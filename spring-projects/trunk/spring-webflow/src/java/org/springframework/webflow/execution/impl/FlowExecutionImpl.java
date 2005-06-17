@@ -334,10 +334,10 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * <p>
 	 * The default implementation uses the <code>InternalStateContext</code>
 	 * class. Subclasses can override this to use a custom class.
-	 * @param originatingEvent the event at the origin of this request
+	 * @param sourceEvent the event at the origin of this request
 	 */
-	protected StateContextImpl createStateContext(Event originatingEvent) {
-		return new StateContextImpl(originatingEvent, this);
+	protected StateContextImpl createStateContext(Event sourceEvent) {
+		return new StateContextImpl(sourceEvent, this);
 	}
 	
 	/**
