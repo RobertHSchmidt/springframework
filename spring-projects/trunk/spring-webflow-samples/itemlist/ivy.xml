@@ -1,0 +1,50 @@
+<ivy-module version="1.0">
+
+  <!--
+      This file is a declaration of dependencies for the project
+	  The format is described here: http://www.jayasoft.fr/org/modules/ivy/ivyfile.php
+  -->
+ 
+  <info organisation="springframework" module="swf-itemlist-sample"/>
+	
+  <!-- 
+       Some standard dependency configurations, known to the build system.
+       What configuration a dependency is declared in has implications as to whether
+       it's available in the compile classpath and the test classpath, and whether it
+       is expected to be bundled with the final artifact (or only needed for compiles,
+       as the container will make it available).
+  -->
+  <configurations>
+  
+    <!-- 
+       default: the default externally visible configuration. Other modules will
+       depend on this config or any other externally visible configs you may 
+       optionally define. Normally you shouldn't add dependencies to this config,
+       unless they are strictly runtime-only, and don't need to be touched at all
+       by the build system.-->
+    <conf name="default" extends="global"/>
+
+    <!-- global: dependencies needed at compile-time, test-time, and runtime (the
+	     latter implies bundling for runtime, i.e. the container doesn't include them -->
+    <conf name="global" visibility="private"/>
+
+    <!-- buildtime: additional dependencies needed only for build-time (compiling and 
+         running tests. e.g. servlet-api.jar -->
+    <conf name="buildtime" visibility="private"/>
+
+    <!-- test: additional dependencies needed for test-time, added to "default" -->
+    <conf name="test" visibility="private"/>
+
+  </configurations>
+	
+  <dependencies  defaultconf="global->default">
+    <dependency org="java" name="servlet" rev="2.4"
+                conf="buildtime->default">
+		<artifact name="servlet-api" type="jar"/>
+	</dependency>
+    <dependency org="junit" name="junit" rev="3.8.1"
+                conf="test->default" />
+    <dependency org="springframework" name="spring-webflow" rev="latest.integration"/>
+  </dependencies>
+
+</ivy-module>

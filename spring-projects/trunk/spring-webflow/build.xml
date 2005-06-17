@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<project name="spring-webflow" default="dist">
+
+  <!-- Source local user-specific build properties -->
+
+  <property file="build.properties"/>
+  <property file="project.properties"/>
+  <property file="${common.build.dir}/build.properties"/>
+  <property file="${common.build.dir}/project.properties"/>
+  <property file="${user.home}/build.properties"/>
+
+  <!-- ivy properties -->
+
+  <property name="ivy.conf.dir" value="${common.build.dir}" />
+  <property file="${ivy.conf.dir}/ivyconf.properties" />
+  
+  <import file="${common.build.dir}/common-targets.xml"/>
+
+</project>
