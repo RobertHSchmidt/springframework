@@ -19,18 +19,23 @@ package org.springframework.binding.convert;
  * A service interface for retrieving type conversion executors. The returned
  * command object is thread-safe and may be safely cached for use by client
  * code.
+ * 
  * @author Keith Donald
  */
 public interface ConversionService {
 
 	/**
-	 * Returns the class aliased by the given name--e.g "boolean" might return
-	 * java.lang.Boolean.
-	 * @param alias
-	 * @return the class with the given alias
+	 * Return a conversion executor command object capable of converting source
+	 * objects of the specified <code>sourceClass</code> to instances of the
+	 * <code>targetClass</code> with the specified <code>alias</code>.
+	 *
+	 * @param sourceClass the sourceClass
+	 * @param alias the target alias
+	 * @return the conversion executor
 	 */
-	public Class withAlias(String alias) throws IllegalArgumentException;
-	
+	public ConversionExecutor conversionExecutorForAlias(Class sourceClass,
+			String alias) throws IllegalArgumentException;
+
 	/**
 	 * Return a conversion executor command object capable of converting source
 	 * objects of the specified <code>sourceClass</code> to instances of the
@@ -38,11 +43,15 @@ public interface ConversionService {
 	 * <p>
 	 * The returned ConversionExecutor is thread-safe and may safely be cached
 	 * for use in client code.
-	 * @param sourceClass The source class to convert from
-	 * @param targetClass The target class to convert to
+	 * 
+	 * @param sourceClass
+	 *            The source class to convert from
+	 * @param targetClass
+	 *            The target class to convert to
 	 * @return The executor that can execute instance conversion
-	 * @throws ConversionException An exception occured retrieving a converter
-	 *         for the source-to-target pair.
+	 * @throws ConversionException
+	 *             An exception occured retrieving a converter for the
+	 *             source-to-target pair.
 	 */
-	public ConversionExecutor getConversionExecutor(Class sourceClass, Class targetClass) throws ConversionException;
+	public ConversionExecutor conversionExecutorFor(Class sourceClass, Class targetClass) throws ConversionException;
 }

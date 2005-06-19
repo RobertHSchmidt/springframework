@@ -42,14 +42,7 @@ public class ConversionExecutor implements Serializable {
 	 * Execute the conversion for the provided source object.
 	 * @param source the source object to convert
 	 */
-	public Object execute(Object source) {
+	public Object execute(Object source) throws ConversionException {
 		return this.converter.convert(source, this.targetClass);
-	}
-	
-	/*
-	 * Implements Closure for use as a function object.
-	 */
-	public Object call(Object source) {
-		return execute(source);
-	}
+	}	
 }
