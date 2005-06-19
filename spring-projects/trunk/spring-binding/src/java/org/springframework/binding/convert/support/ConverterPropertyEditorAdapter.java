@@ -40,7 +40,7 @@ public class ConverterPropertyEditorAdapter extends PropertyEditorSupport {
 
 	public void setAsText(String text) throws IllegalArgumentException {
 		try {
-			setValue(converterExecutor.call(text));
+			setValue(converterExecutor.execute(text));
 		}
 		catch (ConversionException e) {
 			IllegalArgumentException iae = new IllegalArgumentException("Converter could not convert String '" + e

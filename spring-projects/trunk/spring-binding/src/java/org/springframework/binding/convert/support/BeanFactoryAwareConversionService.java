@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -32,27 +34,39 @@ import org.springframework.binding.convert.Converter;
  * Acts as bean factory post processor, registering property editor adapters for
  * each supported conversion with a <code>java.lang.String sourceClass</code>.
  * This makes for very convenient use with the Spring container.
+ * 
  * @author Keith Donald
  */
-public class BeanFactoryAwareConversionService extends DefaultConversionService implements InitializingBean, BeanFactoryPostProcessor {
+public class BeanFactoryAwareConversionService extends DefaultConversionService
+		implements InitializingBean, BeanFactoryAware, BeanFactoryPostProcessor {
 
+	private BeanFactory beanFactory;
+	
 	public BeanFactoryAwareConversionService() {
+	}
+
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		this.beanFactory = beanFactory;
 	}
 
 	public void afterPropertiesSet() {
 		addDefaultConverters();
+		addConverter(new TextToBean(beanFactory), "bean");
 	}
 
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+	public void postProcessBeanFactory(
+			ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		if (getSourceClassConverters() != null) {
-			Map sourceStringConverters = (Map)getSourceClassConverters().get(String.class);
+			Map sourceStringConverters = (Map) getSourceClassConverters().get(
+					String.class);
 			if (sourceStringConverters != null) {
 				Iterator it = sourceStringConverters.entrySet().iterator();
 				while (it.hasNext()) {
-					Map.Entry entry = (Map.Entry)it.next();
-					Class targetClass = (Class)entry.getKey();
-					PropertyEditor editor = new ConverterPropertyEditorAdapter(new ConversionExecutor((Converter)entry
-							.getValue(), targetClass));
+					Map.Entry entry = (Map.Entry) it.next();
+					Class targetClass = (Class) entry.getKey();
+					PropertyEditor editor = new ConverterPropertyEditorAdapter(
+							new ConversionExecutor(
+									(Converter) entry.getValue(), targetClass));
 					beanFactory.registerCustomEditor(targetClass, editor);
 				}
 			}

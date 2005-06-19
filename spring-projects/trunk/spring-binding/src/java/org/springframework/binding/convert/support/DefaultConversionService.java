@@ -28,6 +28,7 @@ import org.springframework.binding.format.FormatterLocator;
 import org.springframework.binding.format.support.ThreadLocalFormatterLocator;
 import org.springframework.binding.support.Mapping;
 import org.springframework.binding.support.TextToMapping;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
@@ -37,14 +38,15 @@ import org.springframework.util.StringUtils;
  * Acts as bean factory post processor, registering property editor adapters for
  * each supported conversion with a <code>java.lang.String sourceClass</code>.
  * This makes for very convenient use with the Spring container.
+ * 
  * @author Keith Donald
  */
 public class DefaultConversionService implements ConversionService {
 
 	private Map aliasMap = new HashMap();
-	
+
 	private ConversionService parent;
-	
+
 	private Map sourceClassConverters = new HashMap();
 
 	private FormatterLocator formatterLocator = new ThreadLocalFormatterLocator();
@@ -60,7 +62,7 @@ public class DefaultConversionService implements ConversionService {
 	public void setParent(ConversionService parent) {
 		this.parent = parent;
 	}
-	
+
 	public void setFormatterLocator(FormatterLocator formatterLocator) {
 		this.formatterLocator = formatterLocator;
 	}
@@ -89,20 +91,31 @@ public class DefaultConversionService implements ConversionService {
 	public void addAlias(String alias, Class targetType) {
 		aliasMap.put(alias, targetType);
 	}
-	
+
 	public void addDefaultAlias(Class targetType) {
-		addAlias(StringUtils.uncapitalize(ClassUtils.getShortName(targetType)), targetType);
+		addAlias(StringUtils.uncapitalize(ClassUtils.getShortName(targetType)),
+				targetType);
 	}
 
-	public Class withAlias(String alias) throws IllegalArgumentException {
-		Class targetType = (Class)aliasMap.get(alias);
+	public ConversionExecutor conversionExecutorForAlias(Class sourceClass,
+			String alias) throws IllegalArgumentException {
+		Assert.hasText(alias,
+				"The target alias is required and must either be a type alias (e.g 'boolean') "
+						+ "or a generic converter alias (e.g. 'bean') ");
+		Object targetType = aliasMap.get(alias);
 		if (targetType == null) {
-			ConversionExecutor executor = getConversionExecutor(String.class, Class.class);
-			targetType = (Class)executor.execute(alias);
+			ConversionExecutor executor = conversionExecutorFor(String.class,
+					Class.class);
+			targetType = (Class) executor.execute(alias);
 		}
-		return targetType;
+		if (targetType instanceof Class) {
+			return conversionExecutorFor(sourceClass, (Class) targetType);
+		} else {
+			Assert.isInstanceOf(Converter.class, targetType);
+			Converter conv = (Converter) targetType;
+			return new ConversionExecutor(conv, Object.class);
+		}
 	}
-	
 
 	public void addConverters(Converter[] converters) {
 		for (int i = 0; i < converters.length; i++) {
@@ -115,7 +128,7 @@ public class DefaultConversionService implements ConversionService {
 		Class[] targetClasses = converter.getTargetClasses();
 		for (int i = 0; i < sourceClasses.length; i++) {
 			Class sourceClass = sourceClasses[i];
-			Map sourceMap = (Map)this.sourceClassConverters.get(sourceClass);
+			Map sourceMap = (Map) this.sourceClassConverters.get(sourceClass);
 			if (sourceMap == null) {
 				sourceMap = new HashMap();
 				this.sourceClassConverters.put(sourceClass, sourceMap);
@@ -127,29 +140,40 @@ public class DefaultConversionService implements ConversionService {
 		}
 	}
 
+	public void addConverter(Converter converter, String alias) {
+		aliasMap.put(alias, converter);
+		addConverter(converter);
+	}
+
 	protected FormatterLocator getFormatterLocator() {
 		return formatterLocator;
 	}
 
-	public ConversionExecutor getConversionExecutor(Class sourceClass, Class targetClass) {
-		if (this.sourceClassConverters == null || this.sourceClassConverters.isEmpty()) {
-			throw new IllegalStateException("No converters have been added to this service's registry");
+	public ConversionExecutor conversionExecutorFor(Class sourceClass,
+			Class targetClass) {
+		if (this.sourceClassConverters == null
+				|| this.sourceClassConverters.isEmpty()) {
+			throw new IllegalStateException(
+					"No converters have been added to this service's registry");
 		}
 		if (sourceClass.equals(targetClass)) {
 			throw new IllegalArgumentException("Source class '" + sourceClass
 					+ "' already equals target class; no conversion to perform");
 		}
-		Map sourceTargetConverters = (Map)findConvertersForSource(sourceClass);
-		Converter converter = (Converter)sourceTargetConverters.get(targetClass);
+		Map sourceTargetConverters = (Map) findConvertersForSource(sourceClass);
+		Converter converter = (Converter) sourceTargetConverters
+				.get(targetClass);
 		if (converter != null) {
 			return new ConversionExecutor(converter, targetClass);
-		}
-		else {
+		} else {
 			if (this.parent != null) {
-				return this.parent.getConversionExecutor(sourceClass, targetClass);
+				return this.parent.conversionExecutorFor(sourceClass,
+						targetClass);
 			} else {
-				throw new IllegalArgumentException("No converter registered to convert from sourceClass '" + sourceClass
-						+ "' to target class '" + targetClass + "'");
+				throw new IllegalArgumentException(
+						"No converter registered to convert from sourceClass '"
+								+ sourceClass + "' to target class '"
+								+ targetClass + "'");
 			}
 		}
 	}
@@ -158,12 +182,15 @@ public class DefaultConversionService implements ConversionService {
 		LinkedList classQueue = new LinkedList();
 		classQueue.addFirst(sourceClass);
 		while (!classQueue.isEmpty()) {
-			sourceClass = (Class)classQueue.removeLast();
-			Map sourceTargetConverters = (Map)sourceClassConverters.get(sourceClass);
-			if (sourceTargetConverters != null && !sourceTargetConverters.isEmpty()) {
+			sourceClass = (Class) classQueue.removeLast();
+			Map sourceTargetConverters = (Map) sourceClassConverters
+					.get(sourceClass);
+			if (sourceTargetConverters != null
+					&& !sourceTargetConverters.isEmpty()) {
 				return sourceTargetConverters;
 			}
-			if (!sourceClass.isInterface() && (sourceClass.getSuperclass() != null)) {
+			if (!sourceClass.isInterface()
+					&& (sourceClass.getSuperclass() != null)) {
 				classQueue.addFirst(sourceClass.getSuperclass());
 			}
 			// queue up source class's implemented interfaces.
@@ -178,11 +205,11 @@ public class DefaultConversionService implements ConversionService {
 	public ConversionService getParent() {
 		return parent;
 	}
-	
+
 	protected Map getSourceClassConverters() {
 		return sourceClassConverters;
 	}
-	
+
 	protected Map getAliasMap() {
 		return aliasMap;
 	}
