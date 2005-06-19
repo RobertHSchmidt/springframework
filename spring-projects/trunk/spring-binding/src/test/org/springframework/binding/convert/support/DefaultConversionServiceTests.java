@@ -19,7 +19,7 @@ public class DefaultConversionServiceTests extends TestCase {
 	public void testNoConvertersRegistered() {
 		DefaultConversionService service = new DefaultConversionService();
 		try {
-			service.getConversionExecutor(String.class, Integer.class);
+			service.conversionExecutorFor(String.class, Integer.class);
 			fail("Should have thrown an ise");
 		}
 		catch (IllegalStateException e) {
@@ -30,7 +30,7 @@ public class DefaultConversionServiceTests extends TestCase {
 	public void testTargetClassNotSupported() {
 		DefaultConversionService service = new DefaultConversionService();
 		try {
-			service.getConversionExecutor(String.class, HashMap.class);
+			service.conversionExecutorFor(String.class, HashMap.class);
 			fail("Should have thrown an ise");
 		}
 		catch (IllegalArgumentException e) {
@@ -39,7 +39,7 @@ public class DefaultConversionServiceTests extends TestCase {
 
 	public void testValidConversion() {
 		DefaultConversionService service = new DefaultConversionService();
-		ConversionExecutor executor = service.getConversionExecutor(String.class, Integer.class);
+		ConversionExecutor executor = service.conversionExecutorFor(String.class, Integer.class);
 		Integer three = (Integer)executor.execute("3");
 		assertEquals(3, three.intValue());
 	}
@@ -47,7 +47,7 @@ public class DefaultConversionServiceTests extends TestCase {
 	public void testLabeledEnumConversionNoSuchEnum() {
 		DefaultConversionService service = new DefaultConversionService();
 		service.addConverter(new TextToLabeledEnum(MyEnum.class, service.getFormatterLocator()));
-		ConversionExecutor executor = service.getConversionExecutor(String.class, MyEnum.class);
+		ConversionExecutor executor = service.conversionExecutorFor(String.class, MyEnum.class);
 		try {
 			MyEnum myEnum = (MyEnum)executor.execute("My Invalid Label");
 			fail("Should have failed");
@@ -59,15 +59,14 @@ public class DefaultConversionServiceTests extends TestCase {
 	public void testValidLabeledEnumConversion() {
 		DefaultConversionService service = new DefaultConversionService();
 		service.addConverter(new TextToLabeledEnum(MyEnum.class, service.getFormatterLocator()));
-		ConversionExecutor executor = service.getConversionExecutor(String.class, MyEnum.class);
+		ConversionExecutor executor = service.conversionExecutorFor(String.class, MyEnum.class);
 		MyEnum myEnum = (MyEnum)executor.execute("My Label 1");
 		assertEquals(MyEnum.ONE, myEnum);
 	}
 
 	public void testValidMappingConversion() {
 		DefaultConversionService service = new DefaultConversionService();
-		ConversionExecutor executor = service.getConversionExecutor(String.class, Mapping.class);
-		
+		ConversionExecutor executor = service.conversionExecutorFor(String.class, Mapping.class);
 		Mapping mapping = (Mapping)executor.execute("id");
 		Map source = new HashMap(1);
 		source.put("id", "5");	

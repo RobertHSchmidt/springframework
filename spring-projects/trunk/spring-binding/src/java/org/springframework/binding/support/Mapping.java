@@ -90,7 +90,7 @@ public class Mapping implements Serializable {
 		Object sourceValue = sourceAttribute.evaluateAgainst(source, mappingContext);
 		Object targetValue = sourceValue;
 		if (valueConverter != null) {
-			targetValue = valueConverter.call(sourceValue);
+			targetValue = valueConverter.execute(sourceValue);
 		}
 		// set target value
 		if (logger.isDebugEnabled()) {
