@@ -25,10 +25,8 @@ import org.springframework.webflow.config.BeanFactoryFlowServiceLocator;
 import org.springframework.webflow.config.FlowBuilder;
 import org.springframework.webflow.config.FlowFactoryBean;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.ServiceLookupException;
-import org.springframework.webflow.execution.TokenTransactionSynchronizer;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 
 /**
@@ -140,8 +138,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 *         (returned when the first view state is entered)
 	 */
 	protected ViewDescriptor startFlow(Event event) {
-		this.flowExecution = new FlowExecutionImpl(getFlow(), new FlowExecutionListener[0],
-				new TokenTransactionSynchronizer());
+		this.flowExecution = new FlowExecutionImpl(getFlow());
 		onSetupFlowExecution(flowExecution);
 		return this.flowExecution.start(event);
 	}
