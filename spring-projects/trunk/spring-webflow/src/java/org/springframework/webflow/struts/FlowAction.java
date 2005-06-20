@@ -24,8 +24,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionServlet;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.struts.BindingActionForm;
-import org.springframework.web.struts.TemplateAction;
+import org.springframework.web.struts.MappingDispatchActionSupport;
+import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -87,22 +87,9 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * <li>Use of the <code>BindingActionForm</code> requires some minor setup in
  * <code>struts-config.xml</code>. Specifically:
  * <ol>
- * <li>A custom BindingActionForm-aware request processor is needed, to defer
- * form population:
- * 
- * <pre>
- *     &lt;controller processorClass=&quot;org.springframework.web.struts.BindingRequestProcessor&quot;/&gt; 
- * </pre>
- * 
- * <li>A <code>BindingPlugin</code> is needed, to plugin an Errors-aware
- * <code>jakarta-commons-beanutils</code> adapter:
- * 
- * <pre>
- *     &lt;plug-in className=&quot;org.springframework.web.struts.BindingPlugin&quot;/&gt;
- * </pre>
- * 
- * </ol>
- * </ul>
+ * <li>A custom SpringBindingActionForm-aware request processor is needed, to defer
+ * form population;.
+ * <p>
  * The benefits here are substantial: developers now have a powerful web flow
  * capability integrated with Struts, with a consistent-approach to POJO-based
  * binding and validation that addresses the proliferation of
@@ -110,14 +97,12 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * 
  * @see org.springframework.webflow.struts.FlowActionMapping
  * @see org.springframework.webflow.execution.FlowExecutionManager
- * @see org.springframework.web.struts.BindingActionForm
- * @see org.springframework.web.struts.BindingRequestProcessor
- * @see org.springframework.web.struts.BindingPlugin
+ * @see org.springframework.web.struts.SpringBindingActionForm
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowAction extends TemplateAction {
+public class FlowAction extends MappingDispatchActionSupport {
 
 	private FlowLocator flowLocator;
 
@@ -201,10 +186,9 @@ public class FlowAction extends TemplateAction {
 		return new FlowExecutionListenerAdapter() {
 			public void requestProcessed(RequestContext context) {
 				if (context.getFlowContext().isActive()) {
-					if (form instanceof BindingActionForm) {
-						BindingActionForm bindingForm = (BindingActionForm)form;
-						bindingForm.setErrors(new FormObjectAccessor(context).getFormErrors());
-						bindingForm.setRequest(request);
+					if (form instanceof SpringBindingActionForm) {
+						SpringBindingActionForm bindingForm = (SpringBindingActionForm)form;
+						bindingForm.expose(new FormObjectAccessor(context).getFormErrors(), request);
 					}
 				}
 			}
@@ -231,9 +215,6 @@ public class FlowAction extends TemplateAction {
 			return forward;
 		}
 		else {
-			if (logger.isInfoEnabled()) {
-				logger.info("No view descriptor; returning a [null] forward");
-			}
 			return null;
 		}
 	}

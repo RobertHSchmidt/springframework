@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.config;
 
-import org.springframework.core.enums.support.ShortCodedLabeledEnum;
+import org.springframework.core.enums.ShortCodedLabeledEnum;
 
 /**
  * Enumeration listing all possible autowire modes. The autowire mode is

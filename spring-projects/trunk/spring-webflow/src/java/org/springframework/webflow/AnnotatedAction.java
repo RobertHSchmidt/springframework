@@ -18,7 +18,7 @@ package org.springframework.webflow;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.core.ToStringCreator;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 

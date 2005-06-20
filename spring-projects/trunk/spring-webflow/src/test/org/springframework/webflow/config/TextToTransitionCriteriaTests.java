@@ -21,7 +21,6 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.config.TextToTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

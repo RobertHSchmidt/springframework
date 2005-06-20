@@ -26,7 +26,7 @@ import java.util.Set;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.binding.MutableAttributeSource;
-import org.springframework.core.Styler;
+import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -113,7 +113,7 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 		Object value = getAttribute(attributeName);
 		if (value == null) {
 			throw new IllegalStateException("Required attribute '" + attributeName + "' is not present in " + this
-					+ "; attributes present are = " + Styler.call(getAttributeMap()));
+					+ "; attributes present are = " + StylerUtils.style(getAttributeMap()));
 		}
 		return value;
 	}
@@ -161,7 +161,7 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	public void assertAttributePresent(String attributeName) throws IllegalStateException {
 		if (!containsAttribute(attributeName)) {
 			throw new IllegalStateException("Required attribute '" + attributeName + "' is not present in " + this
-					+ "; attributes present are = " + Styler.call(getAttributeMap()));
+					+ "; attributes present are = " + StylerUtils.style(getAttributeMap()));
 		}
 	}
 

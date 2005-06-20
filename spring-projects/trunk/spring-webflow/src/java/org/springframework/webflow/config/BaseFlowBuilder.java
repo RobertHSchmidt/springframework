@@ -121,7 +121,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	 * @throws ConversionException when the converter cannot be found
 	 */
 	protected ConversionExecutor converterFor(Class targetType) throws ConversionException {
-		return getConversionService().getConversionExecutor(String.class, targetType);
+		return getConversionService().conversionExecutorFor(String.class, targetType);
 	}
 
 }

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.core.CollectionFactory;
-import org.springframework.core.ToStringCreator;
+import org.springframework.core.style.ToStringCreator;
 
 /**
  * Abstract superclass for states that have one or more transitions. State

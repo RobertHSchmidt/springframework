@@ -33,10 +33,6 @@ import org.springframework.webflow.SimpleViewDescriptorCreator;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.config.AutowireMode;
-import org.springframework.webflow.config.FlowConversionService;
-import org.springframework.webflow.config.FlowFactoryBean;
-import org.springframework.webflow.config.XmlFlowBuilder;
 import org.springframework.webflow.execution.ServiceLookupException;
 import org.springframework.webflow.test.MockRequestContext;
 

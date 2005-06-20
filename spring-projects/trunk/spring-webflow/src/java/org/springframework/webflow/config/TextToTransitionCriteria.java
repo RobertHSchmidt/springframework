@@ -22,7 +22,7 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.ExpressionParserException;
+import org.springframework.binding.expression.ParserException;
 import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
@@ -99,7 +99,7 @@ public class TextToTransitionCriteria extends AbstractConverter {
 		try {
 			return new ExpressionTransitionCriteria(expressionParser.parseExpression(expression));
 		}
-		catch (ExpressionParserException e) {
+		catch (ParserException e) {
 			throw new ConversionException(expression, ExpressionTransitionCriteria.class, e);
 		}
 	}

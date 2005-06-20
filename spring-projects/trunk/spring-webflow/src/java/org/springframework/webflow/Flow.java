@@ -22,8 +22,8 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.CollectionFactory;
-import org.springframework.core.Styler;
-import org.springframework.core.ToStringCreator;
+import org.springframework.core.style.StylerUtils;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -159,7 +159,7 @@ public class Flow extends AnnotatedObject {
 		if (containsState(state.getId())) {
 			throw new IllegalArgumentException("This flow '" + getId() + "' already contains a state with id '"
 					+ state.getId() + "' -- state ids must be locally unique to the flow definition; "
-					+ "existing state-ids of this flow include: " + Styler.call(getStateIds()));
+					+ "existing state-ids of this flow include: " + StylerUtils.style(getStateIds()));
 		}
 		boolean firstAdd = states.isEmpty();
 		this.states.add(state);

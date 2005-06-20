@@ -21,7 +21,6 @@ import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.FlowFactoryBean;
 import org.springframework.webflow.config.TextToTransitionCriteria;
 import org.springframework.webflow.config.TextToViewDescriptorCreator;
-import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 
 /**

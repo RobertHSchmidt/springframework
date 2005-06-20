@@ -20,7 +20,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

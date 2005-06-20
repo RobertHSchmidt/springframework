@@ -22,8 +22,8 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.CollectionFactory;
-import org.springframework.core.Styler;
-import org.springframework.core.ToStringCreator;
+import org.springframework.core.style.StylerUtils;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
@@ -416,9 +416,9 @@ public class ActionState extends TransitionableState {
 					+ "signaled by the " + executionCount + " action(s) that executed in this action state '" + getId()
 					+ "' of flow '" + getFlow().getId()
 					+ "'; transitions must be defined to handle action result outcomes -- "
-					+ "possible flow configuration error? Note: the eventIds signaled were: '" + Styler.call(eventIds)
+					+ "possible flow configuration error? Note: the eventIds signaled were: '" + StylerUtils.style(eventIds)
 					+ "', while the supported set of transitional criteria for this action state is '"
-					+ Styler.call(getTransitionCriterias()) + "'");
+					+ StylerUtils.style(getTransitionCriterias()) + "'");
 		}
 		else {
 			throw new IllegalStateException("No actions were executed, thus I cannot execute any state transition "

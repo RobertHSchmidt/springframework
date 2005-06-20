@@ -17,7 +17,7 @@ package org.springframework.webflow;
 
 import java.util.Map;
 
-import org.springframework.core.ToStringCreator;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.StringUtils;
 
 /**

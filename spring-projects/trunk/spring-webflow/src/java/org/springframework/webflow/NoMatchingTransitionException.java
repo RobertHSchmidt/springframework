@@ -15,7 +15,8 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.core.Styler;
+import org.springframework.core.style.StylerUtils;
+
 
 /**
  * Thrown when no transition can be matched given the occurence of an event in
@@ -61,7 +62,7 @@ public class NoMatchingTransitionException extends FlowNavigationException {
 	public NoMatchingTransitionException(TransitionableState state, RequestContext context, Throwable cause) {
 		super(state.getFlow(), "No transition found for event '" + context.getLastEvent().getId() + "' in state '"
 				+ state.getId() + "' of flow '" + state.getFlow().getId() + "' -- valid transitional criteria are "
-				+ Styler.call(state.getTransitionCriterias())
+				+ StylerUtils.style(state.getTransitionCriterias())
 				+ " -- likely programmer error, check the set of TransitionCriteria for this state", cause);
 		this.state = state;
 		this.context = context;

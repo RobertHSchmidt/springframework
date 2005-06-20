@@ -15,7 +15,8 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.core.Styler;
+import org.springframework.core.style.StylerUtils;
+
 
 /**
  * Thrown when a state could not be found in a flow on lookup by
@@ -45,7 +46,7 @@ public class NoSuchFlowStateException extends FlowNavigationException {
 	 */
 	public NoSuchFlowStateException(Flow flow, String stateId, Throwable cause) {
 		super(flow, "No state with state id '" + stateId + "' exists for flow '" + flow.getId()
-				+ "' -- valid states are " + Styler.call(flow.getStateIds())
+				+ "' -- valid states are " + StylerUtils.style(flow.getStateIds())
 				+ "-- likely programmer error, check your flow configuration", cause);
 		this.stateId = stateId;
 	}

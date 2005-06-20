@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.execution.ExternalEvent;
 import org.springframework.webflow.execution.servlet.ServletEvent;
 
 /**

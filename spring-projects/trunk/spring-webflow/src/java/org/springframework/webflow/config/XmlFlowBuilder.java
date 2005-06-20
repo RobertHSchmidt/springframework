@@ -30,8 +30,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.convert.ConversionExecutor;
+import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.ExpressionEvaluationException;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.format.InvalidFormatException;
@@ -645,7 +645,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected void parseAndAddProperty(Element element, MutableAttributeSource properties) {
 		String name = element.getAttribute(NAME_ATTRIBUTE);
-		Object value = null;
+		String value = null;
 		if (element.hasAttribute(VALUE_ATTRIBUTE)) {
 			value = element.getAttribute(VALUE_ATTRIBUTE);
 		}
@@ -660,11 +660,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Do type conversion for given property value.
 	 */
-	protected Object convertPropertyValue(Element element, Object value) {
+	protected Object convertPropertyValue(Element element, String value) {
 		if (element.hasAttribute(TYPE_ATTRIBUTE)) {
 			// do value type conversion
-			Class targetClass = getConversionService().withAlias(element.getAttribute(TYPE_ATTRIBUTE));
-			return converterFor(targetClass).execute(value);
+			return getConversionService().conversionExecutorForAlias(String.class, 
+					element.getAttribute(TYPE_ATTRIBUTE)).execute(value);
 		}
 		else {
 			return value;
@@ -808,8 +808,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		String type = element.getAttribute(TYPE_ATTRIBUTE);
 		ConversionExecutor valueConverter = null;
 		if (StringUtils.hasText(type)) {
-			Class targetType = getConversionService().withAlias(type);
-			valueConverter = converterFor(targetType);
+			valueConverter = getConversionService().conversionExecutorForAlias(String.class, type);
 		}
 		if (StringUtils.hasText(name)) {
 			if (StringUtils.hasText(as)) {
@@ -872,7 +871,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			this.evaluator = evaluator;
 		}
 		
-		public Object evaluateAgainst(Object target, Map context) throws ExpressionEvaluationException {
+		public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
 			RequestContext requestContext = (RequestContext)target;
 			return evaluator.evaluateAgainst(requestContext.getFlowScope(), context);
 		}

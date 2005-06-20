@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.core.enums.support.ShortCodedLabeledEnum;
+import org.springframework.core.enums.ShortCodedLabeledEnum;
 
 /**
  * Supported scope types for the web flow system.

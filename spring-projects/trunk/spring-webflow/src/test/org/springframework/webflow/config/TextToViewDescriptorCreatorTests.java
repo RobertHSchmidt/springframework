@@ -7,7 +7,6 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.ViewDescriptorCreator;
-import org.springframework.webflow.config.TextToViewDescriptorCreator;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class TextToViewDescriptorCreatorTests extends TestCase {
