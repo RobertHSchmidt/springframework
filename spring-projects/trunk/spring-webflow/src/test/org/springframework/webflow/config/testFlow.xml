@@ -11,9 +11,9 @@
 			<property name="prop2" value="prop2Value"/>
 		</action>
 		<action name="action2Name" bean="action2"/>
-		<action class="org.springframework.web.flow.config.XmlFlowBuilderTests$TestAction"/>
-		<action class="org.springframework.web.flow.config.XmlFlowBuilderTests$TestAction" autowire="byType"/>
-		<action classref="org.springframework.web.flow.config.XmlFlowBuilderTests$TestAction"/>
+		<action class="org.springframework.webflow.config.XmlFlowBuilderTests$TestAction"/>
+		<action class="org.springframework.webflow.config.XmlFlowBuilderTests$TestAction" autowire="byType"/>
+		<action classref="org.springframework.webflow.config.XmlFlowBuilderTests$TestAction"/>
 		<transition on="event1" to="viewState1"/>
 		<transition on="action2Name.event2" to="viewState2"/>
 	</action-state>
