@@ -751,7 +751,7 @@
   <!-- set fake default value, will not override existing setting -->
   <property name="test.arguments" value="-Dzzz456zzz"/>
   
-  <target name="tests.prepare" depends="build.prepare" unless="tests.prepare.done">
+  <target name="tests.prepare" depends="compile" unless="tests.prepare.done">
     <mkdir dir="${target.testresults.dir}"/>
     <delete>
       <fileset dir="${target.testresults.dir}"
