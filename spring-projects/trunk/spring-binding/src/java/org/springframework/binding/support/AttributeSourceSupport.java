@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.binding.MutableAttributeSource;
-import org.springframework.core.Styler;
+import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -43,7 +43,7 @@ public abstract class AttributeSourceSupport implements MutableAttributeSource {
 		Object value = getAttribute(attributeName);
 		if (value == null) {
 			throw new IllegalStateException("Required attribute '" + attributeName + "' is not present in this "
-					+ getSourceName() + "; attributes present are = " + Styler.call(getAttributeMap()));
+					+ getSourceName() + "; attributes present are = " + StylerUtils.style(getAttributeMap()));
 		}
 		return value;
 	}

@@ -17,8 +17,8 @@ package org.springframework.binding.expression.support;
 
 import java.util.Map;
 
-import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.EvaluationException;
+import org.springframework.binding.expression.Expression;
 
 /**
  * A simple expression evaluator that just returns the expression 

@@ -24,7 +24,7 @@ import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.expression.PropertyExpression;
-import org.springframework.core.ToStringCreator;
+import org.springframework.core.style.ToStringCreator;
 
 /**
  * A single mapping definition, encapulating the information neccessary to map a

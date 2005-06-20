@@ -3,7 +3,7 @@ package org.springframework.binding.expression;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.springframework.core.ToStringCreator;
+import org.springframework.core.style.ToStringCreator;
 
 /**
  * A simple holder for information about an evaluation attempt.

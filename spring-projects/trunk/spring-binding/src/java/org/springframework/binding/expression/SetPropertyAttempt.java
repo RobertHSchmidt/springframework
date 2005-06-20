@@ -2,7 +2,7 @@ package org.springframework.binding.expression;
 
 import java.util.Map;
 
-import org.springframework.core.ToStringCreator;
+import org.springframework.core.style.ToStringCreator;
 
 public class SetPropertyAttempt extends EvaluationAttempt {
 	private Object value;

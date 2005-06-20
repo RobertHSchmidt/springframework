@@ -15,7 +15,7 @@
  */
 package org.springframework.binding.format;
 
-import org.springframework.core.enums.support.ShortCodedLabeledEnum;
+import org.springframework.core.enums.ShortCodedLabeledEnum;
 
 /**
  * Format styles.

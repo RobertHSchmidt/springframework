@@ -10,7 +10,7 @@ import org.springframework.binding.expression.EvaluationAttempt;
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.expression.SetPropertyAttempt;
-import org.springframework.core.ToStringCreator;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**

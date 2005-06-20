@@ -1,4 +1,8 @@
 target
+lib
+bak
 build.properties
-database.properties
-.settings
+*.log
+*.jpx.local*
+*.iws
+*.tws
