@@ -26,8 +26,8 @@ public interface ConversionService {
 
 	/**
 	 * Return a conversion executor command object capable of converting source
-	 * objects of the specified <code>sourceClass</code> to instances of the
-	 * <code>targetClass</code> with the specified <code>alias</code>.
+	 * objects of the specified <code>sourceClass</code> to target objects of the
+	 * type associated with the specified alias.
 	 *
 	 * @param sourceClass the sourceClass
 	 * @param alias the target alias

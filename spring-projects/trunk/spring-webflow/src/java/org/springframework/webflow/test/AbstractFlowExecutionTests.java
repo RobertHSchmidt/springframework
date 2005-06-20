@@ -120,9 +120,19 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 *         (returned when the first view state is entered)
 	 */
 	protected ViewDescriptor startFlow() {
-		return startFlow(new Event(this));
+		return startFlow(event("start"));
 	}
 
+	/**
+	 * Convenience factory method that returns an event instance for this
+	 * test client with the specified id.
+	 * @param eventId the event id
+	 * @return the event
+	 */
+	protected Event event(String eventId) {
+		return new Event(this, eventId);
+	}
+	
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
 	 * @param event the starting event
