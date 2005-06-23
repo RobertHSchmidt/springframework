@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+
+<!--
+  "$Header$"
+  =======================================================================
+  A master build ant file for the core spring jars
+
+  Ideally this would use Ivy dependency information itself to drive the
+  build order of the jar projects, but there's no easy way to access that
+  data here. So the order is hard-coded here, but any mismatch from the
+  true dependencies between jars will still be caught on a build, since
+  Ivy will not be able to resolve needed dependencies for the out of
+  order project.
+  =======================================================================
+-->
+
+<project name="build-spring" default="targets">
+
+  <!-- Load local and user build preferences -->
+  <property file="build.properties"/>
+  <property file="project.properties"/>
+  <property file="${user.home}/build.properties"/>
+  
+  <!-- Default values for unspecified properties -->
+  <!-- Anything passed in or specified in property file will override these -->
+
+  <!-- root of build hierarchy -->
+  <property name="target.dir" value="${basedir}/target"/>
+
+  <!-- directory for release zips -->
+  <property name="target.release.dir" value="${target.dir}/release"/>
+  
+  <!-- directory for release zips -->
+  <property name="release.bin.zip" value="spring-bin.zip"/>
+  <property name="release.src.zip" value="spring-src.zip"/>
+  
+  <path id="modules">
+    <pathelement location="../spring-webflow"/>
+    <pathelement location="../spring-webflow-samples/birthdate"/>
+    <pathelement location="../spring-webflow-samples/fileupload"/>
+    <pathelement location="../spring-webflow-samples/flowlauncher"/>
+    <pathelement location="../spring-webflow-samples/itemlist"/>
+    <pathelement location="../spring-webflow-samples/numberguess"/>
+    <pathelement location="../spring-webflow-samples/phonebook"/>
+    <pathelement location="../spring-webflow-samples/sellitem"/>
+  </path>
+  
+  <!--
+        targets:  displays all targets suitable for developer use
+  -->
+  <target name="targets">
+    <echo>
+
+    Master build for core Spring jars.
+
+    Please execute
+      build -projecthelp
+
+    to see a list of all relevant targets.
+    The default target is 'main'
+    </echo>
+  </target>
+  
+  <!--
+        init:  initializes some common settings
+  -->
+  <target name="init" depends="init_pre, init_post">
+  </target>
+
+  <target name="init_pre" >
+
+    <tstamp>
+      <format property="TSTAMPCOL" pattern="hh:mm"/>
+    </tstamp>
+    <echo message='user.dir = "${user.dir}"' />
+    <echo message='ant.file = "${ant.file}"' />
+    <echo message='ant.java.version = "${ant.java.version}"' />
+
+  </target>
+  
+  <target name="init_post" >
+    <property name="projects" value="modules"/>
+  </target>
+  
+  <target name="clean" depends="init"
+          description="Cleans all build output files from all projects">
+    <echo>projects=${projects}</echo>
+	<subant target="clean" inheritall="false">
+	  <buildpath refid="${projects}"/>
+    </subant>
+  </target>
+
+  <target name="publish" depends="init"
+          description="Calls publish targets on each project">
+    <echo>projects=${projects}</echo>
+	<subant target="publish" inheritall="false">
+	  <buildpath refid="${projects}"/>
+    </subant>
+  </target>
+
+  <target name="tests" depends="init"
+          description="Calls test targets on each project">
+    <echo>projects=${projects}</echo>
+	<subant target="run-ltests" inheritall="false">
+	  <buildpath refid="${projects}"/>
+    </subant>
+  </target>
+  
+</project>
