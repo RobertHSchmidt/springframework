@@ -831,7 +831,7 @@
 		set up, etc. Property files can be written out, etc.
 		
 		<target name="test.example" depends="init">
-    		<antcall target="test.run.one">
+    		<antcall target="test">
       			<param name="test.class" value="com.mycompany.myproject.MyTest"/>
     		</antcall>
   		</target>

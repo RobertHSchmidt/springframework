@@ -83,13 +83,18 @@
 
   <target name="db-schema-load" depends="db.task.init" description="Load the project schema into the database">
   	<property name="sql.src" value="${src.etc.dir}/db/schema.sql"/>
-  	<antcall target="db-sql"/>
+  	<antcall target="db-sql">
+        <param name="onerror" value="continue"/>
+        <param name="autocommit" value="true"/>
+    </antcall>
   </target> 
 
   <target name="db-sql" depends="guard.sqlsrc, db.task.init"
   	description="Execute sql statements stored in the file defined by the ${sql.src} property">
-  	<echo>sql.src = '${sql.src}'</echo>
-  	<my.sql src="${sql.src}">
+    <property name="onerror" value="stop"/>
+    <property name="autocommit" value="false"/>
+    <echo>sql.src = '${sql.src}'</echo>
+  	<my.sql src="${sql.src}" onerror="${onerror}" autocommit="${autocommit}">
         <classpath>
           <path refid="test.classpath"/>
           <pathelement location="${src.test.resources.dir}" />

@@ -106,7 +106,7 @@
     <antcall target="generate.hibernate.properties" />
     <schemaexport quiet="no" text="no" drop="no" delimiter=";"
 	              properties="${target.dir}/db/database.properties" 
-				  output="${target.dir}/db/create-tables.sql">
+				  output="${target.dir}/db/schema.sql">
       <fileset dir="${target.classes.dir}" includes="**/*.hbm.xml" />
     </schemaexport>
   </target>
