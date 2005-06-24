@@ -21,16 +21,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.Converter;
 import org.springframework.binding.format.FormatterLocator;
 import org.springframework.binding.format.support.ThreadLocalFormatterLocator;
+import org.springframework.binding.support.Assert;
 import org.springframework.binding.support.Mapping;
 import org.springframework.binding.support.TextToMapping;
-import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * Default, local implementation of a conversion service.
@@ -106,14 +105,21 @@ public class DefaultConversionService implements ConversionService {
 		if (targetType == null) {
 			ConversionExecutor executor = conversionExecutorFor(String.class,
 					Class.class);
-			targetType = (Class) executor.execute(alias);
+			try {
+				targetType = (Class) executor.execute(alias);
+			} catch (ConversionException e) {
+				IllegalArgumentException iae = new IllegalArgumentException("The alias '" + alias + "' is not present in my aliasMap " + 
+						"and is not a classname either");
+				iae.initCause(e);
+				throw iae;
+			}
 		}
 		if (targetType instanceof Class) {
 			return conversionExecutorFor(sourceClass, (Class) targetType);
 		} else {
 			Assert.isInstanceOf(Converter.class, targetType);
 			Converter conv = (Converter) targetType;
-			return new ConversionExecutor(conv, Object.class);
+			return new ConversionExecutor(conv, null);
 		}
 	}
 
