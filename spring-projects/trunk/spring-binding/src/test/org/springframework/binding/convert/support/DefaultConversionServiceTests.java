@@ -9,6 +9,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.binding.convert.ConversionExecutor;
+import org.springframework.binding.format.support.SimpleFormatterLocator;
 import org.springframework.binding.support.Mapping;
 import org.springframework.core.enums.ShortCodedLabeledEnum;
 
@@ -46,7 +47,7 @@ public class DefaultConversionServiceTests extends TestCase {
 
 	public void testLabeledEnumConversionNoSuchEnum() {
 		DefaultConversionService service = new DefaultConversionService();
-		service.addConverter(new TextToLabeledEnum(MyEnum.class, service.getFormatterLocator()));
+		service.addConverter(new TextToLabeledEnum(MyEnum.class, new SimpleFormatterLocator()));
 		ConversionExecutor executor = service.conversionExecutorFor(String.class, MyEnum.class);
 		try {
 			MyEnum myEnum = (MyEnum)executor.execute("My Invalid Label");
@@ -58,7 +59,7 @@ public class DefaultConversionServiceTests extends TestCase {
 
 	public void testValidLabeledEnumConversion() {
 		DefaultConversionService service = new DefaultConversionService();
-		service.addConverter(new TextToLabeledEnum(MyEnum.class, service.getFormatterLocator()));
+		service.addConverter(new TextToLabeledEnum(MyEnum.class, new SimpleFormatterLocator()));
 		ConversionExecutor executor = service.conversionExecutorFor(String.class, MyEnum.class);
 		MyEnum myEnum = (MyEnum)executor.execute("My Label 1");
 		assertEquals(MyEnum.ONE, myEnum);

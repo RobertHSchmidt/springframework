@@ -25,8 +25,7 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.Converter;
-import org.springframework.binding.format.FormatterLocator;
-import org.springframework.binding.format.support.ThreadLocalFormatterLocator;
+import org.springframework.binding.format.support.SimpleFormatterLocator;
 import org.springframework.binding.support.Assert;
 import org.springframework.binding.support.Mapping;
 import org.springframework.binding.support.TextToMapping;
@@ -44,13 +43,11 @@ import org.springframework.util.StringUtils;
  */
 public class DefaultConversionService implements ConversionService {
 
+	private Map sourceClassConverters = new HashMap();
+
 	private Map aliasMap = new HashMap();
 
 	private ConversionService parent;
-
-	private Map sourceClassConverters = new HashMap();
-
-	private FormatterLocator formatterLocator = new ThreadLocalFormatterLocator();
 
 	protected DefaultConversionService() {
 
@@ -64,10 +61,6 @@ public class DefaultConversionService implements ConversionService {
 		this.parent = parent;
 	}
 
-	public void setFormatterLocator(FormatterLocator formatterLocator) {
-		this.formatterLocator = formatterLocator;
-	}
-
 	public void setConverters(Converter[] converters) {
 		this.sourceClassConverters = new HashMap(converters.length);
 		addConverters(converters);
@@ -75,7 +68,7 @@ public class DefaultConversionService implements ConversionService {
 
 	protected void addDefaultConverters() {
 		addConverter(new TextToClass());
-		addConverter(new TextToNumber(getFormatterLocator()));
+		addConverter(new TextToNumber(new SimpleFormatterLocator()));
 		addConverter(new TextToBoolean());
 		addConverter(new TextToMapping(this));
 		addDefaultAlias(Short.class);
@@ -216,9 +209,5 @@ public class DefaultConversionService implements ConversionService {
 
 	protected Map getAliasMap() {
 		return aliasMap;
-	}
-
-	protected FormatterLocator getFormatterLocator() {
-		return formatterLocator;
 	}
 }

@@ -19,8 +19,9 @@ import java.util.Locale;
 
 import org.springframework.binding.format.Formatter;
 import org.springframework.binding.format.FormatterLocator;
-import org.springframework.binding.format.LocaleContext;
 import org.springframework.binding.format.Style;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.SimpleLocaleContext;
 import org.springframework.core.enums.LabeledEnumResolver;
 import org.springframework.core.enums.StaticLabeledEnumResolver;
 
@@ -30,7 +31,7 @@ import org.springframework.core.enums.StaticLabeledEnumResolver;
  */
 public abstract class AbstractFormatterLocator implements FormatterLocator {
 
-	private LocaleContext localeContext = new ThreadLocaleContext();
+	private LocaleContext localeContext = new SimpleLocaleContext(Locale.getDefault());
 
 	private Style defaultDateStyle = Style.MEDIUM;
 
@@ -54,12 +55,12 @@ public abstract class AbstractFormatterLocator implements FormatterLocator {
 		this.labeledEnumResolver = labeledEnumResolver;
 	}
 
-	protected int getDefaultDateStyleCode() {
-		return defaultDateStyle.getShortCode();
+	protected Style getDefaultDateStyle() {
+		return defaultDateStyle;
 	}
 
-	protected int getDefaultTimeStyleCode() {
-		return defaultTimeStyle.getShortCode();
+	protected Style getDefaultTimeStyle() {
+		return defaultTimeStyle;
 	}
 
 	protected Locale getLocale() {
@@ -67,27 +68,15 @@ public abstract class AbstractFormatterLocator implements FormatterLocator {
 	}
 
 	public Formatter getDateFormatter() {
-		return getDateFormatter(this.defaultDateStyle);
-	}
-
-	public Formatter getDateFormatter(String encodedFormat) {
-		throw new UnsupportedOperationException();
+		return getDateFormatter(getDefaultDateStyle());
 	}
 
 	public Formatter getDateTimeFormatter() {
-		return getDateTimeFormatter(this.defaultDateStyle, this.defaultTimeStyle);
+		return getDateTimeFormatter(getDefaultDateStyle(), getDefaultTimeStyle());
 	}
 
 	public Formatter getTimeFormatter() {
-		return getTimeFormatter(this.defaultTimeStyle);
-	}
-
-	public Formatter getPercentFormatter() {
-		throw new UnsupportedOperationException();
-	}
-
-	public Formatter getCurrencyFormatter() {
-		throw new UnsupportedOperationException();
+		return getTimeFormatter(getDefaultTimeStyle());
 	}
 
 	public Formatter getLabeledEnumFormatter() {

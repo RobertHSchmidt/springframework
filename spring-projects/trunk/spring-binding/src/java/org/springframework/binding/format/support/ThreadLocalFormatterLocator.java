@@ -99,4 +99,19 @@ public class ThreadLocalFormatterLocator extends AbstractFormatterLocator {
 		}
 		return formatter;
 	}
+
+	public Formatter getCurrencyFormatter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Formatter getDateFormatter(String encodedFormat) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Formatter getPercentFormatter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

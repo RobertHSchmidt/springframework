@@ -17,6 +17,7 @@ package org.springframework.binding.format.support;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Currency;
 
 import org.springframework.binding.format.Formatter;
 import org.springframework.binding.format.Style;
@@ -47,4 +48,18 @@ public class SimpleFormatterLocator extends AbstractFormatterLocator {
 	public Formatter getNumberFormatter(Class numberClass) {
 		return new NumberFormatter(NumberFormat.getNumberInstance(getLocale()));
 	}
+
+	public Formatter getCurrencyFormatter() {
+		return new NumberFormatter(NumberFormat.getCurrencyInstance(getLocale()));
+	}
+
+	public Formatter getDateFormatter(String encodedFormat) {
+		return new DateFormatter(new SimpleDateFormat(encodedFormat));
+	}
+
+	public Formatter getPercentFormatter() {
+		return new NumberFormatter(NumberFormat.getPercentInstance(getLocale()));
+	}
+
+
 }
