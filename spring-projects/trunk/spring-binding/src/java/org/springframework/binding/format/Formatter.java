@@ -22,7 +22,8 @@ public interface Formatter {
 	 * Parse the formatted string representation of a value, restoring the
 	 * value.
 	 * @param formattedValue The formatted string representation
-	 * @return The value
+	 * @param targetClass the target class to convert the formatted value to
+	 * @return The parsed value
 	 * @throws InvalidFormatException The string was in an invalid form
 	 */
 	public Object parseValue(String formattedValue, Class targetClass) throws InvalidFormatException;
