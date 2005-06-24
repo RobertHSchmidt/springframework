@@ -30,6 +30,8 @@ import org.springframework.binding.format.support.ThreadLocalFormatterLocator;
 import org.springframework.binding.support.Assert;
 import org.springframework.binding.support.Mapping;
 import org.springframework.binding.support.TextToMapping;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Default, local implementation of a conversion service.
