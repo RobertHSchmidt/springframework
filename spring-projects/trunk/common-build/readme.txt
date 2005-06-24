@@ -24,4 +24,6 @@ insert before it, just depend on the 'pre' target instead:
 
 Important: if you are running Ant directly, you must drop the Ivy jar (i.e. ivy-xx.jar)
 into ant's lib dir. All other binaries will be pulled down by the build as per the
-dependency declaration in the project ivy.xml files.
+dependency declaration in the project ivy.xml files. The ivy jar may be found in the
+jar repository.
+
