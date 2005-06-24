@@ -17,6 +17,8 @@ package org.springframework.webflow.samples.sellitem;
 
 import java.io.Serializable;
 
+import org.springframework.core.style.ToStringCreator;
+
 public class Sale implements Serializable {
 
 	private double price;
@@ -72,8 +74,7 @@ public class Sale implements Serializable {
 	// business logic methods
 
 	/**
-	 * Returns the base amount of the sale, without discount
-	 * or delivery costs.
+	 * Returns the base amount of the sale, without discount or delivery costs.
 	 */
 	public double getAmount() {
 		return price * itemCount;
@@ -88,8 +89,7 @@ public class Sale implements Serializable {
 			if (itemCount >= 100) {
 				discount = 0.1;
 			}
-		}
-		else if ("B".equals(category)) {
+		} else if ("B".equals(category)) {
 			if (itemCount >= 200) {
 				discount = 0.2;
 			}
@@ -111,18 +111,21 @@ public class Sale implements Serializable {
 		double delCost = 0.0;
 		if ("S".equals(shippingType)) {
 			delCost = 10.0;
-		}
-		else if ("E".equals(shippingType)) {
+		} else if ("E".equals(shippingType)) {
 			delCost = 20.0;
 		}
 		return delCost;
 	}
 
 	/**
-	 * Returns the total cost of the sale, including
-	 * discount and delivery cost.
+	 * Returns the total cost of the sale, including discount and delivery cost.
 	 */
 	public double getTotalCost() {
 		return getAmount() + getDeliveryCost() - getSavings();
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("price", price).append(
+				"itemCount", itemCount).toString();
 	}
 }

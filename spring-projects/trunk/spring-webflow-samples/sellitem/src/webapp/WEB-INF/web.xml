@@ -11,7 +11,7 @@
 	  -->
 	<context-param>
 		<param-name>webAppRootKey</param-name>
-		<param-value>@PROJECT_NAME@</param-value>
+		<param-value>sellitem</param-value>
 	</context-param>
 	
 	<!--
@@ -21,17 +21,6 @@
 	<context-param>
 		<param-name>log4jConfigLocation</param-name>
 		<param-value>/WEB-INF/classes/log4j.properties</param-value>
-	</context-param>
-
-	<!--
-	  - Location of the Spring bean definition files, for initialization of
-	  - root spring application context
-	  -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>
-			<!-- Context config files go here, space delimited -->
-		</param-value>
 	</context-param>
 
 	<!--
@@ -49,21 +38,13 @@
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
 	</listener>
 
-	<!--
-	  - Load the spring root application context from the paths define by
-	  - the contextConfigLocation param.
-	  -->	
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
-	
 	<servlet>
-		<servlet-name>@PROJECT_NAME@</servlet-name>
+		<servlet-name>sellitem</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>@PROJECT_NAME@</servlet-name>
+		<servlet-name>sellitem</servlet-name>
 		<url-pattern>*.htm</url-pattern>
 	</servlet-mapping>
 	
