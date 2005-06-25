@@ -19,7 +19,7 @@ package org.springframework.binding.format;
  * Thrown when a formatted value is of the wrong form.
  * @author Keith Donald
  */
-public class InvalidFormatException extends Exception {
+public class InvalidFormatException extends RuntimeException {
 
 	private String invalidValue;
 
@@ -56,5 +56,4 @@ public class InvalidFormatException extends Exception {
 		this.invalidValue = invalidValue;
 		this.expectedFormat = expectedFormat;
 	}
-
 }

@@ -15,8 +15,10 @@
  */
 package org.springframework.binding.format.support;
 
+import java.math.BigInteger;
 import java.text.NumberFormat;
 
+import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.util.NumberUtils;
 
 /**
@@ -57,5 +59,33 @@ public class NumberFormatter extends AbstractFormatter {
 		else {
 			return NumberUtils.parseNumber((String)text, targetClass);
 		}
+	}
+	
+	public Short parseShort(String formattedString) throws InvalidFormatException {
+		return (Short)parseValue(formattedString, Short.class);
+	}
+
+	public Integer parseInteger(String formattedString) throws InvalidFormatException {
+		return (Integer)parseValue(formattedString, Integer.class);
+	}
+
+	public Long parseLong(String formattedString) throws InvalidFormatException {
+		return (Long)parseValue(formattedString, Long.class);
+	}
+
+	public Double parseDouble(String formattedString) throws InvalidFormatException {
+		return (Double)parseValue(formattedString, Double.class);
+	}
+
+	public Float parseFloat(String formattedString) throws InvalidFormatException {
+		return (Float)parseValue(formattedString, Float.class);
+	}
+
+	public BigInteger parseBigInteger(String formattedString) throws InvalidFormatException {
+		return (BigInteger)parseValue(formattedString, BigInteger.class);
+	}
+
+	public Byte parseByte(String formattedString) throws InvalidFormatException {
+		return (Byte)parseValue(formattedString, Byte.class);
 	}
 }

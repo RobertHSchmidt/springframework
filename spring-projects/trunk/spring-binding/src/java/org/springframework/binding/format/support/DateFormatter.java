@@ -19,6 +19,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.springframework.binding.format.InvalidFormatException;
+
 /**
  * Formatter that formats date objects.
  * @author Keith Donald
@@ -54,7 +56,11 @@ public class DateFormatter extends AbstractFormatter {
 	}
 
 	// convert back from string to date
-	protected Object doParseValue(String dateString, Class targetClass) throws ParseException {
-		return dateFormat.parse((String)dateString);
+	protected Object doParseValue(String formattedString, Class targetClass) throws ParseException {
+		return dateFormat.parse(formattedString);
+	}
+	
+	protected Date parseDate(String formattedString) throws InvalidFormatException {
+		return (Date)parseValue(formattedString, Date.class);
 	}
 }

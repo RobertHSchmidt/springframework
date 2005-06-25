@@ -15,6 +15,7 @@
  */
 package org.springframework.binding.format.support;
 
+import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.core.enums.LabeledEnumResolver;
 import org.springframework.core.enums.StaticLabeledEnumResolver;
@@ -64,5 +65,9 @@ public class LabeledEnumFormatter extends AbstractFormatter {
 			Assert.isInstanceOf(targetClass, labeledEnum);
 		}
 		return labeledEnum;
+	}
+	
+	public LabeledEnum parseLabeledEnum(String formattedString, Class enumClass) throws InvalidFormatException {
+		return (LabeledEnum)parseValue(formattedString, enumClass);
 	}
 }

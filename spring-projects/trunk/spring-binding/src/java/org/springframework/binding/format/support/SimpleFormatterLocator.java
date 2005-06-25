@@ -17,7 +17,6 @@ package org.springframework.binding.format.support;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Currency;
 
 import org.springframework.binding.format.Formatter;
 import org.springframework.binding.format.Style;
