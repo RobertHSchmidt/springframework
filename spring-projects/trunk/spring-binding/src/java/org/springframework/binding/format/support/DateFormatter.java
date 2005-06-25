@@ -60,7 +60,7 @@ public class DateFormatter extends AbstractFormatter {
 		return dateFormat.parse(formattedString);
 	}
 	
-	protected Date parseDate(String formattedString) throws InvalidFormatException {
+	public Date parseDate(String formattedString) throws InvalidFormatException {
 		return (Date)parseValue(formattedString, Date.class);
 	}
 }

@@ -59,6 +59,4 @@ public class SimpleFormatterLocator extends AbstractFormatterLocator {
 	public Formatter getPercentFormatter() {
 		return new NumberFormatter(NumberFormat.getPercentInstance(getLocale()));
 	}
-
-
 }
