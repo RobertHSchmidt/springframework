@@ -493,7 +493,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         loaded
 	 */
 	protected Object loadFormObject(RequestContext context) throws FormObjectRetrievalFailureException {
-		Object formObject = new FormObjectAccessor(context).getFormObject();
+		Object formObject = getFormObject(context);
 		if (formObject != null) {
 			return formObject;
 		}
@@ -513,6 +513,16 @@ public class FormAction extends MultiAction implements InitializingBean {
 						"Unable to access form object class constructor", e);
 			}
 		}
+	}
+	
+	/**
+	 * Convenience method that returns the current form object for this form action.
+	 * 
+	 * @param context the flow request context
+	 * @return the form object, or <code>null</code> if not found
+	 */
+	protected Object getFormObject(RequestContext context) {
+		return new FormObjectAccessor(context).getFormObject();
 	}
 	
 	/**
