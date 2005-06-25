@@ -568,7 +568,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 */
 	protected Event bindAndValidateInternal(RequestContext context, DataBinder binder) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Binding allowed matching event parameters to object '" + binder.getObjectName()
+			logger.debug("Binding allowed matching event parameters for event " + context.getLastEvent() + " to object '" + binder.getObjectName()
 					+ "', details='" + binder.getTarget() + "'");
 		}
 		binder.bind(new MutablePropertyValues(context.getLastEvent().getParameters()));
