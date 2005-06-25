@@ -40,14 +40,24 @@ import org.springframework.webflow.RequestContext;
 public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
-	 * Event id of the default success result event.
+	 * Event id of the default 'success' result event.
 	 */
 	public static final String SUCCESS_RESULT_EVENT_ID = "success";
 	
 	/**
-	 * Event id of the default error result event.
+	 * Event id of the default 'error' result event.
 	 */
 	public static final String ERROR_RESULT_EVENT_ID = "error";
+
+	/**
+	 * Event id of the default 'yes' result event.
+	 */
+	public static final String YES_RESULT_EVENT_ID = "yes";
+
+	/**
+	 * Event id of the default 'no' result event.
+	 */
+	public static final String NO_RESULT_EVENT_ID = "no";
 
 	/**
 	 * Constant for the error exception event parameter name.
@@ -104,6 +114,20 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 */
 	protected Event success(Object result) {
 		return result(SUCCESS_RESULT_EVENT_ID, RESULT_PARAMETER, result);
+	}
+
+	/**
+	 * Returns the default yes event.
+	 */
+	protected Event yes() {
+		return result(YES_RESULT_EVENT_ID);
+	}
+
+	/**
+	 * Returns the default yes event.
+	 */
+	protected Event no() {
+		return result(NO_RESULT_EVENT_ID);
 	}
 
 	/**
