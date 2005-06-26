@@ -271,6 +271,9 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	public synchronized ViewDescriptor start(Event sourceEvent) throws IllegalStateException {
 		Assert.state(!isActive(), "This flow is already executing -- you cannot call start more than once");
 		updateLastRequestTimestamp();
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start event signaled: " + sourceEvent);
+		}
 		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		ViewDescriptor viewDescriptor = context.spawn(rootFlow.getStartState(), new HashMap());
@@ -285,6 +288,9 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	public synchronized ViewDescriptor signalEvent(Event sourceEvent) throws FlowNavigationException, IllegalStateException {
 		assertActive();
 		updateLastRequestTimestamp();
+		if (logger.isDebugEnabled()) {
+			logger.debug("Resume event signaled: " + sourceEvent);
+		}
 		String stateId = sourceEvent.getStateId();
 		if (!StringUtils.hasText(stateId)) {
 			if (logger.isDebugEnabled()) {
