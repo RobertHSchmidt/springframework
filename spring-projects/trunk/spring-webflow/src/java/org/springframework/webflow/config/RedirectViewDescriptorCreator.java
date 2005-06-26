@@ -24,6 +24,7 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.binding.expression.support.StaticExpression;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
@@ -114,5 +115,9 @@ public class RedirectViewDescriptorCreator extends SimpleViewDescriptorCreator {
 	 */
 	protected Map getEvaluationContext(RequestContext context) {
 		return Collections.EMPTY_MAP;
+	}
+	
+	public String toString() {
+		return new ToStringCreator(this).append("expressions", expressions).toString();
 	}
 }
