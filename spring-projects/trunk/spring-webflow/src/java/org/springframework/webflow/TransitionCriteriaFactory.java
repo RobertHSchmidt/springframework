@@ -80,7 +80,7 @@ public class TransitionCriteriaFactory {
 		 * @param eventId the event id
 		 */
 		public EventIdTransitionCriteria(String eventId) {
-			Assert.notNull(eventId);
+			Assert.notNull(eventId, "The event id is required");
 			this.eventId = eventId;
 		}
 
