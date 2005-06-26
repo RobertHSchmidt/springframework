@@ -39,7 +39,7 @@ public class FlowExecutionListenerCriteriaFactory {
 		 */
 		public static final String WILDCARD_FLOW_ID = "*";
 		
-		public boolean matches(Flow flow) {
+		public boolean includes(Flow flow) {
 			return true;
 		}
 		
@@ -66,7 +66,7 @@ public class FlowExecutionListenerCriteriaFactory {
 			this.flowId = flowId;
 		}
 		
-		public boolean matches(Flow flow) {
+		public boolean includes(Flow flow) {
 			return flowId.equals(flow.getId());
 		}
 	

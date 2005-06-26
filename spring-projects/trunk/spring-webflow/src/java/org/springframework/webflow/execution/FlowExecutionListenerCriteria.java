@@ -19,8 +19,7 @@ import org.springframework.webflow.Flow;
 
 /**
  * Strategy interface that determines if a flow execution listener
- * should be subscribed to the lifecycle of flow executions of specific
- * flow definition.
+ * should attach to executions of a specific flow definition.
  * <p>
  * This selection strategy is used by the flow execution manager.
  * 
@@ -34,9 +33,9 @@ import org.springframework.webflow.Flow;
 public interface FlowExecutionListenerCriteria {
 	
 	/**
-	 * Is this flow eligible for listening?
-	 * @param flow the flow
+	 * Does this listener criteria apply to the provided flow definition?
+	 * @param flow the flow definition
 	 * @return true if yes, false if no
 	 */
-	public boolean matches(Flow flow);
+	public boolean includes(Flow flow);
 }
