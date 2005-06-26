@@ -159,7 +159,7 @@ public abstract class State extends AnnotatedObject {
 	 */
 	public final ViewDescriptor enter(StateContext context) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Entering state '" + getId() + "' in flow '" + getFlow() + "'");
+			logger.debug("Entering state '" + getId() + "' in flow '" + getFlow().getId() + "'");
 		}
 		context.setCurrentState(this);
 		return doEnter(context);
