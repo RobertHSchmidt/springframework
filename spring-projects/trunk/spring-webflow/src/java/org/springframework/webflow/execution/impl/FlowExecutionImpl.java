@@ -237,9 +237,6 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	protected void setLastEvent(Event lastEvent) {
 		Assert.notNull(lastEvent, "The last event is required");
 		this.lastEventId = lastEvent.getId();
-		if (logger.isDebugEnabled()) {
-			logger.debug("Set last event id to '" + this.lastEventId + "'");
-		}
 	}
 
 	public FlowSession getActiveSession() {
@@ -486,8 +483,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 			return "[Empty FlowExecutionStack; no flows are active]";
 		}
 		else {
-			return new ToStringCreator(this).append("activeFlowId", getActiveSession().getFlow().getId()).append("currentStateId",
-					getCurrentState().getId()).append("rootFlow", getRootFlow()).append("executingFlowSessions",
+			return new ToStringCreator(this).append("activeFlow", getActiveSession().getFlow().getId()).append("currentState",
+					getCurrentState().getId()).append("rootFlow", getRootFlow().getId()).append("executingFlowSessions",
 					executingFlowSessions).toString();
 		}
 	}

@@ -143,12 +143,15 @@ public class EndState extends State {
 			ViewDescriptor viewDescriptor;
 			if (isMarker()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning a view descriptor null object; no view to render");
+					logger.debug("Returning control to client with a [null] view render request");
 				}
 				viewDescriptor = null;
 			}
 			else {
 				viewDescriptor = viewDescriptorCreator.createViewDescriptor(context);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Returning view render request to client: " + viewDescriptor);
+				}
 			}
 			// end the flow
 			// note that we do this here to make sure we can call context.getModel()
@@ -185,6 +188,6 @@ public class EndState extends State {
 	}
 	
 	protected void createToString(ToStringCreator creator) {
-		creator.append("viewDescriptorProducer", viewDescriptorCreator);
+		creator.append("viewDescriptorCreator", viewDescriptorCreator);
 	}
 }

@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow;
 
+import org.springframework.core.style.ToStringCreator;
+
 /**
  * Simple view descriptor creator that produces a ViewDescriptor with the same
  * view name each time. This producer will make all model data from both
@@ -61,5 +63,9 @@ public class SimpleViewDescriptorCreator implements ViewDescriptorCreator {
 	
 	public ViewDescriptor createViewDescriptor(RequestContext context) {
 		return new ViewDescriptor(getViewName(), context.getModel());
+	}
+	
+	public String toString() {
+		return new ToStringCreator(this).append("viewName", viewName).toString();
 	}
 }

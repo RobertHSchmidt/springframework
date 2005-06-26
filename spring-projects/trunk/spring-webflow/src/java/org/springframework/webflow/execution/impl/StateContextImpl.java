@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.AttributeSource;
 import org.springframework.binding.support.EmptyAttributeSource;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.FlowContext;
@@ -189,5 +190,12 @@ public class StateContextImpl implements StateContext {
 		}
 		this.flowExecution.getListeners().fireSessionEnded(this, endedSession);
 		return endedSession;
+	}
+	
+	public String toString() {
+		String lastEventId = (lastEvent != null ? lastEvent.getId() : null);
+		return new ToStringCreator(this).append("sourceEvent", sourceEvent.getId()).
+			append("lastEvent", lastEventId).append("lastTransition", lastTransition).append("requestScope", requestScope).
+			append("executionProperties", executionProperties).append("flowExecution", flowExecution).toString();
 	}
 }

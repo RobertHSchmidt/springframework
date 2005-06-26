@@ -223,17 +223,21 @@ public class ViewState extends TransitionableState {
 	public ViewDescriptor viewDescriptor(StateContext context) {
 		if (isMarker()) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Returning a view descriptor null object; no view to render");
+				logger.debug("Returning control to client with a [null] view render request");
 			}
 			return null;
 		}
 		else {
-			return viewDescriptorCreator.createViewDescriptor(context);
+			ViewDescriptor viewDescriptor = viewDescriptorCreator.createViewDescriptor(context);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Returning view render request to client: " + viewDescriptor);
+			}
+			return viewDescriptor;
 		}
 	}
 
 	protected void createToString(ToStringCreator creator) {
-		creator.append("viewDescriptorProducer", this.viewDescriptorCreator).append("setupCriteria", this.setupCriteria).
+		creator.append("viewDescriptorCreator", this.viewDescriptorCreator).append("setupCriteria", this.setupCriteria).
 			append("setupErrorStateId", this.setupErrorStateId);
 		super.createToString(creator);
 	}

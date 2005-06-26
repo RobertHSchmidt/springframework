@@ -262,9 +262,12 @@ public class Transition extends AnnotatedObject {
 		catch (NoSuchFlowStateException e) {
 			throw new CannotExecuteTransitionException(this, e);
 		}
-		context.setLastTransition(this);
 		ViewDescriptor viewDescriptor;
 		if (canExecute(context)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Executing transition '" + this + "' out of state '" + getSourceState().getId() + "'");
+			}
+			context.setLastTransition(this);
 			// enter the target state (note: any exceptions are propagated)
 			viewDescriptor = targetState.enter(context);
 		}

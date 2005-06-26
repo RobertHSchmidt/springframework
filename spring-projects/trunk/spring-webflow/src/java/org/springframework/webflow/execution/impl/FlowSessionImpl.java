@@ -182,7 +182,7 @@ public class FlowSessionImpl implements FlowSession, Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("flow", flow).append("currentState", currentState).append(
+		return new ToStringCreator(this).append("flow", flow.getId()).append("currentState", currentState.getId()).append(
 				"attributesCount", flowScope.size()).append("attributes", flowScope)
 				.toString();
 	}

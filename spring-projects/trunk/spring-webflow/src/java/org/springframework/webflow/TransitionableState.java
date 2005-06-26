@@ -198,8 +198,15 @@ public abstract class TransitionableState extends State {
 	 */
 	public ViewDescriptor onEvent(Event event, StateContext context)
 			throws NoMatchingTransitionException, CannotExecuteTransitionException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Event '" + event.getId() + "' signaled in context: " + context);
+		}
 		context.setLastEvent(event);
-		return getRequiredTransition(context).execute(context);
+		Transition transition = getRequiredTransition(context);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Event '" + event.getId() + "' matched transition: " + transition);
+		}
+		return transition.execute(context);
 	}
 
 	/**

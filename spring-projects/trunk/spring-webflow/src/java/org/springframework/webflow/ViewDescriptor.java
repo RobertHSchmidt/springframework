@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.binding.AttributeSource;
+import org.springframework.core.style.ToStringCreator;
 
 /**
  * Value object that provides clients with information about a logical view to render
@@ -190,5 +191,9 @@ public class ViewDescriptor implements AttributeSource, Serializable {
 	
 	public Object getAttribute(String attributeName) {
 		return model.get(attributeName);
+	}
+	
+	public String toString() {
+		return new ToStringCreator(this).append("viewName", viewName).append("redirect", redirect).append("model", model).toString();
 	}
 }

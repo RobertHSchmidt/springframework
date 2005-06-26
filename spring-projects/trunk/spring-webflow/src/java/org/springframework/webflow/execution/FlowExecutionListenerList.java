@@ -176,9 +176,6 @@ public class FlowExecutionListenerList {
 	 * execution.
 	 */
 	public void fireRequestSubmitted(RequestContext context) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Publishing request submitted event to " + size() + " listener(s)");
-		}
 		for (Iterator it=iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).requestSubmitted(context);
 		}
@@ -189,9 +186,6 @@ public class FlowExecutionListenerList {
 	 * processing a request.
 	 */
 	public void fireRequestProcessed(RequestContext context) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Publishing request processed event to " + size()	+ " listener(s)");
-		}
 		for (Iterator it=iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).requestProcessed(context);
 		}
@@ -201,9 +195,6 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution session is starting.
 	 */
 	public void fireSessionStarting(RequestContext context, State startState, Map input) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Publishing flow execution starting event to " + size() + " listener(s)");
-		}
 		for (Iterator it=iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).sessionStarting(context, startState, input);
 		}
@@ -213,9 +204,6 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution session has started.
 	 */
 	public void fireSessionStarted(RequestContext context) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Publishing flow execution started event to " + size()	+ " listener(s)");
-		}
 		for (Iterator it=iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).sessionStarted(context);
 		}
@@ -226,9 +214,6 @@ public class FlowExecutionListenerList {
 	 * execution.
 	 */
 	public void fireEventSignaled(RequestContext context) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Publishing event signaled event to " + size()	+ " listener(s)");
-		}
 		for (Iterator it=iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).eventSignaled(context);
 		}
@@ -239,9 +224,6 @@ public class FlowExecutionListenerList {
 	 * flow execution.
 	 */
 	public void fireStateEntering(RequestContext context, State nextState) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Publishing state entering event to " + size()	+ " listener(s)");
-		}
 		for (Iterator it=iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).stateEntering(context, nextState);
 		}
@@ -252,9 +234,6 @@ public class FlowExecutionListenerList {
 	 * flow execution.
 	 */
 	public void fireStateEntered(RequestContext context, State previousState) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Publishing state entered event to " + size() + " listener(s)");
-		}
 		for (Iterator it=iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).stateEntered(context, previousState, context.getFlowContext().getCurrentState());
 		}
@@ -265,9 +244,6 @@ public class FlowExecutionListenerList {
 	 * flow execution.
 	 */
 	public void fireResumed(RequestContext context) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Publishing resumed event to " + size() + " listener(s)");
-		}
 		for (Iterator it=iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).resumed(context);
 		}
@@ -278,9 +254,6 @@ public class FlowExecutionListenerList {
 	 * flow execution.
 	 */
 	public void firePaused(RequestContext context) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Publishing paused event to " + size()	+ " listener(s)");
-		}
 		for (Iterator it=iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).paused(context);
 		}
@@ -290,9 +263,6 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution session has ended.
 	 */
 	public void fireSessionEnded(RequestContext context, FlowSession endedSession) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Publishing flow execution ended event to " + size() + " listener(s)");
-		}
 		for (Iterator it=iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).sessionEnded(context, endedSession);
 		}
