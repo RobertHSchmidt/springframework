@@ -53,7 +53,8 @@ import org.springframework.webflow.execution.TransactionSynchronizer;
  * {@link org.springframework.webflow.FlowSession flow sessions}.
  * <p>
  * This implementation of FlowExecution is serializable so it can be safely
- * stored in an HTTP session.
+ * stored in a HTTP session or other persistent store such as a file, database, or
+ * client-side form field.
  * <p>
  * Note: this implementation synchronizes both execution entry points
  * {@link #start(Event)} and {@link #signalEvent(Event)}. They are locked on a
