@@ -166,10 +166,10 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 
 	public String getCaption() {
 		if (isActive()) {
-			return "Active execution for flow '" + getRootFlow() + "': [" + getSessionPath() + "]";
+			return "[" + getActiveSession().getStatus().getLabel() + "] execution for flow '" + getRootFlow().getId() + "': [" + getSessionPath() + "]";
 		}
 		else {
-			return "Inactive execution for flow '" + getRootFlow() + "'";
+			return "Inactive execution for flow '" + getRootFlow().getId() + "'";
 		}
 	}
 
