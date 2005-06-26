@@ -16,6 +16,7 @@
 package org.springframework.webflow.test;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 import org.springframework.util.Assert;
@@ -132,7 +133,18 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	protected Event event(String eventId) {
 		return new Event(this, eventId);
 	}
-	
+
+	/**
+	 * Convenience factory method that returns an event instance for this
+	 * test client with the specified id and parameters
+	 * @param eventId the event id
+	 * @param parameters the event parameters
+	 * @return the event
+	 */
+	protected Event event(String eventId, Map parameters) {
+		return new Event(this, eventId, parameters);
+	}
+
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
 	 * @param event the starting event
