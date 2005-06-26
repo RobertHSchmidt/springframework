@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.test;
 
+import java.util.Collection;
+
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
@@ -236,4 +238,52 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 		assertEquals("The last event '" + getFlowContext().getLastEventId() + "' does not equal the expected event '" + expectedEventId
 				+ "'", expectedEventId, getFlowContext().getLastEventId());
 	}
+
+	/**
+	 * Assert that the view name equals the provided value.
+	 * @param expectedViewName the expected name
+	 * @param viewDescriptor the view descriptor to assert
+	 */
+	public void assertViewNameEquals(String expectedViewName, ViewDescriptor viewDescriptor) {
+		assertEquals("The view name is wrong:", expectedViewName, viewDescriptor.getViewName());
+	}
+	
+	/**
+	 * Assert that the view descriptor contains the specified model attribute with the provided expected value.
+	 * @param expectedValue the expected value
+	 * @param attributeName the attribute name
+	 * @param viewDescriptor the view descriptor to assert
+	 */
+	public void assertModelAttributeEquals(String expectedValue, String attributeName, ViewDescriptor viewDescriptor) {
+		assertEquals("The model attribute value is wrong:", expectedValue, viewDescriptor.getAttribute(attributeName));
+	}
+
+	/**
+	 * Assert that the view descriptor contains the specified collection model attribute with the provided expected size.
+	 * @param expectedValue the expected size
+	 * @param attributeName the collection attribute name
+	 * @param viewDescriptor the view descriptor to assert
+	 */
+	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ViewDescriptor viewDescriptor) {
+		assertModelAttributeNotNull(attributeName, viewDescriptor);
+		Collection c = (Collection)viewDescriptor.getAttribute(attributeName);
+		assertEquals("The model attribute collection size is wrong:", expectedSize, c.size());
+	}
+	/**
+	 * Assert that the view descriptor contains the specified model attribute.
+	 * @param attributeName the attribute name
+	 * @param viewDescriptor the view descriptor to assert
+	 */
+	public void assertModelAttributeNotNull(String attributeName, ViewDescriptor viewDescriptor) {
+		assertNotNull("The model attribute is [null] but should be NOT null:", viewDescriptor.getAttribute(attributeName));
+	}	
+
+	/**
+	 * Assert that the view descriptor contains the specified model attribute.
+	 * @param attributeName the attribute name
+	 * @param viewDescriptor the view descriptor to assert
+	 */
+	public void assertModelAttributeNull(String attributeName, ViewDescriptor viewDescriptor) {
+		assertNull("The model attribute is NOT null but should be [null]:", viewDescriptor.getAttribute(attributeName));
+	}	
 }
