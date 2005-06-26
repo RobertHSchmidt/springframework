@@ -21,15 +21,18 @@ public class FormatterPropertyEditorAdapter extends PropertyEditorSupport {
 	private Class targetClass;
 	
 	/**
-	 * @param formatter
+	 * Creates a formatter property editor.
+	 * @param formatter the formatter to adapt
 	 */
 	public FormatterPropertyEditorAdapter(Formatter formatter) {
 		this.formatter = formatter;
 	}
 
 	/**
-	 * @param formatter
-	 * @param targetClass
+	 * Creates a formatter property editor.
+	 * 
+	 * @param formatter the formatter to adapt
+	 * @param targetClass the target class for "setAsText" conversions.
 	 */
 	public FormatterPropertyEditorAdapter(Formatter formatter, Class targetClass) {
 		this.formatter = formatter;
