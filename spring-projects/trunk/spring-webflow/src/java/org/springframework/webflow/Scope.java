@@ -27,6 +27,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.binding.MutableAttributeSource;
 import org.springframework.core.style.StylerUtils;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
@@ -249,6 +250,6 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	}
 
 	public String toString() {
-		return scopeType.getLabel() + " scope";
+		return new ToStringCreator(this).append("scopeType", scopeType).append("attributes", attributes).toString();
 	}
 }
