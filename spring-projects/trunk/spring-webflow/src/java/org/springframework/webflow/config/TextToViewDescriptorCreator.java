@@ -20,8 +20,10 @@ import org.springframework.beans.BeansException;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.convert.support.TextToClass;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.SimpleViewDescriptorCreator;
+import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 
 /**
@@ -74,7 +76,9 @@ public class TextToViewDescriptorCreator extends AbstractConverter {
 			if (encodedView.startsWith(CLASS_PREFIX)) {
 				String className = encodedView.substring(CLASS_PREFIX.length());
 				Class clazz = (Class)new TextToClass().convert(className);
-				return (ViewDescriptorCreator)BeanUtils.instantiateClass(clazz);
+				Object o = BeanUtils.instantiateClass(clazz);
+				Assert.isInstanceOf(ViewDescriptorCreator.class, o, "Encoded view descriptor creator is of wrong type:");
+				return (ViewDescriptorCreator)o;
 			}
 			else if (encodedView.startsWith(REDIRECT_PREFIX)) {
 				String viewInfo = encodedView.substring(REDIRECT_PREFIX.length());

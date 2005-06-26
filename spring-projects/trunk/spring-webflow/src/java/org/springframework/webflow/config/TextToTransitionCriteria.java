@@ -18,13 +18,16 @@ package org.springframework.webflow.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
+import org.springframework.binding.convert.support.TextToClass;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.ParserException;
 import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionCriteriaFactory;
@@ -50,6 +53,11 @@ import org.springframework.webflow.TransitionCriteriaFactory;
  * @author Erwin Vervaet
  */
 public class TextToTransitionCriteria extends AbstractConverter {
+
+	/**
+	 * Prefix used when the encoded transition criteria denotes a custom TransitionCriteria implementation.
+	 */
+	public static final String CLASS_PREFIX = "class:";
 
 	private ExpressionParser expressionParser = ExpressionParserUtils.getDefaultExpressionParser();
 	
@@ -77,11 +85,18 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	
 	protected Object doConvert(Object source, Class targetClass) throws ConversionException {
 		String encodedCriteria = (String)source;
-		if (TransitionCriteriaFactory.WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
+		if (!StringUtils.hasText(encodedCriteria) || TransitionCriteriaFactory.WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
 			return TransitionCriteriaFactory.any();
 		}
 		else if (expressionParser.isExpression(encodedCriteria)) {
 			return createExpressionTransitionCriteria(encodedCriteria);
+		}
+		else if (encodedCriteria.startsWith(CLASS_PREFIX)) {
+			String className = encodedCriteria.substring(CLASS_PREFIX.length());
+			Class clazz = (Class)new TextToClass().convert(className);
+			Object o = BeanUtils.instantiateClass(clazz);
+			Assert.isInstanceOf(TransitionCriteria.class, o, "Encoded criteria class is of wrong type:");
+			return (TransitionCriteria)o;
 		}
 		else {
 			return TransitionCriteriaFactory.eventId(encodedCriteria);
