@@ -19,7 +19,6 @@ import org.springframework.webflow.execution.EnterStateVetoException;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
-import org.springframework.webflow.execution.impl.FlowExecutionMBeanAdapter;
 
 public class StatisticsService implements InitializingBean, DisposableBean {
 	private FlowExecutionManager flowExecutionManager;
