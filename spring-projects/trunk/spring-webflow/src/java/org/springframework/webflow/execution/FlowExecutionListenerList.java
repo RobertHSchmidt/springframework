@@ -235,7 +235,7 @@ public class FlowExecutionListenerList {
 	 */
 	public void fireStateEntered(RequestContext context, State previousState) {
 		for (Iterator it=iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).stateEntered(context, previousState, context.getFlowContext().getCurrentState());
+			((FlowExecutionListener)it.next()).stateEntered(context, previousState, context.getFlowExecutionContext().getCurrentState());
 		}
 	}
 

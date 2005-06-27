@@ -16,7 +16,7 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.webflow.Event;
-import org.springframework.webflow.FlowContext;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowNavigationException;
 import org.springframework.webflow.ViewDescriptor;
 
@@ -42,7 +42,7 @@ import org.springframework.webflow.ViewDescriptor;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface FlowExecution extends FlowContext {
+public interface FlowExecution extends FlowExecutionContext {
 	
 	/**
 	 * Start a flow execution, transitioning the flow to the start state and
@@ -79,7 +79,7 @@ public interface FlowExecution extends FlowContext {
 	 * @param transactionSynchronizer application transaction synchronization
 	 *        strategy to use
 	 */
-	public void rehydrate(FlowLocator flowLocator, FlowExecutionListener[] listeners,
+	public void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader,
 			TransactionSynchronizer transactionSynchronizer);
 
 	/**

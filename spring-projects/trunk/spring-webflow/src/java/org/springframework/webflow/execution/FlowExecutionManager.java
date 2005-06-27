@@ -17,7 +17,6 @@ package org.springframework.webflow.execution;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,11 +27,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.CachingMapDecorator;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowContext;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.config.BeanFactoryFlowServiceLocator;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
@@ -63,7 +64,9 @@ import org.springframework.webflow.execution.impl.FlowExecutionImpl;
  * the executing flow is resumed in that state.</li>
  * <li>If the flow execution is still active after event processing, it
  * is saved in storage. This process generates a unique flow execution
- * id that will be exposed to the caller for reference on subsequent events.</li>
+ * id that will be exposed to the caller for reference on subsequent events.  The caller
+ * is also exposed a reference to the flow execution context and any data placed in
+ * request or flow scope.</li>
  * </ol>
  * 
  * @see org.springframework.webflow.execution.FlowExecution
@@ -72,7 +75,7 @@ import org.springframework.webflow.execution.impl.FlowExecutionImpl;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class FlowExecutionManager implements BeanFactoryAware {
+public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionListenerLoader {
 
 	/**
 	 * Clients can send the id (name) of the flow to be started
@@ -94,9 +97,9 @@ public class FlowExecutionManager implements BeanFactoryAware {
 
 	/**
 	 * The flow context itself will be exposed to the view in a model
-	 * attribute with this name ("flowContext").
+	 * attribute with this name ("flowExecutionContext").
 	 */
-	public static final String FLOW_CONTEXT_ATTRIBUTE = "flowContext";
+	public static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
 
 	/**
 	 * The current state of the flow execution will be exposed to the view in a
@@ -120,7 +123,11 @@ public class FlowExecutionManager implements BeanFactoryAware {
 	 * A map of all know flow execution listeners (the key) and their associated
 	 * flow execution listener criteria objects (a list -- the value).
 	 */
-	private Map flowExecutionListeners = new HashMap();
+	private CachingMapDecorator flowExecutionListeners = new CachingMapDecorator() {
+		protected Object create(Object key) {
+			return new LinkedList();
+		}
+	};
 
 	private FlowExecutionStorage storage;
 
@@ -180,26 +187,6 @@ public class FlowExecutionManager implements BeanFactoryAware {
 	}
 
 	/**
-	 * Returns the array of flow execution listeners for specified flow.
-	 * @param flow the flow definition associated with the execution to be listened to
-	 * @return the flow execution listeners
-	 */
-	protected FlowExecutionListener[] getListeners(Flow flow) {
-		List listeners = new LinkedList();
-		for (Iterator entryIt = flowExecutionListeners.entrySet().iterator(); entryIt.hasNext(); ) {
-			Map.Entry entry = (Map.Entry)entryIt.next();
-			for (Iterator criteriaIt = ((List)entry.getValue()).iterator(); criteriaIt.hasNext(); ) {
-				FlowExecutionListenerCriteria criteria = (FlowExecutionListenerCriteria)criteriaIt.next();
-				if (criteria.includes(flow)) {
-					listeners.add((FlowExecutionListener)entry.getKey());
-					break;
-				}
-			}
-		}
-		return (FlowExecutionListener[])listeners.toArray(new FlowExecutionListener[listeners.size()]);
-	}
-
-	/**
 	 * Set the flow execution listener that will be notified of managed
 	 * flow executions.
 	 */
@@ -211,8 +198,8 @@ public class FlowExecutionManager implements BeanFactoryAware {
 	 * Set the flow execution listener that will be notified of managed
 	 * flow executions for the flows that match given criteria.
 	 */
-	public void setListener(FlowExecutionListenerCriteria criteria, FlowExecutionListener listener) {
-		setListeners(criteria, Collections.singleton(listener));
+	public void setListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
+		setListeners(Collections.singleton(listener), criteria);
 	}
 
 	/**
@@ -220,19 +207,16 @@ public class FlowExecutionManager implements BeanFactoryAware {
 	 * flow executions.
 	 */
 	public void setListeners(Collection listeners) {
-		setListeners(FlowExecutionListenerCriteriaFactory.allFlows(), listeners);
+		setListeners(listeners, FlowExecutionListenerCriteriaFactory.allFlows());
 	}
 	
 	/**
 	 * Sets the flow execution listeners that will be notified of managed
 	 * flow executions for flows that match given criteria.
 	 */
-	public void setListeners(FlowExecutionListenerCriteria criteria, Collection listeners) {
+	public void setListeners(Collection listeners, FlowExecutionListenerCriteria criteria) {
 		for (Iterator it = listeners.iterator(); it.hasNext(); ) {
 			FlowExecutionListener listener = (FlowExecutionListener)it.next();
-			if (!flowExecutionListeners.containsKey(listener)) {
-				flowExecutionListeners.put(listener, new LinkedList());
-			}
 			List registeredCriteria = (List)flowExecutionListeners.get(listener);
 			registeredCriteria.add(criteria);
 		}
@@ -240,34 +224,59 @@ public class FlowExecutionManager implements BeanFactoryAware {
 
 	/**
 	 * Sets the flow execution listeners that will be notified of managed
-	 * flow executions. The map keys can either be string encoded flow
-	 * execution listener matching criteria or direct
-	 * <code>FlowExecutionListenerCriteria</code> objects. The associated
-	 * value is either a single listener, or a list of flow execution
-	 * listeners.
+	 * flow executions.  The map keys may be individual flow execution listener instances or 
+	 * collections of execution listener instances.  The map values can either
+	 * be string encoded flow execution listener criteria or direct
+	 * <code>FlowExecutionListenerCriteria</code> objects.
 	 */
-	public void setListenerMap(Map criteriaListenerMap) {
-		Iterator it = criteriaListenerMap.entrySet().iterator();
+	public void setListenerMap(Map listenerCriteriaMap) {
+		Iterator it = listenerCriteriaMap.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry)it.next();
 			FlowExecutionListenerCriteria criteria;
-			if (entry.getKey() instanceof FlowExecutionListenerCriteria) {
-				criteria = (FlowExecutionListenerCriteria)entry.getKey();
+			if (entry.getValue() instanceof FlowExecutionListenerCriteria) {
+				criteria = (FlowExecutionListenerCriteria)entry.getValue();
 			}
 			else {
 				// string encoded
 				criteria =
-					(FlowExecutionListenerCriteria)new TextToFlowExecutionListenerCriteria().convert(entry.getKey());
+					(FlowExecutionListenerCriteria)new TextToFlowExecutionListenerCriteria().convert(entry.getValue());
 			}
-			if (entry.getValue() instanceof Collection) {
-				setListeners(criteria, (Collection)entry.getValue());
+			if (entry.getKey() instanceof Collection) {
+				setListeners((Collection)entry.getKey(), criteria);
 			}
 			else {
-				setListener(criteria, (FlowExecutionListener)entry.getValue());
+				setListener((FlowExecutionListener)entry.getKey(), criteria);
 			}
 		}
 	}
 
+	/**
+	 * Add a listener that will listen to executions for all flows.
+	 * @param listener the listener to add
+	 */
+	public void addListener(FlowExecutionListener listener) {
+		addListener(listener, FlowExecutionListenerCriteriaFactory.allFlows());
+	}
+	
+	/**
+	 * Add a listener that wil listen to executions to flows matching the specified criteria
+	 * @param listener the listener
+	 * @param criteria the listener criteria
+	 */
+	public void addListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
+		List registeredCriteria = (List)this.flowExecutionListeners.get(listener);
+		registeredCriteria.add(criteria);
+	}
+
+	/**
+	 * Remove the flow execution listener from the listener list.
+	 * @param listener the listener
+	 */
+	public void removeListener(FlowExecutionListener listener) {
+		this.flowExecutionListeners.remove(listener);
+	}
+	
 	/**
 	 * Returns the storage strategy used by the flow execution manager.
 	 */
@@ -352,8 +361,9 @@ public class FlowExecutionManager implements BeanFactoryAware {
 			// retrieve information about it
 			flowExecution = getStorage().load(id, event);
 			// rehydrate the execution if neccessary (if it had been serialized out)
+			
 			flowExecution.rehydrate(
-					getFlowLocator(), getListeners(flowExecution.getRootFlow()), getTransactionSynchronizer());
+					getFlowLocator(), this, getTransactionSynchronizer());
 			if (listener != null) {
 				flowExecution.getListeners().add(listener);
 			}
@@ -399,6 +409,33 @@ public class FlowExecutionManager implements BeanFactoryAware {
 	 */
 	protected FlowExecution createFlowExecution(Flow flow) {
 		return new FlowExecutionImpl(flow, getListeners(flow), getTransactionSynchronizer());
+	}
+
+	/**
+	 * Returns the array of flow execution listeners for specified flow.
+	 * @param flow the flow definition associated with the execution to be listened to
+	 * @return the flow execution listeners
+	 */
+	public FlowExecutionListener[] getListeners(Flow flow) {
+		if (flow == null) {
+			throw new IllegalStateException("The Flow to load listeners for cannot be null");
+		}
+		List listeners = new LinkedList();
+		for (Iterator entryIt = flowExecutionListeners.entrySet().iterator(); entryIt.hasNext(); ) {
+			Map.Entry entry = (Map.Entry)entryIt.next();
+			for (Iterator criteriaIt = ((List)entry.getValue()).iterator(); criteriaIt.hasNext(); ) {
+				FlowExecutionListenerCriteria criteria = (FlowExecutionListenerCriteria)criteriaIt.next();
+				if (criteria.includes(flow)) {
+					listeners.add((FlowExecutionListener)entry.getKey());
+					break;
+				}
+			}
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Loaded " + listeners.size() + " of possible " + flowExecutionListeners.size() + " listeners to this execution request for flow: '" + flow.getId() 
+					+ "', the attached listeners are: " + StylerUtils.style(listeners));
+		}
+		return (FlowExecutionListener[])listeners.toArray(new FlowExecutionListener[listeners.size()]);
 	}
 
 	/**
@@ -468,21 +505,19 @@ public class FlowExecutionManager implements BeanFactoryAware {
 	 * exposed to the view.
 	 * @param viewDescriptor the view descriptor to be processed
 	 * @param flowExecutionId the unique id of the flow execution
-	 * @param flowContext the flow context providing info about the flow execution
+	 * @param flowExecutionContext the flow context providing info about the flow execution
 	 * @return the processed view descriptor
 	 */
 	protected ViewDescriptor prepareViewDescriptor(ViewDescriptor viewDescriptor, String flowExecutionId,
-			FlowContext flowContext) {
-		if (flowContext.isActive() && viewDescriptor != null) {
+			FlowExecutionContext flowExecutionContext) {
+		if (flowExecutionContext.isActive() && viewDescriptor != null) {
 			// make the unique flow execution id available in the model
 			viewDescriptor.addObject(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
 			// make the flow execution context available in the model
-			viewDescriptor.addObject(FLOW_CONTEXT_ATTRIBUTE, flowContext);
-			viewDescriptor.addObject("flowExecution", flowContext); // for backwards compatibility
+			viewDescriptor.addObject(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
 			// add some convenience values for views that aren't easily JavaBean aware
-			viewDescriptor.addObject(CURRENT_STATE_ID_ATTRIBUTE, flowContext.getCurrentState().getId());
+			viewDescriptor.addObject(CURRENT_STATE_ID_ATTRIBUTE, flowExecutionContext.getCurrentState().getId());
 		}
 		return viewDescriptor;
 	}
-
 }
