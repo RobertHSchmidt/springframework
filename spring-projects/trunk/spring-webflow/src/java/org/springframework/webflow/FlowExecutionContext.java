@@ -21,26 +21,7 @@ package org.springframework.webflow;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface FlowContext {
-
-	/**
-	 * Returns a display string suitable for logging/printing in a console
-	 * containing info about this executing flow.
-	 * @return the flow execution caption
-	 */
-	public String getCaption();
-
-	/**
-	 * Returns the time at which this flow started executing.
-	 * @return the creation timestamp
-	 */
-	public long getCreationTimestamp();
-
-	/**
-	 * Returns the time in milliseconds this flow execution has been active.
-	 * @return the flow execution up time
-	 */
-	public long getUptime();
+public interface FlowExecutionContext extends FlowExecutionStatistics {
 
 	/**
 	 * Returns the root flow definition associated with this executing flow.
@@ -63,35 +44,9 @@ public interface FlowContext {
 	public State getCurrentState() throws IllegalStateException;
 
 	/**
-	 * Returns the timestamp noting when the last request to manipulate this
-	 * executing flow was received.
-	 * @return the timestamp of the last client request
-	 */
-	public long getLastRequestTimestamp();
-
-	/**
-	 * Returns the id of the last event that occured in this executing flow.
-	 * @return the last event id
-	 */
-	public String getLastEventId();
-	
-	/**
 	 * Returns the active flow session.
 	 * @return the active flow session
 	 * @throws IllegalStateException when this flow is no longer actively executing
 	 */
 	public FlowSession getActiveSession() throws IllegalStateException;
-
-	/**
-	 * Is the flow execution active?
-	 * @return true if active, false if flow execution has terminated
-	 */
-	public boolean isActive();
-	
-	/**
-	 * Is the root flow of the flow execution currently active?
-	 * @return true if so, false otherwise
-	 */
-	public boolean isRootFlowActive();
-
 }

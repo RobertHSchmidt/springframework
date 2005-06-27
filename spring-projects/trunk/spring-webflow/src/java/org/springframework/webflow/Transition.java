@@ -66,7 +66,7 @@ public class Transition extends AnnotatedObject {
 	 * The criteria that determine whether or not this transition, once matched,
 	 * should complete execution or should <i>roll back</i>.
 	 */
-	private TransitionCriteria executionCriteria;
+	private TransitionCriteria executionCriteria = TransitionCriteriaFactory.alwaysTrue();
 	
 	/**
 	 * The state id for the target state.
@@ -276,10 +276,10 @@ public class Transition extends AnnotatedObject {
 			viewDescriptor = getSourceState().reenter(context);
 		}
 		if (logger.isDebugEnabled()) {
-			if (context.getFlowContext().isActive()) {
+			if (context.getFlowExecutionContext().isActive()) {
 				logger.debug("Transition '" + this + "' executed; as a result, the new state is '"
-						+ context.getFlowContext().getCurrentState().getId() + "' in flow '"
-						+ context.getFlowContext().getActiveFlow().getId() + "'");
+						+ context.getFlowExecutionContext().getCurrentState().getId() + "' in flow '"
+						+ context.getFlowExecutionContext().getActiveFlow().getId() + "'");
 			}
 			else {
 				logger.debug("Transition '" + this + "' executed; as a result, the flow execution has ended");
@@ -289,6 +289,7 @@ public class Transition extends AnnotatedObject {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("on", matchingCriteria).append("properties", getProperties()).toString();
+		return new ToStringCreator(this).append("sourceState", sourceState.getId()).append("matchingCriteria", matchingCriteria).
+			append("executionCriteria", executionCriteria).append("properties", getProperties()).toString();
 	}
 }

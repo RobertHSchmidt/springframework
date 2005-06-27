@@ -67,7 +67,7 @@ public interface RequestContext {
 	 * Returns additional contextual information about the executing flow.
 	 * @return the flow execution context
 	 */
-	public FlowContext getFlowContext();
+	public FlowExecutionContext getFlowExecutionContext();
 
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in

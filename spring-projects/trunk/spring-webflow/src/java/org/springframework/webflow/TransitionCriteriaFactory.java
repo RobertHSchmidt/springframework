@@ -97,7 +97,7 @@ public class TransitionCriteriaFactory {
 	 * Returns a transition criteria object that always returns 'true'.
 	 * @return the wildcard criteria
 	 */
-	public static TransitionCriteria any() {
+	public static TransitionCriteria alwaysTrue() {
 		return new WildcardTransitionCriteria();
 	}
 	

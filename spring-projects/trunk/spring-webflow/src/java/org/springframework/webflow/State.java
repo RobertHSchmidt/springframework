@@ -36,10 +36,9 @@ import org.springframework.util.Assert;
  * configuration information. The ability to plugin custom state types that
  * execute different behaviour polymorphically is the classic GoF state pattern.
  * <p>
- * Why is this class abstract and not an interface? A specific design choice. An
- * state does not define a generic contract or role, it is expected that
- * specializations of this base class be "States" and not part of some other
- * inheritence hierarchy.
+ * Why is this class abstract and not an interface? A specific design choice.
+ * It is expected that specializations of this base class be "States" and not
+ * part of some other inheritence hierarchy.
  * 
  * @see org.springframework.webflow.TransitionableState
  * @see org.springframework.webflow.ActionState

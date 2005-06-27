@@ -135,7 +135,7 @@ public class EndState extends State {
 	 *         returned to the client and a view rendered
 	 */
 	protected ViewDescriptor doEnter(StateContext context) {
-		if (context.getFlowContext().getActiveSession().isRoot()) {
+		if (context.getFlowExecutionContext().getActiveSession().isRoot()) {
 			// entire flow execution is ending, return ending view if applicable
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing flow '" + getFlow().getId() + "' has ended");
@@ -162,7 +162,7 @@ public class EndState extends State {
 		else {
 			// there is a parent flow that will resume, so map attributes from the
 			// ending sub flow up to the resuming parent flow
-			FlowSession parentSession = context.getFlowContext().getActiveSession().getParent();
+			FlowSession parentSession = context.getFlowExecutionContext().getActiveSession().getParent();
 			if (logger.isDebugEnabled()) {
 				logger.debug("Resuming parent flow '" + parentSession.getFlow() + "' in state '"
 						+ parentSession.getCurrentState() + "'");
