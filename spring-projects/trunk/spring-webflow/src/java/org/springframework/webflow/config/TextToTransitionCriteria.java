@@ -38,7 +38,7 @@ import org.springframework.webflow.TransitionCriteriaFactory;
  * encoded forms:
  * <ul>
  * <li>"*" - will result in a TransitionCriteria object that matches on everything
- * ({@link org.springframework.webflow.TransitionCriteriaFactory#any()})
+ * ({@link org.springframework.webflow.TransitionCriteriaFactory#alwaysTrue()})
  * </li>
  * <li>"eventId" - will result in a TransitionCriteria object that matches given
  * event id ({@link org.springframework.webflow.TransitionCriteriaFactory#eventId(String)})</li>
@@ -86,7 +86,7 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	protected Object doConvert(Object source, Class targetClass) throws ConversionException {
 		String encodedCriteria = (String)source;
 		if (!StringUtils.hasText(encodedCriteria) || TransitionCriteriaFactory.WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
-			return TransitionCriteriaFactory.any();
+			return TransitionCriteriaFactory.alwaysTrue();
 		}
 		else if (expressionParser.isExpression(encodedCriteria)) {
 			return createExpressionTransitionCriteria(encodedCriteria);

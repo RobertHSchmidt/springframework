@@ -1040,7 +1040,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the transition (*->stateId)
 	 */
 	protected Transition onAnyEvent(String stateId) {
-		return new Transition(TransitionCriteriaFactory.any(), stateId);
+		return new Transition(TransitionCriteriaFactory.alwaysTrue(), stateId);
 	}
 
 	/**

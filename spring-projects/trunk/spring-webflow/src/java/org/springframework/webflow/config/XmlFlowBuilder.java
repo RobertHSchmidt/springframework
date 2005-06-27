@@ -743,7 +743,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		Transition thenTransition = new Transition(criteria, trueStateId);
 		String falseStateId = element.getAttribute(ELSE_ATTRIBUTE);
 		if (StringUtils.hasText(falseStateId)) {
-			Transition elseTransition = new Transition(TransitionCriteriaFactory.any(), falseStateId);
+			Transition elseTransition = new Transition(TransitionCriteriaFactory.alwaysTrue(), falseStateId);
 			return new Transition[] { thenTransition, elseTransition };
 		}
 		else {

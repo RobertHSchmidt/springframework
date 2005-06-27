@@ -187,7 +187,7 @@ public class StateTests extends TestCase {
 		}
 
 		public void mapSubflowOutput(RequestContext context) {
-			MutableAttributeSource parentAttributes = (MutableAttributeSource)context.getFlowContext().getActiveSession().getParent().getScope();
+			MutableAttributeSource parentAttributes = (MutableAttributeSource)context.getFlowExecutionContext().getActiveSession().getParent().getScope();
 			parentAttributes.setAttribute("parentOutputAttribute", context.getFlowScope().getAttribute("childInputAttribute"));
 		}
 	}

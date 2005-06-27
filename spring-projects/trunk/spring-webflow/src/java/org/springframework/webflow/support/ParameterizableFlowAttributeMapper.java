@@ -226,7 +226,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	public void mapSubflowOutput(RequestContext context) {
 		if (this.outputMapper != null) {
 			MutableAttributeSource parentFlowScope = 
-				(MutableAttributeSource)context.getFlowContext().getActiveSession().getParent().getScope();
+				(MutableAttributeSource)context.getFlowExecutionContext().getActiveSession().getParent().getScope();
 			this.outputMapper.map(context.getFlowScope(), parentFlowScope, getMappingContext(context));
 		}
 	}

@@ -24,7 +24,7 @@ import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowContext;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.Scope;
@@ -49,7 +49,7 @@ import org.springframework.webflow.Transition;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class MockRequestContext implements RequestContext, FlowContext {
+public class MockRequestContext implements RequestContext, FlowExecutionContext {
 
 	private Event sourceEvent;
 
@@ -103,7 +103,7 @@ public class MockRequestContext implements RequestContext, FlowContext {
 	}
 
 
-	public FlowContext getFlowContext() {
+	public FlowExecutionContext getFlowExecutionContext() {
 		return this;
 	}
 

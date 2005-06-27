@@ -96,7 +96,7 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 			return result != null && getTrueEventId().equals(result.getId());
 		}
 		catch (Exception e) {
-			throw new ActionExecutionException(context.getFlowContext().getCurrentState(), action, e);
+			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), action, e);
 		}
 		finally {
 			context.setProperties(null);

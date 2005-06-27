@@ -22,7 +22,7 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowContext;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.config.BeanFactoryFlowServiceLocator;
 import org.springframework.webflow.config.FlowBuilder;
@@ -33,33 +33,54 @@ import org.springframework.webflow.execution.ServiceLookupException;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 
 /**
- * Base class for tests that verify a flow executes as expected; that is, it
- * responds to all supported events correctly, transitioning to the correct
- * states.
+ * Base class for integration tests that verify a flow executes as expected.  Flow execution tests
+ * captured by subclasses should test that a flow responds to all supported transition criteria correctly,
+ * transitioning to the correct states and producing the appropriate results on the occurence of 
+ * possible "external" (user) events. 
+ * <p>
+ * More specifically, a typical flow execution test case will test:
+ * <ul>
+ * <li>that the flow execution starts as expected given a source event with potential input parameters
+ * (see startFlow(Event))
+ * <li>that given the set of supported transition criteria for a given state, that the state executes 
+ * the appropriate transition when an event is signaled (with potential input parameters).  A test case
+ * should be coded for each logical event that can occur, where an event drives a possible 
+ * path through the flow.  The goal should be to exercise all possible paths of the flow.
+ * <li>that given a transition that leads to an interactive state type (a view state or an end state),
+ * that the view descriptor returned to the client matches what was expected and the current
+ * state of the flow matches what is expected.
+ * </ul>
+ * A flow execution test can effectively automate and validate the orchestration required to drive a 
+ * end-to-end business process thats spans several steps involving the user.  Such tests area good way to
+ * test your system top-down starting at the web-tier and pushing through all the way to the DB without
+ * having to deploy to a servlet or portlet container.  Because these tests are typically end-to-end
+ * integration tests that involve a transactional resource such a database, this class subclasses Spring's 
+ * AbstractTransactionalSpringContextTests to take advantage of its automatic transaction management
+ * and rollback capabilites.  If you do not need those capabilities, you must call
+ * <code>setDependencyCheck(false)</code> in your test's constructor to turn off dependency
+ * checking for the transaction manager property.
  * @author Keith Donald
  */
 public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSpringContextTests {
 
 	/**
-	 * The flow whose execution is being tested.
+	 * The flow definition whose execution is being tested (configuration object).
 	 */
 	private Flow flow;
 
 	/**
-	 * The flow execution running the flow when the test is active.
+	 * The flow execution running the flow when the test is active (runtime object).
 	 */
 	private FlowExecution flowExecution;
 
 	/**
-	 * The flow service locator; providing means to lookup and retrieve
-	 * configured flows. Used to resolve the Flow to be tested by
-	 * <code>id</code>.
+	 * The flow service locator; providing means to lookup and retrieve configured flows.
+	 * Used to resolve the Flow to be tested by <code>id</code>.
 	 */
 	private FlowLocator flowLocator;
 
 	/**
-	 * Returns the flow locator used to resolve the Flow to be tested by
-	 * <code>id</code>.
+	 * Returns the flow locator used to resolve the Flow to be tested by <code>id</code>.
 	 */
 	protected FlowLocator getFlowLocator() {
 		return flowLocator;
@@ -214,7 +235,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @return the flow execution
 	 * @throws IllegalStateException the execution has not been started
 	 */
-	protected FlowContext getFlowContext() throws IllegalStateException {
+	protected FlowExecutionContext getFlowContext() throws IllegalStateException {
 		if (flowExecution == null) {
 			throw new IllegalStateException("The flow execution has not been started; call startFlow first");
 		}

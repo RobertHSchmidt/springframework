@@ -182,7 +182,7 @@ public class MultiAction extends AbstractAction {
 			}
 			else {
 				// use current state name as method name
-				return context.getFlowContext().getCurrentState().getId();
+				return context.getFlowExecutionContext().getCurrentState().getId();
 			}
 		}
 	}
