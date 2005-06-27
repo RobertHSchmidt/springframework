@@ -483,7 +483,6 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		}
 		this.listenerList = new FlowExecutionListenerList();
 		this.listenerList.add(listenerLoader.getListeners(this.rootFlow));
-		System.out.println("Listener list size = " + this.listenerList.size());
 		this.transactionSynchronizer = transactionSynchronizer;
 	}
 

@@ -78,7 +78,6 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 		}
 
 		public void requestSubmitted(RequestContext context) {
-			System.out.println("request submitted!!!!!!!");
 			if (statisticsEnabled(context)) {
 				globalStats.totalRequestCount++;
 				globalStats.requestsInProcessCount++;

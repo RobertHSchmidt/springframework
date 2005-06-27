@@ -434,7 +434,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Loaded " + listeners.size() + " of possible " + flowExecutionListeners.size() + " listeners to this execution request for flow: '" + flow.getId() 
-					+ "', the attached listeners are: " + StylerUtils.style(listeners));
+					+ "', the listeners to attach are: " + StylerUtils.style(listeners));
 		}
 		return (FlowExecutionListener[])listeners.toArray(new FlowExecutionListener[listeners.size()]);
 	}

@@ -94,7 +94,10 @@ public class FlowExecutionListenerList {
 			boolean changed = false;
 			Iterator it = flowExecutionListenerList.iterator();
 			while (it.hasNext()) {
-				changed = changed || add((FlowExecutionListener)it.next());
+				boolean added = add((FlowExecutionListener)it.next());
+				if (added && !changed) {
+					changed = true;
+				}
 			}
 			return changed;
 		}
