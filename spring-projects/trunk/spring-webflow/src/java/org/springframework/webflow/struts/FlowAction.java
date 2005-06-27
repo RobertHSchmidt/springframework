@@ -50,7 +50,7 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * controller logic in other environments. Consult the JavaDoc of that class for
  * more information on how requests are processed.
  * <p>
- * This class also is aware of the <code>BindingActionForm</code> adapter,
+ * This class also is aware of the <code>SpringBindingActionForm</code> adapter,
  * which adapts Spring's data binding infrastructure (based on POJO binding, a
  * standard Errors interface, and property editor type conversion) to the Struts
  * action form model. This gives backend web-tier developers full support for
@@ -64,7 +64,7 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * <pre>
  * &lt;action path=&quot;/userRegistration&quot;
  *    	type=&quot;org.springframework.web.flow.struts.FlowAction&quot;
- *     	name=&quot;bindingActionForm&quot; scope=&quot;request&quot; 
+ *     	name=&quot;springBindingActionForm&quot; scope=&quot;request&quot; 
  *     	className=&quot;org.springframework.web.flow.struts.FlowActionMapping&quot;&gt;
  *     	&lt;set-property property=&quot;flowId&quot; value=&quot;user.Registration&quot; /&gt;
  * &lt;/action&gt;
@@ -75,7 +75,7 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * by the id <code>user.Registration</code>. Alternatively, the
  * <code>flowId</code> could have been left blank and provided in dynamic
  * fashion by the views (allowing a single <code>FlowAction</code> to manage
- * any number of flow executions). A binding action form instance is set in
+ * any number of flow executions). A Spring binding action form instance is set in
  * request scope, acting as an adapter enabling POJO-based binding and
  * validation with Spring.
  * <p>
@@ -84,11 +84,10 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * <li>Logical view names returned when <code>ViewStates</code> and
  * <code>EndStates</code> are entered are mapped to physical view templates
  * using standard Struts action forwards (typically global forwards).
- * <li>Use of the <code>BindingActionForm</code> requires some minor setup in
- * <code>struts-config.xml</code>. Specifically:
- * <ol>
- * <li>A custom SpringBindingActionForm-aware request processor is needed, to defer
- * form population;.
+ * <li>Use of the <code>SpringBindingActionForm</code> requires no special setup
+ * in <code>struts-config.xml</code>: simply declare a form bean in request scope 
+ * of the class <code>org.springframework.web.struts.SpringBindingActionForm</code> and
+ * use it with your FlowAction(s).
  * <p>
  * The benefits here are substantial: developers now have a powerful web flow
  * capability integrated with Struts, with a consistent-approach to POJO-based
@@ -185,7 +184,7 @@ public class FlowAction extends MappingDispatchActionSupport {
 	protected FlowExecutionListener createActionFormAdapter(final HttpServletRequest request, final ActionForm form) {
 		return new FlowExecutionListenerAdapter() {
 			public void requestProcessed(RequestContext context) {
-				if (context.getFlowContext().isActive()) {
+				if (context.getFlowExecutionContext().isActive()) {
 					if (form instanceof SpringBindingActionForm) {
 						SpringBindingActionForm bindingForm = (SpringBindingActionForm)form;
 						bindingForm.expose(new FormObjectAccessor(context).getFormErrors(), request);
