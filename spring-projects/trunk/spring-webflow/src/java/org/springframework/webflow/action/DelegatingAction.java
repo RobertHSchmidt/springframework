@@ -126,5 +126,4 @@ public class DelegatingAction implements Action, BeanNameAware {
 		}
 		return action.execute(context);
 	}
-
 }
