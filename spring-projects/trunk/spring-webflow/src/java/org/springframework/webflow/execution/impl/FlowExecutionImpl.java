@@ -43,6 +43,7 @@ import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerList;
+import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.TokenTransactionSynchronizer;
 import org.springframework.webflow.execution.TransactionSynchronizer;
@@ -455,7 +456,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		this.executingFlowSessions = (Stack)in.readObject();
 	}
 
-	public synchronized void rehydrate(FlowLocator flowLocator, FlowExecutionListener[] listeners,
+	public synchronized void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader,
 			TransactionSynchronizer transactionSynchronizer) {
 		// implementation note: we cannot integrate this code into the
 		// readObject() method since we need the flow locator, listener list and tx synchronizer!
@@ -481,7 +482,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 					"The root flow of the execution should be the same as the flow in the root flow session");
 		}
 		this.listenerList = new FlowExecutionListenerList();
-		this.listenerList.add(listeners);
+		this.listenerList.add(listenerLoader.getListeners(this.rootFlow));
 		this.transactionSynchronizer = transactionSynchronizer;
 	}
 

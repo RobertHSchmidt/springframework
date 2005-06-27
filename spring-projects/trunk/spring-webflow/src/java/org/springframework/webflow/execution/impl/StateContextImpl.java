@@ -25,7 +25,7 @@ import org.springframework.binding.support.EmptyAttributeSource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.FlowContext;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.ScopeType;
@@ -93,7 +93,7 @@ public class StateContextImpl implements StateContext {
 		return this.sourceEvent;
 	}
 
-	public FlowContext getFlowContext() {
+	public FlowExecutionContext getFlowExecutionContext() {
 		return this.flowExecution;
 	}
 
