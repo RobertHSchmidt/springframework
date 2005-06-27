@@ -72,7 +72,10 @@ public class FlowExecutionListenerList {
 		else {
 			boolean changed = false;
 			for (int i = 0; i < listeners.length; i++) {
-				changed = changed || add(listeners[i]);
+				boolean added = add(listeners[i]);
+				if (added && !changed) {
+					changed = true;
+				}
 			}
 			return changed;
 		}
