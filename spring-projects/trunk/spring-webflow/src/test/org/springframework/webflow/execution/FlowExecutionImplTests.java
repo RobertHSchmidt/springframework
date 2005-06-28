@@ -76,13 +76,12 @@ public class FlowExecutionImplTests extends TestCase {
 
 		assertNotNull(restoredFlowExecution);
 
-		// rehydrate the flow execution
-		// fix me
 		FlowExecutionListenerLoader listenerLoader = new FlowExecutionListenerLoader() {
 			public FlowExecutionListener[] getListeners(Flow flow) {
-				return null;
+				return flowExecution.getListeners().toArray();
 			}
 		};
+		// rehydrate the flow execution
 		restoredFlowExecution.rehydrate(flowLocator, listenerLoader, flowExecution.getTransactionSynchronizer());
 
 		assertEquals(flowExecution.isActive(), restoredFlowExecution.isActive());
