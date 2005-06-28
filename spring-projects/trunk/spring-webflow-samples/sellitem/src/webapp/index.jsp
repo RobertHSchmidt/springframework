@@ -35,6 +35,10 @@
 					<LI>
 						Using <A href="http://www.ognl.org/">OGNL</A> based conditional expressions.
 					</LI>
+					<LI>
+						Collecting statistics on flows using the JMX protocol (via a standard JMX client
+						like JConsole).
+					</LI>
 				</UL>
 			</P>
 		</DIV>

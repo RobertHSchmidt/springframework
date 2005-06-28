@@ -23,8 +23,8 @@
     <dependency org="springframework" name="spring-web" rev="1.2.2-dev-20050619"/>
     <dependency org="springframework" name="spring-webmvc" rev="1.2.2-dev-20050619"/>
     <dependency org="springframework" name="spring-binding" rev="latest.integration"/>
-    <dependency org="springframework" name="spring-mock" rev="1.2.1"/>
     <dependency org="springframework" name="spring-webflow" rev="latest.integration"/>
+    <dependency org="springframework" name="spring-mock" rev="1.2.1"/>
 
     <dependency org="java" name="servlet" rev="2.4" conf="buildtime->default">
 		<artifact name="servlet-api" type="jar"/>

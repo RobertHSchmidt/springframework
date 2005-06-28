@@ -58,4 +58,8 @@
 		</property>
 	</bean>
 
+	<bean id="statisticsService" class="org.springframework.webflow.execution.jmx.StatisticsService">
+		<constructor-arg ref="flowExecutionManager"/>
+		<property name="enabled" value="true"/>
+	</bean>
 </beans>
