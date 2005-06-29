@@ -50,10 +50,18 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * controller logic in other environments. Consult the JavaDoc of that class for
  * more information on how requests are processed.
  * <p>
+ * On each request received by this action, a StrutsEvent object is created as input 
+ * to the webflow system.  This external source event provides access to the 
+ * action form, action mapping, and other struts-specific constructs.  As a 
+ * convenience, the "actionForm" attribute is also exposed in requestScope after
+ * a request is submitted.  This means you may access your action form from your
+ * webflow artifacts as follows:
+ * <code>context.getRequestScope().getAttribute("actionForm")</code>.
+ * <p>
  * This class also is aware of the <code>SpringBindingActionForm</code> adapter,
  * which adapts Spring's data binding infrastructure (based on POJO binding, a
  * standard Errors interface, and property editor type conversion) to the Struts
- * action form model. This gives backend web-tier developers full support for
+ * action form model. This option gives backend web-tier developers full support for
  * POJO-based binding with minimal hassel, while still providing consistency to
  * view developers who already have a lot of experience with Struts for markup
  * and request dispatching.
@@ -103,6 +111,8 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  */
 public class FlowAction extends MappingDispatchActionSupport {
 
+	public static final String ACTION_FORM_ATTRIBUTE = "actionForm"
+;
 	private FlowLocator flowLocator;
 
 	public void setServlet(ActionServlet actionServlet) {
@@ -183,6 +193,10 @@ public class FlowAction extends MappingDispatchActionSupport {
 	 */
 	protected FlowExecutionListener createActionFormAdapter(final HttpServletRequest request, final ActionForm form) {
 		return new FlowExecutionListenerAdapter() {
+			public void requestSubmitted(RequestContext context) {
+				context.getRequestScope().setAttribute(ACTION_FORM_ATTRIBUTE, form);
+			}
+			
 			public void requestProcessed(RequestContext context) {
 				if (context.getFlowExecutionContext().isActive()) {
 					if (form instanceof SpringBindingActionForm) {
