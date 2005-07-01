@@ -589,6 +589,15 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 		if (getValidator() != null && isValidateOnBinding() && validationEnabled(context)) {
 			validate(context, binder.getTarget(), binder.getErrors());
+		} else {
+			if (logger.isDebugEnabled()) {
+				if (validator == null) {
+					logger.debug("No validator is configured; no additional validation will occur");
+				} else {
+					logger.debug("Validation was disabled for this request; details: validateOnBinding=" +
+							isValidateOnBinding() + ", validationEnabled=" + validationEnabled(context));
+				}
+			}
 		}
 		return onBindAndValidate(context, binder.getTarget(), binder.getErrors());
 	}
@@ -609,6 +618,9 @@ public class FormAction extends MultiAction implements InitializingBean {
 			invokeValidatorMethod(validatorMethod, formObject, errors);
 		}
 		else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Invoking validator: " + validator);
+			}
 			getValidator().validate(formObject, errors);
 		}
 	}
@@ -621,6 +633,9 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param errors possible binding errors
 	 */
 	protected void invokeValidatorMethod(String validatorMethod, Object formObject, Errors errors) throws Exception {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Invoking piecemeal validator method '" + validatorMethod + "' on form object: " + formObject);
+		}
 		this.validateMethodDispatcher.dispatch(validatorMethod, new Object[] { formObject, errors });
 	}
 
