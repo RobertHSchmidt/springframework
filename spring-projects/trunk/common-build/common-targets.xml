@@ -539,6 +539,11 @@
   <!-- copy web statics -->
   <target name="statics.web" if="build.web">
 
+  	<property name="project.webapp.name" value="${ant.project.name}"/>
+    <propertyfile file="${target.filter.file}">
+	  	<entry key="PROJECT_WEBAPP_NAME" value="${project.webapp.name}" />
+	</propertyfile>
+  	
 	<!-- copy statics files for exploded webapps.  This is useful for quick updating of a deployed webapp when
 	       only statics files like images, jsps, html (no java code) change.  -->
 	<mkdir dir="${target.war.expanded.dir}"/>
@@ -598,7 +603,7 @@
   <!-- main war target -->
   <target name="war.main" if="build.web">
     <mkdir dir="${target.artifacts.war.dir}"/>
-  	<property name="project.war" value="${target.artifacts.war.dir}/${project.name}.war"/>
+  	<property name="project.war" value="${target.artifacts.war.dir}/${project.webapp.name}.war"/>
     <jar jarfile="${project.war}">
       <fileset dir="${target.war.expanded.dir}" >
         <exclude name="**/*.dependency" />

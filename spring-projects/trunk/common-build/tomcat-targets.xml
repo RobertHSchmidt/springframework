@@ -124,7 +124,7 @@
 
     <target name="tomcat-content" depends="statics, tomcat.init"
             description="Copy web content to tomcat without redeploy">
-        <copy todir="${tomcat.deploy.dir}/${project.name}">
+        <copy todir="${tomcat.deploy.dir}/${project.webapp.name}">
             <fileset dir="${target.war.expanded.dir}">
                 <patternset refid="web.public.content.files" />
             </fileset>
