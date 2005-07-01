@@ -587,6 +587,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 			logger.debug("Binding completed for object '" + binder.getObjectName() + "', details='"
 					+ binder.getTarget() + "'");
 		}
+		System.out.println("Testing");
 		if (getValidator() != null && isValidateOnBinding() && validationEnabled(context)) {
 			validate(context, binder.getTarget(), binder.getErrors());
 		} else {

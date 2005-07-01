@@ -361,13 +361,11 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 			// retrieve information about it
 			flowExecution = getStorage().load(id, event);
 			// rehydrate the execution if neccessary (if it had been serialized out)
-			
 			flowExecution.rehydrate(
 					getFlowLocator(), this, getTransactionSynchronizer());
 			if (listener != null) {
 				flowExecution.getListeners().add(listener);
 			}
-			System.out.println("!!!!!!!! " + flowExecution.getListeners().size());
 			// signal the event within the current state
 			Assert.hasText(event.getId(), "No _eventId could be obtained -- "
 					+ "make sure the submitting view or other client provides the _eventId parameter as input");
