@@ -1,37 +1,31 @@
-<%@ page session="false" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ include file="includeTop.jsp" %>
 
-<HTML>
-	<BODY>
-		<DIV align="left">Enter shipping details</DIV>
-		<HR>
-		<DIV align="left">
-			Price: ${sale.price}<BR>
-			Item count: ${sale.itemCount}<BR>
-			Category: ${sale.category}<BR>
-			Shipping: ${sale.shipping}
+<div align="left">Enter shipping details</div>
+<hr>
+<div align="left">
+	Price: ${sale.price}<br>
+	Item count: ${sale.itemCount}<br>
+	Category: ${sale.category}<br>
+	Shipping: ${sale.shipping}
 
-			<FORM name="shippingForm" method="post">
-				<INPUT type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
-				<INPUT type="hidden" name="_eventId" value="submit">
+	<form name="shippingForm" method="post">
+		Shipping type:
+		<spring:bind path="sale.shippingType">
+			<select name="${status.expression}">
+				<option value="S" <c:if test="${status.value=='S'}">selected</c:if>>
+					Standard (10 extra cost)
+				</option>
+				<option value="E" <c:if test="${status.value=='E'}">selected</c:if>>
+					Express (20 extra cost)
+				</option>
+			</select>
+		</spring:bind>
 		
-				Shipping type:
-				<spring:bind path="sale.shippingType">
-					<SELECT name="${status.expression}">
-						<OPTION value="S" <c:if test="${status.value=='S'}">selected</c:if>>
-							Standard (10 extra cost)
-						</OPTION>
-						<OPTION value="E" <c:if test="${status.value=='E'}">selected</c:if>>
-							Express (20 extra cost)
-						</OPTION>
-					</SELECT>
-				</spring:bind>					
-			</FORM>
-		</DIV>
-		<HR>
-		<DIV align="right">
-			<INPUT type="button" onclick="javascript:document.shippingForm.submit()" value="Next">
-		</DIV>
-	</BODY>
-</HTML>
+		<div align="right">
+			<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
+			<input type="submit" name="_eventId_submit" value="Next">
+		</div>
+	</form>
+</div>
+
+<%@ include file="includeBottom.jsp" %>
