@@ -1,5 +1,5 @@
 			<c:if test="${!empty data.guessHistory}">
-				Guess history:
+				<h4>Guess history:</h4>
 				<table border="1">
 				    <th>Guess</th>
 				    <th>Right Position</th>
