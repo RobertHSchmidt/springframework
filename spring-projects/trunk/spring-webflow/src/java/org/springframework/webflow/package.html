@@ -5,18 +5,18 @@ Contains core interfaces and classes for dealing with web flows.
 </p>
 
 <p>The core concepts used at configuration time to define a flow are covered
-by this package. A {@link org.springframework.web.flow.Flow web flow} is composed of a
-set of {@link org.springframework.web.flow.State states}. A state is a point in the
+by this package. A {@link org.springframework.webflow.Flow web flow} is composed of a
+set of {@link org.springframework.webflow.State states}. A state is a point in the
 flow where something happens; for instance,
-{@link org.springframework.web.flow.ViewState displaying a view} or
-{@link org.springframework.web.flow.ActionState executing an action}.
-Each state has one or more {@link org.springframework.web.flow.Transition transitions}
+{@link org.springframework.webflow.ViewState displaying a view} or
+{@link org.springframework.webflow.ActionState executing an action}.
+Each state has one or more {@link org.springframework.webflow.Transition transitions}
 that are used to move to another state.
 </p>
 
 <p>
 Furthermore, this package also defines a number of interfaces related to flow execution.
-The central concept in this regard is the {@link org.springframework.web.flow.RequestContext},
+The central concept in this regard is the {@link org.springframework.webflow.RequestContext},
 which is used by all artifacts of a web flow to gain access to information about an
 ongoing flow execution.
 </p>
@@ -25,24 +25,24 @@ ongoing flow execution.
 To the end user of the system, the following extension points are of importance:
 <ul>
 <li>
-{@link org.springframework.web.flow.Action} - The interface implemented
+{@link org.springframework.webflow.Action} - The interface implemented
 by actions executed by a web flow in an action state. Ready to use
 implementations and convenience superclasses are provided in
-the {@link org.springframework.web.flow.action} package.
+the {@link org.springframework.webflow.action} package.
 </li>
 <li>
-{@link org.springframework.web.flow.FlowAttributeMapper} - The interface
+{@link org.springframework.webflow.FlowAttributeMapper} - The interface
 implemented by strategy objects used to map attributes between flow
 scopes. An out-of-the-box implementation is provided by the class
-{@link org.springframework.web.flow.support.ParameterizableFlowAttributeMapper}.
+{@link org.springframework.webflow.support.ParameterizableFlowAttributeMapper}.
 </li>
 <li>
-{@link org.springframework.web.flow.ViewDescriptorCreator} -  A factory that
+{@link org.springframework.webflow.ViewDescriptorCreator} -  A factory that
 produces a new, configured <code>ViewDescriptor</code> on each invocation,
 taking into account the information in the ongoing flow execution.
 </li>
 <li>
-{@link org.springframework.web.flow.TransitionCriteria} - The interface for
+{@link org.springframework.webflow.TransitionCriteria} - The interface for
 strategy objects encapsulating criteria that determine whether or not a
 transition should execute given the current state of a flow execution.
 </li>
@@ -53,32 +53,37 @@ transition should execute given the current state of a flow execution.
 This package has several sub packages:
 <ul>
 <li>
-{@link org.springframework.web.flow.action action} - Out-of-the box action implementations
+{@link org.springframework.webflow.action action} - Out-of-the box action implementations
 that address common controller concerns.
 </li>
 <li>
-{@link org.springframework.web.flow.config config} - Contains interfaces and classes for
+{@link org.springframework.webflow.config config} - Contains interfaces and classes for
 building and assembling web flows.
 </li>
 <li>
-{@link org.springframework.web.flow.execution execution} - Provides classes supporting managed
+{@link org.springframework.webflow.execution execution} - Provides classes supporting managed
 flow execution.
 </li>
 <li>
-{@link org.springframework.web.flow.mvc mvc} - Integration of the Spring web flow system
+{@link org.springframework.webflow.mvc mvc} - Integration of the Spring web flow system
 into the Spring web MVC framework.
 </li>
 <li>
-{@link org.springframework.web.flow.portlet portlet} - Integration of the Spring web flow system
+{@link org.springframework.webflow.portlet portlet} - Integration of the Spring web flow system
 into the Spring portlet MVC framework.
 </li>
 <li>
-{@link org.springframework.web.flow.struts struts} - Integration of the Spring web flow
+{@link org.springframework.webflow.struts struts} - Integration of the Spring web flow
 system with Struts 1.x.
 </li>
 <li>
-{@link org.springframework.web.flow.support support} - This package contains interfaces and
+{@link org.springframework.webflow.support support} - This package contains interfaces and
 classes supporting the Spring web flow system.
+</li>
+<li>
+{@link org.springframework.webflow.jmx jmx} - This package contains interfaces and
+classes enabling management of the Spring web flow system using JMX, the Java Management
+Extensions.
 </li>
 </ul>
 </p>

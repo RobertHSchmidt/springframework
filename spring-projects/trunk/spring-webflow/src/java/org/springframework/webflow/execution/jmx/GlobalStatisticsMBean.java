@@ -59,8 +59,8 @@ public interface GlobalStatisticsMBean {
 	public boolean isStatisticsEnabled();
 	
 	/**
-	 * Turn statistics collection on/off
-	 * @param enabled true to turn on, false to turn off
+	 * Turn statistics collection on/off.
+	 * @param statisticsEnabled true to turn on, false to turn off
 	 */
 	public void setStatisticsEnabled(boolean statisticsEnabled);
 	

@@ -245,31 +245,37 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	/**
 	 * Assert that the active flow session is for the flow with the provided id.
 	 * @param expectedActiveFlowId the flow id that should have a session active
-	 *        in the tested flow execution.
+	 *        in the tested flow execution
 	 */
 	protected void assertActiveFlowEquals(String expectedActiveFlowId) {
-		assertEquals("The active flow id '" + getFlowContext().getActiveSession().getFlow() + "' does not equal the expected active flow '"
-				+ expectedActiveFlowId + "'", expectedActiveFlowId, getFlowContext().getActiveSession().getFlow().getId());
+		assertEquals(
+				"The active flow id '" + getFlowContext().getActiveSession().getFlow()
+				+ "' does not equal the expected active flow '" + expectedActiveFlowId + "'",
+				expectedActiveFlowId, getFlowContext().getActiveSession().getFlow().getId());
 	}
 
 	/**
 	 * Assert that the current state of the flow execution equals the provided
 	 * state id.
-	 * @param expectedCurrentStateId the expected current state.
+	 * @param expectedCurrentStateId the expected current state
 	 */
 	protected void assertCurrentStateEquals(String expectedCurrentStateId) {
-		assertEquals("The current state '" + getFlowContext().getActiveSession().getCurrentState().getId() + "' does not equal the expected state '"
-				+ expectedCurrentStateId + "'", expectedCurrentStateId, getFlowContext().getActiveSession().getCurrentState().getId());
+		assertEquals(
+				"The current state '" + getFlowContext().getActiveSession().getCurrentState().getId()
+				+ "' does not equal the expected state '" + expectedCurrentStateId + "'",
+				expectedCurrentStateId, getFlowContext().getActiveSession().getCurrentState().getId());
 	}
 
 	/**
 	 * Assert that the last supported event that occured in the flow execution
 	 * equals the provided event.
-	 * @param expectedEventId the expected event.
+	 * @param expectedEventId the expected event
 	 */
 	protected void assertLastEventEquals(String expectedEventId) {
-		assertEquals("The last event '" + getFlowContext().getLastEventId() + "' does not equal the expected event '" + expectedEventId
-				+ "'", expectedEventId, getFlowContext().getLastEventId());
+		assertEquals(
+				"The last event '" + getFlowContext().getLastEventId()
+				+ "' does not equal the expected event '" + expectedEventId	+ "'",
+				expectedEventId, getFlowContext().getLastEventId());
 	}
 
 	/**
@@ -282,7 +288,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 	
 	/**
-	 * Assert that the view descriptor contains the specified model attribute with the provided expected value.
+	 * Assert that the view descriptor contains the specified model attribute
+	 * with the provided expected value.
 	 * @param expectedValue the expected value
 	 * @param attributeName the attribute name
 	 * @param viewDescriptor the view descriptor to assert
@@ -292,12 +299,14 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
-	 * Assert that the view descriptor contains the specified collection model attribute with the provided expected size.
-	 * @param expectedValue the expected size
+	 * Assert that the view descriptor contains the specified collection model
+	 * attribute with the provided expected size.
+	 * @param expectedSize the expected size
 	 * @param attributeName the collection attribute name
 	 * @param viewDescriptor the view descriptor to assert
 	 */
-	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ViewDescriptor viewDescriptor) {
+	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName,
+			ViewDescriptor viewDescriptor) {
 		assertModelAttributeNotNull(attributeName, viewDescriptor);
 		Collection c = (Collection)viewDescriptor.getAttribute(attributeName);
 		assertEquals("The model attribute collection size is wrong:", expectedSize, c.size());
@@ -308,15 +317,17 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @param viewDescriptor the view descriptor to assert
 	 */
 	public void assertModelAttributeNotNull(String attributeName, ViewDescriptor viewDescriptor) {
-		assertNotNull("The model attribute is [null] but should be NOT null:", viewDescriptor.getAttribute(attributeName));
+		assertNotNull("The model attribute is [null] but should be NOT null:",
+				viewDescriptor.getAttribute(attributeName));
 	}	
 
 	/**
-	 * Assert that the view descriptor contains the specified model attribute.
+	 * Assert that the view descriptor does not contain the specified model attribute.
 	 * @param attributeName the attribute name
 	 * @param viewDescriptor the view descriptor to assert
 	 */
 	public void assertModelAttributeNull(String attributeName, ViewDescriptor viewDescriptor) {
-		assertNull("The model attribute is NOT null but should be [null]:", viewDescriptor.getAttribute(attributeName));
+		assertNull("The model attribute is NOT null but should be [null]:",
+				viewDescriptor.getAttribute(attributeName));
 	}	
 }
