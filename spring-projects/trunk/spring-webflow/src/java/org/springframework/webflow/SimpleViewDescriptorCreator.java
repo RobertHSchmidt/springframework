@@ -61,9 +61,6 @@ public class SimpleViewDescriptorCreator implements ViewDescriptorCreator {
 		this.viewName = viewName;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.springframework.webflow.ViewDescriptorCreator#createViewDescriptor(org.springframework.webflow.RequestContext)
-	 */
 	public ViewDescriptor createViewDescriptor(RequestContext context) {
 		return new ViewDescriptor(getViewName(), context.getModel());
 	}

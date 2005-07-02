@@ -3,8 +3,11 @@ package org.springframework.webflow;
 /**
  * A generically typed flow execution statistics interface for use by management clients.
  * These stats would typically be exported for management via JMX.  References to strongly-typed
- * webflow classes (e.g Flow, State) should not go here--put them in the FlowContext subinterface.
- * 
+ * webflow classes (e.g Flow, State) should not go here -- put them in the FlowExecutionContext
+ * subinterface.
+ *
+ * @see org.springframework.webflow.FlowExecutionContext
+ *  
  * @author Keith Donald
  */
 public interface FlowExecutionStatistics {
