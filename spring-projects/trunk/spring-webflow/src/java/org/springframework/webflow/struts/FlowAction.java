@@ -111,8 +111,8 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  */
 public class FlowAction extends MappingDispatchActionSupport {
 
-	public static final String ACTION_FORM_ATTRIBUTE = "actionForm"
-;
+	public static final String ACTION_FORM_ATTRIBUTE = "actionForm";
+	
 	private FlowLocator flowLocator;
 
 	public void setServlet(ActionServlet actionServlet) {

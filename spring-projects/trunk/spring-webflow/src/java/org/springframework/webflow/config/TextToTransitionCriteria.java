@@ -55,7 +55,8 @@ import org.springframework.webflow.TransitionCriteriaFactory;
 public class TextToTransitionCriteria extends AbstractConverter {
 
 	/**
-	 * Prefix used when the encoded transition criteria denotes a custom TransitionCriteria implementation.
+	 * Prefix used when the encoded transition criteria denotes a custom
+	 * TransitionCriteria implementation.
 	 */
 	public static final String CLASS_PREFIX = "class:";
 

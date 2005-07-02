@@ -23,7 +23,6 @@ import org.springframework.binding.convert.support.TextToClass;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.SimpleViewDescriptorCreator;
-import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 
 /**
