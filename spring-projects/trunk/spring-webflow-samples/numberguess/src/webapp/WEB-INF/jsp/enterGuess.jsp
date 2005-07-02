@@ -7,13 +7,13 @@
 	<hr>
 	<form name="guessForm" method="post">
 		<table>
-			<tr>
+			<tr class="readOnly">
 				<td>Number of guesses:</td>
-				<td>${data.guesses}</td>
+				<td><b>${data.guesses}</b></td>
 			</tr>
-			<tr>
+			<tr class="readOnly">
 				<td>Your last guess was:</td>
-				<td>${data.lastGuessResult}</td>
+				<td><b><i>${data.lastGuessResult}</b></i></td>
 			</tr>
 		    <tr>
 		    	<td>Guess:</td>

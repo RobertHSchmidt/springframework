@@ -24,5 +24,5 @@
 			</form>
 		</td>
 	</tr>
-	
+	</table>
 <%@ include file="includeBottom.jsp" %>
