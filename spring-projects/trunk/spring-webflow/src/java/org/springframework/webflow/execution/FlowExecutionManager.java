@@ -64,9 +64,9 @@ import org.springframework.webflow.execution.impl.FlowExecutionImpl;
  * the executing flow is resumed in that state.</li>
  * <li>If the flow execution is still active after event processing, it
  * is saved in storage. This process generates a unique flow execution
- * id that will be exposed to the caller for reference on subsequent events.  The caller
- * is also exposed a reference to the flow execution context and any data placed in
- * request or flow scope.</li>
+ * id that will be exposed to the caller for reference on subsequent events.
+ * The caller will also be given access to the flow execution context and
+ * any data placed in request or flow scope.</li>
  * </ol>
  * 
  * @see org.springframework.webflow.execution.FlowExecution
@@ -187,6 +187,33 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	}
 
 	/**
+	 * Returns the array of flow execution listeners for specified flow.
+	 * @param flow the flow definition associated with the execution to be listened to
+	 * @return the flow execution listeners
+	 */
+	public FlowExecutionListener[] getListeners(Flow flow) {
+		Assert.notNull(flow, "The Flow to load listeners for cannot be null");
+		List listeners = new LinkedList();
+		for (Iterator entryIt = flowExecutionListeners.entrySet().iterator(); entryIt.hasNext(); ) {
+			Map.Entry entry = (Map.Entry)entryIt.next();
+			for (Iterator criteriaIt = ((List)entry.getValue()).iterator(); criteriaIt.hasNext(); ) {
+				FlowExecutionListenerCriteria criteria = (FlowExecutionListenerCriteria)criteriaIt.next();
+				if (criteria.applies(flow)) {
+					// the criteria 'guarding' this flow execution listener is
+					// telling us that the listener applies to the flow
+					listeners.add((FlowExecutionListener)entry.getKey());
+					break;
+				}
+			}
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Loaded " + listeners.size() + " of possible " + flowExecutionListeners.size() + " listeners to this execution request for flow: '" + flow.getId() 
+					+ "', the listeners to attach are: " + StylerUtils.style(listeners));
+		}
+		return (FlowExecutionListener[])listeners.toArray(new FlowExecutionListener[listeners.size()]);
+	}
+
+	/**
 	 * Set the flow execution listener that will be notified of managed
 	 * flow executions.
 	 */
@@ -224,8 +251,8 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 
 	/**
 	 * Sets the flow execution listeners that will be notified of managed
-	 * flow executions.  The map keys may be individual flow execution listener instances or 
-	 * collections of execution listener instances.  The map values can either
+	 * flow executions. The map keys may be individual flow execution listener instances or 
+	 * collections of execution listener instances. The map values can either
 	 * be string encoded flow execution listener criteria or direct
 	 * <code>FlowExecutionListenerCriteria</code> objects.
 	 */
@@ -408,33 +435,6 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 */
 	protected FlowExecution createFlowExecution(Flow flow) {
 		return new FlowExecutionImpl(flow, getListeners(flow), getTransactionSynchronizer());
-	}
-
-	/**
-	 * Returns the array of flow execution listeners for specified flow.
-	 * @param flow the flow definition associated with the execution to be listened to
-	 * @return the flow execution listeners
-	 */
-	public FlowExecutionListener[] getListeners(Flow flow) {
-		if (flow == null) {
-			throw new IllegalStateException("The Flow to load listeners for cannot be null");
-		}
-		List listeners = new LinkedList();
-		for (Iterator entryIt = flowExecutionListeners.entrySet().iterator(); entryIt.hasNext(); ) {
-			Map.Entry entry = (Map.Entry)entryIt.next();
-			for (Iterator criteriaIt = ((List)entry.getValue()).iterator(); criteriaIt.hasNext(); ) {
-				FlowExecutionListenerCriteria criteria = (FlowExecutionListenerCriteria)criteriaIt.next();
-				if (criteria.includes(flow)) {
-					listeners.add((FlowExecutionListener)entry.getKey());
-					break;
-				}
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Loaded " + listeners.size() + " of possible " + flowExecutionListeners.size() + " listeners to this execution request for flow: '" + flow.getId() 
-					+ "', the listeners to attach are: " + StylerUtils.style(listeners));
-		}
-		return (FlowExecutionListener[])listeners.toArray(new FlowExecutionListener[listeners.size()]);
 	}
 
 	/**

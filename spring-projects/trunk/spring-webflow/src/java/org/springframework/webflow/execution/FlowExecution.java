@@ -75,7 +75,8 @@ public interface FlowExecution extends FlowExecutionContext {
 	/**
 	 * Rehydrate this flow execution after deserialization.
 	 * @param flowLocator the flow locator
-	 * @param listeners the flow execution listeners
+	 * @param listenerLoader the flow execution listener loader to use to obtain
+	 *        all listeners that apply
 	 * @param transactionSynchronizer application transaction synchronization
 	 *        strategy to use
 	 */
