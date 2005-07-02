@@ -5,10 +5,16 @@
 	<h2>The Number Guess Game
 	<h3>Guess a number between 1 and 100!</h3>
 	<hr>
-	<p>Number of guesses so far: ${data.guesses}</p>
-	<p>Last guess result: ${data.lastGuessResult}</p>
 	<form name="guessForm" method="post">
 		<table>
+			<tr>
+				<td>Number of guesses:</td>
+				<td>${data.guesses}</td>
+			</tr>
+			<tr>
+				<td>Your last guess was:</td>
+				<td>${data.lastGuessResult}</td>
+			</tr>
 		    <tr>
 		    	<td>Guess:</td>
 		    	<td>
