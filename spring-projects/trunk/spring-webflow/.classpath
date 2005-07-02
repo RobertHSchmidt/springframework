@@ -18,5 +18,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/global/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/global/junit.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/jmx-ri.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
