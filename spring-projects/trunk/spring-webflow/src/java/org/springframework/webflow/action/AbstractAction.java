@@ -124,7 +124,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
-	 * Returns the default yes event.
+	 * Returns the default no event.
 	 */
 	protected Event no() {
 		return result(NO_RESULT_EVENT_ID);

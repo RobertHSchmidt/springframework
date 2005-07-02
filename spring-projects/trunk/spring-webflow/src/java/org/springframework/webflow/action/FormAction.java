@@ -517,6 +517,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 	
 	/**
 	 * Convenience method that returns the current form object for this form action.
+	 * The form object will be retreived from the request or flow scope accessible
+	 * from given flow execution request context.
 	 * 
 	 * @param context the flow request context
 	 * @return the form object, or <code>null</code> if not found
@@ -589,11 +591,13 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 		if (getValidator() != null && isValidateOnBinding() && validationEnabled(context)) {
 			validate(context, binder.getTarget(), binder.getErrors());
-		} else {
+		}
+		else {
 			if (logger.isDebugEnabled()) {
 				if (validator == null) {
 					logger.debug("No validator is configured; no additional validation will occur");
-				} else {
+				}
+				else {
 					logger.debug("Validation was disabled for this request; details: validateOnBinding=" +
 							isValidateOnBinding() + ", validationEnabled=" + validationEnabled(context));
 				}
