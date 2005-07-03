@@ -44,6 +44,8 @@ import org.springframework.webflow.TransitionCriteriaFactory;
  * event id ({@link org.springframework.webflow.TransitionCriteriaFactory#eventId(String)})</li>
  * <li>"${...}" - will result in a TransitionCriteria object that evaluates given
  * condition, expressed as an expression</li>
+ * <li>"class:&lt;classname&gt; - will resut in instantiation and usage of a custom 
+ * TransitionCriteria implementation.  The implementation must have a public no-arg constructor.
  * </ul>
  * 
  * @see org.springframework.webflow.TransitionCriteria
