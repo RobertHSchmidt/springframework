@@ -36,10 +36,10 @@ import org.springframework.webflow.ViewDescriptorCreator;
  * with the provided view name.
  * </li>
  * <li>"redirect:&lt;viewName&gt;" - will result in a RedirectViewDescriptorCreator that returns a
- * ViewDescriptor with the provided view name and the redirect flag set to true.
+ * ViewDescriptor with the provided view name and redirect flag set to true.
  * </li>
  * <li>"class:&lt;classname&gt;" - will result in instantiation and usage of a custom 
- * ViewDescriptorCreatror implementation.  The implementation must have a public no-arg constructor.
+ * ViewDescriptorCreatoe implementation.  The implementation must have a public no-arg constructor.
  * </li>
  * </ul> 
  * 
