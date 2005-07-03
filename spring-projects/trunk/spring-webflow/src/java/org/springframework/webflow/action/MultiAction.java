@@ -21,19 +21,20 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker;
 
 /**
- * Action implementation that bundles many action execution methods into a
- * single action implementation class. Action execution methods defined by
- * subclasses should follow the following signature:
+ * Action implementation that bundles two or more action execution methods into a
+ * single class. Action execution methods defined by subclasses must adhere
+ * to the following signature:
  * 
  * <pre>
- *     public Event ${method}(RequestContext context) throws Exception
+ *     public Event ${method}(RequestContext context) throws Exception;
  * </pre>
  * 
- * By default, the ${method} will be the value of the "method" action
- * property associated with the action in the current state, or the name of the
- * current state of the flow if there is no such property defined.
- * So the following state definition
- * 
+ * When this action is invoked, by default the <code>id</code> of the calling 
+ * action state state is treated as the action execution method name.  Alternatively,
+ * the execution method name may be explicitly specified as a property of
+ * the calling action state.  
+ * <p>
+ * For example, the following action state definition:
  * <pre>
  *     &lt;action-state id=&quot;search&quot;&gt;
  *          &lt;action bean=&quot;my.search.action&quot;/&gt;
@@ -41,13 +42,13 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  *     &lt;/action-state&gt;
  * </pre>
  * 
- * ... will execute the method:
+ * ... when entered, executes the method:
  * 
  * <pre>
- *     public Event search(RequestContext context) throws Exception
+ *     public Event search(RequestContext context) throws Exception;
  * </pre>
  * 
- * Alternatively you could have explictly specified the method name:
+ * Alternatively you may explictly specify the method name:
  * 
  * <pre>
  *     &lt;action-state id=&quot;searchState&quot;&gt;
@@ -57,11 +58,10 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </pre>
  * 
  * <p>
- * A typical use of the MultiAction is to combine all CRUD operations for a
- * certain domain object into a single controller. Another typical use is to
- * centralize form setup and submit logic into one place, or command logic for
- * an entire flow in once place. This action allows you to reduce the
- * number of action beans you have to define and configure.
+ * A typical use of the MultiAction is to centralize all command logic for a flow
+ * in one place. Another common use is to centralize form setup and submit logic
+ * into one place, or CRUD (create/read/update/delete) operations for a single
+ * domain object in once place. 
  * <p>
  * <b>Exposed configuration properties:</b> <br>
  * <table border="1">
@@ -78,7 +78,8 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <tr>
  * <td>executeMethodNameResolver</td>
  * <td><i>{@link MultiAction.DefaultActionExecuteMethodNameResolver default}</i></td>
- * <td>Set the strategy used to resolve the name of an action execution method.</td>
+ * <td>Set the strategy used to resolve the name of an action execution method.  Allows
+ * full control over the method resolution algorithm.</td>
  * </tr>
  * </table>
  * 
