@@ -15,12 +15,8 @@
  */
 package org.springframework.webflow.execution.servlet;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.Assert;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.execution.FlowExecution;
@@ -61,7 +57,8 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 	public FlowExecution load(String id, Event requestingEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		try {
-			return (FlowExecution)WebUtils.getRequiredSessionAttribute(getHttpServletRequest(requestingEvent), id);
+			return (FlowExecution)WebUtils.getRequiredSessionAttribute(
+					ServletEvent.getHttpServletRequest(requestingEvent), id);
 		}
 		catch (IllegalStateException e) {
 			throw new NoSuchFlowExecutionException(id, e);
@@ -79,7 +76,7 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 		// always update session attribute, even if just overwriting
 		// an existing one to make sure the servlet engine knows that this
 		// attribute has changed!
-		getHttpSession(requestingEvent).setAttribute(id, flowExecution);
+		ServletEvent.getHttpSession(requestingEvent, isCreateSession()).setAttribute(id, flowExecution);
 		return id;
 	}
 
@@ -87,8 +84,10 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removing flow execution with id '" + id + "' from HTTP session");
 		}
-		getHttpSession(requestingEvent).removeAttribute(id);
+		ServletEvent.getHttpSession(requestingEvent, isCreateSession()).removeAttribute(id);
 	}
+	
+	// subclassing hooks
 
 	/**
 	 * Helper to generate a unique id for a flow execution in the storage.
@@ -97,26 +96,4 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 		return new RandomGuid().toString();
 	}
 
-	/**
-	 * Return (cast) given event as an HttpServletRequestEvent.
-	 */
-	protected ServletEvent getHttpServletRequestEvent(Event event) {
-		Assert.isInstanceOf(ServletEvent.class, event, "Wrong event type: ");
-		return (ServletEvent)event;
-	}
-
-	/**
-	 * Helper to get the HTTP request from given event.
-	 */
-	protected HttpServletRequest getHttpServletRequest(Event event) {
-		return getHttpServletRequestEvent(event).getRequest();
-	}
-
-	/**
-	 * Helper to get the HTTP session associated with the HTTP request
-	 * embedded in given event.
-	 */
-	protected HttpSession getHttpSession(Event event) {
-		return getHttpServletRequest(event).getSession(isCreateSession());
-	}
 }

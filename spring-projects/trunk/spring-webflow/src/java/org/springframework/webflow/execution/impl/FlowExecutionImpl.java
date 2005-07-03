@@ -45,7 +45,7 @@ import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerList;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.TokenTransactionSynchronizer;
+import org.springframework.webflow.execution.FlowScopeTokenTransactionSynchronizer;
 import org.springframework.webflow.execution.TransactionSynchronizer;
 
 /**
@@ -127,7 +127,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * @param rootFlow the root flow of this flow execution
 	 */
 	public FlowExecutionImpl(Flow rootFlow) {
-		this(rootFlow, null, new TokenTransactionSynchronizer());
+		this(rootFlow, null, new FlowScopeTokenTransactionSynchronizer());
 	}
 	
 	/**

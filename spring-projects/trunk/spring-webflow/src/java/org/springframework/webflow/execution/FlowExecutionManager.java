@@ -131,7 +131,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 
 	private FlowExecutionStorage storage;
 
-	private TransactionSynchronizer transactionSynchronizer = new TokenTransactionSynchronizer();
+	private TransactionSynchronizer transactionSynchronizer = new FlowScopeTokenTransactionSynchronizer();
 
 	private BeanFactory beanFactory;
 

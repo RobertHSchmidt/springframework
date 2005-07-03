@@ -17,10 +17,13 @@ package org.springframework.webflow.execution.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.util.WebUtils;
+import org.springframework.webflow.Event;
 import org.springframework.webflow.execution.ExternalEvent;
 
 /**
@@ -103,5 +106,39 @@ public class ServletEvent extends ExternalEvent {
 	 */
 	public HttpServletResponse getResponse() {
 		return response;
+	}
+	
+	// some static helpers that are generally usefull
+	
+	/**
+	 * Return (cast) given event as a ServletEvent.
+	 * @param event the event to use
+	 * @return the event case to a ServletEvent
+	 */
+	public static ServletEvent getServletEvent(Event event) {
+		Assert.isInstanceOf(ServletEvent.class, event, "Wrong event type: ");
+		return (ServletEvent)event;
+	}
+
+	/**
+	 * Helper to get the HTTP request from given event. The event
+	 * should be a ServletEvent.
+	 * @param event the event to use
+	 * @return the obtained HTTP servlet request
+	 */
+	public static HttpServletRequest getHttpServletRequest(Event event) {
+		return getServletEvent(event).getRequest();
+	}
+
+	/**
+	 * Helper to get the HTTP session associated with the HTTP request
+	 * embedded in given event, which should be a ServletEvent.
+	 * @param event the event to use
+	 * @param allowCreate true when an HTTP session can be created if non exists,
+	 *        false otherwise
+	 * @return the obtained HTTP session
+	 */
+	public static HttpSession getHttpSession(Event event, boolean allowCreate) {
+		return getHttpServletRequest(event).getSession(allowCreate);
 	}
 }

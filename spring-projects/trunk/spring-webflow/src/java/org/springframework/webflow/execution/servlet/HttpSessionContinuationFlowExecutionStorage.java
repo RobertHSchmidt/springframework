@@ -62,7 +62,7 @@ public class HttpSessionContinuationFlowExecutionStorage extends HttpSessionFlow
 			FlowExecutionStorageException {
 		try {
 			FlowExecutionContinuation continuation = (FlowExecutionContinuation)WebUtils.getRequiredSessionAttribute(
-					getHttpServletRequest(requestingEvent), id);
+					ServletEvent.getHttpServletRequest(requestingEvent), id);
 			return continuation.getFlowExecution();
 		}
 		catch (IllegalStateException e) {
@@ -74,7 +74,8 @@ public class HttpSessionContinuationFlowExecutionStorage extends HttpSessionFlow
 			throws FlowExecutionStorageException {
 		// generate a new id for each continuation
 		id = createId();
-		getHttpSession(requestingEvent).setAttribute(id, new FlowExecutionContinuation(flowExecution, isCompress()));
+		ServletEvent.getHttpSession(requestingEvent, isCreateSession()).setAttribute(
+				id, new FlowExecutionContinuation(flowExecution, isCompress()));
 		return id;
 	}
 
