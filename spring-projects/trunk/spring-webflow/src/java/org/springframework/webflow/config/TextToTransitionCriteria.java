@@ -34,18 +34,22 @@ import org.springframework.webflow.TransitionCriteriaFactory;
 
 /**
  * Converter that takes an encoded string representation and produces
- * a corresponding <code>TransitionCriteria</code> object. It supports the following
- * encoded forms:
+ * a corresponding <code>TransitionCriteria</code> object.
+ * <p>
+ * This converter supports the following encoded forms:
  * <ul>
  * <li>"*" - will result in a TransitionCriteria object that matches on everything
  * ({@link org.springframework.webflow.TransitionCriteriaFactory#alwaysTrue()})
  * </li>
  * <li>"eventId" - will result in a TransitionCriteria object that matches given
- * event id ({@link org.springframework.webflow.TransitionCriteriaFactory#eventId(String)})</li>
+ * event id ({@link org.springframework.webflow.TransitionCriteriaFactory#eventId(String)})
+ * </li>
  * <li>"${...}" - will result in a TransitionCriteria object that evaluates given
- * condition, expressed as an expression</li>
+ * condition, expressed as an expression
+ * </li>
  * <li>"class:&lt;classname&gt; - will resut in instantiation and usage of a custom 
  * TransitionCriteria implementation.  The implementation must have a public no-arg constructor.
+ * </li>
  * </ul>
  * 
  * @see org.springframework.webflow.TransitionCriteria
