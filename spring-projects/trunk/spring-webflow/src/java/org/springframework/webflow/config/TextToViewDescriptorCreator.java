@@ -30,6 +30,19 @@ import org.springframework.webflow.ViewDescriptorCreator;
  * view descriptor into a <code>ViewDescriptorCreator</code> that will
  * create such a view descriptor.
  * 
+ * This converter supports the following encoded forms:
+ * <ul>
+ * <li>"viewName" - will result in a SimpleViewDescriptorCreator that returns a ViewDescriptor 
+ * with the provided view name.
+ * </li>
+ * <li>"redirect:&lt;viewName&gt;" - will result in a RedirectViewDescriptorCreator that returns a
+ * ViewDescriptor with the provided view name and the redirect flag set to true.
+ * </li>
+ * <li>"class:&lt;classname&gt;" - will result in instantiation and usage of a custom 
+ * ViewDescriptorCreatror implementation.  The implementation must have a public no-arg constructor.
+ * </li>
+ * </ul> 
+ * 
  * @see org.springframework.webflow.ViewDescriptor
  * @see org.springframework.webflow.ViewDescriptorCreator
  * 
