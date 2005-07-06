@@ -801,7 +801,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Parse a single inline attribute mapping definition.
 	 */
-	protected Mapping parseMapping(Element element, boolean inputMapping) {
+	protected Mapping parseMapping(Element element, boolean isInputMapping) {
 		String name = element.getAttribute(NAME_ATTRIBUTE);
 		String value = element.getAttribute(VALUE_ATTRIBUTE);
 		String as = element.getAttribute(AS_ATTRIBUTE);
@@ -812,10 +812,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		}
 		if (StringUtils.hasText(name)) {
 			if (StringUtils.hasText(as)) {
-				return new Mapping(flowScope(name, inputMapping), parsePropertyExpression(as), valueConverter);
+				return new Mapping(flowScopeExpression(name, isInputMapping), parsePropertyExpression(as), valueConverter);
 			}
 			else {
-				return new Mapping(flowScope(name, inputMapping), parsePropertyExpression(name), valueConverter);
+				return new Mapping(flowScopeExpression(name, isInputMapping), parsePropertyExpression(name), valueConverter);
 			}
 		}
 		else if (StringUtils.hasText(value)) {
@@ -830,12 +830,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Returns an evaluator to get named attribute from the flow scope.
 	 */
-	protected Expression flowScope(String name, boolean inputMapping) {
-		if (inputMapping) {
-			return new FlowScopeExpression(parseExpression(name));
+	protected Expression flowScopeExpression(String expressionString, boolean isInputMapping) {
+		if (isInputMapping) {
+			return new FlowScopeExpression(parseExpression(expressionString));
 		}
 		else {
-			return parseExpression(name);
+			return parseExpression(expressionString);
 		}
 	}
 	
