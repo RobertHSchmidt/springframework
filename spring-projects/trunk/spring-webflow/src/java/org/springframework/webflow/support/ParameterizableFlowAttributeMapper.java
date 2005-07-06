@@ -25,7 +25,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.AttributeMapper;
-import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.support.Mapping;
 import org.springframework.binding.support.ParameterizableAttributeMapper;
 import org.springframework.core.style.ToStringCreator;
@@ -225,9 +224,9 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 
 	public void mapSubflowOutput(RequestContext context) {
 		if (this.outputMapper != null) {
-			MutableAttributeSource parentFlowScope = 
-				(MutableAttributeSource)context.getFlowExecutionContext().getActiveSession().getParent().getScope();
-			this.outputMapper.map(context.getFlowScope(), parentFlowScope, getMappingContext(context));
+			this.outputMapper.map(context.getFlowScope(),
+					context.getFlowExecutionContext().getActiveSession().getParent().getScope(),
+					getMappingContext(context));
 		}
 	}
 	
