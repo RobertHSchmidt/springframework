@@ -812,15 +812,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		}
 		if (StringUtils.hasText(name)) {
 			if (StringUtils.hasText(as)) {
-				return new Mapping(flowScope(name, inputMapping), setterFor(as), valueConverter);
+				return new Mapping(flowScope(name, inputMapping), parsePropertyExpression(as), valueConverter);
 			}
 			else {
-				return new Mapping(flowScope(name, inputMapping), setterFor(name), valueConverter);
+				return new Mapping(flowScope(name, inputMapping), parsePropertyExpression(name), valueConverter);
 			}
 		}
 		else if (StringUtils.hasText(value)) {
 			Assert.hasText(as, "The 'as' attribute is required with the 'value' attribute");
-			return new Mapping(evaluatorFor(value), setterFor(as), valueConverter);
+			return new Mapping(parseExpression(value), parsePropertyExpression(as), valueConverter);
 		}
 		else {
 			throw new FlowBuilderException(this, "Name or value is required in a mapping definition");
@@ -832,10 +832,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected Expression flowScope(String name, boolean inputMapping) {
 		if (inputMapping) {
-			return new FlowScopeExpressionEvaluator(evaluatorFor(name));
+			return new FlowScopeExpression(parseExpression(name));
 		}
 		else {
-			return evaluatorFor(name);
+			return parseExpression(name);
 		}
 	}
 	
@@ -843,7 +843,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * Helper that returns an expression evaluator to get a value as indicated
 	 * by given expression string.
 	 */
-	protected Expression evaluatorFor(String expressionString) {
+	protected Expression parseExpression(String expressionString) {
 		return ExpressionFactory.parseExpression(expressionString);
 	}
 	
@@ -851,29 +851,29 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * Helper that returns an expression evaluator to set a value as indicated
 	 * by given expression string.
 	 */
-	protected PropertyExpression setterFor(String expressionString) {
+	protected PropertyExpression parsePropertyExpression(String expressionString) {
 		return ExpressionFactory.parsePropertyExpression(expressionString);
 	}
 	
 	/**
 	 * Expression evaluator that evaluates an expression in flow scope.
 	 */
-	private static class FlowScopeExpressionEvaluator implements Expression {
+	private static class FlowScopeExpression implements Expression {
 		
-		private Expression evaluator;
+		private Expression expression;
 		
 		/**
 		 * Create a new expression evaluator that executes given evaluator
 		 * 'in flow scope'.
 		 * @param evaluator the nested evaluator to execute
 		 */
-		public FlowScopeExpressionEvaluator(Expression evaluator) {
-			this.evaluator = evaluator;
+		public FlowScopeExpression(Expression evaluator) {
+			this.expression = evaluator;
 		}
 		
 		public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
 			RequestContext requestContext = (RequestContext)target;
-			return evaluator.evaluateAgainst(requestContext.getFlowScope(), context);
+			return expression.evaluateAgainst(requestContext.getFlowScope(), context);
 		}
 	}
 }

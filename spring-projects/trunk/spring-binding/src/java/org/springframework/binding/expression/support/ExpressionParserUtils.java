@@ -27,19 +27,29 @@ import org.springframework.binding.expression.ExpressionParser;
  */
 public class ExpressionParserUtils {
 
+	private static ExpressionParser defaultExpressionParser;
+
+	public static void load(ExpressionParser defaultInstance) {
+		defaultExpressionParser = defaultInstance;
+	}
+	
 	/**
 	 * Utility method that checks which expression parsers are available
 	 * on the classpath and returns the appropriate default one.
 	 */
-	public static ExpressionParser getDefaultExpressionParser() {
-		try {
-			Class.forName("ognl.Ognl");
-			// OGNL is available in the classpath
-			return new OgnlExpressionParser();
+	public static synchronized ExpressionParser getDefaultExpressionParser() {
+		if (defaultExpressionParser == null) {
+			try {
+				Class.forName("ognl.Ognl");
+				defaultExpressionParser = new OgnlExpressionParser();
+			}
+			catch (ClassNotFoundException e) {
+				IllegalStateException ise =
+					new IllegalStateException("Ognl is not in the classpath");
+				ise.initCause(e);
+				throw ise;
+			}
 		}
-		catch (ClassNotFoundException e) {
-			// It's not available, use spring's bean wrapper
-			return new BeanWrapperExpressionParser();
-		}
+		return defaultExpressionParser;
 	}	
 }
