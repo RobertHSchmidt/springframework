@@ -394,6 +394,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 			if (listener != null) {
 				flowExecution.getListeners().add(listener);
 			}
+			flowExecution.getListeners().fireLoaded(id);
 			// signal the event within the current state
 			Assert.hasText(event.getId(), "No _eventId could be obtained -- "
 					+ "make sure the submitting view or other client provides the _eventId parameter as input");
@@ -410,11 +411,13 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 		if (flowExecution.isActive()) {
 			// save the flow execution for future use
 			id = getStorage().save(id, flowExecution, event);
+			flowExecution.getListeners().fireSaved(id);
 		}
 		else {
 			// event execution resulted in the entire flow execution ending, cleanup
 			if (id != null) {
 				getStorage().remove(id, event);
+				flowExecution.getListeners().fireRemoved(id);
 			}
 		}
 		if (listener != null) {

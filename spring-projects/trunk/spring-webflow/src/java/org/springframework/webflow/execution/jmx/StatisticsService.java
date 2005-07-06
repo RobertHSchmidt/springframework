@@ -1,8 +1,22 @@
+/*
+ * Copyright 2002-2005 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.webflow.execution.jmx;
 
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import javax.management.JMException;
 import javax.management.MBeanServer;
@@ -14,13 +28,18 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.State;
-import org.springframework.webflow.execution.EnterStateVetoException;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.support.FlowExecutionListenerAdapter;
 
+/**
+ * Managed service that collects statistics on the web flow system.
+ * 
+ * @author Keith Donald
+ */
 public class StatisticsService implements InitializingBean, DisposableBean {
+	
 	private FlowExecutionManager flowExecutionManager;
 
 	private GlobalStatistics globalStats = new GlobalStatistics();
@@ -49,8 +68,7 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 			List servers = MBeanServerFactory.findMBeanServer(null);
 			mbeanServer = (MBeanServer) servers.get(0);
 		}
-		globalStatsMBeanName = new ObjectName("spring-webflow", "type",
-				"globalStatistics");
+		globalStatsMBeanName = new ObjectName("spring-webflow", "type",	"globalStatistics");
 		mbeanServer.registerMBean(globalStats, globalStatsMBeanName);
 		this.flowExecutionManager.addListener(statisticsCollector);
 	}
@@ -60,9 +78,10 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 		this.flowExecutionManager.removeListener(statisticsCollector);
 	}
 
-	protected final class StatisticsCollector implements FlowExecutionListener {
-
-		public void eventSignaled(RequestContext context) {
+	protected final class StatisticsCollector extends FlowExecutionListenerAdapter {
+		
+		protected boolean statisticsEnabled(RequestContext context) {
+			return globalStats.statisticsEnabled;
 		}
 
 		public void paused(RequestContext context) {
@@ -132,22 +151,6 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 					}
 				}
 			}
-		}
-
-		public void sessionStarting(RequestContext context, State startState,
-				Map input) throws EnterStateVetoException {
-		}
-
-		public void stateEntered(RequestContext context, State previousState,
-				State state) {
-		}
-
-		public void stateEntering(RequestContext context, State nextState)
-				throws EnterStateVetoException {
-		}
-
-		public boolean statisticsEnabled(RequestContext context) {
-			return globalStats.statisticsEnabled;
 		}
 	}
 }

@@ -21,6 +21,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
+import org.springframework.webflow.support.FlowExecutionListenerAdapter;
 
 /**
  * Mock implementation of the <code>FlowExecutionListener</code> interface for
@@ -29,7 +30,7 @@ import org.springframework.webflow.State;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class MockFlowExecutionListener implements FlowExecutionListener {
+public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	private boolean started;
 
@@ -117,7 +118,7 @@ public class MockFlowExecutionListener implements FlowExecutionListener {
 			Assert.state(started, "The flow execution prematurely ended");
 		}
 	}
-
+	
 	/**
 	 * Is the flow execution running, e.g. it has started but not yet ended.
 	 */

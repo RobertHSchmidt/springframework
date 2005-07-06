@@ -273,4 +273,35 @@ public class FlowExecutionListenerList {
 			((FlowExecutionListener)it.next()).sessionEnded(context, endedSession);
 		}
 	}
+	
+	/**
+	 * Notify all interested listeners that a flow execution was loaded from
+	 * storage.
+	 */
+	public void fireLoaded(String storageId) {
+		for (Iterator it=iterator(); it.hasNext(); ) {
+			((FlowExecutionListener)it.next()).loaded(storageId);
+		}
+	}
+	
+	/**
+	 * Notify all interested listeners that a flow execution was saved to
+	 * storage.
+	 */
+	public void fireSaved(String storageId) {
+		for (Iterator it=iterator(); it.hasNext(); ) {
+			((FlowExecutionListener)it.next()).saved(storageId);
+		}
+	}
+	
+	/**
+	 * Notify all interested listeners that a flow execution was removed from
+	 * storage.
+	 */
+	public void fireRemoved(String storageId) {
+		for (Iterator it=iterator(); it.hasNext(); ) {
+			((FlowExecutionListener)it.next()).removed(storageId);
+		}
+	}
+
 }
