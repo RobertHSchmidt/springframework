@@ -17,6 +17,7 @@ package org.springframework.webflow.execution;
 
 import java.util.Map;
 
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -114,19 +115,22 @@ public interface FlowExecutionListener {
 	
 	/**
 	 * Called when a flow execution is loaded from flow execution storage.
+	 * @param context the flow execution that was loaded
 	 * @param storageId id the unique id of the flow execution in the storage medium
 	 */
-	public void loaded(String storageId);
+	public void loaded(FlowExecutionContext context, String storageId);
 	
 	/**
 	 * Called when a flow execution is saved to flow execution storage.
+	 * @param context the flow execution that was loaded
 	 * @param storageId id the unique id of the flow execution in the storage medium
 	 */
-	public void saved(String storageId);
+	public void saved(FlowExecutionContext context, String storageId);
 	
 	/**
 	 * Called when a flow execution is removed from flow execution storage.
+	 * @param context the flow execution that was loaded
 	 * @param storageId id the unique id of the flow execution in the storage medium
 	 */
-	public void removed(String storageId);
+	public void removed(FlowExecutionContext context, String storageId);
 }

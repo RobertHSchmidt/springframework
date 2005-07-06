@@ -17,6 +17,7 @@ package org.springframework.webflow.support;
 
 import java.util.Map;
 
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -64,12 +65,12 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void sessionEnded(RequestContext context, FlowSession endedRootFlowSession) {
 	}
 	
-	public void loaded(String storageId) {
+	public void loaded(FlowExecutionContext context, String storageId) {
 	}
 	
-	public void saved(String storageId) {
+	public void saved(FlowExecutionContext context, String storageId) {
 	}
 	
-	public void removed(String storageId) {
+	public void removed(FlowExecutionContext context, String storageId) {
 	}
 }

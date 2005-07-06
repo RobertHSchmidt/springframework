@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -278,9 +279,9 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was loaded from
 	 * storage.
 	 */
-	public void fireLoaded(String storageId) {
+	public void fireLoaded(FlowExecutionContext context, String storageId) {
 		for (Iterator it=iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).loaded(storageId);
+			((FlowExecutionListener)it.next()).loaded(context, storageId);
 		}
 	}
 	
@@ -288,9 +289,9 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was saved to
 	 * storage.
 	 */
-	public void fireSaved(String storageId) {
+	public void fireSaved(FlowExecutionContext context, String storageId) {
 		for (Iterator it=iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).saved(storageId);
+			((FlowExecutionListener)it.next()).saved(context, storageId);
 		}
 	}
 	
@@ -298,9 +299,9 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was removed from
 	 * storage.
 	 */
-	public void fireRemoved(String storageId) {
+	public void fireRemoved(FlowExecutionContext context, String storageId) {
 		for (Iterator it=iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).removed(storageId);
+			((FlowExecutionListener)it.next()).removed(context, storageId);
 		}
 	}
 
