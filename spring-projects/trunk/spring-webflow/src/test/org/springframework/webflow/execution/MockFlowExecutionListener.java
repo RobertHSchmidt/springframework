@@ -85,7 +85,8 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		if (context.getFlowExecutionContext().getActiveSession().isRoot()) {
 			Assert.state(!started, "The flow execution was already started");
 			started = true;
-		} else {
+		}
+		else {
 			assertStarted();
 			flowNestingLevel++;
 		}
@@ -122,7 +123,8 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 			Assert.state(flowNestingLevel == 0, "The flow execution should have ended");
 			started = false;
 			executing = false;
-		} else {
+		}
+		else {
 			flowNestingLevel--;
 			Assert.state(started, "The flow execution prematurely ended");
 		}
@@ -145,7 +147,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 	}
 	
 	/**
-	 * Is the flow execution created
+	 * Is the flow execution created?
 	 */
 	public boolean isCreated() {
 		return created;
@@ -159,7 +161,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 	}
 
 	/**
-	 * @return
+	 * Is the flow execution executing?
 	 */
 	public boolean isExecuting() {
 		return executing;
@@ -209,18 +211,30 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		return stateTransitions;
 	}
 
+	/**
+	 * Returns the number of times the flow execution was loaded from storage.
+	 */
 	public int getLoadCount() {
 		return loadCount;
 	}
-	
+
+	/**
+	 * Returns the number of times the flow execution was saved to storage.
+	 */
 	public int getSaveCount() {
 		return saveCount;
 	}
-	
+
+	/**
+	 * Returns whether or not the flow execution was removed from storage.
+	 */
 	public boolean isRemoved() {
 		return removed;
 	}
 
+	/**
+	 * Reset all state collected by this listener.
+	 */
 	public void reset() {
 		created = false;
 		started = false;
