@@ -8,7 +8,6 @@
 	<classpathentry kind="lib" path="lib/global/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
 	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/global/spring-binding.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/global/spring-web.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/global/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/servlet-api.jar"/>
@@ -19,5 +18,6 @@
 	<classpathentry kind="lib" path="lib/global/junit.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/jmx-ri.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/spring-binding"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

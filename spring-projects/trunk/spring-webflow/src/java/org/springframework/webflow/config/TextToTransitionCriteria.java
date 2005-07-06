@@ -69,6 +69,20 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	private ExpressionParser expressionParser = ExpressionParserUtils.getDefaultExpressionParser();
 	
 	/**
+	 * 
+	 */
+	public TextToTransitionCriteria() {
+		
+	}
+	
+	/**
+	 * @param expressionParser
+	 */
+	public TextToTransitionCriteria(ExpressionParser expressionParser) {
+		setExpressionParser(expressionParser);
+	}
+	
+	/**
 	 * Returns the expression parser used by this converter.
 	 */
 	public ExpressionParser getExpressionParser() {
@@ -137,6 +151,8 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	 */
 	public static class ExpressionTransitionCriteria implements TransitionCriteria {
 
+		private static final String RESULT_ALIAS = "result";
+		
 		/**
 		 * The expression evaluator to use.
 		 */
@@ -165,7 +181,7 @@ public class TextToTransitionCriteria extends AbstractConverter {
 			Map evalContext = new HashMap();
 			// ${#result == lastEvent.id}
 			if (context.getLastEvent() != null) {
-				evalContext.put("result", context.getLastEvent().getId());
+				evalContext.put(RESULT_ALIAS, context.getLastEvent().getId());
 			}
 			return evalContext;
 		}

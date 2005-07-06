@@ -844,7 +844,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * by given expression string.
 	 */
 	protected Expression evaluatorFor(String expressionString) {
-		return ExpressionFactory.evaluatorFor(expressionString);
+		return ExpressionFactory.parseExpression(expressionString);
 	}
 	
 	/**
@@ -852,7 +852,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * by given expression string.
 	 */
 	protected PropertyExpression setterFor(String expressionString) {
-		return ExpressionFactory.propertyEvaluatorFor(expressionString);
+		return ExpressionFactory.parsePropertyExpression(expressionString);
 	}
 	
 	/**

@@ -41,24 +41,24 @@ public class Mapping implements Serializable {
 	private ConversionExecutor valueConverter;
 
 	public Mapping(String sourceTargetAttributeExpressionString) {
-		this(ExpressionFactory.evaluatorFor(sourceTargetAttributeExpressionString),
-			 ExpressionFactory.propertyEvaluatorFor(sourceTargetAttributeExpressionString));
+		this(ExpressionFactory.parseExpression(sourceTargetAttributeExpressionString),
+			 ExpressionFactory.parsePropertyExpression(sourceTargetAttributeExpressionString));
 	}
 
 	public Mapping(String sourceTargetAttributeExpressionString, ConversionExecutor valueConverter) {
-		this(ExpressionFactory.evaluatorFor(sourceTargetAttributeExpressionString),
-			 ExpressionFactory.propertyEvaluatorFor(sourceTargetAttributeExpressionString), valueConverter);
+		this(ExpressionFactory.parseExpression(sourceTargetAttributeExpressionString),
+			 ExpressionFactory.parsePropertyExpression(sourceTargetAttributeExpressionString), valueConverter);
 	}
 
 	public Mapping(String sourceAttributeExpressionString, String targetAttributeExpressionString) {
-		this(ExpressionFactory.evaluatorFor(sourceAttributeExpressionString),
-			 ExpressionFactory.propertyEvaluatorFor(targetAttributeExpressionString));
+		this(ExpressionFactory.parseExpression(sourceAttributeExpressionString),
+			 ExpressionFactory.parsePropertyExpression(targetAttributeExpressionString));
 	}
 
 	public Mapping(String sourceAttributeExpressionString, String targetAttributeExpressionString,
 			ConversionExecutor valueConverter) {
-		this(ExpressionFactory.evaluatorFor(sourceAttributeExpressionString),
-			 ExpressionFactory.propertyEvaluatorFor(targetAttributeExpressionString), valueConverter);
+		this(ExpressionFactory.parseExpression(sourceAttributeExpressionString),
+			 ExpressionFactory.parsePropertyExpression(targetAttributeExpressionString), valueConverter);
 	}
 
 	public Mapping(PropertyExpression sourceTargetAttribute) {
