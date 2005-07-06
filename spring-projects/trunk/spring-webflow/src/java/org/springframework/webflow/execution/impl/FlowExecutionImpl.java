@@ -153,7 +153,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		this.getListeners().add(listeners);
 		this.transactionSynchronizer = transactionSynchronizer;
 		if (logger.isDebugEnabled()) {
-			logger.debug("Created new client execution for flow '" + rootFlow.getId() + "'");
+			logger.debug("Created new client execution with key: '" + key + "' for flow definition: '" + rootFlow.getId() + "'");
 		}
 	}
 	
