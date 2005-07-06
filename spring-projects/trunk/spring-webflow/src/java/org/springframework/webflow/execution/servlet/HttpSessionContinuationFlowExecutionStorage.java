@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution.servlet;
 
+import java.io.Serializable;
+
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.execution.FlowExecution;
@@ -58,11 +60,11 @@ public class HttpSessionContinuationFlowExecutionStorage extends HttpSessionFlow
 		this.compress = compress;
 	}
 
-	public FlowExecution load(String id, Event requestingEvent) throws NoSuchFlowExecutionException,
+	public FlowExecution load(Serializable id, Event requestingEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		try {
 			FlowExecutionContinuation continuation = (FlowExecutionContinuation)WebUtils.getRequiredSessionAttribute(
-					ServletEvent.getHttpServletRequest(requestingEvent), id);
+					ServletEvent.getHttpServletRequest(requestingEvent), attributeName(id));
 			return continuation.getFlowExecution();
 		}
 		catch (IllegalStateException e) {
@@ -70,16 +72,16 @@ public class HttpSessionContinuationFlowExecutionStorage extends HttpSessionFlow
 		}
 	}
 
-	public String save(String id, FlowExecution flowExecution, Event requestingEvent)
+	public Serializable save(Serializable id, FlowExecution flowExecution, Event requestingEvent)
 			throws FlowExecutionStorageException {
 		// generate a new id for each continuation
 		id = createId();
 		ServletEvent.getHttpSession(requestingEvent, isCreateSession()).setAttribute(
-				id, new FlowExecutionContinuation(flowExecution, isCompress()));
+				attributeName(id), new FlowExecutionContinuation(flowExecution, isCompress()));
 		return id;
 	}
 
-	public void remove(String id, Event requestingEvent) throws FlowExecutionStorageException {
+	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException {
 		// nothing to do
 		// note that we shouldn't remove the identified flow execution continuation
 		// because that id actually identifies the 'previous' flow execution, not the

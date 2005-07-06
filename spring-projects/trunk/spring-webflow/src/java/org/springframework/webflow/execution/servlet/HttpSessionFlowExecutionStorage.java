@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution.servlet;
 
+import java.io.Serializable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.util.WebUtils;
@@ -54,18 +56,18 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 		this.createSession = createSession;
 	}
 
-	public FlowExecution load(String id, Event requestingEvent) throws NoSuchFlowExecutionException,
+	public FlowExecution load(Serializable id, Event requestingEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		try {
 			return (FlowExecution)WebUtils.getRequiredSessionAttribute(
-					ServletEvent.getHttpServletRequest(requestingEvent), id);
+					ServletEvent.getHttpServletRequest(requestingEvent), attributeName(id));
 		}
 		catch (IllegalStateException e) {
 			throw new NoSuchFlowExecutionException(id, e);
 		}
 	}
 
-	public String save(String id, FlowExecution flowExecution, Event requestingEvent)
+	public Serializable save(Serializable id, FlowExecution flowExecution, Event requestingEvent)
 			throws FlowExecutionStorageException {
 		if (id == null) {
 			id = createId();
@@ -76,15 +78,15 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 		// always update session attribute, even if just overwriting
 		// an existing one to make sure the servlet engine knows that this
 		// attribute has changed!
-		ServletEvent.getHttpSession(requestingEvent, isCreateSession()).setAttribute(id, flowExecution);
+		ServletEvent.getHttpSession(requestingEvent, isCreateSession()).setAttribute(attributeName(id), flowExecution);
 		return id;
 	}
 
-	public void remove(String id, Event requestingEvent) throws FlowExecutionStorageException {
+	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removing flow execution with id '" + id + "' from HTTP session");
 		}
-		ServletEvent.getHttpSession(requestingEvent, isCreateSession()).removeAttribute(id);
+		ServletEvent.getHttpSession(requestingEvent, isCreateSession()).removeAttribute(attributeName(id));
 	}
 	
 	// subclassing hooks
@@ -92,8 +94,15 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 	/**
 	 * Helper to generate a unique id for a flow execution in the storage.
 	 */
-	protected String createId() {
+	protected Serializable createId() {
 		return new RandomGuid().toString();
+	}
+	
+	/**
+	 * Returns an appropriate session attribute name for the flow execution id.
+	 */
+	protected String attributeName(Serializable id) {
+		return FlowExecution.class.getName() + "." + id;
 	}
 
 }

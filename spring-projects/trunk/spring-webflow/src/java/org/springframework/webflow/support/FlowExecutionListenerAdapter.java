@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.support;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.springframework.webflow.FlowExecutionContext;
@@ -34,6 +35,9 @@ import org.springframework.webflow.execution.FlowExecutionListener;
  * @author Keith Donald
  */
 public abstract class FlowExecutionListenerAdapter implements FlowExecutionListener {
+
+	public void created(FlowExecutionContext context) {
+	}
 
 	public void requestSubmitted(RequestContext context) {
 	}
@@ -65,12 +69,12 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void sessionEnded(RequestContext context, FlowSession endedRootFlowSession) {
 	}
 	
-	public void loaded(FlowExecutionContext context, String id) {
+	public void loaded(FlowExecutionContext context, Serializable id) {
 	}
 	
-	public void saved(FlowExecutionContext context, String id) {
+	public void saved(FlowExecutionContext context, Serializable id) {
 	}
 	
-	public void removed(FlowExecutionContext context, String id) {
+	public void removed(FlowExecutionContext context, Serializable id) {
 	}
 }
