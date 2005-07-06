@@ -15,11 +15,11 @@
  */
 package org.springframework.webflow.support;
 
-import java.util.Collections;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.support.Mapping;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -29,10 +29,11 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 
 	public void testSimpleMapping() {
 		ParameterizableFlowAttributeMapper mapper = new ParameterizableFlowAttributeMapper();
-		mapper.setInputMappings(Collections.singleton("someAttribute"));
+		// FIXME this is not clear
+		Mapping inputMapping = new Mapping("${flowScope.someAttribute}", "someAttribute");
+		mapper.setInputMapping(inputMapping);
 		MockRequestContext context = new MockRequestContext();
 		context.getFlowScope().setAttribute("someAttribute", "someValue");
-		// FIXME this currently throws an EvaluationException 
 		Map input = mapper.createSubflowInput(context);
 		assertEquals(1, input.size());
 		assertEquals("someValue", input.get("someAttribute"));
