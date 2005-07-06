@@ -7,10 +7,26 @@ package org.springframework.webflow;
  * subinterface.
  *
  * @see org.springframework.webflow.FlowExecutionContext
- *  
+ * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public interface FlowExecutionStatistics {
+	
+	/**
+	 * Returns a key that uniquely identifies this flow execution as
+	 * a logical entity. It is possible that the same <i>logical</i>
+	 * flow execution is physically represented as several different
+	 * objects. However, each of those objects will have the same key.
+	 * As such, the key identifies a group of related flow execution
+	 * representations for the same logical flow execution.
+	 * <p>
+	 * This key will remain unchanged during the entire lifecycle of
+	 * the flow execution an can safely be used to identify the
+	 * flow execution among all other flow executions.
+	 * @return the flow execution identification key
+	 */
+	public String getKey();
 	
 	/**
 	 * Returns a display string suitable for logging/printing in a console

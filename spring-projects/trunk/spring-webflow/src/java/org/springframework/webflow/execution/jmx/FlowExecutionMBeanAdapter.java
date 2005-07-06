@@ -37,6 +37,10 @@ public class FlowExecutionMBeanAdapter implements FlowExecutionMBean {
 	public String getCaption() {
 		return flowExecution.getCaption();
 	}
+	
+	public String getKey() {
+		return flowExecution.getKey();
+	}
 
 	public long getCreationTimestamp() {
 		return flowExecution.getCreationTimestamp();

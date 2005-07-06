@@ -50,6 +50,8 @@ import org.springframework.webflow.Transition;
  * @author Erwin Vervaet
  */
 public class MockRequestContext implements RequestContext, FlowExecutionContext {
+	
+	private String key = "Mock Flow Execution";
 
 	private Event sourceEvent;
 
@@ -185,7 +187,9 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 		inTransaction = false;
 	}
 
-	// implementing FlowContext
+	public String getKey() {
+		return key;
+	}
 
 	public String getCaption() {
 		return getActiveFlow().getId();

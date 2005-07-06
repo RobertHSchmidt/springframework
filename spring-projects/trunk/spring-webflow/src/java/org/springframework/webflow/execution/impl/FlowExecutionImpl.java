@@ -47,6 +47,7 @@ import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.FlowScopeTokenTransactionSynchronizer;
 import org.springframework.webflow.execution.TransactionSynchronizer;
+import org.springframework.webflow.util.RandomGuid;
 
 /**
  * Default implementation of FlowExecution that uses a stack-based data
@@ -74,6 +75,11 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	// static logger because FlowExecutionImpl objects can be serialized
 	// and then restored
 	protected static final Log logger = LogFactory.getLog(FlowExecutionImpl.class);
+	
+	/**
+	 * Key identifying this flow execution.
+	 */
+	private String key;
 
 	/**
 	 * The time at which this object was created.
@@ -141,6 +147,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 			TransactionSynchronizer transactionSynchronizer) {
 		Assert.notNull(rootFlow, "The root flow definition is required");
 		Assert.notNull(transactionSynchronizer, "The transaction synchronizer is required");
+		this.key = new RandomGuid().toString();
 		this.creationTimestamp = System.currentTimeMillis();
 		this.rootFlow = rootFlow;
 		this.getListeners().add(listeners);
@@ -164,15 +171,23 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		this.transactionSynchronizer = transactionSynchronizer;
 	}
 	
-	// implementing FlowContext
+	// implementing FlowExecutionStatistics
+	
+	public String getKey() {
+		return key;
+	}
 
 	public String getCaption() {
+		StringBuffer caption = new StringBuffer();
 		if (isActive()) {
-			return "[" + getActiveSession().getStatus().getLabel() + "] execution for flow '" + getRootFlow().getId() + "': [" + getSessionPath() + "]";
+			caption.append("[").append(getActiveSession().getStatus().getLabel()).append("] execution for flow '");
+			caption.append(getRootFlow().getId()).append("': [").append(getSessionPath()).append("]");
 		}
 		else {
-			return "Inactive execution for flow '" + getRootFlow().getId() + "'";
+			caption.append("Inactive execution for flow '").append(getRootFlow().getId()).append("'");
 		}
+		caption.append("; key: '").append(getKey()).append("'");
+		return caption.toString();
 	}
 
 	/**
@@ -205,18 +220,6 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		return System.currentTimeMillis() - this.creationTimestamp;
 	}
 	
-	public Flow getRootFlow() {
-		return rootFlow;
-	}
-	
-	public Flow getActiveFlow() {
-		return getActiveSession().getFlow();
-	}
-
-	public State getCurrentState() {
-		return getActiveSession().getCurrentState();
-	}
-
 	public long getLastRequestTimestamp() {
 		return this.lastRequestTimestamp;
 	}
@@ -240,10 +243,6 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		Assert.notNull(lastEvent, "The last event is required");
 		this.lastEventId = lastEvent.getId();
 	}
-
-	public FlowSession getActiveSession() {
-		return getActiveSessionInternal();
-	}
 	
 	public boolean isActive() {
 		return !executingFlowSessions.isEmpty();
@@ -257,7 +256,25 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 			return false;
 		}
 	}
+	
+	// implementing FlowExecutionContext
 
+	public Flow getRootFlow() {
+		return rootFlow;
+	}
+	
+	public Flow getActiveFlow() {
+		return getActiveSession().getFlow();
+	}
+
+	public State getCurrentState() {
+		return getActiveSession().getCurrentState();
+	}
+
+	public FlowSession getActiveSession() {
+		return getActiveSessionInternal();
+	}
+	
 	/**
 	 * Check that this flow execution is active and throw an exception if it's not.
 	 */
@@ -435,6 +452,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	// custom serialization
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeObject(this.key);
 		out.writeLong(this.creationTimestamp);
 		if (this.getRootFlow() != null) {
 			// avoid bogus NullPointerExceptions
@@ -449,6 +467,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	}
 
 	private void readObject(ObjectInputStream in) throws OptionalDataException, ClassNotFoundException, IOException {
+		this.key = (String)in.readObject();
 		this.creationTimestamp = in.readLong();
 		this.rootFlowId = (String)in.readObject();
 		this.lastEventId = (String)in.readObject();
@@ -488,12 +507,15 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 
 	public String toString() {
 		if (!isActive()) {
-			return "[Empty FlowExecutionStack; no flows are active]";
+			return "[Empty FlowExecutionStack with key '" + getKey() + "'; no flows are active]";
 		}
 		else {
-			return new ToStringCreator(this).append("activeFlow", getActiveSession().getFlow().getId()).append("currentState",
-					getCurrentState().getId()).append("rootFlow", getRootFlow().getId()).append("executingFlowSessions",
-					executingFlowSessions).toString();
+			return new ToStringCreator(this)
+					.append("key", getKey())
+					.append("activeFlow", getActiveSession().getFlow().getId())
+					.append("currentState",	getCurrentState().getId())
+					.append("rootFlow", getRootFlow().getId())
+					.append("executingFlowSessions", executingFlowSessions).toString();
 		}
 	}
 }
