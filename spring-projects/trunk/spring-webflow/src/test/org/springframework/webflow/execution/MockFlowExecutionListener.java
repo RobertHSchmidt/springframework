@@ -15,9 +15,11 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -32,6 +34,8 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  */
 public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 
+	private boolean created;
+	
 	private boolean started;
 
 	private boolean executing;
@@ -40,6 +44,12 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	private boolean requestInProcess;
 
+	private int loadCount;
+	
+	private int saveCount;
+	
+	private boolean removed;
+	
 	private int requestsSubmitted;
 
 	private int requestsProcessed;
@@ -98,7 +108,6 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		stateTransitions++;
 	}
 
-
 	public void paused(RequestContext context) {
 		executing = false;
 	}
@@ -117,6 +126,29 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 			flowNestingLevel--;
 			Assert.state(started, "The flow execution prematurely ended");
 		}
+	}
+
+	public void created(FlowExecutionContext context) {
+		this.created = true;
+	}
+
+	public void loaded(FlowExecutionContext context, Serializable id) {
+		loadCount++;
+	}
+
+	public void removed(FlowExecutionContext context, Serializable id) {
+		removed = true;
+	}
+
+	public void saved(FlowExecutionContext context, Serializable id) {
+		saveCount++;
+	}
+	
+	/**
+	 * Is the flow execution created
+	 */
+	public boolean isCreated() {
+		return created;
 	}
 	
 	/**
@@ -176,11 +208,27 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 	public int getTransitionCount() {
 		return stateTransitions;
 	}
+
+	public int getLoadCount() {
+		return loadCount;
+	}
 	
+	public int getSaveCount() {
+		return saveCount;
+	}
+	
+	public boolean isRemoved() {
+		return removed;
+	}
+
 	public void reset() {
+		created = false;
 		started = false;
 		executing = false;
+		removed = false;
 		requestsSubmitted = 0;
 		requestsProcessed = 0;
+		loadCount = 0;
+		saveCount = 0;
 	}
 }
