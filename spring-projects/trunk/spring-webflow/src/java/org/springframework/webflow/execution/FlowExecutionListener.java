@@ -114,21 +114,21 @@ public interface FlowExecutionListener {
 	public void sessionEnded(RequestContext context, FlowSession endedSession);
 	
 	/**
-	 * Called when a flow execution is loaded from flow execution storage.
+	 * Called after a flow execution is loaded from storage.
 	 * @param context the flow execution that was loaded
 	 * @param storageId id the unique id of the flow execution in the storage medium
 	 */
 	public void loaded(FlowExecutionContext context, String storageId);
 	
 	/**
-	 * Called when a flow execution is saved to flow execution storage.
+	 * Called after a flow execution is saved to  storage.
 	 * @param context the flow execution that was loaded
 	 * @param storageId id the unique id of the flow execution in the storage medium
 	 */
 	public void saved(FlowExecutionContext context, String storageId);
 	
 	/**
-	 * Called when a flow execution is removed from flow execution storage.
+	 * Called after a flow execution is removed from storage.
 	 * @param context the flow execution that was loaded
 	 * @param storageId id the unique id of the flow execution in the storage medium
 	 */

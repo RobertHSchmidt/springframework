@@ -389,8 +389,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 			// retrieve information about it
 			flowExecution = getStorage().load(id, event);
 			// rehydrate the execution if neccessary (if it had been serialized out)
-			flowExecution.rehydrate(
-					getFlowLocator(), this, getTransactionSynchronizer());
+			flowExecution.rehydrate(getFlowLocator(), this, getTransactionSynchronizer());
 			if (listener != null) {
 				flowExecution.getListeners().add(listener);
 			}
