@@ -780,7 +780,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 					List inputMappings = new ArrayList(inputElements.size());
 					Iterator it = inputElements.iterator();
 					while (it.hasNext()) {
-						inputMappings.add(parseMapping((Element)it.next()));
+						inputMappings.add(parseMapping((Element)it.next(), true));
 					}
 					attributeMapper.setInputMappings(inputMappings);
 				}
@@ -789,7 +789,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 					List outputMappings = new ArrayList(outputElements.size());
 					Iterator it = outputElements.iterator();
 					while (it.hasNext()) {
-						outputMappings.add(parseMapping((Element)it.next()));
+						outputMappings.add(parseMapping((Element)it.next(), false));
 					}
 					attributeMapper.setOutputMappings(outputMappings);
 				}
@@ -801,7 +801,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Parse a single inline attribute mapping definition.
 	 */
-	protected Mapping parseMapping(Element element) {
+	protected Mapping parseMapping(Element element, boolean isInputMapping) {
 		String name = element.getAttribute(NAME_ATTRIBUTE);
 		String value = element.getAttribute(VALUE_ATTRIBUTE);
 		String as = element.getAttribute(AS_ATTRIBUTE);
@@ -812,10 +812,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		}
 		if (StringUtils.hasText(name)) {
 			if (StringUtils.hasText(as)) {
-				return new Mapping(flowScopeExpression(name), parsePropertyExpression(as), valueConverter);
+				return new Mapping(flowScopeExpression(name, isInputMapping), parsePropertyExpression(as), valueConverter);
 			}
 			else {
-				return new Mapping(flowScopeExpression(name), parsePropertyExpression(name), valueConverter);
+				return new Mapping(flowScopeExpression(name, isInputMapping), parsePropertyExpression(name), valueConverter);
 			}
 		}
 		else if (StringUtils.hasText(value)) {
@@ -830,8 +830,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Returns an evaluator to get a named attribute from the flow scope.
 	 */
-	protected Expression flowScopeExpression(String expressionString) {
-		return new FlowScopeExpression(parseExpression(expressionString));
+	protected Expression flowScopeExpression(String expressionString, boolean isInputMapping) {
+		if (isInputMapping) {
+			// must specifically provide a flow scope expression for mapper to use
+			return new FlowScopeExpression(parseExpression(expressionString));
+		} else {
+			// flowscope is assumed by mapper
+			return parseExpression(expressionString);
+		}
 	}
 	
 	/**
