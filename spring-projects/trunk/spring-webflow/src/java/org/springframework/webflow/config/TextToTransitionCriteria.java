@@ -66,17 +66,22 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	 */
 	public static final String CLASS_PREFIX = "class:";
 
-	private ExpressionParser expressionParser = ExpressionParserUtils.getDefaultExpressionParser();
+	private ExpressionParser expressionParser;
 	
 	/**
-	 * 
+	 * Create a new converter that converts strings to transition
+	 * criteria objects. The default expression parser will
+	 * be used.
+	 * @see ExpressionParserUtils#getDefaultExpressionParser()
 	 */
 	public TextToTransitionCriteria() {
-		
+		this(ExpressionParserUtils.getDefaultExpressionParser());
 	}
 	
 	/**
-	 * @param expressionParser
+	 * Create a new converter that converts strings to transition
+	 * criteria objects using the given expression parser.
+	 * @param expressionParser the expression parser to use
 	 */
 	public TextToTransitionCriteria(ExpressionParser expressionParser) {
 		setExpressionParser(expressionParser);
