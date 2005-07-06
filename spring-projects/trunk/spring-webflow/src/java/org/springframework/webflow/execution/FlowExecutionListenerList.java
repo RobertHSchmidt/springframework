@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -178,6 +179,16 @@ public class FlowExecutionListenerList {
 	
 	// methods to fire events to all listeners
 	
+
+	/**
+	 * Notify all interested listeners that a flow execution was created.
+	 */
+	public void fireCreated(FlowExecutionContext context) {
+		for (Iterator it = iterator(); it.hasNext(); ) {
+			((FlowExecutionListener)it.next()).created(context);
+		}
+	}
+	
 	/**
 	 * Notify all interested listeners that a request was submitted to the flow
 	 * execution.
@@ -279,9 +290,9 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was loaded from
 	 * storage.
 	 */
-	public void fireLoaded(FlowExecutionContext context, String storageId) {
+	public void fireLoaded(FlowExecutionContext context, Serializable id) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).loaded(context, storageId);
+			((FlowExecutionListener)it.next()).loaded(context, id);
 		}
 	}
 	
@@ -289,9 +300,9 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was saved to
 	 * storage.
 	 */
-	public void fireSaved(FlowExecutionContext context, String storageId) {
+	public void fireSaved(FlowExecutionContext context, Serializable id) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).saved(context, storageId);
+			((FlowExecutionListener)it.next()).saved(context, id);
 		}
 	}
 	
@@ -299,10 +310,9 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was removed from
 	 * storage.
 	 */
-	public void fireRemoved(FlowExecutionContext context, String storageId) {
+	public void fireRemoved(FlowExecutionContext context, Serializable id) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).removed(context, storageId);
+			((FlowExecutionListener)it.next()).removed(context, id);
 		}
 	}
-
 }

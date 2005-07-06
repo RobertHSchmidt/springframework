@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Serializable;
+
 import org.springframework.core.NestedRuntimeException;
 
 /**
@@ -27,13 +29,13 @@ import org.springframework.core.NestedRuntimeException;
  */
 public class NoSuchFlowExecutionException extends NestedRuntimeException {
 
-	private String flowExecutionId;
+	private Serializable flowExecutionId;
 
 	/**
 	 * Create a new flow execution lookup exception.
 	 * @param flowExecutionId id of the flow execution that cannot be found
 	 */
-	public NoSuchFlowExecutionException(String flowExecutionId) {
+	public NoSuchFlowExecutionException(Serializable flowExecutionId) {
 		this(flowExecutionId, null);
 	}
 
@@ -42,7 +44,7 @@ public class NoSuchFlowExecutionException extends NestedRuntimeException {
 	 * @param flowExecutionId id of the flow execution that cannot be found
 	 * @param cause the underlying cause of this exception
 	 */
-	public NoSuchFlowExecutionException(String flowExecutionId, Throwable cause) {
+	public NoSuchFlowExecutionException(Serializable flowExecutionId, Throwable cause) {
 		super("No executing flow could be found with id '" + flowExecutionId
 				+ "' -- perhaps the flow has ended or expired? "
 				+ "This could happen if your users are relying on browser history "
@@ -54,7 +56,7 @@ public class NoSuchFlowExecutionException extends NestedRuntimeException {
 	 * Returns the id of the flow execution that was not found.
 	 * @return the flow execution id.
 	 */
-	public String getFlowExecutionId() {
+	public Serializable getFlowExecutionId() {
 		return flowExecutionId;
 	}
 }

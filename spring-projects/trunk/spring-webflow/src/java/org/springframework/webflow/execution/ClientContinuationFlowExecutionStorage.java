@@ -15,7 +15,10 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Serializable;
+
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 
 /**
@@ -68,17 +71,17 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 		this.compress = compress;
 	}
 
-	public FlowExecution load(String id, Event requestingEvent) throws NoSuchFlowExecutionException,
+	public FlowExecution load(Serializable id, Event requestingEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		return decode(id);
 	}
 
-	public String save(String id, FlowExecution flowExecution, Event requestingEvent)
+	public Serializable save(Serializable id, FlowExecution flowExecution, Event requestingEvent)
 			throws FlowExecutionStorageException {
 		return encode(flowExecution);
 	}
 
-	public void remove(String id, Event requestingEvent) throws FlowExecutionStorageException {
+	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException {
 		// nothing to do here
 	}
 
@@ -92,8 +95,9 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 	 * @param data the encode flow execution data
 	 * @return the decoded flow execution instance
 	 */
-	protected FlowExecution decode(String data) {
-		return new FlowExecutionContinuation(Base64.decodeBase64(data.getBytes()), isCompress()).getFlowExecution();
+	protected FlowExecution decode(Serializable data) {
+		Assert.notNull(data, "The flow execution data to decode cannot be null");
+		return new FlowExecutionContinuation(Base64.decodeBase64(String.valueOf(data).getBytes()), isCompress()).getFlowExecution();
 	}
 
 	/**

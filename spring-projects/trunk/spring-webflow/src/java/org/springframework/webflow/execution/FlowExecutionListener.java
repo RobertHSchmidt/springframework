@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.springframework.webflow.FlowExecutionContext;
@@ -36,6 +37,13 @@ import org.springframework.webflow.State;
  */
 public interface FlowExecutionListener {
 
+	/**
+	 * Called after a new flow execution is created but before it is started 
+	 * or any requests have been submitted.
+	 * @param context the flow execution context
+	 */
+	public void created(FlowExecutionContext context);
+	
 	/**
 	 * Called when any client request is submitted to manipulate this
 	 * flow execution.
@@ -68,7 +76,7 @@ public interface FlowExecutionListener {
 	public void sessionStarted(RequestContext context);
 
 	/**
-	 * Called when an event is signaled in a state, but prior to a state
+	 * Called when an event is signaled in a state, but prior to any state
 	 * transition.
 	 * @param context the source of the event, with a 'lastEvent'
 	 *        property for accessing the signaled event
@@ -114,23 +122,23 @@ public interface FlowExecutionListener {
 	public void sessionEnded(RequestContext context, FlowSession endedSession);
 	
 	/**
-	 * Called after a flow execution is loaded from storage.
+	 * Called after an existing flow execution is loaded and rehydrated from storage.
 	 * @param context the flow execution that was loaded
 	 * @param id id the unique id of the flow execution in the storage medium
 	 */
-	public void loaded(FlowExecutionContext context, String id);
+	public void loaded(FlowExecutionContext context, Serializable id);
 	
 	/**
-	 * Called after a flow execution is saved to  storage.
+	 * Called after a new or resumed flow execution is saved to storage.
 	 * @param context the flow execution that was loaded
 	 * @param id id the unique id of the flow execution in the storage medium
 	 */
-	public void saved(FlowExecutionContext context, String id);
+	public void saved(FlowExecutionContext context, Serializable id);
 	
 	/**
-	 * Called after a flow execution is removed from storage.
+	 * Called after an ended flow execution is removed from storage.
 	 * @param context the flow execution that was loaded
 	 * @param id id the unique id of the flow execution in the storage medium
 	 */
-	public void removed(FlowExecutionContext context, String id);
+	public void removed(FlowExecutionContext context, Serializable id);
 }

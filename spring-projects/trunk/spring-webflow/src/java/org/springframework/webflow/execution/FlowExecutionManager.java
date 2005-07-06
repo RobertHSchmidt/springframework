@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -375,13 +376,14 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	public ViewDescriptor onEvent(Event event, FlowExecutionListener listener) throws Exception {
 		FlowExecution flowExecution;
 		ViewDescriptor viewDescriptor;
-		String id = getFlowExecutionId(event);
+		Serializable id = getFlowExecutionId(event);
 		if (id == null) {
 			// start a new flow execution
 			flowExecution = createFlowExecution(getFlow(event));
 			if (listener != null) {
 				flowExecution.getListeners().add(listener);
 			}
+			flowExecution.getListeners().fireCreated(flowExecution);
 			viewDescriptor = flowExecution.start(event);
 		}
 		else {
@@ -510,7 +512,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 * @param flowExecutionContext the flow context providing info about the flow execution
 	 * @return the processed view descriptor
 	 */
-	protected ViewDescriptor prepareViewDescriptor(ViewDescriptor viewDescriptor, String flowExecutionId,
+	protected ViewDescriptor prepareViewDescriptor(ViewDescriptor viewDescriptor, Serializable flowExecutionId,
 			FlowExecutionContext flowExecutionContext) {
 		if (flowExecutionContext.isActive() && viewDescriptor != null) {
 			// make the unique flow execution id available in the model

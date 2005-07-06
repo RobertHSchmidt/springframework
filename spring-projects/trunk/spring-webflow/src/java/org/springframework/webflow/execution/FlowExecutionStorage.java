@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Serializable;
+
 import org.springframework.webflow.Event;
 
 /**
@@ -57,7 +59,7 @@ public interface FlowExecutionStorage {
 	 * @throws FlowExecutionStorageException when there is a technical problem
 	 *         accessing the flow execution storage
 	 */
-	public FlowExecution load(String id, Event requestingEvent) throws NoSuchFlowExecutionException,
+	public FlowExecution load(Serializable id, Event requestingEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException;
 
 	/**
@@ -72,7 +74,7 @@ public interface FlowExecutionStorage {
 	 * @throws FlowExecutionStorageException when there is a technical problem
 	 *         accessing the flow execution storage
 	 */
-	public String save(String id, FlowExecution flowExecution, Event requestingEvent)
+	public Serializable save(Serializable id, FlowExecution flowExecution, Event requestingEvent)
 			throws FlowExecutionStorageException;
 
 	/**
@@ -83,6 +85,6 @@ public interface FlowExecutionStorage {
 	 * @throws FlowExecutionStorageException when there is a technical problem
 	 *         accessing the flow execution storage
 	 */
-	public void remove(String id, Event requestingEvent) throws FlowExecutionStorageException;
+	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException;
 
 }
