@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.samples.phonebook.web.flow.action;
+package org.springframework.webflow.samples.phonebook.web;
 
 import junit.framework.TestCase;
 
