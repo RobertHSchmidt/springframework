@@ -238,6 +238,11 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 		return Collections.EMPTY_MAP;
 	}
 	
+	/**
+	 * Attribute mapper specialization that knows if an "attribute name" is provided, and not a value ${expression},
+	 * that the name should be treated as a flow scope expression.
+	 * @author Keith Donald
+	 */
 	protected static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
 		public FlowScopeAwareParameterizableAttributeMapper() {
 			super();
