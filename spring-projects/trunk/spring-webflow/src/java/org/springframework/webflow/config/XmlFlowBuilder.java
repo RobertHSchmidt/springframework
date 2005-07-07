@@ -30,7 +30,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.convert.ConversionExecutor;
-import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.expression.PropertyExpression;
@@ -50,7 +49,6 @@ import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
@@ -60,6 +58,7 @@ import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.ActionTransitionCriteria;
 import org.springframework.webflow.action.MultiAction;
+import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 import org.springframework.webflow.support.TransitionCriteriaChain;
 import org.w3c.dom.Document;
@@ -854,27 +853,5 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected PropertyExpression parsePropertyExpression(String expressionString) {
 		return ExpressionFactory.parsePropertyExpression(expressionString);
-	}
-	
-	/**
-	 * Expression evaluator that evaluates an expression in flow scope.
-	 */
-	private static class FlowScopeExpression implements Expression {
-		
-		private Expression expression;
-		
-		/**
-		 * Create a new expression evaluator that executes given evaluator
-		 * 'in flow scope'.
-		 * @param evaluator the nested evaluator to execute
-		 */
-		public FlowScopeExpression(Expression evaluator) {
-			this.expression = evaluator;
-		}
-		
-		public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
-			RequestContext requestContext = (RequestContext)target;
-			return expression.evaluateAgainst(requestContext.getFlowScope(), context);
-		}
 	}
 }

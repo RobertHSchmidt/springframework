@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.AttributeMapper;
+import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.support.Mapping;
 import org.springframework.binding.support.ParameterizableAttributeMapper;
 import org.springframework.core.style.ToStringCreator;
@@ -136,7 +137,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * @param inputMappings the input mappings
 	 */
 	public void setInputMappings(Collection inputMappings) {
-		this.inputMapper = new ParameterizableAttributeMapper(inputMappings);
+		this.inputMapper = new FlowScopeAwareParameterizableAttributeMapper(inputMappings);
 	}
 
 	/**
@@ -149,7 +150,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 *      attribute in the child flow.
 	 */
 	public void setInputMappingsMap(Map inputMappings) {
-		this.inputMapper = new ParameterizableAttributeMapper(inputMappings);
+		this.inputMapper = new FlowScopeAwareParameterizableAttributeMapper(inputMappings);
 	}
 
 	/**
@@ -235,6 +236,37 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 */
 	protected Map getMappingContext(RequestContext context) {
 		return Collections.EMPTY_MAP;
+	}
+	
+	protected static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
+		public FlowScopeAwareParameterizableAttributeMapper() {
+			super();
+		}
+
+		public FlowScopeAwareParameterizableAttributeMapper(Collection mappings) {
+			super(mappings);
+		}
+
+		public FlowScopeAwareParameterizableAttributeMapper(Map mappingsMap) {
+			super(mappingsMap);
+		}
+
+		public FlowScopeAwareParameterizableAttributeMapper(Mapping mapping) {
+			super(mapping);
+		}
+
+		public FlowScopeAwareParameterizableAttributeMapper(Mapping[] mappings) {
+			super(mappings);
+		}
+
+		protected void addMapping(String sourceExpression, String targetExpression) {
+			if (ExpressionFactory.isParseableExpression(sourceExpression)) {
+				addMapping(new Mapping(sourceExpression, targetExpression));
+			} else {
+				addMapping(new Mapping(new FlowScopeExpression(ExpressionFactory.parseExpression(sourceExpression)),
+						ExpressionFactory.parsePropertyExpression(targetExpression)));
+			}
+		}
 	}
 	
 	public String toString() {
