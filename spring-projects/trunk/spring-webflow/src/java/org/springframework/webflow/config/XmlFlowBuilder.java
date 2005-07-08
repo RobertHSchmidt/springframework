@@ -735,7 +735,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * object.
 	 */
 	protected Transition[] parseIf(Element element) {
-		FlowArtifact ifDef = parseFlowArtifactDefinition(element);
 		TransitionCriteria criteria = (TransitionCriteria)
 			converterFor(TransitionCriteria.class).execute(element.getAttribute(TEST_ATTRIBUTE));
 		String trueStateId = element.getAttribute(THEN_ATTRIBUTE);
