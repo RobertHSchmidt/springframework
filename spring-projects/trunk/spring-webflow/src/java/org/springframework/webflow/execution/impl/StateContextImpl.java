@@ -176,7 +176,7 @@ public class StateContextImpl implements StateContext {
 	
 	public ViewDescriptor spawn(State startState, Map input) throws IllegalStateException {
 		this.flowExecution.getListeners().fireSessionStarting(this, startState, input);
-		FlowSession session = this.flowExecution.activateSession(this, startState.getFlow(), input);
+		this.flowExecution.activateSession(this, startState.getFlow(), input);
 		ViewDescriptor viewDescriptor = startState.enter(this);
 		this.flowExecution.getListeners().fireSessionStarted(this);
 		return viewDescriptor;

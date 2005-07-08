@@ -489,11 +489,9 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		this.rootFlowId = null;
 		// rehydrate all flow sessions
 		Iterator it = this.executingFlowSessions.iterator();
-		FlowSessionImpl parent = null;
 		while (it.hasNext()) {
 			FlowSessionImpl session = (FlowSessionImpl)it.next();
 			session.rehydrate(flowLocator);
-			parent = session;
 		}
 		if (isActive()) {
 			// sanity check
