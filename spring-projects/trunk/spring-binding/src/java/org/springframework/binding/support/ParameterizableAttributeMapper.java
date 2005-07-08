@@ -110,7 +110,7 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	 */
 	public void setMappingsCollection(Collection mappings) {
 		this.mappings = new HashSet();
-		putCollectionMappings(this.mappings, mappings);
+		addCollectionMappings(this.mappings, mappings);
 	}
 
 	/**
@@ -124,14 +124,14 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	 */
 	public void setMappingsMap(Map mappingsMap) {
 		this.mappings = new HashSet();
-		putMapMappings(this.mappings, mappingsMap);
+		addMapMappings(this.mappings, mappingsMap);
 	}
 
 	/**
 	 * Internal worker function to convert given mappingsList to a simple
 	 * mappings map.
 	 */
-	private void putCollectionMappings(Collection mappings, Collection mappingsList) {
+	private void addCollectionMappings(Collection mappings, Collection mappingsList) {
 		Iterator it = mappingsList.iterator();
 		while (it.hasNext()) {
 			Object element = it.next();
@@ -139,30 +139,43 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 				mappings.add(element);
 			}
 			else if (element instanceof Collection) {
-				putCollectionMappings(mappings, (Collection)element);
+				addCollectionMappings(mappings, (Collection)element);
 			}
 			else if (element instanceof Map) {
-				putMapMappings(mappings, (Map)element);
+				addMapMappings(mappings, (Map)element);
 			}
 			else {
-				Assert.isInstanceOf(String.class, element, "ParameterizableFlowModelMapper key or value: ");
-				mappings.add(new Mapping((String)element)); 
+				addMapping(String.valueOf(element));
 			}
 		}
 	}
 
-	private void putMapMappings(Collection mappings, Map mappingsMap) {
-		// we could just add the map into the other, but want to
-		// validate key and value types!
-		Iterator itMap = mappingsMap.entrySet().iterator();
-		while (itMap.hasNext()) {
-			Map.Entry entry = (Map.Entry)itMap.next();
-			Assert.isInstanceOf(String.class, entry.getKey(), "ParameterizableAttributeMapper key: ");
-			Assert.isInstanceOf(String.class, entry.getValue(), "ParameterizableAttributeMapper value: ");
-			mappings.add(new Mapping((String)entry.getKey(), (String)entry.getValue()));
+	private void addMapMappings(Collection mappings, Map mappingsMap) {
+		Iterator it = mappingsMap.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry)it.next();
+			addMapping(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
 		}
 	}
 
+	private void addMapping(String expression) {
+		addMapping(expression, expression);
+	}
+
+	/**
+	 * Hook method to add a mapping given a source and target expression.  May be
+	 * overidden by subclasses to customize mapping parsing logic.
+	 * @param sourceExpression the source expression
+	 * @param targetExpression the target expression
+	 */
+	protected void addMapping(String sourceExpression, String targetExpression) {
+		addMapping(new Mapping(sourceExpression, targetExpression));
+	}
+
+	protected void addMapping(Mapping mapping) {
+		this.mappings.add(mapping);
+	}
+	
 	/**
 	 * Map data from one map to another map using specified mappings.
 	 */
