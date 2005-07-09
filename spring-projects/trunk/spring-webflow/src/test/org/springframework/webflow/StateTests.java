@@ -25,10 +25,10 @@ import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.support.Mapping;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AttributeMapperAction;
-import org.springframework.webflow.config.TextToTransitionCriteria;
-import org.springframework.webflow.config.TextToViewDescriptorCreator;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.support.convert.TextToTransitionCriteria;
+import org.springframework.webflow.support.convert.TextToViewDescriptorCreator;
 
 /**
  * Tests that each of the Flow state types execute as expected when entered.

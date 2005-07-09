@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
  * 
  * @author Erwin Vervaet
  */
-public class FlowDtdResolver implements EntityResolver {
+public class WebFlowDtdResolver implements EntityResolver {
 
 	private static final String WEBFLOW_ELEMENT = "spring-webflow";
 

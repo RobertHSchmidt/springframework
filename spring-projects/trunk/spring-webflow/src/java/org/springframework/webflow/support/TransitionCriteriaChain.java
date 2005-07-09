@@ -19,8 +19,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.action.ActionTransitionCriteria;
 
 /**
  * An ordered chain of <code>TransitionCriteria</code>. Iterates over each element
@@ -65,5 +67,19 @@ public class TransitionCriteriaChain implements TransitionCriteria {
 			}
 		}
 		return true;
+	}
+	
+	// static helpers
+	
+	/**
+	 * Create a transition criteria chain chaining given list of actions.
+	 * @param actions the actions (and there execution properties) to chain together
+	 */
+	public static TransitionCriteria criteriaChainFor(AnnotatedAction[] actions) {
+		TransitionCriteriaChain chain = new TransitionCriteriaChain();
+		for (int i = 0; i < actions.length; i++) {
+			chain.add(new ActionTransitionCriteria(actions[i]));
+		}
+		return chain;
 	}
 }

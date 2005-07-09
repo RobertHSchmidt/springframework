@@ -21,6 +21,7 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.support.convert.TextToTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -74,7 +75,7 @@ public class TextToTransitionCriteriaTests extends TestCase {
 	public void testInvalidSyntax() throws Exception {
 		try {
 			String expression = "${&foo<<m}";
-			TransitionCriteria criterion = (TransitionCriteria)new TextToTransitionCriteria().convert(expression);
+			new TextToTransitionCriteria().convert(expression);
 			fail("Syntax error should throw ExpressionSyntaxException");
 		}
 		catch (ConversionException ex) {

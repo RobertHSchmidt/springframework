@@ -24,6 +24,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.execution.ServiceLookupException;
+import org.springframework.webflow.support.convert.FlowConversionService;
 
 /**
  * Simple helper adapter for the flow service locator interface. For testing.

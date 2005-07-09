@@ -33,6 +33,7 @@ import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.execution.ServiceLookupException;
+import org.springframework.webflow.support.convert.FlowConversionService;
 
 /**
  * A flow service locator that uses a Spring bean factory to lookup flow-related

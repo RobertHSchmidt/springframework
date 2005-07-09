@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.binding.convert.ConversionService;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
@@ -38,6 +39,7 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.config.BeanFactoryFlowServiceLocator;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.support.convert.FlowConversionService;
 
 /**
  * A manager for the executing flows of the application. This object is responsible for
@@ -133,6 +135,8 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	private FlowExecutionStorage storage;
 
 	private TransactionSynchronizer transactionSynchronizer = new FlowScopeTokenTransactionSynchronizer();
+	
+	private ConversionService conversionService = new FlowConversionService();
 
 	private BeanFactory beanFactory;
 
@@ -150,6 +154,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 * @see #setListeners(Collection, FlowExecutionListenerCriteria)
 	 * @see #setStorage(FlowExecutionStorage) 
 	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
+	 * @see #setConversionService(ConversionService)
 	 */
 	public FlowExecutionManager() {
 	}
@@ -268,8 +273,9 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 			}
 			else {
 				// string encoded
-				criteria =
-					(FlowExecutionListenerCriteria)new TextToFlowExecutionListenerCriteria().convert(entry.getValue());
+				criteria = 
+					(FlowExecutionListenerCriteria)getConversionService().
+						conversionExecutorFor(String.class, FlowExecutionListenerCriteria.class).execute(entry.getValue());
 			}
 			if (entry.getKey() instanceof Collection) {
 				setListeners((Collection)entry.getKey(), criteria);
@@ -335,6 +341,20 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 */
 	public void setTransactionSynchronizer(TransactionSynchronizer transactionSynchronizer) {
 		this.transactionSynchronizer = transactionSynchronizer;
+	}
+
+	/**
+	 * Returns the conversion service used by this flow execution manager.
+	 */
+	public ConversionService getConversionService() {
+		return conversionService;
+	}
+	
+	/**
+	 * Set the conversion service used by this flow execution manager.
+	 */
+	public void setConversionService(ConversionService conversionService) {
+		this.conversionService = conversionService;
 	}
 
 	/**

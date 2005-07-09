@@ -23,7 +23,9 @@
 	</view-state>
 	
 	<view-state id="viewState2">
-		<setup bean="action2" on-error="viewState1"/>
+		<setup on-error="viewState1">
+			<action bean="action2"/>
+		</setup>
 		<transition on="event2" to="subFlowState2"/>
 	</view-state>
 

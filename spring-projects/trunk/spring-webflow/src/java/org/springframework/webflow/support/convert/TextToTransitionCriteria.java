@@ -13,19 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.support.convert;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.binding.convert.ConversionException;
-import org.springframework.binding.convert.support.AbstractConverter;
-import org.springframework.binding.convert.support.TextToClass;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.ParserException;
-import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
@@ -48,7 +43,7 @@ import org.springframework.webflow.TransitionCriteriaFactory;
  * condition, expressed as an expression
  * </li>
  * <li>"class:&lt;classname&gt;" - will result in instantiation and usage of a custom 
- * TransitionCriteria implementation.  The implementation must have a public no-arg constructor.
+ * TransitionCriteria implementation. The implementation must have a public no-arg constructor.
  * </li>
  * </ul>
  * 
@@ -58,24 +53,14 @@ import org.springframework.webflow.TransitionCriteriaFactory;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class TextToTransitionCriteria extends AbstractConverter {
-
-	/**
-	 * Prefix used when the encoded transition criteria denotes a custom
-	 * TransitionCriteria implementation.
-	 */
-	public static final String CLASS_PREFIX = "class:";
-
-	private ExpressionParser expressionParser;
+public class TextToTransitionCriteria extends BaseConverter {
 	
 	/**
 	 * Create a new converter that converts strings to transition
 	 * criteria objects. The default expression parser will
 	 * be used.
-	 * @see ExpressionParserUtils#getDefaultExpressionParser()
 	 */
 	public TextToTransitionCriteria() {
-		this(ExpressionParserUtils.getDefaultExpressionParser());
 	}
 	
 	/**
@@ -86,21 +71,7 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	public TextToTransitionCriteria(ExpressionParser expressionParser) {
 		setExpressionParser(expressionParser);
 	}
-	
-	/**
-	 * Returns the expression parser used by this converter.
-	 */
-	public ExpressionParser getExpressionParser() {
-		return expressionParser;
-	}
-	
-	/**
-	 * Set the expression parser used by this converter.
-	 */
-	public void setExpressionParser(ExpressionParser expressionParser) {
-		this.expressionParser = expressionParser;
-	}
-	
+		
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class } ;
 	}
@@ -109,19 +80,17 @@ public class TextToTransitionCriteria extends AbstractConverter {
 		return new Class[] { TransitionCriteria.class } ;
 	}
 	
-	protected Object doConvert(Object source, Class targetClass) throws ConversionException {
+	protected Object doConvert(Object source, Class targetClass) throws Exception {
 		String encodedCriteria = (String)source;
 		if (!StringUtils.hasText(encodedCriteria) || TransitionCriteriaFactory.WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
 			return TransitionCriteriaFactory.alwaysTrue();
 		}
-		else if (expressionParser.isExpression(encodedCriteria)) {
+		else if (getExpressionParser().isExpression(encodedCriteria)) {
 			return createExpressionTransitionCriteria(encodedCriteria);
 		}
 		else if (encodedCriteria.startsWith(CLASS_PREFIX)) {
-			String className = encodedCriteria.substring(CLASS_PREFIX.length());
-			Class clazz = (Class)new TextToClass().convert(className);
-			Object o = BeanUtils.instantiateClass(clazz);
-			Assert.isInstanceOf(TransitionCriteria.class, o, "Encoded criteria class is of wrong type:");
+			Object o = parseAndInstantiateClass(encodedCriteria);
+			Assert.isInstanceOf(TransitionCriteria.class, o, "Encoded criteria class is of wrong type: ");
 			return (TransitionCriteria)o;
 		}
 		else {
@@ -137,12 +106,7 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	 * @throws ConversionException when there is a problem parsing the expression
 	 */
 	protected TransitionCriteria createExpressionTransitionCriteria(String expression) throws ConversionException {
-		try {
-			return new ExpressionTransitionCriteria(expressionParser.parseExpression(expression));
-		}
-		catch (ParserException e) {
-			throw new ConversionException(expression, ExpressionTransitionCriteria.class, e);
-		}
+		return new ExpressionTransitionCriteria(parseExpression(expression));
 	}
 	
 	/**

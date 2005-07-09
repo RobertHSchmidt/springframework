@@ -19,9 +19,9 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.FlowFactoryBean;
-import org.springframework.webflow.config.TextToTransitionCriteria;
-import org.springframework.webflow.config.TextToViewDescriptorCreator;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.support.convert.TextToTransitionCriteria;
+import org.springframework.webflow.support.convert.TextToViewDescriptorCreator;
 
 /**
  * General flow execution tests.

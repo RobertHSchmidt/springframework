@@ -22,7 +22,6 @@ import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.support.TransitionCriteriaChain;
 
 /**
  * A transition criteria that will execute an action when tested and return
@@ -102,13 +101,5 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 		finally {
 			context.setProperties(null);
 		}
-	}
-
-	public static TransitionCriteria criteriaChainFor(AnnotatedAction[] actions) {
-		TransitionCriteriaChain chain = new TransitionCriteriaChain();
-		for (int i = 0; i < actions.length; i++) {
-			chain.add(new ActionTransitionCriteria(actions[i]));
-		}
-		return chain;
 	}
 }
