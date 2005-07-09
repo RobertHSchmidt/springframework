@@ -273,9 +273,9 @@
 <!ATTLIST view-state autowire (no | byName | byType | constructor | autodetect | default) "default">
 
 <!--
-	Defines a single view state setup action to be executed.
+	Defines view state setup (aka prerender) logic to be executed.
 -->
-<!ELEMENT setup ( action* )>
+<!ELEMENT setup ( action+ )>
 
 <!--
 	State to transition to if the setup action fails. When not specified, the results of the
