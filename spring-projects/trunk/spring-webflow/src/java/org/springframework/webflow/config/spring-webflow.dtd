@@ -142,7 +142,7 @@
 
 <!--
 	A property associated with an another element (action, state, ...). Properties are simple
-	strings that allow you to annotate the element.
+	strings or typed information that allow you to annotate the element.
 	For example, the 'caption' property might serve a GUI tooltip or logging statement, and
 	the 'validatorMethod' property might specify a target method to invoke on a form action's
 	validator in a particular action state.
@@ -155,13 +155,13 @@
 <!ATTLIST property name CDATA #REQUIRED>
 
 <!--
-	The target type of the property value; to facilitate from-string type conversion.  This type
-	string may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer')
+	The target type of the property value; to facilitate from-string type conversion. This type
+	string may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer').
 -->
 <!ATTLIST property type CDATA #IMPLIED>
 
 <!--
-	Thev value of the property; a short-cut alternative to an explicit child 'value' element.
+	The value of the property; a short-cut alternative to an explicit child 'value' element.
 -->
 <!ATTLIST property value CDATA #IMPLIED>
 
@@ -178,11 +178,11 @@
 
 <!--
 	The criteria that triggers this transition, typically taking into account the
-	last event that occured in this flow.  The exact interpretation of the attribute value depends
-	on the TextToTransitionCriteria converter that is installed.  The most basic value is a 
-	static event id (e.g on="success").  Sophisticated, custom transitional expressions are also
+	last event that occured in this flow. The exact interpretation of the attribute value depends
+	on the TextToTransitionCriteria converter that is installed. The most basic value is a 
+	static event id (e.g on="success"). Sophisticated, custom transitional expressions are also
 	supported (e.g on="${#result == 'submit' && flowScope.attribute == 'foo'}, or
-	on="class:example.web.MyCustomTransitionCriteria")
+	on="class:example.web.MyCustomTransitionCriteria").
 -->
 <!ATTLIST transition on CDATA #REQUIRED>
 
@@ -226,21 +226,21 @@
 <!ELEMENT view-state ( setup?, transition+, property* )>
 
 <!--
-	Unique identifier of an view state; must be unique to this flow.
+	Unique identifier of a view state; must be unique to this flow.
 -->
 <!ATTLIST view-state id ID #REQUIRED>
 
 <!--
 	The name of the view that is expected to render when this view state is entered.
-	When no view name is provided, this view state will act as a marker view state.  A marker
+	When no view name is provided, this view state will act as a marker view state. A marker
 	view state does not request the rendering of a view, it only pauses the flow and returns control 
-	the client. Use a marker end state when another	object is expected to generate the response.
+	the client. Use a marker end state when another object is expected to generate the response.
 	
 	While this value may be a static view name, it may also be qualified with a prefix to denote a
-	specific (possibly custom) ViewDescriptorCreator strategy.  The "class:" prefix allows you to 
+	specific (possibly custom) ViewDescriptorCreator strategy. The "class:" prefix allows you to 
 	define a custom ViewDescriptorCreator implementation (e.g class:example.MyViewDescriptorCreator).
 	The "redirect:" prefix triggers creation of a RedirectViewDescriptorCreator which will request a
-	redirect to a specific URL (e.g. redirect:/home.htm).  The exact semantics are defined by the 
+	redirect to a specific URL (e.g. redirect:/home.htm). The exact semantics are defined by the 
 	installed TextToViewDescriptorCreator.
 -->
 <!ATTLIST view-state view CDATA #IMPLIED>
@@ -323,8 +323,8 @@
 
 <!--
 	A transition specification that defines a criteria expression and a state to
-	transition to if the expression is true.  Optionally, this element may also 
-	define a 'else' state to transition to if the expression is false.
+	transition to if the expression is true. Optionally, this element may also 
+	define an 'else' state to transition to if the expression is false.
 	The form is:
  	    <if test="${criteria}" then="${toTrueState}" [else="(toFalseState)"]>
 -->
@@ -434,12 +434,13 @@
 
 <!--
 	An expression for the attribute value in this flow's request context to
-	map to the subflow.  Use this OR the name attribute, not both.
+	map to the subflow. When used, you will also need to specify an 'as'
+	attribute. Use this OR the name attribute, not both.
 -->
 <!ATTLIST input value CDATA #IMPLIED>
 
 <!--
-	The name of the target attribute in the subflow.  This is optional when used in
+	The name of the target attribute in the subflow. This is optional when used in
 	conjunction with the 'name' attribute; by default, the same attribute name will be
 	used between this flow and the subflow.
 	
@@ -449,7 +450,7 @@
 <!ATTLIST input as CDATA #IMPLIED>
 
 <!--
-    The type of the target attribute in the subflow.  This is useful when you wish
+    The type of the target attribute in the subflow. This is useful when you wish
     to perform type conversion on the input value to adapt it to the type the subflow expects.
 -->
 <!ATTLIST input type CDATA #IMPLIED>
@@ -468,12 +469,13 @@
 
 <!--
 	An expression for the attribute value in the subflow's request context to
-	map to this flow.  Use this OR the name attribute, not both.
+	map to this flow. When used, you also need to specify the 'as' attribute.
+	Use this OR the name attribute, not both.
 -->
 <!ATTLIST output value CDATA #IMPLIED>
 
 <!--
-	The name of the target attribute in this flow.  This is optional when used in
+	The name of the target attribute in this flow. This is optional when used in
 	conjunction with the 'name' attribute; by default, the same name will be used between
 	the subflow and this flow.
 
@@ -483,7 +485,7 @@
 <!ATTLIST output as CDATA #IMPLIED>
 
 <!--
-    The type of the target attribute in this flow.  This is useful when you wish
+    The type of the target attribute in this flow. This is useful when you wish
     to perform type conversion on the output value to adapt it to the type this flow expects.
 -->
 <!ATTLIST output type CDATA #IMPLIED>
@@ -500,15 +502,15 @@
 
 <!--
 	Optional name of the view that is expected to be rendered when this state is reached 
-	when there is no parent flow to resume.  When not present, this state will be a marker end state.
+	when there is no parent flow to resume. When not present, this state will be a marker end state.
 	A marker end state does request the rendering of a view, it only returns control to the client.
 	Use a marker end state when another object is expected to generate the response.
 
 	While this value may be a static view name, it may also be qualified with a prefix to denote a
-	specific (possibly custom) ViewDescriptorCreator strategy.  The "class:" prefix allows you to 
+	specific (possibly custom) ViewDescriptorCreator strategy. The "class:" prefix allows you to 
 	define a custom ViewDescriptorCreator implementation (e.g class:example.MyViewDescriptorCreator).
 	The "redirect:" prefix triggers creation of a RedirectViewDescriptorCreator which will request a
-	redirect to a specific URL (e.g. redirect:/home.htm).  The exact capabilities are defined by the 
+	redirect to a specific URL (e.g. redirect:/home.htm). The exact capabilities are defined by the 
 	installed TextToViewDescriptorCreator.
 -->
 <!ATTLIST end-state view CDATA #IMPLIED>
