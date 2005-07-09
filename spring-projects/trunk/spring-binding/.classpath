@@ -11,6 +11,5 @@
 	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
 	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
-	<classpathentry kind="src" path="/spring"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
