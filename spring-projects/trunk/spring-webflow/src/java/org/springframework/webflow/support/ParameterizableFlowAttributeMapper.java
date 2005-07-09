@@ -41,7 +41,7 @@ import org.springframework.webflow.RequestContext;
  * <tr>
  * <td>inputMapper</td>
  * <td><i>null</i></td>
- * <td>The AttributesMapper strategy responsible for mapping starting
+ * <td>The AttributeMapper strategy responsible for mapping starting
  * subflow input attributes from a suspending parent flow.</td>
  * </tr>
  * <tr>
@@ -68,7 +68,7 @@ import org.springframework.webflow.RequestContext;
  * </tr>
  * <td>outputMapper</td>
  * <td><i>null</i></td>
- * <td>The AttributesMapper strategy responsible for mapping ending subflow
+ * <td>The AttributeMapper strategy responsible for mapping ending subflow
  * output attributes to a resuming parent flow as output.</td>
  * </tr>
  * <tr>
@@ -237,13 +237,20 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	protected Map getMappingContext(RequestContext context) {
 		return Collections.EMPTY_MAP;
 	}
-	
+
+	public String toString() {
+		return new ToStringCreator(this).append("inputMapper", inputMapper).
+			append("outputMapper", outputMapper).toString();
+	}
+
 	/**
-	 * Attribute mapper specialization that knows if an "attribute name" is provided, and not a value ${expression},
-	 * that the name should be treated as a flow scope expression.
+	 * Attribute mapper specialization that knows if an "attribute name" is provided, and not a
+	 * value ${expression}, that the name should be treated as a flow scope expression.
+	 * 
 	 * @author Keith Donald
 	 */
 	protected static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
+		
 		public FlowScopeAwareParameterizableAttributeMapper() {
 			super();
 		}
@@ -267,15 +274,11 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 		protected void addMapping(String sourceExpression, String targetExpression) {
 			if (ExpressionFactory.isParseableExpression(sourceExpression)) {
 				addMapping(new Mapping(sourceExpression, targetExpression));
-			} else {
+			}
+			else {
 				addMapping(new Mapping(new FlowScopeExpression(ExpressionFactory.parseExpression(sourceExpression)),
 						ExpressionFactory.parsePropertyExpression(targetExpression)));
 			}
 		}
-	}
-	
-	public String toString() {
-		return new ToStringCreator(this).append("inputMapper", inputMapper).
-			append("outputMapper", outputMapper).toString();
 	}
 }
