@@ -90,6 +90,14 @@
     </subant>
   </target>
 
+  <target name="clean-all" depends="init"
+          description="Cleans all build output files from all projects, and also retrieved libs">
+    <echo>projects=${projects}</echo>
+	<subant target="clean-all" inheritall="false">
+	  <buildpath refid="${projects}"/>
+    </subant>
+  </target>
+  
   <target name="publish" depends="init"
           description="Calls publish targets on each project">
     <echo>projects=${projects}</echo>
