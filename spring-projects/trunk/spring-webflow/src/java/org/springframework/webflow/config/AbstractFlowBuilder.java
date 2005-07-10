@@ -34,7 +34,6 @@ import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.ActionTransitionCriteria;
 import org.springframework.webflow.action.DelegatingAction;
 import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.execution.ServiceLookupException;
 
 /**
  * Base class for flow builders that programmatically build flows in Java

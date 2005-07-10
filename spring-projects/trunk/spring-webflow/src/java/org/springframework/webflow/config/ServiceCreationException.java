@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.config;
 
-import org.springframework.webflow.execution.ServiceLookupException;
 
 /**
  * Exception thrown when a flow artifact cannot be created.

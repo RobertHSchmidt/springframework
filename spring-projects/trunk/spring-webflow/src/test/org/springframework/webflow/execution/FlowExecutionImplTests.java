@@ -30,6 +30,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.config.FlowFactoryBean;
+import org.springframework.webflow.config.FlowLocator;
+import org.springframework.webflow.config.ServiceLookupException;
 import org.springframework.webflow.config.XmlFlowBuilder;
 import org.springframework.webflow.config.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;

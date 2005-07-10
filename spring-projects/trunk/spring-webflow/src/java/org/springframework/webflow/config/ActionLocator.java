@@ -13,26 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution;
+package org.springframework.webflow.config;
 
-import org.springframework.webflow.Flow;
+import org.springframework.webflow.Action;
 
 /**
- * Service locator interface for retrieving a flow by id. Needed at execution
- * time to load a configured flow instance from a registry. The default registry
- * is typically the Spring application context.
+ * Service locator interface for retrieving a an action by id. The default 
+ * backing action registry is typically the Spring application context.
+ * Can be used at execution time to lookup actions by id.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface FlowLocator {
+public interface ActionLocator {
 
 	/**
-	 * Lookup a flow definition with specified id.
-	 * @param id the flow definition id
-	 * @return the flow
-	 * @throws ServiceLookupException when the flow cannot be found
+	 * Lookup an action with specified id.
+	 * @param id the action id
+	 * @return the action
+	 * @throws ServiceLookupException when the action cannot be found
 	 */
-	public Flow getFlow(String id) throws ServiceLookupException;
+	public Action getAction(String id) throws ServiceLookupException;
 
 }

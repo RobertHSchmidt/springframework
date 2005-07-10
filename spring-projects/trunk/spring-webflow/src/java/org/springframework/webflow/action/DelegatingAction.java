@@ -20,7 +20,7 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.execution.ActionLocator;
+import org.springframework.webflow.config.ActionLocator;
 
 /**
  * A action that delegates to another action instance managed in flow scope.

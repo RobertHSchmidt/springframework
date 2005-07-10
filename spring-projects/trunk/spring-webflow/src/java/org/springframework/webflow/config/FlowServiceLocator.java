@@ -21,9 +21,6 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.execution.ActionLocator;
-import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.ServiceLookupException;
 
 /**
  * Service locator interface used by flow builders at configuration time to

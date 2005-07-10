@@ -32,10 +32,10 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.config.BeanFactoryFlowServiceLocator;
+import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.FlowExecutionStorage;
-import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.support.FlowExecutionListenerAdapter;
 
 /**

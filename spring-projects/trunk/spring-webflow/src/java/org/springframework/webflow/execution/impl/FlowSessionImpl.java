@@ -31,7 +31,7 @@ import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
-import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.config.FlowLocator;
 
 /**
  * Implementation of the FlowSession interfaced used internally by

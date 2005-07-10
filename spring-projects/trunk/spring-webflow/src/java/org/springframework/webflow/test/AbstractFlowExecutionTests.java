@@ -27,9 +27,9 @@ import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.config.BeanFactoryFlowServiceLocator;
 import org.springframework.webflow.config.FlowBuilder;
 import org.springframework.webflow.config.FlowFactoryBean;
+import org.springframework.webflow.config.FlowLocator;
+import org.springframework.webflow.config.ServiceLookupException;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.ServiceLookupException;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 
 /**

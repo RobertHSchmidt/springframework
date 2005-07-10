@@ -32,7 +32,6 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.execution.ServiceLookupException;
 import org.springframework.webflow.support.convert.FlowConversionService;
 
 /**

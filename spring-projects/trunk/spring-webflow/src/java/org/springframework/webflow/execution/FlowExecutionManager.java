@@ -38,6 +38,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.config.BeanFactoryFlowServiceLocator;
+import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.convert.FlowConversionService;
 

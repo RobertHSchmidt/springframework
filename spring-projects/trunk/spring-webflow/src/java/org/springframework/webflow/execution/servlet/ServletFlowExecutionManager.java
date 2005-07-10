@@ -21,9 +21,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
-import org.springframework.webflow.execution.FlowLocator;
 
 /**
  * Flow execution manager to manage flow executions using HTTP servlet
