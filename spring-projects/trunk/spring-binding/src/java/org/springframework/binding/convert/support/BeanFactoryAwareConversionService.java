@@ -50,7 +50,6 @@ public class BeanFactoryAwareConversionService extends DefaultConversionService
 	}
 
 	public void afterPropertiesSet() {
-		addDefaultConverters();
 		addConverter(new TextToBean(beanFactory), "bean");
 	}
 

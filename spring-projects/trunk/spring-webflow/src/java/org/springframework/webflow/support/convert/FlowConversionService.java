@@ -36,7 +36,6 @@ public class FlowConversionService extends DefaultConversionService {
 	 * Create a new web flow conversion service.
 	 */
 	public FlowConversionService() {
-		addDefaultConverters();
 		// register web flow specific converters
 		addConverter(new TextToTransitionCriteria());
 		addConverter(new TextToViewDescriptorCreator());

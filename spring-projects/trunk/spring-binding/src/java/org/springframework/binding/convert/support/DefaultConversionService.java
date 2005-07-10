@@ -34,10 +34,6 @@ import org.springframework.util.StringUtils;
 
 /**
  * Default, local implementation of a conversion service.
- * <p>
- * Acts as bean factory post processor, registering property editor adapters for
- * each supported conversion with a <code>java.lang.String sourceClass</code>.
- * This makes for very convenient use with the Spring container.
  * 
  * @author Keith Donald
  */
@@ -49,8 +45,14 @@ public class DefaultConversionService implements ConversionService {
 
 	private ConversionService parent;
 
-	protected DefaultConversionService() {
-
+	public DefaultConversionService() {
+		this(true);
+	}
+	
+	public DefaultConversionService(boolean registerDefaultConverters) {
+		if (registerDefaultConverters) {
+			addDefaultConverters();
+		}
 	}
 
 	public DefaultConversionService(ConversionService parent) {
@@ -66,7 +68,7 @@ public class DefaultConversionService implements ConversionService {
 		addConverters(converters);
 	}
 
-	protected void addDefaultConverters() {
+	private void addDefaultConverters() {
 		addConverter(new TextToClass());
 		addConverter(new TextToNumber(new SimpleFormatterLocator()));
 		addConverter(new TextToBoolean());
