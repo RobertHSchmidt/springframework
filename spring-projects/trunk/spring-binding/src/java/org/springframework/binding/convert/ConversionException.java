@@ -74,6 +74,6 @@ public class ConversionException extends RuntimeException {
 	 * @return Returns the convertFromClass.
 	 */
 	public Class getConvertToClass() {
-		return convertFromClass;
+		return convertToClass;
 	}
 }
