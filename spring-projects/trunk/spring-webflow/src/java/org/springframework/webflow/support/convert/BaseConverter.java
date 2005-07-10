@@ -24,17 +24,13 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.convert.support.TextToClass;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.ParserException;
-import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
  * Abstract base class for converters used by the web flow system. Provides
- * a number of convenience functionalities for use by subclasses, e.g. access
- * to a configurable expression parser.
+ * a number of convenience functionalities for use by subclasses.
  * 
  * @author Erwin Vervaet
  */
@@ -45,22 +41,6 @@ public abstract class BaseConverter extends AbstractConverter {
 	 * object implementation.
 	 */
 	public static final String CLASS_PREFIX = "class:";
-
-	private ExpressionParser expressionParser = ExpressionParserUtils.getDefaultExpressionParser();
-
-	/**
-	 * Returns the expression parser used by this converter.
-	 */
-	public ExpressionParser getExpressionParser() {
-		return expressionParser;
-	}
-	
-	/**
-	 * Set the expression parser used by this converter.
-	 */
-	public void setExpressionParser(ExpressionParser expressionParser) {
-		this.expressionParser = expressionParser;
-	}
 	
 	/**
 	 * Helper that parses given expression string using the configured parser. The expression
@@ -107,18 +87,22 @@ public abstract class BaseConverter extends AbstractConverter {
 	}
 
 	/**
-	 * Parse given expression string, which should be contained in a "${...}" marker.
+	 * Parse given expression string, optionally contained in a "${...}" marker.
 	 * @param expressionString the expression string 
 	 * @return the parsed expression
 	 * @throws ConversionException when the expression cannot be parsed
 	 */
 	protected Expression parseExpression(String expressionString) throws ConversionException {
-		try {
-			return getExpressionParser().parseExpression(expressionString);
-		}
-		catch (ParserException e) {
-			throw new ConversionException(expressionString, Expression.class, e);
-		}
+		// TODO ideally we should not have to hard code the converter here
+		// and would use the conversion service...
+		return (Expression)new TextToExpression().convert(expressionString);
+	}
+	
+	/**
+	 * Check whether or not given string is an expression.
+	 */
+	protected boolean isExpression(String str) {
+		return new TextToExpression().getExpressionParser().isExpression(str);
 	}
 
 	/**

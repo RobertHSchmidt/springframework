@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
@@ -62,15 +61,6 @@ public class TextToTransitionCriteria extends BaseConverter {
 	 */
 	public TextToTransitionCriteria() {
 	}
-	
-	/**
-	 * Create a new converter that converts strings to transition
-	 * criteria objects using the given expression parser.
-	 * @param expressionParser the expression parser to use
-	 */
-	public TextToTransitionCriteria(ExpressionParser expressionParser) {
-		setExpressionParser(expressionParser);
-	}
 		
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class } ;
@@ -85,7 +75,7 @@ public class TextToTransitionCriteria extends BaseConverter {
 		if (!StringUtils.hasText(encodedCriteria) || TransitionCriteriaFactory.WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
 			return TransitionCriteriaFactory.alwaysTrue();
 		}
-		else if (getExpressionParser().isExpression(encodedCriteria)) {
+		else if (isExpression(encodedCriteria)) {
 			return createExpressionTransitionCriteria(encodedCriteria);
 		}
 		else if (encodedCriteria.startsWith(CLASS_PREFIX)) {

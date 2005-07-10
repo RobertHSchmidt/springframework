@@ -15,8 +15,13 @@
  */
 package org.springframework.webflow.support.convert;
 
+import org.springframework.binding.convert.ConversionException;
+import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.ExpressionParser;
+import org.springframework.binding.expression.ParserException;
 import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.support.ExpressionParserUtils;
 
 /**
  * Converter that converts a String into an Expression object.
@@ -26,7 +31,23 @@ import org.springframework.binding.expression.PropertyExpression;
  * 
  * @author Erwin Vervaet
  */
-public class TextToExpression extends BaseConverter {
+public class TextToExpression extends AbstractConverter {
+
+	private ExpressionParser expressionParser = ExpressionParserUtils.getDefaultExpressionParser();
+
+	/**
+	 * Returns the expression parser used by this converter.
+	 */
+	public ExpressionParser getExpressionParser() {
+		return expressionParser;
+	}
+	
+	/**
+	 * Set the expression parser used by this converter.
+	 */
+	public void setExpressionParser(ExpressionParser expressionParser) {
+		this.expressionParser = expressionParser;
+	}
 
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class };
@@ -37,7 +58,12 @@ public class TextToExpression extends BaseConverter {
 	}
 
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
-		return parseExpression((String)source);
+		try {
+			return getExpressionParser().parseExpression((String)source);
+		}
+		catch (ParserException e) {
+			throw new ConversionException(source, Expression.class, e);
+		}
 	}
 
 }
