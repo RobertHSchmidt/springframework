@@ -114,7 +114,6 @@ public abstract class BaseConverter extends AbstractConverter {
 	 */
 	protected Expression parseExpression(String expressionString) throws ConversionException {
 		try {
-//			Assert.state(getExpressionParser().isExpression(expressionString), "the input string '" + expressionString + "' is not an expression");
 			return getExpressionParser().parseExpression(expressionString);
 		}
 		catch (ParserException e) {

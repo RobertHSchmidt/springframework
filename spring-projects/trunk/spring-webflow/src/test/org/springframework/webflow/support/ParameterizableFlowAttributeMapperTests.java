@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.AttributeMapper;
 import org.springframework.binding.support.Mapping;
+import org.springframework.core.CollectionFactory;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.test.MockFlowSession;
@@ -50,8 +51,9 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 	}
 	
 	public void testDirectMapping() {
-		mapper.setInputMapping(new Mapping("${flowScope.x}", "${y}"));
-		mapper.setOutputMapping(new Mapping("${x}", "${y}")); // this seems bizar...
+		Mapping testMapping = new Mapping("${flowScope.x}", "${y}");
+		mapper.setInputMapping(testMapping);
+		mapper.setOutputMapping(testMapping);
 		
 		context.setActiveSession(parentSession);
 		context.getFlowScope().setAttribute("x", "xValue");
@@ -79,9 +81,9 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 		mapper.setInputMapper(testInputMapper);
 		AttributeMapper testOutputMapper = new AttributeMapper() {
 			public void map(Object source, Object target, Map context) {
-				assertTrue(source instanceof Scope);
-				assertTrue(source instanceof Scope);
-				((Scope)target).setAttribute("y", ((Scope)source).getAttribute("x"));
+				assertTrue(source instanceof RequestContext);
+				assertTrue(target instanceof Scope);
+				((Scope)target).setAttribute("y", ((RequestContext)source).getFlowScope().getAttribute("x"));
 			}
 		};
 		mapper.setOutputMapper(testOutputMapper);
@@ -176,6 +178,79 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 		mapper.mapSubflowOutput(context);
 		assertEquals(2, parentSession.getScope().size());
 		assertEquals("aValue", parentSession.getScope().get("a"));
+		assertEquals("xValue", parentSession.getScope().get("y"));
+	}
+	
+	public static class TestBean {
+		
+		private String prop;
+		
+		public String getProp() {
+			return prop;
+		}
+		
+		public void setProp(String prop) {
+			this.prop = prop;
+		}
+	}
+
+	public void testBeanPropertyMapping() {
+		Map mappingsMap = CollectionFactory.createLinkedMapIfPossible(3);
+		mappingsMap.put("bean.prop", "attr");
+		mappingsMap.put("bean", "otherBean");
+		mappingsMap.put("otherAttr", "otherBean.prop");
+		mapper.setInputMappingsMap(mappingsMap);
+		mapper.setOutputMappingsMap(mappingsMap);
+
+		TestBean bean = new TestBean();
+		bean.setProp("value");
+		
+		context.setActiveSession(parentSession);
+		context.getFlowScope().setAttribute("bean", bean);
+		context.getFlowScope().setAttribute("otherAttr", "otherValue");
+		Map input = mapper.createSubflowInput(context);
+		assertEquals(2, input.size());
+		assertEquals("value", input.get("attr"));
+		assertEquals("otherValue", ((TestBean)input.get("otherBean")).getProp());
+		
+		parentSession.getScope().clear();
+		bean.setProp("value");
+		
+		context.setActiveSession(subflowSession);
+		context.getFlowScope().setAttribute("bean", bean);
+		context.getFlowScope().setAttribute("otherAttr", "otherValue");
+		mapper.mapSubflowOutput(context);
+		assertEquals(2, parentSession.getScope().size());
+		assertEquals("value", parentSession.getScope().get("attr"));
+		assertEquals("otherValue", ((TestBean)parentSession.getScope().get("otherBean")).getProp());
+	}
+	
+	public void testExpressionMapping() {
+		Map mappingsMap = new HashMap();
+		mappingsMap.put("${flowExecutionContext.key}", "key");
+		mappingsMap.put("${requestScope.a}", "b");
+		mappingsMap.put("${flowScope.x}", "y");
+		mapper.setInputMappingsMap(mappingsMap);
+		mapper.setOutputMappingsMap(mappingsMap);
+		
+		context.setActiveSession(parentSession);
+		context.getRequestScope().setAttribute("a", "aValue");
+		context.getFlowScope().setAttribute("x", "xValue");
+		Map input = mapper.createSubflowInput(context);
+		assertEquals(3, input.size());
+		assertEquals(context.getFlowExecutionContext().getKey(), input.get("key"));
+		assertEquals("aValue", input.get("b"));
+		assertEquals("xValue", input.get("y"));
+		
+		parentSession.getScope().clear();
+		
+		context.setActiveSession(subflowSession);
+		context.getFlowScope().setAttribute("a", "aValue");
+		context.getFlowScope().setAttribute("x", "xValue");
+		mapper.mapSubflowOutput(context);
+		assertEquals(3, parentSession.getScope().size());
+		assertEquals(context.getFlowExecutionContext().getKey(), parentSession.getScope().get("key"));
+		assertEquals("aValue", parentSession.getScope().get("b"));
 		assertEquals("xValue", parentSession.getScope().get("y"));
 	}
 

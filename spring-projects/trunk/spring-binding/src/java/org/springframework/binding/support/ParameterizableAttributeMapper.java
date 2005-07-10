@@ -19,13 +19,12 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.springframework.binding.AttributeMapper;
+import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.Assert;
 
 /**
  * Generic attributes mapper implementation that allows mappings to be
@@ -65,7 +64,6 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	private Collection mappings = Collections.EMPTY_SET;
 
 	public ParameterizableAttributeMapper() {
-
 	}
 
 	public ParameterizableAttributeMapper(Mapping mapping) {
@@ -89,7 +87,8 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	 * @param mappings The mappings
 	 */
 	public void setMappings(Mapping[] mappings) {
-		this.mappings = new HashSet(Arrays.asList(mappings));
+		this.mappings = CollectionFactory.createLinkedSetIfPossible(mappings.length);
+		this.mappings.addAll(Arrays.asList(mappings));
 	}
 
 	/**
@@ -109,7 +108,7 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	 * @param mappings The mappings
 	 */
 	public void setMappingsCollection(Collection mappings) {
-		this.mappings = new HashSet();
+		this.mappings = CollectionFactory.createLinkedSetIfPossible(mappings.size());
 		addCollectionMappings(this.mappings, mappings);
 	}
 
@@ -123,7 +122,7 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	 * @param mappingsMap The mappings map
 	 */
 	public void setMappingsMap(Map mappingsMap) {
-		this.mappings = new HashSet();
+		this.mappings = CollectionFactory.createLinkedSetIfPossible(mappings.size());
 		addMapMappings(this.mappings, mappingsMap);
 	}
 

@@ -38,8 +38,10 @@
 		<attribute-mapper>
 			<input name="attribute1"/>
 			<input name="attribute3" as="attribute2"/>
+			<input value="${flowScope.attribute1}" as="attribute4"/>
 			<output name="attribute2"/>
 			<output name="attribute1" as="attribute3"/>
+			<output value="${flowScope.attribute4}" as="attribute1"/>
 		</attribute-mapper>
 		<transition on="event2" to="endState2"/>
 	</subflow-state>

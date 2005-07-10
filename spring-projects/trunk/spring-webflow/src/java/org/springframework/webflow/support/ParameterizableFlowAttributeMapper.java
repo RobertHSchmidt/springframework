@@ -16,7 +16,6 @@
 package org.springframework.webflow.support;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,7 +24,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.AttributeMapper;
+import org.springframework.binding.expression.EvaluationException;
+import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionFactory;
+import org.springframework.binding.support.Assert;
 import org.springframework.binding.support.Mapping;
 import org.springframework.binding.support.ParameterizableAttributeMapper;
 import org.springframework.core.style.ToStringCreator;
@@ -54,8 +56,7 @@ import org.springframework.webflow.RequestContext;
  * flow. If the list item is a Map, each map entry must be a String key
  * naming the attribute in the parent flow, and a String value naming the
  * attribute in the child flow. If the list item is itself a List, then that
- * list is itself evaluated recursively, and must itself contain Strings,
- * Lists or Maps.</td>
+ * list is evaluated recursively, and must contain Strings, Lists or Maps.</td>
  * </tr>
  * <tr>
  * <td>inputMappingsMap</td>
@@ -81,8 +82,8 @@ import org.springframework.webflow.RequestContext;
  * name in the parent flow and in the child flow. If the list item is a Map,
  * each map entry must be a String key naming the attribute in the sub flow,
  * and a String value naming the attribute in the parent flow. If the list
- * item is itself a List, then that list is itself evaluated recursively,
- * and must itself contain Strings, Lists or Maps.</td>
+ * item is itself a List, then that list is evaluated recursively,
+ * and must contain Strings, Lists or Maps.</td>
  * </tr>
  * <tr>
  * <td>outputMappingsMap</td>
@@ -99,6 +100,11 @@ import org.springframework.webflow.RequestContext;
  * bean property access. So an entry name in a mapping can either be "beanName"
  * or "beanName.propName". Nested property values are also supported
  * ("beanName.propName.propName").
+ * When the <i>from</i> mapping string is enclosed in "${...}", it will be
+ * interpreted as an expression that will be evaluated agains the request execution
+ * context.
+ * 
+ * @see org.springframework.webflow.RequestContext
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -113,31 +119,12 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	private AttributeMapper outputMapper;
 
 	/**
-	 * Set the input mapping to use when mapping properties in a parent
-	 * flow's scope to a sub flow scope. This is a convenience method
-	 * for setting a single mapping.
+	 * Set the input mapping to use when mapping properties in the request context
+	 * to the sub flow scope. This is a convenience method for setting a single mapping.
 	 * @param mapping the mapping object
 	 */
 	public void setInputMapping(Mapping mapping) {
-		Collection mappings = new ArrayList(1);
-		mappings.add(mapping);
-		setInputMappings(mappings);
-	}
-
-	/**
-	 * Set the mappings that will be executed when mapping properties in
-	 * a parent flow's scope to a sub flow scope. Each list item must be
-	 * a String, a Mapping, a List, or a Map. If the list item is a simple
-	 * String value, the attribute will be mapped as having the same name
-	 * in the parent flow and in the sub flow. If the list item is a Map,
-	 * each map entry must be a String key naming the attribute in the
-	 * parent flow, and a String value naming the attribute in the child flow.
-	 * If the list item is itself a List, then that list is itself evaluated
-	 * recursively, and must itself contain Strings, Lists or Maps.
-	 * @param inputMappings the input mappings
-	 */
-	public void setInputMappings(Collection inputMappings) {
-		this.inputMapper = new FlowScopeAwareParameterizableAttributeMapper(inputMappings);
+		setInputMappings(Collections.singletonList(mapping));
 	}
 
 	/**
@@ -150,7 +137,23 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 *      attribute in the child flow.
 	 */
 	public void setInputMappingsMap(Map inputMappings) {
-		this.inputMapper = new FlowScopeAwareParameterizableAttributeMapper(inputMappings);
+		setInputMappings(Collections.singletonList(inputMappings));
+	}
+
+	/**
+	 * Set the mappings that will be executed when mapping properties in
+	 * a parent flow to a sub flow scope. Each list item must be
+	 * a String, a Mapping, a List, or a Map. If the list item is a simple
+	 * String value, the attribute will be mapped as having the same name
+	 * in the parent flow and in the sub flow. If the list item is a Map,
+	 * each map entry must be a String key naming the attribute in the
+	 * parent flow, and a String value naming the attribute in the child flow.
+	 * If the list item is itself a List, then that list is evaluated
+	 * recursively, and must itself contain Strings, Lists or Maps.
+	 * @param inputMappings the input mappings
+	 */
+	public void setInputMappings(Collection inputMappings) {
+		setInputMapper(new FlowScopeAwareParameterizableAttributeMapper(inputMappings));
 	}
 
 	/**
@@ -163,33 +166,15 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	}
 
 	/**
-	 * Set the output mapping to use when mapping properties in sub flow's
-	 * scope back to a resuming parent flow. This is a convenience method for
+	 * Set the output mapping to use when mapping properties in sub flow
+	 * back to a resuming parent flow. This is a convenience method for
 	 * setting a single mapping.
 	 * @param mapping the mapping object
 	 */
 	public void setOutputMapping(Mapping mapping) {
-		Collection mappings = new ArrayList(1);
-		mappings.add(mapping);
-		setOutputMappings(mappings);
+		setOutputMappings(Collections.singletonList(mapping));
 	}
 	
-	/**
-	 * Set the mappings that will be executed when mapping model data from
-	 * the sub flow. Each list item must be a String, Mapping, a List, or a
-	 * Map. If the list item is a simple String value, the attribute will be
-	 * mapped as having the same name in the parent flow and in the child flow.
-	 * If the list item is a Map, each map entry must be a String key naming
-	 * the attribute in the sub flow, and a String value naming the attribute
-	 * in the parent flow. If the list item is itself a List, then that list
-	 * is itself evaluated recursively, and must itself contain Strings,
-	 * Mappings, Lists, or Maps.
-	 * @param outputMappings the output mappings
-	 */
-	public void setOutputMappings(Collection outputMappings) {
-		this.outputMapper = new ParameterizableAttributeMapper(outputMappings);
-	}
-
 	/**
 	 * Set the mappings that will be executed when mapping model data from the
 	 * sub flow. This method is provided as a configuration convenience.
@@ -200,13 +185,29 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 *      in the parent flow.
 	 */
 	public void setOutputMappingsMap(Map outputMappings) {
-		this.outputMapper = new ParameterizableAttributeMapper(outputMappings);
+		setOutputMappings(Collections.singletonList(outputMappings));
+	}
+
+	/**
+	 * Set the mappings that will be executed when mapping model data from
+	 * the sub flow. Each list item must be a String, Mapping, a List, or a
+	 * Map. If the list item is a simple String value, the attribute will be
+	 * mapped as having the same name in the parent flow and in the child flow.
+	 * If the list item is a Map, each map entry must be a String key naming
+	 * the attribute in the sub flow, and a String value naming the attribute
+	 * in the parent flow. If the list item is itself a List, then that list
+	 * is evaluated recursively, and must itself contain Strings,
+	 * Mappings, Lists, or Maps.
+	 * @param outputMappings the output mappings
+	 */
+	public void setOutputMappings(Collection outputMappings) {
+		setOutputMapper(new FlowScopeAwareParameterizableAttributeMapper(outputMappings));
 	}
 
 	/**
 	 * Set the AttributesMapper strategy responsible for mapping ending subflow
 	 * output attributes to a resuming parent flow as output.
-	 * @param mapper the mapper
+	 * @param mapper the mapperÎ
 	 */
 	public void setOutputMapper(AttributeMapper mapper) {
 		this.outputMapper = mapper;
@@ -215,17 +216,20 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	public Map createSubflowInput(RequestContext context) {
 		if (this.inputMapper != null) {
 			Map input = new HashMap();
+			// map from request context to input map
 			this.inputMapper.map(context, input, getMappingContext(context));
 			return input;
 		}
 		else {
-			return Collections.EMPTY_MAP;
+			// an empty, but modifyable map
+			return new HashMap();
 		}
 	}
 
 	public void mapSubflowOutput(RequestContext context) {
 		if (this.outputMapper != null) {
-			this.outputMapper.map(context.getFlowScope(),
+			// map from request context to parent flow scope
+			this.outputMapper.map(context,
 					context.getFlowExecutionContext().getActiveSession().getParent().getScope(),
 					getMappingContext(context));
 		}
@@ -235,7 +239,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * Returns a map of contextual data available during mapping.
 	 */
 	protected Map getMappingContext(RequestContext context) {
-		return Collections.EMPTY_MAP;
+		return new HashMap();
 	}
 
 	public String toString() {
@@ -246,38 +250,61 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	/**
 	 * Attribute mapper specialization that knows if an "attribute name" is provided, and not a
 	 * value ${expression}, that the name should be treated as a flow scope expression.
+	 * This is needed because all <i>from</i> expressions will be evaluated agains the request
+	 * context. Expression need to explicitly handle this (e.g. "${flowScope.bean.prop}"), but
+	 * simple names should automatically evaluated agains the flow scope ("bean.prop").
 	 * 
 	 * @author Keith Donald
+	 * @author Erwin Vervaet
 	 */
-	protected static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
+	private static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
 		
-		public FlowScopeAwareParameterizableAttributeMapper() {
-			super();
-		}
-
+		/**
+		 * Create a new flow scope aware attribute mapper wrapping given collection
+		 * of mappings.
+		 * @param mappings the mappings to make "flow scope aware"
+		 */
 		public FlowScopeAwareParameterizableAttributeMapper(Collection mappings) {
 			super(mappings);
 		}
-
-		public FlowScopeAwareParameterizableAttributeMapper(Map mappingsMap) {
-			super(mappingsMap);
-		}
-
-		public FlowScopeAwareParameterizableAttributeMapper(Mapping mapping) {
-			super(mapping);
-		}
-
-		public FlowScopeAwareParameterizableAttributeMapper(Mapping[] mappings) {
-			super(mappings);
-		}
-
+		
 		protected void addMapping(String sourceExpression, String targetExpression) {
 			if (ExpressionFactory.isParseableExpression(sourceExpression)) {
+				// use expression "as is"
 				addMapping(new Mapping(sourceExpression, targetExpression));
 			}
 			else {
-				addMapping(new Mapping(new FlowScopeExpression(ExpressionFactory.parseExpression(sourceExpression)),
+				// use flow scope aware mapping for "from" expression
+				addMapping(
+					new Mapping(
+						new FlowScopeExpression(ExpressionFactory.parseExpression(sourceExpression)),
 						ExpressionFactory.parsePropertyExpression(targetExpression)));
+			}
+		}
+		
+		/**
+		 * Expression evaluator that evaluates an expression in flow scope.
+		 * 
+		 * @author Keith Donald
+		 */
+		private class FlowScopeExpression implements Expression {
+			
+			private Expression expression;
+			
+			/**
+			 * Create a new expression evaluator that executes given evaluator
+			 * 'in flow scope'.
+			 * @param evaluator the nested evaluator to execute
+			 */
+			public FlowScopeExpression(Expression evaluator) {
+				this.expression = evaluator;
+			}
+			
+			public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
+				Assert.isInstanceOf(RequestContext.class, target,
+						"In the web flow system all source (from) mapping expressions are evaluated against the request context");
+				RequestContext requestContext = (RequestContext)target;
+				return expression.evaluateAgainst(requestContext.getFlowScope(), context);
 			}
 		}
 	}

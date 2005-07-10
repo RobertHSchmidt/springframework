@@ -17,8 +17,8 @@ package org.springframework.webflow.config;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,13 +29,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.binding.MutableAttributeSource;
-import org.springframework.binding.convert.ConversionExecutor;
-import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.binding.format.support.LabeledEnumFormatter;
 import org.springframework.binding.support.MapAttributeSource;
-import org.springframework.binding.support.Mapping;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -57,7 +53,6 @@ import org.springframework.webflow.TransitionCriteriaFactory;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 import org.springframework.webflow.support.TransitionCriteriaChain;
 import org.w3c.dom.Document;
@@ -762,89 +757,45 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 				return getFlowServiceLocator().createFlowAttributeMapper(mapperDef.clazz, mapperDef.autowire);
 			}
 			else {
-				// inline definition of an mapping
+				// inline definition of a mapping
 				ParameterizableFlowAttributeMapper attributeMapper = new ParameterizableFlowAttributeMapper();
 				List inputElements = DomUtils.getChildElementsByTagName(attributeMapperElement, INPUT_ELEMENT);
-				if (inputElements.size() > 0) {
-					List inputMappings = new ArrayList(inputElements.size());
-					Iterator it = inputElements.iterator();
-					while (it.hasNext()) {
-						inputMappings.add(parseMapping((Element)it.next(), true));
-					}
-					attributeMapper.setInputMappings(inputMappings);
+				Map inputMappings = new HashMap(inputElements.size());
+				for (Iterator it = inputElements.iterator(); it.hasNext(); ) {
+					parseAndAddMapping((Element)it.next(), inputMappings);
 				}
+				attributeMapper.setInputMappingsMap(inputMappings);
+				
 				List outputElements = DomUtils.getChildElementsByTagName(attributeMapperElement, OUTPUT_ELEMENT);
-				if (outputElements.size() > 0) {
-					List outputMappings = new ArrayList(outputElements.size());
-					Iterator it = outputElements.iterator();
-					while (it.hasNext()) {
-						outputMappings.add(parseMapping((Element)it.next(), false));
-					}
-					attributeMapper.setOutputMappings(outputMappings);
+				Map outputMappings = new HashMap(outputElements.size());
+				for (Iterator it = outputElements.iterator(); it.hasNext(); ) {
+					parseAndAddMapping((Element)it.next(), outputMappings);
 				}
+				attributeMapper.setOutputMappingsMap(outputMappings);
+				
 				return attributeMapper;
 			}
 		}
 	}
 
 	/**
-	 * Parse a single inline attribute mapping definition.
+	 * Parse a single inline attribute mapping definition and add it to given map.
 	 */
-	protected Mapping parseMapping(Element element, boolean isInputMapping) {
+	protected void parseAndAddMapping(Element element, Map mappingsMap) {
 		String name = element.getAttribute(NAME_ATTRIBUTE);
 		String value = element.getAttribute(VALUE_ATTRIBUTE);
 		String as = element.getAttribute(AS_ATTRIBUTE);
-		String type = element.getAttribute(TYPE_ATTRIBUTE);
-		ConversionExecutor valueConverter = null;
-		if (StringUtils.hasText(type)) {
-			valueConverter = getConversionService().conversionExecutorForAlias(String.class, type);
-		}
 		if (StringUtils.hasText(name)) {
 			// "name" allows you to specify the name of an attribute to map
-			if (StringUtils.hasText(as)) {
-				return new Mapping(parseGetFromFlowScopeExpression(name, isInputMapping), parseSetExpression(as), valueConverter);
-			}
-			else {
-				return new Mapping(parseGetFromFlowScopeExpression(name, isInputMapping), parseSetExpression(name), valueConverter);
-			}
+			mappingsMap.put(name, StringUtils.hasText(as) ? as : name);
 		}
 		else if (StringUtils.hasText(value)) {
 			// "value" allows you to specify the value that should get mapped using an expression
 			Assert.hasText(as, "The 'as' attribute is required with the 'value' attribute");
-			return new Mapping(parseGetExpression(value), parseSetExpression(as), valueConverter);
+			mappingsMap.put(value, as);
 		}
 		else {
 			throw new FlowBuilderException(this, "Name or value is required in a mapping definition: " + element);
 		}
-	}
-	
-	/**
-	 * Returns an evaluator to get a named attribute from the flow scope.
-	 */
-	protected Expression parseGetFromFlowScopeExpression(String expressionString, boolean isInputMapping) {
-		if (isInputMapping) {
-			// must specifically provide a flow scope expression for mapper to use
-			return new FlowScopeExpression(parseGetExpression(expressionString));
-		}
-		else {
-			// flowscope is assumed by mapper
-			return parseGetExpression(expressionString);
-		}
-	}
-	
-	/**
-	 * Helper that returns an expression evaluator to get a value as indicated
-	 * by given expression string.
-	 */
-	protected Expression parseGetExpression(String expressionString) {
-		return (Expression)converterFor(Expression.class).execute(expressionString);
-	}
-	
-	/**
-	 * Helper that returns an expression evaluator to set a value as indicated
-	 * by given expression string.
-	 */
-	protected PropertyExpression parseSetExpression(String expressionString) {
-		return (PropertyExpression)converterFor(Expression.class).execute(expressionString);
 	}
 }
