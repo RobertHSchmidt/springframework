@@ -138,7 +138,7 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
-	 * Is this state transitionable? That is, is this state capable of executing
+	 * Checks if this state is transitionable. That is, is this state capable of executing
 	 * a transition to another state on the occurence of an event? All
 	 * subclasses of <code>TransitionableState</code> are transitionable.
 	 * @return true when this state is a <code>TransitionableState</code>, false

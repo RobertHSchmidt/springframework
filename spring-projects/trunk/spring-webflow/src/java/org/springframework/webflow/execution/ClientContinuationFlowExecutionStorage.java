@@ -25,7 +25,7 @@ import org.springframework.webflow.Event;
  * Flow execution storage implementation that will store a flow execution as a
  * <i>continuation</i> on the client side. It will actually encode the state of
  * the flow execution in the unique id that is returned from the
- * {@link #save(String, FlowExecution, Event) save} method. The load method
+ * {@link #save(Serializable, FlowExecution, Event) save} method. The load method
  * just decodes the incoming id and restores the <code>FlowExecution</code>
  * object.
  * <p>
@@ -44,7 +44,7 @@ import org.springframework.webflow.Event;
  * reverse engineer a continuation and get access to possible sensitive data stored
  * in the flow execution. If you need more security and still want to store
  * continuations on the client, subclass this class and override the methods
- * {@link #encode(FlowExecution)} and {@link #decode(String)}, implementing
+ * {@link #encode(FlowExecution)} and {@link #decode(Serializable)}, implementing
  * them with a secure encoding/decoding algorithm, e.g. based on public/private
  * key encryption.
  * <p>

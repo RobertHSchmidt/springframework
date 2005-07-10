@@ -236,7 +236,7 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Is given state instance present in this flow? Does a "same" (==) check.
+	 * Checks if given state instance is present in this flow. Does a "same" (==) check.
 	 * @param state the state to search for
 	 * @return true if yes (the same instance is present), false otherwise
 	 */

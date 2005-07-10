@@ -113,8 +113,8 @@ public class Event extends EventObject implements AttributeSource {
 	}
 
 	/**
-	 * Returns the event identifier, or <code>null</code> if not
-	 * available (e.g. for an event starting a flow).
+	 * Returns the event identifier. This could be <code>null</code> if not
+	 * available, e.g. for an event starting a flow.
 	 * @return the event id
 	 */
 	public String getId() {

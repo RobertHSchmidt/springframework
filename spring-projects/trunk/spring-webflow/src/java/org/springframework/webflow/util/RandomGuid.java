@@ -210,7 +210,8 @@ public class RandomGuid extends Object {
 
 	/**
 	 * Convert to the standard format for GUID (Useful for SQL Server
-	 * UniqueIdentifiers, etc.) Example: C2FEEEAC-CFCD-11D1-8B05-00600806D9B6
+	 * UniqueIdentifiers, etc).
+	 * Example: C2FEEEAC-CFCD-11D1-8B05-00600806D9B6
 	 */
 	public String toString() {
 		String raw = valueAfterMD5.toUpperCase();

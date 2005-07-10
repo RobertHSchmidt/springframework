@@ -156,15 +156,14 @@ public class MultiAction extends AbstractAction {
 	}
 
 	/**
-	 * Action execution method name resolver that uses the following algorithm
-	 * to calculate a method name:
+	 * Default method name resolver used by the MultiAction class.
+	 * It uses the following algorithm to calculate a method name:
 	 * <ol>
 	 * <li>If the currently executing action has a "method" property
 	 * defined, use the value as method name.</li>
 	 * <li>Else, use the name of the current state of the flow execution as a
 	 * method name.</li>
 	 * </ol>
-	 * This is the default method name resolver used by the MultiAction class.
 	 * 
 	 * @author Erwin Vervaet
 	 */

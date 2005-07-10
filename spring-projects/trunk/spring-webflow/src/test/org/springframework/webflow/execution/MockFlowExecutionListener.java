@@ -154,7 +154,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 	}
 	
 	/**
-	 * Is the flow execution running, e.g. it has started but not yet ended.
+	 * Is the flow execution running: it has started but not yet ended.
 	 */
 	public boolean isStarted() {
 		return started;
@@ -176,8 +176,8 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 	}
 
 	/**
-	 * Is there a request in process, e.g. it was submitted but has not yet
-	 * completed processing.
+	 * Checks if a request is in process. A request is in process if it was submitted
+	 * but has not yet completed processing.
 	 */
 	public boolean isRequestInProcess() {
 		return requestInProcess;

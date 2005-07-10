@@ -175,7 +175,7 @@ public class ViewDescriptor implements AttributeSource, Serializable {
 	}
 
 	/**
-	 * Return whether this ViewDescriptor object is empty, i.e. whether it does
+	 * Return whether this ViewDescriptor object is empty: whether it does
 	 * not hold any view and does not contain a model.
 	 * @see #clear
 	 */
