@@ -125,7 +125,7 @@ public class TextToTransitionCriteria extends ConversionServiceAwareConverter {
 		/**
 		 * The expression evaluator to use.
 		 */
-		private Expression expression;
+		private Expression booleanExpression;
 
 		/**
 		 * Create a new expression based transition criteria object.
@@ -133,11 +133,11 @@ public class TextToTransitionCriteria extends ConversionServiceAwareConverter {
 		 *        this expression should be a condition that returns a Boolean value
 		 */
 		public BooleanExpressionTransitionCriteria(Expression expression) {
-			this.expression = expression;
+			this.booleanExpression = expression;
 		}
 
 		public boolean test(RequestContext context) {
-			Object result = this.expression.evaluateAgainst(context, getEvaluationContext(context));
+			Object result = this.booleanExpression.evaluateAgainst(context, getEvaluationContext(context));
 			Assert.isInstanceOf(Boolean.class, result, "Impossible to determine result of boolean expression: ");
 			return ((Boolean)result).booleanValue();
 		}
@@ -156,7 +156,7 @@ public class TextToTransitionCriteria extends ConversionServiceAwareConverter {
 		}
 
 		public String toString() {
-			return expression.toString();
+			return booleanExpression.toString();
 		}
 	}
 }

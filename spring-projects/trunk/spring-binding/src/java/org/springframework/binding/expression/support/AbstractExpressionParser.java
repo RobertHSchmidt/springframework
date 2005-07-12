@@ -15,7 +15,13 @@
  */
 package org.springframework.binding.expression.support;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
+import org.springframework.binding.expression.ParserException;
+import org.springframework.util.StringUtils;
 
 /**
  * An expression parser that parses Ognl expressions.
@@ -26,18 +32,18 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	/**
 	 * The expression prefix.
 	 */
-	private static final String EXPRESSION_PREFIX = "${";
+	private static final String DEFAULT_EXPRESSION_PREFIX = "${";
 
 	/**
 	 * The expression suffix.
 	 */
-	private static final String EXPRESSION_SUFFIX = "}";
+	private static final String DEFAULT_EXPRESSION_SUFFIX = "}";
 	
 	/**
 	 * Check whether or not given criteria are expressed as an expression.
 	 */
 	public boolean isExpression(String encodedCriteria) {
-		return (encodedCriteria.startsWith(EXPRESSION_PREFIX) && encodedCriteria.endsWith(EXPRESSION_SUFFIX));
+		return (encodedCriteria.startsWith(getExpressionPrefix()) && encodedCriteria.endsWith(getExpressionSuffix()));
 	}
 
 	/**
@@ -46,10 +52,62 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	protected String cutExpression(String encodedCriteria) {
 		if (isExpression(encodedCriteria)) {
 			return encodedCriteria.substring(
-				EXPRESSION_PREFIX.length(),
-				encodedCriteria.length() - EXPRESSION_SUFFIX.length());
+				DEFAULT_EXPRESSION_PREFIX.length(),
+				encodedCriteria.length() - DEFAULT_EXPRESSION_SUFFIX.length());
 		} else {
 			return encodedCriteria;
 		}
+	}
+
+	protected String getExpressionPrefix() {
+		return DEFAULT_EXPRESSION_PREFIX;
+	}
+	
+	protected String getExpressionSuffix() {
+		return DEFAULT_EXPRESSION_SUFFIX;
+	}
+	
+	/*
+	 * Helper that parses given expression string using the configured parser. The expression
+	 * string can contain any number of expressions, all contained in "${...}" markers. For
+	 * instance: "foo${expr0}bar${expr1}". The static pieces of text will also be returned
+	 * as Expressions that just return that static piece of text. As a result, evaluating all
+	 * returned expressions and concatenagint the results produces the complete evaluated
+	 * string.
+	 * @param expressionString the expression string
+	 * @return the parsed expressions
+	 * @throws ParserException when the expressions cannot be parsed
+	 */
+	public Expression[] parseExpressions(String expressionString) throws ParserException {
+		List expressions = new LinkedList();
+		if (StringUtils.hasText(expressionString)) {
+			int startIdx = 0;
+			while (startIdx < expressionString.length()) {
+				int exprStartIdx = expressionString.indexOf(getExpressionPrefix(), startIdx);
+				if (exprStartIdx >= startIdx) {
+					// an expression was found
+					if (exprStartIdx > startIdx) {
+						expressions.add(new StaticExpression(expressionString.substring(startIdx, exprStartIdx)));
+						startIdx = exprStartIdx;
+					}
+					
+					int exprEndIdx = expressionString.indexOf(getExpressionSuffix(), exprStartIdx);
+					if (exprEndIdx >= exprStartIdx) {
+						expressions.add(parseExpression(expressionString.substring(exprStartIdx, exprEndIdx + 1)));
+						startIdx = exprEndIdx + 1;
+					}
+					else {
+						expressions.add(new StaticExpression(expressionString.substring(startIdx)));
+						startIdx = expressionString.length();
+					}
+				}
+				else {
+					// no expression could be found
+					expressions.add(new StaticExpression(expressionString.substring(startIdx)));
+					startIdx = expressionString.length();
+				}
+			}
+		}
+		return (Expression[])expressions.toArray(new Expression[expressions.size()]);
 	}
 }

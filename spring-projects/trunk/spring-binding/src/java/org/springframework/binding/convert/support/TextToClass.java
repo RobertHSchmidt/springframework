@@ -26,6 +26,8 @@ import org.springframework.util.StringUtils;
  */
 public class TextToClass extends AbstractConverter {
 
+	public static final String CLASS_PREFIX = "class:";
+
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class };
 	}

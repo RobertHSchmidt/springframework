@@ -24,7 +24,9 @@ import java.util.Map;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.convert.ConversionServiceAware;
 import org.springframework.binding.convert.Converter;
+import org.springframework.binding.expression.Expression;
 import org.springframework.binding.format.support.SimpleFormatterLocator;
 import org.springframework.binding.support.Assert;
 import org.springframework.binding.support.Mapping;
@@ -73,6 +75,8 @@ public class DefaultConversionService implements ConversionService {
 		addConverter(new TextToNumber(new SimpleFormatterLocator()));
 		addConverter(new TextToBoolean());
 		addConverter(new TextToMapping(this));
+		addConverter(new TextToExpression());
+		addConverter(new TextToExpressions());
 		addDefaultAlias(Short.class);
 		addDefaultAlias(Integer.class);
 		addDefaultAlias(Long.class);
@@ -82,6 +86,8 @@ public class DefaultConversionService implements ConversionService {
 		addDefaultAlias(Boolean.class);
 		addDefaultAlias(Mapping.class);
 		addDefaultAlias(Class.class);
+		addDefaultAlias(Expression.class);
+		addAlias("expressionString", Expression[].class);
 	}
 
 	public void addConverters(Converter[] converters) {
@@ -105,6 +111,9 @@ public class DefaultConversionService implements ConversionService {
 				sourceMap.put(targetClass, converter);
 			}
 		}
+		if (converter instanceof ConversionServiceAware) {
+			((ConversionServiceAware)converter).setConversionService(this);
+		}
 	}
 
 	public void addConverter(Converter converter, String alias) {
@@ -121,14 +130,14 @@ public class DefaultConversionService implements ConversionService {
 				targetType);
 	}
 
-	public ConversionExecutor conversionExecutorForAlias(Class sourceClass,
+	public ConversionExecutor getConversionExecutorForTargetAlias(Class sourceClass,
 			String alias) throws IllegalArgumentException {
 		Assert.hasText(alias,
 				"The target alias is required and must either be a type alias (e.g 'boolean') "
 						+ "or a generic converter alias (e.g. 'bean') ");
 		Object targetType = aliasMap.get(alias);
 		if (targetType == null) {
-			ConversionExecutor executor = conversionExecutorFor(String.class,
+			ConversionExecutor executor = getConversionExecutor(String.class,
 					Class.class);
 			try {
 				targetType = (Class) executor.execute(alias);
@@ -140,7 +149,7 @@ public class DefaultConversionService implements ConversionService {
 			}
 		}
 		if (targetType instanceof Class) {
-			return conversionExecutorFor(sourceClass, (Class) targetType);
+			return getConversionExecutor(sourceClass, (Class) targetType);
 		} else {
 			Assert.isInstanceOf(Converter.class, targetType);
 			Converter conv = (Converter) targetType;
@@ -148,7 +157,7 @@ public class DefaultConversionService implements ConversionService {
 		}
 	}
 
-	public ConversionExecutor conversionExecutorFor(Class sourceClass,
+	public ConversionExecutor getConversionExecutor(Class sourceClass,
 			Class targetClass) {
 		if (this.sourceClassConverters == null
 				|| this.sourceClassConverters.isEmpty()) {
@@ -166,7 +175,7 @@ public class DefaultConversionService implements ConversionService {
 			return new ConversionExecutor(converter, targetClass);
 		} else {
 			if (this.parent != null) {
-				return this.parent.conversionExecutorFor(sourceClass,
+				return this.parent.getConversionExecutor(sourceClass,
 						targetClass);
 			} else {
 				throw new IllegalArgumentException(
