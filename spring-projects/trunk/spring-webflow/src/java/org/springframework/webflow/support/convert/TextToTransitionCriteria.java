@@ -19,12 +19,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.binding.convert.ConversionException;
+import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionCriteriaFactory;
+import org.springframework.webflow.TransitionCriteriaFactory.EventIdTransitionCriteria;
 
 /**
  * Converter that takes an encoded string representation and produces
@@ -52,7 +56,7 @@ import org.springframework.webflow.TransitionCriteriaFactory;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class TextToTransitionCriteria extends BaseConverter {
+public class TextToTransitionCriteria extends ConversionServiceAwareConverter {
 	
 	/**
 	 * Create a new converter that converts strings to transition
@@ -61,7 +65,11 @@ public class TextToTransitionCriteria extends BaseConverter {
 	 */
 	public TextToTransitionCriteria() {
 	}
-		
+
+	public TextToTransitionCriteria(ConversionService conversionService) {
+		super(conversionService);
+	}
+
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class } ;
 	}
@@ -75,32 +83,34 @@ public class TextToTransitionCriteria extends BaseConverter {
 		if (!StringUtils.hasText(encodedCriteria) || TransitionCriteriaFactory.WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
 			return TransitionCriteriaFactory.alwaysTrue();
 		}
-		else if (isExpression(encodedCriteria)) {
-			return createExpressionTransitionCriteria(encodedCriteria);
-		}
 		else if (encodedCriteria.startsWith(CLASS_PREFIX)) {
-			Object o = parseAndInstantiateClass(encodedCriteria);
+			Object o = newInstance(encodedCriteria);
 			Assert.isInstanceOf(TransitionCriteria.class, o, "Encoded criteria class is of wrong type: ");
 			return (TransitionCriteria)o;
 		}
 		else {
-			return TransitionCriteriaFactory.eventId(encodedCriteria);
+			return createTransitionCriteria(encodedCriteria);
 		}
 	}
 
 	/**
 	 * Factory method overridable by subclasses to customize expression-based
 	 * transition criteria.
-	 * @param expression the expression
+	 * @param expressionString the expression
 	 * @return the criteria
 	 * @throws ConversionException when there is a problem parsing the expression
 	 */
-	protected TransitionCriteria createExpressionTransitionCriteria(String expression) throws ConversionException {
-		return new ExpressionTransitionCriteria(parseExpression(expression));
+	protected TransitionCriteria createTransitionCriteria(String expressionString) throws ConversionException {
+		Expression expression = (Expression)fromStringTo(Expression.class).execute(expressionString);
+		if (expression instanceof StaticExpression) {
+			return TransitionCriteriaFactory.eventId(expressionString);
+		} else {
+			return new BooleanExpressionTransitionCriteria(expression);
+		}
 	}
 	
 	/**
-	 * Transtition criteria that tests the value of an expression. The
+	 * Transition criteria that tests the value of an expression. The
 	 * expression is used to express a condition that guards transition
 	 * execution in a web flow.
 	 * 
@@ -108,27 +118,27 @@ public class TextToTransitionCriteria extends BaseConverter {
 	 * @author Erwin Vervaet
 	 * @author Rob Harrop
 	 */
-	public static class ExpressionTransitionCriteria implements TransitionCriteria {
+	public static class BooleanExpressionTransitionCriteria implements TransitionCriteria {
 
 		private static final String RESULT_ALIAS = "result";
 		
 		/**
 		 * The expression evaluator to use.
 		 */
-		private Expression evaluator;
+		private Expression expression;
 
 		/**
 		 * Create a new expression based transition criteria object.
-		 * @param evaluator the expression evaluator testing the criteria,
+		 * @param expression the expression evaluator testing the criteria,
 		 *        this expression should be a condition that returns a Boolean value
 		 */
-		public ExpressionTransitionCriteria(Expression evaluator) {
-			this.evaluator = evaluator;
+		public BooleanExpressionTransitionCriteria(Expression expression) {
+			this.expression = expression;
 		}
 
 		public boolean test(RequestContext context) {
-			Object result = this.evaluator.evaluateAgainst(context, getEvaluationContext(context));
-			Assert.isInstanceOf(Boolean.class, result);
+			Object result = this.expression.evaluateAgainst(context, getEvaluationContext(context));
+			Assert.isInstanceOf(Boolean.class, result, "Impossible to determine result of boolean expression: ");
 			return ((Boolean)result).booleanValue();
 		}
 
@@ -146,7 +156,7 @@ public class TextToTransitionCriteria extends BaseConverter {
 		}
 
 		public String toString() {
-			return evaluator.toString();
+			return expression.toString();
 		}
-	}	
+	}
 }

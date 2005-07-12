@@ -16,6 +16,7 @@
 package org.springframework.webflow.support.convert;
 
 import org.springframework.binding.convert.ConversionException;
+import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory;
@@ -27,7 +28,7 @@ import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactor
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class TextToFlowExecutionListenerCriteria extends BaseConverter {
+public class TextToFlowExecutionListenerCriteria extends AbstractConverter {
 
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class };

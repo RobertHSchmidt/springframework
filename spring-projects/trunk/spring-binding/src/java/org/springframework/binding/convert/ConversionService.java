@@ -23,19 +23,7 @@ package org.springframework.binding.convert;
  * @author Keith Donald
  */
 public interface ConversionService {
-
-	/**
-	 * Return a conversion executor command object capable of converting source
-	 * objects of the specified <code>sourceClass</code> to target objects of the
-	 * type associated with the specified alias.
-	 *
-	 * @param sourceClass the sourceClass
-	 * @param alias the target alias
-	 * @return the conversion executor
-	 */
-	public ConversionExecutor conversionExecutorForAlias(Class sourceClass,
-			String alias) throws IllegalArgumentException;
-
+	
 	/**
 	 * Return a conversion executor command object capable of converting source
 	 * objects of the specified <code>sourceClass</code> to instances of the
@@ -53,5 +41,17 @@ public interface ConversionService {
 	 *             An exception occured retrieving a converter for the
 	 *             source-to-target pair.
 	 */
-	public ConversionExecutor conversionExecutorFor(Class sourceClass, Class targetClass) throws ConversionException;
+	public ConversionExecutor getConversionExecutor(Class sourceClass, Class targetClass) throws ConversionException;
+	
+	/**
+	 * Return a conversion executor command object capable of converting source
+	 * objects of the specified <code>sourceClass</code> to target objects of the
+	 * type associated with the specified alias.
+	 *
+	 * @param sourceClass the sourceClass
+	 * @param targetAlias the target alias, may also be the fully qualified target class name
+	 * @return the conversion executor
+	 */
+	public ConversionExecutor getConversionExecutorForTargetAlias(Class sourceClass,
+			String targetAlias) throws IllegalArgumentException;
 }

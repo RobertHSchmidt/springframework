@@ -16,6 +16,7 @@
 package org.springframework.webflow.support.convert;
 
 import org.springframework.binding.convert.support.DefaultConversionService;
+import org.springframework.binding.convert.support.TextToExpression;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
@@ -37,10 +38,8 @@ public class FlowConversionService extends DefaultConversionService {
 		addConverter(new TextToTransitionCriteria());
 		addConverter(new TextToViewDescriptorCreator());
 		addConverter(new TextToFlowExecutionListenerCriteria());
-		addConverter(new TextToExpression());
 		addDefaultAlias(TransitionCriteria.class);
 		addDefaultAlias(ViewDescriptorCreator.class);
 		addDefaultAlias(FlowExecutionListenerCriteria.class);
-		addDefaultAlias(TextToExpression.class);
 	}
 }

@@ -20,6 +20,7 @@ import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.FlowFactoryBean;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.support.convert.FlowConversionService;
 import org.springframework.webflow.support.convert.TextToTransitionCriteria;
 import org.springframework.webflow.support.convert.TextToViewDescriptorCreator;
 
@@ -132,7 +133,7 @@ public class FlowExecutionTests extends TestCase {
 	}
 	
 	public static TransitionCriteria on(String event) {
-		return (TransitionCriteria)new TextToTransitionCriteria().convert(event);
+		return (TransitionCriteria)new TextToTransitionCriteria(new FlowConversionService()).convert(event);
 	}
 	
 	public static ViewDescriptorCreator view(String viewName) {

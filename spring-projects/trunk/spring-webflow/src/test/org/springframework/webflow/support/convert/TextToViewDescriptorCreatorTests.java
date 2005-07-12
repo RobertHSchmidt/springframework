@@ -15,11 +15,11 @@
  */
 package org.springframework.webflow.support.convert;
 
+import junit.framework.TestCase;
+
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.test.MockRequestContext;
-
-import junit.framework.TestCase;
 
 /**
  * Test case for TextToViewDescriptorCreator.
@@ -28,7 +28,7 @@ import junit.framework.TestCase;
  */
 public class TextToViewDescriptorCreatorTests extends TestCase {
 
-	private TextToViewDescriptorCreator converter = new TextToViewDescriptorCreator();
+	private TextToViewDescriptorCreator converter = new TextToViewDescriptorCreator(new FlowConversionService());
 	
 	public void testCreateRedirectViewDescriptorCreator() {
 		RequestContext context = new MockRequestContext();

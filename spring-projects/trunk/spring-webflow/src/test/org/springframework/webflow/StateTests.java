@@ -27,6 +27,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AttributeMapperAction;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.support.convert.FlowConversionService;
 import org.springframework.webflow.support.convert.TextToTransitionCriteria;
 import org.springframework.webflow.support.convert.TextToViewDescriptorCreator;
 
@@ -172,11 +173,11 @@ public class StateTests extends TestCase {
 	}
 
 	public static TransitionCriteria on(String event) {
-		return (TransitionCriteria)new TextToTransitionCriteria().convert(event);
+		return (TransitionCriteria)new TextToTransitionCriteria(new FlowConversionService()).convert(event);
 	}
 	
 	public static ViewDescriptorCreator view(String viewName) {
-		return (ViewDescriptorCreator)new TextToViewDescriptorCreator().convert(viewName);
+		return (ViewDescriptorCreator)new TextToViewDescriptorCreator(new FlowConversionService()).convert(viewName);
 	}
 	
 	public static class InputOutputMapper implements FlowAttributeMapper {

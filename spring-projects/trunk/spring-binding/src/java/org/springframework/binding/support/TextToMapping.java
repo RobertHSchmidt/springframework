@@ -63,12 +63,12 @@ public class TextToMapping extends AbstractConverter {
 			String targetAttributeName = targetMappingInfo[0];
 			Class targetAttributeClass = null;
 			if (targetMappingInfo.length == 2) {
-				targetAttributeClass = (Class) getConversionService().conversionExecutorFor(String.class, Class.class)
+				targetAttributeClass = (Class) getConversionService().getConversionExecutor(String.class, Class.class)
 						.execute(targetMappingInfo[1]);
 			}
 			if (targetAttributeClass != null) {
 				return new Mapping(sourceAttributeName, targetAttributeName, getConversionService()
-						.conversionExecutorFor(String.class, targetAttributeClass));
+						.getConversionExecutor(String.class, targetAttributeClass));
 			}
 			else {
 				return new Mapping(sourceAttributeName, targetAttributeName);
@@ -80,19 +80,19 @@ public class TextToMapping extends AbstractConverter {
 			String sourceAttributeName = sourceMappingInfo[0];
 			Class sourceAttributeClass = String.class;
 			if (sourceMappingInfo.length == 2) {
-				sourceAttributeClass = (Class) getConversionService().conversionExecutorFor(String.class, Class.class)
+				sourceAttributeClass = (Class) getConversionService().getConversionExecutor(String.class, Class.class)
 						.execute(sourceMappingInfo[1]);
 			}
 			String[] targetMappingInfo = StringUtils.commaDelimitedListToStringArray(sourceTarget[1]);
 			String targetAttributeName = targetMappingInfo[0];
 			Class targetAttributeClass = String.class;
 			if (targetMappingInfo.length == 2) {
-				targetAttributeClass = (Class) getConversionService().conversionExecutorFor(String.class, Class.class)
+				targetAttributeClass = (Class) getConversionService().getConversionExecutor(String.class, Class.class)
 						.execute(targetMappingInfo[1]);
 			}
 			if (!sourceAttributeClass.equals(targetAttributeClass)) {
 				return new Mapping(sourceAttributeName, targetAttributeName, getConversionService()
-						.conversionExecutorFor(sourceAttributeClass, targetAttributeClass));
+						.getConversionExecutor(sourceAttributeClass, targetAttributeClass));
 			}
 			else {
 				return new Mapping(sourceAttributeName, targetAttributeName);

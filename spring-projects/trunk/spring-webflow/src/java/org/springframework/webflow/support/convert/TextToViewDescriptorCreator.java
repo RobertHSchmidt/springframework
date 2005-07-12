@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.springframework.binding.convert.ConversionException;
+import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
@@ -52,7 +54,7 @@ import org.springframework.webflow.ViewDescriptorCreator;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class TextToViewDescriptorCreator extends BaseConverter {
+public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter {
 
 	/**
 	 * Prefix used when the encoded view name wants to specify that
@@ -60,6 +62,14 @@ public class TextToViewDescriptorCreator extends BaseConverter {
 	 */
 	public static final String REDIRECT_PREFIX = "redirect:";
 
+	public TextToViewDescriptorCreator() {
+		super();
+	}
+
+	public TextToViewDescriptorCreator(ConversionService conversionService) {
+		super(conversionService);
+	}
+	
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class } ;
 	}
@@ -72,7 +82,7 @@ public class TextToViewDescriptorCreator extends BaseConverter {
 		String encodedView = (String)source;
 		if (StringUtils.hasText(encodedView)) {
 			if (encodedView.startsWith(CLASS_PREFIX)) {
-				Object o = parseAndInstantiateClass(encodedView);
+				Object o = newInstance(encodedView);
 				Assert.isInstanceOf(ViewDescriptorCreator.class, o, "Encoded view descriptor creator is of wrong type: ");
 				return (ViewDescriptorCreator)o;
 			}
@@ -102,7 +112,7 @@ public class TextToViewDescriptorCreator extends BaseConverter {
 	 * @throws ConversionException when something goes wrong
 	 */
 	protected ViewDescriptorCreator createRedirectViewDescriptorCreator(String encodedView) throws ConversionException {
-		return new RedirectViewDescriptorCreator(parseExpressions(encodedView));
+		return new RedirectViewDescriptorCreator((Expression[])fromStringTo(Expression[].class).execute(encodedView));
 	}
 	
 	/**

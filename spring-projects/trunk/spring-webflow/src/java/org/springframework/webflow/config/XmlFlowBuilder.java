@@ -653,7 +653,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	protected Object convertPropertyValue(Element element, String value) {
 		if (element.hasAttribute(TYPE_ATTRIBUTE)) {
 			// do value type conversion
-			return getConversionService().conversionExecutorForAlias(String.class, 
+			return getConversionService().getConversionExecutorForTargetAlias(String.class, 
 					element.getAttribute(TYPE_ATTRIBUTE)).execute(value);
 		}
 		else {

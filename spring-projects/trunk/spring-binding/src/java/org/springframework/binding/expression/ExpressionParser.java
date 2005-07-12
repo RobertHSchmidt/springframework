@@ -37,4 +37,13 @@ public interface ExpressionParser {
 	 * @throws ParserException an exception occured during parsing
 	 */
 	public Expression parseExpression(String expressionString) throws ParserException;
+	
+	/**
+	 * Parse the provided expression string, returning an array of evaluatable expressions.
+	 * @param expressionString the expression 
+	 * @return the evaluator for the parsed expression
+	 * @throws ParserException an exception occured during parsing
+	 */
+	public Expression[] parseExpressions(String expressionString) throws ParserException;
+
 }

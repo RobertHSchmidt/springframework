@@ -7,12 +7,14 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.ViewDescriptorCreator;
+import org.springframework.webflow.support.convert.FlowConversionService;
 import org.springframework.webflow.support.convert.TextToViewDescriptorCreator;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class TextToViewDescriptorCreatorTests extends TestCase {
+	TextToViewDescriptorCreator converter = new TextToViewDescriptorCreator(new FlowConversionService());
+
 	public void testStaticView() {
-		TextToViewDescriptorCreator converter = new TextToViewDescriptorCreator();
 		ViewDescriptorCreator creator = (ViewDescriptorCreator)converter.convert("myView");
 		RequestContext context = getRequestContext();
 		ViewDescriptor view = creator.createViewDescriptor(context);
@@ -21,7 +23,6 @@ public class TextToViewDescriptorCreatorTests extends TestCase {
 	}
 	
 	public void testRedirectView() {
-		TextToViewDescriptorCreator converter = new TextToViewDescriptorCreator();
 		ViewDescriptorCreator creator = (ViewDescriptorCreator)converter.convert("redirect:myView?foo=${flowScope.foo}&bar=${requestScope.oven}");
 		RequestContext context = getRequestContext();
 		ViewDescriptor view = creator.createViewDescriptor(context);

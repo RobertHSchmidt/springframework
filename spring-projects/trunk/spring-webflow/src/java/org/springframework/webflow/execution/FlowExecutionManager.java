@@ -276,7 +276,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 				// string encoded
 				criteria = 
 					(FlowExecutionListenerCriteria)getConversionService().
-						conversionExecutorFor(String.class, FlowExecutionListenerCriteria.class).execute(entry.getValue());
+						getConversionExecutor(String.class, FlowExecutionListenerCriteria.class).execute(entry.getValue());
 			}
 			if (entry.getKey() instanceof Collection) {
 				setListeners((Collection)entry.getKey(), criteria);
