@@ -16,7 +16,8 @@
 package org.springframework.webflow.support.convert;
 
 import org.springframework.binding.convert.ConversionException;
-import org.springframework.binding.convert.support.AbstractConverter;
+import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory;
@@ -24,11 +25,29 @@ import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactor
 /**
  * Converter that converts an encoded string representation of a
  * flow execution listener criteria object to an object instance.
+ * <p>
+ * This converter supports the following encoded forms:
+ * <ul>
+ * <li>"*" - will result in  a FlowExecutionListenerCriteria object that matches
+ * with all flows ({@link org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory#allFlows()})
+ * </li>
+ * <li>"flowId" - will result in a FlowExecutionListenerCriteria object that
+ * matches the flow with specified id
+ * ({@link org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory#flow(String)})
+ * </li>
+ * <li>"class:&lt;classname&gt;" - will result in instantiation and usage of a custom 
+ * FlowExecutionListenerCriteria implementation. The implementation must have a public
+ * no-arg constructor.
+ * </li>
+ * </ul>
+ * 
+ * @see org.springframework.webflow.execution.FlowExecutionListenerCriteria
+ * @see org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class TextToFlowExecutionListenerCriteria extends AbstractConverter {
+public class TextToFlowExecutionListenerCriteria extends ConversionServiceAwareConverter {
 
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class };
@@ -45,6 +64,12 @@ public class TextToFlowExecutionListenerCriteria extends AbstractConverter {
 					WildcardFlowExecutionListenerCriteria.WILDCARD_FLOW_ID.equals(encodedCriteria)) {
 			// match all flows
 			return FlowExecutionListenerCriteriaFactory.allFlows();
+		}
+		else if (encodedCriteria.startsWith(CLASS_PREFIX)) {
+			// use custom criteria class
+			Object o = newInstance(encodedCriteria);
+			Assert.isInstanceOf(FlowExecutionListenerCriteria.class, o, "Encoded criteria class is of wrong type: ");
+			return (FlowExecutionListenerCriteria)o;
 		}
 		else {
 			// match identified flow

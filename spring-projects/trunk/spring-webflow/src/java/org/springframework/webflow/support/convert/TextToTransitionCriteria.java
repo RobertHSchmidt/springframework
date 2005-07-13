@@ -59,12 +59,16 @@ public class TextToTransitionCriteria extends ConversionServiceAwareConverter {
 	
 	/**
 	 * Create a new converter that converts strings to transition
-	 * criteria objects. The default expression parser will
-	 * be used.
+	 * criteria objects.
 	 */
 	public TextToTransitionCriteria() {
 	}
 
+	/**
+	 * Create a new converter that converts strings to transition
+	 * criteria objects. The given conversion service will be used to do
+	 * all necessary internal conversion (e.g. parsing expression strings).
+	 */
 	public TextToTransitionCriteria(ConversionService conversionService) {
 		super(conversionService);
 	}
@@ -79,7 +83,8 @@ public class TextToTransitionCriteria extends ConversionServiceAwareConverter {
 	
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
 		String encodedCriteria = (String)source;
-		if (!StringUtils.hasText(encodedCriteria) || TransitionCriteriaFactory.WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
+		if (!StringUtils.hasText(encodedCriteria) ||
+				TransitionCriteriaFactory.WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
 			return TransitionCriteriaFactory.alwaysTrue();
 		}
 		else if (encodedCriteria.startsWith(CLASS_PREFIX)) {
@@ -88,7 +93,7 @@ public class TextToTransitionCriteria extends ConversionServiceAwareConverter {
 			return (TransitionCriteria)o;
 		}
 		else {
-			return createTransitionCriteria(encodedCriteria);
+			return createBooleanExpressionTransitionCriteria(encodedCriteria);
 		}
 	}
 
@@ -99,11 +104,12 @@ public class TextToTransitionCriteria extends ConversionServiceAwareConverter {
 	 * @return the criteria
 	 * @throws ConversionException when there is a problem parsing the expression
 	 */
-	protected TransitionCriteria createTransitionCriteria(String expressionString) throws ConversionException {
+	protected TransitionCriteria createBooleanExpressionTransitionCriteria(String expressionString) throws ConversionException {
 		Expression expression = (Expression)fromStringTo(Expression.class).execute(expressionString);
 		if (expression instanceof StaticExpression) {
 			return TransitionCriteriaFactory.eventId(expressionString);
-		} else {
+		}
+		else {
 			return new BooleanExpressionTransitionCriteria(expression);
 		}
 	}
@@ -115,7 +121,6 @@ public class TextToTransitionCriteria extends ConversionServiceAwareConverter {
 	 * 
 	 * @author Keith Donald
 	 * @author Erwin Vervaet
-	 * @author Rob Harrop
 	 */
 	public static class BooleanExpressionTransitionCriteria implements TransitionCriteria {
 
