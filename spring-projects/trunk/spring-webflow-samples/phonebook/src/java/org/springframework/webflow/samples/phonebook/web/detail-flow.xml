@@ -18,7 +18,7 @@
 
 	<subflow-state id="browseColleagueDetails" flow="detailFlow">
 		<attribute-mapper>
-			<input value="${sourceEvent.parameters.id}" as="id" type="long"/>
+			<input value="${sourceEvent.parameters.id}" as="id" from="string" to="long"/>
 		</attribute-mapper>
 		<transition on="finish" to="getDetails"/>
 		<transition on="error" to="error"/>

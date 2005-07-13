@@ -6,9 +6,9 @@
 <webflow id="searchFlow" start-state="displayCriteria">
 
 	<view-state id="displayCriteria" view="searchCriteria">
-		<setup>
+		<entry>
 			<action bean="searchFormAction" method="setupForm"/>
-		</setup>
+		</entry>
 		<transition on="submit" to="executeSearch">
 			<action bean="searchFormAction" method="bindAndValidate"/>
 		</transition>
@@ -26,7 +26,7 @@
 
 	<subflow-state id="browseDetails" flow="detailFlow">
 		<attribute-mapper>
-			<input value="${sourceEvent.parameters.id}" as="id" type="long"/>
+			<input value="${sourceEvent.parameters.id}" as="id" from="string" to="long"/>
 		</attribute-mapper>
 		<transition on="finish" to="executeQuery"/>
 		<transition on="error" to="error"/>
