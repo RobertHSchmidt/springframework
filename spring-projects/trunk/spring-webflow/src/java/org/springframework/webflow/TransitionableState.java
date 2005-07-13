@@ -40,6 +40,11 @@ public abstract class TransitionableState extends State {
 	private Set transitions = CollectionFactory.createLinkedSetIfPossible(6);
 	
 	/**
+	 * An action to execute when exiting this state 
+	 */
+	private Action exitAction;
+	
+	/**
 	 * Default constructor for bean style usage.
 	 */
 	protected TransitionableState() {
@@ -97,6 +102,22 @@ public abstract class TransitionableState extends State {
 		addAll(transitions);
 	}
 
+	/**
+	 * Returns the exit action for this state (may be null).
+	 * @return the exit action
+	 */
+	public Action getExitAction() {
+		return exitAction;
+	}
+
+	/**
+	 * Sets the exit action for this state.
+	 * @param exitAction the exit action (may be null).
+	 */
+	public void setExitAction(Action exitAction) {
+		this.exitAction = exitAction;
+	}
+	
 	/**
 	 * Add a transition to this state.
 	 * @param transition the transition to add
@@ -224,7 +245,14 @@ public abstract class TransitionableState extends State {
 		return enter(context);
 	}
 
+	public void exit(StateContext context) {
+		if (this.exitAction != null) {
+			new ActionExecutor(this, exitAction).execute(context);
+		}
+	}
+	
 	protected void createToString(ToStringCreator creator) {
 		creator.append("transitions", this.transitions);
 	}
+
 }

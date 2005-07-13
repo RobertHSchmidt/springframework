@@ -19,8 +19,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
@@ -227,7 +225,7 @@ public class ActionState extends TransitionableState {
 	/**
 	 * Returns an iterator that lists the set of actions to execute for this
 	 * state. Returns a iterator over a collection of
-	 * {@link ActionState.ActionExecutor} objects.
+	 * {@link ActionExecutor} objects.
 	 * @return the ActionExecutor iterator
 	 */
 	private Iterator actionExecutors() {
@@ -345,63 +343,6 @@ public class ActionState extends TransitionableState {
 		}
 	}
 
-	/**
-	 * Internal action executor, encapsulating a single action's execution and
-	 * result handling logic.
-	 * 
-	 * @author Keith Donald
-	 * @author Erwin Vervaet
-	 */
-	private static class ActionExecutor {
-
-		protected final Log logger = LogFactory.getLog(ActionExecutor.class);
-
-		private ActionState actionState;
-
-		private Action action;
-
-		/**
-		 * Create a new action executor.
-		 * @param action the action to wrap
-		 */
-		public ActionExecutor(ActionState actionState, Action action) {
-			Assert.notNull(action, "The action state's action is required");
-			this.actionState = actionState;
-			this.action = action;
-		}
-
-		/**
-		 * Returns the wrapped action.
-		 */
-		public Action getAction() {
-			return action;
-		}
-
-		/**
-		 * Execute the wrapped action.
-		 * @param context the flow execution request context
-		 * @return result of execution
-		 */
-		protected Event execute(RequestContext context) throws ActionExecutionException {
-			try {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Executing action '" + this + "'");
-				}
-				return action.execute(context);
-			}
-			catch (ActionExecutionException e) {
-				throw e;
-			}
-			catch (Exception e) {
-				throw new ActionExecutionException(actionState, action, e);
-			}
-		}
-
-		public String toString() {
-			return action.toString();
-		}
-	}
-	
 	protected void createToString(ToStringCreator creator) {
 		creator.append("actions", actionExecutors);
 		super.createToString(creator);

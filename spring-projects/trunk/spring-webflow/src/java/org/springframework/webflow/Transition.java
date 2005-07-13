@@ -267,6 +267,7 @@ public class Transition extends AnnotatedObject {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing transition '" + this + "' out of state '" + getSourceState().getId() + "'");
 			}
+			getSourceState().exit(context);
 			context.setLastTransition(this);
 			// enter the target state (note: any exceptions are propagated)
 			viewDescriptor = targetState.enter(context);
