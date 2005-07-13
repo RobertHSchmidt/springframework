@@ -65,6 +65,11 @@ public abstract class State extends AnnotatedObject {
 	private String id;
 
 	/**
+	 * The action to invoke when this state is entered. 
+	 */
+	private Action entryAction;
+	
+	/**
 	 * Default constructor for bean style usage.
 	 */
 	protected State() {
@@ -138,6 +143,22 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
+	 * Returns the action to invoke when this state is entered.
+	 * @return the entry action (may be null)
+	 */
+	public Action getEntryAction() {
+		return entryAction;
+	}
+
+	/**
+	 * Sets the action to invoke when this state is entered.
+	 * @param entryAction the entry action (may be null)
+	 */
+	public void setEntryAction(Action entryAction) {
+		this.entryAction = entryAction;
+	}
+	
+	/**
 	 * Checks if this state is transitionable. That is, is this state capable of executing
 	 * a transition to another state on the occurence of an event? All
 	 * subclasses of <code>TransitionableState</code> are transitionable.
@@ -156,12 +177,19 @@ public abstract class State extends AnnotatedObject {
 	 * @return a view descriptor containing model and view information needed to
 	 *         render the results of the state processing
 	 */
-	public final ViewDescriptor enter(StateContext context) {
+	public ViewDescriptor enter(StateContext context) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Entering state '" + getId() + "' in flow '" + getFlow().getId() + "'");
 		}
 		context.setCurrentState(this);
+		executeEntryAction(context);
 		return doEnter(context);
+	}
+	
+	protected void executeEntryAction(RequestContext context) {
+		if (getEntryAction() != null) {
+			new ActionExecutor(this, getEntryAction()).execute(context);
+		}
 	}
 
 	/**
