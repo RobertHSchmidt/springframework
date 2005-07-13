@@ -62,10 +62,17 @@ public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter
 	 */
 	public static final String REDIRECT_PREFIX = "redirect:";
 
+	/**
+	 * Create a new text to ViewDescriptorCreator converter.
+	 */
 	public TextToViewDescriptorCreator() {
 		super();
 	}
 
+	/**
+	 * Create a new text to ViewDescriptorCreator converter. Use given
+	 * conversion service for internal conversions (e.g. parsing expressions).
+	 */
 	public TextToViewDescriptorCreator(ConversionService conversionService) {
 		super(conversionService);
 	}
@@ -180,6 +187,12 @@ public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter
 		
 		private Expression[] expressions;
 		
+		/**
+		 * Create a new redirecting view descriptor creator that takes given
+		 * list of expressions as input. The list of expressions is the parsed
+		 * form (expression-tokenized) of the encoded view
+		 * (e.g. "/viewName?param0=value0&param1=value1").
+		 */
 		public RedirectViewDescriptorCreator(Expression[] expressions) {
 			this.expressions = expressions;
 		}
@@ -196,6 +209,7 @@ public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter
 			viewDescriptor.setRedirect(true);
 			
 			// the resulting evaluatedEncodedeView should look something like "/viewName?param0=value0&param1=value1"
+			// now parse that and build a corresponding view descriptor
 			String fullView = evaluatedEncodedView.toString();
 			int idx = fullView.indexOf('?');
 			if (idx != -1) {
