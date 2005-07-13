@@ -450,6 +450,18 @@
 <!ATTLIST input as CDATA #IMPLIED>
 
 <!--
+	The type of the source attribute to map in this flow; used with the "to" attribute to perform
+	a value type conversion during attribute mapping.
+-->
+<!ATTLIST input from CDATA #IMPLIED>
+
+<!--
+	The target type of the target attribute in the subflow; used with the "from" attribute to perform
+	a value type conversion during attribute mapping.
+-->
+<!ATTLIST input to CDATA #IMPLIED>
+
+<!--
 	A single output mapping that maps data from the subflow back up to this flow 
 	when it resumes.
 -->
@@ -477,6 +489,18 @@
 	assign a name to the value returned by the expression for storage in this flow.
 -->
 <!ATTLIST output as CDATA #IMPLIED>
+
+<!--
+	The type of the attribute to map from the subflow; used with the "to" attribute to perform
+	a value type conversion during attribute mapping.
+-->
+<!ATTLIST output from CDATA #IMPLIED>
+
+<!--
+	The type of the target attribute to set in this flow; used with the "from" attribute to perform
+	a value type conversion during attribute mapping.
+-->
+<!ATTLIST output to CDATA #IMPLIED>
 
 <!--
 	Defines an end state: a state that terminates the flow.
