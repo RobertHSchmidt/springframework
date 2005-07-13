@@ -28,7 +28,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionCriteriaFactory;
-import org.springframework.webflow.TransitionCriteriaFactory.EventIdTransitionCriteria;
 
 /**
  * Converter that takes an encoded string representation and produces

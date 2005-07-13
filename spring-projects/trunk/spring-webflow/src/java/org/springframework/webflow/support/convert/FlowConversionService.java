@@ -16,7 +16,6 @@
 package org.springframework.webflow.support.convert;
 
 import org.springframework.binding.convert.support.DefaultConversionService;
-import org.springframework.binding.convert.support.TextToExpression;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
