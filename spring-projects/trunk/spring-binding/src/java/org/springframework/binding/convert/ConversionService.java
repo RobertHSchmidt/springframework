@@ -52,6 +52,13 @@ public interface ConversionService {
 	 * @param targetAlias the target alias, may also be the fully qualified target class name
 	 * @return the conversion executor
 	 */
-	public ConversionExecutor getConversionExecutorForTargetAlias(Class sourceClass,
+	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass,
 			String targetAlias) throws IllegalArgumentException;
+	
+	/**
+	 * Return the class with the specified alias.
+	 * @param alias the class alias
+	 * @return the class
+	 */
+	public Class getClassByAlias(String alias);
 }
