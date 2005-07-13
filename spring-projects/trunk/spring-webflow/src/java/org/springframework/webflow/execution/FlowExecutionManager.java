@@ -536,12 +536,15 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	protected ViewDescriptor prepareViewDescriptor(ViewDescriptor viewDescriptor, Serializable flowExecutionId,
 			FlowExecutionContext flowExecutionContext) {
 		if (flowExecutionContext.isActive() && viewDescriptor != null) {
-			// make the unique flow execution id available in the model
-			viewDescriptor.addObject(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
-			// make the flow execution context available in the model
-			viewDescriptor.addObject(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
-			// add some convenience values for views that aren't easily JavaBean aware
-			viewDescriptor.addObject(CURRENT_STATE_ID_ATTRIBUTE, flowExecutionContext.getCurrentState().getId());
+			if (viewDescriptor.isRedirect()) {
+				viewDescriptor.addObject(getFlowExecutionIdParameterName(), flowExecutionId);
+			} else {
+				// make the entire flow execution context available in the model
+				viewDescriptor.addObject(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
+				// make the unique flow execution id and current state id available in the model as convenience to views
+				viewDescriptor.addObject(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
+				viewDescriptor.addObject(CURRENT_STATE_ID_ATTRIBUTE, flowExecutionContext.getCurrentState().getId());
+			}
 		}
 		return viewDescriptor;
 	}
