@@ -1,22 +1,5 @@
 <?xml version="1.0"?>
 
-<!--
-  "$Header$"
-  =======================================================================
-  This Ant build script relies on the use of pre-made targets from a
-  common build system, using Ant 1.6.x's import functionality. This means
-  that common tasks do not have to be defined at all in this file.
-
-  It is still easy to add onto default behavior; just override normal or 'hook'
-  targets from the common targets, adding 'depend' clauses on the originals.
-
-  Do not check the lib dir into revision control! Libraries get retrieved
-  from one or more configured repositories via Ivy. If there is a need to
-  check in static libraries of some sort (unlikely), use a directory called
-  static-lib.
-  =======================================================================
--->
-
 <project name="swf-fileupload-sample" default="dist">
 
   <!-- you may override default properties for the build by using entries
