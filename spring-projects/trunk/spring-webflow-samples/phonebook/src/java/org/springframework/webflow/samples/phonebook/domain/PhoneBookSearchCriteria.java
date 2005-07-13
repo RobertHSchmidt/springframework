@@ -17,16 +17,11 @@ package org.springframework.webflow.samples.phonebook.domain;
 
 import java.io.Serializable;
 
-public class PhoneBookQuery implements Serializable {
+public class PhoneBookSearchCriteria implements Serializable {
 
-	private String firstName;
+	private String firstName = "";
 
-	private String lastName;
-
-	public PhoneBookQuery() {
-		this.firstName = "";
-		this.lastName = "";
-	}
+	private String lastName = "";
 
 	public String getFirstName() {
 		return firstName;

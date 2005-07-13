@@ -30,17 +30,17 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 	}
 
 	protected String flowId() {
-		return "person.Search";
+		return "searchFlow";
 	}
 
 	protected String[] getConfigLocations() {
-		return new String[] { "classpath:org/springframework/samples/phonebook/deploy/service-layer.xml",
-				"classpath:org/springframework/samples/phonebook/deploy/web-layer.xml" };
+		return new String[] { "classpath:org/springframework/webflow/samples/phonebook/deploy/service-layer.xml",
+				"classpath:org/springframework/webflow/samples/phonebook/deploy/web-layer.xml" };
 	}
 
 	public void testStartFlow() {
 		startFlow();
-		assertCurrentStateEquals("criteria.view");
+		assertCurrentStateEquals("displayCriteria");
 	}
 	
 	public void testCriteriaView_Submit_Success() {
@@ -49,14 +49,14 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 		properties.put("firstName", "Keith");
 		properties.put("lastName", "Donald");
 		ViewDescriptor view = signalEvent(new Event(this, "submit", properties));
-		assertCurrentStateEquals("results.view");
+		assertCurrentStateEquals("displayResults");
 		Assert.collectionAttributeSizeEquals(view, "persons", 1);
 	}
 	
 	public void testCriteriaView_Submit_Error() {
 		startFlow();
 		ViewDescriptor view = signalEvent(new Event(this, "submit", null));
-		assertCurrentStateEquals("criteria.view");
+		assertCurrentStateEquals("displayCriteria");
 	}
 
 }

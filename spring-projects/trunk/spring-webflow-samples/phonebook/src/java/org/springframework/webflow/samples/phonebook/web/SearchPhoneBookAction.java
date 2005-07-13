@@ -19,20 +19,20 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
-import org.springframework.webflow.samples.phonebook.domain.PhoneBookQuery;
+import org.springframework.webflow.samples.phonebook.domain.PhoneBookSearchCriteria;
 
-public class ExecuteQueryAction extends AbstractAction {
+public class SearchPhoneBookAction extends AbstractAction {
 
 	private PhoneBook phoneBook;
 
-	public void setPhoneBook(PhoneBook phoneBook) {
+	public SearchPhoneBookAction(PhoneBook phonebook) {
 		this.phoneBook = phoneBook;
 	}
-
+	
 	protected Event doExecute(RequestContext context) throws Exception {
-		PhoneBookQuery query = (PhoneBookQuery)context.getFlowScope().getRequiredAttribute("query",
-				PhoneBookQuery.class);
-		context.getRequestScope().setAttribute("persons", phoneBook.query(query));
+		PhoneBookSearchCriteria criteria = (PhoneBookSearchCriteria)context.getFlowScope().getRequiredAttribute("query",
+				PhoneBookSearchCriteria.class);
+		context.getRequestScope().setAttribute("persons", phoneBook.search(criteria));
 		return success();
 	}
 }

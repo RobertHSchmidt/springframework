@@ -18,14 +18,14 @@ package org.springframework.webflow.samples.phonebook.domain;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-public class PhoneBookQueryValidator implements Validator {
+public class PhoneBookSearchCriteriaValidator implements Validator {
 
 	public boolean supports(Class clazz) {
-		return clazz.equals(PhoneBookQuery.class);
+		return clazz.equals(PhoneBookSearchCriteria.class);
 	}
 
 	public void validate(Object obj, Errors errors) {
-		PhoneBookQuery query = (PhoneBookQuery)obj;
+		PhoneBookSearchCriteria query = (PhoneBookSearchCriteria)obj;
 		if ((query.getFirstName() == null || query.getFirstName().length() == 0)
 				&& (query.getLastName() == null || query.getLastName().length() == 0)) {
 			errors.reject("noCriteria", "Please provide some query criteria!");

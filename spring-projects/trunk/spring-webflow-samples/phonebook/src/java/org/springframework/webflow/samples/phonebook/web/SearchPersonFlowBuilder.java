@@ -53,7 +53,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 				beforeExecute(method("bindAndValidate", action("person.Search.criteria.formAction")))));
 
 		// execute query
-		addActionState(EXECUTE_QUERY, action(ExecuteQueryAction.class, AutowireMode.BY_TYPE), new Transition[] {
+		addActionState(EXECUTE_QUERY, action(SearchPhoneBookAction.class, AutowireMode.BY_TYPE), new Transition[] {
 				on(error(), DISPLAY_CRITERIA), on(success(), DISPLAY_RESULTS) });
 
 		// view results

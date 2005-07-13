@@ -3,20 +3,20 @@
 <!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
-<webflow id="person.Detail" start-state="getDetails">
+<webflow id="detailFlow" start-state="getDetails">
 
 	<action-state id="getDetails">
-		<action class="org.springframework.samples.phonebook.web.flow.action.GetPersonAction" autowire="byType"/>
+		<action class="org.springframework.webflow.samples.phonebook.web.GetPersonAction" autowire="byType"/>
 		<transition on="success" to="displayDetails"/>
 		<transition on="error" to="error"/>
 	</action-state>
 
-	<view-state id="displayDetails" view="person.Detail.view">
+	<view-state id="displayDetails" view="details">
 		<transition on="back" to="finish"/>
-		<transition on="select" to="showColleagueDetails"/>
+		<transition on="select" to="browseColleagueDetails"/>
 	</view-state>
 
-	<subflow-state id="showColleagueDetails" flow="person.Detail">
+	<subflow-state id="browseColleagueDetails" flow="detailFlow">
 		<attribute-mapper>
 			<input value="${sourceEvent.parameters.id}" as="id" type="long"/>
 		</attribute-mapper>

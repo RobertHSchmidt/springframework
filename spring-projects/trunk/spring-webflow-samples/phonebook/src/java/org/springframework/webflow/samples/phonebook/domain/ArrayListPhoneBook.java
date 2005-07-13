@@ -87,7 +87,7 @@ public class ArrayListPhoneBook implements PhoneBook {
 		persons.add(dj);
 	}
 
-	public List query(PhoneBookQuery query) {
+	public List search(PhoneBookSearchCriteria query) {
 		List res = new ArrayList();
 		Iterator it = persons.iterator();
 		while (it.hasNext()) {

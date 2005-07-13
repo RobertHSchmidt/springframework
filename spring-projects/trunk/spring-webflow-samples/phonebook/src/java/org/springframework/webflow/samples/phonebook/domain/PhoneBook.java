@@ -18,11 +18,9 @@ package org.springframework.webflow.samples.phonebook.domain;
 import java.util.List;
 
 public interface PhoneBook {
-
-	public List query(PhoneBookQuery query);
+	public List search(PhoneBookSearchCriteria criteria);
 
 	public Person getPerson(Long id);
 
 	public Person getPerson(String userId);
-
 }
