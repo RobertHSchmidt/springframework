@@ -64,6 +64,7 @@
 	<path id="hibernate.classpath">
 	  <path refid="test.classpath" />
 	  <path location="${target.classes.dir}" />
+      <pathelement location="${target.testclasses.dir}" />
     </path>
   </target>
 
