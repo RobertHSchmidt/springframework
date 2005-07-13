@@ -47,7 +47,7 @@ public class StateTests extends TestCase {
 		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
 		assertNull(view);
 		assertEquals("success", flowExecution.getLastEventId());
-		assertEquals(1, ((ExecutionCounterAction)state.getAction().getTargetAction()).getExecutionCount());
+		assertEquals(1, ((ExecutionCounterAction)state.getAction()).getExecutionCount());
 	}
 
 	public void testActionAttributesChain() {
@@ -61,10 +61,10 @@ public class StateTests extends TestCase {
 		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
 		assertNull(view);
 		assertEquals("success", flowExecution.getLastEventId());
-		AnnotatedAction[] actions = state.getActions();
+		Action[] actions = state.getActions();
 		for (int i = 0; i < actions.length; i++) {
-			AnnotatedAction action = actions[i];
-			assertEquals(1, ((ExecutionCounterAction)(action.getTargetAction())).getExecutionCount());
+			ExecutionCounterAction action = (ExecutionCounterAction)actions[i];
+			assertEquals(1, action.getExecutionCount());
 		}
 	}
 
@@ -86,7 +86,7 @@ public class StateTests extends TestCase {
 
 	public void testActionAttributesChainNamedActions() {
 		Flow flow = new Flow("myFlow");
-		AnnotatedAction[] actions = new AnnotatedAction[4];
+		Action[] actions = new AnnotatedAction[4];
 		actions[0] = new AnnotatedAction(new ExecutionCounterAction("not mapped result"));
 		actions[1] = new AnnotatedAction(new ExecutionCounterAction(null));
 		Properties properties = new Properties();
@@ -103,7 +103,7 @@ public class StateTests extends TestCase {
 		assertEquals("action4.success", flowExecution.getLastEventId());
 		actions = state.getActions();
 		for (int i = 0; i < actions.length; i++) {
-			AnnotatedAction action = actions[i];
+			AnnotatedAction action = (AnnotatedAction)actions[i];
 			assertEquals(1, ((ExecutionCounterAction)(action.getTargetAction())).getExecutionCount());
 		}
 	}

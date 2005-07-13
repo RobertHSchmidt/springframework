@@ -16,6 +16,7 @@
 package org.springframework.webflow;
 
 import org.springframework.binding.AttributeSource;
+import org.springframework.binding.support.EmptyAttributeSource;
 import org.springframework.core.NestedRuntimeException;
 
 /**
@@ -49,12 +50,14 @@ public class ActionExecutionException extends NestedRuntimeException {
 	 * Create a new action execution exception.
 	 * @param state the active state
 	 * @param action the action that generated an unrecoverable exception
+	 * @param executionProperties action usage properties
 	 * @param cause the underlying cause
 	 */
-	public ActionExecutionException(State state, AnnotatedAction action, Throwable cause) {
-		this(state, action.getTargetAction(), action, cause);
+	public ActionExecutionException(State state, Action action, Throwable cause) {
+		this(state, action, EmptyAttributeSource.INSTANCE,
+				"Exception thrown executing action '" + action + "' in state '" + state.getId() + "' of flow '"
+				+ state.getFlow().getId() + "'", cause);
 	}
-
 	/**
 	 * Create a new action execution exception.
 	 * @param state the active state

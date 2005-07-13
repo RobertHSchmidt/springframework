@@ -88,7 +88,6 @@ import org.springframework.util.Assert;
  */
 public class ActionState extends TransitionableState {
 
-	
 	/**
 	 * The set of actions to be executed when this action state is entered.
 	 */
@@ -114,22 +113,6 @@ public class ActionState extends TransitionableState {
 			throws IllegalArgumentException {
 		super(flow, id, transition);
 		addAction(targetAction);
-	}
-
-	/**
-	 * Create a new action state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param action the action and any configuration properties for use within
-	 *        this state
-	 * @param transition the sole transition (path) out of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
-	 */
-	public ActionState(Flow flow, String id, AnnotatedAction action, Transition transition)
-			throws IllegalArgumentException {
-		super(flow, id, transition);
-		addAction(action);
 	}
 
 	/**
@@ -163,39 +146,6 @@ public class ActionState extends TransitionableState {
 			throws IllegalArgumentException {
 		super(flow, id, transitions, properties);
 		addAction(targetAction);
-	}
-
-	/**
-	 * Create a new action state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param action the action and any configuration properties for use within
-	 *        this state
-	 * @param transitions the transitions out of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
-	 */
-	public ActionState(Flow flow, String id, AnnotatedAction action, Transition[] transitions)
-			throws IllegalArgumentException {
-		super(flow, id, transitions);
-		addAction(action);
-	}
-
-	/**
-	 * Create a new action state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param action the action and any configuration properties for use within
-	 *        this state
-	 * @param transitions the transitions out of this state
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
-	 */
-	public ActionState(Flow flow, String id, AnnotatedAction action, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
-		super(flow, id, transitions, properties);
-		addAction(action);
 	}
 
 	/**
@@ -245,67 +195,10 @@ public class ActionState extends TransitionableState {
 	}
 
 	/**
-	 * Create a new action state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param actions the actions with any configuration properties for use
-	 *        within this state
-	 * @param transition the transitions (paths) out of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
-	 */
-	public ActionState(Flow flow, String id, AnnotatedAction[] actions, Transition transition)
-			throws IllegalArgumentException {
-		super(flow, id, transition);
-		addActions(actions);
-	}
-
-	/**
-	 * Create a new action state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param actions the actions with any configuration properties for use
-	 *        within this state
-	 * @param transitions the transitions (paths) out of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
-	 */
-	public ActionState(Flow flow, String id, AnnotatedAction[] actions, Transition[] transitions)
-			throws IllegalArgumentException {
-		super(flow, id, transitions);
-		addActions(actions);
-	}
-
-	/**
-	 * Create a new action state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param actions the actions with any configuration properties for use
-	 *        within this state
-	 * @param transitions the transitions (paths) out of this state
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
-	 */
-	public ActionState(Flow flow, String id, AnnotatedAction[] actions, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
-		super(flow, id, transitions, properties);
-		addActions(actions);
-	}
-
-	/**
 	 * Add a target action instance to this state.
 	 * @param action the action to add
 	 */
 	public void addAction(Action action) {
-		this.actionExecutors.add(new ActionExecutor(this, new AnnotatedAction(action)));
-	}
-
-	/**
-	 * Add an action instance to this state.
-	 * @param action the state action to add
-	 */
-	public void addAction(AnnotatedAction action) {
 		this.actionExecutors.add(new ActionExecutor(this, action));
 	}
 
@@ -354,16 +247,24 @@ public class ActionState extends TransitionableState {
 	 * Returns the first action executed by this action state.
 	 * @return the first action
 	 */
-	public AnnotatedAction getAction() {
+	public Action getAction() {
 		return getActions()[0];
+	}
+
+	/**
+	 * Returns the first action executed by this action state with its annotations
+	 * @return the annotated first action
+	 */
+	public AnnotatedAction getAnnotatedAction() {
+		return getAnnotatedActions()[0];
 	}
 
 	/**
 	 * Returns the list of actions executed by this action state.
 	 * @return the action list, as a typed array
 	 */
-	public AnnotatedAction[] getActions() {
-		AnnotatedAction[] actions = new AnnotatedAction[actionExecutors.size()];
+	public Action[] getActions() {
+		Action[] actions = new Action[actionExecutors.size()];
 		int i = 0;
 		for (Iterator it = actionExecutors(); it.hasNext();) {
 			actions[i++] = ((ActionExecutor)it.next()).getAction();
@@ -371,6 +272,24 @@ public class ActionState extends TransitionableState {
 		return actions;
 	}
 
+	/**
+	 * Returns the list of actions executed by this action state with annotations
+	 * @return the annotated action list, as a typed array
+	 */
+	public AnnotatedAction[] getAnnotatedActions() {
+		AnnotatedAction[] actions = new AnnotatedAction[actionExecutors.size()];
+		int i = 0;
+		for (Iterator it = actionExecutors(); it.hasNext();) {
+			Action targetAction = ((ActionExecutor)it.next()).getAction();
+			if (targetAction instanceof AnnotatedAction) {
+				actions[i++] = (AnnotatedAction)targetAction; 
+			} else {
+				actions[i++] = new AnnotatedAction(targetAction);
+			}
+		}
+		return actions;
+	}
+	
 	/**
 	 * Specialization of State's <code>doEnter</code> template method
 	 * that executes behaviour specific to this state type in polymorphic
@@ -392,8 +311,8 @@ public class ActionState extends TransitionableState {
 		int executionCount = 0;
 		String[] eventIds = new String[actionExecutors.size()];
 		while (it.hasNext()) {
-			ActionExecutor actionExecutor = (ActionExecutor)it.next();
-			Event event = actionExecutor.execute(context);
+			ActionExecutor action = (ActionExecutor)it.next();
+			Event event = action.execute(context);
 			if (event != null) {
 				eventIds[executionCount] = event.getId();
 				try {
@@ -439,13 +358,13 @@ public class ActionState extends TransitionableState {
 
 		private ActionState actionState;
 
-		private AnnotatedAction action;
+		private Action action;
 
 		/**
 		 * Create a new action executor.
 		 * @param action the action to wrap
 		 */
-		public ActionExecutor(ActionState actionState, AnnotatedAction action) {
+		public ActionExecutor(ActionState actionState, Action action) {
 			Assert.notNull(action, "The action state's action is required");
 			this.actionState = actionState;
 			this.action = action;
@@ -454,7 +373,7 @@ public class ActionState extends TransitionableState {
 		/**
 		 * Returns the wrapped action.
 		 */
-		public AnnotatedAction getAction() {
+		public Action getAction() {
 			return action;
 		}
 
@@ -463,39 +382,19 @@ public class ActionState extends TransitionableState {
 		 * @param context the flow execution request context
 		 * @return result of execution
 		 */
-		protected Event execute(RequestContext context) {
+		protected Event execute(RequestContext context) throws ActionExecutionException {
 			try {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Executing action '" + this + "'");
 				}
-				context.setProperties(action);
-				return decorateResult(action.getTargetAction().execute(context));
+				return action.execute(context);
+			}
+			catch (ActionExecutionException e) {
+				throw e;
 			}
 			catch (Exception e) {
 				throw new ActionExecutionException(actionState, action, e);
 			}
-			finally {
-				context.setProperties(null);
-			}
-		}
-
-		/**
-		 * Get the event id to be used as grounds for a transition in the
-		 * containing state, based on given result returned from action
-		 * execution.
-		 * <p>
-		 * If the wrapped action is named, the name will be used as a qualifier
-		 * for the event (e.g. "myAction.success").
-		 * @param resultEvent the action result event
-		 */
-		protected Event decorateResult(Event resultEvent) {
-			if (resultEvent == null) {
-				return null;
-			}
-			if (action.isNamed()) {
-				resultEvent.setId(action.getName() + "." + resultEvent.getId());
-			}
-			return resultEvent;
 		}
 
 		public String toString() {

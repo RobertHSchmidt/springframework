@@ -18,7 +18,6 @@ package org.springframework.webflow.action;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionExecutionException;
-import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
@@ -36,30 +35,21 @@ import org.springframework.webflow.TransitionCriteria;
 public class ActionTransitionCriteria implements TransitionCriteria {
 
 	/**
-	 * The action to execute when the precondition is tested, annotated with usage attributes.
-	 */
-	private AnnotatedAction action;
-
-	/**
 	 * The result event id that should map to a <code>true</code> precondition
 	 * return value.
 	 */
 	private String trueEventId = AbstractAction.SUCCESS_RESULT_EVENT_ID;
 
 	/**
-	 * Create a action precondition delegating to the specified action.
-	 * @param action the action
+	 * The action to execute when the precondition is tested, annotated with usage attributes.
 	 */
-	public ActionTransitionCriteria(Action action) {
-		this(new AnnotatedAction(action));
-	}
+	private Action action;
 
 	/**
 	 * Create a action precondition delegating to the specified action.
 	 * @param action the action
 	 */
-	public ActionTransitionCriteria(AnnotatedAction action) {
-		Assert.notNull(action, "The action is required");
+	public ActionTransitionCriteria(Action action) {
 		this.action = action;
 	}
 
@@ -85,21 +75,19 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 	 * Returns the action attributes associated with this action precondition.
 	 * @return the attributes
 	 */
-	protected AnnotatedAction getAction() {
+	protected Action getAction() {
 		return action;
 	}
 	
 	public boolean test(RequestContext context) {
-		context.setProperties(action);
 		try {
-			Event result = this.action.getTargetAction().execute(context);
+			Event result = getAction().execute(context);
 			return result != null && getTrueEventId().equals(result.getId());
 		}
-		catch (Exception e) {
-			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), action, e);
-		}
-		finally {
-			context.setProperties(null);
+		catch (ActionExecutionException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), getAction(), e);
 		}
 	}
 }

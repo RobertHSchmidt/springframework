@@ -69,8 +69,8 @@ public class XmlFlowBuilderTests extends TestCase {
 		ActionState actionState1 = (ActionState) flow.getState("actionState1");
 		assertNotNull(actionState1);
 		assertEquals(5, actionState1.getActionCount());
-		assertEquals(null, actionState1.getAction().getCaption());
-		assertEquals("action2Name", actionState1.getActions()[1].getName());
+		assertEquals(null, actionState1.getAnnotatedAction().getCaption());
+		assertEquals("action2Name", actionState1.getAnnotatedActions()[1].getName());
 		assertEquals(2, actionState1.getTransitions().length);
 		context.setLastEvent(createEvent("event1"));
 		assertTrue(actionState1.hasTransitionFor(context));
@@ -80,8 +80,8 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertTrue(actionState1.hasTransitionFor(context));
 		transition = actionState1.getRequiredTransition(context);
 		assertEquals("viewState2", transition.getTargetStateId());
-		assertEquals("prop1Value", actionState1.getActions()[0].getAttribute("prop1"));
-		assertEquals("prop2Value", actionState1.getActions()[0].getAttribute("prop2"));
+		assertEquals("prop1Value", actionState1.getAnnotatedActions()[0].getAttribute("prop1"));
+		assertEquals("prop2Value", actionState1.getAnnotatedActions()[0].getAttribute("prop2"));
 
 		ViewState viewState1 = (ViewState) flow.getState("viewState1");
 		assertNotNull(viewState1);
