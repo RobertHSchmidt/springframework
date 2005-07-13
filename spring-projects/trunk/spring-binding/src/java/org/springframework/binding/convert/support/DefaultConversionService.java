@@ -130,7 +130,7 @@ public class DefaultConversionService implements ConversionService {
 				targetType);
 	}
 
-	public ConversionExecutor getConversionExecutorForTargetAlias(Class sourceClass,
+	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass,
 			String alias) throws IllegalArgumentException {
 		Assert.hasText(alias,
 				"The target alias is required and must either be a type alias (e.g 'boolean') "
@@ -186,6 +186,12 @@ public class DefaultConversionService implements ConversionService {
 		}
 	}
 
+	public Class getClassByAlias(String alias) {
+		Object clazz = aliasMap.get(alias);
+		Assert.isInstanceOf(Class.class, clazz, "Not a class alias '" + alias + "':");
+		return ((Class)clazz);
+	}
+	
 	protected Map findConvertersForSource(Class sourceClass) {
 		LinkedList classQueue = new LinkedList();
 		classQueue.addFirst(sourceClass);

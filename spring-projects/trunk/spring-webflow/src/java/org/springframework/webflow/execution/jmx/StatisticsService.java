@@ -117,7 +117,7 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 					globalStats.endedFlowExecutionCount++;
 					globalStats.managedFlowExecutionCount--;
 					globalStats.activeFlowExecutionCount--;
-					try {
+					/* TODO try {
 						Hashtable keys = new Hashtable();
 						keys.put("id", endedSession.getFlow().getId());
 						keys.put("type", "flowExecution");
@@ -126,6 +126,7 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 					} catch (JMException e) {
 						System.out.println(e);
 					}
+					*/
 				}
 			}
 		}
@@ -135,6 +136,7 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 				if (context.getFlowExecutionContext().isRootFlowActive()) {
 					globalStats.totalFlowExecutionCount++;
 					globalStats.managedFlowExecutionCount++;
+					/* TODO
 					try {
 						FlowExecution execution = (FlowExecution) context
 								.getFlowExecutionContext();
@@ -149,6 +151,7 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 					} catch (JMException e) {
 						System.out.println(e);
 					}
+					*/
 				}
 			}
 		}

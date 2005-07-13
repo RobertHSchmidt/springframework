@@ -53,7 +53,7 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 	}
 	
 	protected ConversionExecutor fromStringToTypeWithAlias(String targetAlias) {
-		return conversionService.getConversionExecutorForTargetAlias(String.class, targetAlias);
+		return conversionService.getConversionExecutorByTargetAlias(String.class, targetAlias);
 	}
 	
 	protected ConversionExecutor fromStringTo(Class targetClass) {
