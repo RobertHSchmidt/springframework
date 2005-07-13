@@ -50,8 +50,10 @@ import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionCriteriaFactory;
+import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.action.CompositeAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 import org.springframework.webflow.support.TransitionCriteriaChain;
@@ -177,7 +179,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 	private static final String VALUE_ELEMENT = "value";
 	
-	private static final String SETUP_ELEMENT = "setup";
+	private static final String ENTRY_ELEMENT = "entry";
+
+	private static final String EXIT_ELEMENT = "exit";
 	
 	private static final String ON_ERROR_ATTRIBUTE = "on-error";
 	
@@ -476,6 +480,21 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		Assert.isInstanceOf(requiredStateType, state,
 				"The state object for the '" + element.getAttribute(ID_ATTRIBUTE)
 				+ "' state definition should subclass '" + ClassUtils.getShortName(requiredStateType) + "'");
+		// parse any state entry actions
+		List entryElements = DomUtils.getChildElementsByTagName(element, ENTRY_ELEMENT);
+		if (!entryElements.isEmpty()) {
+			Element entryElement = (Element)entryElements.get(0);
+			state.setEntryAction(new CompositeAction(parseAnnotatedActions(entryElement)));
+		}
+		if (state instanceof TransitionableState) {
+			// parse any state entry actions
+			List exitElements = DomUtils.getChildElementsByTagName(element, EXIT_ELEMENT);
+			if (!exitElements.isEmpty()) {
+				Element exitElement = (Element)exitElements.get(0);
+				((TransitionableState)state).setExitAction(new CompositeAction(parseAnnotatedActions(exitElement)));
+			}		
+			return state;
+		}
 		return state;
 	}
 
@@ -504,15 +523,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			ViewDescriptorCreator creator = (ViewDescriptorCreator)
 				converterFor(ViewDescriptorCreator.class).execute(element.getAttribute(VIEW_ATTRIBUTE));
 			viewState.setViewDescriptorCreator(creator);
-		}
-		// setup action support
-		List setupElements = DomUtils.getChildElementsByTagName(element, SETUP_ELEMENT);
-		if (!setupElements.isEmpty()) {
-			Element setupElement = (Element)setupElements.get(0);
-			viewState.setSetupCriteria(TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(setupElement)));
-			if (setupElement.hasAttribute(ON_ERROR_ATTRIBUTE)) {
-				viewState.setSetupErrorStateId(setupElement.getAttribute(ON_ERROR_ATTRIBUTE));
-			}
 		}
 		viewState.addAll(parseTransitions(element));
 		viewState.setProperties(parseProperties(element));

@@ -223,7 +223,7 @@
 	returned to the user.
 	Transitions triggered by user input from the view lead on to other states.
 -->
-<!ELEMENT view-state ( setup?, transition+, property* )>
+<!ELEMENT view-state ( entry?, transition+, property*, exit? )>
 
 <!--
 	Unique identifier of a view state; must be unique to this flow.
@@ -273,21 +273,21 @@
 <!ATTLIST view-state autowire (no | byName | byType | constructor | autodetect | default) "default">
 
 <!--
-	Defines view state setup (aka prerender) logic to be executed.
+	Defines state entry logic to be executed.  This logic will always execute when this state is entered.
 -->
-<!ELEMENT setup ( action+ )>
+<!ELEMENT entry ( action+ )>
 
 <!--
-	State to transition to if the setup action fails. When not specified, the results of the
-	setup action will not be evaluated.
+	Defines state exit logic to be executed.  This logic will always execute when this state is exited 
+	regardless of what transition is executed.
 -->
-<!ATTLIST setup on-error IDREF #IMPLIED>
+<!ELEMENT exit ( action+ )>
 
 <!--
 	Defines a decision state: a state that will evaluate one or more expressions to
 	decide which state to go to next.
 -->
-<!ELEMENT decision-state ( if+, property* )>
+<!ELEMENT decision-state ( entry?, if+, property*, exit? )>
 
 <!--
 	Unique identifier of this decision state; must be unique to this flow.
@@ -350,7 +350,7 @@
 	sub flow completes execution (reaches an end state), the result of subflow execution
 	will be used as grounds for a transition out of this state.
 -->
-<!ELEMENT subflow-state ( attribute-mapper?, transition+, property* )>
+<!ELEMENT subflow-state ( entry?, attribute-mapper?, transition+, property*, exit? )>
 
 <!--
 	Unique identifier of a subflow state; must be unique to this flow.
@@ -481,7 +481,7 @@
 <!--
 	Defines an end state: a state that terminates the flow.
 -->
-<!ELEMENT end-state ( property* )>
+<!ELEMENT end-state ( entry?, property* )>
 
 <!--
 	Unique identifier of an end state; must be unique to this flow.
