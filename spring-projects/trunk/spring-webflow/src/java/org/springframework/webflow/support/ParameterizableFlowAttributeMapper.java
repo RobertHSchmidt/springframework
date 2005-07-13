@@ -24,10 +24,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.AttributeMapper;
-import org.springframework.binding.expression.EvaluationException;
-import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionFactory;
-import org.springframework.binding.support.Assert;
 import org.springframework.binding.support.Mapping;
 import org.springframework.binding.support.ParameterizableAttributeMapper;
 import org.springframework.core.style.ToStringCreator;
@@ -257,7 +254,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * @author Keith Donald
 	 * @author Erwin Vervaet
 	 */
-	private static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
+	static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
 		
 		/**
 		 * Create a new flow scope aware attribute mapper wrapping given collection
@@ -279,32 +276,6 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 					new Mapping(
 						new FlowScopeExpression(ExpressionFactory.parseExpression(sourceExpression)),
 						ExpressionFactory.parsePropertyExpression(targetExpression)));
-			}
-		}
-		
-		/**
-		 * Expression evaluator that evaluates an expression in flow scope.
-		 * 
-		 * @author Keith Donald
-		 */
-		private class FlowScopeExpression implements Expression {
-			
-			private Expression expression;
-			
-			/**
-			 * Create a new expression evaluator that executes given evaluator
-			 * 'in flow scope'.
-			 * @param evaluator the nested evaluator to execute
-			 */
-			public FlowScopeExpression(Expression evaluator) {
-				this.expression = evaluator;
-			}
-			
-			public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
-				Assert.isInstanceOf(RequestContext.class, target,
-						"In the web flow system all source (from) mapping expressions are evaluated against the request context");
-				RequestContext requestContext = (RequestContext)target;
-				return expression.evaluateAgainst(requestContext.getFlowScope(), context);
 			}
 		}
 	}
