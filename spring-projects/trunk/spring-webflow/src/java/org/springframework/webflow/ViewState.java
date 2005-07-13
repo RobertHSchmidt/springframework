@@ -18,7 +18,6 @@ package org.springframework.webflow;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.StringUtils;
 
 /**
  * A view state is a state in which a physical view resource should be rendered
@@ -45,16 +44,6 @@ public class ViewState extends TransitionableState {
 	 * The factory for the view descriptor to return when this state is entered.
 	 */
 	private ViewDescriptorCreator viewDescriptorCreator;
-	
-	/**
-	 * A view pre-render setup criteria object.
-	 */
-	private TransitionCriteria setupCriteria;
-	
-	/**
-	 * The state to transition to if the view state setup criteria fails.
-	 */
-	private String setupErrorStateId;
 	
 	/**
 	 * Default constructor for bean style usage.
@@ -141,37 +130,6 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
-	 * Returns the setup criteria.
-	 */
-	public TransitionCriteria getSetupCriteria() {
-		return setupCriteria;
-	}
-
-	/**
-	 * Sets the setup criteria to determine if this view state should pause 
-	 * the flow and request that a view be rendered when entered.
-	 * @param setupCriteria the setup criteria
-	 */
-	public void setSetupCriteria(TransitionCriteria setupCriteria) {
-		this.setupCriteria = setupCriteria;
-	}
-	
-	/**
-	 * Returns the setup criteria failure state id.
-	 */
-	public String getSetupErrorStateId() {
-		return setupErrorStateId;
-	}
-
-	/**
-	 * Set the state to transition to if the setup criteria fails.
-	 * @param setupErrorStateId the state id
-	 */
-	public void setSetupErrorStateId(String setupErrorStateId) {
-		this.setupErrorStateId = setupErrorStateId;
-	}
-
-	/**
 	 * Returns true if this view state has no associated view, false otherwise.
 	 */
 	public boolean isMarker() {
@@ -191,25 +149,6 @@ public class ViewState extends TransitionableState {
 	 *         render the results of the state execution
 	 */
 	protected ViewDescriptor doEnter(StateContext context) {
-		// test setup criteria and transition to error state if setup fails
-		if (setupCriteria != null) {
-			if (StringUtils.hasText(setupErrorStateId)) {
-				// test the criteria and if false, transition to the setup error state
-				// implementation note: we're using a short lived Transition object
-				// to execute the setup logic, evaluate the result and, if necessary, make
-				// transition to the error state
-				// also note that we're not adding this temporary transition to this
-				// state because that would result in a memory leak!
-				Transition toSetupError = new Transition(this, TransitionCriteriaFactory.not(setupCriteria), setupErrorStateId);
-				if (toSetupError.matches(context)) {
-					toSetupError.execute(context);
-				}
-			}
-			else {
-				// just test the criteria but don't evaluate it's result
-				this.setupCriteria.test(context);
-			}
-		}
 		return viewDescriptor(context);
 	}
 	
@@ -237,8 +176,7 @@ public class ViewState extends TransitionableState {
 	}
 
 	protected void createToString(ToStringCreator creator) {
-		creator.append("viewDescriptorCreator", this.viewDescriptorCreator).append("setupCriteria", this.setupCriteria).
-			append("setupErrorStateId", this.setupErrorStateId);
+		creator.append("viewDescriptorCreator", this.viewDescriptorCreator);
 		super.createToString(creator);
 	}
 }

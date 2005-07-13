@@ -202,7 +202,8 @@ public abstract class State extends AnnotatedObject {
 	
 	public String toString() {
 		ToStringCreator creator =
-			new ToStringCreator(this).append("id", getId()).append("flow", flow == null ? "" : flow.getId());
+			new ToStringCreator(this).append("id", getId()).append("flow", flow == null ? "" : flow.getId()).
+					append("entryAction", entryAction);
 		createToString(creator);
 		return creator.toString();
 	}

@@ -252,7 +252,7 @@ public abstract class TransitionableState extends State {
 	}
 	
 	protected void createToString(ToStringCreator creator) {
-		creator.append("transitions", this.transitions);
+		creator.append("transitions", this.transitions).append("exitAction", exitAction);
 	}
 
 }
