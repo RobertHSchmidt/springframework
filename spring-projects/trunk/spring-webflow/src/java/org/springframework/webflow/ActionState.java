@@ -103,95 +103,95 @@ public class ActionState extends TransitionableState {
 	 * Create a new action state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param targetAction the raw target action instance to execute in this
+	 * @param action the raw target action instance to execute in this
 	 *        state when entered
 	 * @param transition the sole transition (path) out of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 *         flow
 	 */
-	public ActionState(Flow flow, String id, Action targetAction, Transition transition)
+	public ActionState(Flow flow, String id, Action action, Transition transition)
 			throws IllegalArgumentException {
 		super(flow, id, transition);
-		addAction(targetAction);
+		addAction(action);
 	}
 
 	/**
 	 * Create a new action state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param targetAction the raw target action instance to execute in this
+	 * @param action the raw target action instance to execute in this
 	 *        state when entered
 	 * @param transitions the transitions out of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 *         flow
 	 */
-	public ActionState(Flow flow, String id, Action targetAction, Transition[] transitions)
+	public ActionState(Flow flow, String id, Action action, Transition[] transitions)
 			throws IllegalArgumentException {
 		super(flow, id, transitions);
-		addAction(targetAction);
+		addAction(action);
 	}
 
 	/**
 	 * Create a new action state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param targetAction the raw target action instance to execute in this
+	 * @param action the raw target action instance to execute in this
 	 *        state when entered
 	 * @param transitions the transitions out of this state
 	 * @param properties additional properties describing this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 *         flow
 	 */
-	public ActionState(Flow flow, String id, Action targetAction, Transition[] transitions, Map properties)
+	public ActionState(Flow flow, String id, Action action, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
 		super(flow, id, transitions, properties);
-		addAction(targetAction);
+		addAction(action);
 	}
 
 	/**
 	 * Create a new action state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param targetActions the raw, target actions to execute in this state
+	 * @param actions the raw, target actions to execute in this state
 	 * @param transition the sole transition (path) out of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 *         flow
 	 */
-	public ActionState(Flow flow, String id, Action[] targetActions, Transition transition)
+	public ActionState(Flow flow, String id, Action[] actions, Transition transition)
 			throws IllegalArgumentException {
 		super(flow, id, transition);
-		addActions(targetActions);
+		addActions(actions);
 	}
 
 	/**
 	 * Create a new action state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param targetActions the raw actions to execute in this state
+	 * @param actions the raw actions to execute in this state
 	 * @param transitions the transitions (paths) out of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 *         flow
 	 */
-	public ActionState(Flow flow, String id, Action[] targetActions, Transition[] transitions)
+	public ActionState(Flow flow, String id, Action[] actions, Transition[] transitions)
 			throws IllegalArgumentException {
 		super(flow, id, transitions);
-		addActions(targetActions);
+		addActions(actions);
 	}
 
 	/**
 	 * Create a new action state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param targetActions the raw actions to execute in this state
+	 * @param actions the raw actions to execute in this state
 	 * @param transitions the transitions (paths) out of this state
 	 * @param properties additional properties describing this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 *         flow
 	 */
-	public ActionState(Flow flow, String id, Action[] targetActions, Transition[] transitions, Map properties)
+	public ActionState(Flow flow, String id, Action[] actions, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
 		super(flow, id, transitions, properties);
-		addActions(targetActions);
+		addActions(actions);
 	}
 
 	/**
@@ -280,11 +280,11 @@ public class ActionState extends TransitionableState {
 		AnnotatedAction[] actions = new AnnotatedAction[actionExecutors.size()];
 		int i = 0;
 		for (Iterator it = actionExecutors(); it.hasNext();) {
-			Action targetAction = ((ActionExecutor)it.next()).getAction();
-			if (targetAction instanceof AnnotatedAction) {
-				actions[i++] = (AnnotatedAction)targetAction; 
+			Action action = ((ActionExecutor)it.next()).getAction();
+			if (action instanceof AnnotatedAction) {
+				actions[i++] = (AnnotatedAction)action; 
 			} else {
-				actions[i++] = new AnnotatedAction(targetAction);
+				actions[i++] = new AnnotatedAction(action);
 			}
 		}
 		return actions;

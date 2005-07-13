@@ -47,9 +47,10 @@ public class WebFlowDtdResolver implements EntityResolver {
 				return source;
 			}
 			catch (IOException ex) {
-				// fall trough below
+				// fall through below
 			}
 		}
-		return null; // let the parser handle it
+		// let the parser handle it		
+		return null; 
 	}
 }

@@ -21,7 +21,7 @@ public class EmptyAttributeSource implements AttributeSource {
 
 	public static final AttributeSource INSTANCE = new EmptyAttributeSource(); 
 	
-	private EmptyAttributeSource() {
+	public EmptyAttributeSource() {
 		
 	}
 	
