@@ -538,7 +538,8 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 		if (flowExecutionContext.isActive() && viewDescriptor != null) {
 			if (viewDescriptor.isRedirect()) {
 				viewDescriptor.addObject(getFlowExecutionIdParameterName(), flowExecutionId);
-			} else {
+			}
+			else {
 				// make the entire flow execution context available in the model
 				viewDescriptor.addObject(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
 				// make the unique flow execution id and current state id available in the model as convenience to views
