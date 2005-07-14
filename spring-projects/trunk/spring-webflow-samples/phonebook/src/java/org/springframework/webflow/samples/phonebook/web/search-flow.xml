@@ -28,7 +28,7 @@
 		<attribute-mapper>
 			<input value="${sourceEvent.parameters.id}" as="id" from="string" to="long"/>
 		</attribute-mapper>
-		<transition on="finish" to="executeQuery"/>
+		<transition on="finish" to="executeSearch"/>
 		<transition on="error" to="error"/>
 	</subflow-state>
 	

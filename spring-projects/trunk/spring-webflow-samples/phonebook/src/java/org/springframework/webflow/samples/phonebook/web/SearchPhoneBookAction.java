@@ -26,7 +26,7 @@ public class SearchPhoneBookAction extends AbstractAction {
 	private PhoneBook phoneBook;
 
 	public SearchPhoneBookAction(PhoneBook phonebook) {
-		this.phoneBook = phoneBook;
+		this.phoneBook = phonebook;
 	}
 	
 	protected Event doExecute(RequestContext context) throws Exception {
