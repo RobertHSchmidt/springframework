@@ -4,11 +4,7 @@ body {
 	padding: 0px;
 	font-size: 10px;
 }
-
-p {
-	font-size: 14px;
-}
-
+ 
 div#logo {
 	width: 720px;
 	height: 65px;
@@ -40,13 +36,12 @@ div#insert {
 
 div#copyright {
 	width: 720px;
-	height: 20px;
 }
 
 div#copyright p {
 	text-align: center;
 	font-family: Tahoma, sans-serif;  
-	font-size: 10px; 
+	font-size: 90%; 
 	color: div#336633; 
 	margin-left: 5px;
 	font-weight: bold;

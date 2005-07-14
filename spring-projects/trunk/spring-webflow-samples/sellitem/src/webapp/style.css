@@ -33,7 +33,11 @@ div#insert {
 	height: 1.5em;
 	text-align: right;
 }
-		
+
+div#copyright {
+	width: 720px;
+}
+
 div#copyright p {
 	text-align: center;
 	font-family: Tahoma, sans-serif;  
