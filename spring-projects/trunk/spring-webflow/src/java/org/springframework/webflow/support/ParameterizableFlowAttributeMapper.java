@@ -16,6 +16,7 @@
 package org.springframework.webflow.support;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -111,9 +112,25 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 
 	protected final Log logger = LogFactory.getLog(getClass());;
 
-	private AttributeMapper inputMapper;
+	private AttributeMapper inputMapper = new FlowScopeAwareParameterizableAttributeMapper();
 
-	private AttributeMapper outputMapper;
+	private AttributeMapper outputMapper = new FlowScopeAwareParameterizableAttributeMapper();
+
+	/**
+	 * Sets the name of an input attribute in flow scope to map to the subflow.
+	 * @param attributeName the attributeName
+	 */
+	public void setInputAttribute(String attributeName) {
+		setInputMappings(Collections.singletonList(attributeName));
+	}
+
+	/**
+	 * Sets the name of an input attribute in flow scope to map to the subflow.
+	 * @param attributeName the attributeName
+	 */
+	public void setInputAttributes(String[] attributeNames) {
+		setInputMappings(Arrays.asList(attributeNames));
+	}
 
 	/**
 	 * Set the input mapping to use when mapping properties in the request context
@@ -163,6 +180,22 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	}
 
 	/**
+	 * Sets the name of an output attribute in flow scope to map up to the parent flow.
+	 * @param attributeName the attributeName
+	 */
+	public void setOutputAttribute(String attributeName) {
+		setOutputMappings(Collections.singletonList(attributeName));
+	}
+
+	/**
+	 * Sets the name of an input attribute in flow scope to map to the subflow.
+	 * @param attributeName the attributeName
+	 */
+	public void setOutputAttributes(String[] attributeNames) {
+		setOutputMappings(Arrays.asList(attributeNames));
+	}
+
+	/**
 	 * Set the output mapping to use when mapping properties in sub flow
 	 * back to a resuming parent flow. This is a convenience method for
 	 * setting a single mapping.
@@ -204,7 +237,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	/**
 	 * Set the AttributesMapper strategy responsible for mapping ending subflow
 	 * output attributes to a resuming parent flow as output.
-	 * @param mapper the mapperÎ
+	 * @param mapper the mapper
 	 */
 	public void setOutputMapper(AttributeMapper mapper) {
 		this.outputMapper = mapper;
@@ -254,8 +287,15 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * @author Keith Donald
 	 * @author Erwin Vervaet
 	 */
-	static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
-		
+	protected static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
+
+		/**
+		 * Create a new flow scope aware attribute mapper
+		 */
+		public FlowScopeAwareParameterizableAttributeMapper() {
+			super();
+		}
+
 		/**
 		 * Create a new flow scope aware attribute mapper wrapping given collection
 		 * of mappings.
@@ -265,7 +305,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 			super(mappings);
 		}
 		
-		protected void addMapping(String sourceExpression, String targetExpression) {
+		public void addMapping(String sourceExpression, String targetExpression) {
 			if (ExpressionFactory.isParseableExpression(sourceExpression)) {
 				// use expression "as is"
 				addMapping(new Mapping(sourceExpression, targetExpression));

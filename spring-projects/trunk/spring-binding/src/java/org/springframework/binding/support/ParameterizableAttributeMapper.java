@@ -70,16 +70,8 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 		setMappings(new Mapping[] { mapping });
 	}
 
-	public ParameterizableAttributeMapper(Mapping[] mappings) {
-		setMappings(mappings);
-	}
-
 	public ParameterizableAttributeMapper(Collection mappings) {
 		setMappingsCollection(mappings);
-	}
-
-	public ParameterizableAttributeMapper(Map mappingsMap) {
-		setMappingsMap(mappingsMap);
 	}
 
 	/**
@@ -157,21 +149,28 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 		}
 	}
 
-	private void addMapping(String expression) {
+	/**
+	 * Add a mapping where the source and target attribute expressions are the same.
+	 * @param expression the attribute expression to map
+	 */
+	public void addMapping(String expression) {
 		addMapping(expression, expression);
 	}
 
 	/**
-	 * Hook method to add a mapping given a source and target expression.  May be
-	 * overidden by subclasses to customize mapping parsing logic.
+	 * Add a mapping for the source and target attribute expressions.
 	 * @param sourceExpression the source expression
 	 * @param targetExpression the target expression
 	 */
-	protected void addMapping(String sourceExpression, String targetExpression) {
+	public void addMapping(String sourceExpression, String targetExpression) {
 		addMapping(new Mapping(sourceExpression, targetExpression));
 	}
 
-	protected void addMapping(Mapping mapping) {
+	/**
+	 * Add a mapping to this mapper.
+	 * @param mapping the mapping to add.
+	 */
+	public void addMapping(Mapping mapping) {
 		this.mappings.add(mapping);
 	}
 	

@@ -15,11 +15,10 @@
  */
 package org.springframework.webflow.samples.flowlauncher;
 
-import org.springframework.binding.support.Mapping;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
 public class SampleFlowAttributeMapper extends ParameterizableFlowAttributeMapper {
 	public SampleFlowAttributeMapper() {
-		setInputMapping(new Mapping(SampleFlowExecutionListener.INPUT_ATTRIBUTE));
+		setInputAttribute(SampleFlowExecutionListener.INPUT_ATTRIBUTE);
 	}
 }
