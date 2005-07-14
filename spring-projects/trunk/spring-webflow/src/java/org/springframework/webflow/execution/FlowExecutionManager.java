@@ -419,7 +419,8 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 			flowExecution.getListeners().fireLoaded(flowExecution, id);
 			// signal the event within the current state
 			Assert.hasText(event.getId(), "No _eventId could be obtained -- "
-					+ "make sure the submitting view or other client provides the _eventId parameter as input");
+					+ "make sure the submitting view or other client provides the _eventId parameter as input, parameters provide include:" 
+					+ StylerUtils.style(event.getParameters()));
 			// see if the eventId was set to a static marker placeholder because
 			// of a client configuration error
 			if (event.getId().equals(getNotSetEventIdParameterMarker())) {
