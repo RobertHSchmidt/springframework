@@ -77,6 +77,7 @@ public class DefaultConversionService implements ConversionService {
 		addConverter(new TextToMapping(this));
 		addConverter(new TextToExpression());
 		addConverter(new TextToExpressions());
+		addDefaultAlias(String.class);
 		addDefaultAlias(Short.class);
 		addDefaultAlias(Integer.class);
 		addDefaultAlias(Long.class);
@@ -188,7 +189,8 @@ public class DefaultConversionService implements ConversionService {
 
 	public Class getClassByAlias(String alias) {
 		Object clazz = aliasMap.get(alias);
-		Assert.isInstanceOf(Class.class, clazz, "Not a class alias '" + alias + "':");
+		Assert.notNull(clazz, "Class alias '" + alias + "' does not apply to this conversion service");
+		Assert.isInstanceOf(Class.class, clazz, "Not a Class alias '" + alias + "': ");
 		return ((Class)clazz);
 	}
 	
