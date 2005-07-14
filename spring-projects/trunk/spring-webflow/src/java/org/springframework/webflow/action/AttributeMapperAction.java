@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.action;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -90,7 +91,7 @@ public class AttributeMapperAction extends AbstractAction {
 	 * @param mappings the mappings
 	 */
 	public void setMappings(Mapping[] mappings) {
-		setAttributeMapper(new ParameterizableAttributeMapper(mappings));
+		setAttributeMapper(new ParameterizableAttributeMapper(Arrays.asList(mappings)));
 	}
 
 	/**

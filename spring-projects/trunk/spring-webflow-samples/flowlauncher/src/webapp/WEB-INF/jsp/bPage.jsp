@@ -6,19 +6,35 @@
 	Flow input was: ${input}<BR>
 	<c:if test="${!flowExecutionContext.rootFlowActive}">
 	<br>
-	Sample B is running as a sub flow of another flow, so we can end Sample B and
-	return to the parent flow, using either an anchor or a form:
-	<li>
-		<a href="<c:url value="/flow.htm?_flowExecutionId=${flowExecutionId}&_eventId=end"/>">
-			End Sample B
-		</a>
-	</li>
-	<li>
-		<form action="<c:url value="/flow.htm"/>" method="post">
-			<input type="hidden" name="_flowExecutionId" value="<c:out value="${flowExecutionId}"/>">
-			<input type="submit" name="_eventId_end" value="End Sample B">
-		</form>
-	</li>
+	Sample B is now running as a sub flow within Sample A.  This means we can end Sample B and
+	return to the parent flow.  We can do this using either:
+	<ul>
+	<table>
+	<tr>
+		<td>an anchor:</td>
+		<td>
+			<a href="<c:url value="/flow.htm?_flowExecutionId=${flowExecutionId}&_eventId=end"/>">
+				End Sample B
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">or a form:</td>
+		<td>
+			<table>
+			<form action="flow.htm" method="post">
+			<tr>
+				<td class="buttonBar">
+					<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
+					<input type="submit" name="_eventId_end" value="End Sample B">
+				</td>
+			</tr>
+			</form>
+			</table>
+		</td>
+	</tr>
+	</table>
+	</ul>
 	</c:if>
 	<hr>
 	<form action="<c:url value="/index.html"/>">
