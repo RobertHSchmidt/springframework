@@ -8,6 +8,9 @@
   <property file="${common.build.dir}/project.properties"/>
   <property file="${user.home}/build.properties"/>
 
+  <property name="project.title" value="Spring Web Flow"/>
+  <property name="project.package" value="org.springframework.webflow"/>
+  
   <import file="${common.build.dir}/common-targets.xml"/>
 
   <import file="${common.build.dir}/clover-targets.xml"/>
