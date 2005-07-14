@@ -8,6 +8,10 @@
   <property file="${common.build.dir}/project.properties"/>
   <property file="${user.home}/build.properties"/>
 
+  <property name="build.web" value="true"/>
+  <property name="project.webapp.name" value="itemlist"/>
+		
   <import file="${common.build.dir}/common-targets.xml"/>
+  <import file="${common.build.dir}/tomcat-targets.xml"/>
 
 </project>

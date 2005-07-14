@@ -12,6 +12,7 @@
   <property name="project.webapp.name" value="phonebook"/>
 	
   <import file="${common.build.dir}/common-targets.xml"/>
+  <import file="${common.build.dir}/clover-targets.xml"/>
   <import file="${common.build.dir}/tomcat-targets.xml"/>
 
 </project>

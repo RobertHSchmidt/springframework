@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean name="/itemlist.htm" class="org.springframework.webflow.mvc.FlowController">
+		 <!-- serialize all operations within a session -->
+		<property name="synchronizeOnSession" value="true"/>
+		<property name="flow" ref="itemList"/>
+	</bean>
+	
+	<bean id="itemlist" class="org.springframework.webflow.config.XmlFlowFactoryBean">
+		<property name="location" value="/WEB-INF/itemlist-flow.xml"/>
+	</bean>
+
+	<bean id="createItemAction" class="org.springframework.samples.itemlist.NewItemAction"/>
+	
+	<bean id="addItemAction" class="org.springframework.samples.itemlist.AddItemAction"/>
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+		
+</beans>
