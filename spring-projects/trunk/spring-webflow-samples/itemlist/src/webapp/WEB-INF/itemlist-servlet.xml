@@ -6,7 +6,7 @@
 	<bean name="/itemlist.htm" class="org.springframework.webflow.mvc.FlowController">
 		 <!-- serialize all operations within a session -->
 		<property name="synchronizeOnSession" value="true"/>
-		<property name="flow" ref="itemList"/>
+		<property name="flow" ref="itemlist"/>
 	</bean>
 	
 	<bean id="itemlist" class="org.springframework.webflow.config.XmlFlowFactoryBean">
