@@ -74,6 +74,8 @@
 
     <property name="ivy.conf.dir" value="${common.build.dir}" />
 
+  	<property name="org.name" value="springframework.org"/>
+  	<property name="org.package.prefix" value="org.springframework"/>
     <property name="project.name" value="${ant.project.name}"/>
     <property name="project.base.version" value="1.0-dev"/>
     <property name="project.version" value="${project.base.version}-${build.timestamp}"/>
@@ -366,7 +368,12 @@
       </fileset>
     </copy>
 	
-    <!-- resource files, filtering for non-binary types -->
+    <!-- copy resource files if neccessary, filtering for non-binary types -->
+	<available file="${src.resources.dir}" property="resources.exists" />
+	<antcall target="copy.resources" />
+  </target>
+
+  <target name="copy.resources" if="resources.exists">
     <copy todir="${target.classes.dir}" filtering="on">
       <fileset dir="${src.resources.dir}">
         <patternset refid="std.files.to.filter"/>
@@ -380,9 +387,8 @@
         <patternset refid="std.files.not.to.filter"/>
       </fileset>
     </copy>
-		
   </target>
-
+	
   <!-- copy test statics -->
   <target name="statics.test">
   	
@@ -394,7 +400,18 @@
       </fileset>
     </copy>
 
-	<!-- copy test resources -->
+    <!-- copy test resource files if neccessary, filtering for non-binary types -->
+	<available file="${src.test.resources.dir}" property="test.resources.exists" />
+	<antcall target="copy.test.resources" />
+  	
+	<!-- write out a test.properties file with common properties -->
+    <propertyfile file="${target.testclasses.dir}/test.properties" comment="Common unit/integration test properties">
+      <entry key="lastupate" type="date" value="now"/>
+    </propertyfile>
+
+  </target>
+
+  <target name="copy.test.resources" if="test.resources.exists">
     <copy todir="${target.testclasses.dir}" filtering="on">
       <fileset dir="${src.test.resources.dir}">
         <patternset refid="std.files.to.filter"/>
@@ -409,14 +426,8 @@
         <patternset refid="std.files.not.to.filter"/>
       </fileset>
     </copy>
-	
-	<!-- write out a test.properties file with common properties -->
-    <propertyfile file="${target.testclasses.dir}/test.properties" comment="Common unit/integration test properties">
-      <entry key="lastupate" type="date" value="now"/>
-    </propertyfile>
-
   </target>
-
+	
   <!-- hook target -->
   <target name="statics.post"/>
 
@@ -504,8 +515,12 @@
 
   <!-- main jar target -->
   <target name="jar.main">
-    <property name="jar.manifest.file" value="${src.etc.dir}/manifest/empty.mf"/>
-	<jar jarfile="${target.lib.dir}/${project.name}.jar" manifest="${jar.manifest.file}">
+	<jar jarfile="${target.lib.dir}/${project.name}.jar">
+	  <manifest>
+		<attribute name="Implementation-Vendor" value="${org.name}" />
+		<attribute name="Implementation-Title" value="${project.title}" />
+		<attribute name="Implementation-Version" value="${project.version}" />
+      </manifest>
       <fileset dir="${target.classes.dir}">
 	      <!-- todo, make this more selective, we don't neccessarily want to include everything here -->
       </fileset>
