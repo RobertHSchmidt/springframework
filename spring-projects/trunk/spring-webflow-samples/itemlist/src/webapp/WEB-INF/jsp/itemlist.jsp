@@ -7,8 +7,10 @@
 			<td>
 				Item list:
 			</td>
+		</tr>
+		<tr>
 			<td>
-				<table border="1">
+				<table border="1" width="300px">
 					<c:forEach var="item" items="${list}">
 						<tr><td>${item}</td></tr>
 					</c:forEach>
@@ -16,7 +18,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2" class="buttonBar">
+			<td class="buttonBar">
 				<!-- Tell webflow what executing flow we're participating in -->
 				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"/>
 				<!-- Tell webflow what event happened -->
