@@ -26,6 +26,6 @@
 	
 	<end-state id="finish"/>
 	
-	<end-state id="error" view="error.view"/>
+	<end-state id="error" view="error"/>
 	
 </webflow>
