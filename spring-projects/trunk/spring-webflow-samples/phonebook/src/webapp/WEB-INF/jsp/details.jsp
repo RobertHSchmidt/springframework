@@ -35,7 +35,7 @@
 				<br>
 				<c:forEach var="colleague" items="${person.colleagues}">
 					<a href="phonebook.htm?_flowExecutionId=${flowExecutionId}&_eventId=select&id=${colleague.id}">
-						${person.firstName} ${person.lastName}<br>
+						${colleague.firstName} ${colleague.lastName}<br>
 					</a>
 				</c:forEach>				
 			</td>
