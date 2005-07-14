@@ -2,9 +2,6 @@
 
 <project name="swf-phonebook-sample" default="dist">
 
-  <!-- you may override default properties for the build by using entries
-       in a build.properties file, or by just adding 'property' elements
-	   here, before the following properties files are loaded -->
   <property file="build.properties"/>
   <property file="project.properties"/>
   <property file="${common.build.dir}/build.properties"/>
@@ -12,6 +9,8 @@
   <property file="${user.home}/build.properties"/>
 
   <property name="build.web" value="true"/>
+  <property name="project.webapp.name" value="phonebook"/>
+	
   <import file="${common.build.dir}/common-targets.xml"/>
   <import file="${common.build.dir}/tomcat-targets.xml"/>
 

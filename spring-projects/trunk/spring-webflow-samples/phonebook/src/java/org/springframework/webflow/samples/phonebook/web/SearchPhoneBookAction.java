@@ -30,7 +30,7 @@ public class SearchPhoneBookAction extends AbstractAction {
 	}
 	
 	protected Event doExecute(RequestContext context) throws Exception {
-		PhoneBookSearchCriteria criteria = (PhoneBookSearchCriteria)context.getFlowScope().getRequiredAttribute("query",
+		PhoneBookSearchCriteria criteria = (PhoneBookSearchCriteria)context.getFlowScope().getRequiredAttribute("searchCriteria",
 				PhoneBookSearchCriteria.class);
 		context.getRequestScope().setAttribute("persons", phoneBook.search(criteria));
 		return success();

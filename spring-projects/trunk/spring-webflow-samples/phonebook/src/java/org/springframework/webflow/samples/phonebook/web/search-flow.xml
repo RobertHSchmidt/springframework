@@ -9,7 +9,7 @@
 		<entry>
 			<action bean="searchFormAction" method="setupForm"/>
 		</entry>
-		<transition on="submit" to="executeSearch">
+		<transition on="search" to="executeSearch">
 			<action bean="searchFormAction" method="bindAndValidate"/>
 		</transition>
 	</view-state>

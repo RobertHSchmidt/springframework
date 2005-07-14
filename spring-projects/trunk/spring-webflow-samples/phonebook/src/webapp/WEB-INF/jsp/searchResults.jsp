@@ -4,7 +4,7 @@
 	<div id="insert">
 		<img src="images/webflow-logo.jpg"/>
 	</div>
-	<form action="phonebook.htm">
+	<form action="phonebook.htm" method="post">
 	<table>
 		<tr>
 			<td>

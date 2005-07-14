@@ -4,7 +4,7 @@
 	<div id="insert">
 		<img src="images/webflow-logo.jpg"/>
 	</div>
-	<form action="phonebook.htm">
+	<form action="phonebook.htm" method="post">
 	<table>
 		<tr>
 			<td>Search Criteria</td>
@@ -14,14 +14,14 @@
 				<hr>
 			</td>
 		</tr>
-		<spring:hasBindErrors>
+		<spring:hasBindErrors name="searchCriteria">
 		<tr>
 			<td colspan="2">
 				<div class="error">Please provide valid search criteria!</div>
 			</td>
 		</tr>
 		</spring:hasBindErrors>
-		<spring:bind path="firstName">
+		<spring:bind path="searchCriteria.firstName">
 		<tr>
 			<td>First Name</td>
 			<td>
@@ -29,11 +29,11 @@
 			</td>
 		</tr>
 		</spring:bind>		
-		<spring:bind path="lastName">
+		<spring:bind path="searchCriteria.lastName">
 		<TR>
 			<td>Last Name</td>
 			<td>
-				<input type="text" name="${status.expression}" value="${status.value}/>">
+				<input type="text" name="${status.expression}" value="${status.value}">
 			</td>
 		</TR>
 		</spring:bind>
