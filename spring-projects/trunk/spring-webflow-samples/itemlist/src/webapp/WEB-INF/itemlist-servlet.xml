@@ -13,9 +13,9 @@
 		<property name="location" value="/WEB-INF/itemlist-flow.xml"/>
 	</bean>
 
-	<bean id="createItemAction" class="org.springframework.samples.itemlist.NewItemAction"/>
+	<bean id="createItemAction" class="org.springframework.webflow.samples.itemlist.NewItemAction"/>
 	
-	<bean id="addItemAction" class="org.springframework.samples.itemlist.AddItemAction"/>
+	<bean id="addItemAction" class="org.springframework.webflow.samples.itemlist.AddItemAction"/>
 	
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>
