@@ -43,7 +43,7 @@
 		<tr>
 			<td colspan="2" class="buttonBar">
 				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
-				<input type="submit" class="button" name="_eventId_submit" value="Back">
+				<input type="submit" class="button" name="_eventId_back" value="Back">
 			</td>
 		</tr>
 	</table>
