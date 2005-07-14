@@ -1,16 +1,18 @@
 <%@ include file="includeTop.jsp" %>
 
 <div id="content">
-	<form action="itemList.htm" method="post"/>
-	<table border="1">
+	<form action="itemlist.htm" method="post"/>
+	<table>
 		<tr>
 			<td>
 				Item list:
 			</td>
 			<td>
-				<c:forEach var="item" items="${list}">
-					<td>${item}</td>
-				</c:forEach>
+				<table border="1">
+					<c:forEach var="item" items="${list}">
+						<tr><td>${item}</td></tr>
+					</c:forEach>
+				</table>
 			</td>
 		</tr>
 		<tr>
