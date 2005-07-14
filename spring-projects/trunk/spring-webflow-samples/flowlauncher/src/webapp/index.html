@@ -11,35 +11,59 @@
 				input parameters.
 			</P>
 			<P>
-				You can launch the Sample A flow as a stand-alone, top-level flow, passing input
-				to it using normal request parameters. This can be done using either
-				<LI>
-					an anchor:
-					<A href="flow.htm?_flowId=sampleA&input=someInputForSampleA">Start Sample A</A>
-				</LI>
-				<LI>
-					a form:
-					<FORM action="flow.htm" method="post">
-						<INPUT type="hidden" name="_flowId" value="sampleA">
-						<INPUT type="text" name="input" value="someInputForSampleA">
-						<INPUT type="submit" value="Start Sample A">
-					</FORM>
-				</LI>
+				You can launch the Sample A flow as a top-level flow and pass it input using
+				request parameters.  This can be done using
+				<table>
+				<tr>
+					<td>an anchor:</td>
+					<td><A href="flow.htm?_flowId=sampleA&input=someInputForSampleA">Start Sample A</A></td>
+				</tr>
+				<tr>
+					<td valign="top">or a form:</td>
+					<td>
+						<table>
+						<form action="flow.htm" method="post">
+							<tr>
+								<td><INPUT type="text" name="input" value="someInputForSampleA"></td>
+							</tr>
+							<tr>
+								<td class="buttonBar">
+									<INPUT type="hidden" name="_flowId" value="sampleA">
+									<INPUT type="submit" value="Start Sample A">
+								</td>
+							</tr>
+						</form>
+						</table>
+					</td>
+				</tr>
+				</table>
 			</P>
 			<P>
 				The same is true for Sample B:
-				<LI>
-					an anchor:
-					<A href="flow.htm?_flowId=sampleB&input=someInputForSampleB">Start Sample B</A>
-				</LI>
-				<LI>
-					a form:
-					<FORM action="flow.htm" method="post">
-						<INPUT type="hidden" name="_flowId" value="sampleB">
-						<INPUT type="text" name="input" value="someInputForSampleB">
-						<INPUT type="submit" value="Start Sample B">
-					</FORM>
-				</LI>
+				<table>
+				<tr>
+					<td>an anchor:</td>
+					<td><A href="flow.htm?_flowId=sampleB&input=someInputForSampleB">Start Sample B</A></td>
+				</tr>
+				<tr>
+					<td valign="top">or a form:</td>
+					<td>
+						<table>
+						<form action="flow.htm" method="post">
+							<tr>
+								<td><INPUT type="text" name="input" value="someInputForSampleB"></td>
+							</tr>
+							<tr>
+								<td class="buttonBar">
+									<INPUT type="hidden" name="_flowId" value="sampleB">
+									<INPUT type="submit" value="Start Sample B">
+								</td>
+							</tr>
+						</form>
+						</table>
+					</td>
+				</tr>
+				</table>
 			</P>
 		</DIV>
 		<HR>

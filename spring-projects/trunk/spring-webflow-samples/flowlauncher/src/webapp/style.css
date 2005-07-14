@@ -2,7 +2,6 @@ body {
 	width: 720px;
 	margin: 0px;
 	padding: 0px;
-	font-size: 10px;
 }
  
 div#logo {
@@ -41,7 +40,7 @@ div#copyright {
 div#copyright p {
 	text-align: center;
 	font-family: Tahoma, sans-serif;  
-	font-size: 90%; 
+	font-size: 10px; 
 	color: div#336633; 
 	margin-left: 5px;
 	font-weight: bold;
