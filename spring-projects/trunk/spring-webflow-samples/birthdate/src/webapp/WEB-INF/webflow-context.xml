@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	
+	<bean id="birthDate" class="org.springframework.webflow.config.XmlFlowFactoryBean">
+		<property name="location" value="/WEB-INF/birthdate-flow.xml"/>
+	</bean>
+	
+	<bean id="birthDateFormAction" class="org.springframework.webflow.samples.birthdate.BirthDateFormAction"/>
+
+</beans>
