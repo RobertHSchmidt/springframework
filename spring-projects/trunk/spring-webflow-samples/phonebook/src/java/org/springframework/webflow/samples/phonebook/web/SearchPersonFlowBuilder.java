@@ -17,6 +17,7 @@ package org.springframework.webflow.samples.phonebook.web;
 
 import org.springframework.binding.support.Mapping;
 import org.springframework.webflow.Transition;
+import org.springframework.webflow.ViewState;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.AutowireMode;
 import org.springframework.webflow.config.FlowBuilderException;
@@ -49,8 +50,9 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
-		addViewState(DISPLAY_CRITERIA, "searchCriteria", on("search", EXECUTE_SEARCH,
+		ViewState displayCriteria = addViewState(DISPLAY_CRITERIA, "searchCriteria", on("search", EXECUTE_SEARCH,
 				beforeExecute(method("bindAndValidate", action("searchFormAction")))));
+		displayCriteria.setEntryAction(method("setupForm", action("searchFormAction")));
 
 		// execute query
 		addActionState(EXECUTE_SEARCH, action(SearchPhoneBookAction.class, AutowireMode.CONSTRUCTOR), new Transition[] {
