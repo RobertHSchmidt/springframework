@@ -17,6 +17,7 @@
 				<input type="hidden" name="_txToken" value="${txToken}">
 				<!-- Tell webflow what executing flow we're participating in -->
 				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"/>
+				<input type="hidden" name="_currentStateId" value="displayItem"/>
 				<!-- Tell webflow what event happened -->
 				<input type="submit" name="_eventId_submit" value="Submit">
 			</td>
