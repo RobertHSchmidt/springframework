@@ -20,7 +20,7 @@
 		editors are available for form display.
 	-->
 	<action-state id="setupForm">
-		<action bean="birthDateFormAction"/>
+		<action bean="formAction"/>
 		<transition on="success" to="displayForm"/>
 	</action-state>
 	
@@ -36,7 +36,7 @@
 		method of the SimpleFormController.
 	-->
 	<action-state id="bindAndValidateForm">
-		<action bean="birthDateFormAction" method="bindAndValidate"/>
+		<action bean="formAction" method="bindAndValidate"/>
 		<transition on="success" to="calculateAge"/>
 		<transition on="error" to="displayForm"/>
 	</action-state>

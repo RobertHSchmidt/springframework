@@ -13,16 +13,16 @@
 	If you only need this flow, it is advised that you just use the SimpleFormController.
 	
 	This is a simplified definition of the BirthDate flow (see birthDate-flow.xml) that
-	uses view state setup actions and transition actions to make the flow definition more compact.
+	uses view state entry actions and transition actions to make the flow definition more compact.
 -->
 <webflow id="birthdate" start-state="displayForm">
 
 	<view-state id="displayForm" view="form">
 		<entry>
-			<action bean="birthDateFormAction" method="setupForm"/>
+			<action bean="formAction" method="setupForm"/>
 		</entry>
 		<transition on="submit" to="calculateAge">
-			<action bean="birthDateFormAction" method="bindAndValidate"/>
+			<action bean="formAction" method="bindAndValidate"/>
 		</transition>
 	</view-state>
 	

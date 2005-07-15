@@ -3,10 +3,10 @@
 
 <beans>
 	
-	<bean id="birthDate" class="org.springframework.webflow.config.XmlFlowFactoryBean">
+	<bean id="birthdate" class="org.springframework.webflow.config.XmlFlowFactoryBean">
 		<property name="location" value="/WEB-INF/birthdate-flow.xml"/>
 	</bean>
 	
-	<bean id="birthDateFormAction" class="org.springframework.webflow.samples.birthdate.BirthDateFormAction"/>
+	<bean id="formAction" class="org.springframework.webflow.samples.birthdate.BirthDateFormAction"/>
 
 </beans>
