@@ -15,20 +15,16 @@
  */
 package org.springframework.webflow.execution.jmx;
 
-import java.util.Hashtable;
 import java.util.List;
 
-import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
-import javax.management.StandardMBean;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.support.FlowExecutionListenerAdapter;
