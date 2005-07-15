@@ -7,7 +7,7 @@
 	<HEAD>
 	</HEAD>
 	<BODY>
-		<FORM name="submitForm" action="upload.htm">
+		<FORM name="submitForm" action="fileupload.htm">
 			<INPUT type="hidden" name="_flowExecutionId" value="<%=request.getAttribute("flowExecutionId") %>">
 			<INPUT type="hidden" name="_eventId" value="back">
 		</FORM>

@@ -11,7 +11,7 @@
 		<property name="location" value="/WEB-INF/fileupload-flow.xml"/>
 	</bean>
 	
-	<bean id="upload.process" class="org.springframework.webflow.samples.fileupload.ProcessUploadAction"/>
+	<bean id="uploadFileAction" class="org.springframework.webflow.samples.fileupload.ProcessUploadAction"/>
 
 	<!-- 
 		support for multipart requests using commons file upload

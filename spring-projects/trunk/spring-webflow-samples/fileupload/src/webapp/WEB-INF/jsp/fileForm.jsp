@@ -8,7 +8,7 @@
 		<DIV align="left">Select File</DIV>
 		<HR>
 		<DIV align="left">
-			<FORM name="submitForm" action="upload.htm" method="post" enctype="multipart/form-data">
+			<FORM name="submitForm" action="fileupload.htm" method="post" enctype="multipart/form-data">
 				<INPUT type="hidden" name="_flowExecutionId" value="<%=request.getAttribute("flowExecutionId") %>">
 				<INPUT type="hidden" name="_eventId" value="submit">
 				<INPUT type="file" name="file">

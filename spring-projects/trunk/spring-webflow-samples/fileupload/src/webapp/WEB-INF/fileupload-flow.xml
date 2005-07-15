@@ -10,7 +10,7 @@
 	</view-state>
 
 	<action-state id="uploadFile">
-		<action bean="uploadFileAction"/>
+		<action bean="uploadFileAction" method="bindAndValidate"/>
 		<transition on="success" to="displayConfirmation"/>
 		<transition on="error" to="selectFile"/>
 	</action-state>
