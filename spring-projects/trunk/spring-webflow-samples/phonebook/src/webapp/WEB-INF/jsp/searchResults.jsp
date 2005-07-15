@@ -25,8 +25,8 @@
 						<th>User Id</th>
 						<th>Phone</th>
 					</tr>
-					<tr>
-						<c:forEach var="person" items="${persons}">
+					<c:forEach var="person" items="${persons}">
+						<tr>
 							<td>${person.firstName}</td>
 							<td>${person.lastName}</td>
 							<td>
@@ -35,8 +35,8 @@
 								</a>
 							</td>
 							<td>${person.phone}</td>
-						</c:forEach>
-					</tr>
+						</tr>
+					</c:forEach>
 				</table>
 			</td>
 		</tr>
