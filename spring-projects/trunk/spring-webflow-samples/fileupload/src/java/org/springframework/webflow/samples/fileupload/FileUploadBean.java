@@ -15,7 +15,9 @@
  */
 package org.springframework.webflow.samples.fileupload;
 
-public class FileUploadBean {
+import java.io.Serializable;
+
+public class FileUploadBean implements Serializable {
 
 	private byte[] file;
 

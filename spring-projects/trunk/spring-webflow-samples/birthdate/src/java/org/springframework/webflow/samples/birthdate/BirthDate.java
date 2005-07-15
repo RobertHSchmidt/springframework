@@ -15,9 +15,10 @@
  */
 package org.springframework.webflow.samples.birthdate;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class BirthDate {
+public class BirthDate implements Serializable {
 
 	private String name;
 

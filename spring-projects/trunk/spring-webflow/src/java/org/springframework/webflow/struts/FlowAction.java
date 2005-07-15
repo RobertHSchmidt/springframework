@@ -21,21 +21,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionServlet;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
-import org.springframework.web.struts.MappingDispatchActionSupport;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.web.struts.ActionSupport;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.action.FormObjectAccessor;
-import org.springframework.webflow.config.BeanFactoryFlowServiceLocator;
-import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
-import org.springframework.webflow.execution.FlowExecutionStorage;
+import org.springframework.webflow.execution.servlet.ServletFlowExecutionManager;
 import org.springframework.webflow.support.FlowExecutionListenerAdapter;
 
 /**
@@ -109,47 +105,29 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowAction extends MappingDispatchActionSupport {
+public class FlowAction extends ActionSupport {
+
+	public static final String FLOW_EXECUTION_MANAGER_BEAN_NAME = "flowExecutionManager";
 
 	public static final String ACTION_FORM_ATTRIBUTE = "actionForm";
 	
-	private FlowLocator flowLocator;
-
-	public void setServlet(ActionServlet actionServlet) {
-		super.setServlet(actionServlet);
-		this.flowLocator = new BeanFactoryFlowServiceLocator(getWebApplicationContext());
+	private FlowExecutionManager flowExecutionManager;
+	
+	protected void onInit() {
+		try {
+			this.flowExecutionManager = (FlowExecutionManager)getWebApplicationContext().getBean(FLOW_EXECUTION_MANAGER_BEAN_NAME, FlowExecutionManager.class);
+		} catch (NoSuchBeanDefinitionException e) {
+			this.flowExecutionManager = new ServletFlowExecutionManager();
+			this.flowExecutionManager.setBeanFactory(getWebApplicationContext());
+		}
 	}
 
-	/**
-	 * Returns the flow locator used to lookup flows by id. Defaults to
-	 * {@link BeanFactoryFlowServiceLocator}.
-	 */
-	protected FlowLocator getFlowLocator() {
-		return flowLocator;
-	}
-
-	protected ActionForward doExecuteAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		FlowExecutionManager flowExecutionManager = createFlowExecutionManager(mapping);
 		FlowExecutionListener actionFormAdapter = createActionFormAdapter(request, form);
 		Event event = createEvent(mapping, form, request, response);
 		ViewDescriptor viewDescriptor =	flowExecutionManager.onEvent(event, actionFormAdapter);
 		return toActionForward(viewDescriptor, mapping, request);
-	}
-
-	/**
-	 * Creates the default flow execution manager. Subclasses can override this
-	 * to return a specialized manager.
-	 */
-	protected FlowExecutionManager createFlowExecutionManager(ActionMapping mapping) {
-		FlowExecutionManager manager = new FlowExecutionManager();
-		manager.setFlowLocator(getFlowLocator());
-		String flowId = getFlowId(mapping);
-		if (StringUtils.hasText(flowId)) {
-			manager.setFlow(getFlowLocator().getFlow(flowId));
-		}
-		manager.setStorage(getStorage(mapping));
-		return manager;
 	}
 	
 	/**
@@ -163,24 +141,6 @@ public class FlowAction extends MappingDispatchActionSupport {
 	protected StrutsEvent createEvent(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) {
 		return new StrutsEvent(mapping, form, request, response);
-	}
-
-	/**
-	 * Get the flow id from given action mapping, which should be of type
-	 * <code>FlowActionMapping</code>.
-	 */
-	protected String getFlowId(ActionMapping mapping) {
-		Assert.isInstanceOf(FlowActionMapping.class, mapping);
-		return ((FlowActionMapping)mapping).getFlowId();
-	}
-
-	/**
-	 * Get the flow execution storage from given action mapping, which should be
-	 * of type <code>FlowActionMapping</code>.
-	 */
-	protected FlowExecutionStorage getStorage(ActionMapping mapping) {
-		Assert.isInstanceOf(FlowActionMapping.class, mapping);
-		return ((FlowActionMapping)mapping).getFlowExecutionStorage();
 	}
 
 	/**
