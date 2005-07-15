@@ -17,16 +17,8 @@
 	</global-forwards>
 
 	<action-mappings>
-
 		<action path="/home" forward="index.jsp"/>
-		
-		<!-- flow actions -->
-		<action path="/birthdate" name="actionForm" scope="request"
-				type="org.springframework.webflow.struts.FlowAction"
-				className="org.springframework.webflow.struts.FlowActionMapping">
-			<set-property property="flowId" value="birthdate"/>
-		</action>
-
+		<action path="/birthdate" name="actionForm" type="org.springframework.webflow.struts.FlowAction"/>
 	</action-mappings>
 
 	<message-resources parameter="org.springframework.webflow.samples.birthdate.MessageResources"/>

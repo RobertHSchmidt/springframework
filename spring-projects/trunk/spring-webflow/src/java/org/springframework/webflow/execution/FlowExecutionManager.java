@@ -116,7 +116,6 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 */
 	public static final String NOT_SET_EVENT_ID = "@NOT_SET@";
 	
-
 	protected final Log logger = LogFactory.getLog(FlowExecutionManager.class);
 
 	private Flow flow;
@@ -475,8 +474,9 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 		if (!StringUtils.hasText(flowId)) {
 			Assert.notNull(getFlow(),
 					"This flow execution manager is not configured with a default top-level flow; thus, "
-							+ "the flow to execute must be provided by client views via the '"
-							+ getFlowIdParameterName() + "' parameter, yet no parameter was provided in this event");
+							+ "the flow to execute must be provided by the client via the '"
+							+ getFlowIdParameterName() + "' parameter, yet no such parameter was provided in this event." +
+							" Parameters provided were: " + StylerUtils.style(event.getParameters()));
 			return getFlow();
 		}
 		else {
