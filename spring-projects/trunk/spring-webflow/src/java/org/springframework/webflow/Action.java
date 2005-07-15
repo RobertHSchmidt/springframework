@@ -84,8 +84,8 @@ public interface Action {
 	 * each time you wish to view those results. 2nd level caches are much
 	 * better cache solutions.
 	 * <p>
-	 * Note: as flow scoped attributes are eligible for serialization thus
-	 * they should implemented <code>Serializable</code>.
+	 * Note: as flow scoped attributes are eligible for serialization they
+	 * should be <code>Serializable</code>.
 	 * 
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope" as well as obtaining other flow
