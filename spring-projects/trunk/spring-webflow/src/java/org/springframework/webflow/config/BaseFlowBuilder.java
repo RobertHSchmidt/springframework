@@ -115,12 +115,12 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	}
 
 	/**
-	 * Returns the converter for given type.
-	 * @param targetType the type for which to lookup the converter
+	 * Returns a converter capable of converting a string value to the given type.
+	 * @param targetType the type you wish to convert to (from a string)
 	 * @return the converter
 	 * @throws ConversionException when the converter cannot be found
 	 */
-	protected ConversionExecutor converterFor(Class targetType) throws ConversionException {
+	protected ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
 		return getConversionService().getConversionExecutor(String.class, targetType);
 	}
 

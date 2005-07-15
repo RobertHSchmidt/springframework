@@ -256,7 +256,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the corresponding view descriptor creator
 	 */
 	protected ViewDescriptorCreator view(String viewName) {
-		return (ViewDescriptorCreator)converterFor(ViewDescriptorCreator.class).execute(viewName);
+		return (ViewDescriptorCreator)fromStringTo(ViewDescriptorCreator.class).execute(viewName);
 	}
 	
 	/**
@@ -955,7 +955,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the transition (eventId->stateId)
 	 */
 	protected Transition on(String eventId, String stateId) {
-		TransitionCriteria criteria = (TransitionCriteria)converterFor(TransitionCriteria.class).execute(eventId);
+		TransitionCriteria criteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(eventId);
 		return on(criteria, stateId);
 	}
 
@@ -971,7 +971,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the transition (eventId->stateId)
 	 */
 	protected Transition on(String eventId, String stateId, Map properties) {
-		TransitionCriteria criteria = (TransitionCriteria)converterFor(TransitionCriteria.class).execute(eventId);
+		TransitionCriteria criteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(eventId);
 		return on(criteria, stateId, properties);
 	}
 
@@ -987,7 +987,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the transition (eventId+executionCriteria->stateId)
 	 */
 	protected Transition on(String eventId, String stateId, TransitionCriteria executionCriteria) {
-		TransitionCriteria criteria = (TransitionCriteria)converterFor(TransitionCriteria.class).execute(eventId);
+		TransitionCriteria criteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(eventId);
 		return on(criteria, stateId, executionCriteria);
 	}
 
@@ -1004,7 +1004,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the transition (eventId+executionCriteria->stateId)
 	 */
 	protected Transition on(String eventId, String stateId, TransitionCriteria executionCriteria, Map properties) {
-		TransitionCriteria criteria = (TransitionCriteria)converterFor(TransitionCriteria.class).execute(eventId);
+		TransitionCriteria criteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(eventId);
 		return on(criteria, stateId, executionCriteria, properties);
 	}
 

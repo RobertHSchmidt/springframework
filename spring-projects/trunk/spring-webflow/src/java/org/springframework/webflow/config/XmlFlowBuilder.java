@@ -360,7 +360,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * Parse a class reference from named attribute of given element.
 	 */
 	protected Class parseClass(Element element, String attributeName) {
-		return (Class)converterFor(Class.class).execute(element.getAttribute(attributeName));
+		return (Class)fromStringTo(Class.class).execute(element.getAttribute(attributeName));
 	}
 	
 	/**
@@ -527,7 +527,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		viewState.setFlow(flow);
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
 			ViewDescriptorCreator creator = (ViewDescriptorCreator)
-				converterFor(ViewDescriptorCreator.class).execute(element.getAttribute(VIEW_ATTRIBUTE));
+				fromStringTo(ViewDescriptorCreator.class).execute(element.getAttribute(VIEW_ATTRIBUTE));
 			viewState.setViewDescriptorCreator(creator);
 		}
 		viewState.addAll(parseTransitions(element));
@@ -570,7 +570,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		endState.setFlow(flow);
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
 			ViewDescriptorCreator creator = (ViewDescriptorCreator)
-				converterFor(ViewDescriptorCreator.class).execute(element.getAttribute(VIEW_ATTRIBUTE));
+				fromStringTo(ViewDescriptorCreator.class).execute(element.getAttribute(VIEW_ATTRIBUTE));
 			endState.setViewDescriptorCreator(creator);
 		}
 		endState.setProperties(parseProperties(element));
@@ -710,7 +710,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			transition = new Transition();
 		}
 		TransitionCriteria matchingCriteria = (TransitionCriteria)
-			converterFor(TransitionCriteria.class).execute(element.getAttribute(ON_ATTRIBUTE));
+			fromStringTo(TransitionCriteria.class).execute(element.getAttribute(ON_ATTRIBUTE));
 		transition.setMatchingCriteria(matchingCriteria);
 		transition.setTargetStateId(element.getAttribute(TO_ATTRIBUTE));
 		transition.setExecutionCriteria(TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element)));
@@ -738,7 +738,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected Transition[] parseIf(Element element) {
 		TransitionCriteria criteria = (TransitionCriteria)
-			converterFor(TransitionCriteria.class).execute(element.getAttribute(TEST_ATTRIBUTE));
+			fromStringTo(TransitionCriteria.class).execute(element.getAttribute(TEST_ATTRIBUTE));
 		String trueStateId = element.getAttribute(THEN_ATTRIBUTE);
 		Transition thenTransition = new Transition(criteria, trueStateId);
 		String falseStateId = element.getAttribute(ELSE_ATTRIBUTE);
