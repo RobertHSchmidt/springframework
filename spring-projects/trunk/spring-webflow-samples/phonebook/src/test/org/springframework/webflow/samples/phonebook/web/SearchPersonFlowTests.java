@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.binding.support.Assert;
-import org.springframework.webflow.Event;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.test.AbstractFlowExecutionTests;
 
@@ -55,7 +54,7 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 	
 	public void testCriteriaView_Submit_Error() {
 		startFlow();
-		ViewDescriptor view = signalEvent(event("search", null));
+		signalEvent(event("search", null));
 		assertCurrentStateEquals("displayCriteria");
 	}
 
