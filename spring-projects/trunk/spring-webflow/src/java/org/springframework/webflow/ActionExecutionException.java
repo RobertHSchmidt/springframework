@@ -50,7 +50,6 @@ public class ActionExecutionException extends NestedRuntimeException {
 	 * Create a new action execution exception.
 	 * @param state the active state
 	 * @param action the action that generated an unrecoverable exception
-	 * @param executionProperties action usage properties
 	 * @param cause the underlying cause
 	 */
 	public ActionExecutionException(State state, Action action, Throwable cause) {

@@ -125,8 +125,8 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	}
 
 	/**
-	 * Sets the name of an input attribute in flow scope to map to the subflow.
-	 * @param attributeName the attributeName
+	 * Sets the name of input attributes in flow scope to map to the subflow.
+	 * @param attributeNames the attribute names
 	 */
 	public void setInputAttributes(String[] attributeNames) {
 		setInputMappings(Arrays.asList(attributeNames));
@@ -188,8 +188,8 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	}
 
 	/**
-	 * Sets the name of an input attribute in flow scope to map to the subflow.
-	 * @param attributeName the attributeName
+	 * Sets the name of output attribute in flow scope to map to the parent flow.
+	 * @param attributeNames the attribute names
 	 */
 	public void setOutputAttributes(String[] attributeNames) {
 		setOutputMappings(Arrays.asList(attributeNames));
