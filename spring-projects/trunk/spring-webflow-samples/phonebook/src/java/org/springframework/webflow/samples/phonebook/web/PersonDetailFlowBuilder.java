@@ -37,12 +37,10 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	private static final String DISPLAY_DETAILS = "displayDetails";
 
-	private static final String SHOW_COLLEAGUE_DETAILS = "showColleagueDetails";
-
-	private static final String PERSON_DETAIL = "person.Detail";
+	private static final String BROWSE_COLLEAGUE_DETAILS = "browseColleagueDetails";
 
 	protected String flowId() {
-		return PERSON_DETAIL;
+		return "detailFlow";
 	}
 
 	public void buildStates() throws FlowBuilderException {
@@ -50,13 +48,13 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 		addActionState(GET_PERSON, action(GetPersonAction.class, AutowireMode.BY_TYPE), on(success(), DISPLAY_DETAILS));
 
 		// view the person details
-		addViewState(DISPLAY_DETAILS, "person.Detail.view", new Transition[] { on(back(), "finish"),
-				on(select(), SHOW_COLLEAGUE_DETAILS) });
+		addViewState(DISPLAY_DETAILS, "details", new Transition[] { on(back(), "finish"),
+				on(select(), BROWSE_COLLEAGUE_DETAILS) });
 
 		// view details for selected collegue
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("sourceEvent.parameters.id", "id", converterFor(Long.class)));
-		addSubFlowState(SHOW_COLLEAGUE_DETAILS, flow(PERSON_DETAIL), idMapper,
+		addSubFlowState(BROWSE_COLLEAGUE_DETAILS, flow("detailFlow"), idMapper,
 				new Transition[] { on(finish(), GET_PERSON), on(error(), "error") });
 
 		// end

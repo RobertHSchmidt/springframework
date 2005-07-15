@@ -20,6 +20,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.AutowireMode;
 import org.springframework.webflow.config.FlowBuilderException;
+import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
 /**
@@ -37,36 +38,36 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	private static final String DISPLAY_CRITERIA = "displayCriteria";
 
-	private static final String EXECUTE_QUERY = "executeQuery";
+	private static final String EXECUTE_SEARCH = "executeSearch";
 
 	private static final String DISPLAY_RESULTS = "displayResults";
 
-	private static final String SHOW_DETAILS = "showDetails";
+	private static final String BROWSE_DETAILS = "showDetails";
 
 	protected String flowId() {
-		return "person.Search";
+		return "searchFlow";
 	}
 
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
-		addViewState(DISPLAY_CRITERIA, "person.Search.criteria.view", on(submit(), EXECUTE_QUERY,
-				beforeExecute(method("bindAndValidate", action("person.Search.criteria.formAction")))));
+		addViewState(DISPLAY_CRITERIA, "searchCriteria", on(submit(), EXECUTE_SEARCH,
+				beforeExecute(method("bindAndValidate", action("searchFormAction")))));
 
 		// execute query
-		addActionState(EXECUTE_QUERY, action(SearchPhoneBookAction.class, AutowireMode.BY_TYPE), new Transition[] {
+		addActionState(EXECUTE_SEARCH, action(SearchPhoneBookAction.class, AutowireMode.BY_TYPE), new Transition[] {
 				on(error(), DISPLAY_CRITERIA), on(success(), DISPLAY_RESULTS) });
 
 		// view results
-		addViewState(DISPLAY_RESULTS, "person.Search.results.view", new Transition[] { on("newSearch", DISPLAY_CRITERIA),
-				on(select(), SHOW_DETAILS) });
+		addViewState(DISPLAY_RESULTS, "searchResults", new Transition[] { on("newSearch", DISPLAY_CRITERIA),
+				on(select(), BROWSE_DETAILS) });
 
 		// view details for selected user id
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("sourceEvent.parameters.id", "id", converterFor(Long.class)));
-		addSubFlowState(SHOW_DETAILS, flow("person.Detail", PersonDetailFlowBuilder.class), idMapper,
-				new Transition[] { on(finish(), EXECUTE_QUERY), on(error(), "error") });
+		addSubFlowState(BROWSE_DETAILS, flow("detailFlow"), idMapper,
+				new Transition[] { on(finish(), EXECUTE_SEARCH), on(error(), "error") });
 
 		// end - an error occured
-		addEndState(error(), "error.view");
+		addEndState(error(), "error");
 	}
 }
