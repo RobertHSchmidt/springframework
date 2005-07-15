@@ -164,8 +164,8 @@ public class EndState extends State {
 			// ending sub flow up to the resuming parent flow
 			FlowSession parentSession = context.getFlowExecutionContext().getActiveSession().getParent();
 			if (logger.isDebugEnabled()) {
-				logger.debug("Resuming parent flow '" + parentSession.getFlow() + "' in state '"
-						+ parentSession.getCurrentState() + "'");
+				logger.debug("Resuming parent flow '" + parentSession.getFlow().getId() + "' in state '"
+						+ parentSession.getCurrentState().getId() + "'");
 			}
 			Assert.isInstanceOf(FlowAttributeMapper.class, parentSession.getCurrentState());
 			FlowAttributeMapper resumingState = (FlowAttributeMapper)parentSession.getCurrentState();

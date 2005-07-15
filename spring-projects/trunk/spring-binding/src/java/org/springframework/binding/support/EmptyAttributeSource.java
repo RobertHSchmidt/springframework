@@ -32,4 +32,8 @@ public class EmptyAttributeSource implements AttributeSource {
 	public Object getAttribute(String attributeName) {
 		return null;
 	}
+	
+	public String toString() {
+		return "empty";
+	}
 }

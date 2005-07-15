@@ -114,7 +114,7 @@ public class FlowSessionImpl implements FlowSession, Serializable {
 		Assert.isTrue(this.flow == newState.getFlow(),
 				"The newState belongs to the flow associated with this flow session");
 		if (logger.isDebugEnabled()) {
-			logger.debug("Setting current state of this '" + getFlow().getId() + "' flow session to '" + newState + "'");
+			logger.debug("Setting current state of this '" + getFlow().getId() + "' flow session to: '" + newState.getId() + "'");
 		}
 		this.currentState = newState;
 	}

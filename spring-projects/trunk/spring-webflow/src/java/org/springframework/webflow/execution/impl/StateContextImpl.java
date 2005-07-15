@@ -195,7 +195,7 @@ public class StateContextImpl implements StateContext {
 	public String toString() {
 		String lastEventId = (lastEvent != null ? lastEvent.getId() : null);
 		return new ToStringCreator(this).append("sourceEvent", sourceEvent.getId()).
-			append("lastEvent", lastEventId).append("lastTransition", lastTransition).append("requestScope", requestScope).
+			append("lastEvent", lastEventId).append("requestScope", requestScope).
 			append("executionProperties", executionProperties).append("flowExecution", flowExecution).toString();
 	}
 }

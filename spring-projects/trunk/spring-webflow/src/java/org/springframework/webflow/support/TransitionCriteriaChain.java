@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
@@ -68,7 +69,11 @@ public class TransitionCriteriaChain implements TransitionCriteria {
 		}
 		return true;
 	}
-	
+
+	public String toString() {
+		return new ToStringCreator(this).append("criteriaChain", chain).toString();
+	}
+
 	// static helpers
 	
 	/**
@@ -81,5 +86,5 @@ public class TransitionCriteriaChain implements TransitionCriteria {
 			chain.add(new ActionTransitionCriteria(actions[i]));
 		}
 		return chain;
-	}
+	}	
 }
