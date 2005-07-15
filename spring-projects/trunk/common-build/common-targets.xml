@@ -528,24 +528,12 @@
   </target>
 
   <target name="jar.post"/>
-
-  <target name="publish" depends="jar" description="Publish this project in the ivy repository">
-
-    <!-- we clean out the deliver dir, since we don't want multiple integration versions
-	     to end up in there -->
-	<delete dir="${ivy.distrib.dir}/jars"/>
-
-    <tstamp>
-      <format property="pubdate" pattern="yyyyMMddHHmmss"/>  <!-- default value -->
-    </tstamp>
-    
-	<mkdir dir="${ivy.distrib.dir}/jars"/>
-    <copy file="${target.lib.dir}/${project.name}.jar" tofile="${ivy.distrib.dir}/jars/${project.name}-${project.version}.jar" />
-	<ivy:publish resolver="integration-repo"
-                 artifactspattern="${ivy.distrib.dir}/jars/[artifact]-[revision].[ext]"
-                 pubrevision="${project.version}" pubdate="${pubdate}"
-                 srcivypattern="${ivy.srcivypattern}" />
-    <echo message="project ${project.name} released with version ${project.version}" />
+  
+  <target name="source-zip">
+    <zip zipfile="${target.lib.dir}/${project.name}-src.jar">
+      <fileset dir="${src.java.main.dir}"/>
+      <fileset dir="${target.gen.java.dir}"/>
+    </zip>
   </target>
 
   <!-- web:  Creates primary webapp in exploded format -->
@@ -708,7 +696,26 @@
   <target name="dist.pre"/>
   <target name="dist.main"/>
   <target name="dist.post"/>
-  
+
+  <target name="publish" depends="dist" description="Publish this project in the ivy repository">
+
+    <!-- we clean out the deliver dir, since we don't want multiple integration versions
+	     to end up in there -->
+	<delete dir="${ivy.distrib.dir}/jars"/>
+
+    <tstamp>
+      <format property="pubdate" pattern="yyyyMMddHHmmss"/>  <!-- default value -->
+    </tstamp>
+    
+	<mkdir dir="${ivy.distrib.dir}/jars"/>
+    <copy file="${target.lib.dir}/${project.name}.jar" tofile="${ivy.distrib.dir}/jars/${project.name}-${project.version}.jar" />
+	<ivy:publish resolver="integration-repo"
+                 artifactspattern="${ivy.distrib.dir}/jars/[artifact]-[revision].[ext]"
+                 pubrevision="${project.version}" pubdate="${pubdate}"
+                 srcivypattern="${ivy.srcivypattern}" />
+    <echo message="project ${project.name} released with version ${project.version}" />
+  </target>
+    
   <!-- javadocs:  Creates the API documentation -->
   <target name="javadoc" depends="build.prepare" description="Create the API documentation">
     <mkdir dir="${target.javadocs.dir}"/>
