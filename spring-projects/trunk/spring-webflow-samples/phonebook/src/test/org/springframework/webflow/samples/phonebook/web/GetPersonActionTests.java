@@ -34,8 +34,7 @@ public class GetPersonActionTests extends TestCase {
 		control.setReturnValue(new Person(), 1);
 		control.replay();
 
-		GetPersonAction action = new GetPersonAction();
-		action.setPhoneBook(phoneBook);
+		GetPersonAction action = new GetPersonAction(phoneBook);
 		MockRequestContext context = new MockRequestContext();
 		context.getFlowScope().setAttribute("id", new Long(1));
 		Event result = action.execute(context);
@@ -51,8 +50,7 @@ public class GetPersonActionTests extends TestCase {
 		control.setReturnValue(null, 1);
 		control.replay();
 
-		GetPersonAction action = new GetPersonAction();
-		action.setPhoneBook(phoneBook);
+		GetPersonAction action = new GetPersonAction(phoneBook);
 		MockRequestContext context = new MockRequestContext();
 		context.getFlowScope().setAttribute("id", new Long(2));
 		Event result = action.execute(context);

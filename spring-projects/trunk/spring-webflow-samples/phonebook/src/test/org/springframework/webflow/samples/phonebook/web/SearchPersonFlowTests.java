@@ -45,17 +45,17 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 	
 	public void testCriteriaView_Submit_Success() {
 		startFlow();
-		Map properties = new HashMap();
-		properties.put("firstName", "Keith");
-		properties.put("lastName", "Donald");
-		ViewDescriptor view = signalEvent(new Event(this, "submit", properties));
+		Map parameters = new HashMap();
+		parameters.put("firstName", "Keith");
+		parameters.put("lastName", "Donald");
+		ViewDescriptor view = signalEvent(event("search", parameters));
 		assertCurrentStateEquals("displayResults");
 		Assert.collectionAttributeSizeEquals(view, "persons", 1);
 	}
 	
 	public void testCriteriaView_Submit_Error() {
 		startFlow();
-		ViewDescriptor view = signalEvent(new Event(this, "submit", null));
+		ViewDescriptor view = signalEvent(event("search", null));
 		assertCurrentStateEquals("displayCriteria");
 	}
 
