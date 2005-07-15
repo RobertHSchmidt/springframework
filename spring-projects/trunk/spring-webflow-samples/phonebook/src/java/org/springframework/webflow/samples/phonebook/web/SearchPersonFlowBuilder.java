@@ -42,7 +42,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	private static final String DISPLAY_RESULTS = "displayResults";
 
-	private static final String BROWSE_DETAILS = "showDetails";
+	private static final String BROWSE_DETAILS = "browseDetails";
 
 	protected String flowId() {
 		return "searchFlow";
