@@ -20,7 +20,6 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.AutowireMode;
 import org.springframework.webflow.config.FlowBuilderException;
-import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
 /**
