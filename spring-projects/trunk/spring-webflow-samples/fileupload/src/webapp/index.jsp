@@ -12,7 +12,7 @@
 		
 		<DIV align="left">
 			<P>
-				<A href="upload.htm">File Upload</A>
+				<A href="fileupload.htm">File Upload</A>
 			</P>
 			
 			<P>

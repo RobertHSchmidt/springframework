@@ -3,12 +3,12 @@
 
 <beans>
 
-	<bean name="/upload.htm" class="org.springframework.webflow.mvc.FlowController">
+	<bean name="/fileupload.htm" class="org.springframework.webflow.mvc.FlowController">
 		<property name="flow" ref="fileupload"/>
 	</bean>
 	
 	<bean id="fileupload" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/upload-flow.xml"/>
+		<property name="location" value="/WEB-INF/fileupload-flow.xml"/>
 	</bean>
 	
 	<bean id="upload.process" class="org.springframework.webflow.samples.fileupload.ProcessUploadAction"/>
