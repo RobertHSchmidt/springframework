@@ -3,7 +3,7 @@
 
 <beans>
 
-	<bean name="/upload.htm" class="org.springframework.web.flow.mvc.FlowController">
+	<bean name="/upload.htm" class="org.springframework.webflow.mvc.FlowController">
 		<property name="flow" ref="fileupload"/>
 	</bean>
 	

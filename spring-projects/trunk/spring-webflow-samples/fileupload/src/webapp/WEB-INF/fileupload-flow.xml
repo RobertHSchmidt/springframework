@@ -15,7 +15,7 @@
 		<transition on="error" to="selectFile"/>
 	</action-state>
 	
-	<view-state id="displayConfimation" view="confirmation">
+	<view-state id="displayConfirmation" view="confirmation">
 		<transition on="back" to="selectFile"/>
 	</view-state>
 	
