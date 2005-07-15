@@ -45,7 +45,7 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
-		addActionState(GET_PERSON, action(GetPersonAction.class, AutowireMode.BY_TYPE), on(success(), DISPLAY_DETAILS));
+		addActionState(GET_PERSON, action(GetPersonAction.class, AutowireMode.CONSTRUCTOR), on(success(), DISPLAY_DETAILS));
 
 		// view the person details
 		addViewState(DISPLAY_DETAILS, "details", new Transition[] { on(back(), "finish"),

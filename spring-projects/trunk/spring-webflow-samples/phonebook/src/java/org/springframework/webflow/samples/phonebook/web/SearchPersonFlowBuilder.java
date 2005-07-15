@@ -50,11 +50,11 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
-		addViewState(DISPLAY_CRITERIA, "searchCriteria", on(submit(), EXECUTE_SEARCH,
+		addViewState(DISPLAY_CRITERIA, "searchCriteria", on("search", EXECUTE_SEARCH,
 				beforeExecute(method("bindAndValidate", action("searchFormAction")))));
 
 		// execute query
-		addActionState(EXECUTE_SEARCH, action(SearchPhoneBookAction.class, AutowireMode.BY_TYPE), new Transition[] {
+		addActionState(EXECUTE_SEARCH, action(SearchPhoneBookAction.class, AutowireMode.CONSTRUCTOR), new Transition[] {
 				on(error(), DISPLAY_CRITERIA), on(success(), DISPLAY_RESULTS) });
 
 		// view results

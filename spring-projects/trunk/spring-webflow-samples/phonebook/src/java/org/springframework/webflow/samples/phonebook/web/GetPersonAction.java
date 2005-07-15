@@ -25,7 +25,7 @@ public class GetPersonAction extends AbstractAction {
 
 	private PhoneBook phoneBook;
 
-	public void setPhoneBook(PhoneBook phoneBook) {
+	public GetPersonAction(PhoneBook phoneBook) {
 		this.phoneBook = phoneBook;
 	}
 
