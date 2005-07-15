@@ -1,4 +1,5 @@
-<%@ page session="true" %> <%-- make sure we have a session --%>
+<%-- make sure we have a session --%>
+<%@ page session="true" %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML>
