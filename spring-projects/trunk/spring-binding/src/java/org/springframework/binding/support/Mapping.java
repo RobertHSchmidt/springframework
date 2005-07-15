@@ -94,8 +94,8 @@ public class Mapping implements Serializable {
 		}
 		// set target value
 		if (logger.isDebugEnabled()) {
-			logger.debug("Mapping source attribute '" + sourceAttribute + "' with value: " + sourceValue + " to" +
-					"target attribute '" + targetAttribute + "' with value: " + targetValue);
+			logger.debug("Mapping source attribute '" + sourceAttribute + "' with value: " + sourceValue + 
+					" to target attribute '" + targetAttribute + "' with value: " + targetValue);
 		}
 		targetAttribute.setValue(target, targetValue, mappingContext);
 	}
