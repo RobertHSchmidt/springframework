@@ -27,3 +27,4 @@ As an example, here is Spring Web Flow's project build.xml:
   <import file="${common.build.dir}/clover-targets.xml"/>
 
 </project>
+
