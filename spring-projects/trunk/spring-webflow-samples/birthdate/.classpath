@@ -21,5 +21,11 @@
 	<classpathentry kind="lib" path="lib/global/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/global/standard.jar"/>
 	<classpathentry kind="lib" path="lib/test/spring-mock.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-digester.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-lang.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-validator.jar"/>
+	<classpathentry kind="lib" path="lib/global/struts.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
