@@ -21,24 +21,24 @@
 	-->
 	<action-state id="setupForm">
 		<action bean="formAction"/>
-		<transition on="success" to="displayForm"/>
+		<transition on="success" to="enterBirthdate"/>
 	</action-state>
 	
 	<!--
 		Display the input form view.
 	-->
-	<view-state id="displayForm" view="form">
-		<transition on="submit" to="bindAndValidateForm"/>
+	<view-state id="enterBirthdate" view="enterBirthdate">
+		<transition on="submit" to="bindAndValidate"/>
 	</view-state>
 	
 	<!--
 		Bind and validate input data from the form. This is similar to the bindAndValidate()
 		method of the SimpleFormController.
 	-->
-	<action-state id="bindAndValidateForm">
+	<action-state id="bindAndValidate">
 		<action bean="formAction" method="bindAndValidate"/>
 		<transition on="success" to="calculateAge"/>
-		<transition on="error" to="displayForm"/>
+		<transition on="error" to="enterBirthdate"/>
 	</action-state>
 	
 	<!--
@@ -46,13 +46,13 @@
 		SimpleFormController.
 	-->
 	<action-state id="calculateAge">
-		<action name="calculateAge" bean="birthDateFormAction"/>
-		<transition on="calculateAge.success" to="displaySuccess"/>
+		<action name="calculateAge" bean="formAction"/>
+		<transition on="calculateAge.success" to="displayAge"/>
 	</action-state>
 	
 	<!--
 		Display the success view.
 	-->
-	<end-state id="displaySuccess" view="success"/>
+	<end-state id="displayAge" view="yourAge"/>
 
 </webflow>

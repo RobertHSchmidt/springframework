@@ -24,7 +24,7 @@
 	<tr>
 		<td colspan="2" class="buttonBar">
 			<html:submit value="Calculate Age"/>
-			<input type="hidden" name="_flowExecutionId" value="<c:out value="${flowExecutionId}"/>">
+			<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
 			<input type="hidden" name="_eventId" value="submit">
 		</td>
 	</tr>

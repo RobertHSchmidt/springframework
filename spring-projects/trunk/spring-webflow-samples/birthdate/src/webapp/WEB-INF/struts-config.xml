@@ -12,8 +12,8 @@
 	</form-beans>
 
 	<global-forwards>
-		<forward name="displayAge"	path="/WEB-INF/jsp/displayAge.jsp"/>
-		<forward name="enterBirthDate" path="/WEB-INF/jsp/enterBirthDate.jsp"/>
+		<forward name="enterBirthdate" path="/WEB-INF/jsp/enterBirthdate.jsp"/>
+		<forward name="yourAge"	path="/WEB-INF/jsp/yourAge.jsp"/>
 	</global-forwards>
 
 	<action-mappings>

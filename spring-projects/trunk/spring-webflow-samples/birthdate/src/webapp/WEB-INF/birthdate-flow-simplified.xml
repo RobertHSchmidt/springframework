@@ -15,9 +15,9 @@
 	This is a simplified definition of the BirthDate flow (see birthDate-flow.xml) that
 	uses view state entry actions and transition actions to make the flow definition more compact.
 -->
-<webflow id="birthdate" start-state="displayForm">
+<webflow id="birthdate" start-state="enterBirthdate">
 
-	<view-state id="displayForm" view="form">
+	<view-state id="enterBirthdate" view="enterBirthdate">
 		<entry>
 			<action bean="formAction" method="setupForm"/>
 		</entry>
@@ -27,10 +27,10 @@
 	</view-state>
 	
 	<action-state id="calculateAge">
-		<action name="calculateAge" bean="birthDateFormAction"/>
-		<transition on="calculateAge.success" to="displaySuccess"/>
+		<action name="calculateAge" bean="formAction"/>
+		<transition on="calculateAge.success" to="displayAge"/>
 	</action-state>
 	
-	<end-state id="displaySuccess" view="success"/>
+	<end-state id="displayAge" view="yourAge"/>
 
 </webflow>
