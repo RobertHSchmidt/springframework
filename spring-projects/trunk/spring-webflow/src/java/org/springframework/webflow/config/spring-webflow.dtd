@@ -61,7 +61,7 @@
 	Defines an action state: a state where an action is executed.
 	Transitions triggered by the action(s) lead on to other states.
 -->
-<!ELEMENT action-state ( action+, transition+, property*)>
+<!ELEMENT action-state ( entry?, action+, transition+, property*, exit? )>
 
 <!--
 	Unique identifier of an action state; must be unique to this flow.

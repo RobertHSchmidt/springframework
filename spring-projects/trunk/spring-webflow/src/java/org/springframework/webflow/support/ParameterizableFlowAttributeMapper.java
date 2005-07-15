@@ -287,10 +287,10 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * @author Keith Donald
 	 * @author Erwin Vervaet
 	 */
-	protected static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
+	public static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
 
 		/**
-		 * Create a new flow scope aware attribute mapper
+		 * Create a new flow scope aware attribute mapper.
 		 */
 		public FlowScopeAwareParameterizableAttributeMapper() {
 			super();

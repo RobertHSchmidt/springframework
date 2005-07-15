@@ -27,10 +27,14 @@ import org.springframework.util.StringUtils;
  * target <code>Action</code> implementation for use in exactly one
  * context, for example an <code>ActionState</code> definition, a
  * <code>TransitionCriteria</code> definition, or in a test environment.
+ * An annotated action is an action that wraps another action (the
+ * <i>target</i>).
  * 
  * @author Keith Donald
  */
 public class AnnotatedAction extends AnnotatedObject implements Action {
+	
+	// well known properties
 	
 	/**
 	 * The name of the action.
@@ -46,6 +50,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * The action long description property.
 	 */
 	public static final String DESCRIPTION_PROPERTY = "description";
+	
 
 	/**
 	 * The action to execute.
@@ -147,7 +152,8 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 		try {
 			Event result = getTargetAction().execute(context);
 			return postProcessResult(result);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(),
 					getTargetAction(), this, e);
 		}
@@ -158,8 +164,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 
 	/**
 	 * Get the event id to be used as grounds for a transition in the
-	 * containing state, based on given result returned from action
-	 * execution.
+	 * containing state, based on given result returned from action execution.
 	 * <p>
 	 * If the wrapped action is named, the name will be used as a qualifier
 	 * for the event (e.g. "myAction.success").

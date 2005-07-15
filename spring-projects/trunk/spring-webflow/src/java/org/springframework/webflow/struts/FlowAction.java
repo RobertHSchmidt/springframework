@@ -68,8 +68,7 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * <pre>
  * &lt;action path=&quot;/userRegistration&quot;
  *    	type=&quot;org.springframework.web.flow.struts.FlowAction&quot;
- *     	name=&quot;springBindingActionForm&quot; scope=&quot;request&quot; 
- *     	className=&quot;org.springframework.web.flow.struts.FlowActionMapping&quot;&gt;
+ *     	name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
  *     	&lt;set-property property=&quot;flowId&quot; value=&quot;user.Registration&quot; /&gt;
  * &lt;/action&gt;
  * </pre>
@@ -98,7 +97,6 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * binding and validation that addresses the proliferation of
  * <code>ActionForm</code> classes found in traditional Struts-based apps.
  * 
- * @see org.springframework.webflow.struts.FlowActionMapping
  * @see org.springframework.webflow.execution.FlowExecutionManager
  * @see org.springframework.web.struts.SpringBindingActionForm
  * 
@@ -116,7 +114,8 @@ public class FlowAction extends ActionSupport {
 	protected void onInit() {
 		try {
 			this.flowExecutionManager = (FlowExecutionManager)getWebApplicationContext().getBean(FLOW_EXECUTION_MANAGER_BEAN_NAME, FlowExecutionManager.class);
-		} catch (NoSuchBeanDefinitionException e) {
+		}
+		catch (NoSuchBeanDefinitionException e) {
 			this.flowExecutionManager = new ServletFlowExecutionManager();
 			this.flowExecutionManager.setBeanFactory(getWebApplicationContext());
 		}

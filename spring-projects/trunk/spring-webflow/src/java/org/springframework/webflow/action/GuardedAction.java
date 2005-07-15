@@ -23,7 +23,13 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
 
 /**
- * A action that will execute an ordered chain of other actions when executed.
+ * A action that will execute another action if a guard allows it to.
+ * The guard is represented by a TransitionCriteria object. If the guard
+ * disallows execution, the wrapped action is just skipped and this
+ * action will return the "success" event.
+ * 
+ * @see org.springframework.webflow.TransitionCriteria
+ * 
  * @author Keith Donald
  */
 public class GuardedAction extends AbstractAction {
@@ -39,17 +45,18 @@ public class GuardedAction extends AbstractAction {
 	private TransitionCriteria executionCriteria;
 	
 	/**
-	 * Create a action precondition delegating to the specified action.
-	 * @param action the action
+	 * Create a guarded action
+	 * @param action the action to execute
+	 * @param executionCriteria the guard to use
 	 */
 	public GuardedAction(Action action, TransitionCriteria executionCriteria) {
-		Assert.notNull(action, "At least one action is required");
+		Assert.notNull(action, "The action is required");
 		Assert.notNull(executionCriteria, "The guarding execution criteria is required");
 		this.executionCriteria = executionCriteria;
 	}
 
 	/**
-	 * Returns the guarded action 
+	 * Returns the guarded action.
 	 * @return the action
 	 */
 	public Action getAction() {
@@ -57,7 +64,7 @@ public class GuardedAction extends AbstractAction {
 	}
 	
 	/**
-	 * Returns the action execution criteria
+	 * Returns the action execution criteria.
 	 * @return the execution criteria
 	 */
 	public TransitionCriteria getExecutionCriteria() {
@@ -67,7 +74,9 @@ public class GuardedAction extends AbstractAction {
 	public Event doExecute(RequestContext context) throws Exception {
 		if (getExecutionCriteria().test(context)) {
 			return getAction().execute(context);
-		} else {
+		}
+		else {
+			// skip wrapped action
 			return success();
 		}
 	}

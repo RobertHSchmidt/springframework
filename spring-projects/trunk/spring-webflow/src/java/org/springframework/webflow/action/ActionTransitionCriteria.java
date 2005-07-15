@@ -86,7 +86,8 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 		}
 		catch (ActionExecutionException e) {
 			throw e;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), getAction(), e);
 		}
 	}

@@ -23,6 +23,9 @@ import org.springframework.webflow.RequestContext;
 
 /**
  * A action that will execute an ordered chain of other actions when executed.
+ * The result of the last executed action is returned.
+ * This is the classic GoF composite design pattern.
+ * 
  * @author Keith Donald
  */
 public class CompositeAction extends AbstractAction {
@@ -43,8 +46,8 @@ public class CompositeAction extends AbstractAction {
 	private String errorEventId = ERROR_RESULT_EVENT_ID;
 	
 	/**
-	 * Create a action precondition delegating to the specified action.
-	 * @param action the action
+	 * Create a composite action composed of given actions.
+	 * @param actions the actions
 	 */
 	public CompositeAction(Action[] actions) {
 		Assert.notEmpty(actions, "At least one action is required");
@@ -52,8 +55,8 @@ public class CompositeAction extends AbstractAction {
 	}
 
 	/**
-	 * Returns the action attributes associated with this action precondition.
-	 * @return the attributes
+	 * Returns the actions contained by this composite action.
+	 * @return the actions
 	 */
 	protected Action[] getActions() {
 		return actions;

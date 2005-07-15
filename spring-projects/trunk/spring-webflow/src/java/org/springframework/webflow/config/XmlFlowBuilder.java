@@ -189,8 +189,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 	private static final String EXIT_ELEMENT = "exit";
 	
-	private static final String ON_ERROR_ATTRIBUTE = "on-error";
-	
 	
 	/**
 	 * Internal helper class capturing flow artifact definition info.
@@ -493,7 +491,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			state.setEntryAction(new CompositeAction(parseAnnotatedActions(entryElement)));
 		}
 		if (state instanceof TransitionableState) {
-			// parse any state entry actions
+			// parse any state exit actions
 			List exitElements = DomUtils.getChildElementsByTagName(element, EXIT_ELEMENT);
 			if (!exitElements.isEmpty()) {
 				Element exitElement = (Element)exitElements.get(0);
@@ -812,7 +810,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			// "name" allows you to specify the name of an attribute to map
 			if (StringUtils.hasText(as)) {
 				mappings.add(new Mapping(new FlowScopeExpression(name), ExpressionFactory.parsePropertyExpression(as), valueConverter));
-			} else {
+			}
+			else {
 				mappings.add(new Mapping(new FlowScopeExpression(name), ExpressionFactory.parsePropertyExpression(name), valueConverter));
 			}
 		}

@@ -212,17 +212,6 @@ public class ActionState extends TransitionableState {
 	}
 
 	/**
-	 * Add a collection of actions to this state.
-	 * @param actions the actions to add
-	 */
-	public void addActions(AnnotatedAction[] actions) {
-		Assert.notEmpty(actions, "You must add at least one action");
-		for (int i = 0; i < actions.length; i++) {
-			addAction(actions[i]);
-		}
-	}
-
-	/**
 	 * Returns an iterator that lists the set of actions to execute for this
 	 * state. Returns a iterator over a collection of
 	 * {@link ActionExecutor} objects.
@@ -271,7 +260,7 @@ public class ActionState extends TransitionableState {
 	}
 
 	/**
-	 * Returns the list of actions executed by this action state with annotations
+	 * Returns the list of actions executed by this action state with annotations.
 	 * @return the annotated action list, as a typed array
 	 */
 	public AnnotatedAction[] getAnnotatedActions() {
@@ -281,7 +270,8 @@ public class ActionState extends TransitionableState {
 			Action action = ((ActionExecutor)it.next()).getAction();
 			if (action instanceof AnnotatedAction) {
 				actions[i++] = (AnnotatedAction)action; 
-			} else {
+			}
+			else {
 				actions[i++] = new AnnotatedAction(action);
 			}
 		}

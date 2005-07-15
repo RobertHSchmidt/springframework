@@ -171,8 +171,8 @@ public abstract class State extends AnnotatedObject {
 
 	/**
 	 * Enter this state in the provided flow execution request context. This implementation
-	 * just calls the {@link #doEnter(StateContext)} hook method, which should be
-	 * implemented by subclasses.
+	 * just calls the {@link #doEnter(StateContext)} hook method after executing the entry action,
+	 * which should be implemented by subclasses.
 	 * @param context the request context in an executing flow (a client instance of a flow)
 	 * @return a view descriptor containing model and view information needed to
 	 *         render the results of the state processing
@@ -186,6 +186,10 @@ public abstract class State extends AnnotatedObject {
 		return doEnter(context);
 	}
 	
+	/**
+	 * Execute the entry action registered with this state.
+	 * @param context the flow execution request context
+	 */
 	protected void executeEntryAction(RequestContext context) {
 		if (getEntryAction() != null) {
 			new ActionExecutor(this, getEntryAction()).execute(context);

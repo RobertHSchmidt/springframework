@@ -58,6 +58,7 @@ public class ActionExecutionException extends NestedRuntimeException {
 				"Exception thrown executing action '" + action + "' in state '" + state.getId() + "' of flow '"
 				+ state.getFlow().getId() + "'", cause);
 	}
+	
 	/**
 	 * Create a new action execution exception.
 	 * @param state the active state

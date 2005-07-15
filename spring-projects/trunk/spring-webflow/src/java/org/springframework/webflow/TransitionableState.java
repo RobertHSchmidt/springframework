@@ -40,7 +40,7 @@ public abstract class TransitionableState extends State {
 	private Set transitions = CollectionFactory.createLinkedSetIfPossible(6);
 	
 	/**
-	 * An action to execute when exiting this state 
+	 * An action to execute when exiting this state. 
 	 */
 	private Action exitAction;
 	
@@ -245,6 +245,12 @@ public abstract class TransitionableState extends State {
 		return enter(context);
 	}
 
+	/**
+	 * Exit this state. This is typically called when a transition takes the flow
+	 * out of this state into another state. By default just executes the exit action, if
+	 * one is registered.
+	 * @param context the flow execution request context
+	 */
 	public void exit(StateContext context) {
 		if (this.exitAction != null) {
 			new ActionExecutor(this, exitAction).execute(context);

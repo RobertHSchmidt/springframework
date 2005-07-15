@@ -21,7 +21,7 @@ import org.springframework.core.style.ToStringCreator;
 
 /**
  * A view state is a state in which a physical view resource should be rendered
- * to the user, for example, for solicting form input.
+ * to the user, for example, for soliciting form input.
  * <p>
  * To accomplish this, a <code>ViewState</code> returns a
  * <code>ViewDescriptor</code>, which contains the logical name of a view
