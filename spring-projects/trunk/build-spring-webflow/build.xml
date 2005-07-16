@@ -3,7 +3,7 @@
 <!--
   "$Header$"
   =======================================================================
-  A master build ant file for the core spring jars
+  A master build ant file for Spring Web Flow
 
   Ideally this would use Ivy dependency information itself to drive the
   build order of the jar projects, but there's no easy way to access that
@@ -34,7 +34,31 @@
     <pathelement location="../spring-webflow-samples/phonebook"/>
     <pathelement location="../spring-webflow-samples/sellitem"/>
   </path>
-  
+
+  <!-- simplistic pattern for zipping up sources -->
+  <selector id="project.source.zip.includes">
+    <and>
+      <or>
+        <filename name="build-spring-webflow/**"/>
+        <filename name="common-build/**"/>
+        <filename name="repository/**"/>
+        <filename name="spring-webflow/**"/>
+        <filename name="spring-webflow-samples/**"/>
+      </or>
+      <and>
+        <filename name="*/target/**" negate="true"/>
+        <filename name="*/build.properties" negate="true"/>
+        <filename name="*/lib/**" negate="true"/>
+      </and>
+      <and>
+        <filename name="*/*/target/**" negate="true"/>
+        <filename name="*/*/build.properties" negate="true"/>
+        <filename name="*/*/lib/**" negate="true"/>
+      </and>
+    </and>  
+  </selector>
+
+ 
   <!--
         targets:  displays all targets suitable for developer use
   -->
@@ -75,10 +99,12 @@
     <property name="target.release.dir" value="${target.dir}/release"/>
   
     <!-- directory for release zips -->
-    <property name="release.bin.zip" value="spring-webflow-bin-${release.version}.zip"/>
+    <property name="release.bin.zip"
+	          value="spring-webflow-bin-${release.version}.zip"/>
     <property name="release.bin.deps.zip"
 	          value="spring-webflow-bin-with-dependencies-${release.version}.zip"/>
-    <property name="release.src.zip" value="spring-src-${release.version}.zip"/>
+    <property name="release.buildable.zip"
+	          value="spring-webflow-buildable-${release.version}.zip"/>
 
     <property name="zip.toplevel.dir" value="spring-webflow-${release.version}"/>
 
@@ -128,7 +154,7 @@
   </target>
 
   <target name="release"
-          depends="publish, gen-release-bins, gen-release-bins-with-deps, gen-buildable-archive"
+          depends="publish, gen-release-bins, gen-release-bins-with-deps, gen-buildable-zip"
           description="Generate release zips">
 
   </target>
@@ -149,7 +175,7 @@
           description="Generate bin zips/tarballs with all dependencies">
 
     <mkdir dir="${target.release.dir}"/>
-    <delete file="${target.release.dir}/${release.bin.zip}"/>
+    <delete file="${target.release.dir}/${release.bin.deps.zip}"/>
 
     <zip zipfile="${target.release.dir}/${release.bin.deps.zip}">
 	  <zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
@@ -158,13 +184,13 @@
     </zip>
   </target>
   
-  <target name="gen-buildable-archive" depends="init"
+  <target name="gen-buildable-zip" depends="init"
           description="Generate archive with buildable sources">
 
     <mkdir dir="${target.release.dir}"/>
-    <delete file="${target.release.dir}/${release.src.zip}"/>
+    <delete file="${target.release.dir}/${release.buildable.zip}"/>
 
-    <zip zipfile="${target.release.dir}/${release.src.zip}">
+    <zip zipfile="${target.release.dir}/${release.buildable.zip}">
       <zipfileset dir="..">
         <selector refid="project.source.zip.includes"/>
       </zipfileset>
