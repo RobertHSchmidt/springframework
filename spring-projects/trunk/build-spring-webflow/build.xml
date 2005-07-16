@@ -24,16 +24,6 @@
   <!-- Default values for unspecified properties -->
   <!-- Anything passed in or specified in property file will override these -->
 
-  <!-- root of build hierarchy -->
-  <property name="target.dir" value="${basedir}/target"/>
-
-  <!-- directory for release zips -->
-  <property name="target.release.dir" value="${target.dir}/release"/>
-  
-  <!-- directory for release zips -->
-  <property name="release.bin.zip" value="spring-bin.zip"/>
-  <property name="release.src.zip" value="spring-src.zip"/>
-  
   <path id="modules">
     <pathelement location="../spring-webflow"/>
     <pathelement location="../spring-webflow-samples/birthdate"/>
@@ -64,22 +54,45 @@
   <!--
         init:  initializes some common settings
   -->
-  <target name="init" depends="init_pre, init_post">
+  <target name="init" unless="init.done" depends="init.pre, init.post">
   </target>
 
-  <target name="init_pre" >
+  <target name="init.pre" >
 
+    <tstamp>
+    	<format property="build.timestamp" pattern="yyyyMMddHHmmss"/>
+    </tstamp>
     <tstamp>
       <format property="TSTAMPCOL" pattern="hh:mm"/>
     </tstamp>
+
+    <property name="release.version" value="${build.timestamp}"/>
+
+    <!-- root of build hierarchy -->
+    <property name="target.dir" value="${basedir}/target"/>
+
+    <!-- directory for release zips -->
+    <property name="target.release.dir" value="${target.dir}/release"/>
+  
+    <!-- directory for release zips -->
+    <property name="release.bin.zip" value="spring-webflow-bin-${release.version}.zip"/>
+    <property name="release.bin.deps.zip"
+	          value="spring-webflow-bin-with-dependencies-${release.version}.zip"/>
+    <property name="release.src.zip" value="spring-src-${release.version}.zip"/>
+
+    <property name="zip.toplevel.dir" value="spring-webflow-${release.version}"/>
+
     <echo message='user.dir = "${user.dir}"' />
     <echo message='ant.file = "${ant.file}"' />
     <echo message='ant.java.version = "${ant.java.version}"' />
+    <echo message='release.version = "${release.version}"' />
 
   </target>
   
-  <target name="init_post" >
+  <target name="init.post" >
     <property name="projects" value="modules"/>
+
+    <property name="init.done" value="true"/>
   </target>
   
   <target name="clean" depends="init"
@@ -112,6 +125,50 @@
 	<subant target="run-ltests" inheritall="false">
 	  <buildpath refid="${projects}"/>
     </subant>
+  </target>
+
+  <target name="release"
+          depends="publish, gen-release-bins, gen-release-bins-with-deps, gen-buildable-archive"
+          description="Generate release zips">
+
+  </target>
+
+  <target name="gen-release-bins" depends="init"
+          description="Generate bin zips/tarballs">
+
+    <mkdir dir="${target.release.dir}"/>
+    <delete file="${target.release.dir}/${release.bin.zip}"/>
+
+    <zip zipfile="${target.release.dir}/${release.bin.zip}">
+	  <zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
+	  <zipfileset dir="../spring-webflow/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
+    </zip>
+  </target>
+
+  <target name="gen-release-bins-with-deps" depends="init"
+          description="Generate bin zips/tarballs with all dependencies">
+
+    <mkdir dir="${target.release.dir}"/>
+    <delete file="${target.release.dir}/${release.bin.zip}"/>
+
+    <zip zipfile="${target.release.dir}/${release.bin.deps.zip}">
+	  <zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
+	  <zipfileset dir="../spring-webflow/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
+	  <zipfileset dir="../spring-webflow/lib/global" prefix="${zip.toplevel.dir}/lib"/>
+    </zip>
+  </target>
+  
+  <target name="gen-buildable-archive" depends="init"
+          description="Generate archive with buildable sources">
+
+    <mkdir dir="${target.release.dir}"/>
+    <delete file="${target.release.dir}/${release.src.zip}"/>
+
+    <zip zipfile="${target.release.dir}/${release.src.zip}">
+      <zipfileset dir="..">
+        <selector refid="project.source.zip.includes"/>
+      </zipfileset>
+    </zip>
   </target>
   
 </project>
