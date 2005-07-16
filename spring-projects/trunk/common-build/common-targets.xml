@@ -529,7 +529,7 @@
 
   <target name="jar.post"/>
   
-  <target name="source-zip">
+  <target name="source-zip" depends="jar">
     <zip zipfile="${target.lib.dir}/${project.name}-src.jar">
       <fileset dir="${src.java.main.dir}"/>
       <fileset dir="${target.gen.java.dir}"/>
@@ -537,7 +537,7 @@
   </target>
 
   <!-- web:  Creates primary webapp in exploded format -->
-  <target name="web" depends="jar, web.pre, web.main, web.post" if="build.web" description="Create this webapp in exploded format"/>
+  <target name="web" depends="source-zip, web.pre, web.main, web.post" if="build.web" description="Create this webapp in exploded format"/>
 
   <!-- copy web statics -->
   <target name="statics.web" if="build.web">
@@ -702,6 +702,7 @@
     <!-- we clean out the deliver dir, since we don't want multiple integration versions
 	     to end up in there -->
 	<delete dir="${ivy.distrib.dir}/jars"/>
+	<delete dir="${ivy.distrib.dir}/ivys"/>
 
     <tstamp>
       <format property="pubdate" pattern="yyyyMMddHHmmss"/>  <!-- default value -->
@@ -709,6 +710,7 @@
     
 	<mkdir dir="${ivy.distrib.dir}/jars"/>
     <copy file="${target.lib.dir}/${project.name}.jar" tofile="${ivy.distrib.dir}/jars/${project.name}-${project.version}.jar" />
+    <copy file="${target.lib.dir}/${project.name}-src.jar" tofile="${ivy.distrib.dir}/jars/${project.name}-src-${project.version}.jar" />
 	<ivy:publish resolver="integration-repo"
                  artifactspattern="${ivy.distrib.dir}/jars/[artifact]-[revision].[ext]"
                  pubrevision="${project.version}" pubdate="${pubdate}"
