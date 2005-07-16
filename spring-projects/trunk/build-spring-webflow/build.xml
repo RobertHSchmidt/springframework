@@ -1,29 +1,16 @@
 <?xml version="1.0"?>
-
 <!--
-  "$Header$"
   =======================================================================
-  A master build ant file for Spring Web Flow
-
-  Ideally this would use Ivy dependency information itself to drive the
-  build order of the jar projects, but there's no easy way to access that
-  data here. So the order is hard-coded here, but any mismatch from the
-  true dependencies between jars will still be caught on a build, since
-  Ivy will not be able to resolve needed dependencies for the out of
-  order project.
+  A master build file for creating a release of Spring Web Flow
   =======================================================================
 -->
-
-<project name="build-spring" default="targets">
+<project name="build-spring-webflow" default="targets">
 
   <!-- Load local and user build preferences -->
   <property file="build.properties"/>
   <property file="project.properties"/>
   <property file="${user.home}/build.properties"/>
   
-  <!-- Default values for unspecified properties -->
-  <!-- Anything passed in or specified in property file will override these -->
-
   <path id="modules">
     <pathelement location="../spring-webflow"/>
     <pathelement location="../spring-webflow-samples/birthdate"/>
@@ -57,7 +44,6 @@
       </and>
     </and>  
   </selector>
-
  
   <!--
         targets:  displays all targets suitable for developer use
@@ -90,6 +76,7 @@
       <format property="TSTAMPCOL" pattern="hh:mm"/>
     </tstamp>
 
+  	<!-- default the release version (used in release archive zips) to the current timestamp -->
     <property name="release.version" value="${build.timestamp}"/>
 
     <!-- root of build hierarchy -->
@@ -156,7 +143,6 @@
   <target name="release"
           depends="publish, gen-release-bins, gen-release-bins-with-deps, gen-buildable-zip"
           description="Generate release zips">
-
   </target>
 
   <target name="gen-release-bins" depends="init"
