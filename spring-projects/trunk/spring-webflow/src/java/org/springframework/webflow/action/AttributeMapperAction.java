@@ -26,7 +26,12 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
- * Maps properties of the request context.  This action always returns the
+ * Action that executes an attribute mapper to map information in the request
+ * context. Both the source and the target of the mapping will be the request context.
+ * This allows for maximum flexibility when defining mappings, typically using
+ * expressions (e.g. "${flowScope.someAttribute}").
+ * <p>
+ * This action always returns the
  * {@link org.springframework.webflow.action.AbstractAction#success() success}
  * event.
  * <p>
@@ -48,6 +53,9 @@ import org.springframework.webflow.RequestContext;
  * <td>The custom mapping strategy used by this action.</td>
  * </tr>
  * </table>
+ * 
+ * @see org.springframework.binding.AttributeMapper
+ * @see org.springframework.webflow.RequestContext
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -104,6 +112,7 @@ public class AttributeMapperAction extends AbstractAction {
 
 	protected Event doExecute(RequestContext context) throws Exception {
 		if (attributeMapper != null) {
+			// map from the request context to the request context
 			this.attributeMapper.map(context, context, getMappingContext(context));
 		}
 		return success();

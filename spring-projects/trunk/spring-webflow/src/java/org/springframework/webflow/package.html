@@ -4,7 +4,8 @@
 Contains core interfaces and classes for dealing with web flows.
 </p>
 
-<p>The core concepts used at configuration time to define a flow are covered
+<p>
+The core concepts used at configuration time to define a flow are covered
 by this package. A {@link org.springframework.webflow.Flow web flow} is composed of a
 set of {@link org.springframework.webflow.State states}. A state is a point in the
 flow where something happens; for instance,
@@ -65,6 +66,11 @@ building and assembling web flows.
 flow execution.
 </li>
 <li>
+{@link org.springframework.webflow.execution.jmx execution.jmx} - This package contains interfaces and
+classes enabling management of the Spring web flow system using JMX, the Java Management
+Extensions.
+</li>
+<li>
 {@link org.springframework.webflow.mvc mvc} - Integration of the Spring web flow system
 into the Spring web MVC framework.
 </li>
@@ -81,9 +87,12 @@ system with Struts 1.x.
 classes supporting the Spring web flow system.
 </li>
 <li>
-{@link org.springframework.webflow.execution.jmx jmx} - This package contains interfaces and
-classes enabling management of the Spring web flow system using JMX, the Java Management
-Extensions.
+{@link org.springframework.webflow.test test} - Contains classes that assist in testing
+web flows and their associated artifacts.
+</li>
+<li>
+{@link org.springframework.webflow.util util} - General purpose utility classes used by the
+web flow system.
 </li>
 </ul>
 </p>

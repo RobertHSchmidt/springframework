@@ -1,5 +1,19 @@
 <html>
 <body>
+<p>
 Out-of-the box action implementations that address common controller concerns.
+</p>
+
+<p>
+When implementing custom actions, consider subclassing {@link org.springframework.webflow.action.AbstractAction}.
+Alternatively, you could also subclass {@link org.springframework.webflow.action.MultiAction} to bundle several
+action execution methods in a single class.
+</p>
+
+<p>
+The {@link org.springframework.webflow.action.FormAction} provides powerful input form handling functionality.
+When dealing with form objects in custom actions, the {@link org.springframework.webflow.action.FormObjectAccessor}
+can be of help.
+</p>
 </body>
 </html>

@@ -44,6 +44,9 @@ public class MockFlowSession implements FlowSession {
 		return flow;
 	}
 
+	/**
+	 * Set the flow associated with this flow session.
+	 */
 	public void setFlow(Flow flow) {
 		this.flow = flow;
 	}
@@ -52,6 +55,10 @@ public class MockFlowSession implements FlowSession {
 		return parent;
 	}
 
+	/**
+	 * Set the parent flow session of this flow session in the ongoing
+	 * flow execution.
+	 */
 	public void setParent(FlowSession parent) {
 		this.parent = parent;
 	}
@@ -64,6 +71,11 @@ public class MockFlowSession implements FlowSession {
 		return scope;
 	}
 
+	/**
+	 * Set the scope data maintained by this flow session. This will
+	 * be the flow scope data of the ongoing flow execution. As such, the
+	 * given scope should be of type {@link ScopeType#FLOW}.
+	 */
 	public void setScope(Scope scope) {
 		Assert.notNull(scope, "The flow scope is required");
 		Assert.isTrue(scope.getScopeType() == ScopeType.FLOW, "The session maintains flow scope data");
@@ -74,6 +86,9 @@ public class MockFlowSession implements FlowSession {
 		return state;
 	}
 
+	/**
+	 * Set the currently active state.
+	 */
 	public void setCurrentState(State state) {
 		this.state = state;
 	}
@@ -82,6 +97,9 @@ public class MockFlowSession implements FlowSession {
 		return status;
 	}
 
+	/**
+	 * Set the status of this flow session.
+	 */
 	public void setStatus(FlowSessionStatus status) {
 		this.status = status;
 	}	
