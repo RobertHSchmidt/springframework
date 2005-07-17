@@ -89,7 +89,8 @@ public class FlowController extends AbstractController implements InitializingBe
 	 * Set default properties for this controller.
 	 */
 	protected void initDefaults() {
-		setCacheSeconds(0); // no caching
+		// no caching
+		setCacheSeconds(0);
 		setFlowExecutionManager(new ServletFlowExecutionManager());
 	}
 
