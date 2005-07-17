@@ -470,11 +470,11 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 * event, the default top-level flow will be returned.
 	 */
 	protected Flow getFlow(Event event) {
-		String flowId = (String)event.getParameter(getFlowIdParameterName());
+		String flowId = ExternalEvent.verifySingleStringInputParameter(getFlowIdParameterName(), event.getParameter(getFlowIdParameterName()));
 		if (!StringUtils.hasText(flowId)) {
 			Assert.notNull(getFlow(),
-					"This flow execution manager is not configured with a default top-level flow; thus, "
-							+ "the flow to execute must be provided by the client via the '"
+					"This flow execution manager is not configured with a default top-level flow--that means "
+							+ "the flow to launch must be provided by the client via the '"
 							+ getFlowIdParameterName() + "' parameter, yet no such parameter was provided in this event." +
 							" Parameters provided were: " + StylerUtils.style(event.getParameters()));
 			return getFlow();
@@ -499,7 +499,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 * @return the obtained id or <code>null</code> if not found
 	 */
 	protected String getFlowExecutionId(Event event) {
-		return (String)event.getParameter(getFlowExecutionIdParameterName());
+		return ExternalEvent.verifySingleStringInputParameter(getFlowExecutionIdParameterName(), event.getParameter(getFlowExecutionIdParameterName()));
 	}
 
 	/**

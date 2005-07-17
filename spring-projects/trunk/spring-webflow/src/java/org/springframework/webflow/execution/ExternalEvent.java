@@ -17,6 +17,7 @@ package org.springframework.webflow.execution;
 
 import java.util.Iterator;
 
+import org.springframework.core.style.StylerUtils;
 import org.springframework.webflow.Event;
 
 /**
@@ -108,5 +109,33 @@ public abstract class ExternalEvent extends Event {
 		}
 		// we couldn't find the parameter value
 		return null;
+	}
+
+	/**
+	 * Utility method that makes sure the value for the specified parameter, if present,
+	 * is a single valued string.
+	 * @param parameterName the parameter name
+	 * @param parameterValue the parameter value
+	 * @return the string value
+	 */
+	public static String verifySingleStringInputParameter(String parameterName, Object parameterValue) {
+		String str = null;
+		if (parameterValue != null) {
+			try {
+				str = (String)parameterValue;
+			} catch (ClassCastException e) {
+				if (str.getClass().isArray()) {
+					throw new IllegalArgumentException("The '" + parameterName + "' parameter was unexpectedly set to an array with values: " + StylerUtils.style(parameterValue) +
+							"; this is likely a view configuration error: make sure you submit a single string value for the '" + parameterName + "' parameter " +
+						    "to tell the flow which event occured!");
+				} else {
+					IllegalArgumentException iae = new IllegalArgumentException("Parameter '" + parameterName + " should have been a single string value but was: " + parameterValue  + 
+							" of class: + " + parameterValue.getClass());
+					iae.initCause(e);
+					throw iae;
+				}
+			}
+		}
+		return str;
 	}
 }
