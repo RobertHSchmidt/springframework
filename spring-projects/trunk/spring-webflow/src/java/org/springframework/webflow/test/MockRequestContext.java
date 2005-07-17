@@ -37,14 +37,14 @@ import org.springframework.webflow.Transition;
  * facilitate standalone Action unit tests.
  * <p>
  * NOT intended to be used for anything but standalone unit tests. This
- * is a simple state holder, a stub implementation.
- * <p>
- * Note that this is really a <i>stub</i> implementation of the RequestContext
- * interface, at least if you follow <a
+ * is a simple state holder, a <i>stub</i> implementation, at least if you follow <a
  * href="http://www.martinfowler.com/articles/mocksArentStubs.html">Martin
  * Fowler's</a> reasoning. This class is called <i>Mock</i>RequestContext to
  * be consistent with the naming convention in the rest of the Spring framework
  * (e.g. MockHttpServletRequest, ...).
+ * 
+ * @see org.springframework.webflow.RequestContext
+ * @see org.springframework.webflow.Action
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -123,7 +123,7 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 
 	/**
 	 * Set the last event that occured in this request context.
-	 * @param lastEvent the lastEvent to set
+	 * @param lastEvent the event to set
 	 */
 	public void setLastEvent(Event lastEvent) {
 		this.lastRequestTimestamp = System.currentTimeMillis();
@@ -186,6 +186,8 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	public void endTransaction() {
 		inTransaction = false;
 	}
+	
+	// implementing FlowExecutionContext
 
 	public String getKey() {
 		return key;
@@ -201,6 +203,22 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 
 	public long getUptime() {
 		return System.currentTimeMillis() - getCreationTimestamp();
+	}
+	
+	public long getLastRequestTimestamp() {
+		return lastRequestTimestamp;
+	}
+	
+	public String getLastEventId() {
+		return lastEvent.getId();
+	}
+
+	public boolean isActive() {
+		return activeSession != null;
+	}
+
+	public boolean isRootFlowActive() {
+		return activeSession != null && activeSession.isRoot();
 	}
 
 	public Flow getRootFlow() {
@@ -235,14 +253,6 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 		Assert.state(state.getFlow() == getActiveSession().getFlow(), "The current state must be in the active flow");
 		this.activeSession.setCurrentState(state);
 	}
-
-	public long getLastRequestTimestamp() {
-		return lastRequestTimestamp;
-	}
-
-	public String getLastEventId() {
-		return lastEvent.getId();
-	}
 	
 	public FlowSession getActiveSession() throws IllegalStateException {
 		if (activeSession == null) {
@@ -256,18 +266,10 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	 * @param session the active flow session to set
 	 */
 	public void setActiveSession(MockFlowSession session) {
-		Assert.notNull(session);
+		Assert.notNull(session, "The session is required");
 		this.activeSession = session;
 		if (this.rootFlow == null) {
 			this.rootFlow = session.getFlow();
 		}
-	}
-
-	public boolean isActive() {
-		return activeSession != null;
-	}
-
-	public boolean isRootFlowActive() {
-		return activeSession != null && activeSession.isRoot();
 	}
 }

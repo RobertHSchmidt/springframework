@@ -51,7 +51,7 @@ import org.springframework.webflow.execution.impl.FlowExecutionImpl;
  * state of the flow matches what is expected.
  * </ul>
  * A flow execution test can effectively automate and validate the orchestration required to drive a 
- * end-to-end business process thats spans several steps involving the user.  Such tests area good way to
+ * end-to-end business process that spans several steps involving the user.  Such tests are a good way to
  * test your system top-down starting at the web-tier and pushing through all the way to the DB without
  * having to deploy to a servlet or portlet container.  Because these tests are typically end-to-end
  * integration tests that involve a transactional resource such a database, this class subclasses Spring's 
@@ -59,6 +59,7 @@ import org.springframework.webflow.execution.impl.FlowExecutionImpl;
  * and rollback capabilites.  If you do not need those capabilities, you must call
  * <code>setDependencyCheck(false)</code> in your test's constructor to turn off dependency
  * checking for the transaction manager property.
+ * 
  * @author Keith Donald
  */
 public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSpringContextTests {
