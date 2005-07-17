@@ -32,7 +32,6 @@ public class ActionExecutor {
 
 	/**
 	 * The action that will be executed.
-	 * 
 	 */
 	private Action action;
 

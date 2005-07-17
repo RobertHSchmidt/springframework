@@ -82,6 +82,10 @@ public class ServletEvent extends ExternalEvent {
 		setStateId(verifySingleStringInputParameter(currentStateIdParameterName, getParameter(currentStateIdParameterName)));
 	}
 
+	/**
+	 * Initialize the parameters contained in this event from the HTTP
+	 * servlet request.
+	 */
 	protected void initParameters() {
 		setParameters(WebUtils.getParametersStartingWith(getRequest(), null));
 		if (getRequest() instanceof MultipartHttpServletRequest) {
@@ -90,6 +94,15 @@ public class ServletEvent extends ExternalEvent {
 		}
 	}
 
+	/**
+	 * Obtain the event id from the parameters contained in this event.
+	 * @param eventIdParameterName name of the event id parameter in the request
+	 * @param eventIdAttributeName name of the event id attribute in the request
+	 * @param parameterValueDelimiter delimiter used when a parameter value is
+	 *        sent as part of the name of a request parameter
+	 *        (e.g. "_eventId_value=bar")
+	 * @return the event id, or null if not found
+	 */
 	protected String extractEventId(String eventIdParameterName, String eventIdAttributeName, String parameterValueDelimiter) {
 		Object parameter = searchForParameter(eventIdParameterName, parameterValueDelimiter);
 		if (parameter == null) {
