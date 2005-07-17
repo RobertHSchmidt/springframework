@@ -19,15 +19,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.execution.ExternalEvent;
 
 /**
- * A flow event that originated from an incoming HTTP servlet request.
+ * An external flow event that originated from an incoming HTTP servlet request.
+ * This is a request "source event" accessible from a flow artifact using the
+ * <code>requestContext.getSourceEvent()</code> accessor.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -38,8 +40,7 @@ public class ServletEvent extends ExternalEvent {
 	 * The event to be signaled can also be sent using a request
 	 * attribute set by an intercepting filter, with this name
 	 * ("_mapped_eventId"). Use this when you can't use the "_eventId" parameter
-	 * to pass in the event -- for example, when using image buttons with
-	 * javascript restrictions.
+	 * to pass in the event.
 	 */
 	public static final String EVENT_ID_REQUEST_ATTRIBUTE = "_mapped_eventId";
 	
@@ -77,22 +78,42 @@ public class ServletEvent extends ExternalEvent {
 			String parameterValueDelimiter) {
 		super(request);
 		this.response = response;
-		// initialize parameters
-		setParameters(WebUtils.getParametersStartingWith(request, null));
-		if (request instanceof MultipartHttpServletRequest) {
-			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)getRequest();
-			addParameters(multipartRequest.getFileMap());
-		}
-		String eventId = (String)searchForParameter(eventIdParameterName, parameterValueDelimiter);
-		if (!StringUtils.hasText(eventId)) {
-			// see if the eventId is set as a request attribute (put there by a
-			// servlet filter)
-			eventId = (String)getRequest().getAttribute(eventIdAttributeName);
-		}
-		setId(eventId);
+		initParameters();
+		setId(extractEventId(eventIdParameterName, eventIdAttributeName, parameterValueDelimiter));
 		setStateId((String)getParameter(currentStateIdParameterName));
 	}
 
+	protected void initParameters() {
+		setParameters(WebUtils.getParametersStartingWith(getRequest(), null));
+		if (getRequest() instanceof MultipartHttpServletRequest) {
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)getRequest();
+			addParameters(multipartRequest.getFileMap());
+		}
+	}
+
+	protected String extractEventId(String eventIdParameterName, String eventIdAttributeName, String parameterValueDelimiter) {
+		Object parameter = searchForParameter(eventIdParameterName, parameterValueDelimiter);
+		if (parameter == null) {
+			// see if the eventId is set as a request attribute (put there by a
+			// servlet filter)
+			parameter = getRequest().getAttribute(eventIdAttributeName);
+		}
+		String eventId = null;
+		if (parameter != null) {
+			try {
+				eventId = (String)parameter;
+			} catch (ClassCastException e) {
+				if (parameter.getClass().isArray()) {
+					throw new IllegalArgumentException("The '" + eventIdParameterName + "' parameter was unexpectedly set to an array with values: " + StylerUtils.style(parameter) +
+							"; this is likely a view configuration error: make sure you submit a single string value for the '" + eventIdParameterName + "' parameter" +
+						    "to tell the flow which event occured!");
+				} else {
+					throw e;
+				}
+			}
+		}
+		return eventId;
+	}
 	/**
 	 * Returns the HTTP servlet request that originated this event.
 	 */
@@ -108,7 +129,7 @@ public class ServletEvent extends ExternalEvent {
 		return response;
 	}
 	
-	// some static helpers that are generally usefull
+	// some static helpers that are generally useful
 	
 	/**
 	 * Return (cast) given event as a ServletEvent.
@@ -128,6 +149,16 @@ public class ServletEvent extends ExternalEvent {
 	 */
 	public static HttpServletRequest getHttpServletRequest(Event event) {
 		return getServletEvent(event).getRequest();
+	}
+
+	/**
+	 * Helper to get the HTTP response from given event. The event
+	 * should be a ServletEvent.
+	 * @param event the event to use
+	 * @return the obtained HTTP servlet request
+	 */
+	public static HttpServletResponse getHttpServletResponse(Event event) {
+		return getServletEvent(event).getResponse();
 	}
 
 	/**

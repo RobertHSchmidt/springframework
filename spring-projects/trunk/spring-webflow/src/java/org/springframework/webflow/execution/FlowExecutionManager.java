@@ -417,16 +417,16 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 			}
 			flowExecution.getListeners().fireLoaded(flowExecution, id);
 			// signal the event within the current state
-			Assert.hasText(event.getId(), "No _eventId could be obtained -- "
-					+ "make sure the submitting view or other client provides the _eventId parameter as input, parameters provide include:" 
+			Assert.hasText(event.getId(), "No eventId could be obtained -- "
+					+ "make sure the client provides the _eventId parameter as input; the parameters provided for this request were:" 
 					+ StylerUtils.style(event.getParameters()));
 			// see if the eventId was set to a static marker placeholder because
 			// of a client configuration error
 			if (event.getId().equals(getNotSetEventIdParameterMarker())) {
-				throw new IllegalArgumentException("The received event id was the 'not set' marker '"
+				throw new IllegalArgumentException("The received eventId was the 'not set' marker '"
 						+ getNotSetEventIdParameterMarker()
 						+ "' -- this is likely a view (jsp, etc) configuration error --"
-						+ "the event id parameter must be set to a valid event");
+						+ "the _eventId parameter must be set to a valid event");
 			}
 			viewDescriptor = flowExecution.signalEvent(event);
 		}
