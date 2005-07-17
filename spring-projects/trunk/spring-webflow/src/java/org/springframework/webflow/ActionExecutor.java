@@ -17,7 +17,6 @@ package org.springframework.webflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
@@ -32,12 +31,8 @@ public class ActionExecutor {
 	protected final Log logger = LogFactory.getLog(ActionExecutor.class);
 
 	/**
-	 * The state in which the action will be executed. 
-	 */
-	private State state;
-
-	/**
 	 * The action that will be executed.
+	 * 
 	 */
 	private Action action;
 
@@ -46,9 +41,8 @@ public class ActionExecutor {
 	 * @param state the state that is executing the action
 	 * @param action the action to execute
 	 */
-	public ActionExecutor(State state, Action action) {
+	public ActionExecutor(Action action) {
 		Assert.notNull(action, "The action is required");
-		this.state = state;
 		this.action = action;
 	}
 
@@ -76,11 +70,7 @@ public class ActionExecutor {
 			throw e;
 		}
 		catch (Exception e) {
-			throw new ActionExecutionException(state, action, e);
+			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), action, e);
 		}
-	}
-
-	public String toString() {
-		return new ToStringCreator(this).append("state", state).append("action", action).toString();
 	}
 }

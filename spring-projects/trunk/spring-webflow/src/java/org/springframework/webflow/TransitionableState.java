@@ -253,7 +253,7 @@ public abstract class TransitionableState extends State {
 	 */
 	public void exit(StateContext context) {
 		if (this.exitAction != null) {
-			new ActionExecutor(this, exitAction).execute(context);
+			new ActionExecutor(exitAction).execute(context);
 		}
 	}
 	

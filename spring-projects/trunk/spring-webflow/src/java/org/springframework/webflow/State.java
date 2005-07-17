@@ -192,7 +192,7 @@ public abstract class State extends AnnotatedObject {
 	 */
 	protected void executeEntryAction(RequestContext context) {
 		if (getEntryAction() != null) {
-			new ActionExecutor(this, getEntryAction()).execute(context);
+			new ActionExecutor(getEntryAction()).execute(context);
 		}
 	}
 

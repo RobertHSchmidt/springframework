@@ -197,7 +197,7 @@ public class ActionState extends TransitionableState {
 	 * @param action the action to add
 	 */
 	public void addAction(Action action) {
-		this.actionExecutors.add(new ActionExecutor(this, action));
+		this.actionExecutors.add(new ActionExecutor(action));
 	}
 
 	/**
