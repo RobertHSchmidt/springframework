@@ -37,7 +37,6 @@ public class ActionExecutor {
 
 	/**
 	 * Create a new action executor.
-	 * @param state the state that is executing the action
 	 * @param action the action to execute
 	 */
 	public ActionExecutor(Action action) {
