@@ -105,7 +105,7 @@ public class ServletEvent extends ExternalEvent {
 			} catch (ClassCastException e) {
 				if (parameter.getClass().isArray()) {
 					throw new IllegalArgumentException("The '" + eventIdParameterName + "' parameter was unexpectedly set to an array with values: " + StylerUtils.style(parameter) +
-							"; this is likely a view configuration error: make sure you submit a single string value for the '" + eventIdParameterName + "' parameter" +
+							"; this is likely a view configuration error: make sure you submit a single string value for the '" + eventIdParameterName + "' parameter " +
 						    "to tell the flow which event occured!");
 				} else {
 					throw e;
