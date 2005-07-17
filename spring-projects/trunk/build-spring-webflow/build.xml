@@ -4,7 +4,7 @@
   A master build file for creating a release of Spring Web Flow
   =======================================================================
 -->
-<project name="build-spring-webflow" default="targets">
+<project name="build-spring-webflow" default="release">
 
   <!-- Load local and user build preferences -->
   <property file="build.properties"/>
