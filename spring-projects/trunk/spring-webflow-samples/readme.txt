@@ -1,5 +1,5 @@
 /*
- * webflow-samples
+ * spring-webflow-samples
  *
  * birthdate - demonstrates Struts integration and the MultiAction
  * fileupload - demonstrates multipart file upload with webflow
@@ -7,55 +7,31 @@
  * itemlist - demonstrates application transaction tokens and expired flow cleanup
  * numberguess - demonstrates how to play a game with spring web flow
  * phonebook - central sample demonstrating most webflow features
- * sellitem - demonstrates a wizard with conditional transitions and continuations
- *
- * @author Keith Donald
- * @since Mar 2005
- * @version $Id$
+ * sellitem - demonstrates a wizard with conditional transitions, continuations, and jmx-enabled statistics
  */
 
-HOW TO BUILD WEBFLOW SAMPLES - FROM RELEASED DISTRIBUTION
----------------------------------------------------------
-1. copy in the template 'build.properties' file in the same directory as this file to the
-root directory of the sample you wish to run.
+Sample pre-requisites:
+----------------------
+* JDK 1.4+ must be installed with the JAVA_HOME variable set
 
-2. cd to the root directory of the sample you wish to run.
+* Ant 1.6 must be installed and in your system path
 
-3. tweak the copied 'build.properties' to your environment
+* Ivy (integration build 20050712085510 or greater) must be in your ant classpath (%ANT_HOME%\lib)
+	* Note: A tested copy of Ivy you may copy into %ANT_HOME%\lib is provided in this release at: ../repository/jayasoft/ivy/jars
+        * IMPORTANT: Earlier versions of Ivy (including 1.1) will NOT work with this build system!
 
-4. tweak 'build.bat' to point your environemnt so the ant build system can execute.
+* A Servlet 2.4/JSP 2.0-capable servlet container (e.g. tomcat 5.5) must be installed for sample app deployment
 
-5. run 'build dist' to build the application .war file, ready for deployment.
 
-6. if tomcat is installed on your system, run 'build tomcat.server.start' to start it and
-deploy the sample application in one step.
+To build each sample:
+---------------------
+1. cd to the sample root directory
 
-7. access the sample at the appropriate URL, e.g http://localhost:8080/phonebook
+2. run 'ant dist' to produce a deployable .war file
 
-HOW TO BUILD WEBFLOW SAMPLES - FROM CVS
----------------------------------------------------------
-From the spring root directory, execute from the command line:
 
-1. build alljars
+Assistance with .war deployment in tomcat:
+------------------------------------------
+* If you have tomcat installed on your system, you may create a build.properties file in your user home directory that defines a tomcat.dir property pointing to your installation.
 
-2. build webflow.jar
-
-3. build webflow.support.jar
-
-4. Proceed with the RELEASED DISTRIBUTION instructions above, customizing your local
-build.properties for each sample as necessary.  Note: If all wish to do is build the
-sample .war file for manual deployment, you shouldn't have to do any build.properties or
-build.bat customization--the default properties and paths will suffice.  Property customization
-is only necessary if you have custom paths to dependent jar files or wish to automate deployment
-with a local tomcat installation.
-
-SAMPLE DEPENDENCIES
-------------------------------------------------------------
-To see exactly what dependencies each sample depends on to build, review the
-'build.webapp.libs' target in the build.xml file for each project.  At a minimum,
-this includes:
-
-commons-logging.jar
-spring.jar
-spring-webflow.jar
-spring-webflow-support.jar
+* Once tomcat.dir is set, run 'ant tomcat-launch' for the sample app you wish to deploy.  This will launch tomcat from ant.  Note this target tries to start tomcat via the standard %TOMCAT_DIR%/bin/startup.bat file.
