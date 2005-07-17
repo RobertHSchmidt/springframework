@@ -25,7 +25,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * Signals the occurence of something the webflow system should respond to.
+ * Signals the occurence of something a webflow should respond to.
  * Each event has a string id that provides a key for what happen: e.g "coinInserted", or "pinDropped".
  * An event may optionally contain information about the state in which it occured, e.g "displayingVendingMachine",
  * or "waitingForUser".  Events may have parameters that provide arbitrary payload data, e.g 

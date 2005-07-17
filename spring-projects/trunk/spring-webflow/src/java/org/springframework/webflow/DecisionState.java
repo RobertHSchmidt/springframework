@@ -20,7 +20,7 @@ import java.util.Map;
 import org.springframework.util.StringUtils;
 
 /**
- * A simple decision state that when entered, will execute the first transition whose
+ * A simple decision state that when entered will execute the first transition whose
  * matching criteria evaluates to <code>true</code> in the context of the current request.
  * <p>
  * A decision state is a convenient way to encapsulate reusable state transition logic in

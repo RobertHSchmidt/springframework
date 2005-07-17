@@ -17,11 +17,12 @@ package org.springframework.webflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * Internal action executor, encapsulating a single action's execution and
- * result handling logic.
+ * Worker object that performs an action execution, encapsulating common logging and
+ * exception handling logic.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -30,14 +31,20 @@ public class ActionExecutor {
 
 	protected final Log logger = LogFactory.getLog(ActionExecutor.class);
 
+	/**
+	 * The state in which the action will be executed. 
+	 */
 	private State state;
 
+	/**
+	 * The action that will be executed.
+	 */
 	private Action action;
 
 	/**
 	 * Create a new action executor.
 	 * @param state the state that is executing the action
-	 * @param action the action to wrap
+	 * @param action the action to execute
 	 */
 	public ActionExecutor(State state, Action action) {
 		Assert.notNull(action, "The action is required");
@@ -56,6 +63,7 @@ public class ActionExecutor {
 	 * Execute the wrapped action.
 	 * @param context the flow execution request context
 	 * @return result of execution
+	 * @throws ActionExecutionException if the action threw an exception while executing
 	 */
 	protected Event execute(RequestContext context) throws ActionExecutionException {
 		try {
@@ -73,6 +81,6 @@ public class ActionExecutor {
 	}
 
 	public String toString() {
-		return action.toString();
+		return new ToStringCreator(this).append("state", state).append("action", action).toString();
 	}
 }

@@ -27,6 +27,7 @@ import org.springframework.util.StringUtils;
  * target <code>Action</code> implementation for use in exactly one
  * context, for example an <code>ActionState</code> definition, a
  * <code>TransitionCriteria</code> definition, or in a test environment.
+ * <p>
  * An annotated action is an action that wraps another action (the
  * <i>target</i>).
  * 

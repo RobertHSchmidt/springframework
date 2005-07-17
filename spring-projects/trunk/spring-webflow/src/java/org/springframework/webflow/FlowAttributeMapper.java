@@ -31,7 +31,7 @@ import java.util.Map;
  * <pre>
  *      Parent Flow Session 1
  *      ---------------------
- *      - flow=myFlow
+ *      - flowId=myFlow
  *      - flowScope=[map:attr1=value1, attr2=value2, attr3=value3]
  * </pre>
  * 
@@ -81,8 +81,8 @@ public interface FlowAttributeMapper {
 	 * Attributes set in the <code>Map</code> returned by this method will be
 	 * added to flow scope of the child subflow session when the session is
 	 * spawned and activated.
-	 * @param context the request execution context, which gives access to the
-	 *        parent flow scope as well as request scope
+	 * @param context the current request execution context, which gives access to the
+	 *        parent flow scope, the request scope, any event parameter, etc.
 	 * @return a map of attributes (name=value pairs) to pass as input to the
 	 *         spawning subflow.
 	 */
@@ -92,7 +92,7 @@ public interface FlowAttributeMapper {
 	 * Map relavent attributes of an ending subflow session back up to a
 	 * resuming parent flow session. This maps the <i>output</i> of the child
 	 * as new input to the resuming parent.
-	 * @param context the request execution context, which gives access to the
+	 * @param context the current request execution context, which gives access to the
 	 *        ending subflow scope and resuming parent flow scope
 	 */
 	public void mapSubflowOutput(RequestContext context);
