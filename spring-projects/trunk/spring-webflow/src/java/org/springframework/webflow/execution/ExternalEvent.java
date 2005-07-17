@@ -124,7 +124,7 @@ public abstract class ExternalEvent extends Event {
 			try {
 				str = (String)parameterValue;
 			} catch (ClassCastException e) {
-				if (str.getClass().isArray()) {
+				if (parameterValue.getClass().isArray()) {
 					throw new IllegalArgumentException("The '" + parameterName + "' parameter was unexpectedly set to an array with values: " + StylerUtils.style(parameterValue) +
 							"; this is likely a view configuration error: make sure you submit a single string value for the '" + parameterName + "' parameter " +
 						    "to tell the flow which event occured!");

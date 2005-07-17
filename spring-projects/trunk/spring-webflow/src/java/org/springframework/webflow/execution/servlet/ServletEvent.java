@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.util.WebUtils;
@@ -80,7 +79,7 @@ public class ServletEvent extends ExternalEvent {
 		this.response = response;
 		initParameters();
 		setId(extractEventId(eventIdParameterName, eventIdAttributeName, parameterValueDelimiter));
-		setStateId((String)getParameter(currentStateIdParameterName));
+		setStateId(verifySingleStringInputParameter(currentStateIdParameterName, getParameter(currentStateIdParameterName)));
 	}
 
 	protected void initParameters() {
@@ -98,22 +97,9 @@ public class ServletEvent extends ExternalEvent {
 			// servlet filter)
 			parameter = getRequest().getAttribute(eventIdAttributeName);
 		}
-		String eventId = null;
-		if (parameter != null) {
-			try {
-				eventId = (String)parameter;
-			} catch (ClassCastException e) {
-				if (parameter.getClass().isArray()) {
-					throw new IllegalArgumentException("The '" + eventIdParameterName + "' parameter was unexpectedly set to an array with values: " + StylerUtils.style(parameter) +
-							"; this is likely a view configuration error: make sure you submit a single string value for the '" + eventIdParameterName + "' parameter " +
-						    "to tell the flow which event occured!");
-				} else {
-					throw e;
-				}
-			}
-		}
-		return eventId;
+		return verifySingleStringInputParameter(eventIdParameterName, parameter);
 	}
+	
 	/**
 	 * Returns the HTTP servlet request that originated this event.
 	 */
