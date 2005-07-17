@@ -20,8 +20,10 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.binding.AttributeMapper;
+import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.support.Mapping;
 import org.springframework.binding.support.ParameterizableAttributeMapper;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
@@ -32,8 +34,7 @@ import org.springframework.webflow.RequestContext;
  * expressions (e.g. "${flowScope.someAttribute}").
  * <p>
  * This action always returns the
- * {@link org.springframework.webflow.action.AbstractAction#success() success}
- * event.
+ * {@link org.springframework.webflow.action.AbstractAction#success() success} event.
  * <p>
  * <b>Exposed configuration properties:</b> <br>
  * <table border="1">
@@ -52,6 +53,26 @@ import org.springframework.webflow.RequestContext;
  * <td><i>null</i></td>
  * <td>The custom mapping strategy used by this action.</td>
  * </tr>
+ * <tr>
+ * <td>sourceExpression</td>
+ * <td><i>null</i></td>
+ * <td>Set the expression which obtains the source attribute to map. If you use
+ * this, you also need to specify the "targetExpression".</td>
+ * </tr>
+ * <tr>
+ * <td>targetExpression</td>
+ * <td><i>null</i></td>
+ * <td>Set the expression used to set the target attribute during the mapping.
+ * If you use this, you also need to specify the "sourceExpression".</td>
+ * </tr>
+ * <tr>
+ * <td>valueConverter</td>
+ * <td><i>null</i></td>
+ * <td>Set a value converter to use during the mapping. This is optional and
+ * will only be used if you do not explicitly set the mapper or mapping
+ * to use, but instead used the "sourceExpression" and "targetExpression"
+ * properties.</td>
+ * </tr>
  * </table>
  * 
  * @see org.springframework.binding.AttributeMapper
@@ -61,6 +82,10 @@ import org.springframework.webflow.RequestContext;
  * @author Erwin Vervaet
  */
 public class AttributeMapperAction extends AbstractAction {
+	
+	private String sourceExpression;
+	private String targetExpression;
+	private ConversionExecutor valueConverter;
 
 	private AttributeMapper attributeMapper;
 
@@ -108,6 +133,41 @@ public class AttributeMapperAction extends AbstractAction {
 	 */
 	public void setAttributeMapper(AttributeMapper mapper) {
 		this.attributeMapper = mapper;
+	}
+	
+	/**
+	 * Set the expression which obtains the source attribute to map. If you use
+	 * this, you also need to specify the "targetExpression".
+	 */
+	public void setSourceExpression(String sourceExpression) {
+		this.sourceExpression = sourceExpression;
+	}
+
+	/**
+	 * Set the expression used to set the target attribute during the mapping.
+	 * If you use this, you also need to specify the "sourceExpression".
+	 */
+	public void setTargetExpression(String targetExpression) {
+		this.targetExpression = targetExpression;
+	}
+
+	/**
+	 * Set a value converter to use during the mapping. This is optional and
+	 * will only be used if you do not explicitly set the mapper or mapping
+	 * to use, but instead used the "sourceExpression" and "targetExpression"
+	 * properties.
+	 */
+	public void setValueConverter(ConversionExecutor valueConverter) {
+		this.valueConverter = valueConverter;
+	}
+	
+	protected void initAction() {
+		if (attributeMapper == null) {
+			if (StringUtils.hasText(sourceExpression) && StringUtils.hasText(targetExpression)) {
+				setAttributeMapper(new ParameterizableAttributeMapper(
+						new Mapping(sourceExpression, targetExpression, valueConverter)));
+			}
+		}
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
