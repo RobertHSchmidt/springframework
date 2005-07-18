@@ -15,10 +15,8 @@
  */
 package org.springframework.binding.convert.support;
 
-import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.ParserException;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.expression.support.ExpressionParserUtils;
 

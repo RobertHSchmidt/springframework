@@ -16,12 +16,12 @@
 package org.springframework.binding.thread.support;
 
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.binding.thread.ThreadCleanupBroadcaster;
 import org.springframework.binding.thread.ThreadCleanupListener;
+import org.springframework.core.CollectionFactory;
 
 /**
  * Default thread cleanup broadcaster that broadcast cleanup events to all
@@ -29,7 +29,7 @@ import org.springframework.binding.thread.ThreadCleanupListener;
  * @author Keith Donald
  */
 public class DefaultThreadCleanupBroadcaster implements ThreadCleanupBroadcaster, DisposableBean {
-	private Set listenerList = new LinkedHashSet();
+	private Set listenerList = CollectionFactory.createLinkedSetIfPossible(1);
 
 	public void addThreadCleanupListener(ThreadCleanupListener listener) {
 		listenerList.add(listener);

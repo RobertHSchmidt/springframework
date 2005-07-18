@@ -15,7 +15,6 @@
  */
 package org.springframework.binding.convert.support;
 
-import org.springframework.binding.convert.ConversionException;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
