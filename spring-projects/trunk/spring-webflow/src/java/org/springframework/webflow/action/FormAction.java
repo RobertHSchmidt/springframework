@@ -489,7 +489,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 		DataBinder binder = createBinder(context, getRequiredFormObject(context));
 		if (logger.isDebugEnabled()) {
 			logger.debug("Binding allowed parameters in event: " + context.getLastEvent() + " to form object with name: '" + binder.getObjectName()
-					+ "', pre-toString(): " + binder.getTarget());
+					+ "', prebind-toString: " + binder.getTarget());
 			if (binder.getAllowedFields() != null && binder.getAllowedFields().length > 0) {
 				logger.debug("(Allowed event parameters are: " + binder.getAllowedFields() + ")");
 			} else {
@@ -498,7 +498,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 		binder.bind(new MutablePropertyValues(context.getLastEvent().getParameters()));
 		if (logger.isDebugEnabled()) {
-			logger.debug("Binding completed for form object with name: '" + binder.getObjectName() + "', post-toString(): " + binder.getTarget());
+			logger.debug("Binding completed for form object with name: '" + binder.getObjectName() + "', postbind-toString: " + binder.getTarget());
 			logger.debug("There are [" + binder.getErrors().getErrorCount() + "] errors, details: " + binder.getErrors().getAllErrors());
 		}
 		return binder.getErrors().hasErrors() ? error() : success();

@@ -84,7 +84,9 @@ import org.springframework.webflow.RequestContext;
 public class AttributeMapperAction extends AbstractAction {
 	
 	private String sourceExpression;
+	
 	private String targetExpression;
+	
 	private ConversionExecutor valueConverter;
 
 	private AttributeMapper attributeMapper;
