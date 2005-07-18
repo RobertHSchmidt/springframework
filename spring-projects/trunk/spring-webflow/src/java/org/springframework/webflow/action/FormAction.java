@@ -425,14 +425,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Returns true event parameters should be bound to the form object during
-	 * the {@link #setupForm(RequestContext)} action. Defaults to bindOnSetupForm.
-	 */
-	protected boolean setupBindingEnabled(RequestContext context) {
-		return isBindOnSetupForm();
-	}
-
-	/**
 	 * Bind all incoming request parameters to the form object and validate the
 	 * form object using a registered validator.
 	 * @param context the action execution context, for accessing and setting
@@ -526,7 +518,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	/**
 	 * Factory method that returns a new form object accessor for accessing form objects 
 	 * in the provided request context.
-	 * @param context the context
+	 * @param context the flow request context
 	 * @return the accessor
 	 */
 	protected FormObjectAccessor getFormObjectAccessor(RequestContext context) {
@@ -668,7 +660,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Expose the an empty errors collection in the model of the currently executing flow.
+	 * Expose an empty errors collection in the model of the currently executing flow.
 	 * @param context the flow execution request context
 	 * @param formObject the object
 	 */
@@ -691,6 +683,15 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	// subclassing hook methods
+
+	/**
+	 * Returns true if event parameters should be bound to the form object during
+	 * the {@link #setupForm(RequestContext)} action. The defautl implementation just
+	 * calls {@link #isBindOnSetupForm()}.
+	 */
+	protected boolean setupBindingEnabled(RequestContext context) {
+		return isBindOnSetupForm();
+	}
 
 	/**
 	 * Return whether validation should be performed given the state of the flow request
