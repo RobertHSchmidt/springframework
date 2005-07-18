@@ -485,7 +485,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *        data in "flow scope" or "request scope"
 	 * @return the action result outcome
 	 */
-	private Event bind(RequestContext context) throws Exception {
+	public Event bind(RequestContext context) throws Exception {
 		DataBinder binder = createBinder(context, getRequiredFormObject(context));
 		if (logger.isDebugEnabled()) {
 			logger.debug("Binding allowed parameters in event: " + context.getLastEvent() + " to form object with name: '" + binder.getObjectName()
