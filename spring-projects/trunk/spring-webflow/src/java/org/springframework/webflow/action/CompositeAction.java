@@ -43,7 +43,7 @@ public class CompositeAction extends AbstractAction {
 	/**
 	 * The error result event identifier. 
 	 */
-	private String errorEventId = ERROR_RESULT_EVENT_ID;
+	private String errorEventId = ERROR_EVENT_ID;
 	
 	/**
 	 * Create a composite action composed of given actions.

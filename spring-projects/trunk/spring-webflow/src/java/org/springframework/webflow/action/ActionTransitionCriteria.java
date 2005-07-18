@@ -38,7 +38,7 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 	 * The result event id that should map to a <code>true</code> precondition
 	 * return value.
 	 */
-	private String trueEventId = AbstractAction.SUCCESS_RESULT_EVENT_ID;
+	private String trueEventId = AbstractAction.SUCCESS_EVENT_ID;
 
 	/**
 	 * The action to execute when the precondition is tested, annotated with usage attributes.

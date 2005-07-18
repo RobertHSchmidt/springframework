@@ -42,22 +42,22 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	/**
 	 * Event id of the default 'success' result event.
 	 */
-	public static final String SUCCESS_RESULT_EVENT_ID = "success";
+	public static final String SUCCESS_EVENT_ID = "success";
 	
 	/**
 	 * Event id of the default 'error' result event.
 	 */
-	public static final String ERROR_RESULT_EVENT_ID = "error";
+	public static final String ERROR_EVENT_ID = "error";
 
 	/**
 	 * Event id of the default 'yes' result event.
 	 */
-	public static final String YES_RESULT_EVENT_ID = "yes";
+	public static final String YES_EVENT_ID = "yes";
 
 	/**
 	 * Event id of the default 'no' result event.
 	 */
-	public static final String NO_RESULT_EVENT_ID = "no";
+	public static final String NO_EVENT_ID = "no";
 
 	/**
 	 * Constant for the error exception event parameter name.
@@ -65,7 +65,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	public static final String EXCEPTION_PARAMETER = "exception";
 
 	/**
-	 * Constant for the success result event parameter name.
+	 * Constant for the success result object event parameter name.
 	 */
 	public static final String RESULT_PARAMETER = "result";
 
@@ -88,7 +88,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Returns the default error event.
 	 */
 	protected Event error() {
-		return result(ERROR_RESULT_EVENT_ID);
+		return result(ERROR_EVENT_ID);
 	}
 
 	/**
@@ -97,14 +97,14 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 *        an event parameter
 	 */
 	protected Event error(Exception e) {
-		return result(ERROR_RESULT_EVENT_ID, EXCEPTION_PARAMETER, e);
+		return result(ERROR_EVENT_ID, EXCEPTION_PARAMETER, e);
 	}
 
 	/**
 	 * Returns the default success event.
 	 */
 	protected Event success() {
-		return result(SUCCESS_RESULT_EVENT_ID);
+		return result(SUCCESS_EVENT_ID);
 	}
 
 	/**
@@ -113,21 +113,21 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * @param result the action success result;
 	 */
 	protected Event success(Object result) {
-		return result(SUCCESS_RESULT_EVENT_ID, RESULT_PARAMETER, result);
+		return result(SUCCESS_EVENT_ID, RESULT_PARAMETER, result);
 	}
 
 	/**
 	 * Returns the default yes event.
 	 */
 	protected Event yes() {
-		return result(YES_RESULT_EVENT_ID);
+		return result(YES_EVENT_ID);
 	}
 
 	/**
 	 * Returns the default no event.
 	 */
 	protected Event no() {
-		return result(NO_RESULT_EVENT_ID);
+		return result(NO_EVENT_ID);
 	}
 
 	/**
