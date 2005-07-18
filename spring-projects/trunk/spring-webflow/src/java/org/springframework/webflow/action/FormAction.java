@@ -343,6 +343,10 @@ public class FormAction extends MultiAction implements InitializingBean {
 		this.validateMethodDispatcher.setTarget(validator);
 	}
 
+	protected DispatchMethodInvoker getValidateMethodDispatcher() {
+		return validateMethodDispatcher;
+	}
+
 	/**
 	 * Returns if event parameters should be bound to the form object during the
 	 * {@link #setupForm(RequestContext)} action.
@@ -455,21 +459,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Convenience method that returns the form object for this form action.
-	 * @param context the flow request context
-	 * @return the form object, or <code>null</code> if not found
-	 */
-	protected Object getFormObject(RequestContext context) {
-		Object formObject = getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormObjectClass(), getFormObjectScope());
-		if (formObject == null) {
-			formObject = loadFormObject(context);
-			exposeFormObject(context, formObject);
-			exposeEmptyErrors(context, formObject);
-		}
-		return formObject;
-	}
-	
-	/**
 	 * Get the backing form object that should be updated from incoming event
 	 * parameters and validated. Throws an exception if the object could not be
 	 * retrieved.
@@ -488,6 +477,21 @@ public class FormAction extends MultiAction implements InitializingBean {
 		return formObject;
 	}
 
+	/**
+	 * Convenience method that returns the form object for this form action.
+	 * @param context the flow request context
+	 * @return the form object, or <code>null</code> if not found
+	 */
+	protected Object getFormObject(RequestContext context) {
+		Object formObject = getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormObjectClass(), getFormObjectScope());
+		if (formObject == null) {
+			formObject = loadFormObject(context);
+			exposeFormObject(context, formObject);
+			exposeEmptyErrors(context, formObject);
+		}
+		return formObject;
+	}
+	
 	/**
 	 * Load the backing form object that should be updated from incoming event
 	 * parameters and validated. By default, will attempt to instantiate a new
@@ -628,7 +632,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Invoking piecemeal validator method '" + validatorMethod + "' on form object: " + formObject);
 		}
-		this.validateMethodDispatcher.dispatch(validatorMethod, new Object[] { formObject, errors });
+		getValidateMethodDispatcher().dispatch(validatorMethod, new Object[] { formObject, errors });
 	}
 
 	/**
