@@ -158,7 +158,7 @@ public class FormObjectAccessor {
 	 * @param formObjectName the name of the form object
 	 * @param scope the scope to expose the errors in
 	 */
-	public void exposeErrors(Object formObject, String formObjectName, ScopeType scope) {
+	public void exposeEmptyErrors(Object formObject, String formObjectName, ScopeType scope) {
 		Errors errors = new BindException(formObject, formObjectName);
 		exposeErrors(errors, scope);
 	}
