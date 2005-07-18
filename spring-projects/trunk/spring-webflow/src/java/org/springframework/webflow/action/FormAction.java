@@ -15,12 +15,14 @@
  */
 package org.springframework.webflow.action;
 
+import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.binding.format.support.LabeledEnumFormatter;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindException;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.MessageCodesResolver;
@@ -49,8 +51,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * event if there are no binding or validation errors, otherwise it will return
  * the error() event.
  * </li>
+ * <li> {@link #bind(RequestContext)} - Binds all incoming event
+ * parameters to the form object. This action method will return the success()
+ * event if there are no binding errors, otherwise it will return
+ * the error() event.
+ * </li>
+ * <li> {@link #validate(RequestContext)} - Validates the form object using a
+ * registered validator. This action method will return the success()
+ * event if there are no validation errors, otherwise it will return
+ * the error() event.
+ * </li>
  * <li> {@link #resetForm(RequestContext)} - Resets the form by reloading
- * the backing form object.  Returns success() on completion.
+ * the backing form object and reinstalling property editors.
+ * Returns success() on completion.
  * </li>
  * </ul>
  * Since this is a multi-action, a subclass could add any number of additional
@@ -360,8 +373,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * Set if event parameters should be bound to the form object during the
 	 * {@link #setupForm(RequestContext)} action.
 	 */
-	public void setBindOnSetupForm(boolean bindOnNewForm) {
-		this.bindOnSetupForm = bindOnNewForm;
+	public void setBindOnSetupForm(boolean bindOnSetupForm) {
+		this.bindOnSetupForm = bindOnSetupForm;
 	}
 
 	/**
@@ -424,11 +437,15 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         checked or unchecked
 	 */
 	public Event setupForm(RequestContext context) throws Exception {
-		Object formObject = getRequiredFormObject(context);
+		// trigger loading of the form object (and empty errors collection)
+		getRequiredFormObject(context);
 		if (setupBindingEnabled(context)) {
-			return doBindAndValidate(context, formObject);
+			return bind(context);
 		}
 		else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Setup form object binding was disabled for this request");
+			}
 			return success();
 		}
 	}
@@ -444,20 +461,81 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         checked or unchecked
 	 */
 	public Event bindAndValidate(RequestContext context) throws Exception {
-		return doBindAndValidate(context, getRequiredFormObject(context));
+		Event result = bind(context);
+		if (success().equals(result.getId())) {
+			if (getValidator() != null && isValidateOnBinding() && validationEnabled(context)) {
+				return validate(context);
+			}
+			else {
+				if (logger.isDebugEnabled()) {
+					if (validator == null) {
+						logger.debug("No validator is configured: no validation will occur");
+					}
+					else {
+						logger.debug("Validation was disabled for this request");
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 	/**
-	 * Internal helper method to do bind and validate logic.
+	 * Bind the parameters of the last event in the request context to the
+	 * given form object using given data binder.
+	 * @param context the action execution context, for accessing and setting
+	 *        data in "flow scope" or "request scope"
+	 * @return the action result outcome
 	 */
-	private Event doBindAndValidate(RequestContext context, Object formObject) throws Exception {
-		DataBinder binder = createBinder(context, formObject);
-		Event result = bindAndValidateInternal(context, binder);
-		exposeFormObject(context, formObject);
-		exposeErrors(context, binder.getErrors());
-		return result != null ? result : calculateResult(context, formObject, binder.getErrors());
+	private Event bind(RequestContext context) throws Exception {
+		DataBinder binder = createBinder(context, getRequiredFormObject(context));
+		if (logger.isDebugEnabled()) {
+			logger.debug("Binding allowed parameters in event: " + context.getLastEvent() + " to form object with name: '" + binder.getObjectName()
+					+ "', pre-toString(): " + binder.getTarget());
+			if (binder.getAllowedFields() != null || binder.getAllowedFields().length > 0) {
+				logger.debug("(Allowed event parameters are: " + binder.getAllowedFields() + ")");
+			} else {
+				logger.debug("(Any event parameter is allowed)");
+			}
+		}
+		binder.bind(new MutablePropertyValues(context.getLastEvent().getParameters()));
+		if (logger.isDebugEnabled()) {
+			logger.debug("Binding completed for form object with name: '" + binder.getObjectName() + "', post-toString(): " + binder.getTarget());
+			logger.debug("There are [" + binder.getErrors().getErrorCount() + "] errors, details: " + binder.getErrors().getAllErrors());
+		}
+		return binder.getErrors().hasErrors() ? error() : success();
 	}
 
+	/**
+	 * Validate the form object.
+	 * @param context the action execution context, for accessing and setting
+	 *        data in "flow scope" or "request scope"
+	 * @return the action result outcome
+	 */
+	public Event validate(RequestContext context) throws Exception {
+		DataBinder binder = createBinder(context, getRequiredFormObject(context));
+		validate(context, binder.getTarget(), binder.getErrors());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Validation completed for form object with name: '" + binder.getObjectName() + "'");
+			logger.debug("There are [" + binder.getErrors().getErrorCount() + "] errors, details: " + binder.getErrors().getAllErrors());
+		}
+		return binder.getErrors().hasErrors() ? error() : success();
+	}
+	
+	/**
+	 * Resets the form by clearing out the formObject in the specified scope and
+	 * reloading it by calling loadFormObject.
+	 * @param context the request context
+	 * @return success if the reset action completed successfully
+	 * @throws Exception if an exception occured
+	 */
+	public Event resetForm(RequestContext context) throws Exception {
+		Object formObject = loadFormObject(context);
+		exposeFormObject(context, formObject);
+		exposeEmptyErrors(context, formObject);
+		return success();
+	}
+	
 	/**
 	 * Get the backing form object that should be updated from incoming event
 	 * parameters and validated. Throws an exception if the object could not be
@@ -563,41 +641,37 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Bind the parameters of the last event in given request context to the
-	 * given form object using given data binder.
+	 * Initialize the given binder instance, for example with custom editors.
+	 * Called by createBinder().
+	 * <p>
+	 * This method allows you to register custom editors for certain fields of
+	 * your form object. For instance, you will be able to transform Date
+	 * objects into a String pattern and back, in order to allow your JavaBeans
+	 * to have Date properties and still be able to set and display them in an
+	 * HTML interface.
+	 * <p>
+	 * Default implementation will simply call registerCustomEditors on any
+	 * propertyEditorRegistrar object that has been set for the action.
+	 * <p>
+	 * The request context may be used to feed reference data to any property
+	 * editors, although it may be better (in the interest of not bloating the
+	 * session, to have the editors get this from somewhere else).
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
-	 * @param binder the binder to use for binding
-	 * @return the action result outcome
+	 * @param binder new binder instance
+	 * @see #createBinder(RequestContext, Object)
 	 */
-	private Event bindAndValidateInternal(RequestContext context, DataBinder binder) throws Exception {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Binding allowed matching event parameters for event " + context.getLastEvent() + " to object '" + binder.getObjectName()
-					+ "', details='" + binder.getTarget() + "'");
-		}
-		binder.bind(new MutablePropertyValues(context.getLastEvent().getParameters()));
-		onBind(context, binder.getTarget(), binder.getErrors());
-		if (logger.isDebugEnabled()) {
-			logger.debug("Binding completed for object '" + binder.getObjectName() + "', details='"
-					+ binder.getTarget() + "'");
-		}
-		if (getValidator() != null && isValidateOnBinding() && validationEnabled(context)) {
-			validate(context, binder.getTarget(), binder.getErrors());
+	protected void initBinder(RequestContext context, DataBinder binder) {
+		if (propertyEditorRegistrar != null) {
+			propertyEditorRegistrar.registerCustomEditors(binder);
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				if (validator == null) {
-					logger.debug("No validator is configured; no additional validation will occur");
-				}
-				else {
-					logger.debug("Validation was disabled for this request; details: validateOnBinding=" +
-							isValidateOnBinding() + ", validationEnabled=" + validationEnabled(context));
-				}
+				logger.debug("No property editor registrar set, no custom editors to register");
 			}
 		}
-		return onBindAndValidate(context, binder.getTarget(), binder.getErrors());
 	}
-
+	
 	/**
 	 * Validate given form object using a registered validator. If a "validatorMethod"
 	 * action property is specified for the currently executing action state action,
@@ -659,21 +733,10 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param formObject the object
 	 */
 	protected void exposeEmptyErrors(RequestContext context, Object formObject) {
-		getFormObjectAccessor(context).exposeEmptyErrors(formObject, getFormObjectName(), getErrorsScope());
-	}
-
-	/**
-	 * Get the default action result for this action; this implementation
-	 * returns error() if the binder has errors, success() otherwise. Subclasses
-	 * may overrride.
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
-	 * @param formObject the form object
-	 * @param errors possible binding errors
-	 * @return success() when there are no binding errors, error() otherwise
-	 */
-	protected Event calculateResult(RequestContext context, Object formObject, Errors errors) {
-		return errors.hasErrors() ? error() : success();
+		// we must initialize the binder here so property editors get installed
+		DataBinder binder = new WebDataBinder(formObject, getFormObjectName());
+		initBinder(context, binder);
+		exposeErrors(context, binder.getErrors());
 	}
 
 	// subclassing hook methods
@@ -700,107 +763,5 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 */
 	protected boolean validationEnabled(RequestContext context) {
 		return true;
-	}
-
-	/**
-	 * Callback for custom post-processing in terms of binding. Called on each
-	 * submit, after standard binding but before validation.
-	 * <p>
-	 * Default implementation is empty.
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
-	 * @param formObject the form object
-	 * @param errors validation errors holder, allowing for additional custom
-	 *        registration of binding errors
-	 */
-	protected void onBind(RequestContext context, Object formObject, Errors errors) {
-	}
-
-	/**
-	 * Callback for custom post-processing in terms of binding and validation.
-	 * Called on each submit, after standard binding and validation, but before
-	 * error evaluation. Subclasses may optionally return an action result to
-	 * supercede the default result event, which will be success() or error()
-	 * depending on whether or not there are binding errors.
-	 * <p>
-	 * Default implementation will call onBindAndValidateSuccess() if given
-	 * errors instance does not have errors. Otherwise [null] will be returned,
-	 * which indicates that the default action result calculated by the
-	 * getDefaultActionResult() method will be used.
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
-	 * @param formObject the form object
-	 * @param errors validation errors holder, allowing for additional custom
-	 *        registration of binding errors
-	 * @return the action result
-	 */
-	protected Event onBindAndValidate(RequestContext context, Object formObject, Errors errors) {
-		if (!errors.hasErrors()) {
-			return onBindAndValidateSuccess(context, formObject, errors);
-		}
-		return null;
-	}
-
-	/**
-	 * Hook called when binding and validation completed successfully;
-	 * subclasses may optionally return an action result to supercede the
-	 * default result event, which will be success().
-	 * <p>
-	 * Default implementation just returns null.
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
-	 * @param formObject the form object
-	 * @param errors validation errors holder, allowing for additional custom
-	 *        registration of binding errors
-	 * @return the action result
-	 */
-	protected Event onBindAndValidateSuccess(RequestContext context, Object formObject, Errors errors) {
-		return null;
-	}
-
-	/**
-	 * Initialize the given binder instance, for example with custom editors.
-	 * Called by createBinder().
-	 * <p>
-	 * This method allows you to register custom editors for certain fields of
-	 * your form object. For instance, you will be able to transform Date
-	 * objects into a String pattern and back, in order to allow your JavaBeans
-	 * to have Date properties and still be able to set and display them in an
-	 * HTML interface.
-	 * <p>
-	 * Default implementation will simply call registerCustomEditors on any
-	 * propertyEditorRegistrar object that has been set for the action.
-	 * <p>
-	 * The request context may be used to feed reference data to any property
-	 * editors, although it may be better (in the interest of not bloating the
-	 * session, to have the editors get this from somewhere else).
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
-	 * @param binder new binder instance
-	 * @see #createBinder(RequestContext, Object)
-	 */
-	protected void initBinder(RequestContext context, DataBinder binder) {
-		if (propertyEditorRegistrar != null) {
-			propertyEditorRegistrar.registerCustomEditors(binder);
-		}
-		else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("No property editor registrar set, no custom editors to register");
-			}
-		}
-	}
-	
-	/**
-	 * Resets the form by clearing out the formObject in the specified scope and
-	 * reloading it by calling loadFormObject.
-	 * @param context the request context
-	 * @return success if the reset action completed successfully
-	 * @throws Exception if an exception occured
-	 */
-	public Event resetForm(RequestContext context) throws Exception {
-		Object formObject = loadFormObject(context);
-		exposeFormObject(context, formObject);
-		exposeEmptyErrors(context, formObject);
-		return success();
 	}
 }
