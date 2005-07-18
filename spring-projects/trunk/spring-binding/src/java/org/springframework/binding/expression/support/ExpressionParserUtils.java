@@ -45,8 +45,9 @@ public class ExpressionParserUtils {
 			}
 			catch (ClassNotFoundException e) {
 				IllegalStateException ise =
-					new IllegalStateException("Ognl is not in the classpath");
-				ise.initCause(e);
+					new IllegalStateException("Unable to access the default expression parser: OGNL could not be found in the classpath.  " + 
+							"Please add OGNL to your classpath or set the default ExpressionParser instance to something that is in the classpath.  " + 
+							"Details: " + e.getMessage());
 				throw ise;
 			}
 		}
