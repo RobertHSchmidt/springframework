@@ -688,6 +688,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 			invokeValidatorMethod(validatorMethod, formObject, errors);
 		}
 		else {
+			Assert.notNull(validator, "The validator must not be null but it is: programmer error");
 			if (logger.isDebugEnabled()) {
 				logger.debug("Invoking validator: " + validator);
 			}
