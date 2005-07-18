@@ -174,6 +174,16 @@ public class FormObjectAccessor {
 	}
 	
 	/**
+	 * Expose a <i>new</i> errors instance in the specified scope for given
+	 * form object using the well-known alias {@link #FORM_OBJECT_ALIAS}.
+	 * @param formObject the form object to expose an errors instance for
+	 * @param scope the scope to expose the errors in
+	 */
+	private void alias(Errors errors, ScopeType scope) {
+		getScope(scope).setAttribute(BindException.ERROR_KEY_PREFIX + FORM_OBJECT_ALIAS, errors);
+	}
+
+	/**
 	 * Removes the form object exposed in the specified scope
 	 * @param formObjectName the form object name
 	 * @param scope the scope
@@ -183,16 +193,6 @@ public class FormObjectAccessor {
 		getScope(scope).remove(FORM_OBJECT_ALIAS);
 		getScope(scope).remove(BindException.ERROR_KEY_PREFIX + formObjectName);
 		getScope(scope).remove(BindException.ERROR_KEY_PREFIX + FORM_OBJECT_ALIAS);
-	}
-
-	/**
-	 * Expose a <i>new</i> errors instance in the specified scope for given
-	 * form object using the well-known alias {@link #FORM_OBJECT_ALIAS}.
-	 * @param formObject the form object to expose an errors instance for
-	 * @param scope the scope to expose the errors in
-	 */
-	private void alias(Errors errors, ScopeType scope) {
-		getScope(scope).setAttribute(BindException.ERROR_KEY_PREFIX + FORM_OBJECT_ALIAS, errors);
 	}
 
 	/**
