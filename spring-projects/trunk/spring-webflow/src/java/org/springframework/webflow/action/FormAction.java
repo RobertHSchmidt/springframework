@@ -490,7 +490,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Binding allowed parameters in event: " + context.getLastEvent() + " to form object with name: '" + binder.getObjectName()
 					+ "', pre-toString(): " + binder.getTarget());
-			if (binder.getAllowedFields() != null || binder.getAllowedFields().length > 0) {
+			if (binder.getAllowedFields() != null && binder.getAllowedFields().length > 0) {
 				logger.debug("(Allowed event parameters are: " + binder.getAllowedFields() + ")");
 			} else {
 				logger.debug("(Any event parameter is allowed)");
