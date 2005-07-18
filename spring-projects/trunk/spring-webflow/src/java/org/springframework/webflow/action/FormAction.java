@@ -15,14 +15,12 @@
  */
 package org.springframework.webflow.action;
 
-import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.binding.format.support.LabeledEnumFormatter;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindException;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.MessageCodesResolver;
@@ -571,6 +569,108 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 	
 	/**
+	 * Factory method that returns a new form object accessor for accessing form objects 
+	 * in the provided request context.
+	 * @param context the flow request context
+	 * @return the accessor
+	 */
+	protected FormObjectAccessor getFormObjectAccessor(RequestContext context) {
+		return new FormObjectAccessor(context);
+	}
+	
+	/**
+	 * Create a new binder instance for the given form object and request
+	 * context. Can be overridden to plug in custom DataBinder subclasses.
+	 * <p>
+	 * Default implementation creates a standard WebDataBinder, and invokes
+	 * initBinder. Note that initBinder will not be invoked if you override this
+	 * method!
+	 * @param context the action execution context, for accessing and setting
+	 *        data in "flow scope" or "request scope"
+	 * @param formObject the form object to bind onto
+	 * @return the new binder instance
+	 * @see #initBinder(RequestContext, DataBinder)
+	 */
+	protected DataBinder createBinder(RequestContext context, Object formObject) {
+		DataBinder binder = new WebDataBinder(formObject, getFormObjectName());
+		if (this.messageCodesResolver != null) {
+			binder.setMessageCodesResolver(this.messageCodesResolver);
+		}
+		initBinder(context, binder);
+		return binder;
+	}
+
+	/**
+	 * Validate given form object using a registered validator. If a "validatorMethod"
+	 * action property is specified for the currently executing action state action,
+	 * the identified validator method will be invoked. When no such property is found,
+	 * the defualt <code>validate()</code> method is invoked.
+	 * @param context the action execution context, for accessing and setting
+	 *        data in "flow scope" or "request scope"
+	 * @param formObject the form object
+	 * @param errors possible binding errors
+	 */
+	private void validate(RequestContext context, Object formObject, Errors errors) throws Exception {
+		String validatorMethod = (String)context.getProperties().getAttribute(VALIDATOR_METHOD_PROPERTY);
+		if (StringUtils.hasText(validatorMethod)) {
+			invokeValidatorMethod(validatorMethod, formObject, errors);
+		}
+		else {
+			Assert.notNull(validator, "The validator must not be null but it is: programmer error");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Invoking validator: " + validator);
+			}
+			getValidator().validate(formObject, errors);
+		}
+	}
+
+	/**
+	 * Invoke specified validator method on the validator registered with this
+	 * action.
+	 * @param validatorMethod the name of the validator method to invoke
+	 * @param formObject the form object
+	 * @param errors possible binding errors
+	 */
+	private void invokeValidatorMethod(String validatorMethod, Object formObject, Errors errors) throws Exception {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Invoking piecemeal validator method '" + validatorMethod + "' on form object: " + formObject);
+		}
+		getValidateMethodDispatcher().dispatch(validatorMethod, new Object[] { formObject, errors });
+	}
+
+	/**
+	 * Expose the form object in the model of the currently executing flow.
+	 * @param context the flow execution request context
+	 * @param formObject the form object
+	 */
+	private void exposeFormObject(RequestContext context, Object formObject) {
+		getFormObjectAccessor(context).exposeFormObject(formObject, getFormObjectName(), getFormObjectScope());
+	}
+
+	/**
+	 * Expose the errors collection in the model of the currently executing flow.
+	 * @param context the flow execution request context
+	 * @param errors the errors
+	 */
+	private void exposeErrors(RequestContext context, Errors errors) {
+		getFormObjectAccessor(context).exposeErrors(errors, getErrorsScope());
+	}
+
+	/**
+	 * Expose an empty errors collection in the model of the currently executing flow.
+	 * @param context the flow execution request context
+	 * @param formObject the object
+	 */
+	private void exposeEmptyErrors(RequestContext context, Object formObject) {
+		// we must initialize the binder here so property editors get installed
+		DataBinder binder = new WebDataBinder(formObject, getFormObjectName());
+		initBinder(context, binder);
+		exposeErrors(context, binder.getErrors());
+	}
+
+	// subclassing hook methods
+
+	/**
 	 * Load the backing form object that should be updated from incoming event
 	 * parameters and validated. By default, will attempt to instantiate a new
 	 * form object instance transiently in memory if not already present in the
@@ -609,38 +709,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 	
 	/**
-	 * Factory method that returns a new form object accessor for accessing form objects 
-	 * in the provided request context.
-	 * @param context the flow request context
-	 * @return the accessor
-	 */
-	protected FormObjectAccessor getFormObjectAccessor(RequestContext context) {
-		return new FormObjectAccessor(context);
-	}
-	
-	/**
-	 * Create a new binder instance for the given form object and request
-	 * context. Can be overridden to plug in custom DataBinder subclasses.
-	 * <p>
-	 * Default implementation creates a standard WebDataBinder, and invokes
-	 * initBinder. Note that initBinder will not be invoked if you override this
-	 * method!
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
-	 * @param formObject the form object to bind onto
-	 * @return the new binder instance
-	 * @see #initBinder(RequestContext, DataBinder)
-	 */
-	protected DataBinder createBinder(RequestContext context, Object formObject) {
-		DataBinder binder = new WebDataBinder(formObject, getFormObjectName());
-		if (this.messageCodesResolver != null) {
-			binder.setMessageCodesResolver(this.messageCodesResolver);
-		}
-		initBinder(context, binder);
-		return binder;
-	}
-
-	/**
 	 * Initialize the given binder instance, for example with custom editors.
 	 * Called by createBinder().
 	 * <p>
@@ -672,76 +740,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 	}
 	
-	/**
-	 * Validate given form object using a registered validator. If a "validatorMethod"
-	 * action property is specified for the currently executing action state action,
-	 * the identified validator method will be invoked. When no such property is found,
-	 * the defualt <code>validate()</code> method is invoked.
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
-	 * @param formObject the form object
-	 * @param errors possible binding errors
-	 */
-	protected void validate(RequestContext context, Object formObject, Errors errors) throws Exception {
-		String validatorMethod = (String)context.getProperties().getAttribute(VALIDATOR_METHOD_PROPERTY);
-		if (StringUtils.hasText(validatorMethod)) {
-			invokeValidatorMethod(validatorMethod, formObject, errors);
-		}
-		else {
-			Assert.notNull(validator, "The validator must not be null but it is: programmer error");
-			if (logger.isDebugEnabled()) {
-				logger.debug("Invoking validator: " + validator);
-			}
-			getValidator().validate(formObject, errors);
-		}
-	}
-
-	/**
-	 * Invoke specified validator method on the validator registered with this
-	 * action.
-	 * @param validatorMethod the name of the validator method to invoke
-	 * @param formObject the form object
-	 * @param errors possible binding errors
-	 */
-	private void invokeValidatorMethod(String validatorMethod, Object formObject, Errors errors) throws Exception {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Invoking piecemeal validator method '" + validatorMethod + "' on form object: " + formObject);
-		}
-		getValidateMethodDispatcher().dispatch(validatorMethod, new Object[] { formObject, errors });
-	}
-
-	/**
-	 * Expose the form object in the model of the currently executing flow.
-	 * @param context the flow execution request context
-	 * @param formObject the form object
-	 */
-	protected void exposeFormObject(RequestContext context, Object formObject) {
-		getFormObjectAccessor(context).exposeFormObject(formObject, getFormObjectName(), getFormObjectScope());
-	}
-
-	/**
-	 * Expose the errors collection in the model of the currently executing flow.
-	 * @param context the flow execution request context
-	 * @param errors the errors
-	 */
-	protected void exposeErrors(RequestContext context, Errors errors) {
-		getFormObjectAccessor(context).exposeErrors(errors, getErrorsScope());
-	}
-
-	/**
-	 * Expose an empty errors collection in the model of the currently executing flow.
-	 * @param context the flow execution request context
-	 * @param formObject the object
-	 */
-	protected void exposeEmptyErrors(RequestContext context, Object formObject) {
-		// we must initialize the binder here so property editors get installed
-		DataBinder binder = new WebDataBinder(formObject, getFormObjectName());
-		initBinder(context, binder);
-		exposeErrors(context, binder.getErrors());
-	}
-
-	// subclassing hook methods
-
 	/**
 	 * Returns true if event parameters should be bound to the form object during
 	 * the {@link #setupForm(RequestContext)} action. The defautl implementation just
