@@ -39,12 +39,7 @@ public class TextToClass extends AbstractConverter {
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
 		String text = (String)source;
 		if (StringUtils.hasText(text)) {
-			try {
-				return ClassUtils.forName(text.trim());
-			}
-			catch (ClassNotFoundException ex) {
-				throw new ConversionException(source, Class.class, ex);
-			}
+			return ClassUtils.forName(text.trim());
 		}
 		else {
 			return null;

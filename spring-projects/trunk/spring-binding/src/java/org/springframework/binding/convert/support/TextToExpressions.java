@@ -58,11 +58,6 @@ public class TextToExpressions extends AbstractConverter {
 	}
 
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
-		try {
-			return getExpressionParser().parseExpressions((String)source);
-		}
-		catch (ParserException e) {
-			throw new ConversionException(source, Expression.class, e);
-		}
+		return getExpressionParser().parseExpressions((String)source);
 	}
 }

@@ -46,10 +46,10 @@ public abstract class AbstractConverter implements Converter {
 		catch (ConversionException e) {
 			throw e;
 		}
-		catch (RuntimeException e) {
-			throw e;
-		}
 		catch (Throwable e) {
+			if (targetClass == null) {
+				targetClass = getTargetClasses()[0];
+			}
 			throw new ConversionException(source, targetClass, e);
 		}
 	}
