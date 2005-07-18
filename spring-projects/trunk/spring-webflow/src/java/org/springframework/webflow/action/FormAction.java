@@ -33,30 +33,36 @@ import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.util.DispatchMethodInvoker;
 
 /**
- * Multi-action that implements logic dealing with input forms: form setup and
- * bind & validate. Two action execution methods are provided:
+ * Multi-action that implements common logic dealing with input forms.
+ * <p>
+ * Three action execution methods are provided:
  * <ul>
  * <li> {@link #setupForm(RequestContext)} - Prepares a form object for display
  * in a new form. This will initialize the binder so that all custom property
  * editors are available for use in the new form. This action method will return
  * (signal) the success() event if there are no setup errors, otherwise it will
- * return the error() event. </li>
- * <li> {@link #bindAndValidate(RequestContext)} - Bind all incoming event
+ * return the error() event.
+ * </li>
+ * <li> {@link #bindAndValidate(RequestContext)} - Binds all incoming event
  * parameters to the form object and validate the form object using a
  * registered validator. This action method will return (signal) the success()
  * event if there are no binding or validation errors, otherwise it will return
- * the error() event. </li>
+ * the error() event.
+ * </li>
+ * <li> {@link #resetForm(RequestContext)} - Resets the form by reloading
+ * the backing form object.  Returns success() on completion.
+ * </li>
  * </ul>
  * Since this is a multi-action, a subclass could add any number of additional
- * action execution methods, e.g. an "onSubmit()".
+ * action execution methods, e.g. a "processSubmit(RequestContext)".
  * <p>
  * Using this action, it becomes very easy to implement form preparation and
  * submission logic in your flow:
  * <ol>
- * <li> Start of with an action state called "setupForm". This will invoke
+ * <li> Create an action state called "setupForm". This will invoke
  * {@link #setupForm(RequestContext) setupForm} to prepare the new form for
  * display. </li>
- * <li> Now show the form using a view state. </li>
+ * <li> Show the form using a view state. </li>
  * <li> Go to an action state called "bindAndValidate" when the form is
  * submitted. This will invoke
  * {@link #bindAndValidate(RequestContext) bindAndValidate} to bind incoming
@@ -64,19 +70,23 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * binding or validation errors, go back to the previous view state to redisplay
  * the form with error messages. </li>
  * <li> If binding and validation was successful, go to an action state called
- * "onSubmit" (or any other appropriate name). This will invoke an action method
- * called "onSubmit" you must provide on a subclass to process form submission,
+ * "processSubmit" (or any other appropriate name). This will invoke an action method
+ * called "processSubmit" you must provide on a subclass to process form submission,
  * e.g. interacting with the business logic. </li>
  * <li> If business processing is ok, contine to a view state to display the
  * success view. </li>
  * </ol>
  * <p>
- * The most important hook method provided by this class is the method
+ * An important hook method provided by this class is the method
  * {@link #initBinder(RequestContext, DataBinder) initBinder}. This will be
  * called after a new data binder is created by both
  * {@link #setupForm(RequestContext) setupForm} and
  * {@link #bindAndValidate(RequestContext) bindAndValidate}. It allows you to
  * register any custom property editors required by the form and form object.
+ * <p>
+ * Another important hook is {@link #loadFormObject(RequestContext) loadFormObject}.
+ * You may override this to customize where the backing form object come from
+ * (e.g instantiated directly in memory or loaded from a database).
  * <p>
  * Note that this action does not provide a <i>referenceData()</i> hook method
  * similar to that of the <code>SimpleFormController</code>. If you need to
@@ -170,7 +180,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	/**
 	 * The name the form object should be exposed under.
 	 */
-	private String formObjectName = FormObjectAccessor.FORM_OBJECT_ALIAS;
+	private String formObjectName = "formObject";
 
 	/**
 	 * The type of form object - typically a instantiable class. 
@@ -394,22 +404,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	// action execute methods
-	
-	/**
-	 * Resets the form by clearing out the form object in the specified scope and
-	 * reloading it by calling loadFormObject.
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
-	 * @return success() if the reset action completed successfully
-	 * @throws Exception if an exception occured
-	 */
-	public Event resetForm(RequestContext context) throws Exception {
-		removeFormObject(context);
-		Object formObject = loadFormObject(context);
-		exposeFormObject(context, formObject);
-		exposeEmptyErrors(context, formObject);
-		return success();
-	}
 
 	/**
 	 * Prepares a form object for display in a new form. This will initialize
@@ -426,12 +420,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         checked or unchecked
 	 */
 	public Event setupForm(RequestContext context) throws Exception {
-		Object formObject = getFormObject(context);
-		if (formObject == null) {
-			formObject = createFormObject(context);
-			exposeFormObject(context, formObject);
-			exposeEmptyErrors(context, formObject);
-		}
+		Object formObject = getOrLoadFormObject(context);
 		if (setupBindingEnabled(context)) {
 			return doBindAndValidate(context, formObject);
 		}
@@ -440,6 +429,21 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 	}
 
+	/**
+	 * Returns a cached form object if one is present in the configured scope,
+	 * else requests that one be loaded.
+	 * @param context the request context 
+	 * @return the form object
+	 */
+	private Object getOrLoadFormObject(RequestContext context) {
+		Object formObject = getFormObject(context);
+		if (formObject != null) {
+			return formObject;
+		} else {
+			return loadRequiredFormObject(context);
+		}
+	}
+	
 	/**
 	 * Bind all incoming request parameters to the form object and validate the
 	 * form object using a registered validator.
@@ -451,7 +455,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         checked or unchecked
 	 */
 	public Event bindAndValidate(RequestContext context) throws Exception {
-		return doBindAndValidate(context, loadFormObject(context));
+		return doBindAndValidate(context, loadRequiredFormObject(context));
 	}
 
 	/**
@@ -463,14 +467,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 		exposeFormObject(context, formObject);
 		exposeErrors(context, binder.getErrors());
 		return result != null ? result : calculateResult(context, formObject, binder.getErrors());
-	}
-	
-	/**
-	 * Removes the form object and errors collection from the specified scopes.
-	 * @param context the context
-	 */
-	protected void removeFormObject(RequestContext context) {
-		getFormObjectAccessor(context).removeFormObject(getFormObjectName(), getFormObjectScope());
 	}
 	
 	/**
@@ -487,9 +483,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 */
 	protected Object loadRequiredFormObject(RequestContext context) throws FormObjectRetrievalFailureException,
 			IllegalStateException {
-		// get the form object
 		Object formObject = loadFormObject(context);
-		Assert.state(formObject != null, "The loaded form object cannot be null");
+		Assert.state(formObject != null, "The loaded form object cannot be null but it was: programmer error");
 		return formObject;
 	}
 
@@ -508,13 +503,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         loaded
 	 */
 	protected Object loadFormObject(RequestContext context) throws FormObjectRetrievalFailureException {
-		Object formObject = getFormObject(context);
-		if (formObject != null) {
-			return formObject;
-		}
-		else {
-			return createFormObject(context);
-		}
+		return createFormObject(context);
 	}
 	
 	/**
@@ -816,5 +805,19 @@ public class FormAction extends MultiAction implements InitializingBean {
 				logger.debug("No property editor registrar set, no custom editors to register");
 			}
 		}
+	}
+	
+	/**
+	 * Resets the form by clearing out the formObject in the specified scope and
+	 * reloading it by calling loadFormObject.
+	 * @param context the request context
+	 * @return success if the reset action completed successfully
+	 * @throws Exception if an exception occured
+	 */
+	public Event resetForm(RequestContext context) throws Exception {
+		Object formObject = loadFormObject(context);
+		exposeFormObject(context, formObject);
+		exposeEmptyErrors(context, formObject);
+		return success();
 	}
 }
