@@ -172,6 +172,18 @@ public class FormObjectAccessor {
 		getScope(scope).setAttribute(BindException.ERROR_KEY_PREFIX + errors.getObjectName(), errors);
 		alias(errors, scope);
 	}
+	
+	/**
+	 * Removes the form object exposed in the specified scope
+	 * @param formObjectName the form object name
+	 * @param scope the scope
+	 */
+	public void removeFormObject(String formObjectName, ScopeType scope) {
+		getScope(scope).remove(formObjectName);
+		getScope(scope).remove(FORM_OBJECT_ALIAS);
+		getScope(scope).remove(BindException.ERROR_KEY_PREFIX + formObjectName);
+		getScope(scope).remove(BindException.ERROR_KEY_PREFIX + FORM_OBJECT_ALIAS);
+	}
 
 	/**
 	 * Expose a <i>new</i> errors instance in the specified scope for given

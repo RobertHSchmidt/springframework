@@ -814,7 +814,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the context
 	 */
 	protected void removeFormObject(RequestContext context) {
-		getFormObjectAccessor(context).exposeFormObject(null, getFormObjectName(), getFormObjectScope());
-		getFormObjectAccessor(context).exposeErrors(null, getErrorsScope());
+		getFormObjectAccessor(context).removeFormObject(getFormObjectName(), getFormObjectScope());
 	}
 }
