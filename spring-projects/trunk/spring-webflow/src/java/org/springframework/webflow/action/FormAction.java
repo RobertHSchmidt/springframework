@@ -400,8 +400,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * the binder so that all custom property editors are available for use in
 	 * the new form.
 	 * <p>
-	 * If the "bindOnNewForm" property is set, a bind and validate step will be
-	 * done to pre-populate the new form with incoming request parameters.
+	 * If the setupBindingEnabled method returns true a bind and validate step will be
+	 * executed to pre-populate the new form with incoming event parameters.
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
 	 * @return success() when binding and validation is successful, error()
