@@ -473,7 +473,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * Load the backing form object that should be updated from incoming event
 	 * parameters and validated. By default, will attempt to instantiate a new
 	 * form object instance transiently in memory if not already present in the
-	 * flow scope (when formObjectScope is set to "flow scope").
+	 * configured scope.
 	 * <p>
 	 * Subclasses should override if they need to load the form object from a
 	 * specific location or resource such as a database or filesystem.
@@ -489,20 +489,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 			return formObject;
 		}
 		else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Creating new form object '" + getFormObjectName() + "'");
-			}
-			try {
-				return createFormObject(context);
-			}
-			catch (InstantiationException e) {
-				throw new FormObjectRetrievalFailureException(getFormObjectClass(), getFormObjectName(),
-						"Unable to instantiate form object", e);
-			}
-			catch (IllegalAccessException e) {
-				throw new FormObjectRetrievalFailureException(getFormObjectClass(), getFormObjectName(),
-						"Unable to access form object class constructor", e);
-			}
+			return createFormObject(context);
 		}
 	}
 	
@@ -530,20 +517,31 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
 	 * @return the new form object instance
-	 * @throws InstantiationException if the form object class could not be
-	 *         instantiated
-	 * @throws IllegalAccessException if the form object class or its
-	 *         constructor is not accessible
+	 * @throws FormObjectRetrievalFailureException if the form object class could not be
+	 *         instantiated or if the form object class or its constructor is not accessible
 	 */
-	protected Object createFormObject(RequestContext context) throws InstantiationException, IllegalAccessException {
-		if (this.formObjectClass == null) {
-			throw new IllegalStateException("Cannot create form object without formObjectClass being set -- "
-					+ "either set formObjectClass, override loadFormObject or createFormObject");
-		}
+	protected Object createFormObject(RequestContext context) throws FormObjectRetrievalFailureException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Creating new form object of class [" + this.formObjectClass.getName() + "]");
+			logger.debug("Creating new form object '" + getFormObjectName() + "'");
 		}
-		return this.formObjectClass.newInstance();
+		try {
+			if (this.formObjectClass == null) {
+				throw new IllegalStateException("Cannot create form object without formObjectClass being set -- "
+						+ "either set formObjectClass, override loadFormObject or createFormObject");
+			}
+			if (logger.isDebugEnabled()) {
+				logger.debug("Creating new form object of class [" + this.formObjectClass.getName() + "]");
+			}
+			return this.formObjectClass.newInstance();
+		}
+		catch (InstantiationException e) {
+			throw new FormObjectRetrievalFailureException(getFormObjectClass(), getFormObjectName(),
+					"Unable to instantiate form object", e);
+		}
+		catch (IllegalAccessException e) {
+			throw new FormObjectRetrievalFailureException(getFormObjectClass(), getFormObjectName(),
+					"Unable to access form object class constructor", e);
+		}
 	}
 
 	/**
@@ -794,5 +792,29 @@ public class FormAction extends MultiAction implements InitializingBean {
 				logger.debug("No property editor registrar set, no custom editors to register");
 			}
 		}
+	}
+	
+	/**
+	 * Resets the form by clearing out the formObject in the specified scope and
+	 * reloading it by calling loadFormObject.
+	 * @param context the request context
+	 * @return success if the reset action completed successfully
+	 * @throws Exception if an exception occured
+	 */
+	public Event resetForm(RequestContext context) throws Exception {
+		removeFormObject(context);
+		Object formObject = loadFormObject(context);
+		exposeFormObject(context, formObject);
+		exposeEmptyErrors(context, formObject);
+		return success();
+	}
+	
+	/**
+	 * Removes the form object and errors collection from the specified scopes.
+	 * @param context the context
+	 */
+	protected void removeFormObject(RequestContext context) {
+		getFormObjectAccessor(context).exposeFormObject(null, getFormObjectName(), getFormObjectScope());
+		getFormObjectAccessor(context).exposeErrors(null, getErrorsScope());
 	}
 }
