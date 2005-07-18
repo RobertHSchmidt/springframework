@@ -145,7 +145,6 @@ public class DefaultConversionService implements ConversionService {
 			} catch (ConversionException e) {
 				IllegalArgumentException iae = new IllegalArgumentException("The alias '" + alias + "' is not present in my aliasMap " + 
 						"and is not a classname either");
-				iae.initCause(e);
 				throw iae;
 			}
 		}

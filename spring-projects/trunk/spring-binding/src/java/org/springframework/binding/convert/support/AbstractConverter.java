@@ -50,7 +50,7 @@ public abstract class AbstractConverter implements Converter {
 			throw e;
 		}
 		catch (Throwable e) {
-			throw new RuntimeException(e);
+			throw new ConversionException(source, targetClass, e);
 		}
 	}
 

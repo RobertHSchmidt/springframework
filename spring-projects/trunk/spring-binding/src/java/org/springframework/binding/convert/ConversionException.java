@@ -15,65 +15,71 @@
  */
 package org.springframework.binding.convert;
 
+import org.springframework.core.NestedRuntimeException;
+
 /**
  * Base class for exceptions thrown by the type conversion system.
  * @author Keith Donald
  */
-public class ConversionException extends RuntimeException {
+public class ConversionException extends NestedRuntimeException {
+	
+	/**
+	 * The value we tried to convert. 
+	 */
 	private Object value;
 
-	private Class convertToClass;
+	/**
+	 * The target type we tried to convert to.
+	 */
+	private Class targetClass;
 
-	private Class convertFromClass;
-
-	public ConversionException(Object value, Class convertToClass) {
+	/**
+	 * @param value
+	 * @param targetClass
+	 */
+	public ConversionException(Object value, Class targetClass) {
 		super("Unable to convert value '" + value + "' of type '" + value.getClass().getName() + "' to class '"
-				+ convertToClass.getName() + "'");
+				+ targetClass.getName() + "'");
 		this.value = value;
-		this.convertToClass = convertToClass;
+		this.targetClass = targetClass;
 	}
 
-	public ConversionException(Object value, Class convertToClass, Throwable cause) {
+	/**
+	 * @param value
+	 * @param targetClass
+	 * @param cause
+	 */
+	public ConversionException(Object value, Class targetClass, Throwable cause) {
 		super("Unable to convert value '" + value + "' of type '" + value.getClass().getName() + "' to class '"
-				+ convertToClass.getName() + "'", cause);
+				+ targetClass.getName() + "'", cause);
 		this.value = value;
-		this.convertToClass = convertToClass;
+		this.targetClass = targetClass;
 	}
 
-	public ConversionException(Object value, Class convertToClass, Throwable cause, String message) {
-		this(value, convertToClass, null, cause, message);
-	}
-
-	public ConversionException(Object value, Class convertToClass, Class convertFromClass) {
-		this(value, convertToClass, convertFromClass, null, null);
-	}
-
-	public ConversionException(Object value, Class convertToClass, Class convertFromClass, Throwable cause,
-			String message) {
+	/**
+	 * @param value
+	 * @param targetClass
+	 * @param cause
+	 * @param message
+	 */
+	public ConversionException(Object value, Class targetClass, Throwable cause, String message) {
 		super(message, cause);
 		this.value = value;
-		this.convertFromClass = convertFromClass;
-		this.convertToClass = convertToClass;
+		this.targetClass = targetClass;
 	}
 
+	/**
+	 * Returns the source value
+	 * @return the source value
+	 */
 	public Object getValue() {
 		return value;
 	}
 
 	/**
-	 * @return Returns the convertFromClass.
+	 * @return Returns the targetClass.
 	 */
-	public Class getConvertFromClass() {
-		if (convertFromClass == null && value != null) {
-			return value.getClass();
-		}
-		return convertFromClass;
-	}
-
-	/**
-	 * @return Returns the convertFromClass.
-	 */
-	public Class getConvertToClass() {
-		return convertToClass;
+	public Class getTargetClass() {
+		return targetClass;
 	}
 }

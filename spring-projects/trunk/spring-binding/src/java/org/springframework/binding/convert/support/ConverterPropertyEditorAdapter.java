@@ -17,7 +17,6 @@ package org.springframework.binding.convert.support;
 
 import java.beans.PropertyEditorSupport;
 
-import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.util.Assert;
 
@@ -34,20 +33,12 @@ public class ConverterPropertyEditorAdapter extends PropertyEditorSupport {
 	private ConversionExecutor converterExecutor;
 
 	public ConverterPropertyEditorAdapter(ConversionExecutor converter) {
-		Assert.notNull(converter, "Converter is required");
+		Assert.notNull(converter, "A toString conversion executor is required");
 		this.converterExecutor = converter;
 	}
 
 	public void setAsText(String text) throws IllegalArgumentException {
-		try {
-			setValue(converterExecutor.execute(text));
-		}
-		catch (ConversionException e) {
-			IllegalArgumentException iae = new IllegalArgumentException("Converter could not convert String '" + e
-					+ "'");
-			iae.initCause(e);
-			throw iae;
-		}
+		setValue(converterExecutor.execute(text));
 	}
 
 	public String getAsText() {
