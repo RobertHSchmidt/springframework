@@ -420,7 +420,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         checked or unchecked
 	 */
 	public Event setupForm(RequestContext context) throws Exception {
-		Object formObject = getOrLoadFormObject(context);
+		Object formObject = getRequiredFormObject(context);
 		if (setupBindingEnabled(context)) {
 			return doBindAndValidate(context, formObject);
 		}
@@ -429,21 +429,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 	}
 
-	/**
-	 * Returns a cached form object if one is present in the configured scope,
-	 * else requests that one be loaded.
-	 * @param context the request context 
-	 * @return the form object
-	 */
-	private Object getOrLoadFormObject(RequestContext context) {
-		Object formObject = getFormObject(context);
-		if (formObject != null) {
-			return formObject;
-		} else {
-			return loadRequiredFormObject(context);
-		}
-	}
-	
 	/**
 	 * Bind all incoming request parameters to the form object and validate the
 	 * form object using a registered validator.
@@ -455,7 +440,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         checked or unchecked
 	 */
 	public Event bindAndValidate(RequestContext context) throws Exception {
-		return doBindAndValidate(context, loadRequiredFormObject(context));
+		return doBindAndValidate(context, getRequiredFormObject(context));
 	}
 
 	/**
@@ -468,11 +453,26 @@ public class FormAction extends MultiAction implements InitializingBean {
 		exposeErrors(context, binder.getErrors());
 		return result != null ? result : calculateResult(context, formObject, binder.getErrors());
 	}
+
+	/**
+	 * Convenience method that returns the form object for this form action.
+	 * @param context the flow request context
+	 * @return the form object, or <code>null</code> if not found
+	 */
+	protected Object getFormObject(RequestContext context) {
+		Object formObject = getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormObjectClass(), getFormObjectScope());
+		if (formObject == null) {
+			formObject = loadFormObject(context);
+			exposeFormObject(context, formObject);
+			exposeEmptyErrors(context, formObject);
+		}
+		return formObject;
+	}
 	
 	/**
-	 * Load the backing form object that should be updated from incoming event
+	 * Get the backing form object that should be updated from incoming event
 	 * parameters and validated. Throws an exception if the object could not be
-	 * loaded.
+	 * retrieved.
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
 	 * @return the form object
@@ -481,10 +481,10 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @throws IllegalStateException the form object loaded was
 	 *         <code>null</code>
 	 */
-	protected Object loadRequiredFormObject(RequestContext context) throws FormObjectRetrievalFailureException,
+	protected final Object getRequiredFormObject(RequestContext context) throws FormObjectRetrievalFailureException,
 			IllegalStateException {
-		Object formObject = loadFormObject(context);
-		Assert.state(formObject != null, "The loaded form object cannot be null but it was: programmer error");
+		Object formObject = getFormObject(context);
+		Assert.state(formObject != null, "The retrieved form object cannot be null but it was: programmer error");
 		return formObject;
 	}
 
@@ -503,44 +503,13 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         loaded
 	 */
 	protected Object loadFormObject(RequestContext context) throws FormObjectRetrievalFailureException {
-		return createFormObject(context);
-	}
-	
-	/**
-	 * Convenience method that returns the form object for this form action.
-	 * @param context the flow request context
-	 * @return the form object, or <code>null</code> if not found
-	 */
-	protected Object getFormObject(RequestContext context) {
-		return getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormObjectClass(), getFormObjectScope());
-	}
-	
-	/**
-	 * Factory method that returns a new form object accessor for accessing form objects 
-	 * in the provided request context.
-	 * @param context the flow request context
-	 * @return the accessor
-	 */
-	protected FormObjectAccessor getFormObjectAccessor(RequestContext context) {
-		return new FormObjectAccessor(context);
-	}
-	
-	/**
-	 * Create a new form object instance of the configured class.
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
-	 * @return the new form object instance
-	 * @throws FormObjectRetrievalFailureException if the form object class could not be
-	 *         instantiated or if the form object class or its constructor is not accessible
-	 */
-	protected Object createFormObject(RequestContext context) throws FormObjectRetrievalFailureException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Creating new form object '" + getFormObjectName() + "'");
 		}
 		try {
 			if (this.formObjectClass == null) {
 				throw new IllegalStateException("Cannot create form object without formObjectClass being set -- "
-						+ "either set formObjectClass, override loadFormObject or createFormObject");
+						+ "either set formObjectClass or override this method");
 			}
 			if (logger.isDebugEnabled()) {
 				logger.debug("Creating new form object of class [" + this.formObjectClass.getName() + "]");
@@ -556,7 +525,17 @@ public class FormAction extends MultiAction implements InitializingBean {
 					"Unable to access form object class constructor", e);
 		}
 	}
-
+	
+	/**
+	 * Factory method that returns a new form object accessor for accessing form objects 
+	 * in the provided request context.
+	 * @param context the flow request context
+	 * @return the accessor
+	 */
+	protected FormObjectAccessor getFormObjectAccessor(RequestContext context) {
+		return new FormObjectAccessor(context);
+	}
+	
 	/**
 	 * Create a new binder instance for the given form object and request
 	 * context. Can be overridden to plug in custom DataBinder subclasses.
@@ -587,7 +566,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param binder the binder to use for binding
 	 * @return the action result outcome
 	 */
-	protected Event bindAndValidateInternal(RequestContext context, DataBinder binder) throws Exception {
+	private Event bindAndValidateInternal(RequestContext context, DataBinder binder) throws Exception {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Binding allowed matching event parameters for event " + context.getLastEvent() + " to object '" + binder.getObjectName()
 					+ "', details='" + binder.getTarget() + "'");
@@ -645,7 +624,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param formObject the form object
 	 * @param errors possible binding errors
 	 */
-	protected void invokeValidatorMethod(String validatorMethod, Object formObject, Errors errors) throws Exception {
+	private void invokeValidatorMethod(String validatorMethod, Object formObject, Errors errors) throws Exception {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Invoking piecemeal validator method '" + validatorMethod + "' on form object: " + formObject);
 		}
