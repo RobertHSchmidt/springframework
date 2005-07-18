@@ -460,7 +460,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 */
 	public Event bindAndValidate(RequestContext context) throws Exception {
 		Event result = bind(context);
-		if (success().equals(result.getId())) {
+		if (SUCCESS_RESULT_EVENT_ID.equals(result.getId())) {
 			if (getValidator() != null && isValidateOnBinding() && validationEnabled(context)) {
 				return validate(context);
 			}
