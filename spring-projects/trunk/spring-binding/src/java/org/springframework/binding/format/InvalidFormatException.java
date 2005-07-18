@@ -15,39 +15,25 @@
  */
 package org.springframework.binding.format;
 
+import org.springframework.core.NestedRuntimeException;
+
 /**
  * Thrown when a formatted value is of the wrong form.
  * 
  * @author Keith Donald
  */
-public class InvalidFormatException extends RuntimeException {
+public class InvalidFormatException extends NestedRuntimeException {
 
 	private String invalidValue;
 
 	private String expectedFormat;
 
-	public InvalidFormatException(String invalidValue) {
-		this.invalidValue = invalidValue;
-	}
-
-	public InvalidFormatException(String invalidValue, Throwable cause) {
-		super(cause);
-		this.invalidValue = invalidValue;
-	}
-
 	public InvalidFormatException(String invalidValue, String expectedFormat) {
-		this.invalidValue = invalidValue;
-		this.expectedFormat = expectedFormat;
-	}
-
-	public InvalidFormatException(String invalidValue, String expectedFormat, String message) {
-		super(message);
-		this.invalidValue = invalidValue;
-		this.expectedFormat = expectedFormat;
+		this(invalidValue, expectedFormat, (Throwable)null);
 	}
 
 	public InvalidFormatException(String invalidValue, String expectedFormat, Throwable cause) {
-		super(cause);
+		super("Invalid format for value " + invalidValue + "; the expected format was '" + expectedFormat + "'", cause);
 		this.invalidValue = invalidValue;
 		this.expectedFormat = expectedFormat;
 	}

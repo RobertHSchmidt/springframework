@@ -82,11 +82,15 @@ public abstract class AbstractFormatter implements Formatter {
 			return doParseValue(formattedString, targetClass);
 		}
 		catch (ParseException ex) {
-			throw new InvalidFormatException(formattedString, ex);
+			throw new InvalidFormatException(formattedString, getExpectedFormat(targetClass), ex);
 		}
 	}
 
 	protected Object getEmptyValue() {
+		return null;
+	}
+	
+	protected String getExpectedFormat(Class targetClass) {
 		return null;
 	}
 	
