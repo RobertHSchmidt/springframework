@@ -394,6 +394,22 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	// action execute methods
+	
+	/**
+	 * Resets the form by clearing out the form object in the specified scope and
+	 * reloading it by calling loadFormObject.
+	 * @param context the action execution context, for accessing and setting
+	 *        data in "flow scope" or "request scope"
+	 * @return success() if the reset action completed successfully
+	 * @throws Exception if an exception occured
+	 */
+	public Event resetForm(RequestContext context) throws Exception {
+		removeFormObject(context);
+		Object formObject = loadFormObject(context);
+		exposeFormObject(context, formObject);
+		exposeEmptyErrors(context, formObject);
+		return success();
+	}
 
 	/**
 	 * Prepares a form object for display in a new form. This will initialize
@@ -447,6 +463,14 @@ public class FormAction extends MultiAction implements InitializingBean {
 		exposeFormObject(context, formObject);
 		exposeErrors(context, binder.getErrors());
 		return result != null ? result : calculateResult(context, formObject, binder.getErrors());
+	}
+	
+	/**
+	 * Removes the form object and errors collection from the specified scopes.
+	 * @param context the context
+	 */
+	protected void removeFormObject(RequestContext context) {
+		getFormObjectAccessor(context).removeFormObject(getFormObjectName(), getFormObjectScope());
 	}
 	
 	/**
@@ -792,28 +816,5 @@ public class FormAction extends MultiAction implements InitializingBean {
 				logger.debug("No property editor registrar set, no custom editors to register");
 			}
 		}
-	}
-	
-	/**
-	 * Resets the form by clearing out the formObject in the specified scope and
-	 * reloading it by calling loadFormObject.
-	 * @param context the request context
-	 * @return success if the reset action completed successfully
-	 * @throws Exception if an exception occured
-	 */
-	public Event resetForm(RequestContext context) throws Exception {
-		removeFormObject(context);
-		Object formObject = loadFormObject(context);
-		exposeFormObject(context, formObject);
-		exposeEmptyErrors(context, formObject);
-		return success();
-	}
-	
-	/**
-	 * Removes the form object and errors collection from the specified scopes.
-	 * @param context the context
-	 */
-	protected void removeFormObject(RequestContext context) {
-		getFormObjectAccessor(context).removeFormObject(getFormObjectName(), getFormObjectScope());
 	}
 }
