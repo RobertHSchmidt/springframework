@@ -94,7 +94,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	/**
 	 * Returns the default error event caused by the provided exception.
 	 * @param e the exception that caused the error event, to be sent as
-	 *        an event parameter
+	 *        an event parameter under the name {@link AbstractAction#EXCEPTION_PARAMETER}
 	 */
 	protected Event error(Exception e) {
 		return result(ERROR_EVENT_ID, EXCEPTION_PARAMETER, e);
@@ -109,7 +109,9 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
 	 * Returns the default success event with the provided result object
-	 * as a parameter.
+	 * as a parameter.  The result object is identified by the parameter name
+	 * {@link AbstractAction#RESULT_PARAMETER}
+	 * 
 	 * @param result the action success result;
 	 */
 	protected Event success(Object result) {
@@ -147,11 +149,11 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
 	 * common results.
-	 * @param resultId the result event identifier
+	 * @param eventId the result event identifier
 	 * @return the action result event
 	 */
-	protected Event result(String resultId) {
-		return new Event(this, resultId);
+	protected Event result(String eventId) {
+		return new Event(this, eventId);
 	}
 
 	/**
@@ -174,12 +176,12 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
 	 * common results.
-	 * @param resultId the result event identifier
+	 * @param eventId the result event identifier
 	 * @param parameters the event parameters
 	 * @return the action result event
 	 */
-	protected Event result(String resultId, Map parameters) {
-		return new Event(this, resultId, parameters);
+	protected Event result(String eventId, Map parameters) {
+		return new Event(this, eventId, parameters);
 	}
 
 	/**
@@ -201,15 +203,15 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 *	    }
 	 *   }
 	 * </pre>
-	 * @param resultId the result id
+	 * @param eventId the result id
 	 * @param parameterName the parameter name
 	 * @param parameterValue the parameter value
 	 * @return the action result event
 	 */
-	protected Event result(String resultId, String parameterName, Object parameterValue) {
+	protected Event result(String eventId, String parameterName, Object parameterValue) {
 		HashMap parameters = new HashMap(1);
 		parameters.put(parameterName, parameterValue);
-		return new Event(this, resultId, parameters);
+		return new Event(this, eventId, parameters);
 	}
 
 	public final Event execute(RequestContext context) throws Exception {
