@@ -416,7 +416,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 			exposeFormObject(context, formObject);
 			exposeEmptyErrors(context, formObject);
 		}
-		if (bindOnSetupForm(context)) {
+		if (setupBindingEnabled(context)) {
 			return doBindAndValidate(context, formObject);
 		}
 		else {
@@ -425,10 +425,10 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Returns if request parameters should be bound to the form object during
-	 * the {@link #setupForm(RequestContext)} action. Defaults to false.
+	 * Returns true event parameters should be bound to the form object during
+	 * the {@link #setupForm(RequestContext)} action. Defaults to bindOnSetupForm.
 	 */
-	protected boolean bindOnSetupForm(RequestContext context) {
+	protected boolean setupBindingEnabled(RequestContext context) {
 		return bindOnSetupForm;
 	}
 
