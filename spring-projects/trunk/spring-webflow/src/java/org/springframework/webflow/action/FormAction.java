@@ -429,7 +429,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * the {@link #setupForm(RequestContext)} action. Defaults to bindOnSetupForm.
 	 */
 	protected boolean setupBindingEnabled(RequestContext context) {
-		return bindOnSetupForm;
+		return isBindOnSetupForm();
 	}
 
 	/**
