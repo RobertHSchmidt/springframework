@@ -36,10 +36,9 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
 
 /**
  * Struts Action that acts a front controller entry point into the web flow
- * system. Typically, a single FlowAction manages all flow executions by
+ * system.  A single FlowAction manages all flow executions by
  * parameterization with the appropriate <code>flowId</code> in views that
- * start new flow executions. Alternatively, a FlowAction may exist per
- * top-level (root) flow definition in the application.
+ * start new flow executions.
  * <p>
  * Requests are managed by and delegated to a
  * {@link FlowExecutionManager}, allowing reuse of common front flow
@@ -67,20 +66,17 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * 
  * <pre>
  * &lt;action path=&quot;/userRegistration&quot;
- *    	type=&quot;org.springframework.web.flow.struts.FlowAction&quot;
+ *    	type=&quot;org.springframework.webflow.struts.FlowAction&quot;
  *     	name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *     	&lt;set-property property=&quot;flowId&quot; value=&quot;user.Registration&quot; /&gt;
  * &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
- * <code>/userRegistration.do</code> with the <code>Flow</code> indentified
- * by the id <code>user.Registration</code>. Alternatively, the
- * <code>flowId</code> could have been left blank and provided in dynamic
- * fashion by the views (allowing a single <code>FlowAction</code> to manage
- * any number of flow executions). A Spring binding action form instance is set in
- * request scope, acting as an adapter enabling POJO-based binding and
- * validation with Spring.
+ * <code>/userRegistration.do</code> as a Flow controller. It is expected 
+ * flows to launch be provided in a dynamic fashion by the views (allowing 
+ * this single <code>FlowAction</code> to manage any number of flow executions).
+ * A Spring binding action form instance is set in request scope, acting as an
+ * adapter enabling POJO-based binding and validation with Spring.
  * <p>
  * Other notes regarding Struts web-flow integration:
  * <ul>
