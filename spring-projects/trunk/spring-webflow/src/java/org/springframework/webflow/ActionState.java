@@ -307,9 +307,16 @@ public class ActionState extends TransitionableState {
 					return onEvent(event, context);
 				}
 				catch (NoMatchingTransitionException e) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Action execution #" + (executionCount + 1) + " resulted in no transition on event '"
-								+ event.getId() + "' -- I will proceed to the next action in the chain");
+					if (e.getState()!=this) {
+						// this no-matching-transition exception is not about this state!!
+						// let it propagate
+						throw e;
+					}
+					else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Action execution #" + (executionCount + 1) + " resulted in no transition on event '"
+									+ event.getId() + "' -- I will proceed to the next action in the chain");
+						}
 					}
 				}
 			}
