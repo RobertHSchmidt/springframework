@@ -664,14 +664,20 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Do type conversion for given property value.
 	 */
-	protected Object convertPropertyValue(Element element, String value) {
+	protected Object convertPropertyValue(Element element, String stringValue) {
 		if (element.hasAttribute(TYPE_ATTRIBUTE)) {
-			// do value type conversion
-			return getConversionService().getConversionExecutorByTargetAlias(String.class, 
-					element.getAttribute(TYPE_ATTRIBUTE)).execute(value);
+			ConversionExecutor executor = fromStringToAliased(element.getAttribute(TYPE_ATTRIBUTE));
+			if (executor != null) {
+				// convert string value to instance of aliased type
+				return executor.execute(stringValue);
+			} else {
+				Class targetClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(TYPE_ATTRIBUTE));
+				// convert string value to instance of target class
+				return fromStringTo(targetClass).execute(stringValue);
+			}
 		}
 		else {
-			return value;
+			return stringValue;
 		}
 	}
 

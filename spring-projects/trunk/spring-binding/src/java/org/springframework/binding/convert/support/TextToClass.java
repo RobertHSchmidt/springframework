@@ -15,6 +15,7 @@
  */
 package org.springframework.binding.convert.support;
 
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
@@ -23,7 +24,9 @@ import org.springframework.util.StringUtils;
  * instance.
  * @author Keith Donald
  */
-public class TextToClass extends AbstractConverter {
+public class TextToClass extends ConversionServiceAwareConverter {
+
+	public static final String TYPE_PREFIX = "type:";
 
 	public static final String CLASS_PREFIX = "class:";
 
@@ -38,7 +41,24 @@ public class TextToClass extends AbstractConverter {
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
 		String text = (String)source;
 		if (StringUtils.hasText(text)) {
-			return ClassUtils.forName(text.trim());
+			String classNameOrAlias = text.trim();
+			if (classNameOrAlias.startsWith(CLASS_PREFIX)) {
+				return ClassUtils.forName(text.substring(CLASS_PREFIX.length()));
+			} else if (classNameOrAlias.startsWith(TYPE_PREFIX)) {
+				Class clazz = getConversionService().getClassByAlias(text);
+				Assert.notNull(clazz, "No class found associated with type alias '" + classNameOrAlias + "'");
+				return clazz;
+			} else {
+				// try first an aliased based lookup
+				if (getConversionService() != null) {
+					Class aliasedClass = getConversionService().getClassByAlias(text);
+					if (aliasedClass != null) {
+						return aliasedClass;
+					}
+				}
+				// treat as a class name
+				return ClassUtils.forName(classNameOrAlias);
+			}
 		}
 		else {
 			return null;

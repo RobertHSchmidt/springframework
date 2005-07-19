@@ -115,6 +115,16 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	}
 
 	/**
+	 * Returns a conversion executor capable of converting string objects to the 
+	 * target class aliased by the provided alias.
+	 * @param targetAlias the target class alias, e.g "long" or "float"
+	 * @return the conversion executor, or <code>null</code> if no suitable converter exists for alias
+	 */
+	protected ConversionExecutor fromStringToAliased(String targetAlias) {
+		return getConversionService().getConversionExecutorByTargetAlias(String.class, targetAlias);
+	}
+
+	/**
 	 * Returns a converter capable of converting a string value to the given type.
 	 * @param targetType the type you wish to convert to (from a string)
 	 * @return the converter
@@ -123,5 +133,4 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	protected ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
 		return getConversionService().getConversionExecutor(String.class, targetType);
 	}
-
 }

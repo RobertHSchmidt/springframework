@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.ConversionServiceAware;
@@ -138,22 +137,13 @@ public class DefaultConversionService implements ConversionService {
 						+ "or a generic converter alias (e.g. 'bean') ");
 		Object targetType = aliasMap.get(alias);
 		if (targetType == null) {
-			ConversionExecutor executor = getConversionExecutor(String.class,
-					Class.class);
-			try {
-				targetType = (Class) executor.execute(alias);
-			} catch (ConversionException e) {
-				IllegalArgumentException iae = new IllegalArgumentException("The alias '" + alias + "' is not present in my aliasMap " + 
-						"and is not a classname either");
-				throw iae;
-			}
-		}
-		if (targetType instanceof Class) {
+			return null;
+		} else if (targetType instanceof Class) {
 			return getConversionExecutor(sourceClass, (Class) targetType);
 		} else {
-			Assert.isInstanceOf(Converter.class, targetType);
+			Assert.isInstanceOf(Converter.class, targetType, "Not a converter:");
 			Converter conv = (Converter) targetType;
-			return new ConversionExecutor(conv, null);
+			return new ConversionExecutor(conv, Object.class);
 		}
 	}
 
@@ -188,9 +178,10 @@ public class DefaultConversionService implements ConversionService {
 
 	public Class getClassByAlias(String alias) {
 		Object clazz = aliasMap.get(alias);
-		Assert.notNull(clazz, "Class alias '" + alias + "' does not apply to this conversion service");
-		Assert.isInstanceOf(Class.class, clazz, "Not a Class alias '" + alias + "': ");
-		return ((Class)clazz);
+		if (clazz != null) {
+			Assert.isInstanceOf(Class.class, clazz, "Not a Class alias '" + alias + "': ");
+		}
+		return (Class)clazz;
 	}
 	
 	protected Map findConvertersForSource(Class sourceClass) {

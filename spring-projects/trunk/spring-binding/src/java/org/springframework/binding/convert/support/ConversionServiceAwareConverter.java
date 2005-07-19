@@ -16,12 +16,10 @@
 package org.springframework.binding.convert.support;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.ConversionServiceAware;
-import org.springframework.util.Assert;
 
 
 /**
@@ -34,6 +32,9 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 
 	protected static final String CLASS_PREFIX = "class:";
 
+	/**
+	 * The conversion service this converter is aware of.
+	 */
 	private ConversionService conversionService;
 
 	public ConversionServiceAwareConverter() {
@@ -52,34 +53,46 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 		this.conversionService = conversionService;
 	}
 	
-	protected ConversionExecutor fromStringToTypeWithAlias(String targetAlias) {
-		return conversionService.getConversionExecutorByTargetAlias(String.class, targetAlias);
-	}
-	
+	/**
+	 * Returns a conversion executor capable of converting string objects to the 
+	 * specified target class.
+	 * @param targetClass the target class
+	 * @return the conversion executor
+	 */
 	protected ConversionExecutor fromStringTo(Class targetClass) {
-		return conversionService.getConversionExecutor(String.class, targetClass);
+		return getConversionService().getConversionExecutor(String.class, targetClass);
 	}
 	
+	/**
+	 * Returns a conversion executor capable of converting string objects to the 
+	 * target class aliased by the provided alias.
+	 * @param targetAlias the target class alias, e.g "long" or "float"
+	 * @return the conversion executor, or <code>null</code> if no suitable converter exists for alias
+	 */
+	protected ConversionExecutor fromStringToAliased(String targetAlias) {
+		return getConversionService().getConversionExecutorByTargetAlias(String.class, targetAlias);
+	}
+		
+	/**
+	 * Returns a conversion executor capable of converting objects from one 
+	 * class to another.
+	 * @param sourceClass the source class to convert from
+	 * @param targetClass the target class to convert to
+	 * @return the conversion executor
+	 */
 	protected ConversionExecutor converterFor(Class sourceClass, Class targetClass) {
-		return conversionService.getConversionExecutor(sourceClass, targetClass);
+		return getConversionService().getConversionExecutor(sourceClass, targetClass);
 	}
 
 	/**
-	 * Helper that parses given encoded class (which should start with "class:") and
+	 * Helper that parses given encoded class (which may start with "class:") and
 	 * instantiates the identified class using the default constructor.
 	 * @param encodedClass the encoded class reference, starting with "class:"
 	 * @return an instantiated objected of the identified class
 	 * @throws ConversionException when the class cannot be found or cannot be instantiated
 	 */
 	protected Object newInstance(String encodedClass) throws ConversionException {
-		try {
-			Assert.state(encodedClass.startsWith(CLASS_PREFIX), "The encoded class name should start with the class: prefix");
-			String className = encodedClass.substring(CLASS_PREFIX.length());
-			Class clazz = (Class)fromStringTo(Class.class).execute(className);
-			return BeanUtils.instantiateClass(clazz);
-		}
-		catch (BeansException e) {
-			throw new ConversionException(encodedClass, Object.class, e);
-		}
+		Class clazz = (Class)fromStringTo(Class.class).execute(encodedClass);
+		return BeanUtils.instantiateClass(clazz);
 	}
 }
