@@ -24,6 +24,13 @@ import org.springframework.webflow.ScopeType;
 /**
  * Convenience helper that encapsulates logic on how to retrieve and expose
  * form objects and associated errors to and from a flow execution context.
+ * <p>
+ * <b>Note</b>: The form object available under the well known attribute name
+ * {@link #FORM_OBJECT_ALIAS} will be the last form object set in the
+ * request context. The same is true for the associated errors object. This
+ * implies that special care should be taken when accessing the form object
+ * using this alias if there are multiple form objects available in the
+ * flow execution context!
  * 
  * @see org.springframework.webflow.RequestContext
  * @see org.springframework.validation.Errors
@@ -36,6 +43,9 @@ public class FormObjectAccessor {
 	/**
 	 * The form object instance is aliased under this attribute name in the
 	 * flow context by the default form setup and bind and validate actions.
+	 * <p>
+	 * Note that if you would have multiple form objects in the request context,
+	 * the last one that was used would be available using this alias!
 	 */
 	public static final String FORM_OBJECT_ALIAS = "#formObject";
 	
@@ -162,10 +172,10 @@ public class FormObjectAccessor {
 	}
 	
 	/**
-	 * Expose a <i>new</i> errors instance in the specified scope for given
-	 * form object using the well-known alias {@link #FORM_OBJECT_ALIAS}.
-	 * @param formObject the form object to expose an errors instance for
-	 * @param scope the scope to expose the errors in
+	 * Expose given errors instance using the well known alias
+	 * {@link #FORM_OBJECT_ALIAS} in the specified scope.
+	 * @param errors the errors instance
+	 * @param scope the scope in which to expose the errors instance
 	 */
 	private void alias(Errors errors, ScopeType scope) {
 		getScope(scope).setAttribute(BindException.ERROR_KEY_PREFIX + FORM_OBJECT_ALIAS, errors);
