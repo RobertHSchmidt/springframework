@@ -156,7 +156,7 @@ public class FormObjectAccessor {
 	 * @param errors the errors object
 	 * @param scope the scope to expose the errors in
 	 */
-	public void setErrors(Errors errors, ScopeType scope) {
+	public void setFormErrors(Errors errors, ScopeType scope) {
 		getScope(scope).setAttribute(BindException.ERROR_KEY_PREFIX + errors.getObjectName(), errors);
 		alias(errors, scope);
 	}
