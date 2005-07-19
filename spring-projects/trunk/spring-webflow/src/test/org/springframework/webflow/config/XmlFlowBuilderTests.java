@@ -70,6 +70,8 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(actionState1);
 		assertEquals(5, actionState1.getActionCount());
 		assertEquals(null, actionState1.getAnnotatedAction().getCaption());
+		assertEquals(Boolean.TRUE, (Boolean)actionState1.getProperty("propBoolean"));
+		assertEquals("aString", actionState1.getProperty("propString"));
 		assertEquals("action2Name", actionState1.getAnnotatedActions()[1].getName());
 		assertEquals(2, actionState1.getTransitions().length);
 		context.setLastEvent(createEvent("event1"));

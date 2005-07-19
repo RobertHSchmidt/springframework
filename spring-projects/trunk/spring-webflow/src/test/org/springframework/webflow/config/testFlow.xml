@@ -16,6 +16,8 @@
 		<action classref="org.springframework.webflow.config.XmlFlowBuilderTests$TestAction"/>
 		<transition on="event1" to="viewState1"/>
 		<transition on="action2Name.event2" to="viewState2"/>
+		<property name="propBoolean" value="true" type="boolean"/>
+		<property name="propString" value="aString"/>
 	</action-state>
 
 	<view-state id="viewState1" view="view1">
