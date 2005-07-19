@@ -461,18 +461,16 @@ public class FormAction extends MultiAction implements InitializingBean {
 		ensureFormObjectExposed(context, formObject);
 		doBind(context, binder);
 		setFormErrors(context, binder.getErrors());
-		if (!binder.getErrors().hasErrors()) {
-			if (getValidator() != null && isValidateOnBinding() && validationEnabled(context)) {
-				doValidate(context, binder);
-			}
-			else {
-				if (logger.isDebugEnabled()) {
-					if (validator == null) {
-						logger.debug("No validator is configured: no validation will occur");
-					}
-					else {
-						logger.debug("Validation was disabled for this request");
-					}
+		if (getValidator() != null && isValidateOnBinding() && validationEnabled(context)) {
+			doValidate(context, binder);
+		}
+		else {
+			if (logger.isDebugEnabled()) {
+				if (validator == null) {
+					logger.debug("No validator is configured: no validation will occur");
+				}
+				else {
+					logger.debug("Validation was disabled for this request");
 				}
 			}
 		}
