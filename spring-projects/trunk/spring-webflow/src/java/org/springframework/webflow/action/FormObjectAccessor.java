@@ -152,18 +152,6 @@ public class FormObjectAccessor {
 	}
 
 	/**
-	 * Expose a <i>new</i> errors instance in the specified scope for given form
-	 * object with the specified form object name.
-	 * @param formObject the form object
-	 * @param formObjectName the name of the form object
-	 * @param scope the scope to expose the errors in
-	 */
-	public void exposeEmptyErrors(Object formObject, String formObjectName, ScopeType scope) {
-		Errors errors = new BindException(formObject, formObjectName);
-		exposeErrors(errors, scope);
-	}
-
-	/**
 	 * Expose given errors instance in the specified scope.
 	 * @param errors the errors object
 	 * @param scope the scope to expose the errors in
@@ -181,18 +169,6 @@ public class FormObjectAccessor {
 	 */
 	private void alias(Errors errors, ScopeType scope) {
 		getScope(scope).setAttribute(BindException.ERROR_KEY_PREFIX + FORM_OBJECT_ALIAS, errors);
-	}
-
-	/**
-	 * Removes the form object exposed in the specified scope
-	 * @param formObjectName the form object name
-	 * @param scope the scope
-	 */
-	public void removeFormObject(String formObjectName, ScopeType scope) {
-		getScope(scope).remove(formObjectName);
-		getScope(scope).remove(FORM_OBJECT_ALIAS);
-		getScope(scope).remove(BindException.ERROR_KEY_PREFIX + formObjectName);
-		getScope(scope).remove(BindException.ERROR_KEY_PREFIX + FORM_OBJECT_ALIAS);
 	}
 
 	/**
