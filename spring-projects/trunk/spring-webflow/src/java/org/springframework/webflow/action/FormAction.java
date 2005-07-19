@@ -435,14 +435,18 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         checked or unchecked
 	 */
 	public Event setupForm(RequestContext context) throws Exception {
-		DataBinder binder = createBinder(context, getFormObject(context));
+		Object formObject = getFormObject(context);
+		DataBinder binder = createBinder(context, formObject);
+		exposeFormObject(context, formObject);
 		if (setupBindingEnabled(context)) {
-			bindInternal(context, binder);
+			doBind(context, binder);
+			setErrors(context, binder.getErrors());
 		}
 		else {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Setup form object binding was disabled for this request");
 			}
+			exposeEmptyErrors(context, formObject);
 		}
 		return binder.getErrors().hasErrors() ? error() : success();		
 	}
@@ -481,11 +485,14 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         checked or unchecked
 	 */
 	public Event bindAndValidate(RequestContext context) throws Exception {
-		DataBinder binder = createBinder(context, getFormObject(context));
-		bindInternal(context, binder);
+		Object formObject = getFormObject(context);
+		DataBinder binder = createBinder(context, formObject);
+		exposeFormObject(context, formObject);
+		doBind(context, binder);
+		setErrors(context, binder.getErrors());
 		if (!binder.getErrors().hasErrors()) {
 			if (getValidator() != null && isValidateOnBinding() && validationEnabled(context)) {
-				validateInternal(context, binder);
+				doValidate(context, binder);
 			}
 			else {
 				if (logger.isDebugEnabled()) {
@@ -509,8 +516,11 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @return the action result outcome
 	 */
 	public Event bind(RequestContext context) throws Exception {
-		DataBinder binder = createBinder(context, getFormObject(context));
-		bindInternal(context, binder);
+		Object formObject = getFormObject(context);
+		DataBinder binder = createBinder(context, formObject);
+		exposeFormObject(context, formObject);
+		doBind(context, binder);
+		setErrors(context, binder.getErrors());
 		return binder.getErrors().hasErrors() ? error() : success();
 	}
 
@@ -536,7 +546,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 		return binder;
 	}
 
-	protected void bindInternal(RequestContext context, DataBinder binder) {
+	protected void doBind(RequestContext context, DataBinder binder) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Binding allowed parameters in event: " + context.getLastEvent() + " to form object with name: '" + binder.getObjectName()
 					+ "', prebind-toString: " + binder.getTarget());
@@ -560,8 +570,11 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @return the action result outcome
 	 */
 	public Event validate(RequestContext context) throws Exception {
-		DataBinder binder = createBinder(context, getFormObject(context));
-		validateInternal(context, binder);
+		Object formObject = getFormObject(context);
+		DataBinder binder = createBinder(context, formObject);
+		exposeFormObject(context, formObject);
+		doValidate(context, binder);
+		setErrors(context, binder.getErrors());
 		return binder.getErrors().hasErrors() ? error() : success();
 	}
 
@@ -575,7 +588,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param formObject the form object
 	 * @param errors possible binding errors
 	 */
-	protected void validateInternal(RequestContext context, DataBinder binder) throws Exception {
+	protected void doValidate(RequestContext context, DataBinder binder) throws Exception {
 		String validatorMethod = (String)context.getProperties().getAttribute(VALIDATOR_METHOD_PROPERTY);
 		if (StringUtils.hasText(validatorMethod)) {
 			invokeValidatorMethod(validatorMethod, binder.getTarget(), binder.getErrors());
@@ -616,27 +629,51 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 */
 	public Event resetForm(RequestContext context) throws Exception {
 		Object formObject = loadFormObject(context);
-		exposeFormObject(context, formObject);
-		exposeEmptyErrors(context, formObject);
+		setFormObject(context, formObject);
+		setEmptyErrors(context, formObject);
 		return success();
 	}
 	
 	/**
-	 * Expose the form object in the model of the currently executing flow.
+	 * Expose the form object in the model of the currently executing flow if neccessary.
 	 * @param context the flow execution request context
 	 * @param formObject the form object
 	 */
 	private void exposeFormObject(RequestContext context, Object formObject) {
+		FormObjectAccessor accessor = getFormObjectAccessor(context);
+		if (accessor.getFormObject(getFormObjectName(), getErrorsScope()) == null) {
+			setFormObject(context, formObject);
+		}
+	}
+	
+	private void setFormObject(RequestContext context, Object formObject) {
 		getFormObjectAccessor(context).exposeFormObject(formObject, getFormObjectName(), getFormObjectScope());
 	}
 
 	/**
-	 * Expose the errors collection in the model of the currently executing flow.
+	 * Expose the errors collection in the model of the currently executing flow if neccessary.
 	 * @param context the flow execution request context
 	 * @param errors the errors
 	 */
 	private void exposeErrors(RequestContext context, Errors errors) {
+		if (getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getErrorsScope()) == null) {
+			setErrors(context, errors);
+		}
+	}
+	
+	private void setErrors(RequestContext context, Errors errors) {
 		getFormObjectAccessor(context).exposeErrors(errors, getErrorsScope());
+	}
+
+	/**
+	 * Expose an empty errors collection in the model of the currently executing flow if neccessary.
+	 * @param context the flow execution request context
+	 * @param errors the errors
+	 */
+	private void exposeEmptyErrors(RequestContext context, Object formObject) {
+		if (getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getErrorsScope()) == null) {
+			setEmptyErrors(context, formObject);
+		}
 	}
 
 	/**
@@ -644,9 +681,9 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the flow execution request context
 	 * @param formObject the object
 	 */
-	private void exposeEmptyErrors(RequestContext context, Object formObject) {
+	private void setEmptyErrors(RequestContext context, Object formObject) {
 		// we must initialize the binder here so property editors get installed
-		exposeErrors(context, createBinder(context, formObject).getErrors());
+		setErrors(context, createBinder(context, formObject).getErrors());
 	}
 
 	// subclassing hook methods
