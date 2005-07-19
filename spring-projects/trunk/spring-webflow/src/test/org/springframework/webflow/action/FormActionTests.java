@@ -71,14 +71,7 @@ public class FormActionTests extends TestCase {
 	private FormAction action;
 	
 	protected void setUp() throws Exception {
-		action = new FormAction();
-		action.setFormObjectName("test");
-		action.setFormObjectClass(TestBean.class);
-		action.setValidator(new TestBeanValidator());
-		action.setFormObjectScope(ScopeType.FLOW);
-		action.setErrorsScope(ScopeType.REQUEST);
-		action.setValidateOnBinding(true);
-		action.initAction();
+		action = createFormAction("test");
 	}
 	
 	public void testSetupForm() throws Exception {
@@ -95,6 +88,23 @@ public class FormActionTests extends TestCase {
 		assertEquals(2, context.getFlowScope().size());
 		assertFalse(getErrors(context).hasErrors());
 		assertNull(getFormObject(context).getProp());
+	}
+	
+	public void testSetupFormWithBinding() throws Exception {
+		MockRequestContext context = new MockRequestContext();
+		context.setLastEvent(new Event(this, "test", params("prop", "value")));
+
+		action.setBindOnSetupForm(true);
+		
+		// setupForm() should initialize the form object and the Errors
+		// instance and do a bind & validate (bindOnSetupForm == true)
+		
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
+		
+		assertEquals(2, context.getRequestScope().size());
+		assertEquals(2, context.getFlowScope().size());
+		assertFalse(getErrors(context).hasErrors());
+		assertEquals("value", getFormObject(context).getProp());
 	}
 	
 	public void testSetupFormWithExistingFormObject() throws Exception {
@@ -121,20 +131,84 @@ public class FormActionTests extends TestCase {
 		assertEquals("bla", getFormObject(context).getProp());
 	}
 	
-	public void testSetupFormFailure() throws Exception {
+	public void testSetupFormWithExistingFormObjectAndWithBinding() throws Exception {
 		MockRequestContext context = new MockRequestContext();
-		context.setLastEvent(new Event(this));
+		context.setLastEvent(new Event(this, "test", params("prop", "value")));
+		
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
+		
+		Errors errors = getErrors(context);
+		errors.reject("dummy");
+		TestBean formObject = getFormObject(context);
+		formObject.setProp("bla");
 		
 		action.setBindOnSetupForm(true);
 		
-		// setupForm() should setup 
+		// setupForm() should leave the existing form object untouched but should
+		// generate a new errors instance since we did binding (bindOnSetupForm == true)
+
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
+
+		assertEquals(2, context.getRequestScope().size());
+		assertEquals(2, context.getFlowScope().size());
+		assertNotSame(errors, getErrors(context));
+		assertSame(formObject, getFormObject(context));
+		assertFalse(getErrors(context).hasErrors());
+		assertEquals("value", getFormObject(context).getProp());
+	}
+	
+	public void testBindAndValidate() throws Exception {
+		MockRequestContext context = new MockRequestContext();
+		context.setLastEvent(new Event(this, "test", params("prop", "value")));
 		
-		assertEquals(AbstractAction.ERROR_EVENT_ID, action.setupForm(context).getId());
+		// bindAndValidate() should setup a new form object and errors instance
+		// and do a bind & validate
+		
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.bindAndValidate(context).getId());
+		
+		assertEquals(2, context.getRequestScope().size());
+		assertEquals(2, context.getFlowScope().size());
+		assertFalse(getErrors(context).hasErrors());
+		assertEquals("value", getFormObject(context).getProp());
+	}
+	
+	public void testBindAndValidateFailure() throws Exception {
+		MockRequestContext context = new MockRequestContext();
+		context.setLastEvent(new Event(this));
+		
+		// bindAndValidate() should setup a new form object and errors instance
+		// and do a bind & validate, which fails because the provided value is empty
+		
+		assertEquals(AbstractAction.ERROR_EVENT_ID, action.bindAndValidate(context).getId());
 		
 		assertEquals(2, context.getRequestScope().size());
 		assertEquals(2, context.getFlowScope().size());
 		assertTrue(getErrors(context).hasErrors());
 		assertNull(getFormObject(context).getProp());
+	}
+	
+	public void testBindAndValidateWithExistingFormObject() throws Exception {
+		MockRequestContext context = new MockRequestContext();
+		context.setLastEvent(new Event(this, "test", params("prop", "value")));
+		
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
+		
+		Errors errors = getErrors(context);
+		errors.reject("dummy");
+		TestBean formObject = getFormObject(context);
+		formObject.setProp("bla");
+		
+		// bindAndValidate() should leave the existing form object untouched
+		// but should setup a new Errors instance during bind & validate
+
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.bindAndValidate(context).getId());
+		
+		assertEquals(2, context.getRequestScope().size());
+		assertEquals(2, context.getFlowScope().size());
+		assertNotSame(errors, getErrors(context));
+		assertSame(formObject, getFormObject(context));
+		assertFalse(getErrors(context).hasErrors());
+		assertEquals("value", getFormObject(context).getProp());
 	}
 	
 	// this is what happens in a 'form state'
@@ -156,6 +230,9 @@ public class FormActionTests extends TestCase {
 		assertEquals("", getFormObject(context).getProp());
 
 		Errors errors = getErrors(context);
+		
+		// the setupForm() should leave the form object and error info setup by the
+		// bind & validate untouched
 
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
 		
@@ -167,14 +244,77 @@ public class FormActionTests extends TestCase {
 		assertEquals("", getFormObject(context).getProp());
 	}
 	
+	public void testMultipleFormObjectsInOneFlow() throws Exception {
+		MockRequestContext context = new MockRequestContext();
+		context.setLastEvent(new Event(this, "test", params("prop", "value")));
+
+		FormAction otherAction = createFormAction("otherTest");
+		
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, otherAction.setupForm(context).getId());
+
+		assertEquals(3, context.getRequestScope().size());
+		assertEquals(3, context.getFlowScope().size());
+		assertNotSame(getErrors(context), getErrors(context, "otherTest"));
+		assertNotSame(getFormObject(context), getFormObject(context, "otherTest"));
+		assertFalse(getErrors(context).hasErrors());
+		assertFalse(getErrors(context, "otherTest").hasErrors());
+		assertNull(getFormObject(context).getProp());
+		assertNull(getFormObject(context, "otherTest").getProp());
+		
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.bindAndValidate(context).getId());
+		
+		assertEquals(3, context.getRequestScope().size());
+		assertEquals(3, context.getFlowScope().size());
+		assertNotSame(getErrors(context), getErrors(context, "otherTest"));
+		assertNotSame(getFormObject(context), getFormObject(context, "otherTest"));
+		assertFalse(getErrors(context).hasErrors());
+		assertFalse(getErrors(context, "otherTest").hasErrors());
+		assertEquals("value", getFormObject(context).getProp());
+		assertNull(getFormObject(context, "otherTest").getProp());
+		
+		context.setLastEvent(new Event(this, "test", params("prop", "")));
+		
+		assertEquals(AbstractAction.ERROR_EVENT_ID, otherAction.bindAndValidate(context).getId());
+		
+		assertEquals(3, context.getRequestScope().size());
+		assertEquals(3, context.getFlowScope().size());
+		assertNotSame(getErrors(context), getErrors(context, "otherTest"));
+		assertNotSame(getFormObject(context), getFormObject(context, "otherTest"));
+		assertFalse(getErrors(context).hasErrors());
+		assertTrue(getErrors(context, "otherTest").hasErrors());
+		assertEquals("value", getFormObject(context).getProp());
+		assertEquals("", getFormObject(context, "otherTest").getProp());
+	}
+	
 	// helpers
 	
+	private FormAction createFormAction(String formObjectName) {
+		FormAction res = new FormAction();
+		res.setFormObjectName(formObjectName);
+		res.setFormObjectClass(TestBean.class);
+		res.setValidator(new TestBeanValidator());
+		res.setFormObjectScope(ScopeType.FLOW);
+		res.setErrorsScope(ScopeType.REQUEST);
+		res.setValidateOnBinding(true);
+		res.initAction();
+		return res;
+	}
+	
 	private Errors getErrors(RequestContext context) {
-		return (Errors)context.getRequestScope().get(BindException.ERROR_KEY_PREFIX + "test");
+		return getErrors(context, "test");
+	}
+	
+	private Errors getErrors(RequestContext context, String formObjectName) {
+		return (Errors)context.getRequestScope().get(BindException.ERROR_KEY_PREFIX + formObjectName);
 	}
 	
 	private TestBean getFormObject(RequestContext context) {
-		return (TestBean)context.getFlowScope().get("test");
+		return getFormObject(context, "test");
+	}
+	
+	private TestBean getFormObject(RequestContext context, String formObjectName) {
+		return (TestBean)context.getFlowScope().get(formObjectName);
 	}
 
 	private Map params(String key, String value) {
