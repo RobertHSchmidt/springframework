@@ -99,7 +99,7 @@ public class FormObjectAccessor {
 	 * @param formObjectName the name of the form object
 	 * @param scope the scope in which to expose the form object
 	 */
-	public void exposeFormObject(Object formObject, String formObjectName, ScopeType scope) {
+	public void setFormObject(Object formObject, String formObjectName, ScopeType scope) {
 		getScope(scope).setAttribute(formObjectName, formObject);
 		alias(formObject, scope);
 	}
@@ -156,7 +156,7 @@ public class FormObjectAccessor {
 	 * @param errors the errors object
 	 * @param scope the scope to expose the errors in
 	 */
-	public void exposeErrors(Errors errors, ScopeType scope) {
+	public void setErrors(Errors errors, ScopeType scope) {
 		getScope(scope).setAttribute(BindException.ERROR_KEY_PREFIX + errors.getObjectName(), errors);
 		alias(errors, scope);
 	}

@@ -647,7 +647,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 	
 	private void setFormObject(RequestContext context, Object formObject) {
-		getFormObjectAccessor(context).exposeFormObject(formObject, getFormObjectName(), getFormObjectScope());
+		getFormObjectAccessor(context).setFormObject(formObject, getFormObjectName(), getFormObjectScope());
 	}
 
 	/**
@@ -662,7 +662,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 	
 	private void setErrors(RequestContext context, Errors errors) {
-		getFormObjectAccessor(context).exposeErrors(errors, getErrorsScope());
+		getFormObjectAccessor(context).setErrors(errors, getErrorsScope());
 	}
 
 	/**
