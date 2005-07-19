@@ -38,7 +38,7 @@ public class ConversionException extends NestedRuntimeException {
 	 * @param targetClass
 	 */
 	public ConversionException(Object value, Class targetClass) {
-		super("Unable to convert value '" + value + "' of type '" + value.getClass().getName() + "' to class '"
+		super("Unable to convert value '" + value + "' of type '" + (value != null ? value.getClass().getName() : null) + "' to class '"
 				+ targetClass.getName() + "'");
 		this.value = value;
 		this.targetClass = targetClass;
@@ -50,7 +50,7 @@ public class ConversionException extends NestedRuntimeException {
 	 * @param cause
 	 */
 	public ConversionException(Object value, Class targetClass, Throwable cause) {
-		super("Unable to convert value '" + value + "' of type '" + value.getClass().getName() + "' to class '"
+		super("Unable to convert value '" + value + "' of type '" + (value != null ? value.getClass().getName() : null) + "' to class '"
 				+ targetClass.getName() + "'", cause);
 		this.value = value;
 		this.targetClass = targetClass;
