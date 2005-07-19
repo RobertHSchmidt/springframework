@@ -571,7 +571,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *        data in "flow scope" or "request scope"
 	 * @param binder the data binder to use
 	 */
-	protected void doBind(RequestContext context, DataBinder binder) {
+	protected void doBind(RequestContext context, DataBinder binder) throws Exception {
 		if (logger.isDebugEnabled()) {
 			logger.debug(
 					"Binding allowed parameters in event: " + context.getLastEvent()
@@ -599,7 +599,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
 	 * @param binder the data binder to use
-	 * @param errors possible binding errors
 	 */
 	protected void doValidate(RequestContext context, DataBinder binder) throws Exception {
 		String validatorMethod = (String)context.getProperties().getAttribute(VALIDATOR_METHOD_PROPERTY);
