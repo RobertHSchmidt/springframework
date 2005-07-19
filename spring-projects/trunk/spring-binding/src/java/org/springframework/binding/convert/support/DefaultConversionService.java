@@ -15,6 +15,7 @@
  */
 package org.springframework.binding.convert.support;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,10 +80,12 @@ public class DefaultConversionService implements ConversionService {
 		addDefaultAlias(String.class);
 		addDefaultAlias(Short.class);
 		addDefaultAlias(Integer.class);
+		addDefaultAlias(Byte.class);
 		addDefaultAlias(Long.class);
 		addDefaultAlias(Float.class);
 		addDefaultAlias(Double.class);
 		addDefaultAlias(BigInteger.class);
+		addDefaultAlias(BigDecimal.class);
 		addDefaultAlias(Boolean.class);
 		addDefaultAlias(Mapping.class);
 		addDefaultAlias(Class.class);
