@@ -23,6 +23,10 @@ import org.springframework.binding.expression.support.ExpressionParserUtils;
 /**
  * Converter that converts a String into an array of evaluatable Expression object.
  * 
+ * @TODO it may be possible to fold this in to TextToExpression through a 
+ * parser that can build a composite Expression object from a string 
+ * consistening of multiple expressions....
+ * 
  * @see org.springframework.binding.expression.Expression
  * @see org.springframework.binding.expression.PropertyExpression
  * 
