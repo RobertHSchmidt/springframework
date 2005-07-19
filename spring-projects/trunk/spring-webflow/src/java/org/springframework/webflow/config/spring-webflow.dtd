@@ -17,7 +17,7 @@
 	Defines the root element for a web flow definition. Web flows
 	are composed of one or more states.
 -->
-<!ELEMENT webflow ( ( action-state | view-state | decision-state | subflow-state | end-state )+, property* )>
+<!ELEMENT webflow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+ )>
 
 <!--
 	Unique identifier of the web flow; should be unique to all other web flows.
@@ -61,7 +61,7 @@
 	Defines an action state: a state where an action is executed.
 	Transitions triggered by the action(s) lead on to other states.
 -->
-<!ELEMENT action-state ( entry?, action+, transition+, property*, exit? )>
+<!ELEMENT action-state ( property*, entry?, action+, transition+, exit? )>
 
 <!--
 	Unique identifier of an action state; must be unique to this flow.
@@ -174,7 +174,7 @@
 	Defines a transition from one state to another. Transitions define the supported 
 	paths through the flow.
 -->
-<!ELEMENT transition ( action*, property* )>
+<!ELEMENT transition ( property*, action* )>
 
 <!--
 	The criteria that triggers this transition, typically taking into account the
@@ -223,7 +223,7 @@
 	returned to the user.
 	Transitions triggered by user input from the view lead on to other states.
 -->
-<!ELEMENT view-state ( entry?, transition+, property*, exit? )>
+<!ELEMENT view-state ( property*, entry?, transition+, exit? )>
 
 <!--
 	Unique identifier of a view state; must be unique to this flow.
@@ -287,7 +287,7 @@
 	Defines a decision state: a state that will evaluate one or more expressions to
 	decide which state to go to next.
 -->
-<!ELEMENT decision-state ( entry?, if+, property*, exit? )>
+<!ELEMENT decision-state ( property*, entry?, if+, exit? )>
 
 <!--
 	Unique identifier of this decision state; must be unique to this flow.
@@ -350,7 +350,7 @@
 	sub flow completes execution (reaches an end state), the result of subflow execution
 	will be used as grounds for a transition out of this state.
 -->
-<!ELEMENT subflow-state ( entry?, attribute-mapper?, transition+, property*, exit? )>
+<!ELEMENT subflow-state ( property*, entry?, attribute-mapper?, transition+, exit? )>
 
 <!--
 	Unique identifier of a subflow state; must be unique to this flow.
@@ -505,7 +505,7 @@
 <!--
 	Defines an end state: a state that terminates the flow.
 -->
-<!ELEMENT end-state ( entry?, property* )>
+<!ELEMENT end-state ( property*, entry? )>
 
 <!--
 	Unique identifier of an end state; must be unique to this flow.
