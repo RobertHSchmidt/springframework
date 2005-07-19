@@ -287,6 +287,35 @@ public class FormActionTests extends TestCase {
 		assertEquals("", getFormObject(context, "otherTest").getProp());
 	}
 	
+	public void testFormObjectAccessUsingAlias() throws Exception {
+		MockRequestContext context = new MockRequestContext();
+		context.setLastEvent(new Event(this));
+
+		FormAction otherAction = createFormAction("otherTest");
+		
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
+		
+		assertSame(getFormObject(context), new FormObjectAccessor(context).getFormObject());
+		assertSame(getErrors(context), new FormObjectAccessor(context).getFormErrors());
+		
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, otherAction.setupForm(context).getId());
+
+		assertSame(getFormObject(context, "otherTest"), new FormObjectAccessor(context).getFormObject());
+		assertSame(getErrors(context, "otherTest"), new FormObjectAccessor(context).getFormErrors());
+		
+		assertEquals(AbstractAction.ERROR_EVENT_ID, action.bindAndValidate(context).getId());
+		
+		assertSame(getFormObject(context), new FormObjectAccessor(context).getFormObject());
+		assertSame(getErrors(context), new FormObjectAccessor(context).getFormErrors());
+		
+		context.setLastEvent(new Event(this, "test", params("prop", "value")));
+
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, otherAction.bindAndValidate(context).getId());
+
+		assertSame(getFormObject(context, "otherTest"), new FormObjectAccessor(context).getFormObject());
+		assertSame(getErrors(context, "otherTest"), new FormObjectAccessor(context).getFormErrors());		
+	}
+	
 	// helpers
 	
 	private FormAction createFormAction(String formObjectName) {
