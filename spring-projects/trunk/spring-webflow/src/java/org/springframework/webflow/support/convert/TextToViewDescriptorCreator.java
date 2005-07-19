@@ -23,6 +23,7 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.support.CompositeStringExpression;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -119,7 +120,7 @@ public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter
 	 * @throws ConversionException when something goes wrong
 	 */
 	protected ViewDescriptorCreator createRedirectViewDescriptorCreator(String encodedView) throws ConversionException {
-		return new RedirectViewDescriptorCreator((Expression[])fromStringTo(Expression[].class).execute(encodedView));
+		return new RedirectViewDescriptorCreator((Expression)fromStringTo(CompositeStringExpression.class).execute(encodedView));
 	}
 	
 	/**
@@ -185,7 +186,7 @@ public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter
 	 */
 	public class RedirectViewDescriptorCreator implements ViewDescriptorCreator {
 		
-		private Expression[] expressions;
+		private Expression expression;
 		
 		/**
 		 * Create a new redirecting view descriptor creator that takes given
@@ -193,24 +194,20 @@ public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter
 		 * form (expression-tokenized) of the encoded view
 		 * (e.g. "/viewName?param0=value0&param1=value1").
 		 */
-		public RedirectViewDescriptorCreator(Expression[] expressions) {
-			this.expressions = expressions;
+		public RedirectViewDescriptorCreator(Expression expression) {
+			this.expression = expression;
 		}
 
+		protected Expression getExpression() {
+			return expression;
+		}
+		
 		public ViewDescriptor createViewDescriptor(RequestContext context) {
-			StringBuffer evaluatedEncodedView = new StringBuffer();
-			for (int i = 0; i < expressions.length; i++) {
-				// note that we can safely assume that all expressions result in Strings since we're
-				// going to do a redirect!
-				evaluatedEncodedView.append(expressions[i].evaluateAgainst(context, getEvaluationContext(context)));
-			}
-			
 			ViewDescriptor viewDescriptor = new ViewDescriptor();
 			viewDescriptor.setRedirect(true);
-			
-			// the resulting evaluatedEncodedeView should look something like "/viewName?param0=value0&param1=value1"
+			String fullView = (String)expression.evaluateAgainst(context, getEvaluationContext(context));
+			// the resulting fullView should look something like "/viewName?param0=value0&param1=value1"
 			// now parse that and build a corresponding view descriptor
-			String fullView = evaluatedEncodedView.toString();
 			int idx = fullView.indexOf('?');
 			if (idx != -1) {
 				viewDescriptor.setViewName(fullView.substring(0, idx));
@@ -241,7 +238,7 @@ public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter
 		}
 		
 		public String toString() {
-			return new ToStringCreator(this).append("expressions", expressions).toString();
+			return new ToStringCreator(this).append("expression", expression).toString();
 		}
 	}
 }
