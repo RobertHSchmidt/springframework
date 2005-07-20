@@ -79,7 +79,7 @@ import org.springframework.webflow.support.convert.FlowConversionService;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFactoryAware {
+public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionListenerLoader {
 
 	/**
 	 * Clients can send the id (name) of the flow to be started
@@ -137,6 +137,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	private TransactionSynchronizer transactionSynchronizer = new FlowScopeTokenTransactionSynchronizer();
 	
 	private ConversionService conversionService = new FlowConversionService();
+
+	private BeanFactory beanFactory;
 
 	/**
 	 * Create a new flow execution manager. Before use, the manager should
@@ -355,8 +357,16 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		this.conversionService = conversionService;
 	}
 
+	/**
+	 * Returns this flow execution manager's bean factory.
+	 */
+	protected BeanFactory getBeanFactory() {
+		return beanFactory;
+	}
+
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		if (getFlowLocator() instanceof BeanFactoryAware) {
+			// make the BeanFactoryFlowServiceLocator work
 			((BeanFactoryAware)getFlowLocator()).setBeanFactory(beanFactory);
 		}
 	}
