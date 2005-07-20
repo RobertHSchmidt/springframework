@@ -190,14 +190,16 @@ public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter
 		
 		/**
 		 * Create a new redirecting view descriptor creator that takes given
-		 * list of expressions as input. The list of expressions is the parsed
-		 * form (expression-tokenized) of the encoded view
-		 * (e.g. "/viewName?param0=value0&param1=value1").
+		 * expression as input. The expression is the parsed form (expression-tokenized)
+		 * of the encoded view (e.g. "/viewName?param0=value0&param1=value1").
 		 */
 		public RedirectViewDescriptorCreator(Expression expression) {
 			this.expression = expression;
 		}
 
+		/**
+		 * Returns the expression used by this view descriptor creator.
+		 */
 		protected Expression getExpression() {
 			return expression;
 		}

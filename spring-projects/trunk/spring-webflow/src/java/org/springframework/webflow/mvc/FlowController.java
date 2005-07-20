@@ -124,7 +124,7 @@ public class FlowController extends AbstractController implements InitializingBe
 	 * @see #setFlowExecutionManager(ServletFlowExecutionManager)
 	 */
 	public void setFlow(Flow flow) {
-		this.flowExecutionManager.setFlow(flow);
+		getFlowExecutionManager().setFlow(flow);
 	}
 
 	public void afterPropertiesSet() throws Exception {
