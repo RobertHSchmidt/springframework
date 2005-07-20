@@ -126,6 +126,9 @@ public class FlowAction extends ActionSupport {
 		this.flowExecutionManager = flowExecutionManager;
 	}
 
+	/**
+	 * Returns the default flow to be managed by this flow action's execution manager.
+	 */
 	protected Flow getFlow() {
 		return flow;
 	}
