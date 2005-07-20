@@ -126,6 +126,10 @@ public class FlowAction extends ActionSupport {
 		this.flowExecutionManager = flowExecutionManager;
 	}
 
+	protected Flow getFlow() {
+		return flow;
+	}
+	
 	/**
 	 * Convenience setter that configures a single flow definition for this action to
 	 * manage. This is a convenience feature to make it easy configure the flow for
@@ -146,10 +150,10 @@ public class FlowAction extends ActionSupport {
 			}
 			catch (NoSuchBeanDefinitionException e) {
 				setFlowExecutionManager(new ServletFlowExecutionManager(new BeanFactoryFlowServiceLocator(getWebApplicationContext())));
-				if (flow != null) {
-					getFlowExecutionManager().setFlow(flow);
-				}
 			}
+		}
+		if (getFlow() != null) {
+			getFlowExecutionManager().setFlow(getFlow());
 		}
 	}
 
