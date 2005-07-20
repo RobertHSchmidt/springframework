@@ -37,79 +37,117 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <p>
  * Several action execution methods are provided:
  * <ul>
- * <li> {@link #setupForm(RequestContext)} - Prepares a form object for display
- * in a new form. This will initialize the binder so that all custom property
- * editors are available for use in the new form. This action method will return
- * (signal) the success() event if there are no setup errors, otherwise it will
- * return the error() event.
+ * <li> {@link #exposeFormObject(RequestContext)} - Loads the backing form object 
+ * and exposes it and an empty errors instance in the model of the executing flow
+ * in the correct scope.  Any custom property editors for formatting 
+ * form object values will also be installed.  This action method will return success()
+ * if the form object was loaded successfully, error() otherwise.
+ * <li> {@link #setupForm(RequestContext)} - Prepares the backing form object for display
+ * on a form.  This method behaves exactly like exposeFormObject but goes further 
+ * by adding a capability to perform optional data binding on setup.  This action
+ * method will return the success() event if there are no setup errors, otherwise it
+ * will return the error() event.
  * </li>
  * <li> {@link #bindAndValidate(RequestContext)} - Binds all incoming event
  * parameters to the form object and validates the form object using a
- * registered validator. This action method will return (signal) the success()
+ * registered validator. This action method will return the success()
  * event if there are no binding or validation errors, otherwise it will return
  * the error() event.
  * </li>
  * <li> {@link #bind(RequestContext)} - Binds all incoming event
- * parameters to the form object. This action method will return the success()
- * event if there are no binding errors, otherwise it will return
- * the error() event.
+ * parameters to the form object.  No additional validation is performed.
+ * This action method will return the success() event if there are no binding
+ * errors, otherwise it will return the error() event.
  * </li>
  * <li> {@link #validate(RequestContext)} - Validates the form object using a
- * registered validator. This action method will return the success()
- * event if there are no validation errors, otherwise it will return
- * the error() event.
+ * registered validator. No data binding is performed.  This action method will
+ * return the success() event if there are no validation errors, otherwise it
+ * will return the error() event.
  * </li>
  * <li> {@link #resetForm(RequestContext)} - Resets the form by reloading
- * the backing form object and reinstalling property editors.
- * Returns success() on completion.
+ * the backing form object and reinstalling any custom property editors.
+ * Returns success() on completion, error() if a form object load failure occurs.
  * </li>
  * </ul>
+ * <p>
  * Since this is a multi-action, a subclass could add any number of additional
- * action execution methods, e.g. a "processSubmit(RequestContext)".
+ * action execution methods, e.g. setupReferenceData(RequestContext), or 
+ * "processSubmit(RequestContext)".
  * <p>
  * Using this action, it becomes very easy to implement form preparation and
- * submission logic in your flow:
+ * submission logic in your flow.  One way to do this follows:
  * <ol>
- * <li> Create an action state called "setupForm". This will invoke
- * {@link #setupForm(RequestContext) setupForm} to prepare the new form for
- * display. </li>
- * <li> Show the form using a view state. </li>
- * <li> Go to an action state called "bindAndValidate" when the form is
- * submitted. This will invoke
- * {@link #bindAndValidate(RequestContext) bindAndValidate} to bind incoming
- * event data to the form object and validate the form object. If there are
- * binding or validation errors, go back to the previous view state to redisplay
- * the form with error messages. </li>
- * <li> If binding and validation was successful, go to an action state called
- * "processSubmit" (or any other appropriate name). This will invoke an action method
- * called "processSubmit" you must provide on a subclass to process form submission,
+ * <li> Create an view state to display the form. In a setup action of that 
+ * state, invoke {@link #setupForm(RequestContext) setupForm} to prepare the
+ * new form for display. </li>
+ * <li> On submit, execute a state transition action that performs a bindAndValidate.
+ * This will invoke {@link #bindAndValidate(RequestContext) bindAndValidate} to
+ * bind incoming event parameters to the form object and validate the form object.
+ * <li>If there are binding or validation errors, the transition will not be allowed
+ * and the view state will automatically be re-entered.
+ * <li> If binding and validation is successful, go to an action state called
+ * "executeSubmit" (or any other appropriate name). This will invoke an action method
+ * called "executeSubmit" you must provide on a subclass to process form submission,
  * e.g. interacting with the business logic. </li>
  * <li> If business processing is ok, continue to a view state to display the
  * success view. </li>
  * </ol>
  * <p>
- * An important hook method provided by this class is the method
- * {@link #initBinder(RequestContext, DataBinder) initBinder}. This will be
- * called after a new data binder is created by any of the action execution methods
- * It allows you to register any custom property editors required by the form and form object.
+ * Here is an example implementation of such a compact form flow:
+ * <pre>
+ * &lt;view-state id="displayCriteria" view="searchCriteria"&gt;
+ *     &lt;entry&gt;
+ *         &lt;action bean="searchFormAction" method="setupForm"/&gt;
+ *     &lt;/entry&gt;
+ *     &lt;transition on="search" to="executeSearch"&gt;
+ *         &lt;action bean="searchFormAction" method="bindAndValidate"/&gt;
+ *     &lt;/transition&gt;
+ * &lt;/view-state&gt;
+ *
+ * &lt;action-state id="executeSearch"&gt;
+ *     &lt;action bean="searchFormAction"/&gt;
+ *     &lt;transition on="success" to="displayResults"/&gt;
+ * &lt;/action-state&gt;
+ *</pre>
+ * </p>
  * <p>
- * Another important hook is {@link #loadFormObject(RequestContext) loadFormObject}.
+ * When you need additional flexibility, consider splitting the view state above 
+ * acting as a single logical form state into multiple states.  For example,
+ * you could have one action state handle form setup, a view state trigger
+ * form display, another action state handle data binding and validation, and another
+ * process form submission.  This would be a bit more verbose but would also give you
+ * more control over how you respond to specific results of fine-grained actions that
+ * occur within the the flow.
+ * <p>
+ * <b>Subclassing hooks:</b>
+ * <ul>
+ * <li>An important hook method provided by this class is 
+ * {@link #initBinder(RequestContext, DataBinder) initBinder}. This is 
+ * called after a new data binder is created by any of the action execution methods
+ * It allows you to install any custom property editors required to format richly-typed 
+ * form object property values.
+ * <li>Another important hook is {@link #loadFormObject(RequestContext) loadFormObject}.
  * You may override this to customize where the backing form object come from
  * (e.g instantiated directly in memory or loaded from a database).
+ * </ul>
  * <p>
  * Note that this action does not provide a <i>referenceData()</i> hook method
- * similar to that of the <code>SimpleFormController</code>. If you need to
- * set up reference data you should create a separate state in your flow to do
- * just that and make sure you pass through that state before showing the form
- * view. Note that you can add the method that handles this reference data
- * setup logic to a subclass of this class since this is a multi-action! Typically
- * you would define an action execute method like
- * <pre>
- *    public Event setupReferenceData(RequestContext context) throws Exception
- * </pre>
- * in that case.
+ * similar to that of Spring MVC's <code>SimpleFormController</code>. If you need to
+ * expose reference data to populate form drop downs for example, you should create
+ * a custom action method in your FormAction subclass that does just that, and invoke it
+ * as either a chained action as part of a form setup state, or as a fine grained state 
+ * definition itself.
  * <p>
- * <b>Exposed configuration properties</b><br>
+ * For example, you might create this method in your subclass:
+ * <pre>
+ *    public Event setupReferenceData(RequestContext context) throws Exception {
+ *        Scope requestScope = context.getRequestScope();
+ *        requestScope.setAttribute("refData", referenceDataDao.getSupportingFormData());
+ *        return success();
+ *    }
+ * </pre>
+ * <p>
+ * <b>FormAction configurable properties</b><br>
  * <table border="1">
  * <tr>
  * <td><b>name</b></td>
@@ -415,8 +453,23 @@ public class FormAction extends MultiAction implements InitializingBean {
 	// action execute methods
 
 	/**
-	 * Loads the form object and ensures it is exposed on the model in 
+	 * Loads the form object and ensures it is exposed in the model of the executing flow in 
 	 * the correct scope.
+	 * <p>
+	 * This is a fine-grained action method that you may invoke and combine with other action
+	 * methods as part of a chain.  For example, one could call "exposeFormObject" and then
+	 * "bind" to achieve setupForm-like behaivior, with the ability to respond to results of
+	 * each actions independently as part of a flow definition.
+	 * <p>
+	 * Here is that example illustrated:
+	 * <pre>
+	 *    <action-state method="setupForm">
+	 *        <action name="exposer" bean="formAction" method="exposeFormObject"/>
+	 *        <action bean="formAction" method="bind"/>
+	 *        <transition on="exposer.error" to="displayFormObjectRetrievalFailurePage"/>
+	 *        <transition on="success" to="displayForm"/>
+	 *    </action-state>
+	 * </pre>
 	 * @param context the flow request context
 	 * @return success if the action completed successsfully, error otherwise
 	 * @throws Exception an unrecoverable exception occured
