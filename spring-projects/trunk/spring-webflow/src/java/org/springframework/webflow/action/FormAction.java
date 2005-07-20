@@ -415,6 +415,24 @@ public class FormAction extends MultiAction implements InitializingBean {
 	// action execute methods
 
 	/**
+	 * Loads the form object and ensures it is exposed on the model in 
+	 * the correct scope.
+	 * @param context the flow request context
+	 * @return success if the action completed successsfully, error otherwise
+	 * @throws Exception an unrecoverable exception occured
+	 */
+	public Event exposeFormObject(RequestContext context) throws Exception {
+		try {
+			Object formObject = getFormObject(context);
+			ensureFormObjectExposed(context, formObject);
+			setEmptyFormErrors(context, formObject);
+			return success();
+		} catch (FormObjectRetrievalFailureException e) {
+			return error(e);
+		}		
+	}
+	
+	/**
 	 * Prepares a form object for display in a new form. This will initialize
 	 * the binder so that all custom property editors are available for use in
 	 * the new form.
@@ -429,9 +447,15 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         checked or unchecked
 	 */
 	public Event setupForm(RequestContext context) throws Exception {
-		Object formObject = getFormObject(context);
-		DataBinder binder = createBinder(context, formObject);
+		Object formObject = null;
+		try {
+			formObject = getFormObject(context);
+		} catch (FormObjectRetrievalFailureException e) {
+			// handle retrieval exceptions only, other exceptions propagate
+			return error(e);
+		}
 		ensureFormObjectExposed(context, formObject);
+		DataBinder binder = createBinder(context, formObject);
 		if (setupBindingEnabled(context)) {
 			doBind(context, binder);
 			setFormErrors(context, binder.getErrors());
@@ -444,7 +468,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 		return binder.getErrors().hasErrors() ? error() : success();		
 	}
-		
+	
 	/**
 	 * Bind all incoming request parameters to the form object and validate the
 	 * form object using a registered validator.
@@ -456,7 +480,13 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *         checked or unchecked
 	 */
 	public Event bindAndValidate(RequestContext context) throws Exception {
-		Object formObject = getFormObject(context);
+		Object formObject = null;
+		try {
+			formObject = getFormObject(context);
+		} catch (FormObjectRetrievalFailureException e) {
+			// handle retrieval exceptions only, other exceptions propagate
+			return error(e);
+		}
 		DataBinder binder = createBinder(context, formObject);
 		ensureFormObjectExposed(context, formObject);
 		doBind(context, binder);
@@ -485,7 +515,13 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @return the action result outcome
 	 */
 	public Event bind(RequestContext context) throws Exception {
-		Object formObject = getFormObject(context);
+		Object formObject = null;
+		try {
+			formObject = getFormObject(context);
+		} catch (FormObjectRetrievalFailureException e) {
+			// handle retrieval exceptions only, other exceptions propagate
+			return error(e);
+		}
 		DataBinder binder = createBinder(context, formObject);
 		ensureFormObjectExposed(context, formObject);
 		doBind(context, binder);
@@ -500,8 +536,13 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @return the action result outcome
 	 */
 	public Event validate(RequestContext context) throws Exception {
-		Assert.notNull(getValidator(), "Cannot do validation without a validator");
-		Object formObject = getFormObject(context);
+		Object formObject = null;
+		try {
+			formObject = getFormObject(context);
+		} catch (FormObjectRetrievalFailureException e) {
+			// handle retrieval exceptions only, other exceptions propagate
+			return error(e);
+		}
 		DataBinder binder = createBinder(context, formObject);
 		ensureFormObjectExposed(context, formObject);
 		doValidate(context, binder);
@@ -517,10 +558,15 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @throws Exception if an exception occured
 	 */
 	public Event resetForm(RequestContext context) throws Exception {
-		Object formObject = loadFormObject(context);
-		setFormObject(context, formObject);
-		setEmptyFormErrors(context, formObject);
-		return success();
+		try {
+			Object formObject = loadFormObject(context);
+			setFormObject(context, formObject);
+			setEmptyFormErrors(context, formObject);
+			return success();
+		} catch (FormObjectRetrievalFailureException e) {
+			// handle retrieval exceptions only, other exceptions propagate
+			return error(e);
+		}
 	}
 
 	// internal helpers
@@ -532,7 +578,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the flow request context
 	 * @return the form object
 	 */
-	protected Object getFormObject(RequestContext context) {
+	protected Object getFormObject(RequestContext context) throws Exception {
 		Object formObject = getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormObjectClass(), getFormObjectScope());
 		if (formObject == null) {
 			formObject = loadFormObject(context);
@@ -710,7 +756,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @throws FormObjectRetrievalFailureException the form object could not be
 	 *         loaded
 	 */
-	protected Object loadFormObject(RequestContext context) throws FormObjectRetrievalFailureException {
+	protected Object loadFormObject(RequestContext context) throws FormObjectRetrievalFailureException, Exception {
 		return createFormObject(context);
 	}
 
@@ -722,28 +768,18 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @throws FormObjectRetrievalFailureException the form object could not be
 	 *         created
 	 */
-	protected Object createFormObject(RequestContext context) throws FormObjectRetrievalFailureException {
+	protected Object createFormObject(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Creating new form object '" + getFormObjectName() + "'");
 		}
-		try {
-			if (this.formObjectClass == null) {
-				throw new IllegalStateException("Cannot create form object without formObjectClass being set -- "
-						+ "either set formObjectClass or override this method");
-			}
-			if (logger.isDebugEnabled()) {
-				logger.debug("Creating new form object of class [" + this.formObjectClass.getName() + "]");
-			}
-			return this.formObjectClass.newInstance();
+		if (this.formObjectClass == null) {
+			throw new IllegalStateException("Cannot create form object without formObjectClass being set -- "
+					+ "either set formObjectClass or override this method");
 		}
-		catch (InstantiationException e) {
-			throw new FormObjectRetrievalFailureException(getFormObjectClass(), getFormObjectName(),
-					"Unable to instantiate form object", e);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Creating new form object of class [" + this.formObjectClass.getName() + "]");
 		}
-		catch (IllegalAccessException e) {
-			throw new FormObjectRetrievalFailureException(getFormObjectClass(), getFormObjectName(),
-					"Unable to access form object class constructor", e);
-		}
+		return this.formObjectClass.newInstance();
 	}
 	
 	/**
