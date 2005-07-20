@@ -104,7 +104,10 @@ public class FlowExecutionContinuation implements Serializable {
 		}
 		catch (ClassNotFoundException e) {
 			throw new FlowExecutionStorageException(
-					"ClassNotFoundException loading the flow execution continuation -- this should not happen!", e);
+					"ClassNotFoundException loading the flow execution continuation -- this should not happen! --" +
+					"Make sure there are no classloader issues: e.g. maybe the Web Flow system is being loaded by a classloader " +
+					"that is a parent of the classloader loading application classes?",
+					e);
 		}
 	}
 
