@@ -296,12 +296,14 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		try {
-			return context.spawn(rootFlow.getStartState(), new HashMap());
-		} finally {
+			ViewDescriptor viewDescriptor = context.spawn(rootFlow.getStartState(), new HashMap());
 			if (isActive()) {
 				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
 				getListeners().firePaused(context);
 			}
+			return viewDescriptor;
+		}
+		finally {
 			getListeners().fireRequestProcessed(context);
 		}
 	}
@@ -339,12 +341,14 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 		getListeners().fireResumed(context);
 		try {
-			return state.onEvent(sourceEvent, context);
-		} finally {
+			ViewDescriptor viewDescriptor = state.onEvent(sourceEvent, context);
 			if (isActive()) {
 				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
 				getListeners().firePaused(context);
 			}
+			return viewDescriptor;
+		}
+		finally {
 			getListeners().fireRequestProcessed(context);
 		}
 	}

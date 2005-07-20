@@ -670,7 +670,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			if (executor != null) {
 				// convert string value to instance of aliased type
 				return executor.execute(stringValue);
-			} else {
+			}
+			else {
 				Class targetClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(TYPE_ATTRIBUTE));
 				// convert string value to instance of target class
 				return fromStringTo(targetClass).execute(stringValue);
