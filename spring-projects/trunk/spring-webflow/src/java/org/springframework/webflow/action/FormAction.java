@@ -425,7 +425,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 		try {
 			Object formObject = getFormObject(context);
 			ensureFormObjectExposed(context, formObject);
-			setEmptyFormErrors(context, formObject);
+			ensureFormErrorsExposed(context, formObject);
 			return success();
 		} catch (FormObjectRetrievalFailureException e) {
 			return error(e);
