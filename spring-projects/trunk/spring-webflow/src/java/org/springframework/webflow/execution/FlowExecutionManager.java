@@ -361,10 +361,11 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 * Returns this flow execution manager's bean factory.
 	 */
 	protected BeanFactory getBeanFactory() {
-		return beanFactory;
+		return this.beanFactory;
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		this.beanFactory = beanFactory;
 		if (getFlowLocator() instanceof BeanFactoryAware) {
 			// make the BeanFactoryFlowServiceLocator work
 			((BeanFactoryAware)getFlowLocator()).setBeanFactory(beanFactory);
