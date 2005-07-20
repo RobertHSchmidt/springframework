@@ -128,14 +128,14 @@ public class FlowController extends AbstractController implements InitializingBe
 	}
 
 	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(this.flowExecutionManager, "The http servlet flow execution manager is required");
-		this.flowExecutionManager.setBeanFactory(getApplicationContext());
+		Assert.notNull(getFlowExecutionManager(), "The http servlet flow execution manager is required");
+		getFlowExecutionManager().setBeanFactory(getApplicationContext());
 	}
 
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		// delegate to the flow execution manager to process the request
-		ViewDescriptor viewDescriptor = flowExecutionManager.handle(request, response);
+		ViewDescriptor viewDescriptor = getFlowExecutionManager().handle(request, response);
 		// convert the view descriptor to a ModelAndView object
 		return toModelAndView(viewDescriptor);
 	}

@@ -26,9 +26,11 @@ import org.springframework.web.struts.ActionSupport;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.action.FormObjectAccessor;
+import org.springframework.webflow.config.BeanFactoryFlowServiceLocator;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.servlet.ServletFlowExecutionManager;
@@ -106,14 +108,48 @@ public class FlowAction extends ActionSupport {
 	public static final String ACTION_FORM_ATTRIBUTE = "actionForm";
 	
 	private FlowExecutionManager flowExecutionManager;
+
+	private Flow flow;
+	
+	/**
+	 * Returns the flow execution manager used by this controller.
+	 * @return the HTTP flow execution manager
+	 */
+	protected FlowExecutionManager getFlowExecutionManager() {
+		return flowExecutionManager;
+	}
+
+	/**
+	 * Configures the flow execution manager implementation to use.
+	 */
+	public void setFlowExecutionManager(FlowExecutionManager flowExecutionManager) {
+		this.flowExecutionManager = flowExecutionManager;
+	}
+
+	/**
+	 * Convenience setter that configures a single flow definition for this action to
+	 * manage. This is a convenience feature to make it easy configure the flow for
+	 * a action which just uses the default flow execution manager.
+	 * Note: do not call both this method and <code>setFlowExecutionManager()</code> -- call one
+	 * or the other.
+	 * @param flow the flow that this controller will manage
+	 * @see #setFlowExecutionManager(ServletFlowExecutionManager)
+	 */
+	public void setFlow(Flow flow) {
+		this.flow = flow;
+	}
 	
 	protected void onInit() {
-		try {
-			this.flowExecutionManager = (FlowExecutionManager)getWebApplicationContext().getBean(FLOW_EXECUTION_MANAGER_BEAN_NAME, FlowExecutionManager.class);
-		}
-		catch (NoSuchBeanDefinitionException e) {
-			this.flowExecutionManager = new ServletFlowExecutionManager();
-			this.flowExecutionManager.setBeanFactory(getWebApplicationContext());
+		if (getFlowExecutionManager() == null) {
+			try {
+				setFlowExecutionManager((FlowExecutionManager)getWebApplicationContext().getBean(FLOW_EXECUTION_MANAGER_BEAN_NAME, FlowExecutionManager.class));
+			}
+			catch (NoSuchBeanDefinitionException e) {
+				setFlowExecutionManager(new ServletFlowExecutionManager(new BeanFactoryFlowServiceLocator(getWebApplicationContext())));
+				if (flow != null) {
+					getFlowExecutionManager().setFlow(flow);
+				}
+			}
 		}
 	}
 
@@ -121,7 +157,7 @@ public class FlowAction extends ActionSupport {
 			HttpServletResponse response) throws Exception {
 		FlowExecutionListener actionFormAdapter = createActionFormAdapter(request, form);
 		Event event = createEvent(mapping, form, request, response);
-		ViewDescriptor viewDescriptor =	flowExecutionManager.onEvent(event, actionFormAdapter);
+		ViewDescriptor viewDescriptor =	getFlowExecutionManager().onEvent(event, actionFormAdapter);
 		return toActionForward(viewDescriptor, mapping, request);
 	}
 	
