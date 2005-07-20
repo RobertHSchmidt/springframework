@@ -71,4 +71,8 @@ public class ActionExecutor {
 			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), action, e);
 		}
 	}
+	
+	public String toString() {
+		return action.toString();
+	}
 }
