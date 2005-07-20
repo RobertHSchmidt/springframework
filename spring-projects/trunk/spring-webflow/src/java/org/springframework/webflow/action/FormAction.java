@@ -461,17 +461,17 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * "bind" to achieve setupForm-like behaivior, with the ability to respond to results of
 	 * each actions independently as part of a flow definition.
 	 * <p>
-	 * Here is that example illustrated:
+	 * Here is that example of that 'action chaining' illustrated:
 	 * <pre>
-	 *    <action-state method="setupForm">
-	 *        <action name="exposer" bean="formAction" method="exposeFormObject"/>
-	 *        <action bean="formAction" method="bind"/>
-	 *        <transition on="exposer.error" to="displayFormObjectRetrievalFailurePage"/>
-	 *        <transition on="success" to="displayForm"/>
-	 *    </action-state>
+	 *    &lt;action-state method="setupForm"&gt;
+	 *        &lt;action name="exposer" bean="formAction" method="exposeFormObject"/&gt;
+	 *        &lt;action bean="formAction" method="bind"/&gt;
+	 *        &lt;transition on="exposer.error" to="displayFormObjectRetrievalFailurePage"/&gt;
+	 *        &lt;transition on="success" to="displayForm"/&gt;
+	 *    &lt;/action-state&gt;
 	 * </pre>
 	 * @param context the flow request context
-	 * @return success if the action completed successsfully, error otherwise
+	 * @return "success" if the action completed successsfully, "error" otherwise
 	 * @throws Exception an unrecoverable exception occured
 	 */
 	public Event exposeFormObject(RequestContext context) throws Exception {
@@ -490,12 +490,13 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * the binder so that all custom property editors are available for use in
 	 * the new form.
 	 * <p>
-	 * If the setupBindingEnabled method returns true a bind and validate step will be
-	 * executed to pre-populate the new form with incoming event parameters.
+	 * If the setupBindingEnabled method returns true a data binding operation
+	 * will occur to pre-populate the new form with incoming event parameters.
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
-	 * @return success() when binding and validation is successful, error()
-	 *         otherwise
+	 * @return "success" when binding and validation is successful, "error"
+	 *         if there were binding or validation errors or the form object
+	 *         could not be retrieved.
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 *         checked or unchecked
 	 */
@@ -528,7 +529,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
 	 * @return "success" when binding and validation is successful, "error"
-	 *         otherwise
+	 *         if ther were errors or the form object could not be retrieved.
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 *         checked or unchecked
 	 */
@@ -565,7 +566,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * form object.
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
-	 * @return the action result outcome
+	 * @return "success" if there are no binding errors, "error" if there
+	 * are errors or the form object could not be retrieved.
 	 */
 	public Event bind(RequestContext context) throws Exception {
 		Object formObject = null;
@@ -586,7 +588,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * Validate the form object.
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
-	 * @return the action result outcome
+	 * @return "success" if there are no validation errors, "error" if there 
+	 * are errors or the form object could not be retrieved.
 	 */
 	public Event validate(RequestContext context) throws Exception {
 		Object formObject = null;
@@ -607,7 +610,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * Resets the form by clearing out the form object in the specified scope and
 	 * reloading it by calling loadFormObject.
 	 * @param context the request context
-	 * @return success if the reset action completed successfully
+	 * @return "success" if the reset action completed successfully, "error" otherwise.
 	 * @throws Exception if an exception occured
 	 */
 	public Event resetForm(RequestContext context) throws Exception {
