@@ -295,13 +295,15 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		}
 		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
-		ViewDescriptor viewDescriptor = context.spawn(rootFlow.getStartState(), new HashMap());
-		if (isActive()) {
-			getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
-			getListeners().firePaused(context);
+		try {
+			return context.spawn(rootFlow.getStartState(), new HashMap());
+		} finally {
+			if (isActive()) {
+				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
+				getListeners().firePaused(context);
+			}
+			getListeners().fireRequestProcessed(context);
 		}
-		getListeners().fireRequestProcessed(context);
-		return viewDescriptor;
 	}
 
 	public synchronized ViewDescriptor signalEvent(Event sourceEvent) throws FlowNavigationException, IllegalStateException {
@@ -336,13 +338,15 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		getListeners().fireRequestSubmitted(context);
 		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 		getListeners().fireResumed(context);
-		ViewDescriptor viewDescriptor = state.onEvent(sourceEvent, context);
-		if (isActive()) {
-			getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
-			getListeners().firePaused(context);
+		try {
+			return state.onEvent(sourceEvent, context);
+		} finally {
+			if (isActive()) {
+				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
+				getListeners().firePaused(context);
+			}
+			getListeners().fireRequestProcessed(context);
 		}
-		getListeners().fireRequestProcessed(context);
-		return viewDescriptor;
 	}
 	
 	public FlowExecutionListenerList getListeners() {
