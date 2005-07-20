@@ -20,6 +20,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.format.support.SimpleFormatterLocator;
 import org.springframework.binding.support.Mapping;
@@ -68,7 +69,7 @@ public class DefaultConversionServiceTests extends TestCase {
 			executor.execute("My Invalid Label");
 			fail("Should have failed");
 		}
-		catch (IllegalArgumentException e) {
+		catch (ConversionException e) {
 		}
 	}
 
