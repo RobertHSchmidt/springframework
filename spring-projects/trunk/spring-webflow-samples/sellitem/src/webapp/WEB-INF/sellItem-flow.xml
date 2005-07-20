@@ -5,10 +5,10 @@
 <webflow id="sellItem" start-state="setupForm">
 
 	<action-state id="setupForm">
-		<action bean="sellItemAction"/>
-		<transition on="success" to="enterPriceAndItemCount"/>
 		<!-- uncomment to experiment with precondition violations -->
 		<!-- <property name="role" value="manager"/> -->
+		<action bean="sellItemAction"/>
+		<transition on="success" to="enterPriceAndItemCount"/>
 	</action-state>
 
 	<view-state id="enterPriceAndItemCount" view="priceAndItemCountForm">
