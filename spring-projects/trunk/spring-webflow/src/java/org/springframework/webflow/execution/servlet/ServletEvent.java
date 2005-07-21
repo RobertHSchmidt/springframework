@@ -36,10 +36,12 @@ import org.springframework.webflow.execution.ExternalEvent;
 public class ServletEvent extends ExternalEvent {
 
 	/**
-	 * The event to be signaled can also be sent using a request
+	 * The event to be signaled may be communicated using a request
 	 * attribute set by an intercepting filter, with this name
-	 * ("_mapped_eventId"). Use this when you can't use the "_eventId" parameter
-	 * to pass in the event.
+	 * ("_mapped_eventId").
+	 * <p>
+	 * Use this only when you can't use a parameter-only approach for
+	 * communicating the event id.
 	 */
 	public static final String EVENT_ID_REQUEST_ATTRIBUTE = "_mapped_eventId";
 	
@@ -95,12 +97,21 @@ public class ServletEvent extends ExternalEvent {
 	}
 
 	/**
-	 * Obtain the event id from the parameters contained in this event.
-	 * @param eventIdParameterName name of the event id parameter in the request
-	 * @param eventIdAttributeName name of the event id attribute in the request
-	 * @param parameterValueDelimiter delimiter used when a parameter value is
+	 * Obtain this event's id from the parameter map.
+	 * <p>
+	 * This is a multi-step process consisting of:
+	 * <ol>
+	 * <li>Try the _eventId parameter first, if it is present, return its value 
+	 * as the eventId.
+	 * <li>Try a parameter search looking for parameters of the format: 
+	 * _eventId_value.  If a match is found, return the value as the eventId.
+	 * <li>Try the _mapped_eventId request attribute
+	 * <li>
+	 * @param eventIdParameterName name of the event id parameter in the request (default=_eventId)
+	 * @param eventIdAttributeName name of the event id attribute in the request (default=_mapped_eventId)
+	 * @param parameterValueDelimiter delimiter used when a parameter value is 
 	 *        sent as part of the name of a request parameter
-	 *        (e.g. "_eventId_value=bar")
+	 *        (e.g. "_eventId_value=bar", default=_)
 	 * @return the event id, or null if not found
 	 */
 	protected String extractEventId(String eventIdParameterName, String eventIdAttributeName, String parameterValueDelimiter) {
