@@ -26,19 +26,18 @@ import org.springframework.util.Assert;
 
 /**
  * Signals the occurence of something a webflow should respond to.
- * Each event has a string id that provides a key for what happen: e.g "coinInserted", or "pinDropped".
- * An event may optionally contain information about the state in which it occured, e.g "displayingVendingMachine",
- * or "waitingForUser".  Events may have parameters that provide arbitrary payload data, e.g 
- * "coin.amount=25", or "pinDropSpeed=25ms".
+ * Each event has a string id that provides a key for what happened: e.g "coinInserted",
+ * or "pinDropped". An event may optionally contain information about the state in
+ * which it occured, e.g "displayVendingMachine" or "waitForUser".  Events may have
+ * parameters that provide arbitrary payload data, e.g. "coin.amount=25", or "pinDropSpeed=25ms".
  * <p>
  * For example, a "submit" event might signal that a Submit button was pressed
  * in a web browser. A "success" event might signal an action executed
  * successfully. A "finish" event might signal a sub flow ended normally.
  * <p>
- * Why is this class abstract and not an interface? A specific design choice. An
- * event is not a strategy, its essentially a parmaeter object and it is expected that
- * specializations of this base class be "Events" and not part of some other
- * inheritence hierarchy.
+ * Why is this not an interface? A specific design choice. An event is not a strategy,
+ * its essentially a parmaeter object and it is expected that specializations of this base
+ * class be "Events" and not part of some other inheritence hierarchy.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
