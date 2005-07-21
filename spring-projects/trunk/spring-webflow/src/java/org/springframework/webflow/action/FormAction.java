@@ -782,9 +782,10 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Put an empty errors collection in the model of the currently executing flow.
+	 * Return an empty errors collection with property editors registered.
 	 * @param context the flow execution request context
 	 * @param formObject the object
+	 * @return the new errors instance
 	 */
 	private Errors createFormErrors(RequestContext context, Object formObject) {
 		return createBinder(context, formObject).getErrors();
