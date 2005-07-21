@@ -242,7 +242,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	/**
 	 * The scope in which the form object errors holder should be exposed.
 	 */
-	private ScopeType errorsScope = ScopeType.REQUEST;
+	private ScopeType formErrorsScope = ScopeType.REQUEST;
 
 	/**
 	 * A centralized service for property editor registration, for type conversion during
@@ -336,16 +336,16 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * Get the scope in which the Errors object will be placed. Can be either
 	 * flow scope ore request scope. Defaults to request scope.
 	 */
-	public ScopeType getErrorsScope() {
-		return errorsScope;
+	public ScopeType getFormErrorsScope() {
+		return formErrorsScope;
 	}
 
 	/**
 	 * Set the scope in which the Errors object will be placed. Can be either
 	 * flow scope ore request scope. Defaults to request scope.
 	 */
-	public void setErrorsScope(ScopeType errorsScope) {
-		this.errorsScope = errorsScope;
+	public void setFormErrorsScope(ScopeType errorsScope) {
+		this.formErrorsScope = errorsScope;
 	}
 
 	/**
@@ -354,8 +354,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param encodedScopeType the encoded scope type string
 	 * @throws InvalidFormatException the encoded value was invalid
 	 */
-	public void setErrorsScopeAsString(String encodedScopeType) throws InvalidFormatException {
-		this.errorsScope = (ScopeType)new LabeledEnumFormatter().parseValue(encodedScopeType, ScopeType.class);
+	public void setFormErrorsScopeAsString(String encodedScopeType) throws InvalidFormatException {
+		this.formErrorsScope = (ScopeType)new LabeledEnumFormatter().parseValue(encodedScopeType, ScopeType.class);
 	}
 
 	/**
@@ -755,7 +755,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param formObject the form object
 	 */
 	private void ensureFormObjectExposed(RequestContext context, Object formObject) {
-		if (getFormObjectAccessor(context).getFormObject(getFormObjectName(), getErrorsScope()) == null) {
+		if (getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormErrorsScope()) == null) {
 			setFormObject(context, formObject);
 		}
 	}
@@ -773,7 +773,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param errors the errors
 	 */
 	private Errors ensureFormErrorsExposed(RequestContext context, Object formObject) {
-		Errors errors = getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getErrorsScope());
+		Errors errors = getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope());
 		if (errors == null) {
 			errors = createFormErrors(context, formObject);
 			setFormErrors(context, errors);
@@ -794,7 +794,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * Put given errors instance in the configured scope of given context.
 	 */
 	private void setFormErrors(RequestContext context, Errors errors) {
-		getFormObjectAccessor(context).setFormErrors(errors, getErrorsScope());
+		getFormObjectAccessor(context).setFormErrors(errors, getFormErrorsScope());
 	}
 
 	// subclassing hook methods
