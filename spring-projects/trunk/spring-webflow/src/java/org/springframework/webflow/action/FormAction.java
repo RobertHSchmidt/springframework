@@ -21,6 +21,7 @@ import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.binding.format.support.LabeledEnumFormatter;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindException;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.MessageCodesResolver;
@@ -635,31 +636,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 	// internal helpers
 	
 	/**
-	 * Convenience method that returns the form object for this form action.
-	 * If not found in the configured scope, a new form object will be created
-	 * or loaded by a call to {@link #loadFormObject(RequestContext)}.
-	 * @param context the flow request context
-	 * @return the form object
-	 */
-	protected Object getFormObject(RequestContext context) throws Exception {
-		Object formObject = getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormObjectClass(), getFormObjectScope());
-		if (formObject == null) {
-			formObject = loadFormObject(context);
-		}
-		return formObject;
-	}
-
-	/**
-	 * Convenience method that returns the form object errors for this form action.
-	 * If not found in the configured scope, a new form object erors will be created.
-	 * @param context the flow request context
-	 * @return the form errors
-	 */
-	protected Object getFormErrors(RequestContext context) throws Exception {
-		return ensureFormErrorsExposed(context, getFormObject(context));
-	}
-	
-	/**
 	 * Create a new binder instance for the given form object and request
 	 * context. Can be overridden to plug in custom DataBinder subclasses.
 	 * <p>
@@ -750,6 +726,21 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 	
 	/**
+	 * Convenience method that returns the form object for this form action.
+	 * If not found in the configured scope, a new form object will be created
+	 * or loaded by a call to {@link #loadFormObject(RequestContext)}.
+	 * @param context the flow request context
+	 * @return the form object
+	 */
+	protected Object getFormObject(RequestContext context) throws Exception {
+		Object formObject = getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormObjectClass(), getFormObjectScope());
+		if (formObject == null) {
+			formObject = loadFormObject(context);
+		}
+		return formObject;
+	}
+
+	/**
 	 * Expose the form object in the model of the currently executing flow if neccessary.
 	 * @param context the flow execution request context
 	 * @param formObject the form object
@@ -766,6 +757,16 @@ public class FormAction extends MultiAction implements InitializingBean {
 	private void setFormObject(RequestContext context, Object formObject) {
 		getFormObjectAccessor(context).setFormObject(formObject, getFormObjectName(), getFormObjectScope());
 	}
+	
+	/**
+	 * Convenience method that returns the form object errors for this form action.
+	 * If not found in the configured scope, a new form object erors will be created.
+	 * @param context the flow request context
+	 * @return the form errors
+	 */
+	protected Object getFormErrors(RequestContext context) throws Exception {
+		return ensureFormErrorsExposed(context, getFormObject(context));
+	}
 
 	/**
 	 * Expose an empty errors collection in the model of the currently executing flow if neccessary.
@@ -774,6 +775,19 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 */
 	private Errors ensureFormErrorsExposed(RequestContext context, Object formObject) {
 		Errors errors = getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope());
+		if (errors instanceof BindException) {
+			// make sure the existing form errors are consistent with the form object
+			BindException be = (BindException)errors;
+			if (be.getTarget() != formObject) {
+				if (logger.isInfoEnabled()) {
+					logger.info(
+							"Found an Errors instance in '" + getFormErrorsScope() + "' scope that it inconsistent with the current form object." +
+							"The existing Errors instance wrap a target object '" + be.getTarget() + "' of class " + be.getTarget().getClass() +
+							". Overwriting the existing Errors instance with a newly generated one!");
+				}
+				errors = null; // fall through below
+			}
+		}
 		if (errors == null) {
 			errors = createFormErrors(context, formObject);
 			setFormErrors(context, errors);

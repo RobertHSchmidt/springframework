@@ -58,6 +58,19 @@ public class FormActionTests extends TestCase {
 		}
 	}
 	
+	private static class OtherTestBean {
+		
+		private String otherProp;
+		
+		public String getOtherProp() {
+			return otherProp;
+		}
+		
+		public void setOtherProp(String otherProp) {
+			this.otherProp = otherProp;
+		}
+	}
+	
 	private static class TestBeanValidator implements Validator {
 		public boolean supports(Class clazz) {
 			return TestBean.class.equals(clazz);
@@ -304,10 +317,11 @@ public class FormActionTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		context.setLastEvent(new Event(this));
 		FormAction action = createFormAction("test");
+		action.setupForm(context);
 		Errors errors = (Errors)action.getFormErrors(context);
 		assertNotNull(errors);
 		assertTrue(!errors.hasErrors());
-		errors = new BindException(new TestBean(), "test");
+		errors = new BindException(getFormObject(context), "test");
 		Errors testErrors = errors;
 		new FormObjectAccessor(context).setFormErrors(errors, action.getFormErrorsScope());
 		errors = (Errors)action.getFormErrors(context);
@@ -341,6 +355,41 @@ public class FormActionTests extends TestCase {
 
 		assertSame(getFormObject(context, "otherTest"), new FormObjectAccessor(context).getFormObject());
 		assertSame(getErrors(context, "otherTest"), new FormObjectAccessor(context).getFormErrors());		
+	}
+	
+	// as reported in SWF-4
+	public void testInconsistentFormObjectAndErrors() throws Exception {
+		MockRequestContext context = new MockRequestContext();
+		context.setLastEvent(new Event(this));	
+		
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
+		
+		Object formObject = getFormObject(context);
+		BindException errors = (BindException)getErrors(context);
+		
+		assertTrue(formObject instanceof TestBean);
+		assertTrue(errors.getTarget() instanceof TestBean);
+		assertSame(formObject, errors.getTarget());
+		
+		context = new MockRequestContext();
+		context.setLastEvent(new Event(this));
+		
+		OtherTestBean freshBean = new OtherTestBean();
+		context.getFlowScope().setAttribute("test", freshBean);
+		context.getRequestScope().setAttribute(BindException.ERROR_KEY_PREFIX + "test",  errors);
+		
+		FormAction otherAction = createFormAction("test");
+		otherAction.setFormObjectClass(OtherTestBean.class);
+		
+		assertEquals(AbstractAction.SUCCESS_EVENT_ID, otherAction.setupForm(context).getId());
+
+		formObject = context.getFlowScope().getAttribute("test");
+		errors = (BindException)getErrors(context);
+		
+		assertTrue(formObject instanceof OtherTestBean);
+		assertSame(freshBean, formObject);
+		assertTrue("Expected OtherTestBean, but was " + errors.getTarget().getClass(), errors.getTarget() instanceof OtherTestBean);
+		assertSame(formObject, errors.getTarget());
 	}
 	
 	// helpers
