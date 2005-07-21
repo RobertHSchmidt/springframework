@@ -782,10 +782,11 @@ public class FormAction extends MultiAction implements InitializingBean {
 				if (logger.isInfoEnabled()) {
 					logger.info(
 							"Found an Errors instance in '" + getFormErrorsScope() + "' scope that it inconsistent with the current form object." +
-							"The existing Errors instance wrap a target object '" + be.getTarget() + "' of class " + be.getTarget().getClass() +
-							". Overwriting the existing Errors instance with a newly generated one!");
+							"The existing Errors instance wraps the target object: " + be.getTarget() + " of class: " + be.getTarget().getClass() +
+							". [Taking corrective action: overwriting the existing Errors instance with an empty one for the current form object]");
 				}
-				errors = null; // fall through below
+				// fall through below				
+				errors = null;
 			}
 		}
 		if (errors == null) {
