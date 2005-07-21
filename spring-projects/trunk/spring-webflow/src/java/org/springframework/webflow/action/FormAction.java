@@ -71,13 +71,13 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </ul>
  * <p>
  * Since this is a multi-action, a subclass could add any number of additional
- * action execution methods, e.g. setupReferenceData(RequestContext), or 
+ * action execution methods, e.g. "setupReferenceData(RequestContext)", or 
  * "processSubmit(RequestContext)".
  * <p>
  * Using this action, it becomes very easy to implement form preparation and
  * submission logic in your flow.  One way to do this follows:
  * <ol>
- * <li> Create an view state to display the form. In a setup action of that 
+ * <li> Create an view state to display the form. In an entry action of that 
  * state, invoke {@link #setupForm(RequestContext) setupForm} to prepare the
  * new form for display. </li>
  * <li> On submit, execute a state transition action that performs a bindAndValidate.
@@ -86,8 +86,8 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <li>If there are binding or validation errors, the transition will not be allowed
  * and the view state will automatically be re-entered.
  * <li> If binding and validation is successful, go to an action state called
- * "executeSubmit" (or any other appropriate name). This will invoke an action method
- * called "executeSubmit" you must provide on a subclass to process form submission,
+ * "processSubmit" (or any other appropriate name). This will invoke an action method
+ * called "processSubmit" you must provide on a subclass to process form submission,
  * e.g. interacting with the business logic. </li>
  * <li> If business processing is ok, continue to a view state to display the
  * success view. </li>
@@ -112,22 +112,22 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </p>
  * <p>
  * When you need additional flexibility, consider splitting the view state above 
- * acting as a single logical form state into multiple states.  For example,
+ * acting as a single logical <i>form state</i> into multiple states.  For example,
  * you could have one action state handle form setup, a view state trigger
  * form display, another action state handle data binding and validation, and another
  * process form submission.  This would be a bit more verbose but would also give you
  * more control over how you respond to specific results of fine-grained actions that
- * occur within the the flow.
+ * occur within the flow.
  * <p>
  * <b>Subclassing hooks:</b>
  * <ul>
  * <li>An important hook method provided by this class is 
  * {@link #initBinder(RequestContext, DataBinder) initBinder}. This is 
- * called after a new data binder is created by any of the action execution methods
+ * called after a new data binder is created by any of the action execution methods.
  * It allows you to install any custom property editors required to format richly-typed 
  * form object property values.
  * <li>Another important hook is {@link #loadFormObject(RequestContext) loadFormObject}.
- * You may override this to customize where the backing form object come from
+ * You may override this to customize where the backing form object comes from
  * (e.g instantiated directly in memory or loaded from a database).
  * </ul>
  * <p>
@@ -458,17 +458,17 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * <p>
 	 * This is a fine-grained action method that you may invoke and combine with other action
 	 * methods as part of a chain.  For example, one could call "exposeFormObject" and then
-	 * "bind" to achieve setupForm-like behaivior, with the ability to respond to results of
+	 * "bind" to achieve setupForm-like behaviour, with the ability to respond to results of
 	 * each actions independently as part of a flow definition.
 	 * <p>
 	 * Here is that example of that 'action chaining' illustrated:
 	 * <pre>
-	 *    &lt;action-state method="setupForm"&gt;
-	 *        &lt;action name="exposer" bean="formAction" method="exposeFormObject"/&gt;
-	 *        &lt;action bean="formAction" method="bind"/&gt;
-	 *        &lt;transition on="exposer.error" to="displayFormObjectRetrievalFailurePage"/&gt;
-	 *        &lt;transition on="success" to="displayForm"/&gt;
-	 *    &lt;/action-state&gt;
+	 * &lt;action-state method="setupForm"&gt;
+	 *     &lt;action name="exposer" bean="formAction" method="exposeFormObject"/&gt;
+	 *     &lt;action bean="formAction" method="bind"/&gt;
+	 *     &lt;transition on="exposer.error" to="displayFormObjectRetrievalFailurePage"/&gt;
+	 *     &lt;transition on="success" to="displayForm"/&gt;
+	 * &lt;/action-state&gt;
 	 * </pre>
 	 * @param context the flow request context
 	 * @return "success" if the action completed successsfully, "error" otherwise
@@ -480,7 +480,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 			ensureFormObjectExposed(context, formObject);
 			ensureFormErrorsExposed(context, formObject);
 			return success();
-		} catch (FormObjectRetrievalFailureException e) {
+		}
+		catch (FormObjectRetrievalFailureException e) {
 			return error(e);
 		}		
 	}
@@ -504,7 +505,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 		Object formObject = null;
 		try {
 			formObject = getFormObject(context);
-		} catch (FormObjectRetrievalFailureException e) {
+		}
+		catch (FormObjectRetrievalFailureException e) {
 			// handle retrieval exceptions only, other exceptions propagate
 			return error(e);
 		}
@@ -537,12 +539,13 @@ public class FormAction extends MultiAction implements InitializingBean {
 		Object formObject = null;
 		try {
 			formObject = getFormObject(context);
-		} catch (FormObjectRetrievalFailureException e) {
+		}
+		catch (FormObjectRetrievalFailureException e) {
 			// handle retrieval exceptions only, other exceptions propagate
 			return error(e);
 		}
-		DataBinder binder = createBinder(context, formObject);
 		ensureFormObjectExposed(context, formObject);
+		DataBinder binder = createBinder(context, formObject);
 		doBind(context, binder);
 		setFormErrors(context, binder.getErrors());
 		if (getValidator() != null && isValidateOnBinding() && validationEnabled(context)) {
@@ -567,18 +570,19 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
 	 * @return "success" if there are no binding errors, "error" if there
-	 * are errors or the form object could not be retrieved.
+	 *         are errors or the form object could not be retrieved.
 	 */
 	public Event bind(RequestContext context) throws Exception {
 		Object formObject = null;
 		try {
 			formObject = getFormObject(context);
-		} catch (FormObjectRetrievalFailureException e) {
+		}
+		catch (FormObjectRetrievalFailureException e) {
 			// handle retrieval exceptions only, other exceptions propagate
 			return error(e);
 		}
-		DataBinder binder = createBinder(context, formObject);
 		ensureFormObjectExposed(context, formObject);
+		DataBinder binder = createBinder(context, formObject);
 		doBind(context, binder);
 		setFormErrors(context, binder.getErrors());
 		return binder.getErrors().hasErrors() ? error() : success();
@@ -589,18 +593,19 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
 	 * @return "success" if there are no validation errors, "error" if there 
-	 * are errors or the form object could not be retrieved.
+	 *         are errors or the form object could not be retrieved.
 	 */
 	public Event validate(RequestContext context) throws Exception {
 		Object formObject = null;
 		try {
 			formObject = getFormObject(context);
-		} catch (FormObjectRetrievalFailureException e) {
+		}
+		catch (FormObjectRetrievalFailureException e) {
 			// handle retrieval exceptions only, other exceptions propagate
 			return error(e);
 		}
-		DataBinder binder = createBinder(context, formObject);
 		ensureFormObjectExposed(context, formObject);
+		DataBinder binder = createBinder(context, formObject);
 		doValidate(context, binder);
 		setFormErrors(context, binder.getErrors());
 		return binder.getErrors().hasErrors() ? error() : success();
@@ -610,7 +615,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * Resets the form by clearing out the form object in the specified scope and
 	 * reloading it by calling loadFormObject.
 	 * @param context the request context
-	 * @return "success" if the reset action completed successfully, "error" otherwise.
+	 * @return "success" if the reset action completed successfully, "error" otherwise
 	 * @throws Exception if an exception occured
 	 */
 	public Event resetForm(RequestContext context) throws Exception {
@@ -619,7 +624,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 			setFormObject(context, formObject);
 			setEmptyFormErrors(context, formObject);
 			return success();
-		} catch (FormObjectRetrievalFailureException e) {
+		}
+		catch (FormObjectRetrievalFailureException e) {
 			// handle retrieval exceptions only, other exceptions propagate
 			return error(e);
 		}
@@ -821,8 +827,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
 	 * @return the form object
-	 * @throws FormObjectRetrievalFailureException the form object could not be
-	 *         created
+	 * @throws Exception the form object could not be created
 	 */
 	protected Object createFormObject(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
