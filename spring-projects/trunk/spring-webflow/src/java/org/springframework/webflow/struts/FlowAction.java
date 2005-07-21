@@ -225,12 +225,12 @@ public class FlowAction extends ActionSupport {
 			WebUtils.exposeRequestAttributes(request, viewDescriptor.getModel());
 			ActionForward forward = mapping.findForward(viewDescriptor.getViewName());
 			if (forward != null) {
-				forward = new ActionForward(forward);
+				// the 1.2.1 copy constructor would ideally be better to use, but is not Struts 1.1 compatible
+				forward = new ActionForward(forward.getName(), forward.getPath(), viewDescriptor.isRedirect(), forward.getModule());
 			}
 			else {
-				forward = new ActionForward(viewDescriptor.getViewName());
+				forward = new ActionForward(viewDescriptor.getViewName(), viewDescriptor.isRedirect());
 			}
-			forward.setRedirect(viewDescriptor.isRedirect());
 			forward.freeze();
 			return forward;
 		}
