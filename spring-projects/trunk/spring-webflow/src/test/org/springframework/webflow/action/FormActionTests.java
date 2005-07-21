@@ -18,6 +18,8 @@ package org.springframework.webflow.action;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -26,8 +28,6 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.test.MockRequestContext;
-
-import junit.framework.TestCase;
 
 /**
  * Unit test for the FormAction class.
@@ -287,6 +287,33 @@ public class FormActionTests extends TestCase {
 		assertEquals("", getFormObject(context, "otherTest").getProp());
 	}
 	
+	public void testGetFormObject() throws Exception {
+		MockRequestContext context = new MockRequestContext();
+		context.setLastEvent(new Event(this));
+		FormAction action = createFormAction("test");
+		TestBean formObject = (TestBean)action.getFormObject(context);
+		assertNotNull(formObject);
+		formObject = new TestBean();
+		TestBean testBean = formObject;
+		new FormObjectAccessor(context).setFormObject(formObject, action.getFormObjectName(), action.getFormObjectScope());
+		formObject = (TestBean)action.getFormObject(context);
+		assertSame(formObject, testBean);
+	}
+	
+	public void testGetFormErrors() throws Exception {
+		MockRequestContext context = new MockRequestContext();
+		context.setLastEvent(new Event(this));
+		FormAction action = createFormAction("test");
+		Errors errors = (Errors)action.getFormErrors(context);
+		assertNotNull(errors);
+		assertTrue(!errors.hasErrors());
+		errors = new BindException(new TestBean(), "test");
+		Errors testErrors = errors;
+		new FormObjectAccessor(context).setFormErrors(errors, action.getFormErrorsScope());
+		errors = (Errors)action.getFormErrors(context);
+		assertSame(errors, testErrors);
+	}
+	
 	public void testFormObjectAccessUsingAlias() throws Exception {
 		MockRequestContext context = new MockRequestContext();
 		context.setLastEvent(new Event(this));
@@ -324,7 +351,7 @@ public class FormActionTests extends TestCase {
 		res.setFormObjectClass(TestBean.class);
 		res.setValidator(new TestBeanValidator());
 		res.setFormObjectScope(ScopeType.FLOW);
-		res.setErrorsScope(ScopeType.REQUEST);
+		res.setFormErrorsScope(ScopeType.REQUEST);
 		res.setValidateOnBinding(true);
 		res.initAction();
 		return res;
