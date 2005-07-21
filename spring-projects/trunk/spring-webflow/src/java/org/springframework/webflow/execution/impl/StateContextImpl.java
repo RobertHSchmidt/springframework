@@ -184,10 +184,6 @@ public class StateContextImpl implements StateContext {
 
 	public FlowSession endActiveSession() throws IllegalStateException {
 		FlowSession endedSession = this.flowExecution.endActiveFlowSession();
-		if (logger.isDebugEnabled()) {
-			logger.debug("Session for flow '" + endedSession.getFlow().getId() + "' ended, session details = "
-					+ endedSession);
-		}
 		this.flowExecution.getListeners().fireSessionEnded(this, endedSession);
 		return endedSession;
 	}

@@ -60,7 +60,7 @@ public class ActionExecutor {
 	protected Event execute(RequestContext context) throws ActionExecutionException {
 		try {
 			if (logger.isDebugEnabled()) {
-				logger.debug("In state: " + context.getFlowExecutionContext().getCurrentState().getId() + ", executing action: '" + this + "'");
+				logger.debug("Executing action: " + this + " in state: '" + context.getFlowExecutionContext().getCurrentState().getId() + "'");
 			}
 			return action.execute(context);
 		}

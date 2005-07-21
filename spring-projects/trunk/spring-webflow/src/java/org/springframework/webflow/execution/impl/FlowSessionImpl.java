@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
@@ -114,7 +115,7 @@ public class FlowSessionImpl implements FlowSession, Serializable {
 		Assert.isTrue(this.flow == newState.getFlow(),
 				"The newState belongs to the flow associated with this flow session");
 		if (logger.isDebugEnabled()) {
-			logger.debug("Setting current state of this '" + getFlow().getId() + "' flow session to: '" + newState.getId() + "'");
+			logger.debug("Setting current state of flow session: '" + getFlow().getId() + "@" + ObjectUtils.getIdentityHexString(this) + "' to: '" + newState.getId() + "'");
 		}
 		this.currentState = newState;
 	}
@@ -182,8 +183,7 @@ public class FlowSessionImpl implements FlowSession, Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("flow", flow.getId()).append("currentState", currentState.getId()).append(
-				"attributesCount", flowScope.size()).append("attributes", flowScope)
-				.toString();
+		return new ToStringCreator(this).append("flow", flow.getId()).append("currentState", (currentState != null ? currentState.getId() : "[none]")).
+			append("attributesCount", flowScope.size()).append("attributes", flowScope).toString();
 	}
 }

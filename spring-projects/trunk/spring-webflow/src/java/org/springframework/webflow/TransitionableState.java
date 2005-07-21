@@ -225,7 +225,7 @@ public abstract class TransitionableState extends State {
 		context.setLastEvent(event);
 		Transition transition = getRequiredTransition(context);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Event '" + event.getId() + "' matched transition: " + transition);
+			logger.debug("Event '" + event.getId() + "' matched transition to state: '" + transition.getTargetStateId() + "'");
 		}
 		return transition.execute(context);
 	}

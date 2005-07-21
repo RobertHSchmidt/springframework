@@ -430,6 +430,9 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		}
 		executingFlowSessions.push(session);
 		session.setStatus(FlowSessionStatus.ACTIVE);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Activated: " + session);
+		}
 		return session;
 	}
 
@@ -454,8 +457,14 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	protected FlowSession endActiveFlowSession() {
 		FlowSessionImpl endingSession = (FlowSessionImpl)executingFlowSessions.pop();
 		endingSession.setStatus(FlowSessionStatus.ENDED);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Ended: " + endingSession);
+		}		
 		if (!executingFlowSessions.isEmpty()) {
 			getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Resumed: " + getActiveSessionInternal());
+			}		
 		}
 		return endingSession;
 	}

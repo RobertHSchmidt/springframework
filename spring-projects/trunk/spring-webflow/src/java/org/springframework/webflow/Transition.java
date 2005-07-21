@@ -290,7 +290,7 @@ public class Transition extends AnnotatedObject {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("sourceState", sourceState.getId()).append("matchingCriteria", matchingCriteria).
-			append("executionCriteria", executionCriteria).append("properties", getProperties()).toString();
+		return new ToStringCreator(this).append("targetState", getTargetStateId()).append("sourceState", getSourceState().getId()).append("matchingCriteria", getMatchingCriteria()).
+			append("executionCriteria", getExecutionCriteria()).append("properties", getProperties()).toString();
 	}
 }
