@@ -42,13 +42,12 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * parameterization with the appropriate <code>flowId</code> in views that
  * start new flow executions.
  * <p>
- * Requests are managed by and delegated to a
- * {@link FlowExecutionManager}, allowing reuse of common front flow
- * controller logic in other environments. Consult the JavaDoc of that class for
- * more information on how requests are processed.
+ * Requests are managed by and delegated to a {@link FlowExecutionManager},
+ * allowing reuse of common front flow controller logic in other environments.
+ * Consult the JavaDoc of that class for more information on how requests are processed.
  * <p>
  * On each request received by this action, a StrutsEvent object is created as input 
- * to the webflow system.  This external source event provides access to the 
+ * to the web flow system.  This external source event provides access to the 
  * action form, action mapping, and other struts-specific constructs.  As a 
  * convenience, the "actionForm" attribute is also exposed in requestScope after
  * a request is submitted.  This means you may access your action form from your
@@ -64,7 +63,7 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * and request dispatching.
  * <p>
  * Below is an example <code>struts-config.xml</code> configuration for a
- * FlowAction that fronts a single top-level flow:
+ * FlowAction:
  * 
  * <pre>
  * &lt;action path=&quot;/userRegistration&quot;
@@ -89,6 +88,7 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * in <code>struts-config.xml</code>: simply declare a form bean in request scope 
  * of the class <code>org.springframework.web.struts.SpringBindingActionForm</code> and
  * use it with your FlowAction(s).
+ * </ul>
  * <p>
  * The benefits here are substantial: developers now have a powerful web flow
  * capability integrated with Struts, with a consistent-approach to POJO-based
@@ -96,6 +96,7 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  * <code>ActionForm</code> classes found in traditional Struts-based apps.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionManager
+ * @see org.springframework.webflow.struts.StrutsEvent
  * @see org.springframework.web.struts.SpringBindingActionForm
  * 
  * @author Keith Donald
@@ -103,8 +104,16 @@ import org.springframework.webflow.support.FlowExecutionListenerAdapter;
  */
 public class FlowAction extends ActionSupport {
 
+	/**
+	 * The flow execution manager will be retreived from the application context
+	 * using this bean name if no manager is explicitly set.
+	 */
 	public static final String FLOW_EXECUTION_MANAGER_BEAN_NAME = "flowExecutionManager";
 
+	/**
+	 * Name of the request scope attribute that will hold a reference to
+	 * the Struts ActionForm.
+	 */
 	public static final String ACTION_FORM_ATTRIBUTE = "actionForm";
 	
 	private FlowExecutionManager flowExecutionManager;
@@ -135,12 +144,11 @@ public class FlowAction extends ActionSupport {
 	
 	/**
 	 * Convenience setter that configures a single flow definition for this action to
-	 * manage. This is a convenience feature to make it easy configure the flow for
-	 * a action which just uses the default flow execution manager.
-	 * Note: do not call both this method and <code>setFlowExecutionManager()</code> -- call one
-	 * or the other.
-	 * @param flow the flow that this controller will manage
-	 * @see #setFlowExecutionManager(ServletFlowExecutionManager)
+	 * manage. This is a convenience feature to make it easy to configure the flow for
+	 * an action which just uses the default flow execution manager.
+	 * Note: do not call both this method and <code>setFlowExecutionManager()</code>
+	 * -- call one or the other.
+	 * @param flow the flow that this action will manage
 	 */
 	public void setFlow(Flow flow) {
 		this.flow = flow;
@@ -152,6 +160,7 @@ public class FlowAction extends ActionSupport {
 				setFlowExecutionManager((FlowExecutionManager)getWebApplicationContext().getBean(FLOW_EXECUTION_MANAGER_BEAN_NAME, FlowExecutionManager.class));
 			}
 			catch (NoSuchBeanDefinitionException e) {
+				// use default
 				setFlowExecutionManager(new ServletFlowExecutionManager(new BeanFactoryFlowServiceLocator(getWebApplicationContext())));
 			}
 		}
@@ -184,7 +193,7 @@ public class FlowAction extends ActionSupport {
 	/**
 	 * Creates a flow execution listener that takes a Spring Errors instance
 	 * supporting POJO-based data binding in request scope under a well-defined
-	 * name and adapts it to the Struts Action form model.
+	 * name and adapts it to the Struts ActionForm model.
 	 * @param request the request
 	 * @param form the action form
 	 * @return the adapter
