@@ -413,6 +413,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * Create a new flow session and activate it in this flow execution. This
 	 * will push the flow session onto the stack and mark it as the active flow
 	 * session.
+	 * @param context the flow execution request context
 	 * @param subflow the flow that should be associated with the flow session
 	 * @param input the input parameters used to populate the flow session
 	 * @return the created and activated flow session
@@ -437,6 +438,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * a special implementation if required.
 	 * @param flow the flow that should be associated with the flow session
 	 * @param input the input parameters used to populate the flow session
+	 * @param parent the flow session that should be the parent of the newly
+	 *        created flow session
 	 * @return the newly created flow session
 	 */
 	protected FlowSessionImpl createFlowSession(Flow flow, Map input, FlowSessionImpl parent) {
