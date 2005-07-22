@@ -764,7 +764,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the flow request context
 	 * @return the form errors
 	 */
-	protected Object getFormErrors(RequestContext context) throws Exception {
+	protected Errors getFormErrors(RequestContext context) throws Exception {
 		return ensureFormErrorsExposed(context, getFormObject(context));
 	}
 

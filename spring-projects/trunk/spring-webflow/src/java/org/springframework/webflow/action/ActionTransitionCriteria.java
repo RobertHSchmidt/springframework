@@ -17,7 +17,7 @@ package org.springframework.webflow.action;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
-import org.springframework.webflow.ActionExecutionException;
+import org.springframework.webflow.ActionExecutor;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
@@ -80,15 +80,7 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 	}
 	
 	public boolean test(RequestContext context) {
-		try {
-			Event result = getAction().execute(context);
-			return result != null && getTrueEventId().equals(result.getId());
-		}
-		catch (ActionExecutionException e) {
-			throw e;
-		}
-		catch (Exception e) {
-			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), getAction(), e);
-		}
+		Event result = new ActionExecutor(getAction()).execute(context);
+		return result != null && getTrueEventId().equals(result.getId());
 	}
 }

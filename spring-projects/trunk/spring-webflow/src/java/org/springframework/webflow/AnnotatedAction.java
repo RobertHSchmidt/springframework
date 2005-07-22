@@ -178,7 +178,6 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	}
 	
 	public String toString() {
-		return new ToStringCreator(this).append("action", getTargetAction()).append("properties", getProperties())
-				.toString();
+		return new ToStringCreator(this).append("properties", getProperties()).append("action", getTargetAction()).toString();
 	}
 }
