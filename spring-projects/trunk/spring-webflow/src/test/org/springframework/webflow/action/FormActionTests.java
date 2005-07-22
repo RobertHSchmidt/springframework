@@ -318,7 +318,7 @@ public class FormActionTests extends TestCase {
 		context.setLastEvent(new Event(this));
 		FormAction action = createFormAction("test");
 		action.setupForm(context);
-		Errors errors = (Errors)action.getFormErrors(context);
+		Errors errors = action.getFormErrors(context);
 		assertNotNull(errors);
 		assertTrue(!errors.hasErrors());
 		errors = new BindException(getFormObject(context), "test");
@@ -390,6 +390,42 @@ public class FormActionTests extends TestCase {
 		assertSame(freshBean, formObject);
 		assertTrue("Expected OtherTestBean, but was " + errors.getTarget().getClass(), errors.getTarget() instanceof OtherTestBean);
 		assertSame(formObject, errors.getTarget());
+	}
+	
+	public void testMultipleFormObjects() throws Exception {
+		MockRequestContext context = new MockRequestContext();
+		context.setLastEvent(new Event(this));	
+
+		FormAction action1 = createFormAction("test1");
+		Event result1 = action1.setupForm(context);
+		TestBean test1 = (TestBean)context.getFlowScope().getAttribute("test1");
+		assertNotNull(test1);
+		assertSame(test1, new FormObjectAccessor(context).getFormObject());
+
+		FormAction action2 = createFormAction("test2");
+		Event result2 = action2.setupForm(context);
+		TestBean test2 = (TestBean)context.getFlowScope().getAttribute("test2");
+		assertNotNull(test2);
+		assertSame(test2, new FormObjectAccessor(context).getFormObject());
+		
+		Map props = new HashMap();
+		props.put("prop", "12345");
+		context.setLastEvent(new Event(this, "submit", props));
+		action1.bindAndValidate(context);
+		TestBean test11 = (TestBean)context.getFlowScope().getAttribute("test1");
+		assertSame(test1, test11);
+		assertEquals("12345", test1.getProp());
+		assertSame(test1, new FormObjectAccessor(context).getFormObject());
+
+		props = new HashMap();
+		props.put("prop", "123456");
+		context.setLastEvent(new Event(this, "submit", props));
+		action2.bindAndValidate(context);
+		TestBean test22 = (TestBean)context.getFlowScope().getAttribute("test2");
+		assertSame(test22, test2);
+		assertEquals("123456", test2.getProp());
+		assertSame(test2, new FormObjectAccessor(context).getFormObject());
+
 	}
 	
 	// helpers

@@ -478,7 +478,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	public Event exposeFormObject(RequestContext context) throws Exception {
 		try {
 			Object formObject = getFormObject(context);
-			ensureFormObjectExposed(context, formObject);
+			setFormObject(context, formObject);
 			ensureFormErrorsExposed(context, formObject);
 			return success();
 		}
@@ -511,7 +511,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 			// handle retrieval exceptions only, other exceptions propagate
 			return error(e);
 		}
-		ensureFormObjectExposed(context, formObject);
+		setFormObject(context, formObject);
 		if (setupBindingEnabled(context)) {
 			DataBinder binder = createBinder(context, formObject);
 			doBind(context, binder);
@@ -546,7 +546,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 			// handle retrieval exceptions only, other exceptions propagate
 			return error(e);
 		}
-		ensureFormObjectExposed(context, formObject);
+		setFormObject(context, formObject);
 		DataBinder binder = createBinder(context, formObject);
 		doBind(context, binder);
 		setFormErrors(context, binder.getErrors());
@@ -583,7 +583,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 			// handle retrieval exceptions only, other exceptions propagate
 			return error(e);
 		}
-		ensureFormObjectExposed(context, formObject);
+		setFormObject(context, formObject);
 		DataBinder binder = createBinder(context, formObject);
 		doBind(context, binder);
 		setFormErrors(context, binder.getErrors());
@@ -606,7 +606,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 			// handle retrieval exceptions only, other exceptions propagate
 			return error(e);
 		}
-		ensureFormObjectExposed(context, formObject);
+		setFormObject(context, formObject);
 		DataBinder binder = createBinder(context, formObject);
 		doValidate(context, binder);
 		setFormErrors(context, binder.getErrors());
@@ -740,17 +740,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 		return formObject;
 	}
 
-	/**
-	 * Expose the form object in the model of the currently executing flow if neccessary.
-	 * @param context the flow execution request context
-	 * @param formObject the form object
-	 */
-	private void ensureFormObjectExposed(RequestContext context, Object formObject) {
-		if (getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormErrorsScope()) == null) {
-			setFormObject(context, formObject);
-		}
-	}
-	
 	/**
 	 * Put given form object in the configured scope of given context.
 	 */
