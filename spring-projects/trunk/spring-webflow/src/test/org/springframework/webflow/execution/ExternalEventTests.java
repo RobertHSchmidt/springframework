@@ -22,6 +22,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.servlet.ServletEvent;
 
 /**
+ * Test case for the ExternalEvent class.
+ * 
  * @author Erwin Vervaet
  */
 public class ExternalEventTests extends TestCase {
