@@ -397,13 +397,13 @@ public class FormActionTests extends TestCase {
 		context.setLastEvent(new Event(this));	
 
 		FormAction action1 = createFormAction("test1");
-		Event result1 = action1.setupForm(context);
+		action1.setupForm(context);
 		TestBean test1 = (TestBean)context.getFlowScope().getAttribute("test1");
 		assertNotNull(test1);
 		assertSame(test1, new FormObjectAccessor(context).getFormObject());
 
 		FormAction action2 = createFormAction("test2");
-		Event result2 = action2.setupForm(context);
+		action2.setupForm(context);
 		TestBean test2 = (TestBean)context.getFlowScope().getAttribute("test2");
 		assertNotNull(test2);
 		assertSame(test2, new FormObjectAccessor(context).getFormObject());
@@ -425,7 +425,6 @@ public class FormActionTests extends TestCase {
 		assertSame(test22, test2);
 		assertEquals("123456", test2.getProp());
 		assertSame(test2, new FormObjectAccessor(context).getFormObject());
-
 	}
 	
 	// helpers
