@@ -701,7 +701,7 @@
     
 	<mkdir dir="${ivy.distrib.dir}/jars"/>
     <copy file="${target.lib.dir}/${project.name}.jar" tofile="${ivy.distrib.dir}/jars/${project.name}-${project.version}.jar" />
-    <copy file="${target.lib.dir}/${project.name}-src.jar" tofile="${ivy.distrib.dir}/jars/${project.name}-src-${project.version}.jar" />
+    <copy file="${target.lib.dir}/${project.name}-src.zip" tofile="${ivy.distrib.dir}/jars/${project.name}-src-${project.version}.zip" />
 	<ivy:publish resolver="integration-repo"
                  artifactspattern="${ivy.distrib.dir}/jars/[artifact]-[revision].[ext]"
                  pubrevision="${project.version}" pubdate="${pubdate}"
