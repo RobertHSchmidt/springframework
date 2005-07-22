@@ -151,12 +151,8 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	public Event execute(RequestContext context) throws Exception {
 		context.setProperties(this);
 		try {
-			Event result = getTargetAction().execute(context);
+			Event result = new ActionExecutor(getTargetAction()).execute(context);
 			return postProcessResult(result);
-		}
-		catch (Exception e) {
-			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(),
-					getTargetAction(), this, e);
 		}
 		finally {
 			context.setProperties(null);

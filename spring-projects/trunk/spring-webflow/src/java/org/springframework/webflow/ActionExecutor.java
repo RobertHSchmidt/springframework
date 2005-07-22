@@ -57,7 +57,7 @@ public class ActionExecutor {
 	 * @return result of execution
 	 * @throws ActionExecutionException if the action threw an exception while executing
 	 */
-	protected Event execute(RequestContext context) throws ActionExecutionException {
+	public Event execute(RequestContext context) throws ActionExecutionException {
 		try {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing action: " + this + " in state: '" + context.getFlowExecutionContext().getCurrentState().getId() + "'");
