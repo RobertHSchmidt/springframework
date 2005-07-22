@@ -170,6 +170,7 @@
     <zip zipfile="${target.release.dir}/${release.bin.zip}">
 	  <zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
 	  <zipfileset dir="../spring-webflow/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
+	  <zipfileset dir="../spring-webflow/target/javadocs" prefix="${zip.toplevel.dir}/doc/api"/>
     </zip>
   </target>
 
@@ -182,8 +183,9 @@
     <zip zipfile="${target.release.dir}/${release.bin.deps.zip}">
 	  <zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
 	  <zipfileset dir="../spring-webflow/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
+	  <zipfileset dir="../spring-webflow/target/javadocs" prefix="${zip.toplevel.dir}/doc/api"/>
 	  <zipfileset dir="../spring-webflow/lib/global" prefix="${zip.toplevel.dir}/lib"/>
-    </zip>
+	</zip>
   </target>
   
   <target name="gen-buildable-zip" depends="init"
@@ -196,6 +198,7 @@
       <zipfileset dir="..">
         <selector refid="project.source.zip.includes"/>
       </zipfileset>
+	  <zipfileset dir="../spring-webflow/target/javadocs" prefix="doc/api"/>
     </zip>
   </target>
   
