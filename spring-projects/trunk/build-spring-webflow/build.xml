@@ -132,6 +132,14 @@
     </subant>
   </target>
 
+  <target name="dist" depends="init"
+          description="Calls dist targets on each project">
+    <echo>projects=${projects}</echo>
+	<subant target="dist" inheritall="false">
+	  <buildpath refid="${projects}"/>
+    </subant>
+  </target>
+  
   <target name="tests" depends="init"
           description="Calls test targets on each project">
     <echo>projects=${projects}</echo>
@@ -140,8 +148,16 @@
     </subant>
   </target>
 
+  <target name="javadoc" depends="init"
+          description="Calls javadoc targets on each project">
+    <echo>projects=${projects}</echo>
+	<subant target="javadoc" inheritall="false">
+	  <buildpath refid="${projects}"/>
+    </subant>
+  </target>
+
   <target name="release"
-          depends="publish, gen-release-bins, gen-release-bins-with-deps, gen-buildable-zip"
+          depends="dist, javadoc, gen-release-bins, gen-release-bins-with-deps, gen-buildable-zip"
           description="Generate release zips">
   </target>
 
