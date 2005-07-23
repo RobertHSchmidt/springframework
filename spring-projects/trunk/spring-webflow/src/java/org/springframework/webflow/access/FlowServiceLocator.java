@@ -61,8 +61,8 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	public Flow createFlow(Class implementationClass, AutowireMode autowireMode) throws ServiceLookupException;
 	
 	/**
-	 * Lookup a flow of specified implementation class; there must exactly one
-	 * flow implementation of the specified implementation in the registry this
+	 * Lookup a flow of specified implementation class; there must be exactly one
+	 * flow implementation of the specified implementation class in the registry this
 	 * locator queries.
 	 * @param implementationClass the required implementation class
 	 * @return the flow
