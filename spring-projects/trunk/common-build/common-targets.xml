@@ -77,9 +77,11 @@
   	<property name="org.name" value="springframework.org"/>
   	<property name="org.package.prefix" value="org.springframework"/>
     <property name="project.name" value="${ant.project.name}"/>
-    <property name="project.base.version" value="1.0-dev"/>
+   	<property name="project.webapp.name" value="${ant.project.name}"/>
+  	<property name="project.base.version" value="1.0-dev"/>
     <property name="project.version" value="${project.base.version}-${build.timestamp}"/>
-    <property environment="myenv"/>
+
+  	<property environment="myenv"/>
 
   	<!-- Compiler options -->
     <property name="optimize" value="false"/>
@@ -171,7 +173,8 @@
 	</patternset>
 
     <property name="target.lib.dir" value="${target.artifacts.dir}/lib" />
-	
+  	<property name="project.war" value="${target.artifacts.war.dir}/${project.webapp.name}.war"/>
+
     <!-- convert appserver specific properties to final property names -->
 	<echoproperties destfile="properties.tmp">
       <propertyset id="appserver.specific.properties">
@@ -542,7 +545,6 @@
   <!-- copy web statics -->
   <target name="statics.web" if="build.web">
 
-  	<property name="project.webapp.name" value="${ant.project.name}"/>
     <propertyfile file="${target.filter.file}">
 	  	<entry key="PROJECT_WEBAPP_NAME" value="${project.webapp.name}" />
 	</propertyfile>
@@ -606,7 +608,6 @@
   <!-- main war target -->
   <target name="war.main" if="build.web">
     <mkdir dir="${target.artifacts.war.dir}"/>
-  	<property name="project.war" value="${target.artifacts.war.dir}/${project.webapp.name}.war"/>
     <jar jarfile="${project.war}">
       <fileset dir="${target.war.expanded.dir}" >
         <exclude name="**/*.dependency" />

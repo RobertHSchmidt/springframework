@@ -86,23 +86,21 @@
         <reload url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${project.name}" />
     </target>
 
-    <target name="tomcat-copy-war" depends="tomcat.init, war"
+    <target name="tomcat-copy-war" depends="tomcat.init"
             description="Copy this application .war to tomcat">
         <copy file="${project.war}" todir="${tomcat.deploy.dir}" />
     </target>
 
     <target name="tomcat-clean-war" depends="tomcat.init"
-            description="Clean this application .war from tomcat">
-        <delete file="${project.war}" />
-        <delete failonerror="false" dir="${tomcat.deploy.dir}/${project.name}" />
+            description="Clean this application expanded war directory from tomcat">
+        <delete failonerror="false" dir="${tomcat.deploy.dir}/${project.webapp.name}" />
     </target>
 
     <target name="tomcat-refresh-war" depends="tomcat-clean-war, tomcat-copy-war"
             description="Clean and copy this application .war to tomcat">
-        <copy file="${project.war}" todir="${tomcat.deploy.dir}" />
     </target>
 
-    <target name="tomcat-launch" depends="tomcat.init"
+    <target name="tomcat-launch" depends="tomcat.init,tomcat-refresh-war"
             description="Launch the tomcat server process and have it deploy this web application">
         <exec dir="${tomcat.dir}/bin" executable="startup.bat" spawn="true" vmlauncher="false">
         	<env key="JAVA_OPTS" value="${tomcat.javaopts}"/>
