@@ -30,9 +30,9 @@ import org.springframework.webflow.Flow;
  * this:
  * 
  * <pre>
- *    &lt;bean id=&quot;user.RegistrationFlow&quot; class=&quot;org.springframework.web.flow.config.FlowFactoryBean&quot;&gt;
+ *    &lt;bean id=&quot;user.RegistrationFlow&quot; class=&quot;org.springframework.webflow.config.FlowFactoryBean&quot;&gt;
  *       &lt;property name=&quot;flowBuilder&quot;&gt;
- *           &lt;bean class=&quot;com.mycompany.myapp.web.flow.user.UserRegistrationFlowBuilder&quot;/&gt;
+ *           &lt;bean class=&quot;com.mycompany.myapp.webflow.user.UserRegistrationFlowBuilder&quot;/&gt;
  *       &lt;/property&gt;
  *    &lt;/bean&gt;
  * </pre>
@@ -41,10 +41,10 @@ import org.springframework.webflow.Flow;
  * implementation. An XmlFlowBuilder could instead be used, for example:
  * 
  * <pre>
- *    &lt;bean id=&quot;user.RegistrationFlow&quot; class=&quot;org.springframework.web.flow.config.FlowFactoryBean&quot;&gt;
+ *    &lt;bean id=&quot;user.RegistrationFlow&quot; class=&quot;org.springframework.webflow.config.FlowFactoryBean&quot;&gt;
  *        &lt;property name=&quot;flowBuilder&quot;&gt;
- *            &lt;bean class=&quot;org.springframework.web.flow.config.XmlFlowBuilder&quot;&gt;
- *                &lt;property name=&quot;resource&quot;&gt;
+ *            &lt;bean class=&quot;org.springframework.webflow.config.XmlFlowBuilder&quot;&gt;
+ *                &lt;property name=&quot;location&quot;&gt;
  *                    &lt;value&gt;UserRegistrationFlow.xml&lt;/value&gt;
  *                &lt;/property&gt;
  *            &lt;/bean&gt;
