@@ -21,7 +21,7 @@
 
 	<filter>
 		<filter-name>flowCleanup</filter-name>
-		<filter-class>org.springframework.webflow.support.ExpiredFlowCleanupFilter</filter-class>
+		<filter-class>org.springframework.webflow.execution.servlet.ExpiredFlowCleanupFilter</filter-class>
 		<init-param>
 			<param-name>timeout</param-name>
 			<param-value>1</param-value> <!-- 1 minute timeout for demo purposes -->

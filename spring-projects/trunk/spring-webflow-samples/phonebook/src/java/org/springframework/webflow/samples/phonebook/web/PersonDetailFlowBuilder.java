@@ -17,8 +17,8 @@ package org.springframework.webflow.samples.phonebook.web;
 
 import org.springframework.binding.support.Mapping;
 import org.springframework.webflow.Transition;
+import org.springframework.webflow.access.AutowireMode;
 import org.springframework.webflow.config.AbstractFlowBuilder;
-import org.springframework.webflow.config.AutowireMode;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
