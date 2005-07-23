@@ -134,7 +134,7 @@ public class FlowExecutionTests extends TestCase {
 						return success();
 					}
 				}, on(success(), "startSubFlow"));
-				addSubFlowState("startSubFlow", childFlow, new Transition[] { on(finish(), "startSubFlow"),
+				addSubflowState("startSubFlow", childFlow, new Transition[] { on(finish(), "startSubFlow"),
 						on("stopTest", "stopTest") });
 				addEndState("stopTest");
 			}

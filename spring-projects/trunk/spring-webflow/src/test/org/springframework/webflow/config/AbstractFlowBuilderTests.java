@@ -111,7 +111,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 		public void buildStates() {
 			addActionState("getPersonList", action("noOptAction"), on(success(), "viewPersonList"));
 			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
-			addSubFlowState(PERSON_DETAILS, flow("person.Detail"),	attributeMapper("id.attributeMapper"), onAnyEvent("getPersonList"));
+			addSubflowState(PERSON_DETAILS, flow("person.Detail"),	attributeMapper("id.attributeMapper"), onAnyEvent("getPersonList"));
 			addEndState("finish");
 		}
 	}
@@ -124,7 +124,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 		public void buildStates() {
 			addActionState("getPersonList", actionRef(NoOpAction.class), on(success(), "viewPersonList"));
 			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
-			addSubFlowState(PERSON_DETAILS, flow("person.Detail"),	attributeMapperRef(PersonIdMapper.class), onAnyEvent("getPersonList"));
+			addSubflowState(PERSON_DETAILS, flow("person.Detail"),	attributeMapperRef(PersonIdMapper.class), onAnyEvent("getPersonList"));
 			addEndState("finish");
 		}
 	}
@@ -155,7 +155,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 		public void buildStates() {
 			addActionState("getPersonList", noOpAction, on(success(), "viewPersonList"));
 			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
-			addSubFlowState(PERSON_DETAILS, subFlow, personIdMapper, onAnyEvent("getPersonList"));
+			addSubflowState(PERSON_DETAILS, subFlow, personIdMapper, onAnyEvent("getPersonList"));
 			addEndState("finish");
 		}
 	}

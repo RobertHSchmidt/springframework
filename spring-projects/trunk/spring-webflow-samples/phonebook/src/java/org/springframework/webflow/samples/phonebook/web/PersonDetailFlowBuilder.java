@@ -54,7 +54,7 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 		// view details for selected collegue
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("sourceEvent.parameters.id", "id", fromStringTo(Long.class)));
-		addSubFlowState(BROWSE_COLLEAGUE_DETAILS, flow("detailFlow"), idMapper,
+		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detailFlow"), idMapper,
 				new Transition[] { on(finish(), GET_PERSON), on(error(), "error") });
 
 		// end
