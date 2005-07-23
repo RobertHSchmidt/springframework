@@ -21,8 +21,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
 /**
- * Convenient specialization of FlowFactoryBean that uses a XmlFlowBuilder to
- * build flows from a XML file.
+ * Convenient specialization of FlowFactoryBean that uses an XmlFlowBuilder to
+ * build flows from an XML file.
  * <p>
  * <b>Exposed configuration properties: </b> <br>
  * <table border="1">
@@ -48,7 +48,7 @@ import org.springframework.util.Assert;
 public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAware {
 
 	/**
-	 * Creates a XML flow factory bean.
+	 * Creates an XML flow factory bean.
 	 */
 	public XmlFlowFactoryBean() {
 		super(new XmlFlowBuilder());

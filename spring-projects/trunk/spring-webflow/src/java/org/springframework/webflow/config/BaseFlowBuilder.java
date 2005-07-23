@@ -42,6 +42,9 @@ import org.springframework.webflow.access.FlowServiceLocator;
  */
 public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 
+	/**
+	 * A logger instance that can be used in subclasses.
+	 */
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
@@ -120,7 +123,8 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	 * Returns a conversion executor capable of converting string objects to the 
 	 * target class aliased by the provided alias.
 	 * @param targetAlias the target class alias, e.g "long" or "float"
-	 * @return the conversion executor, or <code>null</code> if no suitable converter exists for alias
+	 * @return the conversion executor, or <code>null</code> if no suitable converter exists
+	 *         for given alias
 	 */
 	protected ConversionExecutor fromStringToAliased(String targetAlias) {
 		return getConversionService().getConversionExecutorByTargetAlias(String.class, targetAlias);

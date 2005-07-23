@@ -101,7 +101,7 @@ public class FlowFactoryBean implements FactoryBean, InitializingBean {
 
 	/**
 	 * Create a new flow factory bean using the specified builder strategy.
-	 * @param flowBuilder the builder the factory will use to build flows.
+	 * @param flowBuilder the builder the factory will use to build flows
 	 */
 	public FlowFactoryBean(FlowBuilder flowBuilder) {
 		setFlowBuilder(flowBuilder);

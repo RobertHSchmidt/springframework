@@ -21,7 +21,7 @@ import org.springframework.webflow.Flow;
  * Builder interface used to build flows.
  * <p>
  * Implementations should encapsulate flow construction logic, either for a
- * specific kind of flow, for example, a <code>EditUsersMasterFlowBuilder</code>
+ * specific kind of flow, for example, an <code>EditUsersMasterFlowBuilder</code>
  * built in Java code, or a generic flow builder strategy, like the
  * <code>XmlFlowBuilder</code>, for building flows from an XML-definition.
  * <p>

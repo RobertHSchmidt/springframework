@@ -65,7 +65,7 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  *         addActionState(&quot;bindAndValidate&quot;,
  *             method("bindAndValidate", action(&quot;customerAction&quot;)),
  *             new Transition[] {
- *                 on(error(), &quot;viewDetails&quot;),
+ *                 on(error(), &quot;displayDetails&quot;),
  *                 on(success(), &quot;finish&quot;)
  *             });
  *         // finish
@@ -109,7 +109,7 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * when a <code>submit</code> event is signaled by the view (for example, on a
  * submit button click), the bindAndValidate action state will be entered and
  * the <code>bindAndValidate</code> method of the 
- * <code>customerDetailsAction</code> <code>Action</code> implementation
+ * <code>customerAction</code> <code>Action</code> implementation
  * will be executed.
  * </ol>
  * 
@@ -129,7 +129,7 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * transitioned to and the flow will terminate.
  * <li>An <code>error</code> transition back to the form view. This means if
  * the <code>Action</code> returns an <code>error</code> event, the <code>
- * viewDetails</code> view state will be transitioned back to.
+ * displayDetails</code> view state will be transitioned back to.
  * </ol>
  * 
  * The fourth and last state, an end state, will be indentified with the default
@@ -139,7 +139,7 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * flow-allocated resources will be cleaned up. An end state can optionally be
  * configured with a logical view name to forward to when entered. It will also
  * trigger a state transition in a resuming parent flow if this flow was
- * participating as a spawned 'sub flow' within a suspended parent flow.
+ * participating as a spawned 'subflow' within a suspended parent flow.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -180,7 +180,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Hook subclasses may override to provide additional properties about the flow built by
 	 * this builder.  Returns <code>null</code> by default.
-	 * @return additional properties describing the flow being built.
+	 * @return additional properties describing the flow being built
 	 */
 	protected Map flowProperties() {
 		return null;

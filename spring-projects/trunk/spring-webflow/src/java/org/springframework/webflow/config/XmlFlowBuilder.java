@@ -80,7 +80,8 @@ import org.xml.sax.SAXException;
  * 		&quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
  * </pre>
  * 
- * Consult the web flow DTD for more information on the XML definition format.
+ * Consult the <a href="http://www.springframework.org/dtd/spring-webflow.dtd">web flow DTD</a>
+ * for more information on the XML definition format.
  * An object of this class is normally configured in the Spring application
  * context.
  * <p>
@@ -291,7 +292,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * Set a SAX entity resolver to be used for parsing. By default,
-	 * FlowDtdResolver will be used. Can be overridden for custom entity
+	 * WebFlowDtdResolver will be used. Can be overridden for custom entity
 	 * resolution, for example relative to some specific base path.
 	 * 
 	 * @see org.springframework.webflow.config.WebFlowDtdResolver
