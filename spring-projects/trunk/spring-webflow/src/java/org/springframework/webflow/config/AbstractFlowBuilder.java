@@ -202,8 +202,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param transition a single supported transition for this state, mapping a
 	 *        path from this state to another state (triggered by an event)
 	 * @return the view state
-	 * @throws IllegalArgumentException the stateId was not unique after
-	 *         qualificaion
+	 * @throws IllegalArgumentException the stateId was not unique
 	 */
 	protected ViewState addViewState(String stateId, String viewName, Transition transition)
 			throws IllegalArgumentException {
@@ -223,8 +222,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 *        transition maps a path from this state to another state (triggered
 	 *        by an event)
 	 * @return the view state
-	 * @throws IllegalArgumentException the stateId was not unique after
-	 *         qualificaion
+	 * @throws IllegalArgumentException the stateId was not unique
 	 */
 	protected ViewState addViewState(String stateId, String viewName, Transition[] transitions)
 			throws IllegalArgumentException {
@@ -245,8 +243,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 *        by an event)
 	 * @param properties additional properties describing the state
 	 * @return the view state
-	 * @throws IllegalArgumentException the stateId was not unique after
-	 *         qualificaion
+	 * @throws IllegalArgumentException the stateId was not unique
 	 */
 	protected ViewState addViewState(String stateId, String viewName, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
@@ -276,8 +273,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 *        by an event)
 	 * @param properties additional properties describing the state
 	 * @return the view state
-	 * @throws IllegalArgumentException the stateId was not unique after
-	 *         qualificaion
+	 * @throws IllegalArgumentException the stateId was not unique
 	 */
 	protected ViewState addViewState(String stateId, ViewDescriptorCreator creater, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
@@ -295,8 +291,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param transition a single supported transition for this state, mapping a
 	 *        path from this state to another state (triggered by an event)
 	 * @return the view marker state
-	 * @throws IllegalStateException the stateId was not unique after
-	 *         qualificaion
+	 * @throws IllegalArgumentException the stateId was not unique
 	 */
 	protected ViewState addViewStateMarker(String stateId, Transition transition) throws IllegalArgumentException {
 		return addViewState(stateId, (String)null, transition);
@@ -315,8 +310,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 *        transition maps a path from this state to another state (triggered
 	 *        by an event)
 	 * @return the view marker state
-	 * @throws IllegalStateException the stateId was not unique after
-	 *         qualificaion
+	 * @throws IllegalArgumentException the stateId was not unique
 	 */
 	protected ViewState addViewStateMarker(String stateId, Transition[] transitions) throws IllegalArgumentException {
 		return addViewState(stateId, (String)null, transitions);
@@ -336,8 +330,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 *        by an event)
 	 * @param properties additional properties describing the state
 	 * @return the view marker state
-	 * @throws IllegalStateException the stateId was not unique after
-	 *         qualificaion
+	 * @throws IllegalArgumentException the stateId was not unique
 	 */
 	protected ViewState addViewStateMarker(String stateId, Transition[] transitions, Map properties) throws IllegalArgumentException {
 		return addViewState(stateId, (String)null, transitions, properties);
