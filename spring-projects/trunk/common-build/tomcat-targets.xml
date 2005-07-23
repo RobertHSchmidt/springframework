@@ -102,7 +102,7 @@
         <copy file="${project.war}" todir="${tomcat.deploy.dir}" />
     </target>
 
-    <target name="tomcat-launch" depends="tomcat-refresh-war"
+    <target name="tomcat-launch" depends="tomcat.init"
             description="Launch the tomcat server process and have it deploy this web application">
         <exec dir="${tomcat.dir}/bin" executable="startup.bat" spawn="true" vmlauncher="false">
         	<env key="JAVA_OPTS" value="${tomcat.javaopts}"/>
