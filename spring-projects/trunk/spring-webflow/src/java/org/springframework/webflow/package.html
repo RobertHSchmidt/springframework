@@ -54,12 +54,19 @@ transition should execute given the current state of a flow execution.
 This package has several sub packages:
 <ul>
 <li>
+{@link org.springframework.webflow.access access} - Provides interfaces and classes to
+access a bean registry, typically the Spring application context.
+</li>
+<li>
 {@link org.springframework.webflow.action action} - Out-of-the box action implementations
 that address common controller concerns.
 </li>
 <li>
 {@link org.springframework.webflow.config config} - Contains interfaces and classes for
 building and assembling web flows.
+</li>
+<li>
+{@link org.springframework.webflow.convert convert} - A web flow specific conversion service.
 </li>
 <li>
 {@link org.springframework.webflow.execution execution} - Provides classes supporting managed
@@ -73,10 +80,6 @@ Extensions.
 <li>
 {@link org.springframework.webflow.mvc mvc} - Integration of the Spring web flow system
 into the Spring web MVC framework.
-</li>
-<li>
-{@link org.springframework.webflow.portlet portlet} - Integration of the Spring web flow system
-into the Spring portlet MVC framework.
 </li>
 <li>
 {@link org.springframework.webflow.struts struts} - Integration of the Spring web flow

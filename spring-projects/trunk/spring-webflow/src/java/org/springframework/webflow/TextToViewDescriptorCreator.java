@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support.convert;
+package org.springframework.webflow;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,9 +27,6 @@ import org.springframework.binding.expression.support.CompositeStringExpression;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.ViewDescriptorCreator;
 
 /**
  * Converter that converts an encoded string representation of a

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.impl;
+package org.springframework.webflow.execution;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -40,13 +40,7 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.StateContext;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.config.FlowLocator;
-import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionListener;
-import org.springframework.webflow.execution.FlowExecutionListenerList;
-import org.springframework.webflow.execution.FlowExecutionListenerLoader;
-import org.springframework.webflow.execution.FlowScopeTokenTransactionSynchronizer;
-import org.springframework.webflow.execution.TransactionSynchronizer;
+import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.util.RandomGuid;
 
 /**
@@ -65,7 +59,7 @@ import org.springframework.webflow.util.RandomGuid;
  * processed in-full, preventing possible race conditions.
  *
  * @see org.springframework.webflow.FlowSession
- * @see org.springframework.webflow.execution.impl.FlowSessionImpl 
+ * @see org.springframework.webflow.execution.FlowSessionImpl 
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

@@ -19,7 +19,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowNavigationException;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.config.FlowLocator;
+import org.springframework.webflow.access.FlowLocator;
 
 /**
  * Represents a <i>client instance</i> of an executing flow. This is the central facade

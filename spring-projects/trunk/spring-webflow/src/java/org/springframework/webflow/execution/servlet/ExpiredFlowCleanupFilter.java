@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.support;
+package org.springframework.webflow.execution.servlet;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -45,7 +45,7 @@ import org.springframework.webflow.execution.FlowExecution;
  *  &lt;web-app&gt;
  *  	&lt;filter&gt;
  *  		&lt;filter-name&gt;flowCleanup&lt;/filter-name&gt;
- *  		&lt;filter-class&gt;org.springframework.web.flow.support.ExpiredFlowCleanupFilter&lt;/filter-class&gt;
+ *  		&lt;filter-class&gt;org.springframework.webflow.execution.servlet.ExpiredFlowCleanupFilter&lt;/filter-class&gt;
  *  	&lt;/filter&gt;
  *  	&lt;filter-mapping&gt;
  *  		&lt;filter-name&gt;flowCleanup&lt;/filter-name&gt;

@@ -24,13 +24,13 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.config.BeanFactoryFlowServiceLocator;
+import org.springframework.webflow.access.BeanFactoryFlowServiceLocator;
+import org.springframework.webflow.access.FlowLocator;
+import org.springframework.webflow.access.ServiceLookupException;
 import org.springframework.webflow.config.FlowBuilder;
 import org.springframework.webflow.config.FlowFactoryBean;
-import org.springframework.webflow.config.FlowLocator;
-import org.springframework.webflow.config.ServiceLookupException;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.execution.FlowExecutionImpl;
 
 /**
  * Base class for integration tests that verify a flow executes as expected.  Flow execution tests
@@ -219,7 +219,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * <code>getFlowExecution().getListenerList().add(myListener)</code>,
 	 * where myListener is a class that implements the FlowExecutionListener
 	 * interface (It is recommended you extend
-	 * {@link org.springframework.webflow.support.FlowExecutionListenerAdapter}
+	 * {@link org.springframework.webflow.execution.FlowExecutionListenerAdapter}
 	 * and only override what you need.
 	 * 
 	 * @param event the event to signal

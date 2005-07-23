@@ -29,12 +29,12 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.access.BeanFactoryFlowServiceLocator;
 import org.springframework.webflow.action.FormObjectAccessor;
-import org.springframework.webflow.config.BeanFactoryFlowServiceLocator;
 import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.servlet.ServletFlowExecutionManager;
-import org.springframework.webflow.support.FlowExecutionListenerAdapter;
 
 /**
  * Struts Action that acts a front controller entry point into the web flow

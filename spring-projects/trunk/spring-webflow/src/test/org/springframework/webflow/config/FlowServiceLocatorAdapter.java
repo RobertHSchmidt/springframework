@@ -23,7 +23,10 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
-import org.springframework.webflow.support.convert.FlowConversionService;
+import org.springframework.webflow.access.AutowireMode;
+import org.springframework.webflow.access.FlowServiceLocator;
+import org.springframework.webflow.access.ServiceLookupException;
+import org.springframework.webflow.convert.FlowConversionService;
 
 /**
  * Simple helper adapter for the flow service locator interface. For testing.
@@ -121,11 +124,6 @@ public class FlowServiceLocatorAdapter implements FlowServiceLocator {
 		throw new UnsupportedOperationException();
 	}
 	
-	public Flow getFlow(String id, Class requiredFlowBuilderImplementationClass)
-			throws ServiceLookupException {
-		throw new UnsupportedOperationException();
-	}
-
 	public Flow getFlow(String id) throws ServiceLookupException {
 		throw new UnsupportedOperationException();
 	}

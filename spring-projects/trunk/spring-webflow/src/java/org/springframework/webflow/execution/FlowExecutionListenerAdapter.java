@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.support;
+package org.springframework.webflow.execution;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -22,8 +22,6 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
-import org.springframework.webflow.execution.EnterStateVetoException;
-import org.springframework.webflow.execution.FlowExecutionListener;
 
 /**
  * An abstract adapter class for listeners (observers) of flow execution

@@ -30,10 +30,12 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
+import org.springframework.webflow.TextToViewDescriptorCreator;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.support.convert.FlowConversionService;
-import org.springframework.webflow.support.convert.TextToViewDescriptorCreator;
+import org.springframework.webflow.access.AutowireMode;
+import org.springframework.webflow.access.ServiceLookupException;
+import org.springframework.webflow.convert.FlowConversionService;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

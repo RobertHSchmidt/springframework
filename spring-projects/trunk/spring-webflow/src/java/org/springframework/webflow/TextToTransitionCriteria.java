@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support.convert;
+package org.springframework.webflow;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +25,6 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.TransitionCriteriaFactory;
 
 /**
  * Converter that takes an encoded string representation and produces

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.access;
 
 import org.springframework.core.enums.ShortCodedLabeledEnum;
 
@@ -25,7 +25,7 @@ import org.springframework.core.enums.ShortCodedLabeledEnum;
  * The autowire modes defined here are inspired by those supported by
  * the Spring <code>AutowireCapableBeanFactory</code>.
  * 
- * @see org.springframework.webflow.config.FlowServiceLocator
+ * @see org.springframework.webflow.access.FlowServiceLocator
  * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory
  *  
  * @author Keith Donald

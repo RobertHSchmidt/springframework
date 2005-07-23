@@ -13,31 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.access;
 
 import org.springframework.webflow.Flow;
 
 /**
- * Abstract factory that encapsulates the creation of a <code>Flow</code>
- * instance. The instance may be <code>Flow</code>, in the default case, or a
- * custom extension.
- * <p>
- * This interface is useful when you require specific <code>Flow</code>
- * specializations that are shared between different <code>FlowBuilder</code>
- * implementations.
- * 
- * @see org.springframework.webflow.Flow
- * @see org.springframework.webflow.config.FlowBuilder
+ * Service locator interface for retrieving a flow by id. Needed at execution
+ * time to load a configured flow instance from a registry. The default registry
+ * is typically the Spring application context.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface FlowCreator {
+public interface FlowLocator {
 
 	/**
-	 * Creates a new <code>Flow</code> instance.
-	 * @return The <code>Flow</code> (or a custom specialization of
-	 *         <code>Flow</code>)
+	 * Lookup a flow definition with specified id.
+	 * @param id the flow definition id
+	 * @return the flow
+	 * @throws ServiceLookupException when the flow cannot be found
 	 */
-	public Flow createFlow();
+	public Flow getFlow(String id) throws ServiceLookupException;
+
 }

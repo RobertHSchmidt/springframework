@@ -25,6 +25,8 @@ import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.access.BeanFactoryFlowServiceLocator;
+import org.springframework.webflow.access.FlowServiceLocator;
 
 /**
  * Abstract base implementation of a flow builder defining common functionality
@@ -33,7 +35,7 @@ import org.springframework.webflow.Flow;
  * The builder will use a <code>FlowServiceLocator</code> to locate and create
  * any required flow related artifacts.
  * 
- * @see org.springframework.webflow.config.FlowServiceLocator
+ * @see org.springframework.webflow.access.FlowServiceLocator
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

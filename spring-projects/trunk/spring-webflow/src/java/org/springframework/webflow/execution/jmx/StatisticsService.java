@@ -26,8 +26,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.FlowExecutionManager;
-import org.springframework.webflow.support.FlowExecutionListenerAdapter;
 
 /**
  * Managed service that collects statistics on the web flow system.

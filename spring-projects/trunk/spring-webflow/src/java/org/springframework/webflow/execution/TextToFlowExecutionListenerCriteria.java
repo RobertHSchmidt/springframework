@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support.convert;
+package org.springframework.webflow.execution;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
-import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory;
 
 /**
  * Converter that converts an encoded string representation of a

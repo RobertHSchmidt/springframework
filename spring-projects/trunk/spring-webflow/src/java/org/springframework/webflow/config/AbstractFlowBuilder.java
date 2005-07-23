@@ -31,9 +31,12 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionCriteriaFactory;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.action.ActionTransitionCriteria;
+import org.springframework.webflow.access.AutowireMode;
+import org.springframework.webflow.access.FlowServiceLocator;
+import org.springframework.webflow.access.ServiceLookupException;
 import org.springframework.webflow.action.DelegatingAction;
 import org.springframework.webflow.action.MultiAction;
+import org.springframework.webflow.support.ActionTransitionCriteria;
 
 /**
  * Base class for flow builders that programmatically build flows in Java
@@ -801,23 +804,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected Flow flow(String flowId) throws ServiceLookupException {
 		return getFlowServiceLocator().getFlow(flowId);
-	}
-
-	/**
-	 * Request that the flow with the specified flowId and built by the
-	 * specified flow builder implementation be spawned as a subflow when the
-	 * subflow state being built is entered. Simply resolves the subflow
-	 * definition by id, verifies it is built by the specified builder, and
-	 * returns it; throwing a fail-fast exception if it does not exist or is
-	 * build by the wrong builder.
-	 * @param flowId the flow definition id
-	 * @param flowBuilderImplementationClass the required FlowBuilder
-	 *        implementation that must build the subflow
-	 * @return the flow to be used as a subflow, this should be passed to a
-	 *         addSubFlowState call
-	 */
-	protected Flow flow(String flowId, Class flowBuilderImplementationClass) throws ServiceLookupException {
-		return getFlowServiceLocator().getFlow(flowId, flowBuilderImplementationClass);
 	}
 
 	/**

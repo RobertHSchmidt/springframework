@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.access;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -32,7 +32,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.support.convert.FlowConversionService;
+import org.springframework.webflow.convert.FlowConversionService;
 
 /**
  * A flow service locator that uses a Spring bean factory to lookup flow-related
@@ -262,29 +262,6 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 
 	public Flow getFlow(Class implementationClass) throws ServiceLookupException {
 		return (Flow)lookupService(Flow.class, implementationClass);
-	}
-
-	public Flow getFlow(String flowDefinitionId, Class requiredBuilderImplementationClass)
-			throws ServiceLookupException {
-		if (requiredBuilderImplementationClass == null) {
-			return getFlow(flowDefinitionId);
-		}
-		try {
-			String flowFactoryBeanId = BeanFactory.FACTORY_BEAN_PREFIX + flowDefinitionId;
-			FlowFactoryBean factoryBean = (FlowFactoryBean)getBeanFactory().getBean(flowFactoryBeanId,
-					FlowFactoryBean.class);
-			if (factoryBean.buildsWith(requiredBuilderImplementationClass)) {
-				return factoryBean.getFlow();
-			}
-			else {
-				throw new ServiceLookupException(Flow.class, flowDefinitionId, new IllegalStateException(
-						"The flow factory must produce flows using a FlowBuilder of type '"
-								+ requiredBuilderImplementationClass + "', but it doesn't"));
-			}
-		}
-		catch (BeansException e) {
-			throw new ServiceLookupException(Flow.class, flowDefinitionId, e);
-		}
 	}
 	
 	public State createState(Class implementationClass,	AutowireMode autowireMode) throws ServiceLookupException {

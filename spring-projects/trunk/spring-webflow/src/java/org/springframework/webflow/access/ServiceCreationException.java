@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
-
+package org.springframework.webflow.access;
 
 /**
  * Exception thrown when a flow artifact cannot be created.

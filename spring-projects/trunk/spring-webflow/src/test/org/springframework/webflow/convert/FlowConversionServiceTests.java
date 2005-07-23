@@ -13,32 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support.convert;
+package org.springframework.webflow.convert;
 
-import org.springframework.binding.convert.support.DefaultConversionService;
+import org.springframework.binding.convert.ConversionService;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
 
+import junit.framework.TestCase;
+
 /**
- * Conversion service used by the web flow system. This service
- * supports conversion for a number of web flow specific types.
+ * Unit test for the FlowConversionService class.
  * 
- * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowConversionService extends DefaultConversionService {
+public class FlowConversionServiceTests extends TestCase {
 	
-	/**
-	 * Create a new web flow conversion service.
-	 */
-	public FlowConversionService() {
-		// register web flow specific converters
-		addConverter(new TextToTransitionCriteria());
-		addConverter(new TextToViewDescriptorCreator());
-		addConverter(new TextToFlowExecutionListenerCriteria());
-		addDefaultAlias(TransitionCriteria.class);
-		addDefaultAlias(ViewDescriptorCreator.class);
-		addDefaultAlias(FlowExecutionListenerCriteria.class);
+	public void testDefaultConvertersRegistered() {
+		ConversionService conversionService = new FlowConversionService();
+		assertNotNull(conversionService.getConversionExecutor(String.class, TransitionCriteria.class));
+		assertNotNull(conversionService.getConversionExecutor(String.class, ViewDescriptorCreator.class));
+		assertNotNull(conversionService.getConversionExecutor(String.class, FlowExecutionListenerCriteria.class));
 	}
+
 }

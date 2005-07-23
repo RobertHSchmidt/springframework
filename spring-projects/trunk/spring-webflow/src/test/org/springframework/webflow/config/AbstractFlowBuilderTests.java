@@ -30,6 +30,8 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.access.AutowireMode;
+import org.springframework.webflow.access.ServiceLookupException;
 
 /**
  * Test Java based flow builder logic (subclasses of AbstractFlowBuilder).
@@ -57,7 +59,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 				return new Flow();
 			}
 
-			public Flow getFlow(String flowDefinitionId, Class flowBuilderImplementation) throws ServiceLookupException {
+			public Flow getFlow(String flowDefinitionId) throws ServiceLookupException {
 				if (flowDefinitionId.equals(PERSON_DETAILS)) {
 					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();
 					builder.setFlowServiceLocator(this);
@@ -109,8 +111,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 		public void buildStates() {
 			addActionState("getPersonList", action("noOptAction"), on(success(), "viewPersonList"));
 			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
-			addSubFlowState(PERSON_DETAILS, flow("person.Detail", TestDetailFlowBuilderLookupByType.class),
-					attributeMapper("id.attributeMapper"), onAnyEvent("getPersonList"));
+			addSubFlowState(PERSON_DETAILS, flow("person.Detail"),	attributeMapper("id.attributeMapper"), onAnyEvent("getPersonList"));
 			addEndState("finish");
 		}
 	}
@@ -123,8 +124,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 		public void buildStates() {
 			addActionState("getPersonList", actionRef(NoOpAction.class), on(success(), "viewPersonList"));
 			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
-			addSubFlowState(PERSON_DETAILS, flow("person.Detail", TestDetailFlowBuilderLookupByType.class),
-					attributeMapperRef(PersonIdMapper.class), onAnyEvent("getPersonList"));
+			addSubFlowState(PERSON_DETAILS, flow("person.Detail"),	attributeMapperRef(PersonIdMapper.class), onAnyEvent("getPersonList"));
 			addEndState("finish");
 		}
 	}

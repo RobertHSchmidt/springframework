@@ -23,7 +23,6 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.action.ActionTransitionCriteria;
 
 /**
  * An ordered chain of <code>TransitionCriteria</code>. Iterates over each element

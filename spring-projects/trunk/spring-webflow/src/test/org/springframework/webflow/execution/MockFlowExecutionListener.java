@@ -23,7 +23,6 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
-import org.springframework.webflow.support.FlowExecutionListenerAdapter;
 
 /**
  * Mock implementation of the <code>FlowExecutionListener</code> interface for

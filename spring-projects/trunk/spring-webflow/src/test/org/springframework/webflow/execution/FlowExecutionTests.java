@@ -23,6 +23,8 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
+import org.springframework.webflow.TextToTransitionCriteria;
+import org.springframework.webflow.TextToViewDescriptorCreator;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptor;
@@ -34,10 +36,7 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.FlowFactoryBean;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.support.convert.FlowConversionService;
-import org.springframework.webflow.support.convert.TextToTransitionCriteria;
-import org.springframework.webflow.support.convert.TextToViewDescriptorCreator;
+import org.springframework.webflow.convert.FlowConversionService;
 
 /**
  * General flow execution tests.

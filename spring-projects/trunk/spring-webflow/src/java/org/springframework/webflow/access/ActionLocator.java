@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.access;
 
-import org.springframework.webflow.Flow;
+import org.springframework.webflow.Action;
 
 /**
- * The default FlowCreator implementation. This just instantiates the
- * <code>Flow</code> class. If you need a custom <code>Flow</code>
- * implementation, configure the BaseFlowBuilder with a custom
- * <code>FlowCreator</code> factory.
- * 
- * @see org.springframework.webflow.Flow
+ * Service locator interface for retrieving an action by id. The default 
+ * backing action registry is typically the Spring application context.
+ * Can be used at execution time to lookup actions by id.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
-public class DefaultFlowCreator implements FlowCreator {
-	
-	public Flow createFlow() {
-		return new Flow();
-	}
+public interface ActionLocator {
+
+	/**
+	 * Lookup an action with specified id.
+	 * @param id the action id
+	 * @return the action
+	 * @throws ServiceLookupException when the action cannot be found
+	 */
+	public Action getAction(String id) throws ServiceLookupException;
+
 }

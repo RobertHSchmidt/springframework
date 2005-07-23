@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action;
+package org.springframework.webflow.support;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
@@ -21,6 +21,7 @@ import org.springframework.webflow.ActionExecutor;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.action.AbstractAction;
 
 /**
  * A transition criteria that will execute an action when tested and return

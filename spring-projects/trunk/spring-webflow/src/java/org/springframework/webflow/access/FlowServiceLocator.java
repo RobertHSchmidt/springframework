@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.access;
 
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.webflow.Action;
@@ -71,15 +71,6 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	 */
 	public Flow getFlow(Class implementationClass) throws ServiceLookupException;
 
-	/**
-	 * Lookup a flow build by specified type of flow builder.
-	 * @param id the flow id
-	 * @param requiredFlowBuilderImplementationClass the required builder type
-	 * @return the flow
-	 * @throws ServiceLookupException when the flow cannot be found
-	 */
-	public Flow getFlow(String id, Class requiredFlowBuilderImplementationClass) throws ServiceLookupException;
-	
 	// dealing with states
 
 	/**

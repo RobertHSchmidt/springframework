@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.impl;
+package org.springframework.webflow.execution;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -32,7 +32,7 @@ import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
-import org.springframework.webflow.config.FlowLocator;
+import org.springframework.webflow.access.FlowLocator;
 
 /**
  * Implementation of the FlowSession interfaced used internally by

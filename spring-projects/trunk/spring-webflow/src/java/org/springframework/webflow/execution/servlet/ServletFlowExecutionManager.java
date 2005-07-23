@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.config.FlowLocator;
+import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
 

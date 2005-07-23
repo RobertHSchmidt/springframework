@@ -21,10 +21,11 @@ constructs the flow accordingly.
 </ul>
 During flow construction, a flow builder will need to locate a number of
 <i>services</i> required by the web flow: actions, other flows, attribute
-mappers and so on. To do this, the flow builder will use a
-{@link org.springframework.webflow.config.FlowServiceLocator}. Most
+mappers and so on. To do this, the flow builder will use the services
+provided by the {@link org.springframework.webflow.access access} package,
+namely a {@link org.springframework.webflow.access.FlowServiceLocator}. Most
 Spring applications will use the
-{@link org.springframework.webflow.config.BeanFactoryFlowServiceLocator},
+{@link org.springframework.webflow.access.BeanFactoryFlowServiceLocator},
 which is also the default.
 </p>
 

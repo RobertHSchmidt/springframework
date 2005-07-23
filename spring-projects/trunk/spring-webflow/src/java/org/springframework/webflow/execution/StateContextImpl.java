@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.execution.impl;
+package org.springframework.webflow.execution;
 
 import java.util.HashMap;
 import java.util.Map;

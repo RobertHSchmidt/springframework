@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.impl;
+package org.springframework.webflow.execution;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,19 +29,19 @@ import junit.framework.TestCase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.access.FlowLocator;
+import org.springframework.webflow.access.ServiceLookupException;
 import org.springframework.webflow.config.FlowFactoryBean;
-import org.springframework.webflow.config.FlowLocator;
-import org.springframework.webflow.config.ServiceLookupException;
 import org.springframework.webflow.config.XmlFlowBuilder;
 import org.springframework.webflow.config.XmlFlowBuilderTests;
+import org.springframework.webflow.execution.FlowExecutionImpl;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 
 /**
  * Test case for FlowExecutionStack.
  * 
- * @see org.springframework.webflow.execution.impl.FlowExecutionImpl
+ * @see org.springframework.webflow.execution.FlowExecutionImpl
  * 
  * @author Erwin Vervaet
  */
