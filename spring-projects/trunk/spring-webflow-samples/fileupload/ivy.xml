@@ -29,7 +29,6 @@
 	
 	<!-- test-time only dependencies -->
     <dependency org="junit" name="junit" rev="3.8.1" conf="test->default" />
-    <dependency org="springframework" name="spring-mock" rev="1.2.2" conf="test->default" />
   </dependencies>
 
 </ivy-module>
