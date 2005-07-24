@@ -51,7 +51,7 @@ import org.springframework.webflow.execution.servlet.ServletFlowExecutionManager
  * action form, action mapping, and other struts-specific constructs.  As a 
  * convenience, the "actionForm" attribute is also exposed in requestScope after
  * a request is submitted.  This means you may access your action form from your
- * webflow artifacts as follows:
+ * web flow artifacts as follows:
  * <code>context.getRequestScope().getAttribute("actionForm")</code>.
  * <p>
  * This class also is aware of the <code>SpringBindingActionForm</code> adapter,
@@ -122,7 +122,7 @@ public class FlowAction extends ActionSupport {
 	
 	/**
 	 * Returns the flow execution manager used by this controller.
-	 * @return the HTTP flow execution manager
+	 * @return the flow execution manager
 	 */
 	protected FlowExecutionManager getFlowExecutionManager() {
 		return flowExecutionManager;
@@ -173,7 +173,7 @@ public class FlowAction extends ActionSupport {
 			HttpServletResponse response) throws Exception {
 		FlowExecutionListener actionFormAdapter = createActionFormAdapter(request, form);
 		Event event = createEvent(mapping, form, request, response);
-		ViewDescriptor viewDescriptor =	getFlowExecutionManager().onEvent(event, actionFormAdapter);
+		ViewDescriptor viewDescriptor = getFlowExecutionManager().onEvent(event, actionFormAdapter);
 		return toActionForward(viewDescriptor, mapping, request);
 	}
 	
