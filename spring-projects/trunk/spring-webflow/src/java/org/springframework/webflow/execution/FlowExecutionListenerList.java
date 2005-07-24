@@ -179,7 +179,7 @@ public class FlowExecutionListenerList {
 	/**
 	 * Notify all interested listeners that a flow execution was created.
 	 */
-	protected void fireCreated(FlowExecutionContext context) {
+	public void fireCreated(FlowExecutionContext context) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).created(context);
 		}
@@ -189,7 +189,7 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a request was submitted to the flow
 	 * execution.
 	 */
-	protected void fireRequestSubmitted(RequestContext context) {
+	public void fireRequestSubmitted(RequestContext context) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).requestSubmitted(context);
 		}
@@ -199,7 +199,7 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that the flow execution finished
 	 * processing a request.
 	 */
-	protected void fireRequestProcessed(RequestContext context) {
+	public void fireRequestProcessed(RequestContext context) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).requestProcessed(context);
 		}
@@ -208,7 +208,7 @@ public class FlowExecutionListenerList {
 	/**
 	 * Notify all interested listeners that a flow execution session is starting.
 	 */
-	protected void fireSessionStarting(RequestContext context, State startState, Map input) {
+	public void fireSessionStarting(RequestContext context, State startState, Map input) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).sessionStarting(context, startState, input);
 		}
@@ -217,7 +217,7 @@ public class FlowExecutionListenerList {
 	/**
 	 * Notify all interested listeners that a flow execution session has started.
 	 */
-	protected void fireSessionStarted(RequestContext context) {
+	public void fireSessionStarted(RequestContext context) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).sessionStarted(context);
 		}
@@ -227,7 +227,7 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that an event was signaled in the flow
 	 * execution.
 	 */
-	protected void fireEventSignaled(RequestContext context) {
+	public void fireEventSignaled(RequestContext context) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).eventSignaled(context);
 		}
@@ -237,7 +237,7 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a state is being entered in the
 	 * flow execution.
 	 */
-	protected void fireStateEntering(RequestContext context, State nextState) {
+	public void fireStateEntering(RequestContext context, State nextState) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).stateEntering(context, nextState);
 		}
@@ -247,7 +247,7 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a state was entered in the
 	 * flow execution.
 	 */
-	protected void fireStateEntered(RequestContext context, State previousState) {
+	public void fireStateEntered(RequestContext context, State previousState) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).stateEntered(context, previousState, context.getFlowExecutionContext().getCurrentState());
 		}
@@ -257,7 +257,7 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow session was activated in the
 	 * flow execution.
 	 */
-	protected void fireResumed(RequestContext context) {
+	public void fireResumed(RequestContext context) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).resumed(context);
 		}
@@ -267,7 +267,7 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow session was paused in the
 	 * flow execution.
 	 */
-	protected void firePaused(RequestContext context) {
+	public void firePaused(RequestContext context) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).paused(context);
 		}
@@ -276,7 +276,7 @@ public class FlowExecutionListenerList {
 	/**
 	 * Notify all interested listeners that a flow execution session has ended.
 	 */
-	protected void fireSessionEnded(RequestContext context, FlowSession endedSession) {
+	public void fireSessionEnded(RequestContext context, FlowSession endedSession) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).sessionEnded(context, endedSession);
 		}
@@ -286,7 +286,7 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was loaded from
 	 * storage.
 	 */
-	protected void fireLoaded(FlowExecutionContext context, Serializable id) {
+	public void fireLoaded(FlowExecutionContext context, Serializable id) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).loaded(context, id);
 		}
@@ -296,7 +296,7 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was saved to
 	 * storage.
 	 */
-	protected void fireSaved(FlowExecutionContext context, Serializable id) {
+	public void fireSaved(FlowExecutionContext context, Serializable id) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).saved(context, id);
 		}
@@ -306,7 +306,7 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was removed from
 	 * storage.
 	 */
-	protected void fireRemoved(FlowExecutionContext context, Serializable id) {
+	public void fireRemoved(FlowExecutionContext context, Serializable id) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).removed(context, id);
 		}
