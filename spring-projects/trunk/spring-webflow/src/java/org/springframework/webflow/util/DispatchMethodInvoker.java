@@ -211,18 +211,10 @@ public class DispatchMethodInvoker {
 	 * configured parameter types and return type.
 	 * @param methodName the method name
 	 * @return the method
+	 * @throws MethodLookupException when the method cannot be resolved
 	 */
-	public Method getDispatchMethod(String methodName) {
+	public Method getDispatchMethod(String methodName) throws MethodLookupException {
 		return (Method)this.methodCache.get(methodName);
-	}
-
-	/**
-	 * Thrown when a method could not be resolved.
-	 */
-	public static class MethodLookupException extends NestedRuntimeException {
-		public MethodLookupException(String msg, Throwable ex) {
-			super(msg, ex);
-		}
 	}
 
 	/**
@@ -230,9 +222,10 @@ public class DispatchMethodInvoker {
 	 * @param methodName the name of the method to invoke
 	 * @param arguments the arguments to pass to the method
 	 * @return the result of the method invokation
+	 * @throws MethodLookupException when the method cannot be resolved
 	 * @throws Exception when the invoked method throws an exception
 	 */
-	public Object dispatch(String methodName, Object[] arguments) throws Exception {
+	public Object dispatch(String methodName, Object[] arguments) throws MethodLookupException, Exception {
 		try {
 			Method dispatchMethod = getDispatchMethod(methodName);
 			Object result = dispatchMethod.invoke(getTarget(), arguments);
@@ -252,6 +245,21 @@ public class DispatchMethodInvoker {
 			else {
 				throw (Error)e.getTargetException();
 			}
+		}
+	}
+	
+	/**
+	 * Thrown when a method could not be resolved.
+	 */
+	public static class MethodLookupException extends NestedRuntimeException {
+		
+		/**
+		 * Create a new method lookup exception
+		 * @param msg a descriptive message
+		 * @param ex the underlying cause of this exception
+		 */
+		public MethodLookupException(String msg, Throwable ex) {
+			super(msg, ex);
 		}
 	}
 }
