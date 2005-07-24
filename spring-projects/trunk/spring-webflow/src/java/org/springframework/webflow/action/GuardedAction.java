@@ -23,7 +23,7 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
 
 /**
- * A action that will execute another action if a guard allows it to.
+ * An action that will execute another action if a guard allows it to.
  * The guard is represented by a TransitionCriteria object. If the guard
  * disallows execution, the wrapped action is just skipped and this
  * action will return the "success" event.
@@ -45,7 +45,7 @@ public class GuardedAction extends AbstractAction {
 	private TransitionCriteria executionCriteria;
 	
 	/**
-	 * Create a guarded action
+	 * Create a guarded action.
 	 * @param action the action to execute
 	 * @param executionCriteria the guard to use
 	 */

@@ -61,7 +61,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * A typical use of the MultiAction is to centralize all command logic for a flow
  * in one place. Another common use is to centralize form setup and submit logic
  * into one place, or CRUD (create/read/update/delete) operations for a single
- * domain object in once place. 
+ * domain object in one place. 
  * <p>
  * <b>Exposed configuration properties:</b> <br>
  * <table border="1">
@@ -120,7 +120,7 @@ public class MultiAction extends AbstractAction {
 
 	/**
 	 * Get the strategy used to resolve action execution method names. Defaults
-	 * to current state id based resolution.
+	 * to {@link MultiAction.DefaultActionExecuteMethodNameResolver}.
 	 */
 	public ActionExecuteMethodNameResolver getExecuteMethodNameResolver() {
 		return executeMethodNameResolver;

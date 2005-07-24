@@ -22,7 +22,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
- * A action that will execute an ordered chain of other actions when executed.
+ * An action that will execute an ordered chain of other actions when executed.
  * The result of the last executed action is returned.
  * This is the classic GoF composite design pattern.
  * 
@@ -63,7 +63,7 @@ public class CompositeAction extends AbstractAction {
 	}
 
 	/**
-	 * Retruns the stop on error flag.
+	 * Returns the stop on error flag.
 	 */
 	public boolean isStopOnError() {
 		return stopOnError;

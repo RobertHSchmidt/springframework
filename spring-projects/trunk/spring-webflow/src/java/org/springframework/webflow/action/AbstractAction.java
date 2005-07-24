@@ -40,35 +40,38 @@ import org.springframework.webflow.RequestContext;
 public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
-	 * Event id of the default 'success' result event.
+	 * Event id of the default 'success' result event ("success").
 	 */
 	public static final String SUCCESS_EVENT_ID = "success";
 	
 	/**
-	 * Event id of the default 'error' result event.
+	 * Event id of the default 'error' result event ("error").
 	 */
 	public static final String ERROR_EVENT_ID = "error";
 
 	/**
-	 * Event id of the default 'yes' result event.
+	 * Event id of the default 'yes' result event ("yes").
 	 */
 	public static final String YES_EVENT_ID = "yes";
 
 	/**
-	 * Event id of the default 'no' result event.
+	 * Event id of the default 'no' result event ("no").
 	 */
 	public static final String NO_EVENT_ID = "no";
 
 	/**
-	 * Constant for the error exception event parameter name.
+	 * Constant for the error exception event parameter name ("exception").
 	 */
 	public static final String EXCEPTION_PARAMETER = "exception";
 
 	/**
-	 * Constant for the success result object event parameter name.
+	 * Constant for the success result object event parameter name ("result").
 	 */
 	public static final String RESULT_PARAMETER = "result";
 
+	/**
+	 * Logger, usable in subclasses.
+	 */
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	public void afterPropertiesSet() {
@@ -110,7 +113,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	/**
 	 * Returns the default success event with the provided result object
 	 * as a parameter.  The result object is identified by the parameter name
-	 * {@link AbstractAction#RESULT_PARAMETER}
+	 * {@link AbstractAction#RESULT_PARAMETER}.
 	 * 
 	 * @param result the action success result;
 	 */
@@ -189,18 +192,17 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * and a single parameter. Typically called as part of return, for example:
 	 * <pre>
 	 *   public Event makeSelection(RequestContext context) throws Exception {
-	 *	    try {
-	 * 		    String selection = (String) context.getSourceEvent().getParameter(
-	 * 				"selection");
-	 * 		    selectionSensorHelper.fireSelectionMade(selection);
-	 * 		    return success();
-	 *	    } catch (NoSuchBinException e) {
-	 *		    return result("noSuchBin", "exception", e);
-	 *	    } catch (BinEmptyException e) {
-	 *		    return result("binEmpty", "exception", e);
-	 *	    } catch (NotEnoughFundsException e) {
-	 *		    return result("notEnoughFunds", "exception", e);
-	 *	    }
+	 *      try {
+	 *         String selection = (String) context.getSourceEvent().getParameter("selection");
+	 *         selectionSensorHelper.fireSelectionMade(selection);
+	 *         return success();
+	 *      } catch (NoSuchBinException e) {
+	 *         return result("noSuchBin", "exception", e);
+	 *      } catch (BinEmptyException e) {
+	 *         return result("binEmpty", "exception", e);
+	 *      } catch (NotEnoughFundsException e) {
+	 *         return result("notEnoughFunds", "exception", e);
+	 *      }
 	 *   }
 	 * </pre>
 	 * @param eventId the result id

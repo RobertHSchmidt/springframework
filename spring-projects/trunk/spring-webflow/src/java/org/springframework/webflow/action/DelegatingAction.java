@@ -23,7 +23,7 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.access.ActionLocator;
 
 /**
- * A action that delegates to another action instance managed in flow scope.
+ * An action that delegates to another action instance managed in flow scope.
  * 
  * @author Keith Donald
  */
