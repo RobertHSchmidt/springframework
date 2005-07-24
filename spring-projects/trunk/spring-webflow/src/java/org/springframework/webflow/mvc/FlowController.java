@@ -56,7 +56,7 @@ import org.springframework.webflow.execution.servlet.ServletFlowExecutionManager
  * </tr>
  * <tr>
  * <td>flow</td>
- * <td>nulls</td>
+ * <td>null</td>
  * <td>Configures a single Flow definition to manage. Note this property should only be set as a
  * convenience if fine-grained configuration of the flowExecutionManager is not neccessary.</td>
  * </tr>
@@ -115,7 +115,7 @@ public class FlowController extends AbstractController implements InitializingBe
 
 	/**
 	 * Convenience setter that configures a single flow definition for this controller to
-	 * manage. This is a convenience feature to make it easy configure the flow for
+	 * manage. This is a convenience feature to make it easy to configure the flow for
 	 * a controller which just uses the default flow execution manager.
 	 * Note: do not call both this method and <code>setFlowExecutionManager()</code> -- call one
 	 * or the other.
