@@ -29,11 +29,11 @@ public interface TransactionSynchronizer {
 
 	/**
 	 * Is the caller participating in the application transaction currently
-	 * active in the flow execution.
+	 * active in the flow execution?
 	 * @param context the flow execution request context
 	 * @param end indicates whether or not the transaction should end after
 	 *        checking it
-	 * @return true if it is participating in the active transaction, false
+	 * @return true if the caller is participating in the active transaction, false
 	 *         otherwise
 	 */
 	public boolean inTransaction(RequestContext context, boolean end);
@@ -45,7 +45,7 @@ public interface TransactionSynchronizer {
 	 * @param end indicates whether or not the transaction should end after
 	 *        checking it
 	 * @throws IllegalStateException there is no active transaction in the
-	 *         flow execution
+	 *         flow execution, or the caller is not participating in it
 	 */
 	public void assertInTransaction(RequestContext context, boolean end) throws IllegalStateException;
 

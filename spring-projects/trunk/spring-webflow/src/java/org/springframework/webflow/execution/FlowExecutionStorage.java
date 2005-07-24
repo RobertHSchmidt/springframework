@@ -36,7 +36,7 @@ import org.springframework.webflow.Event;
  * transaction implementation. Usually this is not a problem since free browing
  * is not really compatible with any kind of transactional semantics. If required,
  * you can always plug in another transaction synchronizer, e.g. one that stores
- * a transaction token in the database, thus no longer requiring a single
+ * a transaction token in the database, no longer requiring a single
  * flow execution per application transaction.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionManager

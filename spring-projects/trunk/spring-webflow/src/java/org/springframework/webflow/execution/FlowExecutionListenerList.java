@@ -21,8 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
@@ -40,8 +38,6 @@ import org.springframework.webflow.State;
  */
 public class FlowExecutionListenerList {
 
-	protected final Log logger = LogFactory.getLog(FlowExecutionListenerList.class);
-	
 	/**
 	 * The list of listeners that should receive event callbacks during managed
 	 * flow executions (client sessions).
@@ -141,7 +137,7 @@ public class FlowExecutionListenerList {
 	/**
 	 * Is the provided FlowExecutionListener instance present in the listener list?
 	 * @param listener the execution listener
-	 * @return true if present, false otherwise.
+	 * @return true if present, false otherwise
 	 */
 	public boolean isAdded(FlowExecutionListener listener) {
 		return this.flowExecutionListeners.contains(listener);

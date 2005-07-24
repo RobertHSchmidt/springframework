@@ -61,7 +61,7 @@ import org.springframework.webflow.convert.FlowConversionService;
  * with that id is loaded from the storage.</li>
  * <li>If a new flow execution was created in the previous steps, it is
  * started.</li>
- * <li>If an existing flow execution is loaded from storage, the current state id
+ * <li>If an existing flow execution was loaded from storage, the current state id
  * ("_currentStateId") and event id ("_eventId") parameter values are
  * extracted from the event. The event is then signaled in that state, and 
  * the executing flow is resumed in that state.</li>
@@ -71,6 +71,11 @@ import org.springframework.webflow.convert.FlowConversionService;
  * The caller will also be given access to the flow execution context and
  * any data placed in request or flow scope.</li>
  * </ol>
+ * <p>
+ * By default, this class will use the flow execution implementation provided
+ * by the <code>FlowExecutionImpl</code> class. If you would like to use a 
+ * different implementation, just override the {@link #createFlowExecution(Flow)}
+ * method in a subclass.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.execution.FlowExecutionStorage
@@ -329,7 +334,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	/**
 	 * Return the application transaction synchronization strategy to use.
 	 * This defaults to a <i>synchronizer token</i> based transaction management
-	 * system.
+	 * system, as implemented by {@link FlowScopeTokenTransactionSynchronizer}.
 	 */
 	protected TransactionSynchronizer getTransactionSynchronizer() {
 		return transactionSynchronizer;
@@ -472,7 +477,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 
 	/**
 	 * Create a new flow execution for given flow. Subclasses could redefine this
-	 * if they which to use a specialized FlowExecution implementation class.
+	 * if they wish to use a specialized FlowExecution implementation class.
 	 * @param flow the flow
 	 * @return the created flow execution
 	 */
@@ -545,7 +550,9 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 * Do any processing necessary before given view descriptor can be returned
 	 * to the client of the flow execution manager. This implementation adds
 	 * a number of <i>infrastructure attributes</i> to the model that will be
-	 * exposed to the view.
+	 * exposed to the view. More specifically, it will add the
+	 * {@link #FLOW_EXECUTION_CONTEXT_ATTRIBUTE}, {@link #FLOW_EXECUTION_ID_ATTRIBUTE}
+	 * and {@link #CURRENT_STATE_ID_ATTRIBUTE}.
 	 * @param viewDescriptor the view descriptor to be processed
 	 * @param flowExecutionId the unique id of the flow execution
 	 * @param flowExecutionContext the flow context providing info about the flow execution

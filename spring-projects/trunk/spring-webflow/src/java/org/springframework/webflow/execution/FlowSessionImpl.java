@@ -35,8 +35,13 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.access.FlowLocator;
 
 /**
- * Implementation of the FlowSession interfaced used internally by
- * the FlowSessionImpl.
+ * Implementation of the FlowSession interfaced used internally by the <code>FlowExecutionImpl</code>.
+ * This class is closely coupled with <code>FlowExecutionImpl</code> and
+ * <code>StateContextImpl</code>. The three classes work together to form a complete
+ * flow execution implementation.
+ * 
+ * @see org.springframework.webflow.execution.FlowExecutionImpl
+ * @see org.springframework.webflow.execution.StateContextImpl
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -45,7 +50,7 @@ public class FlowSessionImpl implements FlowSession, Serializable {
 
 	// static logger because FlowSessionImpl objects can be serialized and
 	// then restored
-	protected static final Log logger = LogFactory.getLog(FlowSessionImpl.class);
+	private static final Log logger = LogFactory.getLog(FlowSessionImpl.class);
 	
 	/**
 	 * The flow definition (a singleton).
@@ -164,7 +169,7 @@ public class FlowSessionImpl implements FlowSession, Serializable {
 	}
 
 	/**
-	 * Restore this <code>Flow Session</code> for use after deserialization.
+	 * Restore this <code>FlowSession</code> for use after deserialization.
 	 * @param flowLocator the flow locator
 	 */
 	protected void rehydrate(FlowLocator flowLocator) {

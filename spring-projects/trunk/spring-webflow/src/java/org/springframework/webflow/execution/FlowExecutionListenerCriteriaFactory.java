@@ -35,7 +35,7 @@ public class FlowExecutionListenerCriteriaFactory {
 	public static class WildcardFlowExecutionListenerCriteria implements FlowExecutionListenerCriteria {
 		
 		/**
-		 * The string representation of the wildcoard flow id.
+		 * The string representation of the wildcard flow id.
 		 */
 		public static final String WILDCARD_FLOW_ID = "*";
 		

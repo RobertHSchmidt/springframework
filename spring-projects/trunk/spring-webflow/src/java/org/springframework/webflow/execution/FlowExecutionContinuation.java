@@ -28,10 +28,12 @@ import java.util.zip.GZIPOutputStream;
 import org.springframework.util.FileCopyUtils;
 
 /**
- * Helper class that aides in handling a flow execution as if
- * it was a continuation.
+ * Helper class that aides in handling a flow execution as if it was a continuation.
+ * Mainly intended for use in FlowExecutionStorage implementations that store
+ * flow executions as if they were continuations.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
+ * @see org.springframework.webflow.execution.FlowExecutionStorage
  * 
  * @author Erwin Vervaet
  */
@@ -60,7 +62,7 @@ public class FlowExecutionContinuation implements Serializable {
 	 * @throws FlowExecutionStorageException when the flow execution cannot
 	 *         be serialized
 	 * @param compress indicates whether or not the flow execution continuation
-	 *        should compress its state.
+	 *        should compress its state
 	 */
 	public FlowExecutionContinuation(FlowExecution flowExecution, boolean compress)
 			throws FlowExecutionStorageException {

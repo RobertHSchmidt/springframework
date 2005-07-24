@@ -45,11 +45,13 @@ import org.springframework.webflow.util.RandomGuid;
 
 /**
  * Default implementation of FlowExecution that uses a stack-based data
- * structure to manage
- * {@link org.springframework.webflow.FlowSession flow sessions}.
+ * structure to manage {@link org.springframework.webflow.FlowSession flow sessions}.
+ * This class is closely coupled with <code>FlowSessionImpl</code> and
+ * <code>StateContextImpl</code>. The three classes work together to form a complete
+ * flow execution implementation.
  * <p>
  * This implementation of FlowExecution is serializable so it can be safely
- * stored in a HTTP session or other persistent store such as a file, database, or
+ * stored in an HTTP session or other persistent store such as a file, database, or
  * client-side form field.
  * <p>
  * Note: this implementation synchronizes both execution entry points
@@ -59,7 +61,8 @@ import org.springframework.webflow.util.RandomGuid;
  * processed in-full, preventing possible race conditions.
  *
  * @see org.springframework.webflow.FlowSession
- * @see org.springframework.webflow.execution.FlowSessionImpl 
+ * @see org.springframework.webflow.execution.FlowSessionImpl
+ * @see org.springframework.webflow.execution.StateContextImpl 
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -68,7 +71,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 
 	// static logger because FlowExecutionImpl objects can be serialized
 	// and then restored
-	protected static final Log logger = LogFactory.getLog(FlowExecutionImpl.class);
+	private static final Log logger = LogFactory.getLog(FlowExecutionImpl.class);
 	
 	/**
 	 * Key identifying this flow execution.
@@ -356,7 +359,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	/**
 	 * Create a flow execution state context for given event.
 	 * <p>
-	 * The default implementation uses the <code>InternalStateContext</code>
+	 * The default implementation uses the <code>StateContextImpl</code>
 	 * class. Subclasses can override this to use a custom class.
 	 * @param sourceEvent the event at the origin of this request
 	 */

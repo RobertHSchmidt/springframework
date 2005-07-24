@@ -25,6 +25,8 @@ import org.springframework.core.NestedRuntimeException;
  */
 public class FlowExecutionStorageException extends NestedRuntimeException {
 	
+	private FlowExecutionStorage storage;
+	
 	private String flowExecutionId;
 
 	private FlowExecution flowExecution;
@@ -40,7 +42,8 @@ public class FlowExecutionStorageException extends NestedRuntimeException {
 
 	/**
 	 * Create a new flow execution storage exception.
-	 * @param flowExecutionId the unique of the flow execution (optional)
+	 * @param storage the storage strategy involved
+	 * @param flowExecutionId the unique id of the flow execution (optional)
 	 * @param flowExecution the flow execution (optional)
 	 * @param msg a descriptive message
 	 * @param ex the underlying cause of this exception
@@ -48,8 +51,18 @@ public class FlowExecutionStorageException extends NestedRuntimeException {
 	public FlowExecutionStorageException(FlowExecutionStorage storage, String flowExecutionId,
 			FlowExecution flowExecution, String msg, Throwable ex) {
 		super(msg, ex);
+		this.storage = storage;
 		this.flowExecutionId = flowExecutionId;
 		this.flowExecution = flowExecution;
+	}
+	
+	/**
+	 * Returns the flow execution storage strategy involved.
+	 * Could be <code>null</code>.
+	 * @return the storage strategy
+	 */
+	public FlowExecutionStorage getStorage() {
+		return storage;
 	}
 	
 	/**

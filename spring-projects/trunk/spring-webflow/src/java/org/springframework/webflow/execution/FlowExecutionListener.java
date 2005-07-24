@@ -47,14 +47,14 @@ public interface FlowExecutionListener {
 	/**
 	 * Called when any client request is submitted to manipulate this
 	 * flow execution.
-	 * @param context the source of the event, with an 'sourceEvent'
+	 * @param context the source of the event, with a 'sourceEvent'
 	 *        property for access to the request event
 	 */
 	public void requestSubmitted(RequestContext context);
 
 	/**
 	 * Called when a client request has completed processing.
-	 * @param context the source of the event, with an 'sourceEvent'
+	 * @param context the source of the event, with a 'sourceEvent'
 	 *        property for access to the request event
 	 */
 	public void requestProcessed(RequestContext context);
@@ -131,14 +131,14 @@ public interface FlowExecutionListener {
 	
 	/**
 	 * Called after a new or resumed flow execution is saved to storage.
-	 * @param context the flow execution that was loaded
+	 * @param context the flow execution that was saved
 	 * @param id the unique id of the flow execution in the storage medium
 	 */
 	public void saved(FlowExecutionContext context, Serializable id);
 	
 	/**
 	 * Called after an ended flow execution is removed from storage.
-	 * @param context the flow execution that was loaded
+	 * @param context the flow execution that was removed
 	 * @param id the unique id of the flow execution in the storage medium
 	 */
 	public void removed(FlowExecutionContext context, Serializable id);

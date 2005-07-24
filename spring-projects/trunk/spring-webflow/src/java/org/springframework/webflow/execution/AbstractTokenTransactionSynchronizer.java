@@ -22,7 +22,11 @@ import org.springframework.webflow.util.RandomGuid;
 
 /**
  * Abstract base class to ease implementation of <i>synchronizer token</i>
- * based transaction synchronizers.
+ * based transaction synchronizers. The <i>synchronizer token</i> is a classic J2EE
+ * pattern (see Core J2EE Patterns by Alur, Crupi, and Malks) that can be used
+ * to monitor and control the request flow and client access to certain resources.
+ * It provides an elegant way to handle situations where clients might make duplicate
+ * resource requests.
  * 
  * @see org.springframework.webflow.execution.FlowScopeTokenTransactionSynchronizer
  * 

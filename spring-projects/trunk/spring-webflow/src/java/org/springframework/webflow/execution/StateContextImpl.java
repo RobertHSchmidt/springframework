@@ -18,8 +18,6 @@ package org.springframework.webflow.execution;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.AttributeSource;
 import org.springframework.binding.support.EmptyAttributeSource;
 import org.springframework.core.style.ToStringCreator;
@@ -35,15 +33,18 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewDescriptor;
 
 /**
- * Default state context implementation used internally by the web flow
- * system.
+ * Default state context implementation used internally by the web flow system.
+ * This class is closely coupled with <code>FlowExecutionImpl</code> and
+ * <code>StateSessionImpl</code>. The three classes work together to form a complete
+ * flow execution implementation.
+ * 
+ * @see org.springframework.webflow.execution.FlowExecutionImpl
+ * @see org.springframework.webflow.execution.FlowSessionImpl
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class StateContextImpl implements StateContext {
-
-	protected final Log logger = LogFactory.getLog(StateContextImpl.class);
 
 	/**
 	 * The owning flow execution.

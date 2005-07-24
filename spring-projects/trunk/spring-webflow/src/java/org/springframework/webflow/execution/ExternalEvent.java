@@ -52,7 +52,7 @@ public abstract class ExternalEvent extends Event {
 
 	/**
 	 * Creates an external event with the specified external source,
-	 * for example a HTTP request.
+	 * for example an HTTP request.
 	 * @param source the event source
 	 */
 	public ExternalEvent(Object source) {
