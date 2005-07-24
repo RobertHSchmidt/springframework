@@ -44,7 +44,7 @@ public class TransitionCriteriaChain implements TransitionCriteria {
 	}
 
 	/**
-	 * Creates an transition criteria chain with the specified criteria. 
+	 * Creates a transition criteria chain with the specified criteria. 
 	 * @param criteria the criteria
 	 */
 	public TransitionCriteriaChain(TransitionCriteria[] criteria) {

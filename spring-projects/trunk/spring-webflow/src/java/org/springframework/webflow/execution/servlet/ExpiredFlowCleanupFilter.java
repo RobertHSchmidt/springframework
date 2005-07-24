@@ -55,12 +55,12 @@ import org.springframework.webflow.execution.FlowExecution;
  * </pre>
  * 
  * <p>
- * <b>Exposed configuration properties: </b> <br>
+ * <b>Exposed configuration properties:</b> <br>
  * <table border="1">
  * <tr>
- * <td><b>name </b></th>
- * <td><b>default </b></td>
- * <td><b>description </b></td>
+ * <td><b>name</b></td>
+ * <td><b>default</b></td>
+ * <td><b>description</b></td>
  * </tr>
  * <tr>
  * <td>timeout</td>

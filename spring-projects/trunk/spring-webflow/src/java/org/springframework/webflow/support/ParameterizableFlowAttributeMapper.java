@@ -39,6 +39,16 @@ import org.springframework.webflow.RequestContext;
  * <b>Exposed configuration properties:</b> <br>
  * <table border="1">
  * <tr>
+ * <td><b>name</b></td>
+ * <td><b>default</b></td>
+ * <td><b>description</b></td>
+ * </tr>
+ * <tr>
+ * <td>inputAttribute(s)</td>
+ * <td><i>null</i></td>
+ * <td>Sets the name of input attributes in flow scope to map to the subflow.</td>
+ * </tr>
+ * <tr>
  * <td>inputMapper</td>
  * <td><i>null</i></td>
  * <td>The AttributeMapper strategy responsible for mapping starting
@@ -65,6 +75,12 @@ import org.springframework.webflow.RequestContext;
  * with a key is the name of the target entry that will be placed in the
  * subflow model.</td>
  * </tr>
+ * <tr>
+ * <td>outputAttribute(s)</td>
+ * <td><i>null</i></td>
+ * <td>ets the name of output attributes in flow scope to map to the parent flow.</td>
+ * </tr>
+ * <tr>
  * <td>outputMapper</td>
  * <td><i>null</i></td>
  * <td>The AttributeMapper strategy responsible for mapping ending subflow
@@ -99,7 +115,7 @@ import org.springframework.webflow.RequestContext;
  * or "beanName.propName". Nested property values are also supported
  * ("beanName.propName.propName").
  * When the <i>from</i> mapping string is enclosed in "${...}", it will be
- * interpreted as an expression that will be evaluated agains the request execution
+ * interpreted as an expression that will be evaluated against the request execution
  * context.
  * 
  * @see org.springframework.webflow.RequestContext
@@ -110,6 +126,9 @@ import org.springframework.webflow.RequestContext;
  */
 public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, Serializable {
 
+	/**
+	 * Logger, usable in subclasses.
+	 */
 	protected final Log logger = LogFactory.getLog(getClass());;
 
 	private AttributeMapper inputMapper = new FlowScopeAwareParameterizableAttributeMapper();
@@ -188,7 +207,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	}
 
 	/**
-	 * Sets the name of output attribute in flow scope to map to the parent flow.
+	 * Sets the name of output attributes in flow scope to map to the parent flow.
 	 * @param attributeNames the attribute names
 	 */
 	public void setOutputAttributes(String[] attributeNames) {
@@ -281,8 +300,8 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * Attribute mapper specialization that knows if an "attribute name" is provided, and not a
 	 * value ${expression}, that the name should be treated as a flow scope expression.
 	 * This is needed because all <i>from</i> expressions will be evaluated agains the request
-	 * context. Expression need to explicitly handle this (e.g. "${flowScope.bean.prop}"), but
-	 * simple names should automatically evaluated agains the flow scope ("bean.prop").
+	 * context. Expressions need to explicitly handle this (e.g. "${flowScope.bean.prop}"), but
+	 * simple names should automatically evaluate against the flow scope ("bean.prop").
 	 * 
 	 * @author Keith Donald
 	 * @author Erwin Vervaet

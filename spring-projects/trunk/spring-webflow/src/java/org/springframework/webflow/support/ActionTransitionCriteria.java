@@ -21,7 +21,6 @@ import org.springframework.webflow.ActionExecutor;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.action.AbstractAction;
 
 /**
  * A transition criteria that will execute an action when tested and return
@@ -29,6 +28,9 @@ import org.springframework.webflow.action.AbstractAction;
  * otherwise.
  * <p>
  * This effectively adapts an <code>Action</code> to a <code>TransitionCriteria</code>.
+ * 
+ * @see org.springframework.webflow.Action
+ * @see org.springframework.webflow.TransitionCriteria
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -39,7 +41,7 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 	 * The result event id that should map to a <code>true</code> precondition
 	 * return value.
 	 */
-	private String trueEventId = AbstractAction.SUCCESS_EVENT_ID;
+	private String trueEventId = "success";
 
 	/**
 	 * The action to execute when the precondition is tested, annotated with usage attributes.
@@ -47,7 +49,7 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 	private Action action;
 
 	/**
-	 * Create a action precondition delegating to the specified action.
+	 * Create action transition criteria delegating to the specified action.
 	 * @param action the action
 	 */
 	public ActionTransitionCriteria(Action action) {
@@ -56,7 +58,8 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 
 	/**
 	 * Returns the action result <code>eventId</code> that should cause this
-	 * precondition to return true (it will return false otherwise).
+	 * precondition to return true (it will return false otherwise). Defaults
+	 * to "success".
 	 */
 	public String getTrueEventId() {
 		return trueEventId;
@@ -73,8 +76,8 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 	}
 
 	/**
-	 * Returns the action attributes associated with this action precondition.
-	 * @return the attributes
+	 * Returns the action wrapped by this object.
+	 * @return the action
 	 */
 	protected Action getAction() {
 		return action;

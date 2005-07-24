@@ -47,7 +47,7 @@ public class FlowScopeExpression implements Expression {
 	}
 
 	/**
-	 * Create a new expression evaluator that executes given evaluator
+	 * Create a new expression evaluator that executes given expression
 	 * 'in flow scope'.
 	 * @param expression the nested evaluator to execute
 	 */
@@ -67,7 +67,7 @@ public class FlowScopeExpression implements Expression {
 	}
 	
 	/**
-	 * Returns given target as a request context.
+	 * Returns (casts) given target as a request context.
 	 */
 	protected RequestContext requestContext(Object target) {
 		Assert.isInstanceOf(RequestContext.class, target,
