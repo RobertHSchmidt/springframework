@@ -40,17 +40,17 @@ import org.springframework.webflow.execution.FlowExecutionImpl;
  * <p>
  * More specifically, a typical flow execution test case will test:
  * <ul>
- * <li>that the flow execution starts as expected given a source event with potential input parameters
- * (see startFlow(Event))
- * <li>that given the set of supported transition criteria for a given state, that the state executes 
+ * <li>That the flow execution starts as expected given a source event with potential input parameters
+ * (see {@link #startFlow(Event)}).
+ * <li>That given the set of supported transition criteria for a given state, that the state executes 
  * the appropriate transition when an event is signaled (with potential input parameters).  A test case
  * should be coded for each logical event that can occur, where an event drives a possible 
  * path through the flow.  The goal should be to exercise all possible paths of the flow.
- * <li>that given a transition that leads to an interactive state type (a view state or an end state),
+ * <li>That given a transition that leads to an interactive state type (a view state or an end state),
  * that the view descriptor returned to the client matches what was expected and the current
  * state of the flow matches what is expected.
  * </ul>
- * A flow execution test can effectively automate and validate the orchestration required to drive a 
+ * A flow execution test can effectively automate and validate the orchestration required to drive an 
  * end-to-end business process that spans several steps involving the user.  Such tests are a good way to
  * test your system top-down starting at the web-tier and pushing through all the way to the DB without
  * having to deploy to a servlet or portlet container.  Because these tests are typically end-to-end
@@ -124,7 +124,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	/**
 	 * Subclasses should override to return the <code>flowId</code> whose
 	 * execution should be tested.
-	 * @return the flow id, whose execution is to be tested.
+	 * @return the flow id, whose execution is to be tested
 	 */
 	protected abstract String flowId();
 
@@ -218,10 +218,9 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * each state transition (among other points). To add a listener, call
 	 * <code>getFlowExecution().getListenerList().add(myListener)</code>,
 	 * where myListener is a class that implements the FlowExecutionListener
-	 * interface (It is recommended you extend
+	 * interface. It is recommended you extend
 	 * {@link org.springframework.webflow.execution.FlowExecutionListenerAdapter}
 	 * and only override what you need.
-	 * 
 	 * @param event the event to signal
 	 * @return the model and view, returned once control is returned to the
 	 *         client (occurs when the flow enters a view state, or an end
