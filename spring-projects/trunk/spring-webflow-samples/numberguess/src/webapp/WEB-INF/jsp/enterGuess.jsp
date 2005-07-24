@@ -2,7 +2,7 @@
 
 <div id="content">
 	<div id="insert"><img src="images/webflow-logo.jpg"/></div>
-	<h2>The Number Guess Game
+	<h2>The Number Guess Game</h2>
 	<h3>Guess a number between 1 and 100!</h3>
 	<hr>
 	<form name="guessForm" method="post">
