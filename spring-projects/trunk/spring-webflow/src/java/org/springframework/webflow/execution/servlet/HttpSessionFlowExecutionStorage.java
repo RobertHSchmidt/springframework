@@ -60,7 +60,7 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 			FlowExecutionStorageException {
 		try {
 			return (FlowExecution)WebUtils.getRequiredSessionAttribute(
-					ServletEvent.getHttpServletRequest(requestingEvent), attributeName(id));
+					ServletEvent.getRequest(requestingEvent), attributeName(id));
 		}
 		catch (IllegalStateException e) {
 			throw new NoSuchFlowExecutionException(id, e);
@@ -78,7 +78,7 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 		// always update session attribute, even if just overwriting
 		// an existing one to make sure the servlet engine knows that this
 		// attribute has changed!
-		ServletEvent.getHttpSession(requestingEvent, isCreateSession()).setAttribute(attributeName(id), flowExecution);
+		ServletEvent.getSession(requestingEvent, isCreateSession()).setAttribute(attributeName(id), flowExecution);
 		return id;
 	}
 
@@ -86,7 +86,7 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removing flow execution with id '" + id + "' from HTTP session");
 		}
-		ServletEvent.getHttpSession(requestingEvent, isCreateSession()).removeAttribute(attributeName(id));
+		ServletEvent.getSession(requestingEvent, isCreateSession()).removeAttribute(attributeName(id));
 	}
 	
 	// subclassing hooks

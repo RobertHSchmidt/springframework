@@ -71,7 +71,7 @@ public class HttpSessionTokenTransactionSynchronizer extends AbstractTokenTransa
 	 * Helper to get the HTTP session accessible from given event.
 	 */
 	protected HttpSession getHttpSession(Event event) {
-		return ServletEvent.getHttpSession(event, isCreateSession());
+		return ServletEvent.getSession(event, isCreateSession());
 	}
 	
 	/**

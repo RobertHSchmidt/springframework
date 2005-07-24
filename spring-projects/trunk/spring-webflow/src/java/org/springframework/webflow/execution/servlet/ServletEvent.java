@@ -157,7 +157,7 @@ public class ServletEvent extends ExternalEvent {
 	 * @param event the event to use
 	 * @return the obtained HTTP servlet request
 	 */
-	public static HttpServletRequest getHttpServletRequest(Event event) {
+	public static HttpServletRequest getRequest(Event event) {
 		return getServletEvent(event).getRequest();
 	}
 
@@ -167,7 +167,7 @@ public class ServletEvent extends ExternalEvent {
 	 * @param event the event to use
 	 * @return the obtained HTTP servlet request
 	 */
-	public static HttpServletResponse getHttpServletResponse(Event event) {
+	public static HttpServletResponse getResponse(Event event) {
 		return getServletEvent(event).getResponse();
 	}
 
@@ -179,7 +179,7 @@ public class ServletEvent extends ExternalEvent {
 	 *        false otherwise
 	 * @return the obtained HTTP session
 	 */
-	public static HttpSession getHttpSession(Event event, boolean allowCreate) {
-		return getHttpServletRequest(event).getSession(allowCreate);
+	public static HttpSession getSession(Event event, boolean allowCreate) {
+		return getRequest(event).getSession(allowCreate);
 	}
 }
