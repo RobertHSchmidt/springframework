@@ -104,9 +104,9 @@ public class ServletEvent extends ExternalEvent {
 	 * <li>Try the _eventId parameter first, if it is present, return its value 
 	 * as the eventId.
 	 * <li>Try a parameter search looking for parameters of the format: 
-	 * _eventId_value.  If a match is found, return the value as the eventId.
-	 * <li>Try the _mapped_eventId request attribute
-	 * <li>
+	 * _eventId_value. If a match is found, return the value as the eventId.
+	 * <li>Try the _mapped_eventId request attribute.
+	 * </ol>
 	 * @param eventIdParameterName name of the event id parameter in the request (default=_eventId)
 	 * @param eventIdAttributeName name of the event id attribute in the request (default=_mapped_eventId)
 	 * @param parameterValueDelimiter delimiter used when a parameter value is 
@@ -144,7 +144,7 @@ public class ServletEvent extends ExternalEvent {
 	/**
 	 * Return (cast) given event as a ServletEvent.
 	 * @param event the event to use
-	 * @return the event case to a ServletEvent
+	 * @return the event cast to a ServletEvent
 	 */
 	public static ServletEvent getServletEvent(Event event) {
 		Assert.isInstanceOf(ServletEvent.class, event, "Wrong event type: ");
@@ -165,7 +165,7 @@ public class ServletEvent extends ExternalEvent {
 	 * Helper to get the HTTP response from given event. The event
 	 * should be a ServletEvent.
 	 * @param event the event to use
-	 * @return the obtained HTTP servlet request
+	 * @return the obtained HTTP servlet response
 	 */
 	public static HttpServletResponse getResponse(Event event) {
 		return getServletEvent(event).getResponse();

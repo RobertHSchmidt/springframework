@@ -95,7 +95,7 @@ public class ServletFlowExecutionManager extends FlowExecutionManager {
 
 	/**
 	 * Create a flow event wrapping given request and response. Subclasses
-	 * can override this, e.g. when the want to use special names for the
+	 * can override this, e.g. when they want to use special names for the
 	 * request parameters.
 	 */
 	protected Event createEvent(HttpServletRequest request, HttpServletResponse response) {

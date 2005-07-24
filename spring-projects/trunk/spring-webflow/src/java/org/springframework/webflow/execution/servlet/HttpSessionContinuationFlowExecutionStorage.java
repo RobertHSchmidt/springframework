@@ -32,10 +32,10 @@ import org.springframework.webflow.execution.NoSuchFlowExecutionException;
  * is that there could be many copies of the flow execution stored in the HTTP
  * session, increasing server memory requirements. It is advised that you use the
  * {@link org.springframework.webflow.execution.servlet.ExpiredFlowCleanupFilter} to
- * cleanup any flow execution continuations as soon as the can be considered
+ * cleanup any flow execution continuations as soon as they can be considered
  * to have expired.
  * <p>
- * This storage strategy requires a <code>HttpServletRequestEvent</code>.
+ * This storage strategy requires a <code>ServletEvent</code>.
  * 
  * @see org.springframework.webflow.execution.servlet.ExpiredFlowCleanupFilter
  * @see org.springframework.webflow.execution.servlet.ServletEvent

@@ -31,13 +31,18 @@ import org.springframework.webflow.util.RandomGuid;
  * Flow execution storage implementation that stores the flow execution
  * in the HTTP session.
  * <p>
- * This storage strategy requires a <code>HttpServletRequestEvent</code>.
+ * This storage strategy requires a <code>ServletEvent</code>.
+ * 
+ * @see org.springframework.webflow.execution.servlet.ServletEvent
  * 
  * @author Erwin Vervaet
  */
 public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 
-	protected final Log logger = LogFactory.getLog(HttpSessionFlowExecutionStorage.class);
+	/**
+	 * Logger, can be used in subclasses.
+	 */
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	private boolean createSession = true;
 
