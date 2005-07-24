@@ -36,39 +36,37 @@
 
 <project name="clover-targets" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
 
-    <import file="common-targets.xml"/>
+	<import file="common-targets.xml" />
 
 	<target name="clover.tasks" depends="retrieve">
-		<taskdef resource="com/cenqua/ant/antlib.xml" classpath="${test.classpath}"/>
-		<taskdef resource="clovertasks" classpath="${test.classpath}"/>
+		<taskdef resource="com/cenqua/ant/antlib.xml" classpath="${test.classpath}" />
+		<taskdef resource="clovertasks" classpath="${test.classpath}" />
 	</target>
 
 	<target name="-check.clover" depends="clover.tasks">
 		<available property="clover.installed" classname="com.cenqua.clover.CloverInstr" />
 	</target>
-	
+
 	<target name="guard.noclover" depends="-check.clover" unless="clover.installed">
-		<fail message="The target you are attempting to run requires Clover, which doesn't appear"/>
+		<fail message="The target you are attempting to run requires Clover, which doesn't appear" />
 	</target>
-	
+
 	<target name="clover.init" depends="guard.noclover">
-		<property name="target.clover.dir" value="${target.dir}/clover"/>	
-		<mkdir dir="${target.clover.dir}"/>
-		<clover-setup initstring="${target.clover.dir}/coverage.db"
- 		  		      tmpdir="${target.clover.dir}"
-			          preserve="true">
+		<property name="target.clover.dir" value="${target.dir}/clover" />
+		<mkdir dir="${target.clover.dir}" />
+		<clover-setup initstring="${target.clover.dir}/coverage.db" tmpdir="${target.clover.dir}" preserve="true">
 			<fileset dir="${src.java.main.dir}">
-       			<include name="**/*.java" />
+				<include name="**/*.java" />
 			</fileset>
 		</clover-setup>
-	</target>	
+	</target>
 
-	<target name="clover.instrument" depends="clean, clover.init, compile"/>
-	
+	<target name="clover.instrument" depends="clean, clover.init, compile" />
+
 	<target name="clover-report" depends="clover.instrument, tests-local" description="Produce a test coverage report">
 		<clover-report>
 			<current outfile="${target.clover.dir}/html">
-				<format type="html"/>
+				<format type="html" />
 			</current>
 		</clover-report>
 	</target>
@@ -76,9 +74,9 @@
 	<target name="clover-summary" depends="clover.instrument, tests-local" description="Produce a test coverage summary">
 		<clover-report>
 			<current summary="yes" outfile="${target.clover.dir}/coverage.pdf">
-				<format type="pdf"/>
+				<format type="pdf" />
 			</current>
 		</clover-report>
 	</target>
-	
+
 </project>

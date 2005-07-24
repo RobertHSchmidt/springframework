@@ -21,29 +21,29 @@
 
 <project name="spring-targets" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
 
-    <import file="common-targets.xml"/>
+	<import file="common-targets.xml"/>
 
 	<target name="spring-beandoc" depends="init" description="Generate Spring bean documentation">
 
 		<property name="spring.beandoc.input.files" value="${src.web.dir}/WEB-INF/applicationContext.xml"/>
 		<property name="spring.beandoc.output.dir" value="${target.artifacts.dir}/beandoc/"/>
 		<property name="spring.beandoc.properties" value="${common.build.dir}/beandoc.properties"/>
-		
+
 		<mkdir dir="${spring.beandoc.output.dir}"/>
-			
+
 		<path id="beandoc.classpath">
-    	    <path refid="test.classpath"/>
+			<path refid="test.classpath"/>
 		</path>
 
-		<taskdef name="beandoc" classname="org.springframework.beandoc.client.AntTask">            
-	  		<classpath refid="beandoc.classpath"/>
+		<taskdef name="beandoc" classname="org.springframework.beandoc.client.AntTask">
+			<classpath refid="beandoc.classpath"/>
 		</taskdef>
-		
+
 		<beandoc 
 			inputFiles="${spring.beandoc.input.files}" 
 			outputDir="${spring.beandoc.output.dir}"
 	   		beandocProps="${spring.beandoc.properties}"
 		/>
 	</target>
-	
+
 </project>

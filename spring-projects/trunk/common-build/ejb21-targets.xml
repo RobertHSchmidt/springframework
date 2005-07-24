@@ -32,34 +32,34 @@
 
 <project name="ejb21" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
 
-  <import file="common-targets.xml"/>
+	<import file="common-targets.xml" />
 
-  <!--
+	<!--
         init: this target must be hooked up to after common-targets.init
   -->
-    <target name="init">
-    <!-- where ejbs go -->
-    <property name="target.ejb.dir" value="${target.artifacts.dir}/ejb"/>
-    <!-- where any exploded ejbs go -->
-    <property name="target.ear.expanded.dir" value="${target.artifacts.dir}/ejb-expanded/primary"/>
-    <!-- where deployment descriptors go -->
-    <property name="target.ear.expanded.descriptor.dir" value="${target.ear.expanded.dir}/META-INF"/>
-  </target>
+	<target name="init">
+		<!-- where ejbs go -->
+		<property name="target.ejb.dir" value="${target.artifacts.dir}/ejb" />
+		<!-- where any exploded ejbs go -->
+		<property name="target.ear.expanded.dir" value="${target.artifacts.dir}/ejb-expanded/primary" />
+		<!-- where deployment descriptors go -->
+		<property name="target.ear.expanded.descriptor.dir" value="${target.ear.expanded.dir}/META-INF" />
+	</target>
 
-  <!--
+	<!--
         copy-target-ejbs: copies ejbs from target.ejb.dir where something like XDoclet
 		has produced them, into target.expear.dir
 		This target must be hooked up to run before or after common-targets.ear.stage.main
   -->
-  <target name="copy.target.ejbs" if="build.j2eeapp">
+	<target name="copy.target.ejbs" if="build.j2eeapp">
 
-	<!-- copy ejb modules -->
-	<mkdir dir="${target.ejb.dir}"/>
-    <copy todir="${target.ear.expanded.dir}">
-      <fileset dir="${target.ejb.dir}">
-        <include name="*.jar" />
-      </fileset>
-	</copy>
-  </target>
+		<!-- copy ejb modules -->
+		<mkdir dir="${target.ejb.dir}" />
+		<copy todir="${target.ear.expanded.dir}">
+			<fileset dir="${target.ejb.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+	</target>
 
 </project>
