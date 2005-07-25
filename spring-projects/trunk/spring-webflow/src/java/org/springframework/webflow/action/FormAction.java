@@ -284,7 +284,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Set the name of the form object in the configured scope. The form object object
+	 * Set the name of the form object in the configured scope. The form object
 	 * will be included in the configured scope under this name.
 	 */
 	public void setFormObjectName(String formObjectName) {
@@ -498,7 +498,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 *        data in "flow scope" or "request scope"
 	 * @return "success" when binding and validation is successful, "error"
 	 *         if there were binding or validation errors or the form object
-	 *         could not be retrieved.
+	 *         could not be retrieved
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 *         checked or unchecked
 	 */
@@ -533,7 +533,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
 	 * @return "success" when binding and validation is successful, "error"
-	 *         if ther were errors or the form object could not be retrieved.
+	 *         if ther were errors or the form object could not be retrieved
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 *         checked or unchecked
 	 */
@@ -572,7 +572,9 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
 	 * @return "success" if there are no binding errors, "error" if there
-	 *         are errors or the form object could not be retrieved.
+	 *         are errors or the form object could not be retrieved
+	 * @throws Exception an <b>unrecoverable</b> exception occured, either
+	 *         checked or unchecked
 	 */
 	public Event bind(RequestContext context) throws Exception {
 		Object formObject = null;
@@ -595,7 +597,9 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the action execution context, for accessing and setting
 	 *        data in "flow scope" or "request scope"
 	 * @return "success" if there are no validation errors, "error" if there 
-	 *         are errors or the form object could not be retrieved.
+	 *         are errors or the form object could not be retrieved
+	 * @throws Exception an <b>unrecoverable</b> exception occured, either
+	 *         checked or unchecked
 	 */
 	public Event validate(RequestContext context) throws Exception {
 		Object formObject = null;
@@ -686,7 +690,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	
 	/**
 	 * Validate given form object using a registered validator. If a "validatorMethod"
-	 * action property is specified for the currently executing action state action,
+	 * action property is specified for the currently executing action,
 	 * the identified validator method will be invoked. When no such property is found,
 	 * the defualt <code>validate()</code> method is invoked.
 	 * @param context the action execution context, for accessing and setting
@@ -749,7 +753,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	
 	/**
 	 * Convenience method that returns the form object errors for this form action.
-	 * If not found in the configured scope, a new form object erors will be created.
+	 * If not found in the configured scope, a new form object errors will be created.
 	 * @param context the flow request context
 	 * @return the form errors
 	 */
