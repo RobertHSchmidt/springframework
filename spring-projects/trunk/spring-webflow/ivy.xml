@@ -15,13 +15,13 @@
     <dependency org="apache" name="commons-logging" rev="1.0.4"/>
     <dependency org="apache" name="log4j" rev="1.2.9"/>
     <dependency org="ognl" name="ognl" rev="2.7"/>
-    <dependency org="springframework" name="spring-beans" rev="1.2.2"/>
-    <dependency org="springframework" name="spring-core" rev="1.2.2"/>
-    <dependency org="springframework" name="spring-context" rev="1.2.2"/>
-    <dependency org="springframework" name="spring-web" rev="1.2.2"/>
-    <dependency org="springframework" name="spring-webmvc" rev="1.2.2"/>
-    <dependency org="springframework" name="spring-mock" rev="1.2.2"/>
-    <dependency org="springframework" name="spring-binding" rev="latest.integration"/>
+    <dependency org="springframework" name="spring-beans" rev="1.2.3"/>
+    <dependency org="springframework" name="spring-core" rev="1.2.3"/>
+    <dependency org="springframework" name="spring-context" rev="1.2.3"/>
+    <dependency org="springframework" name="spring-web" rev="1.2.3"/>
+    <dependency org="springframework" name="spring-webmvc" rev="1.2.3"/>
+    <dependency org="springframework" name="spring-mock" rev="1.2.3"/>
+    <dependency org="springframework" name="spring-binding" rev="1.0-20050725061503"/>
     <dependency org="junit" name="junit" rev="3.8.1" />
 
 	<!--  build time only dependencies -->
