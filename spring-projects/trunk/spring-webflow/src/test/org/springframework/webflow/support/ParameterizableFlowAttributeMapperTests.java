@@ -25,8 +25,11 @@ import junit.framework.TestCase;
 import org.springframework.binding.AttributeMapper;
 import org.springframework.binding.support.Mapping;
 import org.springframework.core.CollectionFactory;
+import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.Scope;
+import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.action.FormAction;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -254,4 +257,66 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 		assertEquals("xValue", parentSession.getScope().get("y"));
 	}
 
+	public void testNullMapping() {
+		Map mappingsMap = new HashMap();
+		mappingsMap.put("${flowScope.x}", "y");
+		mappingsMap.put("a", "b");
+		mapper.setInputMappingsMap(mappingsMap);
+		mapper.setOutputMappingsMap(mappingsMap);
+		
+		parentSession.getScope().put("x", null);
+		
+		context.setActiveSession(parentSession);
+		Map input = mapper.createSubflowInput(context);
+		assertEquals(2, input.size());
+		assertTrue(input.containsKey("y"));
+		assertNull(input.get("y"));
+		assertTrue(input.containsKey("b"));
+		assertNull(input.get("b"));
+		
+		parentSession.getScope().clear();
+		
+		context.setActiveSession(subflowSession);
+		mapper.mapSubflowOutput(context);
+		assertEquals(2, parentSession.getScope().size());
+		assertTrue(parentSession.getScope().containsKey("y"));
+		assertNull(parentSession.getScope().get("y"));
+		assertTrue(parentSession.getScope().containsKey("b"));
+		assertNull(parentSession.getScope().get("b"));
+	}
+	
+	public void testFormActionInCombinationWithMapping() throws Exception {
+		context.setActiveSession(parentSession);
+		context.setLastEvent(new Event(this));
+		
+		FormAction action = new FormAction();
+		action.setFormObjectName("command");
+		action.setFormObjectClass(TestBean.class);
+		action.setFormObjectScope(ScopeType.FLOW);
+		context.setProperty("method", "setupForm");
+		
+		action.execute(context);
+		
+		assertEquals(2, context.getFlowScope().size());
+		assertNotNull(context.getFlowScope().get("command"));
+		
+		assertTrue(subflowSession.getScope().isEmpty());
+		
+		Map mappingsMap = new HashMap();
+		mappingsMap.put("${flowScope.command}", "command");
+		mapper.setInputMappingsMap(mappingsMap);
+		Map input = mapper.createSubflowInput(context);
+		
+		assertEquals(1, input.size());
+		assertSame(parentSession.getScope().get("command"), input.get("command"));
+		subflowSession.getScope().putAll(input);
+		
+		context.setActiveSession(subflowSession);
+		assertEquals(1, context.getFlowScope().size());
+		
+		action.execute(context);
+		
+		assertEquals(2, context.getFlowScope().size());
+		assertSame(parentSession.getScope().get("command"), context.getFlowScope().get("command"));
+	}
 }
