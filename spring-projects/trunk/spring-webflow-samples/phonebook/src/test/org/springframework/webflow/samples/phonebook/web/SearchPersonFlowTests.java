@@ -54,7 +54,8 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 	
 	public void testCriteriaView_Submit_Error() {
 		startFlow();
-		signalEvent(event("search", null));
+		// simulate user error by not passing in any params
+		signalEvent(event("search"));
 		assertCurrentStateEquals("displayCriteria");
 	}
 

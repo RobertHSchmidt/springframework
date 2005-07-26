@@ -21,6 +21,5 @@
 	<classpathentry kind="lib" path="lib/global/spring-webflow.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/global/standard.jar"/>
-	<classpathentry kind="lib" path="lib/test/spring-mock.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
