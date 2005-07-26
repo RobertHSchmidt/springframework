@@ -427,6 +427,27 @@ public class FormActionTests extends TestCase {
 		assertSame(test2, new FormObjectAccessor(context).getFormObject());
 	}
 	
+	public void testFormObjectAndNoErrors() throws Exception {
+		// this typically happens with mapping from parent flow to subflow	
+		MockRequestContext context = new MockRequestContext();
+		context.setLastEvent(new Event(this, "test", params("prop", "value")));
+		
+		TestBean testBean = new TestBean();
+		testBean.setProp("bla");
+		context.getFlowScope().setAttribute("test", testBean);
+		
+		action.setupForm(context);
+		
+		// should have created a new empty errors instance, but left the form object alone
+		// since we didn't to bindOnSetupForm
+		
+		assertSame(testBean, getFormObject(context));
+		assertEquals("bla", getFormObject(context).getProp());
+		assertNotNull(getErrors(context));
+		assertSame(testBean, ((BindException)getErrors(context)).getTarget());
+		assertFalse(getErrors(context).hasErrors());
+	}
+	
 	// helpers
 	
 	private FormAction createFormAction(String formObjectName) {
