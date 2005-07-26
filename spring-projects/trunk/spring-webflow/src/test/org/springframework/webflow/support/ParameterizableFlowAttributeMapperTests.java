@@ -286,8 +286,10 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 	}
 	
 	public void testFormActionInCombinationWithMapping() throws Exception {
-		context.setActiveSession(parentSession);
 		context.setLastEvent(new Event(this));
+
+		context.setActiveSession(parentSession);
+		assertTrue(context.getFlowScope().isEmpty());
 		
 		FormAction action = new FormAction();
 		action.setFormObjectName("command");
@@ -299,9 +301,7 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 		
 		assertEquals(2, context.getFlowScope().size());
 		assertNotNull(context.getFlowScope().get("command"));
-		
-		assertTrue(subflowSession.getScope().isEmpty());
-		
+				
 		Map mappingsMap = new HashMap();
 		mappingsMap.put("${flowScope.command}", "command");
 		mapper.setInputMappingsMap(mappingsMap);
@@ -309,6 +309,7 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 		
 		assertEquals(1, input.size());
 		assertSame(parentSession.getScope().get("command"), input.get("command"));
+		assertTrue(subflowSession.getScope().isEmpty());
 		subflowSession.getScope().putAll(input);
 		
 		context.setActiveSession(subflowSession);
