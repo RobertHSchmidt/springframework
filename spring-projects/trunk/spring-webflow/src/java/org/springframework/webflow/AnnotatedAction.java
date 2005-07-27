@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * A action that allows for storing arbitrary properties about a
+ * An action that allows for storing arbitrary properties about a
  * target <code>Action</code> implementation for use in exactly one
  * context, for example an <code>ActionState</code> definition, a
  * <code>TransitionCriteria</code> definition, or in a test environment.

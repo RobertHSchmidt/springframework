@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
  */
 public class ActionExecutor {
 
-	protected final Log logger = LogFactory.getLog(ActionExecutor.class);
+	private final Log logger = LogFactory.getLog(ActionExecutor.class);
 
 	/**
 	 * The action that will be executed.

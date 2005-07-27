@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
 /**
  * A transitionable state that executes one or more actions when entered.  
  * When the action(s) are executed, this state responds to their result(s) to
- * decide to go next.
+ * decide where to go next.
  * <p>
  * If more than one action is configured, they are executed in an ordered chain
  * until one returns a result event that matches a valid state transition out of
@@ -45,10 +45,10 @@ import org.springframework.util.Assert;
  * <p>
  * Common action execution properties include:
  * <p>
- * <table>
+ * <table border="1">
  * <th>Property</th><th>Description</th>
  * <tr><td valign="top">Name</td>
- * <td>The 'name' property is used as a qualifier for action's result event.
+ * <td>The 'name' property is used as a qualifier for the action's result event.
  * For example, if an action named <code>myAction</code> returns a <code>success</code>
  * result, a transition for event <code>myAction.success</code> will be searched,
  * and if found, executed. If the action is not named a transition for the base
@@ -284,11 +284,11 @@ public class ActionState extends TransitionableState {
 	 * fashion.
 	 * <p>
 	 * This implementation iterates over each configured <code>Action</code>
-	 * instance and executes it. Execution continues until a <code>Action</code>
+	 * instance and executes it. Execution continues until an <code>Action</code>
 	 * returns a result event that matches a state transition in this request
 	 * context, or the set of all actions is exhausted.
 	 * @param context the state context for the executing flow
-	 * @return ViewDescriptor a view descriptor signaling that control should be
+	 * @return a view descriptor signaling that control should be
 	 *         returned to the client and a view rendered
 	 * @throws CannotExecuteTransitionException when no action execution
 	 *         resulted in a outcome event that could be mapped to a valid state

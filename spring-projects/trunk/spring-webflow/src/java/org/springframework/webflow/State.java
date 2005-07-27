@@ -52,6 +52,9 @@ import org.springframework.util.Assert;
  */
 public abstract class State extends AnnotatedObject {
 
+	/**
+	 * Logger, for use in subclasses.
+	 */
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
