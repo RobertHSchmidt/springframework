@@ -189,7 +189,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 
 	/**
 	 * Specialization of State's <code>doEnter</code> template method that executes
-	 * behaivior specific to this state type in polymorphic fashion.
+	 * behaviour specific to this state type in polymorphic fashion.
 	 * <p>
 	 * Entering this state, creates the sub flow input map and spawns the sub
 	 * flow in the current flow execution.
