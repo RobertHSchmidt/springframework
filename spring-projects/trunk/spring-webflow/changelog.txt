@@ -2,7 +2,6 @@ SPRING WEBFLOW CHANGELOG
 ==========================
 http://www.springframework.org
 
-
 Changes in version PR5 (28.7.2005)
 ------------------------------------
 * Renamed the static helpers in the ServletEvent class to match with their instance counterparts: e.g. getHttpServletRequest() was renamed to getRequest().
