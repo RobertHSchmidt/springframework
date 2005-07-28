@@ -68,7 +68,8 @@
 		<property name="org.name" value="springframework.org" />
 		<property name="org.package.prefix" value="org.springframework" />
 		<property name="project.name" value="${ant.project.name}" />
-		<property name="project.webapp.name" value="${ant.project.name}" />
+		<property name="project.title" value="${project.name}" />
+		<property name="project.webapp.name" value="${project.name}" />
 		<property name="project.base.version" value="1.0-dev" />
 		<property name="project.version" value="${project.base.version}-${build.timestamp}" />
 
@@ -690,7 +691,7 @@
 	<target name="javadoc" depends="build.prepare" description="Create the API documentation">
 		<mkdir dir="${target.javadocs.dir}" />
 		<property name="copyright" value="Copyright &#169; 2005. All Rights Reserved." />
-		<javadoc destdir="${target.javadocs.dir}" author="true" version="true" windowtitle="${project.name} API" doctitle="${project.name}" bottom="${copyright}">
+		<javadoc destdir="${target.javadocs.dir}" author="true" version="true" windowtitle="${project.name} API" doctitle="${project.title}" bottom="${copyright}">
 			<classpath>
 				<pathelement location="${target.classes.dir}" />
 				<pathelement location="${target.testclasses.dir}" />

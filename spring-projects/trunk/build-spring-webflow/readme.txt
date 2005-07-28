@@ -1,12 +1,12 @@
-This is where the master build to create releases 
-of spring-webflow resides.
+This is where the master build to create releases of spring-webflow resides.
 
 To build a new release:
 
-	build-spring-webflow$ ant release
+1. Update project.properties to contain the new release version, if necessary.
 
-The release archive will be placed in:
-
-	target/release
+2. From this directory, run:
+		ant release
+   The release archive will created and placed in:
+		target/release
 	
 Questions? See forum.springframework.org
