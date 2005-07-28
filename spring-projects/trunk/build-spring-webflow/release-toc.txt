@@ -1,0 +1,16 @@
+SPRING WEB FLOW
+
+Release archive table of contents
+---------------------------------------------------
+* build-spring-webflow - contains master build files to produce this release archive
+* common-build - contains the ant 1.6 "common build system" used by all spring projects to compile/build/test
+* dist - contains project distribution units (jars and source zip archives)
+* doc - contains project API JavaDocs
+* repository - contains distribution units (jars) for this project's dependencies
+* spring-webflow - contains project sources
+* spring-webflow-samples - contains sample project sources
+
+Each source project like "spring-webflow" and "spring-webflow-samples/phonebook" is directly
+importable as an Eclipse project.
+
+See the readme.txt within the above directories for additional information.
