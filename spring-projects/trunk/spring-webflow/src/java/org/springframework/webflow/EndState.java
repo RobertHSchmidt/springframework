@@ -34,7 +34,7 @@ import org.springframework.util.Assert;
  * EndState terminates the entire flow execution, it is expected that some
  * action has already written the response (or else a blank response will
  * result). On the other hand, if no <code>viewName</code> is specified <b>and</b>
- * this EndState reliniquishes control back to a parent flow, view rendering
+ * this EndState relinquishes control back to a parent flow, view rendering
  * responsibility falls on the parent flow.
  * 
  * @see org.springframework.webflow.ViewDescriptorCreator
@@ -115,7 +115,7 @@ public class EndState extends State {
 	}
 
 	/**
-	 * Returns true if this view state has no associated view, false otherwise.
+	 * Returns true if this end state has no associated view, false otherwise.
 	 */
 	public boolean isMarker() {
 		return viewDescriptorCreator == null;
@@ -131,7 +131,7 @@ public class EndState extends State {
 	 * If the ended session is the root flow, a ViewDescriptor is
 	 * returned (when viewName is not null, else null is returned).
 	 * @param context the state context for the executing flow
-	 * @return ViewDescriptor a view descriptor signaling that control should be
+	 * @return a view descriptor signaling that control should be
 	 *         returned to the client and a view rendered
 	 */
 	protected ViewDescriptor doEnter(StateContext context) {
