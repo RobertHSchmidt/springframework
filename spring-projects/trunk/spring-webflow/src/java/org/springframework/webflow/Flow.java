@@ -33,7 +33,7 @@ import org.springframework.util.StringUtils;
  * At a high level, a Flow is a reusable, self-contained module that captures
  * the definition (configuration information) of a logical page flow within a
  * web application. A logical page flow is defined as a controlled navigation
- * that guides the user through fullfillment of a business process that takes
+ * that guides the user through fulfillment of a business process that takes
  * place over a series of steps (modeled as states).
  * <p>
  * Note: A flow is not a welcome page, a menu, an index page, or even a
@@ -51,8 +51,8 @@ import org.springframework.util.StringUtils;
  * <p>
  * Each state can have transitions that are used to move to another
  * state. A transition is typically triggered by the occurence of a supported
- * event within a request context. An event is a identifier signalling the
- * occurence of something: e.g "submit", "back", "success", "error".
+ * event within a request context. An event is an identifier signalling the
+ * occurence of something: e.g. "submit", "back", "success" or "error".
  * <p>
  * Each Flow has exactly one start state. A start state is simply a marker for
  * the state flow executions (client instances of this flow) should start in.
@@ -81,6 +81,9 @@ import org.springframework.util.StringUtils;
  */
 public class Flow extends AnnotatedObject {
 
+	/**
+	 * Logger, for use in subclasses.
+	 */
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
@@ -117,6 +120,7 @@ public class Flow extends AnnotatedObject {
 	 * Construct a new flow definition with the given id. The id should be
 	 * unique among all flows.
 	 * @param id the flow identifier
+	 * @param properties additional properties describing the flow
 	 */
 	public Flow(String id, Map properties) {
 		setId(id);
@@ -208,10 +212,8 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Set the start state for this flow to the state with the provided
 	 * <code>stateId</code>; a state must exist by the provided
-	 * <code>stateId</code> and it must be transitionable.
+	 * <code>stateId</code>.
 	 * @param stateId the id of the new start state
-	 * @throws IllegalStateException when the specified start state is not
-	 *         transitionable
 	 * @throws NoSuchFlowStateException when no state exists with the id you
 	 *         provided
 	 */

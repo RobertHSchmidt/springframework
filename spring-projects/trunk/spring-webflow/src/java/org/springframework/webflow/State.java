@@ -174,8 +174,8 @@ public abstract class State extends AnnotatedObject {
 
 	/**
 	 * Enter this state in the provided flow execution request context. This implementation
-	 * just calls the {@link #doEnter(StateContext)} hook method after executing the entry action,
-	 * which should be implemented by subclasses.
+	 * just calls the {@link #doEnter(StateContext)} hook method, which should be implemented
+	 * by subclasses, after executing the entry action.
 	 * @param context the request context in an executing flow (a client instance of a flow)
 	 * @return a view descriptor containing model and view information needed to
 	 *         render the results of the state processing
@@ -218,7 +218,7 @@ public abstract class State extends AnnotatedObject {
 	/**
 	 * Subclasses may override this hook method to stringify their internal
 	 * state. This default implementation does nothing.
-	 * @param creator the toString creator, to stringify properties.
+	 * @param creator the toString creator, to stringify properties
 	 */
 	protected void createToString(ToStringCreator creator) {
 	}
