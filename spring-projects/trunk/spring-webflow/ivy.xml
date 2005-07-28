@@ -21,7 +21,7 @@
     <dependency org="springframework" name="spring-web" rev="1.2.3"/>
     <dependency org="springframework" name="spring-webmvc" rev="1.2.3"/>
     <dependency org="springframework" name="spring-mock" rev="1.2.3"/>
-    <dependency org="springframework" name="spring-binding" rev="1.0-20050725061503"/>
+    <dependency org="springframework" name="spring-binding" rev="1.0-dev-20050727232106"/>
     <dependency org="junit" name="junit" rev="3.8.1" />
 
 	<!--  build time only dependencies -->

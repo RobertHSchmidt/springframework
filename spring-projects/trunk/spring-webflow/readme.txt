@@ -45,7 +45,7 @@ optional, i.e. just necessary for certain functionality.
 - Dependencies: Commons Logging, spring-beans, spring-core, spring-context, spring-web, spring-binding,
                 (Log4J, Commons Codec, OGNL, spring-webmvc, spring-mock, JUnit, Servlet, JMX, Struts)
               
-* spring-binding-1.0-dev-2005xxxx.jar
+* spring-binding-1.0-dev-20050727232106.jar
 - Contents: The Spring Data Binding framework
 - Dependencies: Commons Logging, spring-bean, spring-core, spring-context, (Log4J)
 
