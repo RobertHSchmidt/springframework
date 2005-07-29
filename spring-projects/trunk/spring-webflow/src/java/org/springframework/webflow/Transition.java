@@ -49,7 +49,10 @@ import org.springframework.util.Assert;
  */
 public class Transition extends AnnotatedObject {
 
-	protected final Log logger = LogFactory.getLog(Transition.class);
+	/**
+	 * Logger, for use in subclasses.
+	 */
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * The source state that owns this transition.
@@ -124,7 +127,7 @@ public class Transition extends AnnotatedObject {
 	}
 
 	/**
-	 * Create a new local transition programatically
+	 * Create a new local transition programatically.
 	 * @param sourceState the source state of the transition
 	 * @param matchingCriteria strategy object used to determine if this transition should be
 	 *        matched as elligible for execution
