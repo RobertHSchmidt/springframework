@@ -70,7 +70,7 @@ public class ViewDescriptor implements AttributeSource, Serializable {
 
 	/**
 	 * Convenient constructor when there is no model data to expose. Can also be
-	 * used in conjunction with <code>addObject</code>.
+	 * used in conjunction with <code>addObject()</code>.
 	 * @param viewName name of the view to render
 	 * @see #addObject
 	 */
@@ -79,11 +79,11 @@ public class ViewDescriptor implements AttributeSource, Serializable {
 	}
 
 	/**
-	 * Creates new ViewDescriptor given a view name and a model.
+	 * Creates a new ViewDescriptor given a view name and a model.
 	 * @param viewName name of the view to render
-	 * @param model Map of model names (Strings) to model objects (Objects).
-	 *        Model entries may not be null, but the model Map may be null if
-	 *        there is no model data.
+	 * @param model map of model names (Strings) to model objects (Objects),
+	 *        model entries may not be null, but the model Map may be null if
+	 *        there is no model data
 	 */
 	public ViewDescriptor(String viewName, Map model) {
 		this.viewName = viewName;

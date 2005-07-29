@@ -21,7 +21,7 @@ package org.springframework.webflow;
  * Note that this is a runtime factory! It is used at flow execution time by objects like the
  * <code>ViewState</code> to produce new <code>ViewDescriptor</code>s.
  * <p>
- * This allows easy insertion of dynamic view descriptor configuration logic.  This alows you to
+ * This allows easy insertion of dynamic view descriptor configuration logic, for instance, letting you
  * determine the view to render or the available model data for rendering based on contextual 
  * information.
  * 

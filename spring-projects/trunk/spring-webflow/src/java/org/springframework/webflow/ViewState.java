@@ -27,7 +27,7 @@ import org.springframework.core.style.ToStringCreator;
  * <code>ViewDescriptor</code>, which contains the logical name of a view
  * template to render and all supporting model data needed to render it
  * correctly. It is expected that some sort of view resolver will map this view
- * name to a physical resource template (like a JSP file.)
+ * name to a physical resource template (like a JSP file).
  * <p>
  * A view state can also be a <i>marker</i> state with no associated view. In
  * this case it just returns control back to the client. Marker states are
