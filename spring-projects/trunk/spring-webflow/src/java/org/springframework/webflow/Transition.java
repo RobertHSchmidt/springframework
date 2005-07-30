@@ -63,13 +63,13 @@ public class Transition extends AnnotatedObject {
 	 * The criteria that determine whether or not this transition matches as
 	 * elligible for execution.
 	 */
-	private TransitionCriteria matchingCriteria;
+	private TransitionCriteria matchingCriteria = WildcardTransitionCriteria.INSTANCE;
 
 	/**
 	 * The criteria that determine whether or not this transition, once matched,
 	 * should complete execution or should <i>roll back</i>.
 	 */
-	private TransitionCriteria executionCriteria = TransitionCriteriaFactory.alwaysTrue();
+	private TransitionCriteria executionCriteria = WildcardTransitionCriteria.INSTANCE;
 	
 	/**
 	 * The state id for the target state.
@@ -83,16 +83,16 @@ public class Transition extends AnnotatedObject {
 	}
 
 	/**
-	 * Create a new transition.
-	 * @param matchingCriteria strategy object used to determine if this transition should be
-	 *        matched as elligible for execution
+	 * Create a new transition that always matches and always executes, transitioning
+	 * to the specified target state.
+	 * @param targetStateId the id of the starget state of the transition
 	 */
-	public Transition(TransitionCriteria matchingCriteria) {
-		setMatchingCriteria(matchingCriteria);
+	public Transition(String targetStateId) {
 	}
 
 	/**
-	 * Create a new transition.
+	 * Create a new transition that transitions to the specified state when the
+	 * provided criteria matches.
 	 * @param matchingCriteria strategy object used to determine if this transition should be
 	 *        matched as elligible for execution
 	 * @param targetStateId the id of the starget state of the transition
@@ -103,21 +103,11 @@ public class Transition extends AnnotatedObject {
 	}
 
 	/**
-	 * Create a new transition.
+	 * Create a new annoated transition that transitions to the target state when the
+	 * provided criteria matches.
 	 * @param matchingCriteria strategy object used to determine if this transition should be
 	 *        matched as elligible for execution
-	 * @param properties additional properties describing this transition
-	 */
-	public Transition(TransitionCriteria matchingCriteria, Map properties) {
-		setMatchingCriteria(matchingCriteria);
-		setProperties(properties);
-	}
-
-	/**
-	 * Create a new transition.
-	 * @param matchingCriteria strategy object used to determine if this transition should be
-	 *        matched as elligible for execution
-	 * @param targetStateId the id of the starget state of the transition
+	 *r @param targetStateId the id of the starget state of the transition
 	 * @param properties additional properties describing this transition
 	 */
 	public Transition(TransitionCriteria matchingCriteria, String targetStateId, Map properties) {

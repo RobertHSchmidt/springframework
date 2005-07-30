@@ -32,7 +32,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.convert.FlowConversionService;
+import org.springframework.webflow.support.FlowConversionService;
 
 /**
  * A flow service locator that uses a Spring bean factory to lookup flow-related
