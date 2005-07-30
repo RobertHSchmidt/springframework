@@ -57,7 +57,7 @@ public class FormActionBindingTests extends TestCase {
 		context.setLastEvent(new ServletEvent(request, response));
 		context.setProperty("method", "bindAndValidate");
 		
-		// use a for FormAction to do the binding
+		// use a FormAction to do the binding
 		FormAction formAction = new FormAction();
 		formAction.setFormObjectClass(TestBean.class);
 		formAction.execute(context);
@@ -80,5 +80,8 @@ public class FormActionBindingTests extends TestCase {
 		assertEquals(formActionErrors.getFieldErrorCount("prop"), simpleFormControllerErrors.getFieldErrorCount("prop"));
 		assertEquals(1, formActionErrors.getFieldErrorCount("prop"));
 		assertEquals(formActionErrors.getFieldError("prop").getCodes().length, simpleFormControllerErrors.getFieldError("prop").getCodes().length);
+		for (int i=0; i<formActionErrors.getFieldError("prop").getCodes().length; i++) {
+			assertEquals(formActionErrors.getFieldError("prop").getCodes()[i], simpleFormControllerErrors.getFieldError("prop").getCodes()[i]);
+		}
 	}
 }
