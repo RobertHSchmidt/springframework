@@ -26,12 +26,12 @@ import junit.framework.TestCase;
  * 
  * @author Erwin Vervaet
  */
-public class StatefulActionWrapperTests extends TestCase {
+public class StatefulActionProxyTests extends TestCase {
 	
 	public void testStatefulAction() throws Exception {
 		MockRequestContext context = new MockRequestContext();
 		context.setProperty("statefulActionId", "test");
-		StatefulActionWrapper wrapper = new StatefulActionWrapper();
+		StatefulActionProxy wrapper = new StatefulActionProxy();
 		wrapper.setBeanFactory(new XmlBeanFactory(new ClassPathResource("context.xml", getClass())));
 		
 		assertTrue(context.getFlowScope().isEmpty());
