@@ -96,6 +96,22 @@ public class Event extends EventObject implements AttributeSource {
 	}
 
 	/**
+	 * Create a new event with the specified <code>id</code> and a single
+	 * contextual parameters.
+	 * @param source the source of the event
+	 * @param id the event identifier
+	 * @param parameterName the name of the single parameter
+	 * @param parameterValue the value of the single parameter
+	 */
+	public Event(Object source, String id, String parameterName, Object parameterValue) {
+		super(source);
+		setRequiredId(id);
+		Map parameters = new HashMap(1);
+		parameters.put(parameterName, parameterValue);
+		setParameters(parameters);
+	}
+
+	/**
 	 * Create a new event with the specified <code>id</code> occuring in the
 	 * state with the specified <code>stateId</code> and the provided
 	 * contextual parameters.
