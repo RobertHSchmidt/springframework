@@ -2,6 +2,11 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
+Changes in version RC1
+------------------------------------
+* Relocated several support classes in webflow to webflow.support
+* Introduced StatefulActionProxy, for delegating to flow-scoped actions that can hold local state.
+
 Changes in version PR5 (28.7.2005)
 ------------------------------------
 * Renamed the static helpers in the ServletEvent class to match with their instance counterparts: e.g. getHttpServletRequest()
