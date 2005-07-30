@@ -30,12 +30,12 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
-import org.springframework.webflow.TextToViewDescriptorCreator;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.AutowireMode;
 import org.springframework.webflow.access.ServiceLookupException;
-import org.springframework.webflow.convert.FlowConversionService;
+import org.springframework.webflow.support.FlowConversionService;
+import org.springframework.webflow.support.SimpleViewDescriptorCreator;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -90,7 +90,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		ViewState viewState1 = (ViewState) flow.getState("viewState1");
 		assertNotNull(viewState1);
 		assertFalse(viewState1.isMarker());
-		assertEquals("view1", ((TextToViewDescriptorCreator.SimpleViewDescriptorCreator)viewState1.getViewDescriptorCreator()).getViewName());
+		assertEquals("view1", ((SimpleViewDescriptorCreator)viewState1.getViewDescriptorCreator()).getViewName());
 		assertEquals(1, viewState1.getTransitions().length);
 		context.setLastEvent(createEvent("event1"));
 		assertTrue(viewState1.hasTransitionFor(context));
@@ -132,7 +132,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		EndState endState1 = (EndState) flow.getState("endState1");
 		assertNotNull(endState1);
 		assertFalse(endState1.isMarker());
-		assertEquals("endView1", ((TextToViewDescriptorCreator.SimpleViewDescriptorCreator)endState1.getViewDescriptorCreator()).getViewName());
+		assertEquals("endView1", ((SimpleViewDescriptorCreator)endState1.getViewDescriptorCreator()).getViewName());
 
 		EndState endState2 = (EndState) flow.getState("endState2");
 		assertNotNull(endState2);

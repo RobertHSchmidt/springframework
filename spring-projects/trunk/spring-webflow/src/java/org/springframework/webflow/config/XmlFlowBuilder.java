@@ -52,7 +52,6 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.TransitionCriteriaFactory;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
@@ -752,7 +751,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		Transition thenTransition = new Transition(criteria, trueStateId);
 		String falseStateId = element.getAttribute(ELSE_ATTRIBUTE);
 		if (StringUtils.hasText(falseStateId)) {
-			Transition elseTransition = new Transition(TransitionCriteriaFactory.alwaysTrue(), falseStateId);
+			Transition elseTransition = new Transition(falseStateId);
 			return new Transition[] { thenTransition, elseTransition };
 		}
 		else {

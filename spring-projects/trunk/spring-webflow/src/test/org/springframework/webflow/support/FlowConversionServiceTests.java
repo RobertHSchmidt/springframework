@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.convert;
+package org.springframework.webflow.support;
 
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
+import org.springframework.webflow.support.FlowConversionService;
 
 import junit.framework.TestCase;
 

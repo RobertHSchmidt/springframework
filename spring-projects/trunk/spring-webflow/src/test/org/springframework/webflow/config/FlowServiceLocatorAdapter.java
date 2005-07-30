@@ -26,7 +26,7 @@ import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.AutowireMode;
 import org.springframework.webflow.access.FlowServiceLocator;
 import org.springframework.webflow.access.ServiceLookupException;
-import org.springframework.webflow.convert.FlowConversionService;
+import org.springframework.webflow.support.FlowConversionService;
 
 /**
  * Simple helper adapter for the flow service locator interface. For testing.

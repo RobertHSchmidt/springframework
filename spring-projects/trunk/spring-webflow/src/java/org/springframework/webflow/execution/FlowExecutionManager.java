@@ -39,7 +39,7 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.BeanFactoryFlowServiceLocator;
 import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.convert.FlowConversionService;
+import org.springframework.webflow.support.FlowConversionService;
 
 /**
  * A manager for the executing flows of the application. This object is responsible for

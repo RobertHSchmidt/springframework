@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow;
+package org.springframework.webflow.support;
 
 import junit.framework.TestCase;
 
 import org.springframework.binding.support.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.TextToViewDescriptorCreator;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.ViewDescriptorCreator;
-import org.springframework.webflow.convert.FlowConversionService;
+import org.springframework.webflow.support.FlowConversionService;
+import org.springframework.webflow.support.TextToViewDescriptorCreator;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

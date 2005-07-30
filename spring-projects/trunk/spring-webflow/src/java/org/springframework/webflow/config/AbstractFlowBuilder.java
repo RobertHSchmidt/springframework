@@ -28,7 +28,6 @@ import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.TransitionCriteriaFactory;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.AutowireMode;
@@ -1015,7 +1014,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the transition (*->stateId)
 	 */
 	protected Transition onAnyEvent(String stateId) {
-		return new Transition(TransitionCriteriaFactory.alwaysTrue(), stateId);
+		return new Transition(stateId);
 	}
 
 	/**
