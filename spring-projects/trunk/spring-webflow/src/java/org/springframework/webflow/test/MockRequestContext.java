@@ -78,6 +78,14 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	 */
 	public MockRequestContext() {
 	}
+	
+	/**
+	 * Create a new stub request context.
+	 * @param sourceEvent the event originating this request context
+	 */
+	public MockRequestContext(Event sourceEvent) {
+		setSourceEvent(sourceEvent);
+	}
 
 	/**
 	 * Create a new stub request context.
@@ -87,7 +95,6 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	public MockRequestContext(MockFlowSession session, Event sourceEvent) {
 		setActiveSession(session);
 		setSourceEvent(sourceEvent);
-		setLastEvent(sourceEvent);
 	}
 	
 	// implementing RequestContext
@@ -102,6 +109,9 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	 */
 	public void setSourceEvent(Event sourceEvent) {
 		this.sourceEvent = sourceEvent;
+		if (getLastEvent() == null) {
+			setLastEvent(sourceEvent);
+		}
 	}
 
 
