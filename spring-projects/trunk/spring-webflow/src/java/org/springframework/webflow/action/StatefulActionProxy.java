@@ -24,53 +24,62 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
- * Simple action that wraps another action, which is maintained in flow scope. This
- * action can be used to work with stateful actions: action that hold modifiable
- * state in the instance members.
+ * Thin action proxy that delegates to another action that is managed in flow scope. This
+ * action can be used to work with stateful actions: action that hold modifiable, 
+ * thread-safe state as instance members.
  * <p>
- * To use this action, just configure the "statefulActionId" as a bean property or
- * as an action execution property (which takes precedence). That id will be used
- * as a bean id to lookup a prototype action bean instance in the bean factory. The
- * id will also be used to store that action in the flow scope of the ongoing
- * flow execution. All the action execution properties for this action will be
- * available to the wrapped action, so you could have something like this in your
- * web flow XML definition:
+ * To use this action, configure the <code>actionId</code> bean property on this class
+ * or set the <code>actionId</code> execution property on each invocation (which takes precedence).
+ * The actionId will be treated as the beanId of a prototype action bean definition in the 
+ * configured bean factory to retrieve.  Once retrieved, the <code>actionId</code> is used to
+ * store the new action instance in the flow scope of the ongoing flow execution.
+ * <p>
+ * All action execution properties for this action will be available to the wrapped action.
+ * You might have something like this in your web flow XML definition:
  * <pre>
  * &lt;action-state id="doStuff"&gt;
- *    &lt;action bean="myWrapper" method="someMethod"&gt;
- *       &lt;property name="somePropForMyAction" value="someValue" /&gt;
- *       &lt;property name="statefulActionId" value="myAction" /&gt;
+ *    &lt;action bean="myStatefulActionProxy" method="someMethod"&gt;
+ *       &lt;property name="myProperty" value="myValue" /&gt;
+ *       &lt;property name="actionId" value="myStatefulMultiAction" /&gt;
  *    &lt;/action&gt;
  * &lt;/action-state&gt;
  * </pre>
- * 
+ * <p>
+ * Implementation note: Stateful actions should be serializable.
+ * </p>
  * @author Erwin Vervaet
  */
-public class StatefulActionWrapper extends AbstractAction implements BeanFactoryAware {
+public class StatefulActionProxy extends AbstractAction implements BeanFactoryAware {
 	
 	/**
 	 * Execution property used to specify the bean id of the stateful action
 	 * in the bean factory. The bean should be configured as a prototype instance.
 	 */
-	public static final String STATEFUL_ACTION_ID_PROPERTY = "statefulActionId";
+	public static final String ACTION_ID_PROPERTY = "actionId";
 	
-	private String statefulActionId;
+	/**
+	 * The id of the action that is stateful. 
+	 */
+	private String actionId;
 	
+	/**
+	 * The bean factory where the action definition exists (the definition must be a prototype). 
+	 */
 	private BeanFactory beanFactory;
 	
 	/**
 	 * Returns the bean id of the stateful action in the bean factory. The action
 	 * bean should be configured as a prototype instance.
 	 */
-	public String getStatefulActionId() {
-		return this.statefulActionId;
+	public String getActionId() {
+		return this.actionId;
 	}
 	
 	/**
 	 * Set the bean id of the stateful action in the bean factory.
 	 */
-	public void setStatefulActionId(String statefulActionId) {
-		this.statefulActionId = statefulActionId;
+	public void setActionId(String statefulActionId) {
+		this.actionId = statefulActionId;
 	}
 	
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -88,10 +97,10 @@ public class StatefulActionWrapper extends AbstractAction implements BeanFactory
 	 */
 	protected Action getStatefulAction(RequestContext context) {
 		String beanId = getStatefulActionId(context);
-		Assert.hasText(beanId, "You must specify the id of the stateful action to invoke using the 'statefulActionId' property");
+		Assert.hasText(beanId, "You must specify the id of the stateful action to invoke using the 'actionId' property");
 		if (!context.getFlowScope().containsAttribute(beanId)) {
 			Assert.isTrue(!beanFactory.isSingleton(beanId),
-					"The bean with id '" + beanId + "' must be configured as a prototype instance in the bean factory");
+					"The bean definition with id '" + beanId + "' must be marked as a prototype in the bean factory");
 			context.getFlowScope().setAttribute(beanId, beanFactory.getBean(beanId, Action.class));
 		}
 		return (Action)context.getFlowScope().getAttribute(beanId, Action.class);
@@ -104,11 +113,11 @@ public class StatefulActionWrapper extends AbstractAction implements BeanFactory
 	 * @return the bean id
 	 */
 	protected String getStatefulActionId(RequestContext context) {
-		if (context.getProperties().containsAttribute(STATEFUL_ACTION_ID_PROPERTY)) {
-			return (String)context.getProperties().getAttribute(STATEFUL_ACTION_ID_PROPERTY);
+		if (context.getProperties().containsAttribute(ACTION_ID_PROPERTY)) {
+			return (String)context.getProperties().getAttribute(ACTION_ID_PROPERTY);
 		}
 		else {
-			return getStatefulActionId();
+			return getActionId();
 		}
 	}
 }
