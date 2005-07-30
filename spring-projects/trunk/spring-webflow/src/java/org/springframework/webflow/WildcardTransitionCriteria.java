@@ -37,5 +37,4 @@ public class WildcardTransitionCriteria implements TransitionCriteria,
 	public String toString() {
 		return WILDCARD_EVENT_ID;
 	}
-
 }
