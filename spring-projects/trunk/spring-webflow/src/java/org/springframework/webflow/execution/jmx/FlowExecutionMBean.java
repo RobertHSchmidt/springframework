@@ -24,6 +24,7 @@ import org.springframework.webflow.FlowExecutionStatistics;
  * 
  * @see org.springframework.webflow.FlowExecutionContext
  * 
+ * @author Keith Donald
  * @author Erwin Vervaet
  */
 public interface FlowExecutionMBean extends FlowExecutionStatistics {
@@ -47,8 +48,10 @@ public interface FlowExecutionMBean extends FlowExecutionStatistics {
 	public String getCurrentState() throws IllegalStateException;
 
 	/**
-	 * Returns the current status of this flow execution.
-	 * @return the status code
+	 * Returns the status of the active flow session.
+	 * @return the status code, which is a numeric representation
+	 *         of a {@link org.springframework.webflow.FlowSessionStatus} object:
+	 *         0: CREATED, 1: ACTIVE, 2: PAUSED, 3: SUSPENDED and 4: ENDED 
 	 */
-	public int getStatus();
+	public int getActiveSessionStatus();
 }

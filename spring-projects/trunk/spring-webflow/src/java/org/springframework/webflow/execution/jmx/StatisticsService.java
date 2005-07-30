@@ -74,6 +74,11 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 		this.flowExecutionManager.removeListener(statisticsCollector);
 	}
 
+	/**
+	 * Flow execution listener that collects statistics about the web flow system.
+	 * 
+	 * @author Keith Donald
+	 */
 	protected final class StatisticsCollector extends FlowExecutionListenerAdapter {
 		
 		protected boolean statisticsEnabled(RequestContext context) {

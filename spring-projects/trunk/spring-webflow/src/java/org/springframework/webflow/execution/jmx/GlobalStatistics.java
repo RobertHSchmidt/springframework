@@ -16,7 +16,7 @@
 package org.springframework.webflow.execution.jmx;
 
 /**
- * Simple implementation of a global statistics MBean
+ * Simple implementation of a global statistics MBean.
  * 
  * @author Keith Donald
  */

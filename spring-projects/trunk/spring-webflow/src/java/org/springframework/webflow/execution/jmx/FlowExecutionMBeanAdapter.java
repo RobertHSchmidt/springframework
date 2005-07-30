@@ -51,18 +51,18 @@ public class FlowExecutionMBeanAdapter implements FlowExecutionMBean {
 		return flowExecution.getCurrentState().getId();
 	}
 
-	public int getStatus() {
+	public int getActiveSessionStatus() {
 		return flowExecution.getActiveSession().getStatus().getShortCode();
+	}
+
+	public String getKey() {
+		return flowExecution.getKey();
 	}
 
 	public String getCaption() {
 		return flowExecution.getCaption();
 	}
 	
-	public String getKey() {
-		return flowExecution.getKey();
-	}
-
 	public long getCreationTimestamp() {
 		return flowExecution.getCreationTimestamp();
 	}

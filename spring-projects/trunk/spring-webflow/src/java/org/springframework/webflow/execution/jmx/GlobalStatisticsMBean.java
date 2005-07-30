@@ -42,7 +42,7 @@ public interface GlobalStatisticsMBean {
 	public int getRequestsInProcessCount();
 	
 	/**
-	 * Gets the current number of managed flow executions - managed executions may be in a 
+	 * Gets the current number of managed flow executions -- managed executions may be in an 
 	 * active or paused state, but they exist (have not been ended).
 	 * @return the managed count
 	 */
