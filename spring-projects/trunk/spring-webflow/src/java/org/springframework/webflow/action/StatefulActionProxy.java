@@ -38,9 +38,9 @@ import org.springframework.webflow.RequestContext;
  * You might have something like this in your web flow XML definition:
  * <pre>
  * &lt;action-state id="doStuff"&gt;
- *    &lt;action bean="myStatefulActionProxy" method="someMethod"&gt;
- *       &lt;property name="myProperty" value="myValue" /&gt;
+ *    &lt;action bean="myStatefulActionProxy" method="myActionMethod"&gt;
  *       &lt;property name="actionId" value="myStatefulMultiAction" /&gt;
+ *       &lt;property name="myCustomProperty" value="myValue" /&gt;
  *    &lt;/action&gt;
  * &lt;/action-state&gt;
  * </pre>

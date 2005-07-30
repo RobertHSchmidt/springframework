@@ -30,26 +30,26 @@ public class StatefulActionProxyTests extends TestCase {
 	
 	public void testStatefulAction() throws Exception {
 		MockRequestContext context = new MockRequestContext();
-		context.setProperty("statefulActionId", "test");
-		StatefulActionProxy wrapper = new StatefulActionProxy();
-		wrapper.setBeanFactory(new XmlBeanFactory(new ClassPathResource("context.xml", getClass())));
+		context.setProperty("actionId", "test");
+		StatefulActionProxy proxy = new StatefulActionProxy();
+		proxy.setBeanFactory(new XmlBeanFactory(new ClassPathResource("context.xml", getClass())));
 		
 		assertTrue(context.getFlowScope().isEmpty());
 		
 		context.setProperty("method", "increment");
-		wrapper.execute(context);
+		proxy.execute(context);
 		
 		assertEquals(1, context.getFlowScope().size());
 		TestAction testAction = (TestAction)context.getFlowScope().get("test");
 		assertEquals(1, testAction.getCounter());
-		wrapper.execute(context);
+		proxy.execute(context);
 		assertSame(testAction, context.getFlowScope().get("test"));
 		assertEquals(2, testAction.getCounter());
 
 		context.setProperty("method", "decrement");
-		wrapper.execute(context);
-		wrapper.execute(context);
-		wrapper.execute(context);
+		proxy.execute(context);
+		proxy.execute(context);
+		proxy.execute(context);
 
 		assertEquals(1, context.getFlowScope().size());
 		assertSame(testAction, context.getFlowScope().get("test"));
