@@ -32,6 +32,14 @@ public class FlowTests extends TestCase {
 		}
 	}
 
+	public void testAddSameStateTwice() {
+		Flow flow = new Flow("myFlow");
+		EndState state = new EndState(flow, "myState1");
+		flow.add(state);
+		flow.add(state);
+		assertEquals("State count wrong:", 1, flow.getStateCount());
+	}
+
 	public void testAddStateAlreadyInOtherFlow() {
 		Flow otherFlow = new Flow("myOtherFlow");
 		State state = new EndState(otherFlow, "myState1");
@@ -45,11 +53,31 @@ public class FlowTests extends TestCase {
 		}
 	}
 
-	public void testGetStates() {
+	public void testGetStateExceptions() {
 		Flow flow = new Flow("myFlow");
+		try {
+			flow.getStartState();
+			fail("Retrieved start state when no such state");
+		} catch (IllegalStateException e) {
+			// expected
+		}
 		flow.add(new ViewState(flow, "myState1",
 				new SimpleViewDescriptorCreator("myView"), new Transition(
 						"myState2")));
 		flow.add(new EndState(flow, "myState2"));
+		assertNull("Not null", flow.getState("myState3"));
+		try {
+			flow.getRequiredState("myState3");
+			fail("Returned a state that doesn't exist");
+		} catch (NoSuchFlowStateException e) {
+			// expected
+		}
+		assertEquals("Wrong state:", "myState1", flow.getRequiredTransitionableState("myState1").getId());
+		try {
+			flow.getRequiredTransitionableState("myState2");
+			fail("End states aren't transtionable");
+		} catch (IllegalStateException e) {
+			// expected
+		}
 	}
 }
