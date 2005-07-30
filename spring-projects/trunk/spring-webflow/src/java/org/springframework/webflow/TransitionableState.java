@@ -112,7 +112,7 @@ public abstract class TransitionableState extends State {
 
 	/**
 	 * Sets the exit action for this state.
-	 * @param exitAction the exit action (may be null).
+	 * @param exitAction the exit action (may be null)
 	 */
 	public void setExitAction(Action exitAction) {
 		this.exitAction = exitAction;
@@ -193,7 +193,7 @@ public abstract class TransitionableState extends State {
 
 	/**
 	 * Get a transition in this state for given flow execution request context.
-	 * Throws and exception when when there is no corresponding transition.
+	 * Throws and exception when there is no corresponding transition.
 	 * @throws NoMatchingTransitionException when the transition cannot be found
 	 */
 	public Transition getRequiredTransition(RequestContext context) throws NoMatchingTransitionException {
@@ -214,7 +214,7 @@ public abstract class TransitionableState extends State {
 	 * @param context the context associated with this request
 	 * @return the view descriptor
 	 * @throws NoMatchingTransitionException when no matching transition can be found
-	 * @throws CannotExecuteStateTransitionException when a transition could
+	 * @throws CannotExecuteTransitionException when a transition could
 	 *         not be executed on receipt of the event
 	 */
 	public ViewDescriptor onEvent(Event event, StateContext context)
