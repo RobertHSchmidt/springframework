@@ -35,7 +35,7 @@ import org.springframework.binding.AttributeSource;
  * Once created, this context interface is passed around throughout request
  * processing, where it may be referenced and reasoned upon, typically by
  * user-implemented action code and state transition criteria. The request
- * context is disposed when a entry-point call into a flow execution returns.
+ * context is disposed when an entry-point call into a flow execution returns.
  * This fact means the request context is an internal artifact used within the
  * flow system -- the context object will not be exposed to external client code.
  * <p>
@@ -55,7 +55,7 @@ public interface RequestContext {
 	 * Returns the client event that originated (or triggered) this request.  This 
 	 * event may contain parameters provided as input by the client.  In addition,
 	 * this event may be downcastable to a specific event type for a specific client environment, like
-	 * a HttpServletEvent for servlets or a PortletEvent for portlets.  Such downcasting will give
+	 * a ServletEvent for servlets or a PortletEvent for portlets.  Such downcasting will give
 	 * you full access to a native HttpServletRequest, for example. Noting that, avoid coupling your
 	 * flow artifacts to a specific deployment where possible.
 	 * @return the originating event, the one that triggered the current
@@ -134,7 +134,7 @@ public interface RequestContext {
 	 * @param end indicates whether or not the transaction should end after
 	 *        checking it
 	 * @throws IllegalStateException there is no active transaction in the
-	 *         flow execution
+	 *         flow execution, or the caller is not participating in it
 	 */
 	public void assertInTransaction(boolean end) throws IllegalStateException;
 

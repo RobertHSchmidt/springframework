@@ -36,7 +36,7 @@ import java.util.Map;
  * </pre>
  * 
  * For "Parent Flow Session 1" above, there are 3 attributes in flow scope
- * ("attr1", "attr2", and "attr3", respectively.) Any of these three attributes
+ * ("attr1", "attr2" and "attr3", respectively). Any of these three attributes
  * may be mapped as input down to child subflows when those subflows are
  * spawned. An implementation of this interface performs the actual mapping,
  * encapsulating knowledge of <i>which</i> attributes should be mapped, and
@@ -84,7 +84,7 @@ public interface FlowAttributeMapper {
 	 * @param context the current request execution context, which gives access to the
 	 *        parent flow scope, the request scope, any event parameter, etc.
 	 * @return a map of attributes (name=value pairs) to pass as input to the
-	 *         spawning subflow.
+	 *         spawning subflow
 	 */
 	public Map createSubflowInput(RequestContext context);
 
