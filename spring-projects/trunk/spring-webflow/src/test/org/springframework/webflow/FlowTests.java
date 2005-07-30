@@ -1,11 +1,11 @@
 package org.springframework.webflow;
 
-import org.springframework.webflow.support.EventIdTransitionCriteria;
-import org.springframework.webflow.support.SimpleViewDescriptorCreator;
-
 import junit.framework.TestCase;
 
+import org.springframework.webflow.support.SimpleViewDescriptorCreator;
+
 public class FlowTests extends TestCase {
+	
 	public void testAddStates() {
 		Flow flow = new Flow("myFlow");
 		flow.add(new EndState(flow, "myState1"));
@@ -49,7 +49,7 @@ public class FlowTests extends TestCase {
 		Flow flow = new Flow("myFlow");
 		flow.add(new ViewState(flow, "myState1",
 				new SimpleViewDescriptorCreator("myView"), new Transition(
-						new EventIdTransitionCriteria("submit"), "myState2")));
+						"myState2")));
 		flow.add(new EndState(flow, "myState2"));
 	}
 }
