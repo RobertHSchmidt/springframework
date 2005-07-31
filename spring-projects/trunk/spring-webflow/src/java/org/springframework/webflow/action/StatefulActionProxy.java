@@ -25,8 +25,8 @@ import org.springframework.webflow.RequestContext;
 
 /**
  * Thin action proxy that delegates to another action that is managed in flow scope. This
- * action can be used to work with stateful actions: action that hold modifiable, 
- * thread-safe state as instance members.
+ * action can be used to work with stateful actions: action that hold modifiable state as
+ * instance members.
  * <p>
  * To use this action, configure the <code>actionId</code> bean property on this class
  * or set the <code>actionId</code> execution property on each invocation (which takes precedence).
@@ -46,14 +46,14 @@ import org.springframework.webflow.RequestContext;
  * </pre>
  * <p>
  * Implementation note: Stateful actions should be serializable.
- * </p>
+ * 
  * @author Erwin Vervaet
  */
 public class StatefulActionProxy extends AbstractAction implements BeanFactoryAware {
 	
 	/**
 	 * Execution property used to specify the bean id of the stateful action
-	 * in the bean factory. The bean should be configured as a prototype instance.
+	 * in the bean factory ("actionId"). The bean should be configured as a prototype instance.
 	 */
 	public static final String ACTION_ID_PROPERTY = "actionId";
 	
