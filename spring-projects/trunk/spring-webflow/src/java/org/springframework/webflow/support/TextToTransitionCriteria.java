@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.support;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
@@ -25,7 +22,6 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.WildcardTransitionCriteria;
 
@@ -36,13 +32,14 @@ import org.springframework.webflow.WildcardTransitionCriteria;
  * This converter supports the following encoded forms:
  * <ul>
  * <li>"*" - will result in a TransitionCriteria object that matches on everything
- * ({@link org.springframework.webflow.support.TransitionCriteriaFactory#alwaysTrue()})
+ * ({@link org.springframework.webflow.WildcardTransitionCriteria})
  * </li>
  * <li>"eventId" - will result in a TransitionCriteria object that matches given
- * event id ({@link org.springframework.webflow.support.TransitionCriteriaFactory#eventId(String)})
+ * event id ({@link org.springframework.webflow.support.EventIdTransitionCriteria})
  * </li>
  * <li>"${...}" - will result in a TransitionCriteria object that evaluates given
  * condition, expressed as an expression
+ * ({@link org.springframework.webflow.support.BooleanExpressionTransitionCriteria})
  * </li>
  * <li>"class:&lt;classname&gt;" - will result in instantiation and usage of a custom 
  * TransitionCriteria implementation. The implementation must have a public no-arg constructor.
@@ -50,7 +47,6 @@ import org.springframework.webflow.WildcardTransitionCriteria;
  * </ul>
  * 
  * @see org.springframework.webflow.TransitionCriteria
- * @see org.springframework.webflow.support.TransitionCriteriaFactory
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -93,74 +89,35 @@ public class TextToTransitionCriteria extends ConversionServiceAwareConverter {
 			return (TransitionCriteria)o;
 		}
 		else {
-			return createBooleanExpressionTransitionCriteria(encodedCriteria);
-		}
-	}
-
-	/**
-	 * Factory method overridable by subclasses to customize expression-based
-	 * transition criteria.
-	 * @param expressionString the expression
-	 * @return the criteria
-	 * @throws ConversionException when there is a problem parsing the expression
-	 */
-	protected TransitionCriteria createBooleanExpressionTransitionCriteria(String expressionString) throws ConversionException {
-		Expression expression = (Expression)fromStringTo(Expression.class).execute(expressionString);
-		if (expression instanceof StaticExpression) {
-			return new EventIdTransitionCriteria(expressionString);
-		}
-		else {
-			return new BooleanExpressionTransitionCriteria(expression);
+			Expression expression = (Expression)fromStringTo(Expression.class).execute(encodedCriteria);
+			if (expression instanceof StaticExpression) {
+				return createEventIdTransitionCriteria(encodedCriteria);
+			}
+			else {
+				return createBooleanExpressionTransitionCriteria(expression);
+			}
 		}
 	}
 	
 	/**
-	 * Transition criteria that tests the value of an expression. The
-	 * expression is used to express a condition that guards transition
-	 * execution in a web flow.
-	 * 
-	 * @author Keith Donald
-	 * @author Erwin Vervaet
+	 * Hook method subclasses can override to return a specialized eventId matching
+	 * transition criteria implementation.
+	 * @param eventId the event id to match
+	 * @return the transition criteria object
+	 * @throws ConversionException when something goes wrong
 	 */
-	public static class BooleanExpressionTransitionCriteria implements TransitionCriteria {
-
-		private static final String RESULT_ALIAS = "result";
-		
-		/**
-		 * The expression evaluator to use.
-		 */
-		private Expression booleanExpression;
-
-		/**
-		 * Create a new expression based transition criteria object.
-		 * @param expression the expression evaluator testing the criteria,
-		 *        this expression should be a condition that returns a Boolean value
-		 */
-		public BooleanExpressionTransitionCriteria(Expression expression) {
-			this.booleanExpression = expression;
-		}
-
-		public boolean test(RequestContext context) {
-			Object result = this.booleanExpression.evaluateAgainst(context, getEvaluationContext(context));
-			Assert.isInstanceOf(Boolean.class, result, "Impossible to determine result of boolean expression: ");
-			return ((Boolean)result).booleanValue();
-		}
-
-		/**
-		 * Setup a map with a few aliased values to make writing expression based
-		 * transition conditions a bit easier.
-		 */
-		protected Map getEvaluationContext(RequestContext context) {
-			Map evalContext = new HashMap();
-			// ${#result == lastEvent.id}
-			if (context.getLastEvent() != null) {
-				evalContext.put(RESULT_ALIAS, context.getLastEvent().getId());
-			}
-			return evalContext;
-		}
-
-		public String toString() {
-			return booleanExpression.toString();
-		}
+	protected TransitionCriteria createEventIdTransitionCriteria(String eventId) throws ConversionException {
+		return new EventIdTransitionCriteria(eventId);
+	}
+	
+	/**
+	 * Hook method subclasses can override to return a specialized expression evaluating
+	 * transition criteria implementation.
+	 * @param expression the expression to evaluate
+	 * @return the transition criteria object
+	 * @throws ConversionException when something goes wrong
+	 */
+	protected TransitionCriteria createBooleanExpressionTransitionCriteria(Expression expression) throws ConversionException {
+		return new BooleanExpressionTransitionCriteria(expression);
 	}
 }
