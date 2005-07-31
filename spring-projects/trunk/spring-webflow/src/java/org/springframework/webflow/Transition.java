@@ -88,6 +88,7 @@ public class Transition extends AnnotatedObject {
 	 * @param targetStateId the id of the starget state of the transition
 	 */
 	public Transition(String targetStateId) {
+		setTargetStateId(targetStateId);
 	}
 
 	/**
@@ -107,7 +108,7 @@ public class Transition extends AnnotatedObject {
 	 * provided criteria matches.
 	 * @param matchingCriteria strategy object used to determine if this transition should be
 	 *        matched as elligible for execution
-	 *r @param targetStateId the id of the starget state of the transition
+	 * @param targetStateId the id of the starget state of the transition
 	 * @param properties additional properties describing this transition
 	 */
 	public Transition(TransitionCriteria matchingCriteria, String targetStateId, Map properties) {
