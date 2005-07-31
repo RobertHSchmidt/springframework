@@ -6,15 +6,15 @@
 	<table>
 	<tr>
 		<td>Answer:</td>
-		<td>${data.answer}</td>
+		<td>${numberGuessAction.answer}</td>
 	</tr>
 	<tr>
 		<td>Total number of guesses:</td>
-		<td>${data.guesses}</td>
+		<td>${numberGuessAction.guesses}</td>
 	</tr>
 	<tr>
 		<td>Elapsed time in seconds:</td>
-		<td>${data.durationSeconds}</td>
+		<td>${numberGuessAction.durationSeconds}</td>
 	</tr>
 	<tr>
 		<td colspan="2" class="buttonBar">

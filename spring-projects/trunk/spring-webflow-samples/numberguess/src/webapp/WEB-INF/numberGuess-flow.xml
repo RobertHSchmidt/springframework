@@ -9,7 +9,8 @@
 	</view-state>
 	
 	<action-state id="guess">
-		<action bean="numberGuessAction"/>
+		<!-- access the stateful action via a proxy -->
+		<action bean="numberGuessActionProxy"/>
 		<transition on="invalidInput" to="enterGuess"/>
 		<transition on="retry" to="enterGuess"/>
 		<transition on="success" to="showAnswer"/>

@@ -9,7 +9,7 @@
 	</bean>
 
 	<bean name="/play.htm" class="org.springframework.webflow.mvc.FlowController"/>
-
+	
 	<bean id="numberGuess" class="org.springframework.webflow.config.XmlFlowFactoryBean">
 		<property name="location" value="/WEB-INF/numberGuess-flow.xml"/>
 	</bean>
@@ -18,7 +18,11 @@
 		<property name="location" value="/WEB-INF/fourDigitNumberGuess-flow.xml"/>
 	</bean>
 	
-	<bean id="numberGuessAction" class="org.springframework.webflow.samples.numberguess.NumberGuessAction"/>
+	<!-- a statefull action and it's proxy-->
+	<bean id="numberGuessActionProxy" class="org.springframework.webflow.action.StatefulActionProxy">
+		<property name="actionId" value="numberGuessAction"/>
+	</bean>
+	<bean id="numberGuessAction" class="org.springframework.webflow.samples.numberguess.NumberGuessAction" singleton="false"/>
 
 	<bean id="fourDigitNumberGuessAction" class="org.springframework.webflow.samples.numberguess.FourDigitNumberGuessAction"/>
 
