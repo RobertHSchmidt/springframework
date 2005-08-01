@@ -33,7 +33,6 @@ import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.AutowireMode;
 import org.springframework.webflow.access.FlowServiceLocator;
 import org.springframework.webflow.access.ServiceLookupException;
-import org.springframework.webflow.action.DelegatingAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.ActionTransitionCriteria;
 
@@ -545,17 +544,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected AnnotatedAction annotatedAction(String actionId, Map properties) throws ServiceLookupException {
 		return new AnnotatedAction(action(actionId), properties);
-	}
-
-	/**
-	 * Return a delegating action that delegates to an action instance retrieved by
-	 * messaging a flow-scoped action locator. 
-	 * @param actionLocatorAttribute the action locator
-	 * @param actionId the action id
-	 * @return the delegating action
-	 */
-	protected Action delegateAction(String actionLocatorAttribute, String actionId) {
-		return new DelegatingAction(actionLocatorAttribute, actionId);
 	}
 
 	/**

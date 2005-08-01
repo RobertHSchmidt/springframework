@@ -4,8 +4,15 @@ http://www.springframework.org
 
 Changes in version RC1
 ------------------------------------
-* Relocated several support classes in webflow to webflow.support
-* Introduced StatefulActionProxy, for delegating to flow-scoped actions that can hold local state.
+* Removed DelegatingAction in favor of StatefulActionProxy.
+* Changed numberguess sample application to use the new StatefulActionProxy.
+* Relocated several support classes in webflow to webflow.support. Also moved the FlowConversionService from webflow.convert
+  to webflow.support. These changes should have little impact on existing applications.
+* Added several unit tests.
+* Small improvements in MockRequestContext to make it easier to use.
+* Added a convenience constructor to the Event class that takes a single parameter name/value. Mainly for use in unit tests.
+* Added StatefulActionProxy, an action that delegates to a stateful action managed in flow scope.
+* JavaDoc polishing..
 
 Changes in version PR5 (28.7.2005)
 ------------------------------------
