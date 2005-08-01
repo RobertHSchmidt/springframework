@@ -19,6 +19,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.binding.support.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -56,11 +57,23 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * in the bean factory ("actionId"). The bean should be configured as a prototype instance.
 	 */
 	public static final String ACTION_ID_PROPERTY = "actionId";
-	
+
+	/**
+	 * Execution property used to specify attribute name the stateful action should be
+	 * exposed under.
+	 */
+	public static final String ACTION_ATTRIBUTE_PROPERTY = "actionAttribute";
+
 	/**
 	 * The id of the action that is stateful. 
 	 */
 	private String actionId;
+	
+	/**
+	 * The name of the attribute to expose the stateful action under in flow scope.
+	 * This is optional, the default is the action id.
+	 */
+	private String actionAttribute;
 	
 	/**
 	 * The bean factory where the action definition exists (the definition must be a prototype). 
@@ -81,13 +94,27 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	public void setActionId(String statefulActionId) {
 		this.actionId = statefulActionId;
 	}
-	
+
+	/**
+	 * Returns the attribute name to expose the stateful action under in flow scope.
+	 */
+	public String getActionAttribute() {
+		return actionAttribute;
+	}
+
+	/**
+	 * Sets the attribute name to expose the stateful action under in flow scope.
+	 */
+	public void setActionAttribute(String actionAttributeName) {
+		this.actionAttribute = actionAttributeName;
+	}
+
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
 	}
 	
 	protected Event doExecute(RequestContext context) throws Exception {
-		return getStatefulAction(context).execute(context);
+		return getAction(context).execute(context);
 	}
 	
 	/**
@@ -95,15 +122,25 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * @param context the flow execution request context
 	 * @return the action to wrap
 	 */
-	protected Action getStatefulAction(RequestContext context) {
-		String beanId = getStatefulActionId(context);
-		Assert.hasText(beanId, "You must specify the id of the stateful action to invoke using the 'actionId' property");
-		if (!context.getFlowScope().containsAttribute(beanId)) {
-			Assert.isTrue(!beanFactory.isSingleton(beanId),
-					"The bean definition with id '" + beanId + "' must be marked as a prototype in the bean factory");
-			context.getFlowScope().setAttribute(beanId, beanFactory.getBean(beanId, Action.class));
+	protected Action getAction(RequestContext context) {
+		String actionId = getActionId(context);
+		Assert.hasText(actionId, "You must specify the id of the stateful action to invoke using the 'actionId' property");
+		String actionAttribute = getActionAttribute(context, actionId);
+		if (!context.getFlowScope().containsAttribute(actionAttribute)) {
+			context.getFlowScope().setAttribute(actionAttribute, lookupAction(actionId));
 		}
-		return (Action)context.getFlowScope().getAttribute(beanId, Action.class);
+		return (Action)context.getFlowScope().getAttribute(actionAttribute, Action.class);
+	}
+	
+	/**
+	 * Overriddable hook, useful for working with a lookup-method from a spring bean definition.
+	 * @param beanId the bean id
+	 * @return the stateful action
+	 */
+	protected Action lookupAction(String actionId) {
+		Assert.isTrue(!beanFactory.isSingleton(actionId),
+				"The stateful Action bean definition with id '" + actionId + "' must be marked as a prototype in the bean factory");
+		return (Action)beanFactory.getBean(actionId, Action.class);
 	}
 
 	/**
@@ -112,12 +149,31 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * @param context the flow execution context
 	 * @return the bean id
 	 */
-	protected String getStatefulActionId(RequestContext context) {
+	protected String getActionId(RequestContext context) {
 		if (context.getProperties().containsAttribute(ACTION_ID_PROPERTY)) {
 			return (String)context.getProperties().getAttribute(ACTION_ID_PROPERTY);
 		}
 		else {
 			return getActionId();
+		}
+	}
+
+	/**
+	 * Get the id of the statefull action bean. If an action property is specified,
+	 * use that, otherwise use the value configured for this action.
+	 * @param context the flow execution context
+	 * @return the bean id
+	 */
+	protected String getActionAttribute(RequestContext context, String actionId) {
+		if (context.getProperties().containsAttribute(ACTION_ATTRIBUTE_PROPERTY)) {
+			return (String)context.getProperties().getAttribute(ACTION_ATTRIBUTE_PROPERTY);
+		}
+		else {
+			if (StringUtils.hasText(getActionAttribute())) {
+				return getActionAttribute();
+			} else {
+				return actionId;
+			}
 		}
 	}
 }
