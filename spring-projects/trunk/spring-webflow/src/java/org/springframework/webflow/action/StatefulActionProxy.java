@@ -59,8 +59,8 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	public static final String ACTION_ID_PROPERTY = "actionId";
 
 	/**
-	 * Execution property used to specify attribute name the stateful action should be
-	 * exposed under.
+	 * Execution property used to specify the attribute name the stateful action should be
+	 * exposed under in flow scope.
 	 */
 	public static final String ACTION_ATTRIBUTE_PROPERTY = "actionAttribute";
 
@@ -118,7 +118,7 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	}
 	
 	/**
-	 * Get the stateful action instance to wrap for given request context.
+	 * Get the stateful action instance to proxy for given request context.
 	 * @param context the flow execution request context
 	 * @return the action to wrap
 	 */
@@ -126,6 +126,8 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 		String actionId = getActionId(context);
 		Assert.hasText(actionId, "You must specify the id of the stateful action to invoke using the 'actionId' property");
 		String actionAttribute = getActionAttribute(context, actionId);
+		Assert.hasText(actionAttribute,
+				"You must specify the attribute name of the stateful action in flow scope using the 'actionAttribute' property");
 		if (!context.getFlowScope().containsAttribute(actionAttribute)) {
 			context.getFlowScope().setAttribute(actionAttribute, lookupAction(actionId));
 		}
@@ -133,7 +135,7 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	}
 	
 	/**
-	 * Overriddable hook, useful for working with a lookup-method from a spring bean definition.
+	 * Overriddable hook, useful for working with a lookup-method from a Spring bean definition.
 	 * @param beanId the bean id
 	 * @return the stateful action
 	 */
@@ -159,10 +161,13 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	}
 
 	/**
-	 * Get the id of the statefull action bean. If an action property is specified,
-	 * use that, otherwise use the value configured for this action.
+	 * Get the name of the attribute the stateful action will be exposed under in flow
+	 * scope. If specified as an action property, use that value, otherwise use
+	 * the property value specified for this action, or the given actionId as a fallback
+	 * value.
 	 * @param context the flow execution context
-	 * @return the bean id
+	 * @param actionId the bean id of the stateful action
+	 * @return the action attribute name
 	 */
 	protected String getActionAttribute(RequestContext context, String actionId) {
 		if (context.getProperties().containsAttribute(ACTION_ATTRIBUTE_PROPERTY)) {
@@ -171,7 +176,8 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 		else {
 			if (StringUtils.hasText(getActionAttribute())) {
 				return getActionAttribute();
-			} else {
+			}
+			else {
 				return actionId;
 			}
 		}
