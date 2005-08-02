@@ -10,28 +10,17 @@
   </configurations>
 	
   <dependencies defaultconf="global->default">
-    <dependency org="apache" name="commons-logging" rev="1.0.4"/>
-    <dependency org="apache" name="commons-beanutils" rev="1.7.0"/>
-    <dependency org="apache" name="commons-collections" rev="3.1"/>
-    <dependency org="apache" name="commons-lang" rev="2.1"/>
-    <dependency org="apache" name="commons-digester" rev="1.7"/>
-    <dependency org="apache" name="commons-validator" rev="1.1.4"/>  
-    <dependency org="apache" name="struts" rev="1.2.7"/>
-    <dependency org="apache" name="log4j" rev="1.2.9"/>
+  	<!--  global (core) dependencies -->
     <dependency org="apache" name="taglibs" rev="1.1.2">
        <artifact name="standard" type="jar"/>
     </dependency>
     <dependency org="java" name="jstl" rev="1.1.2"/>
-    <dependency org="ognl" name="ognl" rev="2.7"/>
-    <dependency org="springframework" name="spring-webflow" rev="pr5"/>
+    <dependency org="springframework" name="spring-webflow" rev="rc1" conf="global->struts"/>
 
     <!--  build-time only dependencies -->
     <dependency org="java" name="servlet" rev="2.4" conf="buildtime->default">
 		<artifact name="servlet-api" type="jar"/>
 	</dependency>
-	
-	<!-- test-time only dependencies -->
-    <dependency org="junit" name="junit" rev="3.8.1" conf="test->default" />
   </dependencies>
 
 </ivy-module>

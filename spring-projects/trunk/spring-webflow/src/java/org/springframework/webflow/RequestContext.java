@@ -22,25 +22,35 @@ import org.springframework.binding.AttributeSource;
 /**
  * Central interface that allows clients to access contextual information about
  * an ongoing flow execution within the context of a client request. The term
- * <i>request</i> is used to symbolize a call into the flow system to
- * manipulate an executing flow.
+ * <i>request</i> is used to describe a single call (thread) into the flow system to
+ * manipulate exactly one flow execution.
  * <p>
- * A new request context is created when one of the entry points on the
- * <code>FlowExecution</code> facade interface is invoked, either
+ * A new instance of this object is created when one of the operations on a
+ * <code>FlowExecution</code> facade invoked, either
  * ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
- * to activate a new executing flow, or
+ * to activate a newly created flow execution, or
  * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(Event)}) to
- * manipulate the state of an already executing flow.
+ * signal an event in the current state of an restored flow execution.
  * <p>
- * Once created, this context interface is passed around throughout request
- * processing, where it may be referenced and reasoned upon, typically by
- * user-implemented action code and state transition criteria. The request
- * context is disposed when an entry-point call into a flow execution returns.
- * This fact means the request context is an internal artifact used within the
- * flow system -- the context object will not be exposed to external client code.
+ * Once created this context object is passed around throughout request
+ * processing where it may be accessed and reasoned upon, typically by
+ * user-implemented action code and/or state transition criteria.
  * <p>
- * Note that a <i>request</i> context is in no way linked to an HTTP request!
- * It just uses the familiar "request" naming convention.
+ * When a call into a flow execution returns, this object goes out of scope
+ * and is disposed of automatically.  Thus, this object is an internal artifact
+ * used within a FlowExecution: this object is NOT directly exposed to to external
+ * client code.
+ * <p>
+ * Note: the "requestScope" property may be used as a store for arbitrary data that 
+ * should exist for the life of this object.  Such request-local data, along with
+ * all data in flow scope, is available for exposing to view templates via a 
+ * ViewDescriptor, returned when a ViewState or EndState is entered.
+ * See ({@link org.springframework.webflow.ViewState}) for an example using 
+ * a specific ({@link org.springframework.webflow.ViewDescriptorCreator}) strategy. 
+ * <p>
+ * Note: the <i>request</i> context is in no way linked to an HTTP or Portlet request!
+ * It uses the familiar "request" naming convention to indicate a single call to
+ * manipulate an runtime execution of a flow.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.Action

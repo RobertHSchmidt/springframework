@@ -17,6 +17,12 @@ package org.springframework.webflow;
 
 /**
  * Provides contextual information about an actively executing flow.
+ * <p>
+ * This is an immutable interface for accessing data about a FlowExecution.
+ * It extends FlowExecutionStatistics, adding in strongly typed accessors 
+ * for retrieving runtime objects such as the active flow session, as well as
+ * definition objects such as the top-level flow definition, the currently active 
+ * flow definition, and the current state definition.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

@@ -22,23 +22,42 @@ import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.FlowLocator;
 
 /**
- * Represents a <i>client instance</i> of an executing flow. This is the central facade
- * interface for managing an execution of a single flow.
+ * Represents a <i>client instance</i> of an executing top-level flow.
  * <p>
- * Typically, when the browser requests to execute a new flow, an instance of an object
- * implementing this interface is created by a controlling FlowExecutionManager.  After creation,
- * the start operation is called, which causes this execution to activate the requested flow
- * as the "root flow" and enter that flow's start state. After starting, when control
- * is returned back to the caller, this execution is saved in some form of storage, for example
- * in the HttpSession or a client-side hidden form field for later restoration and manipulation. 
+ * This is the central facade interface for managing one runtime execution of a Flow.
+ * This is the finite state machine that is the heart of Spring Web Flow.
  * <p>
- * Subsequent requests into the web flow system to manipulate an existing executing flow
- * trigger restoration and rehydration of this object, followed by an invocation of the
- * signalEvent operation. This continues until an event causes this flow execution to end, at
- * which time it is removed from storage and discarded.
+ * Typically, when a browser wants to launch a new instance of a Flow at runtime, it passes in the
+ * id of the Flow definition to launch to a governing <code>FlowExecutionManager</code>.
+ * The manager then creates an instance of an object implementing this interface, passing it the 
+ * requested Flow definition--which becomes the execution's "root", or top-level flow.  After creation,
+ * the start operation is called, which causes the execution to activate a new session for its
+ * root flow definition.  That session is then pushed onto a stack and its definition 
+ * becomes the "active flow".  A local, internal StateContext object (which extends
+ * ({@link org.springframework.webflow.RequestContext}) is then created
+ * and the active Flow's start State is entered.
+ * <p>
+ * In a distributed environment such as HTTP, after a start or signalEvent operation has completed
+ * and control returns to the caller (manager), this executoin object (if still active) is 
+ * typically saved out to some form of storage before the server request ends.  For example it
+ * might be saved out to the HttpSession, a Database, or a client-side hidden form field
+ * for later restoration and manipulation. 
+ * <p>
+ * Subsequent requests from the client to manipuate this flow execution trigger restoration and
+ * rehydration of this object, followed by an invocation of the signalEvent operation.
+ * The signalEvent operation tells this state machine what action the user took from
+ * within the context of the current state: e.g the user pressed "submit", or pressed "cancel".
+ * After the user event is processed, control again goes back to the caller and if this 
+ * execution is still active, it is saved out to storage.  This continues until a client event
+ * causes this flow execution to end (by the root flow reachng an EndState).  At that time, 
+ * this object is removed from storage and discarded.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionManager
  * @see org.springframework.webflow.execution.FlowExecutionStorage
+ * @see org.springframework.webflow.Flow
+ * @see org.springframework.webflow.State
+ * @see org.springframework.webflow.FlowSession
+ * @see org.springframework.webflow.StateContext
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -46,10 +65,10 @@ import org.springframework.webflow.access.FlowLocator;
 public interface FlowExecution extends FlowExecutionContext {
 	
 	/**
-	 * Start a flow execution, transitioning the flow to the start state and
+	 * Start this flow execution, transitioning it to the root flow's start state and
 	 * returning the starting model and view descriptor. Typically called by a
 	 * flow controller, but also from test code.
-	 * @param sourceEvent the event that occured that triggered flow
+	 * @param sourceEvent the "launch event" that occured that triggered flow
 	 *        execution creation
 	 * @return the starting view descriptor, which returns control to the client
 	 *         and requests that a view be rendered with model data
@@ -60,7 +79,8 @@ public interface FlowExecution extends FlowExecutionContext {
 
 	/**
 	 * Signal an occurence of the specified event in the current state of this
-	 * executing flow.
+	 * executing flow.  The event will be processed in full and control will be returned 
+	 * once procssing is complete.
 	 * @param sourceEvent the event that occured within the current state of this flow
 	 *        execution.
 	 * @return the next model and view descriptor to display for this flow
