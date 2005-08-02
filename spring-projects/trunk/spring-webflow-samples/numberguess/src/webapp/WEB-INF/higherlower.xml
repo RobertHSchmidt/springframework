@@ -2,19 +2,20 @@
 <!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
-<webflow id="fourDigitNumberGuess" start-state="enterGuess">
+<webflow id="higherlower" start-state="enterGuess">
 	
-	<view-state id="enterGuess" view="enterFourDigitGuess">
+	<view-state id="enterGuess" view="enterGuess">
 		<transition on="submit" to="guess"/>
 	</view-state>
 	
 	<action-state id="guess">
-		<action bean="fourDigitNumberGuessAction"/>
+		<!-- access the stateful action via a proxy -->
+		<action bean="higherlowerGameProxy"/>
 		<transition on="invalidInput" to="enterGuess"/>
 		<transition on="retry" to="enterGuess"/>
-		<transition on="correct" to="showAnswer"/>
+		<transition on="success" to="showAnswer"/>
 	</action-state>
 	
-	<end-state id="showAnswer" view="showFourDigitAnswer"/>
+	<end-state id="showAnswer" view="showAnswer"/>
 
 </webflow>

@@ -1,4 +1,4 @@
-<%@ include file="includeTop.jsp" %>
+<%@ include file="../includeTop.jsp" %>
 
 <div id="content">
 	<div id="insert"><img src="images/webflow-logo.jpg"/></div>
@@ -6,15 +6,15 @@
 	<table>
 	<tr>
 		<td>Answer:</td>
-		<td>${numberGuessAction.answer}</td>
+		<td>${game.answer}</td>
 	</tr>
 	<tr>
 		<td>Total number of guesses:</td>
-		<td>${numberGuessAction.guesses}</td>
+		<td>${game.guesses}</td>
 	</tr>
 	<tr>
 		<td>Elapsed time in seconds:</td>
-		<td>${numberGuessAction.durationSeconds}</td>
+		<td>${game.durationSeconds}</td>
 	</tr>
 	<tr>
 		<td colspan="2" class="buttonBar">
@@ -26,4 +26,4 @@
 	</tr>
 	</table>
 	
-<%@ include file="includeBottom.jsp" %>
+<%@ include file="../includeBottom.jsp" %>

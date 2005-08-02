@@ -1,10 +1,10 @@
-			<c:if test="${!empty data.guessHistory}">
+			<c:if test="${!empty game.guessHistory}">
 				<h4>Guess history:</h4>
 				<table border="1">
 				    <th>Guess</th>
 				    <th>Right Position</th>
 				    <th>Present But Wrong Position</th>
-				    <c:forEach var="guessData" items="${data.guessHistory}">
+				    <c:forEach var="guessData" items="${game.guessHistory}">
 				    	<tr>
 				    		<td>${guessData.guess}</td>
 				    		<td>${guessData.rightPosition}</td>

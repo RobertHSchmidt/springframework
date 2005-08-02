@@ -2,7 +2,7 @@
 <!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
-<webflow id="numberGuess" start-state="enterGuess">
+<webflow id="mastermind" start-state="enterGuess">
 	
 	<view-state id="enterGuess" view="enterGuess">
 		<transition on="submit" to="guess"/>
@@ -10,7 +10,7 @@
 	
 	<action-state id="guess">
 		<!-- access the stateful action via a proxy -->
-		<action bean="numberGuessActionProxy"/>
+		<action bean="mastermindGameProxy"/>
 		<transition on="invalidInput" to="enterGuess"/>
 		<transition on="retry" to="enterGuess"/>
 		<transition on="success" to="showAnswer"/>

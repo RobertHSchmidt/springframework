@@ -1,4 +1,4 @@
-<%@ include file="includeTop.jsp" %>
+<%@ include file="../includeTop.jsp" %>
 
 <div id="content">
 	<div id="insert"><img src="images/webflow-logo.jpg"/></div>
@@ -9,11 +9,11 @@
 		<table>
 			<tr class="readOnly">
 				<td>Number of guesses:</td>
-				<td><b>${numberGuessAction.guesses}</b></td>
+				<td><b>${game.guesses}</b></td>
 			</tr>
 			<tr class="readOnly">
 				<td>Your last guess was:</td>
-				<td><b><i>${numberGuessAction.lastGuessResult}</b></i></td>
+				<td><b><i>${game.lastGuessResult}</b></i></td>
 			</tr>
 		    <tr>
 		    	<td>Guess:</td>
@@ -31,4 +31,4 @@
 	</form>
 </div>
 
-<%@ include file="includeBottom.jsp" %>
+<%@ include file="../includeBottom.jsp" %>

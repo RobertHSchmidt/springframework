@@ -6,14 +6,14 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.Event;
-import org.springframework.webflow.samples.numberguess.FourDigitNumberGuessAction.NumberGuessData;
+import org.springframework.webflow.samples.numberguess.MastermindGame.GameData;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class FourDigitNumberGuessActionTests extends TestCase {
 	public void testGuessNoInputProvided() throws Exception {
 		MockRequestContext context = new MockRequestContext();
 		context.setSourceEvent(new Event(this, "submit"));
-		FourDigitNumberGuessAction action = new FourDigitNumberGuessAction();
+		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
 		assertEquals("invalidInput", result.getId());
 	}
@@ -23,7 +23,7 @@ public class FourDigitNumberGuessActionTests extends TestCase {
 		Map parameters = new HashMap();
 		parameters.put("guess", "123");
 		context.setSourceEvent(new Event(this, "submit", parameters));
-		FourDigitNumberGuessAction action = new FourDigitNumberGuessAction();
+		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
 		assertEquals("invalidInput", result.getId());
 	}
@@ -33,7 +33,7 @@ public class FourDigitNumberGuessActionTests extends TestCase {
 		Map parameters = new HashMap();
 		parameters.put("guess", "12AB");
 		context.setSourceEvent(new Event(this, "submit", parameters));
-		FourDigitNumberGuessAction action = new FourDigitNumberGuessAction();
+		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
 		assertEquals("invalidInput", result.getId());
 	}
@@ -43,7 +43,7 @@ public class FourDigitNumberGuessActionTests extends TestCase {
 		Map parameters = new HashMap();
 		parameters.put("guess", "1111");
 		context.setSourceEvent(new Event(this, "submit", parameters));
-		FourDigitNumberGuessAction action = new FourDigitNumberGuessAction();
+		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
 		assertEquals("invalidInput", result.getId());
 	}
@@ -53,7 +53,7 @@ public class FourDigitNumberGuessActionTests extends TestCase {
 		Map parameters = new HashMap();
 		parameters.put("guess", "1234");
 		context.setSourceEvent(new Event(this, "submit", parameters));
-		FourDigitNumberGuessAction action = new FourDigitNumberGuessAction();
+		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
 		assertEquals("retry", result.getId());
 	}
@@ -62,9 +62,9 @@ public class FourDigitNumberGuessActionTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		Map parameters = new HashMap();
 		context.setSourceEvent(new Event(this, "submit", parameters));
-		FourDigitNumberGuessAction action = new FourDigitNumberGuessAction();
+		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
-		NumberGuessData data = (NumberGuessData)context.getFlowScope().getAttribute("data");
+		GameData data = (GameData)context.getFlowScope().getAttribute("data");
 		String answer = data.getAnswer();
 		parameters.put("guess", answer);
 		context.setSourceEvent(new Event(this, "submit", parameters));

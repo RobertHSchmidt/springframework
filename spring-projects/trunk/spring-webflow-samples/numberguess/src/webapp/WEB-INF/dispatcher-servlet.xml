@@ -3,27 +3,40 @@
 
 <beans>
 
+	<bean name="/play.htm" class="org.springframework.webflow.mvc.FlowController"/>
+	
+	<!-- the higher/lower game flow definition -->
+	<bean id="higherlower" class="org.springframework.webflow.config.XmlFlowFactoryBean">
+		<property name="location" value="/WEB-INF/higherLower.xml"/>
+	</bean>
+
+	<!-- abstract parent bean definition for all game proxies -->
+	<bean id="gameProxy" class="org.springframework.webflow.action.StatefulActionProxy" abstract="true">
+		<property name="actionAttribute" value="game"/>
+	</bean>
+	
+	<!-- the proxy to the stateful higher lower game (a multi action) -->
+	<bean id="higherlowerGameProxy" parent="gameProxy">
+		<property name="actionId" value="higherlowerGame"/>
+	</bean>
+	
+	<!-- note: higherlower is a prototype, it holds caller state in flow scope transparently -->
+	<bean id="higherlowerGame" class="org.springframework.webflow.samples.numberguess.HigherLowerGame" singleton="false"/>
+
+	<!--  the mastermind game flow definition -->
+	<bean id="mastermind" class="org.springframework.webflow.config.XmlFlowFactoryBean">
+		<property name="location" value="/WEB-INF/mastermind.xml"/>
+	</bean>
+
+	<bean id="mastermindGameProxy" parent="gameProxy">
+		<property name="actionId" value="mastermind"/>
+	</bean>
+	
+	<bean id="mastermindGame" class="org.springframework.webflow.samples.numberguess.MasterMindGame" singleton="false"/>
+
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix"><value>/WEB-INF/jsp/</value></property>
 		<property name="suffix"><value>.jsp</value></property>
 	</bean>
-
-	<bean name="/play.htm" class="org.springframework.webflow.mvc.FlowController"/>
-	
-	<bean id="numberGuess" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/numberGuess-flow.xml"/>
-	</bean>
-
-	<bean id="fourDigitNumberGuess" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/fourDigitNumberGuess-flow.xml"/>
-	</bean>
-	
-	<!-- a statefull action and it's proxy-->
-	<bean id="numberGuessActionProxy" class="org.springframework.webflow.action.StatefulActionProxy">
-		<property name="actionId" value="numberGuessAction"/>
-	</bean>
-	<bean id="numberGuessAction" class="org.springframework.webflow.samples.numberguess.NumberGuessAction" singleton="false"/>
-
-	<bean id="fourDigitNumberGuessAction" class="org.springframework.webflow.samples.numberguess.FourDigitNumberGuessAction"/>
 
 </beans>

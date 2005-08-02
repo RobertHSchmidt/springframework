@@ -32,10 +32,19 @@ import org.springframework.webflow.action.MultiAction;
  * @author Keri Donald
  * @author Keith Donald
  */
-public class FourDigitNumberGuessAction extends MultiAction {
+public class MastermindGame extends MultiAction {
 
+	private GameData data = new GameData();
+	
+	public GameData getData() {
+		return data;
+	}
+	
+	public Collection getGuessHistory() {
+		return data.getGuessHistory();
+	}
+	
 	public Event guess(RequestContext context) throws Exception {
-		NumberGuessData data = getNumberGuessData(context);
 		String guess = getGuess(context);
 		if (guess == null || guess.length() != 4) {
 			return result("invalidInput");
@@ -78,22 +87,15 @@ public class FourDigitNumberGuessAction extends MultiAction {
 		}
 	}
 
-	private static final String DATA_ATTRIBUTE = "data";
-
-	private static final String GUESS_PARAMETER = "guess";
-
-	private NumberGuessData getNumberGuessData(RequestContext context) {
-		return (NumberGuessData)context.getFlowScope().getOrCreateAttribute(DATA_ATTRIBUTE, NumberGuessData.class);
-	}
-
 	private String getGuess(RequestContext context) {
+		final String GUESS_PARAMETER = "guess";
 		return (String)context.getSourceEvent().getParameter(GUESS_PARAMETER);
 	}
 
 	/**
 	 * Simple data holder for number guess info.
 	 */
-	public static class NumberGuessData implements Serializable {
+	public static class GameData implements Serializable {
 		
 		private static Random random = new Random();
 
@@ -107,7 +109,7 @@ public class FourDigitNumberGuessAction extends MultiAction {
 
 		// property accessors for JSTL EL
 
-		public NumberGuessData() {
+		public GameData() {
 			this.answer = createAnswer();
 		}
 		

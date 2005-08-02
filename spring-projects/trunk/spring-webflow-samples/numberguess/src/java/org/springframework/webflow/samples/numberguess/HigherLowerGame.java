@@ -31,7 +31,7 @@ import org.springframework.webflow.action.MultiAction;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class NumberGuessAction extends MultiAction implements Serializable {
+public class HigherLowerGame extends MultiAction implements Serializable {
 	
 	private static final String GUESS_PARAMETER = "guess";
 	
@@ -98,5 +98,4 @@ public class NumberGuessAction extends MultiAction implements Serializable {
 			return -1;
 		}
 	}
-
 }

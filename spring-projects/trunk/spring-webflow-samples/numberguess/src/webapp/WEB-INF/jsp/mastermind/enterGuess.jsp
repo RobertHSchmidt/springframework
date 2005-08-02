@@ -1,4 +1,4 @@
-<%@ include file="includeTop.jsp" %>
+<%@ include file="../includeTop.jsp" %>
 
 <div id="content">
 	<div id="insert"><img src="images/webflow-logo.jpg"/></div>
@@ -31,4 +31,4 @@
 	</form>
 </div>
 
-<%@ include file="includeBottom.jsp" %>
+<%@ include file="../includeBottom.jsp" %>
