@@ -9,7 +9,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.samples.numberguess.MastermindGame.GameData;
 import org.springframework.webflow.test.MockRequestContext;
 
-public class FourDigitNumberGuessActionTests extends TestCase {
+public class MastermindGameTests extends TestCase {
 	public void testGuessNoInputProvided() throws Exception {
 		MockRequestContext context = new MockRequestContext();
 		context.setSourceEvent(new Event(this, "submit"));
@@ -64,7 +64,7 @@ public class FourDigitNumberGuessActionTests extends TestCase {
 		context.setSourceEvent(new Event(this, "submit", parameters));
 		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
-		GameData data = (GameData)context.getFlowScope().getAttribute("data");
+		GameData data = action.getData();
 		String answer = data.getAnswer();
 		parameters.put("guess", answer);
 		context.setSourceEvent(new Event(this, "submit", parameters));
