@@ -32,7 +32,7 @@ package org.springframework.webflow;
  * <p>
  * A flow session will go through several status changes during its lifecycle.
  * Initially it will be {@link FlowSessionStatus#CREATED}.  For example, when 
- * a new <code>FlowExecution</code> is created to launch a new root 
+ * a new <code>FlowExecution</code> is started to launch a new root 
  * <code>Flow</code> definition a new <code>FlowSession</code> is created.
  * <p>
  * When a flow session is activated (about to be manipulated), it's status becomes

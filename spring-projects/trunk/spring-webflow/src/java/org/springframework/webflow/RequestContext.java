@@ -26,7 +26,7 @@ import org.springframework.binding.AttributeSource;
  * manipulate exactly one flow execution.
  * <p>
  * A new instance of this object is created when one of the operations on a
- * <code>FlowExecution</code> facade invoked, either
+ * <code>FlowExecution</code> facade is invoked, either
  * ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
  * to activate a newly created flow execution, or
  * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(Event)}) to
@@ -38,7 +38,7 @@ import org.springframework.binding.AttributeSource;
  * <p>
  * When a call into a flow execution returns, this object goes out of scope
  * and is disposed of automatically.  Thus, this object is an internal artifact
- * used within a FlowExecution: this object is NOT directly exposed to to external
+ * used within a FlowExecution: this object is NOT directly exposed to external
  * client code.
  * <p>
  * Note: the "requestScope" property may be used as a store for arbitrary data that 
