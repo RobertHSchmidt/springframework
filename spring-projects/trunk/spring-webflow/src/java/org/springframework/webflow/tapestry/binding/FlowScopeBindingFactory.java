@@ -5,6 +5,11 @@ import org.apache.tapestry.IBinding;
 import org.apache.tapestry.IComponent;
 import org.apache.tapestry.binding.AbstractBindingFactory;
 
+/**
+ * Binding factory that produces FlowBindings.
+ * 
+ * @author Keith Donald
+ */
 public class FlowScopeBindingFactory extends AbstractBindingFactory {
 	public IBinding createBinding(IComponent root, String bindingDescription,
 			String path, Location location) {

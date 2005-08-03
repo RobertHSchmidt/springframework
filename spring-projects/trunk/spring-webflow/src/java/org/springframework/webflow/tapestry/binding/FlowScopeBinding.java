@@ -7,12 +7,33 @@ import org.apache.tapestry.coerce.ValueConverter;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.Scope;
 
+/**
+ * A binding that provides read and write access to a attribute in 
+ * flow scope of the active session in an executing flow.
+ * 
+ * @author Keith Donald
+ */
 public class FlowScopeBinding extends AbstractBinding {
 
+	/**
+	 * The page in which this binding object as created within; provides 
+	 * a context for accessing information about the flow the page is participating in.
+	 */
 	private IPage page;
 
+	/**
+	 * The name of the attribute to read/write from flow scope.
+	 */
 	private String attributeName;
 
+	/**
+	 * Create a new flow scope binding
+	 * @param page the page
+	 * @param attributeName the attribute
+	 * @param description description
+	 * @param valueConverter value converter
+	 * @param location the location
+	 */
 	public FlowScopeBinding(IPage page, String attributeName,
 			String description, ValueConverter valueConverter, Location location) {
 		super(description, valueConverter, location);
