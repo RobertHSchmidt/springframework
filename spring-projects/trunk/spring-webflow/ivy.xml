@@ -29,10 +29,16 @@
     <dependency org="junit" name="junit" rev="3.8.1" conf="global->default"/>
 
 	<!-- spring mvc only dependencies -->
-    <dependency org="springframework" name="spring-webmvc" rev="1.2.3" conf="mvc->default"/>
+    <dependency org="springframework" name="spring-webmvc" rev="1.2.3">
+       	<conf name="mvc->default"/>
+    	<conf name="buildtime->default"/>
+    </dependency>
 
 	<!-- struts only dependencies -->
-    <dependency org="apache" name="struts" rev="1.2.7" conf="struts->default"/>
+    <dependency org="apache" name="struts" rev="1.2.7">
+    	<conf name="struts->default"/>
+    	<conf name="buildtime->default"/>
+    </dependency>
     <dependency org="apache" name="commons-beanutils" rev="1.7.0" conf="struts->default"/>
     <dependency org="apache" name="commons-collections" rev="3.1" conf="struts->default"/>
     <dependency org="apache" name="commons-lang" rev="2.1" conf="struts->default"/>
