@@ -8,8 +8,8 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.Scope;
 
 /**
- * A binding that provides read and write access to a attribute in 
- * flow scope of the active session in an executing flow.
+ * A binding that provides read and write access to a attribute in  the
+ * flow scope of the active session of the currently executing flow.
  * 
  * @author Keith Donald
  */
