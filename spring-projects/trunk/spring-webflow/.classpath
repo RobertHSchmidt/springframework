@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
 	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-web.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/struts.jar"/>
@@ -21,5 +20,6 @@
 	<classpathentry kind="src" path="/spring-binding"/>
 	<classpathentry kind="lib" path="lib/buildtime/tapestry.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/hivemind.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-webmvc.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

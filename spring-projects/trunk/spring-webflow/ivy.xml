@@ -50,9 +50,8 @@
   		<artifact name="tapestry-contrib" type="jar"/>
   		<artifact name="tapestry-annotations" type="jar"/>
   	</dependency>
-  	<dependency org="apache" name="hivemind" rev="1.1-beta-2">
+  	<dependency org="apache" name="hivemind" rev="1.1-beta-2" conf="buildtime->default">
   		<conf name="tapestry->default"/>
-  		<conf name="buildtime->default"/>
   		<artifact name="hivemind" type="jar"/>
   		<artifact name="hivemind-lib" type="jar"/>
   	</dependency>
