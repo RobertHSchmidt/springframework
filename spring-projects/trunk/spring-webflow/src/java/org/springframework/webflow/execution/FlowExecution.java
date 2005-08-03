@@ -25,12 +25,13 @@ import org.springframework.webflow.access.FlowLocator;
  * Represents a <i>client instance</i> of an executing top-level flow.
  * <p>
  * This is the central facade interface for managing one runtime execution of a Flow.
- * This is the finite state machine that is the heart of Spring Web Flow.
+ * Implementations of this interface are the finite state machine that is the heart of
+ * Spring Web Flow.
  * <p>
  * Typically, when a browser wants to launch a new instance of a Flow at runtime, it passes in the
  * id of the Flow definition to launch to a governing <code>FlowExecutionManager</code>.
  * The manager then creates an instance of an object implementing this interface, passing it the 
- * requested Flow definition--which becomes the execution's "root", or top-level flow.  After creation,
+ * requested Flow definition -- which becomes the execution's "root", or top-level flow.  After creation,
  * the start operation is called, which causes the execution to activate a new session for its
  * root flow definition.  That session is then pushed onto a stack and its definition 
  * becomes the "active flow".  A local, internal StateContext object (which extends
@@ -38,7 +39,7 @@ import org.springframework.webflow.access.FlowLocator;
  * and the active Flow's start State is entered.
  * <p>
  * In a distributed environment such as HTTP, after a start or signalEvent operation has completed
- * and control returns to the caller (manager), this executoin object (if still active) is 
+ * and control returns to the caller (manager), this execution object (if still active) is 
  * typically saved out to some form of storage before the server request ends.  For example it
  * might be saved out to the HttpSession, a Database, or a client-side hidden form field
  * for later restoration and manipulation. 
@@ -49,7 +50,7 @@ import org.springframework.webflow.access.FlowLocator;
  * within the context of the current state: e.g the user pressed "submit", or pressed "cancel".
  * After the user event is processed, control again goes back to the caller and if this 
  * execution is still active, it is saved out to storage.  This continues until a client event
- * causes this flow execution to end (by the root flow reachng an EndState).  At that time, 
+ * causes this flow execution to end (by the root flow reaching an EndState).  At that time, 
  * this object is removed from storage and discarded.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionManager
@@ -82,7 +83,7 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * executing flow.  The event will be processed in full and control will be returned 
 	 * once procssing is complete.
 	 * @param sourceEvent the event that occured within the current state of this flow
-	 *        execution.
+	 *        execution
 	 * @return the next model and view descriptor to display for this flow
 	 *         execution, this returns control to the client and requests that a
 	 *         view be rendered with model data
@@ -94,7 +95,9 @@ public interface FlowExecution extends FlowExecutionContext {
 	public ViewDescriptor signalEvent(Event sourceEvent) throws FlowNavigationException, IllegalStateException;
 	
 	/**
-	 * Rehydrate this flow execution after deserialization.
+	 * Rehydrate this flow execution after deserialization. This is called after
+	 * the flow execution has been restored from storaged but before the signalEvent
+	 * method is called.
 	 * @param flowLocator the flow locator
 	 * @param listenerLoader the flow execution listener loader to use to obtain
 	 *        all listeners that apply
