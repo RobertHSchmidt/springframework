@@ -385,7 +385,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 * @return the view descriptor of the model and view to render
 	 * @throws Exception in case of errors
 	 */
-	public ViewDescriptor onEvent(Event event) throws Exception {
+	public ViewDescriptor onEvent(Event event) {
 		return onEvent(event, null);
 	}
 
@@ -398,7 +398,7 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 * @return the view descriptor of the model and view to render
 	 * @throws Exception in case of errors
 	 */
-	public ViewDescriptor onEvent(Event event, FlowExecutionListener listener) throws Exception {
+	public ViewDescriptor onEvent(Event event, FlowExecutionListener listener) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("New request received from client, source event is: "+ event);
 		}
