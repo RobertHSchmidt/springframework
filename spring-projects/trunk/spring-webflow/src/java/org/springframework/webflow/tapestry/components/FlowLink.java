@@ -21,11 +21,11 @@ import org.apache.tapestry.engine.ILink;
 import org.apache.tapestry.link.AbstractLinkComponent;
 
 public abstract class FlowLink extends AbstractLinkComponent {
-    public abstract String getFlowId();
+    public abstract String getTargetFlow();
 
     public abstract IEngineService getFlowService();
 
     public ILink getLink(IRequestCycle cycle) {
-	        return getFlowService().getLink(cycle, getFlowId());
+	        return getFlowService().getLink(cycle, getTargetFlow());
     }
 }

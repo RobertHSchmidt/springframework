@@ -3,9 +3,14 @@
 <!DOCTYPE component-specification PUBLIC 
   "-//Apache Software Foundation//Tapestry Specification 4.0//EN" 
   "http://jakarta.apache.org/tapestry/dtd/Tapestry_4_0.dtd">
-  
+
 <component-specification class="org.springframework.webflow.tapestry.FlowLink">
 	<description>Creates a link that launches a new flow execution</description>
-	<parameter name="flowId" required="yes"/>
-	<inject property="flowService" object="engine-service:flow"/>	
+	<parameter name="flow" property="targetFlow" required="yes" />
+	<parameter name="disabled" />
+	<parameter name="anchor" />
+	<parameter name="target" />
+	<parameter name="renderer" />
+	<reserved-parameter name="href" />
+	<inject property="flowService" object="engine-service:flow" />
 </component-specification>
