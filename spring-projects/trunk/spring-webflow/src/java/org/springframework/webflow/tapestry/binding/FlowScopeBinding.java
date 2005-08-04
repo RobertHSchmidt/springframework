@@ -6,6 +6,7 @@ import org.apache.tapestry.binding.AbstractBinding;
 import org.apache.tapestry.coerce.ValueConverter;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.Scope;
+import org.springframework.webflow.tapestry.Constants;
 
 /**
  * A binding that provides read and write access to a attribute in  the
@@ -58,8 +59,8 @@ public class FlowScopeBinding extends AbstractBinding {
 	}
 	
 	protected Scope getFlowScope() {
-		FlowExecutionContext flowExecution = (FlowExecutionContext) getPage().getProperty(
-				"flowExecutionContext");
-		return flowExecution.getActiveSession().getScope();
+		FlowExecutionContext context = (FlowExecutionContext) getPage().getProperty(
+				Constants.FLOW_EXECUTION_CONTEXT_PAGE_PROPERTY);
+		return context.getActiveSession().getScope();
 	}
 }

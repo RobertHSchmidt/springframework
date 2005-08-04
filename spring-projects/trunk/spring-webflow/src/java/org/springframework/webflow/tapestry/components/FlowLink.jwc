@@ -5,5 +5,7 @@
   "http://jakarta.apache.org/tapestry/dtd/Tapestry_4_0.dtd">
   
 <component-specification class="org.springframework.webflow.tapestry.FlowLink">
-	<description>A webflow flow link specification</description>
+	<description>Creates a link that launches a new flow execution</description>
+	<parameter name="flowId" required="yes"/>
+	<inject property="flowService" object="engine-service:flow"/>	
 </component-specification>

@@ -15,8 +15,17 @@
  */
 package org.springframework.webflow.tapestry.components;
 
-import org.apache.tapestry.AbstractComponent;
+import org.apache.tapestry.IRequestCycle;
+import org.apache.tapestry.engine.IEngineService;
+import org.apache.tapestry.engine.ILink;
+import org.apache.tapestry.link.AbstractLinkComponent;
 
-public abstract class FlowLink extends AbstractComponent {
+public abstract class FlowLink extends AbstractLinkComponent {
+    public abstract String getFlowId();
 
+    public abstract IEngineService getFlowService();
+
+    public ILink getLink(IRequestCycle cycle) {
+	        return getFlowService().getLink(cycle, getFlowId());
+    }
 }
