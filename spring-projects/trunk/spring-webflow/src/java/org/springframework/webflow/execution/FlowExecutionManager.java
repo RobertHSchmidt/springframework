@@ -383,7 +383,6 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 * webflow system for managing all executing flows.
 	 * @param event the event that occured
 	 * @return the view descriptor of the model and view to render
-	 * @throws Exception in case of errors
 	 */
 	public ViewDescriptor onEvent(Event event) {
 		return onEvent(event, null);
@@ -396,7 +395,6 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 	 * @param listener a listener interested in flow execution
 	 *        lifecycle events that happen <i>while handling this event</i>
 	 * @return the view descriptor of the model and view to render
-	 * @throws Exception in case of errors
 	 */
 	public ViewDescriptor onEvent(Event event, FlowExecutionListener listener) {
 		if (logger.isDebugEnabled()) {
