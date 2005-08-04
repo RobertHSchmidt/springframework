@@ -143,7 +143,7 @@
   <target name="tests" depends="init"
           description="Calls test targets on each project">
     <echo>projects=${projects}</echo>
-	<subant target="run-ltests" inheritall="false">
+	<subant target="tests" inheritall="false">
 	  <buildpath refid="${projects}"/>
     </subant>
   </target>
