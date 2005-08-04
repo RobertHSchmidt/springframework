@@ -20,7 +20,7 @@ package org.springframework.webflow;
  * specific <code>Flow</code> definition.  This object maintains all the 
  * state of the session, including its status within exactly one
  * governing FlowExecution and its current State.  This object also acts
- * "flow scope" data model.  Data in "flow scope" lives for the life
+ * as the "flow scope" data model.  Data in "flow scope" lives for the life
  * of this object, and is cleaned up automatically when this object is
  * destroyed.  Destruction happens when this session reaches a end state.
  * <p>
