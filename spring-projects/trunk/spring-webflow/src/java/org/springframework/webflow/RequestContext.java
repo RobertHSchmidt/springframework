@@ -64,12 +64,11 @@ public interface RequestContext {
 	/**
 	 * Returns the client event that originated (or triggered) this request.  This 
 	 * event may contain parameters provided as input by the client.  In addition,
-	 * this event may be downcastable to a specific event type for a specific client environment, like
-	 * a ServletEvent for servlets or a PortletEvent for portlets.  Such downcasting will give
-	 * you full access to a native HttpServletRequest, for example. Noting that, avoid coupling your
-	 * flow artifacts to a specific deployment where possible.
-	 * @return the originating event, the one that triggered the current
-	 *         execution request
+	 * this event may be downcastable to a specific event type for a specific client environment,
+	 * such as a ServletEvent for servlets or a PortletEvent for portlets. Such downcasting will
+	 * give you full access to a native HttpServletRequest, for example. That said, you should
+	 * avoid coupling your flow artifacts to a specific deployment where possible.
+	 * @return the originating event, the one that triggered the current execution request
 	 */
 	public Event getSourceEvent();
 
