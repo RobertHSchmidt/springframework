@@ -6,7 +6,7 @@
 
 <component-specification class="org.springframework.webflow.tapestry.FlowLink">
 	<description>Creates a link that launches a new flow execution</description>
-	<parameter name="flow" property="targetFlow" required="yes" />
+	<parameter name="flow" required="yes" property="targetFlow" />
 	<parameter name="disabled" />
 	<parameter name="anchor" />
 	<parameter name="target" />
