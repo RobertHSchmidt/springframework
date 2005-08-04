@@ -83,7 +83,7 @@ import org.springframework.webflow.support.FlowConversionService;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionListenerLoader {
+public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFactoryAware {
 
 	/**
 	 * Clients can send the id (name) of the flow to be started
@@ -401,9 +401,9 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 			logger.debug("New request received from client, source event is: "+ event);
 		}
 		FlowExecution flowExecution;
-		ViewDescriptor viewDescriptor;
-		Serializable id = getFlowExecutionId(event);
-		if (id == null) {
+		ViewDescriptor selectedView;
+		Serializable flowExecutionId = getFlowExecutionId(event);
+		if (flowExecutionId == null) {
 			// start a new flow execution
 			Flow flow = getFlow(event);
 			flowExecution = createFlowExecution(flow);
@@ -412,22 +412,22 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 			}
 			flowExecution.getListeners().fireCreated(flowExecution);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Created new flow execution for flow definition: '" + flow.getId() + "'");
+				logger.debug("Created a new flow execution for flow definition: '" + flow.getId() + "'");
 			}
-			viewDescriptor = flowExecution.start(event);
+			selectedView = flowExecution.start(event);
 		}
 		else {
 			// client is participating in an existing flow execution,
 			// retrieve information about it
-			flowExecution = getStorage().load(id, event);
+			flowExecution = getStorage().load(flowExecutionId, event);
 			// rehydrate the execution if neccessary (if it had been serialized out)
 			flowExecution.rehydrate(getFlowLocator(), this, getTransactionSynchronizer());
 			if (listener != null) {
 				flowExecution.getListeners().add(listener);
 			}
-			flowExecution.getListeners().fireLoaded(flowExecution, id);
+			flowExecution.getListeners().fireLoaded(flowExecution, flowExecutionId);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Loaded existing flow execution from storage with id: '" + id + "'");
+				logger.debug("Loaded existing flow execution from storage with id: '" + flowExecutionId + "'");
 			}
 			// signal the event within the current state
 			Assert.hasText(event.getId(), "No eventId could be obtained -- "
@@ -438,37 +438,37 @@ public class FlowExecutionManager implements BeanFactoryAware, FlowExecutionList
 			if (event.getId().equals(getNotSetEventIdParameterMarker())) {
 				throw new IllegalArgumentException("The received eventId was the 'not set' marker '"
 						+ getNotSetEventIdParameterMarker()
-						+ "' -- this is likely a view (jsp, etc) configuration error --"
+						+ "' -- this is likely a client view (jsp, etc) configuration error --"
 						+ "the _eventId parameter must be set to a valid event");
 			}
-			viewDescriptor = flowExecution.signalEvent(event);
+			selectedView = flowExecution.signalEvent(event);
 		}
 		if (flowExecution.isActive()) {
 			// save the flow execution for future use
-			id = getStorage().save(id, flowExecution, event);
-			flowExecution.getListeners().fireSaved(flowExecution, id);
+			flowExecutionId = getStorage().save(flowExecutionId, flowExecution, event);
+			flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Saved flow execution out to storage with id: '" + id + "'");
+				logger.debug("Saved flow execution out to storage with id: '" + flowExecutionId + "'");
 			}
 		}
 		else {
 			// event execution resulted in the entire flow execution ending, cleanup
-			if (id != null) {
-				getStorage().remove(id, event);
-				flowExecution.getListeners().fireRemoved(flowExecution, id);
+			if (flowExecutionId != null) {
+				getStorage().remove(flowExecutionId, event);
+				flowExecution.getListeners().fireRemoved(flowExecution, flowExecutionId);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Removed flow execution from storage with id: '" + id + "'");
+					logger.debug("Removed flow execution from storage with id: '" + flowExecutionId + "'");
 				}
 			}
 		}
 		if (listener != null) {
 			flowExecution.getListeners().remove(listener);
 		}
-		viewDescriptor = prepareViewDescriptor(viewDescriptor, id, flowExecution);
+		selectedView = prepareViewDescriptor(selectedView, flowExecutionId, flowExecution);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Returning selected view to client: " + viewDescriptor);
+			logger.debug("Returning selected view to client: " + selectedView);
 		}
-		return viewDescriptor;
+		return selectedView;
 	}
 
 	// subclassing hooks

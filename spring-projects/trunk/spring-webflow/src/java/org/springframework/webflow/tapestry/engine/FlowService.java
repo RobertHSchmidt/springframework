@@ -26,16 +26,18 @@ public class FlowService implements IEngineService {
 
 	private static final String FLOW_SERVICE = "flow";
 
-	private static final String FLOW_ID = "_flowId";
-
-	private ResponseRenderer responseRenderer;
-
-	private LinkFactory linkFactory;
-
 	/**
 	 * The manager that will actually launch flows for us
 	 */
 	private FlowExecutionManager flowExecutionManager;
+
+	private ResponseRenderer responseRenderer;
+
+	private LinkFactory linkFactory;
+	
+	public void setFlowExecutionManager(FlowExecutionManager flowExecutionManager) {
+		this.flowExecutionManager = flowExecutionManager;
+	}
 
 	public void setLinkFactory(LinkFactory factory) {
 		this.linkFactory = factory;
@@ -45,15 +47,11 @@ public class FlowService implements IEngineService {
 		this.responseRenderer = renderer;
 	}
 
-	public void setFlowExecutionManager(FlowExecutionManager flowExecutionManager) {
-		this.flowExecutionManager = flowExecutionManager;
-	}
-	
 	public ILink getLink(IRequestCycle cycle, Object parameter) {
 		Defense.isAssignable(parameter, String.class, "parameter");
 		Map parameters = new HashMap(2);
 		parameters.put(ServiceConstants.SERVICE, FLOW_SERVICE);
-		parameters.put(FLOW_ID, parameter);
+		parameters.put(FlowExecutionManager.FLOW_ID_PARAMETER, parameter);
 		return linkFactory.constructLink(cycle, parameters, true);
 	}
 
@@ -61,7 +59,7 @@ public class FlowService implements IEngineService {
 		ViewDescriptor firstView = flowExecutionManager.onEvent(new TapestryEvent(cycle));
 		IPage firstPage = cycle.getPage(firstView.getViewName());
 		firstPage.setProperty(Constants.FLOW_EXECUTION_CONTEXT_PAGE_PROPERTY, firstView
-				.getAttribute("flowExecutionContext"));
+				.getAttribute(FlowExecutionManager.FLOW_EXECUTION_CONTEXT_ATTRIBUTE));
 		firstPage.setProperty(Constants.MODEL_PAGE_PROPERTY, firstView.getModel());
 		cycle.activate(firstPage);
 		responseRenderer.renderResponse(cycle);
