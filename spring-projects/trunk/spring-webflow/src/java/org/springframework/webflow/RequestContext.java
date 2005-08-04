@@ -50,7 +50,7 @@ import org.springframework.binding.AttributeSource;
  * <p>
  * Note: the <i>request</i> context is in no way linked to an HTTP or Portlet request!
  * It uses the familiar "request" naming convention to indicate a single call to
- * manipulate an runtime execution of a flow.
+ * manipulate a runtime execution of a flow.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.Action
