@@ -44,7 +44,7 @@ package org.springframework.webflow;
  * to {@link FlowSessionStatus#PAUSED}.  The flow is no longer actively 
  * processing: it's stored off somewhere waiting on the user to do something.
  * <p>
- * If a flow session is pushed down in the stack because a subflow is spawned, it's 
+ * If a flow session is pushed down in the stack because a subflow is spawned, its 
  * status becomes {@link FlowSessionStatus#SUSPENDED} until the subflow returns (ends) 
  * and is popped off the stack.  The resuming flow session then becomes active once
  * again.
