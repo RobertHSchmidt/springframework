@@ -30,7 +30,7 @@ import org.springframework.binding.AttributeSource;
  * ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
  * to activate a newly created flow execution, or
  * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(Event)}) to
- * signal an event in the current state of an restored flow execution.
+ * signal an event in the current state of a restored flow execution.
  * <p>
  * Once created this context object is passed around throughout request
  * processing where it may be accessed and reasoned upon, typically by
