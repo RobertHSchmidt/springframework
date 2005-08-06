@@ -21,9 +21,6 @@
         <dependency org="antlr" name="antlr" rev="2.7.5H3">
             <artifact name="antlr" type="jar"/>
         </dependency>
-        <dependency org="apache" name="commons-attributes" rev="2.1">
-            <artifact name="commons-attributes-api" type="jar"/>
-        </dependency>
         <dependency org="apache" name="commons-beanutils" rev="1.6"/>
         <dependency org="apache" name="commons-collections" rev="3.1"/>
         <dependency org="apache" name="commons-dbcp" rev="1.2.1"/>
@@ -48,10 +45,10 @@
         <dependency org="postgresql" name="postgresql" rev="8.0-310">
             <artifact name="postgresql-jdbc3" type="jar"/>
         </dependency>
-        <dependency org="springframework" name="springframework" rev="1.2.2-dev-20050620">
+        <dependency org="springframework" name="springframework" rev="1.2.3">
             <artifact name="spring" type="jar"/>
         </dependency>
-        <dependency org="springframework" name="spring-mock" rev="1.2.1"/>
+        <dependency org="springframework" name="spring-mock" rev="1.2.3"/>
         <dependency org="springframework" name="acegi-security" rev="0.8.2"/>
 
 		<!-- buildtime dependencies -->

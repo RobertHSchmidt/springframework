@@ -11,9 +11,6 @@
   <property file="${common.build.dir}/project.properties"/>
   <property file="${user.home}/build.properties"/>
 
-  <!-- tell common build this is a web project and should produce a .war -->
-  <property name="build.web" value="true" />
-
   <import file="${common.build.dir}/common-targets.xml"/>
 
   <!-- import clover support -->

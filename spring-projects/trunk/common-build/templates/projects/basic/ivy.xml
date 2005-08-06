@@ -20,7 +20,7 @@
     	<!-- global (compile, test, runtime) dependencies -->
 	    <dependency org="apache" name="commons-logging" rev="1.0.4"/>
     	<dependency org="apache" name="log4j" rev="1.2.9"/>
-        <dependency org="springframework" name="springframework" rev="1.2.2-dev-20050620">
+        <dependency org="springframework" name="springframework" rev="1.2.3">
             <artifact name="spring" type="jar"/>
         </dependency>
 
@@ -33,6 +33,6 @@
             <artifact name="cenquatasks" type="jar"/>
         </dependency>
         <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
-        <dependency org="springframework" name="spring-mock" rev="1.2.1" conf="test->default"/>
+        <dependency org="springframework" name="spring-mock" rev="1.2.3" conf="test->default"/>
     </dependencies>
 </ivy-module>
