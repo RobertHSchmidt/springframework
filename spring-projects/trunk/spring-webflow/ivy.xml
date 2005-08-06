@@ -29,14 +29,10 @@
     <dependency org="junit" name="junit" rev="3.8.1" conf="global->default"/>
 
 	<!-- spring mvc only dependencies -->
-    <dependency org="springframework" name="spring-webmvc" rev="1.2.3" conf="buildtime->default">
-       	<conf name="mvc->default"/>
-    </dependency>
+    <dependency org="springframework" name="spring-webmvc" rev="1.2.3" conf="buildtime,mvc->default"/>
 
 	<!-- struts only dependencies -->
-    <dependency org="apache" name="struts" rev="1.2.7" conf="buildtime->default">
-    	<conf name="struts->default"/>
-    </dependency>
+    <dependency org="apache" name="struts" rev="1.2.7" conf="buildtime,struts->default"/>
     <dependency org="apache" name="commons-beanutils" rev="1.7.0" conf="struts->default"/>
     <dependency org="apache" name="commons-collections" rev="3.1" conf="struts->default"/>
     <dependency org="apache" name="commons-lang" rev="2.1" conf="struts->default"/>
@@ -44,14 +40,12 @@
     <dependency org="apache" name="commons-validator" rev="1.1.4" conf="struts->default"/>  
 
 	<!-- tapestry only dependencies -->
-  	<dependency org="apache" name="tapestry" rev="4.0-beta-3" conf="buildtime->default">
-  		<conf name="tapestry->default"/>
+  	<dependency org="apache" name="tapestry" rev="4.0-beta-3" conf="buildtime,tapestry->default">
   		<artifact name="tapestry" type="jar"/>
   		<artifact name="tapestry-contrib" type="jar"/>
   		<artifact name="tapestry-annotations" type="jar"/>
   	</dependency>
-  	<dependency org="apache" name="hivemind" rev="1.1-beta-2" conf="buildtime->default">
-  		<conf name="tapestry->default"/>
+  	<dependency org="apache" name="hivemind" rev="1.1-beta-2" conf="buildtime,tapestry->default">
   		<artifact name="hivemind" type="jar"/>
   		<artifact name="hivemind-lib" type="jar"/>
   	</dependency>
