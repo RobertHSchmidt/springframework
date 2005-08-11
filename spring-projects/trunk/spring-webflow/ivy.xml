@@ -40,7 +40,7 @@
     <dependency org="apache" name="commons-validator" rev="1.1.4" conf="struts->default"/>  
 
 	<!-- tapestry only dependencies -->
-  	<dependency org="apache" name="tapestry" rev="4.0-beta-3" conf="buildtime,tapestry->default">
+  	<dependency org="apache" name="tapestry" rev="4.0-beta-4" conf="buildtime,tapestry->default">
   		<artifact name="tapestry" type="jar"/>
   		<artifact name="tapestry-contrib" type="jar"/>
   		<artifact name="tapestry-annotations" type="jar"/>

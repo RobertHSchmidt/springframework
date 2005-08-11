@@ -47,12 +47,12 @@ public class FlowService implements IEngineService {
 		this.responseRenderer = renderer;
 	}
 
-	public ILink getLink(IRequestCycle cycle, Object parameter) {
+    public ILink getLink(IRequestCycle cycle, boolean post, Object parameter) {
 		Defense.isAssignable(parameter, String.class, "parameter");
 		Map parameters = new HashMap(2);
 		parameters.put(ServiceConstants.SERVICE, FLOW_SERVICE);
 		parameters.put(FlowExecutionManager.FLOW_ID_PARAMETER, parameter);
-		return linkFactory.constructLink(cycle, parameters, true);
+		return linkFactory.constructLink(cycle, post, parameters, true);
 	}
 
 	public void service(IRequestCycle cycle) throws IOException {

@@ -21,11 +21,13 @@ import org.apache.tapestry.engine.ILink;
 import org.apache.tapestry.link.AbstractLinkComponent;
 
 public abstract class FlowLink extends AbstractLinkComponent {
-    public abstract String getTargetFlow();
+	public abstract String getTargetFlow();
 
-    public abstract IEngineService getFlowService();
+	public abstract IEngineService getFlowService();
 
-    public ILink getLink(IRequestCycle cycle) {
-	        return getFlowService().getLink(cycle, getTargetFlow());
-    }
+	public ILink getLink(IRequestCycle cycle) {
+
+		// currently 'post' param is always false
+		return getFlowService().getLink(cycle, false, getTargetFlow());
+	}
 }
