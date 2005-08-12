@@ -304,7 +304,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 */
 	public void setFormObjectClass(Class formObjectClass) {
 		this.formObjectClass = formObjectClass;
-		getValidateMethodDispatcher().setParameterTypes(new Class[] { this.formObjectClass, Errors.class });
 	}
 
 	/**
@@ -388,7 +387,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 */
 	public void setValidator(Validator validator) {
 		this.validator = validator;
-		getValidateMethodDispatcher().setTarget(validator);
 	}
 
 	/**
@@ -448,6 +446,10 @@ public class FormAction extends MultiAction implements InitializingBean {
 				throw new IllegalArgumentException("Validator [" + getValidator()
 						+ "] does not support form object class [" + getFormObjectClass() + "]");
 			}
+			// initialize method dispatcher
+			getValidateMethodDispatcher().setTarget(getValidator());
+			getValidateMethodDispatcher().setParameterTypes(
+					new Class[] { getFormObjectClass() == null ? Object.class : getFormObjectClass(), Errors.class });
 		}
 	}
 
@@ -698,12 +700,12 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param binder the data binder to use
 	 */
 	protected void doValidate(RequestContext context, DataBinder binder) throws Exception {
+		Assert.notNull(validator, "The validator must not be null when attempting validation, but it is: programmer error");
 		String validatorMethod = (String)context.getProperties().getAttribute(VALIDATOR_METHOD_PROPERTY);
 		if (StringUtils.hasText(validatorMethod)) {
 			invokeValidatorMethod(validatorMethod, binder.getTarget(), binder.getErrors());
 		}
 		else {
-			Assert.notNull(validator, "The validator must not be null but it is: programmer error");
 			if (logger.isDebugEnabled()) {
 				logger.debug("Invoking validator: " + validator);
 			}

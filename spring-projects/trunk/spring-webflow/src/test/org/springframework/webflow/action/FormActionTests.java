@@ -71,12 +71,16 @@ public class FormActionTests extends TestCase {
 		}
 	}
 	
-	private static class TestBeanValidator implements Validator {
+	public static class TestBeanValidator implements Validator {
 		public boolean supports(Class clazz) {
 			return TestBean.class.equals(clazz);
 		}
 		
 		public void validate(Object formObject, Errors errors) {
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "prop", "Prop cannot be empty");
+		}
+		
+		public void validateTestBean(TestBean formObject, Errors errors) {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "prop", "Prop cannot be empty");
 		}
 	}
@@ -172,6 +176,7 @@ public class FormActionTests extends TestCase {
 		// bindAndValidate() should setup a new form object and errors instance
 		// and do a bind & validate
 		
+		context.setProperty("validatorMethod", "validateTestBean");
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.bindAndValidate(context).getId());
 		
 		assertEquals(2, context.getRequestScope().size());
