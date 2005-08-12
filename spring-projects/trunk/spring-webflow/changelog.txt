@@ -4,6 +4,10 @@ http://www.springframework.org
 
 Changes in version RC1
 ------------------------------------
+* Improved "validateMethod" handling in FormAction: if no formObjectClass is specified, the invoked validate methods should
+  have a signature matching "public void validateMethodName(Object obj, Errors errors)". When you do specify a
+  formObjectClass, everything works like before, e.g. the signature will be
+  "public void validateMethodName(FormObjectClass obj, Errors errors)".
 * Removed DelegatingAction in favor of StatefulActionProxy.
 * Changed numberguess sample application to use the new StatefulActionProxy.
 * Relocated several support classes in webflow to webflow.support. Also moved the FlowConversionService from webflow.convert
