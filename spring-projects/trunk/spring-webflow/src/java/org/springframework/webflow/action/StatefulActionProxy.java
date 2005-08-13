@@ -173,7 +173,8 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 		Object result = getActionProperty(context, ACTION_ATTRIBUTE_PROPERTY, null);
 		if (result != null) {
 			return (String)result;
-		} else {
+		}
+		else {
 			if (StringUtils.hasText(getActionAttribute())) {
 				return getActionAttribute();
 			}
