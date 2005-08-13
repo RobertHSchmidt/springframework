@@ -150,6 +150,12 @@ public class DefaultConversionService implements ConversionService {
 		}
 	}
 
+	private static final ConversionExecutor NOOP_CONVERSION_EXECUTOR = new ConversionExecutor(null, null) {
+		public Object execute(Object source) {
+			return source;
+		}
+	};
+	
 	public ConversionExecutor getConversionExecutor(Class sourceClass,
 			Class targetClass) {
 		if (this.sourceClassConverters == null
@@ -158,8 +164,7 @@ public class DefaultConversionService implements ConversionService {
 					"No converters have been added to this service's registry");
 		}
 		if (sourceClass.equals(targetClass)) {
-			throw new IllegalArgumentException("Source class '" + sourceClass
-					+ "' already equals target class; no conversion to perform");
+			return NOOP_CONVERSION_EXECUTOR;
 		}
 		Map sourceTargetConverters = (Map) findConvertersForSource(sourceClass);
 		Converter converter = (Converter) sourceTargetConverters
