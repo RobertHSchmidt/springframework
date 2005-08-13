@@ -43,7 +43,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Event id of the default 'success' result event ("success").
 	 */
 	public static final String SUCCESS_EVENT_ID = "success";
-	
+
 	/**
 	 * Event id of the default 'error' result event ("error").
 	 */
@@ -96,8 +96,11 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
 	 * Returns the default error event caused by the provided exception.
-	 * @param e the exception that caused the error event, to be sent as
-	 *        an event parameter under the name {@link AbstractAction#EXCEPTION_PARAMETER}
+	 * 
+	 * @param e
+	 *            the exception that caused the error event, to be sent as an
+	 *            event parameter under the name
+	 *            {@link AbstractAction#EXCEPTION_PARAMETER}
 	 */
 	protected Event error(Exception e) {
 		return result(ERROR_EVENT_ID, EXCEPTION_PARAMETER, e);
@@ -111,11 +114,12 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
-	 * Returns the default success event with the provided result object
-	 * as a parameter.  The result object is identified by the parameter name
+	 * Returns the default success event with the provided result object as a
+	 * parameter. The result object is identified by the parameter name
 	 * {@link AbstractAction#RESULT_PARAMETER}.
 	 * 
-	 * @param result the action success result;
+	 * @param result
+	 *            the action success result;
 	 */
 	protected Event success(Object result) {
 		return result(SUCCESS_EVENT_ID, RESULT_PARAMETER, result);
@@ -140,19 +144,21 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Typically called as part of return, for example:
 	 * 
 	 * <pre>
-	 *    protected Event doExecute(RequestContext context) {
-	 *      // do some work
-	 *      if (some condition) {
-	 *        return result(&quot;success&quot;);
-	 *      } else {
-	 *        return result(&quot;error&quot;);
-	 *      }
-	 *    }
+	 *     protected Event doExecute(RequestContext context) {
+	 *       // do some work
+	 *       if (some condition) {
+	 *         return result(&quot;success&quot;);
+	 *       } else {
+	 *         return result(&quot;error&quot;);
+	 *       }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
 	 * common results.
-	 * @param eventId the result event identifier
+	 * 
+	 * @param eventId
+	 *            the result event identifier
 	 * @return the action result event
 	 */
 	protected Event result(String eventId) {
@@ -160,27 +166,30 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
-	 * Returns a result event for this action with the specified identifier
-	 * and the specified set of parameters. Typically called as part of
-	 * return, for example:
+	 * Returns a result event for this action with the specified identifier and
+	 * the specified set of parameters. Typically called as part of return, for
+	 * example:
 	 * 
 	 * <pre>
-	 *    protected Event doExecute(RequestContext context) {
-	 *      // do some work
-	 *      Map resultParameters = new HashMap();
-	 *      resultParameters.put("parameterName", "parameterValue");
-	 *      if (some condition) {
-	 *        return result(&quot;success&quot;, resultParameters);
-	 *      } else {
-	 *        return result(&quot;error&quot;, resultParameters);
-	 *      }
-	 *    }
+	 *     protected Event doExecute(RequestContext context) {
+	 *       // do some work
+	 *       Map resultParameters = new HashMap();
+	 *       resultParameters.put(&quot;parameterName&quot;, &quot;parameterValue&quot;);
+	 *       if (some condition) {
+	 *         return result(&quot;success&quot;, resultParameters);
+	 *       } else {
+	 *         return result(&quot;error&quot;, resultParameters);
+	 *       }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
 	 * common results.
-	 * @param eventId the result event identifier
-	 * @param parameters the event parameters
+	 * 
+	 * @param eventId
+	 *            the result event identifier
+	 * @param parameters
+	 *            the event parameters
 	 * @return the action result event
 	 */
 	protected Event result(String eventId, Map parameters) {
@@ -188,29 +197,36 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
-	 * Returns a result event for this action with the specified identifier
-	 * and a single parameter. Typically called as part of return, for example:
+	 * Returns a result event for this action with the specified identifier and
+	 * a single parameter. Typically called as part of return, for example:
+	 * 
 	 * <pre>
-	 *   public Event makeSelection(RequestContext context) throws Exception {
-	 *      try {
-	 *         String selection = (String) context.getSourceEvent().getParameter("selection");
-	 *         selectionSensorHelper.fireSelectionMade(selection);
-	 *         return success();
-	 *      } catch (NoSuchBinException e) {
-	 *         return result("noSuchBin", "exception", e);
-	 *      } catch (BinEmptyException e) {
-	 *         return result("binEmpty", "exception", e);
-	 *      } catch (NotEnoughFundsException e) {
-	 *         return result("notEnoughFunds", "exception", e);
-	 *      }
-	 *   }
+	 * public Event makeSelection(RequestContext context) throws Exception {
+	 * 	try {
+	 * 		String selection = (String) context.getSourceEvent().getParameter(
+	 * 				&quot;selection&quot;);
+	 * 		selectionSensorHelper.fireSelectionMade(selection);
+	 * 		return success();
+	 * 	} catch (NoSuchBinException e) {
+	 * 		return result(&quot;noSuchBin&quot;, &quot;exception&quot;, e);
+	 * 	} catch (BinEmptyException e) {
+	 * 		return result(&quot;binEmpty&quot;, &quot;exception&quot;, e);
+	 * 	} catch (NotEnoughFundsException e) {
+	 * 		return result(&quot;notEnoughFunds&quot;, &quot;exception&quot;, e);
+	 * 	}
+	 * }
 	 * </pre>
-	 * @param eventId the result id
-	 * @param parameterName the parameter name
-	 * @param parameterValue the parameter value
+	 * 
+	 * @param eventId
+	 *            the result id
+	 * @param parameterName
+	 *            the parameter name
+	 * @param parameterValue
+	 *            the parameter value
 	 * @return the action result event
 	 */
-	protected Event result(String eventId, String parameterName, Object parameterValue) {
+	protected Event result(String eventId, String parameterName,
+			Object parameterValue) {
 		HashMap parameters = new HashMap(1);
 		parameters.put(parameterName, parameterValue);
 		return new Event(this, eventId, parameters);
@@ -218,23 +234,25 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	public final Event execute(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Action '" + getClass().getName() + "' beginning execution");
+			logger.debug("Action '" + getClass().getName()
+					+ "' beginning execution");
 		}
 		Event result = doPreExecute(context);
 		if (result == null) {
 			result = doExecute(context);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Action '" + getClass().getName() + "' completed execution; result event is " + result);
+				logger.debug("Action '" + getClass().getName()
+						+ "' completed execution; result event is " + result);
 			}
 			doPostExecute(context);
 			if (logger.isInfoEnabled()) {
 				if (result == null) {
-					logger.info("Retured action event is [null]; that's ok so long as another action associated "
-							+ "with the currently executing flow state returns a valid event");
+					logger
+							.info("Retured action event is [null]; that's ok so long as another action associated "
+									+ "with the currently executing flow state returns a valid event");
 				}
 			}
-		}
-		else {
+		} else {
 			if (logger.isInfoEnabled()) {
 				logger.info("Action execution disallowed; event is " + result);
 			}
@@ -244,22 +262,24 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
 	 * Pre-action-execution hook, subclasses may override. If this method
-	 * returns a non-<code>null</code> event, the
-	 * <code>doExecute()</code> method will <b>not</b> be called and
-	 * the returned event will be used to select a transition to trigger in the
-	 * calling action state. If this method returns <code>null</code>,
-	 * <code>doExecute()</code> will be called to obtain an action
-	 * result event.
+	 * returns a non-<code>null</code> event, the <code>doExecute()</code>
+	 * method will <b>not</b> be called and the returned event will be used to
+	 * select a transition to trigger in the calling action state. If this
+	 * method returns <code>null</code>, <code>doExecute()</code> will be
+	 * called to obtain an action result event.
 	 * <p>
 	 * This implementation just returns <code>null</code>.
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * 
+	 * @param context
+	 *            the action execution context, for accessing and setting data
+	 *            in "flow scope" or "request scope"
 	 * @return the non-<code>null</code> action result, in which case the
 	 *         <code>doExecute()</code> will not be called, or
-	 *         <code>null</code> if the <code>doExecute()</code>
-	 *         method should be called to obtain the action result
-	 * @throws Exception an <b>unrecoverable</b> exception occured, either
-	 *         checked or unchecked
+	 *         <code>null</code> if the <code>doExecute()</code> method
+	 *         should be called to obtain the action result
+	 * @throws Exception
+	 *             an <b>unrecoverable</b> exception occured, either checked or
+	 *             unchecked
 	 */
 	protected Event doPreExecute(RequestContext context) throws Exception {
 		return null;
@@ -268,11 +288,14 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	/**
 	 * Template hook method subclasses should override to encapsulate their
 	 * specific action execution logic.
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * 
+	 * @param context
+	 *            the action execution context, for accessing and setting data
+	 *            in "flow scope" or "request scope"
 	 * @return the action result event
-	 * @throws Exception an <b>unrecoverable</b> exception occured, either
-	 *         checked or unchecked
+	 * @throws Exception
+	 *             an <b>unrecoverable</b> exception occured, either checked or
+	 *             unchecked
 	 */
 	protected abstract Event doExecute(RequestContext context) throws Exception;
 
@@ -280,11 +303,36 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Post-action execution hook, subclasses may override.
 	 * <p>
 	 * This implementation does nothing.
-	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
-	 * @throws Exception an <b>unrecoverable</b> exception occured, either
-	 *         checked or unchecked
+	 * 
+	 * @param context
+	 *            the action execution context, for accessing and setting data
+	 *            in "flow scope" or "request scope"
+	 * @throws Exception
+	 *             an <b>unrecoverable</b> exception occured, either checked or
+	 *             unchecked
 	 */
 	protected void doPostExecute(RequestContext context) throws Exception {
+	}
+
+	protected Object getActionProperty(RequestContext context,
+			String propertyName, Object defaultValue) {
+		if (context.getProperties().containsAttribute(propertyName)) {
+			return (String) context.getProperties().getAttribute(propertyName);
+		} else {
+			return defaultValue;
+		}
+	}
+
+	protected Object getRequredActionProperty(RequestContext context,
+			String propertyName) {
+		if (context.getProperties().containsAttribute(propertyName)) {
+			return (String) context.getProperties().getAttribute(propertyName);
+		} else {
+			throw new IllegalStateException(
+					"Required action execution property '"
+							+ propertyName
+							+ "' not present in request context, properties present are: "
+							+ context.getProperties());
+		}
 	}
 }
