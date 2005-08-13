@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action.bean;
-
-import java.lang.reflect.Method;
-import java.util.Iterator;
+package org.springframework.webflow.action;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.binding.convert.ConversionService;
-import org.springframework.binding.convert.support.DefaultConversionService;
+import org.springframework.binding.method.MethodInvoker;
+import org.springframework.binding.method.MethodKey;
 import org.springframework.util.Assert;
-import org.springframework.util.CachingMapDecorator;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.action.AbstractAction;
 
 /**
  * Thin action proxy that delegates to an arbitrary bean managed in the Spring
@@ -63,26 +59,12 @@ public class BeanInvokingAction extends AbstractAction implements
 	 * The spring binding conversion service, for performing event parameter ->
 	 * method argument type conversion.
 	 */
-	private ConversionService conversionService = new DefaultConversionService();
+	private MethodInvoker beanMethodInvoker = new MethodInvoker();
 
 	/**
 	 * The bean factory for loading beans to invoke by <code>id</code>.
 	 */
 	private BeanFactory beanFactory;
-
-	/**
-	 * A cache of invoked bean methods, keyed weakly.
-	 */
-	private CachingMapDecorator methodCache = new CachingMapDecorator(true) {
-		public Object create(Object key) {
-			TypeMethodKey methodKey = (TypeMethodKey) key;
-			try {
-				return methodKey.lookupMethod();
-			} catch (NoSuchMethodException e) {
-				throw new InvalidMethodKeyException(methodKey, e);
-			}
-		}
-	};
 
 	/**
 	 * Set the conversion service to perform type conversion of event parameters
@@ -91,7 +73,7 @@ public class BeanInvokingAction extends AbstractAction implements
 	 * @param conversionService
 	 */
 	public void setConversionService(ConversionService conversionService) {
-		this.conversionService = conversionService;
+		this.beanMethodInvoker.setConversionService(conversionService);
 	}
 
 	/**
@@ -113,18 +95,7 @@ public class BeanInvokingAction extends AbstractAction implements
 		Object bean = getBean(context);
 		MethodKey methodKey = (MethodKey) context.getProperties().getAttribute(
 				METHOD_PROPERTY);
-		Method method = (Method) methodCache.get(new TypeMethodKey(bean
-				.getClass(), methodKey));
-		Object[] args = new Object[methodKey.getArguments().size()];
-		Iterator it = methodKey.getArguments().iterator();
-		int i = 0;
-		while (it.hasNext()) {
-			Argument argument = (Argument) it.next();
-			args[i] = applyTypeConversion(context.getLastEvent().getParameter(
-					argument.getName()), argument.getType());
-			i++;
-		}
-		Object returnValue = method.invoke(bean, args);
+		Object returnValue = beanMethodInvoker.invoke(methodKey, bean, context.getLastEvent());
 		return success(returnValue);
 	}
 
@@ -142,22 +113,5 @@ public class BeanInvokingAction extends AbstractAction implements
 				.hasText(beanName,
 						"The bean name to invoke was not specified: set the bean property");
 		return beanFactory.getBean(beanName);
-	}
-
-	/**
-	 * Apply type conversion on the event parameter if neccessary
-	 * 
-	 * @param rawParameter
-	 *            the raw event parameter
-	 * @param targetType
-	 *            the target type for the matching method argument
-	 * @return the converted method argument
-	 */
-	protected Object applyTypeConversion(Object rawParameter, Class targetType) {
-		if (rawParameter == null) {
-			return null;
-		}
-		return conversionService.getConversionExecutor(rawParameter.getClass(),
-				targetType).execute(rawParameter);
 	}
 }

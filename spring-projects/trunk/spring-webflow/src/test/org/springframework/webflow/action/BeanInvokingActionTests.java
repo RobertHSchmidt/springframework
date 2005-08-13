@@ -1,4 +1,4 @@
-package org.springframework.webflow.action.bean;
+package org.springframework.webflow.action;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,6 +6,10 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.binding.convert.support.DefaultConversionService;
+import org.springframework.binding.method.Argument;
+import org.springframework.binding.method.Arguments;
+import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.TextToMethodKey;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.test.MockRequestContext;
