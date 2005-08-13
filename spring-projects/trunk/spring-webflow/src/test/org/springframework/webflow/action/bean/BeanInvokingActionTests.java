@@ -5,6 +5,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.test.MockRequestContext;
@@ -56,7 +57,7 @@ public class BeanInvokingActionTests extends TestCase {
 		parameters.put("foo", "a string value");
 		context.setLastEvent(new Event(this, "submit", parameters));
 		context.setProperty("method", new MethodKey("execute", new Argument(
-				"foo", String.class)));
+				String.class, "foo")));
 		context.setProperty("bean", "bean");
 		Bean bean = (Bean) beanFactory.getBean("bean");
 		action.execute(context);
@@ -76,13 +77,37 @@ public class BeanInvokingActionTests extends TestCase {
 		parameters.put("bar", "12345");
 		context.setLastEvent(new Event(this, "submit", parameters));
 		context.setProperty("method", new MethodKey("execute", new Arguments(
-				new Argument[] { new Argument("foo", String.class),
-						new Argument("bar", Integer.class) })));
+				new Argument[] { new Argument(String.class, "foo"),
+						new Argument(Integer.class, "bar") })));
 		context.setProperty("bean", "bean");
 		Bean bean = (Bean) beanFactory.getBean("bean");
 		action.execute(context);
 		assertTrue(bean.executed);
 		assertEquals("Property not set:", "a string value", bean.datum1);
 		assertEquals("Property not set:", new Integer(12345), bean.datum2);
+	}
+	
+	public void testMethodKeyConversionNoArg() {
+		TextToMethodKey converter = new TextToMethodKey(new DefaultConversionService());
+		MethodKey key = (MethodKey)converter.convert("execute");
+		assertEquals("Method key wrong", "execute", key.getMethodName());
+	}
+
+	public void testMethodKeyConversionNoArg2() {
+		TextToMethodKey converter = new TextToMethodKey(new DefaultConversionService());
+		MethodKey key = (MethodKey)converter.convert("execute()");
+		assertEquals("Method key wrong", "execute", key.getMethodName());
+	}
+
+	public void testMethodKeyConversionWithArgs() {
+		TextToMethodKey converter = new TextToMethodKey(new DefaultConversionService());
+		MethodKey key = (MethodKey)converter.convert("execute(string foo, int bar)");
+		assertEquals("Method key wrong", "execute", key.getMethodName());
+		assertEquals("Arguments size wrong", 2, key.getArguments().size());
+		assertEquals("Argument 1 name wrong", "foo", key.getArguments().getArgument(0).getName());
+		assertEquals("Argument 1 type wrong", String.class, key.getArguments().getArgument(0).getType());
+		assertEquals("Argument 2 name wrong", "bar", key.getArguments().getArgument(1).getName());
+		assertEquals("Argument 2 type wrong", int.class, key.getArguments().getArgument(1).getType());
+
 	}
 }
