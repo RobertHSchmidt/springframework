@@ -15,6 +15,11 @@
  */
 package org.springframework.webflow.tapestry.components;
 
+/**
+ * A submit button component.
+ * 
+ * @author Keith Donald
+ */
 public abstract class Submit extends org.apache.tapestry.form.Submit {
 
 }

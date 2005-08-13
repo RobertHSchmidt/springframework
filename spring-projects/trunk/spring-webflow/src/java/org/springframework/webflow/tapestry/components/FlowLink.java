@@ -20,7 +20,13 @@ import org.apache.tapestry.engine.IEngineService;
 import org.apache.tapestry.engine.ILink;
 import org.apache.tapestry.link.AbstractLinkComponent;
 
+/**
+ * Component to generate a link to start a flow.
+ * 
+ * @author Keith Donald
+ */
 public abstract class FlowLink extends AbstractLinkComponent {
+	
 	public abstract String getTargetFlow();
 
 	public abstract IEngineService getFlowService();

@@ -15,6 +15,11 @@
  */
 package org.springframework.webflow.tapestry.components;
 
+/**
+ * A form component.
+ * 
+ * @author Keith Donald
+ */
 public abstract class Form extends org.apache.tapestry.form.Form {
 
 }
