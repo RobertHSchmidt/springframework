@@ -1,35 +1,34 @@
 package org.springframework.webflow.action.bean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
-import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 
 public class Arguments implements Serializable {
 
 	public static final Arguments NONE = new Arguments(0);
 
-	private Set arguments;
+	private List arguments;
 
 	public Arguments() {
 		this(3);
 	}
 
 	public Arguments(int size) {
-		this.arguments = CollectionFactory.createLinkedSetIfPossible(size);
+		this.arguments = new ArrayList(size);
 	}
 
 	public Arguments(Argument argument) {
-		this.arguments = CollectionFactory.createLinkedSetIfPossible(1);
+		this.arguments = new ArrayList(1);
 		add(argument);
 	}
 
 	public Arguments(Argument[] arguments) {
-		this.arguments = CollectionFactory
-				.createLinkedSetIfPossible(arguments.length);
+		this.arguments = new ArrayList(arguments.length);
 		addAll(arguments);
 	}
 

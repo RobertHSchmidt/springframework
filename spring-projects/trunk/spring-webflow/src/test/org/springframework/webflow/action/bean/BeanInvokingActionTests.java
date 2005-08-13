@@ -1,4 +1,4 @@
-package org.springframework.webflow.action;
+package org.springframework.webflow.action.bean;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -9,9 +9,9 @@ import java.lang.reflect.Method;
 import org.springframework.core.style.ToStringCreator;
 
 public class ClassMethodKey implements Serializable {
-	Class clazz;
+	private Class clazz;
 
-	MethodKey methodKey;
+	private MethodKey methodKey;
 
 	public ClassMethodKey(Class clazz, MethodKey methodKey) {
 		this.clazz = clazz;
