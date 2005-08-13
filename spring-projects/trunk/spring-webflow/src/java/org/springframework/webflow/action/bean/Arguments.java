@@ -2,7 +2,7 @@ package org.springframework.webflow.action.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -72,7 +72,7 @@ public class Arguments implements Serializable {
 	 * @return the arguments
 	 */
 	public boolean addAll(Argument[] arguments) {
-		return Collections.addAll(this.arguments, arguments);
+		return this.arguments.addAll(Arrays.asList(arguments)); 
 	}
 
 	/**
