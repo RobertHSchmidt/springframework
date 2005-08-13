@@ -9,7 +9,7 @@ import org.springframework.webflow.Scope;
 import org.springframework.webflow.tapestry.Constants;
 
 /**
- * A binding that provides read and write access to a attribute in  the
+ * A binding that provides read and write access to an attribute in the
  * flow scope of the active session of the currently executing flow.
  * 
  * @author Keith Donald
@@ -17,7 +17,7 @@ import org.springframework.webflow.tapestry.Constants;
 public class FlowScopeBinding extends AbstractBinding {
 
 	/**
-	 * The page in which this binding object as created within; provides 
+	 * The page in which this binding object was created; provides 
 	 * a context for accessing information about the flow the page is participating in.
 	 */
 	private IPage page;
@@ -28,7 +28,7 @@ public class FlowScopeBinding extends AbstractBinding {
 	private String attributeName;
 
 	/**
-	 * Create a new flow scope binding
+	 * Create a new flow scope binding.
 	 * @param page the page
 	 * @param attributeName the attribute
 	 * @param description description
