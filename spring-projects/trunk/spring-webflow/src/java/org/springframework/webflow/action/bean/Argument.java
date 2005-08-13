@@ -2,11 +2,29 @@ package org.springframework.webflow.action.bean;
 
 import org.springframework.core.style.ToStringCreator;
 
+/**
+ * A named method argument. Each argument has an identifying name and is of a
+ * specified type (class).
+ * 
+ * @author Keith
+ */
 public class Argument {
+	
+	/**
+	 * The name of the argument, e.g "accountNumber".
+	 */
 	private String name;
 
+	/**
+	 * The class of the argument, e.g "springbank.AccountNumber".
+	 */
 	private Class type;
 
+	/**
+	 * Create a new named argument definition.
+	 * @param name the name
+	 * @param type the type
+	 */
 	public Argument(String name, Class type) {
 		this.name = name;
 		this.type = type;

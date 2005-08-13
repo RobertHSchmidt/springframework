@@ -5,19 +5,48 @@ import java.lang.reflect.Method;
 
 import org.springframework.core.style.ToStringCreator;
 
+/**
+ * A specification for a <code>Method</code>, consisting of the methodName
+ * and an optional set of named arguments.
+ * 
+ * @author Keith Donald
+ */
 public class MethodKey implements Serializable {
+
+	/**
+	 * The name of the method, e.g execute
+	 */
 	private String methodName;
 
+	/**
+	 * The arguments of the method, e.g int arg1
+	 */
 	private Arguments arguments;
 
+	/**
+	 * Creates a method key with no arguments
+	 * 
+	 * @param methodName
+	 *            the name of the method.
+	 */
 	public MethodKey(String methodName) {
 		this(methodName, Arguments.NONE);
 	}
 
+	/**
+	 * Creates a method key with a single argument.
+	 * @param methodName the name of the method
+	 * @param argument the method argument
+	 */
 	public MethodKey(String methodName, Argument argument) {
 		this(methodName, new Arguments(argument));
 	}
 
+	/**
+	 * Creates a method key with a list of arguments.
+	 * @param methodName the name of the method
+	 * @param arguments the method arguments
+	 */
 	public MethodKey(String methodName, Arguments arguments) {
 		this.methodName = methodName;
 		this.arguments = arguments;
@@ -31,6 +60,12 @@ public class MethodKey implements Serializable {
 		return methodName;
 	}
 
+	/**
+	 * Lookup the method for this key on the provided class.
+	 * @param clazz the class
+	 * @return the retrieved method
+	 * @throws NoSuchMethodException no such method was found
+	 */
 	public Method lookupMethod(Class clazz) throws NoSuchMethodException {
 		return clazz.getMethod(methodName, arguments.getTypesArray());
 	}
