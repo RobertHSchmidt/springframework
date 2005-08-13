@@ -241,7 +241,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * @return the property value
 	 * @throws IllegalArgumentException when the property is not defined
 	 */
-	protected Object getRequredActionProperty(RequestContext context, String propertyName) throws IllegalArgumentException {
+	protected Object getRequiredActionProperty(RequestContext context, String propertyName) throws IllegalStateException {
 		if (context.getProperties().containsAttribute(propertyName)) {
 			return (String) context.getProperties().getAttribute(propertyName);
 		}
