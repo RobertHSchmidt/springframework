@@ -84,17 +84,29 @@ public class BeanInvokingAction extends AbstractAction implements
 		}
 	};
 
-	public void setConversionService(ConversionService conversionService)
-			throws BeansException {
+	/**
+	 * Set the conversion service to perform type conversion of event parameters
+	 * to method arguments as neccessary.
+	 * 
+	 * @param conversionService
+	 */
+	public void setConversionService(ConversionService conversionService) {
 		this.conversionService = conversionService;
+	}
+
+	/**
+	 * Set the name of the target bean to invoke. The bean will be looked up in
+	 * the bean factory on action execution.
+	 * 
+	 * @param targetBeanName
+	 *            the target bean name
+	 */
+	public void setTargetBeanName(String targetBeanName) {
+		this.targetBeanName = targetBeanName;
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
-	}
-
-	public void setTargetBeanName(String targetBeanName) {
-		this.targetBeanName = targetBeanName;
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
