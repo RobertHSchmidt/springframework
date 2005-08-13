@@ -15,6 +15,9 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class Arguments implements Serializable {
 
+	/**
+	 * Canonical instance for an empty arguments list.
+	 */
 	public static final Arguments NONE = new Arguments(0);
 
 	/**

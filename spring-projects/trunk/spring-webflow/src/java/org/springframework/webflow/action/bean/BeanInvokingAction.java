@@ -75,7 +75,7 @@ public class BeanInvokingAction extends AbstractAction implements
 	 */
 	private CachingMapDecorator methodCache = new CachingMapDecorator(true) {
 		public Object create(Object key) {
-			ClassMethodKey methodKey = (ClassMethodKey) key;
+			TypeMethodKey methodKey = (TypeMethodKey) key;
 			try {
 				return methodKey.lookupMethod();
 			} catch (NoSuchMethodException e) {
@@ -101,7 +101,7 @@ public class BeanInvokingAction extends AbstractAction implements
 		Object bean = getBean(context);
 		MethodKey methodKey = (MethodKey) context.getProperties().getAttribute(
 				METHOD_PROPERTY);
-		Method method = (Method) methodCache.get(new ClassMethodKey(bean
+		Method method = (Method) methodCache.get(new TypeMethodKey(bean
 				.getClass(), methodKey));
 		Object[] args = new Object[methodKey.getArguments().size()];
 		Iterator it = methodKey.getArguments().iterator();

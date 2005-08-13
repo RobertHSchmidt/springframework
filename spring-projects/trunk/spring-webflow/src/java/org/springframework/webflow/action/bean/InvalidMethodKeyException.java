@@ -22,7 +22,7 @@ public class InvalidMethodKeyException extends NestedRuntimeException {
 	 * @param cause
 	 *            the cause
 	 */
-	public InvalidMethodKeyException(ClassMethodKey methodKey, Exception cause) {
+	public InvalidMethodKeyException(TypeMethodKey methodKey, Exception cause) {
 		super("Could not resolve method with key: " + methodKey, cause);
 	}
 }
