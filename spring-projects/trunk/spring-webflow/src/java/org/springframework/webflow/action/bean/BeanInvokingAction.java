@@ -67,9 +67,9 @@ public class BeanInvokingAction extends AbstractAction implements
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
+		Object bean = getBean(context);
 		MethodKey methodKey = (MethodKey) context.getProperties().getAttribute(
 				"method");
-		Object bean = getBean(context);
 		Method method = (Method) methodCache.get(new ClassMethodKey(bean
 				.getClass(), methodKey));
 		Object[] args = new Object[methodKey.getArguments().size()];
