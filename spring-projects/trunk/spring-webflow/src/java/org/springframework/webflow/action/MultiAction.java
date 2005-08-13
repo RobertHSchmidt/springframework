@@ -16,6 +16,7 @@
 package org.springframework.webflow.action;
 
 import org.springframework.binding.AttributeSource;
+import org.springframework.binding.method.MethodKey;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker;
@@ -92,6 +93,17 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
 public class MultiAction extends AbstractAction {
 
 	/**
+	 * The bean action executino property
+	 */
+	public static final String BEAN_PROPERTY = "bean";
+
+	/**
+	 * The method action execution property.
+	 */
+	public static final String METHOD_PROPERTY = "method";
+
+
+	/**
 	 * A cache for dispatched action execute methods.
 	 */
 	private DispatchMethodInvoker executeMethodDispatcher = new DispatchMethodInvoker(this,
@@ -100,7 +112,7 @@ public class MultiAction extends AbstractAction {
 	/**
 	 * The action execute method name resolver strategy.
 	 */
-	private ActionExecuteMethodNameResolver executeMethodNameResolver = new DefaultActionExecuteMethodNameResolver();
+	private ActionExecuteMethodKeyResolver executeMethodKeyResolver = new DefaultActionExecuteMethodKeyResolver();
 
 	/**
 	 * Returns the delegate object holding the action execution methods.
@@ -122,20 +134,20 @@ public class MultiAction extends AbstractAction {
 	 * Get the strategy used to resolve action execution method names. Defaults
 	 * to {@link MultiAction.DefaultActionExecuteMethodNameResolver}.
 	 */
-	public ActionExecuteMethodNameResolver getExecuteMethodNameResolver() {
-		return executeMethodNameResolver;
+	public ActionExecuteMethodKeyResolver getExecuteMethodNameResolver() {
+		return executeMethodKeyResolver;
 	}
 
 	/**
 	 * Set the strategy used to resolve action execution method names.
 	 */
-	public void setExecuteMethodNameResolver(ActionExecuteMethodNameResolver methodNameResolver) {
-		this.executeMethodNameResolver = methodNameResolver;
+	public void setExecuteMethodNameResolver(ActionExecuteMethodKeyResolver methodNameResolver) {
+		this.executeMethodKeyResolver = methodNameResolver;
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		String actionExecuteMethodName = this.executeMethodNameResolver.getMethodName(context);
-		return (Event)this.executeMethodDispatcher.dispatch(actionExecuteMethodName, new Object[] { context });
+		MethodKey methodKey = this.executeMethodKeyResolver.getMethodKey(context);
+		return (Event)this.executeMethodDispatcher.dispatch(methodKey.getMethodName(), new Object[] { context });
 	}
 
 	/**
@@ -145,14 +157,14 @@ public class MultiAction extends AbstractAction {
 	 * @author Keith Donald
 	 * @author Erwin Vervaet
 	 */
-	public interface ActionExecuteMethodNameResolver {
+	public interface ActionExecuteMethodKeyResolver {
 
 		/**
 		 * Resolve a method name from given flow execution request context.
 		 * @param context the flow execution request context
 		 * @return the name of the method that should handle action execution
 		 */
-		public String getMethodName(RequestContext context);
+		public MethodKey getMethodKey(RequestContext context);
 	}
 
 	/**
@@ -167,22 +179,17 @@ public class MultiAction extends AbstractAction {
 	 * 
 	 * @author Erwin Vervaet
 	 */
-	public static class DefaultActionExecuteMethodNameResolver implements ActionExecuteMethodNameResolver {
+	public static class DefaultActionExecuteMethodKeyResolver implements ActionExecuteMethodKeyResolver {
 		
-		/**
-		 * Name of the property defining the execute method name.
-		 */
-		public static final String METHOD_PROPERTY = "method";
-
-		public String getMethodName(RequestContext context) {
+		public MethodKey getMethodKey(RequestContext context) {
 			AttributeSource properties = context.getProperties();
 			if (properties.containsAttribute(METHOD_PROPERTY)) {
 				// use specified execute method name
-				return (String)properties.getAttribute(METHOD_PROPERTY);
+				return (MethodKey)properties.getAttribute(METHOD_PROPERTY);
 			}
 			else {
 				// use current state name as method name
-				return context.getFlowExecutionContext().getCurrentState().getId();
+				return new MethodKey(context.getFlowExecutionContext().getCurrentState().getId());
 			}
 		}
 	}

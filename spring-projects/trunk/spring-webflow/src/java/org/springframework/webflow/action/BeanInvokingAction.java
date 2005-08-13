@@ -35,18 +35,8 @@ import org.springframework.webflow.RequestContext;
  * 
  * @author Keith Donald
  */
-public class BeanInvokingAction extends AbstractAction implements
+public class BeanInvokingAction extends MultiAction implements
 		BeanFactoryAware {
-
-	/**
-	 * The bean action executino property
-	 */
-	private static final String BEAN_PROPERTY = "bean";
-
-	/**
-	 * The method action execution property.
-	 */
-	private static final String METHOD_PROPERTY = "method";
 
 	/**
 	 * The name of the default bean to invoke when this action is executed.
