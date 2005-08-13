@@ -46,7 +46,7 @@ public class BeanInvokingActionTests extends TestCase {
 		context.setProperty("method", new MethodKey("execute"));
 		context.setProperty("bean", "bean");
 		Bean bean = (Bean) beanFactory.getBean("bean");
-		Event result = action.execute(context);
+		action.execute(context);
 		assertTrue(bean.executed);
 	}
 
@@ -62,7 +62,7 @@ public class BeanInvokingActionTests extends TestCase {
 		context.setProperty("method", new MethodKey("execute", new Argument("foo", String.class)));
 		context.setProperty("bean", "bean");
 		Bean bean = (Bean) beanFactory.getBean("bean");
-		Event result = action.execute(context);
+		action.execute(context);
 		assertTrue("Didn't execute:", bean.executed);
 		assertEquals("Property not set:", "a string value", bean.datum1);
 	}
@@ -85,7 +85,7 @@ public class BeanInvokingActionTests extends TestCase {
 		context.setProperty("arguments", arguments);
 		context.setProperty("bean", "bean");
 		Bean bean = (Bean) beanFactory.getBean("bean");
-		Event result = action.execute(context);
+		action.execute(context);
 		assertTrue(bean.executed);
 		assertEquals("Property not set:", new Integer(12345), bean.datum2);
 	}
