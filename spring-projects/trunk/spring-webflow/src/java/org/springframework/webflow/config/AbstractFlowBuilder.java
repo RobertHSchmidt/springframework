@@ -641,8 +641,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param transition the single supported transition out of the state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected void addSubflowState(String id, Flow subFlow, Transition transition) {
-		new SubflowState(getFlow(), id, subFlow, transition);
+	protected SubflowState addSubflowState(String id, Flow subFlow, Transition transition) {
+		return new SubflowState(getFlow(), id, subFlow, transition);
 	}
 
 	/**
@@ -653,8 +653,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param transitions the eligible set of state transitions
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected void addSubflowState(String id, Flow subFlow, Transition[] transitions) {
-		new SubflowState(getFlow(), id, subFlow, transitions);
+	protected SubflowState addSubflowState(String id, Flow subFlow, Transition[] transitions) {
+		return new SubflowState(getFlow(), id, subFlow, transitions);
 	}
 
 	/**
@@ -666,8 +666,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param properties additional properties describing the state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected void addSubflowState(String id, Flow subFlow, Transition[] transitions, Map properties) {
-		new SubflowState(getFlow(), id, subFlow, transitions, properties);
+	protected SubflowState addSubflowState(String id, Flow subFlow, Transition[] transitions, Map properties) {
+		return new SubflowState(getFlow(), id, subFlow, transitions, properties);
 	}
 
 	/**
@@ -680,8 +680,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param transition the single supported transition out of the state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected void addSubflowState(String id, Flow subFlow, FlowAttributeMapper attributeMapper, Transition transition) {
-		new SubflowState(getFlow(), id, subFlow, transition);
+	protected SubflowState addSubflowState(String id, Flow subFlow, FlowAttributeMapper attributeMapper, Transition transition) {
+		return new SubflowState(getFlow(), id, subFlow, transition);
 	}
 
 	/**
@@ -693,9 +693,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param transitions the eligible set of state transitions
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected void addSubflowState(String id, Flow subFlow, FlowAttributeMapper attributeMapper,
+	protected SubflowState addSubflowState(String id, Flow subFlow, FlowAttributeMapper attributeMapper,
 			Transition[] transitions) {
-		new SubflowState(getFlow(), id, subFlow, attributeMapper, transitions);
+		return new SubflowState(getFlow(), id, subFlow, attributeMapper, transitions);
 	}
 
 	/**
@@ -708,9 +708,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param properties additional properties describing the state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected void addSubflowState(String id, Flow subFlow, FlowAttributeMapper attributeMapper,
+	protected SubflowState addSubflowState(String id, Flow subFlow, FlowAttributeMapper attributeMapper,
 			Transition[] transitions, Map properties) {
-		new SubflowState(getFlow(), id, subFlow, attributeMapper, transitions, properties);
+		return new SubflowState(getFlow(), id, subFlow, attributeMapper, transitions, properties);
 	}
 
 	/**
