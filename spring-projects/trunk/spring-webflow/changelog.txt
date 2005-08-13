@@ -8,14 +8,18 @@ Changes in version RC1
   have a signature matching "public void validateMethodName(Object obj, Errors errors)". When you do specify a
   formObjectClass, everything works like before, e.g. the signature will be
   "public void validateMethodName(FormObjectClass obj, Errors errors)".
-* Removed DelegatingAction in favor of StatefulActionProxy.
-* Changed numberguess sample application to use the new StatefulActionProxy.
 * Relocated several support classes in webflow to webflow.support. Also moved the FlowConversionService from webflow.convert
   to webflow.support. These changes should have little impact on existing applications.
 * Added several unit tests.
 * Small improvements in MockRequestContext to make it easier to use.
 * Added a convenience constructor to the Event class that takes a single parameter name/value. Mainly for use in unit tests.
 * Added StatefulActionProxy, an action that delegates to a stateful action managed in flow scope.
+* Added BeanInvokingAction, an action that can delegate to any bean managed by the Spring bean factory.
+* Added support for invoking strongly typed action execution methods on any abitrary bean:
+  e.g execute(String arg1, int arg2), for use in combination with a BeanInvokingAction as an alternative to
+  the generic 'execute(RequestContext context)' Action interface.
+* Changed numberguess sample application to use the new StatefulActionProxy.
+* Removed DelegatingAction in favor of StatefulActionProxy and BeanInvokingAction.
 * JavaDoc polishing..
 
 Changes in version PR5 (28.7.2005)
