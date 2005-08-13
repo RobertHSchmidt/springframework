@@ -23,6 +23,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.binding.AttributeMapper;
+import org.springframework.binding.method.MethodKey;
 import org.springframework.binding.support.Mapping;
 import org.springframework.core.CollectionFactory;
 import org.springframework.webflow.Event;
@@ -295,7 +296,7 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 		action.setFormObjectName("command");
 		action.setFormObjectClass(TestBean.class);
 		action.setFormObjectScope(ScopeType.FLOW);
-		context.setProperty("method", "setupForm");
+		context.setProperty("method", new MethodKey("setupForm"));
 		
 		action.execute(context);
 		

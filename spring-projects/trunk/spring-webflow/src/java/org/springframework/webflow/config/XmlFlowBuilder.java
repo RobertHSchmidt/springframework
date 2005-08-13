@@ -33,6 +33,7 @@ import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.binding.format.support.LabeledEnumFormatter;
+import org.springframework.binding.method.MethodKey;
 import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.binding.support.Mapping;
 import org.springframework.core.io.Resource;
@@ -599,9 +600,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			action.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)) {
-			// direct support for multi-actions
-			action.setProperty(MultiAction.DefaultActionExecuteMethodNameResolver.METHOD_PROPERTY,
-					element.getAttribute(METHOD_ATTRIBUTE));
+			// direct support for bean invoking actions
+			MethodKey methodKey = (MethodKey)fromStringTo(MethodKey.class).execute(element.getAttribute(METHOD_ATTRIBUTE));
+			action.setProperty(MultiAction.METHOD_PROPERTY, methodKey);
 		}
 		parseAndAddProperties(element, action);
 		return action;

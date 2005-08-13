@@ -18,6 +18,7 @@ package org.springframework.webflow.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.binding.method.MethodKey;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
@@ -33,6 +34,7 @@ import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.AutowireMode;
 import org.springframework.webflow.access.FlowServiceLocator;
 import org.springframework.webflow.access.ServiceLookupException;
+import org.springframework.webflow.action.BeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.ActionTransitionCriteria;
 
@@ -628,7 +630,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected AnnotatedAction method(String methodName, Action action) {
 		Map properties = new HashMap(1);
-		properties.put(MultiAction.DefaultActionExecuteMethodNameResolver.METHOD_PROPERTY, methodName);
+		properties.put(MultiAction.METHOD_PROPERTY, new MethodKey(methodName));
 		AnnotatedAction stateAction = new AnnotatedAction(action, properties);
 		return stateAction;
 	}
