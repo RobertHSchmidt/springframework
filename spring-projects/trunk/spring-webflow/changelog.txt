@@ -10,13 +10,14 @@ Changes in version RC1
   "public void ${validatorMethod}(${formObjectClass} obj, Errors errors)".
 * Relocated several support classes in webflow to webflow.support. Also moved the FlowConversionService from webflow.convert
   to webflow.support. These changes should have little impact on existing applications.
-* Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add state methods
+* Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add state methods.
 * Added a convenience constructor to the Event class that takes a single parameter name/value. Mainly for use in unit tests.
 * Added StatefulActionProxy, an action that delegates to a stateful action managed in flow scope.
 * Added BeanInvokingAction, an action that can invoke any bean managed by the Spring bean factory.
 * Added support for invoking strongly typed action execution methods on any arbitrary bean:
   e.g execute(String arg1, int arg2), for use in combination with a BeanInvokingAction as an alternative to
   implementing the 'execute(RequestContext context)' Action interface.
+* Added some convenience methods to get action execution properties to the AbstractAction class.
 * Changed numberguess sample application to use the new StatefulActionProxy.
 * Removed DelegatingAction in favor of StatefulActionProxy and BeanInvokingAction.
 * Small improvements in MockRequestContext to make it easier to use.
