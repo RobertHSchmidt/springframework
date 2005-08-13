@@ -106,6 +106,15 @@ public class Arguments implements Serializable {
 		return arguments.size();
 	}
 
+	/**
+	 * Return the argument at the provided index.
+	 * @param index
+	 * @return
+	 */
+	public Argument getArgument(int index) {
+		return (Argument)arguments.get(index);
+	}
+	
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Arguments)) {
 			return false;

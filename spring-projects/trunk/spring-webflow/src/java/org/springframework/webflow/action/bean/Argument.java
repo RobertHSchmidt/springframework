@@ -9,11 +9,6 @@ import org.springframework.core.style.ToStringCreator;
  * @author Keith
  */
 public class Argument {
-	
-	/**
-	 * The name of the argument, e.g "accountNumber".
-	 */
-	private String name;
 
 	/**
 	 * The class of the argument, e.g "springbank.AccountNumber".
@@ -21,21 +16,29 @@ public class Argument {
 	private Class type;
 
 	/**
-	 * Create a new named argument definition.
-	 * @param name the name
-	 * @param type the type
+	 * The name of the argument, e.g "accountNumber".
 	 */
-	public Argument(String name, Class type) {
+	private String name;
+
+	/**
+	 * Create a new named argument definition.
+	 * 
+	 * @param type
+	 *            the type
+	 * @param name
+	 *            the name
+	 */
+	public Argument(Class type, String name) {
 		this.name = name;
 		this.type = type;
 	}
 
-	public String getName() {
-		return name;
-	}
-
 	public Class getType() {
 		return type;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public boolean equals(Object obj) {
@@ -43,15 +46,15 @@ public class Argument {
 			return false;
 		}
 		Argument other = (Argument) obj;
-		return name.equals(other.name) && type.equals(other.type);
+		return type.equals(other.type) && name.equals(other.name);
 	}
 
 	public int hashCode() {
-		return name.hashCode() + type.hashCode();
+		return type.hashCode() + name.hashCode();
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("name", name).append("type",
-				type).toString();
+		return new ToStringCreator(this).append("type", type).append("name",
+				name).toString();
 	}
 }
