@@ -7,10 +7,6 @@ import junit.framework.TestCase;
 
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.action.bean.Argument;
-import org.springframework.webflow.action.bean.Arguments;
-import org.springframework.webflow.action.bean.BeanInvokingAction;
-import org.springframework.webflow.action.bean.MethodKey;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class BeanInvokingActionTests extends TestCase {
@@ -59,7 +55,8 @@ public class BeanInvokingActionTests extends TestCase {
 		Map parameters = new HashMap();
 		parameters.put("foo", "a string value");
 		context.setLastEvent(new Event(this, "submit", parameters));
-		context.setProperty("method", new MethodKey("execute", new Argument("foo", String.class)));
+		context.setProperty("method", new MethodKey("execute", new Argument(
+				"foo", String.class)));
 		context.setProperty("bean", "bean");
 		Bean bean = (Bean) beanFactory.getBean("bean");
 		action.execute(context);
@@ -78,15 +75,14 @@ public class BeanInvokingActionTests extends TestCase {
 		parameters.put("foo", "a string value");
 		parameters.put("bar", "12345");
 		context.setLastEvent(new Event(this, "submit", parameters));
-		Arguments arguments = new Arguments(new Argument[] {
-				new Argument("foo", String.class),
-				new Argument("bar", Integer.class) });
-		context.setProperty("method", new MethodKey("execute", arguments));
-		context.setProperty("arguments", arguments);
+		context.setProperty("method", new MethodKey("execute", new Arguments(
+				new Argument[] { new Argument("foo", String.class),
+						new Argument("bar", Integer.class) })));
 		context.setProperty("bean", "bean");
 		Bean bean = (Bean) beanFactory.getBean("bean");
 		action.execute(context);
 		assertTrue(bean.executed);
+		assertEquals("Property not set:", "a string value", bean.datum1);
 		assertEquals("Property not set:", new Integer(12345), bean.datum2);
 	}
 }
