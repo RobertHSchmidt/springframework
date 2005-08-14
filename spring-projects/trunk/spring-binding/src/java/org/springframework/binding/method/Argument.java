@@ -1,6 +1,7 @@
 package org.springframework.binding.method;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.ObjectUtils;
 
 /**
  * A named method argument. Each argument has an identifying name and is of a
@@ -53,11 +54,11 @@ public class Argument {
 			return false;
 		}
 		Argument other = (Argument)obj;
-		return type.equals(other.type) && name.equals(other.name);
+		return ObjectUtils.nullSafeEquals(type, other.type) && name.equals(other.name);
 	}
 
 	public int hashCode() {
-		return type.hashCode() + name.hashCode();
+		return (type != null ? type.hashCode() : 0) + name.hashCode();
 	}
 
 	public String toString() {
