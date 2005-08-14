@@ -20,9 +20,24 @@ package org.springframework.binding.thread;
  * @author Keith Donald
  */
 public interface ThreadLocalContext {
+	
+	/**
+	 * Get an object from thread local storage
+	 * @param key the object's key
+	 * @return the thread local
+	 */
 	public Object get(Object key);
 
+	/**
+	 * Put an object into thread local storage
+	 * @param key the object's key
+	 * @param value the object
+	 * @return the object
+	 */
 	public Object put(Object key, Object value);
 
+	/**
+	 * Remove all objects from storage.
+	 */
 	public void clear();
 }

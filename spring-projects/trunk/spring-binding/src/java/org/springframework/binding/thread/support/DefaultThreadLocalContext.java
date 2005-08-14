@@ -24,7 +24,8 @@ import org.springframework.binding.thread.ThreadCleanupListener;
 import org.springframework.binding.thread.ThreadLocalContext;
 
 /**
- * The default thread-local storage context implementation.
+ * The default thread-local storage context implementation that manages 
+ * a thread-local map for holding abritrary thread-local objects.
  * <p>
  * If the <code>ThreadCleanupBroadcaster</code> property is set, this context
  * will register as a cleanup listener for lifecycle callbacks indicating when
