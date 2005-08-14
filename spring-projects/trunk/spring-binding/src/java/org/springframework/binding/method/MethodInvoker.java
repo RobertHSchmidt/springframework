@@ -4,9 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.AttributeSource;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
+import org.springframework.core.style.StylerUtils;
 import org.springframework.util.CachingMapDecorator;
 
 /**
@@ -23,6 +26,8 @@ public class MethodInvoker {
 	 * required.
 	 */
 	private ConversionService conversionService = new DefaultConversionService();
+
+	protected static final Log logger = LogFactory.getLog(MethodInvoker.class);
 
 	/**
 	 * A cache of invoked bean methods, keyed weakly.
@@ -72,7 +77,8 @@ public class MethodInvoker {
 		Method method = null;
 		try {
 			method = (Method)methodCache.get(new TypeMethodKey(bean.getClass(), methodKey));
-		} catch (InvalidMethodKeyException e) {
+		}
+		catch (InvalidMethodKeyException e) {
 			// TODO - optimize
 			Class[] argTypes = new Class[args.length];
 			for (int j = 0; j < argTypes.length; j++) {
@@ -80,8 +86,16 @@ public class MethodInvoker {
 			}
 			method = bean.getClass().getMethod(methodKey.getMethodName(), argTypes);
 		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Invoking method: '" + method.getName() + "' with arguments: " + StylerUtils.style(args)
+					+ " on bean: " + bean);
+		}
 		// TODO - catch and throw strongly typed unchecked exceptions here?
-		return method.invoke(bean, args);
+		Object returnValue = method.invoke(bean, args);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Invoked method: '" + method.getName() + "' returned value: " + returnValue);
+		}
+		return returnValue;
 	}
 
 	/**
