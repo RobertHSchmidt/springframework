@@ -34,12 +34,12 @@ public class MethodInvoker {
 	 */
 	private CachingMapDecorator methodCache = new CachingMapDecorator(true) {
 		public Object create(Object key) {
-			TypeMethodKey methodKey = (TypeMethodKey)key;
+			Signature signature = (Signature)key;
 			try {
-				return methodKey.lookupMethod();
+				return signature.lookupMethod();
 			}
 			catch (NoSuchMethodException e) {
-				throw new InvalidMethodKeyException(methodKey, e);
+				throw new InvalidMethodSignatureException(signature, e);
 			}
 		}
 	};
@@ -74,26 +74,21 @@ public class MethodInvoker {
 			args[i] = applyTypeConversion(argumentSource.getAttribute(argument.getName()), argument.getType());
 			i++;
 		}
-		Method method = null;
-		try {
-			method = (Method)methodCache.get(new TypeMethodKey(bean.getClass(), methodKey));
-		}
-		catch (InvalidMethodKeyException e) {
-			// TODO - optimize
-			Class[] argTypes = new Class[args.length];
-			for (int j = 0; j < argTypes.length; j++) {
-				argTypes[j] = args[j].getClass();
+		Class[] argumentTypes = methodKey.getArguments().getTypesArray();
+		for (int j = 0; j < argumentTypes.length; j++) {
+			if (argumentTypes[j] == null) {
+				argumentTypes[j] = args[j].getClass();
 			}
-			method = bean.getClass().getMethod(methodKey.getMethodName(), argTypes);
 		}
+		Signature signature = new Signature(bean.getClass(), methodKey.getMethodName(), argumentTypes);
+		Method method = (Method)methodCache.get(signature);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Invoking method: '" + method.getName() + "' with arguments: " + StylerUtils.style(args)
-					+ " on bean: " + bean);
+			logger.debug("Invoking method with signature: " + signature + " with arguments: " + StylerUtils.style(args) + " on bean: " + bean);
 		}
 		// TODO - catch and throw strongly typed unchecked exceptions here?
 		Object returnValue = method.invoke(bean, args);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Invoked method: '" + method.getName() + "' returned value: " + returnValue);
+			logger.debug("Invoked method: '" + signature.getMethodName() + "', method returned value: " + returnValue);
 		}
 		return returnValue;
 	}

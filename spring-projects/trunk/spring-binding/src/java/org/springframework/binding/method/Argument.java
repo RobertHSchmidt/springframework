@@ -1,5 +1,7 @@
 package org.springframework.binding.method;
 
+import java.io.Serializable;
+
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 
@@ -9,7 +11,7 @@ import org.springframework.util.ObjectUtils;
  * 
  * @author Keith
  */
-public class Argument {
+public class Argument implements Serializable {
 
 	/**
 	 * The class of the argument, e.g "springbank.AccountNumber".
