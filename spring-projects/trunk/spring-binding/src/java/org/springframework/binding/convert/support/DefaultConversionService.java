@@ -28,6 +28,8 @@ import org.springframework.binding.convert.ConversionServiceAware;
 import org.springframework.binding.convert.Converter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.format.support.SimpleFormatterLocator;
+import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.TextToMethodKey;
 import org.springframework.binding.support.Assert;
 import org.springframework.binding.support.Mapping;
 import org.springframework.binding.support.TextToMapping;
@@ -77,6 +79,7 @@ public class DefaultConversionService implements ConversionService {
 		addConverter(new TextToMapping(this));
 		addConverter(new TextToExpression());
 		addConverter(new TextToExpressions());
+		addConverter(new TextToMethodKey());
 		addDefaultAlias(String.class);
 		addDefaultAlias(Short.class);
 		addDefaultAlias(Integer.class);
@@ -91,6 +94,7 @@ public class DefaultConversionService implements ConversionService {
 		addDefaultAlias(Class.class);
 		addDefaultAlias(Expression.class);
 		addAlias("expressionString", Expression[].class);
+		addAlias("method", MethodKey.class);
 	}
 
 	public void addConverters(Converter[] converters) {
