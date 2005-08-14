@@ -33,7 +33,7 @@ public class LocalBeanInvokingAction extends AbstractBeanInvokingAction {
 	 * 
 	 * @param bean
 	 */
-	public LocalBeanInvokingAction(Object bean) {
+	public LocalBeanInvokingAction(Object targetBean) {
 		setTargetBean(targetBean);
 	}
 
@@ -51,7 +51,7 @@ public class LocalBeanInvokingAction extends AbstractBeanInvokingAction {
 	 * @param targetBeanName the target bean name
 	 */
 	public void setTargetBean(Object targetBean) {
-		Assert.notNull(targetBean, "The target bean to invoke cannot be null");
+		Assert.notNull(targetBean, "The target bean for this action to invoke cannot be null");
 		this.targetBean = targetBean;
 	}
 
