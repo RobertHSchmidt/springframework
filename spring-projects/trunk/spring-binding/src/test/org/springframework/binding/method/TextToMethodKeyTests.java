@@ -28,4 +28,13 @@ public class TextToMethodKeyTests extends TestCase {
 		assertEquals("Argument 2 name wrong", "bar", key.getArguments().getArgument(1).getName());
 		assertEquals("Argument 2 type wrong", int.class, key.getArguments().getArgument(1).getType());
 	}
+	
+	public void testMethodKeyConversionWithArgsButNoTypes() {
+		TextToMethodKey converter = new TextToMethodKey(new DefaultConversionService());
+		MethodKey key = (MethodKey)converter.convert("execute(foo)");
+		assertEquals("Method key wrong", "execute", key.getMethodName());
+		assertEquals("Arguments size wrong", 1, key.getArguments().size());
+		assertEquals("Argument 1 name wrong", "foo", key.getArguments().getArgument(0).getName());
+		assertEquals("Argument 1 type wrong", null, key.getArguments().getArgument(0).getType());
+	}
 }
