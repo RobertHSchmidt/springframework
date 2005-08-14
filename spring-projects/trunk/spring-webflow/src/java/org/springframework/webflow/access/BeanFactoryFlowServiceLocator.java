@@ -295,6 +295,18 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 	public Action getAction(String id) throws ServiceLookupException {
 		return (Action)lookupService(Action.class, id);
 	}
+	
+	public Object getBean(String id) throws ServiceLookupException {
+		return lookupService(null, id);
+	}
+
+	public Object getBean(Class implementationClass) throws ServiceLookupException {
+		return lookupService(null, implementationClass);
+	}
+
+	public Object createBean(Class implementationClass, AutowireMode autowireMode) {
+		return createService(null, implementationClass, autowireMode);
+	}
 
 	public Action getAction(Class implementationClass) throws ServiceLookupException {
 		return (Action)lookupService(Action.class, implementationClass);

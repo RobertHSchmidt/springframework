@@ -154,6 +154,35 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	 */
 	public Action getAction(Class implementationClass) throws ServiceLookupException;
 
+	/**
+	 * Request that the registry backed by this locator return an instance of
+	 * an abitrary bean (POJO) with the provided id.
+	 * @param beanId the bean id
+	 * @return the retrieved bean
+	 * @throws ServiceLookupException
+	 */
+	public Object getBean(String beanId) throws ServiceLookupException;
+
+	/**
+	 * Request that the registry backed by this locator return an instance of
+	 * an abitrary bean (POJO) of the specified implementation.
+	 * @param implementationClass the bean class
+	 * @return the retrieved bean
+	 * @throws ServiceLookupException
+	 */
+	public Object getBean(Class implementationClass) throws ServiceLookupException;
+
+	/**
+	 * Request that the registry backed by this locator instantiate an instance of
+	 * an abitrary bean (POJO) of the specified implementation using the given 
+	 * autowire policy.
+	 * @param implementationClass the bean class
+	 * @return the newly created bean
+	 * @throws ServiceLookupException
+	 */
+	public Object createBean(Class implementationClass, AutowireMode autowireMode) throws ServiceLookupException;
+
+
 	// dealing with attribute mappers
 	
 	/**
