@@ -12,7 +12,7 @@ public class ChainedAttributeSource implements AttributeSource {
 	
 	public boolean containsAttribute(String attributeName) {
 		for (int i = 0; i < sources.length; i++) {
-			if (sources[0].containsAttribute(attributeName)) {
+			if (sources[i].containsAttribute(attributeName)) {
 				return true;
 			}
 		}
