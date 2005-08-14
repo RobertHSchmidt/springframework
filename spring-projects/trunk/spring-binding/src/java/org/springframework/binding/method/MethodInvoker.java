@@ -21,13 +21,13 @@ import org.springframework.util.CachingMapDecorator;
  */
 public class MethodInvoker {
 
+	protected static final Log logger = LogFactory.getLog(MethodInvoker.class);
+
 	/**
 	 * Conversion service for converting arguments to the neccessary type if
 	 * required.
 	 */
 	private ConversionService conversionService = new DefaultConversionService();
-
-	protected static final Log logger = LogFactory.getLog(MethodInvoker.class);
 
 	/**
 	 * A cache of invoked bean methods, keyed weakly.
