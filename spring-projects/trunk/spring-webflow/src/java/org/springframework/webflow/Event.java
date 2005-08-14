@@ -201,7 +201,7 @@ public class Event extends EventObject implements AttributeSource {
 			return Collections.unmodifiableMap(parameters);
 		}
 		else {
-			return null;
+			return Collections.EMPTY_MAP;
 		}
 	}
 
