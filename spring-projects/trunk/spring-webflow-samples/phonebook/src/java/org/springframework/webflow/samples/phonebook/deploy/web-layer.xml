@@ -18,10 +18,6 @@
 		</property>
 	</bean>
 
-	<bean id="searchAction" class="org.springframework.webflow.samples.phonebook.web.SearchPhoneBookAction">
-		<constructor-arg ref="phoneBook"/>
-	</bean>	
-
 	<!-- xml FlowBuilder definition for the detail flow -->
 	<bean id="detailFlow" class="org.springframework.webflow.config.XmlFlowFactoryBean">
 		<property name="location" value="classpath:org/springframework/webflow/samples/phonebook/web/detail-flow.xml"/>

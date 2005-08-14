@@ -17,9 +17,9 @@ package org.springframework.webflow.samples.phonebook.web;
 
 import org.springframework.binding.support.Mapping;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.access.AutowireMode;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.FlowBuilderException;
+import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
 /**
@@ -45,7 +45,7 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
-		addActionState(GET_PERSON, action(GetPersonAction.class, AutowireMode.CONSTRUCTOR), on(success(), DISPLAY_DETAILS));
+		addActionState(GET_PERSON, method("getPerson(id)", PhoneBook.class), on(success(), DISPLAY_DETAILS));
 
 		// view the person details
 		addViewState(DISPLAY_DETAILS, "details", new Transition[] { on(back(), "finish"),

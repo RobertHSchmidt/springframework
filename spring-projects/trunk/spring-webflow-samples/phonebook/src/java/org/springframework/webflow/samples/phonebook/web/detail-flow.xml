@@ -6,7 +6,7 @@
 <webflow id="detailFlow" start-state="getDetails">
 
 	<action-state id="getDetails">
-		<action class="org.springframework.webflow.samples.phonebook.web.GetPersonAction" autowire="constructor"/>
+		<action bean="phonebook" method="getPerson(id)"/>
 		<transition on="success" to="displayDetails"/>
 		<transition on="error" to="error"/>
 	</action-state>
