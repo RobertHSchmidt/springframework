@@ -16,9 +16,11 @@
 package org.springframework.webflow.action;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.binding.AttributeSource;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.support.ChainedAttributeSource;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
@@ -53,7 +55,10 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
 		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(METHOD_PROPERTY);
-		Object returnValue = beanMethodInvoker.invoke(methodKey, bean, context.getLastEvent());
+		// try event first, then request scope, then flow scope
+		AttributeSource argumentSource = new ChainedAttributeSource(new AttributeSource[] { context.getLastEvent(),
+				context.getRequestScope(), context.getFlowScope() });
+		Object returnValue = beanMethodInvoker.invoke(methodKey, bean, argumentSource);
 		return success(returnValue);
 	}
 
