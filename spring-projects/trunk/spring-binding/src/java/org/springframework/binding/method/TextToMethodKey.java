@@ -63,31 +63,27 @@ public class TextToMethodKey extends ConversionServiceAwareConverter {
 		return new Class[] { MethodKey.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass)
-			throws Exception {
-		String encodedMethodKey = (String) source;
+	protected Object doConvert(Object source, Class targetClass) throws Exception {
+		String encodedMethodKey = (String)source;
 		encodedMethodKey = encodedMethodKey.trim();
 		int openParam = encodedMethodKey.indexOf('(');
 		if (openParam == -1) {
 			return new MethodKey(encodedMethodKey);
-		} else {
+		}
+		else {
 			String methodName = encodedMethodKey.substring(0, openParam);
 			int closeParam = encodedMethodKey.lastIndexOf(')');
 			if (closeParam == -1) {
-				throw new ConversionException(encodedMethodKey,
-						MethodKey.class, null,
+				throw new ConversionException(encodedMethodKey, MethodKey.class, null,
 						"Syntax error: No close parenthesis specified for argument list");
 			}
-			String argList = encodedMethodKey.substring(openParam + 1,
-					closeParam);
-			String[] args = StringUtils
-					.commaDelimitedListToStringArray(argList);
+			String argList = encodedMethodKey.substring(openParam + 1, closeParam);
+			String[] args = StringUtils.commaDelimitedListToStringArray(argList);
 			Arguments arguments = new Arguments(args.length);
 			for (int i = 0; i < args.length; i++) {
 				String arg = args[i].trim();
 				String[] typeAndName = StringUtils.split(arg, " ");
-				Class type = (Class) converterFor(String.class, Class.class)
-						.execute(typeAndName[0]);
+				Class type = (Class)converterFor(String.class, Class.class).execute(typeAndName[0]);
 				arguments.add(new Argument(type, typeAndName[1].trim()));
 			}
 			return new MethodKey(methodName, arguments);

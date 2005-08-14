@@ -23,10 +23,8 @@ public class Argument {
 	/**
 	 * Create a new named argument definition.
 	 * 
-	 * @param type
-	 *            the type
-	 * @param name
-	 *            the name
+	 * @param type the type
+	 * @param name the name
 	 */
 	public Argument(Class type, String name) {
 		this.name = name;
@@ -45,7 +43,7 @@ public class Argument {
 		if (!(obj instanceof Argument)) {
 			return false;
 		}
-		Argument other = (Argument) obj;
+		Argument other = (Argument)obj;
 		return type.equals(other.type) && name.equals(other.name);
 	}
 
@@ -54,7 +52,6 @@ public class Argument {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("type", type).append("name",
-				name).toString();
+		return new ToStringCreator(this).append("type", type).append("name", name).toString();
 	}
 }

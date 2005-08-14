@@ -30,10 +30,8 @@ public class TypeMethodKey implements Serializable {
 	/**
 	 * A method specified for a type.
 	 * 
-	 * @param type
-	 *            the type
-	 * @param methodKey
-	 *            the method
+	 * @param type the type
+	 * @param methodKey the method
 	 */
 	public TypeMethodKey(Class type, MethodKey methodKey) {
 		this.type = type;
@@ -56,7 +54,7 @@ public class TypeMethodKey implements Serializable {
 		if (!(obj instanceof TypeMethodKey)) {
 			return false;
 		}
-		TypeMethodKey other = (TypeMethodKey) obj;
+		TypeMethodKey other = (TypeMethodKey)obj;
 		return type.equals(other.type) && methodKey.equals(other.methodKey);
 	}
 
@@ -65,7 +63,6 @@ public class TypeMethodKey implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("class", type).append("method",
-				methodKey).toString();
+		return new ToStringCreator(this).append("class", type).append("method", methodKey).toString();
 	}
 }

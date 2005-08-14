@@ -4,6 +4,11 @@ import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
 
+/**
+ * Records an attempt to set a property.
+ * 
+ * @author Keith Donald
+ */
 public class SetPropertyAttempt extends EvaluationAttempt {
 	private Object value;
 

@@ -41,7 +41,7 @@ public class Arguments implements Serializable {
 	}
 
 	/**
-	 * Create an argument list with one argument. 
+	 * Create an argument list with one argument.
 	 * @param argument the single argument
 	 */
 	public Arguments(Argument argument) {
@@ -72,7 +72,7 @@ public class Arguments implements Serializable {
 	 * @return the arguments
 	 */
 	public boolean addAll(Argument[] arguments) {
-		return this.arguments.addAll(Arrays.asList(arguments)); 
+		return this.arguments.addAll(Arrays.asList(arguments));
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class Arguments implements Serializable {
 		int i = 0;
 		Class[] types = new Class[arguments.size()];
 		for (Iterator it = arguments.iterator(); it.hasNext();) {
-			Argument arg = (Argument) it.next();
+			Argument arg = (Argument)it.next();
 			types[i] = arg.getType();
 			i++;
 		}
@@ -114,12 +114,12 @@ public class Arguments implements Serializable {
 	public Argument getArgument(int index) {
 		return (Argument)arguments.get(index);
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Arguments)) {
 			return false;
 		}
-		Arguments other = (Arguments) obj;
+		Arguments other = (Arguments)obj;
 		return arguments.equals(other.arguments);
 	}
 
@@ -128,7 +128,6 @@ public class Arguments implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("arguments", arguments)
-				.toString();
+		return new ToStringCreator(this).append("arguments", arguments).toString();
 	}
 }

@@ -26,8 +26,7 @@ public class MethodKey implements Serializable {
 	/**
 	 * Creates a method key with no arguments
 	 * 
-	 * @param methodName
-	 *            the name of the method.
+	 * @param methodName the name of the method.
 	 */
 	public MethodKey(String methodName) {
 		this(methodName, Arguments.NONE);
@@ -74,9 +73,8 @@ public class MethodKey implements Serializable {
 		if (!(obj instanceof MethodKey)) {
 			return false;
 		}
-		MethodKey other = (MethodKey) obj;
-		return methodName.equals(methodName)
-				&& arguments.equals(other.arguments);
+		MethodKey other = (MethodKey)obj;
+		return methodName.equals(methodName) && arguments.equals(other.arguments);
 	}
 
 	public int hashCode() {
@@ -84,7 +82,6 @@ public class MethodKey implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("methodName", methodName)
-				.append("arguments", arguments).toString();
+		return new ToStringCreator(this).append("methodName", methodName).append("arguments", arguments).toString();
 	}
 }
