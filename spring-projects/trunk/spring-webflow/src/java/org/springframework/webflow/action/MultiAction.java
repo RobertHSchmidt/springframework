@@ -176,7 +176,6 @@ public class MultiAction extends AbstractAction {
 	 * @author Erwin Vervaet
 	 */
 	public static class DefaultActionExecuteMethodKeyResolver implements ActionExecuteMethodKeyResolver {
-		
 		public MethodKey getMethodKey(RequestContext context) {
 			AttributeSource properties = context.getProperties();
 			if (properties.containsAttribute(METHOD_PROPERTY)) {
