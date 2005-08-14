@@ -638,8 +638,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Creates an annotated action that calls a bean invoking action with a single
 	 * property that indicates which method should be invoked on the target bean
 	 * when the state is entered.
-	 * @param methodName the method name, with the signature
-	 *        <code>Event ${methodName}(RequestContext context)</code>
+	 * @param methodName the method name</code>
 	 * @return the annotated action
 	 */
 	protected AnnotatedAction method(String methodName, Object bean) {
@@ -647,7 +646,20 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		properties.put(MultiAction.METHOD_PROPERTY, (MethodKey)fromStringTo(MethodKey.class).execute(methodName));
 		return new AnnotatedAction(new LocalBeanInvokingAction(bean), properties);
 	}
-	
+
+	/**
+	 * Creates an annotated action that calls a bean invoking action with a single
+	 * property that indicates which method should be invoked on the bean of  the
+	 * specified implementation class when the state s entered.
+	 * @param methodName the method name
+	 * @return the annotated action
+	 */
+	protected AnnotatedAction method(String methodName, Class beanClass) {
+		Map properties = new HashMap(1);
+		properties.put(MultiAction.METHOD_PROPERTY, (MethodKey)fromStringTo(MethodKey.class).execute(methodName));
+		return new AnnotatedAction(new LocalBeanInvokingAction(getFlowServiceLocator().getBean(beanClass)), properties);
+	}
+
 	/**
 	 * Adds a subflow state to the flow built by this builder with the specified id.
 	 * @param id the state id, must be unique among all states of the flow built
