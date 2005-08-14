@@ -48,8 +48,7 @@ public class LocalBeanInvokingAction extends AbstractBeanInvokingAction {
 	 * Set the name of the target bean to invoke. The bean will be looked up in
 	 * the bean factory on action execution.
 	 * 
-	 * @param targetBeanName
-	 *            the target bean name
+	 * @param targetBeanName the target bean name
 	 */
 	public void setTargetBean(Object targetBean) {
 		Assert.notNull(targetBean, "The target bean to invoke cannot be null");

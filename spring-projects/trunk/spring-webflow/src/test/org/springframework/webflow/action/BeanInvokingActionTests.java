@@ -44,7 +44,7 @@ public class BeanInvokingActionTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		context.setProperty("method", new MethodKey("execute"));
 		context.setProperty("bean", "bean");
-		Bean bean = (Bean) beanFactory.getBean("bean");
+		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
 		assertTrue(bean.executed);
 	}
@@ -58,17 +58,15 @@ public class BeanInvokingActionTests extends TestCase {
 		Map parameters = new HashMap();
 		parameters.put("foo", "a string value");
 		context.setLastEvent(new Event(this, "submit", parameters));
-		context.setProperty("method", new MethodKey("execute", new Argument(
-				String.class, "foo")));
+		context.setProperty("method", new MethodKey("execute", new Argument(String.class, "foo")));
 		context.setProperty("bean", "bean");
-		Bean bean = (Bean) beanFactory.getBean("bean");
+		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
 		assertTrue("Didn't execute:", bean.executed);
 		assertEquals("Property not set:", "a string value", bean.datum1);
 	}
 
-	public void testInvokeBeanWithParametersAndTypeConversion()
-			throws Exception {
+	public void testInvokeBeanWithParametersAndTypeConversion() throws Exception {
 		BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction();
 		StaticWebApplicationContext beanFactory = new StaticWebApplicationContext();
 		beanFactory.registerSingleton("bean", Bean.class);
@@ -78,11 +76,10 @@ public class BeanInvokingActionTests extends TestCase {
 		parameters.put("foo", "a string value");
 		parameters.put("bar", "12345");
 		context.setLastEvent(new Event(this, "submit", parameters));
-		context.setProperty("method", new MethodKey("execute", new Arguments(
-				new Argument[] { new Argument(String.class, "foo"),
-						new Argument(Integer.class, "bar") })));
+		context.setProperty("method", new MethodKey("execute", new Arguments(new Argument[] {
+				new Argument(String.class, "foo"), new Argument(Integer.class, "bar") })));
 		context.setProperty("bean", "bean");
-		Bean bean = (Bean) beanFactory.getBean("bean");
+		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
 		assertTrue(bean.executed);
 		assertEquals("Property not set:", "a string value", bean.datum1);

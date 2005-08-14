@@ -52,10 +52,8 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
-		MethodKey methodKey = (MethodKey) context.getProperties().getAttribute(
-				METHOD_PROPERTY);
-		Object returnValue = beanMethodInvoker.invoke(methodKey, bean, context
-				.getLastEvent());
+		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(METHOD_PROPERTY);
+		Object returnValue = beanMethodInvoker.invoke(methodKey, bean, context.getLastEvent());
 		return success(returnValue);
 	}
 
