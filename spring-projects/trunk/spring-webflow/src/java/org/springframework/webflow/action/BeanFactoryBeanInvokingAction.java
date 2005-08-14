@@ -18,11 +18,7 @@ package org.springframework.webflow.action;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.binding.convert.ConversionService;
-import org.springframework.binding.method.MethodInvoker;
-import org.springframework.binding.method.MethodKey;
 import org.springframework.util.Assert;
-import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
@@ -35,8 +31,8 @@ import org.springframework.webflow.RequestContext;
  * 
  * @author Keith Donald
  */
-public class BeanInvokingAction extends MultiAction implements
-		BeanFactoryAware {
+public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction
+		implements BeanFactoryAware {
 
 	/**
 	 * The name of the default bean to invoke when this action is executed.
@@ -46,26 +42,38 @@ public class BeanInvokingAction extends MultiAction implements
 	private String targetBeanName;
 
 	/**
-	 * The spring binding conversion service, for performing event parameter ->
-	 * method argument type conversion.
-	 */
-	private MethodInvoker beanMethodInvoker = new MethodInvoker();
-
-	/**
 	 * The bean factory for loading beans to invoke by <code>id</code>.
 	 */
 	private BeanFactory beanFactory;
 
 	/**
-	 * Set the conversion service to perform type conversion of event parameters
-	 * to method arguments as neccessary.
-	 * 
-	 * @param conversionService
+	 * Create a bean factory bean invoking action that is expected 
+	 * to be parameterized with information about which bean to 
+	 * invoke and the bean factory to retrieve it from.
 	 */
-	public void setConversionService(ConversionService conversionService) {
-		this.beanMethodInvoker.setConversionService(conversionService);
+	public BeanFactoryBeanInvokingAction() {
 	}
 
+	/**
+	 * Create a bean factory bean invoking action that invokes the 
+	 * bean with the specified name.
+	 * @param targetBeanName the bean name;
+	 */
+	public BeanFactoryBeanInvokingAction(String targetBeanName) {
+		setTargetBeanName(targetBeanName);
+	}
+
+	/**
+	 * Create a bean factory bean invoking action that invokes the 
+	 * bean with the specified name.
+	 * @param targetBeanName the bean name
+	 * @param beanFactory the bean factory
+	 */
+	public BeanFactoryBeanInvokingAction(String targetBeanName, BeanFactory beanFactory) {
+		setTargetBeanName(targetBeanName);
+		setBeanFactory(beanFactory);
+	}
+	
 	/**
 	 * Set the name of the target bean to invoke. The bean will be looked up in
 	 * the bean factory on action execution.
@@ -74,19 +82,12 @@ public class BeanInvokingAction extends MultiAction implements
 	 *            the target bean name
 	 */
 	public void setTargetBeanName(String targetBeanName) {
+		Assert.hasText(targetBeanName, "The name of the target bean to invoke cannot be null or blank -- it is required");
 		this.targetBeanName = targetBeanName;
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
-	}
-
-	protected Event doExecute(RequestContext context) throws Exception {
-		Object bean = getBean(context);
-		MethodKey methodKey = (MethodKey) context.getProperties().getAttribute(
-				METHOD_PROPERTY);
-		Object returnValue = beanMethodInvoker.invoke(methodKey, bean, context.getLastEvent());
-		return success(returnValue);
 	}
 
 	/**

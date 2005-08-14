@@ -34,7 +34,7 @@ import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.AutowireMode;
 import org.springframework.webflow.access.FlowServiceLocator;
 import org.springframework.webflow.access.ServiceLookupException;
-import org.springframework.webflow.action.BeanInvokingAction;
+import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.ActionTransitionCriteria;
 
@@ -631,10 +631,23 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected AnnotatedAction method(String methodName, Action action) {
 		Map properties = new HashMap(1);
 		properties.put(MultiAction.METHOD_PROPERTY, new MethodKey(methodName));
-		AnnotatedAction stateAction = new AnnotatedAction(action, properties);
-		return stateAction;
+		return new AnnotatedAction(action, properties);
 	}
 
+	/**
+	 * Creates an annotated action that calls a bean invoking action with a single
+	 * property that indicates which method should be invoked on the target bean
+	 * when the state is entered.
+	 * @param methodName the method name, with the signature
+	 *        <code>Event ${methodName}(RequestContext context)</code>
+	 * @return the annotated action
+	 */
+	protected AnnotatedAction method(String methodName, Object bean) {
+		Map properties = new HashMap(1);
+		properties.put(MultiAction.METHOD_PROPERTY, (MethodKey)fromStringTo(MethodKey.class).execute(methodName));
+		return new AnnotatedAction(new LocalBeanInvokingAction(bean), properties);
+	}
+	
 	/**
 	 * Adds a subflow state to the flow built by this builder with the specified id.
 	 * @param id the state id, must be unique among all states of the flow built
