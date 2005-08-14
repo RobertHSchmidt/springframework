@@ -153,13 +153,26 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	 * @throws ServiceLookupException when the action cannot be found
 	 */
 	public Action getAction(Class implementationClass) throws ServiceLookupException;
+	
+	// dealing with beans
+	
+	/**
+	 * Request that the registry backed by this locator instantiate an instance of
+	 * an abitrary bean (POJO) of the specified implementation class using the given 
+	 * autowire policy.
+	 * @param implementationClass the bean class
+	 * @param autowireMode the autowire policy
+	 * @return the newly created bean (possibly autowired)
+	 * @throws ServiceLookupException when the bean cannot be created
+	 */
+	public Object createBean(Class implementationClass, AutowireMode autowireMode) throws ServiceLookupException;
 
 	/**
 	 * Request that the registry backed by this locator return an instance of
 	 * an abitrary bean (POJO) with the provided id.
 	 * @param beanId the bean id
 	 * @return the retrieved bean
-	 * @throws ServiceLookupException
+	 * @throws ServiceLookupException when the bean cannot be found
 	 */
 	public Object getBean(String beanId) throws ServiceLookupException;
 
@@ -168,20 +181,9 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	 * an abitrary bean (POJO) of the specified implementation.
 	 * @param implementationClass the bean class
 	 * @return the retrieved bean
-	 * @throws ServiceLookupException
+	 * @throws ServiceLookupException when the bean cannot be found
 	 */
 	public Object getBean(Class implementationClass) throws ServiceLookupException;
-
-	/**
-	 * Request that the registry backed by this locator instantiate an instance of
-	 * an abitrary bean (POJO) of the specified implementation using the given 
-	 * autowire policy.
-	 * @param implementationClass the bean class
-	 * @return the newly created bean
-	 * @throws ServiceLookupException
-	 */
-	public Object createBean(Class implementationClass, AutowireMode autowireMode) throws ServiceLookupException;
-
 
 	// dealing with attribute mappers
 	

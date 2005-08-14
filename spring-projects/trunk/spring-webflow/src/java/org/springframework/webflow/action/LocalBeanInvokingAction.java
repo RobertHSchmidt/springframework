@@ -26,12 +26,17 @@ import org.springframework.webflow.RequestContext;
 public class LocalBeanInvokingAction extends AbstractBeanInvokingAction {
 
 	private Object targetBean;
+	
+	/**
+	 * Default constructor for bean style usage.
+	 */
+	public LocalBeanInvokingAction() {
+	}
 
 	/**
 	 * Creates a bean invoking action that invokes the specified bean. The bean
 	 * may be a proxy.
-	 * 
-	 * @param bean
+	 * @param targetBean the bean to wrap
 	 */
 	public LocalBeanInvokingAction(Object targetBean) {
 		setTargetBean(targetBean);
@@ -45,10 +50,7 @@ public class LocalBeanInvokingAction extends AbstractBeanInvokingAction {
 	}
 
 	/**
-	 * Set the name of the target bean to invoke. The bean will be looked up in
-	 * the bean factory on action execution.
-	 * 
-	 * @param targetBeanName the target bean name
+	 * Set the target bean to wrap.
 	 */
 	public void setTargetBean(Object targetBean) {
 		Assert.notNull(targetBean, "The target bean for this action to invoke cannot be null");

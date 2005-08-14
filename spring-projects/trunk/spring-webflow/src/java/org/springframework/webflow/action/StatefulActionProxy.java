@@ -136,7 +136,7 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	
 	/**
 	 * Overriddable hook, useful for working with a lookup-method from a Spring bean definition.
-	 * @param beanId the bean id
+	 * @param actionId the action id
 	 * @return the stateful action
 	 */
 	protected Action lookupAction(String actionId) {

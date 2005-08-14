@@ -77,15 +77,15 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <td>Set the delegate object holding the action execution methods.</td>
  * </tr>
  * <tr>
- * <td>executeMethodNameResolver</td>
- * <td><i>{@link MultiAction.DefaultActionExecuteMethodNameResolver default}</i></td>
- * <td>Set the strategy used to resolve the name of an action execution method.  Allows
+ * <td>executeMethodKeyResolver</td>
+ * <td><i>{@link MultiAction.DefaultActionExecuteMethodKeyResolver default}</i></td>
+ * <td>Set the strategy used to resolve the name (key) of an action execution method.  Allows
  * full control over the method resolution algorithm.</td>
  * </tr>
  * </table>
  * 
- * @see MultiAction.ActionExecuteMethodNameResolver
- * @see MultiAction.DefaultActionExecuteMethodNameResolver
+ * @see MultiAction.ActionExecuteMethodKeyResolver
+ * @see MultiAction.DefaultActionExecuteMethodKeyResolver
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -93,24 +93,20 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
 public class MultiAction extends AbstractAction {
 
 	/**
-	 * The bean action executino property
-	 */
-	public static final String BEAN_PROPERTY = "bean";
-
-	/**
-	 * The method action execution property.
+	 * The method action execution property ("method").
 	 */
 	public static final String METHOD_PROPERTY = "method";
 
 
 	/**
-	 * A cache for dispatched action execute methods.
+	 * A cache for dispatched action execute methods. The default signature is
+	 * <code>public Event ${method}(RequestContext context) throws Exception;</code>.
 	 */
 	private DispatchMethodInvoker executeMethodDispatcher = new DispatchMethodInvoker(this,
 			new Class[] { RequestContext.class }, Event.class, "action");
 
 	/**
-	 * The action execute method name resolver strategy.
+	 * The action execute method name (key) resolver strategy.
 	 */
 	private ActionExecuteMethodKeyResolver executeMethodKeyResolver = new DefaultActionExecuteMethodKeyResolver();
 
@@ -131,18 +127,18 @@ public class MultiAction extends AbstractAction {
 	}
 
 	/**
-	 * Get the strategy used to resolve action execution method names. Defaults
-	 * to {@link MultiAction.DefaultActionExecuteMethodNameResolver}.
+	 * Get the strategy used to resolve action execution method keys. Defaults
+	 * to {@link MultiAction.DefaultActionExecuteMethodKeyResolver}.
 	 */
-	public ActionExecuteMethodKeyResolver getExecuteMethodNameResolver() {
+	public ActionExecuteMethodKeyResolver getExecuteMethodKeyResolver() {
 		return executeMethodKeyResolver;
 	}
 
 	/**
-	 * Set the strategy used to resolve action execution method names.
+	 * Set the strategy used to resolve action execution method keys.
 	 */
-	public void setExecuteMethodNameResolver(ActionExecuteMethodKeyResolver methodNameResolver) {
-		this.executeMethodKeyResolver = methodNameResolver;
+	public void setExecuteMethodKeyResolver(ActionExecuteMethodKeyResolver methodKeyResolver) {
+		this.executeMethodKeyResolver = methodKeyResolver;
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
@@ -152,7 +148,7 @@ public class MultiAction extends AbstractAction {
 
 	/**
 	 * Strategy interface used by the MultiAction to map a request context to
-	 * the name of an action execution method.
+	 * the name (key) of an action execution method.
 	 * 
 	 * @author Keith Donald
 	 * @author Erwin Vervaet
@@ -160,15 +156,15 @@ public class MultiAction extends AbstractAction {
 	public interface ActionExecuteMethodKeyResolver {
 
 		/**
-		 * Resolve a method name from given flow execution request context.
+		 * Resolve a method key from given flow execution request context.
 		 * @param context the flow execution request context
-		 * @return the name of the method that should handle action execution
+		 * @return the key identifying the method that should handle action execution
 		 */
 		public MethodKey getMethodKey(RequestContext context);
 	}
 
 	/**
-	 * Default method name resolver used by the MultiAction class.
+	 * Default method key resolver used by the MultiAction class.
 	 * It uses the following algorithm to calculate a method name:
 	 * <ol>
 	 * <li>If the currently executing action has a "method" property

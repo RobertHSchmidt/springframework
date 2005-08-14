@@ -48,17 +48,17 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 	 * The default autowire mode for services creating by this locator.
 	 */
 	private AutowireMode defaultAutowireMode = AutowireMode.NONE;
-
+	
 	/**
 	 * The flow creation strategy.
 	 */
 	private FlowCreator flowCreator = new DefaultFlowCreator();
-
+	
 	/**
 	 * The webflow data type conversion service.
 	 */
 	private ConversionService conversionService = new FlowConversionService();
-
+	
 	/**
 	 * The wrapped bean factory.
 	 */
@@ -99,8 +99,8 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 	}
 
 	/**
-	 * Set the conversion service to provide type converters for use by the
-	 * webflow system artifacts.
+	 * Set the conversion service to provide type converters for use by 
+	 * the webflow system artifacts.
 	 */
 	public void setConversionService(ConversionService conversionService) {
 		Assert.notNull(conversionService, "The flow conversion service is required");
@@ -123,18 +123,17 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 		Assert.isTrue(defaultAutowireMode != AutowireMode.DEFAULT, "The default auto wire must not equal 'default'");
 		this.defaultAutowireMode = defaultAutowireMode;
 	}
-
+	
 	/**
-	 * Convenience setter that performs a string to AutowireMode conversion for
-	 * you.
+	 * Convenience setter that performs a string to AutowireMode conversion for you.
 	 * @param encodedAutowireMode the encoded autowire mode string
 	 * @throws InvalidFormatException the encoded value was invalid
 	 */
 	public void setDefaultAutowireModeAsString(String encodedAutowireMode) throws InvalidFormatException {
-		this.defaultAutowireMode = (AutowireMode)new LabeledEnumFormatter().parseValue(encodedAutowireMode,
-				AutowireMode.class);
+		this.defaultAutowireMode =
+			(AutowireMode)new LabeledEnumFormatter().parseValue(encodedAutowireMode, AutowireMode.class);
 	}
-
+	
 	/**
 	 * Returns the bean factory used to lookup services.
 	 */
@@ -162,12 +161,12 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
 	}
-
+	
 	// helper methods
-
+	
 	/**
-	 * Helper to have the application context instantiate a service class and
-	 * wire up any dependencies.
+	 * Helper to have the application context instantiate a service class
+	 * and wire up any dependencies.
 	 * @param expectedClass the expected service (super) class
 	 * @param implementationClass the implementation class
 	 * @param autowireMode the autowire policy
@@ -176,9 +175,9 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 	 */
 	protected Object createService(Class expectedClass, Class implementationClass, AutowireMode autowireMode)
 			throws ServiceLookupException {
-		Assert.isTrue(expectedClass.isAssignableFrom(implementationClass), "The service to instantiate must be a '"
-				+ ClassUtils.getShortName(expectedClass) + "', the implementation class '" + implementationClass
-				+ "' you provided is not.");
+		Assert.isTrue(expectedClass.isAssignableFrom(implementationClass),
+				"The service to instantiate must be a '" + ClassUtils.getShortName(expectedClass)
+				+ "', the implementation class '" + implementationClass + "' you provided is not.");
 		if (autowireMode == AutowireMode.DEFAULT) {
 			return createService(expectedClass, implementationClass, getDefaultAutowireMode());
 		}
@@ -187,8 +186,7 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 				return BeanUtils.instantiateClass(implementationClass);
 			}
 			else {
-				return getAutowireCapableBeanFactory()
-						.autowire(implementationClass, autowireMode.getShortCode(), false);
+				return getAutowireCapableBeanFactory().autowire(implementationClass, autowireMode.getShortCode(), false);
 			}
 		}
 		catch (BeansException e) {
@@ -196,7 +194,7 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 					"Cannot create service object with autowire mode '" + autowireMode + "'", e);
 		}
 	}
-
+	
 	/**
 	 * Autowire given service object.
 	 * @param service the object to wire up
@@ -210,14 +208,13 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 			getAutowireCapableBeanFactory().autowireBeanProperties(service, autowireMode.getShortCode(), false);
 		}
 	}
-
+	
 	/**
 	 * Lookup a service by id.
 	 * @param expectedClass the expected service (super) class
 	 * @param id the service id
 	 * @return the service object
-	 * @throws ServiceLookupException when the identified service cannot be
-	 * found
+	 * @throws ServiceLookupException when the identified service cannot be found
 	 */
 	protected Object lookupService(Class expectedClass, String id) throws ServiceLookupException {
 		try {
@@ -237,8 +234,8 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 	 */
 	protected Object lookupService(Class expectedClass, Class implementationClass) throws ServiceLookupException {
 		try {
-			Assert.isTrue(expectedClass.isAssignableFrom(implementationClass), "The '"
-					+ ClassUtils.getShortName(expectedClass) + "' implementation  '" + implementationClass
+			Assert.isTrue(expectedClass.isAssignableFrom(implementationClass), 
+					"The '" + ClassUtils.getShortName(expectedClass) + "' implementation  '" + implementationClass
 					+ "' you wish to retrieve must be a subclass of '" + ClassUtils.getShortName(expectedClass) + "'");
 			return BeanFactoryUtils.beanOfType(getListableBeanFactory(), implementationClass);
 		}
@@ -246,19 +243,35 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 			throw new ServiceLookupException(expectedClass, implementationClass, e);
 		}
 	}
-
+	
+	/**
+	 * Turn given service object into an action. If the given service object implements the
+	 * <code>Action</code> interface, it is returned as is, otherwise it is wrapped in
+	 * an action that can invoke a method on the service bean.
+	 * @param service the service bean
+	 * @return the action
+	 */
+	protected Action toAction(Object service) {
+		if (service instanceof Action) {
+			return (Action)service;
+		}
+		else {
+			return new LocalBeanInvokingAction(service);
+		}
+	}
+	
 	// implementing FlowServiceLocator
-
+	
 	public Flow createFlow(AutowireMode autowireMode) throws ServiceLookupException {
 		Flow flow = getFlowCreator().createFlow();
 		autowireService(flow, autowireMode);
 		return flow;
 	}
-
+	
 	public Flow createFlow(Class implementationClass, AutowireMode autowireMode) throws ServiceLookupException {
 		return (Flow)createService(Flow.class, implementationClass, autowireMode);
 	}
-
+	
 	public Flow getFlow(String id) throws ServiceLookupException {
 		return (Flow)lookupService(Flow.class, id);
 	}
@@ -266,32 +279,32 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 	public Flow getFlow(Class implementationClass) throws ServiceLookupException {
 		return (Flow)lookupService(Flow.class, implementationClass);
 	}
-
+	
 	public State createState(Class implementationClass, AutowireMode autowireMode) throws ServiceLookupException {
 		return (State)createService(State.class, implementationClass, autowireMode);
 	}
-
+	
 	public State getState(String id) throws ServiceLookupException {
 		return (State)lookupService(State.class, id);
 	}
-
+	
 	public State getState(Class implementationClass) throws ServiceLookupException {
 		return (State)lookupService(State.class, implementationClass);
 	}
-
+	
 	public Transition createTransition(Class implementationClass, AutowireMode autowireMode)
 			throws ServiceLookupException {
 		return (Transition)createService(Transition.class, implementationClass, autowireMode);
 	}
-
+	
 	public Transition getTransition(String id) throws ServiceLookupException {
 		return (Transition)lookupService(Transition.class, id);
 	}
-
+	
 	public Transition getTransition(Class implementationClass) throws ServiceLookupException {
 		return (Transition)lookupService(Transition.class, implementationClass);
 	}
-
+	
 	public Action createAction(Class implementationClass, AutowireMode autowireMode) {
 		return toAction(createService(Object.class, implementationClass, autowireMode));
 	}
@@ -302,15 +315,6 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 
 	public Action getAction(Class implementationClass) throws ServiceLookupException {
 		return toAction(lookupService(Object.class, implementationClass));
-	}
-
-	private Action toAction(Object service) {
-		if (service instanceof Action) {
-			return (Action)service;
-		}
-		else {
-			return new LocalBeanInvokingAction(service);
-		}
 	}
 
 	public Object createBean(Class implementationClass, AutowireMode autowireMode) {
@@ -333,7 +337,8 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 		return (FlowAttributeMapper)lookupService(FlowAttributeMapper.class, id);
 	}
 
-	public FlowAttributeMapper getFlowAttributeMapper(Class implementationClass) throws ServiceLookupException {
+	public FlowAttributeMapper getFlowAttributeMapper(Class implementationClass)
+			throws ServiceLookupException {
 		return (FlowAttributeMapper)lookupService(FlowAttributeMapper.class, implementationClass);
 	}
 }

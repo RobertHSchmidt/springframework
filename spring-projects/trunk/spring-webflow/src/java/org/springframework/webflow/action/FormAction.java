@@ -214,6 +214,8 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </tr>
  * </table>
  * 
+ * @see org.springframework.webflow.action.FormOperations
+ * 
  * @author Erwin Vervaet
  * @author Keith Donald
  */
@@ -453,11 +455,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 		}
 	}
 
-	// action execute methods
+	// action execute methods (as defined by the FormOperations interface)
 
-	/* (non-Javadoc)
-	 * @see org.springframework.webflow.action.FormOperations#exposeFormObject(org.springframework.webflow.RequestContext)
-	 */
 	public Event exposeFormObject(RequestContext context) throws Exception {
 		try {
 			Object formObject = getFormObject(context);
@@ -470,9 +469,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 		}		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.springframework.webflow.action.FormOperations#setupForm(org.springframework.webflow.RequestContext)
-	 */
 	public Event setupForm(RequestContext context) throws Exception {
 		Object formObject = null;
 		try {
@@ -498,9 +494,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.springframework.webflow.action.FormOperations#bindAndValidate(org.springframework.webflow.RequestContext)
-	 */
 	public Event bindAndValidate(RequestContext context) throws Exception {
 		Object formObject = null;
 		try {
@@ -530,9 +523,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 		return binder.getErrors().hasErrors() ? error() : success();		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.webflow.action.FormOperations#bind(org.springframework.webflow.RequestContext)
-	 */
 	public Event bind(RequestContext context) throws Exception {
 		Object formObject = null;
 		try {
@@ -549,9 +539,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 		return binder.getErrors().hasErrors() ? error() : success();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.springframework.webflow.action.FormOperations#validate(org.springframework.webflow.RequestContext)
-	 */
 	public Event validate(RequestContext context) throws Exception {
 		Object formObject = null;
 		try {

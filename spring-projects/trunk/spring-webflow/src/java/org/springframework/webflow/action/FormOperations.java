@@ -4,9 +4,9 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
- * Interface for core operations for working with input forms.
+ * Interface defining core operations for working with input forms.
  * 
- * @author Keith
+ * @author Keith Donald
  */
 public interface FormOperations {
 

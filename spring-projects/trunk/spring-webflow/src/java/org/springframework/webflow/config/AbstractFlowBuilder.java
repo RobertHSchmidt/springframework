@@ -638,7 +638,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Creates an annotated action that calls a bean invoking action with a single
 	 * property that indicates which method should be invoked on the target bean
 	 * when the state is entered.
-	 * @param methodName the method name</code>
+	 * @param methodName the method name
+	 * @param bean the bean on which to invoke the method
 	 * @return the annotated action
 	 */
 	protected AnnotatedAction method(String methodName, Object bean) {
@@ -649,9 +650,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * Creates an annotated action that calls a bean invoking action with a single
-	 * property that indicates which method should be invoked on the bean of  the
-	 * specified implementation class when the state s entered.
+	 * property that indicates which method should be invoked on the bean of the
+	 * specified implementation class when the state is entered.
 	 * @param methodName the method name
+	 * @param beanClass the class of the bean on which to invoke the method
 	 * @return the annotated action
 	 */
 	protected AnnotatedAction method(String methodName, Class beanClass) {

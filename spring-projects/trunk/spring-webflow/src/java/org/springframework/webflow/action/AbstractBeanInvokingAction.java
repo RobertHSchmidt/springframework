@@ -24,23 +24,17 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
- * Base class for actions that delegate to methods on abritrary bean references.
+ * Base class for actions that delegate to methods on abritrary beans.
  * 
  * @author Keith Donald
  */
 public abstract class AbstractBeanInvokingAction extends MultiAction {
 
-	/**
-	 * The spring binding conversion service, for performing event parameter ->
-	 * method argument type conversion.
-	 */
 	private MethodInvoker beanMethodInvoker = new MethodInvoker();
-
+	
 	/**
 	 * Set the conversion service to perform type conversion of event parameters
 	 * to method arguments as neccessary.
-	 * 
-	 * @param conversionService
 	 */
 	public void setConversionService(ConversionService conversionService) {
 		this.beanMethodInvoker.setConversionService(conversionService);
@@ -51,16 +45,25 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(METHOD_PROPERTY);
 		AttributeSource argumentSource = new ChainedAttributeSource(new AttributeSource[] { 
 				context.getFlowScope(), context.getRequestScope(), context.getLastEvent() });
-		Object returnValue = beanMethodInvoker.invoke(methodKey, bean, argumentSource);
-		return success(returnValue);
+		return toEvent(beanMethodInvoker.invoke(methodKey, bean, argumentSource));
 	}
 
 	/**
-	 * Retrieves the bean to invoke. This implementation loads the bean by name
-	 * from the BeanFactory. The name to use may be specified in this class, or
-	 * alternatively as a action execution property, allowing this action
-	 * instance to be parameterized to invoke many different beans throughout
-	 * its life.
+	 * Retrieves the bean to invoke a method on. Subclasses need to
+	 * implement this method.
 	 */
 	protected abstract Object getBean(RequestContext context);
+
+	/**
+	 * Hook method that converts the return value of bean method invokation into a
+	 * web flow event. Subclasses can override this if needed.
+	 */
+	protected Event toEvent(Object returnValue) {
+		if (returnValue instanceof Event) {
+			return (Event)returnValue;
+		}
+		else {
+			return success(returnValue);
+		}
+	}
 }

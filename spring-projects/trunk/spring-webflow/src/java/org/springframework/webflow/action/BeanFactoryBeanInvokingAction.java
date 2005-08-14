@@ -22,7 +22,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 
 /**
- * Thin action proxy that delegates to an arbitrary bean managed in the Spring
+ * Thin action proxy that delegates to an arbitrary bean managed in a Spring
  * bean factory. The bean does not have to implement any special interface to be
  * invoked.
  * <p>
@@ -32,6 +32,11 @@ import org.springframework.webflow.RequestContext;
  * @author Keith Donald
  */
 public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction implements BeanFactoryAware {
+
+	/**
+	 * The bean name action execution property.
+	 */
+	public static final String BEAN_PROPERTY = "bean";
 
 	/**
 	 * The name of the default bean to invoke when this action is executed.
@@ -56,7 +61,7 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	/**
 	 * Create a bean factory bean invoking action that invokes the bean with the
 	 * specified name.
-	 * @param targetBeanName the bean name;
+	 * @param targetBeanName the bean name
 	 */
 	public BeanFactoryBeanInvokingAction(String targetBeanName) {
 		setTargetBeanName(targetBeanName);
@@ -76,7 +81,6 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	/**
 	 * Set the name of the target bean to invoke. The bean will be looked up in
 	 * the bean factory on action execution.
-	 * 
 	 * @param targetBeanName the target bean name
 	 */
 	public void setTargetBeanName(String targetBeanName) {
