@@ -50,7 +50,7 @@ public class DefaultConversionService implements ConversionService {
 	public DefaultConversionService() {
 		this(true);
 	}
-	
+
 	public DefaultConversionService(boolean registerDefaultConverters) {
 		if (registerDefaultConverters) {
 			addDefaultConverters();
@@ -104,7 +104,7 @@ public class DefaultConversionService implements ConversionService {
 		Class[] targetClasses = converter.getTargetClasses();
 		for (int i = 0; i < sourceClasses.length; i++) {
 			Class sourceClass = sourceClasses[i];
-			Map sourceMap = (Map) this.sourceClassConverters.get(sourceClass);
+			Map sourceMap = (Map)this.sourceClassConverters.get(sourceClass);
 			if (sourceMap == null) {
 				sourceMap = new HashMap();
 				this.sourceClassConverters.put(sourceClass, sourceMap);
@@ -129,57 +129,46 @@ public class DefaultConversionService implements ConversionService {
 	}
 
 	public void addDefaultAlias(Class targetType) {
-		addAlias(StringUtils.uncapitalize(ClassUtils.getShortName(targetType)),
-				targetType);
+		addAlias(StringUtils.uncapitalize(ClassUtils.getShortName(targetType)), targetType);
 	}
 
-	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass,
-			String alias) throws IllegalArgumentException {
-		Assert.hasText(alias,
-				"The target alias is required and must either be a type alias (e.g 'boolean') "
-						+ "or a generic converter alias (e.g. 'bean') ");
+	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass, String alias)
+			throws IllegalArgumentException {
+		Assert.hasText(alias, "The target alias is required and must either be a type alias (e.g 'boolean') "
+				+ "or a generic converter alias (e.g. 'bean') ");
 		Object targetType = aliasMap.get(alias);
 		if (targetType == null) {
 			return null;
-		} else if (targetType instanceof Class) {
-			return getConversionExecutor(sourceClass, (Class) targetType);
-		} else {
+		}
+		else if (targetType instanceof Class) {
+			return getConversionExecutor(sourceClass, (Class)targetType);
+		}
+		else {
 			Assert.isInstanceOf(Converter.class, targetType, "Not a converter:");
-			Converter conv = (Converter) targetType;
+			Converter conv = (Converter)targetType;
 			return new ConversionExecutor(conv, Object.class);
 		}
 	}
 
-	private static final ConversionExecutor NOOP_CONVERSION_EXECUTOR = new ConversionExecutor(null, null) {
-		public Object execute(Object source) {
-			return source;
-		}
-	};
-	
-	public ConversionExecutor getConversionExecutor(Class sourceClass,
-			Class targetClass) {
-		if (this.sourceClassConverters == null
-				|| this.sourceClassConverters.isEmpty()) {
-			throw new IllegalStateException(
-					"No converters have been added to this service's registry");
+	public ConversionExecutor getConversionExecutor(Class sourceClass, Class targetClass) {
+		if (this.sourceClassConverters == null || this.sourceClassConverters.isEmpty()) {
+			throw new IllegalStateException("No converters have been added to this service's registry");
 		}
 		if (sourceClass.equals(targetClass)) {
-			return NOOP_CONVERSION_EXECUTOR;
+			return new ConversionExecutor(new NoOpConverter(sourceClass, targetClass), targetClass);
 		}
-		Map sourceTargetConverters = (Map) findConvertersForSource(sourceClass);
-		Converter converter = (Converter) sourceTargetConverters
-				.get(targetClass);
+		Map sourceTargetConverters = (Map)findConvertersForSource(sourceClass);
+		Converter converter = (Converter)sourceTargetConverters.get(targetClass);
 		if (converter != null) {
 			return new ConversionExecutor(converter, targetClass);
-		} else {
+		}
+		else {
 			if (this.parent != null) {
-				return this.parent.getConversionExecutor(sourceClass,
-						targetClass);
-			} else {
-				throw new IllegalArgumentException(
-						"No converter registered to convert from sourceClass '"
-								+ sourceClass + "' to target class '"
-								+ targetClass + "'");
+				return this.parent.getConversionExecutor(sourceClass, targetClass);
+			}
+			else {
+				throw new IllegalArgumentException("No converter registered to convert from sourceClass '"
+						+ sourceClass + "' to target class '" + targetClass + "'");
 			}
 		}
 	}
@@ -191,20 +180,17 @@ public class DefaultConversionService implements ConversionService {
 		}
 		return (Class)clazz;
 	}
-	
+
 	protected Map findConvertersForSource(Class sourceClass) {
 		LinkedList classQueue = new LinkedList();
 		classQueue.addFirst(sourceClass);
 		while (!classQueue.isEmpty()) {
-			sourceClass = (Class) classQueue.removeLast();
-			Map sourceTargetConverters = (Map) sourceClassConverters
-					.get(sourceClass);
-			if (sourceTargetConverters != null
-					&& !sourceTargetConverters.isEmpty()) {
+			sourceClass = (Class)classQueue.removeLast();
+			Map sourceTargetConverters = (Map)sourceClassConverters.get(sourceClass);
+			if (sourceTargetConverters != null && !sourceTargetConverters.isEmpty()) {
 				return sourceTargetConverters;
 			}
-			if (!sourceClass.isInterface()
-					&& (sourceClass.getSuperclass() != null)) {
+			if (!sourceClass.isInterface() && (sourceClass.getSuperclass() != null)) {
 				classQueue.addFirst(sourceClass.getSuperclass());
 			}
 			// queue up source class's implemented interfaces.
@@ -226,5 +212,29 @@ public class DefaultConversionService implements ConversionService {
 
 	protected Map getAliasMap() {
 		return aliasMap;
+	}
+
+	public static class NoOpConverter extends AbstractConverter {
+
+		private Class sourceClass;
+
+		private Class targetClass;
+
+		public NoOpConverter(Class sourceClass, Class targetClass) {
+			this.sourceClass = sourceClass;
+			this.targetClass = targetClass;
+		}
+
+		protected Object doConvert(Object source, Class targetClass) throws Exception {
+			return source;
+		}
+
+		public Class[] getSourceClasses() {
+			return new Class[] { sourceClass };
+		}
+
+		public Class[] getTargetClasses() {
+			return new Class[] { targetClass };
+		}
 	}
 }
