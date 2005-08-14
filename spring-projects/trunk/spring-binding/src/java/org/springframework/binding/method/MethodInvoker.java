@@ -60,8 +60,7 @@ public class MethodInvoker {
 	 * @throws InvocationTargetException
 	 */
 	public Object invoke(MethodKey methodKey, Object bean, AttributeSource argumentSource)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method method = (Method)methodCache.get(new TypeMethodKey(bean.getClass(), methodKey));
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
 		Object[] args = new Object[methodKey.getArguments().size()];
 		Iterator it = methodKey.getArguments().iterator();
 		int i = 0;
@@ -69,6 +68,17 @@ public class MethodInvoker {
 			Argument argument = (Argument)it.next();
 			args[i] = applyTypeConversion(argumentSource.getAttribute(argument.getName()), argument.getType());
 			i++;
+		}
+		Method method = null;
+		try {
+			method = (Method)methodCache.get(new TypeMethodKey(bean.getClass(), methodKey));
+		} catch (InvalidMethodKeyException e) {
+			// TODO - optimize
+			Class[] argTypes = new Class[args.length];
+			for (int j = 0; j < argTypes.length; j++) {
+				argTypes[j] = args[j].getClass();
+			}
+			method = bean.getClass().getMethod(methodKey.getMethodName(), argTypes);
 		}
 		// TODO - catch and throw strongly typed unchecked exceptions here?
 		return method.invoke(bean, args);
