@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.action;
 
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.AttributeSource;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
@@ -38,11 +37,6 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 	private MethodInvoker beanMethodInvoker = new MethodInvoker();
 
 	/**
-	 * The bean factory for loading beans to invoke by <code>id</code>.
-	 */
-	private BeanFactory beanFactory;
-
-	/**
 	 * Set the conversion service to perform type conversion of event parameters
 	 * to method arguments as neccessary.
 	 * 
@@ -55,9 +49,8 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
 		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(METHOD_PROPERTY);
-		// try event first, then request scope, then flow scope
-		AttributeSource argumentSource = new ChainedAttributeSource(new AttributeSource[] { context.getLastEvent(),
-				context.getRequestScope(), context.getFlowScope() });
+		AttributeSource argumentSource = new ChainedAttributeSource(new AttributeSource[] { 
+				context.getFlowScope(), context.getRequestScope(), context.getLastEvent() });
 		Object returnValue = beanMethodInvoker.invoke(methodKey, bean, argumentSource);
 		return success(returnValue);
 	}
