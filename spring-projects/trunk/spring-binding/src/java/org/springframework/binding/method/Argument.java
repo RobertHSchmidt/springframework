@@ -23,6 +23,15 @@ public class Argument {
 	/**
 	 * Create a new named argument definition.
 	 * 
+	 * @param name the name
+	 */
+	public Argument(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Create a new named argument definition.
+	 * 
 	 * @param type the type
 	 * @param name the name
 	 */

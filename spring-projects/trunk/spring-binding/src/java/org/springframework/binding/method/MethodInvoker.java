@@ -82,8 +82,8 @@ public class MethodInvoker {
 	 * @return the converted method argument
 	 */
 	protected Object applyTypeConversion(Object rawArgument, Class targetType) {
-		if (rawArgument == null) {
-			return null;
+		if (rawArgument == null || targetType == null) {
+			return rawArgument;
 		}
 		return conversionService.getConversionExecutor(rawArgument.getClass(), targetType).execute(rawArgument);
 	}
