@@ -127,4 +127,17 @@ public class FlowServiceLocatorAdapter implements FlowServiceLocator {
 	public Flow getFlow(String id) throws ServiceLookupException {
 		throw new UnsupportedOperationException();
 	}
+
+	public Object createBean(Class implementationClass, AutowireMode autowireMode) throws ServiceLookupException {
+		throw new UnsupportedOperationException();
+	}
+
+	public Object getBean(Class implementationClass) throws ServiceLookupException {
+		throw new UnsupportedOperationException();
+	}
+
+	public Object getBean(String beanId) throws ServiceLookupException {
+		throw new UnsupportedOperationException();
+	}
+
 }

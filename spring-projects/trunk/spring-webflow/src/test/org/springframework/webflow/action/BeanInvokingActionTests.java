@@ -5,11 +5,9 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.method.Argument;
 import org.springframework.binding.method.Arguments;
 import org.springframework.binding.method.MethodKey;
-import org.springframework.binding.method.TextToMethodKey;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.test.MockRequestContext;
@@ -39,7 +37,7 @@ public class BeanInvokingActionTests extends TestCase {
 	}
 
 	public void testInvokeBeanNoParameters() throws Exception {
-		BeanInvokingAction action = new BeanInvokingAction();
+		BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction();
 		StaticWebApplicationContext beanFactory = new StaticWebApplicationContext();
 		beanFactory.registerSingleton("bean", Bean.class);
 		action.setBeanFactory(beanFactory);
@@ -52,7 +50,7 @@ public class BeanInvokingActionTests extends TestCase {
 	}
 
 	public void testInvokeBeanWithParameters() throws Exception {
-		BeanInvokingAction action = new BeanInvokingAction();
+		BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction();
 		StaticWebApplicationContext beanFactory = new StaticWebApplicationContext();
 		beanFactory.registerSingleton("bean", Bean.class);
 		action.setBeanFactory(beanFactory);
@@ -71,7 +69,7 @@ public class BeanInvokingActionTests extends TestCase {
 
 	public void testInvokeBeanWithParametersAndTypeConversion()
 			throws Exception {
-		BeanInvokingAction action = new BeanInvokingAction();
+		BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction();
 		StaticWebApplicationContext beanFactory = new StaticWebApplicationContext();
 		beanFactory.registerSingleton("bean", Bean.class);
 		action.setBeanFactory(beanFactory);
@@ -90,28 +88,5 @@ public class BeanInvokingActionTests extends TestCase {
 		assertEquals("Property not set:", "a string value", bean.datum1);
 		assertEquals("Property not set:", new Integer(12345), bean.datum2);
 	}
-	
-	public void testMethodKeyConversionNoArg() {
-		TextToMethodKey converter = new TextToMethodKey(new DefaultConversionService());
-		MethodKey key = (MethodKey)converter.convert("execute");
-		assertEquals("Method key wrong", "execute", key.getMethodName());
-	}
 
-	public void testMethodKeyConversionNoArg2() {
-		TextToMethodKey converter = new TextToMethodKey(new DefaultConversionService());
-		MethodKey key = (MethodKey)converter.convert("execute()");
-		assertEquals("Method key wrong", "execute", key.getMethodName());
-	}
-
-	public void testMethodKeyConversionWithArgs() {
-		TextToMethodKey converter = new TextToMethodKey(new DefaultConversionService());
-		MethodKey key = (MethodKey)converter.convert("execute(string foo, int bar)");
-		assertEquals("Method key wrong", "execute", key.getMethodName());
-		assertEquals("Arguments size wrong", 2, key.getArguments().size());
-		assertEquals("Argument 1 name wrong", "foo", key.getArguments().getArgument(0).getName());
-		assertEquals("Argument 1 type wrong", String.class, key.getArguments().getArgument(0).getType());
-		assertEquals("Argument 2 name wrong", "bar", key.getArguments().getArgument(1).getName());
-		assertEquals("Argument 2 type wrong", int.class, key.getArguments().getArgument(1).getType());
-
-	}
 }

@@ -71,6 +71,11 @@ public class Assert extends org.springframework.util.Assert {
 		valueEquals(attributes.getAttribute(attributeName), attributeValue);
 	}
 	
+	/**
+	 * Assert that a value equals an expected value
+	 * @param value the actual value
+	 * @param expected the expected value
+	 */
 	public static void valueEquals(Object value, Object expected) {
 		Assert.isTrue(ObjectUtils.nullSafeEquals(expected, value),
 				"The attributes attribute '" + value + "' must equal '" + expected + "'");
