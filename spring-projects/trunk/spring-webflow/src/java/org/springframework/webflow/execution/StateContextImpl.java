@@ -135,6 +135,7 @@ public class StateContextImpl implements StateContext {
 	public Map getModel() {
 		// merge request and flow scope
 		Map model = new HashMap(getFlowScope().size() + getRequestScope().size());
+		model.putAll(getLastEvent().getParameters());
 		model.putAll(getFlowScope().getAttributeMap());
 		model.putAll(getRequestScope().getAttributeMap());
 		return model;
