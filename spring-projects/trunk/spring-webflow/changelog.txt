@@ -10,16 +10,17 @@ Changes in version RC1
   "public void ${validatorMethod}(${formObjectClass} obj, Errors errors)".
 * Relocated several support classes in webflow to webflow.support. Also moved the FlowConversionService from webflow.convert
   to webflow.support. These changes should have little impact on existing applications.
-* Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add state methods.
+* Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add methods.
 * Added a convenience constructor to the Event class that takes a single parameter name/value. Mainly for use in unit tests.
 * Added StatefulActionProxy, an action that delegates to a stateful action managed in flow scope.
-* Added BeanInvokingAction, an action that can invoke any bean managed by the Spring bean factory.
-* Added support for invoking strongly typed action execution methods on any arbitrary bean:
+* Added BeanFactoryBeanInvokingAction, an action that can invoke any method on any bean managed by the Spring bean factory.
+* Added LocalBeanInvokingAction, an action that can invoke any method on any bean.
+* Added support for invoking strongly typed action execution methods on arbitrary beans:
   e.g execute(String arg1, int arg2), for use in combination with a BeanInvokingAction as an alternative to
-  implementing the 'execute(RequestContext context)' Action interface.
-* Added some convenience methods to get action execution properties to the AbstractAction class.
+  implementing the 'execute(RequestContext context)' Action interface.  See the Phonebook sample app for an example.
+* Added convenience methods for retrieving action execution properties to the AbstractAction class.
 * Changed numberguess sample application to use the new StatefulActionProxy.
-* Removed DelegatingAction in favor of StatefulActionProxy and BeanInvokingAction.
+* Removed DelegatingAction in favor of StatefulActionProxy and the BeanInvokingActions.
 * Small improvements in MockRequestContext to make it easier to use.
 * Added several unit tests.
 * JavaDoc polishing.
@@ -168,7 +169,7 @@ Changes in version PR2 (11.4.2005)
 	* You may now store execution state client side if you want - no HTTP session required.
 	* You can select to use a continuations based storage strategy, basically turning Spring Web Flow into a continuation driven
 	  system. On top of that, you can choose between client side or server side continuation storage. The continuation storage
-	  strategies also supports GZIP compression.
+	  strategies also support GZIP compression.
 * Renamed TransitionableState.getRequiredTransition() to TransitionableState.transitionFor().
 * Removed TransitionableState.executeTransition() in favor of TransitionableState.transitionFor(context).execute(context).
 * Removed hardwired dependency on LinkedHashSet, for use with JDK 1.3.
