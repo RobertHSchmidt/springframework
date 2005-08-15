@@ -90,7 +90,8 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 	}
 
 	/**
-	 * State persister that doesn't take an action - default implementation.
+	 * State persister that doesn't take any action - default implementation.
+	 * 
 	 * @author Keith Donald
 	 */
 	private static class NoOpBeanStatePersister implements BeanStatePersister {
