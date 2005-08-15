@@ -40,6 +40,10 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 	 */
 	private BeanStatePersister statePersister = new NoOpBeanStatePersister();
 
+	protected BeanStatePersister getStatePersister() {
+		return statePersister;
+	}
+	
 	/**
 	 * Set the bean state management strategy.
 	 */
