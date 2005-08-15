@@ -2,14 +2,26 @@ package org.springframework.binding.support;
 
 import org.springframework.binding.AttributeSource;
 
+/**
+ * A attribute source that queries an ordered set of attribute sources until a
+ * match is found for a given attribute, or the set is exhausted.
+ * @author Keith
+ */
 public class ChainedAttributeSource implements AttributeSource {
 
+	/**
+	 * The set of sources. 
+	 */
 	public AttributeSource[] sources;
-	
+
+	/**
+	 * Create a chained attribute source.
+	 * @param sources the sources
+	 */
 	public ChainedAttributeSource(AttributeSource[] sources) {
 		this.sources = sources;
 	}
-	
+
 	public boolean containsAttribute(String attributeName) {
 		for (int i = 0; i < sources.length; i++) {
 			if (sources[i].containsAttribute(attributeName)) {
