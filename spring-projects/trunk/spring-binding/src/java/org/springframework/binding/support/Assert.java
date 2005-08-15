@@ -34,8 +34,8 @@ public class Assert extends org.springframework.util.Assert {
 	 * Assert that an attribute with specified name is present in given attributes.
 	 */
 	public static void attributePresent(AttributeSource attributes, String attributeName) {
-		isTrue(attributes.containsAttribute(attributeName), "The attributes attribute '" + attributeName
-				+ "' is not present in attributes but should be");
+		isTrue(attributes.containsAttribute(attributeName), "The attribute '" + attributeName
+				+ "' is not present but should be, present attributes are: " + attributes);
 	}
 
 	/**
@@ -43,8 +43,8 @@ public class Assert extends org.springframework.util.Assert {
 	 * attributes map.
 	 */
 	public static void attributeNotPresent(AttributeSource attributes, String attributeName) {
-		isTrue(!attributes.containsAttribute(attributeName), "The attributes attribute '" + attributeName
-				+ "' is present in attributes but shouldn't be");
+		isTrue(!attributes.containsAttribute(attributeName), "The attribute '" + attributeName
+				+ "' is present but shouldn't be");
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class Assert extends org.springframework.util.Assert {
 	 */
 	public static void valueEquals(Object value, Object expected) {
 		Assert.isTrue(ObjectUtils.nullSafeEquals(expected, value),
-				"The attributes attribute '" + value + "' must equal '" + expected + "'");
+				"The attribute '" + value + "' must equal '" + expected + "'");
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class Assert extends org.springframework.util.Assert {
 	public static void collectionAttributeSizeEquals(AttributeSource attributes, String attributeName, int size) {
 		attributeInstanceOf(attributes, attributeName, Collection.class);
 		Assert.isTrue((((Collection)attributes.getAttribute(attributeName)).size() == size),
-				"The attributes collection attribute '" + attributeName + "' must have " + size + " elements");
+				"The collection attribute '" + attributeName + "' must have " + size + " elements");
 	}
 
 	/**
