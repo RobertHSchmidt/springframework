@@ -122,6 +122,17 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
+	 * Returns the default success event with the provided result object
+	 * as a parameter.  The result object is identified by the parameter name
+	 * {@link AbstractAction#RESULT_PARAMETER}.
+	 * 
+	 * @param result the action success result;
+	 */
+	protected Event success(String resultParameterName, Object result) {
+		return result(SUCCESS_EVENT_ID, resultParameterName, result);
+	}
+
+	/**
 	 * Returns the default yes event.
 	 */
 	protected Event yes() {

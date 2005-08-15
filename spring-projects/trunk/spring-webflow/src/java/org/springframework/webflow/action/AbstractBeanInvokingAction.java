@@ -65,7 +65,7 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 		}
 		AttributeSource argumentSource = new ChainedAttributeSource(new AttributeSource[] { context.getFlowScope(),
 				context.getRequestScope(), context.getLastEvent() });
-		Event result = toEvent(beanMethodInvoker.invoke(methodKey, bean, argumentSource));
+		Event result = toEvent(context, beanMethodInvoker.invoke(methodKey, bean, argumentSource));
 		statePersister.saveState(bean, context);
 		return result;
 	}
@@ -80,12 +80,13 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 	 * Hook method that converts the return value of bean method invokation into
 	 * a web flow event. Subclasses can override this if needed.
 	 */
-	protected Event toEvent(Object returnValue) {
-		if (returnValue instanceof Event) {
-			return (Event)returnValue;
+	protected Event toEvent(RequestContext context, Object result) {
+		if (result instanceof Event) {
+			return (Event)result;
 		}
 		else {
-			return success(returnValue);
+			String resultParameterName = (String)getActionProperty(context, RESULT_PARAMETER, RESULT_PARAMETER);
+			return success(resultParameterName, result);
 		}
 	}
 
