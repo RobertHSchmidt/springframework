@@ -4,8 +4,8 @@ http://www.springframework.org
 
 Changes in version RC1
 ------------------------------------
-* Improved "validatorMethod" handling in FormAction: if no formObjectClass is specified, the invoked validate method should
-  will have a signature matching "public void ${validatorMethod}(Object obj, Errors errors)". When you do specify a
+* Improved "validatorMethod" handling in FormAction: if no formObjectClass is specified, the invoked validator method
+  should have a signature matching "public void ${validatorMethod}(Object obj, Errors errors)". When you do specify a
   formObjectClass, everything works like before, e.g. the signature will be
   "public void ${validatorMethod}(${formObjectClass} obj, Errors errors)".
 * Relocated several support classes in webflow to webflow.support. Also moved the FlowConversionService from webflow.convert
@@ -13,14 +13,14 @@ Changes in version RC1
 * Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add methods.
 * Added a convenience constructor to the Event class that takes a single parameter name/value. Mainly for use in unit tests.
 * Added StatefulActionProxy, an action that delegates to a stateful action managed in flow scope.
-* Added BeanFactoryBeanInvokingAction, an action that can invoke any method on any bean managed by the Spring bean factory.
-* Added LocalBeanInvokingAction, an action that can invoke any method on any bean.
+* Added BeanFactoryBeanInvokingAction, an action that can invoke any instance method on any bean managed by the Spring bean factory.
+* Added LocalBeanInvokingAction, an action that can invoke any instance method on any bean.
 * Added support for invoking strongly typed action execution methods on arbitrary beans:
-  e.g execute(String arg1, int arg2), for use in combination with a BeanInvokingAction as an alternative to
+  e.g execute(String arg1, int arg2), for use in combination with a "bean invoking action" as an alternative to
   implementing the 'execute(RequestContext context)' Action interface.  See the Phonebook sample app for an example.
 * Added convenience methods for retrieving action execution properties to the AbstractAction class.
 * Changed numberguess sample application to use the new StatefulActionProxy.
-* Removed DelegatingAction in favor of StatefulActionProxy and the BeanInvokingActions.
+* Removed DelegatingAction in favor of StatefulActionProxy and bean invoking actions.
 * Small improvements in MockRequestContext to make it easier to use.
 * Added several unit tests.
 * JavaDoc polishing.
