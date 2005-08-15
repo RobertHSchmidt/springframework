@@ -30,8 +30,23 @@ import org.springframework.webflow.RequestContext;
  */
 public abstract class AbstractBeanInvokingAction extends MultiAction {
 
+	/**
+	 * The method invoker that performs the action->bean method binding.
+	 */
 	private MethodInvoker beanMethodInvoker = new MethodInvoker();
-	
+
+	/**
+	 * The strategy that saves and restores stateful bean fields in flow scope.
+	 */
+	private BeanStatePersister statePersister = new NoOpBeanStatePersister();
+
+	/**
+	 * Set the bean state management strategy.
+	 */
+	public void setStatePersister(BeanStatePersister stateManager) {
+		this.statePersister = stateManager;
+	}
+
 	/**
 	 * Set the conversion service to perform type conversion of event parameters
 	 * to method arguments as neccessary.
@@ -42,21 +57,28 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
+		statePersister.restoreState(bean, context);
 		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(METHOD_PROPERTY);
-		AttributeSource argumentSource = new ChainedAttributeSource(new AttributeSource[] { 
-				context.getFlowScope(), context.getRequestScope(), context.getLastEvent() });
-		return toEvent(beanMethodInvoker.invoke(methodKey, bean, argumentSource));
+		if (methodKey == null) {
+			throw new IllegalStateException("The method to invoke was not provided--set the '" + METHOD_PROPERTY
+					+ "' property");
+		}
+		AttributeSource argumentSource = new ChainedAttributeSource(new AttributeSource[] { context.getFlowScope(),
+				context.getRequestScope(), context.getLastEvent() });
+		Event result = toEvent(beanMethodInvoker.invoke(methodKey, bean, argumentSource));
+		statePersister.saveState(bean, context);
+		return result;
 	}
 
 	/**
-	 * Retrieves the bean to invoke a method on. Subclasses need to
-	 * implement this method.
+	 * Retrieves the bean to invoke a method on. Subclasses need to implement
+	 * this method.
 	 */
 	protected abstract Object getBean(RequestContext context);
 
 	/**
-	 * Hook method that converts the return value of bean method invokation into a
-	 * web flow event. Subclasses can override this if needed.
+	 * Hook method that converts the return value of bean method invokation into
+	 * a web flow event. Subclasses can override this if needed.
 	 */
 	protected Event toEvent(Object returnValue) {
 		if (returnValue instanceof Event) {
@@ -64,6 +86,18 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 		}
 		else {
 			return success(returnValue);
+		}
+	}
+
+	/**
+	 * State persister that doesn't take an action - default implementation.
+	 * @author Keith Donald
+	 */
+	private static class NoOpBeanStatePersister implements BeanStatePersister {
+		public void restoreState(Object bean, RequestContext context) throws Exception {
+		}
+
+		public void saveState(Object bean, RequestContext context) throws Exception {
 		}
 	}
 }
