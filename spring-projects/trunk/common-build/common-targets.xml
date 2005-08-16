@@ -68,8 +68,7 @@
 		<property name="org.name" value="springframework.org" />
 		<property name="org.package.prefix" value="org.springframework" />
 		<property name="project.name" value="${ant.project.name}" />
-		<property name="project.title" value="${project.name}" />
-		<property name="project.webapp.name" value="${project.name}" />
+		<property name="project.webapp.name" value="${ant.project.name}" />
 		<property name="project.base.version" value="1.0-dev" />
 		<property name="project.version" value="${project.base.version}-${build.timestamp}" />
 
@@ -111,6 +110,7 @@
 			<include name="**/*.xml" />
 			<include name="**/*.properties" />
 			<include name="**/*.conf" />
+			<include name="**/*.sql" />
 			<include name="**/*.txt" />
 			<include name="**/*.email" />
 			<include name="**/*.html" />
@@ -121,6 +121,7 @@
 			<exclude name="**/*.xml" />
 			<exclude name="**/*.properties" />
 			<exclude name="**/*.conf" />
+			<exclude name="**/*.sql" />
 			<exclude name="**/*.txt" />
 			<exclude name="**/*.email" />
 			<exclude name="**/*.html" />
@@ -273,6 +274,12 @@
 		<propertyfile file="${target.filter.file}">
 			<entry key="PROJECT_NAME" value="${project.name}" />
 			<entry key="TEST_RESULTS_DIR" value="${target.testresults.dir.unix}" />
+			<entry key="DATABASE_DRIVER" value="${database.driver}" />
+			<entry key="DATABASE_URL" value="${database.url}" />
+			<entry key="DATABASE_SCHEMA" value="${database.schema}" />
+			<entry key="DATABASE_USERNAME" value="${database.username}" />
+			<entry key="DATABASE_PASSWORD" value="${database.password}" />
+			<entry key="DATA_DIR" value="${data.dir}" />
 		</propertyfile>
 		<property name="build.prepare.done" value="true" />
 	</target>
@@ -418,6 +425,40 @@
 		</copy>
 	</target>
 
+	<target name="resources" depends="build.prepare" description="Force update of filterable resources (property config files, etc) needed at runtime and test time">
+		<copy todir="${target.classes.dir}" filtering="on" overwrite="true">
+			<fileset dir="${src.resources.dir}">
+				<patternset refid="std.files.to.filter" />
+			</fileset>
+			<filterset>
+				<filtersfile file="${target.filter.file}" />
+			</filterset>
+		</copy>
+		<copy todir="${target.classes.dir}" overwrite="true">
+			<fileset dir="${src.resources.dir}">
+				<patternset refid="std.files.not.to.filter" />
+			</fileset>
+		</copy>
+		<antcall target="test-resources"/>
+	</target>
+
+	<target name="test-resources" depends="build.prepare" description="Force update of filterable resources (logging config files, etc) needed at test time">
+		<copy todir="${target.testclasses.dir}" filtering="on" overwrite="true">
+			<fileset dir="${src.test.resources.dir}">
+				<patternset refid="std.files.to.filter" />
+			</fileset>
+			<filterset>
+				<filtersfile file="${target.filter.file}" />
+			</filterset>
+		</copy>
+
+		<copy todir="${target.testclasses.dir}" overwrite="true">
+			<fileset dir="${src.test.resources.dir}">
+				<patternset refid="std.files.not.to.filter" />
+			</fileset>
+		</copy>
+	</target>
+	
 	<!-- hook target -->
 	<target name="statics.post" />
 
@@ -691,11 +732,11 @@
 	<target name="javadoc" depends="build.prepare" description="Create the API documentation">
 		<mkdir dir="${target.javadocs.dir}" />
 		<property name="copyright" value="Copyright &#169; 2005. All Rights Reserved." />
-		<javadoc destdir="${target.javadocs.dir}" author="true" version="true" windowtitle="${project.title} API" doctitle="${project.title}" bottom="${copyright}">
+		<javadoc destdir="${target.javadocs.dir}" author="true" version="true" windowtitle="${project.name} API" doctitle="${project.name}" bottom="${copyright}">
 			<classpath>
 				<pathelement location="${target.classes.dir}" />
 				<pathelement location="${target.testclasses.dir}" />
-				<path refid="compile.classpath" />
+				<pathelement path="${compile.classpath}" />
 			</classpath>
 			<sourcepath>
 				<pathelement location="${src.java.main.dir}" />
