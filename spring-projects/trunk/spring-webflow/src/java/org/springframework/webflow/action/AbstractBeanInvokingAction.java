@@ -40,6 +40,9 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 	 */
 	private BeanStatePersister statePersister = new NoOpBeanStatePersister();
 
+	/**
+	 * Returns the bean state management strategy used by this action.
+	 */
 	protected BeanStatePersister getStatePersister() {
 		return statePersister;
 	}
@@ -61,7 +64,7 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
-		statePersister.restoreState(bean, context);
+		getStatePersister().restoreState(bean, context);
 		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(METHOD_PROPERTY);
 		if (methodKey == null) {
 			throw new IllegalStateException("The method to invoke was not provided--set the '" + METHOD_PROPERTY
@@ -70,7 +73,7 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 		AttributeSource argumentSource = new ChainedAttributeSource(new AttributeSource[] { context.getFlowScope(),
 				context.getRequestScope(), context.getLastEvent() });
 		Event result = toEvent(context, beanMethodInvoker.invoke(methodKey, bean, argumentSource));
-		statePersister.saveState(bean, context);
+		getStatePersister().saveState(bean, context);
 		return result;
 	}
 

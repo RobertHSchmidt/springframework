@@ -112,9 +112,8 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
 	 * Returns the default success event with the provided result object
-	 * as a parameter.  The result object is identified by the parameter name
+	 * as a parameter. The result object is identified by the parameter name
 	 * {@link AbstractAction#RESULT_PARAMETER}.
-	 * 
 	 * @param result the action success result;
 	 */
 	protected Event success(Object result) {
@@ -123,10 +122,9 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
 	 * Returns the default success event with the provided result object
-	 * as a parameter.  The result object is identified by the parameter name
-	 * {@link AbstractAction#RESULT_PARAMETER}.
-	 * 
-	 * @param result the action success result;
+	 * as a parameter.
+	 * @param resultParameterName the name of the result paramter in the created event
+	 * @param result the action success result
 	 */
 	protected Event success(String resultParameterName, Object result) {
 		return result(SUCCESS_EVENT_ID, resultParameterName, result);
