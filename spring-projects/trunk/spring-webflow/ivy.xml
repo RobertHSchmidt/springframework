@@ -20,16 +20,16 @@
 	<dependency	org="apache" name="commons-logging"	rev="1.0.4"	conf="global->default"/>
 	<dependency	org="apache" name="log4j" rev="1.2.9" conf="global->default"/>
 	<dependency	org="ognl" name="ognl" rev="2.7" conf="global->default"/>
-	<dependency	org="springframework" name="spring-beans" rev="1.2.3" conf="global->default"/>
-	<dependency	org="springframework" name="spring-core" rev="1.2.3" conf="global->default"/>
-	<dependency	org="springframework" name="spring-context"	rev="1.2.3"	conf="global->default"/>
-	<dependency	org="springframework" name="spring-web"	rev="1.2.3"	conf="global->default"/>
-	<dependency	org="springframework" name="spring-mock" rev="1.2.3" conf="global->default"/>
+	<dependency	org="springframework" name="spring-beans" rev="1.2.4" conf="global->default"/>
+	<dependency	org="springframework" name="spring-core" rev="1.2.4" conf="global->default"/>
+	<dependency	org="springframework" name="spring-context"	rev="1.2.4"	conf="global->default"/>
+	<dependency	org="springframework" name="spring-web"	rev="1.2.4"	conf="global->default"/>
+	<dependency	org="springframework" name="spring-mock" rev="1.2.4" conf="global->default"/>
 	<dependency	org="springframework" name="spring-binding"	rev="latest.integration" conf="global->default"/>
 	<dependency	org="junit"	name="junit" rev="3.8.1" conf="global->default"/>
 
 	<!-- spring	mvc	only dependencies -->
-	<dependency	org="springframework" name="spring-webmvc" rev="1.2.3" conf="buildtime,mvc->default"/>
+	<dependency	org="springframework" name="spring-webmvc" rev="1.2.4" conf="buildtime,mvc->default"/>
 
 	<!-- struts	only dependencies -->
 	<dependency	org="apache" name="struts" rev="1.2.7" conf="buildtime,struts->default"/>
