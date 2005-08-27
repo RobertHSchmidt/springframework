@@ -20,7 +20,7 @@
     <dependency org="java" name="jmx" rev="1.2.1">
        <artifact name="jmx-ri" type="jar" />
     </dependency>
-    <dependency org="springframework" name="spring-webflow" rev="pr5"/>
+    <dependency org="springframework" name="spring-webflow" rev="latest.integration"/>
     
     <!--  build-time only dependencies -->
     <dependency org="java" name="servlet" rev="2.4" conf="buildtime->default">
