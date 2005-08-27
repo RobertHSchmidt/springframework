@@ -60,8 +60,6 @@
 
   <target name="init.pre">
 
-  <echo>got here</echo>
-    
     <!-- we default project.version to be ${project.base.version}-${build.timestamp}
        where project.base.version defaults to 1.0-dev.
        
