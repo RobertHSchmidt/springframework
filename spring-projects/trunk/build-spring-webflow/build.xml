@@ -18,11 +18,13 @@
   <path id="ivy.lib.path">
     <fileset dir="${common.build.dir}/lib" includes="*.jar"/>
   </path>
-  <taskdef resource="fr/jayasoft/ivy/ant/antlib.xml" onerror="ignore"
-           uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path">
-  </taskdef>
+  <taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
+           uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
   
-  <path id="modules.manual">
+  <!-- we don't need these any longer, ivy builds this list now in dependency order
+       Keep them here for a little while in case we find an issue and need to go
+	   back to manual ordering
+  <path id="modules">
     <pathelement location="../spring-webflow"/>
     <pathelement location="../spring-webflow-samples/birthdate"/>
     <pathelement location="../spring-webflow-samples/fileupload"/>
@@ -31,7 +33,7 @@
     <pathelement location="../spring-webflow-samples/numberguess"/>
     <pathelement location="../spring-webflow-samples/phonebook"/>
     <pathelement location="../spring-webflow-samples/sellitem"/>
-  </path>
+  </path-->
 
   <!-- simplistic pattern for zipping up sources -->
   <selector id="project.source.zip.includes">
