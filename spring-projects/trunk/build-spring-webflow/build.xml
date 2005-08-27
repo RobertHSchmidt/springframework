@@ -4,14 +4,25 @@
   A master build file for creating a release of Spring Web Flow
   =======================================================================
 -->
-<project name="build-spring-webflow" default="release">
+<project name="build-spring-webflow" default="release" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
 
   <!-- Load local and user build preferences -->
   <property file="build.properties"/>
   <property file="project.properties"/>
   <property file="${user.home}/build.properties"/>
+
+  <!-- try to load ivy here from local lib dir, in case the user has not already dropped
+       it into ant's lib dir (note that the latter copy will always take precedence).
+       We will not fail as long as local lib dir exists (it may be empty) and
+       ivy is in at least one of ant's lib dir or the local lib dir. -->
+  <path id="ivy.lib.path">
+    <fileset dir="${common.build.dir}/lib" includes="*.jar"/>
+  </path>
+  <taskdef resource="fr/jayasoft/ivy/ant/antlib.xml" onerror="ignore"
+           uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path">
+  </taskdef>
   
-  <path id="modules">
+  <path id="modules.manual">
     <pathelement location="../spring-webflow"/>
     <pathelement location="../spring-webflow-samples/birthdate"/>
     <pathelement location="../spring-webflow-samples/fileupload"/>
@@ -51,7 +62,7 @@
   <target name="targets">
     <echo>
 
-    Master build for core Spring jars.
+    Master build for core Spring Web Flow main and sample jars.
 
     Please execute
       build -projecthelp
@@ -68,6 +79,18 @@
   </target>
 
   <target name="init.pre" >
+
+    <!-- ivy will determine the right order to build web flow main and samples -->
+
+    <property name="ivy.conf.dir" value="${common.build.dir}" />
+    <ivy:configure file="${ivy.conf.dir}/ivyconf.xml" />
+
+    <ivy:buildlist reference="modules">
+      <fileset dir="..">
+        <include name="spring-webflow-samples/*/build.xml"/>
+        <include name="spring-webflow/build.xml"/>
+      </fileset>
+    </ivy:buildlist>
 
     <tstamp>
     	<format property="build.timestamp" pattern="yyyyMMddHHmmss"/>
@@ -104,6 +127,7 @@
   
   <target name="init.post" >
     <property name="projects" value="modules"/>
+    <property name="projects.names" refid="modules"/>
 
     <property name="init.done" value="true"/>
   </target>
@@ -111,6 +135,7 @@
   <target name="clean" depends="init"
           description="Cleans all build output files from all projects">
     <echo>projects=${projects}</echo>
+    <echo>projects.names=${projects.names}</echo>
 	<subant target="clean" inheritall="false">
 	  <buildpath refid="${projects}"/>
     </subant>
