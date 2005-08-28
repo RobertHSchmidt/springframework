@@ -75,15 +75,15 @@
 		</presetdef>
 	</target>
 
-	<target name="db-create-objects" depends="db.task.init" description="Load the project schema (tables) into the database">
-		<property name="sql.src" value="${src.db.dir}/objects.sql" />
+	<target name="db-schema-create" depends="db.task.init" description="Load the project schema (tables) into the database">
+		<property name="sql.src" value="${src.db.dir}/schema.sql" />
 		<antcall target="db-sql">
 			<param name="onerror" value="continue" />
 			<param name="autocommit" value="true" />
 		</antcall>
 	</target>
 
-	<target name="db-create-user" depends="db.task.init" description="Create the project schema tablespaces and user">
+	<target name="db-user-create" depends="db.task.init" description="Create the project schema tablespaces and user">
 		<property name="sql.src" value="${target.testclasses.dir}/create-user.sql" />
 		<antcall target="db-sql-admin">
 			<param name="onerror" value="continue" />
@@ -94,7 +94,7 @@
 	<target name="db-data-dtd" depends="db.task.init" description="Export db unit dtd for testdata file">
 		<mkdir dir="${target.db.dir}" />
 		<my.dbunit>
-			<export dest="${target.db.dir}/data.dtd" format="dtd" />
+			<export dest="${target.db.dir}/schema.dtd" format="dtd" />
 		</my.dbunit>
 	</target>
 

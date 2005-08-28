@@ -93,19 +93,19 @@
 	</target>
 
 	<!-- db-init: generates the database schema and creates tables based on the mapping files  -->
-	<target name="hibernate-db-create" depends="hibernate.task.init, statics" description="Creates database tables from hibernate mapping files">
+	<target name="hibernate-schema-create" depends="hibernate.task.init, statics" description="Creates database tables from hibernate mapping files">
 		<mkdir dir="${target.dir}/db" />
 		<antcall target="generate.hibernate.properties" />
-		<schemaexport quiet="no" text="no" drop="no" delimiter=";" properties="${target.dir}/db/database.properties" output="${target.dir}/db/schema.sql">
+		<schemaexport quiet="no" text="no" drop="no" delimiter=";" properties="${target.dir}/db/database.properties" output="${target.dir}/db/hib-schema.sql">
 			<fileset dir="${target.classes.dir}" includes="**/*.hbm.xml" />
 		</schemaexport>
 	</target>
 
 	<!-- db-init: drops the database tables -->
-	<target name="hibernate-db-drop" depends="hibernate.task.init, statics" description="Drop database tables created by Hibernate's schema export">
+	<target name="hibernate-schema-drop" depends="hibernate.task.init, statics" description="Drop database tables created by Hibernate's schema export">
 		<mkdir dir="${target.dir}/db" />
 		<antcall target="generate.hibernate.properties" />
-		<schemaexport quiet="no" text="no" drop="yes" delimiter=";" properties="${target.dir}/db/database.properties" output="${target.dir}/db/drop-tables.sql">
+		<schemaexport quiet="no" text="no" drop="yes" delimiter=";" properties="${target.dir}/db/database.properties" output="${target.dir}/db/hib-drop-tables.sql">
 			<fileset dir="${target.classes.dir}" includes="**/*.hbm.xml" />
 		</schemaexport>
 	</target>
@@ -113,7 +113,7 @@
 	<!-- this task is called by tasks that need it in build.xml -->
 	<target name="generate.hibernate.properties">
 		<echo>generating database.properties from build.properties</echo>
-		<propertyfile comment="Hibernate Configuration for JUnit tests" file="${target.dir}/db/database.properties">
+		<propertyfile comment="Hibernate Configuration for targets from db-targets.xml" file="${target.dir}/db/database.properties">
 			<entry key="hibernate.connection.driver_class" value="${database.driver}" />
 			<entry key="hibernate.connection.url" value="${database.url}" />
 			<entry key="hibernate.connection.username" value="${database.username}" />
