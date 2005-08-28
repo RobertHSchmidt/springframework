@@ -91,7 +91,7 @@
 		</antcall>
 	</target>
 
-	<target name="db-data-dtd" depends="db.task.init" description="Export db unit dtd for testdata file">
+	<target name="db-schema-dtd" depends="db.task.init" description="Export db unit dtd for testdata file">
 		<mkdir dir="${target.db.dir}" />
 		<my.dbunit>
 			<export dest="${target.db.dir}/schema.dtd" format="dtd" />
