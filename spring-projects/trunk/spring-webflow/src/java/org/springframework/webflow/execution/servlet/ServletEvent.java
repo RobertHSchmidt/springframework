@@ -54,7 +54,8 @@ public class ServletEvent extends ExternalEvent {
 
 	/**
 	 * Construct a flow event for the specified HTTP servlet request. The default
-	 * request parameter and attribute names will be used.
+	 * request parameter and attribute names will be used. No additional event
+	 * parameters will be added.
 	 * @param request the HTTP servlet request
 	 * @param response the HTTP servlet response associated with the request
 	 */
@@ -66,11 +67,12 @@ public class ServletEvent extends ExternalEvent {
 	
 	/**
 	 * Construct a flow event for the specified HTTP servlet request. The default
-	 * request parameter and attribute names will be used.
+	 * request parameter and attribute names will be used. Given additional parameters
+	 * will be added.
 	 * @param request the HTTP servlet request
 	 * @param response the HTTP servlet response associated with the request
-	 * @param parameters additional event parameters. May be used to override parameters in the
-	 * Request, or add extra parameters, since the Request parameters are read-only
+	 * @param parameters additional event parameters, may be used to override parameters in the
+	 *        request, or add extra parameters, since the request parameters are read-only
 	 */
 	public ServletEvent(HttpServletRequest request, HttpServletResponse response, Map parameters) {
 		this(request, response,
@@ -90,8 +92,8 @@ public class ServletEvent extends ExternalEvent {
 	 * @param parameterValueDelimiter delimiter used when a parameter value is
 	 *        sent as part of the name of a request parameter
 	 *        (e.g. "_eventId_value=bar")
-	 * @param parameters additional event parameters. May be used to override parameters in the
-	 * Request, or add extra parameters, since the Request parameters are read-only
+	 * @param parameters additional event parameters, may be used to override parameters in the
+	 *        request, or add extra parameters, since the request parameters are read-only
 	 */
 	public ServletEvent(HttpServletRequest request, HttpServletResponse response,
 			String eventIdParameterName, String eventIdAttributeName, String currentStateIdParameterName,
@@ -102,16 +104,13 @@ public class ServletEvent extends ExternalEvent {
 		setId(extractEventId(eventIdParameterName, eventIdAttributeName, parameterValueDelimiter));
 		setStateId(verifySingleStringInputParameter(currentStateIdParameterName, getParameter(currentStateIdParameterName)));
 	}
-	
-	
 
 	/**
 	 * Initialize the parameters contained in this event from the HTTP
 	 * servlet request, adding to them or overriding those with values
-	 * from the optional parameters argument
-	 * 
-	 * @param parameters An optional map which adds to or overrides parameter values
-	 * coming from the request
+	 * from the optional parameters argument.
+	 * @param parameters an optional map which adds to or overrides parameter values
+	 *        coming from the request
 	 */
 	protected void initParameters(Map parameters) {
 		setParameters(WebUtils.getParametersStartingWith(getRequest(), null));
@@ -119,8 +118,9 @@ public class ServletEvent extends ExternalEvent {
 			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)getRequest();
 			addParameters(multipartRequest.getFileMap());
 		}
-		if (parameters != null)
+		if (parameters != null) {
 			addParameters(parameters);
+		}
 	}
 
 	/**
