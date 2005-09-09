@@ -62,7 +62,7 @@ public abstract class ExternalEvent extends Event {
 	}
 	
 	/**
-	 * Create an external even with the specified external source and additional parameters.
+	 * Create an external event with the specified external source and additional parameters.
 	 * @param source the source of the event
 	 * @param parameters the event parameters
 	 */
