@@ -41,6 +41,7 @@ import org.springframework.util.Assert;
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @author Colin Sampaleanu
  */
 public class Event extends EventObject implements AttributeSource {
 
@@ -94,10 +95,20 @@ public class Event extends EventObject implements AttributeSource {
 		setRequiredId(id);
 		setParameters(parameters);
 	}
+	
+	/**
+	 * Create a new event with the provided contextual parameters.
+	 * @param source the source of the event
+	 * @param parameters the event parameters
+	 */
+	public Event(Object source, Map parameters) {
+		super(source);
+		setParameters(parameters);
+	}
 
 	/**
 	 * Create a new event with the specified <code>id</code> and a single
-	 * contextual parameters.
+	 * contextual parameter.
 	 * @param source the source of the event
 	 * @param id the event identifier
 	 * @param parameterName the name of the single parameter

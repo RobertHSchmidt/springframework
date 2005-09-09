@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution.servlet;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -59,9 +61,24 @@ public class ServletEvent extends ExternalEvent {
 	public ServletEvent(HttpServletRequest request, HttpServletResponse response) {
 		this(request, response,
 				EVENT_ID_PARAMETER, EVENT_ID_REQUEST_ATTRIBUTE,
-				CURRENT_STATE_ID_PARAMETER, PARAMETER_VALUE_DELIMITER);
+				CURRENT_STATE_ID_PARAMETER, PARAMETER_VALUE_DELIMITER, null);
 	}
-
+	
+	/**
+	 * Construct a flow event for the specified HTTP servlet request. The default
+	 * request parameter and attribute names will be used.
+	 * @param request the HTTP servlet request
+	 * @param response the HTTP servlet response associated with the request
+	 * @param parameters additional event parameters. May be used to override parameters in the
+	 * Request, or add extra parameters, since the Request parameters are read-only
+	 */
+	public ServletEvent(HttpServletRequest request, HttpServletResponse response, Map parameters) {
+		this(request, response,
+				EVENT_ID_PARAMETER, EVENT_ID_REQUEST_ATTRIBUTE,
+				CURRENT_STATE_ID_PARAMETER, PARAMETER_VALUE_DELIMITER, parameters);
+	}
+	
+	
 	/**
 	 * Construct a flow event for the specified HTTP servlet request.
 	 * @param request the HTTP servlet request
@@ -73,27 +90,37 @@ public class ServletEvent extends ExternalEvent {
 	 * @param parameterValueDelimiter delimiter used when a parameter value is
 	 *        sent as part of the name of a request parameter
 	 *        (e.g. "_eventId_value=bar")
+	 * @param parameters additional event parameters. May be used to override parameters in the
+	 * Request, or add extra parameters, since the Request parameters are read-only
 	 */
 	public ServletEvent(HttpServletRequest request, HttpServletResponse response,
 			String eventIdParameterName, String eventIdAttributeName, String currentStateIdParameterName,
-			String parameterValueDelimiter) {
+			String parameterValueDelimiter, Map parameters) {
 		super(request);
 		this.response = response;
-		initParameters();
+		initParameters(parameters);
 		setId(extractEventId(eventIdParameterName, eventIdAttributeName, parameterValueDelimiter));
 		setStateId(verifySingleStringInputParameter(currentStateIdParameterName, getParameter(currentStateIdParameterName)));
 	}
+	
+	
 
 	/**
 	 * Initialize the parameters contained in this event from the HTTP
-	 * servlet request.
+	 * servlet request, adding to them or overriding those with values
+	 * from the optional parameters argument
+	 * 
+	 * @param parameters An optional map which adds to or overrides parameter values
+	 * coming from the request
 	 */
-	protected void initParameters() {
+	protected void initParameters(Map parameters) {
 		setParameters(WebUtils.getParametersStartingWith(getRequest(), null));
 		if (getRequest() instanceof MultipartHttpServletRequest) {
 			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)getRequest();
 			addParameters(multipartRequest.getFileMap());
 		}
+		if (parameters != null)
+			addParameters(parameters);
 	}
 
 	/**

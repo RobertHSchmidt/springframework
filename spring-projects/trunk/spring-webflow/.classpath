@@ -21,5 +21,6 @@
 	<classpathentry sourcepath="/repository/apache/tapestry/sources/tapestry-4.0-beta3-src.zip" kind="lib" path="lib/buildtime/tapestry.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/hivemind.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/spring-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/myfaces-jsf-api.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

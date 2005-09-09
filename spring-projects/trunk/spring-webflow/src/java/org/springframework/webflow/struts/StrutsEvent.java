@@ -72,7 +72,7 @@ public class StrutsEvent extends ServletEvent {
 			HttpServletResponse response, String eventIdParameterName, String eventIdAttributeName,
 			String currentStateIdParameterName, String parameterValueDelimiter) {
 		super(request, response, eventIdParameterName, eventIdAttributeName, currentStateIdParameterName,
-				parameterValueDelimiter);
+				parameterValueDelimiter, null);
 		this.actionMapping = actionMapping;
 		this.actionForm = actionForm;
 	}

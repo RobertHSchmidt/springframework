@@ -16,6 +16,7 @@
 package org.springframework.webflow.execution;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import org.springframework.core.style.StylerUtils;
 import org.springframework.webflow.Event;
@@ -29,6 +30,7 @@ import org.springframework.webflow.Event;
  * @see org.springframework.webflow.execution.FlowExecution
  * 
  * @author Erwin Vervaet
+ * @author Colin Sampaleanu
  */
 public abstract class ExternalEvent extends Event {
 
@@ -57,6 +59,15 @@ public abstract class ExternalEvent extends Event {
 	 */
 	public ExternalEvent(Object source) {
 		super(source);
+	}
+	
+	/**
+	 * Create an external even with the specified external source and additional parameters.
+	 * @param source the source of the event
+	 * @param parameters the event parameters
+	 */
+	public ExternalEvent(Object source, Map parameters) {
+		super(source, parameters);
 	}
 
 	// support methods
