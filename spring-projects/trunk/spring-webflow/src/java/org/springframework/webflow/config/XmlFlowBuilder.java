@@ -45,6 +45,8 @@ import org.springframework.util.xml.SimpleSaxErrorHandler;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
+import org.springframework.webflow.Controller;
+import org.springframework.webflow.ControllerInvocation;
 import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
@@ -120,6 +122,7 @@ import org.xml.sax.SAXException;
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
+ * @author Steven Devijver
  */
 public class XmlFlowBuilder extends BaseFlowBuilder {
 	
@@ -193,6 +196,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 	private static final String EXIT_ELEMENT = "exit";
 	
+	private static final String CONTROLLER_ELEMENT = "controller";
 	
 	/**
 	 * Internal helper class capturing flow artifact definition info.
@@ -532,6 +536,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 				fromStringTo(ViewDescriptorCreator.class).execute(element.getAttribute(VIEW_ATTRIBUTE));
 			viewState.setViewDescriptorCreator(creator);
 		}
+		viewState.addAll(parseControllers(element));
 		viewState.addAll(parseTransitions(element));
 		viewState.setProperties(parseProperties(element));
 	}
@@ -727,6 +732,38 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		return transition;
 	}
 
+	protected ControllerInvocation[] parseControllers(Element element) {
+		List controllerInvocations = new LinkedList();
+		List controllerElements = DomUtils.getChildElementsByTagName(element, CONTROLLER_ELEMENT);
+		for (int i = 0; i < controllerElements.size(); i++) {
+			controllerInvocations.add(parseController((Element)controllerElements.get(i)));
+		}
+		return (ControllerInvocation[])controllerInvocations.toArray(new ControllerInvocation[controllerInvocations.size()]);
+	}
+	
+	/**
+	 * Parse a transition definition and return a corresponding ControllerInvocation
+	 * object.
+	 */
+	protected ControllerInvocation parseController(Element element) {
+		FlowArtifact controllerDef = parseFlowArtifactDefinition(element);
+		Controller controller = null;
+		ViewDescriptorCreator creator = null;
+		String eventId = element.getAttribute(ON_ATTRIBUTE);
+		if (controllerDef.isBeanRef()) {
+			controller = getFlowServiceLocator().getController(controllerDef.bean);
+		}
+		else if (controllerDef.shouldCreate()) {
+			controller = getFlowServiceLocator().createController(controllerDef.clazz, controllerDef.autowire);
+		}
+		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
+			creator = (ViewDescriptorCreator)
+				fromStringTo(ViewDescriptorCreator.class).execute(element.getAttribute(VIEW_ATTRIBUTE));
+		}		
+		ControllerInvocation controllerInvocation = new ControllerInvocation(eventId, creator, controller);
+		return controllerInvocation;
+	}
+	
 	/**
 	 * Find all "if" definitions in given state definition and return a
 	 * list of corresponding Transition objects.

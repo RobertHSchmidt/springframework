@@ -31,6 +31,7 @@ import org.springframework.core.style.ToStringCreator;
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @author Steven Devijver
  */
 public abstract class TransitionableState extends State {
 
@@ -222,6 +223,11 @@ public abstract class TransitionableState extends State {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Event '" + event.getId() + "' signaled in context: " + context);
 		}
+		ControllerInvocationListener listener = new ControllerInvocationListener();
+		ViewDescriptor viewDescriptor = invokeController(context, event, listener);
+		if (listener.isControllerInvoked()) {
+			return viewDescriptor;
+		}
 		context.setLastEvent(event);
 		Transition transition = getRequiredTransition(context);
 		if (logger.isDebugEnabled()) {
@@ -230,6 +236,10 @@ public abstract class TransitionableState extends State {
 		return transition.execute(context);
 	}
 
+	protected ViewDescriptor invokeController(RequestContext requestContext, Event event, ControllerInvocationListener listener) {
+		return null;
+	}
+	
 	/**
 	 * Re-enter this state. This is typically called when a transition out
 	 * of this state is selected, but transition execution rolls back and
@@ -261,4 +271,15 @@ public abstract class TransitionableState extends State {
 		creator.append("transitions", this.transitions).append("exitAction", exitAction);
 	}
 
+	protected class ControllerInvocationListener {
+		private boolean controllerInvoked = false;
+		
+		public void markControllerInvoked() {
+			this.controllerInvoked = true;
+		}
+		
+		public boolean isControllerInvoked() {
+			return this.controllerInvoked;
+		}
+	}
 }

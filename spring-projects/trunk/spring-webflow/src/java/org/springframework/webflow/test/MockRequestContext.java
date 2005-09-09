@@ -22,6 +22,8 @@ import org.springframework.binding.AttributeSource;
 import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.util.Assert;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
@@ -50,6 +52,10 @@ import org.springframework.webflow.Transition;
  * @author Erwin Vervaet
  */
 public class MockRequestContext implements RequestContext, FlowExecutionContext {
+	
+	private static final String REQUEST_CONTEXT = "requestContext";
+	private static final String FLOW_SCOPE = "flowScope";
+	private static final String REQUEST_SCOPE = "requestScope";
 	
 	private String key = "Mock Flow Execution";
 
@@ -282,4 +288,30 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 			this.rootFlow = session.getFlow();
 		}
 	}
+	
+	public Errors getErrors(String name) {
+		Errors errors = null;
+		errors = (Errors)getFlowScope().getAttribute(BindException.ERROR_KEY_PREFIX + name, BindException.class);
+		if (errors == null) {
+			errors = (Errors)getRequestScope().getAttribute(BindException.ERROR_KEY_PREFIX + name, BindException.class);
+		}
+		return errors;
+	}
+
+	public boolean containsAttribute(String attributeName) {
+		return (REQUEST_CONTEXT.equals(attributeName) || FLOW_SCOPE.equals(attributeName) || REQUEST_SCOPE.equals(attributeName));
+	}
+
+	public Object getAttribute(String attributeName) {
+		if (REQUEST_CONTEXT.equals(attributeName)) {
+			return this;
+		} else if (FLOW_SCOPE.equals(attributeName)) {
+			return getFlowScope();
+		} else if (REQUEST_SCOPE.equals(attributeName)) {
+			return getRequestScope();
+		} else {
+			return null;
+		}
+	}
+
 }

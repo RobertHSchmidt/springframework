@@ -28,6 +28,7 @@ import org.springframework.binding.format.support.LabeledEnumFormatter;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.webflow.Action;
+import org.springframework.webflow.Controller;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
@@ -341,4 +342,13 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 			throws ServiceLookupException {
 		return (FlowAttributeMapper)lookupService(FlowAttributeMapper.class, implementationClass);
 	}
+
+	public Controller createController(Class controllerImplementationClass, AutowireMode autowireMode) throws ServiceLookupException {
+		return (Controller)createService(Controller.class, controllerImplementationClass, autowireMode);
+	}
+
+	public Controller getController(String id) throws ServiceLookupException {
+		return (Controller)lookupService(Controller.class, id);
+	}
+	
 }

@@ -17,6 +17,7 @@ package org.springframework.webflow.config;
 
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.webflow.Action;
+import org.springframework.webflow.Controller;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
@@ -113,5 +114,15 @@ public class FlowServiceLocatorAdapter implements FlowServiceLocator {
 	public Object getBean(String beanId) throws ServiceLookupException {
 		throw new UnsupportedOperationException();
 	}
+
+
+	public Controller createController(Class controllerImplementationClass, AutowireMode autowireMode) throws ServiceLookupException {
+		throw new UnsupportedOperationException();
+	}
+
+	public Controller getController(String id) throws ServiceLookupException {
+		throw new UnsupportedOperationException();
+	}
+	
 
 }

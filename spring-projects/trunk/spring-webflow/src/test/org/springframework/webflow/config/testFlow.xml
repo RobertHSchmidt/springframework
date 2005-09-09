@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
-	"http://www.springframework.org/dtd/spring-webflow.dtd">
+	"file://java/org/springframework/webflow/config/spring-webflow.dtd">
 
 <webflow id="testFlow" start-state="actionState1">
 	<property name="propInteger" value="12345" type="integer"/>
@@ -51,8 +51,16 @@
 			<output name="attribute1" as="attribute3"/>
 			<output value="${flowScope.attribute4}" as="attribute1"/>
 		</attribute-mapper>
-		<transition on="event2" to="endState2"/>
+		<transition on="event2" to="viewState3"/>
 	</subflow-state>
+	
+	<view-state id="viewState3">
+		<controller on="someEvent" bean="someBean" view="someView"/>
+		<controller on="someOtherEvent" class="org.springframework.webflow.config.XmlFlowBuilderTests$TestController"
+			autowire="byType"/>
+		<controller on="yetSomeOtherEvent" view="someOtherView"/>
+		<transition on="event3" to="endState2"/>
+	</view-state>
 	
 	<end-state id="endState1" view="endView1"/>
 	

@@ -15,8 +15,12 @@
  */
 package org.springframework.webflow;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -37,6 +41,7 @@ import org.springframework.core.style.ToStringCreator;
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @author Steven Devijver
  */
 public class ViewState extends TransitionableState {
 
@@ -44,6 +49,11 @@ public class ViewState extends TransitionableState {
 	 * The factory for the view descriptor to return when this state is entered.
 	 */
 	private ViewDescriptorCreator viewDescriptorCreator;
+	
+	/**
+	 * Controllers invocations associated with this view state.
+	 */
+	private Collection controllerInvocations = CollectionFactory.createLinkedSetIfPossible(6);
 	
 	/**
 	 * Default constructor for bean style usage.
@@ -74,6 +84,34 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
+	 * Create a new marker view state.
+	 * @param flow the owning flow
+	 * @param id the state identifier (must be unique to the flow)
+	 * @param transition the sole transition of this state
+	 * @param controllerInvocation the sole controller invocation of this state
+	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 */
+	public ViewState(Flow flow, String id, Transition transition, ControllerInvocation controllerInvocation) throws IllegalArgumentException {
+		this(flow, id, transition);
+		// do assert on controller.
+		add(controllerInvocation);
+	}
+	
+	/**
+	 * Create a new marked view state
+	 * @param flow the owning flow
+	 * @param id the state identifier (must be unique to the flow)
+	 * @param transitions the transitions of this state
+	 * @param controllerInvocations the controller invocations of this state
+	 * @throws IllegalArgumentException
+	 */
+	public ViewState(Flow flow, String id, Transition[] transitions, ControllerInvocation[] controllerInvocations) throws IllegalArgumentException {
+		this(flow, id, transitions);
+		// do assert on controllers
+		addAll(controllerInvocations);
+	}
+	
+	/**
 	 * Create a new view state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
@@ -99,6 +137,34 @@ public class ViewState extends TransitionableState {
 		setViewDescriptorCreator(creator);
 	}
 
+	/**
+	 * Create a new view state.
+	 * @param flow the owning flow
+	 * @param id the state identifier (must be unique to the flow)
+	 * @param creator the factory used to produce the view to render
+	 * @param transition the sole transition of this state
+	 * @param controllerInvocation the sole controller invocation of this state
+	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 */
+	public ViewState(Flow flow, String id, ViewDescriptorCreator creator, Transition transition, ControllerInvocation controllerInvocation) throws IllegalArgumentException {
+		this(flow, id, creator, transition);
+		add(controllerInvocation);
+	}
+	
+	/**
+	 * Create a new view state.
+	 * @param flow the owning flow
+	 * @param id the state identifier (must be unique to the flow)
+	 * @param creator the factory used to produce the view to render
+	 * @param transitions the transitions of this state
+	 * @param controllerInvocations the controller invocations of this state
+	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 */
+	public ViewState(Flow flow, String id, ViewDescriptorCreator creator, Transition[] transitions, ControllerInvocation[] controllerInvocations) throws IllegalArgumentException {
+		this(flow, id, creator, transitions);
+		addAll(controllerInvocations);
+	}
+	
 	/**
 	 * Create a new view state.
 	 * @param flow the owning flow
@@ -178,5 +244,46 @@ public class ViewState extends TransitionableState {
 	protected void createToString(ToStringCreator creator) {
 		creator.append("viewDescriptorCreator", this.viewDescriptorCreator);
 		super.createToString(creator);
+	}
+	
+	protected ViewDescriptor invokeController(RequestContext requestContext, Event event, ControllerInvocationListener listener) {
+		for (Iterator iter = this.controllerInvocations.iterator(); iter.hasNext();) {
+			ControllerInvocation controllerInvocation = (ControllerInvocation)iter.next();
+			if (controllerInvocation.matches(event.getId())) {
+				listener.markControllerInvoked();
+				return controllerInvocation.invoke(requestContext, event);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Add controller invocation to this view state
+	 * 
+	 * @param controller invocation the controller invocation
+	 */
+	public void add(ControllerInvocation controllerInvocation) {
+		controllerInvocation.setSourceState(this);
+		this.controllerInvocations.add(controllerInvocation);
+	}
+	
+	/**
+	 * Add array of controller invocatiosn to this view state
+	 * 
+	 * @param controllerInvocations the controller invocations
+	 */
+	public void addAll(ControllerInvocation[] controllerInvocations) {
+		for (int i = 0; i < controllerInvocations.length; i++) {
+			add(controllerInvocations[i]);
+		}
+	}
+	
+	/**
+	 * Returns the collection of controller invocations for this view state.
+	 * 
+	 * @return the controller invocations for this controller
+	 */
+	public Collection getControllerInvocations() {
+		return this.controllerInvocations;
 	}
 }

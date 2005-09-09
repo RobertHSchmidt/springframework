@@ -2,7 +2,7 @@
 
 <!--
 	Spring Web Flow DTD
-	Authors: Erwin Vervaet, Keith Donald
+	Authors: Erwin Vervaet, Keith Donald, Steven Devijver
 	
 	This DTD defines the web flow XML syntax. Web flows capture the page flow
 	in (part of) a web application.
@@ -171,6 +171,41 @@
 <!ELEMENT value ( #PCDATA )>
 
 <!--
+	Defines a controller for a view state.	
+-->
+<!ELEMENT controller EMPTY>
+
+<!--
+	The event id the controller has to be invoked on.	
+-->
+<!ATTLIST controller on CDATA #REQUIRED>
+
+<!--
+	Identifier of the controller implementation exported in the configured registry, typically
+	the Spring Bean Factory. This is similar to the <ref bean="myBean"/> notation of
+	the Spring beans DTD.	
+-->
+<!ATTLIST controller bean CDATA #IMPLIED>
+
+<!--
+	Fully qualified class of the transition implementation. An instance of the
+	class will be instantiated and possibly autowired depending on the value of the
+	autowire attribute.
+-->
+<!ATTLIST controller class CDATA #IMPLIED>
+
+<!--
+	View name the controller delegates to.	
+-->
+<!ATTLIST controller view CDATA #IMPLIED>
+
+<!--
+	Dependency (aka collaborator) autowiring options for use when instantiating the controller 
+	implementation with the class attribute.
+-->
+<!ATTLIST controller autowire (no | byName | byType | constructor | autodetect | default) "default">
+
+<!--
 	Defines a transition from one state to another. Transitions define the supported 
 	paths through the flow.
 -->
@@ -223,7 +258,7 @@
 	returned to the user.
 	Transitions triggered by user input from the view lead on to other states.
 -->
-<!ELEMENT view-state ( property*, entry?, transition+, exit? )>
+<!ELEMENT view-state ( property*, entry?, controller*, transition+, exit? )>
 
 <!--
 	Unique identifier of a view state; must be unique to this flow.
