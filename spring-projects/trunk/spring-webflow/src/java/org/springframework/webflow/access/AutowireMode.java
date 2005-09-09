@@ -57,7 +57,7 @@ public class AutowireMode extends ShortCodedLabeledEnum {
 	/**
 	 * Constant that indicates that no autowiring should be done.
 	 */
-	public static final AutowireMode NONE = new AutowireMode(5, "none");
+	public static final AutowireMode NO = new AutowireMode(5, "no");
 
 	/**
 	 * Constant that indicates that no explicit autowire mode is specified

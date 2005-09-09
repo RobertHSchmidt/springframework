@@ -4,6 +4,7 @@ http://www.springframework.org
 
 Changes in version RC1
 ------------------------------------
+* Fixed naming not being consistent between Java code and DTD for AutowireMode.NO (used to be AutowireMode.NONE).
 * Improved "validatorMethod" handling in FormAction: if no formObjectClass is specified, the invoked validator method
   should have a signature matching "public void ${validatorMethod}(Object obj, Errors errors)". When you do specify a
   formObjectClass, everything works like before, e.g. the signature will be

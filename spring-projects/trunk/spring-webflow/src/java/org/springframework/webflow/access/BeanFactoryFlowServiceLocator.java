@@ -47,7 +47,7 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 	/**
 	 * The default autowire mode for services creating by this locator.
 	 */
-	private AutowireMode defaultAutowireMode = AutowireMode.NONE;
+	private AutowireMode defaultAutowireMode = AutowireMode.NO;
 	
 	/**
 	 * The flow creation strategy.
@@ -182,7 +182,7 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 			return createService(expectedClass, implementationClass, getDefaultAutowireMode());
 		}
 		try {
-			if (autowireMode == AutowireMode.NONE) {
+			if (autowireMode == AutowireMode.NO) {
 				return BeanUtils.instantiateClass(implementationClass);
 			}
 			else {
@@ -204,7 +204,7 @@ public class BeanFactoryFlowServiceLocator implements FlowServiceLocator, BeanFa
 		if (autowireMode == AutowireMode.DEFAULT) {
 			autowireService(service, getDefaultAutowireMode());
 		}
-		else if (autowireMode != AutowireMode.NONE) {
+		else if (autowireMode != AutowireMode.NO) {
 			getAutowireCapableBeanFactory().autowireBeanProperties(service, autowireMode.getShortCode(), false);
 		}
 	}
