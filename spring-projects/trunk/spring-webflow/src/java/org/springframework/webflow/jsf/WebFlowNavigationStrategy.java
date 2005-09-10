@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -200,10 +201,10 @@ public class WebFlowNavigationStrategy {
 
 		// Assume that the view name in the descriptor corresponds to
 		// a JSF view identifier
-		String viewId = descriptor.getViewName()
-
-		// Expose model data specified in the descriptor as needed
-		; // FIXME
+		String viewId = descriptor.getViewName();
+		
+		// Expose model data specified in the descriptor
+		context.getExternalContext().getRequestMap().putAll(descriptor.getModel());
 
 		// Stay on the same view if requested
 		if (viewId == null) {
