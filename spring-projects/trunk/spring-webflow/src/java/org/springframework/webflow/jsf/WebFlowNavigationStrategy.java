@@ -21,12 +21,13 @@ import java.util.Map;
 
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.execution.ExternalEvent;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.servlet.ServletEvent;
 
@@ -116,10 +117,11 @@ public class WebFlowNavigationStrategy {
 	public ViewDescriptor create(FacesContext context, String fromAction, String outcome,
 			FlowExecutionManager manager) throws Exception {
 
+		// we need to get the right flow ID into the event as a param
 		String flowId = outcome.substring(PREFIX.length());
-		Map map = new HashMap();
-		map.put(FlowExecutionManager.FLOW_ID_PARAMETER, flowId);
-		return manager.onEvent(event(context, map, fromAction, outcome));
+		Map params = new HashMap();
+		params.put(FlowExecutionManager.FLOW_ID_PARAMETER, flowId);
+		return manager.onEvent(event(context, params, fromAction, outcome));
 
 	}
 
@@ -238,7 +240,10 @@ public class WebFlowNavigationStrategy {
 	public ViewDescriptor resume(FacesContext context, String fromAction, String outcome,
 			FlowExecutionManager manager) throws Exception {
 
-		return manager.onEvent(event(context, null, fromAction, outcome));
+		// create an event with the right id, and have Web Flow execute it
+		Map params = new HashMap();
+		params.put(ExternalEvent.EVENT_ID_PARAMETER, outcome);
+		return manager.onEvent(event(context, params, fromAction, outcome));
 	}
 
 }
