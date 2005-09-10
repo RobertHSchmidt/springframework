@@ -78,7 +78,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Using this action, it becomes very easy to implement form preparation and
  * submission logic in your flow.  One way to do this follows:
  * <ol>
- * <li> Create an view state to display the form. In an entry action of that 
+ * <li> Create a view state to display the form. In an entry action of that 
  * state, invoke {@link #setupForm(RequestContext) setupForm} to prepare the
  * new form for display. </li>
  * <li> On submit, execute a state transition action that performs a bindAndValidate.
