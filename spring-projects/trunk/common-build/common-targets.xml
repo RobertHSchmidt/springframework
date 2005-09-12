@@ -716,11 +716,12 @@
   
     <!-- we do physical publish by default, unless do.publish property set to "false" -->
     <condition property="publish.needed">
-      <not>
-        <isfalse value="${do.publish}"/>
-      </not>
+      <or>
+        <not><isset property="do.publish"/></not>
+        <istrue value="${do.publish}"/>
+      </or>
     </condition>
-  
+
     <!-- we clean out the deliver dir, since we don't want multiple integration versions
        to end up in there -->
     <delete dir="${ivy.distrib.dir}/jars" />
