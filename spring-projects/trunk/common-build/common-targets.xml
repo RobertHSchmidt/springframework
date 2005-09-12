@@ -708,9 +708,19 @@
   <!-- hook target -->
   <target name="ear.post" if="build.j2eeapp" />
 
-  <!-- dist:  Construct and publish the project distributables -->
-  <target name="publish" depends="ear" description="Publish this project in the ivy repository">
+  <!-- publish:  Construct and publish the project distributables -->
+  <target name="publish" depends="ear, publish.setup, publish.do.publish"
+          description="Publish this project in the ivy repository"/>
 
+  <target name="publish.setup">
+  
+    <!-- we do physical publish by default, unless do.publish property set to "false" -->
+    <condition property="publish.needed">
+      <not>
+        <isfalse value="${do.publish}"/>
+      </not>
+    </condition>
+  
     <!-- we clean out the deliver dir, since we don't want multiple integration versions
        to end up in there -->
     <delete dir="${ivy.distrib.dir}/jars" />
@@ -724,10 +734,13 @@
     <mkdir dir="${ivy.distrib.dir}/jars" />
     <copy file="${target.lib.dir}/${project.name}.jar" tofile="${ivy.distrib.dir}/jars/${project.name}-${project.version}.jar" />
     <copy file="${target.lib.dir}/${project.name}-src.zip" tofile="${ivy.distrib.dir}/jars/${project.name}-src-${project.version}.zip" />
+  </target>
+  
+  <target name="publish.do.publish" if="publish.needed">
     <ivy:publish resolver="integration-repo" artifactspattern="${ivy.distrib.dir}/jars/[artifact]-[revision].[ext]" pubrevision="${project.version}" pubdate="${pubdate}" srcivypattern="${ivy.srcivypattern}" />
     <echo message="project ${project.name} released with version ${project.version}" />
   </target>
-
+  
   <!-- dist:  Construct the project distributables, but really an alias for publish -->
   <target name="dist" depends="publish, dist.pre, dist.main, dist.post" description="Create all project distributables">
   </target>
@@ -736,7 +749,6 @@
   <target name="dist.pre" />
   <target name="dist.main" />
   <target name="dist.post" />
-
 
   <!-- javadocs:  Creates the API documentation -->
   <target name="javadoc" depends="build.prepare" description="Create the API documentation">
