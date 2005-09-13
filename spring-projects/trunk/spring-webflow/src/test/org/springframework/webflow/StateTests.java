@@ -172,35 +172,6 @@ public class StateTests extends TestCase {
 		assertEquals("attributeValue", view.getModel().get("parentOutputAttribute"));
 	}
 
-	public void testViewStateWithController() {
-		Flow flow = new Flow();
-		ExecutionCounterController controller1 = new ExecutionCounterController();
-		ModelMapperController controller2 = new ModelMapperController();
-		Map map = new HashMap();
-		map.put("count", new Integer(0));
-		controller2.setMap(map);
-		new ViewState(
-				flow, 
-				"myViewState", 
-				view("myView"), 
-				new Transition[] { new Transition(on("submit"), "finish") },
-				new ControllerInvocation[] {
-						new ControllerInvocation("ajaxEvent1", view("ajaxView1"), controller1),
-						new ControllerInvocation("ajaxEvent2", view("ajaxView2"), controller2)
-				});
-		new EndState(flow, "finish");
-		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
-		view = flowExecution.signalEvent(new Event(this, "ajaxEvent1"));
-		assertEquals("ajaxView1", view.getViewName());
-		assertEquals(1, controller1.getExecutionCounter());
-		view = flowExecution.signalEvent(new Event(this, "ajaxEvent2"));
-		assertEquals("ajaxView2", view.getViewName());
-		assertEquals(new Integer(0), view.getModel().get("count"));
-		view = flowExecution.signalEvent(new Event(this, "submit"));
-		assertFalse(flowExecution.isActive());
-	}
-	
 	public static TransitionCriteria on(String event) {
 		return (TransitionCriteria)new TextToTransitionCriteria(new FlowConversionService()).convert(event);
 	}
@@ -247,30 +218,6 @@ public class StateTests extends TestCase {
 		public Event execute(RequestContext context) throws Exception {
 			executionCount++;
 			return result;
-		}
-	}
-
-	public static class ExecutionCounterController implements Controller {
-		private int executionCounter = 0;
-		
-		public int getExecutionCounter() {
-			return executionCounter;
-		}
-		
-		public Map handle(Scope flowScope, Event event) {
-			executionCounter++;
-			return new HashMap();
-		}
-	}
-	
-	private static class ModelMapperController implements Controller {
-		private Map map = null;
-		
-		public void setMap(Map map) {
-			this.map = map;
-		}
-		public Map handle(Scope flowScope, Event event) {
-			return map;
 		}
 	}
 }

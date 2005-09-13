@@ -23,8 +23,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
-import org.springframework.webflow.Controller;
-import org.springframework.webflow.ControllerInvocation;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
@@ -145,7 +143,6 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
- * @author Steven Devijver
  */
 public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
@@ -882,33 +879,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		return new EndState(getFlow(), endStateId);
 	}
 
-	/**
-	 * Creates a controller invocation for a view state stating:
-	 * <tt>On the occurence of the matching event execute the controller</tt>
-	 * @param viewState the view state this controller belongs to
-	 * @param eventId the event this controller responds to
-	 * @param controller the controller
-	 * @return a controller invocation
-	 */
-	protected ControllerInvocation on(ViewState viewState, String eventId, Controller controller) {
-		ControllerInvocation controllerInvocation = new ControllerInvocation(eventId, controller);
-		controllerInvocation.setSourceState(viewState);
-		return controllerInvocation;
-	}
-	
-	/**
-	 * Creates a controller invocation for a view state stating:
-	 * <tt>On the occurrence of the matching event execute the controller
-	 * and delegate to a view</tt>
-	 * @param viewState the view state this controller belongs to
-	 * @param eventId the evebt this controller belongs to
-	 * @param controller the controller
-	 * @return a controller invocation
-	 */
-	protected ControllerInvocation on(ViewState viewState, String eventId, ViewDescriptorCreator creator, Controller controller) {
-		return new ControllerInvocation(viewState, creator, eventId, controller);
-	}
-	
 	/**
 	 * Creates a transition stating:
 	 * <tt>On the occurence of an event that matches the criteria defined by

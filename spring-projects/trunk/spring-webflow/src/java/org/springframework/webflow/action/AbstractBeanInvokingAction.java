@@ -71,7 +71,7 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 					+ "' property");
 		}
 		AttributeSource argumentSource = new ChainedAttributeSource(new AttributeSource[] { context.getFlowScope(),
-				context.getRequestScope(), context.getLastEvent(), context });
+				context.getRequestScope(), context.getLastEvent() });
 		Event result = toEvent(context, beanMethodInvoker.invoke(methodKey, bean, argumentSource));
 		getStatePersister().saveState(bean, context);
 		return result;

@@ -18,7 +18,6 @@ package org.springframework.webflow;
 import java.util.Map;
 
 import org.springframework.binding.AttributeSource;
-import org.springframework.validation.Errors;
 
 /**
  * Central interface that allows clients to access contextual information about
@@ -60,7 +59,7 @@ import org.springframework.validation.Errors;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface RequestContext extends AttributeSource {
+public interface RequestContext {
 
 	/**
 	 * Returns the client event that originated (or triggered) this request.  This 
@@ -125,13 +124,7 @@ public interface RequestContext extends AttributeSource {
 	 * @return the model that can be exposed to a client
 	 */
 	public Map getModel();
-
-	/**
-	 * Get the errors object for a named command object in the flow or
-	 * request scope.
-	 */
-	public Errors getErrors(String name);
-
+	
 	// application transaction demarcation
 
 	/**
@@ -163,5 +156,4 @@ public interface RequestContext extends AttributeSource {
 	 * End the active transaction in the flow execution.
 	 */
 	public void endTransaction();
-	
 }
