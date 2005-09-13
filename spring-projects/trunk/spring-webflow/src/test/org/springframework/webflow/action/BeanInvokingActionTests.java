@@ -25,28 +25,20 @@ import org.springframework.binding.method.Arguments;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * Unit test for the bean invoking actions.
- * 
  * @author Keith Donald
  */
 public class BeanInvokingActionTests extends TestCase {
-
+	
 	public static class Bean {
 		private String datum1;
 
 		private Integer datum2;
 
 		private boolean executed;
-
-		private RequestContext context = null;
-
-		private Map flowScope = null;
-
-		private Map requestScope = null;
 
 		public void execute() {
 			this.executed = true;
@@ -62,14 +54,6 @@ public class BeanInvokingActionTests extends TestCase {
 			this.datum1 = parameter;
 			this.datum2 = parameter2;
 		}
-
-		public void execute(RequestContext context, Map flowScope,
-				Map requestScope) {
-			this.executed = true;
-			this.context = context;
-			this.flowScope = flowScope;
-			this.requestScope = requestScope;
-		}
 	}
 
 	public void testInvokeBeanNoParameters() throws Exception {
@@ -80,7 +64,7 @@ public class BeanInvokingActionTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		context.setProperty("method", new MethodKey("execute"));
 		context.setProperty("bean", "bean");
-		Bean bean = (Bean) beanFactory.getBean("bean");
+		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
 		assertTrue(bean.executed);
 	}
@@ -94,17 +78,15 @@ public class BeanInvokingActionTests extends TestCase {
 		Map parameters = new HashMap();
 		parameters.put("foo", "a string value");
 		context.setLastEvent(new Event(this, "submit", parameters));
-		context.setProperty("method", new MethodKey("execute", new Argument(
-				String.class, "foo")));
+		context.setProperty("method", new MethodKey("execute", new Argument(String.class, "foo")));
 		context.setProperty("bean", "bean");
-		Bean bean = (Bean) beanFactory.getBean("bean");
+		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
 		assertTrue("Didn't execute:", bean.executed);
 		assertEquals("Property not set:", "a string value", bean.datum1);
 	}
 
-	public void testInvokeBeanWithParametersAndTypeConversion()
-			throws Exception {
+	public void testInvokeBeanWithParametersAndTypeConversion() throws Exception {
 		BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction();
 		StaticWebApplicationContext beanFactory = new StaticWebApplicationContext();
 		beanFactory.registerSingleton("bean", Bean.class);
@@ -114,35 +96,14 @@ public class BeanInvokingActionTests extends TestCase {
 		parameters.put("foo", "a string value");
 		parameters.put("bar", "12345");
 		context.setLastEvent(new Event(this, "submit", parameters));
-		context.setProperty("method", new MethodKey("execute", new Arguments(
-				new Argument[] { new Argument(String.class, "foo"),
-						new Argument(Integer.class, "bar") })));
+		context.setProperty("method", new MethodKey("execute", new Arguments(new Argument[] {
+				new Argument(String.class, "foo"), new Argument(Integer.class, "bar") })));
 		context.setProperty("bean", "bean");
-		Bean bean = (Bean) beanFactory.getBean("bean");
+		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
 		assertTrue(bean.executed);
 		assertEquals("Property not set:", "a string value", bean.datum1);
 		assertEquals("Property not set:", new Integer(12345), bean.datum2);
 	}
 
-	public void testInvokeBeanWithScopeParameters() throws Exception {
-		BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction();
-		StaticWebApplicationContext beanFactory = new StaticWebApplicationContext();
-		beanFactory.registerSingleton("bean", Bean.class);
-		action.setBeanFactory(beanFactory);
-		MockRequestContext context = new MockRequestContext();
-		context.setProperty("method", new MethodKey("execute", new Arguments(
-				new Argument[] {
-						new Argument(RequestContext.class, "requestContext"),
-						new Argument(Map.class, "flowScope"),
-						new Argument(Map.class, "requestScope") })));
-		context.setProperty("bean", "bean");
-		context.setLastEvent(new Event(this));
-		Bean bean = (Bean)beanFactory.getBean("bean");
-		action.execute(context);
-		assertTrue(bean.executed);
-		assertSame(bean.context, context);
-		assertSame(bean.requestScope, context.getRequestScope());
-		assertSame(bean.flowScope, context.getFlowScope());
-	}
 }

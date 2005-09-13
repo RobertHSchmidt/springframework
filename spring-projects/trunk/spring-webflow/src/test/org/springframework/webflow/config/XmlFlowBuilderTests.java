@@ -15,9 +15,7 @@
  */
 package org.springframework.webflow.config;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -26,14 +24,11 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
-import org.springframework.webflow.Controller;
-import org.springframework.webflow.ControllerInvocation;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.Scope;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
@@ -71,7 +66,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(flow);
 		assertEquals("testFlow", flow.getId());
 		assertEquals("actionState1", flow.getStartState().getId());
-		assertEquals(8, flow.getStateIds().length);
+		assertEquals(7, flow.getStateIds().length);
 
 		ActionState actionState1 = (ActionState) flow.getState("actionState1");
 		assertNotNull(actionState1);
@@ -112,14 +107,6 @@ public class XmlFlowBuilderTests extends TestCase {
 		transition = viewState2.getRequiredTransition(context);
 		assertEquals("subFlowState2", transition.getTargetStateId());
 
-		ViewState viewState3 = (ViewState)flow.getState("viewState3");
-		assertNotNull(viewState3);
-		assertTrue(viewState3.isMarker());
-		assertEquals(3, viewState3.getControllerInvocations().size());
-		List controllers = new ArrayList(viewState3.getControllerInvocations());
-		ControllerInvocation controllerInvocation3 = (ControllerInvocation)controllers.get(2);
-		context.setLastEvent(createEvent("event3"));
-		
 		SubflowState subFlowState1 = (SubflowState) flow.getState("subFlowState1");
 		assertNotNull(subFlowState1);
 		assertNotNull(subFlowState1.getSubflow());
@@ -140,7 +127,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		context.setLastEvent(createEvent("event2"));
 		assertTrue(subFlowState2.hasTransitionFor(context));
 		transition = subFlowState2.getRequiredTransition(context);
-		assertEquals("viewState3", transition.getTargetStateId());
+		assertEquals("endState2", transition.getTargetStateId());
 
 		EndState endState1 = (EndState) flow.getState("endState1");
 		assertNotNull(endState1);
@@ -208,21 +195,6 @@ public class XmlFlowBuilderTests extends TestCase {
 			}
 			throw new ServiceLookupException(FlowAttributeMapper.class, flowModelMapperId, null);
 		}
-		
-		public Controller getController(String id) throws ServiceLookupException {
-			if ("someBean".equals(id)) {
-				return new Controller() {
-					public Map handle(Scope flowScope, Event event) {
-						return new HashMap();
-					};
-				};
-			}
-			throw new ServiceLookupException(Controller.class, id, null);
-		}
-		
-		public Controller createController(Class controllerImplementationClass, AutowireMode autowireMode) throws ServiceLookupException {
-			return new TestController();
-		}
 	};
 
 	public static class TestAction implements Action {
@@ -230,10 +202,4 @@ public class XmlFlowBuilderTests extends TestCase {
 			return new Event(this, "success");
 		}
 	}
-	
-	public static class TestController implements Controller {
-		public Map handle(Scope flowScope, Event event) {
-			return new HashMap();
-		}
-	}
- }
+}
