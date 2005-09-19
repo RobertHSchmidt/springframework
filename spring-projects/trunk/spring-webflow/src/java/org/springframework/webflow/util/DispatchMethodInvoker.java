@@ -40,7 +40,7 @@ public class DispatchMethodInvoker {
 	/**
 	 * The method parameter types describing the form of the dispatcher methods.
 	 */
-	private Class[] parameterTypes;
+	private Class[] parameterTypes = new Class[0];
 
 	/**
 	 * The dispatch method return type
