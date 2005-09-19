@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
  * <p>
  * Each state is associated with exactly one owning flow definition.
  * Specializations of this class capture all the configuration information needed for
- * a specific type of state. 
+ * a specific kind of state. 
  * <p>
  * Subclasses should implement the <code>doEnter</code> method to execute
  * the processing that should occur when this state is entered, acting on its
@@ -209,7 +209,7 @@ public abstract class State extends AnnotatedObject {
 	
 	public String toString() {
 		ToStringCreator creator =
-			new ToStringCreator(this).append("id", getId()).append("flow", flow == null ? "" : flow.getId()).
+			new ToStringCreator(this).append("id", getId()).append("flow", flow == null ? "<not set>" : flow.getId()).
 					append("entryAction", entryAction);
 		createToString(creator);
 		return creator.toString();
