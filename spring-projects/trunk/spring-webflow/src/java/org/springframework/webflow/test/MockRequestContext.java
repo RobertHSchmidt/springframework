@@ -53,10 +53,6 @@ import org.springframework.webflow.Transition;
  */
 public class MockRequestContext implements RequestContext, FlowExecutionContext {
 	
-	private static final String REQUEST_CONTEXT = "requestContext";
-	private static final String FLOW_SCOPE = "flowScope";
-	private static final String REQUEST_SCOPE = "requestScope";
-	
 	private String key = "Mock Flow Execution";
 
 	private Event sourceEvent;
@@ -83,6 +79,8 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	 * Create a new stub request context.
 	 */
 	public MockRequestContext() {
+		setSourceEvent(new Event(this, "start"));
+		setActiveSession(new MockFlowSession());
 	}
 	
 	/**
@@ -258,7 +256,11 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	}
 	
 	public State getCurrentState() {
-		return activeSession.getCurrentState();
+		State state = activeSession.getCurrentState();
+		if (state == null) {
+			throw new IllegalStateException("Active flow session 'currentState' not set");
+		}
+		return state;
 	}
 
 	/**
@@ -266,7 +268,7 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	 * @param state the current state to set
 	 */
 	public void setCurrentState(State state) {
-		Assert.state(state.getFlow() == getActiveSession().getFlow(), "The current state must be in the active flow");
+		Assert.state(state.getFlow() == getActiveSession().getFlow(), "The current state to set must be a state in the active flow");
 		this.activeSession.setCurrentState(state);
 	}
 	
@@ -297,21 +299,4 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 		}
 		return errors;
 	}
-
-	public boolean containsAttribute(String attributeName) {
-		return (REQUEST_CONTEXT.equals(attributeName) || FLOW_SCOPE.equals(attributeName) || REQUEST_SCOPE.equals(attributeName));
-	}
-
-	public Object getAttribute(String attributeName) {
-		if (REQUEST_CONTEXT.equals(attributeName)) {
-			return this;
-		} else if (FLOW_SCOPE.equals(attributeName)) {
-			return getFlowScope();
-		} else if (REQUEST_SCOPE.equals(attributeName)) {
-			return getRequestScope();
-		} else {
-			return null;
-		}
-	}
-
 }

@@ -16,6 +16,7 @@
 package org.springframework.webflow.test;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
@@ -34,11 +35,23 @@ public class MockFlowSession implements FlowSession {
 	
 	private State state;
 	
-	private FlowSessionStatus status;
+	private FlowSessionStatus status = FlowSessionStatus.ACTIVE;
 	
 	private Scope scope = new Scope(ScopeType.FLOW);
 	
 	private FlowSession parent;
+	
+	public MockFlowSession() {
+		Flow flow = new Flow("mockFlow");
+		new EndState(flow, "end");
+		setFlow(flow);
+		setCurrentState(flow.getStartState());
+	}
+	
+	public MockFlowSession(Flow flow) {
+		setFlow(flow);
+		setCurrentState(flow.getStartState());
+	}
 	
 	public Flow getFlow() {
 		return flow;
