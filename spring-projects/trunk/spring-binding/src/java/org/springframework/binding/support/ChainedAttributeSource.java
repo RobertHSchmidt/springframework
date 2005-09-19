@@ -10,7 +10,7 @@ import org.springframework.binding.AttributeSource;
 public class ChainedAttributeSource implements AttributeSource {
 
 	/**
-	 * The set of sources. 
+	 * The set of sources.
 	 */
 	public AttributeSource[] sources;
 
@@ -19,7 +19,17 @@ public class ChainedAttributeSource implements AttributeSource {
 	 * @param sources the sources
 	 */
 	public ChainedAttributeSource(AttributeSource[] sources) {
+		Assert.notNull(sources, "At least one source is required");
+		assertElementsNotNull(sources);
 		this.sources = sources;
+	}
+
+	public void assertElementsNotNull(AttributeSource[] sources) {
+		for (int i = 0; i < sources.length; i++) {
+			if (sources[i] == null) {
+				throw new IllegalArgumentException("Null element at index [" + i  + "] not allowed");
+			}
+		}
 	}
 
 	public boolean containsAttribute(String attributeName) {
