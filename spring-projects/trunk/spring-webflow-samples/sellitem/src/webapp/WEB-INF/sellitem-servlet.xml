@@ -51,13 +51,9 @@
 	<bean id="sellItem" class="org.springframework.webflow.config.XmlFlowFactoryBean">
 		<property name="location" value="/WEB-INF/sellItem-flow.xml"/>
 	</bean>
-	
-	<bean id="sellItemAction" class="org.springframework.webflow.samples.sellitem.SellItemAction">
-		<property name="validator">
-			<bean class="org.springframework.webflow.samples.sellitem.SaleValidator"/>
-		</property>
-	</bean>
 
+	<bean id="saleProcessor" class="org.springframework.webflow.samples.sellitem.StubSaleProcessor"/>
+	
 	<bean id="statisticsService" class="org.springframework.webflow.execution.jmx.StatisticsService">
 		<constructor-arg ref="flowExecutionManager"/>
 		<property name="enabled" value="true"/>
