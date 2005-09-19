@@ -234,12 +234,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * @return the property value
 	 */
 	protected Object getActionProperty(RequestContext context, String propertyName, Object defaultValue) {
-		if (context.getProperties().containsAttribute(propertyName)) {
-			return (String) context.getProperties().getAttribute(propertyName);
-		}
-		else {
-			return defaultValue;
-		}
+		return ActionUtils.getActionProperty(context, propertyName, defaultValue);
 	}
 
 	/**
@@ -248,17 +243,10 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * @param context the flow execution request context
 	 * @param propertyName the name of the property to get
 	 * @return the property value
-	 * @throws IllegalArgumentException when the property is not defined
+	 * @throws IllegalStateException when the property is not defined
 	 */
 	protected Object getRequiredActionProperty(RequestContext context, String propertyName) throws IllegalStateException {
-		if (context.getProperties().containsAttribute(propertyName)) {
-			return (String) context.getProperties().getAttribute(propertyName);
-		}
-		else {
-			throw new IllegalStateException(
-					"Required action execution property '" + propertyName +
-					"' not present in request context, properties present are: " + context.getProperties());
-		}
+		return ActionUtils.getRequiredActionProperty(context, propertyName);
 	}
 
 	public final Event execute(RequestContext context) throws Exception {
