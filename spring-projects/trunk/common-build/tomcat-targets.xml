@@ -82,7 +82,7 @@
 		<reload url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${project.name}" />
 	</target>
 
-	<target name="tomcat-copy-war" depends="tomcat.init" description="Copy this application .war to tomcat">
+	<target name="tomcat-copy-war" depends="tomcat.init, war" description="Copy this application .war to tomcat">
 		<copy file="${project.war}" todir="${tomcat.deploy.dir}" />
 	</target>
 
