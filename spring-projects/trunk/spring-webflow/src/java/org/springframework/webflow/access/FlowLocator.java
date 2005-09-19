@@ -18,9 +18,9 @@ package org.springframework.webflow.access;
 import org.springframework.webflow.Flow;
 
 /**
- * Service locator interface for retrieving a flow by id. Needed at execution
- * time to load a configured flow instance from a registry. The default registry
- * is typically the Spring application context.
+ * Service locator interface for retrieving a flow by id. Needed at runtime
+ * time to load a configured flow instance from a registry, to support launching
+ * new flow executions. The default registry is typically the Spring application context.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -34,5 +34,4 @@ public interface FlowLocator {
 	 * @throws ServiceLookupException when the flow cannot be found
 	 */
 	public Flow getFlow(String id) throws ServiceLookupException;
-
 }

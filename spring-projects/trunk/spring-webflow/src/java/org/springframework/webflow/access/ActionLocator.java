@@ -18,9 +18,10 @@ package org.springframework.webflow.access;
 import org.springframework.webflow.Action;
 
 /**
- * Service locator interface for retrieving an action by id. The default 
- * backing action registry is typically the Spring application context.
- * Can be used at execution time to lookup actions by id.
+ * Service locator interface for retrieving an action by id. Typically only
+ * needed at configuration time to wire in Action implementations with Flow
+ * Action States. The default backing action registry is typically the Spring
+ * application context. Can be used at execution time to lookup actions by id.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -34,5 +35,4 @@ public interface ActionLocator {
 	 * @throws ServiceLookupException when the action cannot be found
 	 */
 	public Action getAction(String id) throws ServiceLookupException;
-
 }

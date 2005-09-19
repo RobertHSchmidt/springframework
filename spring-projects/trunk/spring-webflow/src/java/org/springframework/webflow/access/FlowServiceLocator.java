@@ -30,7 +30,6 @@ import org.springframework.webflow.Transition;
  * during flow execution!
  * 
  * @author Keith Donald
- * @author Colin Sampaleanu
  * @author Erwin Vervaet
  */
 public interface FlowServiceLocator extends FlowLocator, ActionLocator {
@@ -39,9 +38,9 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	
 	/**
 	 * Request that the registry backed by this locator instantiate the default
-	 * flow implementation class, using the given autowire policy.
-	 * Note: not all registries may support this advanced feature (Spring does
-	 * though ;-)).
+	 * flow implementation class, using the specified autowire policy.
+	 * Implementing this method is optional.
+	 * 
 	 * @param autowireMode the autowire policy
 	 * @return the instantiated (and possibly autowired) flow
 	 * @throws ServiceLookupException when the flow cannot be created
@@ -50,9 +49,9 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	
 	/**
 	 * Request that the registry backed by this locator instantiate the flow
-	 * of the specified implementation class, using the given autowire policy.
-	 * Note: not all registries may support this advanced feature (Spring does
-	 * though ;-)).
+	 * of the specified implementation class, using the specified autowire policy.
+	 * Implementing this method is optional.
+	 * 
 	 * @param implementationClass the flow implementation class
 	 * @param autowireMode the autowire policy
 	 * @return the instantiated (and possibly autowired) flow
@@ -64,6 +63,8 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	 * Lookup a flow of specified implementation class; there must be exactly one
 	 * flow implementation of the specified implementation class in the registry this
 	 * locator queries.
+	 * Implementing this method is optional.
+	 * 
 	 * @param implementationClass the required implementation class
 	 * @return the flow
 	 * @throws ServiceLookupException when the flow cannot be found, or more
@@ -75,9 +76,8 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 
 	/**
 	 * Request that the registry backed by this locator instantiate the state
-	 * of the specified implementation class, using the given autowire policy.
-	 * Note: not all registries may support this advanced feature (Spring does
-	 * though ;-)).
+	 * of the specified implementation class, using the specified autowire policy.
+	 * Implementing this method is optional.
 	 * @param implementationClass the state implementation class
 	 * @param autowireMode the autowire policy
 	 * @return the instantiated (and possibly autowired) state
@@ -86,7 +86,9 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	public State createState(Class implementationClass, AutowireMode autowireMode) throws ServiceLookupException;
 
 	/**
-	 * Lookup a state with specified id.
+	 * Lookup a Flow state with specified id.
+	 * Implementing this method is optional.
+	 * 
 	 * @param id the state id
 	 * @return the state
 	 * @throws ServiceLookupException when the state cannot be found
@@ -94,7 +96,9 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	public State getState(String id) throws ServiceLookupException;
 
 	/**
-	 * Lookup a state of specified implementation class.
+	 * Lookup a state of the specified implementation class.
+	 * Implementing this method is optional.
+	 * 
 	 * @param implementationClass the required implementation class
 	 * @return the state
 	 * @throws ServiceLookupException when the state cannot be found
@@ -105,9 +109,9 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 
 	/**
 	 * Request that the registry backed by this locator instantiate the transition
-	 * of the specified implementation class, using the given autowire policy.
-	 * Note: not all registries may support this advanced feature (Spring does
-	 * though ;-)).
+	 * of the specified implementation class, using the specified autowire policy.
+	 * Implementing this method is optional.
+	 * 
 	 * @param implementationClass the transition implementation class
 	 * @param autowireMode the autowire policy
 	 * @return the instantiated (and possibly autowired) transition
@@ -118,6 +122,8 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 
 	/**
 	 * Lookup a transition with specified id.
+	 * Implementing this method is optional.
+	 * 
 	 * @param id the transition id
 	 * @return the transition
 	 * @throws ServiceLookupException when the transition cannot be found
@@ -126,6 +132,8 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 
 	/**
 	 * Lookup a transition of specified implementation class.
+	 * Implementing this method is optional.
+	 * 
 	 * @param implementationClass the required implementation class
 	 * @return the transition
 	 * @throws ServiceLookupException when the transition cannot be found
@@ -136,9 +144,9 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 
 	/**
 	 * Request that the registry backed by this locator instantiate the action
-	 * of the specified implementation class, using the given autowire policy.
-	 * Note: not all registries may support this advanced feature (Spring does
-	 * though ;-)).
+	 * of the specified implementation class, using the specified autowire policy.
+	 * Implementing this method is optional.
+	 * 
 	 * @param implementationClass the action implementation class
 	 * @param autowireMode the autowire policy
 	 * @return the instantiated (and possibly autowired) action
@@ -147,7 +155,9 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	public Action createAction(Class implementationClass, AutowireMode autowireMode) throws ServiceLookupException;
 
 	/**
-	 * Lookup an action of specified implementation class.
+	 * Lookup an action instance by type that implements the specified implementation class.
+	 * Implementing this method is optional.
+	 * 
 	 * @param implementationClass the required implementation class
 	 * @return the action
 	 * @throws ServiceLookupException when the action cannot be found
@@ -190,8 +200,7 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	/**
 	 * Request that the registry backed by this locator instantiate the flow
 	 * attribute mapper of the specified implementation class, using the given
-	 * autowire policy. Note: not all registries may support this advanced
-	 * feature (Spring does though ;-)).
+	 * autowire policy.
 	 * @param attributeMapperImplementationClass the implementation class
 	 * @param autowireMode the autowire policy
 	 * @return the instantiated (and possibly autowired) attribute mapper
@@ -200,7 +209,7 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 			AutowireMode autowireMode) throws ServiceLookupException;
 
 	/**
-	 * Lookup a flow model mapper with specified id.
+	 * Lookup a flow model attribute mapper with specified id.
 	 * @param id the flow model mapper id
 	 * @return the flow model mapper
 	 * @throws ServiceLookupException when the flow model mapper cannot be found
@@ -208,7 +217,7 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	public FlowAttributeMapper getFlowAttributeMapper(String id) throws ServiceLookupException;
 
 	/**
-	 * Lookup a flow model mapper of specified implementation class.
+	 * Lookup a flow model attribute mapper of the specified implementation class.
 	 * @param implementationClass the required implementation class
 	 * @return the flow model mapper
 	 * @throws ServiceLookupException when the flow model mapper cannot be found
@@ -219,7 +228,8 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	// the conversion service
 	
 	/**
-	 * Returns the service responsible for performing from-string type conversion.
+	 * Returns the service responsible for performing type conversion for the
+	 * webflow system.
 	 * @return the web flow system type conversion service
 	 */
 	public ConversionService getConversionService();
