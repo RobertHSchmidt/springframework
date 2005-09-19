@@ -58,4 +58,6 @@
 	
 	<end-state id="endState2"/>
 
+	<bean id="action1" class="org.springframework.webflow.config.XmlFlowBuilderTests$TestAction"/>
+	
 </webflow>

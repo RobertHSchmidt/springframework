@@ -33,6 +33,7 @@ import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.AutowireMode;
+import org.springframework.webflow.access.FlowServiceLocatorAdapter;
 import org.springframework.webflow.access.ServiceLookupException;
 import org.springframework.webflow.support.FlowConversionService;
 import org.springframework.webflow.support.SimpleViewDescriptorCreator;
@@ -69,6 +70,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals(7, flow.getStateIds().length);
 
 		ActionState actionState1 = (ActionState) flow.getState("actionState1");
+		assertEquals("Wrong action class", TestAction.class, actionState1.getAnnotatedAction().getTargetAction().getClass());
 		assertNotNull(actionState1);
 		assertEquals(5, actionState1.getActionCount());
 		assertEquals(null, actionState1.getAnnotatedAction().getCaption());
@@ -138,6 +140,8 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(endState2);
 		assertTrue(endState2.isMarker());
 		assertNull(endState2.getViewDescriptorCreator());
+		
+		
 	}
 
 	/**

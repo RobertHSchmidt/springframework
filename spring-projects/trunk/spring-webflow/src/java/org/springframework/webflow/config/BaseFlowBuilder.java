@@ -54,7 +54,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	private FlowServiceLocator flowServiceLocator = new BeanFactoryFlowServiceLocator();
 
 	/**
-	 * The <code>Flow</code> produced by this builder.
+	 * The <code>Flow</code> built by this builder.
 	 */
 	private Flow flow;
 
@@ -73,12 +73,6 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 		setFlowServiceLocator(flowServiceLocator);
 	}
 
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		if (flowServiceLocator instanceof BeanFactoryFlowServiceLocator) {
-			((BeanFactoryFlowServiceLocator)flowServiceLocator).setBeanFactory(beanFactory);
-		}
-	}
-	
 	/**
 	 * Returns the flow service location strategy in use.
 	 */
@@ -94,6 +88,12 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 		this.flowServiceLocator = flowServiceLocator;
 	}
 
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		if (flowServiceLocator instanceof BeanFactoryFlowServiceLocator) {
+			((BeanFactoryFlowServiceLocator)flowServiceLocator).setBeanFactory(beanFactory);
+		}
+	}
+	
 	/**
 	 * Get the flow (result) built by this builder.
 	 */
@@ -110,7 +110,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 
 	public Flow getResult() {
 		return getFlow();
-	}
+	}	
 	
 	/**
 	 * Returns the type conversion service used by this builder.

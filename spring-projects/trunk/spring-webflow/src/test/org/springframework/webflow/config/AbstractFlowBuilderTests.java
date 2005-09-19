@@ -31,6 +31,7 @@ import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.AutowireMode;
+import org.springframework.webflow.access.FlowServiceLocatorAdapter;
 import org.springframework.webflow.access.ServiceLookupException;
 
 /**
