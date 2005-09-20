@@ -164,6 +164,5 @@ public class WebFlowNavigationHandler extends NavigationHandler {
 			}
 		}
 		return strategy;
-
 	}
 }

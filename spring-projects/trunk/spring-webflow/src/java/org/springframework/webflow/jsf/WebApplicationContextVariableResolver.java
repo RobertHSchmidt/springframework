@@ -111,5 +111,4 @@ public class WebApplicationContextVariableResolver extends VariableResolver {
 	protected WebApplicationContext getWebApplicationContext(FacesContext facesContext) {
 		return FacesContextUtils.getWebApplicationContext(facesContext);
 	}
-
 }
