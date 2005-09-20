@@ -25,28 +25,33 @@ import org.springframework.web.jsf.DelegatingVariableResolver;
 import org.springframework.web.jsf.FacesContextUtils;
 
 /**
- * Note, this shadows a class that has been added to Spring for v1.2.5. It's here so that there is no
- * need for Web Flow to depend on a CVS version of Spring. As soon as Spring 1.2.5 is 
- * available, this class may be removed, and that version may be used instead.
+ * Note, this shadows a class that has been added to Spring for v1.2.5. It's
+ * here so that there is no need for Web Flow to depend on a CVS version of
+ * Spring. As soon as Spring 1.2.5 is available, this class may be removed, and
+ * that version may be used instead.
  * 
  * Special <code>VariableResolver</code> that exposes the Spring
  * <code>WebApplicationContext</code> instance under a variable named
  * "webApplicationContext".
- *
- * <p>In contrast to DelegatingVariableResolver, this VariableResolver
- * does <i>not</i> resolve JSF variable names as Spring bean names. It rather
- * exposes Spring's root WebApplicationContext <i>itself</i> under a special name.
- * JSF-managed beans can then use Spring's WebApplicationContext API to retrieve
+ * 
+ * <p>
+ * In contrast to DelegatingVariableResolver, this VariableResolver does <i>not</i>
+ * resolve JSF variable names as Spring bean names. It rather exposes Spring's
+ * root WebApplicationContext <i>itself</i> under a special name. JSF-managed
+ * beans can then use Spring's WebApplicationContext API to retrieve
  * Spring-managed beans, access resources, etc.
- *
- * <p>Configure this resolver in your <code>faces-config.xml</code> file as follows:
- *
+ * 
+ * <p>
+ * Configure this resolver in your <code>faces-config.xml</code> file as
+ * follows:
+ * 
  * <pre>
- * &lt;application>
- *   ...
- *   &lt;variable-resolver>org.springframework.web.jsf.WebApplicationContextVariableResolver&lt;/variable-resolver>
- * &lt;/application></pre>
- *
+ *  &lt;application&gt;
+ *    ...
+ *    &lt;variable-resolver&gt;org.springframework.web.jsf.WebApplicationContextVariableResolver&lt;/variable-resolver&gt;
+ *  &lt;/application&gt;
+ * </pre>
+ * 
  * @author Colin Sampaleanu
  * @author Juergen Hoeller
  * @since 1.2.5
@@ -56,32 +61,32 @@ import org.springframework.web.jsf.FacesContextUtils;
 public class WebApplicationContextVariableResolver extends VariableResolver {
 
 	/**
-	 * Name of the exposed WebApplicationContext variable: "webApplicationContext".
+	 * Name of the exposed WebApplicationContext variable:
+	 * "webApplicationContext".
 	 */
 	public static final String WEB_APPLICATION_CONTEXT_VARIABLE_NAME = "webApplicationContext";
 
-
 	protected final VariableResolver originalVariableResolver;
-
 
 	/**
 	 * Create a new WebApplicationContextVariableResolver, using the given
 	 * original VariableResolver.
-	 * <p>A JSF implementation will automatically pass its original resolver into the
-	 * constructor of a configured resolver, provided that there is a corresponding
-	 * constructor argument.
+	 * <p>
+	 * A JSF implementation will automatically pass its original resolver into
+	 * the constructor of a configured resolver, provided that there is a
+	 * corresponding constructor argument.
 	 * @param originalVariableResolver the original VariableResolver
 	 */
 	public WebApplicationContextVariableResolver(VariableResolver originalVariableResolver) {
 		this.originalVariableResolver = originalVariableResolver;
 	}
 
-
 	/**
-	 * Check for the special "webApplicationContext" variable first,
-	 * then delegate to the original VariableResolver.
-	 * <p>If no WebApplicationContext is available, all requests
-	 * will be delegated to the original VariableResolver.
+	 * Check for the special "webApplicationContext" variable first, then
+	 * delegate to the original VariableResolver.
+	 * <p>
+	 * If no WebApplicationContext is available, all requests will be delegated
+	 * to the original VariableResolver.
 	 */
 	public Object resolveVariable(FacesContext context, String name) throws EvaluationException {
 		Object value = null;
@@ -96,8 +101,9 @@ public class WebApplicationContextVariableResolver extends VariableResolver {
 
 	/**
 	 * Retrieve the WebApplicationContext reference to expose.
-	 * <p>Default implementation delegates to FacesContextUtils,
-	 * returning <code>null</code> if no WebApplicationContext found.
+	 * <p>
+	 * Default implementation delegates to FacesContextUtils, returning
+	 * <code>null</code> if no WebApplicationContext found.
 	 * @param facesContext the current JSF context
 	 * @return the Spring web application context
 	 * @see FacesContextUtils#getWebApplicationContext

@@ -22,14 +22,10 @@ import java.util.Map;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.execution.ExternalEvent;
 import org.springframework.webflow.execution.FlowExecutionManager;
-import org.springframework.webflow.execution.servlet.ServletEvent;
 
 /**
  * <p>
@@ -44,206 +40,156 @@ import org.springframework.webflow.execution.servlet.ServletEvent;
  * <code>WebFlowNavigationHandler.STRATEGY_BEAN</code>.
  * </p>
  * 
- * @since 1.0
  * @author Craig McClanahan
+ * @author Keith Donald
  * @author Colin Sampaleanu
  */
 public class WebFlowNavigationStrategy {
 
-	// -------------------------------------------------------- Statoc Variables
+	/**
+	 * <p>
+	 * Prefix on a logical outcome value that identifies a logical outcome as
+	 * the identifier for a web flow that should be entered.
+	 * </p>
+	 */
+	protected static final String WEBFLOW_PREFIX = "webflow:";
 
 	/**
-     * <p>
-     * The request parameter used to represent a flow execution id for an
-     * existing in-progress flow.
-     * </p>
-     */
-	protected static final String FLOW_EXECUTION_ID_PARAMETER = "_flowExecutionId";
+	 * The Spring webflow execution manager.
+	 */
+	private FlowExecutionManager flowExecutionManager;
 
 	/**
-     * <p>
-     * Prefix on a logical outcome value that identifies a logical outcome as
-     * the identifier for a web flow that should be entered.
-     * </p>
-     */
-	protected static final String PREFIX					  = "webflow:";
-
-	// -------------------------------------------------------------- Properties
-
-	// ---------------------------------------------------------- Public Methods
-
-	/**
-     * <p>
-     * Return <code>true</code> if there is an existing flow execution in
-     * progress for the current request. Implementors must ensure that the
-     * algorithm used to makes this determination matches the determination that
-     * will be made by the <code>FlowExecutionManager</code> that is being
-     * used. The default implementation looks for a request parameter named by
-     * <code>WebFlowNavigationStrategy.FLOW_EXECUTION_ID</code>.
-     * </p>
-     * 
-     * @param context
-     *            <code>FacesContext</code> for the current request
-     * @param fromAction
-     *            The action binding expression that was evaluated to retrieve
-     *            the specified outcome (if any)
-     * @param outcome
-     *            The logical outcome returned by the specified action
-     */
-	public boolean active(FacesContext context, String fromAction, String outcome) {
-
-		return context.getExternalContext().getRequestParameterMap().containsKey(
-				FLOW_EXECUTION_ID_PARAMETER);
-
+	 * Create a web flow navigation strategy that delegates to the flow
+	 * execution manager
+	 * @param flowExecutionManager the execution manager
+	 */
+	public WebFlowNavigationStrategy(FlowExecutionManager flowExecutionManager) {
+		this.flowExecutionManager = flowExecutionManager;
 	}
 
 	/**
-     * <p>
-     * Create a new flow execution for the current request. Proceed until a
-     * <code>ViewDescriptor</code> is returned describing the next view that
-     * should be rendered.
-     * </p>
-     * 
-     * @param context
-     *            <code>FacesContext</code> for the current request
-     * @param fromAction
-     *            The action binding expression that was evaluated to retrieve
-     *            the specified outcome (if any)
-     * @param outcome
-     *            The logical outcome returned by the specified action
-     * @param manager
-     *            <code>FlowExecutionManager</code> used to manage this flow
-     */
-	public ViewDescriptor create(FacesContext context, String fromAction, String outcome,
-			FlowExecutionManager manager) throws Exception {
-
-		// we need to get the right flow ID into the event as a param
-		String flowId = outcome.substring(PREFIX.length());
-		Map params = new HashMap();
-		params.put(FlowExecutionManager.FLOW_ID_PARAMETER, flowId);
-		return manager.onEvent(event(context, params, fromAction, outcome));
-
-	}
-
-	/**
-     * <p>
-     * Return <code>true</code> if the current request is asking for the
-     * creation of a new flow. The default implementation examines the logical
-     * outcome to see if it starts with the prefix specified by
-     * <code>WebFlowNavigationStrategy.PREFIX</code>.
-     * </p>
-     * 
-     * @param context
-     *            <code>FacesContext</code> for the current request
-     * @param fromAction
-     *            The action binding expression that was evaluated to retrieve
-     *            the specified outcome (if any)
-     * @param outcome
-     *            The logical outcome returned by the specified action
-     */
-	public boolean creating(FacesContext context, String fromAction, String outcome) {
-
+	 * <p>
+	 * Return <code>true</code> if the current request is asking for the
+	 * creation of a new flow. The default implementation examines the logical
+	 * outcome to see if it starts with the prefix specified by
+	 * <code>WebFlowNavigationStrategy.PREFIX</code>.
+	 * </p>
+	 * @param context <code>FacesContext</code> for the current request
+	 * @param fromAction The action binding expression that was evaluated to
+	 * retrieve the specified outcome (if any)
+	 * @param outcome The logical outcome returned by the specified action
+	 */
+	public boolean isFlowLaunchRequest(FacesContext context, String fromAction, String outcome) {
 		if (outcome == null) {
 			return false;
 		}
-		return outcome.startsWith(PREFIX);
-
+		return outcome.startsWith(WEBFLOW_PREFIX);
 	}
 
 	/**
-     * <p>
-     * Construct and return an <code>Event</code> reflecting the flow
-     * execution event that represents this request. The default implementation
-     * constructs and returns a <code>ServletEvent</code> reflecting the
-     * current request. FIXME - this will need to be refactored to support
-     * portlet events as well as servlet events -- or perhaps a FacesEvent can
-     * be constructed that hides the environmental differences.
-     * </p>
-     * 
-     * @param context
-     *            <code>FacesContext</code> for the current request
-     * @param parameters
-     *            Optional additional event parameters
-     * @param fromAction
-     *            The action binding expression that was evaluated to retrieve
-     *            the specified outcome (if any)
-     * @param outcome
-     *            The logical outcome returned by the specified action
-     */
-	public Event event(FacesContext context, Map parameters, String fromAction, String outcome) {
-
-		HttpServletRequest request = (HttpServletRequest) context.getExternalContext()
-				.getRequest();
-		HttpServletResponse response = (HttpServletResponse) context.getExternalContext()
-				.getResponse();
-		return new ServletEvent(request, response, parameters);
-
+	 * <p>
+	 * Create a new flow execution for the current request. Proceed until a
+	 * <code>ViewDescriptor</code> is returned describing the next view that
+	 * should be rendered.
+	 * </p>
+	 * @param context <code>FacesContext</code> for the current request
+	 * @param fromAction The action binding expression that was evaluated to
+	 * retrieve the specified outcome (if any)
+	 * @param outcome The logical outcome returned by the specified action
+	 * @param manager <code>FlowExecutionManager</code> used to manage this
+	 * flow
+	 */
+	public ViewDescriptor launchFlowExecution(FacesContext context, String fromAction, String outcome) {
+		Map parameters = new HashMap(1);
+		// strip of the webflow prefix, leaving the flowId to launch
+		String flowId = outcome.substring(WEBFLOW_PREFIX.length());
+		parameters.put(FlowExecutionManager.FLOW_ID_PARAMETER, flowId);
+		return flowExecutionManager.onEvent(createEvent(context, fromAction, outcome, parameters));
 	}
 
 	/**
-     * <p>
-     * Render the view specified by this <code>ViewDescriptor</code>, after
-     * exposing any model data it includes.
-     * </p>
-     * 
-     * @param context
-     *            <code>FacesContext</code> for the current request
-     * @param fromAction
-     *            The action binding expression that was evaluated to retrieve
-     *            the specified outcome (if any)
-     * @param outcome
-     *            The logical outcome returned by the specified action
-     * @param manager
-     *            <code>FlowExecutionManager</code> used to manage this flow
-     * @param descriptor
-     *            <code>ViewDescriptor</code> for the view to render
-     */
-	public void render(FacesContext context, String fromAction, String outcome,
-			FlowExecutionManager manager, ViewDescriptor descriptor) {
+	 * <p>
+	 * Return <code>true</code> if there is an existing flow execution in
+	 * progress for the current request. Implementors must ensure that the
+	 * algorithm used to makes this determination matches the determination that
+	 * will be made by the <code>FlowExecutionManager</code> that is being
+	 * used. The default implementation looks for a request parameter named by
+	 * <code>WebFlowNavigationStrategy.FLOW_EXECUTION_ID</code>.
+	 * </p>
+	 * @param context <code>FacesContext</code> for the current request
+	 * @param fromAction The action binding expression that was evaluated to
+	 * retrieve the specified outcome (if any)
+	 * @param outcome The logical outcome returned by the specified action
+	 */
+	public boolean isFlowExecutionParticipationRequest(FacesContext context, String fromAction, String outcome) {
+		return context.getExternalContext().getRequestParameterMap().containsKey(
+				FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER);
+	}
 
-		// Assume that the view name in the descriptor corresponds to
-		// a JSF view identifier
-		String viewId = descriptor.getViewName();
-		
+	/**
+	 * <p>
+	 * Resume an active flow execution for the current request. Proceed until a
+	 * <code>ViewDescriptor</code> is returned describing the next view that
+	 * should be rendered.
+	 * </p>
+	 * 
+	 * @param context <code>FacesContext</code> for the current request
+	 * @param fromAction The action binding expression that was evaluated to
+	 * retrieve the specified outcome (if any)
+	 * @param outcome The logical outcome returned by the specified action
+	 * @param flowExecutionManager <code>FlowExecutionManager</code> used to
+	 * manage this flow
+	 */
+	public ViewDescriptor resumeFlowExecution(FacesContext context, String fromAction, String outcome) {
+		return flowExecutionManager.onEvent(createEvent(context, fromAction, outcome, null));
+	}
+
+	/**
+	 * <p>
+	 * Construct and return an <code>Event</code> reflecting the flow
+	 * execution event that represents this request. The default implementation
+	 * constructs and returns a <code>ServletEvent</code> reflecting the
+	 * current request. FIXME - this will need to be refactored to support
+	 * portlet events as well as servlet events -- or perhaps a FacesEvent can
+	 * be constructed that hides the environmental differences.
+	 * </p>
+	 * 
+	 * @param context <code>FacesContext</code> for the current request
+	 * @param parameters Optional additional event parameters
+	 * @param fromAction The action binding expression that was evaluated to
+	 * retrieve the specified outcome (if any)
+	 * @param outcome The logical outcome returned by the specified action
+	 */
+	public Event createEvent(FacesContext context, String fromAction, String outcome, Map parameters) {
+		return new JsfEvent(outcome, context, fromAction, parameters);
+	}
+
+	/**
+	 * <p>
+	 * Render the view specified by this <code>ViewDescriptor</code>, after
+	 * exposing any model data it includes.
+	 * </p>
+	 * 
+	 * @param context <code>FacesContext</code> for the current request
+	 * @param fromAction The action binding expression that was evaluated to
+	 * retrieve the specified outcome (if any)
+	 * @param outcome The logical outcome returned by the specified action
+	 * @param manager <code>FlowExecutionManager</code> used to manage this
+	 * flow
+	 * @param viewDescriptor <code>ViewDescriptor</code> for the view to
+	 * render
+	 */
+	public void renderView(FacesContext context, String fromAction, String outcome, ViewDescriptor viewDescriptor) {
 		// Expose model data specified in the descriptor
-		context.getExternalContext().getRequestMap().putAll(descriptor.getModel());
-
+		context.getExternalContext().getRequestMap().putAll(viewDescriptor.getModel());
 		// Stay on the same view if requested
-		if (viewId == null) {
+		if (viewDescriptor.getViewName() == null) {
 			return;
 		}
-
 		// Create the specified view so that it can be rendered
 		ViewHandler vh = context.getApplication().getViewHandler();
-		UIViewRoot view = vh.createView(context, viewId);
+		UIViewRoot view = vh.createView(context, viewDescriptor.getViewName());
 		context.setViewRoot(view);
-
 	}
-
-	/**
-     * <p>
-     * Resume an active flow execution for the current request. Proceed until a
-     * <code>ViewDescriptor</code> is returned describing the next view that
-     * should be rendered.
-     * </p>
-     * 
-     * @param context
-     *            <code>FacesContext</code> for the current request
-     * @param fromAction
-     *            The action binding expression that was evaluated to retrieve
-     *            the specified outcome (if any)
-     * @param outcome
-     *            The logical outcome returned by the specified action
-     * @param manager
-     *            <code>FlowExecutionManager</code> used to manage this flow
-     */
-	public ViewDescriptor resume(FacesContext context, String fromAction, String outcome,
-			FlowExecutionManager manager) throws Exception {
-
-		// create an event with the right id, and have Web Flow execute it
-		Map params = new HashMap();
-		params.put(ExternalEvent.EVENT_ID_PARAMETER, outcome);
-		return manager.onEvent(event(context, params, fromAction, outcome));
-	}
-
 }
