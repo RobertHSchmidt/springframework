@@ -13,13 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.execution.servlet;
+package org.springframework.webflow.execution;
 
-import javax.servlet.http.HttpSession;
-
-import org.springframework.webflow.Event;
+import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.execution.AbstractTokenTransactionSynchronizer;
 
 /**
  * A transaction synchronizer that uses a <i>synchronizer token</i> stored in
@@ -30,49 +27,48 @@ import org.springframework.webflow.execution.AbstractTokenTransactionSynchronize
  * flow execution storage strategies, where you have several physical copies
  * of the flow execution for a single logical flow execution.
  * 
- * @see org.springframework.webflow.execution.servlet.HttpSessionContinuationFlowExecutionStorage
+ * @see org.springframework.webflow.execution.ContinuationFlowExecutionStorage
  * 
  * @author Erwin Vervaet
  */
-public class HttpSessionTokenTransactionSynchronizer extends AbstractTokenTransactionSynchronizer {
+public class ExternallyScopedTokenTransactionSynchronizer extends AbstractTokenTransactionSynchronizer {
 
-	private boolean createSession = true;
+	private ExternalScopeAccessor scopeAccessor;
 
+	private boolean createScope = true;
+
+	public ExternallyScopedTokenTransactionSynchronizer(ExternalScopeAccessor scopeAccessor) {
+		Assert.notNull(scopeAccessor, "The scope accessor property is required to load and save flow executions");
+		this.scopeAccessor = scopeAccessor;
+	}
 	/**
 	 * Returns whether or not an HTTP session should be created if non
 	 * exists. Defaults to true.
 	 */
-	public boolean isCreateSession() {
-		return createSession;
+	public boolean isCreateScope() {
+		return createScope;
 	}
 
 	/**
 	 * Set whether or not an HTTP session should be created if non exists.
 	 */
-	public void setCreateSession(boolean createSession) {
-		this.createSession = createSession;
+	public void setCreateScope(boolean createScope) {
+		this.createScope = createScope;
 	}
 
 	public String getToken(RequestContext context) {
-		return (String)getHttpSession(context.getSourceEvent()).getAttribute(getTokenName(context));
+		return (String)scopeAccessor.getScope(context.getSourceEvent(), createScope).getAttribute(getTokenName(context));
 	}
 
 	public void setToken(RequestContext context, String token) {
-		getHttpSession(context.getSourceEvent()).setAttribute(getTokenName(context), token);
+		scopeAccessor.getScope(context.getSourceEvent(), createScope).setAttribute(getTokenName(context), token);
 	}
 
 	public void clearToken(RequestContext context) {
-		getHttpSession(context.getSourceEvent()).removeAttribute(getTokenName(context));
+		scopeAccessor.getScope(context.getSourceEvent(), createScope).removeAttribute(getTokenName(context));
 	}
 	
 	// subclassing hooks
-	
-	/**
-	 * Helper to get the HTTP session accessible from given event.
-	 */
-	protected HttpSession getHttpSession(Event event) {
-		return ServletEvent.getSession(event, isCreateSession());
-	}
 	
 	/**
 	 * Generate a pseudo unique token name based on the information available in
@@ -92,6 +88,5 @@ public class HttpSessionTokenTransactionSynchronizer extends AbstractTokenTransa
 		// it identifies the 'logical' flow execution
 		tokenName.append(context.getFlowExecutionContext().getKey());
 		return tokenName.toString();
-	}
-	
+	}	
 }

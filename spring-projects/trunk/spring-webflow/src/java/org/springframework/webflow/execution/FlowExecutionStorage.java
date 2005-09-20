@@ -52,14 +52,14 @@ public interface FlowExecutionStorage {
 	 * the storage.
 	 * @param id the unique id of the flow execution, as returned by the
 	 *        {@link #save(Serializable, FlowExecution, Event) save} method
-	 * @param requestingEvent the event requesting the load of the flow execution
+	 * @param sourceEvent the event requesting the load of the flow execution
 	 * @return the loaded flow execution
 	 * @throws NoSuchFlowExecutionException when there is no flow execution
 	 *         with specified id in the storage
 	 * @throws FlowExecutionStorageException when there is a technical problem
 	 *         accessing the flow execution storage
 	 */
-	public FlowExecution load(Serializable id, Event requestingEvent) throws NoSuchFlowExecutionException,
+	public FlowExecution load(Serializable id, Event sourceEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException;
 
 	/**
@@ -67,24 +67,24 @@ public interface FlowExecutionStorage {
 	 * @param id the unique id of the flow execution, or <code>null</code>
 	 *        if the flow execution does not yet have an id (e.g. was not
 	 *        previously saved)
-	 * @param requestingEvent the event requesting the save of the flow execution
+	 * @param sourceEvent the event requesting the save of the flow execution
 	 * @param flowExecution the flow execution to save
 	 * @return the unique id that actually identifies the saved flow execution,
 	 *         this could be different from the id passed into the method
 	 * @throws FlowExecutionStorageException when there is a technical problem
 	 *         accessing the flow execution storage
 	 */
-	public Serializable save(Serializable id, FlowExecution flowExecution, Event requestingEvent)
+	public Serializable save(Serializable id, FlowExecution flowExecution, Event sourceEvent)
 			throws FlowExecutionStorageException;
 
 	/**
 	 * Remove the identified flow execution from the storage.
 	 * @param id the unique id of the flow execution, as returned by the
 	 *        {@link #save(Serializable, FlowExecution, Event) save} method
-	 * @param requestingEvent the event requesting the remove of the flow execution
+	 * @param sourceEvent the event requesting the remove of the flow execution
 	 * @throws FlowExecutionStorageException when there is a technical problem
 	 *         accessing the flow execution storage
 	 */
-	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException;
+	public void remove(Serializable id, Event sourceEvent) throws FlowExecutionStorageException;
 
 }

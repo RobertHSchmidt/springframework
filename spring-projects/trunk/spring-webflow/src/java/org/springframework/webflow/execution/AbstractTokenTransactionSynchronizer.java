@@ -22,11 +22,11 @@ import org.springframework.webflow.util.RandomGuid;
 
 /**
  * Abstract base class to ease implementation of <i>synchronizer token</i>
- * based transaction synchronizers. The <i>synchronizer token</i> is a classic J2EE
- * pattern (see Core J2EE Patterns by Alur, Crupi, and Malks) that can be used
- * to monitor and control the request flow and client access to certain resources.
- * It provides an elegant way to handle situations where clients might make duplicate
- * resource requests.
+ * based transaction synchronizers. The <i>synchronizer token</i> is a classic
+ * J2EE pattern (see Core J2EE Patterns by Alur, Crupi, and Malks) that can be
+ * used to monitor and control the request flow and client access to certain
+ * resources. It provides an elegant way to handle situations where clients
+ * might make duplicate resource requests.
  * 
  * @see org.springframework.webflow.execution.FlowScopeTokenTransactionSynchronizer
  * 
@@ -45,21 +45,20 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	 * using a request parameter with this name ("_txToken").
 	 */
 	public static final String TRANSACTION_TOKEN_PARAMETER_NAME = "_txToken";
-	
-	
+
 	private String transactionTokenAttributeName = TRANSACTION_TOKEN_ATTRIBUTE_NAME;
-	
+
 	private String transactionTokenParameterName = TRANSACTION_TOKEN_PARAMETER_NAME;
-	
+
 	private boolean secure = false;
-	
+
 	/**
 	 * Get the name for the transaction token attribute. Defaults to "txToken".
 	 */
 	public String getTransactionTokenAttributeName() {
 		return transactionTokenAttributeName;
 	}
-	
+
 	/**
 	 * Set the name for the transaction token attribute.
 	 */
@@ -74,7 +73,7 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	public String getTransactionTokenParameterName() {
 		return transactionTokenParameterName;
 	}
-	
+
 	/**
 	 * Set the name for the transaction token parameter in request events.
 	 */
@@ -89,7 +88,7 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	public boolean isSecure() {
 		return secure;
 	}
-	
+
 	/**
 	 * Set whether or not the transaction synchronizer tokens should be
 	 * cryptographically strong.
@@ -97,7 +96,7 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	public void setSecure(boolean secure) {
 		this.secure = secure;
 	}
-	
+
 	public boolean inTransaction(RequestContext context, boolean end) {
 		// we use the source event because we want to check that the
 		// client request that came into the system has a transaction token!
@@ -114,20 +113,20 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 		}
 		return txToken.equals(tokenValue);
 	}
-	
+
 	public void assertInTransaction(RequestContext context, boolean end) throws IllegalStateException {
-		Assert.state(inTransaction(context, end), 
+		Assert.state(inTransaction(context, end),
 				"The request is not executing in the context of an application transaction");
 	}
-	
+
 	public void beginTransaction(RequestContext context) {
 		setToken(context, generateToken());
 	}
-	
+
 	public void endTransaction(RequestContext context) {
 		clearToken(context);
 	}
-	
+
 	// subclassing hooks
 
 	/**
@@ -144,19 +143,20 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	 * @return the retreived token, or null if no token could be found
 	 */
 	public abstract String getToken(RequestContext context);
-	
+
 	/**
-	 * Set given token in whatever token storage is being used (e.g the flow scope).
+	 * Set given token in whatever token storage is being used (e.g the flow
+	 * scope).
 	 * @param context the flow execution request context
 	 * @param token the token value to set
 	 */
 	public abstract void setToken(RequestContext context, String token);
-	
+
 	/**
 	 * Clear the token from whatever token storage is being used (e.g the flow
 	 * scope). This will end transactional processing.
 	 * @param context the flow execution request context
 	 */
 	public abstract void clearToken(RequestContext context);
-	
+
 }

@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.servlet;
+package org.springframework.webflow.execution;
 
 import java.io.Serializable;
 
-import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionContinuation;
-import org.springframework.webflow.execution.FlowExecutionStorageException;
-import org.springframework.webflow.execution.NoSuchFlowExecutionException;
 
 /**
  * Flow execution storage that stores flow executions as <i>continuations</i>
@@ -42,10 +37,14 @@ import org.springframework.webflow.execution.NoSuchFlowExecutionException;
  * 
  * @author Erwin Vervaet
  */
-public class HttpSessionContinuationFlowExecutionStorage extends HttpSessionFlowExecutionStorage {
+public class ContinuationFlowExecutionStorage extends DefaultFlowExecutionStorage {
 
 	private boolean compress = false;
 
+	public ContinuationFlowExecutionStorage(ExternalScopeAccessor scopeAccessor) {
+		super(scopeAccessor);
+	}
+	
 	/**
 	 * Returns whether or not continuations should be compressed.
 	 */
@@ -60,11 +59,10 @@ public class HttpSessionContinuationFlowExecutionStorage extends HttpSessionFlow
 		this.compress = compress;
 	}
 
-	public FlowExecution load(Serializable id, Event requestingEvent) throws NoSuchFlowExecutionException,
+	public FlowExecution load(Serializable id, Event sourceEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		try {
-			FlowExecutionContinuation continuation = (FlowExecutionContinuation)WebUtils.getRequiredSessionAttribute(
-					ServletEvent.getRequest(requestingEvent), attributeName(id));
+			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getFlowExecutionAttribute(id, sourceEvent);
 			return continuation.getFlowExecution();
 		}
 		catch (IllegalStateException e) {
@@ -72,12 +70,11 @@ public class HttpSessionContinuationFlowExecutionStorage extends HttpSessionFlow
 		}
 	}
 
-	public Serializable save(Serializable id, FlowExecution flowExecution, Event requestingEvent)
+	public Serializable save(Serializable id, FlowExecution flowExecution, Event sourceEvent)
 			throws FlowExecutionStorageException {
 		// generate a new id for each continuation
 		id = createId();
-		ServletEvent.getSession(requestingEvent, isCreateSession()).setAttribute(
-				attributeName(id), new FlowExecutionContinuation(flowExecution, isCompress()));
+		setFlowExecutionAttribute(id, new FlowExecutionContinuation(flowExecution, isCompress()), sourceEvent);
 		return id;
 	}
 

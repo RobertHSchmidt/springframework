@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.servlet;
+package org.springframework.webflow.execution;
 
 import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.web.util.WebUtils;
+import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionStorage;
-import org.springframework.webflow.execution.FlowExecutionStorageException;
-import org.springframework.webflow.execution.NoSuchFlowExecutionException;
 import org.springframework.webflow.util.RandomGuid;
 
 /**
@@ -37,42 +33,51 @@ import org.springframework.webflow.util.RandomGuid;
  * 
  * @author Erwin Vervaet
  */
-public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
+public class DefaultFlowExecutionStorage implements FlowExecutionStorage {
 
 	/**
 	 * Logger, can be used in subclasses.
 	 */
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private boolean createSession = true;
+	private ExternalScopeAccessor scopeAccessor;
+	
+	private boolean createScope = true;
 
+	public DefaultFlowExecutionStorage(ExternalScopeAccessor scopeAccessor) {
+		Assert.notNull(scopeAccessor, "The scope accessor property is required to load and save flow executions");
+		this.scopeAccessor = scopeAccessor;
+	}
+	
 	/**
 	 * Returns whether or not an HTTP session should be created if non
 	 * exists. Defaults to true.
 	 */
-	public boolean isCreateSession() {
-		return createSession;
+	public boolean isCreateScope() {
+		return createScope;
 	}
 
 	/**
 	 * Set whether or not an HTTP session should be created if non exists.
 	 */
-	public void setCreateSession(boolean createSession) {
-		this.createSession = createSession;
+	public void setCreateScope(boolean createScope) {
+		this.createScope = createScope;
 	}
 
-	public FlowExecution load(Serializable id, Event requestingEvent) throws NoSuchFlowExecutionException,
+	public FlowExecution load(Serializable id, Event sourceEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		try {
-			return (FlowExecution)WebUtils.getRequiredSessionAttribute(
-					ServletEvent.getRequest(requestingEvent), attributeName(id));
+			if (logger.isDebugEnabled()) {
+				logger.debug("Loading flow execution from HTTP session with id '" + id + "'");
+			}
+			return (FlowExecution)getFlowExecutionAttribute(id, sourceEvent);
 		}
 		catch (IllegalStateException e) {
 			throw new NoSuchFlowExecutionException(id, e);
 		}
 	}
 
-	public Serializable save(Serializable id, FlowExecution flowExecution, Event requestingEvent)
+	public Serializable save(Serializable id, FlowExecution flowExecution, Event sourceEvent)
 			throws FlowExecutionStorageException {
 		if (id == null) {
 			id = createId();
@@ -83,19 +88,31 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 		// always update session attribute, even if just overwriting
 		// an existing one to make sure the servlet engine knows that this
 		// attribute has changed!
-		ServletEvent.getSession(requestingEvent, isCreateSession()).setAttribute(attributeName(id), flowExecution);
+		setFlowExecutionAttribute(id, flowExecution, sourceEvent);
 		return id;
 	}
 
-	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException {
+	public void remove(Serializable id, Event sourceEvent) throws FlowExecutionStorageException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removing flow execution with id '" + id + "' from HTTP session");
 		}
-		ServletEvent.getSession(requestingEvent, isCreateSession()).removeAttribute(attributeName(id));
+		removeFlowExecutionAttribute(id, sourceEvent);
 	}
 	
 	// subclassing hooks
 
+	protected Object getFlowExecutionAttribute(Serializable id, Event sourceEvent) {
+		return scopeAccessor.getScope(sourceEvent, createScope).getAttribute(attributeName(id));
+	}
+	
+	protected Object setFlowExecutionAttribute(Serializable id, Object value, Event sourceEvent) {
+		return scopeAccessor.getScope(sourceEvent, createScope).setAttribute(attributeName(id), value);
+	}
+	
+	protected void removeFlowExecutionAttribute(Serializable id, Event sourceEvent) {
+		scopeAccessor.getScope(sourceEvent, createScope).removeAttribute(attributeName(id));
+	}
+	
 	/**
 	 * Helper to generate a unique id for a flow execution in the storage.
 	 */
@@ -109,5 +126,4 @@ public class HttpSessionFlowExecutionStorage implements FlowExecutionStorage {
 	protected String attributeName(Serializable id) {
 		return FlowExecution.class.getName() + "." + id;
 	}
-
 }
