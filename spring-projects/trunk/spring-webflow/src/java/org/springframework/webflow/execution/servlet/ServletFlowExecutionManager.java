@@ -102,5 +102,4 @@ public class ServletFlowExecutionManager extends FlowExecutionManager {
 	protected Event createEvent(HttpServletRequest request, HttpServletResponse response) {
 		return new ServletEvent(request, response);
 	}
-
 }
