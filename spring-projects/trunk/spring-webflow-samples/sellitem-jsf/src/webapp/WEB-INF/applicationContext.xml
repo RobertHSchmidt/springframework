@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<!--
+		Custom configuration of the HTTP request flow execution manager.
+		Note how you can just change the flow execution storage strategy without any impact
+		on the views!
+	-->	
+	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.servlet.ServletFlowExecutionManager">
+		<property name="listener">
+			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
+		</property>
+		<property name="storage">
+			<bean class="org.springframework.webflow.execution.servlet.HttpSessionContinuationFlowExecutionStorage"/>
+		</property>
+		<!-- 
+		<property name="storage">
+			<bean class="org.springframework.webflow.execution.servlet.HttpSessionFlowExecutionStorage"/>
+		</property>
+		-->
+		<!-- 
+		<property name="storage">
+			<bean class="org.springframework.webflow.execution.ClientContinuationFlowExecutionStorage">
+				<property name="compress" value="true"/>
+			</bean>
+		</property>
+		-->
+	</bean>
+	
+	<bean id="sellItem" class="org.springframework.webflow.config.XmlFlowFactoryBean">
+		<property name="location" value="/WEB-INF/sellItem-flow.xml"/>
+	</bean>
+	
+	<bean id="sellItemAction" class="org.springframework.webflow.samples.sellitem.SellItemAction">
+		<property name="validator">
+			<bean class="org.springframework.webflow.samples.sellitem.SaleValidator"/>
+		</property>
+	</bean>
+
+	<bean id="statisticsService" class="org.springframework.webflow.execution.jmx.StatisticsService">
+		<constructor-arg ref="flowExecutionManager"/>
+		<property name="enabled" value="true"/>
+	</bean>
+</beans>
