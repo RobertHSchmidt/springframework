@@ -229,7 +229,9 @@ public class Event extends EventObject implements AttributeSource {
 	 * Add given parameters to the set of parameters of this event.
 	 */
 	protected void addParameters(Map parameters) {
-		this.parameters.putAll(parameters);
+		if (parameters != null) {
+			this.parameters.putAll(parameters);
+		}
 	}
 
 	// implementing AttributeAccessor

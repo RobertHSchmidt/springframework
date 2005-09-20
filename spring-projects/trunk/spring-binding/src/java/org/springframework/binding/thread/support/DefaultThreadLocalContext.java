@@ -65,6 +65,10 @@ public class DefaultThreadLocalContext implements ThreadLocalContext, ThreadClea
 		return put(attributeName, value);
 	}
 
+	public Object removeAttribute(String attributeName) {
+		return getThreadLocalStorageMap().remove(attributeName);
+	}
+	
 	public Object get(Object key) {
 		Map map = getThreadLocalStorageMap();
 		return map.get(key);
