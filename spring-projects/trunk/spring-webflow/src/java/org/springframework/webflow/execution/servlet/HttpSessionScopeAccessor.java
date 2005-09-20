@@ -18,6 +18,14 @@ public class HttpSessionScopeAccessor implements ExternalScopeAccessor {
 			this.session = session;
 		}
 
+		public boolean containsAttribute(String attributeName) {
+			return session.getAttribute(attributeName) != null;
+		}
+
+		public Object getAttribute(String attributeName) {
+			return session.getAttribute(attributeName);
+		}
+
 		public Object removeAttribute(String attributeName) {
 			Object oldValue = session.getAttribute(attributeName);
 			session.removeAttribute(attributeName);
@@ -28,14 +36,6 @@ public class HttpSessionScopeAccessor implements ExternalScopeAccessor {
 			Object oldValue = session.getAttribute(attributeName);
 			session.setAttribute(attributeName, attributeValue);
 			return oldValue;
-		}
-
-		public boolean containsAttribute(String attributeName) {
-			return session.getAttribute(attributeName) != null;
-		}
-
-		public Object getAttribute(String attributeName) {
-			return session.getAttribute(attributeName);
 		}
 	}
 }
