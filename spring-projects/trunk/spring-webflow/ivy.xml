@@ -54,9 +54,9 @@
     <dependency	org="apache" name="commons-el" rev="1.0" conf="jsf->default"/>
     <dependency	org="apache" name="commons-fileupload" rev="1.0" conf="jsf->default"/>
     <dependency	org="apache" name="myfaces" rev="1.1.0" conf="buildtime,jsf->default">
-		<artifact name="myfaces-jsf-api" type="jar"/>
+		<artifact name="myfaces-api" type="jar"/>
 		<artifact name="myfaces-impl" type="jar"/>
-		<artifact name="myfaces-extensions" type="jar"/>
+		<artifact name="tomahawk" type="jar"/>
 	</dependency>
 
     <!-- mixed dependencies -->
