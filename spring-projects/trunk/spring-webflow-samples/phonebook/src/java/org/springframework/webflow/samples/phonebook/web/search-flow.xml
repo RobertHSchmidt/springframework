@@ -6,9 +6,9 @@
 <webflow id="searchFlow" start-state="displayCriteria">
 
 	<view-state id="displayCriteria" view="searchCriteria">
-		<entry>
+		<entry-action>
 			<action bean="searchFormAction" method="setupForm"/>
-		</entry>
+		</entry-action>
 		<transition on="search" to="executeSearch">
 			<action bean="searchFormAction" method="bindAndValidate"/>
 		</transition>

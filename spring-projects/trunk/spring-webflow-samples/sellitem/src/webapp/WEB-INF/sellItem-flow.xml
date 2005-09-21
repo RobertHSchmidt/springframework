@@ -5,9 +5,9 @@
 <webflow id="sellItem" start-state="enterPriceAndItemCount">
 
 	<view-state id="enterPriceAndItemCount" view="priceAndItemCountForm">
-		<entry>
+		<entry-action>
 			<action bean="sellItemAction" method="setupForm"/>
-		</entry>
+		</entry-action>
 		<transition on="submit" to="enterCategory">
 			<action bean="sellItemAction" method="bindAndValidate">
 				<property name="validatorMethod" value="validatePriceAndItemCount"/>
