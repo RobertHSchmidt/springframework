@@ -94,19 +94,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *  &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *      &lt;entry&gt;
- *          &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *      &lt;/entry&gt;
- *      &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *          &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *      &lt;/transition&gt;
- *  &lt;/view-state&gt;
- * 
- *  &lt;action-state id=&quot;executeSearch&quot;&gt;
- *      &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *      &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *  &lt;/action-state&gt;
+ *   &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *       &lt;entry&gt;
+ *           &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *       &lt;/entry&gt;
+ *       &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *           &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *       &lt;/transition&gt;
+ *   &lt;/view-state&gt;
+ *  
+ *   &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *       &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *       &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *   &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -429,6 +429,22 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	 */
 	public void setValidateOnBinding(boolean validateOnBinding) {
 		this.validateOnBinding = validateOnBinding;
+	}
+
+	/**
+	 * Return if the validator should get aplied only if the validatorMethod
+	 * property is set.
+	 */
+	public boolean isRequireValidatorMethod() {
+		return requireValidatorMethod;
+	}
+
+	/**
+	 * Set if the validator should only be applied if the validator method
+	 * property is set.
+	 */
+	public void setRequireValidatorMethod(boolean requireValidatorMethod) {
+		this.requireValidatorMethod = requireValidatorMethod;
 	}
 
 	/**
@@ -877,10 +893,10 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	 * request context.
 	 * <p>
 	 * Default implementation always returns true, unless the
-	 * "requireValidatorMethod" property is set to true, then this implementation
-	 * returns true only if the "validatorMethod" property is set. Can be
-	 * overridden in subclasses to test validation, for example, if a special
-	 * event parameter is set.
+	 * "requireValidatorMethod" property is set to true, then this
+	 * implementation returns true only if the "validatorMethod" property is
+	 * set. Can be overridden in subclasses to test validation, for example, if
+	 * a special event parameter is set.
 	 * @param context the request context, for accessing and setting data in
 	 * "flow scope" or "request scope"
 	 * @return whether or not validation is enabled
