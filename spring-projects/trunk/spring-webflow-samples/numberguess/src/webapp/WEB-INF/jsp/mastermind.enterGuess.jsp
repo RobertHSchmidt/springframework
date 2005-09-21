@@ -1,4 +1,4 @@
-<%@ include file="../includeTop.jsp" %>
+<%@ include file="includeTop.jsp" %>
 
 <div id="content">
 	<div id="insert"><img src="images/webflow-logo.jpg"/></div>
@@ -8,7 +8,7 @@
 	<p>Note: each guess must be 4 unique digits!</p>
 	<p>Number of guesses so far: ${data.guesses}</p>
 
-	<%@include file="guessHistoryTable.jsp" %>
+	<%@include file="mastermind.guessHistoryTable.jsp" %>
 			
 	<form name="guessForm" method="post">
 		<c:if test="${flowExecutionContext.lastEventId == 'invalidInput'}">
@@ -31,4 +31,4 @@
 	</form>
 </div>
 
-<%@ include file="../includeBottom.jsp" %>
+<%@ include file="includeBottom.jsp" %>
