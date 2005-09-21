@@ -21,28 +21,19 @@ import org.springframework.webflow.Event;
 
 /**
  * Flow execution storage that stores flow executions as <i>continuations</i>
- * in the HttpSession.
- * <p>
- * A downside of this storage strategy (and of server-side continuations in general)
- * is that there could be many copies of the flow execution stored in the HTTP
- * session, increasing server memory requirements. It is advised that you use the
- * {@link org.springframework.webflow.execution.servlet.ExpiredFlowCleanupFilter} to
- * cleanup any flow execution continuations as soon as they can be considered
- * to have expired.
- * <p>
- * This storage strategy requires a <code>ServletEvent</code>.
- * 
- * @see org.springframework.webflow.execution.servlet.ExpiredFlowCleanupFilter
- * @see org.springframework.webflow.execution.servlet.ServletEvent
+ * in the data store.
+ * <p>A downside of this storage strategy (and of server-side continuations in general)
+ * is that there could be many copies of the flow execution stored in the data store,
+ * increasing server memory requirements.
  * 
  * @author Erwin Vervaet
  */
-public class ContinuationFlowExecutionStorage extends DefaultFlowExecutionStorage {
+public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExecutionStorage {
 
 	private boolean compress = false;
 
-	public ContinuationFlowExecutionStorage(ExternalScopeAccessor scopeAccessor) {
-		super(scopeAccessor);
+	public ContinuationDataStoreFlowExecutionStorage(DataStoreAccessor dataStoreAccessor) {
+		super(dataStoreAccessor);
 	}
 	
 	/**
@@ -62,7 +53,7 @@ public class ContinuationFlowExecutionStorage extends DefaultFlowExecutionStorag
 	public FlowExecution load(Serializable id, Event sourceEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		try {
-			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getFlowExecutionAttribute(id, sourceEvent);
+			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getDataSourceAttribute(id, sourceEvent);
 			return continuation.getFlowExecution();
 		}
 		catch (IllegalStateException e) {
@@ -74,7 +65,7 @@ public class ContinuationFlowExecutionStorage extends DefaultFlowExecutionStorag
 			throws FlowExecutionStorageException {
 		// generate a new id for each continuation
 		id = createId();
-		setFlowExecutionAttribute(id, new FlowExecutionContinuation(flowExecution, isCompress()), sourceEvent);
+		setDataSourceAttribute(id, new FlowExecutionContinuation(flowExecution, isCompress()), sourceEvent);
 		return id;
 	}
 

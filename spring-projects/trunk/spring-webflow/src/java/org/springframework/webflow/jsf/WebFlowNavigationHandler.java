@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package org.springframework.webflow.jsf;
 
 import javax.faces.application.NavigationHandler;
@@ -24,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.execution.DefaultFlowExecutionStorage;
+import org.springframework.webflow.execution.DataStoreFlowExecutionStorage;
 import org.springframework.webflow.execution.FlowExecutionManager;
 
 /**
@@ -61,7 +60,6 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  * @author Craig McClanahan
  * @author Colin Sampaleanu
  */
-
 public class WebFlowNavigationHandler extends NavigationHandler {
 
 	/**
@@ -157,8 +155,8 @@ public class WebFlowNavigationHandler extends NavigationHandler {
 				}
 			}
 			if (strategy == null) {
-				FlowExecutionManager manager = new FlowExecutionManager(new DefaultFlowExecutionStorage(
-						new JsfSessionScopeAccessor()));
+				FlowExecutionManager manager = new FlowExecutionManager(new DataStoreFlowExecutionStorage(
+						new JsfSessionDataStoreAccessor()));
 				manager.setBeanFactory(wac);
 				strategy = new WebFlowNavigationStrategy(manager);
 			}

@@ -22,7 +22,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.execution.DefaultFlowExecutionStorage;
+import org.springframework.webflow.execution.DataStoreFlowExecutionStorage;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
 
@@ -64,7 +64,7 @@ public class ServletFlowExecutionManager extends FlowExecutionManager {
 	 * Set default properties for this manager.
 	 */
 	protected void initDefaults() {
-		setStorage(new DefaultFlowExecutionStorage(new HttpSessionScopeAccessor()));
+		setStorage(new DataStoreFlowExecutionStorage(new HttpSessionDataStoreAccessor()));
 	}
 
 	/**

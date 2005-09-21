@@ -131,6 +131,9 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 		if (!context.getFlowScope().containsAttribute(actionAttribute)) {
 			context.getFlowScope().setAttribute(actionAttribute, lookupAction(actionId));
 		}
+		else {
+			//FIXME action in flow scope should be rewired!
+		}
 		return (Action)context.getFlowScope().getAttribute(actionAttribute, Action.class);
 	}
 	
