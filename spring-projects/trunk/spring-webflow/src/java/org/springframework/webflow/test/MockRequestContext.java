@@ -22,8 +22,6 @@ import org.springframework.binding.AttributeSource;
 import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.util.Assert;
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
@@ -289,14 +287,5 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 		if (this.rootFlow == null) {
 			this.rootFlow = session.getFlow();
 		}
-	}
-	
-	public Errors getErrors(String name) {
-		Errors errors = null;
-		errors = (Errors)getFlowScope().getAttribute(BindException.ERROR_KEY_PREFIX + name, BindException.class);
-		if (errors == null) {
-			errors = (Errors)getRequestScope().getAttribute(BindException.ERROR_KEY_PREFIX + name, BindException.class);
-		}
-		return errors;
 	}
 }
