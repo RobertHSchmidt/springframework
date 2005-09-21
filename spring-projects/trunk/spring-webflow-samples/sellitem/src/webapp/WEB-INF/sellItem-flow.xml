@@ -44,6 +44,7 @@
 		<property name="validator">
 			<bean class="org.springframework.webflow.samples.sellitem.SaleValidator"/>
 		</property>
+		<property name="requireValidatorMethod" value="true"/>
 	</bean>
 
 </webflow>

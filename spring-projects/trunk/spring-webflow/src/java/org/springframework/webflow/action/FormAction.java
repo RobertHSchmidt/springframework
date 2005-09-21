@@ -38,115 +38,117 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <p>
  * Several action execution methods are provided:
  * <ul>
- * <li> {@link #exposeFormObject(RequestContext)} - Loads the backing form object 
- * and exposes it and an empty errors instance in the model of the executing flow
- * in the correct scope.  Any custom property editors for formatting 
- * form object values will also be installed.  This action method will return success()
- * if the form object was loaded successfully, error() otherwise.
- * <li> {@link #setupForm(RequestContext)} - Prepares the backing form object for display
- * on a form.  This method behaves exactly like exposeFormObject but goes further 
- * by adding a capability to perform optional data binding on setup.  This action
- * method will return the success() event if there are no setup errors, otherwise it
- * will return the error() event.
- * </li>
+ * <li> {@link #exposeFormObject(RequestContext)} - Loads the backing form
+ * object and exposes it and an empty errors instance in the model of the
+ * executing flow in the correct scope. Any custom property editors for
+ * formatting form object values will also be installed. This action method will
+ * return success() if the form object was loaded successfully, error()
+ * otherwise.
+ * <li> {@link #setupForm(RequestContext)} - Prepares the backing form object
+ * for display on a form. This method behaves exactly like exposeFormObject but
+ * goes further by adding a capability to perform optional data binding on
+ * setup. This action method will return the success() event if there are no
+ * setup errors, otherwise it will return the error() event. </li>
  * <li> {@link #bindAndValidate(RequestContext)} - Binds all incoming event
  * parameters to the form object and validates the form object using a
- * registered validator. This action method will return the success()
- * event if there are no binding or validation errors, otherwise it will return
- * the error() event.
- * </li>
- * <li> {@link #bind(RequestContext)} - Binds all incoming event
- * parameters to the form object.  No additional validation is performed.
- * This action method will return the success() event if there are no binding
- * errors, otherwise it will return the error() event.
- * </li>
+ * registered validator. This action method will return the success() event if
+ * there are no binding or validation errors, otherwise it will return the
+ * error() event. </li>
+ * <li> {@link #bind(RequestContext)} - Binds all incoming event parameters to
+ * the form object. No additional validation is performed. This action method
+ * will return the success() event if there are no binding errors, otherwise it
+ * will return the error() event. </li>
  * <li> {@link #validate(RequestContext)} - Validates the form object using a
- * registered validator. No data binding is performed.  This action method will
+ * registered validator. No data binding is performed. This action method will
  * return the success() event if there are no validation errors, otherwise it
- * will return the error() event.
- * </li>
- * <li> {@link #resetForm(RequestContext)} - Resets the form by reloading
- * the backing form object and reinstalling any custom property editors.
- * Returns success() on completion, error() if a form object load failure occurs.
- * </li>
+ * will return the error() event. </li>
+ * <li> {@link #resetForm(RequestContext)} - Resets the form by reloading the
+ * backing form object and reinstalling any custom property editors. Returns
+ * success() on completion, error() if a form object load failure occurs. </li>
  * </ul>
  * <p>
  * Since this is a multi-action, a subclass could add any number of additional
- * action execution methods, e.g. "setupReferenceData(RequestContext)", or 
+ * action execution methods, e.g. "setupReferenceData(RequestContext)", or
  * "processSubmit(RequestContext)".
  * <p>
  * Using this action, it becomes very easy to implement form preparation and
- * submission logic in your flow.  One way to do this follows:
+ * submission logic in your flow. One way to do this follows:
  * <ol>
- * <li> Create a view state to display the form. In an entry action of that 
- * state, invoke {@link #setupForm(RequestContext) setupForm} to prepare the
- * new form for display. </li>
- * <li> On submit, execute a state transition action that performs a bindAndValidate.
- * This will invoke {@link #bindAndValidate(RequestContext) bindAndValidate} to
- * bind incoming event parameters to the form object and validate the form object.
- * <li>If there are binding or validation errors, the transition will not be allowed
- * and the view state will automatically be re-entered.
+ * <li> Create a view state to display the form. In an entry action of that
+ * state, invoke {@link #setupForm(RequestContext) setupForm} to prepare the new
+ * form for display. </li>
+ * <li> On submit, execute a state transition action that performs a
+ * bindAndValidate. This will invoke
+ * {@link #bindAndValidate(RequestContext) bindAndValidate} to bind incoming
+ * event parameters to the form object and validate the form object.
+ * <li>If there are binding or validation errors, the transition will not be
+ * allowed and the view state will automatically be re-entered.
  * <li> If binding and validation is successful, go to an action state called
- * "processSubmit" (or any other appropriate name). This will invoke an action method
- * called "processSubmit" you must provide on a subclass to process form submission,
- * e.g. interacting with the business logic. </li>
+ * "processSubmit" (or any other appropriate name). This will invoke an action
+ * method called "processSubmit" you must provide on a subclass to process form
+ * submission, e.g. interacting with the business logic. </li>
  * <li> If business processing is ok, continue to a view state to display the
  * success view. </li>
  * </ol>
  * <p>
  * Here is an example implementation of such a compact form flow:
+ * 
  * <pre>
- * &lt;view-state id="displayCriteria" view="searchCriteria"&gt;
- *     &lt;entry&gt;
- *         &lt;action bean="searchFormAction" method="setupForm"/&gt;
- *     &lt;/entry&gt;
- *     &lt;transition on="search" to="executeSearch"&gt;
- *         &lt;action bean="searchFormAction" method="bindAndValidate"/&gt;
- *     &lt;/transition&gt;
- * &lt;/view-state&gt;
- *
- * &lt;action-state id="executeSearch"&gt;
- *     &lt;action bean="searchFormAction"/&gt;
- *     &lt;transition on="success" to="displayResults"/&gt;
- * &lt;/action-state&gt;
- *</pre>
+ *  &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *      &lt;entry&gt;
+ *          &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *      &lt;/entry&gt;
+ *      &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *          &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *      &lt;/transition&gt;
+ *  &lt;/view-state&gt;
+ * 
+ *  &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *      &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *      &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *  &lt;/action-state&gt;
+ * </pre>
+ * 
  * </p>
  * <p>
- * When you need additional flexibility, consider splitting the view state above 
- * acting as a single logical <i>form state</i> into multiple states.  For example,
- * you could have one action state handle form setup, a view state trigger
- * form display, another action state handle data binding and validation, and another
- * process form submission.  This would be a bit more verbose but would also give you
- * more control over how you respond to specific results of fine-grained actions that
- * occur within the flow.
+ * When you need additional flexibility, consider splitting the view state above
+ * acting as a single logical <i>form state</i> into multiple states. For
+ * example, you could have one action state handle form setup, a view state
+ * trigger form display, another action state handle data binding and
+ * validation, and another process form submission. This would be a bit more
+ * verbose but would also give you more control over how you respond to specific
+ * results of fine-grained actions that occur within the flow.
  * <p>
  * <b>Subclassing hooks:</b>
  * <ul>
- * <li>An important hook method provided by this class is 
- * {@link #initBinder(RequestContext, DataBinder) initBinder}. This is 
- * called after a new data binder is created by any of the action execution methods.
- * It allows you to install any custom property editors required to format richly-typed 
- * form object property values.
- * <li>Another important hook is {@link #loadFormObject(RequestContext) loadFormObject}.
- * You may override this to customize where the backing form object comes from
- * (e.g instantiated directly in memory or loaded from a database).
+ * <li>An important hook method provided by this class is
+ * {@link #initBinder(RequestContext, DataBinder) initBinder}. This is called
+ * after a new data binder is created by any of the action execution methods. It
+ * allows you to install any custom property editors required to format
+ * richly-typed form object property values.
+ * <li>Another important hook is
+ * {@link #loadFormObject(RequestContext) loadFormObject}. You may override
+ * this to customize where the backing form object comes from (e.g instantiated
+ * directly in memory or loaded from a database).
  * </ul>
  * <p>
  * Note that this action does not provide a <i>referenceData()</i> hook method
- * similar to that of Spring MVC's <code>SimpleFormController</code>. If you need to
- * expose reference data to populate form drop downs for example, you should create
- * a custom action method in your FormAction subclass that does just that, and invoke it
- * as either a chained action as part of a form setup state, or as a fine grained state 
- * definition itself.
+ * similar to that of Spring MVC's <code>SimpleFormController</code>. If you
+ * need to expose reference data to populate form drop downs for example, you
+ * should create a custom action method in your FormAction subclass that does
+ * just that, and invoke it as either a chained action as part of a form setup
+ * state, or as a fine grained state definition itself.
  * <p>
  * For example, you might create this method in your subclass:
+ * 
  * <pre>
- *    public Event setupReferenceData(RequestContext context) throws Exception {
- *        Scope requestScope = context.getRequestScope();
- *        requestScope.setAttribute("refData", referenceDataDao.getSupportingFormData());
- *        return success();
- *    }
+ * public Event setupReferenceData(RequestContext context) throws Exception {
+ * 	Scope requestScope = context.getRequestScope();
+ * 	requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ * 	return success();
+ * }
  * </pre>
+ * 
  * <p>
  * <b>FormAction configurable properties</b><br>
  * <table border="1">
@@ -158,8 +160,8 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <tr>
  * <td>formObjectName</td>
  * <td>"formObject"</td>
- * <td>The name of the form object. The form object will be
- * set in the configured scope using this name. </td>
+ * <td>The name of the form object. The form object will be set in the
+ * configured scope using this name. </td>
  * </tr>
  * <tr>
  * <td>formObjectClass</td>
@@ -171,17 +173,16 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <td>formObjectScope</td>
  * <td>{@link org.springframework.webflow.ScopeType#REQUEST request}</td>
  * <td>The scope in which the form object will be put. If put in flow scope the
- * object will be cached and reused over the life of the flow, preserving previous
- * values.  Request scope will cause a new fresh form object instance to be created
- * each execution.</td>
+ * object will be cached and reused over the life of the flow, preserving
+ * previous values. Request scope will cause a new fresh form object instance to
+ * be created each execution.</td>
  * </tr>
  * <tr>
  * <td>errorsScope</td>
  * <td>{@link org.springframework.webflow.ScopeType#REQUEST request}</td>
- * <td>The scope in which the form object errors instance will be put.
- * If put in flow scope the errors will be cached and reused over the life
- * of the flow.  Request scope will cause a new errors instance to be created
- * each execution.</td>
+ * <td>The scope in which the form object errors instance will be put. If put
+ * in flow scope the errors will be cached and reused over the life of the flow.
+ * Request scope will cause a new errors instance to be created each execution.</td>
  * </tr>
  * <tr>
  * <td>propertyEditorRegistrar</td>
@@ -193,8 +194,8 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <tr>
  * <td>validator</td>
  * <td>null</td>
- * <td>The validator for this action. The validator must support the
- * specified form object class. </td>
+ * <td>The validator for this action. The validator must support the specified
+ * form object class. </td>
  * </tr>
  * <tr>
  * <td>bindOnSetupForm</td>
@@ -222,23 +223,24 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
 public class FormAction extends MultiAction implements InitializingBean, FormOperations {
 
 	/**
-	 * Optional property that identifies the method that should be invoked on the 
-	 * configured validator instance, to support piecemeal wizard page validation.
+	 * Optional property that identifies the method that should be invoked on
+	 * the configured validator instance, to support piecemeal wizard page
+	 * validation.
 	 */
 	public static final String VALIDATOR_METHOD_PROPERTY = "validatorMethod";
-	
+
 	/**
 	 * The name the form object should be exposed under.
 	 */
 	private String formObjectName = "formObject";
 
 	/**
-	 * The type of form object -- typically a instantiable class. 
+	 * The type of form object -- typically a instantiable class.
 	 */
 	private Class formObjectClass;
 
 	/**
-	 * The scope in which the form object should be exposed. 
+	 * The scope in which the form object should be exposed.
 	 */
 	private ScopeType formObjectScope = ScopeType.REQUEST;
 
@@ -248,8 +250,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	private ScopeType formErrorsScope = ScopeType.REQUEST;
 
 	/**
-	 * A centralized service for property editor registration, for type conversion during
-	 * form object data binding. 
+	 * A centralized service for property editor registration, for type
+	 * conversion during form object data binding.
 	 */
 	private PropertyEditorRegistrar propertyEditorRegistrar;
 
@@ -277,6 +279,12 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	 * A cache for dispatched action execute methods.
 	 */
 	private DispatchMethodInvoker validateMethodDispatcher = new DispatchMethodInvoker();
+
+	/**
+	 * Determines if validation should only be invoked if the "validatorMethod"
+	 * property is set. Useful for piecemeal validation as part of a wizard.
+	 */
+	private boolean requireValidatorMethod;
 
 	/**
 	 * Return the name of the form object in the configured scope.
@@ -399,7 +407,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	public boolean isBindOnSetupForm() {
 		return this.bindOnSetupForm;
 	}
-	
+
 	/**
 	 * Set if event parameters should be bound to the form object during the
 	 * {@link #setupForm(RequestContext)} action.
@@ -466,9 +474,9 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 		}
 		catch (FormObjectRetrievalFailureException e) {
 			return error(e);
-		}		
+		}
 	}
-	
+
 	public Event setupForm(RequestContext context) throws Exception {
 		Object formObject = null;
 		try {
@@ -493,7 +501,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 			return success();
 		}
 	}
-	
+
 	public Event bindAndValidate(RequestContext context) throws Exception {
 		Object formObject = null;
 		try {
@@ -520,7 +528,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 				}
 			}
 		}
-		return binder.getErrors().hasErrors() ? error() : success();		
+		return binder.getErrors().hasErrors() ? error() : success();
 	}
 
 	public Event bind(RequestContext context) throws Exception {
@@ -538,7 +546,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 		setFormErrors(context, binder.getErrors());
 		return binder.getErrors().hasErrors() ? error() : success();
 	}
-	
+
 	public Event validate(RequestContext context) throws Exception {
 		Object formObject = null;
 		try {
@@ -554,12 +562,13 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 		setFormErrors(context, binder.getErrors());
 		return binder.getErrors().hasErrors() ? error() : success();
 	}
-	
+
 	/**
-	 * Resets the form by clearing out the form object in the specified scope and
-	 * reloading it by calling loadFormObject.
+	 * Resets the form by clearing out the form object in the specified scope
+	 * and reloading it by calling loadFormObject.
 	 * @param context the request context
-	 * @return "success" if the reset action completed successfully, "error" otherwise
+	 * @return "success" if the reset action completed successfully, "error"
+	 * otherwise
 	 * @throws Exception if an exception occured
 	 */
 	public Event resetForm(RequestContext context) throws Exception {
@@ -576,7 +585,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	}
 
 	// internal helpers
-	
+
 	/**
 	 * Create a new binder instance for the given form object and request
 	 * context. Can be overridden to plug in custom DataBinder subclasses.
@@ -585,7 +594,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	 * initBinder. Note that initBinder will not be invoked if you override this
 	 * method!
 	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * data in "flow scope" or "request scope"
 	 * @param formObject the form object to bind onto
 	 * @return the new binder instance
 	 * @see #initBinder(RequestContext, DataBinder)
@@ -603,15 +612,14 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	 * Bind parameters of the last event in given context to the form object
 	 * using given binder.
 	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * data in "flow scope" or "request scope"
 	 * @param binder the data binder to use
 	 */
 	protected void doBind(RequestContext context, DataBinder binder) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug(
-					"Binding allowed parameters in event: " + context.getLastEvent()
-					+ " to form object with name: '" + binder.getObjectName()
-					+ "', prebind-toString: " + binder.getTarget());
+			logger.debug("Binding allowed parameters in event: " + context.getLastEvent()
+					+ " to form object with name: '" + binder.getObjectName() + "', prebind-toString: "
+					+ binder.getTarget());
 			if (binder.getAllowedFields() != null && binder.getAllowedFields().length > 0) {
 				logger.debug("(Allowed event parameters are: " + binder.getAllowedFields() + ")");
 			}
@@ -621,22 +629,26 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 		}
 		binder.bind(new MutablePropertyValues(context.getLastEvent().getParameters()));
 		if (logger.isDebugEnabled()) {
-			logger.debug("Binding completed for form object with name: '" + binder.getObjectName() + "', postbind-toString: " + binder.getTarget());
-			logger.debug("There are [" + binder.getErrors().getErrorCount() + "] errors, details: " + binder.getErrors().getAllErrors());
+			logger.debug("Binding completed for form object with name: '" + binder.getObjectName()
+					+ "', postbind-toString: " + binder.getTarget());
+			logger.debug("There are [" + binder.getErrors().getErrorCount() + "] errors, details: "
+					+ binder.getErrors().getAllErrors());
 		}
 	}
-	
+
 	/**
-	 * Validate given form object using a registered validator. If a "validatorMethod"
-	 * action property is specified for the currently executing action,
-	 * the identified validator method will be invoked. When no such property is found,
-	 * the defualt <code>validate()</code> method is invoked.
+	 * Validate given form object using a registered validator. If a
+	 * "validatorMethod" action property is specified for the currently
+	 * executing action, the identified validator method will be invoked. When
+	 * no such property is found, the defualt <code>validate()</code> method
+	 * is invoked.
 	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * data in "flow scope" or "request scope"
 	 * @param binder the data binder to use
 	 */
 	protected void doValidate(RequestContext context, DataBinder binder) throws Exception {
-		Assert.notNull(validator, "The validator must not be null when attempting validation, but it is: programmer error");
+		Assert.notNull(validator,
+				"The validator must not be null when attempting validation, but it is: programmer error");
 		String validatorMethod = (String)context.getProperties().getAttribute(VALIDATOR_METHOD_PROPERTY);
 		if (StringUtils.hasText(validatorMethod)) {
 			invokeValidatorMethod(validatorMethod, binder.getTarget(), binder.getErrors());
@@ -649,7 +661,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Validation completed for form object with name: '" + binder.getObjectName() + "'");
-			logger.debug("There are [" + binder.getErrors().getErrorCount() + "] errors, details: " + binder.getErrors().getAllErrors());
+			logger.debug("There are [" + binder.getErrors().getErrorCount() + "] errors, details: "
+					+ binder.getErrors().getAllErrors());
 		}
 	}
 
@@ -662,20 +675,23 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	 */
 	private void invokeValidatorMethod(String validatorMethod, Object formObject, Errors errors) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Invoking piecemeal validator method: '" + validatorMethod + "' on form object: " + formObject);
+			logger
+					.debug("Invoking piecemeal validator method: '" + validatorMethod + "' on form object: "
+							+ formObject);
 		}
 		getValidateMethodDispatcher().dispatch(validatorMethod, new Object[] { formObject, errors });
 	}
-	
+
 	/**
-	 * Convenience method that returns the form object for this form action.
-	 * If not found in the configured scope, a new form object will be created
-	 * or loaded by a call to {@link #loadFormObject(RequestContext)}.
+	 * Convenience method that returns the form object for this form action. If
+	 * not found in the configured scope, a new form object will be created or
+	 * loaded by a call to {@link #loadFormObject(RequestContext)}.
 	 * @param context the flow request context
 	 * @return the form object
 	 */
 	protected Object getFormObject(RequestContext context) throws Exception {
-		Object formObject = getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormObjectClass(), getFormObjectScope());
+		Object formObject = getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormObjectClass(),
+				getFormObjectScope());
 		if (formObject == null) {
 			formObject = loadFormObject(context);
 		}
@@ -688,10 +704,11 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	private void setFormObject(RequestContext context, Object formObject) {
 		getFormObjectAccessor(context).setFormObject(formObject, getFormObjectName(), getFormObjectScope());
 	}
-	
+
 	/**
-	 * Convenience method that returns the form object errors for this form action.
-	 * If not found in the configured scope, a new form object errors will be created.
+	 * Convenience method that returns the form object errors for this form
+	 * action. If not found in the configured scope, a new form object errors
+	 * will be created.
 	 * @param context the flow request context
 	 * @return the form errors
 	 */
@@ -700,24 +717,33 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	}
 
 	/**
-	 * Expose an empty errors collection in the model of the currently executing flow if neccessary.
+	 * Expose an empty errors collection in the model of the currently executing
+	 * flow if neccessary.
 	 * @param context the flow execution request context
 	 * @param errors the errors
 	 */
 	private Errors ensureFormErrorsExposed(RequestContext context, Object formObject) {
 		Errors errors = getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope());
 		if (errors instanceof BindException) {
-			// make sure the existing form errors are consistent with the form object
+			// make sure the existing form errors are consistent with the form
+			// object
 			BindException be = (BindException)errors;
 			if (be.getTarget() != formObject) {
 				if (logger.isInfoEnabled()) {
-					logger.info(
-							"Inconsistency detected: the Errors instance in '" + getFormErrorsScope() + "' does NOT wrap the current form object: " 
-							+ formObject + " of class: " + formObject.getClass() + "; instead this Errors instance unexpectedly wraps the target object: " 
-							+ be.getTarget() + " of class: " + be.getTarget().getClass() + 
-							". [Taking corrective action: overwriting the existing Errors instance with an empty one for the current form object]");
+					logger
+							.info("Inconsistency detected: the Errors instance in '"
+									+ getFormErrorsScope()
+									+ "' does NOT wrap the current form object: "
+									+ formObject
+									+ " of class: "
+									+ formObject.getClass()
+									+ "; instead this Errors instance unexpectedly wraps the target object: "
+									+ be.getTarget()
+									+ " of class: "
+									+ be.getTarget().getClass()
+									+ ". [Taking corrective action: overwriting the existing Errors instance with an empty one for the current form object]");
 				}
-				// fall through below				
+				// fall through below
 				errors = null;
 			}
 		}
@@ -746,7 +772,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	}
 
 	// subclassing hook methods
-	
+
 	/**
 	 * Returns a dispatcher to invoke validation methods. Subclasses could
 	 * override this to return a custom dispatcher.
@@ -754,10 +780,10 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	protected DispatchMethodInvoker getValidateMethodDispatcher() {
 		return validateMethodDispatcher;
 	}
-	
+
 	/**
-	 * Factory method that returns a new form object accessor for accessing form objects 
-	 * in the provided request context.
+	 * Factory method that returns a new form object accessor for accessing form
+	 * objects in the provided request context.
 	 * @param context the flow request context
 	 * @return the accessor
 	 */
@@ -774,19 +800,20 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	 * Subclasses should override if they need to load the form object from a
 	 * specific location or resource such as a database or filesystem.
 	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * data in "flow scope" or "request scope"
 	 * @return the form object
 	 * @throws FormObjectRetrievalFailureException the form object could not be
-	 *         loaded
+	 * loaded
 	 */
 	protected Object loadFormObject(RequestContext context) throws FormObjectRetrievalFailureException, Exception {
 		return createFormObject(context);
 	}
 
 	/**
-	 * Create a new form object by instantiating the configured form object class.
+	 * Create a new form object by instantiating the configured form object
+	 * class.
 	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * data in "flow scope" or "request scope"
 	 * @return the form object
 	 * @throws Exception the form object could not be created
 	 */
@@ -803,7 +830,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 		}
 		return this.formObjectClass.newInstance();
 	}
-	
+
 	/**
 	 * Initialize the given binder instance, for example with custom editors.
 	 * Called by createBinder().
@@ -821,7 +848,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	 * editors, although it may be better (in the interest of not bloating the
 	 * session, to have the editors get this from somewhere else).
 	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * data in "flow scope" or "request scope"
 	 * @param binder new binder instance
 	 * @see #createBinder(RequestContext, Object)
 	 */
@@ -835,28 +862,35 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns true if event parameters should be bound to the form object during
-	 * the {@link #setupForm(RequestContext)} action. The default implementation just
-	 * calls {@link #isBindOnSetupForm()}.
+	 * Returns true if event parameters should be bound to the form object
+	 * during the {@link #setupForm(RequestContext)} action. The default
+	 * implementation just calls {@link #isBindOnSetupForm()}.
 	 */
 	protected boolean setupBindingEnabled(RequestContext context) {
 		return isBindOnSetupForm();
 	}
 
 	/**
-	 * Return whether validation should be performed given the state of the flow request
-	 * context.
+	 * Return whether validation should be performed given the state of the flow
+	 * request context.
 	 * <p>
-	 * Default implementation always returns true. Can be overridden
-	 * in subclasses to test validation, for example, if a special
+	 * Default implementation always returns true, unless the
+	 * "requireValidatorMethod" property is set to true, then this implementation
+	 * returns true only if the "validatorMethod" property is set. Can be
+	 * overridden in subclasses to test validation, for example, if a special
 	 * event parameter is set.
-	 * @param context the request context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * @param context the request context, for accessing and setting data in
+	 * "flow scope" or "request scope"
 	 * @return whether or not validation is enabled
 	 */
 	protected boolean validationEnabled(RequestContext context) {
-		return true;
+		if (requireValidatorMethod) {
+			return context.getProperties().containsAttribute(VALIDATOR_METHOD_PROPERTY);
+		}
+		else {
+			return true;
+		}
 	}
 }
