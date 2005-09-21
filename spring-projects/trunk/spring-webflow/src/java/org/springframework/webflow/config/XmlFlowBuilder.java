@@ -195,9 +195,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 	private static final String VALUE_ELEMENT = "value";
 
-	private static final String ENTRY_ELEMENT = "entry";
+	private static final String ENTRY_ACTION_ELEMENT = "entry-action";
 
-	private static final String EXIT_ELEMENT = "exit";
+	private static final String EXIT_ACTION_ELEMENT = "exit-action";
 
 	/**
 	 * The resource location of the XML flow definition
@@ -500,14 +500,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		Assert.isInstanceOf(requiredStateType, state, "The state object for the '" + element.getAttribute(ID_ATTRIBUTE)
 				+ "' state definition should subclass '" + ClassUtils.getShortName(requiredStateType) + "'");
 		// parse any state entry actions
-		List entryElements = DomUtils.getChildElementsByTagName(element, ENTRY_ELEMENT);
+		List entryElements = DomUtils.getChildElementsByTagName(element, ENTRY_ACTION_ELEMENT);
 		if (!entryElements.isEmpty()) {
 			Element entryElement = (Element)entryElements.get(0);
 			state.setEntryAction(new CompositeAction(parseAnnotatedActions(entryElement)));
 		}
 		if (state instanceof TransitionableState) {
 			// parse any state exit actions
-			List exitElements = DomUtils.getChildElementsByTagName(element, EXIT_ELEMENT);
+			List exitElements = DomUtils.getChildElementsByTagName(element, EXIT_ACTION_ELEMENT);
 			if (!exitElements.isEmpty()) {
 				Element exitElement = (Element)exitElements.get(0);
 				((TransitionableState)state).setExitAction(new CompositeAction(parseAnnotatedActions(exitElement)));

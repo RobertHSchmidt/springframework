@@ -32,20 +32,12 @@
 			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
 		</property>
 		<property name="storage">
-			<bean class="org.springframework.webflow.execution.servlet.HttpSessionContinuationFlowExecutionStorage"/>
-		</property>
-		<!-- 
-		<property name="storage">
-			<bean class="org.springframework.webflow.execution.servlet.HttpSessionFlowExecutionStorage"/>
-		</property>
-		-->
-		<!-- 
-		<property name="storage">
-			<bean class="org.springframework.webflow.execution.ClientContinuationFlowExecutionStorage">
-				<property name="compress" value="true"/>
+			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage">
+				<constructor-arg>
+					<bean class="org.springframework.webflow.execution.servlet.HttpSessionDataStoreAccessor"/>
+				</constructor-arg>
 			</bean>
 		</property>
-		-->
 	</bean>
 	
 	<bean id="sellItem" class="org.springframework.webflow.config.XmlFlowFactoryBean">
