@@ -69,11 +69,11 @@
 	</target>
 
 	<target name="tomcat-deploy" depends="tomcat.init, war" description="Install this web application to tomcat">
-		<deploy url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${project.name}" war="${project.war}" />
+		<deploy url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${project.webapp.name}" war="${project.war}" />
 	</target>
 
 	<target name="tomcat-undeploy" depends="tomcat.init" description="Remove this application from tomcat">
-		<undeploy url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${project.name}" failonerror="false" />
+		<undeploy url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${project.webapp.name}" failonerror="false" />
 	</target>
 
 	<target name="tomcat-redeploy" depends="tomcat-undeploy, tomcat-deploy" description="Redeploy the web application" />
@@ -100,11 +100,11 @@
 	</target>
 
 	<target name="tomcat-start" depends="tomcat.init" description="Start this web application in tomcat">
-		<start url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${project.name}" />
+		<start url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${project.webapp.name}" />
 	</target>
 
 	<target name="tomcat-stop" depends="tomcat.init" description="Stop this web application in tomcat">
-		<stop url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${project.name}" />
+		<stop url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${project.webapp.name}" />
 	</target>
 
 	<target name="tomcat-list" depends="tomcat.init" description="List installed tomcat applications">
