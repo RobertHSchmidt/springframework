@@ -7,7 +7,7 @@
 	
 	<!-- the higher/lower game flow definition -->
 	<bean id="higherlower" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/higherLower.xml"/>
+		<property name="location" value="/WEB-INF/higherlower.xml"/>
 	</bean>
 
 	<!--  the mastermind game flow definition -->

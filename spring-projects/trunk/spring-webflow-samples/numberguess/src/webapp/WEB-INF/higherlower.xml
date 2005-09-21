@@ -19,7 +19,7 @@
 	<end-state id="showAnswer" view="higherlower.showAnswer"/>
 
 	<!-- the proxy to the stateful higher lower game (a multi action) -->
-	<bean id="higherlowerGameProxy">
+	<bean id="higherlowerGameProxy" class="org.springframework.webflow.action.StatefulActionProxy">
 		<property name="actionAttribute" value="game"/>
 		<property name="actionId" value="higherlowerGame"/>
 	</bean>

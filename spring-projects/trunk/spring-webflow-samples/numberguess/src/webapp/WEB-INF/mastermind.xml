@@ -18,7 +18,7 @@
 	
 	<end-state id="showAnswer" view="mastermind.showAnswer"/>
 
-	<bean id="mastermindGameProxy">
+	<bean id="mastermindGameProxy" class="org.springframework.webflow.action.StatefulActionProxy">
 		<property name="actionAttribute" value="game"/>	
 		<property name="actionId" value="mastermindGame"/>
 	</bean>

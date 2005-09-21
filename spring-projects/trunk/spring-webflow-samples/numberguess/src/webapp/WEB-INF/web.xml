@@ -19,7 +19,6 @@
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
 	</listener>
 
-	<!--
 	<servlet>
 		<servlet-name>@PROJECT_WEBAPP_NAME@</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -28,16 +27,10 @@
 			<param-value>/WEB-INF/dispatcher-servlet.xml</param-value>
 		</init-param>
 	</servlet>
-	-->
-
-	<servlet>
-		<servlet-name>@PROJECT_WEBAPP_NAME@</servlet-name>
-    	<servlet-class>org.apache.tapestry.ApplicationServlet</servlet-class>
-	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>@PROJECT_WEBAPP_NAME@</servlet-name>
-		<url-pattern>/app</url-pattern>
+		<url-pattern>*.htm</url-pattern>
 	</servlet-mapping>
 
 </web-app>
