@@ -19,7 +19,7 @@
 	<tr>
 		<td colspan="2" class="buttonBar">
 			<form action="play.htm">
-				<input type="hidden" name="_flowId" value="fourDigitNumberGuess">
+				<input type="hidden" name="_flowId" value="mastermind">
 				<input type="submit" value="Play Again!">
 			</form>
 		</td>
