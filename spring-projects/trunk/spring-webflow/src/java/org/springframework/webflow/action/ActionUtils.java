@@ -14,16 +14,14 @@ public class ActionUtils {
 	 * Cannot be instantiated - static utility class.
 	 */
 	private ActionUtils() {
-		
 	}
 	
 	/**
 	 * Lookup the named execution property for this action from the request
-	 * context
+	 * context.
 	 * @param context the flow execution request context
 	 * @param propertyName the name of the property to retrieve
-	 * @param defaultValue the default value to use when the named property
-	 * cannot be found
+	 * @param defaultValue the default value to use when the named property cannot be found
 	 * @return the action property value
 	 */
 	public static Object getActionProperty(RequestContext context, String propertyName, Object defaultValue) {
@@ -36,7 +34,7 @@ public class ActionUtils {
 	}
 
 	/**
-	 * Lookup the names execution property for this action from the request
+	 * Lookup the named execution property for this action from the request
 	 * context. Throw an exception if the property is not defined.
 	 * @param context the flow execution request context
 	 * @param propertyName the name of the property to get
