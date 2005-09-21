@@ -4,7 +4,7 @@
 
 <webflow id="mastermind" start-state="enterGuess">
 	
-	<view-state id="enterGuess" view="mastermindEnterGuess">
+	<view-state id="enterGuess" view="mastermind.enterGuess">
 		<transition on="submit" to="guess"/>
 	</view-state>
 	
@@ -16,6 +16,6 @@
 		<transition on="success" to="showAnswer"/>
 	</action-state>
 	
-	<end-state id="showAnswer" view="mastermindShowAnswer"/>
+	<end-state id="showAnswer" view="mastermind.showAnswer"/>
 
 </webflow>
