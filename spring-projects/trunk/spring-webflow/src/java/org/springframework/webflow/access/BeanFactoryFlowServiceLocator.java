@@ -251,8 +251,7 @@ public class BeanFactoryFlowServiceLocator extends FlowServiceLocatorAdapter imp
 	 * @param expectedClass the expected service (super) class
 	 * @param id the service id
 	 * @return the service object
-	 * @throws ServiceLookupException when the identified service cannot be
-	 * found
+	 * @throws ServiceLookupException when the identified service cannot be found
 	 */
 	protected Object lookupService(Class expectedClass, String id) throws ServiceLookupException {
 		try {
