@@ -208,7 +208,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * Flag indicating if the the XML document parser will perform DTD
 	 * validation
 	 */
-	private boolean validating = false;
+	private boolean validating = true;
 
 	/**
 	 * The webflow DTD resolution strategy
