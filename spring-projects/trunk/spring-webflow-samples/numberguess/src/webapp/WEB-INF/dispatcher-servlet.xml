@@ -10,29 +10,10 @@
 		<property name="location" value="/WEB-INF/higherLower.xml"/>
 	</bean>
 
-	<!-- abstract parent bean definition for all game proxies -->
-	<bean id="gameProxy" class="org.springframework.webflow.action.StatefulActionProxy" abstract="true">
-		<property name="actionAttribute" value="game"/>
-	</bean>
-	
-	<!-- the proxy to the stateful higher lower game (a multi action) -->
-	<bean id="higherlowerGameProxy" parent="gameProxy">
-		<property name="actionId" value="higherlowerGame"/>
-	</bean>
-	
-	<!-- note: higherlower is a prototype, it holds caller state in flow scope transparently -->
-	<bean id="higherlowerGame" class="org.springframework.webflow.samples.numberguess.HigherLowerGame" singleton="false"/>
-
 	<!--  the mastermind game flow definition -->
 	<bean id="mastermind" class="org.springframework.webflow.config.XmlFlowFactoryBean">
 		<property name="location" value="/WEB-INF/mastermind.xml"/>
 	</bean>
-
-	<bean id="mastermindGameProxy" parent="gameProxy">
-		<property name="actionId" value="mastermind"/>
-	</bean>
-	
-	<bean id="mastermindGame" class="org.springframework.webflow.samples.numberguess.MasterMindGame" singleton="false"/>
 
 	<bean id="viewResolver" class="org.springframework.webflow.samples.numberguess.ExpressionInternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>

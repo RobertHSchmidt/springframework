@@ -18,4 +18,11 @@
 	
 	<end-state id="showAnswer" view="mastermind.showAnswer"/>
 
+	<bean id="mastermindGameProxy">
+		<property name="actionAttribute" value="game"/>	
+		<property name="actionId" value="mastermindGame"/>
+	</bean>
+	
+	<bean id="mastermindGame" class="org.springframework.webflow.samples.numberguess.MasterMindGame" singleton="false"/>
+
 </webflow>
