@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.FlowExecutionManager;
 
 /**
  * <p>
- * An implementation of <code>NavigationHandler</code> that provides
+ * An implementation of a JSF <code>NavigationHandler</code> that provides
  * integration with Spring Web Flow. It delegates handling to the standard
  * implementation when there is no current flow.
  * </p>
@@ -40,8 +40,8 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  * <code>NavigationHandler</code> implementation and return.</li>
  * <li>If the specified logical outcome <strong>is</strong> of the form
  * <em>webflow:xxx</em>, look up the corresponding <code>Flow</code>, and
- * begin execution at its starting state. Record state information to indicate
- * that this flow is in progress.</li>
+ * begin its execution at its starting state. Record state information to
+ * indicate that this flow is in progress.</li>
  * </ul>
  * </li>
  * <li>If a flow <strong>is</strong> currently in progress:
@@ -50,8 +50,7 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  * flow.</li>
  * <li>Continue execution of the flow until it returns a
  * <code>ViewDescriptor</code> describing the next view to be rendered.</li>
- * <li>Cause navigation to the requested view (FIXME - perhaps exposing any
- * specified model state as a Map under some reasonable request attribute name.</li>
+ * <li>Cause navigation to render the requested view</li>
  * </ul>
  * </li>
  * </ul>
@@ -59,6 +58,7 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  * @since 1.0
  * @author Craig McClanahan
  * @author Colin Sampaleanu
+ * @author Keith Donald
  */
 public class WebFlowNavigationHandler extends NavigationHandler {
 
@@ -69,7 +69,7 @@ public class WebFlowNavigationHandler extends NavigationHandler {
 	 * actions to undertake.
 	 * </p>
 	 */
-	private static final String STRATEGY = "webFlowNavigationStrategy";
+	private static final String NAVIGATION_STRATEGY_BEAN_NAME = "webFlowNavigationStrategy";
 
 	/**
 	 * <p>
@@ -92,7 +92,7 @@ public class WebFlowNavigationHandler extends NavigationHandler {
 	 * instantiated upon first use.
 	 * </p>
 	 */
-	private WebFlowNavigationStrategy strategy;
+	private WebFlowNavigationStrategy flowNavigationStrategy;
 
 	/**
 	 * <p>
@@ -147,20 +147,21 @@ public class WebFlowNavigationHandler extends NavigationHandler {
 	 * @param context <code>FacesContext</code> for the current request
 	 */
 	private WebFlowNavigationStrategy getStrategy(FacesContext context) {
-		if (strategy == null) {
+		if (flowNavigationStrategy == null) {
 			WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
 			if (wac != null) {
-				if (wac.containsBean(STRATEGY)) {
-					strategy = (WebFlowNavigationStrategy)wac.getBean(STRATEGY, WebFlowNavigationStrategy.class);
+				if (wac.containsBean(NAVIGATION_STRATEGY_BEAN_NAME)) {
+					flowNavigationStrategy = (WebFlowNavigationStrategy)wac.getBean(NAVIGATION_STRATEGY_BEAN_NAME,
+							WebFlowNavigationStrategy.class);
 				}
 			}
-			if (strategy == null) {
+			if (flowNavigationStrategy == null) {
 				FlowExecutionManager manager = new FlowExecutionManager(new DataStoreFlowExecutionStorage(
 						new JsfSessionDataStoreAccessor()));
 				manager.setBeanFactory(wac);
-				strategy = new WebFlowNavigationStrategy(manager);
+				flowNavigationStrategy = new WebFlowNavigationStrategy(manager);
 			}
 		}
-		return strategy;
+		return flowNavigationStrategy;
 	}
 }

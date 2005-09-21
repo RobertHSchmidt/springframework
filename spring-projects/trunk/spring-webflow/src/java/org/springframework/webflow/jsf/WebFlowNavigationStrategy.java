@@ -23,6 +23,7 @@ import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.execution.FlowExecutionManager;
@@ -37,7 +38,7 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  * instance of this class. You can either use this class (which contains the
  * default implementation), or you can subclass it and register a bean under the
  * name specified by manifest constant
- * <code>WebFlowNavigationHandler.STRATEGY_BEAN</code>.
+ * <code>WebFlowNavigationHandler.NAVIGATION_STRATEGY_BEAN_NAME</code>.
  * </p>
  * 
  * @author Craig McClanahan
@@ -65,6 +66,7 @@ public class WebFlowNavigationStrategy {
 	 * @param flowExecutionManager the execution manager
 	 */
 	public WebFlowNavigationStrategy(FlowExecutionManager flowExecutionManager) {
+		Assert.notNull(flowExecutionManager, "The flow execution manager is required");
 		this.flowExecutionManager = flowExecutionManager;
 	}
 
@@ -104,6 +106,7 @@ public class WebFlowNavigationStrategy {
 		Map parameters = new HashMap(1);
 		// strip of the webflow prefix, leaving the flowId to launch
 		String flowId = outcome.substring(WEBFLOW_PREFIX.length());
+		Assert.hasText(flowId, "The id of the flow to launch was not provided - programmer error");
 		parameters.put(FlowExecutionManager.FLOW_ID_PARAMETER, flowId);
 		return flowExecutionManager.onEvent(createEvent(context, fromAction, outcome, parameters));
 	}
