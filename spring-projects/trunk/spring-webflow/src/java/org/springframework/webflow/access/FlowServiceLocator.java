@@ -40,7 +40,6 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	 * Request that the registry backed by this locator instantiate the default
 	 * flow implementation class, using the specified autowire policy.
 	 * Implementing this method is optional.
-	 * 
 	 * @param autowireMode the autowire policy
 	 * @return the instantiated (and possibly autowired) flow
 	 * @throws ServiceLookupException when the flow cannot be created
@@ -51,7 +50,6 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	 * Request that the registry backed by this locator instantiate the flow
 	 * of the specified implementation class, using the specified autowire policy.
 	 * Implementing this method is optional.
-	 * 
 	 * @param implementationClass the flow implementation class
 	 * @param autowireMode the autowire policy
 	 * @return the instantiated (and possibly autowired) flow
@@ -64,7 +62,6 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	 * flow implementation of the specified implementation class in the registry this
 	 * locator queries.
 	 * Implementing this method is optional.
-	 * 
 	 * @param implementationClass the required implementation class
 	 * @return the flow
 	 * @throws ServiceLookupException when the flow cannot be found, or more
@@ -88,7 +85,6 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	/**
 	 * Lookup a Flow state with specified id.
 	 * Implementing this method is optional.
-	 * 
 	 * @param id the state id
 	 * @return the state
 	 * @throws ServiceLookupException when the state cannot be found
@@ -98,7 +94,6 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	/**
 	 * Lookup a state of the specified implementation class.
 	 * Implementing this method is optional.
-	 * 
 	 * @param implementationClass the required implementation class
 	 * @return the state
 	 * @throws ServiceLookupException when the state cannot be found
@@ -111,7 +106,6 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	 * Request that the registry backed by this locator instantiate the transition
 	 * of the specified implementation class, using the specified autowire policy.
 	 * Implementing this method is optional.
-	 * 
 	 * @param implementationClass the transition implementation class
 	 * @param autowireMode the autowire policy
 	 * @return the instantiated (and possibly autowired) transition
@@ -123,7 +117,6 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	/**
 	 * Lookup a transition with specified id.
 	 * Implementing this method is optional.
-	 * 
 	 * @param id the transition id
 	 * @return the transition
 	 * @throws ServiceLookupException when the transition cannot be found
@@ -133,7 +126,6 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	/**
 	 * Lookup a transition of specified implementation class.
 	 * Implementing this method is optional.
-	 * 
 	 * @param implementationClass the required implementation class
 	 * @return the transition
 	 * @throws ServiceLookupException when the transition cannot be found
@@ -146,7 +138,6 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	 * Request that the registry backed by this locator instantiate the action
 	 * of the specified implementation class, using the specified autowire policy.
 	 * Implementing this method is optional.
-	 * 
 	 * @param implementationClass the action implementation class
 	 * @param autowireMode the autowire policy
 	 * @return the instantiated (and possibly autowired) action
@@ -157,7 +148,6 @@ public interface FlowServiceLocator extends FlowLocator, ActionLocator {
 	/**
 	 * Lookup an action instance by type that implements the specified implementation class.
 	 * Implementing this method is optional.
-	 * 
 	 * @param implementationClass the required implementation class
 	 * @return the action
 	 * @throws ServiceLookupException when the action cannot be found

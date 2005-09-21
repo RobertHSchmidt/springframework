@@ -19,7 +19,7 @@ import org.springframework.webflow.Flow;
 
 /**
  * Service locator interface for retrieving a flow by id. Needed at runtime
- * time to load a configured flow instance from a registry, to support launching
+ * to load a configured flow instance from a registry, to support launching
  * new flow executions. The default registry is typically the Spring application context.
  * 
  * @author Keith Donald
