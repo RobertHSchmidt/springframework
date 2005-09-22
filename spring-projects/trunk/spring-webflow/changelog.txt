@@ -4,7 +4,8 @@ http://www.springframework.org
 
 Changes in version RC1
 ------------------------------------
-* The org.springframework.webflow.acccess package now includes a FlowServiceLocatorAdapter.
+* Added "requireValidatorMethod" property to FormAction, useful for piecemeal validation as part of a wizard flow
+* The org.springframework.webflow.access package now includes a FlowServiceLocatorAdapter.
 * Added ActionUtils utility class, usefull when implementing actions.
 * Introduced JSF integration.
 * Added support for webflow definition scoped bean definitions, centralizing controller configuration code in one place.
