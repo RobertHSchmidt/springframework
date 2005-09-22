@@ -94,19 +94,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *   &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *       &lt;entry&gt;
- *           &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *       &lt;/entry&gt;
- *       &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *           &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *       &lt;/transition&gt;
- *   &lt;/view-state&gt;
- *  
- *   &lt;action-state id=&quot;executeSearch&quot;&gt;
- *       &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *       &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *   &lt;/action-state&gt;
+ *    &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *        &lt;entry&gt;
+ *            &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *        &lt;/entry&gt;
+ *        &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *            &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *        &lt;/transition&gt;
+ *    &lt;/view-state&gt;
+ *   
+ *    &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *        &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *        &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *    &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -206,7 +206,13 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <tr>
  * <td>validateOnBinding</td>
  * <td>true</td>
- * <td>Indicates if the validator should get applied when binding. </td>
+ * <td>Indicates if the validator should be invoked after binding. </td>
+ * </tr>
+ * <tr>
+ * <td>requireValidatorMethod</td>
+ * <td>false</td>
+ * <td>Indicates if the validator should be invoked ONLY if the
+ * "validatorMethod" property is set before this action is executed. </td>
  * </tr>
  * <tr>
  * <td>messageCodesResolver</td>
@@ -215,12 +221,12 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </tr>
  * </table>
  * 
- * @see org.springframework.webflow.action.FormOperations
+ * @see org.springframework.webflow.action.FormActionMethods
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class FormAction extends MultiAction implements InitializingBean, FormOperations {
+public class FormAction extends MultiAction implements InitializingBean, FormActionMethods {
 
 	/**
 	 * Optional property that identifies the method that should be invoked on
@@ -242,7 +248,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 	/**
 	 * The scope in which the form object should be exposed.
 	 */
-	private ScopeType formObjectScope = ScopeType.REQUEST;
+	private ScopeType formObjectScope = ScopeType.FLOW;
 
 	/**
 	 * The scope in which the form object errors holder should be exposed.
@@ -282,7 +288,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormOpe
 
 	/**
 	 * Determines if validation should only be invoked if the "validatorMethod"
-	 * property is set. Useful for piecemeal validation as part of a wizard.
+	 * property is set before this action is executed. Useful for piecemeal
+	 * validation as part of a wizard.
 	 */
 	private boolean requireValidatorMethod;
 

@@ -8,7 +8,7 @@ import org.springframework.webflow.RequestContext;
  * 
  * @author Keith Donald
  */
-public interface FormOperations {
+public interface FormActionMethods {
 
 	/**
 	 * Loads the form object and ensures it is exposed in the model of the executing flow in 
@@ -32,7 +32,7 @@ public interface FormOperations {
 	 * @return "success" if the action completed successsfully, "error" otherwise
 	 * @throws Exception an unrecoverable exception occured
 	 */
-	public abstract Event exposeFormObject(RequestContext context) throws Exception;
+	public Event exposeFormObject(RequestContext context) throws Exception;
 
 	/**
 	 * Prepares a form object for display in a new form. This will initialize
@@ -49,7 +49,7 @@ public interface FormOperations {
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 *         checked or unchecked
 	 */
-	public abstract Event setupForm(RequestContext context) throws Exception;
+	public Event setupForm(RequestContext context) throws Exception;
 
 	/**
 	 * Bind all incoming request parameters to the form object and validate the
@@ -61,7 +61,7 @@ public interface FormOperations {
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 *         checked or unchecked
 	 */
-	public abstract Event bindAndValidate(RequestContext context) throws Exception;
+	public Event bindAndValidate(RequestContext context) throws Exception;
 
 	/**
 	 * Bind the parameters of the last event in the request context to the
@@ -73,7 +73,7 @@ public interface FormOperations {
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 *         checked or unchecked
 	 */
-	public abstract Event bind(RequestContext context) throws Exception;
+	public Event bind(RequestContext context) throws Exception;
 
 	/**
 	 * Validate the form object.
@@ -84,6 +84,15 @@ public interface FormOperations {
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 *         checked or unchecked
 	 */
-	public abstract Event validate(RequestContext context) throws Exception;
+	public Event validate(RequestContext context) throws Exception;
 
+	/**
+	 * Resets the form by clearing out the form object in the specified scope
+	 * and reloading it.
+	 * @param context the request context
+	 * @return "success" if the reset action completed successfully, "error"
+	 * otherwise
+	 * @throws Exception if an exception occured
+	 */
+	public Event resetForm(RequestContext context) throws Exception;
 }
