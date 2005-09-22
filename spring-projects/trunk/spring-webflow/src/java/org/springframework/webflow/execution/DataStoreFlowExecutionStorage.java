@@ -24,8 +24,8 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.util.RandomGuid;
 
 /**
- * Flow execution storage implementation that stores the flow execution in a data store
- * accessed using a pluggable data store accessor.
+ * Flow execution storage implementation that stores the flow execution in a
+ * data store accessed using a pluggable data store accessor.
  * 
  * @see org.springframework.webflow.execution.DataStoreAccessor
  * 
@@ -39,7 +39,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	private DataStoreAccessor dataStoreAccessor;
-	
+
 	private boolean createDataStore = true;
 
 	/**
@@ -47,20 +47,22 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 * @param dataStoreAccessor the data store accessor to use
 	 */
 	public DataStoreFlowExecutionStorage(DataStoreAccessor dataStoreAccessor) {
-		Assert.notNull(dataStoreAccessor, "The data store accessor property is required to load and save flow executions");
+		Assert.notNull(dataStoreAccessor,
+				"The data store accessor property is required to load and save flow executions");
 		this.dataStoreAccessor = dataStoreAccessor;
 	}
-	
+
 	/**
-	 * Returns whether or not the data store should be created if it doesn't already
-	 * exist. Defaults to true.
+	 * Returns whether or not the data store should be created if it doesn't
+	 * already exist. Defaults to true.
 	 */
 	public boolean isCreateDataStore() {
 		return createDataStore;
 	}
 
 	/**
-	 * Set whether or not the data store should be created if it doesn't already exist.
+	 * Set whether or not the data store should be created if it doesn't already
+	 * exist.
 	 */
 	public void setCreateDataStore(boolean createDataStore) {
 		this.createDataStore = createDataStore;
@@ -72,7 +74,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Loading flow execution from data store with id '" + id + "'");
 			}
-			return (FlowExecution)getDataSourceAttribute(id, sourceEvent);
+			return (FlowExecution)getRequiredDataSourceAttribute(id, sourceEvent);
 		}
 		catch (IllegalStateException e) {
 			throw new NoSuchFlowExecutionException(id, e);
@@ -84,7 +86,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 		if (id == null) {
 			id = createId();
 			if (logger.isDebugEnabled()) {
-				logger.debug("Saving flow execution in data store using id '" + id + "'");
+				logger.debug("Saving flow execution in data store with id '" + id + "'");
 			}
 		}
 		// always update data store attribute, even if just overwriting
@@ -100,16 +102,26 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 		}
 		removeDataSourceAttribute(id, sourceEvent);
 	}
-	
+
 	// helpers
-	
+
+	/**
+	 * Get the attribute value associated with given id in the data store.
+	 */
+	protected Object getRequiredDataSourceAttribute(Serializable id, Event sourceEvent) {
+		Object attribute = getDataSourceAttribute(id, sourceEvent);
+		Assert.state(attribute != null, "No such attribute: '" + attributeName(id) + "' found in data store: "
+				+ dataStoreAccessor);
+		return attribute;
+	}
+
 	/**
 	 * Get the attribute value associated with given id in the data store.
 	 */
 	protected Object getDataSourceAttribute(Serializable id, Event sourceEvent) {
 		return dataStoreAccessor.getDataStore(sourceEvent, isCreateDataStore()).getAttribute(attributeName(id));
 	}
-	
+
 	/**
 	 * Associate given id with given attribute value in the data store.
 	 */
@@ -123,18 +135,19 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	protected void removeDataSourceAttribute(Serializable id, Event sourceEvent) {
 		dataStoreAccessor.getDataStore(sourceEvent, isCreateDataStore()).removeAttribute(attributeName(id));
 	}
-	
+
 	// subclassing hooks
-	
+
 	/**
 	 * Helper to generate a unique id for a flow execution in the storage.
 	 */
 	protected Serializable createId() {
 		return new RandomGuid().toString();
 	}
-	
+
 	/**
-	 * Returns an appropriate data store attribute name for the flow execution id.
+	 * Returns an appropriate data store attribute name for the flow execution
+	 * id.
 	 */
 	protected String attributeName(Serializable id) {
 		return FlowExecution.class.getName() + "." + id;

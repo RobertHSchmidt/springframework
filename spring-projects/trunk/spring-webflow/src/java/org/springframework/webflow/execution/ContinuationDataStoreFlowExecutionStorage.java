@@ -53,7 +53,7 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 	public FlowExecution load(Serializable id, Event sourceEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		try {
-			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getDataSourceAttribute(id, sourceEvent);
+			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getRequiredDataSourceAttribute(id, sourceEvent);
 			return continuation.getFlowExecution();
 		}
 		catch (IllegalStateException e) {
