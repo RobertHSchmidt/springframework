@@ -3,11 +3,6 @@
 
 <beans>
 
-	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/jsp/"/>
-		<property name="suffix" value=".jsp"/>
-	</bean>
-
 	<!--
 		A general purpose FlowController for the entire "Point of Sale (POS)" application.
 		Note that there is no default top-level flow configured.
@@ -40,14 +35,14 @@
 		</property>
 	</bean>
 	
-	<bean id="sellItem" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/sellItem-flow.xml"/>
-	</bean>
-
-	<bean id="saleProcessor" class="org.springframework.webflow.samples.sellitem.StubSaleProcessor"/>
-	
 	<bean id="statisticsService" class="org.springframework.webflow.execution.jmx.StatisticsService">
 		<constructor-arg ref="flowExecutionManager"/>
 		<property name="enabled" value="true"/>
 	</bean>
+
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+
 </beans>

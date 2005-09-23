@@ -28,5 +28,8 @@
 	<classpathentry kind="lib" path="lib/global/jmx-ri.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/global/struts.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-dao.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-jdbc.jar"/>
+	<classpathentry kind="lib" path="lib/global/hsqldb.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

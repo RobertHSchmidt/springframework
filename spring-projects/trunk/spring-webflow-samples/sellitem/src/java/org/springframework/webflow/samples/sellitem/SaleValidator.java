@@ -21,7 +21,7 @@ import org.springframework.validation.Validator;
 public class SaleValidator implements Validator {
 
 	public boolean supports(Class clazz) {
-		return clazz.equals(Sale.class);
+		return Sale.class.equals(clazz);
 	}
 
 	public void validate(Object obj, Errors errors) {

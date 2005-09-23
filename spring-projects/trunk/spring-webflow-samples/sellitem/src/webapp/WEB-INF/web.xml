@@ -22,6 +22,13 @@
 	<servlet>
 		<servlet-name>@PROJECT_WEBAPP_NAME@</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/sellitem-servlet.xml
+				classpath:org/springframework/webflow/samples/sellitem/applicationContext.xml
+			</param-value>
+		</init-param>
 	</servlet>
 	
 	<servlet-mapping>
