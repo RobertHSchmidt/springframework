@@ -25,32 +25,24 @@
 
 	<import file="common-targets.xml" />
 
-	<target name="doc.clean" description="Delete temporary and distribution directories for docs">
-		
-		<delete quiet="true" dir="${docs.ref.dir}/pdf" />
-		<delete quiet="true" dir="${docs.ref.dir}/html_single" />
-		<delete quiet="true" dir="${docs.ref.dir}/html" />
-		
+	<target name="doc.clean" description="Delete temporary directories for reference docs">
+		<delete quiet="true" dir="${docs.ref.target.dir}" />
 	</target>
 
-	<target name="doc.prepare" description="Extra preparation for the documentation">
-		
+	<target name="doc.prepare" description="Prepare the documentation for generation">
 		<fail message="XSLT supporting lib not installed. Please see docs/reference/readme.txt for instructions.">
 			<condition>
 				<not>
-					<available file="${docs.ref.dir}/lib" />
+					<available file="${docs.ref.lib.dir}" />
 				</not>
 			</condition>
 		</fail>
-		
 	</target>
 
-	<target name="doc.pdf" depends="doc.prepare" description="Compile reference documentation to pdf">
-		
-		<mkdir dir="${docs.ref.dir}/pdf/images" />
-
-		<copy todir="${docs.ref.dir}/pdf/images">
-			<fileset dir="${docs.ref.dir}/src/images">
+	<target name="doc-pdf" depends="doc.prepare" description="Generate PDF reference documentation">
+		<mkdir dir="${docs.ref.target.dir}/pdf/images" />
+		<copy todir="${docs.ref.target.dir}/pdf/images">
+			<fileset dir="${docs.ref.src.dir}/images">
 				<include name="*.gif" />
 				<include name="*.svg" />
 				<include name="*.jpg" />
@@ -59,36 +51,32 @@
 
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}">
 			<classpath>
-				<fileset dir="${docs.ref.dir}/lib">
+				<fileset dir="${docs.ref.lib.dir}">
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
 			<arg value="-o" />
-			<arg value="${docs.ref.dir}/pdf/docbook_fop.tmp" />
-			<arg value="${docs.ref.dir}/src/index.xml" />
+			<arg value="${docs.ref.target.dir}/docbook_fop.tmp" />
+			<arg value="${docs.ref.src.dir}/index.xml" />
 			<arg value="${docs.ref.dir}/styles/fopdf.xsl" />
 		</java>
 
 		<java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${docs.ref.dir}">
 			<classpath>
-				<fileset dir="${docs.ref.dir}/lib">
+				<fileset dir="${docs.ref.lib.dir}">
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
-			<arg value="${docs.ref.dir}/pdf/docbook_fop.tmp" />
-			<arg value="${docs.ref.dir}/pdf/${ant.project.name}-reference.pdf" />
+			<arg value="${docs.ref.target.dir}/pdf/docbook_fop.tmp" />
+			<arg value="${docs.ref.target.dir}/pdf/${ant.project.name}-reference.pdf" />
 		</java>
-
-		<delete file="${docs.ref.dir}/pdf/docbook_fop.tmp" />
-
+		<delete file="${docs.ref.target.dir}/pdf/docbook_fop.tmp" />
 	</target>
 
-	<target name="doc.html" depends="doc.prepare" description="Compile reference documentation to chunked html">
-
-		<mkdir dir="${docs.ref.dir}/html/images" />
-
-		<copy todir="${docs.ref.dir}/html/images">
-			<fileset dir="${docs.ref.dir}/src/images">
+	<target name="doc-html" depends="doc.prepare" description="Generate multi-page HTML reference documentation">
+		<mkdir dir="${docs.ref.target.dir}/html/images" />
+		<copy todir="${docs.ref.target.dir}/html/images">
+			<fileset dir="${docs.ref.src.dir}/images">
 				<include name="*.gif" />
 				<include name="*.svg" />
 				<include name="*.jpg" />
@@ -97,22 +85,19 @@
 
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}/html/">
 			<classpath>
-				<fileset dir="${docs.ref.dir}/lib">
+				<fileset dir="${docs.ref.lib.dir}">
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
-			<arg value="${docs.ref.dir}/src/index.xml" />
+			<arg value="${docs.ref.src.dir}/index.xml" />
 			<arg value="${docs.ref.dir}/styles/html_chunk.xsl" />
 		</java>
-
 	</target>
 
-	<target name="doc.htmlsingle" description="Compile reference documentation to single html">
-
-		<mkdir dir="${docs.ref.dir}/html_single/images" />
-
-		<copy todir="${docs.ref.dir}/html_single/images">
-			<fileset dir="${docs.ref.dir}/src/images">
+	<target name="doc-htmlsingle" description="Generate single-page HTML reference documentation">
+		<mkdir dir="${docs.ref.target.dir}/html_single/images" />
+		<copy todir="${docs.ref.target.dir}/html_single/images">
+			<fileset dir="${docs.ref.src.dir}/images">
 				<include name="*.gif" />
 				<include name="*.svg" />
 				<include name="*.jpg" />
@@ -121,18 +106,17 @@
 
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}">
 			<classpath>
-				<fileset dir="${docs.ref.dir}/lib">
+				<fileset dir="${docs.ref.lib.dir}">
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
 			<arg value="-o" />
-			<arg value="${docs.ref.dir}/html_single/index.html" />
-			<arg value="${docs.ref.dir}/src/index.xml" />
+			<arg value="${docs.ref.target.dir}/html_single/index.html" />
+			<arg value="${docs.ref.src.dir}/index.xml" />
 			<arg value="${docs.ref.dir}/styles/html.xsl" />
 		</java>
-
 	</target>
 
-	<target name="doc.all" depends="doc.html,doc.htmlsingle,doc.pdf" description="Generate and copy reference documentation" />
+	<target name="doc-all" depends="doc-html,doc-htmlsingle,doc-pdf" description="Generate reference documentation in all formats" />
 
 </project>
