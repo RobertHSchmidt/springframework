@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+
+<!--
+ Copyright 2002-2005 the original author or authors.
+  
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ - - -
+ Author: Alef Arendsen
+ 
+ Targets for generating reference documentation.
+-->
+
+<project name="doc-targets" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+
+	<import file="common-targets.xml" />
+
+	<target name="doc.clean" description="Delete temporary and distribution directories for docs">
+		
+		<delete quiet="true" dir="${docs.ref.dir}/pdf" />
+		<delete quiet="true" dir="${docs.ref.dir}/html_single" />
+		<delete quiet="true" dir="${docs.ref.dir}/html" />
+		
+	</target>
+
+	<target name="doc.prepare" description="Extra preparation for the documentation">
+		
+		<fail message="XSLT supporting lib not installed. Please see docs/reference/readme.txt for instructions.">
+			<condition>
+				<not>
+					<available file="${docs.ref.dir}/lib" />
+				</not>
+			</condition>
+		</fail>
+		
+	</target>
+
+	<target name="doc.pdf" depends="doc.prepare" description="Compile reference documentation to pdf">
+		
+		<mkdir dir="${docs.ref.dir}/pdf/images" />
+
+		<copy todir="${docs.ref.dir}/pdf/images">
+			<fileset dir="${docs.ref.dir}/src/images">
+				<include name="*.gif" />
+				<include name="*.svg" />
+				<include name="*.jpg" />
+			</fileset>
+		</copy>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}">
+			<classpath>
+				<fileset dir="${docs.ref.dir}/lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+			<arg value="-o" />
+			<arg value="${docs.ref.dir}/pdf/docbook_fop.tmp" />
+			<arg value="${docs.ref.dir}/src/index.xml" />
+			<arg value="${docs.ref.dir}/styles/fopdf.xsl" />
+		</java>
+
+		<java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${docs.ref.dir}">
+			<classpath>
+				<fileset dir="${docs.ref.dir}/lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+			<arg value="${docs.ref.dir}/pdf/docbook_fop.tmp" />
+			<arg value="${docs.ref.dir}/pdf/${ant.project.name}-reference.pdf" />
+		</java>
+
+		<delete file="${docs.ref.dir}/pdf/docbook_fop.tmp" />
+
+	</target>
+
+	<target name="doc.html" depends="doc.prepare" description="Compile reference documentation to chunked html">
+
+		<mkdir dir="${docs.ref.dir}/html/images" />
+
+		<copy todir="${docs.ref.dir}/html/images">
+			<fileset dir="${docs.ref.dir}/src/images">
+				<include name="*.gif" />
+				<include name="*.svg" />
+				<include name="*.jpg" />
+			</fileset>
+		</copy>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}/html/">
+			<classpath>
+				<fileset dir="${docs.ref.dir}/lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+			<arg value="${docs.ref.dir}/src/index.xml" />
+			<arg value="${docs.ref.dir}/styles/html_chunk.xsl" />
+		</java>
+
+	</target>
+
+	<target name="doc.htmlsingle" description="Compile reference documentation to single html">
+
+		<mkdir dir="${docs.ref.dir}/html_single/images" />
+
+		<copy todir="${docs.ref.dir}/html_single/images">
+			<fileset dir="${docs.ref.dir}/src/images">
+				<include name="*.gif" />
+				<include name="*.svg" />
+				<include name="*.jpg" />
+			</fileset>
+		</copy>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}">
+			<classpath>
+				<fileset dir="${docs.ref.dir}/lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+			<arg value="-o" />
+			<arg value="${docs.ref.dir}/html_single/index.html" />
+			<arg value="${docs.ref.dir}/src/index.xml" />
+			<arg value="${docs.ref.dir}/styles/html.xsl" />
+		</java>
+
+	</target>
+
+	<target name="doc.all" depends="doc.html,doc.htmlsingle,doc.pdf" description="Generate and copy reference documentation" />
+
+</project>
