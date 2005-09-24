@@ -30,7 +30,7 @@
 	</target>
 
 	<target name="doc.prepare" description="Prepare the documentation for generation">
-		<fail message="XSLT supporting lib not installed in: ${docs.ref.lib.dir}, please see docs/reference/readme.txt for instructions.">
+		<fail message="Supporting libraries needed to generate documentation not found in: ${docs.ref.lib.dir}, please see docs/reference/readme.txt for instructions.">
 			<condition>
 				<not>
 					<available file="${docs.ref.lib.dir}" />
