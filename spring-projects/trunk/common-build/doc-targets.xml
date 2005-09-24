@@ -56,7 +56,7 @@
 				</fileset>
 			</classpath>
 			<arg value="-o" />
-			<arg value="${docs.ref.target.dir}/docbook_fop.tmp" />
+			<arg value="${docs.ref.target.dir}/pdf/docbook_fop.tmp" />
 			<arg value="${docs.ref.src.dir}/index.xml" />
 			<arg value="${docs.ref.dir}/styles/fopdf.xsl" />
 		</java>
