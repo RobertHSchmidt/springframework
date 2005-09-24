@@ -2,17 +2,17 @@
 
 <project name="spring-webflow" default="dist">
 
-  <property file="build.properties"/>
-  <property file="project.properties"/>
-  <property file="${common.build.dir}/build.properties"/>
-  <property file="${common.build.dir}/project.properties"/>
-  <property file="${user.home}/build.properties"/>
+	<property file="build.properties" />
+	<property file="project.properties" />
+	<property file="${common.build.dir}/build.properties" />
+	<property file="${common.build.dir}/project.properties" />
+	<property file="${user.home}/build.properties" />
 
-  <property name="project.title" value="Spring Web Flow"/>
-  <property name="project.package" value="org.springframework.webflow"/>
-  
-  <import file="${common.build.dir}/common-targets.xml"/>
+	<property name="project.title" value="Spring Web Flow" />
+	<property name="project.package" value="org.springframework.webflow" />
 
-  <import file="${common.build.dir}/clover-targets.xml"/>
+	<import file="${common.build.dir}/common-targets.xml" />
+	<import file="${common.build.dir}/clover-targets.xml" />
+	<import file="${common.build.dir}/doc-targets.xml" />
 
 </project>

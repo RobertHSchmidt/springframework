@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preface id="preface">
+	<title>Preface</title>
+	
+	<para>
+		Bla bla.
+	</para>
+</preface>
+
+<chapter id="introduction">
+
+	<title>Introduction</title>
+	<sect1 id="introduction-overview">
+		<title>Overview</title>
+
+		<para>
+			Spring Web Flow (SWF) is a core module of the Spring
+			Framework focused on the definition and orchestration of
+			page flow within a web application.
+		</para>
+		<para>
+			The system allows you to capture logical page flows as
+			self-contained modules that are reusable in different
+			situations. The system is ideal for building web application
+			modules that guide the user through controlled navigations
+			that drive business processes. These processes typically
+			span HTTP requests and may be dynamic in nature.
+		</para>
+		<para>
+			SWF exists at a higher-level of abstraction, building on
+			existing frameworks like Struts, Spring MVC, and JSF,
+			capturing your application's page flow explicity in a
+			declarative fashion. SWF is a very a powerful framework
+			based on a finite-state machine for the definition and
+			execution of a web conversation.
+		</para>
+	</sect1>
+</chapter>
