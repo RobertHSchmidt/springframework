@@ -12,9 +12,8 @@ build targets:
 * doc-htmlsingle - generate single page HTML documentation
 * doc-clean      - clean any output directories for docs
 
-For generation to complete successfully, you must have first placed
+For generation to complete successfully, you must have first extracted
 the .jar libraries contained in this archive:
     - http://static.springframework.org/spring/files/docbook-reference-libs.zip
-... in a 'lib' directory at ${basedir}/docs/reference.  If you have not done so
-already, download this file and unzip the contents of the archive into
-${basedir}/docs/reference/lib.
+... to ${basedir}/docs/reference.  If you have not yet done so, download this file
+and unzip the contents of the archive into ${basedir}/docs/reference.
