@@ -36,8 +36,8 @@ import org.springframework.util.StringUtils;
  * that guides the user through fulfillment of a business process that takes
  * place over a series of steps (modeled as states).
  * <p>
- * Note: A flow is not a welcome page, a menu, an index page, or even a
- * simple form page: don't use flows for those cases, use simple
+ * Note: A flow is not a welcome page, a menu, an index page, or even a simple
+ * form page: don't use flows for those cases, use simple
  * controllers/actions/portlets instead. Don't use flows where your application
  * demands a lot of "free browsing"; flows force strict navigation. Especially
  * in Intranet applications, there are often "controlled navigations", where the
@@ -49,10 +49,10 @@ import org.springframework.util.StringUtils;
  * the flow where something happens; for example, showing a view, executing an
  * action, spawning a sub flow, or terminating the flow.
  * <p>
- * Each state can have transitions that are used to move to another
- * state. A transition is typically triggered by the occurence of a supported
- * event within a request context. An event is an identifier signalling the
- * occurence of something: e.g. "submit", "back", "success" or "error".
+ * Each state can have transitions that are used to move to another state. A
+ * transition is typically triggered by the occurence of a supported event
+ * within a request context. An event is an identifier signalling the occurence
+ * of something: e.g. "submit", "back", "success" or "error".
  * <p>
  * Each Flow has exactly one start state. A start state is simply a marker for
  * the state flow executions (client instances of this flow) should start in.
@@ -138,7 +138,7 @@ public class Flow extends AnnotatedObject {
 	 * Set the unique id of this flow.
 	 */
 	public void setId(String id) {
-		Assert.notNull(id, "The flow id is required");
+		Assert.hasText(id, "This flow must have a unique, non-blank identifier");
 		this.id = id;
 	}
 
@@ -147,10 +147,10 @@ public class Flow extends AnnotatedObject {
 	 * this method is to be called by the (privileged) state definition classes
 	 * themselves during state construction as part of a FlowBuilder invocation.
 	 * @param state the state, if already added nothing happens, if another
-	 *        instance is added with the same id, an exception is thrown
+	 * instance is added with the same id, an exception is thrown
 	 * @throws IllegalArgumentException when the state cannot be added to the
-	 *         flow; specifically, if another state shares the same id as the
-	 *         one provided
+	 * flow; specifically, if another state shares the same id as the one
+	 * provided
 	 */
 	protected void add(State state) throws IllegalArgumentException {
 		if (this != state.getFlow() && state.getFlow() != null) {
@@ -188,7 +188,7 @@ public class Flow extends AnnotatedObject {
 	public Iterator statesIterator() {
 		return this.states.iterator();
 	}
-	
+
 	/**
 	 * Returns the list of states in this flow.
 	 */
@@ -197,7 +197,8 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Return the start state, throwing an exception if it has not yet been marked.
+	 * Return the start state, throwing an exception if it has not yet been
+	 * marked.
 	 * @return the start state
 	 * @throws IllegalStateException when no start state has been marked
 	 */
@@ -215,17 +216,18 @@ public class Flow extends AnnotatedObject {
 	 * <code>stateId</code>.
 	 * @param stateId the id of the new start state
 	 * @throws NoSuchFlowStateException when no state exists with the id you
-	 *         provided
+	 * provided
 	 */
 	public void setStartState(String stateId) throws IllegalStateException, NoSuchFlowStateException {
 		setStartState(getRequiredState(stateId));
 	}
 
 	/**
-	 * Set the start state for this flow to the state provided; any
-	 * state may be the start state.
+	 * Set the start state for this flow to the state provided; any state may be
+	 * the start state.
 	 * @param state the new start state
-	 * @throws NoSuchFlowStateException given state has not been added to this flow
+	 * @throws NoSuchFlowStateException given state has not been added to this
+	 * flow
 	 */
 	public void setStartState(State state) throws NoSuchFlowStateException {
 		if (!containsStateInstance(state)) {
@@ -238,7 +240,8 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Checks if given state instance is present in this flow. Does a "same" (==) check.
+	 * Checks if given state instance is present in this flow. Does a "same"
+	 * (==) check.
 	 * @param state the state to search for
 	 * @return true if yes (the same instance is present), false otherwise
 	 */
@@ -269,7 +272,8 @@ public class Flow extends AnnotatedObject {
 	 */
 	public State getState(String stateId) {
 		if (!StringUtils.hasText(stateId)) {
-			return null;
+			throw new IllegalArgumentException(
+					"The specified stateId was invalid: state identifiers must be non-blank and unique to the containing flow definition");
 		}
 		Iterator it = statesIterator();
 		while (it.hasNext()) {
@@ -295,33 +299,33 @@ public class Flow extends AnnotatedObject {
 		}
 		return state;
 	}
-	
+
 	/**
 	 * Return the <code>TransitionableState</code> with given <id>stateId</id>,
 	 * or <code>null</code> when not found.
 	 * @param stateId id of the state to look up
 	 * @return the transitionable state, or null when not found
 	 * @throws IllegalStateException when the identified state is not
-	 *         transitionable
+	 * transitionable
 	 */
 	public TransitionableState getTransitionableState(String stateId) throws IllegalStateException {
 		State state = getState(stateId);
 		if (state != null && !state.isTransitionable()) {
 			throw new IllegalStateException("The state '" + stateId + "' of flow '" + getId()
-				+ "' must be transitionable");
+					+ "' must be transitionable");
 		}
 		return (TransitionableState)state;
-	}	
-	
+	}
+
 	/**
 	 * Return the <code>TransitionableState</code> with given <id>stateId</id>,
 	 * throwing an exception if not found.
 	 * @param stateId id of the state to look up
 	 * @return the transitionable state
 	 * @throws IllegalStateException when the identified state is not
-	 *         transitionable
+	 * transitionable
 	 * @throws NoSuchFlowStateException when no transitionable state exists by
-	 *         this id
+	 * this id
 	 */
 	public TransitionableState getRequiredTransitionableState(String stateId) throws IllegalStateException,
 			NoSuchFlowStateException {
