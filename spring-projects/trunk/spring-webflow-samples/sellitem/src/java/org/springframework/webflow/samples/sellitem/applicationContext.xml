@@ -4,7 +4,7 @@
 <beans>
 
 	<bean id="sellItem" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="classpath:org/springframework/webflow/samples/sellitem/sellitem-flow.xml"/>
+		<property name="location" value="classpath:org/springframework/webflow/samples/sellitem/sellItem-flow.xml"/>
 	</bean>
 
 	<bean id="saleProcessor" parent="transactionProxy">
