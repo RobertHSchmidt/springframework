@@ -33,55 +33,65 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionImpl;
 
 /**
- * Base class for integration tests that verify a flow executes as expected.  Flow execution tests
- * captured by subclasses should test that a flow responds to all supported transition criteria correctly,
- * transitioning to the correct states and producing the appropriate results on the occurence of 
- * possible "external" (user) events. 
+ * Base class for integration tests that verify a flow executes as expected.
+ * Flow execution tests captured by subclasses should test that a flow responds
+ * to all supported transition criteria correctly, transitioning to the correct
+ * states and producing the appropriate results on the occurence of possible
+ * "external" (user) events.
  * <p>
  * More specifically, a typical flow execution test case will test:
  * <ul>
- * <li>That the flow execution starts as expected given a source event with potential input parameters
- * (see {@link #startFlow(Event)}).
- * <li>That given the set of supported transition criteria for a given state, that the state executes 
- * the appropriate transition when an event is signaled (with potential input parameters).  A test case
- * should be coded for each logical event that can occur, where an event drives a possible 
- * path through the flow.  The goal should be to exercise all possible paths of the flow.
- * <li>That given a transition that leads to an interactive state type (a view state or an end state),
- * that the view descriptor returned to the client matches what was expected and the current
- * state of the flow matches what is expected.
+ * <li>That the flow execution starts as expected given a source event with
+ * potential input parameters (see {@link #startFlow(Event)}).
+ * <li>That given the set of supported transition criteria for a given state,
+ * that the state executes the appropriate transition when an event is signaled
+ * (with potential input parameters). A test case should be coded for each
+ * logical event that can occur, where an event drives a possible path through
+ * the flow. The goal should be to exercise all possible paths of the flow.
+ * <li>That given a transition that leads to an interactive state type (a view
+ * state or an end state), that the view descriptor returned to the client
+ * matches what was expected and the current state of the flow matches what is
+ * expected.
  * </ul>
- * A flow execution test can effectively automate and validate the orchestration required to drive an 
- * end-to-end business process that spans several steps involving the user.  Such tests are a good way to
- * test your system top-down starting at the web-tier and pushing through all the way to the DB without
- * having to deploy to a servlet or portlet container.  Because these tests are typically end-to-end
- * integration tests that involve a transactional resource such a database, this class subclasses Spring's 
- * AbstractTransactionalSpringContextTests to take advantage of its automatic transaction management
- * and rollback capabilites.  If you do not need those capabilities, you must call
- * <code>setDependencyCheck(false)</code> in your test's constructor to turn off dependency
- * checking for the transaction manager property.
+ * A flow execution test can effectively automate and validate the orchestration
+ * required to drive an end-to-end business process that spans several steps
+ * involving the user. Such tests are a good way to test your system top-down
+ * starting at the web-tier and pushing through all the way to the DB without
+ * having to deploy to a servlet or portlet container. Because these tests are
+ * typically end-to-end integration tests that involve a transactional resource
+ * such a database, this class subclasses Spring's
+ * AbstractTransactionalSpringContextTests to take advantage of its automatic
+ * transaction management and rollback capabilites. If you do not need those
+ * capabilities, you must call <code>setDependencyCheck(false)</code> in your
+ * test's constructor to turn off dependency checking for the transaction
+ * manager property.
  * 
  * @author Keith Donald
  */
 public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSpringContextTests {
 
 	/**
-	 * The flow definition whose execution is being tested (configuration object).
+	 * The flow definition whose execution is being tested (configuration
+	 * object).
 	 */
 	private Flow flow;
 
 	/**
-	 * The flow execution running the flow when the test is active (runtime object).
+	 * The flow execution running the flow when the test is active (runtime
+	 * object).
 	 */
 	private FlowExecution flowExecution;
 
 	/**
-	 * The flow service locator; providing means to lookup and retrieve configured flows.
-	 * Used to resolve the Flow to be tested by <code>id</code>.
+	 * The flow service locator; providing means to lookup and retrieve
+	 * configured flows. Used to resolve the Flow to be tested by
+	 * <code>id</code>.
 	 */
 	private FlowLocator flowLocator;
 
 	/**
-	 * Returns the flow locator used to resolve the Flow to be tested by <code>id</code>.
+	 * Returns the flow locator used to resolve the Flow to be tested by
+	 * <code>id</code>.
 	 */
 	protected FlowLocator getFlowLocator() {
 		return flowLocator;
@@ -91,19 +101,19 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 		this.flowLocator = new BeanFactoryFlowServiceLocator(this.applicationContext);
 		onSetUpInTransactionalFlowTest();
 	}
-	
+
 	/**
-	 * Hook method subclasses can implement to do additional setup. Called
-	 * after the transition has been activated and the flow locator has been set.
+	 * Hook method subclasses can implement to do additional setup. Called after
+	 * the transition has been activated and the flow locator has been set.
 	 */
 	protected void onSetUpInTransactionalFlowTest() {
 	}
-	
+
 	/**
 	 * Get the singleton flow definition whose execution is being tested.
 	 * @return the singleton flow definition
-	 * @throws ServiceLookupException if the flow identified by flowId()
-	 *         could not be resolved (if <code>this.flow</code> was null)
+	 * @throws ServiceLookupException if the flow identified by flowId() could
+	 * not be resolved (if <code>this.flow</code> was null)
 	 */
 	protected Flow getFlow() throws ServiceLookupException {
 		if (this.flow == null) {
@@ -140,15 +150,15 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
 	 * @return the model and view returned as a result of starting the flow
-	 *         (returned when the first view state is entered)
+	 * (returned when the first view state is entered)
 	 */
 	protected ViewDescriptor startFlow() {
 		return startFlow(event("start"));
 	}
 
 	/**
-	 * Convenience factory method that returns an event instance for this
-	 * test client with the specified id.
+	 * Convenience factory method that returns an event instance for this test
+	 * client with the specified id.
 	 * @param eventId the event id
 	 * @return the event
 	 */
@@ -157,8 +167,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
-	 * Convenience factory method that returns an event instance for this
-	 * test client with the specified id and parameters
+	 * Convenience factory method that returns an event instance for this test
+	 * client with the specified id and parameters
 	 * @param eventId the event id
 	 * @param parameters the event parameters
 	 * @return the event
@@ -171,7 +181,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * Start a new flow execution for the flow definition that is being tested.
 	 * @param event the starting event
 	 * @return the model and view returned as a result of starting the flow
-	 *         (returned when the first view state is entered)
+	 * (returned when the first view state is entered)
 	 */
 	protected ViewDescriptor startFlow(Event event) {
 		this.flowExecution = new FlowExecutionImpl(getFlow());
@@ -223,19 +233,19 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * and only override what you need.
 	 * @param event the event to signal
 	 * @return the model and view, returned once control is returned to the
-	 *         client (occurs when the flow enters a view state, or an end
-	 *         state)
+	 * client (occurs when the flow enters a view state, or an end state)
 	 */
 	protected ViewDescriptor signalEvent(Event event) {
 		return this.flowExecution.signalEvent(event);
 	}
 
 	/**
-	 * Returns the ongoing flow execution for this test.
+	 * Returns the flow execution context, providing information about the ongoing
+	 * flow execution being tested.
 	 * @return the flow execution
 	 * @throws IllegalStateException the execution has not been started
 	 */
-	protected FlowExecutionContext getFlowContext() throws IllegalStateException {
+	protected FlowExecutionContext getFlowExecutionContext() throws IllegalStateException {
 		if (flowExecution == null) {
 			throw new IllegalStateException("The flow execution has not been started; call startFlow first");
 		}
@@ -245,13 +255,20 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	/**
 	 * Assert that the active flow session is for the flow with the provided id.
 	 * @param expectedActiveFlowId the flow id that should have a session active
-	 *        in the tested flow execution
+	 * in the tested flow execution
 	 */
 	protected void assertActiveFlowEquals(String expectedActiveFlowId) {
-		assertEquals(
-				"The active flow id '" + getFlowContext().getActiveSession().getFlow()
-				+ "' does not equal the expected active flow '" + expectedActiveFlowId + "'",
-				expectedActiveFlowId, getFlowContext().getActiveSession().getFlow().getId());
+		assertEquals("The active flow id '" + getFlowExecutionContext().getActiveSession().getFlow()
+				+ "' does not equal the expected active flow '" + expectedActiveFlowId + "'", expectedActiveFlowId,
+				getFlowExecutionContext().getActiveSession().getFlow().getId());
+	}
+
+	/**
+	 * Assert that the entire flow execution has ended; that is, it is no longer
+	 * active.
+	 */
+	protected void assertFlowExecutionEnded() {
+		assertTrue("The flow execution is still active but it should have ended", !flowExecution.isActive());
 	}
 
 	/**
@@ -260,10 +277,9 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @param expectedCurrentStateId the expected current state
 	 */
 	protected void assertCurrentStateEquals(String expectedCurrentStateId) {
-		assertEquals(
-				"The current state '" + getFlowContext().getActiveSession().getCurrentState().getId()
-				+ "' does not equal the expected state '" + expectedCurrentStateId + "'",
-				expectedCurrentStateId, getFlowContext().getActiveSession().getCurrentState().getId());
+		assertEquals("The current state '" + getFlowExecutionContext().getActiveSession().getCurrentState().getId()
+				+ "' does not equal the expected state '" + expectedCurrentStateId + "'", expectedCurrentStateId,
+				getFlowExecutionContext().getActiveSession().getCurrentState().getId());
 	}
 
 	/**
@@ -272,10 +288,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @param expectedEventId the expected event
 	 */
 	protected void assertLastEventEquals(String expectedEventId) {
-		assertEquals(
-				"The last event '" + getFlowContext().getLastEventId()
-				+ "' does not equal the expected event '" + expectedEventId	+ "'",
-				expectedEventId, getFlowContext().getLastEventId());
+		assertEquals("The last event '" + getFlowExecutionContext().getLastEventId() + "' does not equal the expected event '"
+				+ expectedEventId + "'", expectedEventId, getFlowExecutionContext().getLastEventId());
 	}
 
 	/**
@@ -286,7 +300,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	public void assertViewNameEquals(String expectedViewName, ViewDescriptor viewDescriptor) {
 		assertEquals("The view name is wrong:", expectedViewName, viewDescriptor.getViewName());
 	}
-	
+
 	/**
 	 * Assert that the view descriptor contains the specified model attribute
 	 * with the provided expected value.
@@ -305,29 +319,29 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @param attributeName the collection attribute name
 	 * @param viewDescriptor the view descriptor to assert
 	 */
-	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName,
-			ViewDescriptor viewDescriptor) {
+	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ViewDescriptor viewDescriptor) {
 		assertModelAttributeNotNull(attributeName, viewDescriptor);
 		Collection c = (Collection)viewDescriptor.getAttribute(attributeName);
 		assertEquals("The model attribute collection size is wrong:", expectedSize, c.size());
 	}
+
 	/**
 	 * Assert that the view descriptor contains the specified model attribute.
 	 * @param attributeName the attribute name
 	 * @param viewDescriptor the view descriptor to assert
 	 */
 	public void assertModelAttributeNotNull(String attributeName, ViewDescriptor viewDescriptor) {
-		assertNotNull("The model attribute is [null] but should be NOT null:",
-				viewDescriptor.getAttribute(attributeName));
-	}	
+		assertNotNull("The model attribute is [null] but should be NOT null:", viewDescriptor
+				.getAttribute(attributeName));
+	}
 
 	/**
-	 * Assert that the view descriptor does not contain the specified model attribute.
+	 * Assert that the view descriptor does not contain the specified model
+	 * attribute.
 	 * @param attributeName the attribute name
 	 * @param viewDescriptor the view descriptor to assert
 	 */
 	public void assertModelAttributeNull(String attributeName, ViewDescriptor viewDescriptor) {
-		assertNull("The model attribute is NOT null but should be [null]:",
-				viewDescriptor.getAttribute(attributeName));
-	}	
+		assertNull("The model attribute is NOT null but should be [null]:", viewDescriptor.getAttribute(attributeName));
+	}
 }
