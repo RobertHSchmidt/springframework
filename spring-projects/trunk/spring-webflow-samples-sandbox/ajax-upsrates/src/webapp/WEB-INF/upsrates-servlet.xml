@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+
+	<bean name="/upsrates.htm" class="org.springframework.webflow.mvc.FlowController">
+		<property name="cacheSeconds" value="5"/>
+		<property name="flowExecutionManager" ref="flowExecutionManager"/>
+	</bean>
+
+	<!--
+		Custom configuration of the HTTP request flow execution manager.
+		Note how you can just change the flow execution storage strategy without any impact
+		on the views!
+	-->	
+	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.servlet.ServletFlowExecutionManager">
+		<property name="storage">
+			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage">
+				<constructor-arg>
+					<bean class="org.springframework.webflow.execution.servlet.HttpSessionDataStoreAccessor"/>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="upsrates" class="org.springframework.webflow.config.XmlFlowFactoryBean">
+		<property name="location" value="/WEB-INF/upsrates-flow.xml"/>
+	</bean>
+
+	<bean id="queryFormAction" class="org.springframework.webflow.action.FormAction">
+		<property name="formObjectClass" value="org.springframework.webflow.samples.upsrates.web.command.UPSRateQueryCommand"/>
+		<property name="formObjectName" value="query"/>
+		<property name="formObjectScopeAsString" value="flow"/>
+		<property name="validator">
+			<bean class="org.springframework.webflow.samples.upsrates.web.UPSRateQueryCommandValidator" autowire="byType"/>
+		</property>
+	</bean>
+	
+	<bean id="findUPSRateAction" class="org.springframework.webflow.samples.upsrates.web.FindUPSRateAction">
+		<property name="upsRatesService" ref="upsRatesService"/>
+		<property name="commandName" value="query"/>
+	</bean>
+</beans>
