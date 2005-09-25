@@ -29,5 +29,7 @@
 		<property name="url" value="jdbc:hsqldb:mem:sellItem"/>
 		<property name="username" value="sa"/>
 	</bean>
+
+	<bean id="databaseCreator" class="org.springframework.webflow.samples.sellitem.InMemoryDatabaseCreator" autowire="byType"/>
 	
 </beans>

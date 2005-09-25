@@ -35,7 +35,7 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 		Map parameters = new HashMap(1);
 		parameters.put("category", "A");
 		ViewDescriptor nextView = signalEvent(event("submit", parameters));
-		assertViewNameEquals("showCostOverview", nextView);
+		assertViewNameEquals("costOverview", nextView);
 		assertFlowExecutionEnded();
 	}
 
@@ -53,7 +53,7 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 		Map parameters = new HashMap(1);
 		parameters.put("shippingType", "E");
 		ViewDescriptor nextView = signalEvent(event("submit", parameters));
-		assertViewNameEquals("showCostOverview", nextView);
+		assertViewNameEquals("costOverview", nextView);
 		assertFlowExecutionEnded();
 	}
 }
