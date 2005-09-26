@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import org.springframework.webflow.execution.ExternalEvent;
 
 /**
- * External event that communicates an user action was taken from a JSF
- * environment: either requesting a new flow be started or noting an event was
+ * External event that communicates a user action in a JSF environment;
+ * either requesting that a new flow should be started or noting an event was
  * signaled in an ongoing flow execution.
  * 
  * This event provides access to the FacesContext associated with the
