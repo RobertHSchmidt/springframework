@@ -15,7 +15,7 @@
 	<classpathentry kind="lib" path="lib/global/commons-codec.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/global/junit.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
+	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-core.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/jmx-ri.jar"/>
 	<classpathentry kind="src" path="/spring-binding"/>
 	<classpathentry sourcepath="/repository/apache/tapestry/sources/tapestry-4.0-beta3-src.zip" kind="lib" path="lib/buildtime/tapestry.jar"/>

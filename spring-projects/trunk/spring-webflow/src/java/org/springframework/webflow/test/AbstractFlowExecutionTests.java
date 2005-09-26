@@ -24,9 +24,9 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.access.BeanFactoryFlowServiceLocator;
+import org.springframework.webflow.access.BeanFactoryFlowLocator;
 import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.access.ServiceLookupException;
+import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.config.FlowBuilder;
 import org.springframework.webflow.config.FlowFactoryBean;
 import org.springframework.webflow.execution.FlowExecution;
@@ -98,7 +98,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	protected final void onSetUpInTransaction() throws Exception {
-		this.flowLocator = new BeanFactoryFlowServiceLocator(this.applicationContext);
+		this.flowLocator = new BeanFactoryFlowLocator(this.applicationContext);
 		onSetUpInTransactionalFlowTest();
 	}
 
@@ -112,10 +112,10 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	/**
 	 * Get the singleton flow definition whose execution is being tested.
 	 * @return the singleton flow definition
-	 * @throws ServiceLookupException if the flow identified by flowId() could
+	 * @throws FlowArtifactLookupException if the flow identified by flowId() could
 	 * not be resolved (if <code>this.flow</code> was null)
 	 */
-	protected Flow getFlow() throws ServiceLookupException {
+	protected Flow getFlow() throws FlowArtifactLookupException {
 		if (this.flow == null) {
 			setFlow(getFlowLocator().getFlow(flowId()));
 		}
