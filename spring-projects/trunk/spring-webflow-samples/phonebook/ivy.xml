@@ -19,8 +19,8 @@
     <dependency org="java" name="jstl" rev="1.1.2"/>
     <dependency org="ognl" name="ognl" rev="2.7"/>
     <dependency org="springframework" name="spring-webflow" rev="latest.integration"/>
-    <dependency org="springframework" name="spring-aop" rev="1.2.4"/>
-    <dependency org="springframework" name="spring-dao" rev="1.2.4"/>
+    <dependency org="springframework" name="spring-aop" rev="1.2.5"/>
+    <dependency org="springframework" name="spring-dao" rev="1.2.5"/>
 
     <!--  build-time only dependencies -->
     <dependency org="java" name="servlet" rev="2.4" conf="buildtime->default">
