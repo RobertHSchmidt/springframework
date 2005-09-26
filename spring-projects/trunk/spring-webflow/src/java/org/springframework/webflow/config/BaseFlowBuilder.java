@@ -23,10 +23,12 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
-import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.access.BeanFactoryFlowServiceLocator;
-import org.springframework.webflow.access.FlowServiceLocator;
+import org.springframework.webflow.access.BeanFactoryFlowArtifactLocator;
+import org.springframework.webflow.access.DefaultFlowCreator;
+import org.springframework.webflow.access.FlowArtifactLocator;
+import org.springframework.webflow.access.FlowCreator;
+import org.springframework.webflow.support.FlowConversionService;
 
 /**
  * Abstract base implementation of a flow builder defining common functionality
@@ -48,15 +50,26 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * The service locator that locates and creates flow related artifacts by
-	 * identifier or implementation class, as needed by this builder.
-	 */
-	private FlowServiceLocator flowServiceLocator = new BeanFactoryFlowServiceLocator();
-
-	/**
 	 * The <code>Flow</code> built by this builder.
 	 */
 	private Flow flow;
+
+	/**
+	 * Creates the implementation of the flow built by this builder.
+	 */
+	private FlowCreator flowCreator = new DefaultFlowCreator();
+
+	/**
+	 * Locates actions, attribute mappers, and other artifacts invokable by the
+	 * flow built by this builder.
+	 */
+	private FlowArtifactLocator flowArtifactLocator;
+
+	/**
+	 * The conversion service to convert to flow-related artifacts, typically
+	 * from string encoded representations.
+	 */
+	private ConversionService conversionService = new FlowConversionService();
 
 	/**
 	 * Default constructor for subclassing.
@@ -64,36 +77,66 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	protected BaseFlowBuilder() {
 	}
 
-	/**
-	 * Create a base flow builder which will pull services (other flow defs,
-	 * actions, model mappers, etc.) from given service locator.
-	 * @param flowServiceLocator the locator
-	 */
-	protected BaseFlowBuilder(FlowServiceLocator flowServiceLocator) {
-		setFlowServiceLocator(flowServiceLocator);
+	protected BaseFlowBuilder(FlowArtifactLocator artifactLocator) {
+		setFlowArtifactLocator(artifactLocator);
 	}
 
-	/**
-	 * Returns the flow service location strategy in use.
-	 */
-	protected FlowServiceLocator getFlowServiceLocator() {
-		return flowServiceLocator;
+	protected BaseFlowBuilder(FlowCreator flowCreator, FlowArtifactLocator artifactLocator) {
+		setFlowCreator(flowCreator);
+		setFlowArtifactLocator(artifactLocator);
 	}
 
-	/**
-	 * Set the flow service location strategy to use.
-	 */
-	public void setFlowServiceLocator(FlowServiceLocator flowServiceLocator) {
-		Assert.notNull(flowServiceLocator, "The flow service locator is required");
-		this.flowServiceLocator = flowServiceLocator;
+	protected FlowCreator getFlowCreator() {
+		return flowCreator;
+	}
+
+	public void setFlowCreator(FlowCreator flowCreator) {
+		this.flowCreator = flowCreator;
+	}
+
+	protected FlowArtifactLocator getFlowArtifactLocator() {
+		return flowArtifactLocator;
+	}
+
+	public void setFlowArtifactLocator(FlowArtifactLocator flowArtifactLocator) {
+		this.flowArtifactLocator = flowArtifactLocator;
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		if (flowServiceLocator instanceof BeanFactoryFlowServiceLocator) {
-			((BeanFactoryFlowServiceLocator)flowServiceLocator).setBeanFactory(beanFactory);
+		if (flowArtifactLocator == null) {
+			this.flowArtifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory);
 		}
 	}
-	
+
+	/**
+	 * Returns the type conversion service used by this builder.
+	 */
+	protected ConversionService getConversionService() {
+		return conversionService;
+	}
+
+	/**
+	 * Returns a conversion executor capable of converting string objects to the
+	 * target class aliased by the provided alias.
+	 * @param targetAlias the target class alias, e.g "long" or "float"
+	 * @return the conversion executor, or <code>null</code> if no suitable
+	 * converter exists for given alias
+	 */
+	protected ConversionExecutor fromStringToAliased(String targetAlias) {
+		return getConversionService().getConversionExecutorByTargetAlias(String.class, targetAlias);
+	}
+
+	/**
+	 * Returns a converter capable of converting a string value to the given
+	 * type.
+	 * @param targetType the type you wish to convert to (from a string)
+	 * @return the converter
+	 * @throws ConversionException when the converter cannot be found
+	 */
+	protected ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
+		return getConversionService().getConversionExecutor(String.class, targetType);
+	}
+
 	/**
 	 * Get the flow (result) built by this builder.
 	 */
@@ -110,33 +153,5 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 
 	public Flow getResult() {
 		return getFlow();
-	}	
-	
-	/**
-	 * Returns the type conversion service used by this builder.
-	 */
-	protected ConversionService getConversionService() {
-		return getFlowServiceLocator().getConversionService();
-	}
-
-	/**
-	 * Returns a conversion executor capable of converting string objects to the 
-	 * target class aliased by the provided alias.
-	 * @param targetAlias the target class alias, e.g "long" or "float"
-	 * @return the conversion executor, or <code>null</code> if no suitable converter exists
-	 *         for given alias
-	 */
-	protected ConversionExecutor fromStringToAliased(String targetAlias) {
-		return getConversionService().getConversionExecutorByTargetAlias(String.class, targetAlias);
-	}
-
-	/**
-	 * Returns a converter capable of converting a string value to the given type.
-	 * @param targetType the type you wish to convert to (from a string)
-	 * @return the converter
-	 * @throws ConversionException when the converter cannot be found
-	 */
-	protected ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
-		return getConversionService().getConversionExecutor(String.class, targetType);
 	}
 }

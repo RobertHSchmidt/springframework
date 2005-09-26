@@ -30,6 +30,7 @@ import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.StateTests.ExecutionCounterAction;
 import org.springframework.webflow.StateTests.InputOutputMapper;
+import org.springframework.webflow.access.FlowArtifactLocatorAdapter;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.FlowBuilderException;
@@ -48,11 +49,14 @@ public class FlowExecutionTests extends TestCase {
 
 	public void testFlowExecutionListener() {
 		Flow subFlow = new Flow("mySubFlow");
-		new ViewState(subFlow, "subFlowViewState", view("mySubFlowViewName"), new Transition(on("submit"), "finish"));
+		new ViewState(subFlow, "subFlowViewState", view("mySubFlowViewName"), new Transition[] { new Transition(
+				on("submit"), "finish") });
 		new EndState(subFlow, "finish");
 		Flow flow = new Flow("myFlow");
-		new ActionState(flow, "actionState", new ExecutionCounterAction(), new Transition(on("success"), "viewState"));
-		new ViewState(flow, "viewState", view("myView"), new Transition(on("submit"), "subFlowState"));
+		new ActionState(flow, "actionState", new ExecutionCounterAction(), new Transition[] { new Transition(
+				on("success"), "viewState") });
+		new ViewState(flow, "viewState", view("myView"),
+				new Transition[] { new Transition(on("submit"), "subFlowState") });
 		new SubflowState(flow, "subFlowState", subFlow, new InputOutputMapper(), new Transition(on("finish"), "finish"));
 		new EndState(flow, "finish");
 
@@ -74,7 +78,7 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public void testLoopInFlow() throws Exception {
-		AbstractFlowBuilder builder = new AbstractFlowBuilder() {
+		AbstractFlowBuilder builder = new AbstractFlowBuilder(new FlowArtifactLocatorAdapter()) {
 			protected String flowId() {
 				return "flow";
 			}
@@ -101,7 +105,7 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public void testLoopInFlowWithSubFlow() throws Exception {
-		AbstractFlowBuilder childBuilder = new AbstractFlowBuilder() {
+		AbstractFlowBuilder childBuilder = new AbstractFlowBuilder(new FlowArtifactLocatorAdapter()) {
 			protected String flowId() {
 				return "childFlow";
 			}
@@ -123,7 +127,7 @@ public class FlowExecutionTests extends TestCase {
 			}
 		};
 		final Flow childFlow = new FlowFactoryBean(childBuilder).getFlow();
-		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder() {
+		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder(new FlowArtifactLocatorAdapter()) {
 			protected String flowId() {
 				return "parentFlow";
 			}
@@ -145,11 +149,11 @@ public class FlowExecutionTests extends TestCase {
 		flowExecution.start(new Event(this, "start"));
 		assertFalse(flowExecution.isActive());
 	}
-	
+
 	public static TransitionCriteria on(String event) {
 		return (TransitionCriteria)new TextToTransitionCriteria(new FlowConversionService()).convert(event);
 	}
-	
+
 	public static ViewDescriptorCreator view(String viewName) {
 		return (ViewDescriptorCreator)new TextToViewDescriptorCreator().convert(viewName);
 	}

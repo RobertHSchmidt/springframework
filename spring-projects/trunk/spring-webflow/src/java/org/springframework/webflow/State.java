@@ -73,12 +73,6 @@ public abstract class State extends AnnotatedObject {
 	private Action entryAction;
 	
 	/**
-	 * Default constructor for bean style usage.
-	 */
-	protected State() {
-	}
-
-	/**
 	 * Creates a state for the provided <code>flow</code> identified by the
 	 * provided <code>id</code>. The id must be locally unique to the owning
 	 * flow. The flow state will be automatically added to the flow.

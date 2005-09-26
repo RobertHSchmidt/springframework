@@ -53,12 +53,6 @@ public class EndState extends State {
 	private ViewDescriptorCreator viewDescriptorCreator;
 	
 	/**
-	 * Default constructor for bean style usage.
-	 */
-	public EndState() {
-	}
-
-	/**
 	 * Create a new end state with no associated view.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)

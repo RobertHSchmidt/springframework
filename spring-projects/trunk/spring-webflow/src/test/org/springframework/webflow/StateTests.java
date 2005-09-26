@@ -40,8 +40,8 @@ public class StateTests extends TestCase {
 
 	public void testActionStateSingleAction() {
 		Flow flow = new Flow("myFlow");
-		ActionState state = new ActionState(flow, "actionState", new ExecutionCounterAction(), new Transition(
-				on("success"), "finish"));
+		ActionState state = new ActionState(flow, "actionState", new ExecutionCounterAction(),
+				new Transition[] { new Transition(on("success"), "finish") });
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
@@ -54,8 +54,8 @@ public class StateTests extends TestCase {
 		Flow flow = new Flow("myFlow");
 		ActionState state = new ActionState(flow, "actionState", new Action[] {
 				new ExecutionCounterAction("not mapped result"), new ExecutionCounterAction(null),
-				new ExecutionCounterAction(""), new ExecutionCounterAction("success") }, new Transition(on("success"),
-				"finish"));
+				new ExecutionCounterAction(""), new ExecutionCounterAction("success") },
+				new Transition[] { new Transition(on("success"), "finish") });
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
@@ -72,7 +72,8 @@ public class StateTests extends TestCase {
 		Flow flow = new Flow("myFlow");
 		new ActionState(flow, "actionState", new Action[] { new ExecutionCounterAction("not mapped result"),
 				new ExecutionCounterAction(null), new ExecutionCounterAction(""),
-				new ExecutionCounterAction("yet another not mapped result") }, new Transition(on("success"), "finish"));
+				new ExecutionCounterAction("yet another not mapped result") }, new Transition[] { new Transition(
+				on("success"), "finish") });
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		try {
@@ -95,7 +96,8 @@ public class StateTests extends TestCase {
 		properties = new Properties();
 		properties.put("name", "action4");
 		actions[3] = new AnnotatedAction(new ExecutionCounterAction("success"), properties);
-		ActionState state = new ActionState(flow, "actionState", actions, new Transition(on("action4.success"), "finish"));
+		ActionState state = new ActionState(flow, "actionState", actions, new Transition[] { new Transition(
+				on("action4.success"), "finish") });
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
@@ -110,7 +112,8 @@ public class StateTests extends TestCase {
 
 	public void testViewState() {
 		Flow flow = new Flow("myFlow");
-		ViewState state = new ViewState(flow, "viewState", view("myViewName"), new Transition(on("submit"), "finish"));
+		ViewState state = new ViewState(flow, "viewState", view("myViewName"), new Transition[] { new Transition(
+				on("submit"), "finish") });
 		assertTrue(state.isTransitionable());
 		assertTrue(!state.isMarker());
 		new EndState(flow, "finish");
@@ -123,7 +126,7 @@ public class StateTests extends TestCase {
 
 	public void testViewStateMarker() {
 		Flow flow = new Flow("myFlow");
-		ViewState state = new ViewState(flow, "viewState", new Transition(on("submit"), "finish"));
+		ViewState state = new ViewState(flow, "viewState", new Transition[] { new Transition(on("submit"), "finish") });
 		assertTrue(state.isMarker());
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
@@ -134,7 +137,8 @@ public class StateTests extends TestCase {
 
 	public void testSubFlowState() {
 		Flow subFlow = new Flow("mySubFlow");
-		new ViewState(subFlow, "subFlowViewState", view("mySubFlowViewName"), new Transition(on("submit"), "finish"));
+		new ViewState(subFlow, "subFlowViewState", view("mySubFlowViewName"), new Transition[] { new Transition(
+				on("submit"), "finish") });
 		new EndState(subFlow, "finish");
 		Flow flow = new Flow("myFlow");
 		new SubflowState(flow, "subFlowState", subFlow, new Transition(on("finish"), "finish"));
@@ -151,10 +155,13 @@ public class StateTests extends TestCase {
 
 	public void testSubFlowStateModelMapping() {
 		Flow subFlow = new Flow("mySubFlow");
-		new ViewState(subFlow, "subFlowViewState", view("mySubFlowViewName"), new Transition(on("submit"), "finish"));
+		new ViewState(subFlow, "subFlowViewState", view("mySubFlowViewName"), new Transition[] { new Transition(
+				on("submit"), "finish") });
 		new EndState(subFlow, "finish");
 		Flow flow = new Flow("myFlow");
-		new ActionState(flow, "mapperState", new AttributeMapperAction(new Mapping("sourceEvent.parameters.parentInputAttribute", "flowScope.parentInputAttribute")), new Transition(on("success"), "subFlowState"));
+		new ActionState(flow, "mapperState", new AttributeMapperAction(new Mapping(
+				"sourceEvent.parameters.parentInputAttribute", "flowScope.parentInputAttribute")),
+				new Transition[] { new Transition(on("success"), "subFlowState") });
 		new SubflowState(flow, "subFlowState", subFlow, new InputOutputMapper(), new Transition(on("finish"), "finish"));
 		new EndState(flow, "finish", view("myParentFlowEndingViewName"));
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
@@ -164,8 +171,7 @@ public class StateTests extends TestCase {
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getCurrentState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
-		assertEquals("attributeValue", flowExecution.getActiveSession().getScope().getAttribute(
-				"childInputAttribute"));
+		assertEquals("attributeValue", flowExecution.getActiveSession().getScope().getAttribute("childInputAttribute"));
 		view = flowExecution.signalEvent(new Event(this, "submit"));
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
 		assertTrue(!flowExecution.isActive());
@@ -175,11 +181,11 @@ public class StateTests extends TestCase {
 	public static TransitionCriteria on(String event) {
 		return (TransitionCriteria)new TextToTransitionCriteria(new FlowConversionService()).convert(event);
 	}
-	
+
 	public static ViewDescriptorCreator view(String viewName) {
 		return (ViewDescriptorCreator)new TextToViewDescriptorCreator(new FlowConversionService()).convert(viewName);
 	}
-	
+
 	public static class InputOutputMapper implements FlowAttributeMapper {
 		public Map createSubflowInput(RequestContext context) {
 			Map inputMap = new HashMap(1);
@@ -188,8 +194,10 @@ public class StateTests extends TestCase {
 		}
 
 		public void mapSubflowOutput(RequestContext context) {
-			MutableAttributeSource parentAttributes = (MutableAttributeSource)context.getFlowExecutionContext().getActiveSession().getParent().getScope();
-			parentAttributes.setAttribute("parentOutputAttribute", context.getFlowScope().getAttribute("childInputAttribute"));
+			MutableAttributeSource parentAttributes = (MutableAttributeSource)context.getFlowExecutionContext()
+					.getActiveSession().getParent().getScope();
+			parentAttributes.setAttribute("parentOutputAttribute", context.getFlowScope().getAttribute(
+					"childInputAttribute"));
 		}
 	}
 

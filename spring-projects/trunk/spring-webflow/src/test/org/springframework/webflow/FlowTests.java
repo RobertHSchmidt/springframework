@@ -25,7 +25,7 @@ import org.springframework.webflow.support.SimpleViewDescriptorCreator;
  * @author Keith Donald
  */
 public class FlowTests extends TestCase {
-	
+
 	public void testAddStates() {
 		Flow flow = new Flow("myFlow");
 		flow.add(new EndState(flow, "myState1"));
@@ -44,7 +44,8 @@ public class FlowTests extends TestCase {
 		try {
 			flow.add(new EndState(flow, "myState1"));
 			fail("Duplicate state added");
-		} catch (IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 			// expected
 		}
 	}
@@ -65,7 +66,8 @@ public class FlowTests extends TestCase {
 		try {
 			flow.add(state);
 			fail("Added state part of another flow");
-		} catch (IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 			// expected
 		}
 	}
@@ -75,25 +77,27 @@ public class FlowTests extends TestCase {
 		try {
 			flow.getStartState();
 			fail("Retrieved start state when no such state");
-		} catch (IllegalStateException e) {
+		}
+		catch (IllegalStateException e) {
 			// expected
 		}
-		flow.add(new ViewState(flow, "myState1",
-				new SimpleViewDescriptorCreator("myView"), new Transition(
-						"myState2")));
+		flow.add(new ViewState(flow, "myState1", new SimpleViewDescriptorCreator("myView"),
+				new Transition[] { new Transition("myState2") }));
 		flow.add(new EndState(flow, "myState2"));
 		assertNull("Not null", flow.getState("myState3"));
 		try {
 			flow.getRequiredState("myState3");
 			fail("Returned a state that doesn't exist");
-		} catch (NoSuchFlowStateException e) {
+		}
+		catch (NoSuchFlowStateException e) {
 			// expected
 		}
 		assertEquals("Wrong state:", "myState1", flow.getRequiredTransitionableState("myState1").getId());
 		try {
 			flow.getRequiredTransitionableState("myState2");
 			fail("End states aren't transtionable");
-		} catch (IllegalStateException e) {
+		}
+		catch (IllegalStateException e) {
 			// expected
 		}
 	}

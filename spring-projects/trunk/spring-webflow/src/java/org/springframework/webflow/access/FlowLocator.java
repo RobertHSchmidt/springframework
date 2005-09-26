@@ -31,7 +31,7 @@ public interface FlowLocator {
 	 * Lookup a flow definition with specified id.
 	 * @param id the flow definition id
 	 * @return the flow
-	 * @throws ServiceLookupException when the flow cannot be found
+	 * @throws FlowArtifactLookupException when the flow cannot be found
 	 */
-	public Flow getFlow(String id) throws ServiceLookupException;
+	public Flow getFlow(String id) throws FlowArtifactLookupException;
 }

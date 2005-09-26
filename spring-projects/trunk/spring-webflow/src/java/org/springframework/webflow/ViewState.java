@@ -44,30 +44,15 @@ public class ViewState extends TransitionableState {
 	 * The factory for the view descriptor to return when this state is entered.
 	 */
 	private ViewDescriptorCreator viewDescriptorCreator;
-	
-	/**
-	 * Default constructor for bean style usage.
-	 */
-	public ViewState() {
-	}
 
 	/**
-	 * Create a new marker view state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param transition the sole transition of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
-	 */
-	public ViewState(Flow flow, String id, Transition transition) throws IllegalArgumentException {
-		super(flow, id, transition);
-	}
-
-	/**
-	 * Create a new marker view state.
+	 * Create a new marker view state, a view state that causes the flow to
+	 * pause but does not trigger the rendering of a response.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
 	 * @param transitions the transitions of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 * @throws IllegalArgumentException when this state cannot be added to given
+	 * flow
 	 */
 	public ViewState(Flow flow, String id, Transition[] transitions) throws IllegalArgumentException {
 		super(flow, id, transitions);
@@ -78,23 +63,12 @@ public class ViewState extends TransitionableState {
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
 	 * @param creator the factory used to produce the view to render
-	 * @param transition the sole transition of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
-	 */
-	public ViewState(Flow flow, String id, ViewDescriptorCreator creator, Transition transition) throws IllegalArgumentException {
-		super(flow, id, transition);
-		setViewDescriptorCreator(creator);
-	}
-
-	/**
-	 * Create a new view state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param creator the factory used to produce the view to render
 	 * @param transitions the transitions of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 * @throws IllegalArgumentException when this state cannot be added to given
+	 * flow
 	 */
-	public ViewState(Flow flow, String id, ViewDescriptorCreator creator, Transition[] transitions) throws IllegalArgumentException {
+	public ViewState(Flow flow, String id, ViewDescriptorCreator creator, Transition[] transitions)
+			throws IllegalArgumentException {
 		super(flow, id, transitions);
 		setViewDescriptorCreator(creator);
 	}
@@ -106,13 +80,15 @@ public class ViewState extends TransitionableState {
 	 * @param creator the factory used to produce the view to render
 	 * @param transitions the transitions of this state
 	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 * @throws IllegalArgumentException when this state cannot be added to given
+	 * flow
 	 */
-	public ViewState(Flow flow, String id, ViewDescriptorCreator creator, Transition[] transitions, Map properties) throws IllegalArgumentException {
+	public ViewState(Flow flow, String id, ViewDescriptorCreator creator, Transition[] transitions, Map properties)
+			throws IllegalArgumentException {
 		super(flow, id, transitions, properties);
 		setViewDescriptorCreator(creator);
 	}
-	
+
 	/**
 	 * Returns the factory to produce a descriptor for the view to render in
 	 * this view state.
@@ -122,8 +98,8 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
-	 * Sets the factory to produce a descriptor for the view to render in
-	 * this view state.
+	 * Sets the factory to produce a descriptor for the view to render in this
+	 * view state.
 	 */
 	public void setViewDescriptorCreator(ViewDescriptorCreator viewDescriptorCreator) {
 		this.viewDescriptorCreator = viewDescriptorCreator;
@@ -137,27 +113,26 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
-	 * Specialization of State's <code>doEnter</code> template method
-	 * that executes behaviour specific to this state type in polymorphic
-	 * fashion.
+	 * Specialization of State's <code>doEnter</code> template method that
+	 * executes behaviour specific to this state type in polymorphic fashion.
 	 * <p>
 	 * Returns a view descriptor pointing callers to a logical view resource to
 	 * be displayed. The descriptor also contains a model map needed when the
 	 * view is rendered, for populating dynamic content.
 	 * @param context the state context for the executing flow
 	 * @return a view descriptor containing model and view information needed to
-	 *         render the results of the state execution
+	 * render the results of the state execution
 	 */
 	protected ViewDescriptor doEnter(StateContext context) {
 		return viewDescriptor(context);
 	}
-	
+
 	/**
-	 * Returns the view descriptor that should be rendered by this
-	 * state for given execution context.
+	 * Returns the view descriptor that should be rendered by this state for
+	 * given execution context.
 	 * @param context the state context for the executing flow
 	 * @return a view descriptor containing model and view information needed to
-	 *         render the results of the state execution
+	 * render the results of the state execution
 	 */
 	public ViewDescriptor viewDescriptor(StateContext context) {
 		if (isMarker()) {

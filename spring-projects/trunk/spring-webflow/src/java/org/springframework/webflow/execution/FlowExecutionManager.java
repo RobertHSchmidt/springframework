@@ -37,7 +37,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.access.BeanFactoryFlowServiceLocator;
+import org.springframework.webflow.access.BeanFactoryFlowLocator;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.support.FlowConversionService;
 
@@ -163,7 +163,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * The flow locator strategy for retrieving a flow definition using  
 	 * a flow id provided by the client. Defaults to a bean factory based lookup strategy.
 	 */
-	private FlowLocator flowLocator = new BeanFactoryFlowServiceLocator();
+	private FlowLocator flowLocator;
 
 	/**
 	 * A map of all know flow execution listeners (the key) and their associated
@@ -438,9 +438,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
-		if (getFlowLocator() instanceof BeanFactoryAware) {
-			// make the BeanFactoryFlowServiceLocator work
-			((BeanFactoryAware)getFlowLocator()).setBeanFactory(beanFactory);
+		if (flowLocator == null) {
+			flowLocator = new BeanFactoryFlowLocator(beanFactory);
 		}
 	}
 

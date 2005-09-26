@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.access;
 
+import java.util.Map;
+
 import org.springframework.webflow.Flow;
 
 /**
@@ -28,8 +30,7 @@ import org.springframework.webflow.Flow;
  * @author Keith Donald
  */
 public class DefaultFlowCreator implements FlowCreator {
-	
-	public Flow createFlow() {
-		return new Flow();
+	public Flow createFlow(String id, Map properties) {
+		return new Flow(id, properties);
 	}
 }

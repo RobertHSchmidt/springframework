@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.access;
 
+import java.util.Map;
+
 import org.springframework.webflow.Flow;
 
 /**
@@ -39,5 +41,5 @@ public interface FlowCreator {
 	 * @return The <code>Flow</code> (or a custom specialization of
 	 *         <code>Flow</code>)
 	 */
-	public Flow createFlow();
+	public Flow createFlow(String id, Map properties);
 }

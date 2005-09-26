@@ -30,7 +30,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.access.ServiceLookupException;
+import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.config.FlowFactoryBean;
 import org.springframework.webflow.config.XmlFlowBuilder;
 import org.springframework.webflow.config.XmlFlowBuilderTests;
@@ -53,14 +53,14 @@ public class FlowExecutionImplTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow.xml", XmlFlowBuilderTests.class));
-		builder.setFlowServiceLocator(new XmlFlowBuilderTests.TestFlowServiceLocator());
+		builder.setFlowArtifactLocator(new XmlFlowBuilderTests.TestFlowArtifactLocator());
 		final Flow flow = new FlowFactoryBean(builder).getFlow();
 		flowLocator = new FlowLocator() {
-			public Flow getFlow(String flowDefinitionId) throws ServiceLookupException {
+			public Flow getFlow(String flowDefinitionId) throws FlowArtifactLookupException {
 				if (flow.getId().equals(flowDefinitionId)) {
 					return flow;
 				}
-				throw new ServiceLookupException(Flow.class, flowDefinitionId, null);
+				throw new FlowArtifactLookupException(Flow.class, flowDefinitionId);
 			}
 		};
 		flowExecution = new FlowExecutionImpl(flow);

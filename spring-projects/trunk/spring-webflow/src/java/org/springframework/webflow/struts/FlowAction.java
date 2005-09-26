@@ -29,7 +29,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.access.BeanFactoryFlowServiceLocator;
+import org.springframework.webflow.access.BeanFactoryFlowLocator;
 import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
@@ -161,7 +161,7 @@ public class FlowAction extends ActionSupport {
 			}
 			catch (NoSuchBeanDefinitionException e) {
 				// use default
-				setFlowExecutionManager(new ServletFlowExecutionManager(new BeanFactoryFlowServiceLocator(getWebApplicationContext())));
+				setFlowExecutionManager(new ServletFlowExecutionManager(new BeanFactoryFlowLocator(getWebApplicationContext())));
 			}
 		}
 		if (getFlow() != null) {

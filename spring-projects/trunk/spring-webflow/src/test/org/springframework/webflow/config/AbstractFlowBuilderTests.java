@@ -30,9 +30,8 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.access.AutowireMode;
-import org.springframework.webflow.access.FlowServiceLocatorAdapter;
-import org.springframework.webflow.access.ServiceLookupException;
+import org.springframework.webflow.access.FlowArtifactLocator;
+import org.springframework.webflow.access.FlowArtifactLookupException;
 
 /**
  * Test Java based flow builder logic (subclasses of AbstractFlowBuilder).
@@ -51,32 +50,28 @@ public class AbstractFlowBuilderTests extends TestCase {
 
 	public void testDependencyLookup() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
-		master.setFlowServiceLocator(new FlowServiceLocatorAdapter() {
-			public Action getAction(String actionId) throws ServiceLookupException {
+		master.setFlowArtifactLocator(new FlowArtifactLocator() {
+			public Action getAction(String actionId) throws FlowArtifactLookupException {
 				return new NoOpAction();
 			}
 			
-			public Flow createFlow(AutowireMode autowireMode) throws ServiceLookupException {
-				return new Flow();
-			}
-
-			public Flow getFlow(String flowDefinitionId) throws ServiceLookupException {
+			public Flow getFlow(String flowDefinitionId) throws FlowArtifactLookupException {
 				if (flowDefinitionId.equals(PERSON_DETAILS)) {
 					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();
-					builder.setFlowServiceLocator(this);
+					builder.setFlowArtifactLocator(this);
 					return new FlowFactoryBean(builder).getFlow();
 				}
 				else {
-					throw new ServiceLookupException(Flow.class, flowDefinitionId, null);
+					throw new FlowArtifactLookupException(Flow.class, flowDefinitionId);
 				}
 			}
 
-			public FlowAttributeMapper getFlowAttributeMapper(String id) throws ServiceLookupException {
+			public FlowAttributeMapper getFlowAttributeMapper(String id) throws FlowArtifactLookupException {
 				if (id.equals("id.attributeMapper")) {
 					return new PersonIdMapper();
 				}
 				else {
-					throw new ServiceLookupException(FlowAttributeMapper.class, id, null);
+					throw new FlowArtifactLookupException(FlowAttributeMapper.class, id);
 				}
 			}
 		});
@@ -113,19 +108,6 @@ public class AbstractFlowBuilderTests extends TestCase {
 			addActionState("getPersonList", action("noOptAction"), on(success(), "viewPersonList"));
 			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
 			addSubflowState(PERSON_DETAILS, flow("person.Detail"),	attributeMapper("id.attributeMapper"), onAnyEvent("getPersonList"));
-			addEndState("finish");
-		}
-	}
-
-	public class TestMasterFlowBuilderLookupByType extends AbstractFlowBuilder {
-		protected String flowId() {
-			return PERSONS_LIST;
-		}
-
-		public void buildStates() {
-			addActionState("getPersonList", actionRef(NoOpAction.class), on(success(), "viewPersonList"));
-			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
-			addSubflowState(PERSON_DETAILS, flow("person.Detail"),	attributeMapperRef(PersonIdMapper.class), onAnyEvent("getPersonList"));
 			addEndState("finish");
 		}
 	}
@@ -185,20 +167,6 @@ public class AbstractFlowBuilderTests extends TestCase {
 			addEndState("finish");
 		}
 	}
-
-	public class TestDetailFlowBuilderLookupByType extends AbstractFlowBuilder {
-		protected String flowId() {
-			return PERSON_DETAILS;
-		}
-
-		public void buildStates() {
-			addActionState("getDetails", action(NoOpAction.class), on(success(), "viewDetails"));
-			addViewState("viewDetails", "person.Detail.view", on(submit(), "bindAndValidateDetails"));
-			addActionState("bindAndValidateDetails", actionRef(NoOpAction.class), new Transition[] {
-					on(error(), "viewDetails"), on(success(), "finish") });
-			addEndState("finish");
-		}
-	};
 
 	public static class TestDetailFlowBuilderDependencyInjection extends AbstractFlowBuilder {
 

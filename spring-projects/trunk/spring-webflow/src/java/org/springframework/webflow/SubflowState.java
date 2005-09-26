@@ -59,12 +59,6 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	private FlowAttributeMapper attributeMapper;
 	
 	/**
-	 * Default constructor for bean style usage.
-	 */
-	public SubflowState() {
-	}
-
-	/**
 	 * Create a new sub flow state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)

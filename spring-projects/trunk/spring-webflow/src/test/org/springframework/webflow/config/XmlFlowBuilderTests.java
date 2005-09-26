@@ -20,7 +20,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.convert.ConversionService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
@@ -32,10 +31,8 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.access.AutowireMode;
-import org.springframework.webflow.access.FlowServiceLocatorAdapter;
-import org.springframework.webflow.access.ServiceLookupException;
-import org.springframework.webflow.support.FlowConversionService;
+import org.springframework.webflow.access.FlowArtifactLocator;
+import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.support.SimpleViewDescriptorCreator;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -54,7 +51,7 @@ public class XmlFlowBuilderTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow.xml", XmlFlowBuilderTests.class));
-		builder.setFlowServiceLocator(new TestFlowServiceLocator());
+		builder.setFlowArtifactLocator(new TestFlowArtifactLocator());
 		flow = new FlowFactoryBean(builder).getFlow();
 		context = new MockRequestContext();
 	}
@@ -69,10 +66,9 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals("actionState1", flow.getStartState().getId());
 		assertEquals(7, flow.getStateIds().length);
 
-		ActionState actionState1 = (ActionState) flow.getState("actionState1");
-		assertEquals("Wrong action class", TestAction.class, actionState1.getAnnotatedAction().getTargetAction().getClass());
+		ActionState actionState1 = (ActionState)flow.getState("actionState1");
 		assertNotNull(actionState1);
-		assertEquals(5, actionState1.getActionCount());
+		assertEquals(2, actionState1.getActionCount());
 		assertEquals(null, actionState1.getAnnotatedAction().getCaption());
 		assertEquals(Boolean.TRUE, (Boolean)actionState1.getProperty("propBoolean"));
 		assertEquals("aString", actionState1.getProperty("propString"));
@@ -89,7 +85,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals("prop1Value", actionState1.getAnnotatedActions()[0].getAttribute("prop1"));
 		assertEquals("prop2Value", actionState1.getAnnotatedActions()[0].getAttribute("prop2"));
 
-		ViewState viewState1 = (ViewState) flow.getState("viewState1");
+		ViewState viewState1 = (ViewState)flow.getState("viewState1");
 		assertNotNull(viewState1);
 		assertFalse(viewState1.isMarker());
 		assertEquals("view1", ((SimpleViewDescriptorCreator)viewState1.getViewDescriptorCreator()).getViewName());
@@ -99,7 +95,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		transition = viewState1.getRequiredTransition(context);
 		assertEquals("subFlowState1", transition.getTargetStateId());
 
-		ViewState viewState2 = (ViewState) flow.getState("viewState2");
+		ViewState viewState2 = (ViewState)flow.getState("viewState2");
 		assertNotNull(viewState2);
 		assertTrue(viewState2.isMarker());
 		assertNull(viewState2.getViewDescriptorCreator());
@@ -109,7 +105,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		transition = viewState2.getRequiredTransition(context);
 		assertEquals("subFlowState2", transition.getTargetStateId());
 
-		SubflowState subFlowState1 = (SubflowState) flow.getState("subFlowState1");
+		SubflowState subFlowState1 = (SubflowState)flow.getState("subFlowState1");
 		assertNotNull(subFlowState1);
 		assertNotNull(subFlowState1.getSubflow());
 		assertEquals("subFlow1", subFlowState1.getSubflow().getId());
@@ -120,7 +116,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		transition = subFlowState1.getRequiredTransition(context);
 		assertEquals("endState1", transition.getTargetStateId());
 
-		SubflowState subFlowState2 = (SubflowState) flow.getState("subFlowState2");
+		SubflowState subFlowState2 = (SubflowState)flow.getState("subFlowState2");
 		assertNotNull(subFlowState2);
 		assertNotNull(subFlowState2.getSubflow());
 		assertEquals("subFlow2", subFlowState2.getSubflow().getId());
@@ -131,17 +127,16 @@ public class XmlFlowBuilderTests extends TestCase {
 		transition = subFlowState2.getRequiredTransition(context);
 		assertEquals("endState2", transition.getTargetStateId());
 
-		EndState endState1 = (EndState) flow.getState("endState1");
+		EndState endState1 = (EndState)flow.getState("endState1");
 		assertNotNull(endState1);
 		assertFalse(endState1.isMarker());
 		assertEquals("endView1", ((SimpleViewDescriptorCreator)endState1.getViewDescriptorCreator()).getViewName());
 
-		EndState endState2 = (EndState) flow.getState("endState2");
+		EndState endState2 = (EndState)flow.getState("endState2");
 		assertNotNull(endState2);
 		assertTrue(endState2.isMarker());
 		assertNull(endState2.getViewDescriptorCreator());
-		
-		
+
 	}
 
 	/**
@@ -150,44 +145,24 @@ public class XmlFlowBuilderTests extends TestCase {
 	 * 
 	 * @author Erwin Vervaet
 	 */
-	public static class TestFlowServiceLocator extends FlowServiceLocatorAdapter {
+	public static class TestFlowArtifactLocator implements FlowArtifactLocator {
 
-		public ConversionService getConversionService() {
-			return new FlowConversionService();
-		}
-
-		public Action createAction(Class implementationClass, AutowireMode autowire) {
-			return new TestAction();
-		}
-
-		public Action getAction(Class implementationClass) throws ServiceLookupException {
-			return new TestAction();
-		}
-
-		public Action getAction(String actionId) throws ServiceLookupException {
-			if ("action1".equals(actionId) || "action2".equals(actionId)) {
-				return new Action() {
-					public Event execute(RequestContext context) throws Exception {
-						return new Event(this, "event1");
-					}
-				};
+		public Action getAction(String id) throws FlowArtifactLookupException {
+			if ("action1".equals(id) || "action2".equals(id)) {
+				return new TestAction();
 			}
-			throw new ServiceLookupException(Action.class, actionId, null);
-		}
-		
-		public Flow createFlow(AutowireMode autowireMode) throws ServiceLookupException {
-			return new Flow();
+			throw new FlowArtifactLookupException(Action.class, id);
 		}
 
-		public Flow getFlow(String flowDefinitionId) throws ServiceLookupException {
-			if ("subFlow1".equals(flowDefinitionId) || "subFlow2".equals(flowDefinitionId)) {
-				return new Flow(flowDefinitionId);
+		public Flow getFlow(String id) throws FlowArtifactLookupException {
+			if ("subFlow1".equals(id) || "subFlow2".equals(id)) {
+				return new Flow(id);
 			}
-			throw new ServiceLookupException(Flow.class, flowDefinitionId, null);
+			throw new FlowArtifactLookupException(Flow.class, id);
 		}
 
-		public FlowAttributeMapper getFlowAttributeMapper(String flowModelMapperId) throws ServiceLookupException {
-			if ("attributeMapper1".equals(flowModelMapperId)) {
+		public FlowAttributeMapper getFlowAttributeMapper(String id) throws FlowArtifactLookupException {
+			if ("attributeMapper1".equals(id)) {
 				return new FlowAttributeMapper() {
 					public Map createSubflowInput(RequestContext context) {
 						return new HashMap();
@@ -197,13 +172,13 @@ public class XmlFlowBuilderTests extends TestCase {
 					}
 				};
 			}
-			throw new ServiceLookupException(FlowAttributeMapper.class, flowModelMapperId, null);
+			throw new FlowArtifactLookupException(FlowAttributeMapper.class, id);
 		}
 	};
 
 	public static class TestAction implements Action {
 		public Event execute(RequestContext context) throws Exception {
-			return new Event(this, "success");
+			return new Event(this, "event1");
 		}
 	}
 }

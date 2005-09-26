@@ -45,38 +45,6 @@ public abstract class TransitionableState extends State {
 	private Action exitAction;
 	
 	/**
-	 * Default constructor for bean style usage.
-	 */
-	protected TransitionableState() {
-	}
-
-	/**
-	 * Create a new transitionable state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param transition the sole transition of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
-	 */
-	protected TransitionableState(Flow flow, String id, Transition transition) throws IllegalArgumentException {
-		super(flow, id);
-		add(transition);
-	}
-
-	/**
-	 * Create a new transitionable state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param transition the sole transition of this state
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
-	 */
-	protected TransitionableState(Flow flow, String id, Transition transition, Map properties)
-			throws IllegalArgumentException {
-		super(flow, id, properties);
-		add(transition);
-	}
-
-	/**
 	 * Create a new transitionable state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)

@@ -92,28 +92,6 @@ public class ActionState extends TransitionableState {
 	private Set actionExecutors = CollectionFactory.createLinkedSetIfPossible(1);
 	
 	/**
-	 * Default constructor for bean style usage.
-	 */
-	public ActionState() {
-	}
-
-	/**
-	 * Create a new action state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param action the raw target action instance to execute in this
-	 *        state when entered
-	 * @param transition the sole transition (path) out of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
-	 */
-	public ActionState(Flow flow, String id, Action action, Transition transition)
-			throws IllegalArgumentException {
-		super(flow, id, transition);
-		addAction(action);
-	}
-
-	/**
 	 * Create a new action state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
@@ -144,21 +122,6 @@ public class ActionState extends TransitionableState {
 			throws IllegalArgumentException {
 		super(flow, id, transitions, properties);
 		addAction(action);
-	}
-
-	/**
-	 * Create a new action state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param actions the raw, target actions to execute in this state
-	 * @param transition the sole transition (path) out of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
-	 */
-	public ActionState(Flow flow, String id, Action[] actions, Transition transition)
-			throws IllegalArgumentException {
-		super(flow, id, transition);
-		addActions(actions);
 	}
 
 	/**
