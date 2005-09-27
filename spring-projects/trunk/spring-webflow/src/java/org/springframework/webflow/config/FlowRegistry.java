@@ -9,9 +9,9 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.access.NoSuchFlowDefinitionException;
-import org.springframework.webflow.access.FlowArtifactLookupException;
 
 public class FlowRegistry implements FlowLocator, InitializingBean, BeanFactoryAware {
 

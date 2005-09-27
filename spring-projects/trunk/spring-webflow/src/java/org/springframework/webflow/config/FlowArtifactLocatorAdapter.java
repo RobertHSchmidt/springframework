@@ -1,8 +1,9 @@
-package org.springframework.webflow.access;
+package org.springframework.webflow.config;
 
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.access.FlowArtifactLookupException;
 
 /**
  * Dummy implementation of a flow artifact locator that throws 

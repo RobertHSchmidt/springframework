@@ -32,7 +32,6 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.access.FlowArtifactLocator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;

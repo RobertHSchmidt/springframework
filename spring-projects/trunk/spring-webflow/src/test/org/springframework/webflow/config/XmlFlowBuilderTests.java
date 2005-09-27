@@ -31,7 +31,6 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.access.FlowArtifactLocator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.support.SimpleViewDescriptorCreator;
 import org.springframework.webflow.test.MockRequestContext;

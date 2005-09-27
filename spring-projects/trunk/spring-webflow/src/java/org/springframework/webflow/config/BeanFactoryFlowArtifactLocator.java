@@ -1,4 +1,4 @@
-package org.springframework.webflow.access;
+package org.springframework.webflow.config;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -6,6 +6,9 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.access.BeanFactoryFlowLocator;
+import org.springframework.webflow.access.FlowArtifactLookupException;
+import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 
 /**

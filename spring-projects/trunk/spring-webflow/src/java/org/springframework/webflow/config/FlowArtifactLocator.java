@@ -1,6 +1,9 @@
-package org.springframework.webflow.access;
+package org.springframework.webflow.config;
 
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.access.ActionLocator;
+import org.springframework.webflow.access.FlowArtifactLookupException;
+import org.springframework.webflow.access.FlowLocator;
 
 /**
  * A helper interface used by FlowBuilders at configuration time to retrieve

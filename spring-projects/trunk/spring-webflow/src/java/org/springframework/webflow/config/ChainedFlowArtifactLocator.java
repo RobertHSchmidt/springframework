@@ -1,9 +1,10 @@
-package org.springframework.webflow.access;
+package org.springframework.webflow.config;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.access.FlowArtifactLookupException;
 
 /**
  * A flow artifact locator that queries an ordered chain of flow artifact
@@ -78,6 +79,4 @@ public class ChainedFlowArtifactLocator implements FlowArtifactLocator {
 		throw new FlowArtifactLookupException(FlowAttributeMapper.class, id,
 				"Chain exhausted looking for attribute mapper with id: '" + id + "'");
 	}
-
-
 }
