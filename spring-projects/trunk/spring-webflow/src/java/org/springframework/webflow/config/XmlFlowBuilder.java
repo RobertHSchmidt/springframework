@@ -28,6 +28,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.MutableAttributeSource;
@@ -295,6 +297,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	public void setFlowArtifactLocator(FlowArtifactLocator flowArtifactLocator) {
 		super.setFlowArtifactLocator(new ChainedFlowArtifactLocator(new BeanFactoryFlowArtifactLocator(
 				this.localArtifactRegistry), flowArtifactLocator));
+	}
+
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		if (getFlowArtifactLocator() == null) {
+			setFlowArtifactLocator(new BeanFactoryFlowArtifactLocator(beanFactory));
+		}
 	}
 
 	public Flow init() throws FlowBuilderException {
