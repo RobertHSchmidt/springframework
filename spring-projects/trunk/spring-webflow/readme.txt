@@ -15,7 +15,8 @@ typically span HTTP requests and may be dynamic in nature.
 
 SWF exists at a higher-level of abstraction, building on existing frameworks like
 Struts, Spring MVC, and JSF, capturing your application's page flow explicity in a
-declarative fashion.  SWF is a very a powerful framework based on a finite-state machine.
+declarative fashion.  SWF is a very a powerful framework based on a finite-state
+machine for the definition, execution, and management of a web conversation.
 
 2. RELEASE INFO
 
@@ -30,7 +31,7 @@ SWF release contents:
 * "repository" contains the master spring-project artifact (jar) repository
 * "spring-binding" contains the Spring Data Binding project sources
 * "spring-webflow" contains the Spring Web Flow project sources
-* "spring-webflow-samples" contains the Spring Web Flow sample sources
+* "spring-webflow-samples" contains the Spring Web Flow sample application sources
 
 Spring Web Flow is released under the terms of the Apache Software License (see license.txt).
 
@@ -57,5 +58,5 @@ found at the following URL:
 
 http://opensource.atlassian.com/confluence/spring/display/WEBFLOW/Home
 
-It offers useful resources like a 'Quick Start' guide and a 'Frequently Asked Questions'
+There you will find resources such as a 'Quick Start' guide and a 'Frequently Asked Questions'
 section.

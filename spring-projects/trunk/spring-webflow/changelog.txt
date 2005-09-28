@@ -4,9 +4,6 @@ http://www.springframework.org
 
 Changes in version RC1
 ------------------------------------
-* Rework and simplification of the "access" and "config" packages
-  Note: artifact class creation and autowiring support has been removed in favor
-  of artifact lookup by id (which is more compelling now with flow-definition scoped artifact support)
 * Added "requireValidatorMethod" property to FormAction, useful for piecemeal validation as part of a wizard flow
 * Added ActionUtils utility class, usefull when implementing actions.
 * Introduced JSF integration.
@@ -19,6 +16,11 @@ Changes in version RC1
   "public void ${validatorMethod}(${formObjectClass} obj, Errors errors)".
 * Relocated several support classes in webflow to webflow.support. Also moved the FlowConversionService from webflow.convert
   to webflow.support. These changes should have little impact on existing applications.
+* Reworked and simplified the "access" and "config" packages
+  Note: artifact creation and autowiring support has been removed in favor
+  of artifact lookup by id (which is more compelling now with flow-definition scoped artifact support)
+  The "access" package now contains artifact lookup constructs needed at runtime and config time.
+  The "config" now contains artifact lookup constructs needed only at configuration time.
 * Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add methods.
 * Added a convenience constructor to the Event class that takes a single parameter name/value. Mainly for use in unit tests.
 * Added StatefulActionProxy, an action that delegates to a stateful action managed in flow scope.
