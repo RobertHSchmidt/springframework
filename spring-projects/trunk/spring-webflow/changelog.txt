@@ -22,6 +22,7 @@ Changes in version RC1
   The "access" package now contains artifact lookup constructs needed at runtime and config time.
   The "config" now contains artifact lookup constructs needed only at configuration time.
 * Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add methods.
+* Added AbstractFlowBuilder addDecisionState(...) methods for completeness.
 * Added a convenience constructor to the Event class that takes a single parameter name/value. Mainly for use in unit tests.
 * Added StatefulActionProxy, an action that delegates to a stateful action managed in flow scope.
 * Added BeanFactoryBeanInvokingAction, an action that can invoke any instance method on any bean managed by the Spring bean factory.
