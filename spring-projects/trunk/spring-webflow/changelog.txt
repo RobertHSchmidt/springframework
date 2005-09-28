@@ -4,9 +4,9 @@ http://www.springframework.org
 
 Changes in version RC1
 ------------------------------------
+* Introduced JSF integration, see the "jsf" package.
 * Added "requireValidatorMethod" property to FormAction, useful for piecemeal validation as part of a wizard flow
 * Added ActionUtils utility class, usefull when implementing actions.
-* Introduced JSF integration.
 * Added support for webflow definition scoped bean definitions, centralizing all flow definition code in one place.
 * Refactored out DataSourceAccessor strategy interface from FlowExecutionStorage implementations - this change resulted in
   some minor package moves and class renames in the webflow.execution package.
