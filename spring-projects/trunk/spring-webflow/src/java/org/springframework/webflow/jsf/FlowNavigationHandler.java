@@ -65,8 +65,8 @@ public class FlowNavigationHandler extends NavigationHandler {
 	/**
 	 * <p>
 	 * Bean name under which we will find the configured instance of the
-	 * {@link FlowNavigationHandlerStrategy} to be used for determining what logical
-	 * actions to undertake.
+	 * {@link FlowNavigationHandlerStrategy} to be used for determining what
+	 * logical actions to undertake.
 	 * </p>
 	 */
 	private static final String NAVIGATION_STRATEGY_BEAN_NAME = "flowNavigationHandlerStrategy";
@@ -92,7 +92,7 @@ public class FlowNavigationHandler extends NavigationHandler {
 	 * instantiated upon first use.
 	 * </p>
 	 */
-	private FlowNavigationHandlerStrategy flowNavigationStrategy;
+	private FlowNavigationHandlerStrategy flowNavigationHandlerStrategy;
 
 	/**
 	 * <p>
@@ -137,8 +137,8 @@ public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
 	 * <p>
-	 * Return the {@link FlowNavigationHandlerStrategy} instance we will use to make
-	 * navigation handler decisions. The instance to use is discovered by
+	 * Return the {@link FlowNavigationHandlerStrategy} instance we will use to
+	 * make navigation handler decisions. The instance to use is discovered by
 	 * looking for a bean named by
 	 * <code>WebFlowNavigationHandler.STRATEGY</code>, or defaulting to an
 	 * instance of {@link FlowNavigationHandlerStrategy}.
@@ -147,21 +147,21 @@ public class FlowNavigationHandler extends NavigationHandler {
 	 * @param context <code>FacesContext</code> for the current request
 	 */
 	private FlowNavigationHandlerStrategy getStrategy(FacesContext context) {
-		if (flowNavigationStrategy == null) {
+		if (flowNavigationHandlerStrategy == null) {
 			WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
 			if (wac != null) {
 				if (wac.containsBean(NAVIGATION_STRATEGY_BEAN_NAME)) {
-					flowNavigationStrategy = (FlowNavigationHandlerStrategy)wac.getBean(NAVIGATION_STRATEGY_BEAN_NAME,
-							FlowNavigationHandlerStrategy.class);
+					flowNavigationHandlerStrategy = (FlowNavigationHandlerStrategy)wac.getBean(
+							NAVIGATION_STRATEGY_BEAN_NAME, FlowNavigationHandlerStrategy.class);
 				}
 			}
-			if (flowNavigationStrategy == null) {
+			if (flowNavigationHandlerStrategy == null) {
 				FlowExecutionManager manager = new FlowExecutionManager(new DataStoreFlowExecutionStorage(
 						new JsfSessionDataStoreAccessor()));
 				manager.setBeanFactory(wac);
-				flowNavigationStrategy = new FlowNavigationHandlerStrategy(manager);
+				flowNavigationHandlerStrategy = new FlowNavigationHandlerStrategy(manager);
 			}
 		}
-		return flowNavigationStrategy;
+		return flowNavigationHandlerStrategy;
 	}
 }
