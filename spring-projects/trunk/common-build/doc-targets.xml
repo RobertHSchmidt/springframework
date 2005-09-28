@@ -83,7 +83,7 @@
 			</fileset>
 		</copy>
 
-		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}/html/">
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.target.dir}/html">
 			<classpath>
 				<fileset dir="${docs.ref.lib.dir}">
 					<include name="**/*.jar" />
@@ -92,6 +92,7 @@
 			<arg value="${docs.ref.src.dir}/index.xml" />
 			<arg value="${docs.ref.dir}/styles/html_chunk.xsl" />
 		</java>
+		<delete file="${docs.ref.target.dir}/html/docbook_fop.tmp" />
 	</target>
 
 	<target name="doc-htmlsingle" description="Generate single-page HTML reference documentation">
@@ -104,7 +105,7 @@
 			</fileset>
 		</copy>
 
-		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}">
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.target.dir}/html">
 			<classpath>
 				<fileset dir="${docs.ref.lib.dir}">
 					<include name="**/*.jar" />
@@ -115,6 +116,7 @@
 			<arg value="${docs.ref.src.dir}/index.xml" />
 			<arg value="${docs.ref.dir}/styles/html.xsl" />
 		</java>
+		<delete file="${docs.ref.target.dir}/htmlsingle/docbook_fop.tmp" />
 	</target>
 
 	<target name="doc-all" depends="doc-html,doc-htmlsingle,doc-pdf" description="Generate reference documentation in all formats" />
