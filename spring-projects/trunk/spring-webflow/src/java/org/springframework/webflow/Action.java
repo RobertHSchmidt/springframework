@@ -16,7 +16,7 @@
 package org.springframework.webflow;
 
 /**
- * A command that executes some behaviour and returns a logical execution 
+ * A command that executes arbitrary behavior and returns a logical execution 
  * result.  Actions typically delegate down to the service-layer to perform
  * business operations, and/or prep views with dynamic model data for rendering.
  * They act as a bridge between the web-tier client and the middle-tier
