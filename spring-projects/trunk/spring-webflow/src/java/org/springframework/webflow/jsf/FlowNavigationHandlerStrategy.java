@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.FlowExecutionManager;
 
 /**
  * <p>
- * Strategy methods for {@link WebFlowNavigationHandler}. Because a JSF
+ * Strategy methods for {@link FlowNavigationHandler}. Because a JSF
  * <code>NavigationHandler</code> must be registered directly with the JSF
  * runtime, the implementation class cannot be customized in the typical fashion
  * for a Spring-based application. Therefore, decisions that would typically be
@@ -38,14 +38,14 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  * instance of this class. You can either use this class (which contains the
  * default implementation), or you can subclass it and register a bean under the
  * name specified by manifest constant
- * <code>WebFlowNavigationHandler.NAVIGATION_STRATEGY_BEAN_NAME</code>.
+ * <code>FlowNavigationHandler.NAVIGATION_STRATEGY_BEAN_NAME</code>.
  * </p>
  * 
  * @author Craig McClanahan
  * @author Keith Donald
  * @author Colin Sampaleanu
  */
-public class WebFlowNavigationStrategy {
+public class FlowNavigationHandlerStrategy {
 
 	/**
 	 * <p>
@@ -65,7 +65,7 @@ public class WebFlowNavigationStrategy {
 	 * execution manager
 	 * @param flowExecutionManager the execution manager
 	 */
-	public WebFlowNavigationStrategy(FlowExecutionManager flowExecutionManager) {
+	public FlowNavigationHandlerStrategy(FlowExecutionManager flowExecutionManager) {
 		Assert.notNull(flowExecutionManager, "The flow execution manager is required");
 		this.flowExecutionManager = flowExecutionManager;
 	}

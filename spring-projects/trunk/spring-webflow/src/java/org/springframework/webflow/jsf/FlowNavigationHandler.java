@@ -60,16 +60,16 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  * @author Colin Sampaleanu
  * @author Keith Donald
  */
-public class WebFlowNavigationHandler extends NavigationHandler {
+public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
 	 * <p>
 	 * Bean name under which we will find the configured instance of the
-	 * {@link WebFlowNavigationStrategy} to be used for determining what logical
+	 * {@link FlowNavigationHandlerStrategy} to be used for determining what logical
 	 * actions to undertake.
 	 * </p>
 	 */
-	private static final String NAVIGATION_STRATEGY_BEAN_NAME = "webFlowNavigationStrategy";
+	private static final String NAVIGATION_STRATEGY_BEAN_NAME = "flowNavigationHandlerStrategy";
 
 	/**
 	 * <p>
@@ -88,22 +88,22 @@ public class WebFlowNavigationHandler extends NavigationHandler {
 
 	/**
 	 * <p>
-	 * The {@link WebFlowNavigationStrategy} instance to use, lazily
+	 * The {@link FlowNavigationHandlerStrategy} instance to use, lazily
 	 * instantiated upon first use.
 	 * </p>
 	 */
-	private WebFlowNavigationStrategy flowNavigationStrategy;
+	private FlowNavigationHandlerStrategy flowNavigationStrategy;
 
 	/**
 	 * <p>
-	 * Create a new {@link WebFlowNavigationHandler}, wrapping the specified
+	 * Create a new {@link FlowNavigationHandler}, wrapping the specified
 	 * standard navigation handler implementation.
 	 * </p>
 	 * 
 	 * @param handlerDelegate Standard <code>NavigationHandler</code> we are
 	 * wrapping
 	 */
-	public WebFlowNavigationHandler(NavigationHandler handlerDelegate) {
+	public FlowNavigationHandler(NavigationHandler handlerDelegate) {
 		this.handlerDelegate = handlerDelegate;
 	}
 
@@ -137,29 +137,29 @@ public class WebFlowNavigationHandler extends NavigationHandler {
 
 	/**
 	 * <p>
-	 * Return the {@link WebFlowNavigationStrategy} instance we will use to make
+	 * Return the {@link FlowNavigationHandlerStrategy} instance we will use to make
 	 * navigation handler decisions. The instance to use is discovered by
 	 * looking for a bean named by
 	 * <code>WebFlowNavigationHandler.STRATEGY</code>, or defaulting to an
-	 * instance of {@link WebFlowNavigationStrategy}.
+	 * instance of {@link FlowNavigationHandlerStrategy}.
 	 * </p>
 	 * 
 	 * @param context <code>FacesContext</code> for the current request
 	 */
-	private WebFlowNavigationStrategy getStrategy(FacesContext context) {
+	private FlowNavigationHandlerStrategy getStrategy(FacesContext context) {
 		if (flowNavigationStrategy == null) {
 			WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
 			if (wac != null) {
 				if (wac.containsBean(NAVIGATION_STRATEGY_BEAN_NAME)) {
-					flowNavigationStrategy = (WebFlowNavigationStrategy)wac.getBean(NAVIGATION_STRATEGY_BEAN_NAME,
-							WebFlowNavigationStrategy.class);
+					flowNavigationStrategy = (FlowNavigationHandlerStrategy)wac.getBean(NAVIGATION_STRATEGY_BEAN_NAME,
+							FlowNavigationHandlerStrategy.class);
 				}
 			}
 			if (flowNavigationStrategy == null) {
 				FlowExecutionManager manager = new FlowExecutionManager(new DataStoreFlowExecutionStorage(
 						new JsfSessionDataStoreAccessor()));
 				manager.setBeanFactory(wac);
-				flowNavigationStrategy = new WebFlowNavigationStrategy(manager);
+				flowNavigationStrategy = new FlowNavigationHandlerStrategy(manager);
 			}
 		}
 		return flowNavigationStrategy;
