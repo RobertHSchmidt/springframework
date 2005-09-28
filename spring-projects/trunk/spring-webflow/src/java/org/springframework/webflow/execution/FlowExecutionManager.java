@@ -98,7 +98,8 @@ import org.springframework.webflow.support.FlowConversionService;
  * <tr>
  * <td>transactionSynchronizer</td>
  * <td>Flow scoped, token-based strategy</td>
- * <td>Strategy for demaracting application transactions within a flow execution</td>
+ * <td>Strategy for demaracting application transactions within a flow
+ * execution</td>
  * </tr>
  * </table>
  * </p>
@@ -160,31 +161,34 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	private Flow flow;
 
 	/**
-	 * The flow locator strategy for retrieving a flow definition using  
-	 * a flow id provided by the client. Defaults to a bean factory based lookup strategy.
+	 * The flow locator strategy for retrieving a flow definition using a flow
+	 * id provided by the client. Defaults to a bean factory based lookup
+	 * strategy.
 	 */
 	private FlowLocator flowLocator;
 
 	/**
-	 * A map of all know flow execution listeners (the key) and their associated
-	 * flow execution listener criteria objects (a list -- the value).
+	 * A map of flow execution listeners to a list of flow execution listener
+	 * criteria objects. The criteria list determines the conditions in which a
+	 * single flow execution listener applies.
 	 */
-	private CachingMapDecorator flowExecutionListeners = new CachingMapDecorator() {
+	private CachingMapDecorator listenerMap = new CachingMapDecorator() {
 		protected Object create(Object key) {
 			return new LinkedList();
 		}
 	};
 
 	/**
-	 * The flow execution storage strategy, for saving paused executions that 
-	 * require user input and loading resuming executions that will process user events.
+	 * The flow execution storage strategy, for saving paused executions that
+	 * require user input and loading resuming executions that will process user
+	 * events.
 	 */
 	private FlowExecutionStorage storage;
 
 	/**
-	 * The strategy for demarcating a logical application transaction within an 
-	 * executing flow.  Defaults to a token-based strategy, where the transaction token 
-	 * is managed in flow scope.
+	 * The strategy for demarcating a logical application transaction within an
+	 * executing flow. Defaults to a token-based strategy, where the transaction
+	 * token is managed in flow scope.
 	 */
 	private TransactionSynchronizer transactionSynchronizer = new FlowScopeTokenTransactionSynchronizer();
 
@@ -271,25 +275,23 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 */
 	public FlowExecutionListener[] getListeners(Flow flow) {
 		Assert.notNull(flow, "The Flow to load listeners for cannot be null");
-		List listeners = new LinkedList();
-		for (Iterator entryIt = flowExecutionListeners.entrySet().iterator(); entryIt.hasNext();) {
+		List listenersToAttach = new LinkedList();
+		for (Iterator entryIt = listenerMap.entrySet().iterator(); entryIt.hasNext();) {
 			Map.Entry entry = (Map.Entry)entryIt.next();
 			for (Iterator criteriaIt = ((List)entry.getValue()).iterator(); criteriaIt.hasNext();) {
 				FlowExecutionListenerCriteria criteria = (FlowExecutionListenerCriteria)criteriaIt.next();
-				if (criteria.applies(flow)) {
-					// the criteria 'guarding' this flow execution listener is
-					// telling us that the listener applies to the flow
-					listeners.add((FlowExecutionListener)entry.getKey());
+				if (criteria.appliesTo(flow)) {
+					listenersToAttach.add((FlowExecutionListener)entry.getKey());
 					break;
 				}
 			}
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("Loaded " + listeners.size() + " of possible " + flowExecutionListeners.size()
+			logger.debug("Loaded " + listenersToAttach.size() + " of possible " + listenerMap.size()
 					+ " listeners to this execution request for flow: '" + flow.getId()
-					+ "', the listeners to attach are: " + StylerUtils.style(listeners));
+					+ "', the listeners to attach are: " + StylerUtils.style(listenersToAttach));
 		}
-		return (FlowExecutionListener[])listeners.toArray(new FlowExecutionListener[listeners.size()]);
+		return (FlowExecutionListener[])listenersToAttach.toArray(new FlowExecutionListener[listenersToAttach.size()]);
 	}
 
 	/**
@@ -323,7 +325,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	public void setListeners(Collection listeners, FlowExecutionListenerCriteria criteria) {
 		for (Iterator it = listeners.iterator(); it.hasNext();) {
 			FlowExecutionListener listener = (FlowExecutionListener)it.next();
-			List registeredCriteria = (List)flowExecutionListeners.get(listener);
+			List registeredCriteria = (List)this.listenerMap.get(listener);
 			registeredCriteria.add(criteria);
 		}
 	}
@@ -372,7 +374,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @param criteria the listener criteria
 	 */
 	public void addListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
-		List registeredCriteria = (List)this.flowExecutionListeners.get(listener);
+		List registeredCriteria = (List)this.listenerMap.get(listener);
 		registeredCriteria.add(criteria);
 	}
 
@@ -381,7 +383,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @param listener the listener
 	 */
 	public void removeListener(FlowExecutionListener listener) {
-		this.flowExecutionListeners.remove(listener);
+		this.listenerMap.remove(listener);
 	}
 
 	/**

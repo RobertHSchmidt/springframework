@@ -37,5 +37,5 @@ public interface FlowExecutionListenerCriteria {
 	 * @param flow the flow definition
 	 * @return true if yes, false if no
 	 */
-	public boolean applies(Flow flow);
+	public boolean appliesTo(Flow flow);
 }
