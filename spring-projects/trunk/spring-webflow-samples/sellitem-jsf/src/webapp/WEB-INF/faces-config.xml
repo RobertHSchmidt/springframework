@@ -10,7 +10,7 @@
   <application>
     <!-- Navigation handler that delegates to Spring Web Flow -->
     <navigation-handler>
-      org.springframework.webflow.jsf.WebFlowNavigationHandler
+      org.springframework.webflow.jsf.FlowNavigationHandler
     </navigation-handler>
     <!-- Spring Framework Integration -->
     <variable-resolver>
