@@ -1,4 +1,4 @@
-SPRING WEB FLOW PR5 (July 2005)
+SPRING WEB FLOW 1.0 RC1 (October 2005)
 -------------------------------
 http://www.springframework.org
 http://opensource.atlassian.com/confluence/spring/display/WEBFLOW/Home
@@ -41,12 +41,12 @@ The following distinct jar files are included in the distribution. This list
 specifies the respective contents and third-party dependencies. Libraries in brackets are
 optional, i.e. just necessary for certain functionality.
 
-* spring-webflow-pr5.jar
+* spring-webflow-1.0-rc1.jar
 - Contents: The Spring Web Flow system
 - Dependencies: Commons Logging, spring-beans, spring-core, spring-context, spring-web, spring-binding,
                 (Log4J, Commons Codec, OGNL, spring-webmvc, spring-mock, JUnit, Servlet, JMX, Struts)
               
-* spring-binding-1.0-dev-20050727232106.jar
+* spring-binding-1.0-rc1.jar
 - Contents: The Spring Data Binding framework
 - Dependencies: Commons Logging, spring-bean, spring-core, spring-context, (Log4J)
 

@@ -16,10 +16,6 @@ Sample pre-requisites:
 
 * Ant 1.6 must be installed and in your system path
 
-* Ivy (integration build 20050712085510 or greater) must be in your ant classpath (%ANT_HOME%\lib)
-	* Note: A tested copy of Ivy you may copy into %ANT_HOME%\lib is provided in this release at: ../repository/jayasoft/ivy/jars
-        * IMPORTANT: Earlier versions of Ivy (including 1.1) will NOT work with this build system!
-
 * A Servlet 2.4/JSP 2.0-capable servlet container (e.g. tomcat 5.5) must be installed for sample app deployment
 
 
