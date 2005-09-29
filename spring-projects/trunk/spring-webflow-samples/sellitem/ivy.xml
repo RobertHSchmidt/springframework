@@ -20,7 +20,7 @@
     <dependency org="java" name="jmx" rev="1.2.1">
        <artifact name="jmx-ri" type="jar" />
     </dependency>
-    <dependency org="springframework" name="spring-webflow" rev="latest.integration" conf="global->default,struts"/>
+    <dependency org="springframework" name="spring-webflow" rev="latest.integration" conf="global->default"/>
     <dependency org="springframework" name="springframework" rev="1.2.5"/>
 	<dependency org="hsqldb" name="hsqldb" rev="1.8.0.1"/>
 	    
