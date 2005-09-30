@@ -91,6 +91,7 @@
       <fileset dir="..">
         <include name="spring-webflow-samples/*/build.xml"/>
         <include name="spring-webflow/build.xml"/>
+        <exclude name="spring-webflow-samples/sellitem-jsf/build.xml"/>
       </fileset>
     </ivy:buildlist>
 
