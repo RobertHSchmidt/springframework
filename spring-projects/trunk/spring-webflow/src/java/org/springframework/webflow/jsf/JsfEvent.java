@@ -70,7 +70,7 @@ public class JsfEvent extends ExternalEvent {
 	/**
 	 * Returns the faces context.
 	 */
-	public FacesContext getContext() {
+	public FacesContext getFacesContext() {
 		return (FacesContext)getSource();
 	}
 

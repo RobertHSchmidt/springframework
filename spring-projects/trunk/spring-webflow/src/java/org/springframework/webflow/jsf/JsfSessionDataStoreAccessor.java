@@ -13,6 +13,6 @@ import org.springframework.webflow.execution.DataStoreAccessor;
 public class JsfSessionDataStoreAccessor implements DataStoreAccessor {
 	public MutableAttributeSource getDataStore(Event sourceEvent, boolean createDataStore) {
 		JsfEvent event = (JsfEvent)sourceEvent;
-		return new MapAttributeSource(event.getContext().getExternalContext().getSessionMap());
+		return new MapAttributeSource(event.getFacesContext().getExternalContext().getSessionMap());
 	}
 }
