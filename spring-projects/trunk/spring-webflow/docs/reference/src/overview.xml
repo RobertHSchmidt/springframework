@@ -3,7 +3,9 @@
 	<title>Preface</title>
 	
 	<para>
-		Bla bla.
+		Spring Web Flow (SWF) is a component of the Spring
+		Framework focused on the definition and orchestration of
+		page flow within a web application.
 	</para>
 </preface>
 
