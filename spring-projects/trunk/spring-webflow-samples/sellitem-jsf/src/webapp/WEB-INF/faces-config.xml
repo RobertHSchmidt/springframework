@@ -7,18 +7,29 @@
 <!-- =========== FULL CONFIGURATION FILE ================================== -->
 
 <faces-config>
-  <application>
-    <!-- Navigation handler that delegates to Spring Web Flow -->
-    <navigation-handler>
-      org.springframework.webflow.jsf.FlowNavigationHandler
-    </navigation-handler>
-    <!-- Spring Framework Integration -->
-    <variable-resolver>
-      org.springframework.web.jsf.DelegatingVariableResolver
-    </variable-resolver>
-    <!-- Extended "webApplicationContext" resolver -->
-    <variable-resolver>
-      org.springframework.webflow.jsf.WebApplicationContextVariableResolver
-    </variable-resolver>
-  </application>
+	<application>
+		<!-- Navigation handler that delegates to Spring Web Flow -->
+		<navigation-handler>
+			org.springframework.webflow.jsf.FlowNavigationHandler
+		</navigation-handler>
+		<!-- Spring Framework Integration -->
+		<variable-resolver>
+			org.springframework.web.jsf.DelegatingVariableResolver
+		</variable-resolver>
+		<!-- Extended "webApplicationContext" resolver -->
+		<variable-resolver>
+			org.springframework.web.jsf.WebApplicationContextVariableResolver
+		</variable-resolver>
+	</application>
+
+	<managed-bean>
+		<description>
+			A sale
+		</description>
+		<managed-bean-name>sale</managed-bean-name>
+		<managed-bean-class>
+			org.springframework.webflow.samples.sellitem.Sale
+		</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
 </faces-config>

@@ -2,14 +2,14 @@
 <!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
-<webflow id="sellItem" start-state="setupForm">
+<webflow id="sellItem" start-state="enterPriceAndItemCount">
 
-	<action-state id="setupForm">
+	<!--  action-state id="setupForm"-->
 		<!-- uncomment to experiment with precondition violations -->
 		<!-- <property name="role" value="manager"/> -->
-		<action bean="sellItemAction"/>
+		<!-- action bean="sellItemAction"/>
 		<transition on="success" to="enterPriceAndItemCount"/>
-	</action-state>
+	</action-state-->
 
 	<view-state id="enterPriceAndItemCount" view="/priceAndItemCountForm">
 		<transition on="submit" to="enterCategory">

@@ -13,7 +13,11 @@
 			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
 		</property>
 		<property name="storage">
-			<bean class="org.springframework.webflow.execution.servlet.HttpSessionContinuationFlowExecutionStorage"/>
+			<bean class="org.springframework.webflow.execution.DataStoreFlowExecutionStorage">
+				<constructor-arg>
+					<bean class="org.springframework.webflow.jsf.JsfSessionDataStoreAccessor"/>
+				</constructor-arg>
+			</bean>
 		</property>
 		<!-- 
 		<property name="storage">
@@ -34,9 +38,6 @@
 	</bean>
 	
 	<bean id="sellItemAction" class="org.springframework.webflow.samples.sellitem.SellItemAction">
-		<property name="validator">
-			<bean class="org.springframework.webflow.samples.sellitem.SaleValidator"/>
-		</property>
 	</bean>
 
 	<bean id="statisticsService" class="org.springframework.webflow.execution.jmx.StatisticsService">
