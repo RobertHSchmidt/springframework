@@ -1,6 +1,7 @@
 package org.springframework.webflow.jsf;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
 
@@ -61,6 +62,7 @@ public class JsfEvent extends ExternalEvent {
 	 * @param parameters additional parameters to add
 	 */
 	protected void initParameters(FacesContext context, Map parameters) {
+        setParameters(new TreeMap());
 		addParameters(context.getExternalContext().getRequestParameterMap());
 		addParameters(parameters);
 	}

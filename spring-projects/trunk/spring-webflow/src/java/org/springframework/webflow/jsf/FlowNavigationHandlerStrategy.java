@@ -17,6 +17,7 @@
 package org.springframework.webflow.jsf;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.faces.application.ViewHandler;
@@ -185,8 +186,20 @@ public class FlowNavigationHandlerStrategy {
 	 */
 	public void renderView(FacesContext context, String fromAction, String outcome, ViewDescriptor viewDescriptor) {
 		// Expose model data specified in the descriptor
-		context.getExternalContext().getRequestMap().putAll(viewDescriptor.getModel());
-		// Stay on the same view if requested
+		try {
+            context.getExternalContext().getRequestMap().putAll(viewDescriptor.getModel());
+        } catch (UnsupportedOperationException e) {
+            // work around nasty MyFaces bug where it's RequestMap doesn't support putAll
+            // remove after it's fixed in MyFaces
+            Map requestMap = context.getExternalContext().getRequestMap();
+            Iterator it = viewDescriptor.getModel().entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry entry = (Map.Entry) it.next();
+                requestMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+		
+        // Stay on the same view if requested
 		if (viewDescriptor.getViewName() == null) {
 			return;
 		}
