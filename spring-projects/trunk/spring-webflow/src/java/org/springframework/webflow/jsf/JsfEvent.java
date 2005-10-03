@@ -16,6 +16,7 @@ import org.springframework.webflow.execution.ExternalEvent;
  * application. The JSF outcome is treated as the event identifier.
  * 
  * @author Keith Donald
+ * @author Colin Sampaleanu
  */
 public class JsfEvent extends ExternalEvent {
 
@@ -63,7 +64,11 @@ public class JsfEvent extends ExternalEvent {
 	 */
 	protected void initParameters(FacesContext context, Map parameters) {
         setParameters(new TreeMap());
+        // our event snapshots both request param and request attribute data
+        // this is different than ServletEvent, but makes sense for JSF, where
+        // JSF has potentially bound request-scope data as attributes
 		addParameters(context.getExternalContext().getRequestParameterMap());
+		addParameters(context.getExternalContext().getRequestMap());
 		addParameters(parameters);
 	}
 
