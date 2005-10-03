@@ -10,19 +10,19 @@
 		<h:form id="priceAndItemCountForm">
 			<tr>
 				<td>Price:</td>
-				<td><h:inputText id="inputText" value="#{sale.price}"
+				<td><h:inputText value="#{sale.price}"
 					required="true" /></td>
 			</tr>
 			<tr>
 				<td>Item count:</td>
-				<td><h:inputText id="inputText" value="#{sale.itemCount}"
+				<td><h:inputText value="#{sale.itemCount}"
 					required="true" /></td>
 			</tr>
 			<tr>
 				<td colspan="2" class="buttonBar"><input type="hidden"
 					name="_flowExecutionId" value="${flowExecutionId}"> <h:commandButton
 					type="submit" value="Next" action="submit"
-					immediate="true" /></td>
+					immediate="false" actionListener="#{sale.myListener}" /></td>
 			</tr>
 		</h:form>
 	</table>
