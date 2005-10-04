@@ -91,7 +91,6 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 						expressions.add(new StaticExpression(expressionString.substring(startIdx, exprStartIdx)));
 						startIdx = exprStartIdx;
 					}
-					
 					int exprEndIdx = expressionString.indexOf(getExpressionSuffix(), exprStartIdx);
 					if (exprEndIdx >= exprStartIdx) {
 						expressions.add(parseExpression(expressionString.substring(exprStartIdx, exprEndIdx + 1), context));
