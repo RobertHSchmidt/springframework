@@ -15,6 +15,8 @@
  */
 package org.springframework.binding.convert.support;
 
+import java.util.Collections;
+
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
@@ -22,7 +24,8 @@ import org.springframework.binding.expression.support.CompositeStringExpression;
 import org.springframework.binding.expression.support.ExpressionParserUtils;
 
 /**
- * Converter that converts a String into an array of evaluatable Expression object.
+ * Converter that converts a String into an array of evaluatable Expression
+ * object.
  * 
  * @see org.springframework.binding.expression.Expression
  * @see org.springframework.binding.expression.PropertyExpression
@@ -40,7 +43,7 @@ public class TextToExpressions extends AbstractConverter {
 	public ExpressionParser getExpressionParser() {
 		return expressionParser;
 	}
-	
+
 	/**
 	 * Set the expression parser used by this converter.
 	 */
@@ -58,9 +61,11 @@ public class TextToExpressions extends AbstractConverter {
 
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
 		if (targetClass.equals(CompositeStringExpression.class)) {
-			return new CompositeStringExpression(getExpressionParser().parseExpressions((String)source));
-		} else {
-			return getExpressionParser().parseExpressions((String)source);
+			return new CompositeStringExpression(getExpressionParser().parseExpressions((String)source,
+					Collections.EMPTY_MAP));
+		}
+		else {
+			return getExpressionParser().parseExpressions((String)source, Collections.EMPTY_MAP);
 		}
 	}
 }

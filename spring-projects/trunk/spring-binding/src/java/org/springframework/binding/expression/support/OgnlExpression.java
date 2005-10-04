@@ -25,17 +25,30 @@ class OgnlExpression implements PropertyExpression {
 		this.expression = expression;
 	}
 
-	public Object evaluateAgainst(Object target, Map context)
-			throws EvaluationException {
+	public int hashCode() {
+		return expression.hashCode();
+	}
+
+	public boolean equals(Object o) {
+		if (!(o instanceof OgnlExpression)) {
+			return false;
+		}
+		// Ognl 2.6.7 expression objects apparently don't implement equals
+		// this always returns false, which is quite nasty
+		OgnlExpression other = (OgnlExpression)o;
+		return expression.equals(other.expression);
+	}
+
+	public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
 		try {
 			Assert.notNull(target, "The target object to evaluate is required");
 			if (context == null) {
 				context = Collections.EMPTY_MAP;
 			}
 			return Ognl.getValue(expression, context, target);
-		} catch (OgnlException e) {
-			throw new EvaluationException(new EvaluationAttempt(this,
-					target, context), e);
+		}
+		catch (OgnlException e) {
+			throw new EvaluationException(new EvaluationAttempt(this, target, context), e);
 		}
 	}
 
@@ -46,14 +59,13 @@ class OgnlExpression implements PropertyExpression {
 				context = Collections.EMPTY_MAP;
 			}
 			Ognl.setValue(expression, context, target, value);
-		} catch (OgnlException e) {
-			throw new EvaluationException(new SetPropertyAttempt(this,
-					target, value, context), e);
+		}
+		catch (OgnlException e) {
+			throw new EvaluationException(new SetPropertyAttempt(this, target, value, context), e);
 		}
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("expression", expression)
-				.toString();
+		return new ToStringCreator(this).append("expression", expression).toString();
 	}
 }

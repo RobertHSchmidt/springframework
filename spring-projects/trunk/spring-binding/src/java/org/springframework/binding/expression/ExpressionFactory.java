@@ -1,5 +1,7 @@
 package org.springframework.binding.expression;
 
+import java.util.Collections;
+
 import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.binding.support.Assert;
 
@@ -25,7 +27,7 @@ public class ExpressionFactory {
 	 * @return the evaluator
 	 */
 	public static Expression parseExpression(String expressionString) {
-		return ExpressionParserUtils.getDefaultExpressionParser().parseExpression(expressionString);
+		return ExpressionParserUtils.getDefaultExpressionParser().parseExpression(expressionString, Collections.EMPTY_MAP);
 	}
 	
 	/**
@@ -34,7 +36,7 @@ public class ExpressionFactory {
 	 * @return the evaluator setter
 	 */
 	public static PropertyExpression parsePropertyExpression(String expressionString) {
-		Expression evaluator = ExpressionParserUtils.getDefaultExpressionParser().parseExpression(expressionString);
+		Expression evaluator = ExpressionParserUtils.getDefaultExpressionParser().parseExpression(expressionString, Collections.EMPTY_MAP);
 		Assert.isInstanceOf(PropertyExpression.class, evaluator, "The expression evaluator is not a PropertyExpressionEvaluator");
 		return (PropertyExpression)evaluator;
 	}

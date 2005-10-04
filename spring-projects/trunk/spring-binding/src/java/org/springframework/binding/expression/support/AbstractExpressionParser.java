@@ -17,6 +17,7 @@ package org.springframework.binding.expression.support;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
@@ -78,7 +79,7 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	 * @return the parsed expressions
 	 * @throws ParserException when the expressions cannot be parsed
 	 */
-	public Expression[] parseExpressions(String expressionString) throws ParserException {
+	public Expression[] parseExpressions(String expressionString, Map context) throws ParserException {
 		List expressions = new LinkedList();
 		if (StringUtils.hasText(expressionString)) {
 			int startIdx = 0;
@@ -93,7 +94,7 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 					
 					int exprEndIdx = expressionString.indexOf(getExpressionSuffix(), exprStartIdx);
 					if (exprEndIdx >= exprStartIdx) {
-						expressions.add(parseExpression(expressionString.substring(exprStartIdx, exprEndIdx + 1)));
+						expressions.add(parseExpression(expressionString.substring(exprStartIdx, exprEndIdx + 1), context));
 						startIdx = exprEndIdx + 1;
 					}
 					else {

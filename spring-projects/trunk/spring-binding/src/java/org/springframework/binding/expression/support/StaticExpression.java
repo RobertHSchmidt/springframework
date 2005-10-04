@@ -19,16 +19,18 @@ import java.util.Map;
 
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
+import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.ObjectUtils;
 
 /**
- * A simple expression evaluator that just returns the expression 
- * itself as the result of each evaluation.
+ * A simple expression evaluator that just returns the expression itself as the
+ * result of each evaluation.
  * @author Keith Donald
  */
 public class StaticExpression implements Expression {
-	
+
 	/**
-	 * The value expression. 
+	 * The value expression.
 	 */
 	private Object value;
 
@@ -40,11 +42,27 @@ public class StaticExpression implements Expression {
 		this.value = value;
 	}
 
+	public int hashCode() {
+		if (value == null) {
+			return 0;
+		} else {
+			return value.hashCode();
+		}
+	}
+	
+	public boolean equals(Object o) {
+		if (!(o instanceof StaticExpression)) {
+			return false;
+		}
+		StaticExpression other = (StaticExpression)o;
+		return ObjectUtils.nullSafeEquals(value, other.value);
+	}
+
 	public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
 		return value;
 	}
-	
+
 	public String toString() {
-		return String.valueOf(value);
+		return new ToStringCreator(this).append("value", value).toString();
 	}
 }

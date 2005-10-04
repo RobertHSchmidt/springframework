@@ -15,6 +15,8 @@
  */
 package org.springframework.binding.expression;
 
+import java.util.Map;
+
 /**
  * Parses expression strings, returing a configured evaluator instance
  * capable of performing parsed expression evaluation in a thread safe way.
@@ -32,18 +34,20 @@ public interface ExpressionParser {
 	/**
 	 * Parse the provided expression string, returning an evaluator capable
 	 * of evaluating it against input.
-	 * @param expressionString the expression 
+	 * @param expressionString the parseable expression 
+	 * @context the parsing context
 	 * @return the evaluator for the parsed expression
 	 * @throws ParserException an exception occured during parsing
 	 */
-	public Expression parseExpression(String expressionString) throws ParserException;
+	public Expression parseExpression(String expressionString, Map context) throws ParserException;
 	
 	/**
 	 * Parse the provided expression string, returning an array of evaluatable expressions.
-	 * @param expressionString the expression 
+	 * @param expressionString the parseable expression
+	 * @context the parsing context 
 	 * @return the evaluator for the parsed expression
 	 * @throws ParserException an exception occured during parsing
 	 */
-	public Expression[] parseExpressions(String expressionString) throws ParserException;
+	public Expression[] parseExpressions(String expressionString, Map context) throws ParserException;
 
 }

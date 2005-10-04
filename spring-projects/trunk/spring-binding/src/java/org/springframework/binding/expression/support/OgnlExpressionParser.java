@@ -15,6 +15,8 @@
  */
 package org.springframework.binding.expression.support;
 
+import java.util.Map;
+
 import ognl.Ognl;
 import ognl.OgnlException;
 
@@ -26,7 +28,7 @@ import org.springframework.binding.expression.ParserException;
  * @author Keith
  */
 public class OgnlExpressionParser extends AbstractExpressionParser {
-	public Expression parseExpression(String expressionString) throws ParserException {
+	public Expression parseExpression(String expressionString, Map context) throws ParserException {
 		try {
 			return new OgnlExpression(Ognl.parseExpression(cutExpression(expressionString)));
 		} catch (OgnlException e) {

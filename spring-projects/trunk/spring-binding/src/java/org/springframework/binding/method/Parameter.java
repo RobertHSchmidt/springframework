@@ -3,7 +3,7 @@ package org.springframework.binding.method;
 import java.io.Serializable;
 
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.support.ExpressionParserUtils;
+import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 
@@ -40,7 +40,7 @@ public class Parameter implements Serializable {
 	 * @param name the name
 	 */
 	public Parameter(Class type, String name) {
-		this(type, ExpressionParserUtils.getDefaultExpressionParser().parseExpression(name));
+		this(type, ExpressionFactory.parseExpression(name));
 	}
 
 	/**

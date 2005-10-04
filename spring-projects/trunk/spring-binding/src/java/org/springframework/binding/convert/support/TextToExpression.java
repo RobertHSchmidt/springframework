@@ -15,11 +15,12 @@
  */
 package org.springframework.binding.convert.support;
 
+import java.util.Collections;
+
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.expression.support.ExpressionParserUtils;
-import org.springframework.binding.expression.support.StaticExpression;
 
 /**
  * Converter that converts a String into an Expression object.
@@ -39,7 +40,7 @@ public class TextToExpression extends AbstractConverter {
 	public ExpressionParser getExpressionParser() {
 		return expressionParser;
 	}
-	
+
 	/**
 	 * Set the expression parser used by this converter.
 	 */
@@ -56,11 +57,6 @@ public class TextToExpression extends AbstractConverter {
 	}
 
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
-		String expressionString = (String)source;
-		if (getExpressionParser().isExpression(expressionString)) {
-			return getExpressionParser().parseExpression((String)source);
-		} else {
-			return new StaticExpression(expressionString);
-		}
+		return getExpressionParser().parseExpression((String)source, Collections.EMPTY_MAP);
 	}
 }
