@@ -45,34 +45,33 @@ import org.springframework.webflow.util.RandomGuid;
 
 /**
  * Default implementation of FlowExecution that uses a stack-based data
- * structure to manage {@link org.springframework.webflow.FlowSession flow sessions}.
- * This class is closely coupled with <code>FlowSessionImpl</code> and
- * <code>StateContextImpl</code>. The three classes work together to form a complete
- * flow execution implementation.
+ * structure to manage
+ * {@link org.springframework.webflow.FlowSession flow sessions}. This class is
+ * closely coupled with <code>FlowSessionImpl</code> and
+ * <code>StateContextImpl</code>. The three classes work together to form a
+ * complete flow execution implementation.
  * <p>
  * This implementation of FlowExecution is serializable so it can be safely
- * stored in an HTTP session or other persistent store such as a file, database, or
- * client-side form field.
+ * stored in an HTTP session or other persistent store such as a file, database,
+ * or client-side form field.
  * <p>
  * Note: this implementation synchronizes both execution entry points
  * {@link #start(Event)} and {@link #signalEvent(Event)}. They are locked on a
  * per client basis for this flow execution. Synchronization prevents a client
  * from being able to signal other events before previously signaled ones have
  * processed in-full, preventing possible race conditions.
- *
+ * 
  * @see org.springframework.webflow.FlowSession
  * @see org.springframework.webflow.execution.FlowSessionImpl
- * @see org.springframework.webflow.execution.StateContextImpl 
+ * @see org.springframework.webflow.execution.StateContextImpl
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class FlowExecutionImpl implements FlowExecution, Serializable {
 
-	// static logger because FlowExecutionImpl objects can be serialized
-	// and then restored
 	private static final Log logger = LogFactory.getLog(FlowExecutionImpl.class);
-	
+
 	/**
 	 * Key identifying this flow execution.
 	 */
@@ -103,7 +102,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	private String lastEventId;
 
 	/**
-	 * The timestamp when the last request to manipulate this flow execution was processed.
+	 * The timestamp when the last request to manipulate this flow execution was
+	 * processed.
 	 */
 	private long lastRequestTimestamp;
 
@@ -119,12 +119,12 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * of this flow execution.
 	 */
 	private transient FlowExecutionListenerList listenerList = new FlowExecutionListenerList();
-	
+
 	/**
 	 * The application transaction synchronization strategy to use.
 	 */
 	private transient TransactionSynchronizer transactionSynchronizer;
-	
+
 	/**
 	 * Create a new flow execution executing the provided flow.
 	 * @param rootFlow the root flow of this flow execution
@@ -132,13 +132,14 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	public FlowExecutionImpl(Flow rootFlow) {
 		this(rootFlow, null, new FlowScopeTokenTransactionSynchronizer());
 	}
-	
+
 	/**
 	 * Create a new flow execution executing the provided flow.
 	 * @param rootFlow the root flow of this flow execution
-	 * @param listeners the listeners interested in flow execution lifecycle events
-	 * @param transactionSynchronizer the application transaction synchronization
-	 *        strategy to use
+	 * @param listeners the listeners interested in flow execution lifecycle
+	 * events
+	 * @param transactionSynchronizer the application transaction
+	 * synchronization strategy to use
 	 */
 	public FlowExecutionImpl(Flow rootFlow, FlowExecutionListener[] listeners,
 			TransactionSynchronizer transactionSynchronizer) {
@@ -150,26 +151,27 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		this.getListeners().add(listeners);
 		this.transactionSynchronizer = transactionSynchronizer;
 		if (logger.isDebugEnabled()) {
-			logger.debug("Created new client execution with key: '" + key + "' for flow definition: '" + rootFlow.getId() + "'");
+			logger.debug("Created new client execution with key: '" + key + "' for flow definition: '"
+					+ rootFlow.getId() + "'");
 		}
 	}
-	
+
 	/**
 	 * Returns the transaction synchronizer in use.
 	 */
 	public TransactionSynchronizer getTransactionSynchronizer() {
 		return transactionSynchronizer;
 	}
-	
+
 	/**
 	 * Set the transaction synchronization strategy to use.
 	 */
 	protected void setTransactionSynchronizer(TransactionSynchronizer transactionSynchronizer) {
 		this.transactionSynchronizer = transactionSynchronizer;
 	}
-	
+
 	// implementing FlowExecutionStatistics
-	
+
 	public String getKey() {
 		return key;
 	}
@@ -188,8 +190,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	}
 
 	/**
-	 * Helper that return a string representation of the current
-	 * flow session stack.
+	 * Helper that return a string representation of the current flow session
+	 * stack.
 	 */
 	private String getSessionPath() {
 		if (isActive()) {
@@ -216,7 +218,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	public long getUptime() {
 		return System.currentTimeMillis() - this.creationTimestamp;
 	}
-	
+
 	public long getLastRequestTimestamp() {
 		return this.lastRequestTimestamp;
 	}
@@ -240,11 +242,11 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		Assert.notNull(lastEvent, "The last event is required");
 		this.lastEventId = lastEvent.getId();
 	}
-	
+
 	public boolean isActive() {
 		return !executingFlowSessions.isEmpty();
 	}
-	
+
 	public boolean isRootFlowActive() {
 		if (isActive()) {
 			return getActiveSession().isRoot();
@@ -253,13 +255,13 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 			return false;
 		}
 	}
-	
+
 	// implementing FlowExecutionContext
 
 	public Flow getRootFlow() {
 		return rootFlow;
 	}
-	
+
 	public Flow getActiveFlow() {
 		return getActiveSession().getFlow();
 	}
@@ -271,9 +273,10 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	public FlowSession getActiveSession() {
 		return getActiveSessionInternal();
 	}
-	
+
 	/**
-	 * Check that this flow execution is active and throw an exception if it's not.
+	 * Check that this flow execution is active and throw an exception if it's
+	 * not.
 	 */
 	protected void assertActive() throws IllegalStateException {
 		if (!isActive()) {
@@ -305,7 +308,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		}
 	}
 
-	public synchronized ViewDescriptor signalEvent(Event sourceEvent) throws FlowNavigationException, IllegalStateException {
+	public synchronized ViewDescriptor signalEvent(Event sourceEvent) throws FlowNavigationException,
+			IllegalStateException {
 		assertActive();
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
@@ -314,12 +318,13 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		String stateId = sourceEvent.getStateId();
 		if (!StringUtils.hasText(stateId)) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Current state id was not provided in request to signal event '"
-						+ sourceEvent.getId()
-						+ "' in flow "
-						+ getCaption()
-						+ "' -- pulling current state id from session -- "
-						+ "note: if the user has been using the browser back/forward buttons, the currentState could be incorrect.");
+				logger
+						.debug("Current state id was not provided in request to signal event '"
+								+ sourceEvent.getId()
+								+ "' in flow "
+								+ getCaption()
+								+ "' -- pulling current state id from session -- "
+								+ "note: if the user has been using the browser back/forward buttons, the currentState could be incorrect.");
 			}
 			stateId = getCurrentState().getId();
 		}
@@ -333,7 +338,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 			setCurrentState(state);
 		}
 		// execute the event
-		StateContextImpl context = createStateContext(sourceEvent);
+		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 		getListeners().fireResumed(context);
@@ -349,13 +354,13 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 			getListeners().fireRequestProcessed(context);
 		}
 	}
-	
+
 	public FlowExecutionListenerList getListeners() {
 		return listenerList;
 	}
 
 	// flow session management helpers
-	
+
 	/**
 	 * Create a flow execution state context for given event.
 	 * <p>
@@ -366,7 +371,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	protected StateContextImpl createStateContext(Event sourceEvent) {
 		return new StateContextImpl(sourceEvent, this);
 	}
-	
+
 	/**
 	 * Returns the currently active flow session.
 	 * @throws IllegalStateException this execution is not active
@@ -380,12 +385,13 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * Returns the parent flow session of the currently active flow session.
 	 * @return the parent flow session
 	 * @throws IllegalArgumentException when this execution is not active or
-	 *         when the current flow session has no parent (e.g. is the root
-	 *         flow session)
+	 * when the current flow session has no parent (e.g. is the root flow
+	 * session)
 	 */
 	protected FlowSession getParentSession() throws IllegalArgumentException {
 		assertActive();
-		Assert.state(!getActiveSession().isRoot(), "There is no parent flow session for the currently active flow session");
+		Assert.state(!getActiveSession().isRoot(),
+				"There is no parent flow session for the currently active flow session");
 		return (FlowSession)executingFlowSessions.get(executingFlowSessions.size() - 2);
 	}
 
@@ -439,7 +445,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * @param flow the flow that should be associated with the flow session
 	 * @param input the input parameters used to populate the flow session
 	 * @param parent the flow session that should be the parent of the newly
-	 *        created flow session
+	 * created flow session
 	 * @return the newly created flow session
 	 */
 	protected FlowSessionImpl createFlowSession(Flow flow, Map input, FlowSessionImpl parent) {
@@ -456,12 +462,12 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		endingSession.setStatus(FlowSessionStatus.ENDED);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Ended: " + endingSession);
-		}		
+		}
 		if (!executingFlowSessions.isEmpty()) {
 			getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Resumed: " + getActiveSessionInternal());
-			}		
+			}
 		}
 		return endingSession;
 	}
@@ -495,7 +501,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	public synchronized void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader,
 			TransactionSynchronizer transactionSynchronizer) {
 		// implementation note: we cannot integrate this code into the
-		// readObject() method since we need the flow locator, listener list and tx synchronizer!
+		// readObject() method since we need the flow locator, listener list and
+		// tx synchronizer!
 		if (this.rootFlow != null) {
 			// nothing to do, we're already hydrated
 			return;
@@ -525,12 +532,10 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 			return "[Empty FlowExecutionStack with key '" + getKey() + "'; no flows are active]";
 		}
 		else {
-			return new ToStringCreator(this)
-					.append("key", getKey())
-					.append("activeFlow", getActiveSession().getFlow().getId())
-					.append("currentState",	getCurrentState().getId())
-					.append("rootFlow", getRootFlow().getId())
-					.append("executingFlowSessions", executingFlowSessions).toString();
+			return new ToStringCreator(this).append("key", getKey()).append("activeFlow",
+					getActiveSession().getFlow().getId()).append("currentState", getCurrentState().getId()).append(
+					"rootFlow", getRootFlow().getId()).append("executingFlowSessions", executingFlowSessions)
+					.toString();
 		}
 	}
 }

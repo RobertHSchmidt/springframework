@@ -15,7 +15,12 @@
  */
 package org.springframework.webflow.execution;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.springframework.binding.AttributeSource;
@@ -35,8 +40,8 @@ import org.springframework.webflow.ViewDescriptor;
 /**
  * Default state context implementation used internally by the web flow system.
  * This class is closely coupled with <code>FlowExecutionImpl</code> and
- * <code>StateSessionImpl</code>. The three classes work together to form a complete
- * flow execution implementation.
+ * <code>StateSessionImpl</code>. The three classes work together to form a
+ * complete flow execution implementation.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionImpl
  * @see org.springframework.webflow.execution.FlowSessionImpl
@@ -50,22 +55,22 @@ public class StateContextImpl implements StateContext {
 	 * The owning flow execution.
 	 */
 	private FlowExecutionImpl flowExecution;
-	
+
 	/**
-	 * The source (originating) event of the request context.
+	 * The original event that triggered the creation of this state context.
 	 */
 	private Event sourceEvent;
 
 	/**
-	 * The last event that occured in this context.
+	 * The list of state result events that have occured in this context.
 	 */
-	private Event lastEvent;
+	private List resultEvents = new LinkedList();
 
 	/**
 	 * The last transition that executed in this context.
 	 */
 	private Transition lastTransition;
-	
+
 	/**
 	 * Holder for contextual execution properties.
 	 */
@@ -82,8 +87,8 @@ public class StateContextImpl implements StateContext {
 	 * @param flowExecution the owning flow execution
 	 */
 	public StateContextImpl(Event sourceEvent, FlowExecutionImpl flowExecution) {
-		Assert.notNull(sourceEvent, "the source event is required");
-		Assert.notNull(flowExecution, "the owning flow execution is required");
+		Assert.notNull(sourceEvent, "The source event is required");
+		Assert.notNull(flowExecution, "The owning flow execution is required");
 		this.sourceEvent = sourceEvent;
 		this.flowExecution = flowExecution;
 	}
@@ -91,30 +96,41 @@ public class StateContextImpl implements StateContext {
 	// implementing RequestContext
 
 	public Event getSourceEvent() {
-		return this.sourceEvent;
+		return sourceEvent;
 	}
 
-	public FlowExecutionContext getFlowExecutionContext() {
-		return this.flowExecution;
-	}
-
-	public Scope getRequestScope() {
-		return this.requestScope;
-	}
-
-	public Scope getFlowScope() {
-		return this.flowExecution.getActiveSession().getScope();
+	public Event getResultEvent(String stateId) {
+		Iterator it = resultEvents.iterator();
+		while (it.hasNext()) {
+			StateResultEvent event = (StateResultEvent)it.next();
+			if (event.getStateId().equals(stateId)) {
+				return event.getEvent();
+			}
+		}
+		return null;
 	}
 
 	public Event getLastEvent() {
-		if (lastEvent != null) {
-			return lastEvent;
-		}
-		else {
+		if (resultEvents.size() == 0) {
 			return sourceEvent;
 		}
+		else {
+			return ((StateResultEvent)resultEvents.get(resultEvents.size() - 1)).getEvent();
+		}
 	}
-	
+
+	public FlowExecutionContext getFlowExecutionContext() {
+		return flowExecution;
+	}
+
+	public Scope getRequestScope() {
+		return requestScope;
+	}
+
+	public Scope getFlowScope() {
+		return flowExecution.getActiveSession().getScope();
+	}
+
 	public Transition getLastTransition() {
 		return lastTransition;
 	}
@@ -125,44 +141,45 @@ public class StateContextImpl implements StateContext {
 
 	public void setProperties(AttributeSource properties) {
 		if (properties != null) {
-			this.executionProperties = properties;
+			executionProperties = properties;
 		}
 		else {
-			this.executionProperties = EmptyAttributeSource.INSTANCE;
+			executionProperties = EmptyAttributeSource.INSTANCE;
 		}
 	}
-	
+
 	public Map getModel() {
-		// merge request and flow scope
-		Map model = new HashMap(getFlowScope().size() + getRequestScope().size());
+		// merge flow, request, and state result event parameters
+		Map stateResultParameters = getStateResultParameterMaps();
+		Map model = new HashMap(getFlowScope().size() + getRequestScope().size() + stateResultParameters.size());
 		model.putAll(getFlowScope().getAttributeMap());
 		model.putAll(getRequestScope().getAttributeMap());
-		model.putAll(getLastEvent().getParameters());
+		model.putAll(stateResultParameters);
 		return model;
 	}
 
 	public boolean inTransaction(boolean end) {
-		return this.flowExecution.getTransactionSynchronizer().inTransaction(this, end);
+		return flowExecution.getTransactionSynchronizer().inTransaction(this, end);
 	}
 
 	public void assertInTransaction(boolean end) throws IllegalStateException {
-		this.flowExecution.getTransactionSynchronizer().assertInTransaction(this, end);
+		flowExecution.getTransactionSynchronizer().assertInTransaction(this, end);
 	}
 
 	public void beginTransaction() {
-		this.flowExecution.getTransactionSynchronizer().beginTransaction(this);
+		flowExecution.getTransactionSynchronizer().beginTransaction(this);
 	}
 
 	public void endTransaction() {
-		this.flowExecution.getTransactionSynchronizer().endTransaction(this);
+		flowExecution.getTransactionSynchronizer().endTransaction(this);
 	}
 
 	// implementing StateContext
 
 	public void setLastEvent(Event lastEvent) {
-		this.lastEvent = lastEvent;
-		this.flowExecution.setLastEvent(lastEvent);
-		this.flowExecution.getListeners().fireEventSignaled(this);
+		resultEvents.add(new StateResultEvent(getFlowExecutionContext().getCurrentState().getId(), lastEvent));
+		flowExecution.setLastEvent(lastEvent);
+		flowExecution.getListeners().fireEventSignaled(this);
 	}
 
 	public void setLastTransition(Transition lastTransition) {
@@ -175,7 +192,7 @@ public class StateContextImpl implements StateContext {
 		this.flowExecution.setCurrentState(state);
 		this.flowExecution.getListeners().fireStateEntered(this, previousState);
 	}
-	
+
 	public ViewDescriptor spawn(State startState, Map input) throws IllegalStateException {
 		this.flowExecution.getListeners().fireSessionStarting(this, startState, input);
 		this.flowExecution.activateSession(this, startState.getFlow(), input);
@@ -189,11 +206,100 @@ public class StateContextImpl implements StateContext {
 		this.flowExecution.getListeners().fireSessionEnded(this, endedSession);
 		return endedSession;
 	}
-	
+
+	// implementing AttributeSource
+
+	public boolean containsAttribute(String attributeName) {
+		if (getFlowScope().containsAttribute(attributeName) || getRequestScope().containsAttribute(attributeName)
+				|| eventContainsAttribute(attributeName)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public Object getAttribute(String attributeName) {
+		if (getFlowScope().containsAttribute(attributeName)) {
+			return getFlowScope().getAttribute(attributeName);
+		}
+		else if (getRequestScope().containsAttribute(attributeName)) {
+			return getRequestScope().getAttribute(attributeName);
+		}
+		else {
+			return getEventAttribute(attributeName);
+		}
+	}
+
+	private boolean eventContainsAttribute(String attributeName) {
+		ListIterator it = this.resultEvents.listIterator(resultEvents.size() - 1);
+		while (it.hasPrevious()) {
+			AttributeSource event = (AttributeSource)it.previous();
+			if (event.containsAttribute(attributeName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Object getEventAttribute(String attributeName) {
+		ListIterator it = this.resultEvents.listIterator(resultEvents.size() - 1);
+		while (it.hasPrevious()) {
+			AttributeSource event = (AttributeSource)it.previous();
+			if (event.containsAttribute(attributeName)) {
+				return event.getAttribute(attributeName);
+			}
+		}
+		return null;
+	}
+
+	private Map getStateResultParameterMaps() {
+		if (resultEvents.size() == 0) {
+			return Collections.EMPTY_MAP;
+		}
+		Map parameters = new HashMap(this.resultEvents.size());
+		Iterator it = this.resultEvents.iterator();
+		while (it.hasNext()) {
+			StateResultEvent event = (StateResultEvent)it.next();
+			parameters.put(event.getStateId(), event.getEvent().getParameters());
+		}
+		return parameters;
+	}
+
+	private static class StateResultEvent implements AttributeSource {
+		private String stateId;
+
+		private Event event;
+
+		public StateResultEvent(String stateId, Event event) {
+			this.stateId = stateId;
+			this.event = event;
+		}
+
+		public boolean containsAttribute(String attributeName) {
+			return event.containsAttribute(attributeName);
+		}
+
+		public Object getAttribute(String attributeName) {
+			return event.getAttribute(attributeName);
+		}
+
+		public String getStateId() {
+			return stateId;
+		}
+
+		public Event getEvent() {
+			return event;
+		}
+
+		public String toString() {
+			return new ToStringCreator(this).append("stateId", stateId).append("event", event).toString();
+		}
+	}
+
 	public String toString() {
-		String lastEventId = (lastEvent != null ? lastEvent.getId() : null);
-		return new ToStringCreator(this).append("sourceEvent", sourceEvent.getId()).
-			append("lastEvent", lastEventId).append("requestScope", requestScope).
-			append("executionProperties", executionProperties).append("flowExecution", flowExecution).toString();
+		return new ToStringCreator(this).append("sourceEvent", sourceEvent).append("resultEvents", resultEvents)
+				.append("requestScope", requestScope).append("executionProperties", executionProperties).append(
+						"flowExecution", flowExecution).toString();
 	}
 }
