@@ -3,6 +3,7 @@ package org.springframework.binding.method;
 import java.io.Serializable;
 
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 
@@ -25,7 +26,25 @@ public class Parameter implements Serializable {
 	private Expression name;
 
 	/**
-	 * Create a new named argument definition.
+	 * Create a new named parameter definition.
+	 * 
+	 * @param name the name
+	 */
+	public Parameter(String name) {
+		this(null, name);
+	}
+
+	/**
+	 * Create a new named parameter definition.
+	 * 
+	 * @param name the name
+	 */
+	public Parameter(Class type, String name) {
+		this(null, ExpressionParserUtils.getDefaultExpressionParser().parseExpression(name));
+	}
+
+	/**
+	 * Create a new named parameter definition.
 	 * 
 	 * @param name the name
 	 */
@@ -34,7 +53,7 @@ public class Parameter implements Serializable {
 	}
 
 	/**
-	 * Create a new named argument definition.
+	 * Create a new named parameter definition.
 	 * 
 	 * @param type the type
 	 * @param name the name

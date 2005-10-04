@@ -20,9 +20,9 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.method.Argument;
-import org.springframework.binding.method.Arguments;
 import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.Parameter;
+import org.springframework.binding.method.Parameters;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.test.MockRequestContext;
@@ -78,7 +78,7 @@ public class BeanInvokingActionTests extends TestCase {
 		Map parameters = new HashMap();
 		parameters.put("foo", "a string value");
 		context.setLastEvent(new Event(this, "submit", parameters));
-		context.setProperty("method", new MethodKey("execute", new Argument(String.class, "lastEvent.parameters.foo")));
+		context.setProperty("method", new MethodKey("execute", new Parameter(String.class, "lastEvent.parameters.foo")));
 		context.setProperty("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
@@ -96,8 +96,8 @@ public class BeanInvokingActionTests extends TestCase {
 		parameters.put("foo", "a string value");
 		parameters.put("bar", "12345");
 		context.setLastEvent(new Event(this, "submit", parameters));
-		context.setProperty("method", new MethodKey("execute", new Arguments(new Argument[] {
-				new Argument(String.class, "lastEvent.parameters.foo"), new Argument(Integer.class, "lastEvent.parameters.bar") })));
+		context.setProperty("method", new MethodKey("execute", new Parameters(new Parameter[] {
+				new Parameter(String.class, "lastEvent.parameters.foo"), new Parameter(Integer.class, "lastEvent.parameters.bar") })));
 		context.setProperty("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
