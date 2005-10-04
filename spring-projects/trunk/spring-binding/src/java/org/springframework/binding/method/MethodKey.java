@@ -21,7 +21,7 @@ public class MethodKey implements Serializable {
 	/**
 	 * The arguments of the method, e.g int arg1
 	 */
-	private Arguments arguments;
+	private Parameters arguments;
 
 	/**
 	 * Creates a method key with no arguments
@@ -29,7 +29,7 @@ public class MethodKey implements Serializable {
 	 * @param methodName the name of the method.
 	 */
 	public MethodKey(String methodName) {
-		this(methodName, Arguments.NONE);
+		this(methodName, Parameters.NONE);
 	}
 
 	/**
@@ -37,8 +37,8 @@ public class MethodKey implements Serializable {
 	 * @param methodName the name of the method
 	 * @param argument the method argument
 	 */
-	public MethodKey(String methodName, Argument argument) {
-		this(methodName, new Arguments(argument));
+	public MethodKey(String methodName, Parameter argument) {
+		this(methodName, new Parameters(argument));
 	}
 
 	/**
@@ -46,12 +46,12 @@ public class MethodKey implements Serializable {
 	 * @param methodName the name of the method
 	 * @param arguments the method arguments
 	 */
-	public MethodKey(String methodName, Arguments arguments) {
+	public MethodKey(String methodName, Parameters arguments) {
 		this.methodName = methodName;
 		this.arguments = arguments;
 	}
 
-	public Arguments getArguments() {
+	public Parameters getArguments() {
 		return arguments;
 	}
 

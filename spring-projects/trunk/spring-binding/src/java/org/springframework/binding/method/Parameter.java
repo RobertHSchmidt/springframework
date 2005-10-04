@@ -2,16 +2,18 @@ package org.springframework.binding.method;
 
 import java.io.Serializable;
 
+import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 
 /**
- * A named method argument. Each argument has an identifying name and is of a
+ * A named method parameter. Each parameter has an identifying name and is of a
  * specified type (class).
  * 
  * @author Keith
  */
-public class Argument implements Serializable {
+public class Parameter implements Serializable {
 
 	/**
 	 * The class of the argument, e.g "springbank.AccountNumber".
@@ -21,15 +23,15 @@ public class Argument implements Serializable {
 	/**
 	 * The name of the argument, e.g "accountNumber".
 	 */
-	private String name;
+	private Expression name;
 
 	/**
 	 * Create a new named argument definition.
 	 * 
 	 * @param name the name
 	 */
-	public Argument(String name) {
-		this.name = name;
+	public Parameter(String name) {
+		this(null, name);
 	}
 
 	/**
@@ -38,8 +40,8 @@ public class Argument implements Serializable {
 	 * @param type the type
 	 * @param name the name
 	 */
-	public Argument(Class type, String name) {
-		this.name = name;
+	public Parameter(Class type, String name) {
+		this.name = ExpressionParserUtils.getDefaultExpressionParser().parseExpression(name);
 		this.type = type;
 	}
 
@@ -47,15 +49,15 @@ public class Argument implements Serializable {
 		return type;
 	}
 
-	public String getName() {
+	public Expression getName() {
 		return name;
 	}
 
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Argument)) {
+		if (!(obj instanceof Parameter)) {
 			return false;
 		}
-		Argument other = (Argument)obj;
+		Parameter other = (Parameter)obj;
 		return ObjectUtils.nullSafeEquals(type, other.type) && name.equals(other.name);
 	}
 

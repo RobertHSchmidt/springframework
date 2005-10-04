@@ -2,11 +2,11 @@ package org.springframework.binding.method;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.AttributeSource;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.core.style.StylerUtils;
@@ -64,14 +64,15 @@ public class MethodInvoker {
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
-	public Object invoke(MethodKey methodKey, Object bean, AttributeSource argumentSource)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
+	public Object invoke(MethodKey methodKey, Object bean, Object argumentSource) throws IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
 		Object[] args = new Object[methodKey.getArguments().size()];
 		Iterator it = methodKey.getArguments().iterator();
 		int i = 0;
 		while (it.hasNext()) {
-			Argument argument = (Argument)it.next();
-			args[i] = applyTypeConversion(argumentSource.getAttribute(argument.getName()), argument.getType());
+			Parameter param = (Parameter)it.next();
+			Object arg = param.getName().evaluateAgainst(argumentSource, Collections.EMPTY_MAP);
+			args[i] = applyTypeConversion(arg, param.getType());
 			i++;
 		}
 		Class[] argumentTypes = methodKey.getArguments().getTypesArray();
@@ -83,7 +84,8 @@ public class MethodInvoker {
 		Signature signature = new Signature(bean.getClass(), methodKey.getMethodName(), argumentTypes);
 		Method method = (Method)methodCache.get(signature);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Invoking method with signature: " + signature + " with arguments: " + StylerUtils.style(args) + " on bean: " + bean);
+			logger.debug("Invoking method with signature: " + signature + " with arguments: " + StylerUtils.style(args)
+					+ " on bean: " + bean);
 		}
 		// TODO - catch and throw strongly typed unchecked exceptions here?
 		Object returnValue = method.invoke(bean, args);

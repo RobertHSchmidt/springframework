@@ -79,15 +79,15 @@ public class TextToMethodKey extends ConversionServiceAwareConverter {
 			}
 			String argList = encodedMethodKey.substring(openParam + 1, closeParam);
 			String[] args = StringUtils.commaDelimitedListToStringArray(argList);
-			Arguments arguments = new Arguments(args.length);
+			Parameters arguments = new Parameters(args.length);
 			for (int i = 0; i < args.length; i++) {
 				String arg = args[i].trim();
 				String[] typeAndName = StringUtils.split(arg, " ");
 				if (typeAndName != null && typeAndName.length == 2) {
 					Class type = (Class)converterFor(String.class, Class.class).execute(typeAndName[0]);
-					arguments.add(new Argument(type, typeAndName[1].trim()));
+					arguments.add(new Parameter(type, typeAndName[1].trim()));
 				} else {
-					arguments.add(new Argument(arg));
+					arguments.add(new Parameter(arg));
 				}
 			}
 			return new MethodKey(methodName, arguments);
