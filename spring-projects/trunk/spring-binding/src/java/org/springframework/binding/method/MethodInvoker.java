@@ -87,12 +87,15 @@ public class MethodInvoker {
 			logger.debug("Invoking method with signature: " + signature + " with arguments: " + StylerUtils.style(args)
 					+ " on bean: " + bean);
 		}
-		// TODO - catch and throw strongly typed unchecked exceptions here?
-		Object returnValue = method.invoke(bean, args);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Invoked method: '" + signature.getMethodName() + "', method returned value: " + returnValue);
+		try {
+			Object returnValue = method.invoke(bean, args);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Invoked method: '" + signature.getMethodName() + "', method returned value: " + returnValue);
+			}
+			return returnValue;
+		} catch (Exception e) {
+			throw new MethodInvocationException(signature, args, e);
 		}
-		return returnValue;
 	}
 
 	/**
