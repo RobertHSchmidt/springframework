@@ -32,7 +32,7 @@
 	</view-state>
 
 	<action-state id="processSale">
-		<action bean="saleProcessor" method="process(sale)"/>
+		<action bean="saleProcessor" method="process(flowScope.sale)"/>
 		<transition on="success" to="showCostOverview"/>
 	</action-state>
 	

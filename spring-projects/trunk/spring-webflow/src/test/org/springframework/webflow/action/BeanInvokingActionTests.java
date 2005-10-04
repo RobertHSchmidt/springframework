@@ -78,7 +78,7 @@ public class BeanInvokingActionTests extends TestCase {
 		Map parameters = new HashMap();
 		parameters.put("foo", "a string value");
 		context.setLastEvent(new Event(this, "submit", parameters));
-		context.setProperty("method", new MethodKey("execute", new Argument(String.class, "foo")));
+		context.setProperty("method", new MethodKey("execute", new Argument(String.class, "lastEvent.parameters.foo")));
 		context.setProperty("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
@@ -97,7 +97,7 @@ public class BeanInvokingActionTests extends TestCase {
 		parameters.put("bar", "12345");
 		context.setLastEvent(new Event(this, "submit", parameters));
 		context.setProperty("method", new MethodKey("execute", new Arguments(new Argument[] {
-				new Argument(String.class, "foo"), new Argument(Integer.class, "bar") })));
+				new Argument(String.class, "lastEvent.parameters.foo"), new Argument(Integer.class, "lastEvent.parameters.bar") })));
 		context.setProperty("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
