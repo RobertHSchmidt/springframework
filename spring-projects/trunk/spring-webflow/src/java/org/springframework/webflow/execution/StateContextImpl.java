@@ -207,52 +207,6 @@ public class StateContextImpl implements StateContext {
 		return endedSession;
 	}
 
-	// implementing AttributeSource
-
-	public boolean containsAttribute(String attributeName) {
-		if (getFlowScope().containsAttribute(attributeName) || getRequestScope().containsAttribute(attributeName)
-				|| eventContainsAttribute(attributeName)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	public Object getAttribute(String attributeName) {
-		if (getFlowScope().containsAttribute(attributeName)) {
-			return getFlowScope().getAttribute(attributeName);
-		}
-		else if (getRequestScope().containsAttribute(attributeName)) {
-			return getRequestScope().getAttribute(attributeName);
-		}
-		else {
-			return getEventAttribute(attributeName);
-		}
-	}
-
-	private boolean eventContainsAttribute(String attributeName) {
-		ListIterator it = this.resultEvents.listIterator(resultEvents.size() - 1);
-		while (it.hasPrevious()) {
-			AttributeSource event = (AttributeSource)it.previous();
-			if (event.containsAttribute(attributeName)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private Object getEventAttribute(String attributeName) {
-		ListIterator it = this.resultEvents.listIterator(resultEvents.size() - 1);
-		while (it.hasPrevious()) {
-			AttributeSource event = (AttributeSource)it.previous();
-			if (event.containsAttribute(attributeName)) {
-				return event.getAttribute(attributeName);
-			}
-		}
-		return null;
-	}
-
 	private Map getStateResultParameterMaps() {
 		if (resultEvents.size() == 0) {
 			return Collections.EMPTY_MAP;
