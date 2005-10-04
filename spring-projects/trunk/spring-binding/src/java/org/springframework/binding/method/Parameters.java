@@ -91,8 +91,8 @@ public class Parameters implements Serializable {
 		int i = 0;
 		Class[] types = new Class[parameters.size()];
 		for (Iterator it = parameters.iterator(); it.hasNext();) {
-			Parameter arg = (Parameter)it.next();
-			types[i] = arg.getType();
+			Parameter param = (Parameter)it.next();
+			types[i] = param.getType();
 			i++;
 		}
 		return types;

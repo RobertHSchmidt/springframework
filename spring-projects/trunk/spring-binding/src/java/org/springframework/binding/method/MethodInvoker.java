@@ -75,13 +75,13 @@ public class MethodInvoker {
 			args[i] = applyTypeConversion(arg, param.getType());
 			i++;
 		}
-		Class[] argumentTypes = methodKey.getParameters().getTypesArray();
-		for (int j = 0; j < argumentTypes.length; j++) {
-			if (argumentTypes[j] == null) {
-				argumentTypes[j] = args[j].getClass();
+		Class[] parameterTypes = methodKey.getParameters().getTypesArray();
+		for (int j = 0; j < parameterTypes.length; j++) {
+			if (parameterTypes[j] == null) {
+				parameterTypes[j] = args[j].getClass();
 			}
 		}
-		Signature signature = new Signature(bean.getClass(), methodKey.getMethodName(), argumentTypes);
+		Signature signature = new Signature(bean.getClass(), methodKey.getMethodName(), parameterTypes);
 		Method method = (Method)methodCache.get(signature);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Invoking method with signature: " + signature + " with arguments: " + StylerUtils.style(args)

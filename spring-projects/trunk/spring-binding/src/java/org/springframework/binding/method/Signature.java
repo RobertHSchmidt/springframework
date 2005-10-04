@@ -23,10 +23,10 @@ public class Signature implements Serializable {
 	 * 
 	 * @param name the name
 	 */
-	public Signature(Class type, String methodName, Class[] argumentTypes) {
+	public Signature(Class type, String methodName, Class[] parameterTypes) {
 		this.type = type;
 		this.methodName = methodName;
-		this.parameterTypes = argumentTypes;
+		this.parameterTypes = parameterTypes;
 	}
 
 	public Class getType() {

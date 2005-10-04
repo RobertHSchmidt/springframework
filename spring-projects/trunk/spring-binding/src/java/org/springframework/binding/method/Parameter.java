@@ -40,7 +40,7 @@ public class Parameter implements Serializable {
 	 * @param name the name
 	 */
 	public Parameter(Class type, String name) {
-		this(null, ExpressionParserUtils.getDefaultExpressionParser().parseExpression(name));
+		this(type, ExpressionParserUtils.getDefaultExpressionParser().parseExpression(name));
 	}
 
 	/**
@@ -59,8 +59,8 @@ public class Parameter implements Serializable {
 	 * @param name the name
 	 */
 	public Parameter(Class type, Expression name) {
-		this.name = name;
 		this.type = type;
+		this.name = name;
 	}
 
 	public Class getType() {
