@@ -288,12 +288,4 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 			this.rootFlow = session.getFlow();
 		}
 	}
-
-	public boolean containsAttribute(String attributeName) {
-		throw new UnsupportedOperationException();
-	}
-
-	public Object getAttribute(String attributeName) {
-		throw new UnsupportedOperationException();
-	}
 }
