@@ -28,9 +28,9 @@ import org.springframework.util.StringUtils;
  * <ul>
  * <li> "methodName" - the name of the method to invoke, where the method is
  * expected to have no arguments. </li>
- * <li> "methodName(arg1Type arg1Name, argNType argNName)" - the name of the
- * method to invoke, where the method is expected to have arguments delimited by
- * a comma. In this example, the method has two arguments. The type is either
+ * <li> "methodName(param1Type param1Name, paramNType paramNName)" - the name of the
+ * method to invoke, where the method is expected to have parameters delimited by
+ * a comma. In this example, the method has two parameters. The type is either
  * the fully-qualified class of the argument OR a known type alias. The name is
  * the logical name of the argument, which is used during data binding to
  * retrieve the argument value.
@@ -66,31 +66,31 @@ public class TextToMethodKey extends ConversionServiceAwareConverter {
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
 		String encodedMethodKey = (String)source;
 		encodedMethodKey = encodedMethodKey.trim();
-		int openParam = encodedMethodKey.indexOf('(');
-		if (openParam == -1) {
+		int openParan = encodedMethodKey.indexOf('(');
+		if (openParan == -1) {
 			return new MethodKey(encodedMethodKey);
 		}
 		else {
-			String methodName = encodedMethodKey.substring(0, openParam);
-			int closeParam = encodedMethodKey.lastIndexOf(')');
-			if (closeParam == -1) {
+			String methodName = encodedMethodKey.substring(0, openParan);
+			int closeParan = encodedMethodKey.lastIndexOf(')');
+			if (closeParan == -1) {
 				throw new ConversionException(encodedMethodKey, MethodKey.class, null,
-						"Syntax error: No close parenthesis specified for argument list");
+						"Syntax error: No close parenthesis specified for method parameter list");
 			}
-			String argList = encodedMethodKey.substring(openParam + 1, closeParam);
-			String[] args = StringUtils.commaDelimitedListToStringArray(argList);
-			Parameters arguments = new Parameters(args.length);
-			for (int i = 0; i < args.length; i++) {
-				String arg = args[i].trim();
-				String[] typeAndName = StringUtils.split(arg, " ");
+			String delimParamList = encodedMethodKey.substring(openParan + 1, closeParan);
+			String[] paramArray = StringUtils.commaDelimitedListToStringArray(delimParamList);
+			Parameters params = new Parameters(paramArray.length);
+			for (int i = 0; i < paramArray.length; i++) {
+				String param = paramArray[i].trim();
+				String[] typeAndName = StringUtils.split(param, " ");
 				if (typeAndName != null && typeAndName.length == 2) {
 					Class type = (Class)converterFor(String.class, Class.class).execute(typeAndName[0]);
-					arguments.add(new Parameter(type, typeAndName[1].trim()));
+					params.add(new Parameter(type, typeAndName[1].trim()));
 				} else {
-					arguments.add(new Parameter(arg));
+					params.add(new Parameter(param));
 				}
 			}
-			return new MethodKey(methodName, arguments);
+			return new MethodKey(methodName, params);
 		}
 	}
 }

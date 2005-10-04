@@ -66,8 +66,8 @@ public class MethodInvoker {
 	 */
 	public Object invoke(MethodKey methodKey, Object bean, Object argumentSource) throws IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
-		Object[] args = new Object[methodKey.getArguments().size()];
-		Iterator it = methodKey.getArguments().iterator();
+		Object[] args = new Object[methodKey.getParameters().size()];
+		Iterator it = methodKey.getParameters().iterator();
 		int i = 0;
 		while (it.hasNext()) {
 			Parameter param = (Parameter)it.next();
@@ -75,7 +75,7 @@ public class MethodInvoker {
 			args[i] = applyTypeConversion(arg, param.getType());
 			i++;
 		}
-		Class[] argumentTypes = methodKey.getArguments().getTypesArray();
+		Class[] argumentTypes = methodKey.getParameters().getTypesArray();
 		for (int j = 0; j < argumentTypes.length; j++) {
 			if (argumentTypes[j] == null) {
 				argumentTypes[j] = args[j].getClass();

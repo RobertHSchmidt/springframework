@@ -19,9 +19,9 @@ public class MethodKey implements Serializable {
 	private String methodName;
 
 	/**
-	 * The arguments of the method, e.g int arg1
+	 * The parameter types of the method, e.g int param1
 	 */
-	private Parameters arguments;
+	private Parameters parameters;
 
 	/**
 	 * Creates a method key with no arguments
@@ -48,11 +48,11 @@ public class MethodKey implements Serializable {
 	 */
 	public MethodKey(String methodName, Parameters arguments) {
 		this.methodName = methodName;
-		this.arguments = arguments;
+		this.parameters = arguments;
 	}
 
-	public Parameters getArguments() {
-		return arguments;
+	public Parameters getParameters() {
+		return parameters;
 	}
 
 	public String getMethodName() {
@@ -66,7 +66,7 @@ public class MethodKey implements Serializable {
 	 * @throws NoSuchMethodException no such method was found
 	 */
 	public Method lookupMethod(Class clazz) throws NoSuchMethodException {
-		return clazz.getMethod(methodName, arguments.getTypesArray());
+		return clazz.getMethod(methodName, parameters.getTypesArray());
 	}
 
 	public boolean equals(Object obj) {
@@ -74,14 +74,14 @@ public class MethodKey implements Serializable {
 			return false;
 		}
 		MethodKey other = (MethodKey)obj;
-		return methodName.equals(methodName) && arguments.equals(other.arguments);
+		return methodName.equals(methodName) && parameters.equals(other.parameters);
 	}
 
 	public int hashCode() {
-		return methodName.hashCode() + arguments.hashCode();
+		return methodName.hashCode() + parameters.hashCode();
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("methodName", methodName).append("arguments", arguments).toString();
+		return new ToStringCreator(this).append("methodName", methodName).append("parameters", parameters).toString();
 	}
 }

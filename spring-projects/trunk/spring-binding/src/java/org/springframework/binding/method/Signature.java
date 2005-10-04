@@ -16,7 +16,7 @@ public class Signature implements Serializable {
 
 	private String methodName;
 
-	private Class[] argumentTypes;
+	private Class[] parameterTypes;
 
 	/**
 	 * Create a new named argument definition.
@@ -26,7 +26,7 @@ public class Signature implements Serializable {
 	public Signature(Class type, String methodName, Class[] argumentTypes) {
 		this.type = type;
 		this.methodName = methodName;
-		this.argumentTypes = argumentTypes;
+		this.parameterTypes = argumentTypes;
 	}
 
 	public Class getType() {
@@ -37,12 +37,12 @@ public class Signature implements Serializable {
 		return methodName;
 	}
 
-	public Class[] getArgumentTypes() {
-		return argumentTypes;
+	public Class[] getParameterTypes() {
+		return parameterTypes;
 	}
 
 	public Method lookupMethod() throws NoSuchMethodException {
-		return type.getMethod(getMethodName(), getArgumentTypes());
+		return type.getMethod(getMethodName(), getParameterTypes());
 	}
 
 	public boolean equals(Object obj) {
@@ -51,18 +51,18 @@ public class Signature implements Serializable {
 		}
 		Signature other = (Signature)obj;
 		return type.equals(other.type) && methodName.equals(other.methodName)
-				&& argumentTypesEqual(other.argumentTypes);
+				&& argumentTypesEqual(other.parameterTypes);
 	}
 
 	private boolean argumentTypesEqual(Class[] other) {
-		if (argumentTypes == other) {
+		if (parameterTypes == other) {
 			return true;
 		}
-		if (argumentTypes.length != other.length) {
+		if (parameterTypes.length != other.length) {
 			return false;
 		}
-		for (int i = 0; i < this.argumentTypes.length; i++) {
-			if (!argumentTypes[i].equals(other[i])) {
+		for (int i = 0; i < this.parameterTypes.length; i++) {
+			if (!parameterTypes[i].equals(other[i])) {
 				return false;
 			}
 		}
@@ -74,18 +74,18 @@ public class Signature implements Serializable {
 	}
 
 	private int argumentTypesHash() {
-		if (argumentTypes == null) {
+		if (parameterTypes == null) {
 			return 0;
 		}
 		int hash = 0;
-		for (int i = 0; i < argumentTypes.length; i++) {
-			hash += argumentTypes[i].hashCode();
+		for (int i = 0; i < parameterTypes.length; i++) {
+			hash += parameterTypes[i].hashCode();
 		}
 		return hash;
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("type", type).append("methodName", methodName).append("argumentTypes",
-				argumentTypes).toString();
+		return new ToStringCreator(this).append("type", type).append("methodName", methodName).append("parameterTypes",
+				parameterTypes).toString();
 	}
 }
