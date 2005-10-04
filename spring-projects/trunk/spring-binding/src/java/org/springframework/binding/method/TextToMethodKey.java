@@ -28,12 +28,12 @@ import org.springframework.util.StringUtils;
  * <ul>
  * <li> "methodName" - the name of the method to invoke, where the method is
  * expected to have no arguments. </li>
- * <li> "methodName(param1Type param1Name, paramNType paramNName)" - the name of the
- * method to invoke, where the method is expected to have parameters delimited by
- * a comma. In this example, the method has two parameters. The type is either
- * the fully-qualified class of the argument OR a known type alias. The name is
- * the logical name of the argument, which is used during data binding to
- * retrieve the argument value.
+ * <li> "methodName(param1Type param1Name, paramNType paramNName)" - the name of
+ * the method to invoke, where the method is expected to have parameters
+ * delimited by a comma. In this example, the method has two parameters. The
+ * type is either the fully-qualified class of the argument OR a known type
+ * alias. The name is the logical name of the argument, which is used during
+ * data binding to retrieve the argument value.
  * </ul>
  * 
  * @see org.springframework.webflow.action.bean.MethodKey
@@ -85,9 +85,10 @@ public class TextToMethodKey extends ConversionServiceAwareConverter {
 				String[] typeAndName = StringUtils.split(param, " ");
 				if (typeAndName != null && typeAndName.length == 2) {
 					Class type = (Class)converterFor(String.class, Class.class).execute(typeAndName[0]);
-					params.add(new Parameter(type, typeAndName[1].trim()));
-				} else {
-					params.add(new Parameter(param));
+					params.add(new Parameter(type, parseExpression(typeAndName[1].trim())));
+				}
+				else {
+					params.add(new Parameter(parseExpression(param)));
 				}
 			}
 			return new MethodKey(methodName, params);

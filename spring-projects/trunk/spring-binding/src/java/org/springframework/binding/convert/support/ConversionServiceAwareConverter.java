@@ -20,6 +20,7 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.ConversionServiceAware;
+import org.springframework.binding.expression.Expression;
 
 
 /**
@@ -94,5 +95,15 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 	protected Object newInstance(String encodedClass) throws ConversionException {
 		Class clazz = (Class)fromStringTo(Class.class).execute(encodedClass);
 		return BeanUtils.instantiateClass(clazz);
+	}
+	
+	/**
+	 * Helper that parsers the given expression string into an expression, using the 
+	 * installed String->Expression converter.
+	 * @param expressionString the expression string to parse
+	 * @return the parsed, evaluatable expression
+	 */
+	protected Expression parseExpression(String expressionString) {
+		return (Expression)converterFor(String.class, Expression.class).execute(expressionString);
 	}
 }

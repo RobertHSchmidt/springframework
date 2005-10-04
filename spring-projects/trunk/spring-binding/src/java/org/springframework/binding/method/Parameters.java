@@ -26,14 +26,14 @@ public class Parameters implements Serializable {
 	private List parameters;
 
 	/**
-	 * Create a argument list of the default size (3 elements).
+	 * Create a parameter list of the default size (3 elements).
 	 */
 	public Parameters() {
 		this(3);
 	}
 
 	/**
-	 * Create an argument list with the specified size.
+	 * Create an parameter list with the specified size.
 	 * @param size the size
 	 */
 	public Parameters(int size) {
@@ -41,16 +41,16 @@ public class Parameters implements Serializable {
 	}
 
 	/**
-	 * Create an argument list with one argument.
-	 * @param argument the single argument
+	 * Create an parameter list with one parameter.
+	 * @param parameter the single parameter
 	 */
-	public Parameters(Parameter argument) {
+	public Parameters(Parameter parameter) {
 		this.parameters = new ArrayList(1);
-		add(argument);
+		add(parameter);
 	}
 
 	/**
-	 * Create an argument list from the argument array.
+	 * Create an parameter list from the parameter array.
 	 * @param parameters the parameters
 	 */
 	public Parameters(Parameter[] parameters) {
@@ -59,11 +59,11 @@ public class Parameters implements Serializable {
 	}
 
 	/**
-	 * Add a new argument to this list.
-	 * @param argument the argument
+	 * Add a new parameter to this list.
+	 * @param parameter the parameter
 	 */
-	public boolean add(Parameter argument) {
-		return this.parameters.add(argument);
+	public boolean add(Parameter parameter) {
+		return this.parameters.add(parameter);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class Parameters implements Serializable {
 	}
 
 	/**
-	 * Return an argument iterator.
+	 * Return a parameter iterator.
 	 * @return the iterator
 	 */
 	public Iterator iterator() {
@@ -84,7 +84,7 @@ public class Parameters implements Serializable {
 	}
 
 	/**
-	 * Get an array for each argument type.
+	 * Get an array for each parameter type.
 	 * @return the types
 	 */
 	public Class[] getTypesArray() {
@@ -107,11 +107,11 @@ public class Parameters implements Serializable {
 	}
 
 	/**
-	 * Return the argument at the provided index.
+	 * Return the parameter at the provided index.
 	 * @param index
 	 * @return
 	 */
-	public Parameter getArgument(int index) {
+	public Parameter getParameter(int index) {
 		return (Parameter)parameters.get(index);
 	}
 

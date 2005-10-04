@@ -3,7 +3,6 @@ package org.springframework.binding.method;
 import java.io.Serializable;
 
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 
@@ -16,12 +15,12 @@ import org.springframework.util.ObjectUtils;
 public class Parameter implements Serializable {
 
 	/**
-	 * The class of the argument, e.g "springbank.AccountNumber".
+	 * The class of the parameter, e.g "springbank.AccountNumber".
 	 */
 	private Class type;
 
 	/**
-	 * The name of the argument, e.g "accountNumber".
+	 * The name of the parameter, e.g "accountNumber".
 	 */
 	private Expression name;
 
@@ -30,7 +29,7 @@ public class Parameter implements Serializable {
 	 * 
 	 * @param name the name
 	 */
-	public Parameter(String name) {
+	public Parameter(Expression name) {
 		this(null, name);
 	}
 
@@ -40,8 +39,8 @@ public class Parameter implements Serializable {
 	 * @param type the type
 	 * @param name the name
 	 */
-	public Parameter(Class type, String name) {
-		this.name = ExpressionParserUtils.getDefaultExpressionParser().parseExpression(name);
+	public Parameter(Class type, Expression name) {
+		this.name = name;
 		this.type = type;
 	}
 
