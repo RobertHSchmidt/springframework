@@ -59,7 +59,7 @@ import org.springframework.binding.AttributeSource;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface RequestContext {
+public interface RequestContext extends AttributeSource {
 
 	/**
 	 * Returns the client event that originated (or triggered) this request.  This 

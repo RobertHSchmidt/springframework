@@ -15,11 +15,9 @@
  */
 package org.springframework.webflow.action;
 
-import org.springframework.binding.AttributeSource;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodKey;
-import org.springframework.binding.support.ChainedAttributeSource;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
@@ -46,7 +44,7 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 	protected BeanStatePersister getStatePersister() {
 		return statePersister;
 	}
-	
+
 	/**
 	 * Set the bean state management strategy.
 	 */
@@ -70,9 +68,7 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 			throw new IllegalStateException("The method to invoke was not provided--set the '" + METHOD_PROPERTY
 					+ "' property");
 		}
-		AttributeSource argumentSource = new ChainedAttributeSource(new AttributeSource[] { context.getFlowScope(),
-				context.getRequestScope(), context.getLastEvent() });
-		Event result = toEvent(context, beanMethodInvoker.invoke(methodKey, bean, argumentSource));
+		Event result = toEvent(context, beanMethodInvoker.invoke(methodKey, bean, context));
 		getStatePersister().saveState(bean, context);
 		return result;
 	}
