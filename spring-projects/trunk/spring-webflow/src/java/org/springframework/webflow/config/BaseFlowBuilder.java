@@ -73,35 +73,62 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	protected BaseFlowBuilder() {
 	}
 
+	/**
+	 * Creates a flow builder using the locator to link in artifacts
+	 * @param artifactLocator the flow artifact locator.
+	 */
 	protected BaseFlowBuilder(FlowArtifactLocator artifactLocator) {
 		setFlowArtifactLocator(artifactLocator);
 	}
 
+	/**
+	 * Creates a flow builder using the provided creation and locator strategies.
+	 * @param flowCreator the flow creator
+	 * @param artifactLocator the flow artifact locator.
+	 */
 	protected BaseFlowBuilder(FlowCreator flowCreator, FlowArtifactLocator artifactLocator) {
 		setFlowCreator(flowCreator);
 		setFlowArtifactLocator(artifactLocator);
 	}
 
+	/**
+	 * Returns the flow creator.
+	 */
 	protected FlowCreator getFlowCreator() {
 		return flowCreator;
 	}
 
+	/**
+	 * Sets the flow creator.
+	 */
 	public void setFlowCreator(FlowCreator flowCreator) {
 		this.flowCreator = flowCreator;
 	}
 
+	/**
+	 * Returns the artifact locator.
+	 */
 	protected FlowArtifactLocator getFlowArtifactLocator() {
 		return flowArtifactLocator;
 	}
 
+	/**
+	 * Sets the artifact locator.
+	 */
 	public void setFlowArtifactLocator(FlowArtifactLocator flowArtifactLocator) {
 		this.flowArtifactLocator = flowArtifactLocator;
 	}
 
+	/**
+	 * Returns the conversion service.
+	 */
 	protected ConversionService getConversionService() {
 		return conversionService;
 	}
 
+	/**
+	 * Sets the conversion service.
+	 */
 	public void setConversionService(ConversionService conversionService) {
 		this.conversionService = conversionService;
 	}
