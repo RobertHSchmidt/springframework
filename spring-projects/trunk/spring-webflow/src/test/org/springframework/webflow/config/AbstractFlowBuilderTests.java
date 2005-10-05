@@ -49,7 +49,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 
 	public void testDependencyLookup() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
-		master.setFlowArtifactLocator(new FlowArtifactLocator() {
+		master.setFlowArtifactLocator(new FlowArtifactLocatorAdapter() {
 			public Action getAction(String actionId) throws FlowArtifactLookupException {
 				return new NoOpAction();
 			}

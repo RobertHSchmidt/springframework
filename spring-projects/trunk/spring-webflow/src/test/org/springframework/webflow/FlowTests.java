@@ -17,7 +17,7 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.support.SimpleViewDescriptorCreator;
+import org.springframework.webflow.config.SimpleViewDescriptorCreator;
 
 /**
  * Unit test for the Flow class.

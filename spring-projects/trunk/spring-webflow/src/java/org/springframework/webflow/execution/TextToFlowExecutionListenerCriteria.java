@@ -16,26 +16,20 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.binding.convert.ConversionException;
-import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
-import org.springframework.util.Assert;
+import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.util.StringUtils;
 
 /**
- * Converter that converts an encoded string representation of a
- * flow execution listener criteria object to an object instance.
+ * Converter that converts an encoded string representation of a flow execution
+ * listener criteria object to an object instance.
  * <p>
  * This converter supports the following encoded forms:
  * <ul>
- * <li>"*" - will result in  a FlowExecutionListenerCriteria object that matches
- * with all flows ({@link org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory#allFlows()})
+ * <li>"*" - will result in a FlowExecutionListenerCriteria object that matches
+ * on all flows ({@link org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory#allFlows()})
  * </li>
  * <li>"flowId" - will result in a FlowExecutionListenerCriteria object that
- * matches the flow with specified id
- * ({@link org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory#flow(String)})
- * </li>
- * <li>"class:&lt;classname&gt;" - will result in instantiation and usage of a custom 
- * FlowExecutionListenerCriteria implementation. The implementation must have a public
- * no-arg constructor.
+ * matches the flow with specified id ({@link org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory#flow(String)})
  * </li>
  * </ul>
  * 
@@ -45,7 +39,7 @@ import org.springframework.util.StringUtils;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class TextToFlowExecutionListenerCriteria extends ConversionServiceAwareConverter {
+public class TextToFlowExecutionListenerCriteria extends AbstractConverter {
 
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class };
@@ -55,23 +49,22 @@ public class TextToFlowExecutionListenerCriteria extends ConversionServiceAwareC
 		return new Class[] { FlowExecutionListenerCriteria.class };
 	}
 
+	public FlowExecutionListenerCriteria convert(String source) {
+		return (FlowExecutionListenerCriteria)convert(source, FlowExecutionListenerCriteria.class);
+	}
+
 	protected Object doConvert(Object source, Class targetClass) throws ConversionException {
 		String encodedCriteria = (String)source;
-		if (!StringUtils.hasText(encodedCriteria) ||
-				FlowExecutionListenerCriteriaFactory.
-					WildcardFlowExecutionListenerCriteria.WILDCARD_FLOW_ID.equals(encodedCriteria)) {
+		if (!StringUtils.hasText(encodedCriteria)
+				|| FlowExecutionListenerCriteriaFactory.WildcardFlowExecutionListenerCriteria.WILDCARD_FLOW_ID
+						.equals(encodedCriteria)) {
 			// match all flows
 			return FlowExecutionListenerCriteriaFactory.allFlows();
 		}
-		else if (encodedCriteria.startsWith(CLASS_PREFIX)) {
-			// use custom criteria class
-			Object o = newInstance(encodedCriteria);
-			Assert.isInstanceOf(FlowExecutionListenerCriteria.class, o, "Encoded criteria class is of wrong type: ");
-			return (FlowExecutionListenerCriteria)o;
-		}
 		else {
-			// match identified flow
-			return FlowExecutionListenerCriteriaFactory.flow(encodedCriteria);
+			// match identified flows
+			return FlowExecutionListenerCriteriaFactory.flows(StringUtils
+					.commaDelimitedListToStringArray(encodedCriteria));
 		}
 	}
 }

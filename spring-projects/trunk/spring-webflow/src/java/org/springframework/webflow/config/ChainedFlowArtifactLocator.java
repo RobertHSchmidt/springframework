@@ -4,6 +4,8 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 
 /**
@@ -79,4 +81,33 @@ public class ChainedFlowArtifactLocator implements FlowArtifactLocator {
 		throw new FlowArtifactLookupException(FlowAttributeMapper.class, id,
 				"Chain exhausted looking for attribute mapper with id: '" + id + "'");
 	}
+
+	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException {
+		for (int i = 0; i < chain.length; i++) {
+			FlowArtifactLocator locator = chain[i];
+			try {
+				return locator.getTransitionCriteria(id);
+			}
+			catch (FlowArtifactLookupException e) {
+
+			}
+		}
+		throw new FlowArtifactLookupException(TransitionCriteria.class, id,
+				"Chain exhausted looking for transition criteria with id: '" + id + "'");
+	}
+	
+	public ViewDescriptorCreator getViewDescriptorCreator(String id) throws FlowArtifactLookupException {
+		for (int i = 0; i < chain.length; i++) {
+			FlowArtifactLocator locator = chain[i];
+			try {
+				return locator.getViewDescriptorCreator(id);
+			}
+			catch (FlowArtifactLookupException e) {
+
+			}
+		}
+		throw new FlowArtifactLookupException(ViewDescriptorCreator.class, id,
+				"Chain exhausted looking for view descriptor creator with id: '" + id + "'");
+	}
+
 }

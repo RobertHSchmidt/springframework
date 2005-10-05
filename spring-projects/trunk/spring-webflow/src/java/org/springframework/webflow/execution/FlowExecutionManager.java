@@ -28,7 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.binding.convert.ConversionService;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
@@ -39,7 +38,6 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.BeanFactoryFlowLocator;
 import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.support.FlowConversionService;
 
 /**
  * A manager for the executing flows of the application. This object is
@@ -192,8 +190,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 */
 	private TransactionSynchronizer transactionSynchronizer = new FlowScopeTokenTransactionSynchronizer();
 
-	private ConversionService conversionService = new FlowConversionService();
-
 	private BeanFactory beanFactory;
 
 	/**
@@ -210,7 +206,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @see #setListeners(Collection, FlowExecutionListenerCriteria)
 	 * @see #setStorage(FlowExecutionStorage)
 	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
-	 * @see #setConversionService(ConversionService)
 	 */
 	protected FlowExecutionManager() {
 	}
@@ -227,7 +222,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @see #setListeners(Collection)
 	 * @see #setListeners(Collection, FlowExecutionListenerCriteria)
 	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
-	 * @see #setConversionService(ConversionService)
 	 */
 	public FlowExecutionManager(FlowExecutionStorage storage) {
 		setStorage(storage);
@@ -346,9 +340,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 				criteria = (FlowExecutionListenerCriteria)entry.getValue();
 			}
 			else {
-				// string encoded
-				criteria = (FlowExecutionListenerCriteria)getConversionService().getConversionExecutor(String.class,
-						FlowExecutionListenerCriteria.class).execute(entry.getValue());
+				criteria = convertEncodedListenerCriteria((String)entry.getValue());
 			}
 			if (entry.getKey() instanceof Collection) {
 				setListeners((Collection)entry.getKey(), criteria);
@@ -357,6 +349,10 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 				setListener((FlowExecutionListener)entry.getKey(), criteria);
 			}
 		}
+	}
+
+	protected FlowExecutionListenerCriteria convertEncodedListenerCriteria(String encodedCriteria) {
+		return new TextToFlowExecutionListenerCriteria().convert(encodedCriteria);
 	}
 
 	/**
@@ -415,20 +411,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 */
 	public void setTransactionSynchronizer(TransactionSynchronizer transactionSynchronizer) {
 		this.transactionSynchronizer = transactionSynchronizer;
-	}
-
-	/**
-	 * Returns the conversion service used by this flow execution manager.
-	 */
-	public ConversionService getConversionService() {
-		return conversionService;
-	}
-
-	/**
-	 * Set the conversion service used by this flow execution manager.
-	 */
-	public void setConversionService(ConversionService conversionService) {
-		this.conversionService = conversionService;
 	}
 
 	/**

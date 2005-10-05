@@ -23,14 +23,14 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.support.FlowConversionService;
 
 /**
  * Abstract base implementation of a flow builder defining common functionality
  * needed by most concrete flow builder implementations.
  * <p>
- * The builder will use a <code>FlowServiceLocator</code> to locate and create
+ * The builder will use a <code>FlowArtifactLocator</code> to locate hook in
  * any required flow related artifacts.
  * 
  * @see org.springframework.webflow.access.FlowServiceLocator
@@ -56,7 +56,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	private FlowCreator flowCreator = new DefaultFlowCreator();
 
 	/**
-	 * Locates actions, attribute mappers, and other artifacts invokable by the
+	 * Locates actions, attribute mappers, and other artifacts usable by the
 	 * flow built by this builder.
 	 */
 	private FlowArtifactLocator flowArtifactLocator;
@@ -65,7 +65,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	 * The conversion service to convert to flow-related artifacts, typically
 	 * from string encoded representations.
 	 */
-	private ConversionService conversionService = new FlowConversionService();
+	private ConversionService conversionService;
 
 	/**
 	 * Default constructor for subclassing.
@@ -98,6 +98,14 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 		this.flowArtifactLocator = flowArtifactLocator;
 	}
 
+	protected ConversionService getConversionService() {
+		return conversionService;
+	}
+
+	public void setConversionService(ConversionService conversionService) {
+		this.conversionService = conversionService;
+	}
+
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		if (flowArtifactLocator == null) {
 			this.flowArtifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory);
@@ -105,12 +113,18 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	}
 
 	/**
-	 * Returns the type conversion service used by this builder.
+	 * Initialize this builder's conversion service and register default converters.
+	 * Called by subclasses who wish to use the conversion infrastructure.
 	 */
-	protected ConversionService getConversionService() {
-		return conversionService;
+	protected void initConversionService() {
+		if (getConversionService() == null) {
+			DefaultConversionService service = new DefaultConversionService();
+			service.addConverter(new TextToTransitionCriteria(getFlowArtifactLocator()));
+			service.addConverter(new TextToViewDescriptorCreator(getFlowArtifactLocator(), service));
+			setConversionService(service);
+		}
 	}
-
+	
 	/**
 	 * Returns a conversion executor capable of converting string objects to the
 	 * target class aliased by the provided alias.

@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support;
+package org.springframework.webflow.config;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.support.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.ViewDescriptorCreator;
-import org.springframework.webflow.support.FlowConversionService;
-import org.springframework.webflow.support.TextToViewDescriptorCreator;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -33,8 +32,9 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class TextToViewDescriptorCreatorTests extends TestCase {
 
-	private TextToViewDescriptorCreator converter = new TextToViewDescriptorCreator(new FlowConversionService());
-	
+	private TextToViewDescriptorCreator converter = new TextToViewDescriptorCreator(new FlowArtifactLocatorAdapter(),
+			new DefaultConversionService());
+
 	public void testStaticView() {
 		ViewDescriptorCreator creator = (ViewDescriptorCreator)converter.convert("myView");
 		RequestContext context = getRequestContext();
@@ -42,9 +42,10 @@ public class TextToViewDescriptorCreatorTests extends TestCase {
 		assertEquals("myView", view.getViewName());
 		assertEquals(5, view.getModel().size());
 	}
-	
+
 	public void testRedirectView() {
-		ViewDescriptorCreator creator = (ViewDescriptorCreator)converter.convert("redirect:myView?foo=${flowScope.foo}&bar=${requestScope.oven}");
+		ViewDescriptorCreator creator = (ViewDescriptorCreator)converter
+				.convert("redirect:myView?foo=${flowScope.foo}&bar=${requestScope.oven}");
 		RequestContext context = getRequestContext();
 		ViewDescriptor view = creator.createViewDescriptor(context);
 		assertEquals("myView", view.getViewName());
@@ -52,7 +53,7 @@ public class TextToViewDescriptorCreatorTests extends TestCase {
 		Assert.attributeEquals(view, "foo", "bar");
 		Assert.attributeEquals(view, "bar", "mit");
 	}
-		
+
 	private RequestContext getRequestContext() {
 		MockRequestContext ctx = new MockRequestContext();
 		ctx.getFlowScope().setAttribute("foo", "bar");
@@ -68,11 +69,12 @@ public class TextToViewDescriptorCreatorTests extends TestCase {
 		RequestContext context = new MockRequestContext();
 		context.getFlowScope().setAttribute("foo", "foo");
 		context.getFlowScope().setAttribute("bar", "bar");
-		
-		ViewDescriptor viewDescriptor = converter.createRedirectViewDescriptorCreator("/viewName").createViewDescriptor(context);
+
+		ViewDescriptor viewDescriptor = converter.createRedirectViewDescriptorCreator("/viewName")
+				.createViewDescriptor(context);
 		assertEquals("/viewName", viewDescriptor.getViewName());
 		assertEquals(0, viewDescriptor.getModel().size());
-		
+
 		viewDescriptor = converter.createRedirectViewDescriptorCreator("").createViewDescriptor(context);
 		assertEquals("", viewDescriptor.getViewName());
 		assertEquals(0, viewDescriptor.getModel().size());
@@ -85,27 +87,32 @@ public class TextToViewDescriptorCreatorTests extends TestCase {
 		assertEquals("/viewName", viewDescriptor.getViewName());
 		assertEquals(0, viewDescriptor.getModel().size());
 
-		viewDescriptor = converter.createRedirectViewDescriptorCreator("/viewName?param0=").createViewDescriptor(context);
+		viewDescriptor = converter.createRedirectViewDescriptorCreator("/viewName?param0=").createViewDescriptor(
+				context);
 		assertEquals("/viewName", viewDescriptor.getViewName());
 		assertEquals(1, viewDescriptor.getModel().size());
 		assertEquals("", viewDescriptor.getModel().get("param0"));
 
-		viewDescriptor = converter.createRedirectViewDescriptorCreator("/viewName?=value0").createViewDescriptor(context);
+		viewDescriptor = converter.createRedirectViewDescriptorCreator("/viewName?=value0").createViewDescriptor(
+				context);
 		assertEquals("/viewName", viewDescriptor.getViewName());
 		assertEquals(1, viewDescriptor.getModel().size());
 		assertEquals("value0", viewDescriptor.getModel().get(""));
 
-		viewDescriptor = converter.createRedirectViewDescriptorCreator("/viewName?param0=value0").createViewDescriptor(context);
+		viewDescriptor = converter.createRedirectViewDescriptorCreator("/viewName?param0=value0").createViewDescriptor(
+				context);
 		assertEquals("/viewName", viewDescriptor.getViewName());
 		assertEquals(1, viewDescriptor.getModel().size());
 		assertEquals("value0", viewDescriptor.getModel().get("param0"));
-		
-		viewDescriptor = converter.createRedirectViewDescriptorCreator("/viewName?param0=${flowScope.foo}").createViewDescriptor(context);
+
+		viewDescriptor = converter.createRedirectViewDescriptorCreator("/viewName?param0=${flowScope.foo}")
+				.createViewDescriptor(context);
 		assertEquals("/viewName", viewDescriptor.getViewName());
 		assertEquals(1, viewDescriptor.getModel().size());
 		assertEquals("foo", viewDescriptor.getModel().get("param0"));
-		
-		viewDescriptor = converter.createRedirectViewDescriptorCreator("/viewName?param0=${flowScope.foo}&param1=${flowScope.bar}").createViewDescriptor(context);
+
+		viewDescriptor = converter.createRedirectViewDescriptorCreator(
+				"/viewName?param0=${flowScope.foo}&param1=${flowScope.bar}").createViewDescriptor(context);
 		assertEquals("/viewName", viewDescriptor.getViewName());
 		assertEquals(2, viewDescriptor.getModel().size());
 		assertEquals("foo", viewDescriptor.getModel().get("param0"));

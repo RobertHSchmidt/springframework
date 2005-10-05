@@ -32,7 +32,6 @@ import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.FlowArtifactLookupException;
-import org.springframework.webflow.support.SimpleViewDescriptorCreator;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -144,7 +143,7 @@ public class XmlFlowBuilderTests extends TestCase {
 	 * 
 	 * @author Erwin Vervaet
 	 */
-	public static class TestFlowArtifactLocator implements FlowArtifactLocator {
+	public static class TestFlowArtifactLocator extends FlowArtifactLocatorAdapter {
 
 		public Action getAction(String id) throws FlowArtifactLookupException {
 			if ("action1".equals(id) || "action2".equals(id)) {

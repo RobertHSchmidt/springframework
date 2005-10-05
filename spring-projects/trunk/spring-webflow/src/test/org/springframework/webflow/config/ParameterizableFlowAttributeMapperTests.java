@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support;
+package org.springframework.webflow.config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +31,7 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.action.FormAction;
+import org.springframework.webflow.config.ParameterizableFlowAttributeMapper;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 

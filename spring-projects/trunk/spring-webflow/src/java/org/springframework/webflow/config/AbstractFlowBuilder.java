@@ -35,7 +35,6 @@ import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.support.ActionTransitionCriteria;
 
 /**
  * Base class for flow builders that programmatically build flows in Java
@@ -164,6 +163,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	public final Flow init() throws FlowBuilderException {
 		Assert.state(getFlowArtifactLocator() != null,
 				"The flowArtifactLocator property must be set before I can build this flow: '" + flowId() + "'");
+		initConversionService();
 		setFlow(getFlowCreator().createFlow(flowId(), flowProperties()));
 		return getFlow();
 	}

@@ -25,11 +25,10 @@ import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.support.Mapping;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AttributeMapperAction;
+import org.springframework.webflow.config.EventIdTransitionCriteria;
+import org.springframework.webflow.config.SimpleViewDescriptorCreator;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionImpl;
-import org.springframework.webflow.support.FlowConversionService;
-import org.springframework.webflow.support.TextToTransitionCriteria;
-import org.springframework.webflow.support.TextToViewDescriptorCreator;
 
 /**
  * Tests that each of the Flow state types execute as expected when entered.
@@ -179,11 +178,11 @@ public class StateTests extends TestCase {
 	}
 
 	public static TransitionCriteria on(String event) {
-		return (TransitionCriteria)new TextToTransitionCriteria(new FlowConversionService()).convert(event);
+		return new EventIdTransitionCriteria(event);
 	}
 
 	public static ViewDescriptorCreator view(String viewName) {
-		return (ViewDescriptorCreator)new TextToViewDescriptorCreator(new FlowConversionService()).convert(viewName);
+		return new SimpleViewDescriptorCreator(viewName);
 	}
 
 	public static class InputOutputMapper implements FlowAttributeMapper {

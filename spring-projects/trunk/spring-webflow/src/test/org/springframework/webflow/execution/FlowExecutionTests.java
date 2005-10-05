@@ -32,12 +32,11 @@ import org.springframework.webflow.StateTests.ExecutionCounterAction;
 import org.springframework.webflow.StateTests.InputOutputMapper;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.config.AbstractFlowBuilder;
+import org.springframework.webflow.config.EventIdTransitionCriteria;
 import org.springframework.webflow.config.FlowArtifactLocatorAdapter;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.FlowFactoryBean;
-import org.springframework.webflow.support.FlowConversionService;
-import org.springframework.webflow.support.TextToTransitionCriteria;
-import org.springframework.webflow.support.TextToViewDescriptorCreator;
+import org.springframework.webflow.config.SimpleViewDescriptorCreator;
 
 /**
  * General flow execution tests.
@@ -151,10 +150,10 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public static TransitionCriteria on(String event) {
-		return (TransitionCriteria)new TextToTransitionCriteria(new FlowConversionService()).convert(event);
+		return new EventIdTransitionCriteria(event);
 	}
 
 	public static ViewDescriptorCreator view(String viewName) {
-		return (ViewDescriptorCreator)new TextToViewDescriptorCreator().convert(viewName);
+		return new SimpleViewDescriptorCreator(viewName);
 	}
 }

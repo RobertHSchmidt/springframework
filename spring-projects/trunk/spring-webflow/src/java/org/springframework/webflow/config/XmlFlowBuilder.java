@@ -34,6 +34,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.convert.ConversionExecutor;
+import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.binding.support.MapAttributeSource;
@@ -59,9 +60,6 @@ import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.CompositeAction;
 import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.support.FlowScopeExpression;
-import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
-import org.springframework.webflow.support.TransitionCriteriaChain;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -307,6 +305,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 				"The location property specifying the XML flow definition resource location is required");
 		Assert.notNull(getFlowArtifactLocator(),
 				"The flowArtifactLocator property for loading actions and subflows is required");
+		initConversionService();
 		try {
 			loadFlowDefinition();
 		}

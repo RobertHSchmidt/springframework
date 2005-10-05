@@ -6,6 +6,8 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.BeanFactoryFlowLocator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
@@ -24,12 +26,13 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	private BeanFactory beanFactory;
 
 	/**
-	 * An segregated flow locator to delegate to for retrieving flow definitions.
+	 * An segregated flow locator to delegate to for retrieving flow
+	 * definitions.
 	 */
 	private FlowLocator flowLocator;
 
 	/**
-	 * Creates a flow artifact locator that retrieves artifacts from the 
+	 * Creates a flow artifact locator that retrieves artifacts from the
 	 * provided bean factory
 	 * @param beanFactory The spring bean factory, may not be null.
 	 */
@@ -44,12 +47,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	}
 
 	public Action getAction(String id) throws FlowArtifactLookupException {
-		try {
-			return toAction(beanFactory.getBean(id));
-		}
-		catch (BeansException e) {
-			throw new FlowArtifactLookupException(Action.class, id, e);
-		}
+		return toAction(getService(id, Action.class));
 	}
 
 	/**
@@ -70,11 +68,22 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	}
 
 	public FlowAttributeMapper getFlowAttributeMapper(String id) {
+		return (FlowAttributeMapper)getService(id, FlowAttributeMapper.class);
+	}
+
+	public TransitionCriteria getTransitionCriteria(String id) {
+		return (TransitionCriteria)getService(id, TransitionCriteria.class);
+	}
+
+	public ViewDescriptorCreator getViewDescriptorCreator(String id) {
+		return (ViewDescriptorCreator)getService(id, ViewDescriptorCreator.class);
+	}
+
+	private Object getService(String id, Class serviceType) {
 		try {
-			return (FlowAttributeMapper)beanFactory.getBean(id);
-		}
-		catch (BeansException e) {
-			throw new FlowArtifactLookupException(FlowAttributeMapper.class, id, e);
+			return beanFactory.getBean(id);
+		} catch (BeansException e) {
+			throw new FlowArtifactLookupException(serviceType, id, e);
 		}
 	}
 }

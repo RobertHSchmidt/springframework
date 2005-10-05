@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
+import org.springframework.core.style.StylerUtils;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 
@@ -27,54 +29,69 @@ import org.springframework.webflow.Flow;
  * @author Erwin Vervaet
  */
 public class FlowExecutionListenerCriteriaFactory {
-	
+
 	/**
-	 * A flow execution listener criteria implementation that
-	 * matches for all flows.
+	 * A flow execution listener criteria implementation that matches for all
+	 * flows.
 	 */
 	public static class WildcardFlowExecutionListenerCriteria implements FlowExecutionListenerCriteria {
-		
+
 		/**
 		 * The string representation of the wildcard flow id.
 		 */
 		public static final String WILDCARD_FLOW_ID = "*";
-		
+
 		public boolean appliesTo(Flow flow) {
 			return true;
 		}
-		
+
 		public String toString() {
 			return WILDCARD_FLOW_ID;
 		}
 	}
 
 	/**
-	 * A flow execution listener criteria implementation that
-	 * matches flows with a specified id.
+	 * A flow execution listener criteria implementation that matches flows with
+	 * a specified id.
 	 */
 	public static class FlowIdFlowExecutionListenerCriteria implements FlowExecutionListenerCriteria {
-		
-		private String flowId;
+
+		private String[] flowIds;
 
 		/**
-		 * Create a new flow id matching flow execution listener
-		 * criteria implemenation.
+		 * Create a new flow id matching flow execution listener criteria
+		 * implemenation.
 		 * @param flowId the flow id to match
 		 */
 		public FlowIdFlowExecutionListenerCriteria(String flowId) {
 			Assert.notNull(flowId, "The flow id is required");
-			this.flowId = flowId;
+			this.flowIds = new String[] { flowId };
 		}
-		
+
+		/**
+		 * Create a new flow id matching flow execution listener criteria
+		 * implemenation.
+		 * @param flowId the flow ids to match
+		 */
+		public FlowIdFlowExecutionListenerCriteria(String[] flowIds) {
+			Assert.notEmpty(flowIds, "The flow id is required");
+			this.flowIds = flowIds;
+		}
+
 		public boolean appliesTo(Flow flow) {
-			return flowId.equals(flow.getId());
+			for (int i = 0; i < flowIds.length; i++) {
+				if (flowIds[i].equals(flow.getId())) {
+					return true;
+				}
+			}
+			return false;
 		}
-	
+
 		public String toString() {
-			return flowId;
+			return new ToStringCreator(this).append("flowIds", StylerUtils.style(flowIds)).toString();
 		}
 	}
-	
+
 	/**
 	 * Returns a wild card criteria that matches all flows.
 	 */
@@ -90,4 +107,12 @@ public class FlowExecutionListenerCriteriaFactory {
 		return new FlowIdFlowExecutionListenerCriteria(flowId);
 	}
 
+	/**
+	 * Returns a criteria that just matches a flow if it is identified by one of
+	 * the specified ids.
+	 * @param flowId the flow id to match
+	 */
+	public static FlowExecutionListenerCriteria flows(String[] flowIds) {
+		return new FlowIdFlowExecutionListenerCriteria(flowIds);
+	}
 }
