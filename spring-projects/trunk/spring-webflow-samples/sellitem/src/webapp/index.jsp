@@ -29,7 +29,7 @@
 						how browser navigation buttons are used.
 					</LI>
 					<LI>
-					    Using externally stored transactionIds to prevent duplicate submits 
+					    Using synchronized transactionIds to prevent duplicate submits 
 					    of the same sale while also taking advantage of continuations
 					</LI>
 					<LI>
