@@ -41,6 +41,7 @@
 		<tr>
 			<td colspan="2" class="buttonBar">
 				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
+				<input type="hidden" name="_transactionId" value="${transactionId}">
 				<input type="submit" class="button" name="_eventId_submit" value="Next">
 			</td>
 		</tr>

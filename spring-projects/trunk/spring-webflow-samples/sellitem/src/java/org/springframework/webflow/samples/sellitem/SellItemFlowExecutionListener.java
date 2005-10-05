@@ -1,8 +1,11 @@
 package org.springframework.webflow.samples.sellitem;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.execution.EnterStateVetoException;
@@ -10,6 +13,19 @@ import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.servlet.ServletEvent;
 
 public class SellItemFlowExecutionListener extends FlowExecutionListenerAdapter {
+	
+	public void sessionStarting(RequestContext context, State startState, Map input) throws EnterStateVetoException {
+		context.beginTransaction();
+	}
+
+	public void resumed(RequestContext context) {
+		context.assertInTransaction(false);
+	}
+
+	public void sessionEnded(RequestContext context, FlowSession endedRootFlowSession) {
+		context.endTransaction();
+	}
+
 	public void stateEntering(RequestContext context, State nextState) throws EnterStateVetoException {
 		String role = (String)nextState.getProperty("role");
 		if (StringUtils.hasText(role)) {
