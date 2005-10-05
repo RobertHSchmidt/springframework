@@ -1,6 +1,7 @@
 package org.springframework.webflow.execution.servlet;
 
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +24,13 @@ public class HttpServletContextMap implements Map {
 	}
 
 	public int size() {
-		return 0;
+		Enumeration it = context.getAttributeNames();
+		int i = 0;
+		while (it.hasMoreElements()) {
+			i++;
+			it.nextElement();
+		}
+		return i;
 	}
 
 	public boolean isEmpty() {
@@ -35,7 +42,7 @@ public class HttpServletContextMap implements Map {
 	}
 
 	public boolean containsValue(Object value) {
-		return false;
+		throw new UnsupportedOperationException();
 	}
 
 	public Object get(Object key) {
@@ -55,20 +62,22 @@ public class HttpServletContextMap implements Map {
 	}
 
 	public void putAll(Map arg0) {
+		throw new UnsupportedOperationException();
 	}
 
 	public void clear() {
+		throw new UnsupportedOperationException();
 	}
 
 	public Set keySet() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public Collection values() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public Set entrySet() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 }

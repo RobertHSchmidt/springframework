@@ -10,10 +10,7 @@
 			<td>Price:</td>
 			<td>
 				<spring:bind path="sale.price">
-					<input
-						type="text"
-						name="${status.expression}"
-						value="${status.value}">
+					<input type="text" name="${status.expression}" value="${status.value}">
 					<c:if test="${status.error}">
 						<div class="error">${status.errorMessage}</div>
 					</c:if>
@@ -24,10 +21,7 @@
 			<td>Item count:</td>
 			<td>
 				<spring:bind path="sale.itemCount">
-					<input
-						type="text"
-						name="${status.expression}"
-						value="${status.value}">
+					<input type="text" name="${status.expression}" value="${status.value}">
 					<c:if test="${status.error}">
 						<div class="error">${status.errorMessage}</div>
 					</c:if>

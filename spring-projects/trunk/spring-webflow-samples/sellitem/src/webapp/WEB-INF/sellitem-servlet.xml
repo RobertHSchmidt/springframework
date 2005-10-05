@@ -29,7 +29,7 @@
 		<property name="storage">
 			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage">
 				<constructor-arg>
-					<bean class="org.springframework.webflow.execution.servlet.HttpSessionDataStoreAccessor"/>
+					<bean class="org.springframework.webflow.execution.SessionDataStoreAccessor"/>
 				</constructor-arg>
 			</bean>
 		</property>
