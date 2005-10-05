@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
@@ -34,6 +36,8 @@ import org.springframework.webflow.util.RandomGuid;
  */
 public abstract class AbstractTokenTransactionSynchronizer implements TransactionSynchronizer {
 
+	protected final Log logger = LogFactory.getLog(getClass());
+	
 	/**
 	 * The transaction synchronizer token will be stored in the model using an
 	 * attribute with this name ("txToken").
@@ -45,7 +49,6 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	 * using a request parameter with this name ("_txToken").
 	 */
 	public static final String TRANSACTION_TOKEN_PARAMETER_NAME = "_txToken";
-	
 	
 	private String transactionTokenAttributeName = TRANSACTION_TOKEN_ATTRIBUTE_NAME;
 	
@@ -121,10 +124,17 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	}
 	
 	public void beginTransaction(RequestContext context) {
-		setToken(context, generateToken());
+		String token = generateToken();
+		if (logger.isDebugEnabled()) {
+			logger.debug("Beginning new application transaction; txToken is: '" + token + "'");
+		}
+		setToken(context, token);
 	}
 	
 	public void endTransaction(RequestContext context) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Ending application transaction");
+		}
 		clearToken(context);
 	}
 	

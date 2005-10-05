@@ -69,14 +69,14 @@ public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransact
 	 * @return the generated token name
 	 */
 	protected String getTokenName(RequestContext context) {
-		StringBuffer tokenName = new StringBuffer();
-		tokenName.append(getTransactionTokenAttributeName()).append("_");
 		// use the flow execution key to uniquely identify this flow execution
 		// among all other flow executions in the same data store
 		// note that the key always remains the same, even if
 		// the flow execution gets cloned, e.g. when using continuations, so
 		// it identifies the 'logical' flow execution
+		StringBuffer tokenName = new StringBuffer(128);
 		tokenName.append(context.getFlowExecutionContext().getKey());
+		tokenName.append(getTransactionTokenAttributeName()).append("_");
 		return tokenName.toString();
 	}	
 }
