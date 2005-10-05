@@ -42,13 +42,13 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	 * The transaction synchronizer token will be stored in the model using an
 	 * attribute with this name ("txToken").
 	 */
-	public static final String TRANSACTION_TOKEN_ATTRIBUTE_NAME = "txToken";
+	public static final String TRANSACTION_TOKEN_ATTRIBUTE_NAME = "transactionId";
 
 	/**
 	 * A client can send the transaction synchronizer token to a controller
 	 * using a request parameter with this name ("_txToken").
 	 */
-	public static final String TRANSACTION_TOKEN_PARAMETER_NAME = "_txToken";
+	public static final String TRANSACTION_TOKEN_PARAMETER_NAME = "_transactionId";
 	
 	private String transactionTokenAttributeName = TRANSACTION_TOKEN_ATTRIBUTE_NAME;
 	

@@ -46,6 +46,10 @@ public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransact
 		this.dataStoreAccessor = dataStoreAccessor;
 	}
 
+	public String getTransactionId(RequestContext context) {
+		return getToken(context);
+	}
+	
 	public String getToken(RequestContext context) {
 		return (String)dataStoreAccessor.getDataStore(context.getSourceEvent()).getAttribute(getTokenName(context));
 	}

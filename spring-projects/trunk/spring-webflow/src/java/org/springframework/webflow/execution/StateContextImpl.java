@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.springframework.binding.AttributeSource;
@@ -151,10 +150,12 @@ public class StateContextImpl implements StateContext {
 	public Map getModel() {
 		// merge flow, request, and state result event parameters
 		Map stateResultParameters = getStateResultParameterMaps();
-		Map model = new HashMap(getFlowScope().size() + getRequestScope().size() + stateResultParameters.size());
+		Map model = new HashMap(getFlowScope().size() + getRequestScope().size() + stateResultParameters.size() + 1);
 		model.putAll(getFlowScope().getAttributeMap());
 		model.putAll(getRequestScope().getAttributeMap());
 		model.putAll(stateResultParameters);
+		//TODO a little hacky here (but it works)
+		model.put("transactionId", flowExecution.getTransactionSynchronizer().getTransactionId(this));
 		return model;
 	}
 

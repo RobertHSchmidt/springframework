@@ -28,6 +28,10 @@ import org.springframework.webflow.RequestContext;
  */
 public class FlowScopeTokenTransactionSynchronizer extends AbstractTokenTransactionSynchronizer {
 	
+	public String getTransactionId(RequestContext context) {
+		return (String)getToken(context);
+	}
+	
 	public String getToken(RequestContext context) {
 		return (String)context.getFlowScope().getAttribute(getTransactionTokenAttributeName());
 	}
