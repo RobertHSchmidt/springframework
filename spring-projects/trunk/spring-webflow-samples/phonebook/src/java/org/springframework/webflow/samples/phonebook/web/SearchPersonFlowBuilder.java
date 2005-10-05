@@ -20,8 +20,8 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.FlowBuilderException;
+import org.springframework.webflow.config.ParameterizableFlowAttributeMapper;
 import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
-import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
 /**
  * Java-based flow builder that searches for people in the phonebook. The flow

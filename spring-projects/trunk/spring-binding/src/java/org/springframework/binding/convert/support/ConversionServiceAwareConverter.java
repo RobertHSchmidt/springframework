@@ -47,6 +47,9 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 	}
 
 	public ConversionService getConversionService() {
+		if (conversionService == null) {
+			throw new IllegalStateException("Conversion service not yet set: set it first before calling this method");
+		}
 		return conversionService;
 	}
 

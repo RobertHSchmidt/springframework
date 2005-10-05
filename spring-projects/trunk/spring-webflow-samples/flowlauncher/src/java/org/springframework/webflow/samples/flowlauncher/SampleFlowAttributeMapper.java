@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.samples.flowlauncher;
 
-import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
+import org.springframework.webflow.config.ParameterizableFlowAttributeMapper;
 
 public class SampleFlowAttributeMapper extends ParameterizableFlowAttributeMapper {
 	public SampleFlowAttributeMapper() {
