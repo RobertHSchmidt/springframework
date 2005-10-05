@@ -36,8 +36,6 @@ public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransact
 
 	private DataStoreAccessor dataStoreAccessor;
 
-	private boolean createDataStore = true;
-
 	/**
 	 * Create a new token transaction synchronizer storing the token in given data store.
 	 * @param dataStoreAccessor the data store accessor to use
@@ -48,31 +46,16 @@ public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransact
 		this.dataStoreAccessor = dataStoreAccessor;
 	}
 
-	/**
-	 * Returns whether or not the data store should be created if it doesn't already
-	 * exist. Defaults to true.
-	 */
-	public boolean isCreateDataStore() {
-		return createDataStore;
-	}
-
-	/**
-	 * Set whether or not the data store should be created if it doesn't already exist.
-	 */
-	public void setCreateDataStore(boolean createDataStore) {
-		this.createDataStore = createDataStore;
-	}
-
 	public String getToken(RequestContext context) {
-		return (String)dataStoreAccessor.getDataStore(context.getSourceEvent(), isCreateDataStore()).getAttribute(getTokenName(context));
+		return (String)dataStoreAccessor.getDataStore(context.getSourceEvent()).getAttribute(getTokenName(context));
 	}
 
 	public void setToken(RequestContext context, String token) {
-		dataStoreAccessor.getDataStore(context.getSourceEvent(), isCreateDataStore()).setAttribute(getTokenName(context), token);
+		dataStoreAccessor.getDataStore(context.getSourceEvent()).setAttribute(getTokenName(context), token);
 	}
 
 	public void clearToken(RequestContext context) {
-		dataStoreAccessor.getDataStore(context.getSourceEvent(), isCreateDataStore()).removeAttribute(getTokenName(context));
+		dataStoreAccessor.getDataStore(context.getSourceEvent()).removeAttribute(getTokenName(context));
 	}
 	
 	// subclassing hooks

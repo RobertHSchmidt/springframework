@@ -86,4 +86,12 @@ public class JsfEvent extends ExternalEvent {
 	public String getActionId() {
 		return actionId;
 	}
+
+	public Map getApplicationMap() {
+		return getFacesContext().getExternalContext().getApplicationMap();
+	}
+
+	public Map getSessionMap() {
+		return getFacesContext().getExternalContext().getSessionMap();
+	}
 }

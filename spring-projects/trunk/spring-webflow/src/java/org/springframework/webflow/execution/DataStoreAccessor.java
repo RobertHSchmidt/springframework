@@ -31,13 +31,11 @@ import org.springframework.webflow.Event;
  * @author Erwin Vervaet
  */
 public interface DataStoreAccessor {
-	
+
 	/**
 	 * Returns a mutable attribute accessor providing access to the data store.
 	 * @param sourceEvent the event requesting access to the data store
-	 * @param createDataStore whether or not the data store should be created if it doesn't
-	 *        exist yet -- could be ignored by some implementations if not applicable
 	 * @return the mutable attribute source given access to the data store
 	 */
-	public MutableAttributeSource getDataStore(Event sourceEvent, boolean createDataStore);
+	public MutableAttributeSource getDataStore(Event sourceEvent);
 }

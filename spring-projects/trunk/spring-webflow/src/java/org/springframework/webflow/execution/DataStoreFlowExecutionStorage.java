@@ -40,8 +40,6 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 
 	private DataStoreAccessor dataStoreAccessor;
 
-	private boolean createDataStore = true;
-
 	/**
 	 * Create a new flow execution storage using given data store accessor.
 	 * @param dataStoreAccessor the data store accessor to use
@@ -50,22 +48,6 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 		Assert.notNull(dataStoreAccessor,
 				"The data store accessor property is required to load and save flow executions");
 		this.dataStoreAccessor = dataStoreAccessor;
-	}
-
-	/**
-	 * Returns whether or not the data store should be created if it doesn't
-	 * already exist. Defaults to true.
-	 */
-	public boolean isCreateDataStore() {
-		return createDataStore;
-	}
-
-	/**
-	 * Set whether or not the data store should be created if it doesn't already
-	 * exist.
-	 */
-	public void setCreateDataStore(boolean createDataStore) {
-		this.createDataStore = createDataStore;
 	}
 
 	public FlowExecution load(Serializable id, Event sourceEvent) throws NoSuchFlowExecutionException,
@@ -119,21 +101,21 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 * Get the attribute value associated with given id in the data store.
 	 */
 	protected Object getDataSourceAttribute(Serializable id, Event sourceEvent) {
-		return dataStoreAccessor.getDataStore(sourceEvent, isCreateDataStore()).getAttribute(attributeName(id));
+		return dataStoreAccessor.getDataStore(sourceEvent).getAttribute(attributeName(id));
 	}
 
 	/**
 	 * Associate given id with given attribute value in the data store.
 	 */
 	protected Object setDataSourceAttribute(Serializable id, Object value, Event sourceEvent) {
-		return dataStoreAccessor.getDataStore(sourceEvent, isCreateDataStore()).setAttribute(attributeName(id), value);
+		return dataStoreAccessor.getDataStore(sourceEvent).setAttribute(attributeName(id), value);
 	}
 
 	/**
 	 * Remove identified attribute value from the data store.
 	 */
 	protected void removeDataSourceAttribute(Serializable id, Event sourceEvent) {
-		dataStoreAccessor.getDataStore(sourceEvent, isCreateDataStore()).removeAttribute(attributeName(id));
+		dataStoreAccessor.getDataStore(sourceEvent).removeAttribute(attributeName(id));
 	}
 
 	// subclassing hooks

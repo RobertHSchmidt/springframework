@@ -123,6 +123,22 @@ public abstract class ExternalEvent extends Event {
 	}
 
 	/**
+	 * Returns a map to an external session context.
+	 * @return the session map
+	 */
+	public Map getSessionMap() {
+		throw new UnsupportedOperationException("Session map not supported");
+	}
+	
+	/**
+	 * Returns a map to a external application context.
+	 * @return the application map
+	 */
+	public Map getApplicationMap() {
+		throw new UnsupportedOperationException("Application map not supported");
+	}
+	
+	/**
 	 * Utility method that makes sure the value for the specified parameter, if present,
 	 * is a single valued string.
 	 * @param parameterName the parameter name

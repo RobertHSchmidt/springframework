@@ -25,6 +25,7 @@ import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.DataStoreFlowExecutionStorage;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.SessionDataStoreAccessor;
 
 /**
  * Flow execution manager to manage flow executions using HTTP servlet
@@ -64,7 +65,7 @@ public class ServletFlowExecutionManager extends FlowExecutionManager {
 	 * Set default properties for this manager.
 	 */
 	protected void initDefaults() {
-		setStorage(new DataStoreFlowExecutionStorage(new HttpSessionDataStoreAccessor()));
+		setStorage(new DataStoreFlowExecutionStorage(new SessionDataStoreAccessor()));
 	}
 
 	/**

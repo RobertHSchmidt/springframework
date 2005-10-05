@@ -165,6 +165,16 @@ public class ServletEvent extends ExternalEvent {
 	public HttpServletResponse getResponse() {
 		return response;
 	}
+
+	/*
+	public Map getApplicationMap() {
+		return new HttpServletContextMap(getRequest().getSession().getServletContext());
+	}
+
+	public Map getSessionMap() {
+		return new HttpSessionMap(getRequest().getSession());
+	}
+	*/
 	
 	// some static helpers that are generally useful
 	
