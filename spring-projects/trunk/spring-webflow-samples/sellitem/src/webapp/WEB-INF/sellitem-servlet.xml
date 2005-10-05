@@ -28,12 +28,17 @@
 		</property>
 		<property name="storage">
 			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage">
-				<constructor-arg>
-					<bean class="org.springframework.webflow.execution.SessionDataStoreAccessor"/>
-				</constructor-arg>
+				<constructor-arg ref="sessionAccessor"/>
+			</bean>
+		</property>
+		<property name="transactionSynchronizer">
+			<bean class="org.springframework.webflow.execution.DataStoreTokenTransactionSynchronizer">
+				<constructor-arg ref="sessionAccessor"/>
 			</bean>
 		</property>
 	</bean>
+
+	<bean id="sessionAccessor" class="org.springframework.webflow.execution.SessionDataStoreAccessor"/>
 	
 	<bean id="statisticsService" class="org.springframework.webflow.execution.jmx.StatisticsService">
 		<constructor-arg ref="flowExecutionManager"/>
