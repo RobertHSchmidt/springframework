@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
@@ -23,8 +26,8 @@ import org.springframework.webflow.RequestContext;
 
 /**
  * An action that will execute an ordered chain of other actions when executed.
- * The result of the last executed action is returned.
- * This is the classic GoF composite design pattern.
+ * The result of the last executed action is returned. This is the classic GoF
+ * composite design pattern.
  * 
  * @author Keith Donald
  */
@@ -36,15 +39,20 @@ public class CompositeAction extends AbstractAction {
 	private Action[] actions;
 
 	/**
+	 * The success result event identifier.
+	 */
+	private String successEventId = SUCCESS_EVENT_ID;
+
+	/**
+	 * The error result event identifier.
+	 */
+	private String errorEventId = ERROR_EVENT_ID;
+
+	/**
 	 * Should execution stop if one action returns an error event?
 	 */
 	private boolean stopOnError;
-	
-	/**
-	 * The error result event identifier. 
-	 */
-	private String errorEventId = ERROR_EVENT_ID;
-	
+
 	/**
 	 * Create a composite action composed of given actions.
 	 * @param actions the actions
@@ -63,19 +71,19 @@ public class CompositeAction extends AbstractAction {
 	}
 
 	/**
-	 * Returns the stop on error flag.
+	 * Returns the error event id.
 	 */
-	public boolean isStopOnError() {
-		return stopOnError;
+	public String getSuccessEventId() {
+		return successEventId;
 	}
 
 	/**
-	 * Sets the stop on error flag.
+	 * Sets the error event id.
 	 */
-	public void setStopOnError(boolean stopOnError) {
-		this.stopOnError = stopOnError;
+	public void setSuccessEventId(String successEventId) {
+		this.successEventId = successEventId;
 	}
-	
+
 	/**
 	 * Returns the error event id.
 	 */
@@ -89,22 +97,38 @@ public class CompositeAction extends AbstractAction {
 	public void setErrorEventId(String errorEventId) {
 		this.errorEventId = errorEventId;
 	}
-	
+
+	/**
+	 * Returns the stop on error flag.
+	 */
+	public boolean isStopOnError() {
+		return stopOnError;
+	}
+
+	/**
+	 * Sets the stop on error flag.
+	 */
+	public void setStopOnError(boolean stopOnError) {
+		this.stopOnError = stopOnError;
+	}
+
 	public Event doExecute(RequestContext context) throws Exception {
 		Action[] actions = getActions();
-		Event result = null;
+		List actionResults = new ArrayList(actions.length);
 		for (int i = 0; i < actions.length; i++) {
-			Action action = actions[i];
-			result = action.execute(context);
-			if (isStopOnError() && result != null && result.getId().equals(getErrorEventId())) {
-				return result;
+			Event result = actions[i].execute(context);
+			if (result != null) {
+				actionResults.add(result);
+				if (isStopOnError() && result != null && result.getId().equals(getErrorEventId())) {
+					return new CompositeEvent(this, getErrorEventId(), (Event[])actionResults.toArray(new Event[0]));
+				}
 			}
 		}
-		return result;
+		return new CompositeEvent(this, getSuccessEventId(), (Event[])actionResults.toArray(new Event[0]));
 	}
-	
+
 	public String toString() {
-		return new ToStringCreator(this).append("actions", getActions()).append("stopOnError", stopOnError).
-			append("errorEventId", errorEventId).toString();
+		return new ToStringCreator(this).append("actions", getActions()).append("stopOnError", isStopOnError()).append(
+				"successEventId", getSuccessEventId()).append("errorEventId", getErrorEventId()).toString();
 	}
 }
