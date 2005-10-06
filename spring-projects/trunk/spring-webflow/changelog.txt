@@ -5,6 +5,7 @@ http://www.springframework.org
 Changes in version RC1
 ------------------------------------
 * Introduced JSF integration, see the "jsf" package.
+* Added "CompositeEvent" support for composite actions that may generate multiple action result events.
 * Added model support for "state result events", where the parameters of events that drive a state transition can be
   accessed from views by referencing in the format: ${stateId.parameterName}
 * Added "requireValidatorMethod" property to FormAction, useful for piecemeal validation as part of a wizard flow
