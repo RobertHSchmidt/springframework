@@ -5,6 +5,8 @@ http://www.springframework.org
 Changes in version RC1
 ------------------------------------
 * Introduced JSF integration, see the "jsf" package.
+* Added model support for "state result events", where the parameters of events that drive a state transition can be
+  accessed from views by referencing in the format: ${stateId.parameterName}
 * Added "requireValidatorMethod" property to FormAction, useful for piecemeal validation as part of a wizard flow
 * Added ActionUtils utility class, usefull when implementing actions.
 * Added support for webflow definition scoped bean definitions, centralizing all flow definition code in one place.
@@ -19,6 +21,7 @@ Changes in version RC1
 * Added convenience methods for retrieving action execution properties to the AbstractAction class.
 * Refactored out DataSourceAccessor strategy interface from FlowExecutionStorage implementations - this change resulted in
   some minor package moves and class renames in the webflow.execution package.
+* Improved use of the DataStoreTransactionSynchronizer, for working with transaction tokens managed in an external store.
 * Improved "validatorMethod" handling in FormAction: if no formObjectClass is specified, the invoked validator method
   should have a signature matching "public void ${validatorMethod}(Object obj, Errors errors)". When you do specify a
   formObjectClass, everything works like before, e.g. the signature will be
@@ -30,6 +33,8 @@ Changes in version RC1
   of artifact lookup by id (which is more compelling now with flow-definition scoped artifact support)
   The "access" package now contains artifact lookup constructs needed at runtime and config time.
   The "config" now contains artifact lookup constructs needed only at configuration time.
+* Collapsed the "support" package into "config", as all support code was used at configuration time and
+  config heavily depended on this package.
 * Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add methods.
 * Changed numberguess sample application to use the new StatefulActionProxy.
 * Removed DelegatingAction in favor of StatefulActionProxy and bean invoking actions.
