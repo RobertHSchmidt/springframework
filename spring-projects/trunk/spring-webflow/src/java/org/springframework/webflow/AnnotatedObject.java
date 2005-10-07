@@ -27,6 +27,7 @@ import org.springframework.binding.MutableAttributeSource;
  * properties for all annotated objects.
  * 
  * @author Erwin Vervaet
+ * @author Keith Donald
  */
 public abstract class AnnotatedObject implements MutableAttributeSource {
 
