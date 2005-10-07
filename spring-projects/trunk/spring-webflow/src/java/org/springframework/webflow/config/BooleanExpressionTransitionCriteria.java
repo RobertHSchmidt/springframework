@@ -34,6 +34,10 @@ import org.springframework.webflow.TransitionCriteria;
  */
 public class BooleanExpressionTransitionCriteria implements TransitionCriteria {
 
+	/**
+	 * Constant alias that points to the id of the last event that occured
+	 * in a web flow execution.
+	 */
 	private static final String RESULT_ALIAS = "result";
 	
 	/**

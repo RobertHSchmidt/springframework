@@ -58,8 +58,14 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	 */
 	private static final String BEAN_PREFIX = "bean:";
 
+	/**
+	 * Parser to user for parsing transition criteria expressions.
+	 */
 	private ExpressionParser expressionParser = ExpressionParserUtils.getDefaultExpressionParser();
 
+	/**
+	 * Locator to use for loading custom TransitionCriteria beans.
+	 */
 	private FlowArtifactLocator artifactLocator;
 
 	/**

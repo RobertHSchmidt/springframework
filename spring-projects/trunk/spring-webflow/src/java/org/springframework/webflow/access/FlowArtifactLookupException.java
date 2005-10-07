@@ -28,8 +28,14 @@ import org.springframework.util.StringUtils;
  */
 public class FlowArtifactLookupException extends NestedRuntimeException {
 	
+	/**
+	 * The type of artifact that could not be retrieved.
+	 */
 	private Class artifactType;
 
+	/**
+	 * The id of the artifact that could not be retrieved. 
+	 */
 	private String artifactId;
 
 	/**

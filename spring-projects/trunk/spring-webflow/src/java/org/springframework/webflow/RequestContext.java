@@ -21,36 +21,36 @@ import org.springframework.binding.AttributeSource;
 
 /**
  * Central interface that allows clients to access contextual information about
- * an ongoing flow execution within the context of a client request. The term
- * <i>request</i> is used to describe a single call (thread) into the flow system to
- * manipulate exactly one flow execution.
+ * an ongoing flow execution within the context of a single client request. The
+ * term <i>request</i> is used to describe a single call (thread) into the flow
+ * system by an external actor to manipulate exactly one flow execution.
  * <p>
  * A new instance of this object is created when one of the operations on a
- * <code>FlowExecution</code> facade is invoked, either
- * ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
+ * <code>FlowExecution</code> facade is invoked, either ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
  * to activate a newly created flow execution, or
- * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(Event)}) to
- * signal an event in the current state of a restored flow execution.
+ * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(Event)})
+ * to signal an event in the current state of a resumed flow execution.
  * <p>
  * Once created this context object is passed around throughout request
  * processing where it may be accessed and reasoned upon, typically by
  * user-implemented action code and/or state transition criteria.
  * <p>
- * When a call into a flow execution returns, this object goes out of scope
- * and is disposed of automatically.  Thus, this object is an internal artifact
- * used within a FlowExecution: this object is NOT directly exposed to external
+ * When a call into a flow execution returns, this object goes out of scope and
+ * is disposed of automatically. Thus, this object is an internal artifact used
+ * within a FlowExecution: this object is NOT directly exposed to external
  * client code.
  * <p>
- * Note: the "requestScope" property may be used as a store for arbitrary data that 
- * should exist for the life of this object.  Such request-local data, along with
- * all data in flow scope, is available for exposing to view templates via a 
- * ViewDescriptor, returned when a ViewState or EndState is entered.
- * See ({@link org.springframework.webflow.ViewState}) for an example using 
- * a specific ({@link org.springframework.webflow.ViewDescriptorCreator}) strategy. 
+ * Note: the "requestScope" property may be used as a store for arbitrary data
+ * that should exist for the life of this object. Such request-local data, along
+ * with all data in flow scope, is available for exposing to view templates via
+ * a ViewDescriptor "model" map, returned when a ViewState or EndState is
+ * entered. See ({@link org.springframework.webflow.ViewState}) for an example
+ * using a specific ({@link org.springframework.webflow.ViewDescriptorCreator})
+ * strategy.
  * <p>
- * Note: the <i>request</i> context is in no way linked to an HTTP or Portlet request!
- * It uses the familiar "request" naming convention to indicate a single call to
- * manipulate a runtime execution of a flow.
+ * Note: the <i>request</i> context is in no way linked to an HTTP or Portlet
+ * request! It uses the familiar "request" naming convention to indicate a
+ * single call to manipulate a runtime execution of a flow.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.Action
@@ -62,13 +62,16 @@ import org.springframework.binding.AttributeSource;
 public interface RequestContext {
 
 	/**
-	 * Returns the client event that originated (or triggered) this request.  This 
-	 * event may contain parameters provided as input by the client.  In addition,
-	 * this event may be downcastable to a specific event type for a specific client environment,
-	 * such as a ServletEvent for servlets or a PortletEvent for portlets. Such downcasting will
-	 * give you full access to a native HttpServletRequest, for example. That said, you should
-	 * avoid coupling your flow artifacts to a specific deployment where possible.
-	 * @return the originating event, the one that triggered the current execution request
+	 * Returns the external client event that originated (or triggered) this
+	 * request. This event may contain parameters provided as input by the
+	 * client. In addition, this event may be downcastable to a specific event
+	 * type for a specific client environment, such as a ServletEvent for
+	 * servlets or a PortletEvent for portlets. Such downcasting will give you
+	 * full access to a native HttpServletRequest, for example. That said, you
+	 * should avoid coupling your flow artifacts to a specific deployment where
+	 * possible.
+	 * @return the originating event, the one that triggered the current
+	 * execution request
 	 */
 	public Event getSourceEvent();
 
@@ -80,17 +83,32 @@ public interface RequestContext {
 
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in
-	 * request scope. Request scoped attributes exist for the duration of this request.
+	 * request scope. Request scoped attributes exist for the duration of this
+	 * request.
 	 * @return the request scope
 	 */
 	public Scope getRequestScope();
 
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in
-	 * flow scope. Flow scoped attributes exist for the life of the executing flow.
+	 * flow scope. Flow scoped attributes exist for the life of the executing
+	 * flow.
 	 * @return the flow scope
 	 */
 	public Scope getFlowScope();
+
+	/**
+	 * Returns the result event for the State with the specified id. A state
+	 * result event is the event that drove a transition out of a state to a new
+	 * state. If the state provided was never entered for this request,
+	 * <code>null</code> is returned.
+	 * <p>
+	 * This method allows consistent access to state result event parameters.
+	 * 
+	 * @param id the state id
+	 * @return the state result event
+	 */
+	public Event getResultEvent(String id);
 
 	/**
 	 * Returns the last event signaled during this request. The event may or may
@@ -101,39 +119,41 @@ public interface RequestContext {
 
 	/**
 	 * Returns the last state transition executed in this request.
-	 * @return the last transition, or <code>null</code> if none has occured yet
+	 * @return the last transition, or <code>null</code> if none has occured
+	 * yet
 	 */
 	public Transition getLastTransition();
 
 	/**
-	 * Returns a holder for arbitrary execution properties set for the current request.
+	 * Returns a holder for arbitrary execution properties set for the current
+	 * request.
 	 * @return the execution properties, or empty if not set
 	 */
 	public AttributeSource getProperties();
-	
+
 	/**
 	 * Update contextual execution properties for given request context.
 	 * @param properties the execution properties
 	 */
 	public void setProperties(AttributeSource properties);
-	
+
 	/**
 	 * Returns the data model for this context, suitable for exposing to clients
-	 * (mostly web views). Typically the model will contain the union of the data
-	 * available in request scope and flow scope.
+	 * (mostly web views). Typically the model will contain the union of the
+	 * data available in request scope, flow scope, state result events.
 	 * @return the model that can be exposed to a client
 	 */
 	public Map getModel();
-	
+
 	// application transaction demarcation
 
 	/**
 	 * Is the caller participating in the application transaction currently
 	 * active in the flow execution?
 	 * @param end indicates whether or not the transaction should end after
-	 *        checking it
+	 * checking its status
 	 * @return true if it is participating in the active transaction, false
-	 *         otherwise
+	 * otherwise
 	 */
 	public boolean inTransaction(boolean end);
 
@@ -141,9 +161,9 @@ public interface RequestContext {
 	 * Assert that there is an active application transaction in the flow
 	 * execution and that the caller is participating in it.
 	 * @param end indicates whether or not the transaction should end after
-	 *        checking it
-	 * @throws IllegalStateException there is no active transaction in the
-	 *         flow execution, or the caller is not participating in it
+	 * checking its status
+	 * @throws IllegalStateException there is no active transaction in the flow
+	 * execution, or the caller is not participating in it
 	 */
 	public void assertInTransaction(boolean end) throws IllegalStateException;
 

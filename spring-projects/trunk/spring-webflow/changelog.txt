@@ -9,7 +9,7 @@ Changes in version RC1
 * Added model support for "state result events", where the parameters of events that drive a state transition can be
   accessed from views by referencing in the format: ${stateId.parameterName}
 * Added "requireValidatorMethod" property to FormAction, useful for piecemeal validation as part of a wizard flow
-* Added ActionUtils utility class, usefull when implementing actions.
+* Added ActionUtils utility class, useful when implementing actions.
 * Added support for webflow definition scoped bean definitions, centralizing all flow definition code in one place.
 * Added AbstractFlowBuilder addDecisionState(...) methods for completeness.
 * Added a convenience constructor to the Event class that takes a single parameter name/value. Mainly for use in unit tests.

@@ -33,7 +33,7 @@ import org.springframework.webflow.TransitionCriteria;
 public class TransitionCriteriaChain implements TransitionCriteria {
 
 	/**
-	 * The ordered chain.
+	 * The ordered chain of TransitionCriteria objects.
 	 */
 	private LinkedList chain = new LinkedList();
 

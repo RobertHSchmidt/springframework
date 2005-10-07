@@ -31,6 +31,9 @@ import org.springframework.webflow.TransitionCriteria;
  */
 public class EventIdTransitionCriteria implements TransitionCriteria, Serializable {
 
+	/**
+	 * The id of event to match.
+	 */
 	private String eventId;
 
 	/**

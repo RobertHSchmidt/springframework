@@ -59,6 +59,9 @@ public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter
 	 */
 	public static final String REDIRECT_PREFIX = "redirect:";
 
+	/**
+	 * Locator to use for loading custom ViewDescriptorCreator beans.
+	 */
 	private FlowArtifactLocator artifactLocator;
 
 	/**

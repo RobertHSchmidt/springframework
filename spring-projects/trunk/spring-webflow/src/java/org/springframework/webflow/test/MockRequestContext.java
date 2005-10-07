@@ -116,7 +116,6 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 		}
 	}
 
-
 	public FlowExecutionContext getFlowExecutionContext() {
 		return this;
 	}
@@ -129,6 +128,10 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 		return activeSession.getScope();
 	}
 
+	public Event getResultEvent(String stateId) {
+		throw new UnsupportedOperationException();
+	}
+	
 	public Event getLastEvent() {
 		return lastEvent;
 	}

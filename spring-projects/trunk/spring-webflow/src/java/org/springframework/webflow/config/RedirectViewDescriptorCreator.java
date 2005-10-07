@@ -36,6 +36,9 @@ import org.springframework.webflow.ViewDescriptorCreator;
  */
 public class RedirectViewDescriptorCreator implements ViewDescriptorCreator, Serializable {
 	
+	/**
+	 * The parsed, evaluatable redirect expression.
+	 */
 	private Expression expression;
 	
 	/**

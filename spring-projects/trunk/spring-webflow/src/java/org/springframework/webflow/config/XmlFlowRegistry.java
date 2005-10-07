@@ -13,7 +13,7 @@ import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 
-public class FlowRegistry implements FlowLocator, InitializingBean, BeanFactoryAware {
+public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFactoryAware {
 
 	private Map flowDefinitions = Collections.EMPTY_MAP;
 
@@ -36,9 +36,9 @@ public class FlowRegistry implements FlowLocator, InitializingBean, BeanFactoryA
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		
+
 	}
-	
+
 	public void afterPropertiesSet() throws IOException {
 		if (definitionLocations != null) {
 			for (int i = 0; i < definitionLocations.length; i++) {

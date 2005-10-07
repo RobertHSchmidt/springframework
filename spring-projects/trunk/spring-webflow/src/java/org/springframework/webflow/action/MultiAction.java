@@ -97,7 +97,6 @@ public class MultiAction extends AbstractAction {
 	 */
 	public static final String METHOD_PROPERTY = "method";
 
-
 	/**
 	 * A cache for dispatched action execute methods. The default signature is
 	 * <code>public Event ${method}(RequestContext context) throws Exception;</code>.

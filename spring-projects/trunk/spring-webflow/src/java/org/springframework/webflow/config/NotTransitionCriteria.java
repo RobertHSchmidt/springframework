@@ -29,6 +29,9 @@ import org.springframework.webflow.TransitionCriteria;
  */
 public class NotTransitionCriteria implements TransitionCriteria, Serializable {
 
+	/**
+	 * The criteria to 'not'.
+	 */
 	private TransitionCriteria criteria;
 	
 	/**

@@ -28,12 +28,6 @@ public class LocalBeanInvokingAction extends AbstractBeanInvokingAction {
 	private Object targetBean;
 	
 	/**
-	 * Default constructor for bean style usage.
-	 */
-	public LocalBeanInvokingAction() {
-	}
-
-	/**
 	 * Creates a bean invoking action that invokes the specified bean. The bean
 	 * may be a proxy.
 	 * @param targetBean the bean to wrap
