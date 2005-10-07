@@ -346,16 +346,16 @@ public class Flow extends AnnotatedObject {
 		return stateIds;
 	}
 
-	// TODO does this belong here or in a listener? how much logic should go in here?
+	// TODO finish this
 	
-	public void started(RequestContext context) {
+	public void start(RequestContext context) {
 		boolean transactional = ((Boolean)getProperty("transactional")).booleanValue();
 		if (transactional) {
 			context.beginTransaction();
 		}
 	}
 	
-	public void ended(RequestContext context) {
+	public void end(RequestContext context) {
 		boolean transactional = ((Boolean)getProperty("transactional")).booleanValue();
 		if (transactional) {
 			context.endTransaction();
