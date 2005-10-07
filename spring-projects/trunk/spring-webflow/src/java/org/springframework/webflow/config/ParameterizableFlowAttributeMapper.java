@@ -129,8 +129,14 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 */
 	protected final Log logger = LogFactory.getLog(getClass());;
 
+	/**
+	 * The mapper that maps attributes into the spawning subflow.
+	 */
 	private AttributeMapper inputMapper = new FlowScopeAwareParameterizableAttributeMapper();
 
+	/**
+	 * The mapper that maps attributes out from an ending subflow.
+	 */
 	private AttributeMapper outputMapper = new FlowScopeAwareParameterizableAttributeMapper();
 
 	/**

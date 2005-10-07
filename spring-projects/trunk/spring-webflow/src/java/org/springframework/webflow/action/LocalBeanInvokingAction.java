@@ -25,6 +25,9 @@ import org.springframework.webflow.RequestContext;
  */
 public class LocalBeanInvokingAction extends AbstractBeanInvokingAction {
 
+	/**
+	 * The target bean (any POJO) to invoke.
+	 */
 	private Object targetBean;
 	
 	/**
