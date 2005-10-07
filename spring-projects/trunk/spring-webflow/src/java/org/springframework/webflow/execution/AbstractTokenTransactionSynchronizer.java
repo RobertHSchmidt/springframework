@@ -57,7 +57,7 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	private boolean secure = false;
 
 	/**
-	 * Get the name for the transaction token attribute. Defaults to "txToken".
+	 * Get the name for the transaction token attribute. Defaults to "transactionId".
 	 */
 	public String getTransactionTokenAttributeName() {
 		return transactionTokenAttributeName;
@@ -72,7 +72,7 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 
 	/**
 	 * Get the name for the transaction token parameter in request events.
-	 * Defaults to "_txToken".
+	 * Defaults to "_transactionId".
 	 */
 	public String getTransactionTokenParameterName() {
 		return transactionTokenParameterName;

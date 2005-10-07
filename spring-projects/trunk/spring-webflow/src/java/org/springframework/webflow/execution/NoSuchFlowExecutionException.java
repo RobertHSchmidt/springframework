@@ -29,6 +29,9 @@ import org.springframework.core.NestedRuntimeException;
  */
 public class NoSuchFlowExecutionException extends NestedRuntimeException {
 
+	/**
+	 * The id of the flow execution that could not be found.
+	 */
 	private Serializable flowExecutionId;
 
 	/**

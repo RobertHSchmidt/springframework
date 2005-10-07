@@ -25,10 +25,19 @@ import org.springframework.core.NestedRuntimeException;
  */
 public class FlowExecutionStorageException extends NestedRuntimeException {
 	
+	/**
+	 * The flow execution storage strategy.
+	 */
 	private FlowExecutionStorage storage;
 	
+	/**
+	 * The id of the flow execution.
+	 */
 	private String flowExecutionId;
 
+	/**
+	 * The execution that could not be stored.
+	 */
 	private FlowExecution flowExecution;
 
 	/**

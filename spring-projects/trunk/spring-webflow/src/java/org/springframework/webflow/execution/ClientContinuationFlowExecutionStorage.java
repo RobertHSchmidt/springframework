@@ -55,6 +55,9 @@ import org.springframework.webflow.Event;
  */
 public class ClientContinuationFlowExecutionStorage implements FlowExecutionStorage {
 
+	/**
+	 * Flag to turn on/off continuation compression.
+	 */
 	private boolean compress = false;
 
 	/**
