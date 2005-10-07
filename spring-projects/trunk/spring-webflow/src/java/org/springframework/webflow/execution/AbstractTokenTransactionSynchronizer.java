@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.execution;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
@@ -138,6 +141,12 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 		clearToken(context);
 	}
 
+	public Map getModel(RequestContext context) {
+		Map model = new HashMap(1);
+		model.put(getTransactionTokenAttributeName(), getToken(context)); 
+		return model;
+	}
+	
 	// subclassing hooks
 
 	/**

@@ -154,8 +154,7 @@ public class StateContextImpl implements StateContext {
 		model.putAll(getFlowScope().getAttributeMap());
 		model.putAll(getRequestScope().getAttributeMap());
 		model.putAll(stateResultParameters);
-		//TODO a little hacky here (but it works)
-		model.put("transactionId", flowExecution.getTransactionSynchronizer().getTransactionId(this));
+		model.putAll(flowExecution.getTransactionSynchronizer().getModel(this));
 		return model;
 	}
 

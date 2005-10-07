@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
+import java.util.Map;
+
 import org.springframework.webflow.RequestContext;
 
 /**
@@ -65,5 +67,12 @@ public interface TransactionSynchronizer {
 	 * @param context the flow execution request context
 	 */
 	public void endTransaction(RequestContext context);
+
+	/**
+	 * Returns a map with information about the ongoing transaction
+	 * @param context the flow execution request context
+	 * @return the model map
+	 */
+	public Map getModel(RequestContext context);
 
 }
