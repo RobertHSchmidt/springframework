@@ -27,6 +27,9 @@ import org.springframework.core.style.StylerUtils;
  */
 public class NoSuchFlowStateException extends FlowNavigationException {
 
+	/**
+	 * The identifier of the state that could not be found.
+	 */
 	private String stateId;
 
 	/**

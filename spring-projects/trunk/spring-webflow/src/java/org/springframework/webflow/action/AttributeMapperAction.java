@@ -83,12 +83,24 @@ import org.springframework.webflow.RequestContext;
  */
 public class AttributeMapperAction extends AbstractAction {
 	
+	/**
+	 * The source value expression.
+	 */
 	private String sourceExpression;
 	
+	/**
+	 * The target property expression.
+	 */
 	private String targetExpression;
 	
+	/**
+	 * A type converter to apply to the source value.
+	 */
 	private ConversionExecutor valueConverter;
 
+	/**
+	 * The attribute mapper strategy.
+	 */
 	private AttributeMapper attributeMapper;
 
 	/**

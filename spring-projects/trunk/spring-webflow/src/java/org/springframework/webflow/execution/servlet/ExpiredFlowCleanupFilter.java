@@ -78,11 +78,13 @@ import org.springframework.webflow.execution.FlowExecution;
 public class ExpiredFlowCleanupFilter extends OncePerRequestFilter {
 
 	/**
-	 * Default web flow timout: 10 minutes.
+	 * The default web flow timout: 10 minutes.
 	 */
 	public static final int DEFAULT_TIMEOUT = 10;
 
-	// note: timeout is in minutes
+	/**
+	 * The time value in minutes.
+	 */
 	private int timeout = DEFAULT_TIMEOUT;
 
 	/**
