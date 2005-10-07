@@ -34,6 +34,9 @@ import org.springframework.webflow.RequestContext;
  */
 public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransactionSynchronizer {
 
+	/**
+	 * The data store access strategy.
+	 */
 	private DataStoreAccessor dataStoreAccessor;
 
 	/**

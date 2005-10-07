@@ -38,6 +38,9 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 */
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	/**
+	 * The data store access strategy.
+	 */
 	private DataStoreAccessor dataStoreAccessor;
 
 	/**

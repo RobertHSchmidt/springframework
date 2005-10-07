@@ -30,8 +30,15 @@ import org.springframework.webflow.Event;
  */
 public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExecutionStorage {
 
+	/**
+	 * Flag to turn on/off continuation compression.
+	 */
 	private boolean compress = false;
 
+	/**
+	 * Creates a continuation-driven data store flow execution storage.
+	 * @param dataStoreAccessor the data store accessor.
+	 */
 	public ContinuationDataStoreFlowExecutionStorage(DataStoreAccessor dataStoreAccessor) {
 		super(dataStoreAccessor);
 	}

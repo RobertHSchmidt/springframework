@@ -39,8 +39,14 @@ import org.springframework.util.FileCopyUtils;
  */
 public class FlowExecutionContinuation implements Serializable {
 
+	/**
+	 * The serialized continuation (flow execution snapshot).
+	 */
 	private byte[] data;
 
+	/**
+	 * Whether or not this continuation is compressed.
+	 */
 	private boolean compressed;
 
 	/**
