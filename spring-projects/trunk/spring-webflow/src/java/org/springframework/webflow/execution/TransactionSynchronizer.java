@@ -30,11 +30,6 @@ import org.springframework.webflow.RequestContext;
 public interface TransactionSynchronizer {
 
 	/**
-	 * Returns the transaction id if one is executing in this context.
-	 */
-	public String getTransactionId(RequestContext context);
-	
-	/**
 	 * Is the caller participating in the application transaction currently
 	 * active in the flow execution?
 	 * @param context the flow execution request context
