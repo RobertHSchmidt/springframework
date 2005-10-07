@@ -23,21 +23,21 @@ import org.springframework.binding.MutableAttributeSource;
 
 /**
  * Superclass of all objects in the web flow system that support annotation
- * using arbitrary properties. Mainly used to ensure consistent configuration
- * of properties for all annotated objects.
+ * using arbitrary properties. Mainly used to ensure consistent configuration of
+ * properties for all annotated objects.
  * 
  * @author Erwin Vervaet
  */
 public abstract class AnnotatedObject implements MutableAttributeSource {
 
 	/**
-	 * Additional properties further describing this object. 
+	 * Additional properties further describing this object.
 	 */
 	private Map properties = new HashMap();
 
 	/**
-	 * Returns the additional properties describing this object
-	 * in an unmodifiable map.
+	 * Returns the additional properties describing this object in an
+	 * unmodifiable map.
 	 */
 	public Map getProperties() {
 		return Collections.unmodifiableMap(properties);
@@ -58,20 +58,20 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	public Object getProperty(String propertyName) {
 		return this.properties.get(propertyName);
 	}
-	
+
 	/**
 	 * Set the value of named property.
 	 * @param propertyName the name of the property
 	 * @param value the value to set
-     * @return previous value associated with specified name
+	 * @return previous value associated with specified name
 	 */
 	public Object setProperty(String propertyName, Object value) {
 		return this.properties.put(propertyName, value);
 	}
-	
+
 	/**
-	 * Returns whether or not this annotated object contains a
-	 * property with specified name
+	 * Returns whether or not this annotated object contains a property with
+	 * specified name
 	 * @param propertyName the name of the property
 	 * @return true or false
 	 */
@@ -79,20 +79,61 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 		return this.properties.containsKey(propertyName);
 	}
 
+	/**
+	 * Returns a string property value.
+	 * @param propertyName the property name
+	 * @return the value
+	 */
+	public String getStringProperty(String propertyName, String defaultValue) {
+		if (containsProperty(propertyName)) {
+			return (String)getProperty(propertyName);
+		} else {
+			return defaultValue;
+		}
+	}
+
+	/**
+	 * Returns a integer property value.
+	 * @param propertyName the property name
+	 * @return the value
+	 */
+	public int getIntProperty(String propertyName, int defaultValue) {
+		if (containsProperty(propertyName)) {
+			return ((Integer)getProperty(propertyName)).intValue();
+		}
+		else {
+			return defaultValue;
+		}
+	}
+
+	/**
+	 * Returns a boolean property value.
+	 * @param propertyName the property name
+	 * @return the value
+	 */
+	public boolean getBooleanProperty(String propertyName, boolean defaultValue) {
+		if (containsProperty(propertyName)) {
+			return ((Boolean)getProperty(propertyName)).booleanValue();
+		}
+		else {
+			return defaultValue;
+		}
+	}
+
 	// implementing MutableAttributeSource
-	
+
 	public boolean containsAttribute(String attributeName) {
 		return containsProperty(attributeName);
 	}
-	
+
 	public Object getAttribute(String attributeName) {
 		return getProperty(attributeName);
 	}
-	
+
 	public Object setAttribute(String attributeName, Object attributeValue) {
 		return setProperty(attributeName, attributeValue);
 	}
-	
+
 	public Object removeAttribute(String attributeName) {
 		return this.properties.remove(attributeName);
 	}

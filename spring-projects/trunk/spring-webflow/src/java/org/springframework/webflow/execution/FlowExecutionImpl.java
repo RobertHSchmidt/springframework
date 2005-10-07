@@ -32,6 +32,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowExecutionControl;
 import org.springframework.webflow.FlowNavigationException;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
@@ -68,7 +69,7 @@ import org.springframework.webflow.util.RandomGuid;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowExecutionImpl implements FlowExecution, Serializable {
+public class FlowExecutionImpl implements FlowExecution, Serializable, FlowExecutionControl {
 
 	private static final Log logger = LogFactory.getLog(FlowExecutionImpl.class);
 
@@ -296,7 +297,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		try {
-			ViewDescriptor viewDescriptor = context.spawn(rootFlow.getStartState(), new HashMap());
+			ViewDescriptor viewDescriptor = context.spawnFlow(rootFlow.getStartState(), new HashMap());
 			if (isActive()) {
 				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
 				getListeners().firePaused(context);
@@ -355,6 +356,9 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.webflow.execution.FlowExecutionControl#getListeners()
+	 */
 	public FlowExecutionListenerList getListeners() {
 		return listenerList;
 	}
@@ -412,16 +416,10 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		getActiveSessionInternal().setCurrentState(newState);
 	}
 
-	/**
-	 * Create a new flow session and activate it in this flow execution. This
-	 * will push the flow session onto the stack and mark it as the active flow
-	 * session.
-	 * @param context the flow execution request context
-	 * @param subflow the flow that should be associated with the flow session
-	 * @param input the input parameters used to populate the flow session
-	 * @return the created and activated flow session
+	/* (non-Javadoc)
+	 * @see org.springframework.webflow.execution.FlowExecutionControl#activateSession(org.springframework.webflow.Flow, java.util.Map)
 	 */
-	protected FlowSession activateSession(RequestContext context, Flow subflow, Map input) {
+	public FlowSession activateSession(Flow subflow, Map input) {
 		FlowSessionImpl session;
 		if (!executingFlowSessions.isEmpty()) {
 			FlowSessionImpl parent = getActiveSessionInternal();
@@ -452,12 +450,10 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		return new FlowSessionImpl(flow, input, parent);
 	}
 
-	/**
-	 * End the active flow session of this flow execution. This will pop the top
-	 * element from the stack and activate the new top flow session.
-	 * @return the flow session that ended
+	/* (non-Javadoc)
+	 * @see org.springframework.webflow.execution.FlowExecutionControl#endActiveFlowSession()
 	 */
-	protected FlowSession endActiveFlowSession() {
+	public FlowSession endActiveFlowSession() {
 		FlowSessionImpl endingSession = (FlowSessionImpl)executingFlowSessions.pop();
 		endingSession.setStatus(FlowSessionStatus.ENDED);
 		if (logger.isDebugEnabled()) {
