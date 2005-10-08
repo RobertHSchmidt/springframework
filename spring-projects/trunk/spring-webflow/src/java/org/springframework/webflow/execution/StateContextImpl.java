@@ -214,6 +214,12 @@ public class StateContextImpl implements StateContext {
 		return parameters;
 	}
 
+	/**
+	 * A parameter object storing the result event for exactly one state that was entered and 
+	 * transitioned out of in this state context.
+	 * 
+	 * @author Keith Donald
+	 */
 	private static class StateResultEvent implements AttributeSource {
 		private String stateId;
 
