@@ -57,8 +57,8 @@ public abstract class FlowExecutionHolder {
 	 * clear the FlowExecution associated with the current thread
 	 */
 	public static void clearFlowExecution() {
-		flowExecutionIdHolder.set(null);
 		flowExecutionHolder.set(null);
+		flowExecutionIdHolder.set(null);
 	}
 	
 	/**
@@ -68,7 +68,7 @@ public abstract class FlowExecutionHolder {
 	 */
 	public static void setFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution) {
 		if (flowExecutionId != null) {
-			Assert.notNull(flowExecution, "illegal to store flow execution id but not flow execution");
+			Assert.notNull(flowExecution, "It is illegal to store flow execution id but not flow execution");
 		}
 		flowExecutionHolder.set(flowExecution);
 	}
