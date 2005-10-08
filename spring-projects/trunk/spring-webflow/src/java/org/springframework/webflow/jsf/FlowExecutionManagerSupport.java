@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution;
+package org.springframework.webflow.jsf;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.binding.convert.ConversionService;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
@@ -38,6 +39,18 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.BeanFactoryFlowLocator;
 import org.springframework.webflow.access.FlowLocator;
+import org.springframework.webflow.execution.ExternalEvent;
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionImpl;
+import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
+import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory;
+import org.springframework.webflow.execution.FlowExecutionListenerLoader;
+import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.FlowExecutionStorage;
+import org.springframework.webflow.execution.FlowScopeTokenTransactionSynchronizer;
+import org.springframework.webflow.execution.TextToFlowExecutionListenerCriteria;
+import org.springframework.webflow.execution.TransactionSynchronizer;
 
 
 /**
@@ -110,7 +123,7 @@ import org.springframework.webflow.access.FlowLocator;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFactoryAware {
+public class FlowExecutionManagerSupport implements FlowExecutionListenerLoader, BeanFactoryAware {
 
 	/**
 	 * Clients can send the id (name) of the flow to be started using an event
@@ -208,7 +221,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @see #setStorage(FlowExecutionStorage)
 	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
 	 */
-	protected FlowExecutionManager() {
+	protected FlowExecutionManagerSupport() {
 	}
 
 	/**
@@ -224,7 +237,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @see #setListeners(Collection, FlowExecutionListenerCriteria)
 	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
 	 */
-	public FlowExecutionManager(FlowExecutionStorage storage) {
+	public FlowExecutionManagerSupport(FlowExecutionStorage storage) {
 		setStorage(storage);
 	}
 
@@ -568,7 +581,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	/**
 	 * Returns the name of the flow id parameter in the event ("_flowId").
 	 */
-	public String getFlowIdParameterName() {
+	protected String getFlowIdParameterName() {
 		return FLOW_ID_PARAMETER;
 	}
 
@@ -577,7 +590,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @param event the event
 	 * @return the obtained id or <code>null</code> if not found
 	 */
-	public String getFlowExecutionId(Event event) {
+	protected String getFlowExecutionId(Event event) {
 		return ExternalEvent.verifySingleStringInputParameter(getFlowExecutionIdParameterName(), event
 				.getParameter(getFlowExecutionIdParameterName()));
 	}
@@ -586,7 +599,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * Returns the name of the flow execution id parameter in the event
 	 * ("_flowExecutionId").
 	 */
-	public String getFlowExecutionIdParameterName() {
+	protected String getFlowExecutionIdParameterName() {
 		return FLOW_EXECUTION_ID_PARAMETER;
 	}
 
@@ -601,7 +614,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * submitted if the eventId does not get set to the proper dynamic value
 	 * onClick, for example, if javascript was disabled).
 	 */
-	public String getNotSetEventIdParameterMarker() {
+	protected String getNotSetEventIdParameterMarker() {
 		return NOT_SET_EVENT_ID;
 	}
 

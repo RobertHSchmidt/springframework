@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.access.BeanFactoryFlowLocator;
 import org.springframework.webflow.execution.DataStoreFlowExecutionStorage;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.SessionDataStoreAccessor;
@@ -64,103 +65,111 @@ import org.springframework.webflow.execution.SessionDataStoreAccessor;
 public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
-	 * <p>
-	 * Bean name under which we will find the configured instance of the
-	 * {@link FlowNavigationHandlerStrategy} to be used for determining what
-	 * logical actions to undertake.
-	 * </p>
-	 */
-	private static final String NAVIGATION_STRATEGY_BEAN_NAME = "flowNavigationHandlerStrategy";
+     * <p>
+     * Bean name under which we will find the configured instance of the
+     * {@link FlowNavigationHandlerStrategy} to be used for determining what
+     * logical actions to undertake.
+     * </p>
+     */
+	private static final String		   NAVIGATION_STRATEGY_BEAN_NAME = "flowNavigationHandlerStrategy";
 
 	/**
-	 * <p>
-	 * The <code>Log</code> instance for this class.
-	 * </p>
-	 */
-	private final Log log = LogFactory.getLog(getClass());
+     * <p>
+     * The <code>Log</code> instance for this class.
+     * </p>
+     */
+	private final Log					 log						   = LogFactory
+																				.getLog(getClass());
 
 	/**
-	 * <p>
-	 * The standard <code>NavigationHandler</code> implementation that we are
-	 * wrapping.
-	 * </p>
-	 */
-	private NavigationHandler handlerDelegate;
+     * <p>
+     * The standard <code>NavigationHandler</code> implementation that we are
+     * wrapping.
+     * </p>
+     */
+	private NavigationHandler			 handlerDelegate;
 
 	/**
-	 * <p>
-	 * The {@link FlowNavigationHandlerStrategy} instance to use, lazily
-	 * instantiated upon first use.
-	 * </p>
-	 */
+     * <p>
+     * The {@link FlowNavigationHandlerStrategy} instance to use, lazily
+     * instantiated upon first use.
+     * </p>
+     */
 	private FlowNavigationHandlerStrategy flowNavigationHandlerStrategy;
 
 	/**
-	 * <p>
-	 * Create a new {@link FlowNavigationHandler}, wrapping the specified
-	 * standard navigation handler implementation.
-	 * </p>
-	 * 
-	 * @param handlerDelegate Standard <code>NavigationHandler</code> we are
-	 * wrapping
-	 */
+     * <p>
+     * Create a new {@link FlowNavigationHandler}, wrapping the specified
+     * standard navigation handler implementation.
+     * </p>
+     * 
+     * @param handlerDelegate
+     *            Standard <code>NavigationHandler</code> we are wrapping
+     */
 	public FlowNavigationHandler(NavigationHandler handlerDelegate) {
 		this.handlerDelegate = handlerDelegate;
 	}
 
 	/**
-	 * <p>
-	 * Handle the navigation request implied by the specified parameters.
-	 * </p>
-	 * 
-	 * @param context <code>FacesContext</code> for the current request
-	 * @param fromAction The action binding expression that was evaluated to
-	 * retrieve the specified outcome (if any)
-	 * @param outcome The logical outcome returned by the specified action
-	 */
+     * <p>
+     * Handle the navigation request implied by the specified parameters.
+     * </p>
+     * 
+     * @param context
+     *            <code>FacesContext</code> for the current request
+     * @param fromAction
+     *            The action binding expression that was evaluated to retrieve
+     *            the specified outcome (if any)
+     * @param outcome
+     *            The logical outcome returned by the specified action
+     */
 	public void handleNavigation(FacesContext context, String fromAction, String outcome) {
 		if (log.isDebugEnabled()) {
-			log.debug("handleNavigation(viewId=" + context.getViewRoot().getViewId() + ", fromAction=" + fromAction
-					+ ", outcome=" + outcome + ")");
+			log.debug("handleNavigation(viewId=" + context.getViewRoot().getViewId()
+					+ ", fromAction=" + fromAction + ", outcome=" + outcome + ")");
 		}
 		if (getStrategy(context).isFlowLaunchRequest(context, fromAction, outcome)) {
-			ViewDescriptor nextView = getStrategy(context).launchFlowExecution(context, fromAction, outcome);
+			ViewDescriptor nextView = getStrategy(context).launchFlowExecution(context,
+					fromAction, outcome);
 			getStrategy(context).renderView(context, fromAction, outcome, nextView);
-		}
-		else if (getStrategy(context).isFlowExecutionParticipationRequest(context, fromAction, outcome)) {
-			ViewDescriptor nextView = getStrategy(context).resumeFlowExecution(context, fromAction, outcome);
+		} else if (getStrategy(context).isFlowExecutionParticipationRequest(context,
+				fromAction, outcome)) {
+			ViewDescriptor nextView = getStrategy(context).resumeFlowExecution(context,
+					fromAction, outcome);
 			getStrategy(context).renderView(context, fromAction, outcome, nextView);
-		}
-		else {
+		} else {
 			handlerDelegate.handleNavigation(context, fromAction, outcome);
 		}
 	}
 
 	/**
-	 * <p>
-	 * Return the {@link FlowNavigationHandlerStrategy} instance we will use to
-	 * make navigation handler decisions. The instance to use is discovered by
-	 * looking for a bean named by
-	 * <code>WebFlowNavigationHandler.STRATEGY</code>, or defaulting to an
-	 * instance of {@link FlowNavigationHandlerStrategy}.
-	 * </p>
-	 * 
-	 * @param context <code>FacesContext</code> for the current request
-	 */
+     * <p>
+     * Return the {@link FlowNavigationHandlerStrategy} instance we will use to
+     * make navigation handler decisions. The instance to use is discovered by
+     * looking for a bean named by
+     * <code>WebFlowNavigationHandler.STRATEGY</code>, or defaulting to an
+     * instance of {@link FlowNavigationHandlerStrategy}.
+     * </p>
+     * 
+     * @param context
+     *            <code>FacesContext</code> for the current request
+     */
 	private FlowNavigationHandlerStrategy getStrategy(FacesContext context) {
 		if (flowNavigationHandlerStrategy == null) {
-			WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
+			WebApplicationContext wac = FacesContextUtils
+					.getWebApplicationContext(context);
 			if (wac != null) {
 				if (wac.containsBean(NAVIGATION_STRATEGY_BEAN_NAME)) {
-					flowNavigationHandlerStrategy = (FlowNavigationHandlerStrategy)wac.getBean(
-							NAVIGATION_STRATEGY_BEAN_NAME, FlowNavigationHandlerStrategy.class);
+					flowNavigationHandlerStrategy = (FlowNavigationHandlerStrategy) wac
+							.getBean(NAVIGATION_STRATEGY_BEAN_NAME,
+									FlowNavigationHandlerStrategy.class);
 				}
 			}
 			if (flowNavigationHandlerStrategy == null) {
-				FlowExecutionManager manager = new FlowExecutionManager(new DataStoreFlowExecutionStorage(
-						new SessionDataStoreAccessor()));
-				manager.setBeanFactory(wac);
-				flowNavigationHandlerStrategy = new FlowNavigationHandlerStrategy(manager);
+				flowNavigationHandlerStrategy = new FlowNavigationHandlerStrategy(
+						new DataStoreFlowExecutionStorage(new SessionDataStoreAccessor()));
+				flowNavigationHandlerStrategy.setFlowLocator(new BeanFactoryFlowLocator(
+						wac));
 			}
 		}
 		return flowNavigationHandlerStrategy;
