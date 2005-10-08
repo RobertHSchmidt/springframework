@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,10 +58,14 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 
 	private String transactionTokenParameterName = TRANSACTION_TOKEN_PARAMETER_NAME;
 
+	/**
+	 * Flag indicating if transaction token encryption is enabled.
+	 */
 	private boolean secure = false;
 
 	/**
-	 * Get the name for the transaction token attribute. Defaults to "transactionId".
+	 * Get the name for the transaction token attribute. Defaults to
+	 * "transactionId".
 	 */
 	public String getTransactionTokenAttributeName() {
 		return transactionTokenAttributeName;
@@ -142,11 +147,16 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	}
 
 	public Map getModel(RequestContext context) {
-		Map model = new HashMap(1);
-		model.put(getTransactionTokenAttributeName(), getToken(context)); 
-		return model;
+		if (inTransaction(context, false)) {
+			Map model = new HashMap(1);
+			model.put(getTransactionTokenAttributeName(), getToken(context));
+			return model;
+		}
+		else {
+			return Collections.EMPTY_MAP;
+		}
 	}
-	
+
 	// subclassing hooks
 
 	/**
