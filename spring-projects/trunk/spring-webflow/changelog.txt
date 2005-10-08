@@ -9,6 +9,8 @@ Changes in version RC1
 * Flows may now be annotated as "transactional" for automatic creation of a synchronized application transaction
   to prevent duplicate submits (even with continuations!)
 * Added "CompositeEvent" support for composite actions that may generate multiple action result events.
+* Added ExternalEvent "sessionMap" and "applicationMap" property for accessing session and application scoped 
+  variables associated with a source event.
 * Added model support for "state result events", where the parameters of events that drive a state transition can be
   accessed from views by referencing in the format: ${stateId.parameterName}
 * Added "requireValidatorMethod" property to FormAction, useful for piecemeal validation as part of a wizard flow
