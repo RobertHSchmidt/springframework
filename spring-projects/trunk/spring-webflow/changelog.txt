@@ -30,8 +30,6 @@ Changes in version RC1
   should have a signature matching "public void ${validatorMethod}(Object obj, Errors errors)". When you do specify a
   formObjectClass, everything works like before, e.g. the signature will be
   "public void ${validatorMethod}(${formObjectClass} obj, Errors errors)".
-* Relocated several support classes in webflow to webflow.support. Also moved the FlowConversionService from webflow.convert
-  to webflow.support. These changes should have little impact on existing applications.
 * Reworked and simplified the "access" and "config" packages
   Note: artifact creation and autowiring support has been removed in favor
   of artifact lookup by id (which is more compelling now with flow-definition scoped artifact support)
