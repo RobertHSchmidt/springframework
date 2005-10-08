@@ -33,51 +33,47 @@ import org.springframework.webflow.execution.FlowExecution;
 public class FlowVariableResolver extends VariableResolver {
 
 	/**
-     * Name of the exposed flow scope variable: "flow".
-     */
-	public static final String	   FLOW_VARIABLE_NAME = "flow";
+	 * Name of the exposed flow scope variable: "flow".
+	 */
+	public static final String FLOW_VARIABLE_NAME = "flow";
 
-	protected final Log			  logger			 = LogFactory.getLog(getClass());
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	protected final VariableResolver originalVariableResolver;
 
 	/**
-     * Create a new FlowVariableResolver, using the given original
-     * VariableResolver.
-     * <p>
-     * A JSF implementation will automatically pass its original resolver into
-     * the constructor of a configured resolver, provided that there is a
-     * corresponding constructor argument.
-     * 
-     * @param originalVariableResolver
-     *            the original VariableResolver
-     */
+	 * Create a new FlowVariableResolver, using the given original
+	 * VariableResolver.
+	 * <p>
+	 * A JSF implementation will automatically pass its original resolver into
+	 * the constructor of a configured resolver, provided that there is a
+	 * corresponding constructor argument.
+	 * 
+	 * @param originalVariableResolver the original VariableResolver
+	 */
 	public FlowVariableResolver(VariableResolver originalVariableResolver) {
 		this.originalVariableResolver = originalVariableResolver;
 	}
 
 	/**
-     * Return the original VariableResolver that this resolver delegates to.
-     */
+	 * Return the original VariableResolver that this resolver delegates to.
+	 */
 	protected final VariableResolver getOriginalVariableResolver() {
 		return originalVariableResolver;
 	}
 
 	/**
-     * Check for the special "flow" variable first, then delegate to the
-     * original VariableResolver.
-     */
-	public Object resolveVariable(FacesContext context, String name)
-			throws EvaluationException {
-
-		if (!FLOW_VARIABLE_NAME.equals(name))
+	 * Check for the special "flow" variable first, then delegate to the
+	 * original VariableResolver.
+	 */
+	public Object resolveVariable(FacesContext context, String name) throws EvaluationException {
+		if (!FLOW_VARIABLE_NAME.equals(name)) {
 			return this.originalVariableResolver.resolveVariable(context, name);
-
-		FlowExecution flowEx = FlowExecutionHolder.getFlowExecution();
-		if (flowEx == null)
+		}
+		FlowExecution execution = FlowExecutionHolder.getFlowExecution();
+		if (execution == null)
 			throw new EvaluationException(
-					"'flow' prefix specified, but Web Flow not bound to thread context as it should be");
-		
-		return flowEx;
+					"'flow' variable prefix specified, but a FlowExecution is not bound to thread context as it should be");
+		return execution;
 	}
 }

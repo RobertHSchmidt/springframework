@@ -32,6 +32,7 @@ import org.springframework.webflow.execution.FlowExecution;
 public abstract class FlowExecutionHolder {
 
 	private static ThreadLocal flowExecutionIdHolder = new InheritableThreadLocal();
+	
 	private static ThreadLocal flowExecutionHolder = new InheritableThreadLocal();
 	
 	/**
@@ -66,8 +67,9 @@ public abstract class FlowExecutionHolder {
 	 * the thread-bound context
 	 */
 	public static void setFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution) {
-		if (flowExecutionId != null)
+		if (flowExecutionId != null) {
 			Assert.notNull(flowExecution, "illegal to store flow execution id but not flow execution");
+		}
 		flowExecutionHolder.set(flowExecution);
 	}
 }

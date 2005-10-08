@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
@@ -42,160 +41,143 @@ import org.springframework.webflow.execution.FlowExecution;
  */
 public class FlowPropertyResolver extends PropertyResolver {
 
-	protected final Log			  logger = LogFactory.getLog(getClass());
+	/**
+	 * Logger.
+	 */
+	protected final Log logger = LogFactory.getLog(getClass());
 
+	/**
+	 * Default property resolver.
+	 */
 	protected final PropertyResolver originalPropertyResolver;
 
 	/**
-     * Create a new PropertyResolver, using the given original PropertyResolver.
-     * <p>
-     * A JSF implementation will automatically pass its original resolver into
-     * the constructor of a configured resolver, provided that there is a
-     * corresponding constructor argument.
-     * 
-     * @param originalPropertyResolver
-     *            the original VariableResolver
-     */
+	 * Create a new PropertyResolver, using the given original PropertyResolver.
+	 * <p>
+	 * A JSF implementation will automatically pass its original resolver into
+	 * the constructor of a configured resolver, provided that there is a
+	 * corresponding constructor argument.
+	 * 
+	 * @param originalPropertyResolver the original VariableResolver
+	 */
 	public FlowPropertyResolver(PropertyResolver originalPropertyResolver) {
 		this.originalPropertyResolver = originalPropertyResolver;
 	}
 
-	public Class getType(Object base, int index) throws EvaluationException,
-			PropertyNotFoundException {
-		if (!(base instanceof FlowExecution))
+	public Class getType(Object base, int index) throws EvaluationException, PropertyNotFoundException {
+		if (!(base instanceof FlowExecution)) {
 			return originalPropertyResolver.getType(base, index);
-
-		// Cannot determine type, return null per JSF spec
-		return null;
+		}
+		else {
+			return null;
+		}
 	}
 
-	public Class getType(Object base, Object property) throws EvaluationException,
-			PropertyNotFoundException {
-
-		if (!(base instanceof FlowExecution))
+	public Class getType(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
+		if (!(base instanceof FlowExecution)) {
 			return originalPropertyResolver.getType(base, property);
-
-		if (property == null)
-			throw new PropertyNotFoundException(
-					"unable to get value from Flow, as property (key) is null");
-		if (!(property instanceof String))
-			throw new PropertyNotFoundException(
-					"unable to get value from Flow map, as key is non-String");
-
-		FlowExecution flowEx = (FlowExecution) base;
-		Object value = flowEx.getActiveFlow().getProperty((String) property);
-
+		}
+		if (property == null) {
+			throw new PropertyNotFoundException("Unable to get value from Flow, as property (key) is null");
+		}
+		if (!(property instanceof String)) {
+			throw new PropertyNotFoundException("Unable to get value from Flow map, as key is non-String");
+		}
+		FlowExecution execution = (FlowExecution)base;
+		// we want to access flow scope of the active session (conversation)
+		Object value = execution.getActiveSession().getScope().getAttribute((String)property);
 		// note that MyFaces returns Object.class for a null value here, but as
 		// I read the JSF spec, null should be returned when the object type can
 		// not be determined this certainly seems to be the case for a map value
-        // which doesn' even exist
+		// which doesn' even exist
 		return (value == null) ? null : value.getClass();
 	}
 
-	public Object getValue(Object base, int index) throws EvaluationException,
-			PropertyNotFoundException {
-		if (!(base instanceof FlowExecution))
+	public Object getValue(Object base, int index) throws EvaluationException, PropertyNotFoundException {
+		if (!(base instanceof FlowExecution)) {
 			return originalPropertyResolver.getValue(base, index);
-
-		throw new ReferenceSyntaxException("Can not apply an index value to Flow map");
+		} else {
+			throw new ReferenceSyntaxException("Cannot apply an index value to Flow map");
+		}
 	}
 
-	public Object getValue(Object base, Object property) throws EvaluationException,
-			PropertyNotFoundException {
-
-		if (!(base instanceof FlowExecution))
+	public Object getValue(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
+		if (!(base instanceof FlowExecution)) {
 			return originalPropertyResolver.getValue(base, property);
-
-		if (!(property instanceof String))
-			throw new PropertyNotFoundException(
-					"unable to get value from Flow map, as key is non-String");
-
-		String propName = (String) property;
-
-		Flow flow = null;
-		try {
-			flow = ((FlowExecution) base).getActiveFlow();
-		} catch (IllegalStateException e) {
-			throw new EvaluationException(
-					"Flow must be active during property resolution stage", e);
 		}
-
-		Object value = flow.getAttribute(propName);
+		if (!(property instanceof String)) {
+			throw new PropertyNotFoundException("Unable to get value from Flow map, as key is non-String");
+		}
+		FlowExecution execution = (FlowExecution)base;
+		String attributeName = (String)property;
+		Object value = execution.getActiveSession().getScope().getAttribute(attributeName);
 		if (value == null) {
 			FacesContext fc = FacesContext.getCurrentInstance();
-			Assert
-					.notNull(fc,
-							"FacesContext must exist during property resolution stage");
+			Assert.notNull(fc, "FacesContext must exist during property resolution stage");
 			WebApplicationContext wac = getWebApplicationContext(fc);
-			if (wac.containsBean(propName)) {
+			if (wac.containsBean(attributeName)) {
 				// note: this resolver doesn't care, but this should normally be
-				// either a
-				// stateless singleton bean, or a stateful/stateless prototype
-				value = wac.getBean(propName);
-				flow.setAttribute(propName, value);
+				// either a stateless singleton bean, or a stateful/stateless
+				// prototype
+				value = wac.getBean(attributeName);
+				execution.getActiveSession().getScope().setAttribute(attributeName, value);
 			}
 		}
 		return value;
 	}
 
-	public boolean isReadOnly(Object base, int index) throws EvaluationException,
-			PropertyNotFoundException {
-		if (!(base instanceof FlowExecution))
+	public boolean isReadOnly(Object base, int index) throws EvaluationException, PropertyNotFoundException {
+		if (!(base instanceof FlowExecution)) {
 			return originalPropertyResolver.isReadOnly(base, index);
-
-		return false;
+		}
+		else {
+			return false;
+		}
 	}
 
-	public boolean isReadOnly(Object base, Object property) throws EvaluationException,
-			PropertyNotFoundException {
-
-		if (!(base instanceof FlowExecution))
+	public boolean isReadOnly(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
+		if (!(base instanceof FlowExecution)) {
 			return originalPropertyResolver.isReadOnly(base, property);
-
-		return false;
+		}
+		else {
+			return false;
+		}
 	}
 
-	public void setValue(Object base, int index, Object value)
-			throws EvaluationException, PropertyNotFoundException {
-
+	public void setValue(Object base, int index, Object value) throws EvaluationException, PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
 			originalPropertyResolver.setValue(base, index, value);
-			return;
 		}
-
-		throw new ReferenceSyntaxException("Can not apply an index value to Flow map");
+		else {
+			throw new ReferenceSyntaxException("Can not apply an index value to Flow map");
+		}
 	}
 
-	public void setValue(Object base, Object property, Object value)
-			throws EvaluationException, PropertyNotFoundException {
-
+	public void setValue(Object base, Object property, Object value) throws EvaluationException,
+			PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
-		originalPropertyResolver.setValue(base, property, value);
-		return;
+			originalPropertyResolver.setValue(base, property, value);
+			return;
 		}
-
 		if (property == null || !(property instanceof String)
-				|| (property instanceof String && ((String) property).length() == 0)) {
+				|| (property instanceof String && ((String)property).length() == 0)) {
 			throw new PropertyNotFoundException(
 					"Attempt to set Flow attribute with null name, empty name, or non-String name");
 		}
-
-		FlowExecution flowEx = (FlowExecution) base;
-		flowEx.getActiveFlow().setAttribute((String) property, value);
+		FlowExecution execution = (FlowExecution)base;
+		execution.getActiveSession().getScope().setAttribute((String)property, value);
 	}
 
 	/**
-     * Retrieve the web application context to delegate bean name resolution to.
-     * <p>
-     * Default implementation delegates to FacesContextUtils.
-     * 
-     * @param facesContext
-     *            the current JSF context
-     * @return the Spring web application context (never <code>null</code>)
-     * @see FacesContextUtils#getRequiredWebApplicationContext
-     */
+	 * Retrieve the web application context to delegate bean name resolution to.
+	 * <p>
+	 * Default implementation delegates to FacesContextUtils.
+	 * 
+	 * @param facesContext the current JSF context
+	 * @return the Spring web application context (never <code>null</code>)
+	 * @see FacesContextUtils#getRequiredWebApplicationContext
+	 */
 	protected WebApplicationContext getWebApplicationContext(FacesContext facesContext) {
 		return FacesContextUtils.getRequiredWebApplicationContext(facesContext);
 	}
-
 }

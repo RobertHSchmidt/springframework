@@ -69,13 +69,12 @@ public class FlowPhaseListener implements PhaseListener {
 	private FlowNavigationHandlerStrategy flowNavigationHandlerStrategy;
 	
 	public void beforePhase(PhaseEvent event) {
+		
 	}
 
 	public void afterPhase(PhaseEvent event) {
-
 		FacesContext context = event.getFacesContext();
 		FlowNavigationHandlerStrategy strategy = getStrategy(context);
-	
 		if (event.getPhaseId() == PhaseId.RESTORE_VIEW) {
 			Event jsfEvent = strategy.createEvent(context, null, null, null);
 			Serializable flowExecutionId = strategy.getFlowExecutionId(jsfEvent);
@@ -86,11 +85,9 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 	}
 	
-	
 	public PhaseId getPhaseId() {
 		return PhaseId.ANY_PHASE;
 	}
-	
 	
 	/**
 	 * <p>
@@ -121,5 +118,4 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 		return flowNavigationHandlerStrategy;
 	}
-
 }
