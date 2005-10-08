@@ -32,4 +32,9 @@
 		</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
+	
+	<lifecycle>
+		<phase-listener>org.springframework.webflow.jsf.FlowPhaseListener</phase-listener>
+	</lifecycle>	
+	
 </faces-config>

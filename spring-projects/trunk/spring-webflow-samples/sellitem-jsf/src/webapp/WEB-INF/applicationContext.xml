@@ -7,6 +7,8 @@
 		Custom configuration of the HTTP request flow execution manager.
 		Note how you can just change the flow execution storage strategy without any impact
 		on the views!
+		
+		This is actually not being used from JSF!
 	-->	
 	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.servlet.ServletFlowExecutionManager">
 		<property name="listener">
@@ -15,7 +17,7 @@
 		<property name="storage">
 			<bean class="org.springframework.webflow.execution.DataStoreFlowExecutionStorage">
 				<constructor-arg>
-					<bean class="org.springframework.webflow.jsf.JsfSessionDataStoreAccessor"/>
+					<bean class="org.springframework.webflow.execution.SessionDataStoreAccessor"/>
 				</constructor-arg>
 			</bean>
 		</property>
