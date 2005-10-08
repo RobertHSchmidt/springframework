@@ -68,9 +68,9 @@ public class FlowPropertyResolver extends PropertyResolver {
 		if (!(base instanceof FlowExecution)) {
 			return originalPropertyResolver.getType(base, index);
 		}
-		else {
-			return null;
-		}
+
+		// can't access flow scope by index, so can't determine type. Return null per JSF spec
+		return null;
 	}
 
 	public Class getType(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
