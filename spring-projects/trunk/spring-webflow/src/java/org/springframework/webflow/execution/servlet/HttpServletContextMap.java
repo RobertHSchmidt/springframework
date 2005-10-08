@@ -14,6 +14,9 @@ import javax.servlet.ServletContext;
  */
 public class HttpServletContextMap implements Map {
 
+	/**
+	 * The wrapped servlet context.
+	 */
 	private ServletContext context;
 
 	/**

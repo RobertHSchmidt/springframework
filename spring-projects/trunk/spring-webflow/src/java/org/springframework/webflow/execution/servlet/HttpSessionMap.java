@@ -13,6 +13,9 @@ import javax.servlet.http.HttpSession;
  */
 public class HttpSessionMap implements Map {
 
+	/**
+	 * The wrapped http session. 
+	 */
 	private HttpSession session;
 
 	/**
