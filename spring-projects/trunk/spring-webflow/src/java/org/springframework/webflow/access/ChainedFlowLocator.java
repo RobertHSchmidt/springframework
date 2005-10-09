@@ -14,22 +14,21 @@ public class ChainedFlowLocator implements FlowLocator {
 	/**
 	 * The FlowLocator chain.
 	 */
-	private FlowLocator[] chain;
+	private FlowLocator[] locatorChain;
 
 	/**
 	 * Creates a chained flow locator made from the list of specified locators.
 	 * @param flowLocator The FlowLocator list
 	 */
-	public ChainedFlowLocator(FlowLocator[] chain) {
-		Assert.notEmpty(chain, "The chain cannot be empty");
-		this.chain = chain;
+	public ChainedFlowLocator(FlowLocator[] locatorChain) {
+		Assert.notEmpty(locatorChain, "The Flow Locator chain cannot be empty");
+		this.locatorChain = locatorChain;
 	}
 
 	public Flow getFlow(String id) throws FlowArtifactLookupException {
-		for (int i = 0; i < chain.length; i++) {
-			FlowLocator locator = chain[i];
+		for (int i = 0; i < locatorChain.length; i++) {
 			try {
-				return locator.getFlow(id);
+				return locatorChain[i].getFlow(id);
 			}
 			catch (FlowArtifactLookupException e) {
 
