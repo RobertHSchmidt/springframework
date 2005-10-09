@@ -29,17 +29,17 @@ public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFacto
 	private Map flowDefinitions = Collections.EMPTY_MAP;
 
 	/**
-	 * XML flow definition resources.
+	 * XML flow definition resources to load.
 	 */
 	private Resource[] definitionLocations;
 
 	/**
-	 * JAR files containing XML flow definition resources.
+	 * JAR files containing XML flow definition resources to load.
 	 */
 	private Resource[] definitionJarLocations;
 
 	/**
-	 * Directory locations containing XML flow definition resources.
+	 * Directory locations containing XML flow definition resources to load.
 	 */
 	private Resource[] definitionDirectoryLocations;
 
