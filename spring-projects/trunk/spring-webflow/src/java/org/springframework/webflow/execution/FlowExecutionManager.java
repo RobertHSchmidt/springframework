@@ -191,8 +191,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 */
 	private TransactionSynchronizer transactionSynchronizer = new FlowScopeTokenTransactionSynchronizer();
 
-	private BeanFactory beanFactory;
-
 	/**
 	 * Create a new flow execution manager. Before use, the manager should be
 	 * appropriately configured using setter methods. At least the flow
@@ -414,15 +412,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		this.transactionSynchronizer = transactionSynchronizer;
 	}
 
-	/**
-	 * Returns this flow execution manager's bean factory.
-	 */
-	protected BeanFactory getBeanFactory() {
-		return this.beanFactory;
-	}
-
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		this.beanFactory = beanFactory;
 		if (flowLocator == null) {
 			flowLocator = new BeanFactoryFlowLocator(beanFactory);
 		}
