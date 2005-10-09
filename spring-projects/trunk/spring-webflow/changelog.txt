@@ -13,6 +13,7 @@ Changes in version RC1
   variables associated with a source event.
 * Added model support for "state result events", where the parameters of events that drive a state transition can be
   accessed from views by referencing in the format: ${stateId.parameterName}
+* Added refreshable XmlFlowRegistry, for managing a reloadable registry of Flow definitions sourced from XML files.
 * Added "requireValidatorMethod" property to FormAction, useful for piecemeal validation as part of a wizard flow
 * Added ActionUtils utility class, useful when implementing actions.
 * Added support for webflow definition scoped bean definitions, centralizing all flow definition code in one place.

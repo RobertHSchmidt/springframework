@@ -37,11 +37,22 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	 * @param beanFactory The spring bean factory, may not be null.
 	 */
 	public BeanFactoryFlowArtifactLocator(BeanFactory beanFactory) {
-		Assert.notNull(beanFactory, "The beanFactory is required");
-		this.beanFactory = beanFactory;
-		this.flowLocator = new BeanFactoryFlowLocator(beanFactory);
+		this(beanFactory, new BeanFactoryFlowLocator(beanFactory));
 	}
 
+	/**
+	 * Creates a flow artifact locator that retrieves artifacts from the
+	 * provided bean factory
+	 * @param beanFactory The spring bean factory, may not be null.
+	 * @param flowLocaotr The flow locator
+	 */
+	public BeanFactoryFlowArtifactLocator(BeanFactory beanFactory, FlowLocator flowLocator) {
+		Assert.notNull(beanFactory, "The beanFactory is required");
+		Assert.notNull(beanFactory, "The flow locator is required");
+		this.beanFactory = beanFactory;
+		this.flowLocator = flowLocator;
+	}
+	
 	public Flow getFlow(String id) throws FlowArtifactLookupException {
 		return flowLocator.getFlow(id);
 	}
