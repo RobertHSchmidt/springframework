@@ -89,11 +89,7 @@ public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFacto
 	}
 
 	public void afterPropertiesSet() throws IOException {
-		if (definitionLocations != null) {
-			for (int i = 0; i < definitionLocations.length; i++) {
-				loadFlow(definitionLocations[i]);
-			}
-		}
+		refresh();
 	}
 
 	/**
@@ -131,7 +127,11 @@ public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFacto
 	 * from there externalized representations.
 	 */
 	public void refresh() {
-		throw new UnsupportedOperationException();
+		if (definitionLocations != null) {
+			for (int i = 0; i < definitionLocations.length; i++) {
+				loadFlow(definitionLocations[i]);
+			}
+		}
 	}
 
 	/**
