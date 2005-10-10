@@ -2,8 +2,8 @@ package org.springframework.webflow.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -34,7 +34,7 @@ public class XmlFlowRegistry implements FlowLocator, FlowRegistryMBean, Initiali
 	/**
 	 * The map of loaded Flow definitions maintained in this registry.
 	 */
-	private Map flowDefinitions = Collections.EMPTY_MAP;
+	private Map flowDefinitions = new HashMap();
 
 	/**
 	 * XML flow definition resources to load.
@@ -201,8 +201,8 @@ public class XmlFlowRegistry implements FlowLocator, FlowRegistryMBean, Initiali
 		registerFlowDefinition(new RefreshableFlow(resource));
 	}
 
-	private void registerFlowDefinition(RefreshableFlow flowDefinition) {
-		this.flowDefinitions.put(flowDefinition.getFlow().getId(), flowDefinition);
+	private void registerFlowDefinition(RefreshableFlow flow) {
+		this.flowDefinitions.put(flow.getFlow().getId(), flow);
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class XmlFlowRegistry implements FlowLocator, FlowRegistryMBean, Initiali
 	 * support a refresh operation.
 	 * @author Keith Donald
 	 */
-	protected static class RefreshableFlow {
+	protected class RefreshableFlow {
 		private Flow flow;
 
 		private Resource location;
@@ -258,12 +258,10 @@ public class XmlFlowRegistry implements FlowLocator, FlowRegistryMBean, Initiali
 
 		public void refresh() {
 			if (location != null) {
-				if (location.isOpen()) {
-					FlowBuilder builder = new XmlFlowBuilder(location);
-					this.flow = builder.init();
-					builder.buildStates();
-					builder.dispose();
-				}
+				FlowBuilder builder = new XmlFlowBuilder(location, artifactLocator);
+				this.flow = builder.init();
+				builder.buildStates();
+				builder.dispose();
 			}
 		}
 

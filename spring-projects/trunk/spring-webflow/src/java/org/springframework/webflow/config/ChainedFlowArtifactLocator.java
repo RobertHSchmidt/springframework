@@ -23,16 +23,6 @@ public class ChainedFlowArtifactLocator implements FlowArtifactLocator {
 	public FlowArtifactLocator[] chain;
 
 	/**
-	 * Creates a chained artifact locator that queries up to two locators, the
-	 * "first" one first and the "second" one second if neccessary.
-	 * @param first the first locator in the chain
-	 * @param second the second locator in the chain
-	 */
-	public ChainedFlowArtifactLocator(FlowArtifactLocator first, FlowArtifactLocator second) {
-		this(new FlowArtifactLocator[] { first, second });
-	}
-
-	/**
 	 * Creates a chained artifact locator that queries the specified locators in
 	 * the order provided.
 	 * @param chain the artifact locator chain
