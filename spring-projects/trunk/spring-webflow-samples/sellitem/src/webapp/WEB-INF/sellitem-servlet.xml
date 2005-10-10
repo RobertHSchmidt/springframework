@@ -23,28 +23,31 @@
 		on the views!
 	-->	
 	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.servlet.ServletFlowExecutionManager">
+		<property name="flowLocator" ref="flowLocator"/>
 		<property name="listener">
 			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
 		</property>
 		<property name="storage">
-			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage">
-				<constructor-arg ref="sessionAccessor"/>
-			</bean>
+			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage"/>
 		</property>
 		<property name="transactionSynchronizer">
-			<bean class="org.springframework.webflow.execution.DataStoreTokenTransactionSynchronizer">
-				<constructor-arg ref="sessionAccessor"/>
-			</bean>
+			<bean class="org.springframework.webflow.execution.DataStoreTokenTransactionSynchronizer"/>
 		</property>
 	</bean>
 
-	<bean id="sessionAccessor" class="org.springframework.webflow.execution.SessionDataStoreAccessor"/>
-	
+	<bean id="flowLocator" class="org.springframework.webflow.config.XmlFlowRegistry">
+		<property name="definitionLocations" value="classpath:org/springframework/webflow/samples/sellitem/sellitem-flow.xml"/>
+	</bean>
+
 	<bean id="statisticsService" class="org.springframework.webflow.execution.jmx.StatisticsService">
 		<constructor-arg ref="flowExecutionManager"/>
 		<property name="enabled" value="true"/>
 	</bean>
 
+	<bean id="mbeanExporter" class="org.springframework.jmx.export.MBeanExporter">
+		<property name="autodetect" value="true"/>
+	</bean>
+	
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>
