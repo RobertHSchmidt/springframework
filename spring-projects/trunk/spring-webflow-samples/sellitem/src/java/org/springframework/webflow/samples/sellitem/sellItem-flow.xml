@@ -3,7 +3,8 @@
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
 <webflow id="sellItem" start-state="enterPriceAndItemCount">
-
+	<property name="transactional" value="true" type="boolean"/>
+	
 	<view-state id="enterPriceAndItemCount" view="priceAndItemCountForm">
 		<entry-action>
 			<action bean="sellItemAction" method="setupForm"/>
