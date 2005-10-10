@@ -12,7 +12,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
@@ -135,11 +134,11 @@ public class XmlFlowRegistry implements FlowLocator, FlowRegistryMBean, Initiali
 			if (definitionJarLocations != null) {
 				for (int i = 0; i < definitionJarLocations.length; i++) {
 					jar = new JarFile(definitionJarLocations[i].getFile());
-					Enumeration jarEntries = jar.entries();
-					while (jarEntries.hasMoreElements()) {
-						ZipEntry ze = (ZipEntry)jarEntries.nextElement();
-						if (ze.getName().endsWith(".xml")) {
-							loadFlow(new InputStreamResource(jar.getInputStream(ze)));
+					Enumeration entries = jar.entries();
+					while (entries.hasMoreElements()) {
+						ZipEntry entry = (ZipEntry)entries.nextElement();
+						if (entry.getName().endsWith(".xml")) {
+							loadFlow(new JarFileResource(jar, entry));
 						}
 					}
 				}
