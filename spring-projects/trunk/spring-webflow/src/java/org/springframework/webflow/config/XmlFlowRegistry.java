@@ -29,7 +29,7 @@ import org.springframework.webflow.access.NoSuchFlowDefinitionException;
  * 
  * @author Keith Donald
  */
-public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFactoryAware {
+public class XmlFlowRegistry implements FlowLocator, FlowRegistryMBean, InitializingBean, BeanFactoryAware {
 
 	/**
 	 * The map of loaded Flow definitions maintained in this registry.
@@ -115,9 +115,9 @@ public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFacto
 		refresh();
 	}
 
-	/**
-	 * Refresh this flow definition registry, reloading all Flow definitions
-	 * from there externalized representations.
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.webflow.config.FlowRegistryMBean#refresh()
 	 */
 	public void refresh() {
 		loadDefinitions();
@@ -156,8 +156,9 @@ public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFacto
 			if (jar != null) {
 				try {
 					jar.close();
-				} catch (IOException e) {
-					
+				}
+				catch (IOException e) {
+
 				}
 			}
 		}
@@ -216,10 +217,9 @@ public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFacto
 		registerFlowDefinition(new RefreshableFlow(flow));
 	}
 
-	/**
-	 * Refresh the Flow definition in this registry with the flowId provided,
-	 * reloading it from it's externalized representation.
-	 * @param flowId the flow to refresh.
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.webflow.config.FlowRegistryMBean#refresh(java.lang.String)
 	 */
 	public void refresh(String flowId) {
 		getRefreshableFlow(flowId).refresh();
