@@ -115,10 +115,6 @@ public class XmlFlowRegistry implements FlowLocator, FlowRegistryMBean, Initiali
 		refresh();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.webflow.config.FlowRegistryMBean#refresh()
-	 */
 	public void refresh() {
 		loadDefinitions();
 		loadJarDefinitions();
@@ -217,10 +213,6 @@ public class XmlFlowRegistry implements FlowLocator, FlowRegistryMBean, Initiali
 		registerFlowDefinition(new RefreshableFlow(flow));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.webflow.config.FlowRegistryMBean#refresh(java.lang.String)
-	 */
 	public void refresh(String flowId) {
 		getRefreshableFlow(flowId).refresh();
 	}
