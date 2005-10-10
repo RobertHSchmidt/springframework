@@ -22,7 +22,7 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 	}
 
 	protected FlowLocator createFlowLocator() {
-		XmlFlowRegistry registry = new XmlFlowRegistry(new BeanFactoryFlowArtifactLocator(this.applicationContext));
+		XmlFlowRegistry registry = new XmlFlowRegistry(new BeanFactoryFlowArtifactLocator(applicationContext));
 		registry.setDefinitionLocations(new Resource[] { new ClassPathResource("sellItem-flow.xml", this.getClass()) });
 		registry.refresh();
 		return registry;
