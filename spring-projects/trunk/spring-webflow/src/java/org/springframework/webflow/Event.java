@@ -230,6 +230,9 @@ public class Event extends EventObject implements AttributeSource {
 	 */
 	protected void addParameters(Map parameters) {
 		if (parameters != null) {
+			if (this.parameters == null) {
+				this.parameters = new HashMap(parameters.size());
+			}
 			this.parameters.putAll(parameters);
 		}
 	}
