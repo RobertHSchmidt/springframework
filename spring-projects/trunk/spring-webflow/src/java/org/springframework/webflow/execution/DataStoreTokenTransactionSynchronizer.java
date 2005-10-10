@@ -19,13 +19,13 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 
 /**
- * A transaction synchronizer that uses a <i>synchronizer token</i> stored in
- * a data store to demarcate application transactions.
- * This implementation stores the token in the data store using a name that
- * is unique for each <i>logical</i> flow execution in that data store. As a
- * result you can use this transaction synchronizer with continuations based
- * flow execution storage strategies, where you have several physical copies
- * of the flow execution for a single logical flow execution.
+ * A transaction synchronizer that uses a <i>synchronizer token</i> stored in a
+ * data store to demarcate application transactions. This implementation stores
+ * the token in the data store using a name that is unique for each <i>logical</i>
+ * flow execution in that data store. As a result you can use this transaction
+ * synchronizer with continuations based flow execution storage strategies,
+ * where you have several physical copies of the flow execution for a single
+ * logical flow execution.
  * 
  * @see org.springframework.webflow.execution.DataStoreAccessor
  * @see org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage
@@ -37,10 +37,11 @@ public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransact
 	/**
 	 * The data store access strategy.
 	 */
-	private DataStoreAccessor dataStoreAccessor;
+	private DataStoreAccessor dataStoreAccessor = new SessionDataStoreAccessor();
 
 	/**
-	 * Create a new token transaction synchronizer storing the token in given data store.
+	 * Create a new token transaction synchronizer storing the token in given
+	 * data store.
 	 * @param dataStoreAccessor the data store accessor to use
 	 */
 	public DataStoreTokenTransactionSynchronizer(DataStoreAccessor dataStoreAccessor) {
@@ -60,14 +61,15 @@ public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransact
 	public void clearToken(RequestContext context) {
 		dataStoreAccessor.getDataStore(context.getSourceEvent()).removeAttribute(getTokenName(context));
 	}
-	
+
 	// subclassing hooks
-	
+
 	/**
 	 * Generate a pseudo unique token name based on the information available in
-	 * given request context. The generated name is unique among all flow executions
-	 * in the data store. As a result, you can have several concurrent
-	 * flow executions in the same data store, all with their own transaction.
+	 * given request context. The generated name is unique among all flow
+	 * executions in the data store. As a result, you can have several
+	 * concurrent flow executions in the same data store, all with their own
+	 * transaction.
 	 * @param context the flow execution request context
 	 * @return the generated token name
 	 */
@@ -81,5 +83,5 @@ public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransact
 		tokenName.append(context.getFlowExecutionContext().getKey());
 		tokenName.append(getTransactionTokenAttributeName()).append("_");
 		return tokenName.toString();
-	}	
+	}
 }

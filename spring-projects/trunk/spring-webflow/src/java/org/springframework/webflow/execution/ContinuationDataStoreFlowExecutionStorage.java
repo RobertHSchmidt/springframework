@@ -22,9 +22,10 @@ import org.springframework.webflow.Event;
 /**
  * Flow execution storage that stores flow executions as <i>continuations</i>
  * in the data store.
- * <p>A downside of this storage strategy (and of server-side continuations in general)
- * is that there could be many copies of the flow execution stored in the data store,
- * increasing server memory requirements.
+ * <p>
+ * A downside of this storage strategy (and of server-side continuations in
+ * general) is that there could be many copies of the flow execution stored in
+ * the data store, increasing server memory requirements.
  * 
  * @author Erwin Vervaet
  */
@@ -39,10 +40,18 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 	 * Creates a continuation-driven data store flow execution storage.
 	 * @param dataStoreAccessor the data store accessor.
 	 */
+	public ContinuationDataStoreFlowExecutionStorage() {
+		this(new SessionDataStoreAccessor());
+	}
+
+	/**
+	 * Creates a continuation-driven data store flow execution storage.
+	 * @param dataStoreAccessor the data store accessor.
+	 */
 	public ContinuationDataStoreFlowExecutionStorage(DataStoreAccessor dataStoreAccessor) {
 		super(dataStoreAccessor);
 	}
-	
+
 	/**
 	 * Returns whether or not continuations should be compressed.
 	 */
@@ -60,7 +69,8 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 	public FlowExecution load(Serializable id, Event sourceEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		try {
-			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getRequiredDataSourceAttribute(id, sourceEvent);
+			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getRequiredDataSourceAttribute(id,
+					sourceEvent);
 			return continuation.getFlowExecution();
 		}
 		catch (IllegalStateException e) {
@@ -77,10 +87,9 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 	}
 
 	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException {
-		// nothing to do
-		// note that we shouldn't remove the identified flow execution continuation
-		// because that id actually identifies the 'previous' flow execution, not the
-		// one that has ended (because that one is never saved so doesn't even have
-		// an id!)
+		// nothing to do - note that we should not remove the identified flow
+		// execution continuation because that id actually identifies the
+		// 'previous' flow execution, not the one that has ended (because the
+		// ended snapshot is never saved so doesn't even have an id!)
 	}
 }
