@@ -37,7 +37,14 @@ public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransact
 	/**
 	 * The data store access strategy.
 	 */
-	private DataStoreAccessor dataStoreAccessor = new SessionDataStoreAccessor();
+	private DataStoreAccessor dataStoreAccessor;
+
+	/**
+	 * Create a new token transaction synchronizer using the default session map data store.
+	 */
+	public DataStoreTokenTransactionSynchronizer() {
+		this(new SessionDataStoreAccessor());
+	}
 
 	/**
 	 * Create a new token transaction synchronizer storing the token in given

@@ -36,7 +36,7 @@
 	</bean>
 
 	<bean id="flowLocator" class="org.springframework.webflow.config.XmlFlowRegistry">
-		<property name="definitionLocations" value="classpath:org/springframework/webflow/samples/sellitem/sellitem-flow.xml"/>
+		<property name="definitionLocations" value="classpath:org/springframework/webflow/samples/sellitem/sellItem-flow.xml"/>
 	</bean>
 
 	<bean id="statisticsService" class="org.springframework.webflow.execution.jmx.StatisticsService">
