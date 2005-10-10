@@ -2,6 +2,7 @@ package org.springframework.webflow.access;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
@@ -13,21 +14,34 @@ import org.springframework.webflow.Flow;
  * subinterface is only needed at configuration time.
  * @author Keith Donald
  */
-public class BeanFactoryFlowLocator implements FlowLocator {
+public class BeanFactoryFlowLocator implements FlowLocator, BeanFactoryAware {
 
 	/**
-	 * The wrapped Spring bean factory to delegate to. 
+	 * The wrapped Spring bean factory to delegate to.
 	 */
 	private BeanFactory beanFactory;
 
 	/**
-	 * Creates a flow locator that retrieves artifacts from the 
-	 * provided bean factory
+	 * Default constructor for usage when instantiated by Spring.
+	 */
+	public BeanFactoryFlowLocator() {
+
+	}
+
+	/**
+	 * Creates a flow locator that retrieves artifacts from the provided bean
+	 * factory
 	 * @param beanFactory The spring bean factory, may not be null.
 	 */
 	public BeanFactoryFlowLocator(BeanFactory beanFactory) {
 		Assert.notNull(beanFactory, "The beanFactory is required");
 		this.beanFactory = beanFactory;
+	}
+
+	public void setBeanFactory(BeanFactory beanFactory) {
+		if (this.beanFactory != null) {
+			this.beanFactory = beanFactory;
+		}
 	}
 
 	public Flow getFlow(String id) throws FlowArtifactLookupException {
