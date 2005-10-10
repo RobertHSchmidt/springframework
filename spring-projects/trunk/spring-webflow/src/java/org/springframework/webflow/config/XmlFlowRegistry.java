@@ -134,10 +134,11 @@ public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFacto
 	}
 
 	protected void loadJarDefinitions() throws FlowBuilderException {
+		JarFile jar = null;
 		try {
 			if (definitionJarLocations != null) {
 				for (int i = 0; i < definitionJarLocations.length; i++) {
-					JarFile jar = new JarFile(definitionJarLocations[i].getFile());
+					jar = new JarFile(definitionJarLocations[i].getFile());
 					Enumeration jarEntries = jar.entries();
 					while (jarEntries.hasMoreElements()) {
 						ZipEntry ze = (ZipEntry)jarEntries.nextElement();
@@ -150,6 +151,15 @@ public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFacto
 		}
 		catch (IOException e) {
 			throw new FlowBuilderException("Unable to build Flows from jar definitions", e);
+		}
+		finally {
+			if (jar != null) {
+				try {
+					jar.close();
+				} catch (IOException e) {
+					
+				}
+			}
 		}
 	}
 
@@ -256,10 +266,12 @@ public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFacto
 
 		public void refresh() {
 			if (location != null) {
-				FlowBuilder builder = new XmlFlowBuilder(location);
-				this.flow = builder.init();
-				builder.buildStates();
-				builder.dispose();
+				if (location.isOpen()) {
+					FlowBuilder builder = new XmlFlowBuilder(location);
+					this.flow = builder.init();
+					builder.buildStates();
+					builder.dispose();
+				}
 			}
 		}
 
@@ -271,5 +283,4 @@ public class XmlFlowRegistry implements FlowLocator, InitializingBean, BeanFacto
 	public String toString() {
 		return new ToStringCreator(this).append("flowDefinitions", flowDefinitions).toString();
 	}
-
 }
