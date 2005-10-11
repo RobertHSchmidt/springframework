@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionListener;
 
 /**
  * Simple holder class that associates a FlowExecution instance
@@ -31,9 +32,19 @@ import org.springframework.webflow.execution.FlowExecution;
  */
 public abstract class FlowExecutionHolder {
 
+	private static ThreadLocal flowExecutionListener = new InheritableThreadLocal();
+
 	private static ThreadLocal flowExecutionIdHolder = new InheritableThreadLocal();
 	
 	private static ThreadLocal flowExecutionHolder = new InheritableThreadLocal();
+
+	/**
+	 * return the FlowExecutionListener associated with the current thread
+	 */
+	public static FlowExecutionListener getFlowExecutionListener() {
+		return (FlowExecutionListener) flowExecutionListener.get();
+	}
+
 	
 	/**
 	 * Return the FlowExecution associated with the current thread,
@@ -53,16 +64,31 @@ public abstract class FlowExecutionHolder {
 		return (Serializable) flowExecutionIdHolder.get();
 	}
 	
+
 	/**
-	 * clear the FlowExecution associated with the current thread
+	 * clear the FlowExecutionListener, FlowExecution id, and FlowExecution
+	 * associated with the current thread
 	 */
 	public static void clearFlowExecution() {
 		flowExecutionHolder.set(null);
 		flowExecutionIdHolder.set(null);
+		flowExecutionListener.set(null);
 	}
 	
 	/**
-	 * Associate the given FlowExecution with the current thread.
+	 * Associate the given FlowExecutionListener with the current thread
+	 * @param listener the listener, or <code>null</code> null to reset the
+	 * value
+	 */
+	public static void setFlowExecutionListener(FlowExecutionListener listener) {
+		flowExecutionListener.set(listener);
+	}
+	
+	/**
+	 * Associate the given FlowExecution with the current thread. It is not legal to
+	 * store a flow execution id, but no flow execution
+	 * @param flowExecutionId the current FlowExecution id, or <code>null</code> to reset
+	 * the thread-bound context
 	 * @param flowExecution the current FlowExecution, or <code>null</code> to reset
 	 * the thread-bound context
 	 */
@@ -73,4 +99,6 @@ public abstract class FlowExecutionHolder {
 		flowExecutionIdHolder.set(flowExecutionId);
 		flowExecutionHolder.set(flowExecution);
 	}
+	
+	
 }

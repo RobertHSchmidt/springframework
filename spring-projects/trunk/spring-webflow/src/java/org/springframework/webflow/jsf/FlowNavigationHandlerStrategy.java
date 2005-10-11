@@ -148,14 +148,15 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
      */
 	public ViewDescriptor launchFlowExecution(FacesContext context, String fromAction,
 			String outcome) {
-		Map parameters = new HashMap(1);
-		// strip of the webflow prefix, leaving the flowId to launch
+		// strip off the webflow prefix, leaving the flowId to launch
 		String flowId = outcome.substring(WEBFLOW_PREFIX.length());
 		Assert.hasText(flowId,
 				"The id of the flow to launch was not provided - programmer error");
+		Map parameters = new HashMap(1);
 		parameters.put(FlowExecutionManager.FLOW_ID_PARAMETER, flowId);
+		JsfFlowExecutionListener listener = new JsfFlowExecutionListener(context);
 		return onEvent(createEvent(context, fromAction, outcome,
-				parameters));
+				parameters), listener);
 	}
 
 	/**
@@ -216,7 +217,8 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 
 		Event event = createEvent(context, fromAction, outcome, null);
 		ViewDescriptor selectedView = processEventExistingFlow(flowExecution, event);
-		return afterEvent(selectedView, flowExecutionId, flowExecution, event, null);
+		return afterEvent(selectedView, flowExecutionId, flowExecution, event,
+				FlowExecutionHolder.getFlowExecutionListener());
 	}
 
 	/**
