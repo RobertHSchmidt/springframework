@@ -8,9 +8,9 @@ import org.springframework.webflow.action.AbstractAction;
 public class SellItemAction extends AbstractAction {
 
     protected Event doExecute(RequestContext context) throws Exception {
-        Scope request = context.getRequestScope();
+        Scope flow = context.getFlowScope();
         
-        Sale sale = (Sale) request.get("sale");
+        Sale sale = (Sale) flow.get("sale");
         
         Scope flowScope = context.getFlowScope();
         //flowScope.put()

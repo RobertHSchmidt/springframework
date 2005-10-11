@@ -85,7 +85,6 @@ public class FlowPhaseListener implements PhaseListener {
 			//logger.trace("JSF before phase: Restore View");
 		} else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
 			//logger.trace("JSF before phase: Restore View");
-			FlowExecutionHolder.clearFlowExecution();
 		}
 	}
 
@@ -114,6 +113,7 @@ public class FlowPhaseListener implements PhaseListener {
 			//logger.trace("JSF before phase: Restore View");
 		} else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
 			//logger.trace("JSF before phase: Restore View");
+			FlowExecutionHolder.clearFlowExecution();
 		}
 	}
 

@@ -46,4 +46,8 @@
 		<constructor-arg ref="flowExecutionManager"/>
 		<property name="enabled" value="true"/>
 	</bean>
+	
+	<bean name="sale" class="org.springframework.webflow.samples.sellitem.Sale" singleton="false">
+	</bean>
+	
 </beans>

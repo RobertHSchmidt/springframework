@@ -12,7 +12,13 @@
 		<navigation-handler>
 			org.springframework.webflow.jsf.FlowNavigationHandler
 		</navigation-handler>
-		<!-- Spring Framework Integration -->
+
+		<property-resolver>
+			org.springframework.webflow.jsf.FlowPropertyResolver
+		</property-resolver>
+		<variable-resolver>
+			org.springframework.webflow.jsf.FlowVariableResolver
+		</variable-resolver>
 		<variable-resolver>
 			org.springframework.web.jsf.DelegatingVariableResolver
 		</variable-resolver>
@@ -22,7 +28,7 @@
 		</variable-resolver>
 	</application>
 
-	<managed-bean>
+	<!--managed-bean>
 		<description>
 			A sale
 		</description>
@@ -31,7 +37,7 @@
 			org.springframework.webflow.samples.sellitem.Sale
 		</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
+	</managed-bean-->
 	
 	<lifecycle>
 		<phase-listener>org.springframework.webflow.jsf.FlowPhaseListener</phase-listener>

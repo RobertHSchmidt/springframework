@@ -148,15 +148,27 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
      */
 	public ViewDescriptor launchFlowExecution(FacesContext context, String fromAction,
 			String outcome) {
+
 		// strip off the webflow prefix, leaving the flowId to launch
 		String flowId = outcome.substring(WEBFLOW_PREFIX.length());
 		Assert.hasText(flowId,
 				"The id of the flow to launch was not provided - programmer error");
+		
+		JsfFlowExecutionListener listener = new JsfFlowExecutionListener(context);
+		FlowExecutionHolder.setFlowExecutionListener(listener);
+		
 		Map parameters = new HashMap(1);
 		parameters.put(FlowExecutionManager.FLOW_ID_PARAMETER, flowId);
-		JsfFlowExecutionListener listener = new JsfFlowExecutionListener(context);
-		return onEvent(createEvent(context, fromAction, outcome,
-				parameters), listener);
+		Event event = createEvent(context, fromAction, outcome, parameters);
+		FlowExecution flowExecution = createFlowExecution(event, listener);
+		
+		FlowExecutionHolder.setFlowExecution(null, flowExecution);
+		
+		ViewDescriptor selectedView = flowExecution.start(event);
+		// clean-up (non-active view) or store the FlowExecution, and prepare the
+		// ViewDescriptor for the client
+		selectedView = afterEvent(selectedView, null, flowExecution, event, listener);
+		return selectedView;
 	}
 
 	/**

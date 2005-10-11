@@ -445,21 +445,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		Serializable flowExecutionId = getFlowExecutionId(event);
 		
 		if (flowExecutionId == null) {
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("New request received from client, source event is: " + event);
-			}
-
-			// start a new flow execution
-			Flow flow = getFlow(event);
-			flowExecution = createFlowExecution(flow);
-			if (listener != null) {
-				flowExecution.getListeners().add(listener);
-			}
-			flowExecution.getListeners().fireCreated(flowExecution);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Created a new flow execution for flow definition: '" + flow.getId() + "'");
-			}
+			// create flow execution, also attaching optional listener
+			flowExecution = createFlowExecution(event, listener);
 			selectedView = flowExecution.start(event);
 		}
 		else {
@@ -472,10 +459,36 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		// ViewDescriptor for the client
 		selectedView = afterEvent(selectedView, flowExecutionId, flowExecution, event, listener);
 		
-		if (logger.isDebugEnabled()) {
-			logger.debug("Returning selected view to client: " + selectedView);
-		}
 		return selectedView;
+	}
+
+	/**
+     * Create a new FlowExecution based on data in the specified event
+     * 
+     * @param event
+     *            the event that occured
+     * @param listener
+     *            a listener interested in flow execution lifecycle events that
+     *            happen <i>while handling this event</i>. Will be added to
+     *            flow execution listeners
+     */
+	protected FlowExecution createFlowExecution(Event event, FlowExecutionListener listener) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("New request received from client, source event is: " + event);
+		}
+		
+		// start a new flow execution
+		Flow flow = getFlow(event);
+		FlowExecution flowExecution = createFlowExecution(flow);
+		if (listener != null) {
+			flowExecution.getListeners().add(listener);
+		}
+		flowExecution.getListeners().fireCreated(flowExecution);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Created a new flow execution for flow definition: '" + flow.getId() + "'");
+		}
+		return flowExecution;
 	}
 	
 	
@@ -593,6 +606,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 			flowExecution.getListeners().remove(listener);
 		}
 		selectedView = prepareViewDescriptor(selectedView, flowExecutionId, flowExecution);
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Returning selected view to client: " + selectedView);
+		}
+		
 		return selectedView;
 	}
 	
