@@ -25,7 +25,6 @@ import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.BeanFactoryFlowLocator;
 import org.springframework.webflow.execution.DataStoreFlowExecutionStorage;
-import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.SessionDataStoreAccessor;
 
 /**
