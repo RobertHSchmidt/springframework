@@ -12,10 +12,9 @@ public class SellItemAction extends AbstractAction {
         
         Sale sale = (Sale) flow.get("sale");
         
-        Scope flowScope = context.getFlowScope();
-        //flowScope.put()
-        // TODO Auto-generated method stub
-        return null;
+        // this is where we can validate
+        
+        return success();
     }
 
 }

@@ -4,21 +4,14 @@
 
 <webflow id="sellItem" start-state="enterPriceAndItemCount">
 
-	<!--  action-state id="setupForm"-->
-		<!-- uncomment to experiment with precondition violations -->
-		<!-- <property name="role" value="manager"/> -->
-		<!-- action bean="sellItemAction"/>
-		<transition on="success" to="enterPriceAndItemCount"/>
-	</action-state-->
-
 	<view-state id="enterPriceAndItemCount" view="/priceAndItemCountForm">
 		<transition on="submit" to="enterCategory">
-			<action bean="sellItemAction" method="bindAndValidate">
-				<property name="validatorMethod" value="validatePriceAndItemCount"/>
-			</action>
+			<action bean="sellItemAction" />
 		</transition>
 	</view-state>
-
+	
+	<!--  everything from here on still needs to be converted! -->
+	
 	<view-state id="enterCategory" view="categoryForm">
 		<transition on="submit" to="requiresShipping">
 			<action bean="sellItemAction" method="bindAndValidate"/>
