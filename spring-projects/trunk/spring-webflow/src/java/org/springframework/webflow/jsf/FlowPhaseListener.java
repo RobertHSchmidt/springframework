@@ -72,19 +72,19 @@ public class FlowPhaseListener implements PhaseListener {
 			// logger.trace("JSF before phase: Restore View");
 		}
 		else if (event.getPhaseId() == PhaseId.APPLY_REQUEST_VALUES) {
-			// logger.trace("JSF before phase: Restore View");
+			// logger.trace("JSF before phase: Apply request values");
 		}
 		else if (event.getPhaseId() == PhaseId.PROCESS_VALIDATIONS) {
-			// logger.trace("JSF before phase: Restore View");
+			// logger.trace("JSF before phase: Process validations");
 		}
 		else if (event.getPhaseId() == PhaseId.UPDATE_MODEL_VALUES) {
-			// logger.trace("JSF before phase: Restore View");
+			// logger.trace("JSF before phase: Update model vlaues");
 		}
 		else if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
-			// logger.trace("JSF before phase: Restore View");
+			// logger.trace("JSF before phase: Invoke application");
 		}
 		else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
-			// logger.trace("JSF before phase: Restore View");
+			// logger.trace("JSF before phase: Render response");
 		}
 	}
 
@@ -103,19 +103,19 @@ public class FlowPhaseListener implements PhaseListener {
 			}
 		}
 		else if (event.getPhaseId() == PhaseId.APPLY_REQUEST_VALUES) {
-			// logger.trace("JSF before phase: Restore View");
+			// logger.trace("JSF before phase: Apply request values");
 		}
 		else if (event.getPhaseId() == PhaseId.PROCESS_VALIDATIONS) {
-			// logger.trace("JSF before phase: Restore View");
+			// logger.trace("JSF before phase: Process validations");
 		}
 		else if (event.getPhaseId() == PhaseId.UPDATE_MODEL_VALUES) {
-			// logger.trace("JSF before phase: Restore View");
+			// logger.trace("JSF before phase: Update model vlaues");
 		}
 		else if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
-			// logger.trace("JSF before phase: Restore View");
+			// logger.trace("JSF before phase: Invoke application");
 		}
 		else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
-			// logger.trace("JSF before phase: Restore View");
+			// logger.trace("JSF before phase: Render response");
 			FlowExecutionHolder.clearFlowExecution();
 		}
 	}

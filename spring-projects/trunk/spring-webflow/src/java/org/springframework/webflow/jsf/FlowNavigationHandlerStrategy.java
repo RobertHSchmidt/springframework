@@ -64,6 +64,15 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 
 	/**
 	 * <p>
+	 * Bean name under which we will find the configured instance of the
+	 * {@link FlowNavigationHandlerStrategy} to be used for determining what
+	 * logical actions to undertake.
+	 * </p>
+	 */
+	public static final String BEAN_NAME = "flowNavigationHandlerStrategy";
+
+	/**
+	 * <p>
 	 * Prefix on a logical outcome value that identifies a logical outcome as
 	 * the identifier for a web flow that should be entered.
 	 * </p>
@@ -142,7 +151,9 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 	public ViewDescriptor launchFlowExecution(FacesContext context, String fromAction, String outcome) {
 		// strip off the webflow prefix, leaving the flowId to launch
 		String flowId = outcome.substring(WEBFLOW_PREFIX.length());
-		Assert.hasText(flowId, "The id of the flow to launch was not provided in the outcome string - programmer error");
+		Assert
+				.hasText(flowId,
+						"The id of the flow to launch was not provided in the outcome string - programmer error");
 		JsfFlowExecutionListener listener = new JsfFlowExecutionListener(context);
 		FlowExecutionHolder.setFlowExecutionListener(listener);
 		Map parameters = new HashMap(1);

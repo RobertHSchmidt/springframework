@@ -65,15 +65,6 @@ public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
 	 * <p>
-	 * Bean name under which we will find the configured instance of the
-	 * {@link FlowNavigationHandlerStrategy} to be used for determining what
-	 * logical actions to undertake.
-	 * </p>
-	 */
-	private static final String NAVIGATION_STRATEGY_BEAN_NAME = "flowNavigationHandlerStrategy";
-
-	/**
-	 * <p>
 	 * The <code>Log</code> instance for this class.
 	 * </p>
 	 */
@@ -151,9 +142,9 @@ public class FlowNavigationHandler extends NavigationHandler {
 		if (flowNavigationHandlerStrategy == null) {
 			WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
 			if (wac != null) {
-				if (wac.containsBean(NAVIGATION_STRATEGY_BEAN_NAME)) {
+				if (wac.containsBean(FlowNavigationHandlerStrategy.BEAN_NAME)) {
 					flowNavigationHandlerStrategy = (FlowNavigationHandlerStrategy)wac.getBean(
-							NAVIGATION_STRATEGY_BEAN_NAME, FlowNavigationHandlerStrategy.class);
+							FlowNavigationHandlerStrategy.BEAN_NAME, FlowNavigationHandlerStrategy.class);
 				}
 			}
 			if (flowNavigationHandlerStrategy == null) {
