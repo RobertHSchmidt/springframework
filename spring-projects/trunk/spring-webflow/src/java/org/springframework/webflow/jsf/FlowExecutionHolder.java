@@ -70,6 +70,7 @@ public abstract class FlowExecutionHolder {
 		if (flowExecutionId != null) {
 			Assert.notNull(flowExecution, "It is illegal to store flow execution id but not flow execution");
 		}
+		flowExecutionIdHolder.set(flowExecutionId);
 		flowExecutionHolder.set(flowExecution);
 	}
 }

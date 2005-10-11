@@ -26,7 +26,6 @@ import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
-import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
@@ -216,8 +215,7 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 		Assert.notNull(flowExecution);
 
 		Event event = createEvent(context, fromAction, outcome, null);
-		ViewDescriptor selectedView = processEventExistingFlow(flowExecutionId, flowExecution,
-				event);
+		ViewDescriptor selectedView = processEventExistingFlow(flowExecution, event);
 		return afterEvent(selectedView, flowExecutionId, flowExecution, event, null);
 	}
 
@@ -290,139 +288,6 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 		ViewHandler vh = context.getApplication().getViewHandler();
 		UIViewRoot view = vh.createView(context, viewDescriptor.getViewName());
 		context.setViewRoot(view);
-	}
-
-	// code below is here temporarilly, and duplicates stuff in
-	// FlowExecutionManager
-	// don't want to make a new class while figuring out new JSF flow
-	// a lot of this should move to a common superclass of FlowExecutionManager
-	// and some
-	// new class
-
-	/**
-     * Load an existing FlowExecution based on data in the specified event
-     * 
-     * @param event
-     *            the event that occured
-     * @param listener
-     *            a listener interested in flow execution lifecycle events that
-     *            happen <i>while handling this event</i>. Will be added to
-     *            flow execution listeners
-     */
-	public FlowExecution loadFlowExecution(Event event, FlowExecutionListener listener) {
-
-		FlowExecution flowExecution = null;
-		Serializable flowExecutionId = getFlowExecutionId(event);
-		if (flowExecutionId == null) {
-			logger.warn("Unable to load FlowExecution: no ID found");
-		} else {
-			// client is participating in an existing flow execution,
-			// retrieve information about it
-			flowExecution = getStorage().load(flowExecutionId, event);
-			// rehydrate the execution if neccessary (if it had been serialized
-			// out)
-			flowExecution.rehydrate(getFlowLocator(), this, getTransactionSynchronizer());
-			if (listener != null) {
-				flowExecution.getListeners().add(listener);
-			}
-			flowExecution.getListeners().fireLoaded(flowExecution, flowExecutionId);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Loaded existing flow execution from storage with id: '"
-						+ flowExecutionId + "'");
-			}
-		}
-		return flowExecution;
-	}
-
-	/**
-     * Signal the occurence of the specified event on an existing flow
-     * 
-     * @param flowExecutionId
-     *            the id of the existing flow
-     * @param flowExecution
-     *            the existing flow
-     * @param event
-     *            the event that occured
-     * @return the raw or unprepared view descriptor of the model and view to
-     *         render
-     */
-	public ViewDescriptor processEventExistingFlow(Serializable flowExecutionId,
-			FlowExecution flowExecution, Event event) {
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("New request received from client, source event is: " + event);
-		}
-
-		ViewDescriptor selectedView;
-		// signal the event within the current state
-		Assert
-				.hasText(
-						event.getId(),
-						"No eventId could be obtained -- "
-								+ "make sure the client provides the _eventId parameter as input; the parameters provided for this request were:"
-								+ StylerUtils.style(event.getParameters()));
-		// see if the eventId was set to a static marker placeholder because
-		// of a client configuration error
-		if (event.getId().equals(getNotSetEventIdParameterMarker())) {
-			throw new IllegalArgumentException(
-					"The received eventId was the 'not set' marker '"
-							+ getNotSetEventIdParameterMarker()
-							+ "' -- this is likely a client view (jsp, etc) configuration error --"
-							+ "the _eventId parameter must be set to a valid event");
-		}
-		selectedView = flowExecution.signalEvent(event);
-
-		return selectedView;
-	}
-
-	/**
-     * Cleanup (non-active view) or store the FlowExecution, and prepare the
-     * ViewDescriptor for the client
-     * 
-     * @param flowExecutionId
-     *            the id of the existing flow
-     * @param flowExecution
-     *            the existing flow
-     * @param event
-     *            the event that occured
-     * @param listener
-     *            a listener interested in flow execution lifecycle events that
-     *            happen <i>while handling this event</i>. Will be removed at
-     *            end from flow execution listeners
-     * @return the prepared view descriptor of the model and view to render
-     */
-	public ViewDescriptor afterEvent(ViewDescriptor selectedView,
-			Serializable flowExecutionId, FlowExecution flowExecution, Event event,
-			FlowExecutionListener listener) {
-
-		if (flowExecution.isActive()) {
-			// save the flow execution for future use
-			flowExecutionId = getStorage().save(flowExecutionId, flowExecution, event);
-			flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Saved flow execution out to storage with id: '"
-						+ flowExecutionId + "'");
-			}
-		} else {
-			// event execution resulted in the entire flow execution ending,
-			// cleanup
-			if (flowExecutionId != null) {
-				getStorage().remove(flowExecutionId, event);
-				flowExecution.getListeners().fireRemoved(flowExecution, flowExecutionId);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Removed flow execution from storage with id: '"
-							+ flowExecutionId + "'");
-				}
-			}
-		}
-		if (listener != null) {
-			flowExecution.getListeners().remove(listener);
-		}
-		selectedView = prepareViewDescriptor(selectedView, flowExecutionId, flowExecution);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Returning selected view to client: " + selectedView);
-		}
-		return selectedView;
 	}
 
 }

@@ -439,13 +439,17 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @return the view descriptor of the model and view to render
 	 */
 	public ViewDescriptor onEvent(Event event, FlowExecutionListener listener) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("New request received from client, source event is: " + event);
-		}
+		
 		FlowExecution flowExecution;
 		ViewDescriptor selectedView;
 		Serializable flowExecutionId = getFlowExecutionId(event);
+		
 		if (flowExecutionId == null) {
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("New request received from client, source event is: " + event);
+			}
+
 			// start a new flow execution
 			Flow flow = getFlow(event);
 			flowExecution = createFlowExecution(flow);
@@ -459,6 +463,39 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 			selectedView = flowExecution.start(event);
 		}
 		else {
+			// load flow execution, also attaching optional listener
+			flowExecution = loadFlowExecution(event, listener);
+			selectedView = processEventExistingFlow(flowExecution, event);
+		}
+		
+		// clean-up (non-active view) or store the FlowExecution, and prepare the
+		// ViewDescriptor for the client
+		selectedView = afterEvent(selectedView, flowExecutionId, flowExecution, event, listener);
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Returning selected view to client: " + selectedView);
+		}
+		return selectedView;
+	}
+	
+	
+	/**
+     * Load an existing FlowExecution based on data in the specified event
+     * 
+     * @param event
+     *            the event that occured
+     * @param listener
+     *            a listener interested in flow execution lifecycle events that
+     *            happen <i>while handling this event</i>. Will be added to
+     *            flow execution listeners
+     */
+	public FlowExecution loadFlowExecution(Event event, FlowExecutionListener listener) {
+		
+		FlowExecution flowExecution = null;
+		Serializable flowExecutionId = getFlowExecutionId(event);
+		if (flowExecutionId == null) {
+			logger.warn("Unable to load FlowExecution: no ID found");
+		} else {
 			// client is participating in an existing flow execution,
 			// retrieve information about it
 			flowExecution = getStorage().load(flowExecutionId, event);
@@ -472,23 +509,67 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 			if (logger.isDebugEnabled()) {
 				logger.debug("Loaded existing flow execution from storage with id: '" + flowExecutionId + "'");
 			}
-			// signal the event within the current state
-			Assert
-					.hasText(
-							event.getId(),
-							"No eventId could be obtained -- "
-									+ "make sure the client provides the _eventId parameter as input; the parameters provided for this request were:"
-									+ StylerUtils.style(event.getParameters()));
-			// see if the eventId was set to a static marker placeholder because
-			// of a client configuration error
-			if (event.getId().equals(getNotSetEventIdParameterMarker())) {
-				throw new IllegalArgumentException("The received eventId was the 'not set' marker '"
-						+ getNotSetEventIdParameterMarker()
-						+ "' -- this is likely a client view (jsp, etc) configuration error --"
-						+ "the _eventId parameter must be set to a valid event");
-			}
-			selectedView = flowExecution.signalEvent(event);
 		}
+		return flowExecution;
+	}
+
+	/**
+     * Signal the occurence of the specified event on an existing flow
+     * 
+     * @param flowExecutionId
+     *            the id of the existing flow
+     * @param flowExecution
+     *            the existing flow
+     * @param event
+     *            the event that occured
+     * @return the raw or unprepared view descriptor of the model and view to
+     *         render
+     */
+	public ViewDescriptor processEventExistingFlow(FlowExecution flowExecution, Event event) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("New request received from client, source event is: " + event);
+		}
+
+		// signal the event within the current state
+		Assert
+				.hasText(
+						event.getId(),
+						"No eventId could be obtained -- "
+								+ "make sure the client provides the _eventId parameter as input; the parameters provided for this request were:"
+								+ StylerUtils.style(event.getParameters()));
+		// see if the eventId was set to a static marker placeholder because
+		// of a client configuration error
+		if (event.getId().equals(getNotSetEventIdParameterMarker())) {
+			throw new IllegalArgumentException("The received eventId was the 'not set' marker '"
+					+ getNotSetEventIdParameterMarker()
+					+ "' -- this is likely a client view (jsp, etc) configuration error --"
+					+ "the _eventId parameter must be set to a valid event");
+		}
+
+		return flowExecution.signalEvent(event);
+	}
+
+	/**
+     * Cleanup (non-active view) or store the FlowExecution, and prepare the
+     * ViewDescriptor for the client
+     * 
+     * @param flowExecutionId
+     *            the id of the existing flow
+     * @param flowExecution
+     *            the existing flow
+     * @param event
+     *            the event that occured
+     * @param listener
+     *            a listener interested in flow execution lifecycle events that
+     *            happen <i>while handling this event</i>. Will be removed at
+     *            end from flow execution listeners
+     * @return the prepared view descriptor of the model and view to render
+     */
+	public ViewDescriptor afterEvent(ViewDescriptor selectedView,
+			Serializable flowExecutionId, FlowExecution flowExecution, Event event,
+			FlowExecutionListener listener) {
+
 		if (flowExecution.isActive()) {
 			// save the flow execution for future use
 			flowExecutionId = getStorage().save(flowExecutionId, flowExecution, event);
@@ -512,12 +593,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 			flowExecution.getListeners().remove(listener);
 		}
 		selectedView = prepareViewDescriptor(selectedView, flowExecutionId, flowExecution);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Returning selected view to client: " + selectedView);
-		}
 		return selectedView;
 	}
-
+	
 	// subclassing hooks
 
 	/**
