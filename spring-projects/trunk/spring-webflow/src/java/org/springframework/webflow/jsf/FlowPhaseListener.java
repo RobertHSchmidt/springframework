@@ -45,15 +45,6 @@ import org.springframework.webflow.execution.SessionDataStoreAccessor;
 public class FlowPhaseListener implements PhaseListener {
 
 	/**
-	 * <p>
-	 * Bean name under which we will find the configured instance of the
-	 * {@link FlowNavigationHandlerStrategy} to be used for determining what
-	 * logical actions to undertake.
-	 * </p>
-	 */
-	private static final String NAVIGATION_STRATEGY_BEAN_NAME = "flowNavigationHandlerStrategy";
-
-	/**
 	 * Logger, usable by subclasses.
 	 */
 	protected final Log logger = LogFactory.getLog(FlowPhaseListener.class);
@@ -139,9 +130,9 @@ public class FlowPhaseListener implements PhaseListener {
 		if (flowNavigationHandlerStrategy == null) {
 			WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
 			if (wac != null) {
-				if (wac.containsBean(NAVIGATION_STRATEGY_BEAN_NAME)) {
+				if (wac.containsBean(FlowNavigationHandlerStrategy.BEAN_NAME)) {
 					flowNavigationHandlerStrategy = (FlowNavigationHandlerStrategy)wac.getBean(
-							NAVIGATION_STRATEGY_BEAN_NAME, FlowNavigationHandlerStrategy.class);
+							FlowNavigationHandlerStrategy.BEAN_NAME, FlowNavigationHandlerStrategy.class);
 				}
 			}
 			if (flowNavigationHandlerStrategy == null) {
