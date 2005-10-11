@@ -17,8 +17,6 @@ package org.springframework.webflow.samples.sellitem;
 
 import java.io.Serializable;
 
-import javax.faces.event.ActionEvent;
-
 import org.springframework.core.style.ToStringCreator;
 
 public class Sale implements Serializable {
@@ -130,11 +128,4 @@ public class Sale implements Serializable {
 		return new ToStringCreator(this).append("price", price).append(
 				"itemCount", itemCount).toString();
 	}
-	
-	 public void myListener(ActionEvent actionEvent)
-	 {
-		 //	  Add event code here...
-		 System.out.println("here");
-	 }	
-	
 }

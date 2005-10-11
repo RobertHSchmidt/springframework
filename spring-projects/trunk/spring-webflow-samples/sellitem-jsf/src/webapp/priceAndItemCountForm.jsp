@@ -23,7 +23,7 @@
 					<input type="hidden"
 					name="_flowExecutionId" value="${flowExecutionId}"/>
 					<h:commandButton type="submit" value="Next" action="submit"
-					immediate="false" actionListener="#{flow.sale.myListener}" /></td>
+					immediate="false" /></td>
 			</tr>
 		</h:form>
 	</table>
