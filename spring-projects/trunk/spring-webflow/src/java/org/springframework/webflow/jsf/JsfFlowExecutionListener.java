@@ -31,16 +31,14 @@ import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
  */
 public class JsfFlowExecutionListener extends FlowExecutionListenerAdapter {
 
-	FacesContext facesContext;
+	private FacesContext facesContext;
 
 	JsfFlowExecutionListener(FacesContext facesContext) {
 		this.facesContext = facesContext;
 	}
 
 	public void requestSubmitted(RequestContext context) {
-
 		Map requestMap = facesContext.getExternalContext().getRequestMap();
-
 		context.getRequestScope().setAttributes(requestMap);
 	}
 }
