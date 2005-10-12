@@ -157,9 +157,10 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 		parameters.put(FlowExecutionManager.FLOW_ID_PARAMETER, flowId);
 		Event event = createEvent(context, fromAction, outcome, parameters);
 		FlowExecution flowExecution = createFlowExecution(getFlow(event));
-		FlowExecutionHolder.setFlowExecution(null, flowExecution);
 		FlowExecutionListener listener = createFlowExecutionListener(context);
 		flowExecution.getListeners().add(listener);
+		flowExecution.getListeners().fireCreated(flowExecution);
+		FlowExecutionHolder.setFlowExecution(null, flowExecution);
 		ViewDescriptor selectedView = flowExecution.start(event);
 		selectedView = afterEvent(event, null, flowExecution, selectedView);
 		flowExecution.getListeners().remove(listener);
