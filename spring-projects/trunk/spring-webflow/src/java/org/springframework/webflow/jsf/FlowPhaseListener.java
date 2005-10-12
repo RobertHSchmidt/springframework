@@ -85,12 +85,11 @@ public class FlowPhaseListener implements PhaseListener {
 		FlowNavigationHandlerStrategy strategy = getStrategy(context);
 		if (event.getPhaseId() == PhaseId.RESTORE_VIEW) {
 			Event jsfEvent = strategy.createEvent(context, null, null, null);
-			Serializable flowExecutionId = strategy.getFlowExecutionId(jsfEvent);
-			if (flowExecutionId != null) {
-				JsfFlowExecutionListener listener = new JsfFlowExecutionListener(context);
-				FlowExecutionHolder.setFlowExecutionListener(listener);
-				FlowExecution flowExecution = strategy.loadFlowExecution(jsfEvent, listener);
-				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution);
+			Serializable id = strategy.getFlowExecutionId(jsfEvent);
+			if (id != null) {
+				FlowExecution flowExecution = strategy.loadFlowExecution(id, jsfEvent);
+				flowExecution.getListeners().fireLoaded(flowExecution, id);
+				FlowExecutionHolder.setFlowExecution(id, flowExecution);
 			}
 		}
 		else if (event.getPhaseId() == PhaseId.APPLY_REQUEST_VALUES) {

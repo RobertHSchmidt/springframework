@@ -32,17 +32,16 @@ import org.springframework.webflow.execution.FlowExecutionListener;
  */
 public abstract class FlowExecutionHolder {
 
-	private static ThreadLocal flowExecutionListener = new InheritableThreadLocal();
-
 	private static ThreadLocal flowExecutionIdHolder = new InheritableThreadLocal();
 
 	private static ThreadLocal flowExecutionHolder = new InheritableThreadLocal();
 
 	/**
-	 * return the FlowExecutionListener associated with the current thread
+	 * Return the FlowExecution id associated with the current thread, if any.
+	 * @return the current FlowExecution id, or <code>null</code> if none
 	 */
-	public static FlowExecutionListener getFlowExecutionListener() {
-		return (FlowExecutionListener)flowExecutionListener.get();
+	public static Serializable getFlowExecutionId() {
+		return (Serializable)flowExecutionIdHolder.get();
 	}
 
 	/**
@@ -54,30 +53,12 @@ public abstract class FlowExecutionHolder {
 	}
 
 	/**
-	 * Return the FlowExecution id associated with the current thread, if any.
-	 * @return the current FlowExecution id, or <code>null</code> if none
-	 */
-	public static Serializable getFlowExecutionId() {
-		return (Serializable)flowExecutionIdHolder.get();
-	}
-
-	/**
 	 * clear the FlowExecutionListener, FlowExecution id, and FlowExecution
 	 * associated with the current thread
 	 */
 	public static void clearFlowExecution() {
 		flowExecutionHolder.set(null);
 		flowExecutionIdHolder.set(null);
-		flowExecutionListener.set(null);
-	}
-
-	/**
-	 * Associate the given FlowExecutionListener with the current thread
-	 * @param listener the listener, or <code>null</code> null to reset the
-	 * value
-	 */
-	public static void setFlowExecutionListener(FlowExecutionListener listener) {
-		flowExecutionListener.set(listener);
 	}
 
 	/**

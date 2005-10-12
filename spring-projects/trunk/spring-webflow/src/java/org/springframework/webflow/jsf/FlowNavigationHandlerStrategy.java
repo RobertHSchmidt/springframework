@@ -151,20 +151,30 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 	public ViewDescriptor launchFlowExecution(FacesContext context, String fromAction, String outcome) {
 		// strip off the webflow prefix, leaving the flowId to launch
 		String flowId = outcome.substring(WEBFLOW_PREFIX.length());
-		Assert
-				.hasText(flowId,
-						"The id of the flow to launch was not provided in the outcome string - programmer error");
-		JsfFlowExecutionListener listener = new JsfFlowExecutionListener(context);
-		FlowExecutionHolder.setFlowExecutionListener(listener);
+		Assert.hasText(flowId, "The id of the flow to launch was not provided in the outcome string "
+				+ "- programmer error");
 		Map parameters = new HashMap(1);
 		parameters.put(FlowExecutionManager.FLOW_ID_PARAMETER, flowId);
 		Event event = createEvent(context, fromAction, outcome, parameters);
-		FlowExecution flowExecution = createFlowExecution(event, listener);
+		FlowExecution flowExecution = createFlowExecution(getFlow(event));
 		FlowExecutionHolder.setFlowExecution(null, flowExecution);
+		FlowExecutionListener listener = createFlowExecutionListener(context);
+		flowExecution.getListeners().add(listener);
 		ViewDescriptor selectedView = flowExecution.start(event);
-		return afterEvent(event, null, flowExecution, selectedView, listener);
+		selectedView = afterEvent(event, null, flowExecution, selectedView);
+		flowExecution.getListeners().remove(listener);
+		return selectedView;
 	}
 
+	/**
+	 * Creates a flow execution listener to attach to a managed FlowExecution.
+	 * @param context the faces context
+	 * @return the listener to attach
+	 */
+	protected FlowExecutionListener createFlowExecutionListener(FacesContext context) {
+		return new JsfFlowExecutionListener(context);
+	}
+	
 	/**
 	 * <p>
 	 * Return <code>true</code> if there is an existing flow execution in
@@ -206,13 +216,16 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 	 * manage this flow
 	 */
 	public ViewDescriptor resumeFlowExecution(FacesContext context, String fromAction, String outcome) {
-		Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
+		Serializable id = FlowExecutionHolder.getFlowExecutionId();
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
 		Assert.notNull(flowExecution, "The Flow Execution should not be null");
 		Event event = createEvent(context, fromAction, outcome, null);
+		FlowExecutionListener listener = createFlowExecutionListener(context);
+		flowExecution.getListeners().add(listener);
 		ViewDescriptor selectedView = signalEventIn(flowExecution, event);
-		return afterEvent(event, flowExecutionId, flowExecution, selectedView, FlowExecutionHolder
-				.getFlowExecutionListener());
+		selectedView = afterEvent(event, id, flowExecution, selectedView);
+		flowExecution.getListeners().remove(listener);
+		return selectedView;
 	}
 
 	/**
