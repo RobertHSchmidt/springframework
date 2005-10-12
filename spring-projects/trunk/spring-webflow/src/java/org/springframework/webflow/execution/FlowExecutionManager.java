@@ -509,27 +509,46 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 			ViewDescriptor selectedView) {
 		if (flowExecution.isActive()) {
 			// save the flow execution for future use
-			flowExecutionId = getStorage().save(flowExecutionId, flowExecution, event);
-			flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Saved flow execution out to storage with id: '" + flowExecutionId + "'");
-			}
+			flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, event);
 		}
 		else {
 			if (flowExecutionId != null) {
-				// event processing resulted in a previously saved flow execution ending, cleanup
-				getStorage().remove(flowExecutionId, event);
-				flowExecution.getListeners().fireRemoved(flowExecution, flowExecutionId);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Removed flow execution from storage with id: '" + flowExecutionId + "'");
-				}
+				removeFlowExecution(flowExecutionId, flowExecution, event);
 			}
 		}
-		selectedView = prepareViewDescriptor(selectedView, flowExecutionId, flowExecution);
+		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
+	}
+
+	/**
+	 * Save the flow execution to storage.
+	 * @param flowExecutionId the previous storage id (if previously saved)
+	 * @param flowExecution the execution
+	 * @param event the source event
+	 * @return the new storage id (may be different)
+	 */
+	protected Serializable saveFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event event) {
+		flowExecutionId = getStorage().save(flowExecutionId, flowExecution, event);
+		flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Returning selected view to client: " + selectedView);
+			logger.debug("Saved flow execution out to storage with id: '" + flowExecutionId + "'");
 		}
-		return selectedView;
+		return flowExecutionId;
+	}
+
+	/**
+	 * Remove the flow execution from storage
+	 * @param flowExecutionId the storage id
+	 * @param flowExecution the execution
+	 * @param event the source event
+	 */
+	protected void removeFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event event) {
+		// event processing resulted in a previously saved flow execution
+		// ending, cleanup
+		getStorage().remove(flowExecutionId, event);
+		flowExecution.getListeners().fireRemoved(flowExecution, flowExecutionId);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Removed flow execution from storage with id: '" + flowExecutionId + "'");
+		}
 	}
 
 	// subclassing hooks
@@ -619,27 +638,30 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * {@link #FLOW_EXECUTION_CONTEXT_ATTRIBUTE},
 	 * {@link #FLOW_EXECUTION_ID_ATTRIBUTE} and
 	 * {@link #CURRENT_STATE_ID_ATTRIBUTE}.
-	 * @param viewDescriptor the view descriptor to be processed
+	 * @param selectedView the view descriptor to be processed
 	 * @param flowExecutionId the unique id of the flow execution
 	 * @param flowExecutionContext the flow context providing info about the
 	 * flow execution
 	 * @return the processed view descriptor
 	 */
-	protected ViewDescriptor prepareViewDescriptor(ViewDescriptor viewDescriptor, Serializable flowExecutionId,
+	protected ViewDescriptor prepareSelectedView(ViewDescriptor selectedView, Serializable flowExecutionId,
 			FlowExecutionContext flowExecutionContext) {
-		if (flowExecutionContext.isActive() && viewDescriptor != null) {
-			if (viewDescriptor.isRedirect()) {
-				viewDescriptor.addObject(getFlowExecutionIdParameterName(), flowExecutionId);
+		if (flowExecutionContext.isActive() && selectedView != null) {
+			if (selectedView.isRedirect()) {
+				selectedView.addObject(getFlowExecutionIdParameterName(), flowExecutionId);
 			}
 			else {
 				// make the entire flow execution context available in the model
-				viewDescriptor.addObject(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
+				selectedView.addObject(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
 				// make the unique flow execution id and current state id
 				// available in the model as convenience to views
-				viewDescriptor.addObject(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
-				viewDescriptor.addObject(CURRENT_STATE_ID_ATTRIBUTE, flowExecutionContext.getCurrentState().getId());
+				selectedView.addObject(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
+				selectedView.addObject(CURRENT_STATE_ID_ATTRIBUTE, flowExecutionContext.getCurrentState().getId());
 			}
 		}
-		return viewDescriptor;
+		if (logger.isDebugEnabled()) {
+			logger.debug("Returning selected view to client: " + selectedView);
+		}
+		return selectedView;
 	}
 }
