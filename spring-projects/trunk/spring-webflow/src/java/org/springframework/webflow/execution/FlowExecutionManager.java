@@ -433,17 +433,13 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		FlowExecution flowExecution;
 		ViewDescriptor selectedView;
 		if (flowExecutionId == null) {
-			// create flow execution, also attaching the optional listener
 			flowExecution = createFlowExecution(getFlow(event));
 			selectedView = flowExecution.start(event);
 		}
 		else {
-			// load flow execution, also attaching the optional listener
 			flowExecution = loadFlowExecution(flowExecutionId, event);
 			selectedView = signalEventIn(flowExecution, event);
 		}
-		// clean-up or store the FlowExecution and prepare the ViewDescriptor
-		// for the client
 		return afterEvent(event, flowExecutionId, flowExecution, selectedView);
 	}
 
