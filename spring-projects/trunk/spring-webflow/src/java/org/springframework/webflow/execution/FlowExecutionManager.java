@@ -444,6 +444,50 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	}
 
 	/**
+	 * Create a new flow execution for given flow. Subclasses could redefine
+	 * this if they wish to use a specialized FlowExecution implementation
+	 * class.
+	 * @param flow the flow
+	 * @return the created flow execution
+	 */
+	protected FlowExecution createFlowExecution(Flow flow) {
+		FlowExecution flowExecution = new FlowExecutionImpl(flow, getListeners(flow), getTransactionSynchronizer());
+		flowExecution.getListeners().fireCreated(flowExecution);
+		return flowExecution;
+	}
+
+	/**
+	 * Obtain a flow to use from given event. If there is a "_flowId" parameter
+	 * specified in the event, the flow with that id will be returend after
+	 * lookup using the flow locator. If no "_flowId" parameter is present in
+	 * the event, the default top-level flow will be returned.
+	 */
+	protected Flow getFlow(Event event) {
+		String flowId = ExternalEvent.verifySingleStringInputParameter(getFlowIdParameterName(), event
+				.getParameter(getFlowIdParameterName()));
+		if (!StringUtils.hasText(flowId)) {
+			Assert.notNull(getFlow(),
+					"This flow execution manager is not configured with a default top-level flow--that means "
+							+ "the flow to launch must be provided by the client via the '" + getFlowIdParameterName()
+							+ "' parameter, yet no such parameter was provided in this event."
+							+ " Parameters provided were: " + StylerUtils.style(event.getParameters()));
+			return getFlow();
+		}
+		else {
+			Assert.notNull(getFlowLocator(), "The flow locator is required to lookup the requested flow with id '"
+					+ flowId + "'; however, the flowLocator property is null");
+			return getFlowLocator().getFlow(flowId);
+		}
+	}
+
+	/**
+	 * Returns the name of the flow id parameter in the event ("_flowId").
+	 */
+	public String getFlowIdParameterName() {
+		return FLOW_ID_PARAMETER;
+	}
+
+	/**
 	 * Load an existing FlowExecution based on data in the specified event
 	 * 
 	 * @param event the event that occured
@@ -545,52 +589,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removed flow execution from storage with id: '" + flowExecutionId + "'");
 		}
-	}
-
-	// subclassing hooks
-
-	/**
-	 * Create a new flow execution for given flow. Subclasses could redefine
-	 * this if they wish to use a specialized FlowExecution implementation
-	 * class.
-	 * @param flow the flow
-	 * @return the created flow execution
-	 */
-	protected FlowExecution createFlowExecution(Flow flow) {
-		FlowExecution flowExecution = new FlowExecutionImpl(flow, getListeners(flow), getTransactionSynchronizer());
-		flowExecution.getListeners().fireCreated(flowExecution);
-		return flowExecution;
-	}
-
-	/**
-	 * Obtain a flow to use from given event. If there is a "_flowId" parameter
-	 * specified in the event, the flow with that id will be returend after
-	 * lookup using the flow locator. If no "_flowId" parameter is present in
-	 * the event, the default top-level flow will be returned.
-	 */
-	protected Flow getFlow(Event event) {
-		String flowId = ExternalEvent.verifySingleStringInputParameter(getFlowIdParameterName(), event
-				.getParameter(getFlowIdParameterName()));
-		if (!StringUtils.hasText(flowId)) {
-			Assert.notNull(getFlow(),
-					"This flow execution manager is not configured with a default top-level flow--that means "
-							+ "the flow to launch must be provided by the client via the '" + getFlowIdParameterName()
-							+ "' parameter, yet no such parameter was provided in this event."
-							+ " Parameters provided were: " + StylerUtils.style(event.getParameters()));
-			return getFlow();
-		}
-		else {
-			Assert.notNull(getFlowLocator(), "The flow locator is required to lookup the requested flow with id '"
-					+ flowId + "'; however, the flowLocator property is null");
-			return getFlowLocator().getFlow(flowId);
-		}
-	}
-
-	/**
-	 * Returns the name of the flow id parameter in the event ("_flowId").
-	 */
-	public String getFlowIdParameterName() {
-		return FLOW_ID_PARAMETER;
 	}
 
 	/**
