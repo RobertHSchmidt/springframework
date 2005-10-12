@@ -134,7 +134,7 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	public void beginTransaction(RequestContext context) {
 		String token = generateToken();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Beginning new application transaction; txToken is: '" + token + "'");
+			logger.debug("Beginning new application transaction; transactionId='" + token + "'");
 		}
 		setToken(context, token);
 	}
@@ -147,9 +147,10 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	}
 
 	public Map getModel(RequestContext context) {
-		if (inTransaction(context, false)) {
+		String transactionId = getToken(context);
+		if (StringUtils.hasText(transactionId)) {
 			Map model = new HashMap(1);
-			model.put(getTransactionTokenAttributeName(), getToken(context));
+			model.put(getTransactionTokenAttributeName(), transactionId);
 			return model;
 		}
 		else {
