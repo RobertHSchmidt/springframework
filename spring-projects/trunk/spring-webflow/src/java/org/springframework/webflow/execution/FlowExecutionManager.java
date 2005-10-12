@@ -444,6 +444,16 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	}
 
 	/**
+	 * Obtain a unique flow execution id from given event.
+	 * @param event the event
+	 * @return the obtained id or <code>null</code> if not found
+	 */
+	public String getFlowExecutionId(Event event) {
+		return ExternalEvent.verifySingleStringInputParameter(getFlowExecutionIdParameterName(), event
+				.getParameter(getFlowExecutionIdParameterName()));
+	}
+
+	/**
 	 * Create a new flow execution for given flow. Subclasses could redefine
 	 * this if they wish to use a specialized FlowExecution implementation
 	 * class.
@@ -589,16 +599,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removed flow execution from storage with id: '" + flowExecutionId + "'");
 		}
-	}
-
-	/**
-	 * Obtain a unique flow execution id from given event.
-	 * @param event the event
-	 * @return the obtained id or <code>null</code> if not found
-	 */
-	public String getFlowExecutionId(Event event) {
-		return ExternalEvent.verifySingleStringInputParameter(getFlowExecutionIdParameterName(), event
-				.getParameter(getFlowExecutionIdParameterName()));
 	}
 
 	/**
