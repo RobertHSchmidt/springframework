@@ -105,7 +105,6 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 		else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
 			logger.trace("JSF before phase: Render response");
-			
 			FlowExecutionHolder.clearFlowExecution();
 		}
 	}
