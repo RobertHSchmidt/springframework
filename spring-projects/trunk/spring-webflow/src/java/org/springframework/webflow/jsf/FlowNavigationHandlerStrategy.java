@@ -156,6 +156,16 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 		FlowExecutionHolder.setFlowExecution(null, flowExecution);
 		Event event = createEvent(context, fromAction, outcome, null);
 		ViewDescriptor selectedView = flowExecution.start(event);
+		
+		// enable following after flow execution storage changes are done
+		// NOTE: the sequence of preparing the view, and then saving the storage 
+		// (via the phase listener) is the reverse of that used for other web
+		// frameworks, but it is needed since the JSF render phase may create
+		// data in the flow scope 
+		// it _does_ imply that client side flow storage may not be used, as that
+		// flow storage changes the flow ID
+		//return prepareSelectedView(selectedView, null, flowExecution);
+		
 		return afterEvent(event, null, flowExecution, selectedView);
 	}
 
@@ -214,10 +224,15 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 		Event event = createEvent(context, fromAction, outcome, null);
 		ViewDescriptor selectedView = signalEventIn(flowExecution, event);
 		
-		// this is currently completely wrong, as it needs to come after the save!
+		// enable following after flow execution storage changes are done
+		// NOTE: the sequence of preparing the view, and then saving the storage 
+		// (via the phase listener) is the reverse of that used for other web
+		// frameworks, but it is needed since the JSF render phase may create
+		// data in the flow scope 
+		// it _does_ imply that client side flow storage may not be used, as that
+		// flow storage changes the flow ID
 		//return prepareSelectedView(selectedView, id, flowExecution);
 		
-		// temp
 		return afterEvent(event, id, flowExecution, selectedView);
 	}
 
