@@ -20,7 +20,6 @@ import java.io.Serializable;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionListener;
 
 /**
  * Simple holder class that associates a FlowExecution instance with the current

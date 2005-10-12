@@ -463,6 +463,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	protected FlowExecution createFlowExecution(Flow flow) {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow, getListeners(flow), getTransactionSynchronizer());
 		flowExecution.getListeners().fireCreated(flowExecution);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Created a new flow execution for flow definition: '" + flow.getId() + "'");
+		}
 		return flowExecution;
 	}
 
@@ -512,6 +515,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		// rehydrate the execution if neccessary (if it had been serialized out)
 		flowExecution.rehydrate(getFlowLocator(), this, getTransactionSynchronizer());
 		flowExecution.getListeners().fireLoaded(flowExecution, flowExecutionId);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Loaded existing flow execution from storage with id: '" + flowExecutionId + "'");
+		}
 		return flowExecution;
 	}
 

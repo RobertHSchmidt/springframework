@@ -7,25 +7,29 @@ import java.util.zip.ZipEntry;
 
 import org.springframework.core.io.AbstractResource;
 
+/**
+ * A resource providing access to the input stream of a jar file entry.
+ * @author Keith Donald
+ */
 public class JarFileResource extends AbstractResource {
 
 	private JarFile jarFile;
-	
+
 	private ZipEntry entry;
-	
+
 	public JarFileResource(JarFile jarFile, ZipEntry entry) {
 		this.jarFile = jarFile;
 		this.entry = entry;
 	}
-	
+
 	public JarFile getJarFile() {
 		return jarFile;
 	}
-	
+
 	public ZipEntry getEntry() {
 		return entry;
 	}
-	
+
 	public String getDescription() {
 		return entry.getName();
 	}
@@ -33,5 +37,4 @@ public class JarFileResource extends AbstractResource {
 	public InputStream getInputStream() throws IOException {
 		return jarFile.getInputStream(entry);
 	}
-
 }

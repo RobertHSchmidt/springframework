@@ -48,11 +48,7 @@ import org.springframework.webflow.execution.servlet.ServletFlowExecutionManager
  * <p>
  * On each request received by this action, a StrutsEvent object is created as
  * input to the web flow system. This external source event provides access to
- * the action form, action mapping, and other struts-specific constructs. As a
- * convenience, the "actionForm" attribute is also exposed in requestScope after
- * a request is submitted. This means you may access your action form from your
- * web flow artifacts as follows:
- * <code>context.getRequestScope().getAttribute("actionForm")</code>.
+ * the action form, action mapping, and other struts-specific constructs.
  * <p>
  * This class also is aware of the <code>SpringBindingActionForm</code>
  * adapter, which adapts Spring's data binding infrastructure (based on POJO
