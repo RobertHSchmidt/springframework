@@ -88,7 +88,6 @@ public class FlowPhaseListener implements PhaseListener {
 			Serializable id = strategy.getFlowExecutionId(jsfEvent);
 			if (id != null) {
 				FlowExecution flowExecution = strategy.loadFlowExecution(id, jsfEvent);
-				flowExecution.getListeners().fireLoaded(flowExecution, id);
 				FlowExecutionHolder.setFlowExecution(id, flowExecution);
 			}
 		}

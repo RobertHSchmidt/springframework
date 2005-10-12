@@ -426,18 +426,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @return the view descriptor of the model and view to render
 	 */
 	public ViewDescriptor onEvent(Event event) {
-		return onEvent(event, null);
-	}
-
-	/**
-	 * Signal the occurence of the specified event - this is the entry point
-	 * into the webflow system for managing all executing flows.
-	 * @param event the event that occured
-	 * @param listener a listener interested in flow execution lifecycle events
-	 * that happen <i>while handling this event</i>
-	 * @return the view descriptor of the model and view to render
-	 */
-	public ViewDescriptor onEvent(Event event, FlowExecutionListener listener) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("New request received from client, source event is: " + event);
 		}
@@ -447,28 +435,16 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		if (flowExecutionId == null) {
 			// create flow execution, also attaching the optional listener
 			flowExecution = createFlowExecution(getFlow(event));
-			if (listener != null) {
-				flowExecution.getListeners().add(listener);
-			}
-			flowExecution.getListeners().fireCreated(flowExecution);
 			selectedView = flowExecution.start(event);
 		}
 		else {
 			// load flow execution, also attaching the optional listener
 			flowExecution = loadFlowExecution(flowExecutionId, event);
-			if (listener != null) {
-				flowExecution.getListeners().add(listener);
-			}
-			flowExecution.getListeners().fireLoaded(flowExecution, flowExecutionId);
 			selectedView = signalEventIn(flowExecution, event);
 		}
 		// clean-up or store the FlowExecution and prepare the ViewDescriptor
 		// for the client
-		selectedView = afterEvent(event, flowExecutionId, flowExecution, selectedView);
-		if (listener != null) {
-			flowExecution.getListeners().remove(listener);
-		}
-		return selectedView;
+		return afterEvent(event, flowExecutionId, flowExecution, selectedView);
 	}
 
 	/**
@@ -485,6 +461,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		FlowExecution flowExecution = getStorage().load(flowExecutionId, event);
 		// rehydrate the execution if neccessary (if it had been serialized out)
 		flowExecution.rehydrate(getFlowLocator(), this, getTransactionSynchronizer());
+		flowExecution.getListeners().fireLoaded(flowExecution, flowExecutionId);
 		return flowExecution;
 	}
 
@@ -565,7 +542,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @return the created flow execution
 	 */
 	protected FlowExecution createFlowExecution(Flow flow) {
-		return new FlowExecutionImpl(flow, getListeners(flow), getTransactionSynchronizer());
+		FlowExecution flowExecution = new FlowExecutionImpl(flow, getListeners(flow), getTransactionSynchronizer());
+		flowExecution.getListeners().fireCreated(flowExecution);
+		return flowExecution;
 	}
 
 	/**

@@ -23,13 +23,12 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.DataStoreFlowExecutionStorage;
-import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.SessionDataStoreAccessor;
 
 /**
- * Flow execution manager to manage flow executions using HTTP servlet
- * requests and the HTTP session.
+ * Flow execution manager to manage flow executions using HTTP servlet requests
+ * and the HTTP session.
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -79,26 +78,12 @@ public class ServletFlowExecutionManager extends FlowExecutionManager {
 		return onEvent(createEvent(request, response));
 	}
 
-	/**
-	 * The main entry point into managed HTTP-based flow executions.
-	 * @param request the current HTTP request
-	 * @param response the current HTTP response
-	 * @param flowExecutionListener a listener interested in flow execution
-	 *        lifecycle events that happen <i>while handling this request</i>
-	 * @return the view descriptor of the model and view to render
-	 * @throws Exception in case of errors
-	 */
-	public ViewDescriptor handle(HttpServletRequest request, HttpServletResponse response,
-			FlowExecutionListener flowExecutionListener) throws Exception {
-		return onEvent(createEvent(request, response), flowExecutionListener);
-	}
-
 	// subclassing hooks
 
 	/**
-	 * Create a flow event wrapping given request and response. Subclasses
-	 * can override this, e.g. when they want to use special names for the
-	 * request parameters.
+	 * Create a flow event wrapping given request and response. Subclasses can
+	 * override this, e.g. when they want to use special names for the request
+	 * parameters.
 	 */
 	protected Event createEvent(HttpServletRequest request, HttpServletResponse response) {
 		return new ServletEvent(request, response);

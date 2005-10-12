@@ -18,7 +18,6 @@ package org.springframework.webflow.jsf;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -154,15 +153,10 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 		Assert.hasText(flowId, "The id of the flow to launch was not provided in the outcome string "
 				+ "- programmer error");
 		FlowExecution flowExecution = createFlowExecution(getFlowLocator().getFlow(flowId));
-		FlowExecutionListener listener = createFlowExecutionListener(context);
-		flowExecution.getListeners().add(listener);
-		flowExecution.getListeners().fireCreated(flowExecution);
 		FlowExecutionHolder.setFlowExecution(null, flowExecution);
 		Event event = createEvent(context, fromAction, outcome, null);
 		ViewDescriptor selectedView = flowExecution.start(event);
-		selectedView = afterEvent(event, null, flowExecution, selectedView);
-		flowExecution.getListeners().remove(listener);
-		return selectedView;
+		return afterEvent(event, null, flowExecution, selectedView);
 	}
 
 	/**
@@ -218,12 +212,8 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 		Serializable id = FlowExecutionHolder.getFlowExecutionId();
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
 		Event event = createEvent(context, fromAction, outcome, null);
-		FlowExecutionListener listener = createFlowExecutionListener(context);
-		flowExecution.getListeners().add(listener);
 		ViewDescriptor selectedView = signalEventIn(flowExecution, event);
-		selectedView = afterEvent(event, id, flowExecution, selectedView);
-		flowExecution.getListeners().remove(listener);
-		return selectedView;
+		return afterEvent(event, id, flowExecution, selectedView);
 	}
 
 	/**
