@@ -438,47 +438,37 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @return the view descriptor of the model and view to render
 	 */
 	public ViewDescriptor onEvent(Event event, FlowExecutionListener listener) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("New request received from client, source event is: " + event);
+		}
 		Serializable flowExecutionId = getFlowExecutionId(event);
 		FlowExecution flowExecution;
 		ViewDescriptor selectedView;
 		if (flowExecutionId == null) {
 			// create flow execution, also attaching the optional listener
-			flowExecution = createFlowExecution(event, listener);
+			flowExecution = createFlowExecution(getFlow(event));
+			if (listener != null) {
+				flowExecution.getListeners().add(listener);
+			}
+			flowExecution.getListeners().fireCreated(flowExecution);
 			selectedView = flowExecution.start(event);
 		}
 		else {
 			// load flow execution, also attaching the optional listener
-			flowExecution = loadFlowExecution(event, listener);
+			flowExecution = loadFlowExecution(flowExecutionId, event);
+			if (listener != null) {
+				flowExecution.getListeners().add(listener);
+			}
+			flowExecution.getListeners().fireLoaded(flowExecution, flowExecutionId);
 			selectedView = signalEventIn(flowExecution, event);
 		}
 		// clean-up or store the FlowExecution and prepare the ViewDescriptor
 		// for the client
-		return afterEvent(event, flowExecutionId, flowExecution, selectedView, listener);
-	}
-
-	/**
-	 * Create a new FlowExecution based on data in the specified event
-	 * 
-	 * @param event the event that occured
-	 * @param listener a listener interested in flow execution lifecycle events
-	 * that happen <i>while handling this event</i>. Will be added to flow
-	 * execution listeners
-	 */
-	protected FlowExecution createFlowExecution(Event event, FlowExecutionListener listener) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("New request received from client, source event is: " + event);
-		}
-		Flow flow = getFlow(event);
-		// start a new flow execution
-		FlowExecution flowExecution = createFlowExecution(flow);
+		selectedView = afterEvent(event, flowExecutionId, flowExecution, selectedView);
 		if (listener != null) {
-			flowExecution.getListeners().add(listener);
+			flowExecution.getListeners().remove(listener);
 		}
-		flowExecution.getListeners().fireCreated(flowExecution);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Created a new flow execution for flow definition: '" + flow.getId() + "'");
-		}
-		return flowExecution;
+		return selectedView;
 	}
 
 	/**
@@ -489,23 +479,12 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * that happen <i>while handling this event</i>. Will be added to flow
 	 * execution listeners
 	 */
-	public FlowExecution loadFlowExecution(Event event, FlowExecutionListener listener) {
-		Serializable flowExecutionId = getFlowExecutionId(event);
-		if (flowExecutionId == null) {
-			return null;
-		}
+	public FlowExecution loadFlowExecution(Serializable flowExecutionId, Event event) {
 		// client is participating in an existing flow execution, retrieve
 		// information about it
 		FlowExecution flowExecution = getStorage().load(flowExecutionId, event);
 		// rehydrate the execution if neccessary (if it had been serialized out)
 		flowExecution.rehydrate(getFlowLocator(), this, getTransactionSynchronizer());
-		if (listener != null) {
-			flowExecution.getListeners().add(listener);
-		}
-		flowExecution.getListeners().fireLoaded(flowExecution, flowExecutionId);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Loaded existing flow execution from storage with id: '" + flowExecutionId + "'");
-		}
 		return flowExecution;
 	}
 
@@ -518,7 +497,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @return the raw or unprepared view descriptor of the model and view to
 	 * render
 	 */
-	public ViewDescriptor signalEventIn(FlowExecution flowExecution, Event event) {
+	protected ViewDescriptor signalEventIn(FlowExecution flowExecution, Event event) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("New request received from client, source event is: " + event);
 		}
@@ -549,8 +528,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * from flow execution listeners
 	 * @return the prepared view descriptor of the model and view to render
 	 */
-	public ViewDescriptor afterEvent(Event event, Serializable flowExecutionId, FlowExecution flowExecution,
-			ViewDescriptor selectedView, FlowExecutionListener listener) {
+	protected ViewDescriptor afterEvent(Event event, Serializable flowExecutionId, FlowExecution flowExecution,
+			ViewDescriptor selectedView) {
 		if (flowExecution.isActive()) {
 			// save the flow execution for future use
 			flowExecutionId = getStorage().save(flowExecutionId, flowExecution, event);
@@ -568,9 +547,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 					logger.debug("Removed flow execution from storage with id: '" + flowExecutionId + "'");
 				}
 			}
-		}
-		if (listener != null) {
-			flowExecution.getListeners().remove(listener);
 		}
 		selectedView = prepareViewDescriptor(selectedView, flowExecutionId, flowExecution);
 		if (logger.isDebugEnabled()) {
