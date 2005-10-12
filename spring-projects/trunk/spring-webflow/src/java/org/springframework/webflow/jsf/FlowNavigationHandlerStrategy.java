@@ -213,6 +213,11 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
 		Event event = createEvent(context, fromAction, outcome, null);
 		ViewDescriptor selectedView = signalEventIn(flowExecution, event);
+		
+		// this is currently completely wrong, as it needs to come after the save!
+		//return prepareSelectedView(selectedView, id, flowExecution);
+		
+		// temp
 		return afterEvent(event, id, flowExecution, selectedView);
 	}
 

@@ -5,6 +5,12 @@
 <webflow id="sellItem" start-state="enterPriceAndItemCount">
 
 	<view-state id="enterPriceAndItemCount" view="/priceAndItemCountForm">
+		<transition on="submit" to="anotherEnterPriceAndItemCount">
+			<action bean="sellItemAction" />
+		</transition>
+	</view-state>
+	
+	<view-state id="anotherEnterPriceAndItemCount" view="/anotherPriceAndItemCountForm">
 		<transition on="submit" to="enterCategory">
 			<action bean="sellItemAction" />
 		</transition>

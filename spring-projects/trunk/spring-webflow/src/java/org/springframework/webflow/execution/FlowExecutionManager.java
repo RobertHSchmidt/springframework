@@ -108,6 +108,7 @@ import org.springframework.webflow.access.FlowLocator;
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
+ * @author Colin Sampaleanu
  */
 public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFactoryAware {
 
