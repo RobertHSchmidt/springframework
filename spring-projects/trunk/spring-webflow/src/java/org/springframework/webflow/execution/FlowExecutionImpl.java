@@ -297,12 +297,12 @@ public class FlowExecutionImpl implements FlowExecution, Serializable, FlowExecu
 		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		try {
-			ViewDescriptor viewDescriptor = context.spawnFlow(rootFlow.getStartState(), new HashMap());
+			ViewDescriptor selectedView = context.spawnFlow(rootFlow.getStartState(), new HashMap());
 			if (isActive()) {
 				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
 				getListeners().firePaused(context);
 			}
-			return viewDescriptor;
+			return selectedView;
 		}
 		finally {
 			getListeners().fireRequestProcessed(context);
@@ -342,14 +342,17 @@ public class FlowExecutionImpl implements FlowExecution, Serializable, FlowExecu
 		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
+		if (getActiveFlow().isTransactional()) {
+			context.assertInTransaction(false);
+		}
 		getListeners().fireResumed(context);
 		try {
-			ViewDescriptor viewDescriptor = state.onEvent(sourceEvent, context);
+			ViewDescriptor selectedView = state.onEvent(sourceEvent, context);
 			if (isActive()) {
 				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
 				getListeners().firePaused(context);
 			}
-			return viewDescriptor;
+			return selectedView;
 		}
 		finally {
 			getListeners().fireRequestProcessed(context);

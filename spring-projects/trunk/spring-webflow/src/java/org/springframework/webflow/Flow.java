@@ -347,7 +347,8 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Start a new execution of this flow in the specified state with the provided input.
+	 * Start a new execution of this flow in the specified state with the
+	 * provided input.
 	 * @param state The state to start in
 	 * @param input the flow execution input
 	 * @param context the executing state request context
@@ -355,30 +356,37 @@ public class Flow extends AnnotatedObject {
 	public ViewDescriptor start(State state, Map input, FlowExecutionControl control, StateContext context) {
 		control.getListeners().fireSessionStarting(context, state, input);
 		control.activateSession(this, input);
-		boolean transactional = getBooleanProperty("transactional", false);
-		if (transactional) {
+		if (isTransactional()) {
 			context.beginTransaction();
 		}
 		ViewDescriptor selectedView = state.enter(context);
 		control.getListeners().fireSessionStarted(context);
 		return selectedView;
 	}
-	
+
 	/**
-	 * End the active session for this flow in the context of the current request.
+	 * End the active session for this flow in the context of the current
+	 * request.
 	 * @param context the state request context
 	 * @return the ended flow session
 	 */
 	public FlowSession end(FlowExecutionControl control, StateContext context) {
-		boolean transactional = getBooleanProperty("transactional", false);
-		if (transactional) {
+		if (isTransactional()) {
 			context.endTransaction();
 		}
 		FlowSession endedSession = control.endActiveFlowSession();
 		control.getListeners().fireSessionEnded(context, endedSession);
 		return endedSession;
 	}
-	
+
+	/**
+	 * Is this flow annotated as transactional?
+	 * @return true if yes, false otherwise
+	 */
+	public boolean isTransactional() {
+		return getBooleanProperty("transactional", false);
+	}
+
 	public String toString() {
 		return new ToStringCreator(this).append("id", id).append("startState", startState)
 				.append("states", this.states).toString();
