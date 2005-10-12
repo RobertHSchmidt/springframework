@@ -153,14 +153,12 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 		String flowId = outcome.substring(WEBFLOW_PREFIX.length());
 		Assert.hasText(flowId, "The id of the flow to launch was not provided in the outcome string "
 				+ "- programmer error");
-		Map parameters = new HashMap(1);
-		parameters.put(FlowExecutionManager.FLOW_ID_PARAMETER, flowId);
-		Event event = createEvent(context, fromAction, outcome, parameters);
-		FlowExecution flowExecution = createFlowExecution(getFlow(event));
+		FlowExecution flowExecution = createFlowExecution(getFlowLocator().getFlow(flowId));
 		FlowExecutionListener listener = createFlowExecutionListener(context);
 		flowExecution.getListeners().add(listener);
 		flowExecution.getListeners().fireCreated(flowExecution);
 		FlowExecutionHolder.setFlowExecution(null, flowExecution);
+		Event event = createEvent(context, fromAction, outcome, null);
 		ViewDescriptor selectedView = flowExecution.start(event);
 		selectedView = afterEvent(event, null, flowExecution, selectedView);
 		flowExecution.getListeners().remove(listener);
@@ -219,7 +217,6 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 	public ViewDescriptor resumeFlowExecution(FacesContext context, String fromAction, String outcome) {
 		Serializable id = FlowExecutionHolder.getFlowExecutionId();
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-		Assert.notNull(flowExecution, "The Flow Execution should not be null");
 		Event event = createEvent(context, fromAction, outcome, null);
 		FlowExecutionListener listener = createFlowExecutionListener(context);
 		flowExecution.getListeners().add(listener);
