@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Event;
@@ -74,15 +75,20 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 */
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	public void afterPropertiesSet() {
-		initAction();
+	public void afterPropertiesSet() throws Exception {
+		try {
+			initAction();
+		}
+		catch (Exception ex) {
+			throw new BeanInitializationException("Initialization of Action failed: " + ex.getMessage(), ex);
+		}
 	}
 
 	/**
 	 * Action initializing callback, may be overriden by subclasses to perform
 	 * custom initialization logic.
 	 */
-	protected void initAction() {
+	protected void initAction() throws Exception {
 	}
 
 	// creating common events
