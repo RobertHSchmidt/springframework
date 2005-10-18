@@ -3,9 +3,33 @@
 	<title>Preface</title>
 	
 	<para>
-		Spring Web Flow (SWF) is a component of the Spring
-		Framework focused on the definition and orchestration of
-		page flow within a web application.
+		Many web applications consist of a mix of free browsing,
+		where the user is allowed to navigate a web site as they please,
+		and controlled navigations where the user is guided through
+		a series of steps towards completion of a business goal.
+	</para>		
+		Consider the typical shopping cart application.  While a user is
+		shopping, she is freely browsing available products, adding her 
+		favorites to her cart while skipping over others.  This is a good
+		"free browsing" use case.  However, when the user decides to
+		checkout, a controlled workflow begins: the checkout process.  
+		Such a process represents a single user conversation that takes
+		place over a series of steps, and navigation from step-to-step
+		is controlled.  The entire process represents an discrete
+		application transaction that must complete exactly once
+		or not at all.
+	<para>
+		Consider some other good examples of "controlled navigations": 
+		applying for a loan, paying your taxes on-line,
+		booking a trip reservation, registering an account, or
+		updating a warehouse inventory.
+	</para>
+	<para>
+		Traditional approaches to modeling and enforcing such controlled
+		navigations or "flows" fall flat, and fail to express the Flow as a 
+		first class concept.  Spring Web Flow (SWF) is a component of the
+		Spring Framework's web stack focused on solving this problem 
+		in a very productive and powerful manner.
 	</para>
 </preface>
 
@@ -14,27 +38,71 @@
 	<title>Introduction</title>
 	<sect1 id="introduction-overview">
 		<title>Overview</title>
-
+		<mediaobject>
+			<imageobject role="fo">
+				<imagedata fileref="images/spring-webflow.svg" format="SVG" align="center"/>
+			</imageobject>
+			<imageobject role="html">
+				<imagedata fileref="images/spring-webflow.gif" format="GIF" align="center"/>
+			</imageobject>
+		</mediaobject>
 		<para>
-			Spring Web Flow (SWF) is a core module of the Spring
-			Framework focused on the definition and orchestration of
-			page flow within a web application.
+			Spring Web Flow (SWF) is a component of Spring's 
+			web stack focused on the definition and orchestration
+			of page flow within a web application.
 		</para>
 		<para>
-			The system allows you to capture logical page flows as
+			The system allows you to express logical page flows as
 			self-contained modules that are reusable in different
-			situations. The system is ideal for building web application
-			modules that guide the user through controlled navigations
-			that drive business processes. These processes typically
-			span HTTP requests and may be dynamic in nature.
+			situations.  These flows are intended to guide users
+			through the implementation of business processes.
+			Such flows typically execute accross HTTP requests
+			and may be dynamic in nature.
 		</para>
 		<para>
-			SWF exists at a higher-level of abstraction, building on
-			existing frameworks like Struts, Spring MVC, and JSF,
-			capturing your application's page flow explicity in a
-			declarative fashion. SWF is a very a powerful framework
-			based on a finite-state machine for the definition and
-			execution of a web conversation.
+			SWF exists at a higher level of abstraction, integrating
+			with base frameworks such as Struts, Spring MVC, and JSF,
+			to capture your application's page flow explicity in a
+			declarative fashion.  SWF is a very a powerful 
+			controller framework based on a finite-state machine
+			for the definition and execution of a web conversation.
 		</para>
+		<para>
+			The <emphasis>webflow</emphasis> package contains the
+			central abstractions of the framework.  These abstractions
+			consist of definition artifacts such as Flow, State,
+			and Action that define the core "domain language" for
+			expressing flows.
+		</para>
+		<para>
+			The <emphasis>config</emphasis> package contains abstractions
+			used at configuration-time for building and assembling Flows.
+		</para>
+		<para>
+			The <emphasis>execution</emphasis> package contains runtime-only 
+			abstractions for executing Flows.  This is also where the
+			implementation of the SWF finite-state machine resides.
+		</para>
+		<para>
+			The <emphasis>action</emphasis> package contains implementations
+			of the core "Action" abstraction for executing arbitrary
+			command logic within a Flow.
+		</para>		
+		<para>
+			The <emphasis>mvc</emphasis> package contains the Spring MVC 
+			integration support.
+		</para>		
+		<para>
+			The <emphasis>struts</emphasis> package contains the Struts 
+			integration support.
+		</para>		
+		<para>
+			The <emphasis>jsf</emphasis> package contains the JSF 
+			integration support.
+		</para>		
+		<para>
+			The <emphasis>test</emphasis> package contains support for
+			testing Flow Executions out-of-container.
+		</para>		
 	</sect1>
 </chapter>
