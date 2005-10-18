@@ -36,12 +36,7 @@
 	</bean>
 
 	<bean id="flowLocator" class="org.springframework.webflow.config.XmlFlowRegistry">
-		<property name="definitionLocations" value="classpath:org/springframework/webflow/samples/sellitem/sellItem-flow.xml"/>
-	</bean>
-
-	<bean id="statisticsService" class="org.springframework.webflow.execution.jmx.StatisticsService">
-		<constructor-arg ref="flowExecutionManager"/>
-		<property name="enabled" value="true"/>
+		<property name="definitionLocations" value="/WEB-INF/sellItem-flow.xml"/>
 	</bean>
 
 	<bean id="mbeanExporter" class="org.springframework.jmx.export.MBeanExporter">
@@ -50,8 +45,18 @@
 				<entry key="spring-webflow:name=flowRegistry" value-ref="flowLocator"/>
 			</map>
 		</property>
+		<property name="assembler">
+			<bean class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler">
+				<property name="managedInterfaces" value="org.springframework.webflow.config.FlowRegistry"/>
+			</bean>
+		</property>
 	</bean>
-	
+
+	<bean id="statisticsService" class="org.springframework.webflow.execution.jmx.StatisticsService">
+		<constructor-arg ref="flowExecutionManager"/>
+		<property name="enabled" value="true"/>
+	</bean>
+
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>
