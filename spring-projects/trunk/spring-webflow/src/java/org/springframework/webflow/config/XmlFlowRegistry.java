@@ -3,8 +3,8 @@ package org.springframework.webflow.config;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -37,7 +37,7 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 	/**
 	 * The map of loaded Flow definitions maintained in this registry.
 	 */
-	private Map flowDefinitions = new HashMap();
+	private Map flowDefinitions = new TreeMap();
 
 	/**
 	 * XML flow definition resources to load.
@@ -125,7 +125,8 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 			loadDefinitions();
 			loadJarDefinitions();
 			loadDirectoryDefinitions();
-		} finally {
+		}
+		finally {
 			Thread.currentThread().setContextClassLoader(loader);
 		}
 	}
@@ -222,6 +223,10 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 		registerFlowDefinition(new RefreshableFlow(flow));
 	}
 
+	public String[] getFlowDefinitionIds() {
+		return (String[])flowDefinitions.keySet().toArray(new String[0]);
+	}
+
 	public int getFlowDefinitionCount() {
 		return flowDefinitions.size();
 	}
@@ -231,7 +236,8 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 		try {
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 			getRefreshableFlow(flowId).refresh();
-		} finally {
+		}
+		finally {
 			Thread.currentThread().setContextClassLoader(loader);
 		}
 	}

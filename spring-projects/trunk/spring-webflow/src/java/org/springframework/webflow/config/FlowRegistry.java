@@ -9,6 +9,12 @@ package org.springframework.webflow.config;
 public interface FlowRegistry {
 
 	/**
+	 * Returns the names of the flow definitions registered in this registry.
+	 * @return the flow definition names
+	 */
+	public String[] getFlowDefinitionIds();
+	
+	/**
 	 * Return the number of flow definitions registered in this registry.
 	 * @return the flow definition count;
 	 */
