@@ -3,7 +3,7 @@ package org.springframework.webflow.samples.sellitem;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.FlowLocator;
@@ -23,7 +23,7 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 
 	protected FlowLocator createFlowLocator() {
 		XmlFlowRegistry registry = new XmlFlowRegistry(new BeanFactoryFlowArtifactLocator(applicationContext));
-		registry.setDefinitionLocations(new Resource[] { new ClassPathResource("sellItem-flow.xml", this.getClass()) });
+		registry.setDefinitionLocations(new Resource[] { new FileSystemResource("WEB-INF/sellItem-flow.xml") });
 		registry.refresh();
 		return registry;
 	}
