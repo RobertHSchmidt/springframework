@@ -6,8 +6,14 @@ package org.springframework.webflow.config;
  * registration as a JMX 1.0 MBean.
  * @author Keith Donald
  */
-public interface FlowRegistryMBean {
+public interface FlowRegistry {
 
+	/**
+	 * Return the number of flow definitions registered in this registry.
+	 * @return the flow definition count;
+	 */
+	public int getFlowDefinitionCount();
+	
 	/**
 	 * Refresh this flow definition registry, reloading all Flow definitions
 	 * from there externalized representations.
