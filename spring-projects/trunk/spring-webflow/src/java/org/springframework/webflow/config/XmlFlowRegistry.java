@@ -33,7 +33,7 @@ import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingBean, BeanFactoryAware {
 
 	protected final Log logger = LogFactory.getLog(getClass());
-	
+
 	/**
 	 * The map of loaded Flow definitions maintained in this registry.
 	 */
@@ -119,14 +119,14 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 	}
 
 	public void refresh() {
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
+			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 			loadDefinitions();
 			loadJarDefinitions();
 			loadDirectoryDefinitions();
-		}
-		catch (Exception e) {
-			logger.warn(e.getMessage());
-			throw new IllegalStateException(e.getMessage());
+		} finally {
+			Thread.currentThread().setContextClassLoader(loader);
 		}
 	}
 
@@ -227,7 +227,13 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 	}
 
 	public void refresh(String flowId) {
-		getRefreshableFlow(flowId).refresh();
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		try {
+			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+			getRefreshableFlow(flowId).refresh();
+		} finally {
+			Thread.currentThread().setContextClassLoader(loader);
+		}
 	}
 
 	public Flow getFlow(String id) throws FlowArtifactLookupException {
