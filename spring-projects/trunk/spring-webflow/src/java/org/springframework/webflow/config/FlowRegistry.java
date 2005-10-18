@@ -1,9 +1,8 @@
 package org.springframework.webflow.config;
 
 /**
- * A management interface for controller Flow definition registries at runtime.
- * This interface follows JMX "MBean" naming conventions for easy implementation
- * registration as a JMX 1.0 MBean.
+ * A management interface for managing Flow definition registries at runtime.
+ * 
  * @author Keith Donald
  */
 public interface FlowRegistry {
