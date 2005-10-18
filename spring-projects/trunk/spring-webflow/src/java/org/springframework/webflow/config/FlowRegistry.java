@@ -18,13 +18,13 @@ public interface FlowRegistry {
 	 * Refresh this flow definition registry, reloading all Flow definitions
 	 * from there externalized representations.
 	 */
-	public abstract void refresh();
+	public void refresh();
 
 	/**
 	 * Refresh the Flow definition in this registry with the flowId provided,
 	 * reloading it from it's externalized representation.
 	 * @param flowId the flow to refresh.
 	 */
-	public abstract void refresh(String flowId);
+	public void refresh(String flowId);
 
 }

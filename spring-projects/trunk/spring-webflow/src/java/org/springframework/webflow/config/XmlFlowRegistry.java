@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,6 +32,8 @@ import org.springframework.webflow.access.NoSuchFlowDefinitionException;
  */
 public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingBean, BeanFactoryAware {
 
+	protected final Log logger = LogFactory.getLog(getClass());
+	
 	/**
 	 * The map of loaded Flow definitions maintained in this registry.
 	 */
@@ -115,9 +119,15 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 	}
 
 	public void refresh() {
-		loadDefinitions();
-		loadJarDefinitions();
-		loadDirectoryDefinitions();
+		try {
+			loadDefinitions();
+			loadJarDefinitions();
+			loadDirectoryDefinitions();
+		}
+		catch (Exception e) {
+			logger.warn(e.getMessage());
+			throw new IllegalStateException(e.getMessage());
+		}
 	}
 
 	protected void loadDefinitions() {
