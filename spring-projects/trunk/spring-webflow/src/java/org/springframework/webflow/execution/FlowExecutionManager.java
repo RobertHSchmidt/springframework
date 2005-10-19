@@ -111,7 +111,7 @@ import org.springframework.webflow.access.FlowLocator;
  * @author Keith Donald
  * @author Colin Sampaleanu
  */
-public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFactoryAware, InitializingBean {
+public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFactoryAware {
 
 	/**
 	 * Clients can send the id (name) of the flow to be started using an event
@@ -399,10 +399,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		this.listenerMap.remove(listener);
 	}
 
-	public void afterPropertiesSet() throws Exception {
-		System.out.println("Listener map:" + listenerMap);
-	}
-	
 	/**
 	 * Remove the criteria for the specified listener.
 	 * @param listener the listener
