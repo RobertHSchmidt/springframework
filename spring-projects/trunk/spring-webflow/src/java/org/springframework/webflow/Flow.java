@@ -90,10 +90,15 @@ import org.springframework.util.StringUtils;
 public class Flow extends AnnotatedObject {
 
 	/**
+	 * Name of the property used to indicate if this flow is transactional.
+	 */
+	private static final String TRANSACTIONAL_PROPERTY = "transactional";
+
+	/**
 	 * Name of the property used to indicate the start state in which to start a
 	 * flow.
 	 */
-	public static final String START_STATE_PROPERTY = "startState";
+	private static final String START_STATE_PROPERTY = "startState";
 
 	/**
 	 * Logger, for use in subclasses.
@@ -427,7 +432,7 @@ public class Flow extends AnnotatedObject {
 	 * @return true if yes, false otherwise
 	 */
 	public boolean isTransactional() {
-		return getBooleanProperty("transactional", false);
+		return getBooleanProperty(TRANSACTIONAL_PROPERTY, false);
 	}
 
 	public String toString() {
