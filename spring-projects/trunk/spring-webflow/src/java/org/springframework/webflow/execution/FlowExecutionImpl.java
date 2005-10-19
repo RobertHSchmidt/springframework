@@ -344,12 +344,22 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		}
 	}
 
+	/**
+	 * Resume this flow execution.
+	 * @param context the state request context
+	 */
 	protected void resume(StateContext context) {
 		getActiveFlow().resume(context);
 		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 		getListeners().fireResumed(context);
 	}
 	
+	/**
+	 * Pause this flow execution.
+	 * @param context the state request context
+	 * @param selectedView the initial selected view to render
+	 * @return the selected view to render
+	 */
 	protected ViewDescriptor pause(StateContext context, ViewDescriptor selectedView) {
 		if (!isActive()) {
 			return selectedView;
