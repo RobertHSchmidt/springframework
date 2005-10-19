@@ -105,10 +105,10 @@ public interface RequestContext {
 	 * <p>
 	 * This method allows consistent access to state result event parameters.
 	 * 
-	 * @param id the state id
+	 * @param stateId the state id
 	 * @return the state result event
 	 */
-	public Event getResultEvent(String id);
+	public Event getResultEvent(String stateId);
 
 	/**
 	 * Returns the last event signaled during this request. The event may or may
