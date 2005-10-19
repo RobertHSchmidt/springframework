@@ -51,7 +51,7 @@ import org.springframework.webflow.action.MultiAction;
  *   		return &quot;customerDetails&quot;;
  *   	}
  *   
- *   public void buildStates() {
+ *      public void buildStates() {
  *        // get customer information
  *        addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
  *           on(success(), &quot;displayDetails&quot;));
@@ -66,6 +66,7 @@ import org.springframework.webflow.action.MultiAction;
  *           });
  *        // finish
  *        addEndState(&quot;finish&quot;);
+ *      }
  *   }
  * </pre>
  * 
