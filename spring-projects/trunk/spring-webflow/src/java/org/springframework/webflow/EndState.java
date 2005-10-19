@@ -28,7 +28,8 @@ import org.springframework.util.Assert;
  * treated as ending result event the resuming parent flow is expected to respond to.
  * <p>
  * An end state may optionally be configured with the name of a view. This view
- * will be rendered if the end state terminates the entire flow execution.
+ * will be rendered if the end state terminates the entire flow execution as a 
+ * kind of flow ending "confirmation page".
  * <p>
  * Note: if no <code>viewName</code> property is specified <b>and</b> this
  * EndState terminates the entire flow execution, it is expected that some
