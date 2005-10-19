@@ -54,8 +54,14 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	 */
 	public static final String TRANSACTION_TOKEN_PARAMETER_NAME = "_transactionId";
 
+	/**
+	 * The server-side token attribute name (default = transactionId)
+	 */
 	private String transactionTokenAttributeName = TRANSACTION_TOKEN_ATTRIBUTE_NAME;
 
+	/**
+	 * The client-submitted token parameter name (default = _transactionId)
+	 */
 	private String transactionTokenParameterName = TRANSACTION_TOKEN_PARAMETER_NAME;
 
 	/**
