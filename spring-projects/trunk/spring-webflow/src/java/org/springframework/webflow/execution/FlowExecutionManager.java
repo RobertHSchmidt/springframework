@@ -293,8 +293,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * executions.
 	 */
 	public void setListener(FlowExecutionListener listener) {
-		throw new RuntimeException();
-		//setListeners(Collections.singleton(listener));
+		setListeners(Collections.singleton(listener));
 	}
 
 	/**
