@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow;
 
+import java.io.Serializable;
+
 /**
  * A generically typed flow execution statistics interface for use by management clients.
  * These stats would typically be exported for management via JMX.  References to strongly-typed
@@ -41,7 +43,7 @@ public interface FlowExecutionStatistics {
 	 * flow execution among all other flow executions.
 	 * @return the flow execution identification key
 	 */
-	public String getKey();
+	public Serializable getKey();
 	
 	/**
 	 * Returns a display string suitable for logging/printing in a console

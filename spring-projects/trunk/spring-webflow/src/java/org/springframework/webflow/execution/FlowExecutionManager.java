@@ -185,6 +185,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	private FlowExecutionStorage storage;
 
 	/**
+	 * The Flow Execution key generation strategy.
+	 */
+	private KeyGenerator keyGenerator = new RandomGuidKeyGenerator();
+
+	/**
 	 * The strategy for demarcating a logical application transaction within an
 	 * executing flow. Defaults to a token-based strategy, where the transaction
 	 * token is managed in flow scope.
@@ -290,13 +295,13 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	}
 
 	/**
-	 * Returns a unmodifiable map of the configured flow execution listeners and the criteria in which 
-	 * those listeners apply.
+	 * Returns a unmodifiable map of the configured flow execution listeners and
+	 * the criteria in which those listeners apply.
 	 */
 	public Map getListenerMap() {
 		return Collections.unmodifiableMap(listenerMap);
 	}
-	
+
 	/**
 	 * Set the flow execution listener that will be notified of managed flow
 	 * executions.
@@ -454,6 +459,20 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 		this.transactionSynchronizer = transactionSynchronizer;
 	}
 
+	/**
+	 * Returns the FlowExecution key generation strategy.
+	 */
+	protected KeyGenerator getKeyGenerator() {
+		return keyGenerator;
+	}
+
+	/**
+	 * Sets the FlowExecution key generation strategy.
+	 */
+	public void setKeyGenerator(KeyGenerator keyGenerator) {
+		this.keyGenerator = keyGenerator;
+	}
+
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		if (flowLocator == null) {
 			flowLocator = new BeanFactoryFlowLocator(beanFactory);
@@ -504,7 +523,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @return the created flow execution
 	 */
 	protected FlowExecution createFlowExecution(Flow flow) {
-		FlowExecution flowExecution = new FlowExecutionImpl(flow, getListeners(flow), getTransactionSynchronizer());
+		FlowExecution flowExecution = new FlowExecutionImpl(getKeyGenerator().generate(), flow, getListeners(flow),
+				getTransactionSynchronizer());
 		flowExecution.getListeners().fireCreated(flowExecution);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new flow execution for flow definition: '" + flow.getId() + "'");

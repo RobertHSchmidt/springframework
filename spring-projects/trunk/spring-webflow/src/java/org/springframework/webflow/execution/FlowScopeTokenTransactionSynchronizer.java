@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Serializable;
+
 import org.springframework.webflow.RequestContext;
 
 /**
@@ -28,11 +30,11 @@ import org.springframework.webflow.RequestContext;
  */
 public class FlowScopeTokenTransactionSynchronizer extends AbstractTokenTransactionSynchronizer {
 	
-	public String getToken(RequestContext context) {
-		return (String)context.getFlowScope().getAttribute(getTransactionTokenAttributeName());
+	public Serializable getToken(RequestContext context) {
+		return (Serializable)context.getFlowScope().getAttribute(getTransactionTokenAttributeName());
 	}
 	
-	public void setToken(RequestContext context, String token) {
+	public void setToken(RequestContext context, Serializable token) {
 		context.getFlowScope().setAttribute(getTransactionTokenAttributeName(), generateToken());
 	}
 	

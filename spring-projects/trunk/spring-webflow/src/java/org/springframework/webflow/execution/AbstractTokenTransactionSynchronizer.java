@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.RequestNotInTransactionException;
-import org.springframework.webflow.util.RandomGuid;
 
 /**
  * Abstract base class to ease implementation of <i>synchronizer token</i>
@@ -64,6 +64,11 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	 * The client-submitted token parameter name (default = _transactionId)
 	 */
 	private String transactionTokenParameterName = TRANSACTION_TOKEN_PARAMETER_NAME;
+
+	/**
+	 * The token key generation strategy.
+	 */
+	private KeyGenerator keyGenerator = new RandomGuidKeyGenerator();
 
 	/**
 	 * Flag indicating if transaction token encryption is enabled.
@@ -118,13 +123,14 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 
 	public boolean inTransaction(RequestContext context, boolean end) {
 		// we use the source event because we want to verify that the
-		// client request that came into the system has a matching transaction token!
+		// client request that came into the system has a matching transaction
+		// token!
 		String tokenValue = (String)context.getSourceEvent().getParameter(getTransactionTokenParameterName());
 		if (!StringUtils.hasText(tokenValue)) {
 			return false;
 		}
-		String txToken = getToken(context);
-		if (!StringUtils.hasText(txToken)) {
+		Serializable txToken = getToken(context);
+		if (txToken == null) {
 			return false;
 		}
 		if (end) {
@@ -140,7 +146,7 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	}
 
 	public void beginTransaction(RequestContext context) {
-		String token = generateToken();
+		Serializable token = generateToken();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Beginning new application transaction; transactionId='" + token + "'");
 		}
@@ -155,8 +161,8 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	}
 
 	public Map getModel(RequestContext context) {
-		String transactionId = getToken(context);
-		if (StringUtils.hasText(transactionId)) {
+		Serializable transactionId = getToken(context);
+		if (transactionId != null) {
 			Map model = new HashMap(1);
 			model.put(getTransactionTokenAttributeName(), transactionId);
 			return model;
@@ -171,8 +177,8 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	/**
 	 * Generate a new transaction token.
 	 */
-	protected String generateToken() {
-		return new RandomGuid(isSecure()).toString();
+	protected Serializable generateToken() {
+		return keyGenerator.generate();
 	}
 
 	/**
@@ -181,7 +187,7 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	 * @param context the flow execution request context
 	 * @return the retreived token, or null if no token could be found
 	 */
-	public abstract String getToken(RequestContext context);
+	public abstract Serializable getToken(RequestContext context);
 
 	/**
 	 * Set given token in whatever token storage is being used (e.g the flow
@@ -189,7 +195,7 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	 * @param context the flow execution request context
 	 * @param token the token value to set
 	 */
-	public abstract void setToken(RequestContext context, String token);
+	public abstract void setToken(RequestContext context, Serializable token);
 
 	/**
 	 * Clear the token from whatever token storage is being used (e.g the flow

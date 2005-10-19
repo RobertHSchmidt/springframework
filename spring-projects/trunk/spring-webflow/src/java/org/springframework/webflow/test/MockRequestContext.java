@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.test;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -204,7 +205,7 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	
 	// implementing FlowExecutionContext
 
-	public String getKey() {
+	public Serializable getKey() {
 		return key;
 	}
 

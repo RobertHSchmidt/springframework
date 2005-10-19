@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Serializable;
+
 import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 
@@ -57,11 +59,11 @@ public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransact
 		this.dataStoreAccessor = dataStoreAccessor;
 	}
 
-	public String getToken(RequestContext context) {
-		return (String)dataStoreAccessor.getDataStore(context.getSourceEvent()).getAttribute(getTokenName(context));
+	public Serializable getToken(RequestContext context) {
+		return (Serializable)dataStoreAccessor.getDataStore(context.getSourceEvent()).getAttribute(getTokenName(context));
 	}
 
-	public void setToken(RequestContext context, String token) {
+	public void setToken(RequestContext context, Serializable token) {
 		dataStoreAccessor.getDataStore(context.getSourceEvent()).setAttribute(getTokenName(context), token);
 	}
 

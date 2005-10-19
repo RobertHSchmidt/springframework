@@ -40,7 +40,6 @@ import org.springframework.webflow.StateContext;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.util.RandomGuid;
 
 /**
  * Default implementation of FlowExecution that uses a stack-based data
@@ -74,7 +73,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	/**
 	 * Key identifying this flow execution.
 	 */
-	private String key;
+	private Serializable key;
 
 	/**
 	 * The time at which this object was created.
@@ -129,7 +128,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * @param rootFlow the root flow of this flow execution
 	 */
 	public FlowExecutionImpl(Flow rootFlow) {
-		this(rootFlow, null, new FlowScopeTokenTransactionSynchronizer());
+		this(new RandomGuidKeyGenerator().generate(), rootFlow, null, new FlowScopeTokenTransactionSynchronizer());
 	}
 
 	/**
@@ -140,11 +139,10 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * @param transactionSynchronizer the application transaction
 	 * synchronization strategy to use
 	 */
-	public FlowExecutionImpl(Flow rootFlow, FlowExecutionListener[] listeners,
+	public FlowExecutionImpl(Serializable key, Flow rootFlow, FlowExecutionListener[] listeners,
 			TransactionSynchronizer transactionSynchronizer) {
 		Assert.notNull(rootFlow, "The root flow definition is required");
 		Assert.notNull(transactionSynchronizer, "The transaction synchronizer is required");
-		this.key = new RandomGuid().toString();
 		this.creationTimestamp = System.currentTimeMillis();
 		this.rootFlow = rootFlow;
 		this.getListeners().add(listeners);
@@ -171,7 +169,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 
 	// implementing FlowExecutionStatistics
 
-	public String getKey() {
+	public Serializable getKey() {
 		return key;
 	}
 
@@ -353,7 +351,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 		getListeners().fireResumed(context);
 	}
-	
+
 	/**
 	 * Pause this flow execution.
 	 * @param context the state request context
@@ -369,7 +367,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		getListeners().firePaused(context, selectedView);
 		return selectedView;
 	}
-	
+
 	public FlowExecutionListenerList getListeners() {
 		return listenerList;
 	}
@@ -458,7 +456,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		return new FlowSessionImpl(flow, input, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.springframework.webflow.execution.FlowExecutionControl#endActiveFlowSession()
 	 */
 	public FlowSession endActiveFlowSession() {

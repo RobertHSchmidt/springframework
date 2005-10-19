@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution.jmx;
 
+import java.io.Serializable;
+
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
@@ -55,7 +57,7 @@ public class FlowExecutionMBeanAdapter implements FlowExecutionMBean {
 		return flowExecution.getActiveSession().getStatus().getShortCode();
 	}
 
-	public String getKey() {
+	public Serializable getKey() {
 		return flowExecution.getKey();
 	}
 
