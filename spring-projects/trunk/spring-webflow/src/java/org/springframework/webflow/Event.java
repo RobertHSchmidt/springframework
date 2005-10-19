@@ -36,8 +36,8 @@ import org.springframework.util.Assert;
  * successfully. A "finish" event might signal a sub flow ended normally.
  * <p>
  * Why is this not an interface? A specific design choice. An event is not a strategy,
- * its essentially a parmaeter object and it is expected that specializations of this base
- * class be "Events" and not part of some other inheritence hierarchy.
+ * its essentially an immutable parameter object and it is expected that specializations 
+ * of this base class be "Events" and not part of some other inheritence hierarchy.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
