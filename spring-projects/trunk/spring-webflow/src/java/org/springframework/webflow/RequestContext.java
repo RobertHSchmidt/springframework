@@ -165,7 +165,7 @@ public interface RequestContext {
 	 * @throws IllegalStateException there is no active transaction in the flow
 	 * execution, or the caller is not participating in it
 	 */
-	public void assertInTransaction(boolean end) throws IllegalStateException;
+	public void assertInTransaction(boolean end) throws RequestNotInTransactionException;
 
 	/**
 	 * Start a new transaction in the flow execution.
