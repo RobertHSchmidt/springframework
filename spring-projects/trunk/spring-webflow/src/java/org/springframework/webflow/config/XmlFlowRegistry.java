@@ -121,6 +121,7 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 	public void refresh() {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
+			// @TODO workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 			loadDefinitions();
 			loadJarDefinitions();
@@ -234,6 +235,7 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 	public void refresh(String flowId) {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
+			// @TODO workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 			getRefreshableFlow(flowId).refresh();
 		}
