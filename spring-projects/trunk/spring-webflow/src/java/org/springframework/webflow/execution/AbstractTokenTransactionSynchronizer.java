@@ -21,9 +21,9 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.RequestNotInTransactionException;
 import org.springframework.webflow.util.RandomGuid;
 
 /**
@@ -37,6 +37,7 @@ import org.springframework.webflow.util.RandomGuid;
  * @see org.springframework.webflow.execution.FlowScopeTokenTransactionSynchronizer
  * 
  * @author Erwin Vervaet
+ * @author Keith Donald
  */
 public abstract class AbstractTokenTransactionSynchronizer implements TransactionSynchronizer {
 
@@ -116,8 +117,8 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 	}
 
 	public boolean inTransaction(RequestContext context, boolean end) {
-		// we use the source event because we want to check that the
-		// client request that came into the system has a transaction token!
+		// we use the source event because we want to verify that the
+		// client request that came into the system has a matching transaction token!
 		String tokenValue = (String)context.getSourceEvent().getParameter(getTransactionTokenParameterName());
 		if (!StringUtils.hasText(tokenValue)) {
 			return false;
@@ -132,9 +133,10 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 		return txToken.equals(tokenValue);
 	}
 
-	public void assertInTransaction(RequestContext context, boolean end) throws IllegalStateException {
-		Assert.state(inTransaction(context, end),
-				"The request is not executing in the context of an application transaction");
+	public void assertInTransaction(RequestContext context, boolean end) throws RequestNotInTransactionException {
+		if (!inTransaction(context, end)) {
+			throw new RequestNotInTransactionException();
+		}
 	}
 
 	public void beginTransaction(RequestContext context) {
