@@ -59,7 +59,7 @@ public class FlowPropertyResolverTests extends TestCase {
 		Map map = new HashMap();
 		map.put("name", "joe");
 		Flow flow = new Flow("myid", map);
-		flowEx.getActiveFlow();
+		flowEx.getActiveSession();
 		flowExControl.setReturnValue(flow);
 		flowExControl.replay();
 		Class type = resolver.getType(flowEx, "name");
@@ -79,7 +79,7 @@ public class FlowPropertyResolverTests extends TestCase {
 		Map map = new HashMap();
 		map.put("name", "joe");
 		Flow flow = new Flow("myid", map);
-		flowEx.getActiveFlow();
+		flowEx.getActiveSession();
 		flowExControl.setReturnValue(flow);
 		flowExControl.replay();
 		Object value = resolver.getValue(flowEx, "name");
@@ -98,7 +98,7 @@ public class FlowPropertyResolverTests extends TestCase {
 	public void testSetValueBaseProperty() {
 		Map map = new HashMap();
 		Flow flow = new Flow("myid", map);
-		flowEx.getActiveFlow();
+		flowEx.getActiveSession();
 		flowExControl.setReturnValue(flow);
 		flowExControl.replay();
 		resolver.setValue(flowEx, "name", "joe");
