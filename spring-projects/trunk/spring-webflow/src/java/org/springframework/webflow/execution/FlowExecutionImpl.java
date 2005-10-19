@@ -32,7 +32,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowExecutionControl;
 import org.springframework.webflow.FlowNavigationException;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
@@ -68,7 +67,7 @@ import org.springframework.webflow.util.RandomGuid;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowExecutionImpl implements FlowExecution, Serializable, FlowExecutionControl {
+public class FlowExecutionImpl implements FlowExecution, Serializable {
 
 	private static final Log logger = LogFactory.getLog(FlowExecutionImpl.class);
 
@@ -296,12 +295,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable, FlowExecu
 		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		try {
-			ViewDescriptor selectedView = context.spawnFlow(rootFlow.getStartState(), new HashMap());
-			if (isActive()) {
-				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
-				getListeners().firePaused(context);
-			}
-			return selectedView;
+			ViewDescriptor selectedView = context.start(getRootFlow(), new HashMap(3));
+			return pause(context, selectedView);
 		}
 		finally {
 			getListeners().fireRequestProcessed(context);
@@ -337,30 +332,34 @@ public class FlowExecutionImpl implements FlowExecution, Serializable, FlowExecu
 			}
 			setCurrentState(state);
 		}
-		// execute the event
 		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
-		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
-		if (getActiveFlow().isTransactional()) {
-			context.assertInTransaction(false);
-		}
-		getListeners().fireResumed(context);
 		try {
+			resume(context);
 			ViewDescriptor selectedView = state.onEvent(sourceEvent, context);
-			if (isActive()) {
-				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
-				getListeners().firePaused(context);
-			}
-			return selectedView;
+			return pause(context, selectedView);
 		}
 		finally {
 			getListeners().fireRequestProcessed(context);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.webflow.execution.FlowExecutionControl#getListeners()
-	 */
+	protected void resume(StateContext context) {
+		getActiveFlow().resume(context);
+		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
+		getListeners().fireResumed(context);
+	}
+	
+	protected ViewDescriptor pause(StateContext context, ViewDescriptor selectedView) {
+		if (!isActive()) {
+			return selectedView;
+		}
+		selectedView = getActiveFlow().pause(context, selectedView);
+		getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
+		getListeners().firePaused(context, selectedView);
+		return selectedView;
+	}
+	
 	public FlowExecutionListenerList getListeners() {
 		return listenerList;
 	}
@@ -418,9 +417,6 @@ public class FlowExecutionImpl implements FlowExecution, Serializable, FlowExecu
 		getActiveSessionInternal().setCurrentState(newState);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.webflow.execution.FlowExecutionControl#activateSession(org.springframework.webflow.Flow, java.util.Map)
-	 */
 	public FlowSession activateSession(Flow subflow, Map input) {
 		FlowSessionImpl session;
 		if (!executingFlowSessions.isEmpty()) {

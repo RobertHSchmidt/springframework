@@ -18,10 +18,12 @@ package org.springframework.webflow.execution;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
+import org.springframework.webflow.ViewDescriptor;
 
 /**
  * Interface to be implemented by objects that wish to listen and respond to the
@@ -63,10 +65,10 @@ public interface FlowExecutionListener {
 	 * Called immediately after a start event is signaled -- indicating the flow
 	 * execution session is starting but hasn't yet entered its start state.
 	 * @param context source of the event
-	 * @param startState the start state that will be entered
+	 * @param sessionStarting the definition of the Flow that is starting
 	 * @throws EnterStateVetoException the start state transition was not allowed
 	 */
-	public void sessionStarting(RequestContext context, State startState, Map input) throws EnterStateVetoException;
+	public void sessionStarting(RequestContext context, Flow flow, Map input) throws EnterStateVetoException;
 
 	/**
 	 * Called when a new flow execution session was started -- the start state
@@ -111,8 +113,9 @@ public interface FlowExecutionListener {
 	 * Called when a flow execution is paused, for instance when it is waiting for
 	 * user input.
 	 * @param context the source of the event
+	 * @param selectedView the view that will display
 	 */
-	public void paused(RequestContext context);
+	public void paused(RequestContext context, ViewDescriptor selectedView);
 
 	/**
 	 * Called when a flow execution session ends. If the ended session was the

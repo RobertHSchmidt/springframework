@@ -19,10 +19,12 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
+import org.springframework.webflow.ViewDescriptor;
 
 /**
  * Mock implementation of the <code>FlowExecutionListener</code> interface for
@@ -70,7 +72,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		requestInProcess = true;
 	}
 
-	public void sessionStarting(RequestContext context, State startState, Map input) throws EnterStateVetoException {
+	public void sessionStarting(RequestContext context, Flow flow, Map input) throws EnterStateVetoException {
 		if (!context.getFlowExecutionContext().isActive()) {
 			Assert.state(!started, "The flow execution was already started");
 			flowNestingLevel = 0;
@@ -108,7 +110,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		stateTransitions++;
 	}
 
-	public void paused(RequestContext context) {
+	public void paused(RequestContext context, ViewDescriptor selectedView) {
 		executing = false;
 	}
 

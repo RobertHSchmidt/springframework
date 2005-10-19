@@ -27,6 +27,7 @@ import org.springframework.binding.support.EmptyAttributeSource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.Scope;
@@ -187,18 +188,25 @@ public class StateContextImpl implements StateContext {
 	}
 
 	public void setCurrentState(State state) {
-		this.flowExecution.getListeners().fireStateEntering(this, state);
-		State previousState = this.flowExecution.getCurrentState();
-		this.flowExecution.setCurrentState(state);
-		this.flowExecution.getListeners().fireStateEntered(this, previousState);
+		flowExecution.getListeners().fireStateEntering(this, state);
+		State previousState = flowExecution.getCurrentState();
+		flowExecution.setCurrentState(state);
+		flowExecution.getListeners().fireStateEntered(this, previousState);
 	}
 
-	public ViewDescriptor spawnFlow(State startState, Map input) throws IllegalStateException {
-		return startState.getFlow().start(startState, input, this.flowExecution, this);
+	public ViewDescriptor start(Flow flow, Map input) throws IllegalStateException {
+		flowExecution.getListeners().fireSessionStarting(this, flow, input);
+		flowExecution.activateSession(flow, input);
+		ViewDescriptor selectedView = flow.start(this);
+		flowExecution.getListeners().fireSessionStarted(this);
+		return selectedView;
 	}
 
 	public FlowSession endActiveSession() throws IllegalStateException {
-		return this.flowExecution.getActiveFlow().end(this.flowExecution, this);
+		flowExecution.getActiveFlow().end(this);
+		FlowSession endedSession = endActiveSession();
+		flowExecution.getListeners().fireSessionEnded(this, endedSession);
+		return endedSession;
 	}
 
 	private Map getStateResultParameterMaps() {

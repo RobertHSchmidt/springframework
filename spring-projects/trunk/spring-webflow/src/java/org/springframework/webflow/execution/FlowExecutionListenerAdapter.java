@@ -18,10 +18,12 @@ package org.springframework.webflow.execution;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
+import org.springframework.webflow.ViewDescriptor;
 
 /**
  * An abstract adapter class for listeners (observers) of flow execution
@@ -43,7 +45,7 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void requestProcessed(RequestContext context) {
 	}
 
-	public void sessionStarting(RequestContext context, State startState, Map input) throws EnterStateVetoException {
+	public void sessionStarting(RequestContext context, Flow flow, Map input) throws EnterStateVetoException {
 	}
 
 	public void sessionStarted(RequestContext context) {
@@ -61,7 +63,7 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void resumed(RequestContext context) {
 	}
 
-	public void paused(RequestContext context) {
+	public void paused(RequestContext context, ViewDescriptor selectedView) {
 	}
 
 	public void sessionEnded(RequestContext context, FlowSession endedRootFlowSession) {

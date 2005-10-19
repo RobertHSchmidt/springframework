@@ -22,10 +22,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
+import org.springframework.webflow.ViewDescriptor;
 
 /**
  * A strongly typed listener list class for FlowExecutionListeners. It helps
@@ -208,9 +210,9 @@ public class FlowExecutionListenerList {
 	/**
 	 * Notify all interested listeners that a flow execution session is starting.
 	 */
-	public void fireSessionStarting(RequestContext context, State startState, Map input) {
+	public void fireSessionStarting(RequestContext context, Flow flow, Map input) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).sessionStarting(context, startState, input);
+			((FlowExecutionListener)it.next()).sessionStarting(context, flow, input);
 		}
 	}
 
@@ -267,9 +269,9 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow session was paused in the
 	 * flow execution.
 	 */
-	public void firePaused(RequestContext context) {
+	public void firePaused(RequestContext context, ViewDescriptor selectedView) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).paused(context);
+			((FlowExecutionListener)it.next()).paused(context, selectedView);
 		}
 	}
 

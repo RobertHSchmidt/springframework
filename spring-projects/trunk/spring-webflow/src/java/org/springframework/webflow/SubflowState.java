@@ -195,26 +195,9 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 		if (logger.isDebugEnabled()) {
 			logger.debug("Spawning subflow '" + getSubflow().getId() + "' within this flow '" + getFlow().getId() + "'");
 		}
-		return context.spawnFlow(getSubflowStartState(context), createSubflowInput(context));
+		return context.start(getSubflow(), createSubflowInput(context));
 	}
 	
-	/**
-	 * Helper method to determine the state in which the spawned subflow should
-	 * start.
-	 * @param context the flow execution request context
-	 * @return the start state of the subflow
-	 */
-	protected State getSubflowStartState(RequestContext context) {
-		if (containsProperty(START_STATE_PROPERTY)) {
-			// use specified start state
-			return getSubflow().getRequiredState((String)getProperty(START_STATE_PROPERTY));
-		}
-		else {
-			// just use the preconfigured start state
-			return getSubflow().getStartState();
-		}
-	}
-
 	public Map createSubflowInput(RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {

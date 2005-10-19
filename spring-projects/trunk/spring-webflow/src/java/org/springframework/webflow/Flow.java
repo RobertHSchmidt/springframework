@@ -31,20 +31,20 @@ import org.springframework.util.StringUtils;
  * A single definition of a web flow.
  * <p>
  * At a high level, a Flow is a reusable, self-contained module that captures
- * the definition (or blueprint) of a logical page flow within a
- * web application. A logical page flow is defined as a controlled navigation
- * that guides a user through fulfillment of a business process that takes
- * place over a series of steps (modeled as states).
+ * the definition (or blueprint) of a logical page flow within a web
+ * application. A logical page flow is defined as a controlled navigation that
+ * guides a user through fulfillment of a business process that takes place over
+ * a series of steps (modeled as states).
  * <p>
  * Note: A flow is not a welcome page, a menu, an index page, or even a simple
  * form page: don't use flows for those cases, use simple
- * controllers/actions/portlets instead. Don't use flows that span requests 
- * where your application demands a lot of "free browsing", as flows force strict
- * navigation. Especially in Intranet applications, there are often
- * "controlled navigations", where the user is not free to do what he/she
- * wants but has to follow the guidelines provided by the system (the 
- * quinessential example would be a 'checkout' flow for a shopping cart). This is
- * a typical use case appropriate for a web flow.
+ * controllers/actions/portlets instead. Don't use flows that span requests
+ * where your application demands a lot of "free browsing", as flows force
+ * strict navigation. Especially in Intranet applications, there are often
+ * "controlled navigations", where the user is not free to do what he/she wants
+ * but has to follow the guidelines provided by the system (the quinessential
+ * example would be a 'checkout' flow for a shopping cart). This is a typical
+ * use case appropriate for a web flow.
  * <p>
  * Structurally, a Flow is composed of a set of states. A state is a point in
  * the flow where something happens; for example, showing a view, executing an
@@ -63,7 +63,7 @@ import org.springframework.util.StringUtils;
  * has been purposefully designed with minimal dependencies on other parts of
  * Spring, and are easily usable in a standalone fashion (as well as in the
  * context of other frameworks like Struts, WebWork, Tapestry, JSF or Beehive,
- * for example).  The core system is usable outside a HTTP servlet environment, 
+ * for example). The core system is usable outside a HTTP servlet environment,
  * for example in Portlets, tests, or standalone applications.
  * <p>
  * Note: flows are singleton objects so they should be thread-safe!
@@ -351,18 +351,32 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Start a new execution of this flow in the specified state with the
 	 * provided input.
-	 * @param state The state to start in
-	 * @param input the flow execution input
 	 * @param context the executing state request context
 	 */
-	public ViewDescriptor start(State state, Map input, FlowExecutionControl control, StateContext context) {
-		control.getListeners().fireSessionStarting(context, state, input);
-		control.activateSession(this, input);
+	public ViewDescriptor start(StateContext context) {
 		if (isTransactional()) {
 			context.beginTransaction();
 		}
-		ViewDescriptor selectedView = state.enter(context);
-		control.getListeners().fireSessionStarted(context);
+		return getStartState().enter(context);
+	}
+
+	/**
+	 * Resume an execution of this flow in the current state context.
+	 * @param context the state request context
+	 */
+	public void resume(StateContext context) {
+		if (isTransactional()) {
+			context.assertInTransaction(false);
+		}
+	}
+
+	/**
+	 * Pause an execution of this flow in the current state context.
+	 * @param context the state request context
+	 * @param selectedView the view to be rendered to the user while the flow is paused
+	 * @return the selected view
+	 */
+	public ViewDescriptor pause(StateContext context, ViewDescriptor selectedView) {
 		return selectedView;
 	}
 
@@ -372,13 +386,10 @@ public class Flow extends AnnotatedObject {
 	 * @param context the state request context
 	 * @return the ended flow session
 	 */
-	public FlowSession end(FlowExecutionControl control, StateContext context) {
+	public void end(StateContext context) {
 		if (isTransactional()) {
 			context.endTransaction();
 		}
-		FlowSession endedSession = control.endActiveFlowSession();
-		control.getListeners().fireSessionEnded(context, endedSession);
-		return endedSession;
 	}
 
 	/**
