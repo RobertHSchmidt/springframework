@@ -28,7 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
@@ -200,7 +199,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @see #setFlow(Flow)
 	 * @see #setFlowLocator(FlowLocator)
 	 * @see #setListener(FlowExecutionListener)
-	 * @see #setListenerCriteria(FlowExecutionListener, FlowExecutionListenerCriteria)
+	 * @see #setListenerCriteria(FlowExecutionListener,
+	 * FlowExecutionListenerCriteria)
 	 * @see #setListenerMap(Map)
 	 * @see #setListeners(Collection)
 	 * @see #setListenersCriteria(Collection, FlowExecutionListenerCriteria)
@@ -217,7 +217,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @see #setFlow(Flow)
 	 * @see #setFlowLocator(FlowLocator)
 	 * @see #setListener(FlowExecutionListener)
-	 * @see #setListenerCriteria(FlowExecutionListener, FlowExecutionListenerCriteria)
+	 * @see #setListenerCriteria(FlowExecutionListener,
+	 * FlowExecutionListenerCriteria)
 	 * @see #setListenerMap(Map)
 	 * @see #setListeners(Collection)
 	 * @see #setListenersCriteria(Collection, FlowExecutionListenerCriteria)
