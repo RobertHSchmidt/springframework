@@ -293,7 +293,7 @@ public class ActionState extends TransitionableState {
 			executionCount++;
 		}
 		if (executionCount > 0) {
-			throw new NoMatchingTransitionException(this, context, "No transition was matched to the event(s) "
+			throw new NoMatchingTransitionException(this, context.getLastEvent(), "No transition was matched to the event(s) "
 					+ "signaled by the " + executionCount + " action(s) that executed in this action state '" + getId()
 					+ "' of flow '" + getFlow().getId()
 					+ "'; transitions must be defined to handle action result outcomes -- "

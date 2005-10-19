@@ -17,7 +17,6 @@ package org.springframework.webflow;
 
 import org.springframework.core.style.StylerUtils;
 
-
 /**
  * Thrown when no transition can be matched given the occurence of an event in
  * the context of a flow execution request.
@@ -36,62 +35,57 @@ public class NoMatchingTransitionException extends FlowNavigationException {
 	private TransitionableState state;
 
 	/**
-	 * The context that did not match a supported state transition when
-	 * evaluated by the <code>TransitionCriteria</code> for the set of
-	 * possible Transitions out of the <code>TransitionableState</code>.
+	 * The event that occured that could not be matched to a Transition.
 	 */
-	private RequestContext context;
+	private Event event;
 
 	/**
 	 * Create a new no matching transition exception.
 	 * @param state the state that could not be transitioned out of
-	 * @param context the request context that did not trigger a valid
-	 *        transition
+	 * @param event the event that occured that could not be matched to a transition
 	 */
-	public NoMatchingTransitionException(TransitionableState state, RequestContext context) {
-		this(state, context, (Throwable)null);
+	public NoMatchingTransitionException(TransitionableState state, Event event) {
+		this(state, event, (Throwable)null);
 	}
 
 	/**
 	 * Create a new no matching transition exception.
 	 * @param state the state that could not be transitioned out of
-	 * @param context the request context that did not trigger a valid
-	 *        transition
+	 * @param event the event that occured that could not be matched to a transition
 	 * @param cause the underlying cause
 	 */
-	public NoMatchingTransitionException(TransitionableState state, RequestContext context, Throwable cause) {
-		super(state.getFlow(), "No transition found for event '" + context.getLastEvent().getId() + "' in state '"
+	public NoMatchingTransitionException(TransitionableState state, Event event, Throwable cause) {
+		super(state.getFlow(), "No transition found on occurence of event '" + event + "' in state '"
 				+ state.getId() + "' of flow '" + state.getFlow().getId() + "' -- valid transitional criteria are "
 				+ StylerUtils.style(state.getTransitionCriterias())
 				+ " -- likely programmer error, check the set of TransitionCriteria for this state", cause);
 		this.state = state;
-		this.context = context;
+		this.event = event;
 	}
 
 	/**
 	 * Create a new no matching transition exception.
 	 * @param state the state that could not be transitioned out of
-	 * @param context the request context that did not trigger a valid
-	 *        transition
+	 * @param event the event that occured that could not be matched to a transition
 	 * @param message the message
 	 */
-	public NoMatchingTransitionException(TransitionableState state, RequestContext context, String message) {
-		this(state, context, message, null);
+	public NoMatchingTransitionException(TransitionableState state, Event event, String message) {
+		this(state, event, message, null);
 	}
 
 	/**
 	 * Create a new no matching transition exception.
 	 * @param state the state that could not be transitioned out of
 	 * @param context the request context that did not trigger a valid
-	 *        transition
+	 * transition
 	 * @param message the message
 	 * @param cause the underlying cause
 	 */
-	public NoMatchingTransitionException(TransitionableState state, RequestContext context, String message,
+	public NoMatchingTransitionException(TransitionableState state, Event event, String message,
 			Throwable cause) {
 		super(state.getFlow(), message, cause);
 		this.state = state;
-		this.context = context;
+		this.event = event;
 	}
 
 	/**
@@ -107,7 +101,7 @@ public class NoMatchingTransitionException extends FlowNavigationException {
 	 * supported transition out of the set state.
 	 * @return the request context
 	 */
-	public RequestContext getRequestContext() {
-		return context;
+	public Event getEvent() {
+		return event;
 	}
 }

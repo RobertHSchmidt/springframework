@@ -54,7 +54,7 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	}
 
 	/**
-	 * Returns the value of given property, or null if not found.
+	 * Returns the value of given property, or <code>null</code> if not found.
 	 */
 	public Object getProperty(String propertyName) {
 		return this.properties.get(propertyName);
@@ -74,7 +74,7 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	 * Returns whether or not this annotated object contains a property with
 	 * specified name
 	 * @param propertyName the name of the property
-	 * @return true or false
+	 * @return true if the property is set, false otherwise
 	 */
 	public boolean containsProperty(String propertyName) {
 		return this.properties.containsKey(propertyName);
@@ -83,7 +83,8 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	/**
 	 * Returns a string property value.
 	 * @param propertyName the property name
-	 * @return the value
+	 * @param default the default value, if the property is not set
+	 * @return the property value
 	 */
 	public String getStringProperty(String propertyName, String defaultValue) {
 		if (containsProperty(propertyName)) {
@@ -96,7 +97,8 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	/**
 	 * Returns a integer property value.
 	 * @param propertyName the property name
-	 * @return the value
+	 * @param default the default value, if the property is not set
+	 * @return the property value
 	 */
 	public int getIntProperty(String propertyName, int defaultValue) {
 		if (containsProperty(propertyName)) {
@@ -110,7 +112,8 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	/**
 	 * Returns a boolean property value.
 	 * @param propertyName the property name
-	 * @return the value
+	 * @param default the default value, if the property is not set
+	 * @return the property value
 	 */
 	public boolean getBooleanProperty(String propertyName, boolean defaultValue) {
 		if (containsProperty(propertyName)) {

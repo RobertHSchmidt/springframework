@@ -52,7 +52,6 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 */
 	public static final String DESCRIPTION_PROPERTY = "description";
 	
-
 	/**
 	 * The action to execute.
 	 */

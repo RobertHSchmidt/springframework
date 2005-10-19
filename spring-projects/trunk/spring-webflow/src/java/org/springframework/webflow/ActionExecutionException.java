@@ -32,7 +32,7 @@ import org.springframework.core.NestedRuntimeException;
 public class ActionExecutionException extends NestedRuntimeException {
 
 	/**
-	 * The state that was active when the exception occured.
+	 * The state in which the action execution exception occured.
 	 */
 	private State state;
 

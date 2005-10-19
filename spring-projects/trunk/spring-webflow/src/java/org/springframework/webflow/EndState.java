@@ -22,14 +22,14 @@ import org.springframework.util.Assert;
 
 /**
  * Terminates an active web flow session when entered. If the terminated session
- * is the root flow session, the entire flow execution ends.  On the other hand, 
- * if the terminated session was acting as a subflow, the governing flow execution
- * continues and control is returned to the parent flow.  In that case, this state is
- * treated as ending result event the resuming parent flow is expected to respond to.
+ * is the root flow session, the entire flow execution ends. If the terminated
+ * session was acting as a subflow, the governing flow execution continues and
+ * control is returned to the parent flow. In that case, this state is treated
+ * as an ending result event the resuming parent flow is expected to respond to.
  * <p>
- * An end state may optionally be configured with the name of a view. This view
- * will be rendered if the end state terminates the entire flow execution as a 
- * kind of flow ending "confirmation page".
+ * An end state may optionally be configured with the name of a view to render
+ * when entered. This view will be rendered if the end state terminates the
+ * entire flow execution as a kind of flow ending "confirmation page".
  * <p>
  * Note: if no <code>viewName</code> property is specified <b>and</b> this
  * EndState terminates the entire flow execution, it is expected that some
@@ -48,17 +48,17 @@ import org.springframework.util.Assert;
 public class EndState extends State {
 
 	/**
-	 * An optional view descriptor creator that will produce a view to render
-	 * if this end state terminates an executing root flow.
+	 * An optional view descriptor creator that will produce a view to render if
+	 * this end state terminates an executing root flow.
 	 */
 	private ViewDescriptorCreator viewDescriptorCreator;
-	
+
 	/**
 	 * Create a new end state with no associated view.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
+	 * flow
 	 */
 	public EndState(Flow flow, String id) throws IllegalArgumentException {
 		super(flow, id);
@@ -68,10 +68,10 @@ public class EndState extends State {
 	 * Create a new end state with specified associated view.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param creator factory used to create the view that should be rendered
-	 *        if this end state terminates flow execution
+	 * @param creator factory used to create the view that should be rendered if
+	 * this end state terminates a flow execution
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
+	 * flow
 	 */
 	public EndState(Flow flow, String id, ViewDescriptorCreator creator) throws IllegalArgumentException {
 		super(flow, id);
@@ -82,13 +82,14 @@ public class EndState extends State {
 	 * Create a new end state with specified associated view.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param creator factory used to create the view that should be rendered
-	 *        if this end state terminates flow execution
+	 * @param creator factory used to create the view that should be rendered if
+	 * this end state terminates a flow execution
 	 * @param properties additional properties describing this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
+	 * flow
 	 */
-	public EndState(Flow flow, String id, ViewDescriptorCreator creator, Map properties) throws IllegalArgumentException {
+	public EndState(Flow flow, String id, ViewDescriptorCreator creator, Map properties)
+			throws IllegalArgumentException {
 		super(flow, id, properties);
 		setViewDescriptorCreator(creator);
 	}
@@ -110,24 +111,24 @@ public class EndState extends State {
 	}
 
 	/**
-	 * Returns true if this end state has no associated view, false otherwise.
+	 * Returns true if this end state has no associated view (a "marker" end
+	 * state), false otherwise.
 	 */
 	public boolean isMarker() {
 		return viewDescriptorCreator == null;
 	}
 
 	/**
-	 * Specialization of State's <code>doEnter</code> template method
-	 * that executes behaviour specific to this state type in polymorphic
-	 * fashion.
+	 * Specialization of State's <code>doEnter</code> template method that
+	 * executes behaviour specific to this state type in polymorphic fashion.
 	 * <p>
 	 * This implementation pops the top (active) flow session off the execution
 	 * stack, ending it, and resumes control in the parent flow (if neccessary).
-	 * If the ended session is the root flow, a ViewDescriptor is
-	 * returned (when viewName is not null, else null is returned).
+	 * If the ended session is the root flow, a ViewDescriptor is returned (when
+	 * viewName is not null, else null is returned).
 	 * @param context the state context for the executing flow
-	 * @return a view descriptor signaling that control should be
-	 *         returned to the client and a view rendered
+	 * @return a view descriptor signaling that control should be returned to
+	 * the client and a view rendered
 	 */
 	protected ViewDescriptor doEnter(StateContext context) {
 		if (context.getFlowExecutionContext().getActiveSession().isRoot()) {
@@ -138,7 +139,8 @@ public class EndState extends State {
 			ViewDescriptor viewDescriptor;
 			if (isMarker()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning control to client with a [null] view render request");
+					logger.debug("Returning control to client with a [null] view render request: "
+							+ " make sure a response has already been written");
 				}
 				viewDescriptor = null;
 			}
@@ -148,28 +150,24 @@ public class EndState extends State {
 					logger.debug("Returning view render request to client: " + viewDescriptor);
 				}
 			}
-			// end the flow
-			// note that we do this here to make sure we can call context.getModel()
-			// above (in the view descriptor creator) without any problems
 			context.endActiveSession();
 			return viewDescriptor;
 		}
 		else {
-			// there is a parent flow that will resume, so map attributes from the
-			// ending sub flow up to the resuming parent flow
+			// there is a parent flow that will resume
 			FlowSession parentSession = context.getFlowExecutionContext().getActiveSession().getParent();
 			if (logger.isDebugEnabled()) {
-				logger.debug("Resuming parent flow '" + parentSession.getFlow().getId() + "' in state '"
+				logger.debug("Resuming parent flow: '" + parentSession.getFlow().getId() + "' in state: '"
 						+ parentSession.getCurrentState().getId() + "'");
 			}
-			Assert.isInstanceOf(FlowAttributeMapper.class, parentSession.getCurrentState());
+			Assert.isInstanceOf(FlowAttributeMapper.class, parentSession.getCurrentState(),
+					"State is not an attribute mapper:");
 			FlowAttributeMapper resumingState = (FlowAttributeMapper)parentSession.getCurrentState();
 			resumingState.mapSubflowOutput(context);
-			Assert.isInstanceOf(TransitionableState.class, resumingState);
-			// actually end the subflow
+			Assert.isInstanceOf(TransitionableState.class, resumingState, "State is not transitionable:");
 			context.endActiveSession();
 			return ((TransitionableState)resumingState).onEvent(subflowResult(context), context);
-		}		
+		}
 	}
 
 	/**
@@ -181,7 +179,7 @@ public class EndState extends State {
 		// resuming state, this is so cool!
 		return new Event(this, getId());
 	}
-	
+
 	protected void createToString(ToStringCreator creator) {
 		creator.append("viewDescriptorCreator", viewDescriptorCreator);
 	}

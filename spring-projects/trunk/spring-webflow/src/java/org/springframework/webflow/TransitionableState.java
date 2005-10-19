@@ -167,7 +167,7 @@ public abstract class TransitionableState extends State {
 	public Transition getRequiredTransition(RequestContext context) throws NoMatchingTransitionException {
 		Transition transition = getTransition(context);
 		if (transition == null) {
-			throw new NoMatchingTransitionException(this, context);
+			throw new NoMatchingTransitionException(this, context.getLastEvent());
 		}
 		return transition;
 	}
@@ -209,7 +209,6 @@ public abstract class TransitionableState extends State {
 	 *         render the results of the state processing
 	 */
 	public ViewDescriptor reenter(StateContext context) {
-		// just re-enter this state
 		return enter(context);
 	}
 

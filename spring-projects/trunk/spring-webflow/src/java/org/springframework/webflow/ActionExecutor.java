@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
  */
 public class ActionExecutor {
 
-	private final Log logger = LogFactory.getLog(ActionExecutor.class);
+	private static final Log logger = LogFactory.getLog(ActionExecutor.class);
 
 	/**
 	 * The action that will be executed.
@@ -40,7 +40,7 @@ public class ActionExecutor {
 	 * @param action the action to execute
 	 */
 	public ActionExecutor(Action action) {
-		Assert.notNull(action, "The action is required");
+		Assert.notNull(action, "The action to execute is required");
 		this.action = action;
 	}
 
@@ -60,7 +60,7 @@ public class ActionExecutor {
 	public Event execute(RequestContext context) throws ActionExecutionException {
 		try {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Executing action: " + this + " in state: '" + context.getFlowExecutionContext().getCurrentState().getId() + "'");
+				logger.debug("Executing action: " + action + " in state: '" + context.getFlowExecutionContext().getCurrentState().getId() + "'");
 			}
 			return action.execute(context);
 		}

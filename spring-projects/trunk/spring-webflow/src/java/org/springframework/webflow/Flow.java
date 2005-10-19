@@ -30,41 +30,47 @@ import org.springframework.util.StringUtils;
 /**
  * A single definition of a web flow.
  * <p>
- * At a high level, a Flow is a reusable, self-contained module that captures
+ * A Flow represents a reusable, self-contained controller module that captures
  * the definition (or blueprint) of a logical page flow within a web
- * application. A logical page flow is defined as a controlled navigation that
- * guides a user through fulfillment of a business process that takes place over
- * a series of steps (modeled as states).
+ * application. A page flow is defined as a controlled navigation that guides a
+ * user through fulfillment of a business process/goal that takes place over a
+ * series of steps (modeled as states).
  * <p>
- * Note: A flow is not a welcome page, a menu, an index page, or even a simple
- * form page: don't use flows for those cases, use simple
- * controllers/actions/portlets instead. Don't use flows that span requests
- * where your application demands a lot of "free browsing", as flows force
- * strict navigation. Especially in Intranet applications, there are often
- * "controlled navigations", where the user is not free to do what he/she wants
- * but has to follow the guidelines provided by the system (the quinessential
- * example would be a 'checkout' flow for a shopping cart). This is a typical
- * use case appropriate for a web flow.
+ * A simple Flow definition could do nothing more than execute an action and
+ * display a view (all in one request). A more involved Flow definition may be
+ * long-lived (executing accross a series of requests, invoking many possible
+ * paths, actions, and subflows).
+ * 
+ * Note: A flow is not a welcome page, a menu, or an index page: don't use flows
+ * for those cases, use simple controllers/actions/portlets instead. Don't use
+ * flows where your application demands "free browsing": flows force strict
+ * navigation. Especially in Intranet applications, there are often "controlled
+ * navigations", where the user is not free to do what he/she wants but must
+ * follow the guidelines provided by the system (the quinessential example would
+ * be a 'checkout' flow of a shopping cart application). This is a typical use
+ * case appropriate for a web flow.
  * <p>
  * Structurally, a Flow is composed of a set of states. A state is a point in
  * the flow where something happens; for example, showing a view, executing an
- * action, spawning a sub flow, or terminating the flow.
+ * action, spawning a sub flow, or terminating the flow. Different types of
+ * states execute different behaiviors.
  * <p>
  * Each state can have transitions that are used to move to another state. A
- * transition is typically triggered by the occurence of a supported event
- * within a request context. An event is an identifier signalling the occurence
- * of something: e.g. "submit", "back", "success" or "error".
+ * transition is triggered by the occurence of a event. An event is an
+ * identifier signaling the occurence of something: e.g. "submit", "back",
+ * "success" or "error".
  * <p>
- * Each Flow has exactly one start state. A start state is simply a marker for
- * the state flow executions (client instances of this flow) should start in.
+ * Each Flow has exactly one start state. A start state is simply a marker
+ * noting the state flow executions (running instances of this Flow) should
+ * start in.
  * <p>
- * Instances of this class are typically built by a FlowBuilder implementation,
- * but may also be subclassed. This class, and the rest of the web flow system,
- * has been purposefully designed with minimal dependencies on other parts of
- * Spring, and are easily usable in a standalone fashion (as well as in the
- * context of other frameworks like Struts, WebWork, Tapestry, JSF or Beehive,
- * for example). The core system is usable outside a HTTP servlet environment,
- * for example in Portlets, tests, or standalone applications.
+ * Instances of this class are typically built by FlowBuilder implementations,
+ * but may also be subclassed. This class, and the rest of the web flow core,
+ * has been designed with minimal dependencies on other parts of Spring, and is
+ * usable in a standalone fashion (as well as in the context of other frameworks
+ * like Struts, WebWork, Tapestry, or JSF, for example). The core system is also
+ * fully usable outside a HTTP servlet environment, for example in Portlets,
+ * tests, or standalone applications.
  * <p>
  * Note: flows are singleton objects so they should be thread-safe!
  * 
@@ -269,7 +275,7 @@ public class Flow extends AnnotatedObject {
 	public State getState(String stateId) {
 		if (!StringUtils.hasText(stateId)) {
 			throw new IllegalArgumentException(
-					"The specified stateId was invalid: state identifiers must be non-blank and unique to the containing flow definition");
+					"The specified stateId is invalid: state identifiers must be non-blank and unique to the containing flow definition");
 		}
 		Iterator it = statesIterator();
 		while (it.hasNext()) {
@@ -373,7 +379,8 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Pause an execution of this flow in the current state context.
 	 * @param context the state request context
-	 * @param selectedView the view to be rendered to the user while the flow is paused
+	 * @param selectedView the view to be rendered to the user while the flow is
+	 * paused
 	 * @return the selected view
 	 */
 	public ViewDescriptor pause(StateContext context, ViewDescriptor selectedView) {
