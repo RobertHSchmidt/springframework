@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
@@ -110,7 +111,7 @@ import org.springframework.webflow.access.FlowLocator;
  * @author Keith Donald
  * @author Colin Sampaleanu
  */
-public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFactoryAware {
+public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFactoryAware, InitializingBean {
 
 	/**
 	 * Clients can send the id (name) of the flow to be started using an event
@@ -199,10 +200,10 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @see #setFlow(Flow)
 	 * @see #setFlowLocator(FlowLocator)
 	 * @see #setListener(FlowExecutionListener)
-	 * @see #setListener(FlowExecutionListener, FlowExecutionListenerCriteria)
+	 * @see #setListenerCriteria(FlowExecutionListener, FlowExecutionListenerCriteria)
 	 * @see #setListenerMap(Map)
 	 * @see #setListeners(Collection)
-	 * @see #setListeners(Collection, FlowExecutionListenerCriteria)
+	 * @see #setListenersCriteria(Collection, FlowExecutionListenerCriteria)
 	 * @see #setStorage(FlowExecutionStorage)
 	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
 	 */
@@ -216,10 +217,10 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @see #setFlow(Flow)
 	 * @see #setFlowLocator(FlowLocator)
 	 * @see #setListener(FlowExecutionListener)
-	 * @see #setListener(FlowExecutionListener, FlowExecutionListenerCriteria)
+	 * @see #setListenerCriteria(FlowExecutionListener, FlowExecutionListenerCriteria)
 	 * @see #setListenerMap(Map)
 	 * @see #setListeners(Collection)
-	 * @see #setListeners(Collection, FlowExecutionListenerCriteria)
+	 * @see #setListenersCriteria(Collection, FlowExecutionListenerCriteria)
 	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
 	 */
 	public FlowExecutionManager(FlowExecutionStorage storage) {
@@ -292,15 +293,16 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * executions.
 	 */
 	public void setListener(FlowExecutionListener listener) {
-		setListeners(Collections.singleton(listener));
+		throw new RuntimeException();
+		//setListeners(Collections.singleton(listener));
 	}
 
 	/**
 	 * Set the flow execution listener that will be notified of managed flow
 	 * executions for the flows that match given criteria.
 	 */
-	public void setListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
-		setListeners(Collections.singleton(listener), criteria);
+	public void setListenerCriteria(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
+		setListenersCriteria(Collections.singleton(listener), criteria);
 	}
 
 	/**
@@ -308,18 +310,23 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * executions.
 	 */
 	public void setListeners(Collection listeners) {
-		setListeners(listeners, FlowExecutionListenerCriteriaFactory.allFlows());
+		setListenersCriteria(listeners, FlowExecutionListenerCriteriaFactory.allFlows());
 	}
 
 	/**
 	 * Sets the flow execution listeners that will be notified of managed flow
 	 * executions for flows that match given criteria.
 	 */
-	public void setListeners(Collection listeners, FlowExecutionListenerCriteria criteria) {
+	public void setListenersCriteria(Collection listeners, FlowExecutionListenerCriteria criteria) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Setting listeners: " + listeners + " with criteria: " + criteria);
+		}
 		for (Iterator it = listeners.iterator(); it.hasNext();) {
 			FlowExecutionListener listener = (FlowExecutionListener)it.next();
-			List registeredCriteria = (List)this.listenerMap.get(listener);
-			registeredCriteria.add(criteria);
+			if (containsListener(listener)) {
+				removeListener(listener);
+			}
+			addListenerCriteria(listener, criteria);
 		}
 	}
 
@@ -327,8 +334,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * Sets the flow execution listeners that will be notified of managed flow
 	 * executions. The map keys may be individual flow execution listener
 	 * instances or collections of execution listener instances. The map values
-	 * can either be string encoded flow execution listener criteria or direct.
-	 * <code>FlowExecutionListenerCriteria</code> objects.
+	 * can either be string encoded flow execution listener criteria or direct
+	 * references to <code>FlowExecutionListenerCriteria</code> objects.
 	 */
 	public void setListenerMap(Map listenerCriteriaMap) {
 		Iterator it = listenerCriteriaMap.entrySet().iterator();
@@ -342,10 +349,10 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 				criteria = convertEncodedListenerCriteria((String)entry.getValue());
 			}
 			if (entry.getKey() instanceof Collection) {
-				setListeners((Collection)entry.getKey(), criteria);
+				setListenersCriteria((Collection)entry.getKey(), criteria);
 			}
 			else {
-				setListener((FlowExecutionListener)entry.getKey(), criteria);
+				setListenerCriteria((FlowExecutionListener)entry.getKey(), criteria);
 			}
 		}
 	}
@@ -359,18 +366,30 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @param listener the listener to add
 	 */
 	public void addListener(FlowExecutionListener listener) {
-		addListener(listener, FlowExecutionListenerCriteriaFactory.allFlows());
+		addListenerCriteria(listener, FlowExecutionListenerCriteriaFactory.allFlows());
 	}
 
 	/**
-	 * Add a listener that wil listen to executions to flows matching the
+	 * Add a listener that will listen to executions to flows matching the
 	 * specified criteria.
 	 * @param listener the listener
 	 * @param criteria the listener criteria
 	 */
-	public void addListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
-		List registeredCriteria = (List)this.listenerMap.get(listener);
-		registeredCriteria.add(criteria);
+	public void addListenerCriteria(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Adding flow execution listener: " + listener + " with criteria: " + criteria);
+		}
+		List criteriaList = (List)this.listenerMap.get(listener);
+		criteriaList.add(criteria);
+	}
+
+	/**
+	 * Is the listener contained by this Flow execution manager?
+	 * @param listener the listener
+	 * @return true if yes, false otherwise
+	 */
+	public boolean containsListener(FlowExecutionListener listener) {
+		return listenerMap.containsKey(listener);
 	}
 
 	/**
@@ -379,6 +398,25 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 */
 	public void removeListener(FlowExecutionListener listener) {
 		this.listenerMap.remove(listener);
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		System.out.println("Listener map:" + listenerMap);
+	}
+	
+	/**
+	 * Remove the criteria for the specified listener.
+	 * @param listener the listener
+	 * @param criteria the criteria
+	 */
+	public void removeListenerCriteria(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
+		if (containsListener(listener)) {
+			List criteriaList = (List)this.listenerMap.get(listener);
+			criteriaList.remove(criteria);
+			if (criteriaList.isEmpty()) {
+				removeListener(listener);
+			}
+		}
 	}
 
 	/**

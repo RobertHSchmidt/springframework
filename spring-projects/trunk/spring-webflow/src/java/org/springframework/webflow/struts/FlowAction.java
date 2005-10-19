@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.struts;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,7 +29,6 @@ import org.springframework.web.struts.ActionSupport;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.BeanFactoryFlowLocator;
@@ -37,9 +39,10 @@ import org.springframework.webflow.execution.servlet.ServletFlowExecutionManager
 
 /**
  * Struts Action that acts a front controller entry point into the web flow
- * system. A single FlowAction manages all flow executions by parameterization
- * with the appropriate <code>flowId</code> in views that start new flow
- * executions.
+ * system. A single FlowAction may launch any new FlowExecution with the
+ * appropriate <code>_flowId</code> passed in by client views (jsps, etc). In
+ * addition, a single Flow Action may signal events in any existing/restored
+ * FlowExecution with the appropriate <code>_flowExecutionId</code> passed in.
  * <p>
  * Requests are managed by and delegated to a {@link FlowExecutionManager},
  * allowing reuse of common front flow controller logic in other environments.
@@ -62,14 +65,14 @@ import org.springframework.webflow.execution.servlet.ServletFlowExecutionManager
  * FlowAction:
  * 
  * <pre>
- *    &lt;action path=&quot;/userRegistration&quot;
- *       	type=&quot;org.springframework.webflow.struts.FlowAction&quot;
- *        	name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *    &lt;/action&gt;
+ *     &lt;action path=&quot;/userRegistration&quot;
+ *         type=&quot;org.springframework.webflow.struts.FlowAction&quot;
+ *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *     &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
- * <code>/userRegistration.do</code> as a Flow controller. It is expected
+ * <code>/userRegistration.do</code> as a Flow controller. It is expected that
  * flows to launch be provided in a dynamic fashion by the views (allowing this
  * single <code>FlowAction</code> to manage any number of flow executions). A
  * Spring binding action form instance is set in request scope, acting as an
@@ -84,7 +87,7 @@ import org.springframework.webflow.execution.servlet.ServletFlowExecutionManager
  * setup in <code>struts-config.xml</code>: simply declare a form bean in
  * request scope of the class
  * <code>org.springframework.web.struts.SpringBindingActionForm</code> and use
- * it with your FlowAction(s).
+ * it with your FlowAction.
  * </ul>
  * <p>
  * The benefits here are substantial: developers now have a powerful web flow
@@ -107,9 +110,11 @@ public class FlowAction extends ActionSupport {
 	 */
 	public static final String FLOW_EXECUTION_MANAGER_BEAN_NAME = "flowExecutionManager";
 
+	/**
+	 * The manager responsible for launching and signaling struts-originating
+	 * events in flow executions.
+	 */
 	private FlowExecutionManager flowExecutionManager;
-
-	private Flow flow;
 
 	/**
 	 * Returns the flow execution manager used by this controller.
@@ -126,26 +131,6 @@ public class FlowAction extends ActionSupport {
 		this.flowExecutionManager = flowExecutionManager;
 	}
 
-	/**
-	 * Returns the default flow to be managed by this flow action's execution
-	 * manager.
-	 */
-	protected Flow getFlow() {
-		return flow;
-	}
-
-	/**
-	 * Convenience setter that configures a single flow definition for this
-	 * action to manage. This is a convenience feature to make it easy to
-	 * configure the flow for an action which just uses the default flow
-	 * execution manager. Note: do not call both this method and
-	 * <code>setFlowExecutionManager()</code> -- call one or the other.
-	 * @param flow the flow that this action will manage
-	 */
-	public void setFlow(Flow flow) {
-		this.flow = flow;
-	}
-
 	protected void onInit() {
 		if (getFlowExecutionManager() == null) {
 			try {
@@ -157,9 +142,6 @@ public class FlowAction extends ActionSupport {
 				setFlowExecutionManager(new ServletFlowExecutionManager(new BeanFactoryFlowLocator(
 						getWebApplicationContext())));
 			}
-		}
-		if (getFlow() != null) {
-			getFlowExecutionManager().setFlow(getFlow());
 		}
 		getFlowExecutionManager().addListener(new ActionFormAdapter());
 	}
@@ -195,11 +177,29 @@ public class FlowAction extends ActionSupport {
 			ActionForward forward = mapping.findForward(viewDescriptor.getViewName());
 			if (forward != null) {
 				// the 1.2.1 copy constructor would ideally be better to use,
-				// but is not Struts 1.1 compatible
+				// but it is not Struts 1.1 compatible
 				forward = new ActionForward(forward.getName(), forward.getPath(), viewDescriptor.isRedirect());
 			}
 			else {
-				forward = new ActionForward(viewDescriptor.getViewName(), viewDescriptor.isRedirect());
+				if (viewDescriptor.isRedirect()) {
+					StringBuffer path = new StringBuffer(viewDescriptor.getViewName());
+					if (viewDescriptor.getModel().size() > 0) {
+						// append model attributes as redirect query parameters
+						path.append('?');
+						Iterator it = viewDescriptor.getModel().entrySet().iterator();
+						while (it.hasNext()) {
+							Map.Entry entry = (Map.Entry)it.next();
+							path.append(entry.getKey()).append('=').append(entry.getValue());
+							if (it.hasNext()) {
+								path.append('&');
+							}
+						}
+					}
+					forward = new ActionForward(path.toString(), true);
+				}
+				else {
+					forward = new ActionForward(viewDescriptor.getViewName(), false);
+				}
 			}
 			forward.freeze();
 			return forward;
