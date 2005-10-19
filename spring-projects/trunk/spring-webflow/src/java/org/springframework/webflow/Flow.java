@@ -90,6 +90,12 @@ import org.springframework.util.StringUtils;
 public class Flow extends AnnotatedObject {
 
 	/**
+	 * Name of the property used to indicate the start state in which to start a
+	 * flow.
+	 */
+	public static final String START_STATE_PROPERTY = "startState";
+
+	/**
 	 * Logger, for use in subclasses.
 	 */
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -363,7 +369,24 @@ public class Flow extends AnnotatedObject {
 		if (isTransactional()) {
 			context.beginTransaction();
 		}
-		return getStartState().enter(context);
+		return getStartState(context).enter(context);
+	}
+
+	/**
+	 * Returns the flow start state, for starting in the current request
+	 * context. Allows for dynamic calcuation of the start state at execution
+	 * time.
+	 * @param context the context
+	 * @return the start state
+	 */
+	protected State getStartState(StateContext context) {
+		FlowExecutionContext execution = context.getFlowExecutionContext();
+		if (execution.isActive() && execution.getCurrentState() != null) {
+			if (execution.getCurrentState().containsProperty(START_STATE_PROPERTY)) {
+				return getRequiredState((String)execution.getCurrentState().getProperty(START_STATE_PROPERTY));
+			}
+		}
+		return getStartState();
 	}
 
 	/**
