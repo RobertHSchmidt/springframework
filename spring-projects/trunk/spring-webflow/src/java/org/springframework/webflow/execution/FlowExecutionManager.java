@@ -290,6 +290,14 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	}
 
 	/**
+	 * Returns a unmodifiable map of the configured flow execution listeners and the criteria in which 
+	 * those listeners apply.
+	 */
+	public Map getListenerMap() {
+		return Collections.unmodifiableMap(listenerMap);
+	}
+	
+	/**
 	 * Set the flow execution listener that will be notified of managed flow
 	 * executions.
 	 */
