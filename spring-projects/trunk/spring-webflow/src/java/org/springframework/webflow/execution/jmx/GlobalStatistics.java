@@ -21,21 +21,46 @@ package org.springframework.webflow.execution.jmx;
  * @author Keith Donald
  */
 final class GlobalStatistics implements GlobalStatisticsMBean {
-	
+
+	/**
+	 * The current number of actively executing (working) flow executions.
+	 */
 	int activeFlowExecutionCount;
 
+	/**
+	 * The total number of flow executions that have ended.
+	 */
 	int endedFlowExecutionCount;
 
+	/**
+	 * The current number of flow executions created and operational
+	 * (includes both paused and active).
+	 */
 	int managedFlowExecutionCount;
 
+	/**
+	 * The current number of paused flow executions waiting for input.
+	 */
 	int pausedFlowExecutionCount;
 
+	/**
+	 * The current number of requests in process to the SWF system. 
+	 */
 	int requestsInProcessCount;
 
+	/**
+	 * The total number of flow executions that have been spawned.
+	 */
 	int totalFlowExecutionCount;
 
+	/**
+	 * The total number of requests that have been received.
+	 */
 	int totalRequestCount;
 
+	/**
+	 * Flag determing if stats collection is enabled.
+	 */
 	boolean statisticsEnabled;
 
 	public int getActiveFlowExecutionCount() {

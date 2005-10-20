@@ -37,24 +37,60 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  */
 public class StatisticsService implements InitializingBean, DisposableBean {
 
+	/**
+	 * A JMX key attribute "serviceType".
+	 */
+	private static final String SERVICE_TYPE_KEY_NAME = "serviceType";
+
+	/**
+	 * The default "spring-webflow" JMX domain name.
+	 */
+	private static final String SPRING_WEBFLOW_DOMAIN = "spring-webflow";
+
+	/**
+	 * The execution manager to collect statistics on.
+	 */
 	private FlowExecutionManager flowExecutionManager;
 
+	/**
+	 * A global statistics bean (stats holder). 
+	 */
 	private GlobalStatistics globalStats = new GlobalStatistics();
 
+	/**
+	 * The statistics collector, a flow execution listener. 
+	 */
 	private FlowExecutionListener statisticsCollector = new StatisticsCollector();
 
+	/**
+	 * The MBeanServer the statistics MBean should be registered in.
+	 */
 	private MBeanServer mbeanServer;
 
+	/**
+	 * The ObjectName of the global statistics MBean. 
+	 */
 	private ObjectName globalStatsMBeanName;
 
+	/**
+	 * Creates a Web Flow statistics service that will collect stats on FlowExecutions managed by
+	 * the provided execution manger.
+	 * @param flowExecutionManager the flow execution manager
+	 */
 	public StatisticsService(FlowExecutionManager flowExecutionManager) {
 		this.flowExecutionManager = flowExecutionManager;
 	}
 
+	/**
+	 * @param mbeanServer
+	 */
 	public void setMBeanServer(MBeanServer mbeanServer) {
 		this.mbeanServer = mbeanServer;
 	}
 
+	/**
+	 * Set if stats collection should be enabled.
+	 */
 	public void setEnabled(boolean enabled) {
 		this.globalStats.setStatisticsEnabled(enabled);
 	}
@@ -65,7 +101,7 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 			List servers = MBeanServerFactory.findMBeanServer(null);
 			mbeanServer = (MBeanServer)servers.get(0);
 		}
-		globalStatsMBeanName = new ObjectName("spring-webflow", "type", "globalStatistics");
+		globalStatsMBeanName = new ObjectName(SPRING_WEBFLOW_DOMAIN, SERVICE_TYPE_KEY_NAME, "globalStatistics");
 		mbeanServer.registerMBean(globalStats, globalStatsMBeanName);
 		this.flowExecutionManager.addListener(statisticsCollector);
 	}
