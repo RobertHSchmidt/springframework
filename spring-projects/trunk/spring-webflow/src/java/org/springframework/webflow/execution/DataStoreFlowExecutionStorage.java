@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.util.RandomGuid;
 
 /**
  * Flow execution storage implementation that stores the flow execution in a
@@ -44,6 +43,11 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	private DataStoreAccessor dataStoreAccessor;
 
 	/**
+	 * The Flow Execution key generation strategy.
+	 */
+	private KeyGenerator keyGenerator = new RandomGuidKeyGenerator();
+	
+	/**
 	 * Create a new flow execution storage using given data store accessor.
 	 * @param dataStoreAccessor the data store accessor to use
 	 */
@@ -53,6 +57,20 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 		this.dataStoreAccessor = dataStoreAccessor;
 	}
 
+	/**
+	 * Returns the key generation strategy to use.
+	 */
+	protected KeyGenerator getKeyGenerator() {
+		return keyGenerator;
+	}
+	
+	/**
+	 * Sets the storage key generation strategy to use.
+	 */
+	public void setKeyGenerator(KeyGenerator keyGenerator) {
+		this.keyGenerator = keyGenerator;
+	}
+	
 	public FlowExecution load(Serializable id, Event sourceEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		try {
@@ -127,7 +145,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 * Helper to generate a unique id for a flow execution in the storage.
 	 */
 	protected Serializable createId() {
-		return new RandomGuid().toString();
+		return keyGenerator.generate();
 	}
 
 	/**
