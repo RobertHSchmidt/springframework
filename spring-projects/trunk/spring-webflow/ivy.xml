@@ -10,7 +10,6 @@
 	<!-- public	webflow	configurations other projects may use -->
 	<conf name="mvc" visibility="public" extends="global"/>
 	<conf name="struts"	visibility="public"	extends="global"/>
-	<conf name="tapestry" visibility="public" extends="global"/>
 	<conf name="jsf" visibility="public" extends="global"/>
   </configurations>
 
@@ -35,20 +34,6 @@
 	<dependency	org="apache" name="struts" rev="1.2.7" conf="buildtime,struts->default"/>
 	<dependency	org="apache" name="commons-lang" rev="2.1" conf="struts->default"/>
 
-	<!-- tapestry only dependencies	-->
-	<dependency	org="apache" name="tapestry" rev="4.0-beta-8" conf="buildtime,tapestry->default">
-		<artifact name="tapestry" type="jar"/>
-		<artifact name="tapestry-contrib" type="jar"/>
-		<artifact name="tapestry-annotations" type="jar"/>
-	</dependency>
-	<dependency	org="apache" name="hivemind" rev="1.1-beta-3" conf="buildtime,tapestry->default">
-		<artifact name="hivemind" type="jar"/>
-		<artifact name="hivemind-lib" type="jar"/>
-	</dependency>
-	<dependency	org="apache" name="bsf"	rev="2.3.0"	conf="tapestry->default"/>
-	<dependency	org="jboss"	name="javassist" rev="3.0" conf="tapestry->default"/>
-	<!--dependency org="diaphragma"	name="tapestry-spring" rev="1.0-alpha1"	conf="tapestry->default"/-->
-
     <!-- JSF-only dependencies -->
     <!-- note that at this time we depend on MyFaces, not JSF-RI -->
     <dependency	org="apache" name="commons-el" rev="1.0" conf="jsf->default"/>
@@ -60,16 +45,11 @@
 	</dependency>
 
     <!-- mixed dependencies -->
-    <dependency	org="apache" name="commons-beanutils" rev="1.7.0"
-                conf="jsf->default; struts->default"/>
-    <dependency	org="apache" name="commons-collections"	rev="3.1"
-                conf="jsf->default; struts->default"/>
-    <dependency	org="apache" name="commons-digester" rev="1.7"
-                conf="jsf->default; struts->default"/>
-    <dependency	org="apache" name="commons-validator" rev="1.1.4"
-                conf="jsf->default; struts->default"/>
-    <dependency	org="apache" name="oro"	rev="2.0.8"
-                conf="jsf->default; tapestry->default"/>
+    <dependency	org="apache" name="commons-beanutils" rev="1.7.0" conf="jsf->default; struts->default"/>
+    <dependency	org="apache" name="commons-collections"	rev="3.1" conf="jsf->default; struts->default"/>
+    <dependency	org="apache" name="commons-digester" rev="1.7" conf="jsf->default; struts->default"/>
+    <dependency	org="apache" name="commons-validator" rev="1.1.4" conf="jsf->default; struts->default"/>
+    <dependency	org="apache" name="oro"	rev="2.0.8" conf="jsf->default"/>
 
 	<!-- build time	only dependencies -->	 
 	<dependency	org="java" name="servlet" rev="2.4"	conf="buildtime->default">
