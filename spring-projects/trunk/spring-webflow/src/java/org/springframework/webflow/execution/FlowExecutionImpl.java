@@ -530,8 +530,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 					"The root flow of the execution should be the same as the flow in the root flow session");
 		}
 		listenerList = new FlowExecutionListenerList();
-		listenerList.add(listenerLoader.getListeners(this.rootFlow));
-		transactionSynchronizer = transactionSynchronizer;
+		listenerList.add(listenerLoader.getListeners(rootFlow));
+		this.transactionSynchronizer = transactionSynchronizer;
 	}
 
 	public String toString() {
