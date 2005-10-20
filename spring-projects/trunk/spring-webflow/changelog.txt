@@ -5,9 +5,10 @@ http://www.springframework.org
 Changes in version RC1
 ------------------------------------
 * Introduced JSF integration, see the "jsf" package.
-* The "Flow" class now encapsulates FlowExecution start and end behavior
+* The "Flow" class now encapsulates FlowExecution start, resume, pause, and end behavior
 * Flows may now be annotated as "transactional" for automatic creation of a synchronized application transaction
   to prevent duplicate submits (even with continuations!)
+* Added KeyGenerator strategy, providing a plugin point for custom FlowExecution key generation strategies.
 * Added "CompositeEvent" support for composite actions that may generate multiple action result events.
 * Added ExternalEvent "sessionMap" and "applicationMap" property for accessing session and application scoped 
   variables associated with a source event.
