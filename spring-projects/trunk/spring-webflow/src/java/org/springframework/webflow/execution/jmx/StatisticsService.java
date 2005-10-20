@@ -25,6 +25,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.FlowExecutionManager;
@@ -35,7 +36,7 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  * @author Keith Donald
  */
 public class StatisticsService implements InitializingBean, DisposableBean {
-	
+
 	private FlowExecutionManager flowExecutionManager;
 
 	private GlobalStatistics globalStats = new GlobalStatistics();
@@ -53,7 +54,7 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 	public void setMBeanServer(MBeanServer mbeanServer) {
 		this.mbeanServer = mbeanServer;
 	}
-	
+
 	public void setEnabled(boolean enabled) {
 		this.globalStats.setStatisticsEnabled(enabled);
 	}
@@ -62,9 +63,9 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 		// register global stats mbean
 		if (mbeanServer == null) {
 			List servers = MBeanServerFactory.findMBeanServer(null);
-			mbeanServer = (MBeanServer) servers.get(0);
+			mbeanServer = (MBeanServer)servers.get(0);
 		}
-		globalStatsMBeanName = new ObjectName("spring-webflow", "type",	"globalStatistics");
+		globalStatsMBeanName = new ObjectName("spring-webflow", "type", "globalStatistics");
 		mbeanServer.registerMBean(globalStats, globalStatsMBeanName);
 		this.flowExecutionManager.addListener(statisticsCollector);
 	}
@@ -75,32 +76,37 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 	}
 
 	/**
-	 * Flow execution listener that collects statistics about the web flow system.
+	 * Flow execution listener that collects statistics about the web flow
+	 * system.
 	 * 
 	 * @author Keith Donald
 	 */
 	protected final class StatisticsCollector extends FlowExecutionListenerAdapter {
-		
+
 		protected boolean statisticsEnabled(RequestContext context) {
 			return globalStats.statisticsEnabled;
-		}
-
-		public void paused(RequestContext context) {
-			if (statisticsEnabled(context)) {
-				globalStats.pausedFlowExecutionCount++;
-			}
-		}
-
-		public void requestProcessed(RequestContext context) {
-			if (statisticsEnabled(context)) {
-				globalStats.requestsInProcessCount--;
-			}
 		}
 
 		public void requestSubmitted(RequestContext context) {
 			if (statisticsEnabled(context)) {
 				globalStats.totalRequestCount++;
 				globalStats.requestsInProcessCount++;
+			}
+		}
+
+		public void sessionStarted(RequestContext context) {
+			if (statisticsEnabled(context)) {
+				if (context.getFlowExecutionContext().isRootFlowActive()) {
+					globalStats.totalFlowExecutionCount++;
+					globalStats.managedFlowExecutionCount++;
+				}
+			}
+		}
+		
+		public void paused(RequestContext context, ViewDescriptor selectedView) {
+			if (statisticsEnabled(context)) {
+				globalStats.pausedFlowExecutionCount++;
+				globalStats.activeFlowExecutionCount--;
 			}
 		}
 
@@ -111,49 +117,19 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 			}
 		}
 
-		public void sessionEnded(RequestContext context,
-				FlowSession endedSession) {
+		public void sessionEnded(RequestContext context, FlowSession endedSession) {
 			if (statisticsEnabled(context)) {
 				if (endedSession.isRoot()) {
 					globalStats.endedFlowExecutionCount++;
 					globalStats.managedFlowExecutionCount--;
 					globalStats.activeFlowExecutionCount--;
-					/* TODO try {
-						Hashtable keys = new Hashtable();
-						keys.put("id", endedSession.getFlow().getId());
-						keys.put("type", "flowExecution");
-						ObjectName name = new ObjectName("spring-webflow", keys);
-						mbeanServer.unregisterMBean(name);
-					} catch (JMException e) {
-						System.out.println(e);
-					}
-					*/
 				}
 			}
 		}
 
-		public void sessionStarted(RequestContext context) {
+		public void requestProcessed(RequestContext context) {
 			if (statisticsEnabled(context)) {
-				if (context.getFlowExecutionContext().isRootFlowActive()) {
-					globalStats.totalFlowExecutionCount++;
-					globalStats.managedFlowExecutionCount++;
-					/* TODO
-					try {
-						FlowExecution execution = (FlowExecution) context
-								.getFlowExecutionContext();
-						FlowExecutionMBean mbean = new FlowExecutionMBeanAdapter(
-								execution);
-						Hashtable keys = new Hashtable();
-						// temp
-						keys.put("id", execution.getActiveFlow().getId());
-						keys.put("type", "flowExecution");
-						ObjectName name = new ObjectName("spring-webflow", keys);
-						mbeanServer.registerMBean(new StandardMBean(mbean, FlowExecutionMBean.class), name);
-					} catch (JMException e) {
-						System.out.println(e);
-					}
-					*/
-				}
+				globalStats.requestsInProcessCount--;
 			}
 		}
 	}
