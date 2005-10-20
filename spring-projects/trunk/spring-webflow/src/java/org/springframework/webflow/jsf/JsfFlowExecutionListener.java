@@ -33,7 +33,7 @@ public class JsfFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	private FacesContext facesContext;
 
-	JsfFlowExecutionListener(FacesContext facesContext) {
+	public JsfFlowExecutionListener(FacesContext facesContext) {
 		this.facesContext = facesContext;
 	}
 

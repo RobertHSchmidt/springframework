@@ -11,7 +11,7 @@ import java.io.Serializable;
 public interface KeyGenerator {
 
 	/**
-	 * Return a new key
+	 * Generate a new, unique key.
 	 * @return a serializable key, guaranteed to be unique
 	 */
 	public Serializable generate();
