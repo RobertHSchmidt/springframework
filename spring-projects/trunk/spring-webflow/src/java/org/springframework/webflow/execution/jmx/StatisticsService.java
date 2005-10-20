@@ -100,6 +100,7 @@ public class StatisticsService implements InitializingBean, DisposableBean {
 					globalStats.totalFlowExecutionCount++;
 					globalStats.managedFlowExecutionCount++;
 				}
+				globalStats.activeFlowExecutionCount++;
 			}
 		}
 		
