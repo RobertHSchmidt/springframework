@@ -61,7 +61,7 @@
 		</clover-setup>
 	</target>
 
-	<target name="clover.instrument" depends="clean, clover.init, compile" />
+	<target name="clover.instrument" depends="clover.init, compile" />
 
 	<target name="clover-report" depends="clover.instrument, tests-local" description="Produce a test coverage report">
 		<clover-report>
