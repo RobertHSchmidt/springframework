@@ -127,7 +127,7 @@ public abstract class ExternalEvent extends Event {
 	 * @return the session map
 	 */
 	public Map getSessionMap() {
-		throw new UnsupportedOperationException("Session map not supported");
+		throw new UnsupportedOperationException("Session map not supported by this type of external event");
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public abstract class ExternalEvent extends Event {
 	 * @return the application map
 	 */
 	public Map getApplicationMap() {
-		throw new UnsupportedOperationException("Application map not supported");
+		throw new UnsupportedOperationException("Application map not supported by this type of external event");
 	}
 	
 	/**

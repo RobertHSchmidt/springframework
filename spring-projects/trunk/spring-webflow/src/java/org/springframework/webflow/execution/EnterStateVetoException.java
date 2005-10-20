@@ -26,6 +26,9 @@ import org.springframework.webflow.State;
  */
 public class EnterStateVetoException extends FlowNavigationException {
 
+	/**
+	 * The state whose entering was vetoed.
+	 */
 	private State state;
 	
 	/**
