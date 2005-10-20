@@ -18,6 +18,8 @@ package org.springframework.webflow.test;
 import java.util.Collection;
 import java.util.Map;
 
+import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
@@ -100,10 +102,6 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 		return flowLocator;
 	}
 
-	protected final void onSetUpInTransaction() throws Exception {
-		onSetUpInTransactionalFlowTest();
-	}
-
 	/**
 	 * Hook method subclasses may implement to customize the FlowLocator
 	 * implementation that is returned to locate the Flow definition whose
@@ -111,6 +109,10 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 */
 	protected FlowLocator createFlowLocator() {
 		return new BeanFactoryFlowArtifactLocator(this.applicationContext);
+	}
+
+	protected final void onSetUpInTransaction() throws Exception {
+		onSetUpInTransactionalFlowTest();
 	}
 
 	/**
@@ -275,6 +277,13 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
+	 * Assert that the entire flow execution is active; that is, it has not ended and has been started.
+	 */
+	protected void assertFlowExecutionActive() {
+		assertTrue("The flow execution is not active but it should be", flowExecution.isActive());
+	}
+
+	/**
 	 * Assert that the entire flow execution has ended; that is, it is no longer
 	 * active.
 	 */
@@ -307,10 +316,10 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	/**
 	 * Assert that the view name equals the provided value.
 	 * @param expectedViewName the expected name
-	 * @param viewDescriptor the view descriptor to assert
+	 * @param selectedView the view descriptor to assert
 	 */
-	public void assertViewNameEquals(String expectedViewName, ViewDescriptor viewDescriptor) {
-		assertEquals("The view name is wrong:", expectedViewName, viewDescriptor.getViewName());
+	public void assertViewNameEquals(String expectedViewName, ViewDescriptor selectedView) {
+		assertEquals("The view name is wrong:", expectedViewName, selectedView.getViewName());
 	}
 
 	/**
@@ -318,10 +327,24 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * with the provided expected value.
 	 * @param expectedValue the expected value
 	 * @param attributeName the attribute name
-	 * @param viewDescriptor the view descriptor to assert
+	 * @param selectedView the view descriptor to assert
 	 */
-	public void assertModelAttributeEquals(String expectedValue, String attributeName, ViewDescriptor viewDescriptor) {
-		assertEquals("The model attribute value is wrong:", expectedValue, viewDescriptor.getAttribute(attributeName));
+	public void assertModelAttributeEquals(Object expectedValue, String attributeName, ViewDescriptor selectedView) {
+		assertModelAttributeExpressionEquals(expectedValue, ExpressionFactory.parseExpression(attributeName),
+				selectedView);
+	}
+
+	/**
+	 * Assert that the view descriptor contains the specified model expression
+	 * with the provided expected value.
+	 * @param expectedValue the expected value
+	 * @param expression the model map expression
+	 * @param selectedView the view descriptor to assert
+	 */
+	public void assertModelAttributeExpressionEquals(Object expectedValue, Expression expression,
+			ViewDescriptor selectedView) {
+		assertEquals("The model attribute value is wrong:", expectedValue, expression.evaluateAgainst(selectedView
+				.getModel(), null));
 	}
 
 	/**
@@ -329,31 +352,30 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * attribute with the provided expected size.
 	 * @param expectedSize the expected size
 	 * @param attributeName the collection attribute name
-	 * @param viewDescriptor the view descriptor to assert
+	 * @param selectedView the view descriptor to assert
 	 */
-	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ViewDescriptor viewDescriptor) {
-		assertModelAttributeNotNull(attributeName, viewDescriptor);
-		Collection c = (Collection)viewDescriptor.getAttribute(attributeName);
+	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ViewDescriptor selectedView) {
+		assertModelAttributeNotNull(attributeName, selectedView);
+		Collection c = (Collection)selectedView.getAttribute(attributeName);
 		assertEquals("The model attribute collection size is wrong:", expectedSize, c.size());
 	}
 
 	/**
 	 * Assert that the view descriptor contains the specified model attribute.
 	 * @param attributeName the attribute name
-	 * @param viewDescriptor the view descriptor to assert
+	 * @param selectedView the view descriptor to assert
 	 */
-	public void assertModelAttributeNotNull(String attributeName, ViewDescriptor viewDescriptor) {
-		assertNotNull("The model attribute is [null] but should be NOT null:", viewDescriptor
-				.getAttribute(attributeName));
+	public void assertModelAttributeNotNull(String attributeName, ViewDescriptor selectedView) {
+		assertNotNull("The model attribute is [null] but should be NOT null:", selectedView.getAttribute(attributeName));
 	}
 
 	/**
 	 * Assert that the view descriptor does not contain the specified model
 	 * attribute.
 	 * @param attributeName the attribute name
-	 * @param viewDescriptor the view descriptor to assert
+	 * @param selectedView the view descriptor to assert
 	 */
-	public void assertModelAttributeNull(String attributeName, ViewDescriptor viewDescriptor) {
-		assertNull("The model attribute is NOT null but should be [null]:", viewDescriptor.getAttribute(attributeName));
+	public void assertModelAttributeNull(String attributeName, ViewDescriptor selectedView) {
+		assertNull("The model attribute is NOT null but should be [null]:", selectedView.getAttribute(attributeName));
 	}
 }
