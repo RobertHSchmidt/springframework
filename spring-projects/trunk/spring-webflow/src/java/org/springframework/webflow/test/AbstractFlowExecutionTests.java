@@ -18,7 +18,6 @@ package org.springframework.webflow.test;
 import java.util.Collection;
 import java.util.Map;
 
-import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 import org.springframework.util.Assert;
@@ -277,7 +276,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
-	 * Assert that the entire flow execution is active; that is, it has not ended and has been started.
+	 * Assert that the entire flow execution is active; that is, it has not
+	 * ended and has been started.
 	 */
 	protected void assertFlowExecutionActive() {
 		assertTrue("The flow execution is not active but it should be", flowExecution.isActive());
@@ -330,21 +330,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @param selectedView the view descriptor to assert
 	 */
 	public void assertModelAttributeEquals(Object expectedValue, String attributeName, ViewDescriptor selectedView) {
-		assertModelAttributeExpressionEquals(expectedValue, ExpressionFactory.parseExpression(attributeName),
-				selectedView);
-	}
-
-	/**
-	 * Assert that the view descriptor contains the specified model expression
-	 * with the provided expected value.
-	 * @param expectedValue the expected value
-	 * @param expression the model map expression
-	 * @param selectedView the view descriptor to assert
-	 */
-	public void assertModelAttributeExpressionEquals(Object expectedValue, Expression expression,
-			ViewDescriptor selectedView) {
-		assertEquals("The model attribute value is wrong:", expectedValue, expression.evaluateAgainst(selectedView
-				.getModel(), null));
+		assertEquals("The model attribute value is wrong:", expectedValue, evaluateModelAttributeExpression(
+				attributeName, selectedView.getModel()));
 	}
 
 	/**
@@ -356,7 +343,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 */
 	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ViewDescriptor selectedView) {
 		assertModelAttributeNotNull(attributeName, selectedView);
-		Collection c = (Collection)selectedView.getAttribute(attributeName);
+		Collection c = (Collection)evaluateModelAttributeExpression(attributeName, selectedView.getModel());
 		assertEquals("The model attribute collection size is wrong:", expectedSize, c.size());
 	}
 
@@ -366,7 +353,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @param selectedView the view descriptor to assert
 	 */
 	public void assertModelAttributeNotNull(String attributeName, ViewDescriptor selectedView) {
-		assertNotNull("The model attribute is [null] but should be NOT null:", selectedView.getAttribute(attributeName));
+		assertNotNull("The model attribute is [null] but should be NOT null:", evaluateModelAttributeExpression(
+				attributeName, selectedView.getModel()));
 	}
 
 	/**
@@ -376,6 +364,18 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @param selectedView the view descriptor to assert
 	 */
 	public void assertModelAttributeNull(String attributeName, ViewDescriptor selectedView) {
-		assertNull("The model attribute is NOT null but should be [null]:", selectedView.getAttribute(attributeName));
+		assertNull("The model attribute is NOT null but should be [null]:", evaluateModelAttributeExpression(
+				attributeName, selectedView.getModel()));
 	}
+
+	/**
+	 * Evaluates a model attribute expression: e.g. attributeName.childAttribute.attr
+	 * @param attributeName the attribute expression
+	 * @param model the model map
+	 * @return the attribute expression value
+	 */
+	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
+		return ExpressionFactory.parseExpression(attributeName).evaluateAgainst(model, null);
+	}
+	
 }
