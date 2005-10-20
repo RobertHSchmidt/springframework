@@ -32,6 +32,9 @@ import org.springframework.webflow.access.NoSuchFlowDefinitionException;
  */
 public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingBean, BeanFactoryAware {
 
+	/**
+	 * Logger.
+	 */
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
