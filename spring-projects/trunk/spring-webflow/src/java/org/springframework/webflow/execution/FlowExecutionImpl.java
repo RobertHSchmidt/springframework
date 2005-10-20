@@ -71,7 +71,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	private static final Log logger = LogFactory.getLog(FlowExecutionImpl.class);
 
 	/**
-	 * Key identifying this flow execution.
+	 * Key uniquely identifying this flow execution.
 	 */
 	private Serializable key;
 
@@ -124,15 +124,18 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	private transient TransactionSynchronizer transactionSynchronizer;
 
 	/**
-	 * Create a new flow execution executing the provided flow.
+	 * Create a new flow execution executing the provided flow. This constructor
+	 * is mainly used for testing
 	 * @param rootFlow the root flow of this flow execution
 	 */
 	public FlowExecutionImpl(Flow rootFlow) {
-		this(new RandomGuidKeyGenerator().generate(), rootFlow, null, new FlowScopeTokenTransactionSynchronizer());
+		this(new RandomGuidKeyGenerator().generate(), rootFlow, new FlowExecutionListener[0],
+				new FlowScopeTokenTransactionSynchronizer());
 	}
 
 	/**
 	 * Create a new flow execution executing the provided flow.
+	 * @param key the key uniquely identifying this flow execution.
 	 * @param rootFlow the root flow of this flow execution
 	 * @param listeners the listeners interested in flow execution lifecycle
 	 * events
@@ -141,11 +144,12 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 */
 	public FlowExecutionImpl(Serializable key, Flow rootFlow, FlowExecutionListener[] listeners,
 			TransactionSynchronizer transactionSynchronizer) {
+		Assert.notNull(key, "The unique key identifying this flow execution is required");
 		Assert.notNull(rootFlow, "The root flow definition is required");
 		Assert.notNull(transactionSynchronizer, "The transaction synchronizer is required");
-		this.creationTimestamp = System.currentTimeMillis();
+		creationTimestamp = System.currentTimeMillis();
 		this.rootFlow = rootFlow;
-		this.getListeners().add(listeners);
+		getListeners().add(listeners);
 		this.transactionSynchronizer = transactionSynchronizer;
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created new client execution with key: '" + key + "' for flow definition: '"
@@ -478,8 +482,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	// custom serialization
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.writeObject(this.key);
-		out.writeLong(this.creationTimestamp);
+		out.writeObject(key);
+		out.writeLong(creationTimestamp);
 		if (this.getRootFlow() != null) {
 			// avoid bogus NullPointerExceptions
 			out.writeObject(this.getRootFlow().getId());
@@ -487,18 +491,18 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		else {
 			out.writeObject(null);
 		}
-		out.writeObject(this.lastEventId);
-		out.writeLong(this.lastRequestTimestamp);
-		out.writeObject(this.executingFlowSessions);
+		out.writeObject(lastEventId);
+		out.writeLong(lastRequestTimestamp);
+		out.writeObject(executingFlowSessions);
 	}
 
 	private void readObject(ObjectInputStream in) throws OptionalDataException, ClassNotFoundException, IOException {
-		this.key = (String)in.readObject();
-		this.creationTimestamp = in.readLong();
-		this.rootFlowId = (String)in.readObject();
-		this.lastEventId = (String)in.readObject();
-		this.lastRequestTimestamp = in.readLong();
-		this.executingFlowSessions = (Stack)in.readObject();
+		key = (Serializable)in.readObject();
+		creationTimestamp = in.readLong();
+		rootFlowId = (String)in.readObject();
+		lastEventId = (String)in.readObject();
+		lastRequestTimestamp = in.readLong();
+		executingFlowSessions = (Stack)in.readObject();
 	}
 
 	public synchronized void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader,
@@ -506,14 +510,14 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		// implementation note: we cannot integrate this code into the
 		// readObject() method since we need the flow locator, listener list and
 		// tx synchronizer!
-		if (this.rootFlow != null) {
+		if (rootFlow != null) {
 			// nothing to do, we're already hydrated
 			return;
 		}
 		Assert.notNull(rootFlowId, "The root flow id was not set during deserialization: cannot restore"
 				+ " -- was this flow execution deserialized properly?");
-		this.rootFlow = flowLocator.getFlow(rootFlowId);
-		this.rootFlowId = null;
+		rootFlow = flowLocator.getFlow(rootFlowId);
+		rootFlowId = null;
 		// rehydrate all flow sessions
 		Iterator it = this.executingFlowSessions.iterator();
 		while (it.hasNext()) {
@@ -525,9 +529,9 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 			Assert.isTrue(getRootFlow() == getRootSession().getFlow(),
 					"The root flow of the execution should be the same as the flow in the root flow session");
 		}
-		this.listenerList = new FlowExecutionListenerList();
-		this.listenerList.add(listenerLoader.getListeners(this.rootFlow));
-		this.transactionSynchronizer = transactionSynchronizer;
+		listenerList = new FlowExecutionListenerList();
+		listenerList.add(listenerLoader.getListeners(this.rootFlow));
+		transactionSynchronizer = transactionSynchronizer;
 	}
 
 	public String toString() {
