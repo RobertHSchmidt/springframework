@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.RequestNotInTransactionException;
 
@@ -125,8 +124,9 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 		// we use the source event because we want to verify that the
 		// client request that came into the system has a matching transaction
 		// token!
-		String tokenValue = (String)context.getSourceEvent().getParameter(getTransactionTokenParameterName());
-		if (!StringUtils.hasText(tokenValue)) {
+		Serializable tokenValue = (Serializable)context.getSourceEvent().getParameter(
+				getTransactionTokenParameterName());
+		if (tokenValue == null) {
 			return false;
 		}
 		Serializable txToken = getToken(context);
