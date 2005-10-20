@@ -111,17 +111,6 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 		return new BeanFactoryFlowArtifactLocator(this.applicationContext);
 	}
 
-	protected final void onSetUpInTransaction() throws Exception {
-		onSetUpInTransactionalFlowTest();
-	}
-
-	/**
-	 * Hook method subclasses can implement to do additional setup. Called after
-	 * the transition has been activated and the flow locator has been set.
-	 */
-	protected void onSetUpInTransactionalFlowTest() {
-	}
-
 	/**
 	 * Get the singleton flow definition whose execution is being tested.
 	 * @return the singleton flow definition
@@ -160,6 +149,17 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 		setFlow(new FlowFactoryBean(flowBuilder).getFlow());
 	}
 
+	protected final void onSetUpInTransaction() throws Exception {
+		onSetUpInTransactionalFlowTest();
+	}
+
+	/**
+	 * Hook method subclasses can implement to do additional setup. Called after
+	 * the transition has been activated and the flow locator has been set.
+	 */
+	protected void onSetUpInTransactionalFlowTest() {
+	}
+
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
 	 * @return the model and view returned as a result of starting the flow
@@ -167,6 +167,26 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 */
 	protected ViewDescriptor startFlow() {
 		return startFlow(event("start"));
+	}
+
+	/**
+	 * Start a new flow execution for the flow definition that is being tested.
+	 * @param event the starting event
+	 * @return the model and view returned as a result of starting the flow
+	 * (returned when the first view state is entered)
+	 */
+	protected ViewDescriptor startFlow(Event event) {
+		this.flowExecution = new FlowExecutionImpl(getFlow());
+		onSetupFlowExecution(flowExecution);
+		return this.flowExecution.start(event);
+	}
+
+	/**
+	 * Hook method where you can do additional setup of a flow execution before
+	 * it is started, like register an execution listener.
+	 * @param flowExecution the flow execution
+	 */
+	protected void onSetupFlowExecution(FlowExecution flowExecution) {
 	}
 
 	/**
@@ -188,26 +208,6 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 */
 	protected Event event(String eventId, Map parameters) {
 		return new Event(this, eventId, parameters);
-	}
-
-	/**
-	 * Start a new flow execution for the flow definition that is being tested.
-	 * @param event the starting event
-	 * @return the model and view returned as a result of starting the flow
-	 * (returned when the first view state is entered)
-	 */
-	protected ViewDescriptor startFlow(Event event) {
-		this.flowExecution = new FlowExecutionImpl(getFlow());
-		onSetupFlowExecution(flowExecution);
-		return this.flowExecution.start(event);
-	}
-
-	/**
-	 * Hook method where you can do additional setup of a flow execution before
-	 * it is started, like register an execution listener.
-	 * @param flowExecution the flow execution
-	 */
-	protected void onSetupFlowExecution(FlowExecution flowExecution) {
 	}
 
 	/**
