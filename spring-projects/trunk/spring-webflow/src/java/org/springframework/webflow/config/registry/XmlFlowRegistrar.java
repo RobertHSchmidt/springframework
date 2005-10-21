@@ -63,6 +63,16 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware {
 	}
 
 	/**
+	 * Creates an XML flow registrar
+	 * @param artifactLocator the flow artifact locator
+	 * @param definitionLocations the locations of the XML flow definitions to register
+	 */
+	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator, Resource[] definitionLocations) {
+		setFlowArtifactLocator(artifactLocator);
+		setDefinitionLocations(definitionLocations);
+	}
+
+	/**
 	 * Sets the locations (file paths) pointing to XML-based flow definitions.
 	 * @param locations the resource locations
 	 */

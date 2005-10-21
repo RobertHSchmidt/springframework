@@ -3,5 +3,19 @@
 <p>
 Contains interfaces and classes for registering and refreshing web flows in a registry.
 </p>
+<p>
+You can construct a generic, initially empty FlowRegistry, and then populate it
+with Flow definitions using a FlowRegistrar as follows:
+<pre>
+    BeanFactory beanFactory = ...
+    FlowRegistryImpl registry = new FlowRegistryImpl();
+    Resource[] locations = new Resource[] {
+       "/WEB-INF/flowA.xml",
+       "/WEB-INF/flowB.xml"
+    };
+    XmlFlowRegistrar registrar = new XmlFlowRegistrar(new BeanFactoryFlowArtifactLocator(beanFactory), locations);
+    registrar.registerFlowDefinitions(registry);
+</pre>
+</p>
 </body>
 </html>
