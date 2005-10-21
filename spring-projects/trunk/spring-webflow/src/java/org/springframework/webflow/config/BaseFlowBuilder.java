@@ -17,6 +17,9 @@ package org.springframework.webflow.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
@@ -35,7 +38,7 @@ import org.springframework.webflow.Flow;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public abstract class BaseFlowBuilder implements FlowBuilder {
+public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 
 	/**
 	 * A logger instance that can be used in subclasses.
@@ -143,6 +146,12 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 		this.conversionService = conversionService;
 	}
 
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		if (flowArtifactLocator == null) {
+			this.flowArtifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory);
+		}
+	}
+	
 	/**
 	 * Initialize this builder's conversion service and register default
 	 * converters. Called by subclasses who wish to use the conversion
