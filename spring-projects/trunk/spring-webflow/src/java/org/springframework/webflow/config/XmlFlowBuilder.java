@@ -266,6 +266,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		this.entityResolver = entityResolver;
 	}
 
+	/* Overriden to hook in this XML builder's local artifact registry as a child of the parent registry.
+	 * @see org.springframework.webflow.config.BaseFlowBuilder#setFlowArtifactLocator(org.springframework.webflow.config.FlowArtifactLocator)
+	 */
 	public void setFlowArtifactLocator(FlowArtifactLocator artifactLocator) {
 		FlowArtifactLocator localLocator = new BeanFactoryFlowArtifactLocator(localArtifactRegistry);
 		super.setFlowArtifactLocator(new ChainedFlowArtifactLocator(new FlowArtifactLocator[] { localLocator,
