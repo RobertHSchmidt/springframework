@@ -65,7 +65,8 @@ public interface FlowExecutionListener {
 	 * Called immediately after a start event is signaled -- indicating the flow
 	 * execution session is starting but hasn't yet entered its start state.
 	 * @param context source of the event
-	 * @param sessionStarting the definition of the Flow that is starting
+	 * @param flow the definition of the Flow that is starting
+	 * @param input a mutable input map to the starting flow session
 	 * @throws EnterStateVetoException the start state transition was not allowed
 	 */
 	public void sessionStarting(RequestContext context, Flow flow, Map input) throws EnterStateVetoException;

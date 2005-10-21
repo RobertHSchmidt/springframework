@@ -186,8 +186,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	private TransactionSynchronizer transactionSynchronizer = new FlowScopeTokenTransactionSynchronizer();
 
 	/**
-	 * Create a new flow execution manager with the specified storage strategy.
-	 * @param storage the storage strategy
+	 * Create a new flow execution manager using the specified flow locator for
+	 * loading Flow definitions.
+	 * @param the flow locator
 	 * 
 	 * @see #setFlowLocator(FlowLocator)
 	 * @see #setStorage(FlowExecutionStorage)
@@ -505,12 +506,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Load an existing FlowExecution based on data in the specified event
+	 * Load an existing FlowExecution based on data in the specified source
+	 * event.
 	 * 
-	 * @param event the event that occured
-	 * @param listener a listener interested in flow execution lifecycle events
-	 * that happen <i>while handling this event</i>. Will be added to flow
-	 * execution listeners
+	 * @param flowExecutionId the unique id of the flow execution
+	 * @param event the source event
 	 */
 	public FlowExecution loadFlowExecution(Serializable flowExecutionId, Event event) {
 		// client is participating in an existing flow execution, retrieve
@@ -528,7 +528,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	/**
 	 * Signal the occurence of the specified event on an existing flow
 	 * 
-	 * @param flowExecutionId the id of the existing flow
 	 * @param flowExecution the existing flow
 	 * @param event the event that occured
 	 * @return the raw or unprepared view descriptor of the model and view to
@@ -557,12 +556,10 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * Cleanup (non-active view) or store the FlowExecution, and prepare the
 	 * ViewDescriptor for the client
 	 * 
-	 * @param flowExecutionId the id of the existing flow
-	 * @param flowExecution the existing flow
 	 * @param event the event that occured
-	 * @param listener a listener interested in flow execution lifecycle events
-	 * that happen <i>while handling this event</i>. Will be removed at end
-	 * from flow execution listeners
+	 * @param flowExecutionId the id of the manipulated flow execution
+	 * @param flowExecution the manipulated flow execution
+	 * @param selectedView A descriptor for the selected view
 	 * @return the prepared view descriptor of the model and view to render
 	 */
 	protected ViewDescriptor afterEvent(Event event, Serializable flowExecutionId, FlowExecution flowExecution,

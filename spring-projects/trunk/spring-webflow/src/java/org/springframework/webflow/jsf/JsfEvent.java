@@ -8,9 +8,9 @@ import javax.faces.context.FacesContext;
 import org.springframework.webflow.execution.ExternalEvent;
 
 /**
- * External event that communicates a user action in a JSF environment;
- * either requesting that a new flow should be started or noting an event was
- * signaled in an ongoing flow execution.
+ * External event that communicates a user action in a JSF environment; either
+ * requesting that a new flow should be started or noting an event was signaled
+ * in an ongoing flow execution.
  * 
  * This event provides access to the FacesContext associated with the
  * application. The JSF outcome is treated as the event identifier.
@@ -21,8 +21,8 @@ import org.springframework.webflow.execution.ExternalEvent;
 public class JsfEvent extends ExternalEvent {
 
 	/**
-	 * @param fromAction The action binding expression that was evaluated to
-	 * retrieve the specified outcome (if any)
+	 * The action binding expression that was evaluated to retrieve the
+	 * specified outcome (if any)
 	 */
 	private String actionId;
 
@@ -31,7 +31,7 @@ public class JsfEvent extends ExternalEvent {
 	 * the specified context.
 	 * @param outcome The logical outcome returned by the specified action
 	 * @param context <code>FacesContext</code> for the current request
-	 * @param fromAction The action binding expression that was evaluated to
+	 * @param actionId The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
 	 */
 	public JsfEvent(String outcome, FacesContext context, String actionId) {
@@ -46,7 +46,7 @@ public class JsfEvent extends ExternalEvent {
 	 * the specified context.
 	 * @param outcome The logical outcome returned by the specified action
 	 * @param context <code>FacesContext</code> for the current request
-	 * @param fromAction The action binding expression that was evaluated to
+	 * @param actionId The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
 	 * @param parameters additional event parameters to add
 	 */
@@ -63,10 +63,10 @@ public class JsfEvent extends ExternalEvent {
 	 * @param parameters additional parameters to add
 	 */
 	protected void initParameters(FacesContext context, Map parameters) {
-        setParameters(new TreeMap());
-        // our event snapshots both request param and request attribute data
-        // this is different than ServletEvent, but makes sense for JSF, where
-        // JSF has potentially bound request-scope data as attributes
+		setParameters(new TreeMap());
+		// our event snapshots both request param and request attribute data
+		// this is different than ServletEvent, but makes sense for JSF, where
+		// JSF has potentially bound request-scope data as attributes
 		addParameters(context.getExternalContext().getRequestParameterMap());
 		addParameters(context.getExternalContext().getRequestMap());
 		addParameters(parameters);
