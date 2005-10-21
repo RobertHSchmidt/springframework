@@ -21,18 +21,15 @@ constructs the flow accordingly.
 </ul>
 During flow construction, a flow builder will need to locate a number of
 <i>services</i> required by the web flow: actions, other flows, attribute
-mappers and so on. To do this, the flow builder will use the services
-provided by the {@link org.springframework.webflow.access access} package,
-namely a {@link org.springframework.webflow.access.FlowServiceLocator}. Most
-Spring applications will use the
-{@link org.springframework.webflow.access.BeanFactoryFlowServiceLocator},
+mappers and so on. To do this, the flow builder will use a configured
+FlowArtifactLocator. Most Spring applications will use the
+{@link org.springframework.webflow.config.BeanFactoryFlowArtifactLocator},
 which is also the default.
 </p>
 
 <p>
-To actually direct flow construction, you use the
-{@link org.springframework.webflow.config.FlowFactoryBean}. This is a
-normal Spring factory bean that uses a flow builder to construct a web flow.
+To direct flow construction, you use the {@link org.springframework.webflow.config.FlowAssembler}.
+This is based on the class GOF Builder design pattern.
 </p>
 </body>
 </html>
