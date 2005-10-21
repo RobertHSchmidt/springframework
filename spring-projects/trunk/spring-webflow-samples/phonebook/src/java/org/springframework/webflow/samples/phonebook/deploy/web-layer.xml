@@ -3,50 +3,33 @@
 
 <beans>
 
-	<!-- Xml FlowBuilder definition for the search flow -->
-	<bean id="searchFlow" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="classpath:org/springframework/webflow/samples/phonebook/web/search-flow.xml"/>
+	<bean id="flowLocator" class="org.springframework.webflow.config.FlowRegistryFactoryBean">
+		<constructor-arg>
+			<bean class="org.springframework.webflow.config.ChainedFlowRegistrar">
+				<constructor-arg>
+					<list>
+						<bean class="org.springframework.webflow.config.XmlFlowRegistrar">
+							<property name="definitionLocations">
+								<list>
+									<value>classpath:org/springframework/webflow/samples/phonebook/web/search-flow.xml</value>
+									<value>classpath:org/springframework/webflow/samples/phonebook/web/detail-flow.xml</value>
+								</list>
+							</property>
+						</bean>
+						<!-- comment in to deploy Java-based Flow equivalents of the above XML definitions
+						<bean class="org.springframework.webflow.config.JavaFlowRegistrar">
+							<property name="flowBuilders">
+								<list>
+									<bean class="org.springframework.webflow.samples.phonebook.web.SearchPersonFlowBuilder"/>
+									<bean class="org.springframework.webflow.samples.phonebook.web.PersonDetailFlowBuilder"/>
+								</list>
+							</property>
+						</bean>
+						-->
+					</list>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
 	</bean>
-
-	<!-- Search form action that setups the form and processes form submissions -->
-	<bean id="searchFormAction" class="org.springframework.webflow.action.FormAction">
-		<property name="formObjectName" value="searchCriteria"/>
-		<property name="formObjectClass" value="org.springframework.webflow.samples.phonebook.domain.PhoneBookSearchCriteria"/>
-		<property name="formObjectScopeAsString" value="flow"/>
-		<property name="validator">
-			<bean class="org.springframework.webflow.samples.phonebook.domain.PhoneBookSearchCriteriaValidator"/>
-		</property>
-	</bean>
-
-	<!-- xml FlowBuilder definition for the detail flow -->
-	<bean id="detailFlow" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="classpath:org/springframework/webflow/samples/phonebook/web/detail-flow.xml"/>
-	</bean>
-		
-	<!-- Java FlowBuilder definition for the search flow.
-	     Uncomment if you wish to plugin this FlowBuilder instead of the xml implementation!
-	     (be sure to comment out the xml variant)
-	     Notice the consistency: you may plug in any other FlowBuilder implementation in
-	     exactly the same fashion -->
-	<!--
-	<bean id="searchFlow" class="org.springframework.webflow.config.FlowFactoryBean">
-		<property name="flowBuilder">
-			<bean class="org.springframework.webflow.samples.phonebook.web.SearchPersonFlowBuilder" autowire="byType"/>
-		</property>
-	</bean>
-	-->
-
-	<!-- Java flow builder definition for the detail flow.
-	     Uncomment if you wish to plugin this flow builder instead of the xml implementation!
-	     (be sure to comment out the xml variant)
-	     Notice the consistency: you may plug in any other FlowBuilder implementation in
-	     exactly the same fashion -->
-	<!--
-	<bean id="detailFlow" class="org.springframework.webflow.config.FlowFactoryBean">
-		<property name="flowBuilder">
-			<bean class="org.springframework.webflow.samples.phonebook.web.PersonDetailFlowBuilder" autowire="byType"/>
-		</property>
-	</bean>
-	-->
 	
 </beans>
