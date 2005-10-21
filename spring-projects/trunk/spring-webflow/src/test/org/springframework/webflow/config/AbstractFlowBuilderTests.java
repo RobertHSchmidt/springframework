@@ -50,19 +50,19 @@ public class AbstractFlowBuilderTests extends TestCase {
 	public void testDependencyLookup() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
 		master.setFlowArtifactLocator(new FlowArtifactLocatorAdapter() {
-			public Action getAction(String actionId) throws FlowArtifactLookupException {
-				return new NoOpAction();
-			}
-			
-			public Flow getFlow(String flowDefinitionId) throws FlowArtifactLookupException {
-				if (flowDefinitionId.equals(PERSON_DETAILS)) {
+			public Flow getSubflow(String id) throws FlowArtifactLookupException {
+				if (id.equals(PERSON_DETAILS)) {
 					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();
 					builder.setFlowArtifactLocator(this);
 					return new FlowAssembler(builder).getFlow();
 				}
 				else {
-					throw new FlowArtifactLookupException(Flow.class, flowDefinitionId);
+					throw new FlowArtifactLookupException(Flow.class, id);
 				}
+			}
+
+			public Action getAction(String actionId) throws FlowArtifactLookupException {
+				return new NoOpAction();
 			}
 
 			public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
@@ -106,7 +106,8 @@ public class AbstractFlowBuilderTests extends TestCase {
 		public void buildStates() {
 			addActionState("getPersonList", action("noOptAction"), on(success(), "viewPersonList"));
 			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
-			addSubflowState(PERSON_DETAILS, flow("person.Detail"),	attributeMapper("id.attributeMapper"), onAnyEvent("getPersonList"));
+			addSubflowState(PERSON_DETAILS, flow("person.Detail"), attributeMapper("id.attributeMapper"),
+					onAnyEvent("getPersonList"));
 			addEndState("finish");
 		}
 	}
