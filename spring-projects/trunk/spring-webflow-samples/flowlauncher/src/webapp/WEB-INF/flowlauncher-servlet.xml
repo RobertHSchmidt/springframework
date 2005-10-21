@@ -4,25 +4,24 @@
 <beans>
 
 	<bean name="/flow.htm" class="org.springframework.webflow.mvc.FlowController">
+		<constructor-arg ref="flowExecutionManager"/>
 		<property name="cacheSeconds" value="5"/>
-		<property name="flowExecutionManager">
-			<bean class="org.springframework.webflow.execution.servlet.ServletFlowExecutionManager">
-				<property name="storage">
-					<bean class="org.springframework.webflow.execution.servlet.HttpSessionContinuationFlowExecutionStorage"/>
-				</property>
-				<property name="listener">
-					<bean class="org.springframework.webflow.samples.flowlauncher.SampleFlowExecutionListener"/>
-				</property>
-			</bean>
+	</bean>
+
+	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
+		<constructor-arg ref="flowLocator"/>
+		<property name="listener">
+			<bean class="org.springframework.webflow.samples.flowlauncher.SampleFlowExecutionListener"/>
 		</property>
 	</bean>
-
-	<bean id="sampleA" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/sampleA-flow.xml"/>
-	</bean>
-
-	<bean id="sampleB" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/sampleB-flow.xml"/>
+	
+	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
+		<property name="definitionLocations">
+			<list>
+				<value>/WEB-INF/sampleA-flow.xml</value>
+				<value>/WEB-INF/sampleB-flow.xml</value>
+			</list>
+		</property>
 	</bean>
 
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">

@@ -5,10 +5,13 @@
 	<!-- A generic front controller for the entire app.  A view that kicks off a new flow execution
 	     may parameterize this controller with a _flowId parameter.  A view participating in an
 	     existing flow execution may simply pass it the appropriate _flowExecutionId and _eventId. -->
-	<bean  name="/phonebook.htm" class="org.springframework.webflow.mvc.FlowController"/>
+	<bean name="/phonebook.htm" class="org.springframework.webflow.mvc.FlowController">
+		<constructor-arg ref="flowExecutionManager"/>
+	</bean>
 
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>
 	</bean>
+	
 </beans>

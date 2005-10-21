@@ -23,4 +23,8 @@
 		<transition on="*" to="displayItemlist"/>
 	</action-state>
 	
+	<bean id="createItemAction" class="org.springframework.webflow.samples.itemlist.NewItemAction"/>
+	
+	<bean id="addItemAction" class="org.springframework.webflow.samples.itemlist.AddItemAction"/>
+	
 </webflow>

@@ -3,19 +3,24 @@
 
 <beans>
 
-	<bean name="/play.htm" class="org.springframework.webflow.mvc.FlowController"/>
+	<bean name="/play.htm" class="org.springframework.webflow.mvc.FlowController">
+		<constructor-arg ref="flowExecutionManager"/>
+	</bean>
+
+	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
+		<constructor-arg ref="flowLocator"/>
+	</bean>
 	
-	<!-- the higher/lower game flow definition -->
-	<bean id="higherlower" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/higherlower.xml"/>
+	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
+		<property name="definitionLocations">
+			<list>
+				<value>/WEB-INF/higherLower.xml</value>
+				<value>/WEB-INF/mastermind.xml</value>
+			</list>
+		</property>
 	</bean>
-
-	<!--  the mastermind game flow definition -->
-	<bean id="mastermind" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/mastermind.xml"/>
-	</bean>
-
-	<bean id="viewResolver" class="org.springframework.webflow.samples.numberguess.ExpressionInternalResourceViewResolver">
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>
 	</bean>

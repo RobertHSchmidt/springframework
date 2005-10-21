@@ -2,11 +2,13 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-	
-	<bean id="birthdate" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/birthdate-flow.xml"/>
+
+	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
+		<constructor-arg ref="flowLocator"/>
 	</bean>
 	
-	<bean id="formAction" class="org.springframework.webflow.samples.birthdate.BirthDateFormAction"/>
-
+	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
+		<property name="definitionLocations" value="/WEB-INF/birthdate-flow.xml"/>
+	</bean>
+	
 </beans>

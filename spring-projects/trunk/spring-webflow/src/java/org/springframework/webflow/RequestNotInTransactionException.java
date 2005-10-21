@@ -15,6 +15,6 @@ public class RequestNotInTransactionException extends NestedRuntimeException {
 	 * Creates a default instance.
 	 */
 	public RequestNotInTransactionException() {
-		super("The request is not executing in the context of an application transaction");
+		super("The current request is not executing in the context of an application transaction");
 	}
 }

@@ -4,18 +4,20 @@
 <beans>
 
 	<bean name="/fileupload.htm" class="org.springframework.webflow.mvc.FlowController">
-		<property name="flow" ref="fileupload"/>
+		<constructor-arg ref="flowExecutionManager"/>
 	</bean>
-	
-	<bean id="fileupload" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/fileupload-flow.xml"/>
-	</bean>
-	
-	<bean id="uploadFileAction" class="org.springframework.webflow.samples.fileupload.ProcessUploadAction"/>
 
+	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
+		<constructor-arg ref="flowLocator"/>
+	</bean>
+	
+	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
+		<property name="definitionLocations" value="/WEB-INF/fileupload-flow.xml"/>
+	</bean>
+	
 	<!-- 
-		support for multipart requests using commons file upload
-		make sure you have the fileupload jar in your classpath
+	    Support for multipart requests using commons file upload
+		Make sure you have the fileupload jar in your classpath
 	-->
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
 

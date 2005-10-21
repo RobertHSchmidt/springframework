@@ -18,5 +18,7 @@
 	<view-state id="displayConfirmation" view="confirmation">
 		<transition on="back" to="selectFile"/>
 	</view-state>
-	
+
+	<bean id="uploadFileAction" class="org.springframework.webflow.samples.fileupload.ProcessUploadAction"/>
+
 </webflow>

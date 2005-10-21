@@ -9,12 +9,12 @@
 		The flow id of the flow to start should be passed in using the "_flowId" request parameter.
 	-->
 	<bean name="/pos.htm" class="org.springframework.webflow.mvc.FlowController">
+		<constructor-arg ref="flowExecutionManager"/>
 		<!--
 			Set cacheSeconds to a small, non 0, value so you can do ctrl-N to open an new
 			window and experiment with the continuations stuff.
 		-->
 		<property name="cacheSeconds" value="5"/>
-		<property name="flowExecutionManager" ref="flowExecutionManager"/>
 	</bean>
 
 	<!--
@@ -23,7 +23,11 @@
 		on the views!
 	-->	
 	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.servlet.ServletFlowExecutionManager">
-		<property name="flowLocator" ref="flowLocator"/>
+		<constructor-arg>
+			<bean class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
+				<property name="definitionLocations" value="/WEB-INF/sellItem-flow.xml"/>
+			</bean>
+		</constructor-arg>
 		<property name="listener">
 			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
 		</property>
@@ -33,14 +37,6 @@
 		<property name="transactionSynchronizer">
 			<bean class="org.springframework.webflow.execution.DataStoreTokenTransactionSynchronizer"/>
 		</property>
-	</bean>
-
-	<bean id="flowLocator" class="org.springframework.webflow.config.FlowRegistryFactoryBean">
-		<constructor-arg>
-			<bean class="org.springframework.webflow.config.XmlFlowRegistrar">
-				<property name="definitionLocations" value="/WEB-INF/sellItem-flow.xml"/>
-			</bean>
-		</constructor-arg>
 	</bean>
 
 	<bean id="mbeanExporter" class="org.springframework.jmx.export.MBeanExporter">

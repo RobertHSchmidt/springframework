@@ -36,7 +36,7 @@
 		method of the SimpleFormController.
 	-->
 	<action-state id="bindAndValidate">
-		<action bean="formAction" method="bindAndValidate"/>
+		<action bean="formAction"/>
 		<transition on="success" to="calculateAge"/>
 		<transition on="error" to="enterBirthdate"/>
 	</action-state>
@@ -46,13 +46,15 @@
 		SimpleFormController.
 	-->
 	<action-state id="calculateAge">
-		<action name="calculateAge" bean="formAction"/>
-		<transition on="calculateAge.success" to="displayAge"/>
+		<action bean="formAction"/>
+		<transition on="success" to="displayAge"/>
 	</action-state>
 	
 	<!--
 		Display the success view.
 	-->
 	<end-state id="displayAge" view="yourAge"/>
+
+	<bean id="formAction" class="org.springframework.webflow.samples.birthdate.BirthDateFormAction"/>
 
 </webflow>

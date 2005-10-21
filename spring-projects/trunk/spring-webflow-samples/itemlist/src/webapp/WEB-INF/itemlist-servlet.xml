@@ -4,18 +4,16 @@
 <beans>
 
 	<bean name="/itemlist.htm" class="org.springframework.webflow.mvc.FlowController">
-		 <!-- serialize all operations within a session -->
-		<property name="synchronizeOnSession" value="true"/>
-		<property name="flow" ref="itemlist"/>
-	</bean>
-	
-	<bean id="itemlist" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/itemlist-flow.xml"/>
+		<constructor-arg ref="flowExecutionManager"/>
 	</bean>
 
-	<bean id="createItemAction" class="org.springframework.webflow.samples.itemlist.NewItemAction"/>
+	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
+		<constructor-arg ref="flowLocator"/>
+	</bean>
 	
-	<bean id="addItemAction" class="org.springframework.webflow.samples.itemlist.AddItemAction"/>
+	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
+		<property name="definitionLocations" value="/WEB-INF/itemlist-flow.xml"/>
+	</bean>
 	
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>

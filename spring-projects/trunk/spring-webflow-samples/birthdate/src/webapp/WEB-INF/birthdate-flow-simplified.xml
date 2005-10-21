@@ -18,19 +18,21 @@
 <webflow id="birthdate" start-state="enterBirthdate">
 
 	<view-state id="enterBirthdate" view="enterBirthdate">
-		<entry>
+		<entry-action>
 			<action bean="formAction" method="setupForm"/>
-		</entry>
+		</entry-action>
 		<transition on="submit" to="calculateAge">
 			<action bean="formAction" method="bindAndValidate"/>
 		</transition>
 	</view-state>
 	
 	<action-state id="calculateAge">
-		<action name="calculateAge" bean="formAction"/>
-		<transition on="calculateAge.success" to="displayAge"/>
+		<action bean="formAction"/>
+		<transition on="success" to="displayAge"/>
 	</action-state>
 	
 	<end-state id="displayAge" view="yourAge"/>
+
+	<bean id="formAction" class="org.springframework.webflow.samples.birthdate.BirthDateFormAction"/>
 
 </webflow>
