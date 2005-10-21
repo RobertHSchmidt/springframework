@@ -48,7 +48,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	 * Creates an XML flow registrar
 	 * @param artifactLocator the flow artifact locator
 	 */
-	public XmlFlowRegistrar() {
+	protected XmlFlowRegistrar() {
 		
 	}
 	
@@ -58,17 +58,6 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	 */
 	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator) {
 		setFlowArtifactLocator(artifactLocator);
-	}
-
-	/**
-	 * Creates an XML flow registrar
-	 * @param artifactLocator the flow artifact locator
-	 * @param definitionLocations the locations of the XML flow definitions to
-	 * register
-	 */
-	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator, Resource[] definitionLocations) {
-		setFlowArtifactLocator(artifactLocator);
-		setDefinitionLocations(definitionLocations);
 	}
 
 	/**
@@ -103,6 +92,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	 * @param artifactLocator the flow artifact locator
 	 */
 	public void setFlowArtifactLocator(FlowArtifactLocator artifactLocator) {
+		Assert.notNull(artifactLocator, "The flow artifact locator is required");
 		this.artifactLocator = artifactLocator;
 	}
 

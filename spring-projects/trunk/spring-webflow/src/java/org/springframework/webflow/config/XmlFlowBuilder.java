@@ -272,6 +272,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * @see org.springframework.webflow.config.BaseFlowBuilder#setFlowArtifactLocator(org.springframework.webflow.config.FlowArtifactLocator)
 	 */
 	public void setFlowArtifactLocator(FlowArtifactLocator artifactLocator) {
+		Assert.notNull(artifactLocator, "The flow artifact locator is required");
 		FlowArtifactLocator localLocator = new BeanFactoryFlowArtifactLocator(localArtifactRegistry, null);
 		super.setFlowArtifactLocator(new ChainedFlowArtifactLocator(new FlowArtifactLocator[] { localLocator,
 				artifactLocator }));
