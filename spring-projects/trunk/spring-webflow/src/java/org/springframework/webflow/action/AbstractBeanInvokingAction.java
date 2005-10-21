@@ -26,7 +26,7 @@ import org.springframework.webflow.RequestContext;
  * 
  * @author Keith Donald
  */
-public abstract class AbstractBeanInvokingAction extends MultiAction {
+public abstract class AbstractBeanInvokingAction extends AbstractAction {
 
 	/**
 	 * The method invoker that performs the action->bean method binding.
@@ -63,7 +63,7 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
 		getStatePersister().restoreState(bean, context);
-		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(METHOD_PROPERTY);
+		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(MultiAction.METHOD_PROPERTY);
 		if (methodKey == null) {
 			throw new IllegalStateException("The method to invoke was not provided--set the '" + MultiAction.METHOD_PROPERTY
 					+ "' property");
