@@ -57,19 +57,6 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * to the spawned subflow and visa versa.
 	 */
 	private FlowAttributeMapper attributeMapper;
-	
-	/**
-	 * Create a new sub flow state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param subflow the sub flow to spawn
-	 * @param transition the sole transition of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
-	 */
-	public SubflowState(Flow flow, String id, Flow subflow, Transition transition) throws IllegalArgumentException {
-		this(flow, id, subflow, new Transition[] { transition });
-	}
 
 	/**
 	 * Create a new sub flow state.
@@ -97,21 +84,6 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	public SubflowState(Flow flow, String id, Flow subflow, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
 		this(flow, id, subflow, null, transitions, properties);
-	}
-
-	/**
-	 * Create a new sub flow state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param subflow the sub flow to spawn
-	 * @param attributeMapper the attribute mapper to use
-	 * @param transition the sole transition of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
-	 */
-	public SubflowState(Flow flow, String id, Flow subflow, FlowAttributeMapper attributeMapper, Transition transition)
-			throws IllegalArgumentException {
-		this(flow, id, subflow, attributeMapper, new Transition[] { transition });
 	}
 
 	/**

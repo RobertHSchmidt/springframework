@@ -34,8 +34,8 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.EventIdTransitionCriteria;
 import org.springframework.webflow.config.FlowArtifactLocatorAdapter;
-import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.FlowAssembler;
+import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.SimpleViewDescriptorCreator;
 
 /**
@@ -56,7 +56,8 @@ public class FlowExecutionTests extends TestCase {
 				on("success"), "viewState") });
 		new ViewState(flow, "viewState", view("myView"),
 				new Transition[] { new Transition(on("submit"), "subFlowState") });
-		new SubflowState(flow, "subFlowState", subFlow, new InputOutputMapper(), new Transition(on("finish"), "finish"));
+		new SubflowState(flow, "subFlowState", subFlow, new InputOutputMapper(), new Transition[] { new Transition(
+				on("finish"), "finish") });
 		new EndState(flow, "finish");
 
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
