@@ -89,10 +89,11 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 		this.artifactLocator = artifactLocator;
 	}
 
-	public void registerFlowDefinitions(ConfigurableFlowRegistry registry) {
+	public ConfigurableFlowRegistry registerFlowDefinitions(ConfigurableFlowRegistry registry) {
 		registerDefinitions(registry);
 		registerJarDefinitions(registry);
 		registerDirectoryDefinitions(registry);
+		return registry;
 	}
 
 	/**
