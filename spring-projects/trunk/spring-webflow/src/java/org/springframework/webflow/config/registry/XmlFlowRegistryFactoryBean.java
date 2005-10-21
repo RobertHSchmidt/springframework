@@ -2,6 +2,7 @@ package org.springframework.webflow.config.registry;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
 /**
@@ -10,7 +11,7 @@ import org.springframework.core.io.Resource;
  * 
  * @author Keith Donald
  */
-public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implements BeanFactoryAware {
+public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implements BeanFactoryAware, InitializingBean {
 
 	/**
 	 * Creates a new factory bean that will populate a default Flow Registry
@@ -66,5 +67,9 @@ public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implemen
 
 	public void setBeanFactory(BeanFactory beanFactory) {
 		getXmlFlowRegistrar().setBeanFactory(beanFactory);
+	}
+	
+	public void afterPropertiesSet() throws Exception {
+		getXmlFlowRegistrar().afterPropertiesSet();
 	}
 }

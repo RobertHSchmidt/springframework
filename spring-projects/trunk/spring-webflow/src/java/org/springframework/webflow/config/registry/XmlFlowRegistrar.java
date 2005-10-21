@@ -8,6 +8,7 @@ import java.util.zip.ZipEntry;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
@@ -25,7 +26,7 @@ import org.springframework.webflow.config.XmlFlowBuilder;
  * from XML resources.
  * @author Keith Donald
  */
-public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware {
+public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, InitializingBean {
 
 	/**
 	 * XML flow definition resources to load.
@@ -48,12 +49,13 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware {
 	private FlowArtifactLocator artifactLocator;
 
 	/**
-	 * Creates an XML flow registrar
+	 * Creates an XML flow registrar - JavaBean style default constructor. Note:
+	 * the artifactLocator property *must* be set before use.
 	 */
 	public XmlFlowRegistrar() {
-		
+
 	}
-	
+
 	/**
 	 * Creates an XML flow registrar
 	 * @param artifactLocator the flow artifact locator
@@ -65,7 +67,8 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware {
 	/**
 	 * Creates an XML flow registrar
 	 * @param artifactLocator the flow artifact locator
-	 * @param definitionLocations the locations of the XML flow definitions to register
+	 * @param definitionLocations the locations of the XML flow definitions to
+	 * register
 	 */
 	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator, Resource[] definitionLocations) {
 		setFlowArtifactLocator(artifactLocator);
@@ -111,6 +114,10 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware {
 		if (artifactLocator == null) {
 			artifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory);
 		}
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		Assert.state(artifactLocator != null, "The flow artifact locator property is required");
 	}
 	
 	public void registerFlowDefinitions(ConfigurableFlowRegistry registry) {
