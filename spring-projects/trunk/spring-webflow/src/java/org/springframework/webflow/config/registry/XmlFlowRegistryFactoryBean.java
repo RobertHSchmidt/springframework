@@ -31,6 +31,9 @@ public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implemen
 		super(new XmlFlowRegistrar(), registry);
 	}
 
+	/**
+	 * Returns the configured Xml flow registrar.
+	 */
 	protected XmlFlowRegistrar getXmlFlowRegistrar() {
 		return (XmlFlowRegistrar)getFlowRegistrar();
 	}
