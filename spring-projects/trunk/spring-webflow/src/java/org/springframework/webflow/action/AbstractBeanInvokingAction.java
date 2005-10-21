@@ -18,6 +18,7 @@ package org.springframework.webflow.action;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodKey;
+import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
@@ -63,9 +64,9 @@ public abstract class AbstractBeanInvokingAction extends MultiAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
 		getStatePersister().restoreState(bean, context);
-		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(METHOD_PROPERTY);
+		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(AnnotatedAction.METHOD_PROPERTY);
 		if (methodKey == null) {
-			throw new IllegalStateException("The method to invoke was not provided--set the '" + METHOD_PROPERTY
+			throw new IllegalStateException("The method to invoke was not provided--set the '" + AnnotatedAction.METHOD_PROPERTY
 					+ "' property");
 		}
 		Event result = toEvent(context, beanMethodInvoker.invoke(methodKey, bean, context));

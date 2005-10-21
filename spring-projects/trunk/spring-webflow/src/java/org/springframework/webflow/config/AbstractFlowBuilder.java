@@ -33,8 +33,6 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.FlowArtifactLookupException;
-import org.springframework.webflow.action.LocalBeanInvokingAction;
-import org.springframework.webflow.action.MultiAction;
 
 /**
  * Base class for flow builders that programmatically build flows in Java
@@ -495,26 +493,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected AnnotatedAction method(String methodName, Action action) {
 		Map properties = new HashMap(1);
-		properties.put(MultiAction.METHOD_PROPERTY, new MethodKey(methodName));
+		properties.put(AnnotatedAction.METHOD_PROPERTY, new MethodKey(methodName));
 		return new AnnotatedAction(action, properties);
-	}
-
-	/**
-	 * Creates an annotated action that calls a bean invoking action with a
-	 * single property that indicates which method should be invoked on the
-	 * target bean when the state is entered.
-	 * @param methodName the method name, in the format ${methodName}(${arg1},
-	 * ${arg2}, ...)
-	 * @param bean the bean on which to invoke the method
-	 * @return the annotated action
-	 */
-	protected AnnotatedAction method(String methodName, Object bean) {
-		if (bean instanceof Action) {
-			method(methodName, (Action)bean);
-		}
-		Map properties = new HashMap(1);
-		properties.put(MultiAction.METHOD_PROPERTY, (MethodKey)fromStringTo(MethodKey.class).execute(methodName));
-		return new AnnotatedAction(new LocalBeanInvokingAction(bean), properties);
 	}
 
 	/**

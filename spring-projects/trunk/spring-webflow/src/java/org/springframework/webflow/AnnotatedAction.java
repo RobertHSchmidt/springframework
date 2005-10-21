@@ -38,20 +38,25 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	// well known properties
 	
 	/**
-	 * The name of the action.
+	 * The action name property ("name").
 	 */
 	public static final String NAME_PROPERTY = "name";
 
 	/**
-	 * The action caption (short description / tooltip) property.
+	 * The action caption (short description / tooltip) property ("caption").
 	 */
 	public static final String CAPTION_PROPERTY = "caption";
 
 	/**
-	 * The action long description property.
+	 * The action long description property ("description")
 	 */
 	public static final String DESCRIPTION_PROPERTY = "description";
-	
+
+	/**
+	 * The action execution method property ("method").
+	 */
+	public static final String METHOD_PROPERTY = "method";
+
 	/**
 	 * The action to execute.
 	 */
