@@ -184,19 +184,19 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	}
 
 	/**
-	 * A value object holding a Flow definition and a pointer to its resource to
+	 * Holds a Flow definition and a pointer to its originating XML resource to
 	 * support a refresh operation.
 	 * @author Keith Donald
 	 */
 	public class RefreshableXmlFlowHolder implements RefreshableFlowHolder {
 
 		/**
-		 * 
+		 * The Flow definition held by this holder.
 		 */
 		private Flow flow;
 
 		/**
-		 * 
+		 * The Flow definition resource, a XML file.
 		 */
 		private Resource location;
 
@@ -213,9 +213,6 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 			return flow;
 		}
 
-		/**
-		 * @return
-		 */
 		public Resource getLocation() {
 			return location;
 		}

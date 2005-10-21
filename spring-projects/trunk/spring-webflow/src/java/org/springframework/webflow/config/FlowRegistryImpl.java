@@ -13,8 +13,8 @@ import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 
 /**
- * A registry of Flow definitions. May also be refreshed at runtime to support
- * "hot reloading" of refreshable Flow definitions.
+ * A generic registry of Flow definitions. May also be refreshed at runtime to
+ * support "hot reloading" of refreshable Flow definitions.
  * 
  * @author Keith Donald
  */
@@ -98,7 +98,7 @@ public class FlowRegistryImpl implements ConfigurableFlowRegistry, FlowLocator {
 		}
 		return flowHolder;
 	}
-	
+
 	public Flow getFlow(String id) throws FlowArtifactLookupException {
 		return getFlowHolder(id).getFlow();
 	}
