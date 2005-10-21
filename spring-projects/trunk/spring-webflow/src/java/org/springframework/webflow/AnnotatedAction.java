@@ -53,11 +53,6 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	public static final String DESCRIPTION_PROPERTY = "description";
 
 	/**
-	 * The action execution method property ("method").
-	 */
-	public static final String METHOD_PROPERTY = "method";
-
-	/**
 	 * The action to execute.
 	 */
 	private Action targetAction;

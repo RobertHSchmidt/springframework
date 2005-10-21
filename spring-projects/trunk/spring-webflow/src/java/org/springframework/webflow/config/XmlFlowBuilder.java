@@ -58,6 +58,7 @@ import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.CompositeAction;
+import org.springframework.webflow.action.MultiAction;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -504,7 +505,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			// direct support for bean invoking actions
 			MethodKey methodKey = (MethodKey)fromStringTo(MethodKey.class).execute(
 					element.getAttribute(METHOD_ATTRIBUTE));
-			action.setProperty(AnnotatedAction.METHOD_PROPERTY, methodKey);
+			action.setProperty(MultiAction.METHOD_PROPERTY, methodKey);
 		}
 		parseAndSetProperties(element, action);
 		return action;

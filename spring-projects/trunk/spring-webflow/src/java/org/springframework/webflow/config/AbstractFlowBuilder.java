@@ -33,6 +33,7 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.FlowArtifactLookupException;
+import org.springframework.webflow.action.MultiAction;
 
 /**
  * Base class for flow builders that programmatically build flows in Java
@@ -493,7 +494,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected AnnotatedAction method(String methodName, Action action) {
 		Map properties = new HashMap(1);
-		properties.put(AnnotatedAction.METHOD_PROPERTY, new MethodKey(methodName));
+		properties.put(MultiAction.METHOD_PROPERTY, new MethodKey(methodName));
 		return new AnnotatedAction(action, properties);
 	}
 
