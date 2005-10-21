@@ -4,8 +4,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.access.FlowArtifactLookupException;
@@ -19,11 +17,6 @@ import org.springframework.webflow.access.NoSuchFlowDefinitionException;
  * @author Keith Donald
  */
 public class FlowRegistryImpl implements ConfigurableFlowRegistry, FlowLocator {
-
-	/**
-	 * Logger.
-	 */
-	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * The map of loaded Flow definitions maintained in this registry.

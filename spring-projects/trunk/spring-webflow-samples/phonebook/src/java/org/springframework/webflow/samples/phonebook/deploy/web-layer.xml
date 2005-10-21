@@ -17,7 +17,7 @@
 							</property>
 						</bean>
 						<!-- comment in to deploy Java-based Flow equivalents of the above XML definitions
-						<bean class="org.springframework.webflow.config.JavaFlowRegistrar">
+						<bean class="org.springframework.webflow.config.FlowRegistrarImpl">
 							<property name="flowBuilders">
 								<list>
 									<bean class="org.springframework.webflow.samples.phonebook.web.SearchPersonFlowBuilder"/>
