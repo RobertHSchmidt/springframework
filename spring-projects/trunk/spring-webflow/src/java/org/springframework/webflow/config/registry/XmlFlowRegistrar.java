@@ -119,7 +119,7 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 	public void afterPropertiesSet() throws Exception {
 		Assert.state(artifactLocator != null, "The flow artifact locator property is required");
 	}
-	
+
 	public void registerFlowDefinitions(ConfigurableFlowRegistry registry) {
 		registerDefinitions(registry);
 		registerJarDefinitions(registry);
@@ -262,6 +262,6 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 	public String toString() {
 		return new ToStringCreator(this).append("definitionLocation", definitionLocations).append(
 				"definitionJarLocations", definitionJarLocations).append("definitionDirectoryLocations",
-				definitionDirectoryLocations).toString();
+				definitionDirectoryLocations).append("flowArtifactLocator", artifactLocator).toString();
 	}
 }
