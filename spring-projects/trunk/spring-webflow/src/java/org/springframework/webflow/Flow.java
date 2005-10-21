@@ -92,13 +92,13 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Name of the property used to indicate if this flow is transactional.
 	 */
-	private static final String TRANSACTIONAL_PROPERTY = "transactional";
+	public static final String TRANSACTIONAL_PROPERTY = "transactional";
 
 	/**
 	 * Name of the property used to indicate the start state in which to start a
 	 * flow.
 	 */
-	private static final String START_STATE_PROPERTY = "startState";
+	public static final String START_STATE_PROPERTY = "startState";
 
 	/**
 	 * Logger, for use in subclasses.
