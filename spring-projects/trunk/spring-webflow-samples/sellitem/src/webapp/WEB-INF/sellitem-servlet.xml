@@ -35,7 +35,7 @@
 		</property>
 	</bean>
 
-	<bean id="flowLocator"class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
+	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
 		<property name="definitionLocations" value="/WEB-INF/sellItem-flow.xml"/>
 	</bean>
 
@@ -47,7 +47,7 @@
 		</property>
 		<property name="assembler">
 			<bean class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler">
-				<property name="managedInterfaces" value="org.springframework.webflow.config.FlowRegistry"/>
+				<property name="managedInterfaces" value="org.springframework.webflow.config.registry.FlowRegistry"/>
 			</bean>
 		</property>
 	</bean>

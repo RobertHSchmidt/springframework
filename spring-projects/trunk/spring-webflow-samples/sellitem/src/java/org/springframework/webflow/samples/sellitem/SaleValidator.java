@@ -31,10 +31,10 @@ public class SaleValidator implements Validator {
 	
 	public void validatePriceAndItemCount(Sale sale, Errors errors) {
 		if (sale.getItemCount() <= 0) {
-			errors.rejectValue("itemCount", null, "Item count must be greater than 0");
+			errors.rejectValue("itemCount", "Item count must be greater than 0");
 		}
 		if (sale.getPrice() <= 0.0) {
-			errors.rejectValue("price", null, "Price must be greater than 0.0");
+			errors.rejectValue("price", "Price must be greater than 0.0");
 		}
 	}
 }
