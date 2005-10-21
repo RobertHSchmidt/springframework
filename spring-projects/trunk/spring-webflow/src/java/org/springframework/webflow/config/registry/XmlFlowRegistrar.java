@@ -231,10 +231,6 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 		 */
 		private Resource location;
 
-		/**
-		 * @param artifactLocator
-		 * @param location
-		 */
 		public RefreshableXmlFlowHolder(Resource location) {
 			this.location = location;
 			refresh();

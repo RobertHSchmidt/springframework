@@ -38,7 +38,6 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 
 	/**
 	 * Creates a continuation-driven data store flow execution storage.
-	 * @param dataStoreAccessor the data store accessor.
 	 */
 	public ContinuationDataStoreFlowExecutionStorage() {
 		super();

@@ -18,7 +18,7 @@ public class ChainedFlowLocator implements FlowLocator {
 
 	/**
 	 * Creates a chained flow locator made from the list of specified locators.
-	 * @param flowLocator The FlowLocator list
+	 * @param locatorChain The FlowLocator list
 	 */
 	public ChainedFlowLocator(FlowLocator[] locatorChain) {
 		Assert.notEmpty(locatorChain, "The Flow Locator chain cannot be empty");

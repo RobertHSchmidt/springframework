@@ -16,7 +16,6 @@ public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implemen
 	/**
 	 * Creates a new factory bean that will populate a default Flow Registry
 	 * using the provided registrar
-	 * @param registrar the Flow definition registrar
 	 */
 	public XmlFlowRegistryFactoryBean() {
 		super(new XmlFlowRegistrar());
@@ -25,7 +24,6 @@ public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implemen
 	/**
 	 * Creates a new factory bean that will populate the provided Flow Registry
 	 * using the provided registrar
-	 * @param registrar the Flow definition registrar
 	 * @param registry the Flow definition registry
 	 */
 	public XmlFlowRegistryFactoryBean(ConfigurableFlowRegistry registry) {

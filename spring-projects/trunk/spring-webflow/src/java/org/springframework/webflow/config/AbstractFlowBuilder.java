@@ -152,7 +152,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Create an instance of an abstract flow builder, using the specified
 	 * service locator to obtain needed flow services during configuation.
-	 * @param flowServiceLocator the service locator
+	 * @param flowArtifactLocator the artifact locator
 	 */
 	protected AbstractFlowBuilder(FlowArtifactLocator flowArtifactLocator) {
 		super(flowArtifactLocator);
@@ -661,7 +661,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * specified id.
 	 * 
 	 * @param stateId the state id
-	 * @param the state's supported transitions, evaluated in the specified
+	 * @param transitions the state's supported transitions, evaluated in the specified
 	 * order until a match is found
 	 * @return the configured decision state
 	 * @throws IllegalArgumentException
@@ -675,7 +675,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * specified id.
 	 * 
 	 * @param stateId the state id
-	 * @param the state's supported transitions, evaluated in the specified
+	 * @param transitions the state's supported transitions, evaluated in the specified
 	 * order until a match is found
 	 * @param properties custom decision state properties
 	 * @return the configured decision state

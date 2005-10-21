@@ -102,9 +102,9 @@ import org.xml.sax.SAXException;
  * <td>Set a SAX entity resolver to be used for parsing.</td>
  * </tr>
  * <tr>
- * <td>flowServiceLocator</td>
- * <td><i>{@link BeanFactoryFlowServiceLocator}</i></td>
- * <td>Set the flow service location strategy to use.</td>
+ * <td>flowArtifactLocator</td>
+ * <td><i>{@link FlowArtifactLocator}</i></td>
+ * <td>Set the flow artifact location strategy to use.</td>
  * </tr>
  * </table>
  * 
@@ -211,7 +211,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Creates a new XML flow builder.
 	 * @param location resource to read the XML flow definition from
-	 * @param flowServiceLocator the flow service location strategy to use
+	 * @param artifactLocator the flow artifact location strategy to use
 	 */
 	public XmlFlowBuilder(Resource location, FlowArtifactLocator artifactLocator) {
 		super();

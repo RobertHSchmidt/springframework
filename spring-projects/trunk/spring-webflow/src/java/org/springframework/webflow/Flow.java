@@ -419,7 +419,6 @@ public class Flow extends AnnotatedObject {
 	 * End the active session for this flow in the context of the current
 	 * request.
 	 * @param context the state request context
-	 * @return the ended flow session
 	 */
 	public void end(StateContext context) {
 		if (isTransactional()) {
