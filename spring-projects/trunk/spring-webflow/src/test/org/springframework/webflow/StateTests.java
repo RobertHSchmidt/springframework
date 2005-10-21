@@ -140,7 +140,7 @@ public class StateTests extends TestCase {
 				on("submit"), "finish") });
 		new EndState(subFlow, "finish");
 		Flow flow = new Flow("myFlow");
-		new SubflowState(flow, "subFlowState", subFlow, new Transition(on("finish"), "finish"));
+		new SubflowState(flow, "subFlowState", subFlow, new Transition[] { new Transition(on("finish"), "finish") });
 		new EndState(flow, "finish", view("myParentFlowEndingViewName"));
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
@@ -161,7 +161,8 @@ public class StateTests extends TestCase {
 		new ActionState(flow, "mapperState", new AttributeMapperAction(new Mapping(
 				"sourceEvent.parameters.parentInputAttribute", "flowScope.parentInputAttribute")),
 				new Transition[] { new Transition(on("success"), "subFlowState") });
-		new SubflowState(flow, "subFlowState", subFlow, new InputOutputMapper(), new Transition(on("finish"), "finish"));
+		new SubflowState(flow, "subFlowState", subFlow, new InputOutputMapper(), new Transition[] { new Transition(
+				on("finish"), "finish") });
 		new EndState(flow, "finish", view("myParentFlowEndingViewName"));
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		Map input = new HashMap();
