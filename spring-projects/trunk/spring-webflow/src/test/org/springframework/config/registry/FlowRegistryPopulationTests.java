@@ -32,5 +32,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 		FlowRegistrarImpl registrar = new FlowRegistrarImpl(builders);
 		registrar.registerFlowDefinitions(registry);
 		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());
+		registry.refresh();
+		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());
 	}
 }

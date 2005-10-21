@@ -48,8 +48,8 @@ public class XmlFlowBuilderTests extends TestCase {
 	private MockRequestContext context;
 
 	protected void setUp() throws Exception {
-		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow.xml", XmlFlowBuilderTests.class));
-		builder.setFlowArtifactLocator(new TestFlowArtifactLocator());
+		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow.xml", XmlFlowBuilderTests.class),
+				new TestFlowArtifactLocator());
 		flow = new FlowAssembler(builder).getFlow();
 		context = new MockRequestContext();
 	}

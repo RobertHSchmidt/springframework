@@ -28,8 +28,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.MutableAttributeSource;
@@ -211,21 +209,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	protected Document document;
 
 	/**
-	 * Creates a new XML flow builder, the location property must be set before
-	 * use.
-	 */
-	protected XmlFlowBuilder() {
-	}
-
-	/**
-	 * Creates a new XML flow builder.
-	 * @param location resource to read the XML flow definition from
-	 */
-	public XmlFlowBuilder(Resource location) {
-		this.location = location;
-	}
-
-	/**
 	 * Creates a new XML flow builder.
 	 * @param location resource to read the XML flow definition from
 	 * @param flowServiceLocator the flow service location strategy to use
@@ -281,12 +264,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 */
 	public void setEntityResolver(EntityResolver entityResolver) {
 		this.entityResolver = entityResolver;
-	}
-
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		if (getFlowArtifactLocator() == null) {
-			setFlowArtifactLocator(new BeanFactoryFlowArtifactLocator(beanFactory));
-		}
 	}
 
 	public void setFlowArtifactLocator(FlowArtifactLocator artifactLocator) {

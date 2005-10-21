@@ -17,9 +17,6 @@ package org.springframework.webflow.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
@@ -38,7 +35,7 @@ import org.springframework.webflow.Flow;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
+public abstract class BaseFlowBuilder implements FlowBuilder {
 
 	/**
 	 * A logger instance that can be used in subclasses.
@@ -82,7 +79,8 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	}
 
 	/**
-	 * Creates a flow builder using the provided creation and locator strategies.
+	 * Creates a flow builder using the provided creation and locator
+	 * strategies.
 	 * @param flowCreator the flow creator
 	 * @param artifactLocator the flow artifact locator.
 	 */
@@ -113,6 +111,18 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	}
 
 	/**
+	 * Returns the artifact locator
+	 * @throws an IllegalStateException if the artifact locator is not set
+	 */
+	protected FlowArtifactLocator getRequiredFlowArtifactLocator() {
+		if (flowArtifactLocator == null) {
+			throw new IllegalStateException("The flowArtifactLocator property must be set before you can use it to "
+					+ "load actions, attribute mappers, subflows, and other Flow artifacts needed by this builder");
+		}
+		return getFlowArtifactLocator();
+	}
+
+	/**
 	 * Sets the artifact locator.
 	 */
 	public void setFlowArtifactLocator(FlowArtifactLocator flowArtifactLocator) {
@@ -133,15 +143,10 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 		this.conversionService = conversionService;
 	}
 
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		if (flowArtifactLocator == null) {
-			this.flowArtifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory);
-		}
-	}
-
 	/**
-	 * Initialize this builder's conversion service and register default converters.
-	 * Called by subclasses who wish to use the conversion infrastructure.
+	 * Initialize this builder's conversion service and register default
+	 * converters. Called by subclasses who wish to use the conversion
+	 * infrastructure.
 	 */
 	protected void initConversionService() {
 		if (getConversionService() == null) {
@@ -151,7 +156,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 			setConversionService(service);
 		}
 	}
-	
+
 	/**
 	 * Returns a conversion executor capable of converting string objects to the
 	 * target class aliased by the provided alias.

@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.binding.method.MethodKey;
-import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
@@ -160,8 +159,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	public final Flow init() throws FlowBuilderException {
-		Assert.state(getFlowArtifactLocator() != null,
-				"The flowArtifactLocator property must be set before I can build this flow: '" + flowId() + "'");
 		initConversionService();
 		setFlow(getFlowCreator().createFlow(flowId(), flowProperties()));
 		return getFlow();
@@ -433,7 +430,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
 	protected Action action(String id) throws FlowArtifactLookupException {
-		return getFlowArtifactLocator().getAction(id);
+		return getRequiredFlowArtifactLocator().getAction(id);
 	}
 
 	/**
@@ -604,7 +601,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * was exported with the specified id
 	 */
 	protected FlowAttributeMapper attributeMapper(String attributeMapperId) throws FlowArtifactLookupException {
-		return getFlowArtifactLocator().getFlowAttributeMapper(attributeMapperId);
+		return getRequiredFlowArtifactLocator().getFlowAttributeMapper(attributeMapperId);
 	}
 
 	/**
@@ -618,7 +615,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactLookupException when the flow cannot be resolved
 	 */
 	protected Flow flow(String flowId) throws FlowArtifactLookupException {
-		return getFlowArtifactLocator().getFlow(flowId);
+		return getRequiredFlowArtifactLocator().getFlow(flowId);
 	}
 
 	/**

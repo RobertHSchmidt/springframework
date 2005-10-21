@@ -29,14 +29,11 @@ import junit.framework.TestCase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
+import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.XmlFlowBuilder;
 import org.springframework.webflow.config.XmlFlowBuilderTests;
-import org.springframework.webflow.execution.FlowExecutionImpl;
-import org.springframework.webflow.execution.FlowExecutionListener;
-import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 
 /**
  * Test case for FlowExecutionStack.
@@ -52,8 +49,8 @@ public class FlowExecutionImplTests extends TestCase {
 	private FlowExecutionImpl flowExecution;
 
 	protected void setUp() throws Exception {
-		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow.xml", XmlFlowBuilderTests.class));
-		builder.setFlowArtifactLocator(new XmlFlowBuilderTests.TestFlowArtifactLocator());
+		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow.xml", XmlFlowBuilderTests.class),
+				new XmlFlowBuilderTests.TestFlowArtifactLocator());
 		final Flow flow = new FlowAssembler(builder).getFlow();
 		flowLocator = new FlowLocator() {
 			public Flow getFlow(String flowDefinitionId) throws FlowArtifactLookupException {
@@ -90,11 +87,12 @@ public class FlowExecutionImplTests extends TestCase {
 
 		assertEquals(flowExecution.isActive(), restoredFlowExecution.isActive());
 		if (flowExecution.isActive()) {
-			assertTrue(entriesCollectionsAreEqual(
-					flowExecution.getActiveSession().getScope().getAttributeMap().entrySet(),
-					restoredFlowExecution.getActiveSession().getScope().getAttributeMap().entrySet()));
-			assertEquals(flowExecution.getActiveSession().getCurrentState().getId(), restoredFlowExecution.getCurrentState().getId());
-			assertEquals(flowExecution.getActiveSession().getFlow().getId(), restoredFlowExecution.getActiveSession().getFlow().getId());
+			assertTrue(entriesCollectionsAreEqual(flowExecution.getActiveSession().getScope().getAttributeMap()
+					.entrySet(), restoredFlowExecution.getActiveSession().getScope().getAttributeMap().entrySet()));
+			assertEquals(flowExecution.getActiveSession().getCurrentState().getId(), restoredFlowExecution
+					.getCurrentState().getId());
+			assertEquals(flowExecution.getActiveSession().getFlow().getId(), restoredFlowExecution.getActiveSession()
+					.getFlow().getId());
 			assertSame(flowExecution.getRootFlow(), restoredFlowExecution.getRootFlow());
 		}
 		assertEquals(flowExecution.getLastEventId(), restoredFlowExecution.getLastEventId());
