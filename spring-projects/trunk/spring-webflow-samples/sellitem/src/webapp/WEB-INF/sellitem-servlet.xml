@@ -47,7 +47,7 @@
 		</property>
 		<property name="assembler">
 			<bean class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler">
-				<property name="managedInterfaces" value="org.springframework.webflow.config.registry.FlowRegistry"/>
+				<property name="managedInterfaces" value="org.springframework.webflow.config.registry.FlowRegistryMBean"/>
 			</bean>
 		</property>
 	</bean>

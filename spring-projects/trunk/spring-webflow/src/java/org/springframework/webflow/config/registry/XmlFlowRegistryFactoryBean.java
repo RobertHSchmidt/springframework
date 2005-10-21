@@ -15,7 +15,12 @@ import org.springframework.webflow.config.FlowArtifactLocator;
 public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implements BeanFactoryAware {
 
 	public XmlFlowRegistryFactoryBean() {
+		super(new XmlFlowRegistrar());
+	}
 
+	public XmlFlowRegistryFactoryBean(BeanFactory beanFactory) {
+		super(new XmlFlowRegistrar());
+		setBeanFactory(beanFactory);
 	}
 
 	/**
@@ -69,8 +74,7 @@ public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implemen
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		if (getFlowRegistrar() == null) {
-			setFlowRegistrar(new XmlFlowRegistrar(new BeanFactoryFlowArtifactLocator(beanFactory, getFlowRegistry())));
-		}
+		getXmlFlowRegistrar()
+				.setFlowArtifactLocator(new BeanFactoryFlowArtifactLocator(beanFactory, getFlowRegistry()));
 	}
 }
