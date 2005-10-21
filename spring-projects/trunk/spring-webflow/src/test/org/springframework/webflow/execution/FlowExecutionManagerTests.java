@@ -16,6 +16,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.config.SimpleViewDescriptorCreator;
 
 public class FlowExecutionManagerTests extends TestCase {
@@ -41,19 +42,20 @@ public class FlowExecutionManagerTests extends TestCase {
 	}
 
 	public void testLaunchNewFlow() {
-		DataStoreFlowExecutionStorage storage = new DataStoreFlowExecutionStorage(new MapDataStoreAccessor());
-		FlowExecutionManager manager = new FlowExecutionManager(storage);
-		manager.setFlow(new SimpleFlow());
-		ViewDescriptor view = manager.onEvent(new Event(this, "start"));
+		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
+		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
+		Map input = new HashMap(1);
+		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
+		ViewDescriptor view = manager.onEvent(new Event(this, "start", input));
 		assertEquals("Wrong view name", "view", view.getViewName());
 	}
 
 	public void testPartcipateInExistingFlow() {
-		DataStoreFlowExecutionStorage storage = new DataStoreFlowExecutionStorage(new MapDataStoreAccessor());
-		FlowExecutionManager manager = new FlowExecutionManager(storage);
-		manager.setFlow(new SimpleFlow());
-		ViewDescriptor view = manager.onEvent(new Event(this, "start"));
-		Map input = new HashMap(1);
+		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
+		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
+		Map input = new HashMap(2);
+		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
+		ViewDescriptor view = manager.onEvent(new Event(this, "start", input));
 		input.put(FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER, view.getModel().get(
 				FlowExecutionManager.FLOW_EXECUTION_ID_ATTRIBUTE));
 		view = manager.onEvent(new Event(this, "submit", input));
@@ -66,5 +68,13 @@ public class FlowExecutionManagerTests extends TestCase {
 		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
 		FlowExecutionManager manager = (FlowExecutionManager)ac.getBean("flowExecutionManager");
 		assertEquals("Wrong number of listeners", 1, manager.getListenerMap().size());
+	}
+	
+	public static class SimpleFlowLocator implements FlowLocator {
+		private SimpleFlow simpleFlow = new SimpleFlow();
+		
+		public Flow getFlow(String id) {
+			return simpleFlow;
+		}
 	}
 }

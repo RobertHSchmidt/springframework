@@ -35,7 +35,7 @@ import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.EventIdTransitionCriteria;
 import org.springframework.webflow.config.FlowArtifactLocatorAdapter;
 import org.springframework.webflow.config.FlowBuilderException;
-import org.springframework.webflow.config.FlowFactoryBean;
+import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.SimpleViewDescriptorCreator;
 
 /**
@@ -88,7 +88,7 @@ public class FlowExecutionTests extends TestCase {
 				addEndState("endState");
 			}
 		};
-		FlowExecution flowExecution = new FlowExecutionImpl(new FlowFactoryBean(builder).getFlow());
+		FlowExecution flowExecution = new FlowExecutionImpl(new FlowAssembler(builder).getFlow());
 		ViewDescriptor vd = flowExecution.start(new Event(this, "start"));
 		assertNotNull(vd);
 		assertEquals("viewName", vd.getViewName());
@@ -125,7 +125,7 @@ public class FlowExecutionTests extends TestCase {
 				addEndState("stopTest");
 			}
 		};
-		final Flow childFlow = new FlowFactoryBean(childBuilder).getFlow();
+		final Flow childFlow = new FlowAssembler(childBuilder).getFlow();
 		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder(new FlowArtifactLocatorAdapter()) {
 			protected String flowId() {
 				return "parentFlow";
@@ -142,7 +142,7 @@ public class FlowExecutionTests extends TestCase {
 				addEndState("stopTest");
 			}
 		};
-		Flow parentFlow = new FlowFactoryBean(parentBuilder).getFlow();
+		Flow parentFlow = new FlowAssembler(parentBuilder).getFlow();
 
 		FlowExecution flowExecution = new FlowExecutionImpl(parentFlow);
 		flowExecution.start(new Event(this, "start"));

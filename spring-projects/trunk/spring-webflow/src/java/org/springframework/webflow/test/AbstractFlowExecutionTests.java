@@ -29,7 +29,7 @@ import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
 import org.springframework.webflow.config.FlowBuilder;
-import org.springframework.webflow.config.FlowFactoryBean;
+import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionImpl;
 
@@ -145,7 +145,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @param flowBuilder the flow builder
 	 */
 	protected void setFlowBuilder(FlowBuilder flowBuilder) {
-		setFlow(new FlowFactoryBean(flowBuilder).getFlow());
+		setFlow(new FlowAssembler(flowBuilder).getFlow());
 	}
 
 	protected final void onSetUpInTransaction() throws Exception {

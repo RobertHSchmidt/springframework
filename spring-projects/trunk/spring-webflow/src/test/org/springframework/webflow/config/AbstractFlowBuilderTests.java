@@ -58,7 +58,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 				if (flowDefinitionId.equals(PERSON_DETAILS)) {
 					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();
 					builder.setFlowArtifactLocator(this);
-					return new FlowFactoryBean(builder).getFlow();
+					return new FlowAssembler(builder).getFlow();
 				}
 				else {
 					throw new FlowArtifactLookupException(Flow.class, flowDefinitionId);
@@ -74,7 +74,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 				}
 			}
 		});
-		Flow flow = new FlowFactoryBean(master).getFlow();
+		Flow flow = new FlowAssembler(master).getFlow();
 		assertEquals("person.List", flow.getId());
 		assertTrue(flow.getStateCount() == 4);
 		assertTrue(flow.containsState("getPersonList"));
@@ -90,7 +90,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 	public void testNoBeanFactorySet() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
 		try {
-			new FlowFactoryBean(master).getFlow();
+			new FlowAssembler(master).getFlow();
 			fail("Should have failed, no bean factory set for default bean factory flow service locator");
 		}
 		catch (IllegalStateException e) {

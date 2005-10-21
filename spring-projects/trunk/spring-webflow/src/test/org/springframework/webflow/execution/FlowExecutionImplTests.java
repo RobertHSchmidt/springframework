@@ -31,7 +31,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
-import org.springframework.webflow.config.FlowFactoryBean;
+import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.XmlFlowBuilder;
 import org.springframework.webflow.config.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.FlowExecutionImpl;
@@ -54,7 +54,7 @@ public class FlowExecutionImplTests extends TestCase {
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow.xml", XmlFlowBuilderTests.class));
 		builder.setFlowArtifactLocator(new XmlFlowBuilderTests.TestFlowArtifactLocator());
-		final Flow flow = new FlowFactoryBean(builder).getFlow();
+		final Flow flow = new FlowAssembler(builder).getFlow();
 		flowLocator = new FlowLocator() {
 			public Flow getFlow(String flowDefinitionId) throws FlowArtifactLookupException {
 				if (flow.getId().equals(flowDefinitionId)) {
