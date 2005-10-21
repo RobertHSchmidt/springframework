@@ -28,13 +28,13 @@ public class FlowRegistryImpl implements ConfigurableFlowRegistry, FlowLocator {
 	/**
 	 * The map of loaded Flow definitions maintained in this registry.
 	 */
-	private Map flowDefinitions = new TreeMap();
+	private Map flowDefinitions;
 
 	/**
 	 * Creates an initially empty flow registry.
 	 */
 	public FlowRegistryImpl() {
-
+		this.flowDefinitions = new TreeMap();
 	}
 
 	public String[] getFlowDefinitionIds() {

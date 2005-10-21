@@ -83,6 +83,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	/**
 	 * Sets the strategy for locating dependent artifacts when a Flow is being
 	 * built.
+	 * @param artifactLocator the flow artifact locator
 	 */
 	public void setFlowArtifactLocator(FlowArtifactLocator artifactLocator) {
 		this.artifactLocator = artifactLocator;
