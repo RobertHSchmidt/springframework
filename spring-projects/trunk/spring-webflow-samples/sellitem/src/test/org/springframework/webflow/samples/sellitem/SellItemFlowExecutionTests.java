@@ -8,7 +8,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
-import org.springframework.webflow.config.XmlFlowRegistry;
+import org.springframework.webflow.config.FlowRegistryImpl;
+import org.springframework.webflow.config.XmlFlowRegistrar;
 import org.springframework.webflow.test.AbstractFlowExecutionTests;
 
 public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
@@ -22,9 +23,10 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 	}
 
 	protected FlowLocator createFlowLocator() {
-		XmlFlowRegistry registry = new XmlFlowRegistry(new BeanFactoryFlowArtifactLocator(applicationContext));
-		registry.setDefinitionLocations(new Resource[] { new FileSystemResource("WEB-INF/sellItem-flow.xml") });
-		registry.refresh();
+		FlowRegistryImpl registry = new FlowRegistryImpl();
+		XmlFlowRegistrar registrar = new XmlFlowRegistrar(new BeanFactoryFlowArtifactLocator(this.applicationContext));
+		registrar.setDefinitionLocations(new Resource[] { new FileSystemResource("WEB-INF/sellItem-flow.xml") });
+		registrar.registerFlowDefinitions(registry);
 		return registry;
 	}
 

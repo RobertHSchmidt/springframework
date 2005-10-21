@@ -35,8 +35,12 @@
 		</property>
 	</bean>
 
-	<bean id="flowLocator" class="org.springframework.webflow.config.XmlFlowRegistry">
-		<property name="definitionLocations" value="/WEB-INF/sellItem-flow.xml"/>
+	<bean id="flowLocator" class="org.springframework.webflow.config.FlowRegistryFactoryBean">
+		<constructor-arg>
+			<bean class="org.springframework.webflow.config.XmlFlowRegistrar">
+				<property name="definitionLocations" value="/WEB-INF/sellItem-flow.xml"/>
+			</bean>
+		</constructor-arg>
 	</bean>
 
 	<bean id="mbeanExporter" class="org.springframework.jmx.export.MBeanExporter">
