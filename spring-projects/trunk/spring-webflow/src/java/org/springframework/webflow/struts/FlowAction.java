@@ -24,18 +24,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.web.struts.ActionSupport;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.access.BeanFactoryFlowLocator;
 import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.FlowExecutionManager;
-import org.springframework.webflow.execution.servlet.ServletFlowExecutionManager;
 
 /**
  * Struts Action that acts a front controller entry point into the web flow
@@ -133,15 +130,8 @@ public class FlowAction extends ActionSupport {
 
 	protected void onInit() {
 		if (getFlowExecutionManager() == null) {
-			try {
-				setFlowExecutionManager((FlowExecutionManager)getWebApplicationContext().getBean(
-						FLOW_EXECUTION_MANAGER_BEAN_NAME, FlowExecutionManager.class));
-			}
-			catch (NoSuchBeanDefinitionException e) {
-				// use default
-				setFlowExecutionManager(new ServletFlowExecutionManager(new BeanFactoryFlowLocator(
-						getWebApplicationContext())));
-			}
+			setFlowExecutionManager((FlowExecutionManager)getWebApplicationContext().getBean(
+					FLOW_EXECUTION_MANAGER_BEAN_NAME, FlowExecutionManager.class));
 		}
 		getFlowExecutionManager().addListener(new ActionFormAdapter());
 	}
