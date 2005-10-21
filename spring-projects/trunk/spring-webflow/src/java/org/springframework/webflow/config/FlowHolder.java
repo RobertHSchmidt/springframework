@@ -3,7 +3,7 @@ package org.springframework.webflow.config;
 import org.springframework.webflow.Flow;
 
 /**
- * A holder managing a reference to a Flow definition. Provides a layer of
+ * A holder holding a reference to a Flow definition. Provides a layer of
  * indirection for managing a loaded Flow definition.
  * @author Keith Donald
  */

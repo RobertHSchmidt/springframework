@@ -1,8 +1,9 @@
 package org.springframework.webflow.config;
 
 /**
- * A worker object who knows how to register a set of flow definitions in a
- * registry.
+ * A strategy responsible for registering one or more Flow definitions in a Flow
+ * Registry. Encapsulates knowledge about the source and content of those Flow
+ * definitions.
  * 
  * @author Keith Donald
  */

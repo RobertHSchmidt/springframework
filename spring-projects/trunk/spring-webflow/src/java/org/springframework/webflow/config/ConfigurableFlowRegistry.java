@@ -11,13 +11,13 @@ public interface ConfigurableFlowRegistry extends FlowRegistry {
 
 	/**
 	 * Register the flow definition in this registry.
-	 * @param flow The flow to register
+	 * @param flow the flow definition to register
 	 */
 	public void registerFlowDefinition(Flow flow);
 
 	/**
 	 * Register the flow definition in this registry.
-	 * @param flowHolder a holder for the flow to register
+	 * @param flowHolder a holder managing the flow definition to register
 	 */
 	public void registerFlowDefinition(FlowHolder flowHolder);
 

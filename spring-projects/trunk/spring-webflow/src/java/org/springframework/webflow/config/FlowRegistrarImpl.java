@@ -4,8 +4,8 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.Flow;
 
 /**
- * A Flow definition registrar that registers flow definitions built by
- * configured Flow builders.
+ * A Flow definition registrar that registers all flow definitions built by a
+ * configured set of Flow builders.
  * @author Keith Donald
  */
 public class FlowRegistrarImpl implements FlowRegistrar {

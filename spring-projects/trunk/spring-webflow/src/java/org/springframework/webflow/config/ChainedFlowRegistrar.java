@@ -3,14 +3,14 @@ package org.springframework.webflow.config;
 import org.springframework.util.Assert;
 
 /**
- * A Flow Registrar chain, for applying a ordered list of Flow Registrar
+ * A flow registrar chain for applying an ordered list of Flow Registrar
  * implementations.
  * @author Keith Donald
  */
 public class ChainedFlowRegistrar implements FlowRegistrar {
 
 	/**
-	 * The chain.
+	 * The flow registrar chain.
 	 */
 	private FlowRegistrar[] chain;
 
