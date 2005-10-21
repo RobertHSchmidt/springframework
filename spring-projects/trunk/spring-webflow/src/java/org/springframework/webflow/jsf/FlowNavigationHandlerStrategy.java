@@ -79,24 +79,6 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 	protected static final String WEBFLOW_PREFIX = "webflow:";
 
 	/**
-	 * Create a new flow execution manager. Before use, the manager should be
-	 * appropriately configured using setter methods. At least the flow
-	 * execution storage strategy should be set!
-	 * 
-	 * @see #setFlow(Flow)
-	 * @see #setFlowLocator(FlowLocator)
-	 * @see #setListener(FlowExecutionListener)
-	 * @see #setListener(FlowExecutionListener, FlowExecutionListenerCriteria)
-	 * @see #setListenerMap(Map)
-	 * @see #setListeners(Collection)
-	 * @see #setListeners(Collection, FlowExecutionListenerCriteria)
-	 * @see #setStorage(FlowExecutionStorage)
-	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
-	 */
-	protected FlowNavigationHandlerStrategy() {
-	}
-
-	/**
 	 * Create a new flow execution manager with the specified storage strategy.
 	 * @param storage the storage strategy
 	 * 
@@ -109,8 +91,8 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 	 * @see #setListeners(Collection, FlowExecutionListenerCriteria)
 	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
 	 */
-	public FlowNavigationHandlerStrategy(FlowExecutionStorage storage) {
-		super(storage);
+	public FlowNavigationHandlerStrategy(FlowLocator locator) {
+		super(locator);
 	}
 
 	/**

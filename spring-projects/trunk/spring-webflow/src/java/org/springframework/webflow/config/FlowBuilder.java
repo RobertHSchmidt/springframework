@@ -30,7 +30,7 @@ import org.springframework.webflow.Flow;
  * 
  * @see org.springframework.webflow.config.AbstractFlowBuilder
  * @see org.springframework.webflow.config.XmlFlowBuilder
- * @see org.springframework.webflow.config.FlowFactoryBean
+ * @see org.springframework.webflow.config.FlowAssembler
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

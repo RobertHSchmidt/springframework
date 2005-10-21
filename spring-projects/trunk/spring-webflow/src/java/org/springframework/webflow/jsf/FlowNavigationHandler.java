@@ -23,9 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.access.BeanFactoryFlowLocator;
-import org.springframework.webflow.execution.DataStoreFlowExecutionStorage;
-import org.springframework.webflow.execution.SessionDataStoreAccessor;
 
 /**
  * <p>
@@ -141,17 +138,8 @@ public class FlowNavigationHandler extends NavigationHandler {
 	private FlowNavigationHandlerStrategy getStrategy(FacesContext context) {
 		if (flowNavigationHandlerStrategy == null) {
 			WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
-			if (wac != null) {
-				if (wac.containsBean(FlowNavigationHandlerStrategy.BEAN_NAME)) {
-					flowNavigationHandlerStrategy = (FlowNavigationHandlerStrategy)wac.getBean(
-							FlowNavigationHandlerStrategy.BEAN_NAME, FlowNavigationHandlerStrategy.class);
-				}
-			}
-			if (flowNavigationHandlerStrategy == null) {
-				flowNavigationHandlerStrategy = new FlowNavigationHandlerStrategy(new DataStoreFlowExecutionStorage(
-						new SessionDataStoreAccessor()));
-				flowNavigationHandlerStrategy.setFlowLocator(new BeanFactoryFlowLocator(wac));
-			}
+			flowNavigationHandlerStrategy = (FlowNavigationHandlerStrategy)wac.getBean(
+					FlowNavigationHandlerStrategy.BEAN_NAME, FlowNavigationHandlerStrategy.class);
 		}
 		return flowNavigationHandlerStrategy;
 	}

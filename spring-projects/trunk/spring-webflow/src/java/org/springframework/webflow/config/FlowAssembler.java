@@ -15,50 +15,20 @@
  */
 package org.springframework.webflow.config;
 
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 
 /**
- * Factory bean that acts as a director for assembling flows, delegating to a
- * <code>FlowBuilder</code> builder to construct the Flow. This is the core
- * top level class for assembling a <code>Flow</code> from configuration
- * information.
+ * A director for assembling flows, delegating to a <code>FlowBuilder</code>
+ * builder to construct the Flow. This is the core top level class for
+ * assembling a <code>Flow</code> from configuration information.
  * <p>
- * As an example, a Spring-managed FlowFactoryBean definition might look like
- * this:
+ * Flow assemblers, as POJOs, can also be used outside of a Spring bean factory,
+ * in a standalone, programmatic fashion:
  * 
  * <pre>
- *    &lt;bean id=&quot;user.RegistrationFlow&quot; class=&quot;org.springframework.webflow.config.FlowFactoryBean&quot;&gt;
- *       &lt;property name=&quot;flowBuilder&quot;&gt;
- *           &lt;bean class=&quot;com.mycompany.myapp.webflow.user.UserRegistrationFlowBuilder&quot;/&gt;
- *       &lt;/property&gt;
- *    &lt;/bean&gt;
- * </pre>
- * 
- * The above definition is configured with a specific, Java-based FlowBuilder
- * implementation. An XmlFlowBuilder could instead be used, for example:
- * 
- * <pre>
- *    &lt;bean id=&quot;user.RegistrationFlow&quot; class=&quot;org.springframework.webflow.config.FlowFactoryBean&quot;&gt;
- *        &lt;property name=&quot;flowBuilder&quot;&gt;
- *            &lt;bean class=&quot;org.springframework.webflow.config.XmlFlowBuilder&quot;&gt;
- *                &lt;property name=&quot;location&quot;&gt;
- *                    &lt;value&gt;UserRegistrationFlow.xml&lt;/value&gt;
- *                &lt;/property&gt;
- *            &lt;/bean&gt;
- *         &lt;/property&gt;
- *    &lt;/bean&gt;
- * </pre>
- * 
- * <p>
- * Flow factory beans, as POJOs, can also be used outside of a Spring bean
- * factory, in a standalone, programmatic fashion:
- * 
- * <pre>
- *    FlowBuilder builder = ...;
- *    Flow flow = new FlowFactoryBean(builder).getFlow();
+ *     FlowBuilder builder = ...;
+ *     Flow flow = new FlowAssembler(builder).getFlow();
  * </pre>
  * 
  * <p>
@@ -80,11 +50,11 @@ import org.springframework.webflow.Flow;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowFactoryBean implements FactoryBean, InitializingBean {
+public class FlowAssembler {
 
 	/**
 	 * The flow builder strategy used to assemble the flow produced by this
-	 * factory bean.
+	 * assembler.
 	 */
 	private FlowBuilder flowBuilder;
 
@@ -94,16 +64,10 @@ public class FlowFactoryBean implements FactoryBean, InitializingBean {
 	private Flow flow;
 
 	/**
-	 * Create a new flow factory bean.
-	 */
-	public FlowFactoryBean() {
-	}
-
-	/**
-	 * Create a new flow factory bean using the specified builder strategy.
+	 * Create a new flow assembler using the specified builder strategy.
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
-	public FlowFactoryBean(FlowBuilder flowBuilder) {
+	public FlowAssembler(FlowBuilder flowBuilder) {
 		setFlowBuilder(flowBuilder);
 	}
 
@@ -122,17 +86,13 @@ public class FlowFactoryBean implements FactoryBean, InitializingBean {
 		this.flowBuilder = flowBuilder;
 	}
 
-	public void afterPropertiesSet() {
-		Assert.notNull(flowBuilder, "The flow builder is required to assemble the flow produced by this factory");
-	}
-
 	/**
-	 * Does this factory bean build flows with the specified FlowBuilder
+	 * Does this assembler build flows with the specified FlowBuilder
 	 * implementation?
 	 * @param builderImplementationClass the builder implementation
 	 * @return true if yes, false otherwise
 	 * @throws IllegalArgumentException if specified class is not a
-	 *         <code>FlowBuilder</code> implementation
+	 * <code>FlowBuilder</code> implementation
 	 */
 	public boolean buildsWith(Class builderImplementationClass) throws IllegalArgumentException {
 		if (builderImplementationClass == null) {
@@ -146,14 +106,10 @@ public class FlowFactoryBean implements FactoryBean, InitializingBean {
 		return getFlowBuilder().getClass().equals(builderImplementationClass);
 	}
 
-	public Object getObject() throws Exception {
-		return getFlow();
-	}
-
 	/**
 	 * Returns the flow built by this factory.
 	 */
-	public synchronized Flow getFlow() {
+	public Flow getFlow() {
 		if (this.flow == null) {
 			// already set the flow handle to avoid infinite loops!
 			// e.g where Flow A spawns Flow B, which spawns Flow A again...
@@ -163,13 +119,5 @@ public class FlowFactoryBean implements FactoryBean, InitializingBean {
 			this.flowBuilder.dispose();
 		}
 		return this.flow;
-	}
-
-	public Class getObjectType() {
-		return Flow.class;
-	}
-
-	public boolean isSingleton() {
-		return true;
 	}
 }

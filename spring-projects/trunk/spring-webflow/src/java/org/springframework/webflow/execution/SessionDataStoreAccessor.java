@@ -10,6 +10,13 @@ import org.springframework.webflow.Event;
  */
 public class SessionDataStoreAccessor implements DataStoreAccessor {
 	public MutableAttributeSource getDataStore(Event sourceEvent) {
-		return new MapAttributeSource(((ExternalEvent)sourceEvent).getSessionMap());
+		if (sourceEvent instanceof ExternalEvent) {
+			return new MapAttributeSource(((ExternalEvent)sourceEvent).getSessionMap());
+		}
+		else {
+			throw new IllegalStateException("This session data store accessor is in use; however, " + "the source event '"
+					+ sourceEvent.getId() + "' signaled is not an instance of ExternalEvent: "
+					+ "there no way to access the 'sessionMap' property: programmer error");
+		}
 	}
 }

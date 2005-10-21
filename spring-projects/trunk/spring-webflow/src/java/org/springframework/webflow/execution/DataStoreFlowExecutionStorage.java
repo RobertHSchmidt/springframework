@@ -46,6 +46,13 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 * The Flow Execution key generation strategy.
 	 */
 	private KeyGenerator keyGenerator = new RandomGuidKeyGenerator();
+
+	/**
+	 * Create a new flow execution storage using the default session data store accessor.
+	 */
+	public DataStoreFlowExecutionStorage() {
+		this(new SessionDataStoreAccessor());
+	}
 	
 	/**
 	 * Create a new flow execution storage using given data store accessor.

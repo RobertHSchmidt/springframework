@@ -6,6 +6,8 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
@@ -17,7 +19,7 @@ import org.springframework.webflow.Flow;
  * from XML resources.
  * @author Keith Donald
  */
-public class XmlFlowRegistrar implements FlowRegistrar {
+public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware {
 
 	/**
 	 * XML flow definition resources to load.
@@ -40,7 +42,14 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	private FlowArtifactLocator artifactLocator;
 
 	/**
-	 * Creates an initially empty flow registry.
+	 * Creates an XML flow registrar
+	 */
+	public XmlFlowRegistrar() {
+		
+	}
+	
+	/**
+	 * Creates an XML flow registrar
 	 * @param artifactLocator the flow artifact locator
 	 */
 	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator) {
@@ -82,6 +91,12 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 		this.artifactLocator = artifactLocator;
 	}
 
+	public void setBeanFactory(BeanFactory beanFactory) {
+		if (artifactLocator == null) {
+			artifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory);
+		}
+	}
+	
 	public ConfigurableFlowRegistry registerFlowDefinitions(ConfigurableFlowRegistry registry) {
 		registerDefinitions(registry);
 		registerJarDefinitions(registry);
@@ -213,7 +228,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 
 		public void refresh() {
 			if (location != null) {
-				this.flow = new FlowFactoryBean(new XmlFlowBuilder(location, artifactLocator)).getFlow();
+				this.flow = new FlowAssembler(new XmlFlowBuilder(location, artifactLocator)).getFlow();
 			}
 		}
 

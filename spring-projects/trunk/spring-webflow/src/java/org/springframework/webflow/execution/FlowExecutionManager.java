@@ -25,9 +25,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
@@ -36,7 +33,6 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.access.BeanFactoryFlowLocator;
 import org.springframework.webflow.access.FlowLocator;
 
 /**
@@ -110,7 +106,7 @@ import org.springframework.webflow.access.FlowLocator;
  * @author Keith Donald
  * @author Colin Sampaleanu
  */
-public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFactoryAware {
+public class FlowExecutionManager implements FlowExecutionListenerLoader {
 
 	/**
 	 * Clients can send the id (name) of the flow to be started using an event
@@ -150,14 +146,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	/**
 	 * Logger, usable by subclasses.
 	 */
-	protected final Log logger = LogFactory.getLog(FlowExecutionManager.class);
-
-	/**
-	 * The default top-level flow to launch executions for (optional). If not
-	 * specified, it is expected that the client will specify which flows should
-	 * be launched for each "start event".
-	 */
-	private Flow flow;
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * The flow locator strategy for retrieving a flow definition using a flow
@@ -165,6 +154,13 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * strategy.
 	 */
 	private FlowLocator flowLocator;
+
+	/**
+	 * The flow execution storage strategy, for saving paused executions that
+	 * require user input and loading resuming executions that will process user
+	 * events.
+	 */
+	private FlowExecutionStorage storage = new DataStoreFlowExecutionStorage();
 
 	/**
 	 * A map of flow execution listeners to a list of flow execution listener
@@ -176,13 +172,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 			return new LinkedList();
 		}
 	};
-
-	/**
-	 * The flow execution storage strategy, for saving paused executions that
-	 * require user input and loading resuming executions that will process user
-	 * events.
-	 */
-	private FlowExecutionStorage storage;
 
 	/**
 	 * The Flow Execution key generation strategy.
@@ -197,30 +186,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	private TransactionSynchronizer transactionSynchronizer = new FlowScopeTokenTransactionSynchronizer();
 
 	/**
-	 * Create a new flow execution manager. Before use, the manager should be
-	 * appropriately configured using setter methods. At least the flow
-	 * execution storage strategy should be set!
-	 * 
-	 * @see #setFlow(Flow)
-	 * @see #setFlowLocator(FlowLocator)
-	 * @see #setListener(FlowExecutionListener)
-	 * @see #setListenerCriteria(FlowExecutionListener,
-	 * FlowExecutionListenerCriteria)
-	 * @see #setListenerMap(Map)
-	 * @see #setListeners(Collection)
-	 * @see #setListenersCriteria(Collection, FlowExecutionListenerCriteria)
-	 * @see #setStorage(FlowExecutionStorage)
-	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
-	 */
-	protected FlowExecutionManager() {
-	}
-
-	/**
 	 * Create a new flow execution manager with the specified storage strategy.
 	 * @param storage the storage strategy
 	 * 
-	 * @see #setFlow(Flow)
 	 * @see #setFlowLocator(FlowLocator)
+	 * @see #setStorage(FlowExecutionStorage)
 	 * @see #setListener(FlowExecutionListener)
 	 * @see #setListenerCriteria(FlowExecutionListener,
 	 * FlowExecutionListenerCriteria)
@@ -229,26 +199,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 * @see #setListenersCriteria(Collection, FlowExecutionListenerCriteria)
 	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
 	 */
-	public FlowExecutionManager(FlowExecutionStorage storage) {
-		setStorage(storage);
-	}
-
-	/**
-	 * Returns the flow whose executions are managed by this manager. Could be
-	 * <code>null</code> if there is no preconfigured flow and the id of the
-	 * flow for which executions will be managed is sent in an event parameter
-	 * "_flowId".
-	 */
-	protected Flow getFlow() {
-		return flow;
-	}
-
-	/**
-	 * Set the flow whose executions will be managed if there is no alternate
-	 * flow id specified in a "_flowId" event parameter.
-	 */
-	public void setFlow(Flow flow) {
-		this.flow = flow;
+	public FlowExecutionManager(FlowLocator flowLocator) {
+		setFlowLocator(flowLocator);
 	}
 
 	/**
@@ -265,6 +217,21 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
 		this.flowLocator = flowLocator;
+	}
+
+	/**
+	 * Returns the storage strategy used by the flow execution manager.
+	 */
+	protected FlowExecutionStorage getStorage() {
+		return storage;
+	}
+
+	/**
+	 * Set the storage strategy used by the flow execution manager.
+	 */
+	public void setStorage(FlowExecutionStorage storage) {
+		Assert.notNull(storage, "The flow execution storage strategy is required");
+		this.storage = storage;
 	}
 
 	/**
@@ -429,21 +396,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	}
 
 	/**
-	 * Returns the storage strategy used by the flow execution manager.
-	 */
-	protected FlowExecutionStorage getStorage() {
-		return storage;
-	}
-
-	/**
-	 * Set the storage strategy used by the flow execution manager.
-	 */
-	public void setStorage(FlowExecutionStorage storage) {
-		Assert.notNull(storage, "The flow execution storage strategy is required");
-		this.storage = storage;
-	}
-
-	/**
 	 * Return the application transaction synchronization strategy to use. This
 	 * defaults to a <i>synchronizer token</i> based transaction management
 	 * system, as implemented by {@link FlowScopeTokenTransactionSynchronizer}.
@@ -471,12 +423,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	 */
 	public void setKeyGenerator(KeyGenerator keyGenerator) {
 		this.keyGenerator = keyGenerator;
-	}
-
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		if (flowLocator == null) {
-			flowLocator = new BeanFactoryFlowLocator(beanFactory);
-		}
 	}
 
 	// event processing
@@ -541,18 +487,13 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader, BeanFa
 	protected Flow getFlow(Event event) {
 		String flowId = ExternalEvent.verifySingleStringInputParameter(getFlowIdParameterName(), event
 				.getParameter(getFlowIdParameterName()));
-		if (!StringUtils.hasText(flowId)) {
-			Assert.notNull(getFlow(),
-					"This flow execution manager is not configured with a default top-level flow--that means "
-							+ "the flow to launch must be provided by the client via the '" + getFlowIdParameterName()
-							+ "' parameter, yet no such parameter was provided in this event."
-							+ " Parameters provided were: " + StylerUtils.style(event.getParameters()));
-			return getFlow();
+		if (StringUtils.hasText(flowId)) {
+			return getFlowLocator().getFlow(flowId);
 		}
 		else {
-			Assert.notNull(getFlowLocator(), "The flow locator is required to lookup the requested flow with id '"
-					+ flowId + "'; however, the flowLocator property is null");
-			return getFlowLocator().getFlow(flowId);
+			throw new IllegalArgumentException("The flow to launch must be provided by the client via the '"
+					+ getFlowIdParameterName() + "' parameter, yet no such parameter was provided in this event."
+					+ " Parameters provided were: " + StylerUtils.style(event.getParameters()));
 		}
 	}
 

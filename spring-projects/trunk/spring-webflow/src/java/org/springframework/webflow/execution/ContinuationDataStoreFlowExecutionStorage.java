@@ -41,7 +41,7 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 	 * @param dataStoreAccessor the data store accessor.
 	 */
 	public ContinuationDataStoreFlowExecutionStorage() {
-		this(new SessionDataStoreAccessor());
+		super();
 	}
 
 	/**

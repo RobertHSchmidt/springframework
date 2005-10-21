@@ -26,7 +26,7 @@ public class FlowRegistrarImpl implements FlowRegistrar {
 		if (flowBuilders != null) {
 			for (int i = 0; i < flowBuilders.length; i++) {
 				FlowBuilder builder = flowBuilders[i];
-				Flow flow = new FlowFactoryBean(builder).getFlow();
+				Flow flow = new FlowAssembler(builder).getFlow();
 				registry.registerFlowDefinition(flow);
 			}
 		}

@@ -71,8 +71,8 @@ import org.xml.sax.SAXException;
  * file. The XML files read by this class should use the following doctype:
  * 
  * <pre>
- *        &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
- *        &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
+ *     &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -111,7 +111,7 @@ import org.xml.sax.SAXException;
  * </tr>
  * </table>
  * 
- * @see org.springframework.webflow.config.FlowFactoryBean
+ * @see org.springframework.webflow.config.FlowAssembler
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -129,12 +129,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	private static final String ACTION_ELEMENT = "action";
 
 	private static final String BEAN_ATTRIBUTE = "bean";
-
-	private static final String CLASS_ATTRIBUTE = "class";
-
-	private static final String AUTOWIRE_ATTRIBUTE = "autowire";
-
-	private static final String CLASSREF_ATTRIBUTE = "classref";
 
 	private static final String NAME_ATTRIBUTE = "name";
 

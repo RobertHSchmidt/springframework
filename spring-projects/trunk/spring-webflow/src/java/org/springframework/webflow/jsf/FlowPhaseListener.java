@@ -27,10 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.access.BeanFactoryFlowLocator;
-import org.springframework.webflow.execution.DataStoreFlowExecutionStorage;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.SessionDataStoreAccessor;
 
 /**
  * JSF phase listener that is responsible for loading the current flow execution
@@ -127,17 +124,8 @@ public class FlowPhaseListener implements PhaseListener {
 	private FlowNavigationHandlerStrategy getStrategy(FacesContext context) {
 		if (flowNavigationHandlerStrategy == null) {
 			WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
-			if (wac != null) {
-				if (wac.containsBean(FlowNavigationHandlerStrategy.BEAN_NAME)) {
-					flowNavigationHandlerStrategy = (FlowNavigationHandlerStrategy)wac.getBean(
-							FlowNavigationHandlerStrategy.BEAN_NAME, FlowNavigationHandlerStrategy.class);
-				}
-			}
-			if (flowNavigationHandlerStrategy == null) {
-				flowNavigationHandlerStrategy = new FlowNavigationHandlerStrategy(new DataStoreFlowExecutionStorage(
-						new SessionDataStoreAccessor()));
-				flowNavigationHandlerStrategy.setFlowLocator(new BeanFactoryFlowLocator(wac));
-			}
+			flowNavigationHandlerStrategy = (FlowNavigationHandlerStrategy)wac.getBean(
+					FlowNavigationHandlerStrategy.BEAN_NAME, FlowNavigationHandlerStrategy.class);
 		}
 		return flowNavigationHandlerStrategy;
 	}
