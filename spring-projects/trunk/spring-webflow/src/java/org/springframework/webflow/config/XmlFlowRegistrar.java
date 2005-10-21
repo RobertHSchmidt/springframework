@@ -6,8 +6,6 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
@@ -20,11 +18,6 @@ import org.springframework.webflow.Flow;
  * @author Keith Donald
  */
 public class XmlFlowRegistrar implements FlowRegistrar {
-
-	/**
-	 * Logger.
-	 */
-	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * XML flow definition resources to load.
@@ -220,10 +213,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 
 		public void refresh() {
 			if (location != null) {
-				FlowBuilder builder = new XmlFlowBuilder(location, artifactLocator);
-				this.flow = builder.init();
-				builder.buildStates();
-				builder.dispose();
+				this.flow = new FlowFactoryBean(new XmlFlowBuilder(location, artifactLocator)).getFlow();
 			}
 		}
 
@@ -233,6 +223,8 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).toString();
+		return new ToStringCreator(this).append("definitionLocation", definitionLocations).append(
+				"definitionJarLocations", definitionJarLocations).append("definitionDirectoryLocations",
+				definitionDirectoryLocations).toString();
 	}
 }
