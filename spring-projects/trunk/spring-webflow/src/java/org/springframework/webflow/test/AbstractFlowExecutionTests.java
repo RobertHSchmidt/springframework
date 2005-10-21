@@ -27,9 +27,6 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
-import org.springframework.webflow.config.FlowBuilder;
-import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionImpl;
 
@@ -102,13 +99,11 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
-	 * Hook method subclasses may implement to customize the FlowLocator
+	 * Subclasses should override this method to customize the FlowLocator
 	 * implementation that is returned to locate the Flow definition whose
 	 * execution will be tested.
 	 */
-	protected FlowLocator createFlowLocator() {
-		return new BeanFactoryFlowArtifactLocator(this.applicationContext);
-	}
+	protected abstract FlowLocator createFlowLocator();
 
 	/**
 	 * Get the singleton flow definition whose execution is being tested.
@@ -127,7 +122,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * Set the flow definition whose execution is being tested.
 	 * @param flow the singleton flow definition
 	 */
-	protected void setFlow(Flow flow) {
+	private void setFlow(Flow flow) {
 		Assert.notNull(flow, "The flow definition whose execution will be tested is required");
 		this.flow = flow;
 	}
@@ -138,15 +133,6 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @return the flow id, whose execution is to be tested
 	 */
 	protected abstract String flowId();
-
-	/**
-	 * Set the flow definition to be tested to the Flow built by the specified
-	 * builder.
-	 * @param flowBuilder the flow builder
-	 */
-	protected void setFlowBuilder(FlowBuilder flowBuilder) {
-		setFlow(new FlowAssembler(flowBuilder).getFlow());
-	}
 
 	protected final void onSetUpInTransaction() throws Exception {
 		onSetUpInTransactionalFlowTest();
@@ -369,7 +355,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
-	 * Evaluates a model attribute expression: e.g. attributeName.childAttribute.attr
+	 * Evaluates a model attribute expression: e.g.
+	 * attributeName.childAttribute.attr
 	 * @param attributeName the attribute expression
 	 * @param model the model map
 	 * @return the attribute expression value
@@ -377,5 +364,5 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
 		return ExpressionFactory.parseExpression(attributeName).evaluateAgainst(model, null);
 	}
-	
+
 }

@@ -15,8 +15,8 @@ import org.springframework.webflow.access.FlowArtifactLookupException;
  * @author Keith Donald
  */
 public class FlowArtifactLocatorAdapter implements FlowArtifactLocator {
-	
-	public Flow getFlow(String id) throws FlowArtifactLookupException {
+
+	public Flow getSubflow(String id) {
 		throw new UnsupportedOperationException("Subflow lookup is not supported by this artifact locator");
 	}
 
@@ -24,7 +24,7 @@ public class FlowArtifactLocatorAdapter implements FlowArtifactLocator {
 		throw new UnsupportedOperationException("Action lookup is not supported by this artifact locator");
 	}
 
-	public FlowAttributeMapper getFlowAttributeMapper(String id) throws FlowArtifactLookupException {
+	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 		throw new UnsupportedOperationException("Attribute mapper lookup is not supported by this artifact locator");
 	}
 
@@ -36,5 +36,5 @@ public class FlowArtifactLocatorAdapter implements FlowArtifactLocator {
 		throw new UnsupportedOperationException(
 				"View descriptor creator lookup is not supported by this artifact locator");
 	}
-	
+
 }

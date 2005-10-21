@@ -601,7 +601,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * was exported with the specified id
 	 */
 	protected FlowAttributeMapper attributeMapper(String attributeMapperId) throws FlowArtifactLookupException {
-		return getRequiredFlowArtifactLocator().getFlowAttributeMapper(attributeMapperId);
+		return getRequiredFlowArtifactLocator().getAttributeMapper(attributeMapperId);
 	}
 
 	/**
@@ -615,7 +615,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactLookupException when the flow cannot be resolved
 	 */
 	protected Flow flow(String flowId) throws FlowArtifactLookupException {
-		return getRequiredFlowArtifactLocator().getFlow(flowId);
+		return getRequiredFlowArtifactLocator().getSubflow(flowId);
 	}
 
 	/**

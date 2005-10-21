@@ -32,11 +32,11 @@ public class ChainedFlowArtifactLocator implements FlowArtifactLocator {
 		this.chain = chain;
 	}
 
-	public Flow getFlow(String id) throws FlowArtifactLookupException {
+	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		for (int i = 0; i < chain.length; i++) {
 			FlowArtifactLocator locator = chain[i];
 			try {
-				return locator.getFlow(id);
+				return locator.getSubflow(id);
 			}
 			catch (FlowArtifactLookupException e) {
 
@@ -58,11 +58,11 @@ public class ChainedFlowArtifactLocator implements FlowArtifactLocator {
 		throw new FlowArtifactLookupException(Action.class, id, "Chain exhausted looking for Action with id: '" + id + "'");
 	}
 
-	public FlowAttributeMapper getFlowAttributeMapper(String id) throws FlowArtifactLookupException {
+	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 		for (int i = 0; i < chain.length; i++) {
 			FlowArtifactLocator locator = chain[i];
 			try {
-				return locator.getFlowAttributeMapper(id);
+				return locator.getAttributeMapper(id);
 			}
 			catch (FlowArtifactLookupException e) {
 

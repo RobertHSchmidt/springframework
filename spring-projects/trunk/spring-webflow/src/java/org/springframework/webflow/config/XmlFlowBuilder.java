@@ -68,8 +68,8 @@ import org.xml.sax.SAXException;
  * file. The XML files read by this class should use the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
+ *      &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
+ *      &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -266,11 +266,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		this.entityResolver = entityResolver;
 	}
 
-	/* Overriden to hook in this XML builder's local artifact registry as a child of the parent registry.
+	/*
+	 * Overriden to hook in this XML builder's local artifact registry as a
+	 * child of the parent registry.
 	 * @see org.springframework.webflow.config.BaseFlowBuilder#setFlowArtifactLocator(org.springframework.webflow.config.FlowArtifactLocator)
 	 */
 	public void setFlowArtifactLocator(FlowArtifactLocator artifactLocator) {
-		FlowArtifactLocator localLocator = new BeanFactoryFlowArtifactLocator(localArtifactRegistry);
+		FlowArtifactLocator localLocator = new BeanFactoryFlowArtifactLocator(localArtifactRegistry, null);
 		super.setFlowArtifactLocator(new ChainedFlowArtifactLocator(new FlowArtifactLocator[] { localLocator,
 				artifactLocator }));
 	}
@@ -441,7 +443,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * given flow.
 	 */
 	protected SubflowState parseSubFlowState(Flow flow, Element element) {
-		return new SubflowState(flow, element.getAttribute(ID_ATTRIBUTE), getFlowArtifactLocator().getFlow(
+		return new SubflowState(flow, element.getAttribute(ID_ATTRIBUTE), getFlowArtifactLocator().getSubflow(
 				element.getAttribute(FLOW_ATTRIBUTE)), parseAttributeMapper(element), parseTransitions(element),
 				parseProperties(element));
 	}
@@ -629,7 +631,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		else {
 			Element mapperElement = (Element)mapperElements.get(0);
 			if (StringUtils.hasText(mapperElement.getAttribute(BEAN_ATTRIBUTE))) {
-				return getFlowArtifactLocator().getFlowAttributeMapper(mapperElement.getAttribute(BEAN_ATTRIBUTE));
+				return getFlowArtifactLocator().getAttributeMapper(mapperElement.getAttribute(BEAN_ATTRIBUTE));
 			}
 			else {
 				// inline definition of a mapping

@@ -148,10 +148,11 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		if (flowArtifactLocator == null) {
-			this.flowArtifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory);
+			setFlowArtifactLocator(new BeanFactoryFlowArtifactLocator(beanFactory, new BeanFactoryFlowLocatorFinder(
+					beanFactory).getFlowLocator()));
 		}
 	}
-	
+
 	/**
 	 * Initialize this builder's conversion service and register default
 	 * converters. Called by subclasses who wish to use the conversion

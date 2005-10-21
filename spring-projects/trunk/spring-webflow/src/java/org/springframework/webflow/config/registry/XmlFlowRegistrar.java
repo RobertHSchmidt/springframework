@@ -15,6 +15,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
+import org.springframework.webflow.config.BeanFactoryFlowLocatorFinder;
 import org.springframework.webflow.config.FlowArtifactLocator;
 import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.FlowBuilderException;
@@ -112,7 +113,8 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 
 	public void setBeanFactory(BeanFactory beanFactory) {
 		if (artifactLocator == null) {
-			artifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory);
+			artifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory, new BeanFactoryFlowLocatorFinder(
+					beanFactory).getFlowLocator());
 		}
 	}
 
@@ -219,7 +221,7 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 	 * support a refresh operation.
 	 * @author Keith Donald
 	 */
-	public class RefreshableXmlFlowHolder implements RefreshableFlowHolder {
+	public class RefreshableXmlFlowHolder implements FlowHolder {
 
 		/**
 		 * The Flow definition held by this holder.
@@ -233,10 +235,14 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 
 		public RefreshableXmlFlowHolder(Resource location) {
 			this.location = location;
-			refresh();
 		}
 
 		public Flow getFlow() {
+			synchronized (this) {
+				if (flow == null) {
+					refresh();
+				}
+			}
 			return flow;
 		}
 
@@ -245,9 +251,7 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 		}
 
 		public void refresh() {
-			if (location != null) {
-				this.flow = new FlowAssembler(new XmlFlowBuilder(location, artifactLocator)).getFlow();
-			}
+			flow = new FlowAssembler(new XmlFlowBuilder(location, artifactLocator)).getFlow();
 		}
 
 		public String toString() {

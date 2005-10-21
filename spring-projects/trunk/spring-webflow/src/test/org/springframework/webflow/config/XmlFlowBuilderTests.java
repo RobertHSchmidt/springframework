@@ -152,14 +152,14 @@ public class XmlFlowBuilderTests extends TestCase {
 			throw new FlowArtifactLookupException(Action.class, id);
 		}
 
-		public Flow getFlow(String id) throws FlowArtifactLookupException {
+		public Flow getSubFlow(String id) throws FlowArtifactLookupException {
 			if ("subFlow1".equals(id) || "subFlow2".equals(id)) {
 				return new Flow(id);
 			}
 			throw new FlowArtifactLookupException(Flow.class, id);
 		}
 
-		public FlowAttributeMapper getFlowAttributeMapper(String id) throws FlowArtifactLookupException {
+		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 			if ("attributeMapper1".equals(id)) {
 				return new FlowAttributeMapper() {
 					public Map createSubflowInput(RequestContext context) {

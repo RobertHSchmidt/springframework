@@ -31,10 +31,6 @@ public class FlowRegistryImpl implements ConfigurableFlowRegistry, FlowLocator {
 		return flowDefinitions.size();
 	}
 
-	public void registerFlowDefinition(Flow flow) {
-		registerFlowDefinition(new StaticFlowHolder(flow));
-	}
-
 	public void registerFlowDefinition(FlowHolder flowHolder) {
 		this.flowDefinitions.put(flowHolder.getFlow().getId(), flowHolder);
 	}
@@ -46,10 +42,7 @@ public class FlowRegistryImpl implements ConfigurableFlowRegistry, FlowLocator {
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 			Iterator it = flowDefinitions.values().iterator();
 			while (it.hasNext()) {
-				FlowHolder holder = (FlowHolder)it.next();
-				if (holder instanceof RefreshableFlowHolder) {
-					((RefreshableFlowHolder)holder).refresh();
-				}
+				((FlowHolder)it.next()).refresh();
 			}
 		}
 		finally {
@@ -62,19 +55,11 @@ public class FlowRegistryImpl implements ConfigurableFlowRegistry, FlowLocator {
 		try {
 			// @TODO workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-			getRefreshableFlowHolder(flowId).refresh();
+			getFlowHolder(flowId).refresh();
 		}
 		finally {
 			Thread.currentThread().setContextClassLoader(loader);
 		}
-	}
-
-	private RefreshableFlowHolder getRefreshableFlowHolder(String id) {
-		FlowHolder flowHolder = getFlowHolder(id);
-		if (!(flowHolder instanceof RefreshableFlowHolder)) {
-			throw new IllegalStateException("Flow definition with id '" + id + "' is not refreshable");
-		}
-		return (RefreshableFlowHolder)flowHolder;
 	}
 
 	private FlowHolder getFlowHolder(String id) {

@@ -8,7 +8,6 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
-import org.springframework.webflow.access.BeanFactoryFlowLocator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
@@ -29,32 +28,28 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	 * An segregated flow locator to delegate to for retrieving flow
 	 * definitions.
 	 */
-	private FlowLocator flowLocator;
+	private FlowLocator subflowLocator;
 
 	/**
 	 * Creates a flow artifact locator that retrieves artifacts from the
 	 * provided bean factory
 	 * @param beanFactory The spring bean factory, may not be null.
+	 * @param subflowLocator The locator for loading subflows
 	 */
-	public BeanFactoryFlowArtifactLocator(BeanFactory beanFactory) {
-		this(beanFactory, new BeanFactoryFlowLocator(beanFactory));
-	}
-
-	/**
-	 * Creates a flow artifact locator that retrieves artifacts from the
-	 * provided bean factory
-	 * @param beanFactory The spring bean factory, may not be null.
-	 * @param flowLocator The flow locator
-	 */
-	public BeanFactoryFlowArtifactLocator(BeanFactory beanFactory, FlowLocator flowLocator) {
+	public BeanFactoryFlowArtifactLocator(BeanFactory beanFactory, FlowLocator subflowLocator) {
 		Assert.notNull(beanFactory, "The beanFactory is required");
-		Assert.notNull(beanFactory, "The flow locator is required");
 		this.beanFactory = beanFactory;
-		this.flowLocator = flowLocator;
+		this.subflowLocator = subflowLocator;
 	}
-	
-	public Flow getFlow(String id) throws FlowArtifactLookupException {
-		return flowLocator.getFlow(id);
+
+	public Flow getSubflow(String id) {
+		if (subflowLocator == null) {
+			throw new FlowArtifactLookupException(Flow.class, id,
+					"Subflow lookup not supported by this flow artifact locator");
+		}
+		else {
+			return subflowLocator.getFlow(id);
+		}
 	}
 
 	public Action getAction(String id) throws FlowArtifactLookupException {
@@ -78,7 +73,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 		}
 	}
 
-	public FlowAttributeMapper getFlowAttributeMapper(String id) {
+	public FlowAttributeMapper getAttributeMapper(String id) {
 		return (FlowAttributeMapper)getService(id, FlowAttributeMapper.class);
 	}
 
@@ -93,7 +88,8 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	private Object getService(String id, Class serviceType) {
 		try {
 			return beanFactory.getBean(id);
-		} catch (BeansException e) {
+		}
+		catch (BeansException e) {
 			throw new FlowArtifactLookupException(serviceType, id, e);
 		}
 	}

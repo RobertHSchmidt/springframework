@@ -1,8 +1,6 @@
 package org.springframework.webflow.config.registry;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.FlowBuilder;
 
 /**
@@ -42,9 +40,7 @@ public class FlowRegistrarImpl implements FlowRegistrar {
 	public void registerFlowDefinitions(ConfigurableFlowRegistry registry) {
 		if (flowBuilders != null) {
 			for (int i = 0; i < flowBuilders.length; i++) {
-				FlowBuilder builder = flowBuilders[i];
-				Flow flow = new FlowAssembler(builder).getFlow();
-				registry.registerFlowDefinition(flow);
+				registry.registerFlowDefinition(new FlowHolderImpl(flowBuilders[i]));
 			}
 		}
 	}

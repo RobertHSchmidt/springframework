@@ -21,7 +21,7 @@ public class ChainedFlowLocator implements FlowLocator {
 	 * @param locatorChain The FlowLocator list
 	 */
 	public ChainedFlowLocator(FlowLocator[] locatorChain) {
-		Assert.notEmpty(locatorChain, "The Flow Locator chain cannot be empty");
+		Assert.notEmpty(locatorChain, "The flow locator chain cannot be empty");
 		this.locatorChain = locatorChain;
 	}
 
