@@ -2,8 +2,10 @@ package org.springframework.webflow.config.registry;
 
 /**
  * A strategy responsible for registering one or more Flow definitions in a Flow
- * Registry. Encapsulates knowledge about the source and content of those Flow
- * definitions.
+ * Registry. Encapsulates knowledge and behaivior regarding the source of those
+ * flow definitions.
+ * 
+ * @see org.springframework.webflow.config.registry.ConfigurableFlowRegistry
  * 
  * @author Keith Donald
  */

@@ -27,7 +27,6 @@ import javax.faces.context.FacesContext;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecution;
@@ -79,20 +78,22 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 	protected static final String WEBFLOW_PREFIX = "webflow:";
 
 	/**
-	 * Create a new flow execution manager with the specified storage strategy.
-	 * @param storage the storage strategy
+	 * Create a new flow execution manager using the specified flow locator for
+	 * loading Flow definitions.
+	 * @param flowLocator the flow locator to use
 	 * 
-	 * @see #setFlow(Flow)
 	 * @see #setFlowLocator(FlowLocator)
+	 * @see #setStorage(FlowExecutionStorage)
 	 * @see #setListener(FlowExecutionListener)
-	 * @see #setListener(FlowExecutionListener, FlowExecutionListenerCriteria)
+	 * @see #setListenerCriteria(FlowExecutionListener,
+	 * FlowExecutionListenerCriteria)
 	 * @see #setListenerMap(Map)
 	 * @see #setListeners(Collection)
-	 * @see #setListeners(Collection, FlowExecutionListenerCriteria)
+	 * @see #setListenersCriteria(Collection, FlowExecutionListenerCriteria)
 	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
 	 */
-	public FlowNavigationHandlerStrategy(FlowLocator locator) {
-		super(locator);
+	public FlowNavigationHandlerStrategy(FlowLocator flowLocator) {
+		super(flowLocator);
 	}
 
 	/**
@@ -126,8 +127,7 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
 	 * @param outcome The logical outcome returned by the specified action
-	 * @param manager <code>FlowExecutionManager</code> used to manage this
-	 * flow
+	 * @return the selected starting view
 	 */
 	public ViewDescriptor launchFlowExecution(FacesContext context, String fromAction, String outcome) {
 		// strip off the webflow prefix, leaving the flowId to launch
@@ -138,16 +138,15 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 		FlowExecutionHolder.setFlowExecution(null, flowExecution);
 		Event event = createEvent(context, fromAction, outcome, null);
 		ViewDescriptor selectedView = flowExecution.start(event);
-		
+
 		// enable following after flow execution storage changes are done
-		// NOTE: the sequence of preparing the view, and then saving the storage 
+		// NOTE: the sequence of preparing the view, and then saving the storage
 		// (via the phase listener) is the reverse of that used for other web
 		// frameworks, but it is needed since the JSF render phase may create
-		// data in the flow scope 
-		// it _does_ imply that client side flow storage may not be used, as that
-		// flow storage changes the flow ID
-		//return prepareSelectedView(selectedView, null, flowExecution);
-		
+		// data in the flow scope it _does_ imply that client side flow storage
+		// may not be used, as that flow storage changes the flow ID
+		// return prepareSelectedView(selectedView, null, flowExecution);
+
 		return afterEvent(event, null, flowExecution, selectedView);
 	}
 
@@ -159,7 +158,7 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 	protected FlowExecutionListener createFlowExecutionListener(FacesContext context) {
 		return new JsfFlowExecutionListener(context);
 	}
-	
+
 	/**
 	 * <p>
 	 * Return <code>true</code> if there is an existing flow execution in
@@ -197,24 +196,22 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
 	 * @param outcome The logical outcome returned by the specified action
-	 * @param flowExecutionManager <code>FlowExecutionManager</code> used to
-	 * manage this flow
+	 * @return the selected next (or ending) view
 	 */
 	public ViewDescriptor resumeFlowExecution(FacesContext context, String fromAction, String outcome) {
 		Serializable id = FlowExecutionHolder.getFlowExecutionId();
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
 		Event event = createEvent(context, fromAction, outcome, null);
 		ViewDescriptor selectedView = signalEventIn(flowExecution, event);
-		
+
 		// enable following after flow execution storage changes are done
-		// NOTE: the sequence of preparing the view, and then saving the storage 
+		// NOTE: the sequence of preparing the view, and then saving the storage
 		// (via the phase listener) is the reverse of that used for other web
 		// frameworks, but it is needed since the JSF render phase may create
-		// data in the flow scope 
-		// it _does_ imply that client side flow storage may not be used, as that
-		// flow storage changes the flow ID
-		//return prepareSelectedView(selectedView, id, flowExecution);
-		
+		// data in the flow scope it _does_ imply that client side flow storage
+		// may not be used, as that flow storage changes the flow ID
+		// return prepareSelectedView(selectedView, id, flowExecution);
+
 		return afterEvent(event, id, flowExecution, selectedView);
 	}
 
@@ -248,8 +245,6 @@ public class FlowNavigationHandlerStrategy extends FlowExecutionManager {
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
 	 * @param outcome The logical outcome returned by the specified action
-	 * @param manager <code>FlowExecutionManager</code> used to manage this
-	 * flow
 	 * @param viewDescriptor <code>ViewDescriptor</code> for the view to
 	 * render
 	 */

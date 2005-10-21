@@ -54,8 +54,8 @@ transition should execute given the current state of a flow execution.
 This package has several sub packages:
 <ul>
 <li>
-{@link org.springframework.webflow.access access} - Provides interfaces and classes to
-access a bean registry, typically the Spring application context.
+{@link org.springframework.webflow.access access} - Contains interfaces and classes for 
+retrieving flow artifacts at runtime.
 </li>
 <li>
 {@link org.springframework.webflow.action action} - Out-of-the box action implementations
@@ -63,7 +63,11 @@ that address common controller concerns.
 </li>
 <li>
 {@link org.springframework.webflow.config config} - Contains interfaces and classes for
-building and assembling web flows.
+building and assembling web flows at configuration time.
+</li>
+<li>
+{@link org.springframework.webflow.config.registry config.registry} - This package contains interfaces and
+classes for working with Flow definition registries.
 </li>
 <li>
 {@link org.springframework.webflow.execution execution} - Provides classes supporting managed
@@ -81,10 +85,6 @@ into the Spring web MVC framework.
 <li>
 {@link org.springframework.webflow.struts struts} - Integration of the Spring web flow
 system with Struts 1.x.
-</li>
-<li>
-{@link org.springframework.webflow.support support} - This package contains interfaces and
-classes supporting the Spring web flow system, for instance a web flow specific conversion service.
 </li>
 <li>
 {@link org.springframework.webflow.test test} - Contains classes that assist in testing
