@@ -80,8 +80,13 @@ import org.springframework.webflow.access.FlowLocator;
  * <td><b>description</b></td>
  * </tr>
  * <tr>
- * <td>storage (required)</td>
+ * <td>flowLocator (required)</td>
  * <td>None</td>
+ * <td>The locator that will load Flow definitions as needed for execution by this manager.</td>
+ * </tr>
+ * <tr>
+ * <td>storage</td>
+ * <td>A server-side session data store storage strategy.</td>
  * <td>Strategy for saving and loading managed flow executions</td>
  * </tr>
  * <tr>
