@@ -1,6 +1,7 @@
 package org.springframework.webflow.config;
 
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.util.Assert;
 
 /**
  * A factory bean that produces a populated Flow Registry.
@@ -25,6 +26,7 @@ public class FlowRegistryFactoryBean implements FactoryBean {
 	 * @param registrar the Flow definition registrar
 	 */
 	public FlowRegistryFactoryBean(FlowRegistrar registrar) {
+		Assert.notNull(registrar, "The Flow Registrar to perform registrations is required");
 		this.registrar = registrar;
 	}
 
