@@ -96,8 +96,13 @@
     <!-- set to a dummy default val which will be ignored if already set -->
     <property name="unitvm" value="-DzzzDummyVal" />
 
+    <echo message='org.name = "${org.name}"' />
+    <echo message='org.package.prefix = "${org.package.prefix}"' />
     <echo message='project.name = "${project.name}"' />
-    <echo message='project.version = "${project.version}"' />
+    <echo message='project.webapp.name = "${project.webapp.name}"' />
+    <echo message='project.title = "${project.title}"' />
+   	<echo message='project.base.version = "${project.base.version}"' />
+  	<echo message='project.version = "${project.version}"' />
     <echo message='ant.file = "${ant.file}"' />
     <echo message='basedir = "${basedir}"' />
     <echo message='user.dir = "${user.dir}"' />
