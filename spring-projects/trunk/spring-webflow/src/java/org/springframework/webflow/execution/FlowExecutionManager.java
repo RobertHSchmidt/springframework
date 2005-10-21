@@ -188,7 +188,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	/**
 	 * Create a new flow execution manager using the specified flow locator for
 	 * loading Flow definitions.
-	 * @param the flow locator
+	 * @param flowLocator the flow locator to use
 	 * 
 	 * @see #setFlowLocator(FlowLocator)
 	 * @see #setStorage(FlowExecutionStorage)
