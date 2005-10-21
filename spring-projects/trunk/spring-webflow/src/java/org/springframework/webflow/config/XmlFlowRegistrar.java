@@ -3,44 +3,28 @@ package org.springframework.webflow.config;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.access.FlowArtifactLookupException;
-import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 
 /**
- * A refreshable registry of XML Flow definitions. This registry loads its Flow
- * definitions from a set of resources when initialized. It may also be
- * refreshed at runtime to support "hot reloading" of externalized Flow
- * definitions.
- * 
+ * A Flow Registrar that can register refreshable flow definitions from loaded
+ * from XML resources.
  * @author Keith Donald
  */
-public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingBean, BeanFactoryAware {
+public class XmlFlowRegistrar implements FlowRegistrar {
 
 	/**
 	 * Logger.
 	 */
 	protected final Log logger = LogFactory.getLog(getClass());
-
-	/**
-	 * The map of loaded Flow definitions maintained in this registry.
-	 */
-	private Map flowDefinitions = new TreeMap();
 
 	/**
 	 * XML flow definition resources to load.
@@ -64,16 +48,9 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 
 	/**
 	 * Creates an initially empty flow registry.
-	 */
-	public XmlFlowRegistry() {
-
-	}
-
-	/**
-	 * Creates an initially empty flow registry.
 	 * @param artifactLocator the flow artifact locator
 	 */
-	public XmlFlowRegistry(FlowArtifactLocator artifactLocator) {
+	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator) {
 		setFlowArtifactLocator(artifactLocator);
 	}
 
@@ -104,46 +81,34 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 	}
 
 	/**
-	 * Sets the flow artifact locator.
-	 * @param artifactLocator the locator
+	 * Sets the strategy for locating dependent artifacts when a Flow is being
+	 * built.
 	 */
 	public void setFlowArtifactLocator(FlowArtifactLocator artifactLocator) {
 		this.artifactLocator = artifactLocator;
 	}
 
-	public void setBeanFactory(BeanFactory beanFactory) {
-		if (this.artifactLocator == null) {
-			this.artifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory, this);
-		}
+	public void registerFlowDefinitions(ConfigurableFlowRegistry registry) {
+		registerDefinitions(registry);
+		registerJarDefinitions(registry);
+		registerDirectoryDefinitions(registry);
 	}
 
-	public void afterPropertiesSet() throws IOException {
-		refresh();
-	}
-
-	public void refresh() {
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		try {
-			// @TODO workaround for JMX
-			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-			loadDefinitions();
-			loadJarDefinitions();
-			loadDirectoryDefinitions();
-		}
-		finally {
-			Thread.currentThread().setContextClassLoader(loader);
-		}
-	}
-
-	protected void loadDefinitions() {
+	/**
+	 * Register the Flow definitions at the configured file locations.
+	 */
+	protected void registerDefinitions(ConfigurableFlowRegistry registry) {
 		if (definitionLocations != null) {
 			for (int i = 0; i < definitionLocations.length; i++) {
-				loadFlow(definitionLocations[i]);
+				registerFlow(definitionLocations[i], registry);
 			}
 		}
 	}
 
-	protected void loadJarDefinitions() throws FlowBuilderException {
+	/**
+	 * Register the Flow definitions at the configured jar file locations.
+	 */
+	protected void registerJarDefinitions(ConfigurableFlowRegistry registry) {
 		JarFile jar = null;
 		try {
 			if (definitionJarLocations != null) {
@@ -153,7 +118,7 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 					while (entries.hasMoreElements()) {
 						ZipEntry entry = (ZipEntry)entries.nextElement();
 						if (entry.getName().endsWith(".xml")) {
-							loadFlow(new JarFileResource(jar, entry));
+							registerFlow(new JarFileResource(jar, entry), registry);
 						}
 					}
 				}
@@ -174,11 +139,14 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 		}
 	}
 
-	protected void loadDirectoryDefinitions() {
+	/**
+	 * Register the Flow definitions at the configured directory locations.
+	 */
+	protected void registerDirectoryDefinitions(ConfigurableFlowRegistry registry) {
 		try {
 			if (definitionDirectoryLocations != null) {
 				for (int i = 0; i < definitionDirectoryLocations.length; i++) {
-					addDirectory(definitionDirectoryLocations[i].getFile());
+					addDirectory(definitionDirectoryLocations[i].getFile(), registry);
 				}
 			}
 		}
@@ -187,76 +155,31 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 		}
 	}
 
-	protected void addDirectory(File directory) {
+	protected void addDirectory(File directory, ConfigurableFlowRegistry registry) {
 		Assert.isTrue(directory.isDirectory(), "The file must be a directory, programmer error");
 		File[] files = directory.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			File file = files[i];
 			if (file.isDirectory()) {
-				addDirectory(file);
+				addDirectory(file, registry);
 			}
 			else if (file.getName().endsWith(".xml")) {
-				addFile(file);
+				addFile(file, registry);
 			}
 		}
 	}
 
-	protected void addFile(File file) {
-		loadFlow(new FileSystemResource(file));
+	protected void addFile(File file, ConfigurableFlowRegistry registry) {
+		registerFlow(new FileSystemResource(file), registry);
 	}
 
 	/**
-	 * Load the Flow definition from the XML resource provided and register it
-	 * in this registry.
+	 * Register the Flow definition from the XML resource provided in the
+	 * provided registry.
 	 * @param resource the XML resource
-	 * @throws FlowBuilderException the builder could not build the Flow
 	 */
-	protected void loadFlow(Resource resource) throws FlowBuilderException {
-		registerFlowDefinition(new RefreshableFlow(resource));
-	}
-
-	private void registerFlowDefinition(RefreshableFlow flow) {
-		this.flowDefinitions.put(flow.getFlow().getId(), flow);
-	}
-
-	/**
-	 * Register the flow definition in this registry.
-	 * @param flow The flow to register
-	 */
-	public void registerFlowDefinition(Flow flow) {
-		registerFlowDefinition(new RefreshableFlow(flow));
-	}
-
-	public String[] getFlowDefinitionIds() {
-		return (String[])flowDefinitions.keySet().toArray(new String[0]);
-	}
-
-	public int getFlowDefinitionCount() {
-		return flowDefinitions.size();
-	}
-
-	public void refresh(String flowId) {
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		try {
-			// @TODO workaround for JMX
-			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-			getRefreshableFlow(flowId).refresh();
-		}
-		finally {
-			Thread.currentThread().setContextClassLoader(loader);
-		}
-	}
-
-	public Flow getFlow(String id) throws FlowArtifactLookupException {
-		return getRefreshableFlow(id).getFlow();
-	}
-
-	private RefreshableFlow getRefreshableFlow(String id) {
-		RefreshableFlow flow = (RefreshableFlow)flowDefinitions.get(id);
-		if (flow == null) {
-			throw new NoSuchFlowDefinitionException(id);
-		}
-		return flow;
+	protected void registerFlow(Resource resource, ConfigurableFlowRegistry registry) {
+		registry.registerFlowDefinition(new RefreshableXmlFlowHolder(resource));
 	}
 
 	/**
@@ -264,16 +187,23 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 	 * support a refresh operation.
 	 * @author Keith Donald
 	 */
-	protected class RefreshableFlow {
+	public class RefreshableXmlFlowHolder implements RefreshableFlowHolder {
+
+		/**
+		 * 
+		 */
 		private Flow flow;
 
+		/**
+		 * 
+		 */
 		private Resource location;
 
-		public RefreshableFlow(Flow flow) {
-			this.flow = flow;
-		}
-
-		public RefreshableFlow(Resource location) {
+		/**
+		 * @param artifactLocator
+		 * @param location
+		 */
+		public RefreshableXmlFlowHolder(Resource location) {
 			this.location = location;
 			refresh();
 		}
@@ -282,6 +212,9 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 			return flow;
 		}
 
+		/**
+		 * @return
+		 */
 		public Resource getLocation() {
 			return location;
 		}
@@ -301,6 +234,6 @@ public class XmlFlowRegistry implements FlowRegistry, FlowLocator, InitializingB
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("flowDefinitions", flowDefinitions).toString();
+		return new ToStringCreator(this).toString();
 	}
 }
