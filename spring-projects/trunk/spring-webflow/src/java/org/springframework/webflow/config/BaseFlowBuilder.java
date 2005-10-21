@@ -33,7 +33,7 @@ import org.springframework.webflow.Flow;
  * The builder will use a <code>FlowArtifactLocator</code> to locate hook in
  * any required flow related artifacts.
  * 
- * @see org.springframework.webflow.access.FlowServiceLocator
+ * @see org.springframework.webflow.config.FlowArtifactLocator
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
