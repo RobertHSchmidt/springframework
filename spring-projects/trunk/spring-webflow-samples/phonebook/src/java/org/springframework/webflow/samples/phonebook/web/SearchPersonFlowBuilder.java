@@ -21,7 +21,6 @@ import org.springframework.webflow.ViewState;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.ParameterizableFlowAttributeMapper;
-import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
 
 /**
  * Java-based flow builder that searches for people in the phonebook. The flow
@@ -55,7 +54,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 		displayCriteria.setEntryAction(method("setupForm", action("searchFormAction")));
 
 		// execute query
-		addActionState(EXECUTE_SEARCH, method("search(searchCriteria)", PhoneBook.class), new Transition[] {
+		addActionState(EXECUTE_SEARCH, method("search(searchCriteria)", action("phoneBook")), new Transition[] {
 				on(error(), DISPLAY_CRITERIA), on(success(), DISPLAY_RESULTS) });
 
 		// view results

@@ -10,8 +10,8 @@ with Flow definitions using a FlowRegistrar as follows:
     BeanFactory beanFactory = ...
     FlowRegistryImpl registry = new FlowRegistryImpl();
     Resource[] locations = new Resource[] {
-       "/WEB-INF/flowA.xml",
-       "/WEB-INF/flowB.xml"
+       new FileSystemResource("WEB-INF/flowA.xml"),
+       new FileSystemResource("WEB-INF/flowB.xml")
     };
     XmlFlowRegistrar registrar = new XmlFlowRegistrar(new BeanFactoryFlowArtifactLocator(beanFactory), locations);
     registrar.registerFlowDefinitions(registry);

@@ -20,7 +20,6 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.ParameterizableFlowAttributeMapper;
-import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
 
 /**
  * Java-based flow builder that builds the person details flow, exactly like it
@@ -45,7 +44,7 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
-		addActionState(GET_PERSON, method("getPerson(id)", PhoneBook.class), on(success(), DISPLAY_DETAILS));
+		addActionState(GET_PERSON, method("getPerson(id)", action("phoneBook")), on(success(), DISPLAY_DETAILS));
 
 		// view the person details
 		addViewState(DISPLAY_DETAILS, "details", new Transition[] { on(back(), "finish"),
@@ -54,8 +53,8 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 		// view details for selected collegue
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("sourceEvent.parameters.id", "id", fromStringTo(Long.class)));
-		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detailFlow"), idMapper,
-				new Transition[] { on(finish(), GET_PERSON), on(error(), "error") });
+		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detailFlow"), idMapper, new Transition[] {
+				on(finish(), GET_PERSON), on(error(), "error") });
 
 		// end
 		addEndState("finish");
