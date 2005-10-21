@@ -8,13 +8,17 @@ Changes in version RC1
 * The "Flow" class now encapsulates FlowExecution start, resume, pause, and end behavior
 * Flows may now be annotated as "transactional" for automatic creation of a synchronized application transaction
   to prevent duplicate submits (even with continuations!)
+* Added the FlowRegistry subsystem in webflow.config, for registering groups of Flow definitions.
+  This obsoletes the previous FlowFactoryBean and XmlFlowFactoryBean classes which previously exported Flows in a standard BeanFactory.
+  With this addition, Xml Flow definitions may now be refreshed from their registries at runtime
+  by using a JMX client like Sun's jConsole that ships with JDK 1.5.
+* Added refreshable XmlFlowRegistry, for managing a reloadable registry of Flow definitions sourced from XML files.
 * Added KeyGenerator strategy, providing a plugin point for custom FlowExecution key generation strategies.
 * Added "CompositeEvent" support for composite actions that may generate multiple action result events.
 * Added ExternalEvent "sessionMap" and "applicationMap" property for accessing session and application scoped 
   variables associated with a source event.
 * Added model support for "state result events", where the parameters of events that drive a state transition can be
   accessed from views by referencing in the format: ${stateId.parameterName}
-* Added refreshable XmlFlowRegistry, for managing a reloadable registry of Flow definitions sourced from XML files.
 * Added "requireValidatorMethod" property to FormAction, useful for piecemeal validation as part of a wizard flow
 * Added ActionUtils utility class, useful when implementing actions.
 * Added support for webflow definition scoped bean definitions, centralizing all flow definition code in one place.
@@ -34,6 +38,9 @@ Changes in version RC1
   should have a signature matching "public void ${validatorMethod}(Object obj, Errors errors)". When you do specify a
   formObjectClass, everything works like before, e.g. the signature will be
   "public void ${validatorMethod}(${formObjectClass} obj, Errors errors)".
+* Reworked FlowExecutionManager: it is much easier now to customize flow execution workflow (neccessary for JSF).
+  The FlowLocator is now a required dependency, and support for setting a single Flow to execute has been removed.
+  FlowController and FlowAction now all require a FlowExecutionManager to be set, for clarity.
 * Reworked and simplified the "access" and "config" packages
   Note: artifact creation and autowiring support has been removed in favor
   of artifact lookup by id (which is more compelling now with flow-definition scoped artifact support)
