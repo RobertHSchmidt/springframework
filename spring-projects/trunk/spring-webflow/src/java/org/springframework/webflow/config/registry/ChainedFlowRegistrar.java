@@ -23,11 +23,10 @@ public class ChainedFlowRegistrar implements FlowRegistrar {
 		this.chain = chain;
 	}
 
-	public ConfigurableFlowRegistry registerFlowDefinitions(ConfigurableFlowRegistry registry) {
+	public void registerFlowDefinitions(ConfigurableFlowRegistry registry) {
 		for (int i = 0; i < chain.length; i++) {
-			registry = chain[i].registerFlowDefinitions(registry);
+			chain[i].registerFlowDefinitions(registry);
 		}
-		return registry;
 	}
 
 }

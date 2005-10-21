@@ -24,7 +24,7 @@ public class FlowRegistrarImpl implements FlowRegistrar {
 		this.flowBuilders = flowBuilders;
 	}
 
-	public ConfigurableFlowRegistry registerFlowDefinitions(ConfigurableFlowRegistry registry) {
+	public void registerFlowDefinitions(ConfigurableFlowRegistry registry) {
 		if (flowBuilders != null) {
 			for (int i = 0; i < flowBuilders.length; i++) {
 				FlowBuilder builder = flowBuilders[i];
@@ -32,7 +32,6 @@ public class FlowRegistrarImpl implements FlowRegistrar {
 				registry.registerFlowDefinition(flow);
 			}
 		}
-		return registry;
 	}
 
 	public String toString() {

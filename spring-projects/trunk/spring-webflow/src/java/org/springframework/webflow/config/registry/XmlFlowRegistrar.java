@@ -103,11 +103,10 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware {
 		}
 	}
 	
-	public ConfigurableFlowRegistry registerFlowDefinitions(ConfigurableFlowRegistry registry) {
+	public void registerFlowDefinitions(ConfigurableFlowRegistry registry) {
 		registerDefinitions(registry);
 		registerJarDefinitions(registry);
 		registerDirectoryDefinitions(registry);
-		return registry;
 	}
 
 	/**

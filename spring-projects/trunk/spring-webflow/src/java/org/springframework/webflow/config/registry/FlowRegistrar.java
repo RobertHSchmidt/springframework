@@ -15,5 +15,5 @@ public interface FlowRegistrar {
 	 * @param registry the configurable registry to register flow definitions in
 	 * @return the same registry
 	 */
-	public ConfigurableFlowRegistry registerFlowDefinitions(ConfigurableFlowRegistry registry);
+	public void registerFlowDefinitions(ConfigurableFlowRegistry registry);
 }
