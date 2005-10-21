@@ -44,24 +44,30 @@ public class FlowRegistryFactoryBean implements FactoryBean {
 	}
 
 	/**
-	 * Returns the flow registrar that will perform registry population.
+	 * Returns the flow registry that will accept Flow definitions.
+	 */
+	protected FlowRegistry getFlowRegistry() {
+		return registry;
+	}
+	/**
+	 * Returns the flow registrar that will perform Flow definition registries.
 	 */
 	protected FlowRegistrar getFlowRegistrar() {
 		return registrar;
 	}
 	
+	public Object getObject() throws Exception {
+		return populateFlowRegistry();
+	}
+
 	/**
-	 * Returns the populated flow definition registry.
+	 * Populates and returns the configured flow definition registry.
 	 */
-	public FlowRegistry getFlowRegistry() {
+	public FlowRegistry populateFlowRegistry() {
 		registrar.registerFlowDefinitions(registry);
 		return registry;
 	}
 	
-	public Object getObject() throws Exception {
-		return getFlowRegistry();
-	}
-
 	public Class getObjectType() {
 		return FlowRegistry.class;
 	}
