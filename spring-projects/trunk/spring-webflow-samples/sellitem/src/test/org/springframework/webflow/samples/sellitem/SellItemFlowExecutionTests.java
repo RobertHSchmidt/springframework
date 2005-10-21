@@ -41,8 +41,9 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 	}
 
 	public void testStartFlow() {
-		ViewDescriptor nextView = startFlow();
-		assertViewNameEquals("priceAndItemCountForm", nextView);
+		ViewDescriptor selectedView = startFlow();
+		assertModelAttributeNotNull("sale", selectedView);
+		assertViewNameEquals("priceAndItemCountForm", selectedView);
 	}
 
 	public void testSubmitPriceAndItemCount() {
@@ -50,16 +51,16 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 		Map parameters = new HashMap(2);
 		parameters.put("itemCount", 4);
 		parameters.put("price", 25);
-		ViewDescriptor nextView = signalEvent(event("submit", parameters));
-		assertViewNameEquals("categoryForm", nextView);
+		ViewDescriptor selectedView = signalEvent(event("submit", parameters));
+		assertViewNameEquals("categoryForm", selectedView);
 	}
 
 	public void testSubmitCategoryForm() {
 		testSubmitPriceAndItemCount();
 		Map parameters = new HashMap(1);
 		parameters.put("category", "A");
-		ViewDescriptor nextView = signalEvent(event("submit", parameters));
-		assertViewNameEquals("costOverview", nextView);
+		ViewDescriptor selectedView = signalEvent(event("submit", parameters));
+		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
 	}
 
@@ -68,16 +69,16 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 		Map parameters = new HashMap(1);
 		parameters.put("category", "A");
 		parameters.put("shipping", "true");
-		ViewDescriptor nextView = signalEvent(event("submit", parameters));
-		assertViewNameEquals("shippingDetailsForm", nextView);
+		ViewDescriptor selectedView = signalEvent(event("submit", parameters));
+		assertViewNameEquals("shippingDetailsForm", selectedView);
 	}
 
 	public void testSubmitShippingDetailsForm() {
 		testSubmitCategoryFormWithShipping();
 		Map parameters = new HashMap(1);
 		parameters.put("shippingType", "E");
-		ViewDescriptor nextView = signalEvent(event("submit", parameters));
-		assertViewNameEquals("costOverview", nextView);
+		ViewDescriptor selectedView = signalEvent(event("submit", parameters));
+		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
 	}
 }
