@@ -27,7 +27,7 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 
 	protected FlowLocator createFlowLocator() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
-		FlowArtifactLocator artifactLocator = new BeanFactoryFlowArtifactLocator(applicationContext);
+		FlowArtifactLocator artifactLocator = new BeanFactoryFlowArtifactLocator(applicationContext, registry);
 		Resource[] locations = new Resource[] { new FileSystemResource("WEB-INF/sellItem-flow.xml") };
 		XmlFlowRegistrar registrar = new XmlFlowRegistrar(artifactLocator, locations);
 		registrar.registerFlowDefinitions(registry);
