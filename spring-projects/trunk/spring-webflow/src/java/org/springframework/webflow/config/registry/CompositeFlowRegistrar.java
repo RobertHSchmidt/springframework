@@ -23,7 +23,7 @@ public class CompositeFlowRegistrar implements FlowRegistrar {
 		this.registrars = registrars;
 	}
 
-	public void registerFlowDefinitions(ConfigurableFlowRegistry registry) {
+	public void registerFlowDefinitions(FlowRegistry registry) {
 		for (int i = 0; i < registrars.length; i++) {
 			registrars[i].registerFlowDefinitions(registry);
 		}

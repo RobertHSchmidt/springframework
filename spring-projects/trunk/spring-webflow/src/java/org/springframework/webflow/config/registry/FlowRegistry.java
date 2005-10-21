@@ -1,35 +1,16 @@
 package org.springframework.webflow.config.registry;
 
+import org.springframework.webflow.access.FlowLocator;
+
 /**
- * A management interface for managing Flow definition registries at runtime.
- * 
  * @author Keith Donald
  */
-public interface FlowRegistry {
-
-	/**
-	 * Returns the names of the flow definitions registered in this registry.
-	 * @return the flow definition names
-	 */
-	public String[] getFlowDefinitionIds();
+public interface FlowRegistry extends FlowRegistryMBean, FlowLocator {
 	
 	/**
-	 * Return the number of flow definitions registered in this registry.
-	 * @return the flow definition count;
+	 * Register the flow definition in this registry.
+	 * @param flowHolder a holder managing the flow definition to register
 	 */
-	public int getFlowDefinitionCount();
+	public void registerFlowDefinition(FlowHolder flowHolder);
 	
-	/**
-	 * Refresh this flow definition registry, reloading all Flow definitions
-	 * from there externalized representations.
-	 */
-	public void refresh();
-
-	/**
-	 * Refresh the Flow definition in this registry with the flowId provided,
-	 * reloading it from it's externalized representation.
-	 * @param flowId the flow to refresh.
-	 */
-	public void refresh(String flowId);
-
 }

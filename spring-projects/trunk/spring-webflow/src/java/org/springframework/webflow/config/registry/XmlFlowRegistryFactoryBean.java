@@ -2,8 +2,9 @@ package org.springframework.webflow.config.registry;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
+import org.springframework.webflow.config.FlowArtifactLocator;
 
 /**
  * A factory bean that produces a populated Flow Registry using a XML flow
@@ -11,14 +12,18 @@ import org.springframework.core.io.Resource;
  * 
  * @author Keith Donald
  */
-public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implements BeanFactoryAware, InitializingBean {
+public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implements BeanFactoryAware {
+
+	public XmlFlowRegistryFactoryBean() {
+
+	}
 
 	/**
 	 * Creates a new factory bean that will populate a default Flow Registry
 	 * using the provided registrar
 	 */
-	public XmlFlowRegistryFactoryBean() {
-		super(new XmlFlowRegistrar());
+	public XmlFlowRegistryFactoryBean(FlowArtifactLocator artifactLocator) {
+		super(new XmlFlowRegistrar(artifactLocator));
 	}
 
 	/**
@@ -26,8 +31,8 @@ public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implemen
 	 * using the provided registrar
 	 * @param registry the Flow definition registry
 	 */
-	public XmlFlowRegistryFactoryBean(ConfigurableFlowRegistry registry) {
-		super(new XmlFlowRegistrar(), registry);
+	public XmlFlowRegistryFactoryBean(FlowArtifactLocator flowArtifactLocator, FlowRegistry registry) {
+		super(new XmlFlowRegistrar(flowArtifactLocator), registry);
 	}
 
 	/**
@@ -64,10 +69,8 @@ public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implemen
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		getXmlFlowRegistrar().setBeanFactory(beanFactory);
-	}
-	
-	public void afterPropertiesSet() throws Exception {
-		getXmlFlowRegistrar().afterPropertiesSet();
+		if (getFlowRegistrar() == null) {
+			setFlowRegistrar(new XmlFlowRegistrar(new BeanFactoryFlowArtifactLocator(beanFactory, getFlowRegistry())));
+		}
 	}
 }

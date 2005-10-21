@@ -6,16 +6,11 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
-import org.springframework.webflow.config.BeanFactoryFlowLocatorFinder;
 import org.springframework.webflow.config.FlowArtifactLocator;
 import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.FlowBuilderException;
@@ -27,7 +22,7 @@ import org.springframework.webflow.config.XmlFlowBuilder;
  * from XML resources.
  * @author Keith Donald
  */
-public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, InitializingBean {
+public class XmlFlowRegistrar implements FlowRegistrar {
 
 	/**
 	 * XML flow definition resources to load.
@@ -48,14 +43,6 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 	 * Strategy for locating dependent artifacts when a Flow is being built.
 	 */
 	private FlowArtifactLocator artifactLocator;
-
-	/**
-	 * Creates an XML flow registrar - JavaBean style default constructor. Note:
-	 * the artifactLocator property *must* be set before use.
-	 */
-	public XmlFlowRegistrar() {
-
-	}
 
 	/**
 	 * Creates an XML flow registrar
@@ -111,18 +98,7 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 		this.artifactLocator = artifactLocator;
 	}
 
-	public void setBeanFactory(BeanFactory beanFactory) {
-		if (artifactLocator == null) {
-			artifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory, new BeanFactoryFlowLocatorFinder(
-					beanFactory).getFlowLocator());
-		}
-	}
-
-	public void afterPropertiesSet() throws Exception {
-		Assert.state(artifactLocator != null, "The flow artifact locator property is required");
-	}
-
-	public void registerFlowDefinitions(ConfigurableFlowRegistry registry) {
+	public void registerFlowDefinitions(FlowRegistry registry) {
 		registerDefinitions(registry);
 		registerJarDefinitions(registry);
 		registerDirectoryDefinitions(registry);
@@ -131,7 +107,7 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 	/**
 	 * Register the Flow definitions at the configured file locations.
 	 */
-	protected void registerDefinitions(ConfigurableFlowRegistry registry) {
+	protected void registerDefinitions(FlowRegistry registry) {
 		if (definitionLocations != null) {
 			for (int i = 0; i < definitionLocations.length; i++) {
 				registerFlow(definitionLocations[i], registry);
@@ -142,7 +118,7 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 	/**
 	 * Register the Flow definitions at the configured jar file locations.
 	 */
-	protected void registerJarDefinitions(ConfigurableFlowRegistry registry) {
+	protected void registerJarDefinitions(FlowRegistry registry) {
 		JarFile jar = null;
 		try {
 			if (definitionJarLocations != null) {
@@ -176,7 +152,7 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 	/**
 	 * Register the Flow definitions at the configured directory locations.
 	 */
-	protected void registerDirectoryDefinitions(ConfigurableFlowRegistry registry) {
+	protected void registerDirectoryDefinitions(FlowRegistry registry) {
 		try {
 			if (definitionDirectoryLocations != null) {
 				for (int i = 0; i < definitionDirectoryLocations.length; i++) {
@@ -189,7 +165,7 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 		}
 	}
 
-	protected void addDirectory(File directory, ConfigurableFlowRegistry registry) {
+	protected void addDirectory(File directory, FlowRegistry registry) {
 		Assert.isTrue(directory.isDirectory(), "The file must be a directory, programmer error");
 		File[] files = directory.listFiles();
 		for (int i = 0; i < files.length; i++) {
@@ -203,7 +179,7 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 		}
 	}
 
-	protected void addFile(File file, ConfigurableFlowRegistry registry) {
+	protected void addFile(File file, FlowRegistry registry) {
 		registerFlow(new FileSystemResource(file), registry);
 	}
 
@@ -212,7 +188,7 @@ public class XmlFlowRegistrar implements FlowRegistrar, BeanFactoryAware, Initia
 	 * provided registry.
 	 * @param resource the XML resource
 	 */
-	protected void registerFlow(Resource resource, ConfigurableFlowRegistry registry) {
+	protected void registerFlow(Resource resource, FlowRegistry registry) {
 		registry.registerFlowDefinition(new RefreshableXmlFlowHolder(resource));
 	}
 

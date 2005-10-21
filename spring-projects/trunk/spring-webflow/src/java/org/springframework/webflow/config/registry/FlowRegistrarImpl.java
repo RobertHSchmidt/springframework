@@ -37,7 +37,7 @@ public class FlowRegistrarImpl implements FlowRegistrar {
 		this.flowBuilders = flowBuilders;
 	}
 
-	public void registerFlowDefinitions(ConfigurableFlowRegistry registry) {
+	public void registerFlowDefinitions(FlowRegistry registry) {
 		if (flowBuilders != null) {
 			for (int i = 0; i < flowBuilders.length; i++) {
 				registry.registerFlowDefinition(new FlowHolderImpl(flowBuilders[i]));

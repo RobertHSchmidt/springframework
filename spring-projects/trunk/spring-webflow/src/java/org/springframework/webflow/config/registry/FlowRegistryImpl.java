@@ -16,7 +16,7 @@ import org.springframework.webflow.access.NoSuchFlowDefinitionException;
  * 
  * @author Keith Donald
  */
-public class FlowRegistryImpl implements ConfigurableFlowRegistry, FlowLocator {
+public class FlowRegistryImpl implements FlowRegistry {
 
 	/**
 	 * The map of loaded Flow definitions maintained in this registry.

@@ -13,13 +13,20 @@ public class FlowRegistryFactoryBean implements FactoryBean {
 	/**
 	 * The Flow Registry to register Flow definitions in.
 	 */
-	private ConfigurableFlowRegistry registry = new FlowRegistryImpl();
+	private FlowRegistry registry = new FlowRegistryImpl();
 
 	/**
 	 * The Flow Registrar that will perform the definition registrations.
 	 */
 	private FlowRegistrar registrar;
 
+	/**
+	 * Creates an initially unconfigured factory bean.
+	 */
+	protected FlowRegistryFactoryBean() {
+		
+	}
+	
 	/**
 	 * Creates a new factory bean that will populate a default Flow Registry
 	 * using the provided registrar
@@ -36,7 +43,7 @@ public class FlowRegistryFactoryBean implements FactoryBean {
 	 * @param registrar the Flow definition registrar
 	 * @param registry the Flow definition registry
 	 */
-	public FlowRegistryFactoryBean(FlowRegistrar registrar, ConfigurableFlowRegistry registry) {
+	public FlowRegistryFactoryBean(FlowRegistrar registrar, FlowRegistry registry) {
 		Assert.notNull(registrar, "The Flow Registrar to perform registrations is required");
 		Assert.notNull(registry, "The Flow Registry to accept registrations is required");
 		this.registrar = registrar;
@@ -49,11 +56,16 @@ public class FlowRegistryFactoryBean implements FactoryBean {
 	protected FlowRegistry getFlowRegistry() {
 		return registry;
 	}
+	
 	/**
 	 * Returns the flow registrar that will perform Flow definition registries.
 	 */
 	protected FlowRegistrar getFlowRegistrar() {
 		return registrar;
+	}
+	
+	protected void setFlowRegistrar(FlowRegistrar registrar) {
+		this.registrar = registrar;
 	}
 	
 	public Object getObject() throws Exception {
