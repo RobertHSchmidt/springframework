@@ -1,4 +1,4 @@
-package org.springframework.webflow.config;
+package org.springframework.webflow.config.registry;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
+import org.springframework.webflow.config.FlowArtifactLocator;
+import org.springframework.webflow.config.FlowAssembler;
+import org.springframework.webflow.config.FlowBuilderException;
+import org.springframework.webflow.config.JarFileResource;
+import org.springframework.webflow.config.XmlFlowBuilder;
 
 /**
  * A Flow Registrar that can register refreshable flow definitions from loaded

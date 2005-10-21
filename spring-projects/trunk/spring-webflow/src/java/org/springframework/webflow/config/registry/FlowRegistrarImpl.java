@@ -1,7 +1,9 @@
-package org.springframework.webflow.config;
+package org.springframework.webflow.config.registry;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.config.FlowAssembler;
+import org.springframework.webflow.config.FlowBuilder;
 
 /**
  * A Flow definition registrar that registers all flow definitions built by a

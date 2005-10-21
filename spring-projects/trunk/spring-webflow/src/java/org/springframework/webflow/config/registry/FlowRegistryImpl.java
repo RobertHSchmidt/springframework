@@ -1,4 +1,4 @@
-package org.springframework.webflow.config;
+package org.springframework.webflow.config.registry;
 
 import java.util.Iterator;
 import java.util.Map;

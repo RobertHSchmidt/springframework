@@ -1,4 +1,4 @@
-package org.springframework.webflow.config;
+package org.springframework.webflow.config.registry;
 
 /**
  * A management interface for managing Flow definition registries at runtime.

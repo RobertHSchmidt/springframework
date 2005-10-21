@@ -1,4 +1,4 @@
-package org.springframework.webflow.config;
+package org.springframework.webflow.config.registry;
 
 /**
  * A holder managing a refreshable reference to a Flow definition. The

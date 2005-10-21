@@ -1,4 +1,4 @@
-package org.springframework.webflow.config;
+package org.springframework.webflow.config.registry;
 
 /**
  * A strategy responsible for registering one or more Flow definitions in a Flow
