@@ -33,7 +33,6 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.FlowArtifactLookupException;
-import org.springframework.webflow.action.MultiAction;
 
 /**
  * Base class for flow builders that programmatically build flows in Java
@@ -488,13 +487,22 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Creates an annotated action with a single property that indicates which
 	 * method should be invoked on the target action when the state is entered.
-	 * @param methodName the method name, with the signature
-	 * <code>Event ${methodName}(RequestContext context)</code>
+	 * @param methodName the method name to invoke on the action</code>
 	 * @return the annotated action
 	 */
 	protected AnnotatedAction method(String methodName, Action action) {
+		return method(new MethodKey(methodName), action);
+	}
+	
+	/**
+	 * Creates an annotated action with a single property that indicates which
+	 * method should be invoked on the target action when the state is entered.
+	 * @param methodKey A key identifying the the method to invoke on the action</code>
+	 * @return the annotated action
+	 */
+	protected AnnotatedAction method(MethodKey methodKey, Action action) {
 		Map properties = new HashMap(1);
-		properties.put(MultiAction.METHOD_PROPERTY, new MethodKey(methodName));
+		properties.put(AnnotatedAction.METHOD_PROPERTY, methodKey);
 		return new AnnotatedAction(action, properties);
 	}
 
@@ -785,9 +793,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the transition (event matching criteria->stateId)
 	 */
 	protected Transition on(TransitionCriteria criteria, String stateId, TransitionCriteria executionCriteria) {
-		Transition t = on(criteria, stateId);
-		t.setExecutionCriteria(executionCriteria);
-		return t;
+		Transition transition = on(criteria, stateId);
+		transition.setExecutionCriteria(executionCriteria);
+		return transition;
 	}
 
 	/**
@@ -803,9 +811,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected Transition on(TransitionCriteria criteria, String stateId, TransitionCriteria executionCriteria,
 			Map properties) {
-		Transition t = on(criteria, stateId, properties);
-		t.setExecutionCriteria(executionCriteria);
-		return t;
+		Transition transition = on(criteria, stateId, properties);
+		transition.setExecutionCriteria(executionCriteria);
+		return transition;
 	}
 
 	/**

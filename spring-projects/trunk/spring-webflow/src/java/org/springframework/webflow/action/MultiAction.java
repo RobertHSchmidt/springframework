@@ -17,6 +17,7 @@ package org.springframework.webflow.action;
 
 import org.springframework.binding.AttributeSource;
 import org.springframework.binding.method.MethodKey;
+import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker;
@@ -105,11 +106,6 @@ public class MultiAction extends AbstractAction {
 	private ActionExecuteMethodKeyResolver executeMethodKeyResolver = new DefaultActionExecuteMethodKeyResolver();
 
 	/**
-	 * The action execution method property ("method").
-	 */
-	public static final String METHOD_PROPERTY = "method";
-
-	/**
 	 * Returns the delegate object holding the action execution methods.
 	 * Defaults to this object.
 	 */
@@ -177,9 +173,9 @@ public class MultiAction extends AbstractAction {
 	public static class DefaultActionExecuteMethodKeyResolver implements ActionExecuteMethodKeyResolver {
 		public MethodKey getMethodKey(RequestContext context) {
 			AttributeSource properties = context.getProperties();
-			if (properties.containsAttribute(METHOD_PROPERTY)) {
+			if (properties.containsAttribute(AnnotatedAction.METHOD_PROPERTY)) {
 				// use specified execute method name
-				return (MethodKey)properties.getAttribute(METHOD_PROPERTY);
+				return (MethodKey)properties.getAttribute(AnnotatedAction.METHOD_PROPERTY);
 			}
 			else {
 				// use current state name as method name
