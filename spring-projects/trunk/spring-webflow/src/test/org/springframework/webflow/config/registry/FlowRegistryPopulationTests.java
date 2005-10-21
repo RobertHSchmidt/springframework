@@ -43,8 +43,8 @@ public class FlowRegistryPopulationTests extends TestCase {
 	public void testXmlPopulation() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
 		Resource[] locations = new Resource[] {
-				new FileSystemResource("src/test/org/springframework/webflow/config/registry/flow1.xml"),
-				new FileSystemResource("src/test/org/springframework/webflow/config/registry/flow2.xml")
+				new FileSystemResource("flow1.xml"),
+				new FileSystemResource("flow2.xml")
 		};
 		XmlFlowRegistrar registrar = new XmlFlowRegistrar(new FlowArtifactLocatorAdapter(), locations);
 		registrar.registerFlowDefinitions(registry);

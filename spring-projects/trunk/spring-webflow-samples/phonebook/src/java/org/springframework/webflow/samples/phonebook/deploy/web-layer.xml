@@ -9,7 +9,7 @@
 	
 	<bean id="flowLocator" class="org.springframework.webflow.config.registry.FlowRegistryFactoryBean">
 		<constructor-arg>
-			<bean class="org.springframework.webflow.config.CompositeFlowRegistrar">
+			<bean class="org.springframework.webflow.config.registry.CompositeFlowRegistrar">
 				<constructor-arg>
 					<list>
 						<ref bean="xmlFlows"/>
