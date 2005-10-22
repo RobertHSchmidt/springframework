@@ -100,17 +100,17 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	/**
 	 * Returns the flow assembled by this assembler.
 	 */
-	public Flow getFlow() {
+	public synchronized Flow getFlow() {
 		if (!assembled) {
+			assembled = true;
 			flowBuilder.buildStates();
 			flow = flowBuilder.getResult();
 			flowBuilder.dispose();
-			assembled = true;
 		}
 		return flow;
 	}
 
-	public void refresh() {
+	public synchronized void refresh() {
 		// already set the flow handle to avoid infinite loops!
 		// e.g where Flow A spawns Flow B, which spawns Flow A again...
 		flow = flowBuilder.init();
