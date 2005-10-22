@@ -33,11 +33,12 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	}
 
 	/**
-	 * Creates a xml flow registry factory bean.
+	 * Creates a xml flow registry factory bean, for programmatic usage only.
 	 * @param beanFactory the bean factory to use for locating flow artifacts.
 	 */
 	public AbstractFlowRegistryFactoryBean(BeanFactory beanFactory) {
 		setBeanFactory(beanFactory);
+		init();
 	}
 
 	protected FlowRegistry getFlowRegistry() {

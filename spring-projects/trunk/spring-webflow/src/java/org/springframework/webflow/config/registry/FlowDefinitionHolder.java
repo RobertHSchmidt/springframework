@@ -10,10 +10,12 @@ import org.springframework.webflow.Flow;
 public interface FlowDefinitionHolder {
 
 	/**
-	 * Returns the id of the flow definition held by this holder.
+	 * Returns the id of the flow definition held by this holder. This is a
+	 * "lightweight" method callers may call to obtain the id of the Flow
+	 * without triggering further Flow creation.
 	 */
 	public String getFlowId();
-	
+
 	/**
 	 * Returns the Flow definition held by this holder.
 	 */
