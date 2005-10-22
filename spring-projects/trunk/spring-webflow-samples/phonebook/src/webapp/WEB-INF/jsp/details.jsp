@@ -14,26 +14,26 @@
 		</tr>
 		<tr>
 			<td><b>First Name</b></td>
-			<td>${result.firstName}</td>
+			<td>${getDetails.result.firstName}</td>
 		</tr>
 		<tr>
 			<td><b>Last Name</b></td>
-			<td>${result.lastName}</td>
+			<td>${getDetails.result.lastName}</td>
 		</tr>
 		<tr>
 			<td><b>User Id</B></td>
-			<td>${result.userId}</td>
+			<td>${getDetails.result.userId}</td>
 		</tr>
 		<tr>
 			<td><b>Phone</b></td>
-			<td>${result.phone}</td>
+			<td>${getDetails.result.phone}</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<br>
 				<b>Colleagues:</b>
 				<br>
-				<c:forEach var="colleague" items="${result.colleagues}">
+				<c:forEach var="colleague" items="${getDetails.result.colleagues}">
 					<a href="phonebook.htm?_flowExecutionId=${flowExecutionId}&_eventId=select&id=${colleague.id}">
 						${colleague.firstName} ${colleague.lastName}<br>
 					</a>
