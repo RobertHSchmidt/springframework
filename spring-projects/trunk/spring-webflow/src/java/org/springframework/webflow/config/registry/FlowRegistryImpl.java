@@ -1,6 +1,7 @@
 package org.springframework.webflow.config.registry;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -33,7 +34,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 
 	public void registerFlowDefinition(FlowDefinitionHolder flowHolder) {
 		Assert.notNull(flowHolder, "The flow definition holder to register is required");
-		flowDefinitions.put(flowHolder.getFlowId(), flowHolder);
+		index(flowHolder);
 	}
 
 	public void refresh() {
@@ -41,10 +42,20 @@ public class FlowRegistryImpl implements FlowRegistry {
 		try {
 			// @TODO workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-			Iterator it = flowDefinitions.values().iterator();
+			LinkedList needsReindexing = new LinkedList();
+			Iterator it = flowDefinitions.entrySet().iterator();
 			while (it.hasNext()) {
-				FlowDefinitionHolder holder = (FlowDefinitionHolder)it.next();
+				Map.Entry entry = (Map.Entry)it.next();
+				String key = (String)entry.getKey();
+				FlowDefinitionHolder holder = (FlowDefinitionHolder)entry.getValue();
 				holder.refresh();
+				if (!holder.getFlowId().equals(key)) {
+					needsReindexing.add(holder);
+				}
+			}
+			it = needsReindexing.iterator();
+			while (it.hasNext()) {
+				index((FlowDefinitionHolder)it.next());
 			}
 		}
 		finally {
@@ -59,10 +70,17 @@ public class FlowRegistryImpl implements FlowRegistry {
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 			FlowDefinitionHolder holder = getFlowDefinitionHolder(flowId);
 			holder.refresh();
+			if (!holder.getFlowId().equals(flowId)) {
+				index(holder);
+			}
 		}
 		finally {
 			Thread.currentThread().setContextClassLoader(loader);
 		}
+	}
+
+	private void index(FlowDefinitionHolder holder) {
+		flowDefinitions.put(holder.getFlowId(), holder);
 	}
 
 	private FlowDefinitionHolder getFlowDefinitionHolder(String id) {
