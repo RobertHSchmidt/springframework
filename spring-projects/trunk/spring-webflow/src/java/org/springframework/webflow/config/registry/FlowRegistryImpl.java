@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.NoSuchFlowDefinitionException;
@@ -31,7 +32,8 @@ public class FlowRegistryImpl implements FlowRegistry {
 	}
 
 	public void registerFlowDefinition(FlowDefinitionHolder flowHolder) {
-		this.flowDefinitions.put(flowHolder.getFlowId(), flowHolder);
+		Assert.notNull(flowHolder, "The flow definition holder to register is required");
+		flowDefinitions.put(flowHolder.getFlowId(), flowHolder);
 	}
 
 	public void refresh() {
@@ -41,7 +43,8 @@ public class FlowRegistryImpl implements FlowRegistry {
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 			Iterator it = flowDefinitions.values().iterator();
 			while (it.hasNext()) {
-				((FlowDefinitionHolder)it.next()).refresh();
+				FlowDefinitionHolder holder = (FlowDefinitionHolder)it.next();
+				holder.refresh();
 			}
 		}
 		finally {
@@ -54,7 +57,8 @@ public class FlowRegistryImpl implements FlowRegistry {
 		try {
 			// @TODO workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-			getFlowDefinitionHolder(flowId).refresh();
+			FlowDefinitionHolder holder = getFlowDefinitionHolder(flowId);
+			holder.refresh();
 		}
 		finally {
 			Thread.currentThread().setContextClassLoader(loader);

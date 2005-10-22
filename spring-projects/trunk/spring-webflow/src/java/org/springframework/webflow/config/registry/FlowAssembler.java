@@ -28,8 +28,8 @@ import org.springframework.webflow.config.FlowBuilder;
  * in a standalone, programmatic fashion:
  * 
  * <pre>
- *     FlowBuilder builder = ...;
- *     Flow flow = new FlowAssembler(builder).getFlow();
+ *      FlowBuilder builder = ...;
+ *      Flow flow = new FlowAssembler(builder).getFlow();
  * </pre>
  * 
  * <p>
@@ -65,11 +65,17 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	private Flow flow;
 
 	/**
+	 * The initial id of the flow definition to support registration.
+	 */
+	private String flowId;
+	
+	/**
 	 * Create a new flow assembler using the specified builder strategy.
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
 	public FlowAssembler(FlowBuilder flowBuilder) {
 		setFlowBuilder(flowBuilder);
+		flowId = flowBuilder.init().getId();
 	}
 
 	/**
@@ -87,21 +93,25 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		this.flowBuilder = flowBuilder;
 	}
 
-	public String getFlowId() {
-		return flowBuilder.init().getId();
+	public synchronized String getFlowId() {
+		if (flow == null) {
+			return flowId;
+		} else {
+			return flow.getId();
+		}
 	}
 	
 	/**
 	 * Returns the flow assembled by this assembler.
 	 */
-	public Flow getFlow() {
+	public synchronized Flow getFlow() {
 		if (flow == null) {
 			refresh();
 		}
 		return flow;
 	}
 
-	public void refresh() {
+	public synchronized void refresh() {
 		// already set the flow handle to avoid infinite loops!
 		// e.g where Flow A spawns Flow B, which spawns Flow A again...
 		flow = flowBuilder.init();
