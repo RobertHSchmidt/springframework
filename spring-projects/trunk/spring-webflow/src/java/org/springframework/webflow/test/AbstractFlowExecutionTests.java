@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.springframework.binding.expression.ExpressionFactory;
+import org.springframework.core.style.StylerUtils;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
@@ -316,8 +317,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @param selectedView the view descriptor to assert
 	 */
 	public void assertModelAttributeEquals(Object expectedValue, String attributeName, ViewDescriptor selectedView) {
-		assertEquals("The model attribute value is wrong:", expectedValue, evaluateModelAttributeExpression(
-				attributeName, selectedView.getModel()));
+		assertEquals("The model attribute '" + attributeName + "' value is wrong:", expectedValue,
+				evaluateModelAttributeExpression(attributeName, selectedView.getModel()));
 	}
 
 	/**
@@ -330,7 +331,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ViewDescriptor selectedView) {
 		assertModelAttributeNotNull(attributeName, selectedView);
 		Collection c = (Collection)evaluateModelAttributeExpression(attributeName, selectedView.getModel());
-		assertEquals("The model attribute collection size is wrong:", expectedSize, c.size());
+		assertEquals("The model attribute '" + attributeName + "' collection size is wrong:", expectedSize, c.size());
 	}
 
 	/**
@@ -339,8 +340,10 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @param selectedView the view descriptor to assert
 	 */
 	public void assertModelAttributeNotNull(String attributeName, ViewDescriptor selectedView) {
-		assertNotNull("The model attribute is [null] but should be NOT null:", evaluateModelAttributeExpression(
-				attributeName, selectedView.getModel()));
+		assertNotNull("The model attribute '" + attributeName
+				+ "' is [null] but should be NOT null, model contents are: "
+				+ StylerUtils.style(selectedView.getModel()), evaluateModelAttributeExpression(attributeName,
+				selectedView.getModel()));
 	}
 
 	/**
@@ -350,8 +353,9 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * @param selectedView the view descriptor to assert
 	 */
 	public void assertModelAttributeNull(String attributeName, ViewDescriptor selectedView) {
-		assertNull("The model attribute is NOT null but should be [null]:", evaluateModelAttributeExpression(
-				attributeName, selectedView.getModel()));
+		assertNull("The model attribute '" + attributeName + "' is NOT null but should be [null], model contents are:"
+				+ StylerUtils.style(selectedView.getModel()), evaluateModelAttributeExpression(attributeName,
+				selectedView.getModel()));
 	}
 
 	/**

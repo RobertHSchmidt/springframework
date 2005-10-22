@@ -54,7 +54,7 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 		parameters.put("lastName", "Donald");
 		ViewDescriptor view = signalEvent(event("search", parameters));
 		assertCurrentStateEquals("displayResults");
-		Assert.collectionAttributeSizeEquals(view, "persons", 1);
+		assertModelAttributeCollectionSize(1, "executeSearch.result", view);
 	}
 
 	public void testCriteriaView_Submit_Error() {
