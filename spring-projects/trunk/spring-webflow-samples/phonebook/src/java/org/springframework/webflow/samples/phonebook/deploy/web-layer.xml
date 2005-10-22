@@ -6,21 +6,8 @@
 	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
 		<constructor-arg ref="flowLocator"/>
 	</bean>
-	
-	<bean id="flowLocator" class="org.springframework.webflow.config.registry.FlowRegistryFactoryBean">
-		<constructor-arg>
-			<bean class="org.springframework.webflow.config.registry.CompositeFlowRegistrar">
-				<constructor-arg>
-					<list>
-						<ref bean="xmlFlows"/>
-						<ref bean="javaFlows"/>
-					</list>
-				</constructor-arg>
-			</bean>
-		</constructor-arg>
-	</bean>
 
-	<bean id="xmlFlows" class="org.springframework.webflow.config.registry.XmlFlowRegistrar">
+	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
 		<property name="definitionLocations">
 			<list>
 				<value>classpath:org/springframework/webflow/samples/phonebook/web/search-flow.xml</value>
@@ -28,14 +15,8 @@
 			</list>
 		</property>
 	</bean>
-
-	<bean id="javaFlows" class="org.springframework.webflow.config.registry.FlowRegistrarImpl">
-		<property name="flowBuilders">
-			<list>
-				<bean class="org.springframework.webflow.samples.phonebook.web.SearchPersonFlowBuilder"/>
-				<bean class="org.springframework.webflow.samples.phonebook.web.PersonDetailFlowBuilder"/>
-			</list>
-		</property>
-	</bean>
-	
+		
+	<!-- comment in to test java builders 
+	<bean id="flowLocator" class="org.springframework.webflow.samples.phonebook.web.FlowRegistryFactoryBean"/>
+	 -->
 </beans>

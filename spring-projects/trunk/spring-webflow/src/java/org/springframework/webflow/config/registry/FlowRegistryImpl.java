@@ -31,7 +31,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 	}
 
 	public void registerFlowDefinition(FlowDefinitionHolder flowHolder) {
-		this.flowDefinitions.put(flowHolder.getFlow().getId(), flowHolder);
+		this.flowDefinitions.put(flowHolder.getFlowId(), flowHolder);
 	}
 
 	public void refresh() {

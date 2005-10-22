@@ -87,6 +87,10 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		this.flowBuilder = flowBuilder;
 	}
 
+	public String getFlowId() {
+		return flowBuilder.init().getId();
+	}
+	
 	/**
 	 * Returns the flow assembled by this assembler.
 	 */
@@ -100,9 +104,9 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	public void refresh() {
 		// already set the flow handle to avoid infinite loops!
 		// e.g where Flow A spawns Flow B, which spawns Flow A again...
-		flow = this.flowBuilder.init();
+		flow = flowBuilder.init();
 		flowBuilder.buildStates();
-		flow = this.flowBuilder.getResult();
+		flow = flowBuilder.getResult();
 		flowBuilder.dispose();
 	}
 }

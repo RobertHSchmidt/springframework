@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.springframework.binding.support.Assert;
 import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.test.AbstractFlowExecutionTests;
 
 public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
@@ -32,6 +33,10 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 		return "searchFlow";
 	}
 
+	protected FlowLocator createFlowLocator() {
+		return (FlowLocator)applicationContext.getBean("flowLocator");
+	}
+
 	protected String[] getConfigLocations() {
 		return new String[] { "classpath:org/springframework/webflow/samples/phonebook/deploy/service-layer.xml",
 				"classpath:org/springframework/webflow/samples/phonebook/deploy/web-layer.xml" };
@@ -41,7 +46,7 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 		startFlow();
 		assertCurrentStateEquals("displayCriteria");
 	}
-	
+
 	public void testCriteriaView_Submit_Success() {
 		startFlow();
 		Map parameters = new HashMap();
@@ -51,7 +56,7 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 		assertCurrentStateEquals("displayResults");
 		Assert.collectionAttributeSizeEquals(view, "persons", 1);
 	}
-	
+
 	public void testCriteriaView_Submit_Error() {
 		startFlow();
 		// simulate user error by not passing in any params
