@@ -49,7 +49,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 				String key = (String)entry.getKey();
 				FlowDefinitionHolder holder = (FlowDefinitionHolder)entry.getValue();
 				holder.refresh();
-				if (!holder.getFlowId().equals(key)) {
+				if (!holder.getId().equals(key)) {
 					needsReindexing.add(holder);
 				}
 			}
@@ -63,14 +63,14 @@ public class FlowRegistryImpl implements FlowRegistry {
 		}
 	}
 
-	public void refresh(String flowId) {
+	public void refresh(String id) {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
 			// @TODO workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-			FlowDefinitionHolder holder = getFlowDefinitionHolder(flowId);
+			FlowDefinitionHolder holder = getFlowDefinitionHolder(id);
 			holder.refresh();
-			if (!holder.getFlowId().equals(flowId)) {
+			if (!holder.getId().equals(id)) {
 				index(holder);
 			}
 		}
@@ -80,7 +80,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 	}
 
 	private void index(FlowDefinitionHolder holder) {
-		flowDefinitions.put(holder.getFlowId(), holder);
+		flowDefinitions.put(holder.getId(), holder);
 	}
 
 	private FlowDefinitionHolder getFlowDefinitionHolder(String id) {

@@ -14,7 +14,7 @@ public interface FlowDefinitionHolder {
 	 * "lightweight" method callers may call to obtain the id of the Flow
 	 * without triggering further Flow creation.
 	 */
-	public String getFlowId();
+	public String getId();
 
 	/**
 	 * Returns the Flow definition held by this holder.

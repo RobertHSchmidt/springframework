@@ -65,9 +65,9 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	private Flow flow;
 
 	/**
-	 * The initial id of the flow definition to support registration.
+	 * A flag indicating if the flow has been assembled.
 	 */
-	private String flowId;
+	private boolean assembled;
 	
 	/**
 	 * Create a new flow assembler using the specified builder strategy.
@@ -75,7 +75,7 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	 */
 	public FlowAssembler(FlowBuilder flowBuilder) {
 		setFlowBuilder(flowBuilder);
-		flowId = flowBuilder.init().getId();
+		flow = flowBuilder.init();
 	}
 
 	/**
@@ -93,25 +93,24 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		this.flowBuilder = flowBuilder;
 	}
 
-	public synchronized String getFlowId() {
-		if (flow == null) {
-			return flowId;
-		} else {
-			return flow.getId();
-		}
+	public String getId() {
+		return flow.getId();
 	}
 	
 	/**
 	 * Returns the flow assembled by this assembler.
 	 */
-	public synchronized Flow getFlow() {
-		if (flow == null) {
-			refresh();
+	public Flow getFlow() {
+		if (!assembled) {
+			flowBuilder.buildStates();
+			flow = flowBuilder.getResult();
+			flowBuilder.dispose();
+			assembled = true;
 		}
 		return flow;
 	}
 
-	public synchronized void refresh() {
+	public void refresh() {
 		// already set the flow handle to avoid infinite loops!
 		// e.g where Flow A spawns Flow B, which spawns Flow A again...
 		flow = flowBuilder.init();

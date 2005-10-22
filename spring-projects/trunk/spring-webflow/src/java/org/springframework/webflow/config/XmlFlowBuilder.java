@@ -285,7 +285,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 				"The flowArtifactLocator property for loading actions and subflows is required");
 		initConversionService();
 		try {
-			loadFlowDefinition();
+			loadDocument();
 		}
 		catch (IOException e) {
 			throw new FlowBuilderException("Cannot load the XML flow definition resource '" + location + "'", e);
@@ -314,7 +314,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * Load the flow definition from the configured resource. This helper method
 	 * initializes the {@link #document} member variable.
 	 */
-	protected void loadFlowDefinition() throws IOException, ParserConfigurationException, SAXException {
+	protected void loadDocument() throws IOException, ParserConfigurationException, SAXException {
 		InputStream is = null;
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

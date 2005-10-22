@@ -28,8 +28,8 @@ public interface FlowRegistryMBean {
 	/**
 	 * Refresh the Flow definition in this registry with the flowId provided,
 	 * reloading it from it's externalized representation.
-	 * @param flowId the flow to refresh.
+	 * @param id the id of the flow definition to refresh.
 	 */
-	public void refresh(String flowId);
+	public void refresh(String id);
 
 }
