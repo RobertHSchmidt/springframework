@@ -16,13 +16,6 @@ public class FlowRegistrarImpl implements FlowRegistrar {
 	private FlowBuilder[] flowBuilders;
 
 	/**
-	 * Creates a Flow registrar with an initially empty builder list.
-	 */
-	public FlowRegistrarImpl() {
-
-	}
-
-	/**
 	 * Creates a Flow registrar registering Flows built by the provided builder
 	 * list.
 	 */
@@ -30,17 +23,10 @@ public class FlowRegistrarImpl implements FlowRegistrar {
 		this.flowBuilders = flowBuilders;
 	}
 
-	/**
-	 * Sets the builders that will build the Flow definitions to be registered.
-	 */
-	public void setFlowBuilders(FlowBuilder[] flowBuilders) {
-		this.flowBuilders = flowBuilders;
-	}
-
 	public void registerFlowDefinitions(FlowRegistry registry) {
 		if (flowBuilders != null) {
 			for (int i = 0; i < flowBuilders.length; i++) {
-				registry.registerFlowDefinition(new FlowHolderImpl(flowBuilders[i]));
+				registry.registerFlowDefinition(new FlowAssembler(flowBuilders[i]));
 			}
 		}
 	}

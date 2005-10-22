@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.config.AbstractFlowBuilder;
+import org.springframework.webflow.config.FlowArtifactLocator;
 import org.springframework.webflow.config.FlowArtifactLocatorAdapter;
 import org.springframework.webflow.config.FlowBuilder;
 import org.springframework.webflow.config.FlowBuilderException;
@@ -14,8 +15,9 @@ import org.springframework.webflow.config.FlowBuilderException;
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
+		FlowArtifactLocator artifactLocator = new FlowArtifactLocatorAdapter();
 		FlowBuilder[] builders = new FlowBuilder[] {
-			new AbstractFlowBuilder() {
+			new AbstractFlowBuilder(artifactLocator) {
 				protected String flowId() {
 					return "flow1";
 				}
@@ -23,7 +25,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 					addEndState("end");
 				}
 			},
-			new AbstractFlowBuilder() {
+			new AbstractFlowBuilder(artifactLocator) {
 				protected String flowId() {
 					return "flow2";
 				}

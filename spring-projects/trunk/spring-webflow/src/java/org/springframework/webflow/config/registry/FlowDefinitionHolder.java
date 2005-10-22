@@ -7,7 +7,7 @@ import org.springframework.webflow.Flow;
  * indirection for managing a refreshable Flow definition.
  * @author Keith Donald
  */
-public interface FlowHolder {
+public interface FlowDefinitionHolder {
 
 	/**
 	 * Returns the Flow definition held by this holder.

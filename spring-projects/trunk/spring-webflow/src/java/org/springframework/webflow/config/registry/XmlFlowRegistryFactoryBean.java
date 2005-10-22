@@ -1,10 +1,7 @@
 package org.springframework.webflow.config.registry;
 
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
-import org.springframework.webflow.config.FlowArtifactLocator;
 
 /**
  * A factory bean that produces a populated Flow Registry using a XML flow
@@ -12,39 +9,32 @@ import org.springframework.webflow.config.FlowArtifactLocator;
  * 
  * @author Keith Donald
  */
-public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implements BeanFactoryAware {
+public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 
+	/**
+	 * The flow registrar that will perform the definition registrations.
+	 */
+	private XmlFlowRegistrar registrar = new XmlFlowRegistrar();
+
+	/**
+	 * Creates a xml flow registry factory bean.
+	 */
 	public XmlFlowRegistryFactoryBean() {
-		super(new XmlFlowRegistrar());
 	}
 
+	/**
+	 * Creates a xml flow registry factory bean.
+	 * @param beanFactory the bean factory to use for locating flow artifacts.
+	 */
 	public XmlFlowRegistryFactoryBean(BeanFactory beanFactory) {
-		super(new XmlFlowRegistrar());
-		setBeanFactory(beanFactory);
-	}
-
-	/**
-	 * Creates a new factory bean that will populate a default Flow Registry
-	 * using the provided registrar
-	 */
-	public XmlFlowRegistryFactoryBean(FlowArtifactLocator artifactLocator) {
-		super(new XmlFlowRegistrar(artifactLocator));
-	}
-
-	/**
-	 * Creates a new factory bean that will populate the provided Flow Registry
-	 * using the provided registrar
-	 * @param registry the Flow definition registry
-	 */
-	public XmlFlowRegistryFactoryBean(FlowArtifactLocator flowArtifactLocator, FlowRegistry registry) {
-		super(new XmlFlowRegistrar(flowArtifactLocator), registry);
+		super(beanFactory);
 	}
 
 	/**
 	 * Returns the configured Xml flow registrar.
 	 */
 	protected XmlFlowRegistrar getXmlFlowRegistrar() {
-		return (XmlFlowRegistrar)getFlowRegistrar();
+		return registrar;
 	}
 
 	/**
@@ -73,8 +63,13 @@ public class XmlFlowRegistryFactoryBean extends FlowRegistryFactoryBean implemen
 		getXmlFlowRegistrar().setDefinitionDirectoryLocations(locations);
 	}
 
-	public void setBeanFactory(BeanFactory beanFactory) {
-		getXmlFlowRegistrar()
-				.setFlowArtifactLocator(new BeanFactoryFlowArtifactLocator(beanFactory, getFlowRegistry()));
+	protected void init() {
+		getXmlFlowRegistrar().setFlowArtifactLocator(getFlowArtifactLocator());
+	}
+	/**
+	 * Populates and returns the configured flow definition registry.
+	 */
+	public void registerFlowDefinitions(FlowRegistry registry) {
+		getXmlFlowRegistrar().registerFlowDefinitions(registry);
 	}
 }

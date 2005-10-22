@@ -7,7 +7,6 @@ import java.util.TreeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.access.FlowArtifactLookupException;
-import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 
 /**
@@ -31,7 +30,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 		return flowDefinitions.size();
 	}
 
-	public void registerFlowDefinition(FlowHolder flowHolder) {
+	public void registerFlowDefinition(FlowDefinitionHolder flowHolder) {
 		this.flowDefinitions.put(flowHolder.getFlow().getId(), flowHolder);
 	}
 
@@ -42,7 +41,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 			Iterator it = flowDefinitions.values().iterator();
 			while (it.hasNext()) {
-				((FlowHolder)it.next()).refresh();
+				((FlowDefinitionHolder)it.next()).refresh();
 			}
 		}
 		finally {
@@ -55,15 +54,15 @@ public class FlowRegistryImpl implements FlowRegistry {
 		try {
 			// @TODO workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-			getFlowHolder(flowId).refresh();
+			getFlowDefinitionHolder(flowId).refresh();
 		}
 		finally {
 			Thread.currentThread().setContextClassLoader(loader);
 		}
 	}
 
-	private FlowHolder getFlowHolder(String id) {
-		FlowHolder flowHolder = (FlowHolder)flowDefinitions.get(id);
+	private FlowDefinitionHolder getFlowDefinitionHolder(String id) {
+		FlowDefinitionHolder flowHolder = (FlowDefinitionHolder)flowDefinitions.get(id);
 		if (flowHolder == null) {
 			throw new NoSuchFlowDefinitionException(id);
 		}
@@ -71,7 +70,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 	}
 
 	public Flow getFlow(String id) throws FlowArtifactLookupException {
-		return getFlowHolder(id).getFlow();
+		return getFlowDefinitionHolder(id).getFlow();
 	}
 
 	public String toString() {

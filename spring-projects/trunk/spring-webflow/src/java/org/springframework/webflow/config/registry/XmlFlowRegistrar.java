@@ -10,9 +10,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.config.FlowArtifactLocator;
-import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.JarFileResource;
 import org.springframework.webflow.config.XmlFlowBuilder;
@@ -49,9 +47,9 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	 * @param artifactLocator the flow artifact locator
 	 */
 	protected XmlFlowRegistrar() {
-		
+
 	}
-	
+
 	/**
 	 * Creates an XML flow registrar
 	 * @param artifactLocator the flow artifact locator
@@ -184,53 +182,10 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	/**
 	 * Register the Flow definition from the XML resource provided in the
 	 * provided registry.
-	 * @param resource the XML resource
+	 * @param location the XML resource
 	 */
-	protected void registerFlow(Resource resource, FlowRegistry registry) {
-		registry.registerFlowDefinition(new RefreshableXmlFlowHolder(resource));
-	}
-
-	/**
-	 * Holds a Flow definition and a pointer to its originating XML resource to
-	 * support a refresh operation.
-	 * @author Keith Donald
-	 */
-	public class RefreshableXmlFlowHolder implements FlowHolder {
-
-		/**
-		 * The Flow definition held by this holder.
-		 */
-		private Flow flow;
-
-		/**
-		 * The Flow definition resource, a XML file.
-		 */
-		private Resource location;
-
-		public RefreshableXmlFlowHolder(Resource location) {
-			this.location = location;
-		}
-
-		public Flow getFlow() {
-			synchronized (this) {
-				if (flow == null) {
-					refresh();
-				}
-			}
-			return flow;
-		}
-
-		public Resource getLocation() {
-			return location;
-		}
-
-		public void refresh() {
-			flow = new FlowAssembler(new XmlFlowBuilder(location, artifactLocator)).getFlow();
-		}
-
-		public String toString() {
-			return new ToStringCreator(this).append("flow", getFlow()).append("location", getLocation()).toString();
-		}
+	protected void registerFlow(Resource location, FlowRegistry registry) {
+		registry.registerFlowDefinition(new FlowAssembler(new XmlFlowBuilder(location, artifactLocator)));
 	}
 
 	public String toString() {

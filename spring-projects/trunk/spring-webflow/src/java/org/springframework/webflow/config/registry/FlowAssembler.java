@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.config.registry;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.config.FlowBuilder;
 
 /**
  * A director for assembling flows, delegating to a <code>FlowBuilder</code>
@@ -50,7 +51,7 @@ import org.springframework.webflow.Flow;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowAssembler {
+public class FlowAssembler implements FlowDefinitionHolder {
 
 	/**
 	 * The flow builder strategy used to assemble the flow produced by this
@@ -59,7 +60,7 @@ public class FlowAssembler {
 	private FlowBuilder flowBuilder;
 
 	/**
-	 * The flow assembled by this factory bean.
+	 * The flow definition assembled by this factory bean.
 	 */
 	private Flow flow;
 
@@ -87,37 +88,21 @@ public class FlowAssembler {
 	}
 
 	/**
-	 * Does this assembler build flows with the specified FlowBuilder
-	 * implementation?
-	 * @param builderImplementationClass the builder implementation
-	 * @return true if yes, false otherwise
-	 * @throws IllegalArgumentException if specified class is not a
-	 * <code>FlowBuilder</code> implementation
-	 */
-	public boolean buildsWith(Class builderImplementationClass) throws IllegalArgumentException {
-		if (builderImplementationClass == null) {
-			return false;
-		}
-		if (!FlowBuilder.class.isAssignableFrom(builderImplementationClass)) {
-			throw new IllegalArgumentException("The flow builder implementation class '" + builderImplementationClass
-					+ "' you provided to this method does not implement the '" + FlowBuilder.class.getName()
-					+ "' interface");
-		}
-		return getFlowBuilder().getClass().equals(builderImplementationClass);
-	}
-
-	/**
-	 * Returns the flow built by this factory.
+	 * Returns the flow assembled by this assembler.
 	 */
 	public Flow getFlow() {
-		if (this.flow == null) {
-			// already set the flow handle to avoid infinite loops!
-			// e.g where Flow A spawns Flow B, which spawns Flow A again...
-			this.flow = this.flowBuilder.init();
-			this.flowBuilder.buildStates();
-			this.flow = this.flowBuilder.getResult();
-			this.flowBuilder.dispose();
+		if (flow == null) {
+			refresh();
 		}
-		return this.flow;
+		return flow;
+	}
+
+	public void refresh() {
+		// already set the flow handle to avoid infinite loops!
+		// e.g where Flow A spawns Flow B, which spawns Flow A again...
+		flow = this.flowBuilder.init();
+		flowBuilder.buildStates();
+		flow = this.flowBuilder.getResult();
+		flowBuilder.dispose();
 	}
 }

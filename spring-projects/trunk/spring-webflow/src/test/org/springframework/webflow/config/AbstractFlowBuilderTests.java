@@ -31,6 +31,7 @@ import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.FlowArtifactLookupException;
+import org.springframework.webflow.config.registry.FlowAssembler;
 
 /**
  * Test Java based flow builder logic (subclasses of AbstractFlowBuilder).

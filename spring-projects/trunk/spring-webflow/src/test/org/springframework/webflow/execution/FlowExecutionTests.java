@@ -34,9 +34,9 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.EventIdTransitionCriteria;
 import org.springframework.webflow.config.FlowArtifactLocatorAdapter;
-import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.SimpleViewDescriptorCreator;
+import org.springframework.webflow.config.registry.FlowAssembler;
 
 /**
  * General flow execution tests.

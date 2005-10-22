@@ -68,8 +68,8 @@ import org.xml.sax.SAXException;
  * file. The XML files read by this class should use the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
+ *     &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -108,7 +108,7 @@ import org.xml.sax.SAXException;
  * </tr>
  * </table>
  * 
- * @see org.springframework.webflow.config.FlowAssembler
+ * @see org.springframework.webflow.config.registry.FlowAssembler
  * 
  * @author Erwin Vervaet
  * @author Keith Donald

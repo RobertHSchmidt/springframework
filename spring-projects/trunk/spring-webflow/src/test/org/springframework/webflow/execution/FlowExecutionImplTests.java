@@ -31,9 +31,9 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.XmlFlowBuilder;
 import org.springframework.webflow.config.XmlFlowBuilderTests;
+import org.springframework.webflow.config.registry.FlowAssembler;
 
 /**
  * Test case for FlowExecutionStack.
