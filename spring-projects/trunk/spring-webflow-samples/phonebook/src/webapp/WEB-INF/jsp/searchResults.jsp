@@ -25,7 +25,7 @@
 						<th>User Id</th>
 						<th>Phone</th>
 					</tr>
-					<c:forEach var="person" items="${result}">
+					<c:forEach var="person" items="${executeSearch.result}">
 						<tr>
 							<td>${person.firstName}</td>
 							<td>${person.lastName}</td>

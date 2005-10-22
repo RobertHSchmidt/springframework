@@ -6,7 +6,7 @@
 <webflow id="detailFlow" start-state="getDetails">
 
 	<action-state id="getDetails">
-		<action bean="phonebook" method="getPerson(id)"/>
+		<action bean="phonebook" method="getPerson(flowScope.id)"/>
 		<transition on="success" to="displayDetails"/>
 		<transition on="error" to="error"/>
 	</action-state>
