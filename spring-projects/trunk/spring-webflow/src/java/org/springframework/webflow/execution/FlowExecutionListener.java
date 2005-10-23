@@ -67,7 +67,7 @@ public interface FlowExecutionListener {
 	 * @param context source of the event
 	 * @param flow the definition of the Flow that is starting
 	 * @param input a mutable input map to the starting flow session
-	 * @throws EnterStateVetoException the start state transition was not allowed
+	 * @throws EnterStateVetoException the start state transition should not be allowed
 	 */
 	public void sessionStarting(RequestContext context, Flow flow, Map input) throws EnterStateVetoException;
 
@@ -91,7 +91,7 @@ public interface FlowExecutionListener {
 	 * but before the transition occurs.
 	 * @param context the source of the event
 	 * @param nextState the proposed state to transition to
-	 * @throws EnterStateVetoException the state transition was not allowed
+	 * @throws EnterStateVetoException the state transition should not be allowed
 	 */
 	public void stateEntering(RequestContext context, State nextState) throws EnterStateVetoException;
 
