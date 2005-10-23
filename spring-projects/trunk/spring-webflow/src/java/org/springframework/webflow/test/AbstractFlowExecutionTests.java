@@ -100,11 +100,22 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
+	 * Sets the flow locator used to resolve the Flow definition whose execution
+	 * is to be tested by this test.
+	 */
+	public void setFlowLocator(FlowLocator flowLocator) {
+		this.flowLocator = flowLocator;
+	}
+
+	/**
 	 * Subclasses should override this method to customize the FlowLocator
 	 * implementation that is returned to locate the Flow definition whose
 	 * execution will be tested.
 	 */
-	protected abstract FlowLocator createFlowLocator();
+	protected FlowLocator createFlowLocator() {
+		throw new IllegalStateException("Override this method to return a custom FlowLocator or "
+				+ "make sure Spring injects a locator into this test from the context");
+	}
 
 	/**
 	 * Get the singleton flow definition whose execution is being tested.

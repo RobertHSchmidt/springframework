@@ -18,9 +18,7 @@ package org.springframework.webflow.samples.phonebook.web;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.binding.support.Assert;
 import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.test.AbstractFlowExecutionTests;
 
 public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
@@ -31,10 +29,6 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 
 	protected String flowId() {
 		return "searchFlow";
-	}
-
-	protected FlowLocator createFlowLocator() {
-		return (FlowLocator)applicationContext.getBean("flowLocator");
 	}
 
 	protected String[] getConfigLocations() {
