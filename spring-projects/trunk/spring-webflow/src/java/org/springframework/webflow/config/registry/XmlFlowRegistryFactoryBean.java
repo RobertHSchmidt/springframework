@@ -42,6 +42,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 */
 	public XmlFlowRegistryFactoryBean(BeanFactory beanFactory) {
 		super(beanFactory);
+		init();
 	}
 
 	/**

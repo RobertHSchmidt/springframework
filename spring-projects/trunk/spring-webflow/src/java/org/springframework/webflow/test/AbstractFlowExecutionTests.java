@@ -89,6 +89,15 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	private FlowLocator flowLocator;
 
 	/**
+	 * Creates a Flow execution test. This constructor disables dependency
+	 * checking by default, so having Spring autowire dependencies like
+	 * TransactionManager and FlowLocator is optional.
+	 */
+	public AbstractFlowExecutionTests() {
+		setDependencyCheck(false);
+	}
+
+	/**
 	 * Returns the flow locator used to resolve the Flow to be tested by
 	 * <code>id</code>.
 	 */

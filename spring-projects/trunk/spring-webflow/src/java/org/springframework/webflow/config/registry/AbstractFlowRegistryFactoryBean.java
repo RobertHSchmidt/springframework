@@ -49,7 +49,6 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 */
 	public AbstractFlowRegistryFactoryBean(BeanFactory beanFactory) {
 		setBeanFactory(beanFactory);
-		init();
 	}
 
 	protected FlowRegistry getFlowRegistry() {
@@ -97,6 +96,10 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 		init();
 	}
 
+	/**
+	 * Custom initializing hook called automatically when Spring instantiates
+	 * this factory bean. Subclasses may override.
+	 */
 	protected void init() {
 
 	}
