@@ -14,7 +14,7 @@ public class SessionDataStoreAccessor implements DataStoreAccessor {
 			return new MapAttributeSource(((ExternalEvent)sourceEvent).getSessionMap());
 		}
 		else {
-			throw new IllegalStateException("This session data store accessor is in use; however, " + "the source event '"
+			throw new IllegalStateException("This session data store accessor was invoked; however, " + "the source event '"
 					+ sourceEvent.getId() + "' signaled is not an instance of ExternalEvent: "
 					+ "there no way to access the 'sessionMap' property: programmer error");
 		}

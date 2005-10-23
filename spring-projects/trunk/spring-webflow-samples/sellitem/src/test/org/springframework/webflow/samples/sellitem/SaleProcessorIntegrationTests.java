@@ -26,5 +26,4 @@ public class SaleProcessorIntegrationTests extends AbstractTransactionalDataSour
 	protected String[] getConfigLocations() {
 		return new String[] { "classpath:org/springframework/webflow/samples/sellitem/applicationContext.xml" };
 	}
-
 }

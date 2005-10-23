@@ -56,6 +56,9 @@ public class FlowExecutionListenerCriteriaFactory {
 	 */
 	public static class FlowIdFlowExecutionListenerCriteria implements FlowExecutionListenerCriteria {
 
+		/**
+		 * The flow ids that apply for this criteria. 
+		 */
 		private String[] flowIds;
 
 		/**

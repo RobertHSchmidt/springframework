@@ -23,10 +23,6 @@ import org.springframework.webflow.test.AbstractFlowExecutionTests;
 
 public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 
-	public SearchPersonFlowTests() {
-		setDependencyCheck(false);
-	}
-
 	protected String flowId() {
 		return "searchFlow";
 	}
