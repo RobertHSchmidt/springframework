@@ -8,7 +8,7 @@ import org.springframework.webflow.config.FlowBuilder;
  * built by a configured set of Flow builders. This class is useful in
  * conjunction with use of custom FlowBuilder implementations.
  * <p>
- * Usage example:
+ * Usage example that extends @{link AbstractFlowRegistryFactoryBean}:
  * <p>
  * 
  * <pre>

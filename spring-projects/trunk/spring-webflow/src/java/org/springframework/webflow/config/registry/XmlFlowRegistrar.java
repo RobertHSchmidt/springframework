@@ -16,8 +16,22 @@ import org.springframework.webflow.config.JarFileResource;
 import org.springframework.webflow.config.XmlFlowBuilder;
 
 /**
- * A Flow Registrar that can register refreshable flow definitions from loaded
- * from XML resources.
+ * A flow registrar that populates a flow registry from flow definitions defined within 
+ * XML resources.  Typically used in conjunction with a {@link XmlFlowRegistryFactoryBean} but 
+ * may also be used standalone in programmatic fashion.
+ * <p>
+ * Programmatic usage example:
+ * </p>
+ * <pre> 
+ *     FlowRegistryImpl registry = new FlowRegistryImpl();
+ *     File parent = new File("src/webapp/WEB-INF");
+ *	   Resource[] locations = new Resource[] {
+ *	       new FileSystemResource(new File(parent, "flow1.xml")),
+ *		   new FileSystemResource(new File(parent, "flow2.xml"))
+ *	   };
+ *	   XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowArtifactLocator, locations);
+ *	   registrar.registerFlowDefinitions(registry);
+ * </pre>
  * @author Keith Donald
  */
 public class XmlFlowRegistrar implements FlowRegistrar {
@@ -43,7 +57,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	private FlowArtifactLocator artifactLocator;
 
 	/**
-	 * Creates an XML flow registrar
+	 * Creates an XML flow registrar.
 	 * @param artifactLocator the flow artifact locator
 	 */
 	protected XmlFlowRegistrar() {
@@ -51,13 +65,25 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	}
 
 	/**
-	 * Creates an XML flow registrar
-	 * @param artifactLocator the flow artifact locator
+	 * Creates an XML flow registrar.
+	 * @param artifactLocator the flow artifact locator that will find artifacts needed by Flows 
+	 * registered by this registrar
 	 */
 	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator) {
 		setFlowArtifactLocator(artifactLocator);
 	}
 
+	/**
+	 * Creates an XML flow registrar.
+	 * @param artifactLocator the flow artifact locator that will find artifacts needed by Flows 
+	 * registered by this registrar
+	 * @param definitionLocations the XML flow definition resource locations
+	 */
+	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator, Resource[] definitionLocations) {
+		setFlowArtifactLocator(artifactLocator);
+		setDefinitionLocations(definitionLocations);
+	}
+	
 	/**
 	 * Sets the locations (file paths) pointing to XML-based flow definitions.
 	 * @param locations the resource locations

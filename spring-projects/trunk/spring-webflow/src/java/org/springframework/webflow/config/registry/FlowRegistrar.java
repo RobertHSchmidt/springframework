@@ -9,9 +9,9 @@ package org.springframework.webflow.config.registry;
  * inspired by Spring's GenericApplicationContext, which can use any number of
  * BeanDefinitionReaders to drive context population.
  * 
- * @see org.springframework.webflow.config.registry.FlowRegistry
- * @see org.springframework.webflow.config.registry.FlowRegistrarImpl
- * @see org.springframework.webflow.config.registry.XmlFlowRegistrar
+ * @see FlowRegistry
+ * @see FlowRegistrarImpl
+ * @see XmlFlowRegistrar
  * 
  * @author Keith Donald
  */
