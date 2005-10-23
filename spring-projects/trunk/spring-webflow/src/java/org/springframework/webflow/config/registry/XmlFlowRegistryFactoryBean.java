@@ -5,7 +5,21 @@ import org.springframework.core.io.Resource;
 
 /**
  * A factory bean that produces a populated Flow Registry using a XML flow
- * definition registrar.
+ * definition registrar. This is the simplest implementation to use when working
+ * with Spring to deploy XML-based Flow definitions for execution.
+ * <p>
+ * Usage example:
+ * 
+ * <pre>
+ * &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *     &lt;property name=&quot;definitionLocations&quot;&gt;
+ * 	       &lt;list&gt;
+ * 		       &lt;value&gt;/WEB-INF/flow1.xml&lt;/value&gt;
+ * 			   &lt;value&gt;/WEB-INF/flow2.xml&lt;/value&gt;
+ * 		   &lt;/list&gt;
+ *     &lt;/property&gt;
+ * &lt;/bean&gt;
+ * </pre>
  * 
  * @author Keith Donald
  */
@@ -66,6 +80,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	protected void init() {
 		getXmlFlowRegistrar().setFlowArtifactLocator(getFlowArtifactLocator());
 	}
+
 	/**
 	 * Populates and returns the configured flow definition registry.
 	 */

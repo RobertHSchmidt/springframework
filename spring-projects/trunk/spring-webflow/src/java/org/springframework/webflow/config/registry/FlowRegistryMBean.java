@@ -1,7 +1,9 @@
 package org.springframework.webflow.config.registry;
 
 /**
- * A management interface for managing Flow definition registries at runtime.
+ * A JMX management interface for managing Flow definition registries at
+ * runtime. Provides the ability to query the size and state of the registry, as
+ * well as refresh registered Flow definitions at runtime.
  * 
  * @author Keith Donald
  */
@@ -21,13 +23,13 @@ public interface FlowRegistryMBean {
 
 	/**
 	 * Refresh this flow definition registry, reloading all Flow definitions
-	 * from there externalized representations.
+	 * from their externalized representations.
 	 */
 	public void refresh();
 
 	/**
-	 * Refresh the Flow definition in this registry with the flowId provided,
-	 * reloading it from it's externalized representation.
+	 * Refresh the Flow definition in this registry with the <code>id</code>
+	 * provided, reloading it from it's externalized representation.
 	 * @param id the id of the flow definition to refresh.
 	 */
 	public void refresh(String id);

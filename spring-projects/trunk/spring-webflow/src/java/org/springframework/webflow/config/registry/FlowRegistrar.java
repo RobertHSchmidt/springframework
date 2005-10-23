@@ -1,20 +1,26 @@
 package org.springframework.webflow.config.registry;
 
 /**
- * A strategy responsible for registering one or more Flow definitions in a Flow
- * Registry. Encapsulates knowledge and behaivior regarding the source of those
- * flow definitions.
+ * A strategy responsible for registering one or more flow definitions in a
+ * registry. Encapsulates knowledge and behaivior regarding the source of a set
+ * of flow definition resources.
+ * <p>
+ * This design where various FlowRegistrars populate a generic FlowRegistry was
+ * inspired by Spring's GenericApplicationContext, which can use any number of
+ * BeanDefinitionReaders to drive context population.
  * 
- * @see org.springframework.webflow.config.registry.ConfigurableFlowRegistry
+ * @see org.springframework.webflow.config.registry.FlowRegistry
+ * @see org.springframework.webflow.config.registry.FlowRegistrarImpl
+ * @see org.springframework.webflow.config.registry.XmlFlowRegistrar
  * 
  * @author Keith Donald
  */
 public interface FlowRegistrar {
 
 	/**
-	 * Register flow definitions managed by this registrar in the registry
-	 * provided.
-	 * @param registry the configurable registry to register flow definitions in
+	 * Register flow definition resources managed by this registrar in the
+	 * registry provided.
+	 * @param registry the registry to register flow definitions in
 	 */
 	public void registerFlowDefinitions(FlowRegistry registry);
 }

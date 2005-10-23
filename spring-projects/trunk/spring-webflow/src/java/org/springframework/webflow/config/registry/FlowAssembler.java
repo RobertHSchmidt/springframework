@@ -28,8 +28,8 @@ import org.springframework.webflow.config.FlowBuilder;
  * in a standalone, programmatic fashion:
  * 
  * <pre>
- *     FlowBuilder builder = ...;
- *     Flow flow = new FlowAssembler(builder).getFlow();
+ *      FlowBuilder builder = ...;
+ *      Flow flow = new FlowAssembler(builder).getFlow();
  * </pre>
  * 
  * <p>
@@ -88,9 +88,13 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	/**
 	 * Set the builder the factory will use to build flows.
 	 */
-	public void setFlowBuilder(FlowBuilder flowBuilder) {
+	protected void setFlowBuilder(FlowBuilder flowBuilder) {
 		Assert.notNull(flowBuilder, "The flow builder is required");
 		this.flowBuilder = flowBuilder;
+	}
+
+	public synchronized boolean isAssembled() {
+		return assembled;
 	}
 
 	public String getId() {
