@@ -64,6 +64,11 @@ public class FlowRegistryImpl implements FlowRegistry {
 		}
 	}
 
+	/**
+	 * Simple value object that holds the key for an indexed flow definition
+	 * holder in this registry. Used to support reindexing on a refresh.
+	 * @author Keith Donald
+	 */
 	private static class Indexed {
 		private String key;
 

@@ -58,7 +58,6 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 
 	/**
 	 * Creates an XML flow registrar.
-	 * @param artifactLocator the flow artifact locator
 	 */
 	protected XmlFlowRegistrar() {
 

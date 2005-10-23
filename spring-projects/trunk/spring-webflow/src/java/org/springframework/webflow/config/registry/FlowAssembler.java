@@ -20,14 +20,14 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.config.FlowBuilder;
 
 /**
- * A director for assembling flows, delegating to a @{link FlowBuilder} builder
+ * A director for assembling flows, delegating to a {@link FlowBuilder} builder
  * to construct a flow. This is the core top level class for assembling a
- * @{link Flow} definition from configuration information.
+ * {@link Flow} definition from configuration information.
  * <p>
- * An instance of this class is also a @{link FlowDefinitionHolder}, to support
- * registration in a refreshable @{link FlowRegistry}.
+ * An instance of this class is also a {@link FlowDefinitionHolder} to support
+ * registration in a refreshable {@link FlowRegistry}.
  * <p>
- * Flow assemblers, as POJOs, in a standalone, programmatic fashion as follows:
+ * Flow assemblers may be used in a standalone, programmatic fashion as follows:
  * 
  * <pre>
  *       FlowBuilder builder = ...;
@@ -51,7 +51,7 @@ import org.springframework.webflow.config.FlowBuilder;
  * </table>
  * 
  * @see FlowBuilder
- * @see FlowDefinitonHolder
+ * @see FlowDefinitionHolder
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

@@ -30,7 +30,8 @@ import org.springframework.webflow.ViewDescriptor;
  * lifecycle of a <code>FlowExecution</code>.
  * <p>
  * An 'observer' that is very aspect like, allowing you to insert 'cross
- * cutting' behavior at well-defined points within a flow execution lifecycle.
+ * cutting' behavior at well-defined points within one or more flow execution
+ * lifecycles.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
  * 
@@ -40,34 +41,35 @@ import org.springframework.webflow.ViewDescriptor;
 public interface FlowExecutionListener {
 
 	/**
-	 * Called after a new flow execution is created but before it is started 
-	 * or any requests have been submitted.
+	 * Called after a new flow execution is created but before it is started or
+	 * any requests have been submitted.
 	 * @param context the flow execution context
 	 */
 	public void created(FlowExecutionContext context);
-	
+
 	/**
-	 * Called when any client request is submitted to manipulate this
-	 * flow execution.
-	 * @param context the source of the event, with a 'sourceEvent'
-	 *        property for access to the request event
+	 * Called when any client request is submitted to manipulate this flow
+	 * execution.
+	 * @param context the source of the event, with a 'sourceEvent' property for
+	 * access to the request event
 	 */
 	public void requestSubmitted(RequestContext context);
 
 	/**
 	 * Called when a client request has completed processing.
-	 * @param context the source of the event, with a 'sourceEvent'
-	 *        property for access to the request event
+	 * @param context the source of the event, with a 'sourceEvent' property for
+	 * access to the request event
 	 */
 	public void requestProcessed(RequestContext context);
-	
+
 	/**
 	 * Called immediately after a start event is signaled -- indicating the flow
 	 * execution session is starting but hasn't yet entered its start state.
 	 * @param context source of the event
 	 * @param flow the definition of the Flow that is starting
 	 * @param input a mutable input map to the starting flow session
-	 * @throws EnterStateVetoException the start state transition should not be allowed
+	 * @throws EnterStateVetoException the start state transition should not be
+	 * allowed
 	 */
 	public void sessionStarting(RequestContext context, Flow flow, Map input) throws EnterStateVetoException;
 
@@ -81,17 +83,18 @@ public interface FlowExecutionListener {
 	/**
 	 * Called when an event is signaled in a state, but prior to any state
 	 * transition.
-	 * @param context the source of the event, with a 'lastEvent'
-	 *        property for accessing the signaled event
+	 * @param context the source of the event, with a 'lastEvent' property for
+	 * accessing the signaled event
 	 */
 	public void eventSignaled(RequestContext context);
 
 	/**
-	 * Called when a state transitions, after the transition is matched
-	 * but before the transition occurs.
+	 * Called when a state transitions, after the transition is matched but
+	 * before the transition occurs.
 	 * @param context the source of the event
 	 * @param nextState the proposed state to transition to
-	 * @throws EnterStateVetoException the state transition should not be allowed
+	 * @throws EnterStateVetoException the state transition should not be
+	 * allowed
 	 */
 	public void stateEntering(RequestContext context, State nextState) throws EnterStateVetoException;
 
@@ -104,15 +107,15 @@ public interface FlowExecutionListener {
 	public void stateEntered(RequestContext context, State previousState, State state);
 
 	/**
-	 * Called when a flow execution is re-activated, for instance when it resumes as
-	 * a result of user input. 
+	 * Called when a flow execution is re-activated, for instance when it
+	 * resumes as a result of user input.
 	 * @param context the source of the event
 	 */
 	public void resumed(RequestContext context);
 
 	/**
-	 * Called when a flow execution is paused, for instance when it is waiting for
-	 * user input.
+	 * Called when a flow execution is paused, for instance when it is waiting
+	 * for user input.
 	 * @param context the source of the event
 	 * @param selectedView the view that will display
 	 */
@@ -132,14 +135,15 @@ public interface FlowExecutionListener {
 	 * @param id the unique id of the flow execution in the storage medium
 	 */
 	public void saved(FlowExecutionContext context, Serializable id);
-	
+
 	/**
-	 * Called after an existing flow execution is loaded and rehydrated from storage.
+	 * Called after an existing flow execution is loaded and rehydrated from
+	 * storage.
 	 * @param context the flow execution that was loaded
 	 * @param id the unique id of the flow execution in the storage medium
 	 */
 	public void loaded(FlowExecutionContext context, Serializable id);
-	
+
 	/**
 	 * Called after an ended flow execution is removed from storage.
 	 * @param context the flow execution that was removed

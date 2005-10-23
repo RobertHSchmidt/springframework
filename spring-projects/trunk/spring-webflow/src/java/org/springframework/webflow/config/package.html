@@ -26,10 +26,15 @@ FlowArtifactLocator. Most Spring applications will use the
 {@link org.springframework.webflow.config.BeanFactoryFlowArtifactLocator},
 which is also the default.
 </p>
-
 <p>
-To direct flow construction, you use the {@link org.springframework.webflow.config.FlowAssembler}.
+To direct flow construction, you use the {@link org.springframework.webflow.config.registry.FlowAssembler}.
 This is based on the class GOF Builder design pattern.
+</p>
+<p>
+Assembled Flows are typically registerd in a
+{@link org.springframework.webflow.config.registry.FlowRegistry} where they may be accessed for execution 
+at runtime.  A flow registry is typically populated by using a {@link org.springframework.webflow.config.registry.FlowRegistrar} 
+in conjunction with a {@link org.springframework.webflow.config.registry.AbstractFlowRegistryFactoryBean}.
 </p>
 </body>
 </html>
