@@ -28,8 +28,8 @@ import org.springframework.webflow.config.FlowBuilder;
  * in a standalone, programmatic fashion:
  * 
  * <pre>
- *           FlowBuilder builder = ...;
- *           Flow flow = new FlowAssembler(builder).getFlow();
+ *     FlowBuilder builder = ...;
+ *     Flow flow = new FlowAssembler(builder).getFlow();
  * </pre>
  * 
  * <p>

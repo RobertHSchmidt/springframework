@@ -8,8 +8,20 @@ import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
 import org.springframework.webflow.config.FlowArtifactLocator;
 
 /**
- * A factory bean that produces a populated Flow Registry using a XML flow
- * definition registrar.
+ * A base class for a factory bean that creates a populated Flow Registry.
+ * Subclasses should override the {@link #registerFlowDefinitions(FlowRegistry)}
+ * to perform the registry population logic, typically delegating to a
+ * {@link org.springframework.webflow.config.registry.FlowRegistrar}.
+ * 
+ * This class is also <code>BeanFactoryAware</code> and when used with Spring
+ * will automatically create a configured
+ * {@link org.springframework.webflow.config.BeanFactoryFlowArtifactLocator} for
+ * loading Flow artifacts like Actions from the Spring bean factory during the
+ * Flow registration process.
+ * 
+ * @see org.springframework.webflow.config.registry.FlowRegistrar
+ * @see org.springframework.webflow.config.FlowArtifactLocator
+ * @see org.springframework.webflow.config.BeanFactoryFlowArtifactLocator
  * 
  * @author Keith Donald
  */

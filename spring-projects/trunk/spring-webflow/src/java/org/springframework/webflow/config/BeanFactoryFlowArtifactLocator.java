@@ -25,7 +25,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	private BeanFactory beanFactory;
 
 	/**
-	 * An segregated flow locator to delegate to for retrieving flow
+	 * An segregated flow locator to delegate to for retrieving subflow
 	 * definitions.
 	 */
 	private FlowLocator subflowLocator;
@@ -37,7 +37,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	 * @param subflowLocator The locator for loading subflows
 	 */
 	public BeanFactoryFlowArtifactLocator(BeanFactory beanFactory, FlowLocator subflowLocator) {
-		Assert.notNull(beanFactory, "The beanFactory is required");
+		Assert.notNull(beanFactory, "The beanFactory to retrieve flow artifacts is required");
 		this.beanFactory = beanFactory;
 		this.subflowLocator = subflowLocator;
 	}
