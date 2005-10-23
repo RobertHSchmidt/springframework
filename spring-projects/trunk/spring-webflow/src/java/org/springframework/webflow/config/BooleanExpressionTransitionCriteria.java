@@ -47,12 +47,12 @@ public class BooleanExpressionTransitionCriteria implements TransitionCriteria {
 
 	/**
 	 * Create a new expression based transition criteria object.
-	 * @param expression the expression evaluator testing the criteria,
+	 * @param booleanExpression the expression evaluator testing the criteria,
 	 *        this expression should be a condition that returns a Boolean value
 	 */
-	public BooleanExpressionTransitionCriteria(Expression expression) {
-		Assert.notNull(expression, "The expression to test is required");
-		this.booleanExpression = expression;
+	public BooleanExpressionTransitionCriteria(Expression booleanExpression) {
+		Assert.notNull(booleanExpression, "The expression to test is required");
+		this.booleanExpression = booleanExpression;
 	}
 
 	public boolean test(RequestContext context) {
