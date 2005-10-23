@@ -114,7 +114,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 */
 	protected FlowLocator createFlowLocator() {
 		throw new IllegalStateException("Override this method to return a custom FlowLocator or "
-				+ "make sure Spring injects a locator into this test from the context");
+				+ "make sure one of the 'configLocations' XML files defines a FlowLocator bean definition Spring can "
+				+ "automatically inject into this test");
 	}
 
 	/**
