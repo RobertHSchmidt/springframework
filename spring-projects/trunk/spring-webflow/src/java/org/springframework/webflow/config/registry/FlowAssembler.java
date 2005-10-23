@@ -28,8 +28,8 @@ import org.springframework.webflow.config.FlowBuilder;
  * in a standalone, programmatic fashion:
  * 
  * <pre>
- *      FlowBuilder builder = ...;
- *      Flow flow = new FlowAssembler(builder).getFlow();
+ *           FlowBuilder builder = ...;
+ *           Flow flow = new FlowAssembler(builder).getFlow();
  * </pre>
  * 
  * <p>
@@ -68,7 +68,7 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	 * A flag indicating if the flow has been assembled.
 	 */
 	private boolean assembled;
-	
+
 	/**
 	 * Create a new flow assembler using the specified builder strategy.
 	 * @param flowBuilder the builder the factory will use to build flows
@@ -96,12 +96,15 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	public String getId() {
 		return flow.getId();
 	}
-	
+
 	/**
 	 * Returns the flow assembled by this assembler.
 	 */
 	public synchronized Flow getFlow() {
 		if (!assembled) {
+			// set the assembled flag before building states to avoid infinite
+			// loops! This would happen, for example, where Flow A spawns Flow B
+			// as a subflow which spawns Flow A again (recursively)...
 			assembled = true;
 			flowBuilder.buildStates();
 			flow = flowBuilder.getResult();
@@ -111,8 +114,6 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	}
 
 	public synchronized void refresh() {
-		// already set the flow handle to avoid infinite loops!
-		// e.g where Flow A spawns Flow B, which spawns Flow A again...
 		flow = flowBuilder.init();
 		flowBuilder.buildStates();
 		flow = flowBuilder.getResult();
