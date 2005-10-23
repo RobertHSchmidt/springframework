@@ -68,11 +68,11 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 
 	public void sessionEnded(RequestContext context, FlowSession endedRootFlowSession) {
 	}
-	
-	public void loaded(FlowExecutionContext context, Serializable id) {
+
+	public void saved(FlowExecutionContext context, Serializable id) {
 	}
 	
-	public void saved(FlowExecutionContext context, Serializable id) {
+	public void loaded(FlowExecutionContext context, Serializable id) {
 	}
 	
 	public void removed(FlowExecutionContext context, Serializable id) {

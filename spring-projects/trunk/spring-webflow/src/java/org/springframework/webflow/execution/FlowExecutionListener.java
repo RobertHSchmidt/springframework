@@ -125,6 +125,13 @@ public interface FlowExecutionListener {
 	 * @param endedSession ending flow session
 	 */
 	public void sessionEnded(RequestContext context, FlowSession endedSession);
+
+	/**
+	 * Called after a new or resumed flow execution is saved to storage.
+	 * @param context the flow execution that was saved
+	 * @param id the unique id of the flow execution in the storage medium
+	 */
+	public void saved(FlowExecutionContext context, Serializable id);
 	
 	/**
 	 * Called after an existing flow execution is loaded and rehydrated from storage.
@@ -132,13 +139,6 @@ public interface FlowExecutionListener {
 	 * @param id the unique id of the flow execution in the storage medium
 	 */
 	public void loaded(FlowExecutionContext context, Serializable id);
-	
-	/**
-	 * Called after a new or resumed flow execution is saved to storage.
-	 * @param context the flow execution that was saved
-	 * @param id the unique id of the flow execution in the storage medium
-	 */
-	public void saved(FlowExecutionContext context, Serializable id);
 	
 	/**
 	 * Called after an ended flow execution is removed from storage.
