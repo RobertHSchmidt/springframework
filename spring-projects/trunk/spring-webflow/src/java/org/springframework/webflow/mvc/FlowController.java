@@ -21,40 +21,26 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.servlet.ServletEvent;
 
 /**
- * Web controller for the Spring web MVC framework that routes incoming requests
- * to one or more managed web flows. Requests into the web flow system are
- * managed using a configurable {@link FlowExecutionManager}. Consult the
+ * Point of integration between Spring MVC and Spring Web Flow: a web
+ * {@link Controller} for that routes incoming requests to one or more managed
+ * web flows.
+ * <p>
+ * Requests into the web flow system that signal events are handled by a
+ * {@link FlowExecutionManager}, which this class delegates to. Consult the
  * JavaDoc of that class for more information on how requests are processed.
  * <p>
  * Note that a single FlowController may manage executions for all flows of your
- * application -- simply parameterize this controller from view code with the
- * <code>_flowId</code> to execute. See the flowLauncher sample application
- * for an example of this.
- * <p>
- * Configuration note: you may achieve fine-grained control over flow execution
- * management by passing in a configured flow execution manager instance.
- * Alternatively, if this controller should manage executions in the default
- * manner for a single flow definition, simply configure the flow property.
- * <p>
- * <b>Exposed configuration properties: </b> <br>
- * <table border="1">
- * <tr>
- * <td><b>name</b></td>
- * <td><b>default</b></td>
- * <td><b>description</b></td>
- * </tr>
- * <tr>
- * <td>flowExecutionManager</td>
- * <td>{@link org.springframework.webflow.execution.FlowExecutionManager default}</td>
- * <td>Configures the flow execution manager implementation to use.</td>
- * </tr>
- * </table>
+ * application: simply parameterize this controller from client code by
+ * providing a request parameter <code>_flowId</code> indicating the flow
+ * definition to execute. See the flowLauncher sample application for an example
+ * of this.
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -71,6 +57,8 @@ public class FlowController extends AbstractController {
 	 * <p>
 	 * The "cacheSeconds" property is by default set to 0 (so no caching for web
 	 * flow controllers).
+	 * @param flowExecutionManager the manager to launch and resume flow
+	 * executions
 	 */
 	public FlowController(FlowExecutionManager flowExecutionManager) {
 		initDefaults();
@@ -111,8 +99,8 @@ public class FlowController extends AbstractController {
 	}
 
 	/**
-	 * Create a ModelAndView object based on the information in given view
-	 * descriptor. Subclasses can override this to return a specialized
+	 * Create a ModelAndView object based on the information in the selected
+	 * view descriptor. Subclasses can override this to return a specialized
 	 * ModelAndView or to do custom processing on it.
 	 * @param selectedView the view descriptor to convert
 	 * @return a new ModelAndView object
