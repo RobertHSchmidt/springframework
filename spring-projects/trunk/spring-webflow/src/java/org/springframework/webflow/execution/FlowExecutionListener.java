@@ -27,7 +27,7 @@ import org.springframework.webflow.ViewDescriptor;
 
 /**
  * Interface to be implemented by objects that wish to listen and respond to the
- * lifecycle of a <code>FlowExecution</code>.
+ * lifecycle of one or more <code>FlowExecution</code> objects.
  * <p>
  * An 'observer' that is very aspect like, allowing you to insert 'cross
  * cutting' behavior at well-defined points within one or more flow execution
