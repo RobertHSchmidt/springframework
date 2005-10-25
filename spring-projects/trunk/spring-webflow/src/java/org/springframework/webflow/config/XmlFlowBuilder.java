@@ -64,8 +64,8 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.SAXException;
 
 /**
- * Flow builder that builds a flow based on the definitions found in an XML
- * file. The XML files read by this class should use the following doctype:
+ * Flow builder that builds a flow definition from a XML file. XML files read by
+ * this class should use the following doctype:
  * 
  * <pre>
  *     &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
@@ -74,8 +74,7 @@ import org.xml.sax.SAXException;
  * 
  * Consult the <a
  * href="http://www.springframework.org/dtd/spring-webflow.dtd">web flow DTD</a>
- * for more information on the XML definition format. An object of this class is
- * normally configured in the Spring application context.
+ * for more information on the XML flow definition format.
  * <p>
  * <b>Exposed configuration properties: </b> <br>
  * <table border="1">
@@ -87,8 +86,8 @@ import org.xml.sax.SAXException;
  * <tr>
  * <td>location</td>
  * <td><i>null</i></td>
- * <td>Specifies the XML file location from which the flow definition is
- * loaded. This is a required property.</td>
+ * <td>Specifies the resource location from which the XML-based flow definition is
+ * loaded. This "input stream source" is a required property.</td>
  * </tr>
  * <tr>
  * <td>validating</td>
@@ -104,11 +103,10 @@ import org.xml.sax.SAXException;
  * <tr>
  * <td>flowArtifactLocator</td>
  * <td><i>{@link FlowArtifactLocator}</i></td>
- * <td>Set the flow artifact location strategy to use.</td>
+ * <td>Set the flow artifact location strategy to use to resolve externally 
+ * managed flow artifacts during the build process.</td>
  * </tr>
  * </table>
- * 
- * @see org.springframework.webflow.config.registry.FlowAssembler
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
