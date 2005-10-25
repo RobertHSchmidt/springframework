@@ -131,8 +131,8 @@ public class ExpiredFlowCleanupFilter extends OncePerRequestFilter {
 				if (hasExpired(request, flowExecution)) {
 					if (logger.isInfoEnabled()) {
 						logger.info("Flow execution '" + attributeName
-								+ "' for flow '" + flowExecution.getActiveSession().getFlow().getId()
-								+ "' has expired and will be removed from the HTTP session '" + session.getId() + "'");
+								+ "' for flow: '" + flowExecution.getRootFlow().getId()
+								+ "' has expired and will be removed from the HTTP session: '" + session.getId() + "'");
 					}
 					attributeNamesToRemove.add(attributeName);
 				}
