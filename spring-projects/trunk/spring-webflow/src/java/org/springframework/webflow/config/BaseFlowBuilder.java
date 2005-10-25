@@ -27,9 +27,14 @@ import org.springframework.webflow.Flow;
  * Abstract base implementation of a flow builder defining common functionality
  * needed by most concrete flow builder implementations.
  * <p>
- * The builder will use a <code>FlowArtifactLocator</code> to locate hook in
- * any required flow related artifacts.
+ * The Flow definition implementation created by this builder may be customized
+ * by configuring a custom {@link FlowCreator}.
+ * <p>
+ * Subclasses may delegate to a configured {@link FlowArtifactLocator} to
+ * resolve any externally managed flow artifacts the flow being built depends on
+ * (actions, subflows, etc.)
  * 
+ * @see org.springframework.webflow.config.FlowCreator
  * @see org.springframework.webflow.config.FlowArtifactLocator
  * 
  * @author Keith Donald

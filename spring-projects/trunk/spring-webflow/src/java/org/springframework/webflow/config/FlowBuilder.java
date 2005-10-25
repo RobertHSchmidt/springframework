@@ -18,15 +18,30 @@ package org.springframework.webflow.config;
 import org.springframework.webflow.Flow;
 
 /**
- * Builder interface used to build flows.
+ * Builder interface used to build a flow definition. The process of building a
+ * flow consists of the following steps:
+ * <ol>
+ * <li> Initialize this builder, creating the initial flow definition.
+ * <li> Call {@link #buildStates} to create the states of the flow and add them
+ * to the flow definition.
+ * <li> Call {@link #getResult} to return the fully-built {@link Flow}
+ * definition.
+ * <li> Dispose this builder, releasing any resources allocated during the
+ * building process.
+ * </ol>
  * <p>
  * Implementations should encapsulate flow construction logic, either for a
- * specific kind of flow, for example, an <code>EditUsersMasterFlowBuilder</code>
+ * specific kind of flow, for example, an <code>NewOrderFlowBuilder</code>
  * built in Java code, or a generic flow builder strategy, like the
  * <code>XmlFlowBuilder</code>, for building flows from an XML-definition.
  * <p>
- * Flow builders are executed by the <code>FlowFactoryBean</code>, which acts
- * as an assembler (director). This is the classic GoF Builder pattern.
+ * Flow builders are executed by the {@link FlowAssember}, which acts as an
+ * assembler (director). Flow Builders may be reused, however, exercise caution
+ * when doing this as these objects are not thread safe. Also, for each use, be
+ * sure to call init, buildStates, getResult, and dispose completely in that
+ * order.
+ * <p>
+ * This is an example of the classic GoF Builder pattern.
  * 
  * @see org.springframework.webflow.config.AbstractFlowBuilder
  * @see org.springframework.webflow.config.XmlFlowBuilder
@@ -38,7 +53,8 @@ import org.springframework.webflow.Flow;
 public interface FlowBuilder {
 
 	/**
-	 * Initialize this builder and return a handle to the flow under construction.
+	 * Initialize this builder and return a handle to the flow under
+	 * construction.
 	 * <p>
 	 * Note: the returned <code>Flow</code> handle is needed to avoid infinite
 	 * loops in the build process. The returned flow object is still under
