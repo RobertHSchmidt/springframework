@@ -16,7 +16,7 @@ import org.springframework.webflow.access.FlowArtifactLookupException;
  */
 public class FlowArtifactLocatorAdapter implements FlowArtifactLocator {
 
-	public Flow getSubflow(String id) {
+	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		throw new UnsupportedOperationException("Subflow lookup is not supported by this artifact locator");
 	}
 

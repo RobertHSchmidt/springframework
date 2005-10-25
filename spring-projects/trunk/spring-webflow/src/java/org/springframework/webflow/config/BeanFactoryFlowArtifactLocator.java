@@ -10,6 +10,7 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
+import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 
 /**
@@ -42,10 +43,10 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 		this.subflowLocator = subflowLocator;
 	}
 
-	public Flow getSubflow(String id) {
+	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		if (subflowLocator == null) {
-			throw new FlowArtifactLookupException(Flow.class, id,
-					"Subflow lookup not supported by this flow artifact locator");
+			throw new NoSuchFlowDefinitionException(id, "Subflow lookup not supported by this flow artifact locator",
+					null);
 		}
 		else {
 			return subflowLocator.getFlow(id);
@@ -73,15 +74,15 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 		}
 	}
 
-	public FlowAttributeMapper getAttributeMapper(String id) {
+	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 		return (FlowAttributeMapper)getService(id, FlowAttributeMapper.class);
 	}
 
-	public TransitionCriteria getTransitionCriteria(String id) {
+	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException {
 		return (TransitionCriteria)getService(id, TransitionCriteria.class);
 	}
 
-	public ViewDescriptorCreator getViewDescriptorCreator(String id) {
+	public ViewDescriptorCreator getViewDescriptorCreator(String id) throws FlowArtifactLookupException {
 		return (ViewDescriptorCreator)getService(id, ViewDescriptorCreator.class);
 	}
 
