@@ -20,8 +20,8 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.config.FlowBuilder;
 
 /**
- * A director for assembling flows, delegating to a {@link FlowBuilder} builder
- * to construct a flow. This class encapsulates the algorithm for using a 
+ * A director for assembling flows, delegating to a {@link FlowBuilder} to
+ * construct a flow. This class encapsulates the algorithm for using a
  * FlowBuilder to assemble a Flow properly.
  * <p>
  * An instance of this class is also a {@link FlowDefinitionHolder} to support
@@ -30,8 +30,8 @@ import org.springframework.webflow.config.FlowBuilder;
  * Flow assemblers may be used in a standalone, programmatic fashion as follows:
  * 
  * <pre>
- *     FlowBuilder builder = ...;
- *     Flow flow = new FlowAssembler(builder).getFlow();
+ *       FlowBuilder builder = ...;
+ *       Flow flow = new FlowAssembler(builder).getFlow();
  * </pre>
  * 
  * @see FlowBuilder
@@ -54,7 +54,8 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	private Flow flow;
 
 	/**
-	 * A flag indicating if the flow has been assembled.
+	 * A flag indicating if the flow has been assembled. Set to true when
+	 * @{link #getFlow} is called for the first time and assembly commences.
 	 */
 	private boolean assembled;
 
