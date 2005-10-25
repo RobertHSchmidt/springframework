@@ -8,17 +8,19 @@ import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 
 /**
- * A helper interface used by FlowBuilders at configuration time to retrieve
- * necessary flow artifacts to build a single Flow definition from a factory.
- * @author Keith
+ * A support interface used by FlowBuilders at configuration time to retrieve
+ * dependent (but externally managed) flow artifacts neededed to build a flow
+ * definition.
+ * 
+ * @author Keith Donald
  */
 public interface FlowArtifactLocator {
 
 	/**
-	 * Retrieve the flow locator that will locate subflows.
-	 * @param id the id
+	 * Retrieve the Flow to be used as a subflow by id.
+	 * @param id the flow id
 	 * @return the flow to be used as a subflow
-	 * @throws FlowArtifactLookupException when no such subflow is found
+	 * @throws FlowArtifactLookupException when no such flow is found
 	 */
 	public Flow getSubflow(String id) throws FlowArtifactLookupException;
 
@@ -33,7 +35,7 @@ public interface FlowArtifactLocator {
 	/**
 	 * Retrieve the flow attribute mapper with the provided id.
 	 * @param id the id
-	 * @return the mapper
+	 * @return the attribute mapper
 	 * @throws FlowArtifactLookupException when no such mapper is found
 	 */
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException;
@@ -41,7 +43,7 @@ public interface FlowArtifactLocator {
 	/**
 	 * Retrieve the transition criteria with the provided id.
 	 * @param id the id
-	 * @return the criteria
+	 * @return the transition criteria
 	 * @throws FlowArtifactLookupException when no such criteria is found
 	 */
 	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException;
@@ -49,7 +51,7 @@ public interface FlowArtifactLocator {
 	/**
 	 * Retrieve the view descriptor creator with the provided id.
 	 * @param id the id
-	 * @return the creator
+	 * @return the view descriptor creator
 	 * @throws FlowArtifactLookupException when no such creator is found
 	 */
 	public ViewDescriptorCreator getViewDescriptorCreator(String id) throws FlowArtifactLookupException;
