@@ -30,8 +30,8 @@ import org.springframework.webflow.config.FlowBuilder;
  * Flow assemblers may be used in a standalone, programmatic fashion as follows:
  * 
  * <pre>
- *       FlowBuilder builder = ...;
- *       Flow flow = new FlowAssembler(builder).getFlow();
+ *     FlowBuilder builder = ...;
+ *     Flow flow = new FlowAssembler(builder).getFlow();
  * </pre>
  * 
  * @see FlowBuilder
@@ -55,7 +55,7 @@ public class FlowAssembler implements FlowDefinitionHolder {
 
 	/**
 	 * A flag indicating if the flow has been assembled. Set to true when
-	 * @{link #getFlow} is called for the first time and assembly commences.
+	 * {@link #getFlow} is called for the first time and assembly commences.
 	 */
 	private boolean assembled;
 

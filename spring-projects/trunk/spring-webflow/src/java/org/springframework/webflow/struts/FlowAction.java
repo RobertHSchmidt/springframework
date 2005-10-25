@@ -35,6 +35,7 @@ import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.FlowExecutionManager;
 
 /**
+ * Point of integration between Struts and Spring Web Flow: a 
  * Struts Action that acts a front controller entry point into the web flow
  * system. A single FlowAction may launch any new FlowExecution with the
  * appropriate <code>_flowId</code> passed in by client views (jsps, etc). In
