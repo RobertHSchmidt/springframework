@@ -28,11 +28,11 @@ import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.servlet.ServletEvent;
 
 /**
- * Point of integration between Spring MVC and Spring Web Flow: a web
- * {@link Controller} for that routes incoming requests to one or more managed
- * web flows.
+ * Point of integration between Spring MVC and Spring Web Flow: a
+ * {@link Controller} that routes incoming requests to one or more managed web
+ * flows.
  * <p>
- * Requests into the web flow system that signal events are handled by a
+ * Requests into the web flow system are handled by a
  * {@link FlowExecutionManager}, which this class delegates to. Consult the
  * JavaDoc of that class for more information on how requests are processed.
  * <p>
@@ -41,6 +41,35 @@ import org.springframework.webflow.execution.servlet.ServletEvent;
  * providing a request parameter <code>_flowId</code> indicating the flow
  * definition to execute. See the flowLauncher sample application for an example
  * of this.
+ * <p>
+ * Usage example:
+ * 
+ * <pre>
+ *    &lt;!--
+ *        A general purpose controller for the entire application exposed at the /app.htm URL.
+ *        The id of a flow to launch should be passed in using the &quot;_flowId&quot; request parameter: e.g. /app.htm?_flowId=flow1
+ *    --&gt;
+ *    &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.mvc.FlowController&quot;&gt;
+ *        &lt;constructor-arg ref=&quot;flowExecutionManager&quot;/&gt;
+ *    &lt;/bean&gt;
+ *   
+ *    &lt;!--
+ *        Launches new flow executions and resumes existing executions.
+ *    --&gt;	
+ *    &lt;bean id=&quot;flowExecutionManager&quot; class=&quot;org.springframework.webflow.execution.FlowExecutionManager&quot;&gt;
+ *        &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *    &lt;/bean&gt;
+ *   
+ *    &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *    &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *        &lt;property name=&quot;definitionLocations&quot;&gt;
+ *            &lt;list&gt;
+ *                &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *            &lt;/list&gt;
+ *        &lt;/property&gt;
+ *    &lt;/bean&gt;
+ * </pre>
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
