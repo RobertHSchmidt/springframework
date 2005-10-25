@@ -7,12 +7,13 @@ import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
+import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 
 /**
  * A flow artifact locator that queries an ordered chain of flow artifact
  * locators, stopping when one of those locators fulfills a request for an
- * artifact or the chain is exhausted and an ArtifactLookupException exception is
- * thrown.
+ * artifact or the chain is exhausted and an ArtifactLookupException exception
+ * is thrown.
  * @author Keith Donald
  */
 public class ChainedFlowArtifactLocator implements FlowArtifactLocator {
@@ -38,11 +39,12 @@ public class ChainedFlowArtifactLocator implements FlowArtifactLocator {
 			try {
 				return locator.getSubflow(id);
 			}
-			catch (FlowArtifactLookupException e) {
+			catch (NoSuchFlowDefinitionException e) {
 
 			}
 		}
-		throw new FlowArtifactLookupException(Flow.class, id, "Chain exhausted looking for flow with id: '" + id + "'");
+		throw new NoSuchFlowDefinitionException(id, "Artifact locator chain exhausted looking for subflow with id: '"
+				+ id + "'", null);
 	}
 
 	public Action getAction(String id) throws FlowArtifactLookupException {
@@ -55,7 +57,8 @@ public class ChainedFlowArtifactLocator implements FlowArtifactLocator {
 
 			}
 		}
-		throw new FlowArtifactLookupException(Action.class, id, "Chain exhausted looking for Action with id: '" + id + "'");
+		throw new FlowArtifactLookupException(Action.class, id,
+				"Artifact locator chain exhausted looking for Action with id: '" + id + "'");
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
@@ -69,7 +72,7 @@ public class ChainedFlowArtifactLocator implements FlowArtifactLocator {
 			}
 		}
 		throw new FlowArtifactLookupException(FlowAttributeMapper.class, id,
-				"Chain exhausted looking for attribute mapper with id: '" + id + "'");
+				"Artifact locator chain exhausted looking for attribute mapper with id: '" + id + "'");
 	}
 
 	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException {
@@ -83,9 +86,9 @@ public class ChainedFlowArtifactLocator implements FlowArtifactLocator {
 			}
 		}
 		throw new FlowArtifactLookupException(TransitionCriteria.class, id,
-				"Chain exhausted looking for transition criteria with id: '" + id + "'");
+				"Artifact locator chain exhausted looking for transition criteria with id: '" + id + "'");
 	}
-	
+
 	public ViewDescriptorCreator getViewDescriptorCreator(String id) throws FlowArtifactLookupException {
 		for (int i = 0; i < chain.length; i++) {
 			FlowArtifactLocator locator = chain[i];
@@ -97,7 +100,6 @@ public class ChainedFlowArtifactLocator implements FlowArtifactLocator {
 			}
 		}
 		throw new FlowArtifactLookupException(ViewDescriptorCreator.class, id,
-				"Chain exhausted looking for view descriptor creator with id: '" + id + "'");
+				"Artifact locator chain exhausted looking for view descriptor creator with id: '" + id + "'");
 	}
-
 }

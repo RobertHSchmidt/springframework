@@ -24,4 +24,15 @@ public class NoSuchFlowDefinitionException extends FlowArtifactLookupException {
 	public NoSuchFlowDefinitionException(String flowId, Throwable cause) {
 		super(Flow.class, flowId, "Unable to retrieve flow definition with id: '" + flowId + "'", cause);
 	}
+
+	/**
+	 * Creates an exception indicating a flow definition could not be found.
+	 * @param flowId the flow Id
+	 * @param message a custom message
+	 * @param cause the root cause
+	 */
+	public NoSuchFlowDefinitionException(String flowId, String message, Throwable cause) {
+		super(Flow.class, flowId, message, cause);
+	}
+
 }
