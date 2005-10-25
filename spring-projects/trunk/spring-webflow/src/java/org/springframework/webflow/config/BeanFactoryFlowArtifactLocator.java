@@ -1,7 +1,7 @@
 package org.springframework.webflow.config;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
@@ -89,7 +89,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 		try {
 			return beanFactory.getBean(id);
 		}
-		catch (BeansException e) {
+		catch (NoSuchBeanDefinitionException e) {
 			throw new FlowArtifactLookupException(serviceType, id, e);
 		}
 	}
