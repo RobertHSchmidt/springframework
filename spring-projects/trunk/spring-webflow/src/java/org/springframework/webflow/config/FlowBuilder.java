@@ -31,15 +31,16 @@ import org.springframework.webflow.Flow;
  * </ol>
  * <p>
  * Implementations should encapsulate flow construction logic, either for a
- * specific kind of flow, for example, an <code>OrderFlowBuilder</code>
- * built in Java code, or a generic flow builder strategy, like the
+ * specific kind of flow, for example, an <code>OrderFlowBuilder</code> built
+ * in Java code, or a generic flow builder strategy, like the
  * <code>XmlFlowBuilder</code>, for building flows from an XML-definition.
  * <p>
- * Flow builders are used by the {@link FlowAssembler}, which acts as an
- * assembler (director). Flow Builders may be reused, however, exercise caution
- * when doing this as these objects are not thread safe.  Also, for each use, be
- * sure to call init, buildStates, getResult, and dispose completely in that
- * order.
+ * Flow builders are used by the
+ * {@link org.springframework.webflow.config.registry.FlowAssembler}, which
+ * acts as an assembler (director). Flow Builders may be reused, however,
+ * exercise caution when doing this as these objects are not thread safe. Also,
+ * for each use, be sure to call init, buildStates, getResult, and dispose
+ * completely in that order.
  * <p>
  * This is an example of the classic GoF Builder pattern.
  * 
