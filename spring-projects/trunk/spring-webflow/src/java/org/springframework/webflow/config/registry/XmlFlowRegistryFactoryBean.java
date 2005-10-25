@@ -4,9 +4,9 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.io.Resource;
 
 /**
- * A factory bean that produces a populated Flow Registry using a XML flow
- * definition registrar. This is the simplest implementation to use when working
- * with Spring to deploy XML-based Flow definitions for execution.
+ * A factory bean that produces a populated flow registry using a XML flow
+ * definition registrar. This is the simplest implementation to use when using
+ * a Spring BeanFactory to deploy XML-based Flow definitions for execution.
  * <p>
  * Usage example:
  * 
