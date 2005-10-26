@@ -16,8 +16,6 @@
 package org.springframework.webflow;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,10 +50,10 @@ import org.springframework.util.StringUtils;
  * be a 'checkout' flow of a shopping cart application). This is a typical use
  * case appropriate for a web flow.
  * <p>
- * Structurally, a Flow is composed of a set of states. A state is a point in
- * the flow where something happens; for example, showing a view, executing an
- * action, spawning a sub flow, or terminating the flow. Different types of
- * states execute different behaiviors.
+ * Structurally, a Flow is composed of a set of states. A {@link State} is a
+ * point in the flow where something happens; for example, showing a view,
+ * executing an action, spawning a sub flow, or terminating the flow. Different
+ * types of states execute different behaiviors.
  * <p>
  * Each state can have transitions that are used to move to another state. A
  * transition is triggered by the occurence of a event. An event is an
@@ -66,6 +64,12 @@ import org.springframework.util.StringUtils;
  * noting the state flow executions (running instances of this Flow) should
  * start in.
  * <p>
+ * <p>
+ * Flow definitions may have one or more flow exception handlers. A
+ * {@link FlowExceptionHandler} can execute custom behaivior in response to a
+ * specific exception (or set of exceptions) that occur during this flow's
+ * execution.
+ * </p>
  * Instances of this class are typically built by FlowBuilder implementations,
  * but may also be subclassed. This class, and the rest of the web flow core,
  * has been designed with minimal dependencies on other parts of Spring, and is
@@ -78,12 +82,13 @@ import org.springframework.util.StringUtils;
  * 
  * @see org.springframework.webflow.State
  * @see org.springframework.webflow.TransitionableState
- * @see org.springframework.webflow.Transition
  * @see org.springframework.webflow.ActionState
  * @see org.springframework.webflow.ViewState
  * @see org.springframework.webflow.SubflowState
  * @see org.springframework.webflow.EndState
  * @see org.springframework.webflow.DecisionState
+ * @see org.springframework.webflow.Transition
+ * @see org.springframework.webflow.FlowExceptionHandler
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -125,7 +130,7 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * The list exception handlers for this flow.
 	 */
-	private List exceptionHandlers = new LinkedList();
+	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(6);
 
 	/**
 	 * Construct a new flow definition with the given id. The id should be
@@ -446,11 +451,15 @@ public class Flow extends AnnotatedObject {
 
 	/**
 	 * Handle an exception that occured on an execution of this flow in the
-	 * context of the current request. This implementation delegates to a
-	 * ExceptionHandler, the first that in the list of handlers that can handle
-	 * the given exception.
+	 * state context of the current request.
+	 * <p>
+	 * This implementation iterates over the ordered set of flow exception
+	 * handler objects, delegating to each handler in the set until one handles
+	 * the exception that occured and returns a non-null error view.
 	 * @param context the state request context
 	 * @param exception the exception that occured
+	 * @return the selected error view, or <code>null</code> if no handler
+	 * matched or returned a non-null view descriptor
 	 */
 	public ViewDescriptor handleException(Exception exception, StateContext context) {
 		Iterator it = exceptionHandlers.iterator();
