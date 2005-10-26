@@ -321,7 +321,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 */
 	protected ViewDescriptor handleStateException(StateException e, StateContext context) {
 		Flow flow = isActive() ? getActiveFlow() : getRootFlow();
-		ViewDescriptor selectedView = flow.handleException(e, context);
+		ViewDescriptor selectedView = flow.handleStateException(e, context);
 		if (selectedView == null) {
 			throw e;
 		}

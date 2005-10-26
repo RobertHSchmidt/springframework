@@ -3,7 +3,7 @@ package org.springframework.webflow.config;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.FlowExceptionHandler;
+import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
@@ -38,7 +38,7 @@ public class FlowArtifactLocatorAdapter implements FlowArtifactLocator {
 				"View descriptor creator lookup is not supported by this artifact locator");
 	}
 
-	public FlowExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
+	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
 		throw new UnsupportedOperationException(
 				"Flow exception handler lookup is not supported by this artifact locator");
 	}

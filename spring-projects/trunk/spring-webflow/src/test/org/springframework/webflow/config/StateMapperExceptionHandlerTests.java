@@ -23,7 +23,7 @@ public class StateMapperExceptionHandlerTests extends TestCase {
 
 		StateMapperFlowExceptionHandler handler = new StateMapperFlowExceptionHandler();
 		handler.add(new ExceptionStateMapping(MyCustomException.class, state2));
-		Exception e = new MyCustomException();
+		StateException e = new StateException(state2, "Oops", new MyCustomException());
 		assertTrue("Doesn't handle exception", handler.handles(e));
 
 		flow.addExceptionHandler(handler);

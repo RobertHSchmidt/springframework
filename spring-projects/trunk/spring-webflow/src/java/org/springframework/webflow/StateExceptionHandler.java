@@ -1,18 +1,18 @@
 package org.springframework.webflow;
 
 /**
- * A strategy for handling an exception that occurs during the execution of a
- * flow definition.
+ * A strategy for handling an exception that occurs in a state during the
+ * execution of a flow definition.
  * @author Keith Donald
  */
-public interface FlowExceptionHandler {
+public interface StateExceptionHandler {
 
 	/**
 	 * Can this handler handle the given exception?
 	 * @param e the exception that occured
 	 * @return true if yes, false if no
 	 */
-	public boolean handles(Exception e);
+	public boolean handles(StateException e);
 
 	/**
 	 * Handle this exception in the state context of the current request and
@@ -22,5 +22,5 @@ public interface FlowExceptionHandler {
 	 * @return the selected error view that should be displayed (may be null if
 	 * the handler chooses not to select a view)
 	 */
-	public ViewDescriptor handle(Exception e, StateContext context);
+	public ViewDescriptor handle(StateException e, StateContext context);
 }

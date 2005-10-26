@@ -3,9 +3,10 @@ package org.springframework.webflow.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.webflow.FlowExceptionHandler;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateContext;
+import org.springframework.webflow.StateException;
+import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.ViewDescriptor;
 
 /**
@@ -14,7 +15,7 @@ import org.springframework.webflow.ViewDescriptor;
  * 
  * @author Keith Donald
  */
-public class StateMapperFlowExceptionHandler implements FlowExceptionHandler {
+public class StateMapperFlowExceptionHandler implements StateExceptionHandler {
 
 	/**
 	 * The exception state map.
@@ -61,7 +62,7 @@ public class StateMapperFlowExceptionHandler implements FlowExceptionHandler {
 		}
 	}
 
-	public boolean handles(Exception e) {
+	public boolean handles(StateException e) {
 		if (exceptionStateMap.containsKey(e.getClass())) {
 			return true;
 		}
@@ -77,7 +78,7 @@ public class StateMapperFlowExceptionHandler implements FlowExceptionHandler {
 		}
 	}
 
-	private State getState(Exception e) {
+	private State getState(StateException e) {
 		if (exceptionStateMap.containsKey(e.getClass())) {
 			return (State)exceptionStateMap.get(e.getClass());
 		}
@@ -93,7 +94,7 @@ public class StateMapperFlowExceptionHandler implements FlowExceptionHandler {
 		}
 	}
 
-	public ViewDescriptor handle(Exception e, StateContext context) {
+	public ViewDescriptor handle(StateException e, StateContext context) {
 		State state = getState(e);
 		return state.enter(context);
 	}

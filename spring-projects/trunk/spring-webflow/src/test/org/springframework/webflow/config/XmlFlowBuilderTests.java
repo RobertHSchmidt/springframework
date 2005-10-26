@@ -69,7 +69,7 @@ public class XmlFlowBuilderTests extends TestCase {
 
 		assertEquals(2, flow.getExceptionHandlers().length);
 		assertTrue(flow.getExceptionHandlers()[0] instanceof StateMapperFlowExceptionHandler);
-		assertTrue(flow.getExceptionHandlers()[1] instanceof MyCustomFlowExceptionHandler);
+		assertTrue(flow.getExceptionHandlers()[1] instanceof MyCustomStateExceptionHandler);
 		
 		ActionState actionState1 = (ActionState)flow.getState("actionState1");
 		assertNotNull(actionState1);

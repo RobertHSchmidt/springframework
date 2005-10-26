@@ -7,7 +7,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.FlowExceptionHandler;
+import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
@@ -107,7 +107,7 @@ public class CompositeFlowArtifactLocator implements FlowArtifactLocator {
 		throw new FlowArtifactLocatorChainExaustedException(ViewDescriptorCreator.class, id, exceptions);
 	}
 
-	public FlowExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
+	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
 		List exceptions = new LinkedList();
 		for (int i = 0; i < locatorChain.length; i++) {
 			FlowArtifactLocator locator = locatorChain[i];
@@ -118,6 +118,6 @@ public class CompositeFlowArtifactLocator implements FlowArtifactLocator {
 				exceptions.add(e);
 			}
 		}
-		throw new FlowArtifactLocatorChainExaustedException(FlowExceptionHandler.class, id, exceptions);
+		throw new FlowArtifactLocatorChainExaustedException(StateExceptionHandler.class, id, exceptions);
 	}
 }

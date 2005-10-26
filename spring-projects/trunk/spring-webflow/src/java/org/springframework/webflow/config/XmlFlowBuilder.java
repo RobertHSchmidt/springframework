@@ -48,7 +48,7 @@ import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.FlowExceptionHandler;
+import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.State;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
@@ -724,7 +724,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			if (node instanceof Element) {
 				Element element = (Element)node;
 				if (element.hasAttribute(BEAN_ATTRIBUTE)) {
-					FlowExceptionHandler handler = getFlowArtifactLocator().getExceptionHandler(
+					StateExceptionHandler handler = getFlowArtifactLocator().getExceptionHandler(
 							element.getAttribute(BEAN_ATTRIBUTE));
 					getFlow().addExceptionHandler(handler);
 				}

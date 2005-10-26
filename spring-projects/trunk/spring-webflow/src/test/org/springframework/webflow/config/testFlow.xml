@@ -66,6 +66,6 @@
 	
 	<bean id="action1" class="org.springframework.webflow.config.XmlFlowBuilderTests$TestAction"/>
 	<bean id="action3" class="org.springframework.webflow.config.XmlFlowBuilderTests$TestMultiAction"/>
-	<bean id="myCustomHandler" class="org.springframework.webflow.config.MyCustomFlowExceptionHandler"/>
+	<bean id="myCustomHandler" class="org.springframework.webflow.config.MyCustomStateExceptionHandler"/>
 	
 </webflow> 

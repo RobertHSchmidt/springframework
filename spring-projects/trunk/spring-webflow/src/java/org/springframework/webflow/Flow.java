@@ -65,7 +65,7 @@ import org.springframework.util.StringUtils;
  * <p>
  * <p>
  * Flow definitions may have one or more flow exception handlers. A
- * {@link FlowExceptionHandler} can execute custom behavior in response to a
+ * {@link StateExceptionHandler} can execute custom behavior in response to a
  * specific exception (or set of exceptions) that occur during this flow's
  * execution.
  * </p>
@@ -88,7 +88,7 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.webflow.EndState
  * @see org.springframework.webflow.DecisionState
  * @see org.springframework.webflow.Transition
- * @see org.springframework.webflow.FlowExceptionHandler
+ * @see org.springframework.webflow.StateExceptionHandler
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -204,7 +204,7 @@ public class Flow extends AnnotatedObject {
 	 * to display.
 	 * @param handler the exception handler
 	 */
-	public void addExceptionHandler(FlowExceptionHandler handler) {
+	public void addExceptionHandler(StateExceptionHandler handler) {
 		exceptionHandlers.add(handler);
 	}
 
@@ -391,8 +391,8 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Returns the list of exception handlers for this flow.
 	 */
-	public FlowExceptionHandler[] getExceptionHandlers() {
-		return (FlowExceptionHandler[])exceptionHandlers.toArray(new FlowExceptionHandler[exceptionHandlers.size()]);
+	public StateExceptionHandler[] getExceptionHandlers() {
+		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
 	}
 
 	/**
@@ -468,10 +468,10 @@ public class Flow extends AnnotatedObject {
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view descriptor
 	 */
-	public ViewDescriptor handleException(Exception exception, StateContext context) {
+	public ViewDescriptor handleStateException(StateException exception, StateContext context) {
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
-			FlowExceptionHandler handler = (FlowExceptionHandler)it.next();
+			StateExceptionHandler handler = (StateExceptionHandler)it.next();
 			if (handler.handles(exception)) {
 				ViewDescriptor selectedView = handler.handle(exception, context);
 				if (selectedView != null) {

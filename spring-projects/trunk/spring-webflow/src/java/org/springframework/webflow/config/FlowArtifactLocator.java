@@ -3,7 +3,7 @@ package org.springframework.webflow.config;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.FlowExceptionHandler;
+import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
@@ -63,5 +63,5 @@ public interface FlowArtifactLocator {
 	 * @return the exception handler
 	 * @throws FlowArtifactLookupException when no such handler is found
 	 */
-	public FlowExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException;
+	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException;
 }
