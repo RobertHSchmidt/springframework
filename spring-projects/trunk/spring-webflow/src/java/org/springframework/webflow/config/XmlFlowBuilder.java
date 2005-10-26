@@ -272,7 +272,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	public void setFlowArtifactLocator(FlowArtifactLocator artifactLocator) {
 		Assert.notNull(artifactLocator, "The flow artifact locator is required");
 		FlowArtifactLocator localLocator = new BeanFactoryFlowArtifactLocator(localArtifactRegistry, null);
-		super.setFlowArtifactLocator(new ChainedFlowArtifactLocator(new FlowArtifactLocator[] { localLocator,
+		super.setFlowArtifactLocator(new CompositeFlowArtifactLocator(new FlowArtifactLocator[] { localLocator,
 				artifactLocator }));
 	}
 

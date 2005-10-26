@@ -10,6 +10,7 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
+import org.springframework.webflow.access.NoSuchFlowArtifactException;
 import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 
@@ -91,7 +92,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 			return beanFactory.getBean(id);
 		}
 		catch (NoSuchBeanDefinitionException e) {
-			throw new FlowArtifactLookupException(serviceType, id, e);
+			throw new NoSuchFlowArtifactException(serviceType, id, e);
 		}
 	}
 }
