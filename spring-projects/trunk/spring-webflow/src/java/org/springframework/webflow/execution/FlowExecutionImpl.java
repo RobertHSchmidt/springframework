@@ -361,8 +361,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		try {
-			resume(context);
 			try {
+				resume(context);
 				ViewDescriptor selectedView = state.onEvent(sourceEvent, context);
 				return pause(context, selectedView);
 			}
