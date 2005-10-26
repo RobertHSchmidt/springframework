@@ -16,6 +16,8 @@
 package org.springframework.webflow;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -121,6 +123,11 @@ public class Flow extends AnnotatedObject {
 	private Set states = CollectionFactory.createLinkedSetIfPossible(6);
 
 	/**
+	 * The list exception handlers for this flow.
+	 */
+	private List exceptionHandlers = new LinkedList();
+
+	/**
 	 * Construct a new flow definition with the given id. The id should be
 	 * unique among all flows.
 	 * @param id the flow identifier
@@ -183,6 +190,17 @@ public class Flow extends AnnotatedObject {
 		if (firstAdd) {
 			setStartState(state);
 		}
+	}
+
+	/**
+	 * Adds an exception handler to this flow definition. Exception handles are
+	 * invoked when an exception occurs during this flow's execution, and can
+	 * execute custom exception handling logic as well as select an error view
+	 * to display.
+	 * @param handler the exception handler
+	 */
+	public void addExceptionHandler(FlowExceptionHandler handler) {
+		exceptionHandlers.add(handler);
 	}
 
 	/**
@@ -416,7 +434,7 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * End the active session for this flow in the context of the current
+	 * End an active session for this flow in the context of the current
 	 * request.
 	 * @param context the state request context
 	 */
@@ -424,6 +442,26 @@ public class Flow extends AnnotatedObject {
 		if (isTransactional()) {
 			context.endTransaction();
 		}
+	}
+
+	/**
+	 * Handle an exception that occured on an execution of this flow in the
+	 * context of the current request. This implementation delegates to a
+	 * ExceptionHandler, the first that in the list of handlers that can handle
+	 * the given exception.
+	 * @param context the state request context
+	 * @param exception the exception that occured
+	 */
+	public ViewDescriptor handleException(Exception exception, StateContext context) {
+		Iterator it = exceptionHandlers.iterator();
+		ViewDescriptor selectedView = null;
+		while (it.hasNext() && selectedView != null) {
+			FlowExceptionHandler handler = (FlowExceptionHandler)it.next();
+			if (handler.handles(exception)) {
+				selectedView = handler.handle(exception, context);
+			}
+		}
+		return selectedView;
 	}
 
 	/**
@@ -436,6 +474,6 @@ public class Flow extends AnnotatedObject {
 
 	public String toString() {
 		return new ToStringCreator(this).append("id", id).append("startState", startState)
-				.append("states", this.states).toString();
+				.append("states", this.states).append("exceptionHandlers", exceptionHandlers).toString();
 	}
 }

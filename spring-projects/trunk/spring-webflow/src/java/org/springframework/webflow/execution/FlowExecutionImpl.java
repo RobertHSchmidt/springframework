@@ -297,11 +297,36 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		try {
-			ViewDescriptor selectedView = context.start(getRootFlow(), new HashMap(3));
-			return pause(context, selectedView);
+			try {
+				ViewDescriptor selectedView = context.start(getRootFlow(), new HashMap(3));
+				return pause(context, selectedView);
+			}
+			catch (RuntimeException e) {
+				return handleFlowException(e, context);
+			}
 		}
 		finally {
 			getListeners().fireRequestProcessed(context);
+		}
+	}
+
+	/**
+	 * Handles an exception that occured performing an operation on this flow
+	 * execution.
+	 * @param e the exception that occured
+	 * @param context the state context the exception occured in
+	 * @return the selected error view
+	 * @throws RuntimeException rethrows the exception parameter if the
+	 * exception was not handled
+	 */
+	protected ViewDescriptor handleFlowException(RuntimeException e, StateContext context) {
+		Flow flow = isActive() ? getActiveFlow() : getRootFlow();
+		ViewDescriptor selectedView = flow.handleException(e, context);
+		if (selectedView == null) {
+			throw e;
+		}
+		else {
+			return selectedView;
 		}
 	}
 
@@ -338,8 +363,13 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		getListeners().fireRequestSubmitted(context);
 		try {
 			resume(context);
-			ViewDescriptor selectedView = state.onEvent(sourceEvent, context);
-			return pause(context, selectedView);
+			try {
+				ViewDescriptor selectedView = state.onEvent(sourceEvent, context);
+				return pause(context, selectedView);
+			}
+			catch (RuntimeException e) {
+				return handleFlowException(e, context);
+			}
 		}
 		finally {
 			getListeners().fireRequestProcessed(context);
