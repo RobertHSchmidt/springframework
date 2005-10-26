@@ -389,6 +389,13 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
+	 * Returns the list of exception handlers for this flow.
+	 */
+	public FlowExceptionHandler[] getExceptionHandlers() {
+		return (FlowExceptionHandler[])exceptionHandlers.toArray(new FlowExceptionHandler[exceptionHandlers.size()]);
+	}
+
+	/**
 	 * Start a new execution of this flow in the specified state with the
 	 * provided input.
 	 * @param context the executing state request context

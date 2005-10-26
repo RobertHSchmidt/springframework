@@ -67,6 +67,10 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals("actionState1", flow.getStartState().getId());
 		assertEquals(8, flow.getStateIds().length);
 
+		assertEquals(2, flow.getExceptionHandlers().length);
+		assertTrue(flow.getExceptionHandlers()[0] instanceof StateMapperFlowExceptionHandler);
+		assertTrue(flow.getExceptionHandlers()[1] instanceof MyCustomFlowExceptionHandler);
+		
 		ActionState actionState1 = (ActionState)flow.getState("actionState1");
 		assertNotNull(actionState1);
 		assertEquals(2, actionState1.getActionCount());
