@@ -68,8 +68,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
+ *       &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
+ *       &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -209,10 +209,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Creates a new XML flow builder.
 	 * @param location resource to read the XML flow definition from
+	 */
+	public XmlFlowBuilder(Resource location) {
+		setLocation(location);
+	}
+
+	/**
+	 * Creates a new XML flow builder.
+	 * @param location resource to read the XML flow definition from
 	 * @param artifactLocator the flow artifact location strategy to use
 	 */
 	public XmlFlowBuilder(Resource location, FlowArtifactLocator artifactLocator) {
-		super();
 		setLocation(location);
 		setFlowArtifactLocator(artifactLocator);
 	}
@@ -270,10 +277,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * @see org.springframework.webflow.config.BaseFlowBuilder#setFlowArtifactLocator(org.springframework.webflow.config.FlowArtifactLocator)
 	 */
 	public void setFlowArtifactLocator(FlowArtifactLocator artifactLocator) {
-		Assert.notNull(artifactLocator, "The flow artifact locator is required");
 		FlowArtifactLocator localLocator = new BeanFactoryFlowArtifactLocator(localArtifactRegistry);
-		super.setFlowArtifactLocator(new CompositeFlowArtifactLocator(new FlowArtifactLocator[] { localLocator,
-				artifactLocator }));
+		if (artifactLocator != null) {
+			super.setFlowArtifactLocator(new CompositeFlowArtifactLocator(new FlowArtifactLocator[] { localLocator,
+					artifactLocator }));
+		}
+		else {
+			super.setFlowArtifactLocator(localLocator);
+		}
 	}
 
 	public Flow init() throws FlowBuilderException {
