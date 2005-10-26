@@ -472,7 +472,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		executingFlowSessions.push(session);
 		session.setStatus(FlowSessionStatus.ACTIVE);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Activated: " + session);
+			logger.debug("Session activated: " + session);
 		}
 		return session;
 	}
@@ -498,12 +498,12 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		FlowSessionImpl endingSession = (FlowSessionImpl)executingFlowSessions.pop();
 		endingSession.setStatus(FlowSessionStatus.ENDED);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Ended: " + endingSession);
+			logger.debug("Session ended: " + endingSession);
 		}
 		if (!executingFlowSessions.isEmpty()) {
 			getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Resumed: " + getActiveSessionInternal());
+				logger.debug("Session resumed: " + getActiveSessionInternal());
 			}
 		}
 		return endingSession;
@@ -566,7 +566,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 
 	public String toString() {
 		if (!isActive()) {
-			return "[Empty FlowExecutionStack with key '" + getKey() + "'; no flows are active]";
+			return "[Empty FlowExecutionImpl with key '" + getKey() + "'; no flows are active]";
 		}
 		else {
 			return new ToStringCreator(this).append("key", getKey()).append("activeFlow",
