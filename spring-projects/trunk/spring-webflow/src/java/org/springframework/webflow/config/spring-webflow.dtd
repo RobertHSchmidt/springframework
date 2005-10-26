@@ -315,7 +315,7 @@
 <!--
 	The id of the state to transition to when this exception does occur.
 -->
-<!ATTLIST exception-handler state CDATA #IMPLIED>
+<!ATTLIST exception-handler state IDREF #IMPLIED>
 
 <!--
 	The id of the exception handler implementation to attach to this flow definition.  Specify this 
