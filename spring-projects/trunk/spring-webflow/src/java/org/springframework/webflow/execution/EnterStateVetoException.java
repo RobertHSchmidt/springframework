@@ -57,7 +57,7 @@ public class EnterStateVetoException extends StateException {
 	/**
 	 * Returns the state for which entering was vetoed.
 	 */
-	public State getState() {
+	public State getVetoedState() {
 		return vetoedState;
 	}
 }

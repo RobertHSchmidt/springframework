@@ -77,6 +77,8 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * execution creation
 	 * @return the starting view descriptor, which returns control to the client
 	 * and requests that a view be rendered with model data
+	 * @throws StateException if the signaled event does not map to any
+	 * state transitions in the current state
 	 * @throws IllegalStateException if this execution has already been started,
 	 * or no state is marked as the start state.
 	 */
@@ -91,7 +93,7 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @return the next model and view descriptor to display for this flow
 	 * execution, this returns control to the client and requests that a view be
 	 * rendered with model data
-	 * @throws FlowNavigationException if the signaled event does not map to any
+	 * @throws StateException if the signaled event does not map to any
 	 * state transitions in the current state
 	 * @throws IllegalStateException if the flow execution is not active and
 	 * thus is no longer (or not yet) processing events
