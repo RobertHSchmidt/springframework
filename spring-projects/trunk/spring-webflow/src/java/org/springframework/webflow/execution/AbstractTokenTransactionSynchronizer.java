@@ -141,7 +141,7 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 
 	public void assertInTransaction(RequestContext context, boolean end) throws RequestNotInTransactionException {
 		if (!inTransaction(context, end)) {
-			throw new RequestNotInTransactionException();
+			throw new RequestNotInTransactionException(context.getFlowExecutionContext().getCurrentState());
 		}
 	}
 

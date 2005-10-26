@@ -1,6 +1,5 @@
 package org.springframework.webflow;
 
-import org.springframework.core.NestedRuntimeException;
 
 /**
  * An exception indicating a request to resume a Flow execution did not occur in
@@ -9,12 +8,12 @@ import org.springframework.core.NestedRuntimeException;
  * 
  * @author Keith Donald
  */
-public class RequestNotInTransactionException extends NestedRuntimeException {
+public class RequestNotInTransactionException extends StateException {
 
 	/**
 	 * Creates a default instance.
 	 */
-	public RequestNotInTransactionException() {
-		super("The current request is not executing in the context of an application transaction");
+	public RequestNotInTransactionException(State state) {
+		super(state, "The current request is not executing in the context of an application transaction");
 	}
 }
