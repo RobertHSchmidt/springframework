@@ -11,7 +11,6 @@ import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.access.NoSuchFlowArtifactException;
-import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 
 /**
@@ -36,6 +35,15 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	 * Creates a flow artifact locator that retrieves artifacts from the
 	 * provided bean factory
 	 * @param beanFactory The spring bean factory, may not be null.
+	 */
+	public BeanFactoryFlowArtifactLocator(BeanFactory beanFactory) {
+		this(beanFactory, null);
+	}
+
+	/**
+	 * Creates a flow artifact locator that retrieves artifacts from the
+	 * provided bean factory
+	 * @param beanFactory The spring bean factory, may not be null.
 	 * @param subflowLocator The locator for loading subflows
 	 */
 	public BeanFactoryFlowArtifactLocator(BeanFactory beanFactory, FlowLocator subflowLocator) {
@@ -45,12 +53,11 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	}
 
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
-		if (subflowLocator == null) {
-			throw new NoSuchFlowDefinitionException(id, "Subflow lookup not supported by this flow artifact locator",
-					null);
+		if (subflowLocator != null) {
+			return subflowLocator.getFlow(id);
 		}
 		else {
-			return subflowLocator.getFlow(id);
+			return (Flow)getService(id, Flow.class);
 		}
 	}
 

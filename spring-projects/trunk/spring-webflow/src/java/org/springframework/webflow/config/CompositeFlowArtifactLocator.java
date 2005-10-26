@@ -11,7 +11,6 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.NoSuchFlowArtifactException;
-import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 
 /**
  * A flow artifact locator that queries an ordered chain of flow artifact
@@ -44,7 +43,7 @@ public class CompositeFlowArtifactLocator implements FlowArtifactLocator {
 			try {
 				return locator.getSubflow(id);
 			}
-			catch (NoSuchFlowDefinitionException e) {
+			catch (NoSuchFlowArtifactException e) {
 				exceptions.add(e);
 			}
 		}
