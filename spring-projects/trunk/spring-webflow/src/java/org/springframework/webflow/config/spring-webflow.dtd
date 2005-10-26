@@ -302,6 +302,33 @@
 <!ATTLIST end-state view CDATA #IMPLIED>
 
 <!--
+	Defines a flow exception handler to handle one or more exceptions that may occur during the
+	execution of this flow definition.
+-->
+<!ELEMENT exception-handler EMPTY>
+
+<!--
+	The class of exception that may occur.
+-->
+<!ATTLIST exception-handler type CDATA #IMPLIED>
+
+<!--
+	The id of the state to transition to when this exception does occur.
+-->
+<!ATTLIST exception-handler state CDATA #IMPLIED>
+
+<!--
+	The id of the exception handler implementation to attach to this flow definition.
+-->
+<!ATTLIST exception-handler bean CDATA #IMPLIED>
+
+<!--
+	Reference to the id of the web flow to be spawned when this subflow state is entered.
+-->
+<!ATTLIST subflow-state flow CDATA #REQUIRED>
+
+
+<!--
 	Defines a single (usually named) bean associated with this webflow definition.  Typically used to
 	configure instances of services local to this webflow, like an Action or FlowAttributeMapper.
 	
