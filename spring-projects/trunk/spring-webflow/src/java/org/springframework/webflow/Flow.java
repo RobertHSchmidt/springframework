@@ -37,11 +37,11 @@ import org.springframework.util.StringUtils;
  * series of steps (modeled as states).
  * <p>
  * A simple Flow definition could do nothing more than execute an action and
- * display a view (all in one request). A more involved Flow definition may be
- * long-lived (executing accross a series of requests, invoking many possible
- * paths, actions, and subflows).
+ * display a view, all in one request. A more elaborate Flow definition may be
+ * long-lived, executing accross a series of requests, invoking many possible
+ * paths, actions, and subflows.
  * 
- * Note: A flow is not a welcome page, a menu, or an index page: don't use flows
+ * Note: A flow is not a single welcome page or an index page: don't use flows
  * for those cases, use simple controllers/actions/portlets instead. Don't use
  * flows where your application demands "free browsing": flows force strict
  * navigation. Especially in Intranet applications, there are often "controlled
@@ -61,24 +61,24 @@ import org.springframework.util.StringUtils;
  * "success" or "error".
  * <p>
  * Each Flow has exactly one start state. A start state is simply a marker
- * noting the state flow executions (running instances of this Flow) should
- * start in.
+ * noting the state executions of this Flow definition should start in.
  * <p>
  * <p>
  * Flow definitions may have one or more flow exception handlers. A
- * {@link FlowExceptionHandler} can execute custom behaivior in response to a
+ * {@link FlowExceptionHandler} can execute custom behavior in response to a
  * specific exception (or set of exceptions) that occur during this flow's
  * execution.
  * </p>
- * Instances of this class are typically built by FlowBuilder implementations,
- * but may also be subclassed. This class, and the rest of the web flow core,
- * has been designed with minimal dependencies on other parts of Spring, and is
- * usable in a standalone fashion (as well as in the context of other frameworks
- * like Struts, WebWork, Tapestry, or JSF, for example). The core system is also
- * fully usable outside a HTTP servlet environment, for example in Portlets,
- * tests, or standalone applications.
+ * Instances of this class are typically built by
+ * {@link org.springframework.webflow.config.FlowBuilder} implementations, but
+ * may also be directly subclassed. This class, and the rest of the Spring Web
+ * Flow (SWF) core, has been designed with minimal dependencies on other parts
+ * of Spring, and is usable in a standalone fashion (as well as in the context
+ * of other frameworks like Struts, WebWork, Tapestry, or JSF, for example). The
+ * core system is also fully usable outside a HTTP servlet environment, for
+ * example in Portlets, tests, or standalone applications.
  * <p>
- * Note: flows are singleton objects so they should be thread-safe!
+ * Note: flows are singleton definition objects so they should be thread-safe!
  * 
  * @see org.springframework.webflow.State
  * @see org.springframework.webflow.TransitionableState
