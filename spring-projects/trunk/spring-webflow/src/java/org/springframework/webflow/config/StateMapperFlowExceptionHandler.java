@@ -10,7 +10,8 @@ import org.springframework.webflow.ViewDescriptor;
 
 /**
  * A flow exception handler that maps the occurence of a specific type of
- * exception to a transition to a new state.
+ * exception to a transition to a new {@link org.springframework.webflow.State}
+ * 
  * @author Keith Donald
  */
 public class StateMapperFlowExceptionHandler implements FlowExceptionHandler {
