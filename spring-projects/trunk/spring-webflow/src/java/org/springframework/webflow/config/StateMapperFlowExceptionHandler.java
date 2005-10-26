@@ -3,7 +3,6 @@ package org.springframework.webflow.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.webflow.ActionExecutionException;
 import org.springframework.webflow.FlowExceptionHandler;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateContext;
@@ -63,18 +62,34 @@ public class StateMapperFlowExceptionHandler implements FlowExceptionHandler {
 	}
 
 	public boolean handles(Exception e) {
-		if (e instanceof ActionExecutionException) {
-			return exceptionStateMap.containsKey(e.getCause().getClass());
-		} else {
-			return exceptionStateMap.containsKey(e.getClass());
+		if (exceptionStateMap.containsKey(e.getClass())) {
+			return true;
+		}
+		else {
+			Throwable cause = e.getCause();
+			while (cause != null) {
+				if (exceptionStateMap.containsKey(cause.getClass())) {
+					return true;
+				}
+				cause = cause.getCause();
+			}
+			return false;
 		}
 	}
 
 	private State getState(Exception e) {
-		if (e instanceof ActionExecutionException) {
-			return (State)exceptionStateMap.get(e.getCause().getClass());
-		} else {
+		if (exceptionStateMap.containsKey(e.getClass())) {
 			return (State)exceptionStateMap.get(e.getClass());
+		}
+		else {
+			Throwable cause = e.getCause();
+			while (cause != null) {
+				if (exceptionStateMap.containsKey(cause.getClass())) {
+					return (State)exceptionStateMap.get(cause.getClass());
+				}
+				cause = cause.getCause();
+			}
+			throw new IllegalStateException("Should not happen");
 		}
 	}
 
