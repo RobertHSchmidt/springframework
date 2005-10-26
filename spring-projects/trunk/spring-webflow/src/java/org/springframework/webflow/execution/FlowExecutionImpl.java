@@ -47,7 +47,7 @@ import org.springframework.webflow.access.FlowLocator;
  * {@link org.springframework.webflow.FlowSession flow sessions}. This class is
  * closely coupled with <code>FlowSessionImpl</code> and
  * <code>StateContextImpl</code>. The three classes work together to form a
- * complete flow execution implementation.
+ * complete flow execution implementation based on a finite state machine.
  * <p>
  * This implementation of FlowExecution is serializable so it can be safely
  * stored in an HTTP session or other persistent store such as a file, database,
