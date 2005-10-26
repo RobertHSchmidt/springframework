@@ -10,6 +10,11 @@ public class SaleProcessorIntegrationTests extends AbstractTransactionalDataSour
 		this.saleProcessor = saleProcessor;
 	}
 
+	@Override
+	protected String[] getConfigLocations() {
+		return new String[] { "classpath:org/springframework/webflow/samples/sellitem/applicationContext.xml" };
+	}
+
 	public void testProcessSale() {
 		int beforeCount = jdbcTemplate.queryForInt("select count(*) from T_SALES");
 		Sale sale = new Sale();
@@ -20,10 +25,5 @@ public class SaleProcessorIntegrationTests extends AbstractTransactionalDataSour
 		saleProcessor.process(sale);
 		int afterCount = jdbcTemplate.queryForInt("select count(*) from T_SALES");
 		assertEquals("Wrong after count", beforeCount + 1, afterCount);
-	}
-	
-	@Override
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath:org/springframework/webflow/samples/sellitem/applicationContext.xml" };
 	}
 }

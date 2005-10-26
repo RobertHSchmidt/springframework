@@ -1,5 +1,6 @@
 package org.springframework.webflow.samples.sellitem;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,8 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 
 	protected FlowLocator createFlowLocator() {
 		XmlFlowRegistryFactoryBean factory = new XmlFlowRegistryFactoryBean(applicationContext);
-		Resource[] locations = new Resource[] { new FileSystemResource("WEB-INF/sellItem-flow.xml") };
+		File parent = new File("src/webapp/WEB-INF");
+		Resource[] locations = new Resource[] { new FileSystemResource(new File(parent, "sellItem-flow.xml")) };
 		factory.setDefinitionLocations(locations);
 		return factory.populateFlowRegistry();
 	}
