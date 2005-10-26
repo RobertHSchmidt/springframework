@@ -52,7 +52,6 @@ public class CompositeFlowArtifactLocator implements FlowArtifactLocator {
 
 	public Action getAction(String id) throws FlowArtifactLookupException {
 		List exceptions = new LinkedList();
-
 		for (int i = 0; i < locatorChain.length; i++) {
 			FlowArtifactLocator locator = locatorChain[i];
 			try {
