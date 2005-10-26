@@ -253,11 +253,12 @@ public class ActionState extends TransitionableState {
 	 * @param context the state context for the executing flow
 	 * @return a view descriptor signaling that control should be
 	 *         returned to the client and a view rendered
+	 * @throws StateException if an exception occurs in this state
 	 * @throws CannotExecuteTransitionException when no action execution
 	 *         resulted in a outcome event that could be mapped to a valid state
 	 *         transition
 	 */
-	protected ViewDescriptor doEnter(StateContext context) {
+	protected ViewDescriptor doEnter(StateContext context) throws StateException {
 		Iterator it = actionExecutors();
 		int executionCount = 0;
 		String[] eventIds = new String[actionExecutors.size()];

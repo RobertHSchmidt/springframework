@@ -122,8 +122,9 @@ public class ViewState extends TransitionableState {
 	 * @param context the state context for the executing flow
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state execution
+	 * @throws StateException if an exception occurs in this state
 	 */
-	protected ViewDescriptor doEnter(StateContext context) {
+	protected ViewDescriptor doEnter(StateContext context) throws StateException {
 		return viewDescriptor(context);
 	}
 

@@ -22,7 +22,7 @@ package org.springframework.webflow;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class CannotExecuteTransitionException extends FlowNavigationException {
+public class CannotExecuteTransitionException extends StateException {
 
 	/**
 	 * The transition that could not be executed.
@@ -35,7 +35,7 @@ public class CannotExecuteTransitionException extends FlowNavigationException {
 	 * @param cause the underlying cause of this exception
 	 */
 	public CannotExecuteTransitionException(Transition transition, Throwable cause) {
-		super(transition.getSourceState().getFlow(), "Could not execute transition from state '"
+		super(transition.getSourceState(), "Could not execute transition from state '"
 				+ transition.getSourceState().getId() + "' in flow '"
 				+ transition.getSourceState().getFlow().getId() + "'", cause);
 		this.transition = transition;
@@ -47,7 +47,7 @@ public class CannotExecuteTransitionException extends FlowNavigationException {
 	 * @param message a descriptive message
 	 */
 	public CannotExecuteTransitionException(Transition transition, String message) {
-		super(transition.getSourceState().getFlow(), message);
+		super(transition.getSourceState(), message);
 		this.transition = transition;
 	}
 

@@ -94,6 +94,7 @@ public class StateMapperFlowExceptionHandler implements FlowExceptionHandler {
 	}
 
 	public ViewDescriptor handle(Exception e, StateContext context) {
-		return getState(e).enter(context);
+		State state = getState(e);
+		return state.enter(context);
 	}
 }

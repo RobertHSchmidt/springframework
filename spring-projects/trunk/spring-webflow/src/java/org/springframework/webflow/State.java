@@ -23,22 +23,22 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * A point in a flow where something happens. What happens is determined by a 
+ * A point in a flow where something happens. What happens is determined by a
  * state's type. Standard types of states include action states, view states,
  * subflow states, and end states.
  * <p>
  * Each state is associated with exactly one owning flow definition.
- * Specializations of this class capture all the configuration information needed for
- * a specific kind of state. 
+ * Specializations of this class capture all the configuration information
+ * needed for a specific kind of state.
  * <p>
- * Subclasses should implement the <code>doEnter</code> method to execute
- * the processing that should occur when this state is entered, acting on its
+ * Subclasses should implement the <code>doEnter</code> method to execute the
+ * processing that should occur when this state is entered, acting on its
  * configuration information. The ability to plugin custom state types that
  * execute different behaviour polymorphically is the classic GoF state pattern.
  * <p>
- * Why is this class abstract and not an interface? A specific design choice.
- * It is expected that specializations of this base class be "States" and not
- * part of some other inheritence hierarchy.
+ * Why is this class abstract and not an interface? A specific design choice. It
+ * is expected that specializations of this base class be "States" and not part
+ * of some other inheritence hierarchy.
  * 
  * @see org.springframework.webflow.TransitionableState
  * @see org.springframework.webflow.ActionState
@@ -68,10 +68,10 @@ public abstract class State extends AnnotatedObject {
 	private String id;
 
 	/**
-	 * The action to invoke when this state is entered. 
+	 * The action to invoke when this state is entered.
 	 */
 	private Action entryAction;
-	
+
 	/**
 	 * Creates a state for the provided <code>flow</code> identified by the
 	 * provided <code>id</code>. The id must be locally unique to the owning
@@ -79,7 +79,7 @@ public abstract class State extends AnnotatedObject {
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
 	 * @throws IllegalArgumentException if this state cannot be added to the
-	 *         flow
+	 * flow
 	 */
 	protected State(Flow flow, String id) throws IllegalArgumentException {
 		setId(id);
@@ -94,7 +94,7 @@ public abstract class State extends AnnotatedObject {
 	 * @param id the state identifier (must be unique to the flow)
 	 * @param properties additional properties describing this state
 	 * @throws IllegalArgumentException if this state cannot be added to the
-	 *         flow
+	 * flow
 	 */
 	protected State(Flow flow, String id, Map properties) throws IllegalArgumentException {
 		setId(id);
@@ -112,7 +112,7 @@ public abstract class State extends AnnotatedObject {
 	/**
 	 * Set the owning flow.
 	 * @throws IllegalArgumentException if this state cannot be added to the
-	 *         flow
+	 * flow
 	 */
 	public void setFlow(Flow flow) throws IllegalArgumentException {
 		Assert.hasText(getId(), "The id of the state should be set before adding the state to a flow");
@@ -154,27 +154,30 @@ public abstract class State extends AnnotatedObject {
 	public void setEntryAction(Action entryAction) {
 		this.entryAction = entryAction;
 	}
-	
+
 	/**
-	 * Checks if this state is transitionable. That is, is this state capable of executing
-	 * a transition to another state on the occurence of an event? All
+	 * Checks if this state is transitionable. That is, is this state capable of
+	 * executing a transition to another state on the occurence of an event? All
 	 * subclasses of <code>TransitionableState</code> are transitionable.
-	 * @return true when this state is a <code>TransitionableState</code>, false
-	 *         otherwise
+	 * @return true when this state is a <code>TransitionableState</code>,
+	 * false otherwise
 	 */
 	public boolean isTransitionable() {
 		return this instanceof TransitionableState;
 	}
 
 	/**
-	 * Enter this state in the provided flow execution request context. This implementation
-	 * just calls the {@link #doEnter(StateContext)} hook method, which should be implemented
-	 * by subclasses, after executing the entry action.
-	 * @param context the request context in an executing flow (a client instance of a flow)
+	 * Enter this state in the provided flow execution request context. This
+	 * implementation just calls the {@link #doEnter(StateContext)} hook method,
+	 * which should be implemented by subclasses, after executing the entry
+	 * action.
+	 * @param context the request context in an executing flow (a client
+	 * instance of a flow)
 	 * @return a view descriptor containing model and view information needed to
-	 *         render the results of the state processing
+	 * render the results of the state processing
+	 * @throw StateException if an exception occurs in this state
 	 */
-	public ViewDescriptor enter(StateContext context) {
+	public ViewDescriptor enter(StateContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Entering state '" + getId() + "' in flow '" + getFlow().getId() + "'");
 		}
@@ -182,7 +185,7 @@ public abstract class State extends AnnotatedObject {
 		executeEntryAction(context);
 		return doEnter(context);
 	}
-	
+
 	/**
 	 * Execute the entry action registered with this state.
 	 * @param context the flow execution request context
@@ -194,17 +197,19 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
-	 * Hook method to execute custom behaviour as a result of entering this state.
-	 * @param context the state context in an executing flow (a client instance of a flow)
+	 * Hook method to execute custom behaviour as a result of entering this
+	 * state.
+	 * @param context the state context in an executing flow (a client instance
+	 * of a flow)
 	 * @return a view descriptor containing model and view information needed to
-	 *         render the results of the state processing
+	 * render the results of the state processing
+	 * @throw StateException if an exception occurs in this state
 	 */
-	protected abstract ViewDescriptor doEnter(StateContext context);
-	
+	protected abstract ViewDescriptor doEnter(StateContext context) throws StateException;
+
 	public String toString() {
-		ToStringCreator creator =
-			new ToStringCreator(this).append("id", getId()).append("flow", flow == null ? "<not set>" : flow.getId()).
-					append("entryAction", entryAction);
+		ToStringCreator creator = new ToStringCreator(this).append("id", getId()).append("flow",
+				flow == null ? "<not set>" : flow.getId()).append("entryAction", entryAction);
 		createToString(creator);
 		return creator.toString();
 	}

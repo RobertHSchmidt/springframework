@@ -470,14 +470,16 @@ public class Flow extends AnnotatedObject {
 	 */
 	public ViewDescriptor handleException(Exception exception, StateContext context) {
 		Iterator it = exceptionHandlers.iterator();
-		ViewDescriptor selectedView = null;
-		while (it.hasNext() && selectedView != null) {
+		while (it.hasNext()) {
 			FlowExceptionHandler handler = (FlowExceptionHandler)it.next();
 			if (handler.handles(exception)) {
-				selectedView = handler.handle(exception, context);
+				ViewDescriptor selectedView = handler.handle(exception, context);
+				if (selectedView != null) {
+					return selectedView;
+				}
 			}
 		}
-		return selectedView;
+		return null;
 	}
 
 	/**

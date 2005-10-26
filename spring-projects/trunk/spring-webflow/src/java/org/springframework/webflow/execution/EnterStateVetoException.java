@@ -15,47 +15,49 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.webflow.FlowNavigationException;
 import org.springframework.webflow.State;
+import org.springframework.webflow.StateException;
 
 /**
  * Exception thrown to veto entering of a state in a web flow.
- *  
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class EnterStateVetoException extends FlowNavigationException {
+public class EnterStateVetoException extends StateException {
 
 	/**
 	 * The state whose entering was vetoed.
 	 */
-	private State state;
-	
+	private State vetoedState;
+
 	/**
 	 * Create a new enter state veto exception.
-	 * @param state the state for which entering is vetoed
+	 * @param sourceState the current state when the veto operation occured
+	 * @param vetoedState the state for which entering is vetoed
 	 * @param message a descriptive message
 	 */
-	public EnterStateVetoException(State state, String message) {
-		super(state.getFlow(), message);
-		this.state = state;
+	public EnterStateVetoException(State sourceState, State vetoedState, String message) {
+		super(sourceState, message);
+		this.vetoedState = vetoedState;
 	}
 
 	/**
 	 * Create a new enter state veto exception.
-	 * @param state the state for which entering is vetoed
+	 * @param sourceState the current state when the veto operation occured
+	 * @param vetoedState the state for which entering is vetoed
 	 * @param message a descriptive message
 	 * @param cause the underlying cause
 	 */
-	public EnterStateVetoException(State state, String message, Throwable cause) {
-		super(state.getFlow(), message, cause);
-		this.state = state;
+	public EnterStateVetoException(State sourceState, State vetoedState, String message, Throwable cause) {
+		super(sourceState, message, cause);
+		this.vetoedState = vetoedState;
 	}
-	
+
 	/**
 	 * Returns the state for which entering was vetoed.
 	 */
 	public State getState() {
-		return state;
+		return vetoedState;
 	}
 }

@@ -27,12 +27,7 @@ import org.springframework.core.style.StylerUtils;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class NoMatchingTransitionException extends FlowNavigationException {
-
-	/**
-	 * The state this exception was thrown in.
-	 */
-	private TransitionableState state;
+public class NoMatchingTransitionException extends StateException {
 
 	/**
 	 * The event that occured that could not be matched to a Transition.
@@ -57,11 +52,10 @@ public class NoMatchingTransitionException extends FlowNavigationException {
 	 * @param cause the underlying cause
 	 */
 	public NoMatchingTransitionException(TransitionableState state, Event event, Throwable cause) {
-		super(state.getFlow(), "No transition found on occurence of event '" + event + "' in state '" + state.getId()
+		super(state, "No transition found on occurence of event '" + event + "' in state '" + state.getId()
 				+ "' of flow '" + state.getFlow().getId() + "' -- valid transitional criteria are "
 				+ StylerUtils.style(state.getTransitionCriterias())
 				+ " -- likely programmer error, check the set of TransitionCriteria for this state", cause);
-		this.state = state;
 		this.event = event;
 	}
 
@@ -84,8 +78,7 @@ public class NoMatchingTransitionException extends FlowNavigationException {
 	 * @param cause the underlying cause
 	 */
 	public NoMatchingTransitionException(TransitionableState state, Event event, String message, Throwable cause) {
-		super(state.getFlow(), message, cause);
-		this.state = state;
+		super(state, message, cause);
 		this.event = event;
 	}
 
@@ -93,8 +86,8 @@ public class NoMatchingTransitionException extends FlowNavigationException {
 	 * Returns the state that could not execute a transition on the occurence of
 	 * the event in the context of the current request.
 	 */
-	public TransitionableState getState() {
-		return state;
+	public TransitionableState getTransitionableState() {
+		return (TransitionableState)getState();
 	}
 
 	/**

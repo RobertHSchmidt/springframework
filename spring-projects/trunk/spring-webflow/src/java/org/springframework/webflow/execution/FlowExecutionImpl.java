@@ -32,11 +32,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowNavigationException;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateContext;
+import org.springframework.webflow.StateException;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.FlowLocator;
@@ -301,8 +301,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 				ViewDescriptor selectedView = context.start(getRootFlow(), new HashMap(3));
 				return pause(context, selectedView);
 			}
-			catch (RuntimeException e) {
-				return handleFlowException(e, context);
+			catch (StateException e) {
+				return handleStateException(e, context);
 			}
 		}
 		finally {
@@ -319,7 +319,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * @throws RuntimeException rethrows the exception parameter if the
 	 * exception was not handled
 	 */
-	protected ViewDescriptor handleFlowException(RuntimeException e, StateContext context) {
+	protected ViewDescriptor handleStateException(StateException e, StateContext context) {
 		Flow flow = isActive() ? getActiveFlow() : getRootFlow();
 		ViewDescriptor selectedView = flow.handleException(e, context);
 		if (selectedView == null) {
@@ -330,8 +330,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		}
 	}
 
-	public synchronized ViewDescriptor signalEvent(Event sourceEvent) throws FlowNavigationException,
-			IllegalStateException {
+	public synchronized ViewDescriptor signalEvent(Event sourceEvent) throws StateException, IllegalStateException {
 		assertActive();
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
@@ -367,8 +366,8 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 				ViewDescriptor selectedView = state.onEvent(sourceEvent, context);
 				return pause(context, selectedView);
 			}
-			catch (RuntimeException e) {
-				return handleFlowException(e, context);
+			catch (StateException e) {
+				return handleStateException(e, context);
 			}
 		}
 		finally {

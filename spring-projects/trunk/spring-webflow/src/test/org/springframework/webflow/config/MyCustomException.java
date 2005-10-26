@@ -1,6 +1,6 @@
 package org.springframework.webflow.config;
 
-public class MyCustomException extends Exception {
+public class MyCustomException extends RuntimeException {
 
 	public MyCustomException() {
 		super();

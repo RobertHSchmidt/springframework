@@ -17,7 +17,6 @@ package org.springframework.webflow;
 
 import org.springframework.binding.AttributeSource;
 import org.springframework.binding.support.EmptyAttributeSource;
-import org.springframework.core.NestedRuntimeException;
 
 /**
  * Thrown if an unhandled, uncoverable exception occurs when an action is
@@ -29,12 +28,7 @@ import org.springframework.core.NestedRuntimeException;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ActionExecutionException extends NestedRuntimeException {
-
-	/**
-	 * The state in which the action execution exception occured.
-	 */
-	private State state;
+public class ActionExecutionException extends StateException {
 
 	/**
 	 * The action that threw an exception while executing.
@@ -81,18 +75,9 @@ public class ActionExecutionException extends NestedRuntimeException {
 	 */
 	public ActionExecutionException(State state, Action action, AttributeSource executionProperties,
 			String message, Throwable cause) {
-		super(message, cause);
-		this.state = state;
+		super(state, message, cause);
 		this.action = action;
 		this.executionProperties = executionProperties;
-	}
-
-	/**
-	 * Returns information about the action state that invoked the action.
-	 * @return the action state
-	 */
-	public State getState() {
-		return state;
 	}
 
 	/**
