@@ -21,7 +21,6 @@ import java.util.Map;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
-import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
@@ -70,23 +69,16 @@ import org.springframework.webflow.execution.FlowExecutionImpl;
 public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSpringContextTests {
 
 	/**
-	 * The flow definition whose execution is being tested (configuration
-	 * object).
+	 * The flow locator; providing means to lookup and retrieve configured
+	 * flows. Used to resolve the Flow to be tested by <code>id</code>.
 	 */
-	private Flow flow;
+	private FlowLocator flowLocator;
 
 	/**
 	 * The flow execution running the flow when the test is active (runtime
 	 * object).
 	 */
 	private FlowExecution flowExecution;
-
-	/**
-	 * The flow service locator; providing means to lookup and retrieve
-	 * configured flows. Used to resolve the Flow to be tested by
-	 * <code>id</code>.
-	 */
-	private FlowLocator flowLocator;
 
 	/**
 	 * Creates a Flow execution test. This constructor disables dependency
@@ -134,19 +126,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * could not be resolved (if <code>this.flow</code> was null)
 	 */
 	protected Flow getFlow() throws FlowArtifactLookupException {
-		if (this.flow == null) {
-			setFlow(getFlowLocator().getFlow(flowId()));
-		}
-		return this.flow;
-	}
-
-	/**
-	 * Set the flow definition whose execution is being tested.
-	 * @param flow the singleton flow definition
-	 */
-	private void setFlow(Flow flow) {
-		Assert.notNull(flow, "The flow definition whose execution will be tested is required");
-		this.flow = flow;
+		return getFlowLocator().getFlow(flowId());
 	}
 
 	/**
@@ -389,5 +369,4 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
 		return ExpressionFactory.parseExpression(attributeName).evaluateAgainst(model, null);
 	}
-
 }
