@@ -11,9 +11,8 @@ Changes in version 1.0 RC1 (7.11.2005)
 * Flows may now be configured with a set of one or more FlowExeceptionHandler objects, for responding to 
   exceptions that occur during flow execution.  
 * Added the FlowRegistry subsystem in webflow.config, for registering groups of refreshable Flow definitions.
-  This obsoletes the previous FlowFactoryBean and XmlFlowFactoryBean classes which previously exported Flows in a standard BeanFactory.
-  With this addition, Xml Flow definitions may now be refreshed from their registries at runtime
-  by using a JMX client like Sun's jConsole that ships with JDK 1.5.
+  With this addition, Xml Flow definitions may now be refreshed from their registries at runtime by using a
+  JMX client like Sun's jConsole that ships standard with JDK 1.5.
 * Added refreshable FlowRegistryImpl, for managing a reloadable registry of Flow definitions
   registered by an XmlFlowRegistrar or custom FlowRegistrar.  See XmlFlowRegistryFactoryBean
   as a convenient mechanism for populating a FlowRegistry using a Spring bean definition.
