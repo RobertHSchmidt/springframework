@@ -43,6 +43,9 @@
 						Collecting statistics on flows using the JMX protocol (via a standard JMX client
 						like JConsole).
 					</LI>
+					<LI>
+						Use of custom flow state exception handlers to recover from exceptions.
+					</LI>
 				</UL>
 			</P>
 		</DIV>
