@@ -39,6 +39,10 @@
 	
 	<end-state id="showCostOverview" view="costOverview"/>
 
+	<end-state id="error" view="error"/>
+	
+	<exception-handler class="org.springframework.webflow.RequestNotInTransactionException" state="error"/>
+	
 	<bean id="sellItemAction" class="org.springframework.webflow.action.FormAction">
 		<property name="formObjectName" value="sale"/>
 		<property name="formObjectClass" value="org.springframework.webflow.samples.sellitem.Sale"/>
