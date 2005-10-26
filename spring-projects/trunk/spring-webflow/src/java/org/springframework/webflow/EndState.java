@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
@@ -177,7 +178,15 @@ public class EndState extends State {
 	protected Event subflowResult(RequestContext context) {
 		// treat this end state id as a transitional event in the
 		// resuming state, this is so cool!
-		return new Event(this, getId());
+		return new Event(this, getId(), resultParameters(context));
+	}
+
+	/**
+	 * Returns the subflow result event parameter map. Default implementation
+	 * returns an empty map.  Subclasses may override.
+	 */
+	private Map resultParameters(RequestContext context) {
+		return Collections.EMPTY_MAP;
 	}
 
 	protected void createToString(ToStringCreator creator) {
