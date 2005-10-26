@@ -33,6 +33,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.NoSuchFlowDefinitionException;
+import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.config.registry.FlowAssembler;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -64,7 +65,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(flow);
 		assertEquals("testFlow", flow.getId());
 		assertEquals("actionState1", flow.getStartState().getId());
-		assertEquals(7, flow.getStateIds().length);
+		assertEquals(8, flow.getStateIds().length);
 
 		ActionState actionState1 = (ActionState)flow.getState("actionState1");
 		assertNotNull(actionState1);
@@ -73,7 +74,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals(Boolean.TRUE, (Boolean)actionState1.getProperty("propBoolean"));
 		assertEquals("aString", actionState1.getProperty("propString"));
 		assertEquals("action2Name", actionState1.getAnnotatedActions()[1].getName());
-		assertEquals(2, actionState1.getTransitions().length);
+		assertEquals(3, actionState1.getTransitions().length);
 		context.setLastEvent(createEvent("event1"));
 		assertTrue(actionState1.hasTransitionFor(context));
 		Transition transition = actionState1.getRequiredTransition(context);
@@ -181,4 +182,11 @@ public class XmlFlowBuilderTests extends TestCase {
 			return new Event(this, "event1");
 		}
 	}
+
+	public static class TestMultiAction extends MultiAction {
+		public Event actionMethod(RequestContext context) throws Exception {
+			throw new MyCustomException("Oops!");
+		}
+	}
+
 }
