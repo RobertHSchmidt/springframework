@@ -3,6 +3,7 @@ package org.springframework.webflow.config;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.FlowExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
@@ -55,4 +56,12 @@ public interface FlowArtifactLocator {
 	 * @throws FlowArtifactLookupException when no such creator is found
 	 */
 	public ViewDescriptorCreator getViewDescriptorCreator(String id) throws FlowArtifactLookupException;
+
+	/**
+	 * Retrieve the exception handler with the provided id.
+	 * @param id the id
+	 * @return the exception handler
+	 * @throws FlowArtifactLookupException when no such handler is found
+	 */
+	public FlowExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException;
 }

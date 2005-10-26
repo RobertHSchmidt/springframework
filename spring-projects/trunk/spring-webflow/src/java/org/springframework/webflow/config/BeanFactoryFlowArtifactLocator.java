@@ -6,6 +6,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.FlowExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewDescriptorCreator;
 import org.springframework.webflow.access.FlowArtifactLookupException;
@@ -92,6 +93,10 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 
 	public ViewDescriptorCreator getViewDescriptorCreator(String id) throws FlowArtifactLookupException {
 		return (ViewDescriptorCreator)getService(id, ViewDescriptorCreator.class);
+	}
+
+	public FlowExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
+		return (FlowExceptionHandler)getService(id, FlowExceptionHandler.class);
 	}
 
 	private Object getService(String id, Class serviceType) {

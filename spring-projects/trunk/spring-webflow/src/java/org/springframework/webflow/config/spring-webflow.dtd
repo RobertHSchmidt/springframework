@@ -310,7 +310,7 @@
 <!--
 	The class of exception that may occur.
 -->
-<!ATTLIST exception-handler type CDATA #IMPLIED>
+<!ATTLIST exception-handler class CDATA #IMPLIED>
 
 <!--
 	The id of the state to transition to when this exception does occur.
@@ -318,7 +318,8 @@
 <!ATTLIST exception-handler state CDATA #IMPLIED>
 
 <!--
-	The id of the exception handler implementation to attach to this flow definition.
+	The id of the exception handler implementation to attach to this flow definition.  Specify this 
+	attribute or the class and state attributes, not both.
 -->
 <!ATTLIST exception-handler bean CDATA #IMPLIED>
 

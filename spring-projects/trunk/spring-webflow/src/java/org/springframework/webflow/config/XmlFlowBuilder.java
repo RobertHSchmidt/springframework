@@ -68,8 +68,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
+ *            &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
+ *            &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -176,6 +176,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	private static final String ENTRY_ACTION_ELEMENT = "entry-action";
 
 	private static final String EXIT_ACTION_ELEMENT = "exit-action";
+
+	private static final String EXCEPTION_HANDLER_ELEMENT = "exception-handler";
+
+	private static final String CLASS_ATTRIBUTE = "class";
+
+	private static final String STATE_ATTRIBUTE = "state";
 
 	/**
 	 * The resource location of the XML flow definition
@@ -312,6 +318,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		parseStateDefinitions();
+		parseExceptionHandlers();
 	}
 
 	public void dispose() {
@@ -358,8 +365,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * method will set the "flow" property.
 	 */
 	protected void parseFlowDefinition() {
-		Element element = document.getDocumentElement();
-		setFlow(getFlowCreator().createFlow(element.getAttribute(ID_ATTRIBUTE), parseProperties(element)));
+		Element root = document.getDocumentElement();
+		setFlow(getFlowCreator().createFlow(root.getAttribute(ID_ATTRIBUTE), parseProperties(root)));
 	}
 
 	/**
@@ -702,4 +709,36 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			throw new FlowBuilderException(this, "Name or value is required in a mapping definition: " + element);
 		}
 	}
+
+	/**
+	 * Parse the list of exception handlers present in the xml document and add
+	 * them to the flow definition being built.
+	 */
+	protected void parseExceptionHandlers() {
+		Element root = document.getDocumentElement();
+		NodeList nodeList = root.getElementsByTagName(EXCEPTION_HANDLER_ELEMENT);
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node node = nodeList.item(i);
+			StateMapperFlowExceptionHandler defaultHandler = null;
+			if (node instanceof Element) {
+				Element element = (Element)node;
+				if (element.hasAttribute(BEAN_ATTRIBUTE)) {
+					getFlowArtifactLocator().getExceptionHandler(element.getAttribute(BEAN_ATTRIBUTE));
+				}
+				else {
+					if (defaultHandler == null) {
+						defaultHandler = new StateMapperFlowExceptionHandler();
+					}
+					Class exceptionClass = (Class)fromStringTo(Class.class).execute(
+							element.getAttribute(CLASS_ATTRIBUTE));
+					State state = getFlow().getState(element.getAttribute(STATE_ATTRIBUTE));
+					defaultHandler.add(new ExceptionStateMapping(exceptionClass, state));
+				}
+			}
+			if (defaultHandler != null) {
+				getFlow().addExceptionHandler(defaultHandler);
+			}
+		}
+	}
+
 }
