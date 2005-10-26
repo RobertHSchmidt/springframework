@@ -13,7 +13,7 @@
 <body>
 
 <div id="logo">
-	<img src="images/spring-logo.jpg" alt="Logo" border="0"> 
+	<img src="images/spring-logo.jpg" height="73" alt="Logo" border="0"> 
 </div>
 
 <div id="navigation">
