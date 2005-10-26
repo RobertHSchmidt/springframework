@@ -20,8 +20,19 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.config.FlowBuilder;
 
 /**
- * A FlowAssembler that is also a Spring FactoryBean, for easy deployment within
+ * A FlowAssembler that is also a Spring FactoryBean, for convenient deployment within
  * a Spring BeanFactory.
+ * 
+ * Usage example:
+ * 
+ * <pre>
+ *  &lt;bean id=&quot;myFlow&quot; class=&quot;org.springframework.webflow.config.registry.FlowFactoryBean&quot;&gt;
+ *      &lt;constructor-arg&gt;
+ *          &lt;bean class=&quot;example.MyFlowBuilder&quot;/&gt;
+ *      &lt;/constructor-arg&gt;
+ *  &lt;/bean&gt;
+ * </pre>
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */

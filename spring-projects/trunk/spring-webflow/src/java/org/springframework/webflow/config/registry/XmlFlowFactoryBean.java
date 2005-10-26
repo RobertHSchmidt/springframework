@@ -23,7 +23,17 @@ import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
 import org.springframework.webflow.config.XmlFlowBuilder;
 
 /**
- * A flow factory bean that assembles a Flow from a XML resource location.
+ * A flow factory bean that assembles a Flow from a XML resource location, for
+ * convenient use with a Spring bean factory.
+ * 
+ * Usage example:
+ * 
+ * <pre>
+ * &lt;bean id=&quot;myFlow&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowFactoryBean&quot;&gt;
+ *     &lt;constructor-arg value=&quot;classpath:example/myflow.xml&quot;/&gt;
+ * &lt;/bean&gt;
+ * </pre>
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
