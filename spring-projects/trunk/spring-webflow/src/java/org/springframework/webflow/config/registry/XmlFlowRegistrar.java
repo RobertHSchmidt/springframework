@@ -2,9 +2,6 @@ package org.springframework.webflow.config.registry;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -12,26 +9,28 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.config.FlowArtifactLocator;
 import org.springframework.webflow.config.FlowBuilderException;
-import org.springframework.webflow.config.JarFileResource;
 import org.springframework.webflow.config.XmlFlowBuilder;
 
 /**
- * A flow registrar that populates a flow registry from flow definitions defined within 
- * XML resources.  Typically used in conjunction with a {@link XmlFlowRegistryFactoryBean} but 
- * may also be used standalone in programmatic fashion.
+ * A flow registrar that populates a flow registry from flow definitions defined
+ * within XML resources. Typically used in conjunction with a
+ * {@link XmlFlowRegistryFactoryBean} but may also be used standalone in
+ * programmatic fashion.
  * <p>
  * Programmatic usage example:
  * </p>
- * <pre> 
- *     FlowRegistryImpl registry = new FlowRegistryImpl();
- *     File parent = new File("src/webapp/WEB-INF");
- *	   Resource[] locations = new Resource[] {
- *	       new FileSystemResource(new File(parent, "flow1.xml")),
- *		   new FileSystemResource(new File(parent, "flow2.xml"))
- *	   };
- *	   XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowArtifactLocator, locations);
- *	   registrar.registerFlowDefinitions(registry);
+ * 
+ * <pre>
+ * FlowRegistryImpl registry = new FlowRegistryImpl();
+ * File parent = new File(&quot;src/webapp/WEB-INF&quot;);
+ * Resource[] locations = new Resource[] {
+ *     new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
+ *     new FileSystemResource(new File(parent, &quot;flow2.xml&quot;))
+ * };
+ * XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowArtifactLocator, locations);
+ * registrar.registerFlowDefinitions(registry);
  * </pre>
+ * 
  * @author Keith Donald
  */
 public class XmlFlowRegistrar implements FlowRegistrar {
@@ -40,11 +39,6 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	 * XML flow definition resources to load.
 	 */
 	private Resource[] definitionLocations;
-
-	/**
-	 * JAR files containing XML flow definition resources to load.
-	 */
-	private Resource[] definitionJarLocations;
 
 	/**
 	 * Directory locations containing XML flow definition resources to load.
@@ -65,8 +59,8 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 
 	/**
 	 * Creates an XML flow registrar.
-	 * @param artifactLocator the flow artifact locator that will find artifacts needed by Flows 
-	 * registered by this registrar
+	 * @param artifactLocator the flow artifact locator that will find artifacts
+	 * needed by Flows registered by this registrar
 	 */
 	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator) {
 		setFlowArtifactLocator(artifactLocator);
@@ -74,30 +68,21 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 
 	/**
 	 * Creates an XML flow registrar.
-	 * @param artifactLocator the flow artifact locator that will find artifacts needed by Flows 
-	 * registered by this registrar
+	 * @param artifactLocator the flow artifact locator that will find artifacts
+	 * needed by Flows registered by this registrar
 	 * @param definitionLocations the XML flow definition resource locations
 	 */
 	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator, Resource[] definitionLocations) {
 		setFlowArtifactLocator(artifactLocator);
 		setDefinitionLocations(definitionLocations);
 	}
-	
+
 	/**
 	 * Sets the locations (file paths) pointing to XML-based flow definitions.
 	 * @param locations the resource locations
 	 */
 	public void setDefinitionLocations(Resource[] locations) {
 		this.definitionLocations = locations;
-	}
-
-	/**
-	 * Sets the locations pointing to JAR files containing XML-based flow
-	 * definitions.
-	 * @param locations the resource locations
-	 */
-	public void setDefinitionJarLocations(Resource[] locations) {
-		this.definitionJarLocations = locations;
 	}
 
 	/**
@@ -121,7 +106,6 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 
 	public void registerFlowDefinitions(FlowRegistry registry) {
 		registerDefinitions(registry);
-		registerJarDefinitions(registry);
 		registerDirectoryDefinitions(registry);
 	}
 
@@ -132,40 +116,6 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 		if (definitionLocations != null) {
 			for (int i = 0; i < definitionLocations.length; i++) {
 				registerFlow(definitionLocations[i], registry);
-			}
-		}
-	}
-
-	/**
-	 * Register the Flow definitions at the configured jar file locations.
-	 */
-	protected void registerJarDefinitions(FlowRegistry registry) {
-		JarFile jar = null;
-		try {
-			if (definitionJarLocations != null) {
-				for (int i = 0; i < definitionJarLocations.length; i++) {
-					jar = new JarFile(definitionJarLocations[i].getFile());
-					Enumeration entries = jar.entries();
-					while (entries.hasMoreElements()) {
-						ZipEntry entry = (ZipEntry)entries.nextElement();
-						if (entry.getName().endsWith(".xml")) {
-							registerFlow(new JarFileResource(jar, entry), registry);
-						}
-					}
-				}
-			}
-		}
-		catch (IOException e) {
-			throw new FlowBuilderException("Unable to build Flows from jar definitions", e);
-		}
-		finally {
-			if (jar != null) {
-				try {
-					jar.close();
-				}
-				catch (IOException e) {
-
-				}
 			}
 		}
 	}
@@ -215,7 +165,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 
 	public String toString() {
 		return new ToStringCreator(this).append("definitionLocation", definitionLocations).append(
-				"definitionJarLocations", definitionJarLocations).append("definitionDirectoryLocations",
-				definitionDirectoryLocations).append("flowArtifactLocator", artifactLocator).toString();
+				"definitionDirectoryLocations", definitionDirectoryLocations).append("flowArtifactLocator",
+				artifactLocator).toString();
 	}
 }

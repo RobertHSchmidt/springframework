@@ -5,20 +5,20 @@ import org.springframework.core.io.Resource;
 
 /**
  * A factory bean that produces a populated flow registry using a XML flow
- * definition registrar. This is the simplest implementation to use when using
- * a Spring BeanFactory to deploy XML-based Flow definitions for execution.
+ * definition registrar. This is the simplest implementation to use when using a
+ * Spring BeanFactory to deploy XML-based Flow definitions for execution.
  * <p>
  * Usage example:
  * 
  * <pre>
- * &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *     &lt;property name=&quot;definitionLocations&quot;&gt;
- * 	       &lt;list&gt;
- * 		       &lt;value&gt;/WEB-INF/flow1.xml&lt;/value&gt;
- * 			   &lt;value&gt;/WEB-INF/flow2.xml&lt;/value&gt;
- * 		   &lt;/list&gt;
- *     &lt;/property&gt;
- * &lt;/bean&gt;
+ *  &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *      &lt;property name=&quot;definitionLocations&quot;&gt;
+ *  	       &lt;list&gt;
+ *  		       &lt;value&gt;/WEB-INF/flow1.xml&lt;/value&gt;
+ *  			   &lt;value&gt;/WEB-INF/flow2.xml&lt;/value&gt;
+ *  		   &lt;/list&gt;
+ *      &lt;/property&gt;
+ *  &lt;/bean&gt;
  * </pre>
  * 
  * @author Keith Donald
@@ -58,15 +58,6 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 */
 	public void setDefinitionLocations(Resource[] locations) {
 		getXmlFlowRegistrar().setDefinitionLocations(locations);
-	}
-
-	/**
-	 * Sets the locations pointing to JAR files containing XML-based flow
-	 * definitions.
-	 * @param locations the resource locations
-	 */
-	public void setDefinitionJarLocations(Resource[] locations) {
-		getXmlFlowRegistrar().setDefinitionJarLocations(locations);
 	}
 
 	/**
