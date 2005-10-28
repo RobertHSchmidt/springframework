@@ -2,7 +2,7 @@
 <!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
-<webflow id="sellItem" start-state="enterPriceAndItemCount">
+<webflow id="sellitem" start-state="enterPriceAndItemCount">
 	<property name="transactional" value="true" type="boolean"/>
 	
 	<view-state id="enterPriceAndItemCount" view="priceAndItemCountForm">

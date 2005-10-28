@@ -3,7 +3,7 @@
 <!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
-<webflow id="searchFlow" start-state="displayCriteria">
+<webflow id="search" start-state="displayCriteria">
 
 	<view-state id="displayCriteria" view="searchCriteria">
 		<entry-action>
@@ -15,7 +15,7 @@
 	</view-state>
 
 	<action-state id="executeSearch">
-		<action bean="phonebook" method="search(flowScope.searchCriteria)"/>
+		<action bean="phonebook" method="search(${flowScope.searchCriteria})"/>
 		<transition on="success" to="displayResults"/>
 	</action-state>	
 	
@@ -24,7 +24,7 @@
 		<transition on="select" to="browseDetails"/>
 	</view-state>
 
-	<subflow-state id="browseDetails" flow="detailFlow">
+	<subflow-state id="browseDetails" flow="detail">
 		<attribute-mapper>
 			<input value="${sourceEvent.parameters.id}" as="id" from="string" to="long"/>
 		</attribute-mapper>

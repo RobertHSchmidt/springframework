@@ -10,7 +10,7 @@
 	</span>
 	</p>
 	<p>
-		<A href="pos.htm?_flowId=sellItem">Sell a new item</A>
+		<A href="pos.htm?_flowId=sellitem">Sell a new item</A>
 	</p>
 </div>
 

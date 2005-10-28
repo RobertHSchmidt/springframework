@@ -7,11 +7,11 @@
 		
 		<DIV align="left">
 			<P>
-				<A href="pos.htm?_flowId=sellItem">Sell Item</A>
+				<A href="pos.htm?_flowId=sellitem">Sell Item</A>
 			</P>
 			
 			<P>
-				This Spring web flow sample application implements the example application
+				This Spring Web Flow sample application implements the example application
 				discussed in the article
 				<A href="http://www-128.ibm.com/developerworks/java/library/j-contin.html">
 				Use continuations to develop complex Web applications</A>. It illustrates

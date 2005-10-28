@@ -44,7 +44,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 	private static final String BROWSE_DETAILS = "browseDetails";
 
 	protected String flowId() {
-		return "searchFlow";
+		return "search";
 	}
 
 	public void buildStates() throws FlowBuilderException {
@@ -54,7 +54,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 		displayCriteria.setEntryAction(method("setupForm", action("searchFormAction")));
 
 		// execute query
-		addActionState(EXECUTE_SEARCH, method("search(searchCriteria)", action("phoneBook")), new Transition[] {
+		addActionState(EXECUTE_SEARCH, method("search(${searchCriteria})", action("phoneBook")), new Transition[] {
 				on(error(), DISPLAY_CRITERIA), on(success(), DISPLAY_RESULTS) });
 
 		// view results
@@ -64,7 +64,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 		// view details for selected user id
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("sourceEvent.parameters.id", "id", fromStringTo(Long.class)));
-		addSubflowState(BROWSE_DETAILS, flow("detailFlow"), idMapper, new Transition[] { on(finish(), EXECUTE_SEARCH),
+		addSubflowState(BROWSE_DETAILS, flow("detail"), idMapper, new Transition[] { on(finish(), EXECUTE_SEARCH),
 				on(error(), "error") });
 
 		// end - an error occured

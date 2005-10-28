@@ -3,10 +3,10 @@
 <!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
-<webflow id="detailFlow" start-state="getDetails">
+<webflow id="detail" start-state="getDetails">
 
 	<action-state id="getDetails">
-		<action bean="phonebook" method="getPerson(flowScope.id)"/>
+		<action bean="phonebook" method="getPerson(${flowScope.id})"/>
 		<transition on="success" to="displayDetails"/>
 		<transition on="error" to="error"/>
 	</action-state>
@@ -16,7 +16,7 @@
 		<transition on="select" to="browseColleagueDetails"/>
 	</view-state>
 
-	<subflow-state id="browseColleagueDetails" flow="detailFlow">
+	<subflow-state id="browseColleagueDetails" flow="detail">
 		<attribute-mapper>
 			<input value="${sourceEvent.parameters.id}" as="id" from="string" to="long"/>
 		</attribute-mapper>

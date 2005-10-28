@@ -3,20 +3,17 @@
 
 <beans>
 
-	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
-		<constructor-arg ref="flowLocator"/>
-	</bean>
-
+	<!-- Creates the registry of flow definitions for this application. -->
 	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
 		<property name="definitionLocations">
 			<list>
-				<value>classpath:org/springframework/webflow/samples/phonebook/web/search-flow.xml</value>
-				<value>classpath:org/springframework/webflow/samples/phonebook/web/detail-flow.xml</value>
+				<value>classpath:org/springframework/webflow/samples/phonebook/web/search.xml</value>
+				<value>classpath:org/springframework/webflow/samples/phonebook/web/detail.xml</value>
 			</list>
 		</property>
 	</bean>
 		
-	<!-- comment in to test java builders 
+	<!-- comment in to test Java-based flow builders 
 	<bean id="flowLocator" class="org.springframework.webflow.samples.phonebook.web.FlowRegistryFactoryBean"/>
 	 -->
 </beans>

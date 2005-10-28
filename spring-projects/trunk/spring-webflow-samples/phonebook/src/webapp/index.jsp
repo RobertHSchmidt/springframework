@@ -9,7 +9,7 @@
 		<HR>
 		<DIV align="left">
 			<P>
-				<A href="phonebook.htm?_flowId=searchFlow">Phone Book</A>
+				<A href="phonebook.htm?_flowId=search">Phone Book</A>
 			</P>
 			<P>
 				This sample application illustrates core features of the web flow system.

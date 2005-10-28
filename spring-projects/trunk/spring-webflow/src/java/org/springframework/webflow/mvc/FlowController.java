@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.servlet.ServletEvent;
 
@@ -45,30 +46,25 @@ import org.springframework.webflow.execution.servlet.ServletEvent;
  * Usage example:
  * 
  * <pre>
- *    &lt;!--
- *        A general purpose controller for the entire application exposed at the /app.htm URL.
- *        The id of a flow to launch should be passed in using the &quot;_flowId&quot; request parameter: e.g. /app.htm?_flowId=flow1
- *    --&gt;
- *    &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.mvc.FlowController&quot;&gt;
- *        &lt;constructor-arg ref=&quot;flowExecutionManager&quot;/&gt;
- *    &lt;/bean&gt;
- *   
- *    &lt;!--
- *        Launches new flow executions and resumes existing executions.
- *    --&gt;	
- *    &lt;bean id=&quot;flowExecutionManager&quot; class=&quot;org.springframework.webflow.execution.FlowExecutionManager&quot;&gt;
- *        &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *    &lt;/bean&gt;
- *   
- *    &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *    &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *        &lt;property name=&quot;definitionLocations&quot;&gt;
- *            &lt;list&gt;
- *                &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *                &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *            &lt;/list&gt;
- *        &lt;/property&gt;
- *    &lt;/bean&gt;
+ * &lt;!--
+ *   Exposes web flows for execution at a single request URL.
+ *	 The id of a flow to launch should be passed in by clients using
+ *	 the "_flowId" request parameter:
+ *	     e.g. /module.htm?_flowId=flow1
+ * --&gt;
+ * &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.mvc.FlowController&quot;&gt;
+ *     &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ * &lt;/bean&gt;
+ *              
+ * &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ * &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *     &lt;property name=&quot;definitionLocations&quot;&gt;
+ *         &lt;list&gt;
+ *             &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *             &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *         &lt;/list&gt;
+ *     &lt;/property&gt;
+ * &lt;/bean&gt;
  * </pre>
  * 
  * @author Erwin Vervaet
@@ -82,12 +78,20 @@ public class FlowController extends AbstractController {
 	private FlowExecutionManager flowExecutionManager;
 
 	/**
-	 * Create a new FlowController.
-	 * <p>
-	 * The "cacheSeconds" property is by default set to 0 (so no caching for web
-	 * flow controllers).
+	 * Creates a new FlowController that initially relies on a default
+	 * {@link org.springframework.webflow.execution.FlowExecutionManager} implementation
+	 * that uses the provided flow locator to access flow definitions at runtime.
+	 */
+	public FlowController(FlowLocator flowLocator) {
+		initDefaults();
+		setFlowExecutionManager(new FlowExecutionManager(flowLocator));
+	}
+
+	/**
+	 * Create a new FlowController that delegates to the configured execution
+	 * manager for managing the execution of web flows.
 	 * @param flowExecutionManager the manager to launch and resume flow
-	 * executions
+	 * executions brokered by this web controller.
 	 */
 	public FlowController(FlowExecutionManager flowExecutionManager) {
 		initDefaults();
@@ -95,7 +99,9 @@ public class FlowController extends AbstractController {
 	}
 
 	/**
-	 * Set default properties for this controller.
+	 * Set default properties for this controller. * The "cacheSeconds" property
+	 * is by default set to 0 (so by default there is no HTTP header caching for
+	 * web flow controllers).
 	 */
 	protected void initDefaults() {
 		// no caching

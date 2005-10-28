@@ -2,13 +2,18 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-	<!-- A generic front controller for the entire app.  A view that kicks off a new flow execution
-	     may parameterize this controller with a _flowId parameter.  A view participating in an
-	     existing flow execution may simply pass it the appropriate _flowExecutionId and _eventId. -->
+
+	<!-- 
+	  Exposes web flows for execution at a single request URL.
+	  The id of a flow to launch should be passed in by clients using
+	  the "_flowId" request parameter:
+	      e.g. /phonebook.htm?_flowId=searchFlow
+	-->
 	<bean name="/phonebook.htm" class="org.springframework.webflow.mvc.FlowController">
-		<constructor-arg ref="flowExecutionManager"/>
+		<constructor-arg ref="flowLocator"/>
 	</bean>
 
+	<!-- Resolves flow view names to .jsp templates -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>

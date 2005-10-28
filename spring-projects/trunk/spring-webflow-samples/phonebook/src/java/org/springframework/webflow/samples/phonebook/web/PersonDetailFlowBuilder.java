@@ -39,7 +39,7 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 	private static final String BROWSE_COLLEAGUE_DETAILS = "browseColleagueDetails";
 
 	protected String flowId() {
-		return "detailFlow";
+		return "detail";
 	}
 
 	public void buildStates() throws FlowBuilderException {
@@ -53,7 +53,7 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 		// view details for selected collegue
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("sourceEvent.parameters.id", "id", fromStringTo(Long.class)));
-		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detailFlow"), idMapper, new Transition[] {
+		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detail"), idMapper, new Transition[] {
 				on(finish(), GET_PERSON), on(error(), "error") });
 
 		// end
