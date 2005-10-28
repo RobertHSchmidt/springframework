@@ -12,7 +12,7 @@
 		
 		<DIV align="left">
 			<P>
-				<A href="fileupload.htm">File Upload</A>
+				<A href="admin.htm?_flowId=fileupload">File Upload</A>
 			</P>
 			
 			<P>

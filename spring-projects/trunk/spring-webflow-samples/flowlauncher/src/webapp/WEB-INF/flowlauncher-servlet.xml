@@ -3,11 +3,21 @@
 
 <beans>
 
-	<bean name="/flow.htm" class="org.springframework.webflow.mvc.FlowController">
+	<!-- 
+	  Exposes web flows for execution at a single request URL.
+	  The id of a flow to launch should be passed in by clients using
+	  the "_flowId" request parameter:
+	      e.g. /executor.htm?_flowId=sampleA
+	-->
+	<bean name="/executor.htm" class="org.springframework.webflow.mvc.FlowController">
 		<constructor-arg ref="flowExecutionManager"/>
 		<property name="cacheSeconds" value="5"/>
 	</bean>
 
+	<!--
+		Launches new flow executions and resumes existing executions.
+		This manager attaches a custom flow execution listener.
+	-->	
 	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
 		<constructor-arg ref="flowLocator"/>
 		<property name="listener">
@@ -15,15 +25,17 @@
 		</property>
 	</bean>
 	
+	<!-- Creates the registry of flow definitions for this application -->
 	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
 		<property name="definitionLocations">
 			<list>
-				<value>/WEB-INF/sampleA-flow.xml</value>
-				<value>/WEB-INF/sampleB-flow.xml</value>
+				<value>/WEB-INF/sampleA.xml</value>
+				<value>/WEB-INF/sampleB.xml</value>
 			</list>
 		</property>
 	</bean>
 
+	<!-- Resolves flow view names to .jsp templates -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>

@@ -12,7 +12,7 @@
 	<tr>
 		<td>an anchor:</td>
 		<td>
-			<a href="<c:url value="/flow.htm?_flowExecutionId=${flowExecutionId}&_eventId=end-A-and-launch-B&input=someInputForSampleB"/>">
+			<a href="<c:url value="/launcher.htm?_flowExecutionId=${flowExecutionId}&_eventId=end-A-and-launch-B&input=someInputForSampleB"/>">
 				End Sample A and Launch Sample B
 			</a>
 		</td>
@@ -21,7 +21,7 @@
 		<td valign="top">or a form:</td>
 		<td>
 			<table>
-			<form action="flow.htm" method="post">
+			<form action="launcher.htm" method="post">
 			<tr>
 				<td>
 					<input type="text" name="input" value="someInputForSampleB">
@@ -47,7 +47,7 @@
 	<tr>
 		<td>an anchor:</td>
 		<td>
-			<a href="<c:url value="/flow.htm?_flowExecutionId=${flowExecutionId}&_eventId=launch-B-as-subflow"/>">
+			<a href="<c:url value="/executor.htm?_flowExecutionId=${flowExecutionId}&_eventId=launch-B-as-subflow"/>">
 				Launch Sample B as a Sub Flow
 			</a>
 		</td>
@@ -56,7 +56,7 @@
 		<td valign="top">or a form:</td>
 		<td>
 			<table>
-			<form action="flow.htm" method="post">
+			<form action="executor.htm" method="post">
 			<tr>
 				<td class="buttonBar">
 					<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
@@ -75,7 +75,7 @@
 	<tr>
 		<td>an anchor:</td>
 		<td>
-			<a href="<c:url value="/flow.htm?_flowId=sampleB&input=someInputForSampleB"/>">
+			<a href="<c:url value="/executor.htm?_flowId=sampleB&input=someInputForSampleB"/>">
 				Launch Sample B
 			</a>
 		</td>
@@ -84,7 +84,7 @@
 		<td valign="top">or a form:</td>
 		<td>
 			<table>
-			<form action="flow.htm" method="post">
+			<form action="executor.htm" method="post">
 			<tr>
 				<td>
 					<input type="text" name="input" value="someInputForSampleB">

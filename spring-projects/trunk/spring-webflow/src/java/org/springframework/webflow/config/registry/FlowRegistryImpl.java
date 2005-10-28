@@ -40,7 +40,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 	public void refresh() {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
-			// @TODO workaround for JMX
+			// workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 			LinkedList needsReindexing = new LinkedList();
 			Iterator it = flowDefinitions.entrySet().iterator();
@@ -80,15 +80,21 @@ public class FlowRegistryImpl implements FlowRegistry {
 		}
 	}
 
-	public void refresh(String id) {
+	public void refresh(String id) throws IllegalArgumentException {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
-			// @TODO workaround for JMX
+			// workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-			FlowDefinitionHolder holder = getFlowDefinitionHolder(id);
-			holder.refresh();
-			if (!holder.getId().equals(id)) {
-				reindex(holder, id);
+			try {
+				FlowDefinitionHolder holder = getFlowDefinitionHolder(id);
+				holder.refresh();
+				if (!holder.getId().equals(id)) {
+					reindex(holder, id);
+				}
+			} catch (NoSuchFlowDefinitionException e) {
+				// rethrow without context for generic JMX clients
+				throw new IllegalArgumentException("Unable to complete refresh operation: " + 
+						"no flow definition with id '" + id + "' is stored in this registry");
 			}
 		}
 		finally {

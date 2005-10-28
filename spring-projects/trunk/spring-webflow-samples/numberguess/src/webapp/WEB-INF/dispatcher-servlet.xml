@@ -3,14 +3,17 @@
 
 <beans>
 
+	<!-- 
+	  Exposes web flows for execution at a single request URL.
+	  The id of a flow to launch should be passed in by clients using
+	  the "_flowId" request parameter:
+	      e.g. /play.htm?_flowId=mastermind
+	-->
 	<bean name="/play.htm" class="org.springframework.webflow.mvc.FlowController">
-		<constructor-arg ref="flowExecutionManager"/>
-	</bean>
-
-	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
 		<constructor-arg ref="flowLocator"/>
 	</bean>
-	
+
+	<!-- Creates the registry of flow definitions for this application -->
 	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
 		<property name="definitionLocations">
 			<list>
@@ -19,7 +22,8 @@
 			</list>
 		</property>
 	</bean>
-	
+
+	<!-- Resolves flow view names to .jsp templates -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>

@@ -12,7 +12,7 @@
 		
 		<DIV align="left">
 			<P>
-				<A href="itemlist.htm">Item List</A>
+				<A href="app.htm?_flowId=itemlist">Item List</A>
 			</P>
 			
 			<P>

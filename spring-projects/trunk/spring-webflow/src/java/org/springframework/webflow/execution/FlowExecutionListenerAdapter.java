@@ -60,10 +60,16 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void stateEntered(RequestContext context, State previousState, State newState) {
 	}
 
+	public void resuming(RequestContext context) {
+	}
+
 	public void resumed(RequestContext context) {
 	}
 
 	public void paused(RequestContext context, ViewDescriptor selectedView) {
+	}
+
+	public void sessionEnding(RequestContext context) {
 	}
 
 	public void sessionEnded(RequestContext context, FlowSession endedSession) {

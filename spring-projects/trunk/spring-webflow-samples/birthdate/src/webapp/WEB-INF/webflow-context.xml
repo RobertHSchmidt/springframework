@@ -3,10 +3,12 @@
 
 <beans>
 
+	<!-- Launches new flow executions and resumes existing flow executions. -->	
 	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
 		<constructor-arg ref="flowLocator"/>
 	</bean>
-	
+
+	<!-- Creates the registry of flow definitions for this application -->
 	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
 		<property name="definitionLocations" value="/WEB-INF/birthdate-flow.xml"/>
 	</bean>

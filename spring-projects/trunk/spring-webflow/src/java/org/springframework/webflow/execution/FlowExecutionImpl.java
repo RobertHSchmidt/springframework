@@ -367,7 +367,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
-				return handleStateException(e, context);
+				return pause(context, handleStateException(e, context));
 			}
 		}
 		finally {
@@ -380,6 +380,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * @param context the state request context
 	 */
 	protected void resume(StateContext context) {
+		getListeners().fireResuming(context);
 		getActiveFlow().resume(context);
 		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 		getListeners().fireResumed(context);

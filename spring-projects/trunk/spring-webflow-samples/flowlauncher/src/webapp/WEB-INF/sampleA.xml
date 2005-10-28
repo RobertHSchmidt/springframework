@@ -14,7 +14,8 @@
 		<transition on="end" to="aPage"/>
 	</subflow-state>
 
-	<end-state id="endLaunchB" view="redirect:/flow.htm?_flowId=sampleB&amp;input=${flowScope.input}"/>
+	<end-state id="endLaunchB" view="redirect:/executor.htm?_flowId=sampleB&input=${flowScope.input}"/>
 
 	<bean id="mapper" class="org.springframework.webflow.samples.flowlauncher.SampleFlowAttributeMapper"/>
+	
 </webflow>

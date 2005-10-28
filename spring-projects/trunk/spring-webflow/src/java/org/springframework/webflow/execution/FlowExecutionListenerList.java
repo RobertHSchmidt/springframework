@@ -259,6 +259,16 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow session was activated in the
 	 * flow execution.
 	 */
+	public void fireResuming(RequestContext context) {
+		for (Iterator it = iterator(); it.hasNext(); ) {
+			((FlowExecutionListener)it.next()).resuming(context);
+		}
+	}
+
+	/**
+	 * Notify all interested listeners that a flow session was activated in the
+	 * flow execution.
+	 */
 	public void fireResumed(RequestContext context) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).resumed(context);
@@ -272,6 +282,15 @@ public class FlowExecutionListenerList {
 	public void firePaused(RequestContext context, ViewDescriptor selectedView) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).paused(context, selectedView);
+		}
+	}
+
+	/**
+	 * Notify all interested listeners that the active flow execution session is ending.
+	 */
+	public void fireSessionEnding(RequestContext context) {
+		for (Iterator it = iterator(); it.hasNext(); ) {
+			((FlowExecutionListener)it.next()).sessionEnding(context);
 		}
 	}
 

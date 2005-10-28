@@ -13,7 +13,7 @@
 	<tr>
 		<td>an anchor:</td>
 		<td>
-			<a href="<c:url value="/flow.htm?_flowExecutionId=${flowExecutionId}&_eventId=end"/>">
+			<a href="<c:url value="/executor.htm?_flowExecutionId=${flowExecutionId}&_eventId=end"/>">
 				End Sample B
 			</a>
 		</td>
@@ -22,7 +22,7 @@
 		<td valign="top">or a form:</td>
 		<td>
 			<table>
-			<form action="flow.htm" method="post">
+			<form action="executor.htm" method="post">
 			<tr>
 				<td class="buttonBar">
 					<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
