@@ -50,7 +50,7 @@ public class FlowVariableResolverTests extends TestCase {
 		MockControl flowExControl = MockControl.createControl(FlowExecution.class);
 		Serializable flowExecutionId = "myId";
 		FlowExecution flowEx = (FlowExecution) flowExControl.getMock();
-		FlowExecutionHolder.setFlowExecution(flowExecutionId, flowEx);
+		FlowExecutionHolder.setFlowExecution(flowExecutionId, flowEx, null, false);
 		assertEquals(flowEx, resolver.resolveVariable(null, "flow"));
 		
 		FlowExecutionHolder.clearFlowExecution();

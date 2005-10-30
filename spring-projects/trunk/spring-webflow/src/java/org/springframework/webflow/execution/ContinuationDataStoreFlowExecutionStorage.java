@@ -25,9 +25,13 @@ import org.springframework.webflow.Event;
  * <p>
  * A downside of this storage strategy (and of server-side continuations in
  * general) is that there could be many copies of the flow execution stored in
- * the data store, increasing server memory requirements.
+ * the data store, increasing server memory requirements. On this basis it is
+ * possibly not suited for use with untrusted clients
  * 
  * @author Erwin Vervaet
+ * @author Colin Sampaleanu
+ * 
+ * @see org.springframework.webflow.execution.ClientContinuationFlowExecutionStorage
  */
 public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExecutionStorage {
 
@@ -83,6 +87,22 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 		id = createId();
 		setDataSourceAttribute(id, new FlowExecutionContinuation(flowExecution, isCompress()), sourceEvent);
 		return id;
+	}
+	
+	public boolean supportsIdPreGeneration() {
+		return true;
+	}
+
+	public Serializable generateId(Serializable oldId) throws UnsupportedOperationException, FlowExecutionStorageException {
+		// generate a new id for each continuation
+		return createId();
+	}
+
+	public void saveAtId(Serializable id, FlowExecution flowExecution, Event sourceEvent) throws UnsupportedOperationException, FlowExecutionStorageException {
+		// always update data store attribute, even if just overwriting
+		// an existing one to make sure the data store knows that this
+		// attribute has changed!
+		setDataSourceAttribute(id, new FlowExecutionContinuation(flowExecution, isCompress()), sourceEvent);
 	}
 
 	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException {

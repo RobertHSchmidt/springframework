@@ -454,7 +454,16 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 			flowExecution = loadFlowExecution(flowExecutionId, event);
 			selectedView = signalEventIn(flowExecution, event);
 		}
-		return afterEvent(event, flowExecutionId, flowExecution, selectedView);
+		if (flowExecution.isActive()) {
+			// save the flow execution for future use
+			flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, event);
+		}
+		else {
+			if (flowExecutionId != null) {
+				removeFlowExecution(flowExecutionId, flowExecution, event);
+			}
+		}
+		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 	}
 
 	/**
@@ -558,29 +567,22 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Cleanup (non-active view) or store the FlowExecution, and prepare the
-	 * ViewDescriptor for the client
-	 * 
-	 * @param event the event that occured
-	 * @param flowExecutionId the id of the manipulated flow execution
-	 * @param flowExecution the manipulated flow execution
-	 * @param selectedView A descriptor for the selected view
-	 * @return the prepared view descriptor of the model and view to render
+	 * Generates (or reuses) a flow execution id for subsequent saving of
+	 * flow state in the flow storage associaed with this flow execution manager.
+	 * @param id the unique id of the flow execution, or <code>null</code>
+	 *        if the flow execution does not yet have an id (e.g. was not
+	 *        previously saved)
+	 * @return the unique id that actually identifies the saved flow execution,
+	 *         this could be different from the id passed into the method
+	 * @throws UnsupportedOperationException when this storage does not support
+	 *         generation of storage ids as a separate step from saving of flows
+	 *         to the storage
 	 */
-	protected ViewDescriptor afterEvent(Event event, Serializable flowExecutionId, FlowExecution flowExecution,
-			ViewDescriptor selectedView) {
-		if (flowExecution.isActive()) {
-			// save the flow execution for future use
-			flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, event);
-		}
-		else {
-			if (flowExecutionId != null) {
-				removeFlowExecution(flowExecutionId, flowExecution, event);
-			}
-		}
-		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
-	}
-
+    protected Serializable generateFlowExecutionStorageId(Serializable oldId)
+    		throws UnsupportedOperationException {
+    	return storage.generateId(oldId);
+    }
+	
 	/**
 	 * Save the flow execution to storage.
 	 * @param flowExecutionId the previous storage id (if previously saved)
@@ -588,7 +590,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param event the source event
 	 * @return the new storage id (may be different)
 	 */
-	protected Serializable saveFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event event) {
+	public Serializable saveFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event event) {
 		flowExecutionId = getStorage().save(flowExecutionId, flowExecution, event);
 		flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 		if (logger.isDebugEnabled()) {

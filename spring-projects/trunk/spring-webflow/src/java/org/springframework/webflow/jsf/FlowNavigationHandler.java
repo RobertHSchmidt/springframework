@@ -20,8 +20,6 @@ import javax.faces.context.FacesContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.ViewDescriptor;
 
 /**
@@ -77,11 +75,11 @@ public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
 	 * <p>
-	 * The {@link FlowNavigationHandlerStrategy} instance to use, lazily
+	 * The {@link JsfFlowNavigationManager} instance to use, lazily
 	 * instantiated upon first use.
 	 * </p>
 	 */
-	private FlowNavigationHandlerStrategy flowNavigationHandlerStrategy;
+	private JsfFlowNavigationManager flowNavigationManager;
 
 	/**
 	 * <p>
@@ -126,21 +124,17 @@ public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
 	 * <p>
-	 * Return the {@link FlowNavigationHandlerStrategy} instance we will use to
-	 * make navigation handler decisions. The instance to use is discovered by
-	 * looking for a bean named by
-	 * <code>WebFlowNavigationHandler.STRATEGY</code>, or defaulting to an
-	 * instance of {@link FlowNavigationHandlerStrategy}.
+	 * Return the {@link JsfFlowNavigationManager} instance we will use to
+	 * make navigation handler decisions. The instance to use is returned by delegating to
+	 * {@link JsfFlowNavigationManager#getFlowExecutionManager(FacesContext)}, but
+	 * the value is cached, and subsequent requests return the same value.
 	 * </p>
 	 * 
 	 * @param context <code>FacesContext</code> for the current request
 	 */
-	private FlowNavigationHandlerStrategy getStrategy(FacesContext context) {
-		if (flowNavigationHandlerStrategy == null) {
-			WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
-			flowNavigationHandlerStrategy = (FlowNavigationHandlerStrategy)wac.getBean(
-					FlowNavigationHandlerStrategy.BEAN_NAME, FlowNavigationHandlerStrategy.class);
-		}
-		return flowNavigationHandlerStrategy;
+	private JsfFlowNavigationManager getStrategy(FacesContext context) {
+		if (flowNavigationManager == null)
+			flowNavigationManager = (JsfFlowNavigationManager.getFlowExecutionManager(context));
+		return flowNavigationManager;
 	}
 }

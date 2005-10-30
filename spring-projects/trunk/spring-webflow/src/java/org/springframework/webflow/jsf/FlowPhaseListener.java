@@ -48,11 +48,11 @@ public class FlowPhaseListener implements PhaseListener {
 
 	/**
 	 * <p>
-	 * The {@link FlowNavigationHandlerStrategy} instance to use, lazily
+	 * The {@link JsfFlowNavigationManager} instance to use, lazily
 	 * instantiated upon first use.
 	 * </p>
 	 */
-	private FlowNavigationHandlerStrategy flowNavigationHandlerStrategy;
+	private JsfFlowNavigationManager flowNavigationManager;
 
 	public void beforePhase(PhaseEvent event) {
 		logger.trace("JSF before phase: " + event.getPhaseId());
@@ -79,14 +79,10 @@ public class FlowPhaseListener implements PhaseListener {
 	public void afterPhase(PhaseEvent event) {
 		logger.trace("JSF after phase: " + event.getPhaseId());
 		FacesContext context = event.getFacesContext();
-		FlowNavigationHandlerStrategy strategy = getStrategy(context);
+		JsfFlowNavigationManager strategy = getStrategy(context);
 		if (event.getPhaseId() == PhaseId.RESTORE_VIEW) {
-			Event jsfEvent = strategy.createEvent(context, null, null, null);
-			Serializable id = strategy.getFlowExecutionId(jsfEvent);
-			if (id != null) {
-				FlowExecution flowExecution = strategy.loadFlowExecution(id, jsfEvent);
-				FlowExecutionHolder.setFlowExecution(id, flowExecution);
-			}
+			FlowExecutionHolder.clearFlowExecution();
+			strategy.restoreFlowExecution(context);
 		}
 		else if (event.getPhaseId() == PhaseId.APPLY_REQUEST_VALUES) {
 			logger.trace("JSF before phase: Apply request values");
@@ -102,6 +98,13 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 		else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
 			logger.trace("JSF before phase: Render response");
+			if (!FlowExecutionHolder.isFlowExecutionSaved()) {
+				Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
+				FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
+				JsfEvent jsfEvent = FlowExecutionHolder.getSourceEvent();
+				// we do not need to keep id returned by save, it has been pre-generated
+				flowNavigationManager.saveFlowExecution(flowExecutionId, flowExecution, jsfEvent);
+			}
 			FlowExecutionHolder.clearFlowExecution();
 		}
 	}
@@ -112,21 +115,17 @@ public class FlowPhaseListener implements PhaseListener {
 
 	/**
 	 * <p>
-	 * Return the {@link FlowNavigationHandlerStrategy} instance we will use to
-	 * make navigation handler decisions. The instance to use is discovered by
-	 * looking for a bean named by
-	 * <code>WebFlowNavigationHandler.STRATEGY</code>, or defaulting to an
-	 * instance of {@link FlowNavigationHandlerStrategy}.
+	 * Return the {@link JsfFlowNavigationManager} instance we will use to
+	 * make navigation handler decisions. The instanlce to use is returned by delegating to
+	 * {@link JsfFlowNavigationManager#getFlowExecutionManager(FacesContext)}, but
+	 * the value is cached, and subsequent requests return the same value.
 	 * </p>
 	 * 
 	 * @param context <code>FacesContext</code> for the current request
 	 */
-	private FlowNavigationHandlerStrategy getStrategy(FacesContext context) {
-		if (flowNavigationHandlerStrategy == null) {
-			WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
-			flowNavigationHandlerStrategy = (FlowNavigationHandlerStrategy)wac.getBean(
-					FlowNavigationHandlerStrategy.BEAN_NAME, FlowNavigationHandlerStrategy.class);
-		}
-		return flowNavigationHandlerStrategy;
+	private JsfFlowNavigationManager getStrategy(FacesContext context) {
+		if (flowNavigationManager == null)
+			flowNavigationManager = (JsfFlowNavigationManager.getFlowExecutionManager(context));
+		return flowNavigationManager;
 	}
 }

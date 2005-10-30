@@ -106,6 +106,24 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 		return id;
 	}
 
+	public boolean supportsIdPreGeneration() {
+		return true;
+	}
+
+	public Serializable generateId(Serializable oldId) throws UnsupportedOperationException, FlowExecutionStorageException {
+		if (oldId == null) {
+			oldId = createId();
+		}
+		return oldId;
+	}
+
+	public void saveAtId(Serializable id, FlowExecution flowExecution, Event sourceEvent) throws UnsupportedOperationException, FlowExecutionStorageException {
+		// always update data store attribute, even if just overwriting
+		// an existing one to make sure the data store knows that this
+		// attribute has changed!
+		setDataSourceAttribute(id, flowExecution, sourceEvent);
+	}
+	
 	public void remove(Serializable id, Event sourceEvent) throws FlowExecutionStorageException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removing flow execution with id '" + id + "' from data store");

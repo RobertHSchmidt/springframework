@@ -111,6 +111,11 @@ public class FlowPropertyResolver extends PropertyResolver {
 		String attributeName = (String)property;
 		Object value = execution.getActiveSession().getScope().getAttribute(attributeName);
 		if (value == null) {
+			// we can only add a new bean to flow scope if the flow execution has not already been saved
+			if (FlowExecutionHolder.isFlowExecutionSaved()) {
+				throw new EvaluationException("Flow property '" + property + "' can not be created on-demand in flow, as flow execution has already been saved (flow storage type probably precludes saving flow execution at a later stage");
+			}
+			
 			FacesContext fc = FacesContext.getCurrentInstance();
 			Assert.notNull(fc, "FacesContext must exist during property resolution stage");
 			WebApplicationContext wac = getWebApplicationContext(fc);

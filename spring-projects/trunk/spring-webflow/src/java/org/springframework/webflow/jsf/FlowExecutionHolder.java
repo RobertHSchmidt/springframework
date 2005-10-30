@@ -31,16 +31,14 @@ import org.springframework.webflow.execution.FlowExecution;
  */
 public abstract class FlowExecutionHolder {
 
-	private static ThreadLocal flowExecutionIdHolder = new InheritableThreadLocal();
-
-	private static ThreadLocal flowExecutionHolder = new InheritableThreadLocal();
-
+	private static ThreadLocal threadedContext = new InheritableThreadLocal();
+	
 	/**
 	 * Return the FlowExecution id associated with the current thread, if any.
 	 * @return the current FlowExecution id, or <code>null</code> if none
 	 */
 	public static Serializable getFlowExecutionId() {
-		return (Serializable)flowExecutionIdHolder.get();
+		return getContext().flowExecutionId;
 	}
 
 	/**
@@ -48,16 +46,27 @@ public abstract class FlowExecutionHolder {
 	 * @return the current FlowExecution, or <code>null</code> if none
 	 */
 	public static FlowExecution getFlowExecution() {
-		return (FlowExecution)flowExecutionHolder.get();
+		return getContext().flowExecution;
+	}
+	
+	public static JsfEvent getSourceEvent() {
+		return getContext().event;
 	}
 
+	/**
+	 * Return a boolean indicating whether or not the current flow execution has
+	 * already been saved 9and is thus unmodifiable)
+	 */
+	public static boolean isFlowExecutionSaved() {
+		return getContext().flowSaved;
+	}
+	
 	/**
 	 * clear the FlowExecutionListener, FlowExecution id, and FlowExecution
 	 * associated with the current thread
 	 */
 	public static void clearFlowExecution() {
-		flowExecutionHolder.set(null);
-		flowExecutionIdHolder.set(null);
+		threadedContext.set(new Context());
 	}
 
 	/**
@@ -66,13 +75,39 @@ public abstract class FlowExecutionHolder {
 	 * @param flowExecutionId the current FlowExecution id, or <code>null</code>
 	 * to reset the thread-bound context
 	 * @param flowExecution the current FlowExecution, or <code>null</code> to
+	 * @param sourceEvent the source event which triggered the current execution
+	 * @param saved boolean indicating whether the flow execution has already been
+	 * saved to storage or is still live
 	 * reset the thread-bound context
 	 */
-	public static void setFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution) {
+	public static void setFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution,
+			JsfEvent sourceEvent, boolean saved) {
 		if (flowExecutionId != null) {
 			Assert.notNull(flowExecution, "It is illegal to store flow execution id but not flow execution");
 		}
-		flowExecutionIdHolder.set(flowExecutionId);
-		flowExecutionHolder.set(flowExecution);
+		getContext().flowExecutionId = flowExecutionId;
+		getContext().flowExecution = flowExecution;
+		getContext().event = sourceEvent;
+		getContext().flowSaved = saved;
+	}
+	
+	public static void setFlowExecutionSaved(boolean state) {
+		getContext().flowSaved = state;
+	}
+	
+	private static Context getContext() {
+		Context context = (Context) threadedContext.get();
+		if (context == null) {
+			context = new Context();
+			threadedContext.set(context);
+		}
+		return context;	
+	}
+	
+	private static class Context {
+		public Serializable flowExecutionId;
+        public FlowExecution flowExecution;
+        public JsfEvent event;
+        public boolean flowSaved;;
 	}
 }
