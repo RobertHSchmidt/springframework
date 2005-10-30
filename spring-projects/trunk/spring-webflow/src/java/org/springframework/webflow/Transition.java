@@ -53,7 +53,7 @@ public class Transition extends AnnotatedObject {
 	/**
 	 * Logger, for use in subclasses.
 	 */
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final static Log logger = LogFactory.getLog(Transition.class);
 
 	/**
 	 * The source state that owns this transition.
