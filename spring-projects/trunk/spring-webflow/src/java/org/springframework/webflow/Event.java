@@ -70,7 +70,7 @@ public class Event extends EventObject implements AttributeSource {
 	 * @param source the source of the event
 	 */
 	public Event(Object source) {
-		super(source);
+		this(source, "event");
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class Event extends EventObject implements AttributeSource {
 	 */
 	protected void setRequiredId(String id) {
 		Assert.hasText(id, "The event id is required for this use -- please set to a non-blank string identifier");
-		this.id = id;
+		setId(id);
 	}
 
 	/**
