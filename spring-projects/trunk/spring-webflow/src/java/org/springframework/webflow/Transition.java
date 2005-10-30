@@ -73,7 +73,9 @@ public class Transition extends AnnotatedObject {
 	private TransitionCriteria executionCriteria = WildcardTransitionCriteria.INSTANCE;
 
 	/**
-	 * The state id for the target state.
+	 * The state id for the target state - used temporarily until the target
+	 * state is resolved after flow construction (and all possible states have
+	 * been added).
 	 */
 	private String targetStateId;
 
@@ -192,7 +194,8 @@ public class Transition extends AnnotatedObject {
 	public String getTargetStateId() {
 		if (targetState != null) {
 			return targetState.getId();
-		} else {
+		}
+		else {
 			return targetStateId;
 		}
 	}
@@ -235,7 +238,12 @@ public class Transition extends AnnotatedObject {
 		}
 		return targetState;
 	}
-	
+
+	/**
+	 * Resolve the target State using the configured targetStateId. Sets the
+	 * targetState instance variable. This method should be called at
+	 * configuration time after Flow building has completed if possible.
+	 */
 	protected void resolveTargetState() {
 		try {
 			targetState = getSourceState().getFlow().getState(getTargetStateId());
