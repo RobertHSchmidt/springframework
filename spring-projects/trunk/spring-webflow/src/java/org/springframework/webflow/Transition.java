@@ -245,18 +245,13 @@ public class Transition extends AnnotatedObject {
 	 * targetState instance variable. This method should be called at
 	 * configuration time after Flow building has completed if possible.
 	 */
-	protected void resolveTargetState() {
-		try {
-			targetState = getSourceState().getFlow().getState(getTargetStateId());
-			if (targetState.equals(sourceState)) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Loop detected: the source and target state of transition '" + this
-							+ "' are the same -- make sure this is not a bug!");
-				}
+	protected void resolveTargetState() throws NoSuchFlowStateException {
+		targetState = getSourceState().getFlow().getState(getTargetStateId());
+		if (targetState.equals(sourceState)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Loop detected: the source and target state of transition '" + this
+						+ "' are the same -- make sure this is not a bug!");
 			}
-		}
-		catch (NoSuchFlowStateException e) {
-			throw new CannotExecuteTransitionException(this, e);
 		}
 	}
 
