@@ -490,6 +490,22 @@ public class Flow extends AnnotatedObject {
 		return getBooleanProperty(TRANSACTIONAL_PROPERTY, false);
 	}
 
+	/**
+	 * Utility method that iterates over this Flow's list of state Transition objects 
+	 * and resolves their target states.  Designed to be called after Flow construction and 
+	 * all states have been added as a 'second pass' to allow for transition
+	 * target state resolution.
+	 */
+	public void resolveStateTransitionTargetStates() {
+		Iterator it = statesIterator();
+		while (it.hasNext()) {
+			State state = (State)it.next();
+			if (state.isTransitionable()) {
+				((TransitionableState)state).resolveTransitionTargetStates();
+			}
+		}
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append("id", id).append("startState", startState)
 				.append("states", this.states).append("exceptionHandlers", exceptionHandlers).toString();
