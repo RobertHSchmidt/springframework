@@ -183,10 +183,9 @@ public abstract class TransitionableState extends State {
 	 * @param event the event that occured
 	 * @param context the context associated with this request
 	 * @return the view descriptor
-	 * @throws NoMatchingTransitionException when no matching transition can be
-	 * found
-	 * @throws CannotExecuteTransitionException when a transition could not be
-	 * executed on receipt of the event
+	 * @throws StateException when no matching transition can be found, when a
+	 * transition could not be executed on receipt of the event, or when the
+	 * process of transition triggers an exception in the new state
 	 */
 	public ViewDescriptor onEvent(Event event, StateContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
