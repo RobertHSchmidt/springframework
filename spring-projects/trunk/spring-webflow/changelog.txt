@@ -16,6 +16,8 @@ Changes in version 1.0 RC1 (7.11.2005)
 * Added refreshable FlowRegistryImpl, for managing a reloadable registry of Flow definitions
   registered by an XmlFlowRegistrar or custom FlowRegistrar.  See XmlFlowRegistryFactoryBean
   as a convenient mechanism for populating a FlowRegistry using a Spring bean definition.
+* Added support for accessing session and application scope variables as properties of a source ExternalEvent.
+* Added resuming and sessionEnding FlowExecutionListener callbacks.
 * Added KeyGenerator strategy, providing a plugin point for custom FlowExecution key generation strategies.
 * Added "CompositeEvent" support for composite actions that may generate multiple action result events.
 * Added ExternalEvent "sessionMap" and "applicationMap" property for accessing session and application scoped 
