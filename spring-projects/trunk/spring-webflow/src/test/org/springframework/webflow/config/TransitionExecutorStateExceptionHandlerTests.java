@@ -11,7 +11,7 @@ import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.execution.FlowExecutionImpl;
 
-public class StateMapperExceptionHandlerTests extends TestCase {
+public class TransitionExecutorStateExceptionHandlerTests extends TestCase {
 	public void testExceptionHandlingSuccess() {
 		Flow flow = new Flow("myFlow");
 		State state1 = new State(flow, "exception") {
@@ -21,7 +21,7 @@ public class StateMapperExceptionHandlerTests extends TestCase {
 		};
 		State state2 = new EndState(flow, "end", new SimpleViewDescriptorCreator("view"));
 
-		StateMapperFlowExceptionHandler handler = new StateMapperFlowExceptionHandler();
+		TransitionExecutorStateExceptionHandler handler = new TransitionExecutorStateExceptionHandler();
 		handler.add(new ExceptionStateMapping(MyCustomException.class, state2));
 		StateException e = new StateException(state2, "Oops", new MyCustomException());
 		assertTrue("Doesn't handle exception", handler.handles(e));

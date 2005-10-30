@@ -7,32 +7,34 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.StateContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.StateExceptionHandler;
+import org.springframework.webflow.Transition;
+import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewDescriptor;
 
 /**
- * A flow exception handler that maps the occurence of a specific type of
+ * A flow state exception handler that maps the occurence of a specific type of
  * exception to a transition to a new {@link org.springframework.webflow.State}
  * 
  * @author Keith Donald
  */
-public class StateMapperFlowExceptionHandler implements StateExceptionHandler {
+public class TransitionExecutorStateExceptionHandler implements StateExceptionHandler {
 
 	/**
-	 * The exception state map.
+	 * The exception->targetState map.
 	 */
 	private Map exceptionStateMap = new HashMap();
 
 	/**
 	 * Creates a state mapping exception handler with initially no mappings.
 	 */
-	public void StateMapperExceptionHandler() {
+	public TransitionExecutorStateExceptionHandler() {
 
 	}
 
 	/**
 	 * @param mapping
 	 */
-	public void StateMapperExceptionHandler(ExceptionStateMapping mapping) {
+	public TransitionExecutorStateExceptionHandler(ExceptionStateMapping mapping) {
 		add(mapping);
 	}
 
@@ -40,7 +42,7 @@ public class StateMapperFlowExceptionHandler implements StateExceptionHandler {
 	 * Creates a new state map with the configured mappings.
 	 * @param mappings
 	 */
-	public void StateMapperExceptionHandler(ExceptionStateMapping[] mappings) {
+	public TransitionExecutorStateExceptionHandler(ExceptionStateMapping[] mappings) {
 		addAll(mappings);
 	}
 
@@ -49,7 +51,7 @@ public class StateMapperFlowExceptionHandler implements StateExceptionHandler {
 	 * @param mapping
 	 */
 	public void add(ExceptionStateMapping mapping) {
-		exceptionStateMap.put(mapping.getExceptionClass(), mapping.getState());
+		exceptionStateMap.put(mapping.getExceptionClass(), mapping.getTargetState());
 	}
 
 	/**
@@ -78,7 +80,7 @@ public class StateMapperFlowExceptionHandler implements StateExceptionHandler {
 		}
 	}
 
-	private State getState(StateException e) {
+	private State getTargetState(StateException e) {
 		if (exceptionStateMap.containsKey(e.getClass())) {
 			return (State)exceptionStateMap.get(e.getClass());
 		}
@@ -95,7 +97,11 @@ public class StateMapperFlowExceptionHandler implements StateExceptionHandler {
 	}
 
 	public ViewDescriptor handle(StateException e, StateContext context) {
-		State state = getState(e);
-		return state.enter(context);
+		State sourceState = context.getFlowExecutionContext().getCurrentState();
+		if (!sourceState.isTransitionable()) {
+			throw new IllegalStateException("The source state: '" + sourceState.getId()
+					+ "' to transition from on exception: + " + e + " must be transitionable!");
+		}
+		return new Transition((TransitionableState)sourceState, getTargetState(e)).execute(context);
 	}
 }

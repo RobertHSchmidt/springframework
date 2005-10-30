@@ -48,8 +48,8 @@ import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.State;
+import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
@@ -69,8 +69,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
+ *       &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
+ *       &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -720,7 +720,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		NodeList nodeList = root.getElementsByTagName(EXCEPTION_HANDLER_ELEMENT);
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
-			StateMapperFlowExceptionHandler defaultHandler = null;
+			TransitionExecutorStateExceptionHandler defaultHandler = null;
 			if (node instanceof Element) {
 				Element element = (Element)node;
 				if (element.hasAttribute(BEAN_ATTRIBUTE)) {
@@ -730,7 +730,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 				}
 				else {
 					if (defaultHandler == null) {
-						defaultHandler = new StateMapperFlowExceptionHandler();
+						defaultHandler = new TransitionExecutorStateExceptionHandler();
 					}
 					Class exceptionClass = (Class)fromStringTo(Class.class).execute(
 							element.getAttribute(CLASS_ATTRIBUTE));

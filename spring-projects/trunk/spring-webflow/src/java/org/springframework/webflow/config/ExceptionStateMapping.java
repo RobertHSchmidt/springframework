@@ -13,28 +13,28 @@ import org.springframework.webflow.State;
 public class ExceptionStateMapping implements Serializable {
 
 	/**
-	 * The exception class.
+	 * The class of exception that may occur.
 	 */
 	private Class exceptionClass;
 
 	/**
-	 * The state type.
+	 * The state to transition to if it does occur.
 	 */
-	private State state;
+	private State targetState;
 
 	/**
 	 * Creates a new exception->state mapping.
 	 */
-	public ExceptionStateMapping(Class exceptionClass, State state) {
+	public ExceptionStateMapping(Class exceptionClass, State targetState) {
 		this.exceptionClass = exceptionClass;
-		this.state = state;
+		this.targetState = targetState;
 	}
 
 	public Class getExceptionClass() {
 		return exceptionClass;
 	}
 
-	public State getState() {
-		return state;
+	public State getTargetState() {
+		return targetState;
 	}
 }
