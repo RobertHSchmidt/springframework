@@ -496,12 +496,12 @@ public class Flow extends AnnotatedObject {
 	 * all states have been added as a 'second pass' to allow for transition
 	 * target state resolution.
 	 */
-	public void resolveStateTransitionTargetStates() {
+	public void resolveStateTransitionsTargetStates() {
 		Iterator it = statesIterator();
 		while (it.hasNext()) {
 			State state = (State)it.next();
 			if (state.isTransitionable()) {
-				((TransitionableState)state).resolveTransitionTargetStates();
+				((TransitionableState)state).resolveTransitionsTargetStates();
 			}
 		}
 	}

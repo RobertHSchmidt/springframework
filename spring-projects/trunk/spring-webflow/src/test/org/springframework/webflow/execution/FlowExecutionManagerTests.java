@@ -38,6 +38,7 @@ public class FlowExecutionManagerTests extends TestCase {
 			add(new ViewState(this, "view", new SimpleViewDescriptorCreator("view"), new Transition[] { new Transition(
 					"end") }));
 			add(new EndState(this, "end", new SimpleViewDescriptorCreator("confirm")));
+			resolveStateTransitionsTargetStates();
 		}
 	}
 

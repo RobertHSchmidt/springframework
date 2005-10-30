@@ -51,6 +51,8 @@ public class FlowExecutionTests extends TestCase {
 		new ViewState(subFlow, "subFlowViewState", view("mySubFlowViewName"), new Transition[] { new Transition(
 				on("submit"), "finish") });
 		new EndState(subFlow, "finish");
+		subFlow.resolveStateTransitionsTargetStates();
+
 		Flow flow = new Flow("myFlow");
 		new ActionState(flow, "actionState", new ExecutionCounterAction(), new Transition[] { new Transition(
 				on("success"), "viewState") });
@@ -59,6 +61,7 @@ public class FlowExecutionTests extends TestCase {
 		new SubflowState(flow, "subFlowState", subFlow, new InputOutputMapper(), new Transition[] { new Transition(
 				on("finish"), "finish") });
 		new EndState(flow, "finish");
+		flow.resolveStateTransitionsTargetStates();
 
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		MockFlowExecutionListener flowExecutionListener = new MockFlowExecutionListener();

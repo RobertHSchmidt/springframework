@@ -233,9 +233,9 @@ public class Transition extends AnnotatedObject {
 	 * Returns the target state of this transition
 	 */
 	protected State getTargetState() {
-		// @TODO - should this be here, and if yes, should it be synchronized
 		if (targetState == null) {
-			resolveTargetState();
+			throw new IllegalStateException("The target state to transition to has not been resolved: "
+					+ "call resolveTargetState() after the process of building the owning Flow has completed.  Transition details: " + this);
 		}
 		return targetState;
 	}

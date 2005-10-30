@@ -199,7 +199,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	}
 
 	public Flow getResult() {
-		getFlow().resolveStateTransitionTargetStates();
+		getFlow().resolveStateTransitionsTargetStates();
 		return getFlow();
 	}
 }

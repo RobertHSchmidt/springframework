@@ -230,7 +230,7 @@ public abstract class TransitionableState extends State {
 	 * all states have been added as a 'second pass' to allow for transition
 	 * target state resolution.
 	 */
-	protected void resolveTransitionTargetStates() {
+	protected void resolveTransitionsTargetStates() {
 		Iterator it = transitionsIterator();
 		while (it.hasNext()) {
 			((Transition)it.next()).resolveTargetState();
