@@ -125,7 +125,7 @@ public class ViewState extends TransitionableState {
 	 * @throws StateException if an exception occurs in this state
 	 */
 	protected ViewDescriptor doEnter(StateContext context) throws StateException {
-		return viewDescriptor(context);
+		return selectView(context);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class ViewState extends TransitionableState {
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state execution
 	 */
-	public ViewDescriptor viewDescriptor(StateContext context) {
+	public ViewDescriptor selectView(StateContext context) {
 		if (isMarker()) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Returning control to client with a [null] view render request");
@@ -143,11 +143,11 @@ public class ViewState extends TransitionableState {
 			return null;
 		}
 		else {
-			ViewDescriptor viewDescriptor = viewDescriptorCreator.createViewDescriptor(context);
+			ViewDescriptor selectedView = viewDescriptorCreator.createViewDescriptor(context);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Returning view render request to client: " + viewDescriptor);
+				logger.debug("Returning view render request to client: " + selectedView);
 			}
-			return viewDescriptor;
+			return selectedView;
 		}
 	}
 

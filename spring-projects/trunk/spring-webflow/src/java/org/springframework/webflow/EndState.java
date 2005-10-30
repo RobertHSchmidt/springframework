@@ -138,22 +138,22 @@ public class EndState extends State {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing flow '" + getFlow().getId() + "' has ended");
 			}
-			ViewDescriptor viewDescriptor;
+			ViewDescriptor selectedView;
 			if (isMarker()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning control to client with a [null] view render request: "
 							+ " make sure a response has already been written");
 				}
-				viewDescriptor = null;
+				selectedView = null;
 			}
 			else {
-				viewDescriptor = viewDescriptorCreator.createViewDescriptor(context);
+				selectedView = viewDescriptorCreator.createViewDescriptor(context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning view render request to client: " + viewDescriptor);
+					logger.debug("Returning view render request to client: " + selectedView);
 				}
 			}
 			context.endActiveSession();
-			return viewDescriptor;
+			return selectedView;
 		}
 		else {
 			// there is a parent flow that will resume
