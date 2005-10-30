@@ -490,10 +490,6 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		return new FlowSessionImpl(flow, input, parent);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.webflow.execution.FlowExecutionControl#endActiveFlowSession()
-	 */
 	public FlowSession endActiveFlowSession() {
 		FlowSessionImpl endingSession = (FlowSessionImpl)executingFlowSessions.pop();
 		endingSession.setStatus(FlowSessionStatus.ENDED);
