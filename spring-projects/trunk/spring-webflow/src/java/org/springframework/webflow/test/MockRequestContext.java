@@ -37,8 +37,8 @@ import org.springframework.webflow.Transition;
  * Mock implementation of the <code>RequestContext</code> interface to
  * facilitate standalone Action unit tests.
  * <p>
- * NOT intended to be used for anything but standalone unit tests. This
- * is a simple state holder, a <i>stub</i> implementation, at least if you follow <a
+ * NOT intended to be used for anything but standalone unit tests. This is a
+ * simple state holder, a <i>stub</i> implementation, at least if you follow <a
  * href="http://www.martinfowler.com/articles/mocksArentStubs.html">Martin
  * Fowler's</a> reasoning. This class is called <i>Mock</i>RequestContext to
  * be consistent with the naming convention in the rest of the Spring framework
@@ -51,14 +51,16 @@ import org.springframework.webflow.Transition;
  * @author Erwin Vervaet
  */
 public class MockRequestContext implements RequestContext, FlowExecutionContext {
-	
+
 	private String key = "Mock Flow Execution";
+
+	private Flow rootFlow;
 
 	private Event sourceEvent;
 
-	private Scope requestScope = new Scope(ScopeType.REQUEST);
+	private Scope requestScope = new Scope(ScopeType.FLOW);
 
-	private MockFlowSession activeSession = new MockFlowSession();
+	private MockFlowSession activeSession;
 
 	private Event lastEvent;
 
@@ -67,27 +69,28 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	private AttributeSource properties = new MapAttributeSource();
 
 	private boolean inTransaction;
-	
+
 	private long creationTimestamp = System.currentTimeMillis();
-	
-	private Flow rootFlow;
-	
+
 	private long lastRequestTimestamp = System.currentTimeMillis();
 
 	/**
-	 * Create a new stub request context.
+	 * Create a new stub request context. Automatically creates an initial flow
+	 * session that simulates a mock Flow in its start state.
 	 */
 	public MockRequestContext() {
 		setSourceEvent(new Event(this, "start"));
 		setActiveSession(new MockFlowSession());
 	}
-	
+
 	/**
-	 * Create a new stub request context.
+	 * Create a new stub request context. Automatically creates an initial flow
+	 * session that simulates a mock Flow in its start state.
 	 * @param sourceEvent the event originating this request context
 	 */
 	public MockRequestContext(Event sourceEvent) {
 		setSourceEvent(sourceEvent);
+		setActiveSession(new MockFlowSession());
 	}
 
 	/**
@@ -99,9 +102,9 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 		setActiveSession(session);
 		setSourceEvent(sourceEvent);
 	}
-	
+
 	// implementing RequestContext
-	
+
 	public Event getSourceEvent() {
 		return sourceEvent;
 	}
@@ -130,9 +133,10 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	}
 
 	public Event getResultEvent(String stateId) {
+		// result events currently not supported for this mock
 		throw new UnsupportedOperationException();
 	}
-	
+
 	public Event getLastEvent() {
 		return lastEvent;
 	}
@@ -184,11 +188,11 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	}
 
 	public boolean inTransaction(boolean end) {
-		boolean res = this.inTransaction;
+		boolean result = this.inTransaction;
 		if (end) {
 			endTransaction();
 		}
-		return res;
+		return result;
 	}
 
 	public void assertInTransaction(boolean end) throws IllegalStateException {
@@ -202,7 +206,7 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	public void endTransaction() {
 		inTransaction = false;
 	}
-	
+
 	// implementing FlowExecutionContext
 
 	public Serializable getKey() {
@@ -220,11 +224,11 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	public long getUptime() {
 		return System.currentTimeMillis() - getCreationTimestamp();
 	}
-	
+
 	public long getLastRequestTimestamp() {
 		return lastRequestTimestamp;
 	}
-	
+
 	public String getLastEventId() {
 		return lastEvent.getId();
 	}
@@ -240,23 +244,19 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	public Flow getRootFlow() {
 		return rootFlow;
 	}
-	
+
 	/**
 	 * Set the root flow of this request context.
 	 * @param rootFlow the root flow to set
 	 */
 	public void setRootFlow(Flow rootFlow) {
 		this.rootFlow = rootFlow;
-		if (this.activeSession.getFlow() == null) {
-			this.activeSession.setFlow(rootFlow);
-			this.activeSession.setCurrentState(rootFlow.getStartState());
-		}
 	}
 
 	public Flow getActiveFlow() {
 		return activeSession.getFlow();
 	}
-	
+
 	public State getCurrentState() {
 		State state = activeSession.getCurrentState();
 		if (state == null) {
@@ -270,10 +270,11 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	 * @param state the current state to set
 	 */
 	public void setCurrentState(State state) {
-		Assert.state(state.getFlow() == getActiveSession().getFlow(), "The current state to set must be a state in the active flow");
+		Assert.state(state.getFlow() == getActiveSession().getFlow(),
+				"The current state to set must be a state in the active flow");
 		this.activeSession.setCurrentState(state);
 	}
-	
+
 	public FlowSession getActiveSession() throws IllegalStateException {
 		if (activeSession == null) {
 			throw new IllegalStateException("No flow session active");
@@ -282,11 +283,12 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	}
 
 	/**
-	 * Set the active flow session of this request context.
+	 * Set the active flow session of this request context. If the "rootFlow" is
+	 * null when this method is called it will automaically be set to the flow
+	 * associated with the provided session.
 	 * @param session the active flow session to set
 	 */
 	public void setActiveSession(MockFlowSession session) {
-		Assert.notNull(session, "The session is required");
 		this.activeSession = session;
 		if (this.rootFlow == null) {
 			this.rootFlow = session.getFlow();

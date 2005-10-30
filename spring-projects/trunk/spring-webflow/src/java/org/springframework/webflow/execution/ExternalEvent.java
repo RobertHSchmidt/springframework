@@ -57,7 +57,7 @@ public abstract class ExternalEvent extends Event {
 	 * for example an HTTP request.
 	 * @param source the event source
 	 */
-	public ExternalEvent(Object source) {
+	protected ExternalEvent(Object source) {
 		super(source);
 	}
 	
@@ -66,7 +66,7 @@ public abstract class ExternalEvent extends Event {
 	 * @param source the source of the event
 	 * @param parameters the event parameters
 	 */
-	public ExternalEvent(Object source, Map parameters) {
+	protected ExternalEvent(Object source, Map parameters) {
 		super(source, parameters);
 	}
 

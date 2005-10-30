@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.test;
 
+import java.util.Map;
+
 import org.springframework.util.Assert;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
@@ -52,7 +54,13 @@ public class MockFlowSession implements FlowSession {
 		setFlow(flow);
 		setCurrentState(flow.getStartState());
 	}
-	
+
+	public MockFlowSession(Flow flow, Map input) {
+		setFlow(flow);
+		setCurrentState(flow.getStartState());
+		scope.putAll(input);
+	}
+
 	public Flow getFlow() {
 		return flow;
 	}
