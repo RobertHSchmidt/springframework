@@ -100,7 +100,7 @@ public class TransitionExecutorStateExceptionHandler implements StateExceptionHa
 		State sourceState = context.getFlowExecutionContext().getCurrentState();
 		if (!sourceState.isTransitionable()) {
 			throw new IllegalStateException("The source state: '" + sourceState.getId()
-					+ "' to transition from on exception: + " + e + " must be transitionable!");
+					+ "' to transition from on exception: [" + e + "] must be transitionable!");
 		}
 		return new Transition((TransitionableState)sourceState, getTargetState(e)).execute(context);
 	}

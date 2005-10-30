@@ -8,13 +8,15 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateContext;
 import org.springframework.webflow.StateException;
+import org.springframework.webflow.Transition;
+import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.execution.FlowExecutionImpl;
 
 public class TransitionExecutorStateExceptionHandlerTests extends TestCase {
 	public void testExceptionHandlingSuccess() {
 		Flow flow = new Flow("myFlow");
-		State state1 = new State(flow, "exception") {
+		State state1 = new TransitionableState(flow, "exception", new Transition[] { new Transition("end") }) {
 			protected ViewDescriptor doEnter(StateContext context) {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
