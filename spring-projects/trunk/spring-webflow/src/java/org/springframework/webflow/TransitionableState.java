@@ -38,18 +38,19 @@ public abstract class TransitionableState extends State {
 	 * The set of possible transitions out of this state.
 	 */
 	private Set transitions = CollectionFactory.createLinkedSetIfPossible(6);
-	
+
 	/**
-	 * An action to execute when exiting this state. 
+	 * An action to execute when exiting this state.
 	 */
 	private Action exitAction;
-	
+
 	/**
 	 * Create a new transitionable state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
 	 * @param transitions the transitions of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 * @throws IllegalArgumentException when this state cannot be added to given
+	 * flow
 	 */
 	protected TransitionableState(Flow flow, String id, Transition[] transitions) throws IllegalArgumentException {
 		super(flow, id);
@@ -62,7 +63,8 @@ public abstract class TransitionableState extends State {
 	 * @param id the state identifier (must be unique to the flow)
 	 * @param transitions the transitions of this state
 	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 * @throws IllegalArgumentException when this state cannot be added to given
+	 * flow
 	 */
 	protected TransitionableState(Flow flow, String id, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
@@ -85,7 +87,7 @@ public abstract class TransitionableState extends State {
 	public void setExitAction(Action exitAction) {
 		this.exitAction = exitAction;
 	}
-	
+
 	/**
 	 * Add a transition to this state.
 	 * @param transition the transition to add
@@ -181,41 +183,43 @@ public abstract class TransitionableState extends State {
 	 * @param event the event that occured
 	 * @param context the context associated with this request
 	 * @return the view descriptor
-	 * @throws NoMatchingTransitionException when no matching transition can be found
-	 * @throws CannotExecuteTransitionException when a transition could
-	 *         not be executed on receipt of the event
+	 * @throws NoMatchingTransitionException when no matching transition can be
+	 * found
+	 * @throws CannotExecuteTransitionException when a transition could not be
+	 * executed on receipt of the event
 	 */
-	public ViewDescriptor onEvent(Event event, StateContext context)
-			throws NoMatchingTransitionException, CannotExecuteTransitionException {
+	public ViewDescriptor onEvent(Event event, StateContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Event '" + event.getId() + "' signaled in context: " + context);
 		}
 		context.setLastEvent(event);
 		Transition transition = getRequiredTransition(context);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Event '" + event.getId() + "' matched transition to state: '" + transition.getTargetStateId() + "'");
+			logger.debug("Event '" + event.getId() + "' matched transition to state: '" + transition.getTargetStateId()
+					+ "'");
 		}
 		return transition.execute(context);
 	}
 
 	/**
-	 * Re-enter this state. This is typically called when a transition out
-	 * of this state is selected, but transition execution rolls back and
-	 * as a result the flow reenters the source state.
+	 * Re-enter this state. This is typically called when a transition out of
+	 * this state is selected, but transition execution rolls back and as a
+	 * result the flow reenters the source state.
 	 * <p>
 	 * By default, this just calls <code>enter()</code>.
-	 * @param context the request context in an executing flow (a client instance of a flow)
+	 * @param context the request context in an executing flow (a client
+	 * instance of a flow)
 	 * @return a view descriptor containing model and view information needed to
-	 *         render the results of the state processing
+	 * render the results of the state processing
 	 */
 	public ViewDescriptor reenter(StateContext context) {
 		return enter(context);
 	}
 
 	/**
-	 * Exit this state. This is typically called when a transition takes the flow
-	 * out of this state into another state. By default just executes the exit action, if
-	 * one is registered.
+	 * Exit this state. This is typically called when a transition takes the
+	 * flow out of this state into another state. By default just executes the
+	 * exit action, if one is registered.
 	 * @param context the flow execution request context
 	 */
 	public void exit(StateContext context) {
@@ -225,10 +229,10 @@ public abstract class TransitionableState extends State {
 	}
 
 	/**
-	 * Utility method that iterates over this State's list of Transition objects 
-	 * and resolves their target states.  Designed to be called after Flow construction and 
-	 * all states have been added as a 'second pass' to allow for transition
-	 * target state resolution.
+	 * Utility method that iterates over this State's list of Transition objects
+	 * and resolves their target states. Designed to be called after Flow
+	 * construction and all states have been added as a 'second pass' to allow
+	 * for transition target state resolution.
 	 */
 	protected void resolveTransitionsTargetStates() {
 		Iterator it = transitionsIterator();
@@ -236,9 +240,8 @@ public abstract class TransitionableState extends State {
 			((Transition)it.next()).resolveTargetState();
 		}
 	}
-	
+
 	protected void createToString(ToStringCreator creator) {
 		creator.append("transitions", this.transitions).append("exitAction", exitAction);
 	}
-
 }
