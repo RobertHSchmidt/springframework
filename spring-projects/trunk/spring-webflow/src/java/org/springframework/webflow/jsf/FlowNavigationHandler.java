@@ -75,11 +75,8 @@ public class FlowNavigationHandler extends NavigationHandler {
 	private JsfFlowExecutionManager flowExecutionManager;
 
 	/**
-	 * <p>
 	 * Create a new {@link FlowNavigationHandler}, wrapping the specified
 	 * standard navigation handler implementation.
-	 * </p>
-	 * 
 	 * @param handlerDelegate Standard <code>NavigationHandler</code> we are
 	 * wrapping
 	 */

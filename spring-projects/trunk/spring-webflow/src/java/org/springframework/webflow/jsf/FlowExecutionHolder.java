@@ -64,7 +64,7 @@ public abstract class FlowExecutionHolder {
 	 * already been saved and is thus unmodifiable.
 	 */
 	public static boolean isFlowExecutionSaved() {
-		return getContext().flowSaved;
+		return getContext().flowExecutionSaved;
 	}
 
 	/**
@@ -82,22 +82,22 @@ public abstract class FlowExecutionHolder {
 	 * to reset the thread-bound context
 	 * @param flowExecution the current FlowExecution, or <code>null</code> to
 	 * @param sourceEvent the source event which triggered the current execution
-	 * @param saved boolean indicating whether the flow execution has already
+	 * @param flowExecutionSaved boolean indicating whether the flow execution has already
 	 * been saved to storage or is still live reset the thread-bound context
 	 */
 	public static void setFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution,
-			JsfEvent sourceEvent, boolean saved) {
+			JsfEvent sourceEvent, boolean flowExecutionSaved) {
 		if (flowExecutionId != null) {
-			Assert.notNull(flowExecution, "It is illegal to store flow execution id but not flow execution");
+			Assert.notNull(flowExecution, "It is illegal to store a flow execution with a null flow execution id");
 		}
 		getContext().flowExecutionId = flowExecutionId;
 		getContext().flowExecution = flowExecution;
 		getContext().event = sourceEvent;
-		getContext().flowSaved = saved;
+		getContext().flowExecutionSaved = flowExecutionSaved;
 	}
 
 	public static void setFlowExecutionSaved(boolean state) {
-		getContext().flowSaved = state;
+		getContext().flowExecutionSaved = state;
 	}
 
 	private static Context getContext() {
@@ -116,6 +116,6 @@ public abstract class FlowExecutionHolder {
 
 		public JsfEvent event;
 
-		public boolean flowSaved;;
+		public boolean flowExecutionSaved;
 	}
 }
