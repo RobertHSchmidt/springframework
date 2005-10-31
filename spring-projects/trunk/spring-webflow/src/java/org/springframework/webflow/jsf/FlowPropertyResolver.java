@@ -141,27 +141,21 @@ public class FlowPropertyResolver extends PropertyResolver {
 		if (!(base instanceof FlowExecution)) {
 			return resolverDelegate.isReadOnly(base, index);
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 
 	public boolean isReadOnly(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
 			return resolverDelegate.isReadOnly(base, property);
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 
 	public void setValue(Object base, int index, Object value) throws EvaluationException, PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
 			resolverDelegate.setValue(base, index, value);
 		}
-		else {
-			throw new ReferenceSyntaxException("Can not apply an index value to Flow map");
-		}
+		throw new ReferenceSyntaxException("Can not apply an index value to Flow map");
 	}
 
 	public void setValue(Object base, Object property, Object value) throws EvaluationException,
