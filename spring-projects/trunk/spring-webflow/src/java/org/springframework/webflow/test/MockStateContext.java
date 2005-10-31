@@ -35,7 +35,7 @@ import org.springframework.webflow.ViewDescriptor;
  * (e.g. MockHttpServletRequest, ...).
  * 
  * @see org.springframework.webflow.RequestContext
- * @see org.springframework.webflow.Flow
+ * @see org.springframework.webflow.FlowSession
  * @see org.springframework.webflow.State
  * 
  * @author Keith Donald
