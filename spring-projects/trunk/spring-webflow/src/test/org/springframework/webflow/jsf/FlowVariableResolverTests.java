@@ -43,8 +43,8 @@ public class FlowVariableResolverTests extends TestCase {
 		try {
 			Object o = resolver.resolveVariable(null, "flow");
 			fail("resolver can not work with no FlowExecution in thread local");
-		} catch (EvaluationException e) {
-			assertTrue(e.getMessage().contains("Web Flow not bound"));
+		} catch (EvaluationException e) { 
+			// expected
 		}
 		
 		MockControl flowExControl = MockControl.createControl(FlowExecution.class);
