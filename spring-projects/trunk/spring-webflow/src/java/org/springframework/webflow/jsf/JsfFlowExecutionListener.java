@@ -18,8 +18,6 @@ package org.springframework.webflow.jsf;
 
 import java.util.Map;
 
-import javax.faces.context.FacesContext;
-
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 
@@ -33,20 +31,15 @@ import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 public class JsfFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	/**
-	 * The context of the JSF request.
-	 */
-	private FacesContext facesContext;
-
-	/**
 	 * Creates a flow execution listener using the provided faces context.
 	 * @param facesContext the context
 	 */
-	public JsfFlowExecutionListener(FacesContext facesContext) {
-		this.facesContext = facesContext;
+	public JsfFlowExecutionListener() {
+
 	}
 
 	public void requestSubmitted(RequestContext context) {
-		Map requestMap = facesContext.getExternalContext().getRequestMap();
+		Map requestMap = ((JsfEvent)context.getSourceEvent()).getFacesContext().getExternalContext().getRequestMap();
 		context.getRequestScope().setAttributes(requestMap);
 	}
 }
