@@ -41,29 +41,28 @@ import org.springframework.webflow.access.FlowLocator;
  * as signaling events for processing by existing, paused executions (that are
  * waiting to be resumed in response to a user event).
  * <p>
- * The {@link #onEvent(Event)} method implements the following algorithm:
+ * The {@link #onEvent(Event)} method is the central operation and implements
+ * the following algorithm:
  * <ol>
  * <li>Look for a flow execution id in the event (in a parameter named
  * "_flowExecutionId").</li>
- * <li>If NO flow execution id is found, a new flow execution is created. The
- * top-level flow for which the execution is created is determined by first
- * looking for a flow id specified in the event using the "_flowId" parameter.
- * If this parameter is present the specified flow will be used, after lookup
- * using the configured flow locator. If no "_flowId" parameter is present, the
- * default top-level flow configured for this manager is used.</li>
- * <li>If a flow execution id IS found, the previously saved flow execution
- * with that id is loaded from the storage.</li>
- * <li>If a new flow execution was created in the previous steps, it is
- * started.</li>
- * <li>If an existing flow execution was loaded from storage, the current state
- * id ("_currentStateId") and event id ("_eventId") parameter values are
- * extracted from the event. That event is then signaled in that state and the
- * executing flow is resumed in that state.</li>
- * <li>If the flow execution is still active after event processing, it is
- * saved out to storage. This process generates a unique flow execution id that
- * will be exposed to the caller for reference on subsequent events. The caller
- * will also be given access to the flow execution context and any data placed
- * in request or flow scope.</li>
+ * <li>If no flow execution id was submitted, create a new flow execution. The
+ * top-level flow definition for which an execution is created for is determined
+ * by the value of the "_flowId" event parameter. If this parameter parameter is
+ * not present, an exception is thrown.</li>
+ * <li>If a flow execution id <em>was</em> submitted, load the previously
+ * saved FlowExecution with that id from storage.</li>
+ * <li>If a new flow execution was created in the previous steps, start that
+ * execution.</li>
+ * <li>If an existing flow execution was loaded from storage, extract the
+ * current state id ("_currentStateId") and event id ("_eventId") parameter
+ * values from the event. Signal the occurence of the user event in the current
+ * state, resuming the flow execution in that state.</li>
+ * <li>If the flow execution is still active after event processing, save it
+ * out to storage. This process generates a unique flow execution id that will
+ * be exposed to the caller for identifying the same FlowExecution
+ * (conversation) on subsequent requests. The caller will also be given access
+ * to the flow execution context and any data placed in request or flow scope.</li>
  * </ol>
  * <p>
  * By default, this class will use the flow execution implementation provided by
@@ -435,9 +434,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	// event processing
 
 	/**
-	 * Signal the occurence of the specified event - this is the entry point
-	 * into the webflow system for managing all executing flows.
-	 * @param sourceEvent the event that occured
+	 * Signal the occurence of the specified event. This is the entry point into
+	 * the webflow system for managing all executing flows.
+	 * @param sourceEvent the external event that occured
 	 * @return the view descriptor of the model and view to render
 	 */
 	public ViewDescriptor onEvent(Event sourceEvent) {
@@ -461,11 +460,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 
 	/**
 	 * Obtain a unique flow execution id from given event.
-	 * @param event the event
+	 * @param sourceEvent the event
 	 * @return the obtained id or <code>null</code> if not found
 	 */
-	public String getFlowExecutionId(Event event) {
-		return ExternalEvent.verifySingleStringInputParameter(getFlowExecutionIdParameterName(), event
+	public String getFlowExecutionId(Event sourceEvent) {
+		return ExternalEvent.verifySingleStringInputParameter(getFlowExecutionIdParameterName(), sourceEvent
 				.getParameter(getFlowExecutionIdParameterName()));
 	}
 
@@ -492,8 +491,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * lookup using the flow locator. If no "_flowId" parameter is present in
 	 * the event, the default top-level flow will be returned.
 	 */
-	protected Flow getFlow(Event event) {
-		String flowId = ExternalEvent.verifySingleStringInputParameter(getFlowIdParameterName(), event
+	protected Flow getFlow(Event sourceEvent) {
+		String flowId = ExternalEvent.verifySingleStringInputParameter(getFlowIdParameterName(), sourceEvent
 				.getParameter(getFlowIdParameterName()));
 		if (StringUtils.hasText(flowId)) {
 			return getFlowLocator().getFlow(flowId);
@@ -501,7 +500,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		else {
 			throw new IllegalArgumentException("The flow to launch must be provided by the client via the '"
 					+ getFlowIdParameterName() + "' parameter, yet no such parameter was provided in this event."
-					+ " Parameters provided were: " + StylerUtils.style(event.getParameters()));
+					+ " Parameters provided were: " + StylerUtils.style(sourceEvent.getParameters()));
 		}
 	}
 
@@ -517,12 +516,12 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * event.
 	 * 
 	 * @param flowExecutionId the unique id of the flow execution
-	 * @param event the source event
+	 * @param sourceEvent the source event
 	 */
-	public FlowExecution loadFlowExecution(Serializable flowExecutionId, Event event) {
+	public FlowExecution loadFlowExecution(Serializable flowExecutionId, Event sourceEvent) {
 		// client is participating in an existing flow execution, retrieve
 		// information about it
-		FlowExecution flowExecution = getStorage().load(flowExecutionId, event);
+		FlowExecution flowExecution = getStorage().load(flowExecutionId, sourceEvent);
 		// rehydrate the execution if neccessary (if it had been serialized out)
 		flowExecution.rehydrate(getFlowLocator(), this, getTransactionSynchronizer());
 		flowExecution.getListeners().fireLoaded(flowExecution, flowExecutionId);
@@ -579,11 +578,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * Save the flow execution to storage.
 	 * @param flowExecutionId the previous storage id (if previously saved)
 	 * @param flowExecution the execution
-	 * @param event the source event
+	 * @param sourceEvent the source event
 	 * @return the new storage id (may be different)
 	 */
-	public Serializable saveFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event event) {
-		flowExecutionId = getStorage().save(flowExecutionId, flowExecution, event);
+	public Serializable saveFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent) {
+		flowExecutionId = getStorage().save(flowExecutionId, flowExecution, sourceEvent);
 		flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Saved flow execution out to storage with id: '" + flowExecutionId + "'");
@@ -595,12 +594,12 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * Remove the flow execution from storage
 	 * @param flowExecutionId the storage id
 	 * @param flowExecution the execution
-	 * @param event the source event
+	 * @param sourceEvent the source event
 	 */
-	protected void removeFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event event) {
+	protected void removeFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent) {
 		// event processing resulted in a previously saved flow execution
 		// ending, cleanup
-		getStorage().remove(flowExecutionId, event);
+		getStorage().remove(flowExecutionId, sourceEvent);
 		flowExecution.getListeners().fireRemoved(flowExecution, flowExecutionId);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removed flow execution from storage with id: '" + flowExecutionId + "'");
@@ -640,8 +639,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param flowExecution the manipulated flow execution (state machine)
 	 * @param sourceEvent the external event that triggered flow execution
 	 * manipulation
-	 * @return the id the managed FlowExecution is stored under (may be different if 
-	 * a new id was assigned, will be null if the flow execution was removed)
+	 * @return the id the managed FlowExecution is stored under (may be
+	 * different if a new id was assigned, will be null if the flow execution
+	 * was removed)
 	 */
 	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent) {
 		if (flowExecution.isActive()) {
@@ -656,7 +656,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		}
 		return flowExecutionId;
 	}
-	
+
 	/**
 	 * Do any processing necessary before given view descriptor can be returned
 	 * to the client of the flow execution manager. This implementation adds a

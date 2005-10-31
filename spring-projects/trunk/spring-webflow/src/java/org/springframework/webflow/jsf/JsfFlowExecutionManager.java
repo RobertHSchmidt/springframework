@@ -215,7 +215,8 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			getStorage().saveWithGeneratedId(flowExecutionId, flowExecution, sourceEvent);
 			flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Saved flow execution out to storage with id: '" + flowExecutionId + "'");
+				logger.debug("Saved flow execution out to storage with previously generated id: '" + flowExecutionId
+						+ "'");
 			}
 		}
 	}
