@@ -31,7 +31,6 @@ import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
 
 /**
@@ -133,15 +132,6 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		String flowId = outcome.substring(WEBFLOW_PREFIX.length());
 		Assert.hasText(flowId, "The id of the flow to launch was not provided in the outcome string: programmer error");
 		return flowId;
-	}
-
-	/**
-	 * Creates a flow execution listener to attach to a managed FlowExecution.
-	 * @param context the faces context
-	 * @return the listener to attach
-	 */
-	protected FlowExecutionListener createFlowExecutionListener(FacesContext context) {
-		return new JsfFlowExecutionListener(context);
 	}
 
 	/**
