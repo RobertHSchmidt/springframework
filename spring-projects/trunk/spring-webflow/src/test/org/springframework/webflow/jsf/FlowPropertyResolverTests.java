@@ -29,6 +29,7 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.test.MockFlowSession;
 
 /**
  * @author Colin Sampaleanu
@@ -56,11 +57,10 @@ public class FlowPropertyResolverTests extends TestCase {
 	}
 	
 	public void testGetTypeBaseProperty() {
-		Map map = new HashMap();
-		map.put("name", "joe");
-		Flow flow = new Flow("myid", map);
+		MockFlowSession flowSession = new MockFlowSession();
+		flowSession.getScope().setAttribute("name", "joe");
 		flowEx.getActiveSession();
-		flowExControl.setReturnValue(flow);
+		flowExControl.setReturnValue(flowSession);
 		flowExControl.replay();
 		Class type = resolver.getType(flowEx, "name");
 		assertTrue("returned type must match property type", type.equals(String.class));
@@ -76,11 +76,10 @@ public class FlowPropertyResolverTests extends TestCase {
 	}
 
 	public void testGetValueBaseProperty() {
-		Map map = new HashMap();
-		map.put("name", "joe");
-		Flow flow = new Flow("myid", map);
+		MockFlowSession flowSession = new MockFlowSession();
+		flowSession.getScope().setAttribute("name", "joe");
 		flowEx.getActiveSession();
-		flowExControl.setReturnValue(flow);
+		flowExControl.setReturnValue(flowSession);
 		flowExControl.replay();
 		Object value = resolver.getValue(flowEx, "name");
 		assertTrue("must return expected property", value.equals("joe"));
@@ -96,13 +95,12 @@ public class FlowPropertyResolverTests extends TestCase {
 	}
 	
 	public void testSetValueBaseProperty() {
-		Map map = new HashMap();
-		Flow flow = new Flow("myid", map);
+		MockFlowSession flowSession = new MockFlowSession();
 		flowEx.getActiveSession();
-		flowExControl.setReturnValue(flow);
+		flowExControl.setReturnValue(flowSession);
 		flowExControl.replay();
 		resolver.setValue(flowEx, "name", "joe");
-		assertTrue(flow.getProperty("name").equals("joe"));
+		assertTrue(flowSession.getScope().getAttribute("name").equals("joe"));
 	}
 
 	private static class OriginalPropertyResolver extends PropertyResolver {
@@ -145,5 +143,4 @@ public class FlowPropertyResolverTests extends TestCase {
 				throws EvaluationException, PropertyNotFoundException {
 		}
 	}
-
 }
