@@ -23,29 +23,30 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.ViewDescriptor;
 
 /**
- * <p>
  * An implementation of a JSF <code>NavigationHandler</code> that provides
  * integration with Spring Web Flow. It delegates handling to the standard
  * implementation when there is no current flow.
- * </p>
  * <ul>
- * <li>If a flow is <strong>not</strong> currently in progress:
+ * <li>If a flow execution is <strong>not</strong> currently in progress:
  * <ul>
  * <li>If the specified logical outcome is <strong>not</strong> of the form
- * <em>webflow:xxx</em>, delegate to the standard
+ * <em>flowId:xxx</em>, delegate to the standard
  * <code>NavigationHandler</code> implementation and return.</li>
  * <li>If the specified logical outcome <strong>is</strong> of the form
- * <em>webflow:xxx</em>, look up the corresponding <code>Flow</code>, and
- * begin its execution at its starting state. Record state information to
- * indicate that this flow is in progress.</li>
+ * <em>flowId:xxx</em>, look up the corresponding
+ * {@link org.springframework.webflow.Flow} definition with that id and begin
+ * flow execution in the starting state. Record state information to indicate
+ * that this flow is in progress.</li>
  * </ul>
  * </li>
- * <li>If a flow <strong>is</strong> currently in progress:
+ * <li>If a flow execution <strong>is</strong> currently in progress:
  * <ul>
- * <li>Acquire references to the current state information for the in progress
- * flow.</li>
- * <li>Continue execution of the flow until it returns a
- * <code>ViewDescriptor</code> describing the next view to be rendered.</li>
+ * <li>Load the reference to the current in-progress flow execution.</li>
+ * <li>Resume the flow execution by signaling what action (event) the user took
+ * in the resuming state.
+ * <li>Wait for state event processing to complete, which happens when a
+ * <code>ViewDescriptor</code> is returned selecting the next view to be
+ * rendered.</li>
  * <li>Cause navigation to render the requested view</li>
  * </ul>
  * </li>
