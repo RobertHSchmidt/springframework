@@ -101,7 +101,6 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @return the selected starting view
 	 */
 	public ViewDescriptor launchFlowExecution(FacesContext context, String fromAction, String outcome) {
-		// strip off the webflow prefix, leaving the flowId to launch
 		String flowId = getRequiredFlowId(outcome);
 		JsfEvent sourceEvent = createEvent(context, fromAction, outcome, null);
 		Serializable flowExecutionId = null;
@@ -123,12 +122,14 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	}
 
 	/**
-	 * Returns the flow id in the submitted outcome string.
+	 * Returns the flow id in the submitted outcome string. Subclasses may
+	 * override.
 	 * @param outcome the jsf outcome
 	 * @return the flow id
 	 * @throws IllegalArgumentException if no flow id was found
 	 */
 	protected String getRequiredFlowId(String outcome) throws IllegalArgumentException {
+		// strip off the webflow prefix, leaving the flowId to launch
 		String flowId = outcome.substring(WEBFLOW_PREFIX.length());
 		Assert.hasText(flowId, "The id of the flow to launch was not provided in the outcome string: programmer error");
 		return flowId;
