@@ -102,15 +102,14 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 */
 	public ViewDescriptor launchFlowExecution(FacesContext context, String fromAction, String outcome) {
 		// strip off the webflow prefix, leaving the flowId to launch
-		String flowId = outcome.substring(WEBFLOW_PREFIX.length());
-		Assert.hasText(flowId, "The id of the flow to launch was not provided in the outcome string: programmer error");
+		String flowId = getRequiredFlowId(outcome);
 		JsfEvent sourceEvent = createEvent(context, fromAction, outcome, null);
 		Serializable flowExecutionId = null;
-		FlowExecution flowExecution = createFlowExecution(getFlowLocator().getFlow(flowId));
 		boolean flowExecutionSaved = false;
+		FlowExecution flowExecution = createFlowExecution(getFlowLocator().getFlow(flowId));
 		ViewDescriptor selectedView = flowExecution.start(sourceEvent);
 		if (flowExecution.isActive()) {
-			if (getStorage().supportsIdPreGeneration()) {
+			if (getStorage().supportsTwoPhaseSave()) {
 				flowExecutionId = getStorage().generateId(null);
 			}
 			else {
@@ -121,6 +120,18 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		}
 		FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, sourceEvent, flowExecutionSaved);
 		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
+	}
+
+	/**
+	 * Returns the flow id in the submitted outcome string.
+	 * @param outcome the jsf outcome
+	 * @return the flow id
+	 * @throws IllegalArgumentException if no flow id was found
+	 */
+	protected String getRequiredFlowId(String outcome) throws IllegalArgumentException {
+		String flowId = outcome.substring(WEBFLOW_PREFIX.length());
+		Assert.hasText(flowId, "The id of the flow to launch was not provided in the outcome string: programmer error");
+		return flowId;
 	}
 
 	/**
@@ -146,12 +157,13 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 */
 	public boolean isFlowExecutionParticipationRequest(FacesContext context, String fromAction, String outcome) {
 		boolean executionBound = FlowExecutionHolder.getFlowExecution() == null ? false : true;
-		// assert an invariant, just to be safe
-		boolean requestKeyPresent = context.getExternalContext().getRequestParameterMap().containsKey(
+		boolean flowExecutionIdPresent = context.getExternalContext().getRequestParameterMap().containsKey(
 				FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER);
-		Assert.isTrue(executionBound == requestKeyPresent,
-				"FlowExecution bound to thread context must match the existence of a "
-						+ "_flowExecutionId request attribute");
+		// assert an invariant, just to be safe
+		Assert
+				.isTrue(
+						executionBound == flowExecutionIdPresent,
+						"The flow execution bound to the current thread context must match the existence of a _flowExecutionId request attribute");
 		return executionBound;
 	}
 
@@ -166,12 +178,12 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @return the selected next (or ending) view
 	 */
 	public ViewDescriptor resumeFlowExecution(FacesContext context, String fromAction, String outcome) {
+		JsfEvent event = createEvent(context, fromAction, outcome, null);
 		Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-		JsfEvent event = createEvent(context, fromAction, outcome, null);
 		ViewDescriptor selectedView = signalEventIn(flowExecution, event);
 		if (flowExecution.isActive()) {
-			if (getStorage().supportsIdPreGeneration()) {
+			if (getStorage().supportsTwoPhaseSave()) {
 				flowExecutionId = getStorage().generateId(null);
 				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, event, false);
 			}
@@ -183,7 +195,6 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		}
 		else {
 			removeFlowExecution(flowExecutionId, flowExecution, event);
-			flowExecutionId = null;
 		}
 		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 	}
@@ -246,16 +257,16 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @param context <code>FacesContext</code> for the current request
 	 */
 	public void restoreFlowExecution(FacesContext context) {
-
-		Map requestParams = context.getExternalContext().getRequestParameterMap();
-		if (requestParams.containsKey(getFlowExecutionIdParameterName())) {
-			Serializable id = (Serializable)requestParams.get(getFlowExecutionIdParameterName());
-			Map map = new HashMap();
+		Map parameters = context.getExternalContext().getRequestParameterMap();
+		if (parameters.containsKey(getFlowExecutionIdParameterName())) {
+			Serializable id = (Serializable)parameters.get(getFlowExecutionIdParameterName());
+			Map map = new HashMap(1);
 			map.put(getFlowExecutionIdParameterName(), id);
-			JsfEvent jsfEvent = createEvent(context, null, null, map);
-			FlowExecution flowExecution = loadFlowExecution(id, jsfEvent);
-			// note that event will be replaced in the case of actual navigation
-			FlowExecutionHolder.setFlowExecution(id, flowExecution, jsfEvent, false);
+			JsfEvent sourceEvent = createEvent(context, null, null, map);
+			FlowExecution flowExecution = loadFlowExecution(id, sourceEvent);
+			// note that the event will be replaced in the case of actual
+			// navigation
+			FlowExecutionHolder.setFlowExecution(id, flowExecution, sourceEvent, false);
 		}
 	}
 
@@ -269,8 +280,6 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 */
 	public static JsfFlowExecutionManager getFlowExecutionManager(FacesContext context) {
 		WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
-		JsfFlowExecutionManager manager = (JsfFlowExecutionManager)wac.getBean(JsfFlowExecutionManager.BEAN_NAME,
-				JsfFlowExecutionManager.class);
-		return manager;
+		return (JsfFlowExecutionManager)wac.getBean(JsfFlowExecutionManager.BEAN_NAME, JsfFlowExecutionManager.class);
 	}
 }

@@ -119,7 +119,7 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 
 	/* not supported */
 	
-	public boolean supportsIdPreGeneration() {
+	public boolean supportsTwoPhaseSave() {
 		return false;
 	}
 
@@ -128,7 +128,7 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
 	}
 
-	public void saveAtId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+	public void saveWithGeneratedId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
 			throws UnsupportedOperationException, FlowExecutionStorageException {
 		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
 	}

@@ -106,11 +106,12 @@ public interface FlowExecutionStorage {
 	 * save is supported, via a call to
 	 * {@link #save(Serializable, FlowExecution, Event)
 	 */
-	public boolean supportsIdPreGeneration();
+	public boolean supportsTwoPhaseSave();
 
 	/**
 	 * Generates (or reuses) an unique <code>id</code> to be used later to
-	 * save a flow execution out to this storage.
+	 * save a flow execution out to this storage - the first part of a two phase
+	 * save.
 	 * @param oldId the unique id of the flow execution, or <code>null</code>
 	 * if the flow execution does not yet have an id (was not previously saved)
 	 * @return the unique id that identifies the saved flow execution, this
@@ -126,7 +127,7 @@ public interface FlowExecutionStorage {
 
 	/**
 	 * Save the flow execution to storage using the previously generated storage
-	 * id
+	 * id - the second part of a two phase save.
 	 * @param id the unique id of the flow execution, as returned by the
 	 * {@link #save(Serializable, FlowExecution, Event) save} method or
 	 * {@link #generateId(Serializable) method
@@ -135,7 +136,6 @@ public interface FlowExecutionStorage {
 	 * storage
 	 * @throws FlowExecutionStorageException
 	 */
-	public void saveAtId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+	public void saveWithGeneratedId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
 			throws UnsupportedOperationException, FlowExecutionStorageException;
-
 }

@@ -89,7 +89,7 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 		return id;
 	}
 
-	public boolean supportsIdPreGeneration() {
+	public boolean supportsTwoPhaseSave() {
 		return true;
 	}
 
@@ -99,7 +99,7 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 		return createId();
 	}
 
-	public void saveAtId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+	public void saveWithGeneratedId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
 			throws UnsupportedOperationException, FlowExecutionStorageException {
 		// always update data store attribute, even if just overwriting
 		// an existing one to make sure the data store knows that this
