@@ -33,7 +33,6 @@ import org.springframework.webflow.execution.FlowExecution;
  * Note: this class currently uses a FlowNavigationHandlerStrategy for
  * convenience. That class may actually be broken up.
  * 
- * @since 1.0
  * @author Colin Sampaleanu
  */
 public class FlowPhaseListener implements PhaseListener {

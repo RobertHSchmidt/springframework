@@ -51,7 +51,6 @@ import org.springframework.webflow.ViewDescriptor;
  * </li>
  * </ul>
  * 
- * @since 1.0
  * @author Craig McClanahan
  * @author Colin Sampaleanu
  * @author Keith Donald
@@ -59,27 +58,21 @@ import org.springframework.webflow.ViewDescriptor;
 public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
-	 * <p>
 	 * The <code>Log</code> instance for this class.
-	 * </p>
 	 */
 	private final Log log = LogFactory.getLog(getClass());
 
 	/**
-	 * <p>
 	 * The standard <code>NavigationHandler</code> implementation that we are
 	 * wrapping.
-	 * </p>
 	 */
 	private NavigationHandler handlerDelegate;
 
 	/**
-	 * <p>
-	 * The {@link JsfFlowExecutionManager} instance to use, lazily
-	 * instantiated upon first use.
-	 * </p>
+	 * The {@link JsfFlowExecutionManager} instance to use, lazily instantiated
+	 * upon first use.
 	 */
-	private JsfFlowExecutionManager flowNavigationManager;
+	private JsfFlowExecutionManager flowExecutionManager;
 
 	/**
 	 * <p>
@@ -95,10 +88,7 @@ public class FlowNavigationHandler extends NavigationHandler {
 	}
 
 	/**
-	 * <p>
 	 * Handle the navigation request implied by the specified parameters.
-	 * </p>
-	 * 
 	 * @param context <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
@@ -109,13 +99,13 @@ public class FlowNavigationHandler extends NavigationHandler {
 			log.debug("handleNavigation(viewId=" + context.getViewRoot().getViewId() + ", fromAction=" + fromAction
 					+ ", outcome=" + outcome + ")");
 		}
-		if (getStrategy(context).isFlowLaunchRequest(context, fromAction, outcome)) {
-			ViewDescriptor nextView = getStrategy(context).launchFlowExecution(context, fromAction, outcome);
-			getStrategy(context).renderView(context, fromAction, outcome, nextView);
+		if (getExecutionManager(context).isFlowLaunchRequest(context, fromAction, outcome)) {
+			ViewDescriptor nextView = getExecutionManager(context).launchFlowExecution(context, fromAction, outcome);
+			getExecutionManager(context).renderView(context, fromAction, outcome, nextView);
 		}
-		else if (getStrategy(context).isFlowExecutionParticipationRequest(context, fromAction, outcome)) {
-			ViewDescriptor nextView = getStrategy(context).resumeFlowExecution(context, fromAction, outcome);
-			getStrategy(context).renderView(context, fromAction, outcome, nextView);
+		else if (getExecutionManager(context).isFlowExecutionParticipationRequest(context, fromAction, outcome)) {
+			ViewDescriptor nextView = getExecutionManager(context).resumeFlowExecution(context, fromAction, outcome);
+			getExecutionManager(context).renderView(context, fromAction, outcome, nextView);
 		}
 		else {
 			handlerDelegate.handleNavigation(context, fromAction, outcome);
@@ -123,18 +113,17 @@ public class FlowNavigationHandler extends NavigationHandler {
 	}
 
 	/**
-	 * <p>
-	 * Return the {@link JsfFlowExecutionManager} instance we will use to
-	 * make navigation handler decisions. The instance to use is returned by delegating to
-	 * {@link JsfFlowExecutionManager#getFlowExecutionManager(FacesContext)}, but
-	 * the value is cached, and subsequent requests return the same value.
-	 * </p>
-	 * 
+	 * Return the {@link JsfFlowExecutionManager} instance we will use to make
+	 * navigation handler decisions. The instance to use is returned by
+	 * delegating to
+	 * {@link JsfFlowExecutionManager#getFlowExecutionManager(FacesContext)},
+	 * but the value is cached, and subsequent requests return the same value.
 	 * @param context <code>FacesContext</code> for the current request
 	 */
-	private JsfFlowExecutionManager getStrategy(FacesContext context) {
-		if (flowNavigationManager == null)
-			flowNavigationManager = (JsfFlowExecutionManager.getFlowExecutionManager(context));
-		return flowNavigationManager;
+	private JsfFlowExecutionManager getExecutionManager(FacesContext context) {
+		if (flowExecutionManager == null) {
+			flowExecutionManager = (JsfFlowExecutionManager.getFlowExecutionManager(context));
+		}
+		return flowExecutionManager;
 	}
 }

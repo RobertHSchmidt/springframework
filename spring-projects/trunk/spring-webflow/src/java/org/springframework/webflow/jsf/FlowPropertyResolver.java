@@ -37,7 +37,6 @@ import org.springframework.webflow.execution.FlowExecution;
  * JSF provides no other way to customize and configure this insance
  * 
  * @author Colin Sampaleanu
- * @since 1.0
  */
 public class FlowPropertyResolver extends PropertyResolver {
 

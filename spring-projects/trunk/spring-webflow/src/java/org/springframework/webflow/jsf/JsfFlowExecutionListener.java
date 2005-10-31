@@ -24,15 +24,23 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 
 /**
- * FlowExecutionListener which is meant to add the HTTP request attribute map to
- * the flow request scope just before the flow event is actually submitted.
+ * FlowExecutionListener that adds the HTTP request attribute map to the flow
+ * request scope so request attributes are available to the Flow at execution
+ * time.
  * 
  * @author Colin Sampaleanu
  */
 public class JsfFlowExecutionListener extends FlowExecutionListenerAdapter {
 
+	/**
+	 * The context of the JSF request.
+	 */
 	private FacesContext facesContext;
 
+	/**
+	 * Creates a flow execution listener using the provided faces context.
+	 * @param facesContext the context
+	 */
 	public JsfFlowExecutionListener(FacesContext facesContext) {
 		this.facesContext = facesContext;
 	}

@@ -84,20 +84,6 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 		return encode(flowExecution);
 	}
 
-	public boolean supportsIdPreGeneration() {
-		return false;
-	}
-
-	public Serializable generateId(Serializable oldId)
-			throws UnsupportedOperationException, FlowExecutionStorageException {
-		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
-	}
-
-	public void saveAtId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
-			throws UnsupportedOperationException, FlowExecutionStorageException {
-		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
-	}
-	
 	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException {
 		// nothing to do here
 	}
@@ -130,4 +116,22 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 		byte[] data = new FlowExecutionContinuation(flowExecution, isCompress()).getData(false);
 		return new String(Base64.encodeBase64(data));
 	}
+
+	/* not supported */
+	
+	public boolean supportsIdPreGeneration() {
+		return false;
+	}
+
+	public Serializable generateId(Serializable oldId)
+			throws UnsupportedOperationException, FlowExecutionStorageException {
+		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
+	}
+
+	public void saveAtId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+			throws UnsupportedOperationException, FlowExecutionStorageException {
+		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
+	}
+	
+	
 }

@@ -123,19 +123,19 @@ public abstract class ExternalEvent extends Event {
 	}
 
 	/**
-	 * Returns a map to an external session context.
+	 * Returns a map to an external session context ("session scope").
 	 * @return the session map
 	 */
 	public Map getSessionMap() {
-		throw new UnsupportedOperationException("Session map not supported by this type of external event");
+		throw new UnsupportedOperationException("Access to a session scope map is not supported by this type of external event");
 	}
 	
 	/**
-	 * Returns a map to a external application context.
+	 * Returns a map to an external application context ("application scope").
 	 * @return the application map
 	 */
 	public Map getApplicationMap() {
-		throw new UnsupportedOperationException("Application map not supported by this type of external event");
+		throw new UnsupportedOperationException("Access to an application scope map is not supported by this type of external event");
 	}
 	
 	/**

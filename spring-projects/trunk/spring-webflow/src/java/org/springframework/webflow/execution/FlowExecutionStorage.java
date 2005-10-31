@@ -20,27 +20,33 @@ import java.io.Serializable;
 import org.springframework.webflow.Event;
 
 /**
- * Storage strategy for flow executions. A flow execution manager uses
- * this interface to load and save flow executions.
+ * Storage strategy for flow executions. A flow execution manager uses this
+ * interface to load and save flow executions.
  * <p>
- * Note that the flow execution storage strategy can have an impact
- * on application transaction management for a flow execution. For instance,
- * the default application transaction synchronization implementation
- * ({@link org.springframework.webflow.execution.FlowScopeTokenTransactionSynchronizer})
+ * Note that implementations of this interface may impact on application
+ * transaction management for a flow execution.
+ * <p>
+ * For instance, the default application transaction synchronization
+ * implementation ({@link org.springframework.webflow.execution.FlowScopeTokenTransactionSynchronizer})
  * uses a simple <i>synchronizer token</i> stored in the flow scope, which
- * implies that there is a single flow execution for an application transaction.
- * Some flow execution storage strategies (like
+ * implies that there is a single flow execution for the transaction However,
+ * some flow execution storage strategies (like
  * {@link org.springframework.webflow.execution.ClientContinuationFlowExecutionStorage})
- * create copies (clones) of a flow execution to enable <i>free browsing</i>
- * in a flow. Those strategies are not compatible with the default application
- * transaction implementation. Usually this is not a problem since free browing
- * is not really compatible with any kind of transactional semantics. If required,
- * you can always plug in another transaction synchronizer, e.g. one that stores
- * a transaction token in the database, no longer requiring a single
- * flow execution per application transaction.
+ * create copies (clones) of a flow execution to enable <i>free browsing</i> in
+ * a flow. These strategies are not compatible with the default application
+ * transaction implementation.
+ * <p>
+ * Usually this is not a problem since free browing is not really compatible
+ * with any kind of transactional semantics. However, if required, you can
+ * always plug in another transaction synchronizer, e.g. one that stores a
+ * transaction token in an external data store such as a database or shared
+ * session variable, no longer requiring a single flow execution per application
+ * transaction (see
+ * {@link org.springframework.webflow.execution.DataStoreTokenTransactionSynchronizer})
  * 
  * @see org.springframework.webflow.execution.FlowExecutionManager
  * @see org.springframework.webflow.execution.FlowExecution
+ * @see org.springframework.webflow.execution.TransactionSynchronizer
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -49,85 +55,87 @@ import org.springframework.webflow.Event;
 public interface FlowExecutionStorage {
 
 	/**
-	 * Load an existing flow execution, identified by given unique id, from
-	 * the storage.
+	 * Load the existing flow execution identified by the provided
+	 * <code>id</code> from this storage.
 	 * @param id the unique id of the flow execution, as returned by the
-	 *        {@link #save(Serializable, FlowExecution, Event) save} method
-	 *        or {@link #generateId(Serializable) method
-	 * @param sourceEvent the event requesting the load of the flow execution
+	 * {@link #save(Serializable, FlowExecution, Event) save} method or
+	 * {@link #generateId(Serializable) method
+	 * @param sourceEvent the event triggering the load of the flow execution
 	 * @return the loaded flow execution
-	 * @throws NoSuchFlowExecutionException when there is no flow execution
-	 *         with specified id in the storage
-	 * @throws FlowExecutionStorageException when there is a technical problem
-	 *         accessing the flow execution storage
+	 * @throws NoSuchFlowExecutionException when there is no flow execution with
+	 * specified id in the storage
+	 * @throws FlowExecutionStorageException when there is a problem accessing
+	 * the flow execution storage
 	 */
 	public FlowExecution load(Serializable id, Event sourceEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException;
 
 	/**
-	 * Save given flow execution in the storage.
-	 * @param id the unique id of the flow execution, or <code>null</code>
-	 *        if the flow execution does not yet have an id (e.g. was not
-	 *        previously saved)
-	 * @param sourceEvent the event requesting the save of the flow execution
+	 * Save the flow execution out to storage.
+	 * @param id the unique id of the flow execution, or <code>null</code> if
+	 * the flow execution does not yet have an id (was not previously saved)
 	 * @param flowExecution the flow execution to save
-	 * @return the unique id that actually identifies the saved flow execution,
-	 *         this could be different from the id passed into the method
-	 * @throws FlowExecutionStorageException when there is a technical problem
-	 *         accessing the flow execution storage
+	 * @param sourceEvent the event triggering the save of the flow execution
+	 * @return the unique id that identifies the saved flow execution; note this
+	 * could be different from the id passed into the method
+	 * @throws FlowExecutionStorageException when there is a problem accessing
+	 * the flow execution storage
 	 */
 	public Serializable save(Serializable id, FlowExecution flowExecution, Event sourceEvent)
 			throws FlowExecutionStorageException;
-    
-    /**
-     * Allows storage to be queried as to whether it supports pre-generation of storage
-     * IDs, before the save step
-     * @return true if the storage supports two step saves (an id may be generated by
-     * calling {@link #generateId(Serializable), followed by a subsequent call to 
-     * {@link #saveAtId(Serializable, FlowExecution, Event), or false if only a one-step
-     * save is supported, via a call to {@link #save(Serializable, FlowExecution, Event)
-     */
-	public boolean supportsIdPreGeneration();
-	
-	/**
-	 * Generates (or reuses) a flow execution id for subsequent saving of
-	 * flow state in this storage.
-	 * @param oldId the unique id of the flow execution, or <code>null</code>
-	 *        if the flow execution does not yet have an id (e.g. was not
-	 *        previously saved)
-	 * @return the unique id that actually identifies the saved flow execution,
-	 *         this could be different from the id passed into the method
-	 * @throws UnsupportedOperationException when this storage does not support
-	 *         generation of storage ids as a separate step from saving of flows
-	 *         to the storage
-	 * @throws FlowExecutionStorageException when there is a technical problem
-	 *         accessing the flow execution storage
-	 */
-    public Serializable generateId(Serializable oldId)
-    		throws UnsupportedOperationException, FlowExecutionStorageException;;
-	
-	/**
-	 * Save given flow execution in the storage, using the previously generated
-	 * storage id
-	 * @param id the unique id of the flow execution, as returned by the
-	 *        {@link #save(Serializable, FlowExecution, Event) save} method
-	 *        or {@link #generateId(Serializable) method
-	 * @throws UnsupportedOperationException when this storage does not support
-	 *         generation of storage ids as a separate step from saving of flows
-	 *         to the storage
-	 * @throws FlowExecutionStorageException
-	 */
-	public void saveAtId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
-			throws UnsupportedOperationException, FlowExecutionStorageException;;
-    
+
 	/**
 	 * Remove the identified flow execution from the storage.
 	 * @param id the unique id of the flow execution, as returned by the
-	 *        {@link #save(Serializable, FlowExecution, Event) save} method
+	 * {@link #save(Serializable, FlowExecution, Event) save} method
 	 * @param sourceEvent the event requesting the remove of the flow execution
 	 * @throws FlowExecutionStorageException when there is a technical problem
-	 *         accessing the flow execution storage
+	 * accessing the flow execution storage
 	 */
 	public void remove(Serializable id, Event sourceEvent) throws FlowExecutionStorageException;
+
+	/* Optional methods */
+
+	/**
+	 * Allows the storage strategy to be queried as to whether it supports
+	 * pre-generation of storage IDs, assigned before an explicit save step
+	 * @return true if the storage supports two step saves (an id may be
+	 * generated by calling
+	 * {@link #generateId(Serializable), followed by a subsequent call to 
+	 * {@link #saveAtId(Serializable, FlowExecution, Event), or false if only a one-step
+	 * save is supported, via a call to
+	 * {@link #save(Serializable, FlowExecution, Event)
+	 */
+	public boolean supportsIdPreGeneration();
+
+	/**
+	 * Generates (or reuses) an unique <code>id</code> to be used later to
+	 * save a flow execution out to this storage.
+	 * @param oldId the unique id of the flow execution, or <code>null</code>
+	 * if the flow execution does not yet have an id (was not previously saved)
+	 * @return the unique id that identifies the saved flow execution, this
+	 * could be different from the id passed into the method
+	 * @throws UnsupportedOperationException when this storage does not support
+	 * generation of storage ids as a separate step from saving of flows to the
+	 * storage
+	 * @throws FlowExecutionStorageException when there is a problem accessing
+	 * the flow execution storage
+	 */
+	public Serializable generateId(Serializable oldId) throws UnsupportedOperationException,
+			FlowExecutionStorageException;;
+
+	/**
+	 * Save the flow execution to storage using the previously generated storage
+	 * id
+	 * @param id the unique id of the flow execution, as returned by the
+	 * {@link #save(Serializable, FlowExecution, Event) save} method or
+	 * {@link #generateId(Serializable) method
+	 * @throws UnsupportedOperationException when this storage does not support
+	 * generation of storage ids as a separate step from saving of flows to the
+	 * storage
+	 * @throws FlowExecutionStorageException
+	 */
+	public void saveAtId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+			throws UnsupportedOperationException, FlowExecutionStorageException;
 
 }

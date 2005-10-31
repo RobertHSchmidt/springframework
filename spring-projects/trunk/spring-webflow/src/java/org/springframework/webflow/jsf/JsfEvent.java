@@ -9,8 +9,8 @@ import org.springframework.webflow.execution.ExternalEvent;
 
 /**
  * External event that communicates a user action in a JSF environment; either
- * requesting that a new flow should be started or noting an event was signaled
- * in an ongoing flow execution.
+ * requesting that a new flow be started or signaling an event in an ongoing
+ * flow execution that should be resumed.
  * 
  * This event provides access to the FacesContext associated with the
  * application. The JSF outcome is treated as the event identifier.

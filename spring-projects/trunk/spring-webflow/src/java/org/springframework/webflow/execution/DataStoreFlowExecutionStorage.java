@@ -23,8 +23,9 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 
 /**
- * Flow execution storage implementation that stores the flow execution in a
- * data store accessed using a pluggable data store accessor.
+ * Flow execution storage implementation that stores the flow execution in an
+ * externally managed data store. The actual interface to the data store is
+ * pluggable by using a {@link DataStoreAccessor}.
  * 
  * @see org.springframework.webflow.execution.DataStoreAccessor
  * 
@@ -48,12 +49,13 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	private KeyGenerator keyGenerator = new RandomGuidKeyGenerator();
 
 	/**
-	 * Create a new flow execution storage using the default session data store accessor.
+	 * Create a new flow execution storage using the default session data store
+	 * accessor.
 	 */
 	public DataStoreFlowExecutionStorage() {
 		this(new SessionDataStoreAccessor());
 	}
-	
+
 	/**
 	 * Create a new flow execution storage using given data store accessor.
 	 * @param dataStoreAccessor the data store accessor to use
@@ -70,14 +72,14 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	protected KeyGenerator getKeyGenerator() {
 		return keyGenerator;
 	}
-	
+
 	/**
 	 * Sets the storage key generation strategy to use.
 	 */
 	public void setKeyGenerator(KeyGenerator keyGenerator) {
 		this.keyGenerator = keyGenerator;
 	}
-	
+
 	public FlowExecution load(Serializable id, Event sourceEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		try {
@@ -110,20 +112,22 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 		return true;
 	}
 
-	public Serializable generateId(Serializable oldId) throws UnsupportedOperationException, FlowExecutionStorageException {
+	public Serializable generateId(Serializable oldId) throws UnsupportedOperationException,
+			FlowExecutionStorageException {
 		if (oldId == null) {
 			oldId = createId();
 		}
 		return oldId;
 	}
 
-	public void saveAtId(Serializable id, FlowExecution flowExecution, Event sourceEvent) throws UnsupportedOperationException, FlowExecutionStorageException {
+	public void saveAtId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+			throws UnsupportedOperationException, FlowExecutionStorageException {
 		// always update data store attribute, even if just overwriting
 		// an existing one to make sure the data store knows that this
 		// attribute has changed!
 		setDataSourceAttribute(id, flowExecution, sourceEvent);
 	}
-	
+
 	public void remove(Serializable id, Event sourceEvent) throws FlowExecutionStorageException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removing flow execution with id '" + id + "' from data store");

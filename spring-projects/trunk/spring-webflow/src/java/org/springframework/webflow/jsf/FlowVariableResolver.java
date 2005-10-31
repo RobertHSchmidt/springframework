@@ -28,7 +28,6 @@ import org.springframework.webflow.execution.FlowExecution;
  * TODO doc
  * 
  * @author Colin Sampaleanu
- * @since 1.0
  */
 public class FlowVariableResolver extends VariableResolver {
 
