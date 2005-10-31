@@ -25,8 +25,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * TODO doc
- * 
+ * Custom variable resolver that resolves to a thread-bound FlowExecution object
+ * for binding expressions prefixed with {@link #FLOW_VARIABLE_NAME} (e.g.
+ * flow.myBean.myProperty)
  * @author Colin Sampaleanu
  */
 public class FlowVariableResolver extends VariableResolver {
@@ -38,7 +39,7 @@ public class FlowVariableResolver extends VariableResolver {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	protected final VariableResolver originalVariableResolver;
+	private VariableResolver resolverDelegate;
 
 	/**
 	 * Create a new FlowVariableResolver, using the given original
@@ -51,14 +52,14 @@ public class FlowVariableResolver extends VariableResolver {
 	 * @param originalVariableResolver the original VariableResolver
 	 */
 	public FlowVariableResolver(VariableResolver originalVariableResolver) {
-		this.originalVariableResolver = originalVariableResolver;
+		this.resolverDelegate = originalVariableResolver;
 	}
 
 	/**
 	 * Return the original VariableResolver that this resolver delegates to.
 	 */
-	protected final VariableResolver getOriginalVariableResolver() {
-		return originalVariableResolver;
+	protected final VariableResolver getResolverDelegate() {
+		return resolverDelegate;
 	}
 
 	/**
@@ -67,12 +68,14 @@ public class FlowVariableResolver extends VariableResolver {
 	 */
 	public Object resolveVariable(FacesContext context, String name) throws EvaluationException {
 		if (!FLOW_VARIABLE_NAME.equals(name)) {
-			return this.originalVariableResolver.resolveVariable(context, name);
+			return this.resolverDelegate.resolveVariable(context, name);
 		}
-		FlowExecution execution = FlowExecutionHolder.getFlowExecution();
-		if (execution == null)
-			throw new EvaluationException(
-					"'flow' variable prefix specified, but a FlowExecution is not bound to thread context as it should be");
-		return execution;
+		else {
+			FlowExecution execution = FlowExecutionHolder.getFlowExecution();
+			if (execution == null)
+				throw new EvaluationException(
+						"'flow' variable prefix specified, but a FlowExecution is not bound to current thread context as it should be");
+			return execution;
+		}
 	}
 }

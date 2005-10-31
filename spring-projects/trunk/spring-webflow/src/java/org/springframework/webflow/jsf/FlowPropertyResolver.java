@@ -30,11 +30,12 @@ import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * TODO: doc
- * 
+ * Custom property resolve that resolves active flow session scope properties
+ * from a thread bound flow execution.
+ * <p>
  * TODO: this class probably needs to delegate to a strategy object pulled out
- * of the appcontext, to provide ability to override and configre. Crufty, but
- * JSF provides no other way to customize and configure this insance
+ * of the appcontext, to provide ability to override and configure, as JSF
+ * provides no other way to customize and configure this instance.
  * 
  * @author Colin Sampaleanu
  */
@@ -48,7 +49,7 @@ public class FlowPropertyResolver extends PropertyResolver {
 	/**
 	 * Default property resolver.
 	 */
-	protected final PropertyResolver originalPropertyResolver;
+	private final PropertyResolver resolverDelegate;
 
 	/**
 	 * Create a new PropertyResolver, using the given original PropertyResolver.
@@ -57,23 +58,26 @@ public class FlowPropertyResolver extends PropertyResolver {
 	 * the constructor of a configured resolver, provided that there is a
 	 * corresponding constructor argument.
 	 * 
-	 * @param originalPropertyResolver the original VariableResolver
+	 * @param resolverDelegate the original VariableResolver
 	 */
-	public FlowPropertyResolver(PropertyResolver originalPropertyResolver) {
-		this.originalPropertyResolver = originalPropertyResolver;
+	public FlowPropertyResolver(PropertyResolver resolverDelegate) {
+		this.resolverDelegate = resolverDelegate;
 	}
 
 	public Class getType(Object base, int index) throws EvaluationException, PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
-			return originalPropertyResolver.getType(base, index);
+			return resolverDelegate.getType(base, index);
 		}
-		// can't access flow scope by index, so can't determine type. Return null per JSF spec
-		return null;
+		else {
+			// can't access flow scope by index, so can't determine type. Return
+			// null per JSF spec
+			return null;
+		}
 	}
 
 	public Class getType(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
-			return originalPropertyResolver.getType(base, property);
+			return resolverDelegate.getType(base, property);
 		}
 		if (property == null) {
 			throw new PropertyNotFoundException("Unable to get value from Flow, as property (key) is null");
@@ -84,24 +88,25 @@ public class FlowPropertyResolver extends PropertyResolver {
 		FlowExecution execution = (FlowExecution)base;
 		// we want to access flow scope of the active session (conversation)
 		Object value = execution.getActiveSession().getScope().getAttribute((String)property);
-		// note that MyFaces returns Object.class for a null value here, but as
-		// I read the JSF spec, null should be returned when the object type can
-		// not be determined this certainly seems to be the case for a map value
-		// which doesn' even exist
+		// note that MyFaces returns Object.class for a null value here, but
+		// as I read the JSF spec, null should be returned when the object
+		// type can not be determined this certainly seems to be the case
+		// for a map value which doesn' even exist
 		return (value == null) ? null : value.getClass();
 	}
 
 	public Object getValue(Object base, int index) throws EvaluationException, PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
-			return originalPropertyResolver.getValue(base, index);
-		} else {
+			return resolverDelegate.getValue(base, index);
+		}
+		else {
 			throw new ReferenceSyntaxException("Cannot apply an index value to Flow map");
 		}
 	}
 
 	public Object getValue(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
-			return originalPropertyResolver.getValue(base, property);
+			return resolverDelegate.getValue(base, property);
 		}
 		if (!(property instanceof String)) {
 			throw new PropertyNotFoundException("Unable to get value from Flow map, as key is non-String");
@@ -110,14 +115,17 @@ public class FlowPropertyResolver extends PropertyResolver {
 		String attributeName = (String)property;
 		Object value = execution.getActiveSession().getScope().getAttribute(attributeName);
 		if (value == null) {
-			// we can only add a new bean to flow scope if the flow execution has not already been saved
+			// we can only add a new bean to flow scope if the flow execution
+			// has not already been saved
 			if (FlowExecutionHolder.isFlowExecutionSaved()) {
-				throw new EvaluationException("Flow property '" + property + "' can not be created on-demand in flow, as flow execution has already been saved (flow storage type probably precludes saving flow execution at a later stage");
+				throw new EvaluationException(
+						"Flow property '"
+								+ property
+								+ "' cannot be created on-demand in flow, as flow execution has already been saved out to storage (does the storage strategy support two phase saves?)");
 			}
-			
-			FacesContext fc = FacesContext.getCurrentInstance();
-			Assert.notNull(fc, "FacesContext must exist during property resolution stage");
-			WebApplicationContext wac = getWebApplicationContext(fc);
+			FacesContext context = FacesContext.getCurrentInstance();
+			Assert.notNull(context, "FacesContext must exist during property resolution stage");
+			WebApplicationContext wac = getWebApplicationContext(context);
 			if (wac.containsBean(attributeName)) {
 				// note: this resolver doesn't care, but this should normally be
 				// either a stateless singleton bean, or a stateful/stateless
@@ -131,7 +139,7 @@ public class FlowPropertyResolver extends PropertyResolver {
 
 	public boolean isReadOnly(Object base, int index) throws EvaluationException, PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
-			return originalPropertyResolver.isReadOnly(base, index);
+			return resolverDelegate.isReadOnly(base, index);
 		}
 		else {
 			return false;
@@ -140,7 +148,7 @@ public class FlowPropertyResolver extends PropertyResolver {
 
 	public boolean isReadOnly(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
-			return originalPropertyResolver.isReadOnly(base, property);
+			return resolverDelegate.isReadOnly(base, property);
 		}
 		else {
 			return false;
@@ -149,7 +157,7 @@ public class FlowPropertyResolver extends PropertyResolver {
 
 	public void setValue(Object base, int index, Object value) throws EvaluationException, PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
-			originalPropertyResolver.setValue(base, index, value);
+			resolverDelegate.setValue(base, index, value);
 		}
 		else {
 			throw new ReferenceSyntaxException("Can not apply an index value to Flow map");
@@ -159,7 +167,7 @@ public class FlowPropertyResolver extends PropertyResolver {
 	public void setValue(Object base, Object property, Object value) throws EvaluationException,
 			PropertyNotFoundException {
 		if (!(base instanceof FlowExecution)) {
-			originalPropertyResolver.setValue(base, property, value);
+			resolverDelegate.setValue(base, property, value);
 			return;
 		}
 		if (property == null || !(property instanceof String)
