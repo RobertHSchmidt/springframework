@@ -52,11 +52,12 @@ public class FlowPhaseListener implements PhaseListener {
 		FacesContext context = event.getFacesContext();
 		if (event.getPhaseId() == PhaseId.RESTORE_VIEW) {
 			FlowExecutionHolder.clearFlowExecution();
-			// restore flow execution to thread so it will be available for
-			// binding expressions
+			// restore flow execution to the current thread's storage so it will be
+			// available to variable/property resolvers
 			getExecutionManager(context).restoreFlowExecution(context);
 		}
 		else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
+			// save the flow execution out to storage after response rendering if neccessary
 			getExecutionManager(context).saveFlowExecutionIfNeccessary(context);
 			FlowExecutionHolder.clearFlowExecution();
 		}

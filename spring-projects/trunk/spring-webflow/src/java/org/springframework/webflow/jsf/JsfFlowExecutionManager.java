@@ -176,13 +176,15 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent) {
 		if (flowExecution.isActive()) {
 			if (getStorage().supportsTwoPhaseSave()) {
-				// just generate the flow execution id, an actual save will be done after response rendering
+				// just generate the flow execution id, an actual save will be
+				// done after response rendering
 				// see {@link #saveFlowExecutionIfNeccessary()}
 				flowExecutionId = getStorage().generateId(null);
 				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, (JsfEvent)sourceEvent, false);
 			}
 			else {
-				// two-phase save not supported: save the flow execution now in one step
+				// two-phase save not supported: save the flow execution now in
+				// one step
 				flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, sourceEvent);
 				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, (JsfEvent)sourceEvent, true);
 			}
@@ -197,11 +199,12 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	}
 
 	/**
-	 * Saves the thread-bound FlowExecution out to storage if neccessary;
-	 * specifically, if saving is a two phase process. The first part of a save
-	 * happens after event processing when a storage ID is generated, the second
-	 * part actually puts the execution into storage after response rendering
-	 * with that generated id.
+	 * Saves the current thread-bound FlowExecution out to storage if
+	 * neccessary; specifically, only if saving is a two phase process. In this
+	 * case, the first part of a save happens after event processing when a
+	 * storage ID is generated, the second part happens here and actually puts
+	 * the execution into storage after response rendering with that generated
+	 * id.
 	 * @param context the faces context
 	 */
 	public void saveFlowExecutionIfNeccessary(FacesContext context) {

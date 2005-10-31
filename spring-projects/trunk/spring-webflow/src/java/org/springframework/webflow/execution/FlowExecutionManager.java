@@ -460,33 +460,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Process updating FlowExecutionStorage if neccessary for the manipulated
-	 * FlowExecution. Saves the FlowExecution out to storage if the execution is
-	 * still active. Removes the FlowExecution from storage if it is no longer
-	 * active.
-	 * @param flowExecutionId the previous execution id (may be null if a new
-	 * flow execution was launched)
-	 * @param flowExecution the manipulated flow execution (state machine)
-	 * @param sourceEvent the external event that triggered flow execution
-	 * manipulation
-	 * @return the id the managed FlowExecution is stored under (may be different if 
-	 * a new id was assigned, will be null if the flow execution was removed)
-	 */
-	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent) {
-		if (flowExecution.isActive()) {
-			// save the flow execution for future use
-			flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, sourceEvent);
-		}
-		else {
-			if (flowExecutionId != null) {
-				removeFlowExecution(flowExecutionId, flowExecution, sourceEvent);
-				flowExecutionId = null;
-			}
-		}
-		return flowExecutionId;
-	}
-
-	/**
 	 * Obtain a unique flow execution id from given event.
 	 * @param event the event
 	 * @return the obtained id or <code>null</code> if not found
@@ -657,6 +630,33 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		return NOT_SET_EVENT_ID;
 	}
 
+	/**
+	 * Process updating FlowExecutionStorage if neccessary for the manipulated
+	 * FlowExecution. Saves the FlowExecution out to storage if the execution is
+	 * still active. Removes the FlowExecution from storage if it is no longer
+	 * active.
+	 * @param flowExecutionId the previous execution id (may be null if a new
+	 * flow execution was launched)
+	 * @param flowExecution the manipulated flow execution (state machine)
+	 * @param sourceEvent the external event that triggered flow execution
+	 * manipulation
+	 * @return the id the managed FlowExecution is stored under (may be different if 
+	 * a new id was assigned, will be null if the flow execution was removed)
+	 */
+	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent) {
+		if (flowExecution.isActive()) {
+			// save the flow execution for future use
+			flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, sourceEvent);
+		}
+		else {
+			if (flowExecutionId != null) {
+				removeFlowExecution(flowExecutionId, flowExecution, sourceEvent);
+				flowExecutionId = null;
+			}
+		}
+		return flowExecutionId;
+	}
+	
 	/**
 	 * Do any processing necessary before given view descriptor can be returned
 	 * to the client of the flow execution manager. This implementation adds a
