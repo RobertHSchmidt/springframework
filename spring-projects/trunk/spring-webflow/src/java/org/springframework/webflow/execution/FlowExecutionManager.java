@@ -82,7 +82,8 @@ import org.springframework.webflow.access.FlowLocator;
  * <tr>
  * <td>flowLocator (required)</td>
  * <td>None</td>
- * <td>The locator that will load Flow definitions as needed for execution by this manager</td>
+ * <td>The locator that will load Flow definitions as needed for execution by
+ * this manager</td>
  * </tr>
  * <tr>
  * <td>storage</td>
@@ -436,34 +437,53 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	/**
 	 * Signal the occurence of the specified event - this is the entry point
 	 * into the webflow system for managing all executing flows.
-	 * @param event the event that occured
+	 * @param sourceEvent the event that occured
 	 * @return the view descriptor of the model and view to render
 	 */
-	public ViewDescriptor onEvent(Event event) {
+	public ViewDescriptor onEvent(Event sourceEvent) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("New request received from client, source event is: " + event);
+			logger.debug("New request received from client, source event is: " + sourceEvent);
 		}
-		Serializable flowExecutionId = getFlowExecutionId(event);
+		Serializable flowExecutionId = getFlowExecutionId(sourceEvent);
 		FlowExecution flowExecution;
 		ViewDescriptor selectedView;
 		if (flowExecutionId == null) {
-			flowExecution = createFlowExecution(getFlow(event));
-			selectedView = flowExecution.start(event);
+			flowExecution = createFlowExecution(getFlow(sourceEvent));
+			selectedView = flowExecution.start(sourceEvent);
 		}
 		else {
-			flowExecution = loadFlowExecution(flowExecutionId, event);
-			selectedView = signalEventIn(flowExecution, event);
+			flowExecution = loadFlowExecution(flowExecutionId, sourceEvent);
+			selectedView = signalEventIn(flowExecution, sourceEvent);
 		}
+		flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
+		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
+	}
+
+	/**
+	 * Process updating FlowExecutionStorage if neccessary for the manipulated
+	 * FlowExecution. Saves the FlowExecution out to storage if the execution is
+	 * still active. Removes the FlowExecution from storage if it is no longer
+	 * active.
+	 * @param flowExecutionId the previous execution id (may be null if a new
+	 * flow execution was launched)
+	 * @param flowExecution the manipulated flow execution (state machine)
+	 * @param sourceEvent the external event that triggered flow execution
+	 * manipulation
+	 * @return the id the managed FlowExecution is stored under (may be different if 
+	 * a new id was assigned, will be null if the flow execution was removed)
+	 */
+	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent) {
 		if (flowExecution.isActive()) {
 			// save the flow execution for future use
-			flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, event);
+			flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, sourceEvent);
 		}
 		else {
 			if (flowExecutionId != null) {
-				removeFlowExecution(flowExecutionId, flowExecution, event);
+				removeFlowExecution(flowExecutionId, flowExecution, sourceEvent);
+				flowExecutionId = null;
 			}
 		}
-		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
+		return flowExecutionId;
 	}
 
 	/**
@@ -567,22 +587,21 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Generates (or reuses) a flow execution id for subsequent saving of
-	 * flow state in the flow storage associaed with this flow execution manager.
-	 * @param id the unique id of the flow execution, or <code>null</code>
-	 *        if the flow execution does not yet have an id (e.g. was not
-	 *        previously saved)
+	 * Generates (or reuses) a flow execution id for subsequent saving of flow
+	 * state in the flow storage associaed with this flow execution manager.
+	 * @param id the unique id of the flow execution, or <code>null</code> if
+	 * the flow execution does not yet have an id (e.g. was not previously
+	 * saved)
 	 * @return the unique id that actually identifies the saved flow execution,
-	 *         this could be different from the id passed into the method
+	 * this could be different from the id passed into the method
 	 * @throws UnsupportedOperationException when this storage does not support
-	 *         generation of storage ids as a separate step from saving of flows
-	 *         to the storage
+	 * generation of storage ids as a separate step from saving of flows to the
+	 * storage
 	 */
-    protected Serializable generateFlowExecutionStorageId(Serializable oldId)
-    		throws UnsupportedOperationException {
-    	return storage.generateId(oldId);
-    }
-	
+	protected Serializable generateFlowExecutionStorageId(Serializable oldId) throws UnsupportedOperationException {
+		return storage.generateId(oldId);
+	}
+
 	/**
 	 * Save the flow execution to storage.
 	 * @param flowExecutionId the previous storage id (if previously saved)
