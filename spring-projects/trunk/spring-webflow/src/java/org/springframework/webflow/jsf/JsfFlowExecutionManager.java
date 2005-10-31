@@ -40,31 +40,31 @@ import org.springframework.webflow.execution.TransactionSynchronizer;
 
 /**
  * <p>
- * Strategy methods for {@link FlowNavigationHandler}. Because a JSF
- * <code>NavigationHandler</code> must be registered directly with the JSF
- * runtime, the implementation class cannot be customized in the typical fashion
- * for a Spring-based application. Therefore, decisions that would typically be
- * placed in hook methods for a specialzed subclass have been isolated into an
- * instance of this class. You can either use this class (which contains the
- * default implementation), or you can subclass it and register a bean under the
- * name specified by manifest constant
- * <code>FlowNavigationHandler.NAVIGATION_STRATEGY_BEAN_NAME</code>.
+ * A JSF-specific version of 
+ * {@link org.springframework.webflow.execution.FlowExecutionManager} which is
+ * delegated to by Web Flow's 
+ * {@link org.springframework.webflow.jsf.FlowNavigationHandler} and
+ * {@link org.springframework.webflow.jsf.FlowPhaseListener}. The latter classes
+ * will expect to find a configured instance of this class in the web application
+ * context accessible through 
+ * {@link FacesContextUtils#getWebApplicationContext(javax.faces.context.FacesContext)}
+ * as the bean named {@link #BEAN_NAME}.
  * </p>
  * 
  * @author Colin Sampaleanu
  * @author Craig McClanahan
  * @author Keith Donald
  */
-public class JsfFlowNavigationManager extends FlowExecutionManager {
+public class JsfFlowExecutionManager extends FlowExecutionManager {
 
 	/**
 	 * <p>
 	 * Bean name under which we will find the configured instance of the
-	 * {@link JsfFlowNavigationManager} to be used for determining what
+	 * {@link JsfFlowExecutionManager} to be used for determining what
 	 * logical actions to undertake.
 	 * </p>
 	 */
-	public static final String BEAN_NAME = "flowNavigationHandlerStrategy";
+	public static final String BEAN_NAME = "flowExecutionManager";
 
 	/**
 	 * <p>
@@ -89,7 +89,7 @@ public class JsfFlowNavigationManager extends FlowExecutionManager {
 	 * @see #setListenersCriteria(Collection, FlowExecutionListenerCriteria)
 	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
 	 */
-	public JsfFlowNavigationManager(FlowLocator flowLocator) {
+	public JsfFlowExecutionManager(FlowLocator flowLocator) {
 		super(flowLocator);
 	}
 
@@ -287,7 +287,9 @@ public class JsfFlowNavigationManager extends FlowExecutionManager {
 	
     /**
      * Responsible for restoring (loading) the flow execution if the appropriate flow
-     * execution id parameter is found in the faces context request map
+     * execution id parameter is found in the faces context request map. Normally called
+     * by the phase listener.
+     * 
 	 * @param context <code>FacesContext</code> for the current request
      */
 	public void restoreFlowExecution(FacesContext context) {
@@ -316,11 +318,10 @@ public class JsfFlowNavigationManager extends FlowExecutionManager {
 	 * 
 	 * @param context <code>FacesContext</code> for the current request
 	 */
-	public static JsfFlowNavigationManager getFlowExecutionManager(FacesContext context) {
+	public static JsfFlowExecutionManager getFlowExecutionManager(FacesContext context) {
 		WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
-		JsfFlowNavigationManager manager = (JsfFlowNavigationManager)wac.getBean(
-					JsfFlowNavigationManager.BEAN_NAME, JsfFlowNavigationManager.class);
+		JsfFlowExecutionManager manager = (JsfFlowExecutionManager)wac.getBean(
+					JsfFlowExecutionManager.BEAN_NAME, JsfFlowExecutionManager.class);
 		return manager;
 	}
-	
 }

@@ -75,11 +75,11 @@ public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
 	 * <p>
-	 * The {@link JsfFlowNavigationManager} instance to use, lazily
+	 * The {@link JsfFlowExecutionManager} instance to use, lazily
 	 * instantiated upon first use.
 	 * </p>
 	 */
-	private JsfFlowNavigationManager flowNavigationManager;
+	private JsfFlowExecutionManager flowNavigationManager;
 
 	/**
 	 * <p>
@@ -124,17 +124,17 @@ public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
 	 * <p>
-	 * Return the {@link JsfFlowNavigationManager} instance we will use to
+	 * Return the {@link JsfFlowExecutionManager} instance we will use to
 	 * make navigation handler decisions. The instance to use is returned by delegating to
-	 * {@link JsfFlowNavigationManager#getFlowExecutionManager(FacesContext)}, but
+	 * {@link JsfFlowExecutionManager#getFlowExecutionManager(FacesContext)}, but
 	 * the value is cached, and subsequent requests return the same value.
 	 * </p>
 	 * 
 	 * @param context <code>FacesContext</code> for the current request
 	 */
-	private JsfFlowNavigationManager getStrategy(FacesContext context) {
+	private JsfFlowExecutionManager getStrategy(FacesContext context) {
 		if (flowNavigationManager == null)
-			flowNavigationManager = (JsfFlowNavigationManager.getFlowExecutionManager(context));
+			flowNavigationManager = (JsfFlowExecutionManager.getFlowExecutionManager(context));
 		return flowNavigationManager;
 	}
 }

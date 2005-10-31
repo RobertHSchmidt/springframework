@@ -4,13 +4,10 @@
 <beans>
 
 	<!--
-		Custom configuration of the HTTP request flow execution manager.
-		Note how you can just change the flow execution storage strategy without any impact
-		on the views!
-		
-		This is actually not being used from JSF!
+		Configuration for the JSF flow execution manager
 	-->	
-	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.servlet.ServletFlowExecutionManager">
+	<bean id="flowExecutionManager"
+			class="org.springframework.webflow.jsf.JsfFlowExecutionManager">
 		<property name="listener">
 			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
 		</property>

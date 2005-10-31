@@ -24,9 +24,6 @@ import javax.faces.event.PhaseListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.jsf.FacesContextUtils;
-import org.springframework.webflow.Event;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
@@ -48,11 +45,11 @@ public class FlowPhaseListener implements PhaseListener {
 
 	/**
 	 * <p>
-	 * The {@link JsfFlowNavigationManager} instance to use, lazily
+	 * The {@link JsfFlowExecutionManager} instance to use, lazily
 	 * instantiated upon first use.
 	 * </p>
 	 */
-	private JsfFlowNavigationManager flowNavigationManager;
+	private JsfFlowExecutionManager flowNavigationManager;
 
 	public void beforePhase(PhaseEvent event) {
 		logger.trace("JSF before phase: " + event.getPhaseId());
@@ -79,7 +76,7 @@ public class FlowPhaseListener implements PhaseListener {
 	public void afterPhase(PhaseEvent event) {
 		logger.trace("JSF after phase: " + event.getPhaseId());
 		FacesContext context = event.getFacesContext();
-		JsfFlowNavigationManager strategy = getStrategy(context);
+		JsfFlowExecutionManager strategy = getStrategy(context);
 		if (event.getPhaseId() == PhaseId.RESTORE_VIEW) {
 			FlowExecutionHolder.clearFlowExecution();
 			strategy.restoreFlowExecution(context);
@@ -115,17 +112,17 @@ public class FlowPhaseListener implements PhaseListener {
 
 	/**
 	 * <p>
-	 * Return the {@link JsfFlowNavigationManager} instance we will use to
+	 * Return the {@link JsfFlowExecutionManager} instance we will use to
 	 * make navigation handler decisions. The instanlce to use is returned by delegating to
-	 * {@link JsfFlowNavigationManager#getFlowExecutionManager(FacesContext)}, but
+	 * {@link JsfFlowExecutionManager#getFlowExecutionManager(FacesContext)}, but
 	 * the value is cached, and subsequent requests return the same value.
 	 * </p>
 	 * 
 	 * @param context <code>FacesContext</code> for the current request
 	 */
-	private JsfFlowNavigationManager getStrategy(FacesContext context) {
+	private JsfFlowExecutionManager getStrategy(FacesContext context) {
 		if (flowNavigationManager == null)
-			flowNavigationManager = (JsfFlowNavigationManager.getFlowExecutionManager(context));
+			flowNavigationManager = (JsfFlowExecutionManager.getFlowExecutionManager(context));
 		return flowNavigationManager;
 	}
 }
