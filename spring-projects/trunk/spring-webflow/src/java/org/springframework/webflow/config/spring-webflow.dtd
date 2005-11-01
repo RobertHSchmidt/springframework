@@ -78,7 +78,7 @@
 	on the TextToTransitionCriteria converter that is installed. The most basic value is a 
 	static event id (e.g on="success"). Sophisticated, custom transitional expressions are also
 	supported (e.g on="${#result == 'submit' && flowScope.attribute == 'foo'}, or
-	on="class:example.web.MyCustomTransitionCriteria").
+	on="bean:myCustomCriteria").
 -->
 <!ATTLIST transition on CDATA #REQUIRED>
 
@@ -106,11 +106,10 @@
 	the client. Use a marker end state when another object is expected to generate the response.
 	
 	While this value may be a static view name, it may also be qualified with a prefix to denote a
-	specific (possibly custom) ViewDescriptorCreator strategy. The "class:" prefix allows you to 
-	define a custom ViewDescriptorCreator implementation (e.g class:example.MyViewDescriptorCreator).
-	The "redirect:" prefix triggers creation of a RedirectViewDescriptorCreator which will request a
-	redirect to a specific URL (e.g. redirect:/home.htm). The exact semantics are defined by the 
-	installed TextToViewDescriptorCreator.
+	specific (possibly custom) ViewSelector strategy.  The "redirect:" prefix triggers creation of a
+	RedirectViewSelector which will request a redirect to a specific URL (e.g. redirect:/home.htm).
+	The "bean:" prefix will plug in the custom ViewSelector implementation with that bean id.
+	The exact semantics are defined by the installed TextToViewSelector converter.
 -->
 <!ATTLIST view-state view CDATA #IMPLIED>
 
@@ -141,7 +140,7 @@
 	transition to if the expression is true. Optionally, this element may also 
 	define an 'else' state to transition to if the expression is false.
 	The form is:
- 	    <if test="${criteria}" then="${toTrueState}" [else="(toFalseState)"]>
+ 	    <if test="${criteria}" then="trueState" else="falseState">
 -->
 <!ELEMENT if EMPTY>
 
@@ -312,14 +311,15 @@
 <!ATTLIST exception-handler state IDREF #IMPLIED>
 
 <!--
-	The id of the exception handler implementation to attach to this flow definition.  Specify this 
-	attribute or the class and state attributes, not both.
+	The id of a custom exception handler implementation to attach.  Specify this attribute or 
+	the class and state attributes, not both.
 -->
 <!ATTLIST exception-handler bean CDATA #IMPLIED>
 
 <!--
 	Defines a single (usually named) bean associated with this webflow definition.  Typically used to
-	configure instances of services local to this webflow, like an Action or FlowAttributeMapper.
+	configure instances of services local to this webflow, like an Action, ViewSelector,
+	TransitionCriteria,	or FlowAttributeMapper.
 	
 	A webflow bean definition may reference any other bean defined in this file, as well as 
 	beans managed in the registry associated with the builder that constructed this flow.
