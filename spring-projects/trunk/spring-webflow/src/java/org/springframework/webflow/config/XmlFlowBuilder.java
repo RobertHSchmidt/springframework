@@ -69,8 +69,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *                  &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
- *                  &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
+ *     &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -717,7 +717,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	protected StateExceptionHandler[] parseExceptionHandlers(Element element) {
 		NodeList nodeList = element.getElementsByTagName(EXCEPTION_HANDLER_ELEMENT);
 		if (nodeList.getLength() == 0) {
-			return new StateExceptionHandler[0];
+			return null;
 		}
 		StateExceptionHandler[] exceptionHandlers = new StateExceptionHandler[nodeList.getLength()];
 		for (int i = 0; i < nodeList.getLength(); i++) {
