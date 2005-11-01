@@ -15,10 +15,10 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Externalizable;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OptionalDataException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -66,7 +66,12 @@ import org.springframework.webflow.access.FlowLocator;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowExecutionImpl implements FlowExecution, Serializable {
+public class FlowExecutionImpl implements FlowExecution, Externalizable {
+
+	/**
+	 * The serialization id.
+	 */
+	private static final long serialVersionUID = -898397026261844347L;
 
 	private static final Log logger = LogFactory.getLog(FlowExecutionImpl.class);
 
@@ -95,7 +100,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * The id of the last event that was signaled in this flow execution.
 	 * <p>
 	 * Note that we're not storing the event itself because that would cause
-	 * serialisation related issues.
+	 * serialization related issues.
 	 */
 	private String lastEventId;
 
@@ -123,6 +128,14 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 */
 	private transient TransactionSynchronizer transactionSynchronizer;
 
+	/**
+	 * Default constructor required for externalizable serialization.
+	 * Should NOT be called programmatically.
+	 */
+	public FlowExecutionImpl() {
+		
+	}
+	
 	/**
 	 * Create a new flow execution executing the provided flow. This constructor
 	 * is mainly used for testing
@@ -505,24 +518,9 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		return endingSession;
 	}
 
-	// custom serialization
+	// custom serialization (implementation of Externalizable for smaller storage)
 
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.writeObject(key);
-		out.writeLong(creationTimestamp);
-		if (this.getRootFlow() != null) {
-			// avoid bogus NullPointerExceptions
-			out.writeObject(this.getRootFlow().getId());
-		}
-		else {
-			out.writeObject(null);
-		}
-		out.writeObject(lastEventId);
-		out.writeLong(lastRequestTimestamp);
-		out.writeObject(executingFlowSessions);
-	}
-
-	private void readObject(ObjectInputStream in) throws OptionalDataException, ClassNotFoundException, IOException {
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		key = (Serializable)in.readObject();
 		creationTimestamp = in.readLong();
 		rootFlowId = (String)in.readObject();
@@ -531,10 +529,25 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		executingFlowSessions = (Stack)in.readObject();
 	}
 
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeObject(key);
+		out.writeLong(creationTimestamp);
+		if (this.getRootFlow() != null) {
+			// avoid bogus NullPointerExceptions
+			out.writeObject(getRootFlow().getId());
+		}
+		else {
+			out.writeObject(null);
+		}
+		out.writeObject(lastEventId);
+		out.writeLong(lastRequestTimestamp);
+		out.writeObject(executingFlowSessions);
+	}
+	
 	public synchronized void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader,
 			TransactionSynchronizer transactionSynchronizer) {
 		// implementation note: we cannot integrate this code into the
-		// readObject() method since we need the flow locator, listener list and
+		// {@link readExternal(ObjectInput)} method since we need the flow locator, listener list and
 		// tx synchronizer!
 		if (rootFlow != null) {
 			// nothing to do, we're already hydrated
@@ -571,4 +584,5 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 					.toString();
 		}
 	}
+
 }

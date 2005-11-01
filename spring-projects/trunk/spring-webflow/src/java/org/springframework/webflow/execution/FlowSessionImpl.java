@@ -15,10 +15,10 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Externalizable;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -46,7 +46,12 @@ import org.springframework.webflow.access.FlowLocator;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowSessionImpl implements FlowSession, Serializable {
+public class FlowSessionImpl implements FlowSession, Externalizable {
+
+	/**
+	 * The serialization id.
+	 */
+	private static final long serialVersionUID = 7389855930603173417L;
 
 	// static logger because FlowSessionImpl objects can be serialized and
 	// then restored
@@ -86,6 +91,14 @@ public class FlowSessionImpl implements FlowSession, Serializable {
 	 * The parent session of this session (may be null if this is a root session.) 
 	 */
 	private FlowSessionImpl parent;
+
+	/**
+	 * Default constructor required for externalizable serialization.
+	 * Should NOT be called programmatically.
+	 */
+	public FlowSessionImpl() {
+		
+	}
 	
 	/**
 	 * Create a new flow session.
@@ -98,7 +111,7 @@ public class FlowSessionImpl implements FlowSession, Serializable {
 		Assert.notNull(flow, "The flow is required");
 		this.flow = flow;
 		if (input != null) {
-			this.flowScope.setAttributes(input);
+			flowScope.setAttributes(input);
 		}
 		this.parent = parent;
 	}
@@ -117,7 +130,7 @@ public class FlowSessionImpl implements FlowSession, Serializable {
 	 */
 	public void setCurrentState(State newState) {
 		Assert.notNull(newState, "The newState is required");
-		Assert.isTrue(this.flow == newState.getFlow(),
+		Assert.isTrue(flow == newState.getFlow(),
 				"The newState belongs to the flow associated with this flow session");
 		if (logger.isDebugEnabled()) {
 			logger.debug("Setting current state of flow session: '" + getFlow().getId() + "@" + ObjectUtils.getIdentityHexString(this) + "' to: '" + newState.getId() + "'");
@@ -152,20 +165,20 @@ public class FlowSessionImpl implements FlowSession, Serializable {
 
 	// custom serialization
 
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.writeObject(this.flow.getId());
-		out.writeObject(this.currentState.getId());
-		out.writeObject(this.status);
-		out.writeObject(this.flowScope);
-		out.writeObject(this.parent);
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeObject(flow.getId());
+		out.writeObject(currentState.getId());
+		out.writeObject(status);
+		out.writeObject(flowScope);
+		out.writeObject(parent);
 	}
 
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		this.flowId = (String)in.readObject();
-		this.currentStateId = (String)in.readObject();
-		this.status = (FlowSessionStatus)in.readObject();
-		this.flowScope = (Scope)in.readObject();
-		this.parent = (FlowSessionImpl)in.readObject();
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		flowId = (String)in.readObject();
+		currentStateId = (String)in.readObject();
+		status = (FlowSessionStatus)in.readObject();
+		flowScope = (Scope)in.readObject();
+		parent = (FlowSessionImpl)in.readObject();
 	}
 
 	/**
@@ -175,16 +188,16 @@ public class FlowSessionImpl implements FlowSession, Serializable {
 	protected void rehydrate(FlowLocator flowLocator) {
 		// implementation note: we cannot integrate this code into the
 		// readObject() method since we need the flow locator!
-		Assert.state(this.flow == null, "The flow is already set -- already restored");
-		Assert.state(this.currentState == null, "The current state is already set -- already restored");
+		Assert.state(flow == null, "The flow is already set -- already restored");
+		Assert.state(currentState == null, "The current state is already set -- already restored");
 		Assert.notNull(flowId,
 				"The flow id was not set during deserialization: cannot restore -- was this flow session deserialized properly?");
-		this.flow = flowLocator.getFlow(this.flowId);
-		this.flowId = null;
+		flow = flowLocator.getFlow(this.flowId);
+		flowId = null;
 		Assert.notNull(currentStateId,
 				"The current state id was not set during deserialization: cannot restore -- was this flow session deserialized properly?");
-		this.currentState = this.flow.getRequiredState(this.currentStateId);
-		this.currentStateId = null;
+		currentState = this.flow.getRequiredState(this.currentStateId);
+		currentStateId = null;
 	}
 
 	public String toString() {

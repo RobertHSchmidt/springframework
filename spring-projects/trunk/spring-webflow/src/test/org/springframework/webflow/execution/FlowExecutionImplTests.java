@@ -70,6 +70,7 @@ public class FlowExecutionImplTests extends TestCase {
 		ObjectOutputStream oout = new ObjectOutputStream(bout);
 		oout.writeObject(flowExecution);
 		oout.flush();
+		System.out.println("FlowExecutionImpl byte array size: " + bout.size());
 
 		// deserialize the flowExecution
 		ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
