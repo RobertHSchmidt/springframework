@@ -38,9 +38,9 @@ scopes. An out-of-the-box implementation is provided by the class
 {@link org.springframework.webflow.config.ParameterizableFlowAttributeMapper}.
 </li>
 <li>
-{@link org.springframework.webflow.ViewDescriptorCreator} -  A factory that
-produces a new, configured <code>ViewDescriptor</code> on each invocation,
-taking into account the information in the ongoing flow execution.
+{@link org.springframework.webflow.ViewSelector} -  A factory that
+produces a new, configured {@link ViewSelection} instance on each invocation,
+taking into account the contextual information about an ongoing flow execution.
 </li>
 <li>
 {@link org.springframework.webflow.TransitionCriteria} - The interface for
