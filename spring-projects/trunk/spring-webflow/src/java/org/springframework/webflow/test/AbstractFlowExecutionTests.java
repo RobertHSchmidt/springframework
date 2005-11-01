@@ -159,8 +159,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
 	 * @param event the starting event
-	 * @return the model and view returned as a result of starting the flow
-	 * (returned when the first view state is entered)
+	 * @return the selected model and view returned as a result of starting the
+	 * flow (returned when the first view state is entered)
 	 */
 	protected ViewSelection startFlow(Event event) {
 		this.flowExecution = new FlowExecutionImpl(getFlow());
@@ -232,8 +232,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * {@link org.springframework.webflow.execution.FlowExecutionListenerAdapter}
 	 * and only override what you need.
 	 * @param event the event to signal
-	 * @return the model and view, returned once control is returned to the
-	 * client (occurs when the flow enters a view state, or an end state)
+	 * @return the selected model and view, returned once control is returned to
+	 * the client (occurs when the flow enters a view state, or an end state)
 	 */
 	protected ViewSelection signalEvent(Event event) {
 		return this.flowExecution.signalEvent(event);
@@ -304,18 +304,20 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	/**
 	 * Assert that the view name equals the provided value.
 	 * @param expectedViewName the expected name
-	 * @param selectedView the view descriptor to assert
+	 * @param selectedView the selected view with a model attribute map to
+	 * assert against
 	 */
 	public void assertViewNameEquals(String expectedViewName, ViewSelection selectedView) {
 		assertEquals("The view name is wrong:", expectedViewName, selectedView.getViewName());
 	}
 
 	/**
-	 * Assert that the view descriptor contains the specified model attribute
-	 * with the provided expected value.
+	 * Assert that the selected view contains the specified model attribute with
+	 * the provided expected value.
 	 * @param expectedValue the expected value
 	 * @param attributeName the attribute name
-	 * @param selectedView the view descriptor to assert
+	 * @param selectedView the selected view with a model attribute map to
+	 * assert against
 	 */
 	public void assertModelAttributeEquals(Object expectedValue, String attributeName, ViewSelection selectedView) {
 		assertEquals("The model attribute '" + attributeName + "' value is wrong:", expectedValue,
@@ -323,11 +325,12 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
-	 * Assert that the view descriptor contains the specified collection model
+	 * Assert that the selected view contains the specified collection model
 	 * attribute with the provided expected size.
 	 * @param expectedSize the expected size
 	 * @param attributeName the collection attribute name
-	 * @param selectedView the view descriptor to assert
+	 * @param selectedView the selected view with a model attribute map to
+	 * assert against
 	 */
 	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ViewSelection selectedView) {
 		assertModelAttributeNotNull(attributeName, selectedView);
@@ -336,9 +339,10 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
-	 * Assert that the view descriptor contains the specified model attribute.
+	 * Assert that the selected view contains the specified model attribute.
 	 * @param attributeName the attribute name
-	 * @param selectedView the view descriptor to assert
+	 * @param selectedView the selected view with a model attribute map to
+	 * assert against
 	 */
 	public void assertModelAttributeNotNull(String attributeName, ViewSelection selectedView) {
 		assertNotNull("The model attribute '" + attributeName
@@ -348,10 +352,11 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
-	 * Assert that the view descriptor does not contain the specified model
+	 * Assert that the selected view does not contain the specified model
 	 * attribute.
 	 * @param attributeName the attribute name
-	 * @param selectedView the view descriptor to assert
+	 * @param selectedView the selected view with a model attribute map to
+	 * assert against
 	 */
 	public void assertModelAttributeNull(String attributeName, ViewSelection selectedView) {
 		assertNull("The model attribute '" + attributeName + "' is NOT null but should be [null], model contents are:"
