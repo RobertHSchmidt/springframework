@@ -23,47 +23,48 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker;
 
 /**
- * Action implementation that bundles two or more action execution methods into a
- * single class. Action execution methods defined by subclasses must adhere
- * to the following signature:
+ * Action implementation that bundles two or more action execution methods into
+ * a single class. Action execution methods defined by subclasses must adhere to
+ * the following signature:
  * 
  * <pre>
  *     public Event ${method}(RequestContext context) throws Exception;
  * </pre>
  * 
- * When this action is invoked, by default the <code>id</code> of the calling 
- * action state state is treated as the action execution method name.  Alternatively,
- * the execution method name may be explicitly specified as a property of
- * the calling action state.  
+ * When this action is invoked, by default the <code>id</code> of the calling
+ * action state state is treated as the action execution method name.
+ * Alternatively, the execution method name may be explicitly specified as a
+ * property of the calling action state.
  * <p>
  * For example, the following action state definition:
+ * 
  * <pre>
  *     &lt;action-state id=&quot;search&quot;&gt;
- *          &lt;action bean=&quot;my.search.action&quot;/&gt;
- *          &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
+ *         &lt;action bean=&quot;my.search.action&quot;/&gt;
+ *         &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
  *     &lt;/action-state&gt;
  * </pre>
  * 
  * ... when entered, executes the method:
  * 
  * <pre>
- *     public Event search(RequestContext context) throws Exception;
+ * public Event search(RequestContext context) throws Exception;
  * </pre>
  * 
  * Alternatively you may explictly specify the method name:
  * 
  * <pre>
  *     &lt;action-state id=&quot;searchState&quot;&gt;
- *         &lt;action bean=&quot;my.search.action&quot method=&quot;search&quot;/&gt;
+ *         &lt;action bean=&quot;my.search.action&amp;quot method=&quot;search&quot;/&gt;
  *         &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
  *     &lt;/action-state&gt;
  * </pre>
  * 
  * <p>
- * A typical use of the MultiAction is to centralize all command logic for a flow
- * in one place. Another common use is to centralize form setup and submit logic
- * into one place, or CRUD (create/read/update/delete) operations for a single
- * domain object in one place. 
+ * A typical use of the MultiAction is to centralize all command logic for a
+ * flow in one place. Another common use is to centralize form setup and submit
+ * logic into one place, or CRUD (create/read/update/delete) operations for a
+ * single domain object in one place.
  * <p>
  * <b>Exposed configuration properties:</b> <br>
  * <table border="1">
@@ -79,14 +80,14 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </tr>
  * <tr>
  * <td>executeMethodKeyResolver</td>
- * <td><i>{@link MultiAction.DefaultActionExecuteMethodKeyResolver default}</i></td>
- * <td>Set the strategy used to resolve the name (key) of an action execution method.  Allows
- * full control over the method resolution algorithm.</td>
+ * <td><i>{@link MultiAction.DefaultActionMethodResolver default}</i></td>
+ * <td>Set the strategy used to resolve the name (key) of an action execution
+ * method. Allows full control over the method resolution algorithm.</td>
  * </tr>
  * </table>
  * 
- * @see MultiAction.ActionExecuteMethodKeyResolver
- * @see MultiAction.DefaultActionExecuteMethodKeyResolver
+ * @see MultiAction.ActionMethodResolver
+ * @see MultiAction.DefaultActionMethodResolver
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -97,20 +98,20 @@ public class MultiAction extends AbstractAction {
 	 * A cache for dispatched action execute methods. The default signature is
 	 * <code>public Event ${method}(RequestContext context) throws Exception;</code>.
 	 */
-	private DispatchMethodInvoker executeMethodDispatcher = new DispatchMethodInvoker(this,
-			new Class[] { RequestContext.class }, Event.class, "multi action");
+	private DispatchMethodInvoker methodInvoker = new DispatchMethodInvoker(this, new Class[] { RequestContext.class },
+			Event.class, "multi action");
 
 	/**
 	 * The action execute method name (key) resolver strategy.
 	 */
-	private ActionExecuteMethodKeyResolver executeMethodKeyResolver = new DefaultActionExecuteMethodKeyResolver();
+	private ActionMethodResolver methodResolver = new DefaultActionMethodResolver();
 
 	/**
 	 * Returns the delegate object holding the action execution methods.
 	 * Defaults to this object.
 	 */
 	public Object getDelegate() {
-		return this.executeMethodDispatcher.getTarget();
+		return this.methodInvoker.getTarget();
 	}
 
 	/**
@@ -118,27 +119,27 @@ public class MultiAction extends AbstractAction {
 	 * @param delegate the delegate to set
 	 */
 	public void setDelegate(Object delegate) {
-		this.executeMethodDispatcher.setTarget(delegate);
+		this.methodInvoker.setTarget(delegate);
 	}
 
 	/**
 	 * Get the strategy used to resolve action execution method keys. Defaults
-	 * to {@link MultiAction.DefaultActionExecuteMethodKeyResolver}.
+	 * to {@link MultiAction.DefaultActionMethodResolver}.
 	 */
-	public ActionExecuteMethodKeyResolver getExecuteMethodKeyResolver() {
-		return executeMethodKeyResolver;
+	public ActionMethodResolver getMethodResolver() {
+		return methodResolver;
 	}
 
 	/**
 	 * Set the strategy used to resolve action execution method keys.
 	 */
-	public void setExecuteMethodKeyResolver(ActionExecuteMethodKeyResolver methodKeyResolver) {
-		this.executeMethodKeyResolver = methodKeyResolver;
+	public void setMethodResolver(ActionMethodResolver methodResolver) {
+		this.methodResolver = methodResolver;
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		MethodKey methodKey = this.executeMethodKeyResolver.getMethodKey(context);
-		return (Event)this.executeMethodDispatcher.dispatch(methodKey.getMethodName(), new Object[] { context });
+		MethodKey methodKey = getMethodResolver().getMethodKey(context);
+		return (Event)methodInvoker.invoke(methodKey.getMethodName(), new Object[] { context });
 	}
 
 	/**
@@ -148,29 +149,30 @@ public class MultiAction extends AbstractAction {
 	 * @author Keith Donald
 	 * @author Erwin Vervaet
 	 */
-	public interface ActionExecuteMethodKeyResolver {
+	public interface ActionMethodResolver {
 
 		/**
 		 * Resolve a method key from given flow execution request context.
 		 * @param context the flow execution request context
-		 * @return the key identifying the method that should handle action execution
+		 * @return the key identifying the method that should handle action
+		 * execution
 		 */
 		public MethodKey getMethodKey(RequestContext context);
 	}
 
 	/**
-	 * Default method key resolver used by the MultiAction class.
-	 * It uses the following algorithm to calculate a method name:
+	 * Default method key resolver used by the MultiAction class. It uses the
+	 * following algorithm to calculate a method name:
 	 * <ol>
-	 * <li>If the currently executing action has a "method" property
-	 * defined, use the value as method name.</li>
+	 * <li>If the currently executing action has a "method" property defined,
+	 * use the value as method name.</li>
 	 * <li>Else, use the name of the current state of the flow execution as a
 	 * method name.</li>
 	 * </ol>
 	 * 
 	 * @author Erwin Vervaet
 	 */
-	public static class DefaultActionExecuteMethodKeyResolver implements ActionExecuteMethodKeyResolver {
+	public static class DefaultActionMethodResolver implements ActionMethodResolver {
 		public MethodKey getMethodKey(RequestContext context) {
 			AttributeSource properties = context.getProperties();
 			if (properties.containsAttribute(AnnotatedAction.METHOD_PROPERTY)) {

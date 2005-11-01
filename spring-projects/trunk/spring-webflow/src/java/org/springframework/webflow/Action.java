@@ -52,7 +52,6 @@ package org.springframework.webflow;
  * 
  * @see org.springframework.webflow.ActionState
  * @see org.springframework.webflow.test.MockRequestContext
- * @see org.springframework.webflow.action.StatefulActionProxy
  * @see org.springframework.webflow.action.AbstractBeanInvokingAction
  * 
  * @author Keith Donald

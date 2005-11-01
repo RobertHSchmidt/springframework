@@ -284,7 +284,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	/**
 	 * A cache for dispatched action execute methods.
 	 */
-	private DispatchMethodInvoker validateMethodDispatcher = new DispatchMethodInvoker();
+	private DispatchMethodInvoker validateMethodInvoker = new DispatchMethodInvoker();
 
 	/**
 	 * Determines if validation should only be invoked if the "validatorMethod"
@@ -480,8 +480,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 						+ "] does not support form object class [" + getFormObjectClass() + "]");
 			}
 			// initialize method dispatcher
-			getValidateMethodDispatcher().setTarget(getValidator());
-			getValidateMethodDispatcher().setParameterTypes(
+			getValidateMethodInvoker().setTarget(getValidator());
+			getValidateMethodInvoker().setParameterTypes(
 					new Class[] { getFormObjectClass() == null ? Object.class : getFormObjectClass(), Errors.class });
 		}
 	}
@@ -702,7 +702,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 					.debug("Invoking piecemeal validator method: '" + validatorMethod + "' on form object: "
 							+ formObject);
 		}
-		getValidateMethodDispatcher().dispatch(validatorMethod, new Object[] { formObject, errors });
+		getValidateMethodInvoker().invoke(validatorMethod, new Object[] { formObject, errors });
 	}
 
 	/**
@@ -800,8 +800,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * Returns a dispatcher to invoke validation methods. Subclasses could
 	 * override this to return a custom dispatcher.
 	 */
-	protected DispatchMethodInvoker getValidateMethodDispatcher() {
-		return validateMethodDispatcher;
+	protected DispatchMethodInvoker getValidateMethodInvoker() {
+		return validateMethodInvoker;
 	}
 
 	/**

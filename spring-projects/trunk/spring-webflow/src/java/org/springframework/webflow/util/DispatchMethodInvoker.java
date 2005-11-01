@@ -225,7 +225,7 @@ public class DispatchMethodInvoker {
 	 * @throws MethodLookupException when the method cannot be resolved
 	 * @throws Exception when the invoked method throws an exception
 	 */
-	public Object dispatch(String methodName, Object[] arguments) throws MethodLookupException, Exception {
+	public Object invoke(String methodName, Object[] arguments) throws MethodLookupException, Exception {
 		try {
 			Method dispatchMethod = getDispatchMethod(methodName);
 			Object result = dispatchMethod.invoke(getTarget(), arguments);
