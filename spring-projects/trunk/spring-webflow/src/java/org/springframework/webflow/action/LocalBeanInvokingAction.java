@@ -19,7 +19,8 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 
 /**
- * Thin action proxy that delegates to a method on an arbitrary bean.
+ * Thin action proxy that delegates to a method on an arbitrary bean. The bean
+ * instance is managed locally by this Action in an instance variable.
  * 
  * @author Keith Donald
  */
@@ -29,7 +30,7 @@ public class LocalBeanInvokingAction extends AbstractBeanInvokingAction {
 	 * The target bean (any POJO) to invoke.
 	 */
 	private Object targetBean;
-	
+
 	/**
 	 * Creates a bean invoking action that invokes the specified bean. The bean
 	 * may be a proxy.

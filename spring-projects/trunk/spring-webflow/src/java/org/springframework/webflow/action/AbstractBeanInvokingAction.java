@@ -23,7 +23,11 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
- * Base class for actions that delegate to methods on abritrary beans.
+ * Base class for actions that delegate to methods on abritrary beans. The
+ * method to invoke is determined by the value of the
+ * {@link org.springframework.webflow.AnnotatedAction.METHOD_PROPERTY} action
+ * execution property, typically set when provisioning this Action's use as part
+ * of an {@link org.springframework.webflow.ActionState}.
  * 
  * @author Keith Donald
  */
@@ -32,7 +36,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	/**
 	 * The method invoker that performs the action->bean method binding.
 	 */
-	private MethodInvoker beanMethodInvoker = new MethodInvoker();
+	private MethodInvoker beanInvoker = new MethodInvoker();
 
 	/**
 	 * The strategy that saves and restores stateful bean fields in flow scope.
@@ -49,8 +53,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	/**
 	 * Set the bean state management strategy.
 	 */
-	public void setStatePersister(BeanStatePersister stateManager) {
-		this.statePersister = stateManager;
+	public void setStatePersister(BeanStatePersister statePersister) {
+		this.statePersister = statePersister;
 	}
 
 	/**
@@ -58,18 +62,22 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * to method arguments as neccessary.
 	 */
 	public void setConversionService(ConversionService conversionService) {
-		this.beanMethodInvoker.setConversionService(conversionService);
+		this.beanInvoker.setConversionService(conversionService);
 	}
 
+	protected MethodInvoker getBeanInvoker() {
+		return beanInvoker;
+	}
+	
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
 		getStatePersister().restoreState(bean, context);
 		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(AnnotatedAction.METHOD_PROPERTY);
 		if (methodKey == null) {
-			throw new IllegalStateException("The method to invoke was not provided--set the '" + AnnotatedAction.METHOD_PROPERTY
-					+ "' property");
+			throw new IllegalStateException("The method to invoke was not provided: please set the '"
+					+ AnnotatedAction.METHOD_PROPERTY + "' property");
 		}
-		Event result = toEvent(context, beanMethodInvoker.invoke(methodKey, bean, context));
+		Event result = toEvent(context, getBeanInvoker().invoke(methodKey, bean, context));
 		getStatePersister().saveState(bean, context);
 		return result;
 	}
@@ -99,7 +107,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * 
 	 * @author Keith Donald
 	 */
-	private static class NoOpBeanStatePersister implements BeanStatePersister {
+	public static class NoOpBeanStatePersister implements BeanStatePersister {
 		public void restoreState(Object bean, RequestContext context) throws Exception {
 		}
 

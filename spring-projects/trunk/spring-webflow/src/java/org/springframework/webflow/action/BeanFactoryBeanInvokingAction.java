@@ -79,6 +79,13 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	}
 
 	/**
+	 * Returns the target bean name.
+	 */
+	public String getTargetBeanName() {
+		return targetBeanName;
+	}
+
+	/**
 	 * Set the name of the target bean to invoke. The bean will be looked up in
 	 * the bean factory on action execution.
 	 * @param targetBeanName the target bean name
@@ -89,6 +96,10 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 		this.targetBeanName = targetBeanName;
 	}
 
+	protected BeanFactory getBeanFactory() {
+		return beanFactory;
+	}
+	
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
 	}
@@ -101,8 +112,8 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	 * its life.
 	 */
 	protected Object getBean(RequestContext context) {
-		String beanName = (String)getActionProperty(context, BEAN_PROPERTY, this.targetBeanName);
+		String beanName = (String)getActionProperty(context, BEAN_PROPERTY, getTargetBeanName());
 		Assert.hasText(beanName, "The bean name to invoke was not specified: set the bean property");
-		return beanFactory.getBean(beanName);
+		return getBeanFactory().getBean(beanName);
 	}
 }
