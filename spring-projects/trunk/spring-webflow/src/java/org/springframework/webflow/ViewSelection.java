@@ -28,11 +28,13 @@ import org.springframework.core.style.ToStringCreator;
  * that clients map this view descriptor to a physical view template for
  * rendering.
  * <p>
- * View selections are returned as a result of entering a ViewState or EndState.
- * When a state of either of those types is entered and returns, the caller into
- * the webflow system is handed a fully-configured <code>ViewSelection</code>
- * instance and is expected to present a screen to the user that allows them to
- * interact at that point within the flow.
+ * View selections are returned as a result of entering a {@link ViewState} or
+ * {@link EndState}, typically created by those states delegating to a
+ * {@link ViewSelector} factory. When a state of either of those types is
+ * entered and returns, the caller into the webflow system is handed a
+ * fully-configured <code>ViewSelection</code> instance and is expected to
+ * present a screen to the user that allows them to interact at that point
+ * within the flow.
  * <p>
  * For readers familiar with Spring MVC, this class is very similiar to the
  * <code>ModelAndView</code> construct. This class is provided to prevent a
@@ -102,7 +104,7 @@ public class ViewSelection implements AttributeSource, Serializable {
 	}
 
 	/**
-	 * Set a view name for this ViewDescriptor. Will override any pre-existing
+	 * Set a view name for this ViewSelection. Will override any pre-existing
 	 * view name.
 	 */
 	public void setViewName(String viewName) {
@@ -145,7 +147,7 @@ public class ViewSelection implements AttributeSource, Serializable {
 	 * Add an object to the model.
 	 * @param modelName name of the object to add to the model
 	 * @param modelObject object to add to the model, may not be null
-	 * @return this ViewDescriptor, convenient to allow usages like
+	 * @return this ViewSelection, convenient to allow usages like
 	 * <code>return viewDesc.addObject("foo", bar);</code>
 	 */
 	public ViewSelection addObject(String modelName, Object modelObject) {
@@ -156,7 +158,7 @@ public class ViewSelection implements AttributeSource, Serializable {
 	/**
 	 * Add all entries contained in the provided map to the model.
 	 * @param modelMap a map of modelName->modelObject pairs
-	 * @return this ViewDescriptor, convenient to allow usages like
+	 * @return this ViewSelection, convenient to allow usages like
 	 * <code>return viewDesc.addObject("foo", bar);</code>
 	 */
 	public ViewSelection addAllObjects(Map modelMap) {
@@ -165,7 +167,7 @@ public class ViewSelection implements AttributeSource, Serializable {
 	}
 
 	/**
-	 * Clear the state of this ViewDescriptor object. The object will be empty
+	 * Clear the state of this view selection. The object will be empty
 	 * afterwards.
 	 * @see #isEmpty
 	 */
@@ -175,8 +177,8 @@ public class ViewSelection implements AttributeSource, Serializable {
 	}
 
 	/**
-	 * Return whether this ViewDescriptor object is empty: whether it does not
-	 * hold any view and does not contain a model.
+	 * Return whether this view selection is empty: whether it does not hold any
+	 * view and does not contain a model.
 	 * @see #clear
 	 */
 	public boolean isEmpty() {
