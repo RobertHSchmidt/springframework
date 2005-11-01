@@ -27,14 +27,14 @@ import java.util.Map;
  * to the parent flow.
  * <p>
  * For example, say you have the following parent flow session:
- * 
+ * <p>
  * <pre>
  *      Parent Flow Session 1
  *      ---------------------
- *      - flowId=myFlow
- *      - flowScope=[map:attr1=value1, attr2=value2, attr3=value3]
+ *      : flow = myFlow
+ *      : scope = [map:attr1=value1, attr2=value2, attr3=value3]
  * </pre>
- * 
+ * <p>
  * For "Parent Flow Session 1" above, there are 3 attributes in flow scope
  * ("attr1", "attr2" and "attr3", respectively). Any of these three attributes
  * may be mapped as input down to child subflows when those subflows are
@@ -44,14 +44,14 @@ import java.util.Map;
  * be used between flows or not?).
  * <p>
  * For example:
- * 
+ * <p>
  * <pre>
  *      Flow Attribute Mapper
  *      ---------------------
- *      - inputMappings=(map:attr1-&gt;attr1, attr3-&gt;localAttr1)
- *      - outputMappings=(map:localAttr1-&gt;attr3)
+ *      : inputMappings = [map:attr1-&gt;attr1, attr3-&gt;localAttr1]
+ *      : outputMappings = [map:localAttr1-&gt;attr3]
  * </pre>
- * 
+ * <p>
  * The above example "Flow Attribute Mapper" specifies
  * <code>inputMappings</code> that define which parent attributes to map as
  * input to the child. In this case, two attributes in the parent are mapped,
