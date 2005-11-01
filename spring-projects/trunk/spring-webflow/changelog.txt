@@ -56,6 +56,7 @@ Changes in version 1.0 RC1 (7.11.2005)
   config heavily depended on this package.
 * Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add methods.
 * Changed numberguess sample application to use the new StatefulActionProxy.
+* Renamed ViewDescriptor and ViewDescriptorCreator to ViewSelection and ViewSelector, respectively: for clarity and consistency with lexicon.
 * Removed DelegatingAction in favor of StatefulActionProxy and bean invoking actions.
 * Small improvements in MockRequestContext to make it easier to use.
 * Added several unit tests.
