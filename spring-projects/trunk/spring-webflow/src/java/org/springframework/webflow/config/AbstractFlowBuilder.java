@@ -43,28 +43,28 @@ import org.springframework.webflow.access.FlowArtifactLookupException;
  * MVC's simple form controller:
  * 
  * <pre>
- *   public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- *   	protected String flowId() {
- *   		return &quot;customerDetails&quot;;
- *   	}
- *   
- *      public void buildStates() {
- *        // get customer information
- *        addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
- *           on(success(), &quot;displayDetails&quot;));
- *        // view customer information               
- *        addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *           on(submit(), &quot;bindAndValidate&quot;);
- *        // bind and validate customer information updates 
- *        addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
- *           new Transition[] {
- *               on(error(), &quot;displayDetails&quot;),
- *               on(success(), &quot;finish&quot;)
- *           });
- *        // finish
- *        addEndState(&quot;finish&quot;);
- *      }
+ * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
+ * 	 protected String flowId() {
+ * 	   return &quot;customerDetails&quot;;
+ * 	 }
+ * 
+ *   public void buildStates() {
+ *     // get customer information
+ *     addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
+ *         on(success(), &quot;displayDetails&quot;));
+ *     // view customer information               
+ *     addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *         on(submit(), &quot;bindAndValidate&quot;);
+ *     // bind and validate customer information updates 
+ *     addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
+ *         new Transition[] {
+ *             on(error(), &quot;displayDetails&quot;),
+ *             on(success(), &quot;finish&quot;)
+ *         });
+ *     // finish
+ *     addEndState(&quot;finish&quot;);
  *   }
+ * }
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
@@ -299,9 +299,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Turn given view name into a corresponding view descriptor creator.
+	 * Turn given view name into a corresponding view selector.
 	 * @param viewName the view name (might be encoded)
-	 * @return the corresponding view descriptor creator
+	 * @return the corresponding view selector
 	 */
 	protected ViewSelector view(String viewName) {
 		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName);
@@ -312,7 +312,27 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * state triggers the rendering of a view template when entered.
 	 * @param stateId the <code>ViewState</code> id; must be unique in the
 	 * context of the flow built by this builder
-	 * @param creator the factory to produce a descriptor noting the name of the
+	 * @param selector the factory to produce a selection noting the name of the
+	 * logical view to render; this name will be mapped to a physical resource
+	 * template such as a JSP when the ViewState is entered and control returns
+	 * to the front controller
+	 * @param transitions the supported transitions for this state, where each
+	 * transition maps a path from this state to another state (triggered by an
+	 * event)
+	 * @return the view state
+	 * @throws IllegalArgumentException the stateId was not unique
+	 */
+	protected ViewState addViewState(String stateId, ViewSelector selector, Transition[] transitions)
+			throws IllegalArgumentException {
+		return new ViewState(getFlow(), stateId, selector, transitions);
+	}
+	
+	/**
+	 * Adds a <code>ViewState</code> to the flow built by this builder. A view
+	 * state triggers the rendering of a view template when entered.
+	 * @param stateId the <code>ViewState</code> id; must be unique in the
+	 * context of the flow built by this builder
+	 * @param selector the factory to produce a selection noting the name of the
 	 * logical view to render; this name will be mapped to a physical resource
 	 * template such as a JSP when the ViewState is entered and control returns
 	 * to the front controller
@@ -323,9 +343,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the view state
 	 * @throws IllegalArgumentException the stateId was not unique
 	 */
-	protected ViewState addViewState(String stateId, ViewSelector creator, Transition[] transitions,
-			Map properties) throws IllegalArgumentException {
-		return new ViewState(getFlow(), stateId, creator, transitions, properties);
+	protected ViewState addViewState(String stateId, ViewSelector selector, Transition[] transitions, Map properties)
+			throws IllegalArgumentException {
+		return new ViewState(getFlow(), stateId, selector, transitions, properties);
 	}
 
 	/**
@@ -490,7 +510,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected AnnotatedAction method(String methodName, Action action) {
 		return method(new MethodKey(methodName), action);
 	}
-	
+
 	/**
 	 * Creates an annotated action with a single property that indicates which
 	 * method should be invoked on the target action when the state is entered.
@@ -661,8 +681,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * specified id.
 	 * 
 	 * @param stateId the state id
-	 * @param transitions the state's supported transitions, evaluated in the specified
-	 * order until a match is found
+	 * @param transitions the state's supported transitions, evaluated in the
+	 * specified order until a match is found
 	 * @return the configured decision state
 	 * @throws IllegalArgumentException
 	 */
@@ -675,8 +695,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * specified id.
 	 * 
 	 * @param stateId the state id
-	 * @param transitions the state's supported transitions, evaluated in the specified
-	 * order until a match is found
+	 * @param transitions the state's supported transitions, evaluated in the
+	 * specified order until a match is found
 	 * @param properties custom decision state properties
 	 * @return the configured decision state
 	 * @throws IllegalArgumentException
@@ -724,30 +744,30 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * Adds an end state with the specified id that will message the specified
-	 * view descriptor creater to produce a view to display when entered as part
-	 * of a root flow termination.
+	 * view selector to produce a view to display when entered as part of a root
+	 * flow termination.
 	 * @param stateId the end state id
-	 * @param creator the view descriptor creater
+	 * @param selector the view selector
 	 * @return the end state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected EndState addEndState(String stateId, ViewSelector creator) throws IllegalArgumentException {
-		return addEndState(stateId, creator, null);
+	protected EndState addEndState(String stateId, ViewSelector selector) throws IllegalArgumentException {
+		return addEndState(stateId, selector, null);
 	}
 
 	/**
 	 * Adds an end state with the specified id that will message the specified
-	 * view descriptor creater to produce a view to display when entered as part
-	 * of a root flow termination.
+	 * view selector to produce a view to display when entered as part of a root
+	 * flow termination.
 	 * @param stateId the end state id
-	 * @param creater the view descriptor creater
+	 * @param selector the view selector
 	 * @param properties additional properties describing the state
 	 * @return the end state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected EndState addEndState(String stateId, ViewSelector creater, Map properties)
+	protected EndState addEndState(String stateId, ViewSelector selector, Map properties)
 			throws IllegalArgumentException {
-		return new EndState(getFlow(), stateId, creater, properties);
+		return new EndState(getFlow(), stateId, selector, properties);
 	}
 
 	/**
