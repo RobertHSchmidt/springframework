@@ -34,7 +34,7 @@
 	Defines an action state: a state where an action is executed.
 	Transitions triggered by the action(s) lead on to other states.
 -->
-<!ELEMENT action-state ( property*, entry-action?, action+, transition+, exit-action? )>
+<!ELEMENT action-state ( property*, entry-action?, action+, transition+, exit-action?, exception-handler* )>
 
 <!--
 	Unique identifier of an action state; must be unique to this flow.
@@ -92,7 +92,7 @@
 	returned to the user.
 	Transitions triggered by user input from the view lead on to other states.
 -->
-<!ELEMENT view-state ( property*, entry-action?, transition+, exit-action? )>
+<!ELEMENT view-state ( property*, entry-action?, transition+, exit-action?, exception-handler* )>
 
 <!--
 	Unique identifier of a view state; must be unique to this flow.
@@ -129,7 +129,7 @@
 	Defines a decision state: a state that will evaluate one or more expressions to
 	decide which state to go to next.
 -->
-<!ELEMENT decision-state ( property*, entry-action?, if+, exit-action? )>
+<!ELEMENT decision-state ( property*, entry-action?, if+, exit-action?, exception-handler* )>
 
 <!--
 	Unique identifier of this decision state; must be unique to this flow.
@@ -165,7 +165,7 @@
 	sub flow completes execution (reaches an end state), the result of subflow execution
 	will be used as grounds for a transition out of this state.
 -->
-<!ELEMENT subflow-state ( property*, entry-action?, attribute-mapper?, transition+, exit-action? )>
+<!ELEMENT subflow-state ( property*, entry-action?, attribute-mapper?, transition+, exit-action?, exception-handler* )>
 
 <!--
 	Unique identifier of a subflow state; must be unique to this flow.
@@ -176,12 +176,6 @@
 	Reference to the id of the web flow to be spawned when this subflow state is entered.
 -->
 <!ATTLIST subflow-state flow CDATA #REQUIRED>
-
-<!--
-	Dependency (aka collaborator) autowiring options for use when instantiating the subflow state 
-	implementation with the class attribute.
--->
-<!ATTLIST subflow-state autowire (no | byName | byType | constructor | autodetect | default) "default">
 
 <!--
 	An optional mapper that will map attributes from the parent flow to/from the spawned subflow. 
@@ -279,7 +273,7 @@
 <!--
 	Defines an end state: a state that terminates the flow.
 -->
-<!ELEMENT end-state ( property*, entry-action? )>
+<!ELEMENT end-state ( property*, entry-action?, exception-handler* )>
 
 <!--
 	Unique identifier of an end state; must be unique to this flow.
@@ -322,12 +316,6 @@
 	attribute or the class and state attributes, not both.
 -->
 <!ATTLIST exception-handler bean CDATA #IMPLIED>
-
-<!--
-	Reference to the id of the web flow to be spawned when this subflow state is entered.
--->
-<!ATTLIST subflow-state flow CDATA #REQUIRED>
-
 
 <!--
 	Defines a single (usually named) bean associated with this webflow definition.  Typically used to
