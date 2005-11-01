@@ -206,6 +206,10 @@ public abstract class State extends AnnotatedObject {
 			return doEnter(context);
 		}
 		catch (StateException e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Handling exception [" + e + "] that occured entering state '" + getId() + "' of flow '"
+						+ getFlow().getId());
+			}
 			return handleException(e, context);
 		}
 	}
@@ -235,7 +239,9 @@ public abstract class State extends AnnotatedObject {
 				}
 			}
 		}
-		// rethrow
+		if (logger.isDebugEnabled()) {
+			logger.debug("No handler found for state exception [" + exception + "], rethrowing...");
+		}
 		throw exception;
 	}
 
