@@ -209,17 +209,13 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * after response rendering with that generated
 	 */
 	public void saveFlowExecutionIfNecessary(FacesContext context) {
-		
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-
 		if (flowExecution != null && !FlowExecutionHolder.isFlowExecutionSaved() ) {
 			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
 			Assert.notNull(flowExecutionId,
-					"Flow execution storage id must be pre-generated for late-stage save of flow exection to storage");
-			
+					"Flow execution storage id must be pre-generated for two-phase save of flow exection to storage");
 			getStorage().saveWithGeneratedId(flowExecutionId, flowExecution, FlowExecutionHolder.getSourceEvent());
 			FlowExecutionHolder.setFlowExecutionSaved(true);
-
 			flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Saved flow execution out to storage with previously generated id: '" + flowExecutionId
