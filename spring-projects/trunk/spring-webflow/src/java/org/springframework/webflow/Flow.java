@@ -130,7 +130,7 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * The list exception handlers for this flow.
 	 */
-	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(6);
+	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(3);
 
 	/**
 	 * Construct a new flow definition with the given id. The id should be

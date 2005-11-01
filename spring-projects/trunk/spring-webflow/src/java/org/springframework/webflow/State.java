@@ -15,10 +15,13 @@
  */
 package org.springframework.webflow;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
@@ -71,6 +74,11 @@ public abstract class State extends AnnotatedObject {
 	 * The action to invoke when this state is entered.
 	 */
 	private Action entryAction;
+
+	/**
+	 * The list exception handlers for this state.
+	 */
+	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(1);
 
 	/**
 	 * Creates a state for the provided <code>flow</code> identified by the
@@ -167,6 +175,17 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
+	 * Adds an exception handler to this state. Exception handles are invoked
+	 * when an exception occurs when this state is entered, and can execute
+	 * custom exception handling logic as well as select an error view to
+	 * display.
+	 * @param handler the exception handler
+	 */
+	public void addExceptionHandler(StateExceptionHandler handler) {
+		exceptionHandlers.add(handler);
+	}
+
+	/**
 	 * Enter this state in the provided flow execution request context. This
 	 * implementation just calls the {@link #doEnter(StateContext)} hook method,
 	 * which should be implemented by subclasses, after executing the entry
@@ -179,11 +198,45 @@ public abstract class State extends AnnotatedObject {
 	 */
 	public ViewSelection enter(StateContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Entering state '" + getId() + "' in flow '" + getFlow().getId() + "'");
+			logger.debug("Entering state '" + getId() + "' of flow '" + getFlow().getId() + "'");
 		}
 		context.setCurrentState(this);
 		executeEntryAction(context);
-		return doEnter(context);
+		try {
+			return doEnter(context);
+		}
+		catch (StateException e) {
+			return handleException(e, context);
+		}
+	}
+
+	/**
+	 * Handle an exception that occured during the entering of this state in the
+	 * context of the current request.
+	 * <p>
+	 * This implementation iterates over the ordered set of exception handler
+	 * objects, delegating to each handler in the set until one handles the
+	 * exception that occured and selects a non-null error view. If no error
+	 * view is selected, the StateException is rethrown.
+	 * @param context the state request context
+	 * @param exception the exception that occured
+	 * @return the selected error view
+	 * @throw StateException if no error view was selected, rethrowing the
+	 * exception up to the calling FlowExecution for handling.
+	 */
+	protected ViewSelection handleException(StateException exception, StateContext context) throws StateException {
+		Iterator it = exceptionHandlers.iterator();
+		while (it.hasNext()) {
+			StateExceptionHandler handler = (StateExceptionHandler)it.next();
+			if (handler.handles(exception)) {
+				ViewSelection selectedView = handler.handle(exception, context);
+				if (selectedView != null) {
+					return selectedView;
+				}
+			}
+		}
+		// rethrow
+		throw exception;
 	}
 
 	/**
