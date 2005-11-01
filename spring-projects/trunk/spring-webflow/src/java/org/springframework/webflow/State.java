@@ -186,6 +186,19 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
+	 * Adds the list of state exception handlers to this state definition.
+	 * @param exceptionHandlers the state exception handlers
+	 */
+	public void addExceptionHandlers(StateExceptionHandler[] exceptionHandlers) {
+		if (exceptionHandlers == null) {
+			return;
+		}
+		for (int i = 0; i < exceptionHandlers.length; i++) {
+			addExceptionHandler(exceptionHandlers[i]);
+		}
+	}
+	
+	/**
 	 * Enter this state in the provided flow execution request context. This
 	 * implementation just calls the {@link #doEnter(StateContext)} hook method,
 	 * which should be implemented by subclasses, after executing the entry

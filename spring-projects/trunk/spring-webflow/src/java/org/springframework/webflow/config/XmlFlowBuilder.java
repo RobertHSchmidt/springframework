@@ -69,8 +69,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *       &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
- *       &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
+ *                  &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
+ *                  &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -318,8 +318,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	}
 
 	public void buildStates() throws FlowBuilderException {
-		parseStateDefinitions();
-		parseExceptionHandlers();
+		addStateDefinitions();
+		getFlow().addExceptionHandlers(parseExceptionHandlers(document.getDocumentElement()));
 	}
 
 	public void dispose() {
@@ -374,7 +374,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * Parse the state definitions in the XML file and add them to the flow
 	 * object we're constructing.
 	 */
-	protected void parseStateDefinitions() {
+	protected void addStateDefinitions() {
 		Element root = document.getDocumentElement();
 		String startStateId = root.getAttribute(START_STATE_ATTRIBUTE);
 		// get the flow under construction
@@ -402,6 +402,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 				}
 				if (state != null) {
 					parseStateActions(element, state);
+					state.addExceptionHandlers(parseExceptionHandlers(element));
 				}
 			}
 		}
@@ -441,8 +442,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	protected ViewState parseViewState(Flow flow, Element element) {
 		ViewSelector creator = null;
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
-			creator = (ViewSelector)fromStringTo(ViewSelector.class).execute(
-					element.getAttribute(VIEW_ATTRIBUTE));
+			creator = (ViewSelector)fromStringTo(ViewSelector.class).execute(element.getAttribute(VIEW_ATTRIBUTE));
 		}
 		return new ViewState(flow, element.getAttribute(ID_ATTRIBUTE), creator, parseTransitions(element),
 				parseProperties(element));
@@ -473,8 +473,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	protected EndState parseEndState(Flow flow, Element element) {
 		ViewSelector creator = null;
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
-			creator = (ViewSelector)fromStringTo(ViewSelector.class).execute(
-					element.getAttribute(VIEW_ATTRIBUTE));
+			creator = (ViewSelector)fromStringTo(ViewSelector.class).execute(element.getAttribute(VIEW_ATTRIBUTE));
 		}
 		return new EndState(flow, element.getAttribute(ID_ATTRIBUTE), creator, parseProperties(element));
 	}
@@ -715,33 +714,33 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * Parse the list of exception handlers present in the xml document and add
 	 * them to the flow definition being built.
 	 */
-	protected void parseExceptionHandlers() {
-		Element root = document.getDocumentElement();
-		NodeList nodeList = root.getElementsByTagName(EXCEPTION_HANDLER_ELEMENT);
+	protected StateExceptionHandler[] parseExceptionHandlers(Element element) {
+		NodeList nodeList = element.getElementsByTagName(EXCEPTION_HANDLER_ELEMENT);
+		if (nodeList.getLength() == 0) {
+			return new StateExceptionHandler[0];
+		}
+		StateExceptionHandler[] exceptionHandlers = new StateExceptionHandler[nodeList.getLength()];
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
-			TransitionExecutorStateExceptionHandler defaultHandler = null;
 			if (node instanceof Element) {
-				Element element = (Element)node;
-				if (element.hasAttribute(BEAN_ATTRIBUTE)) {
-					StateExceptionHandler handler = getFlowArtifactLocator().getExceptionHandler(
-							element.getAttribute(BEAN_ATTRIBUTE));
-					getFlow().addExceptionHandler(handler);
+				Element handlerElement = (Element)node;
+				if (handlerElement.hasAttribute(BEAN_ATTRIBUTE)) {
+					exceptionHandlers[i] = getFlowArtifactLocator().getExceptionHandler(
+							handlerElement.getAttribute(BEAN_ATTRIBUTE));
 				}
 				else {
-					if (defaultHandler == null) {
-						defaultHandler = new TransitionExecutorStateExceptionHandler();
-					}
-					Class exceptionClass = (Class)fromStringTo(Class.class).execute(
-							element.getAttribute(CLASS_ATTRIBUTE));
-					State state = getFlow().getState(element.getAttribute(STATE_ATTRIBUTE));
-					defaultHandler.add(new ExceptionStateMapping(exceptionClass, state));
+					exceptionHandlers[i] = parseDefaultExceptionHandler(handlerElement);
 				}
 			}
-			if (defaultHandler != null) {
-				getFlow().addExceptionHandler(defaultHandler);
-			}
 		}
+		return exceptionHandlers;
 	}
 
+	protected StateExceptionHandler parseDefaultExceptionHandler(Element element) {
+		TransitionExecutorStateExceptionHandler defaultHandler = new TransitionExecutorStateExceptionHandler();
+		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(CLASS_ATTRIBUTE));
+		State state = getFlow().getState(element.getAttribute(STATE_ATTRIBUTE));
+		defaultHandler.add(new ExceptionStateMapping(exceptionClass, state));
+		return defaultHandler;
+	}
 }

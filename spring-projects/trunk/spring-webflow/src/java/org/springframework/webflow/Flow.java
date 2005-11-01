@@ -198,14 +198,27 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Adds an exception handler to this flow definition. Exception handles are
-	 * invoked when an exception occurs during this flow's execution, and can
-	 * execute custom exception handling logic as well as select an error view
-	 * to display.
-	 * @param handler the exception handler
+	 * Adds a state exception handler to this flow definition. Exception handles
+	 * are invoked when an exception occurs during this flow's execution, and
+	 * can execute custom exception handling logic as well as select an error
+	 * view to display.
+	 * @param exceptionHandler the state exception handler
 	 */
-	public void addExceptionHandler(StateExceptionHandler handler) {
-		exceptionHandlers.add(handler);
+	public void addExceptionHandler(StateExceptionHandler exceptionHandler) {
+		exceptionHandlers.add(exceptionHandler);
+	}
+
+	/**
+	 * Adds the list of state exception handlers to this flow definition.
+	 * @param exceptionHandlers the state exception handlers
+	 */
+	public void addExceptionHandlers(StateExceptionHandler[] exceptionHandlers) {
+		if (exceptionHandlers == null) {
+			return;
+		}
+		for (int i = 0; i < exceptionHandlers.length; i++) {
+			addExceptionHandler(exceptionHandlers[i]);
+		}
 	}
 
 	/**
@@ -491,10 +504,10 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Utility method that iterates over this Flow's list of state Transition objects 
-	 * and resolves their target states.  Designed to be called after Flow construction and 
-	 * all states have been added as a 'second pass' to allow for transition
-	 * target state resolution.
+	 * Utility method that iterates over this Flow's list of state Transition
+	 * objects and resolves their target states. Designed to be called after
+	 * Flow construction and all states have been added as a 'second pass' to
+	 * allow for transition target state resolution.
 	 */
 	public void resolveStateTransitionsTargetStates() {
 		Iterator it = statesIterator();
@@ -505,9 +518,10 @@ public class Flow extends AnnotatedObject {
 			}
 		}
 	}
-	
+
 	public String toString() {
 		return new ToStringCreator(this).append("id", id).append("startState", startState)
 				.append("states", this.states).append("exceptionHandlers", exceptionHandlers).toString();
 	}
+
 }
