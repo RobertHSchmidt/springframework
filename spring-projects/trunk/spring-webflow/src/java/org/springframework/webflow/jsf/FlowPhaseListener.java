@@ -58,7 +58,7 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 		else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
 			// save the flow execution out to storage after response rendering if neccessary
-			getExecutionManager(context).saveFlowExecutionIfNeccessary(context);
+			getExecutionManager(context).saveFlowExecutionIfNecessary(context);
 			FlowExecutionHolder.clearFlowExecution();
 		}
 	}
@@ -69,7 +69,7 @@ public class FlowPhaseListener implements PhaseListener {
 
 	/**
 	 * Return the {@link JsfFlowExecutionManager} instance we will use to make
-	 * navigation handler decisions. The instanlce to use is returned by
+	 * navigation handler decisions. The instance to use is returned by
 	 * delegating to
 	 * {@link JsfFlowExecutionManager#getFlowExecutionManager(FacesContext)},
 	 * but the value is cached, and subsequent requests return the same value.

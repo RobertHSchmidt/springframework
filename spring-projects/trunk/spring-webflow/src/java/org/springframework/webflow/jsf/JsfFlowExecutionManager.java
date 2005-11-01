@@ -148,8 +148,10 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	}
 
 	/**
-	 * Resume an active flow execution for the current request. Proceed until a
-	 * <code>ViewDescriptor</code> is returned describing the next view that
+	 * <p>JSF navigation-focused method which resumes an active flow execution for the current request.
+	 * It is expected that the flow execution itself has already been restored into the current
+	 * thread context available through {@link FlowExecutionHolder}. 
+	 * <p>Proceed until a <code>ViewDescriptor</code> is returned describing the next view that
 	 * should be rendered.
 	 * @param context <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
@@ -178,7 +180,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			if (getStorage().supportsTwoPhaseSave()) {
 				// just generate the flow execution id, an actual save will be
 				// done after response rendering
-				// see {@link #saveFlowExecutionIfNeccessary()}
+				// see {@link #saveFlowExecutionIfNecessary()}
 				flowExecutionId = getStorage().generateId(null);
 				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, (JsfEvent)sourceEvent, false);
 			}
@@ -200,19 +202,24 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 
 	/**
 	 * Saves the current thread-bound FlowExecution out to storage if
-	 * neccessary; specifically, only if saving is a two phase process. In this
-	 * case, the first part of a save happens after event processing when a
-	 * storage ID is generated, the second part happens here and actually puts
-	 * the execution into storage after response rendering with that generated
-	 * id.
-	 * @param context the faces context
+	 * necessary; specifically, only if it actually exsists, and only if
+	 * saving is a two phase process. In this case, the first part of a save
+	 * happens after event processing when a storage ID is generated, the
+	 * second part happens here and actually puts the execution into storage
+	 * after response rendering with that generated
 	 */
-	public void saveFlowExecutionIfNeccessary(FacesContext context) {
-		if (!FlowExecutionHolder.isFlowExecutionSaved()) {
+	public void saveFlowExecutionIfNecessary(FacesContext context) {
+		
+		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
+
+		if (flowExecution != null && !FlowExecutionHolder.isFlowExecutionSaved() ) {
 			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
-			FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-			Event sourceEvent = FlowExecutionHolder.getSourceEvent();
-			getStorage().saveWithGeneratedId(flowExecutionId, flowExecution, sourceEvent);
+			Assert.notNull(flowExecutionId,
+					"Flow execution storage id must be pre-generated for late-stage save of flow exection to storage");
+			
+			getStorage().saveWithGeneratedId(flowExecutionId, flowExecution, FlowExecutionHolder.getSourceEvent());
+			FlowExecutionHolder.setFlowExecutionSaved(true);
+
 			flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Saved flow execution out to storage with previously generated id: '" + flowExecutionId
@@ -220,7 +227,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			}
 		}
 	}
-
+	
 	/**
 	 * Construct and return an <code>Event</code> reflecting the flow
 	 * execution event that represents this request. The default implementation
@@ -272,10 +279,10 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	}
 
 	/**
-	 * Responsible for restoring (loading) the flow execution if the appropriate
+	 * <p>Responsible for restoring (loading) the flow execution if the appropriate
 	 * flow execution id parameter is found in the faces context request map.
-	 * Normally called by the phase listener.
-	 * 
+	 * <p>Normally called by the phase listener.
+	 * <p>The flow execution (if any) is also loaded into the FlowExecutionHolder.
 	 * @param context <code>FacesContext</code> for the current request
 	 */
 	public void restoreFlowExecution(FacesContext context) {
@@ -291,7 +298,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			FlowExecutionHolder.setFlowExecution(id, flowExecution, sourceEvent, false);
 		}
 	}
-
+	
 	/**
 	 * Return the JsfFlowExecutionManager from a known location, as a bean
 	 * called FlowNavigationHandlerStrategy.BEAN_NAME in the web application
