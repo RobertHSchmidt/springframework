@@ -213,7 +213,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		if (flowExecution != null && !FlowExecutionHolder.isFlowExecutionSaved() ) {
 			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
 			Assert.notNull(flowExecutionId,
-					"Flow execution storage id must be pre-generated for two-phase save of flow exection to storage");
+					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
 			getStorage().saveWithGeneratedId(flowExecutionId, flowExecution, FlowExecutionHolder.getSourceEvent());
 			FlowExecutionHolder.setFlowExecutionSaved(true);
 			flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
