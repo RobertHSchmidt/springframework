@@ -41,12 +41,13 @@ import org.springframework.binding.AttributeSource;
  * client code.
  * <p>
  * Note: the "requestScope" property may be used as a store for arbitrary data
- * that should exist for the life of this object. Such request-local data, along
- * with all data in flow scope, is available for exposing to view templates via
- * a ViewDescriptor "model" map, returned when a ViewState or EndState is
- * entered. See ({@link org.springframework.webflow.ViewState}) for an example
- * using a specific ({@link org.springframework.webflow.ViewSelector})
- * strategy.
+ * that should exist for the life of this object.
+ * <p>
+ * Request-local data, along with all data in flow scope, is available for
+ * exposing to view templates via a
+ * {@link org.springframework.webflow.ViewSelection}'s "model" property,
+ * returned when a {@link org.springframework.webflow.ViewState} or
+ * {@link org.springframework.webflow.EndState} is entered.
  * <p>
  * Note: the <i>request</i> context is in no way linked to an HTTP or Portlet
  * request! It uses the familiar "request" naming convention to indicate a

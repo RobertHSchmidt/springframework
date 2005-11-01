@@ -47,8 +47,8 @@ import org.springframework.webflow.ViewSelector;
 public class TextToViewSelector extends ConversionServiceAwareConverter {
 
 	/**
-	 * Prefix used when the user wants to use a ViewDescriptorCreator managed by
-	 * a factory.
+	 * Prefix used when the user wants to use a ViewSelector implementation
+	 * managed by a factory.
 	 */
 	private static final String BEAN_PREFIX = "bean:";
 
@@ -59,12 +59,12 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	public static final String REDIRECT_PREFIX = "redirect:";
 
 	/**
-	 * Locator to use for loading custom ViewDescriptorCreator beans.
+	 * Locator to use for loading custom ViewSelector beans.
 	 */
 	private FlowArtifactLocator artifactLocator;
 
 	/**
-	 * Create a new text to ViewDescriptorCreator converter.
+	 * Create a new text to ViewSelector converter.
 	 */
 	public TextToViewSelector(FlowArtifactLocator artifactLocator, ConversionService conversionService) {
 		super(conversionService);
@@ -96,7 +96,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 * Hook method subclasses can override to return a special simple view
 	 * selector implementation.
 	 * @param encodedView the name of the view to render
-	 * @return the simple view descriptor creator
+	 * @return the simple view selector
 	 * @throws ConversionException when an error occurs
 	 */
 	protected ViewSelector createSimpleViewSelector(String encodedView) throws ConversionException {
@@ -107,7 +107,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 * Hook method sublcasses can override to return a specialized
 	 * implementation of a view selector that triggers a redirect.
 	 * @param encodedView the encoded view, without the "redirect:" prefix
-	 * @return the redirecting view descriptor creator
+	 * @return the redirecting view selector
 	 * @throws ConversionException when something goes wrong
 	 */
 	protected ViewSelector createRedirectViewSelector(String encodedView) throws ConversionException {

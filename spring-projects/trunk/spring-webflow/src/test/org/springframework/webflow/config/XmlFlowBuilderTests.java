@@ -135,12 +135,12 @@ public class XmlFlowBuilderTests extends TestCase {
 		EndState endState1 = (EndState)flow.getState("endState1");
 		assertNotNull(endState1);
 		assertFalse(endState1.isMarker());
-		assertEquals("endView1", ((SimpleViewSelector)endState1.getViewDescriptorCreator()).getViewName());
+		assertEquals("endView1", ((SimpleViewSelector)endState1.getViewSelector()).getViewName());
 
 		EndState endState2 = (EndState)flow.getState("endState2");
 		assertNotNull(endState2);
 		assertTrue(endState2.isMarker());
-		assertNull(endState2.getViewDescriptorCreator());
+		assertNull(endState2.getViewSelector());
 
 	}
 

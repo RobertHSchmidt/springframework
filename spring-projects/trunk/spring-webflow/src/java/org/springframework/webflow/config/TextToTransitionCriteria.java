@@ -53,8 +53,8 @@ import org.springframework.webflow.WildcardTransitionCriteria;
 public class TextToTransitionCriteria extends AbstractConverter {
 
 	/**
-	 * Prefix used when the user wants to use a ViewDescriptorCreator managed by
-	 * a factory.
+	 * Prefix used when the user wants to use a custom TransitionCriteria
+	 * implementation managed by a factory.
 	 */
 	private static final String BEAN_PREFIX = "bean:";
 

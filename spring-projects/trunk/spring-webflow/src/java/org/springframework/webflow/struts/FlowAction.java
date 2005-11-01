@@ -35,12 +35,12 @@ import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.FlowExecutionManager;
 
 /**
- * Point of integration between Struts and Spring Web Flow: a 
- * Struts Action that acts a front controller entry point into the web flow
- * system. A single FlowAction may launch any new FlowExecution with the
- * appropriate <code>_flowId</code> passed in by client views (jsps, etc). In
- * addition, a single Flow Action may signal events in any existing/restored
- * FlowExecution with the appropriate <code>_flowExecutionId</code> passed in.
+ * Point of integration between Struts and Spring Web Flow: a Struts Action that
+ * acts a front controller entry point into the web flow system. A single
+ * FlowAction may launch any new FlowExecution with the appropriate
+ * <code>_flowId</code> passed in by client views (jsps, etc). In addition, a
+ * single Flow Action may signal events in any existing/restored FlowExecution
+ * with the appropriate <code>_flowExecutionId</code> passed in.
  * <p>
  * Requests are managed by and delegated to a {@link FlowExecutionManager},
  * allowing reuse of common front flow controller logic in other environments.
@@ -63,10 +63,10 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  * FlowAction:
  * 
  * <pre>
- *     &lt;action path=&quot;/userRegistration&quot;
- *         type=&quot;org.springframework.webflow.struts.FlowAction&quot;
- *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *     &lt;/action&gt;
+ *       &lt;action path=&quot;/userRegistration&quot;
+ *           type=&quot;org.springframework.webflow.struts.FlowAction&quot;
+ *           name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *       &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -158,8 +158,8 @@ public class FlowAction extends ActionSupport {
 	}
 
 	/**
-	 * Return a Struts ActionForward given a ViewDescriptor. We need to add all
-	 * attributes from the ViewDescriptor as request attributes.
+	 * Return a Struts ActionForward given a ViewSelection. Adds all attributes
+	 * from the ViewSelection as request attributes.
 	 */
 	private ActionForward toActionForward(ViewSelection viewDescriptor, ActionMapping mapping,
 			HttpServletRequest request) {

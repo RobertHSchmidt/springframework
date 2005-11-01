@@ -45,7 +45,7 @@ import org.springframework.webflow.ViewSelection;
  * <li>Resume the flow execution by signaling what action (event) the user took
  * in the resuming state.
  * <li>Wait for state event processing to complete, which happens when a
- * <code>ViewDescriptor</code> is returned selecting the next view to be
+ * <code>ViewSelection</code> is returned selecting the next view to be
  * rendered.</li>
  * <li>Cause navigation to render the requested view</li>
  * </ul>

@@ -52,7 +52,7 @@ public class EndState extends State {
 	 * An optional view descriptor creator that will produce a view to render if
 	 * this end state terminates an executing root flow.
 	 */
-	private ViewSelector viewDescriptorCreator;
+	private ViewSelector viewSelector;
 
 	/**
 	 * Create a new end state with no associated view.
@@ -76,7 +76,7 @@ public class EndState extends State {
 	 */
 	public EndState(Flow flow, String id, ViewSelector creator) throws IllegalArgumentException {
 		super(flow, id);
-		setViewDescriptorCreator(creator);
+		setViewSelector(creator);
 	}
 
 	/**
@@ -89,26 +89,25 @@ public class EndState extends State {
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 */
-	public EndState(Flow flow, String id, ViewSelector creator, Map properties)
-			throws IllegalArgumentException {
+	public EndState(Flow flow, String id, ViewSelector creator, Map properties) throws IllegalArgumentException {
 		super(flow, id, properties);
-		setViewDescriptorCreator(creator);
+		setViewSelector(creator);
 	}
 
 	/**
 	 * Returns the factory to produce a descriptor for the view to render in
 	 * this end state if it terminates a root flow.
 	 */
-	public ViewSelector getViewDescriptorCreator() {
-		return viewDescriptorCreator;
+	public ViewSelector getViewSelector() {
+		return viewSelector;
 	}
 
 	/**
 	 * Sets the factory to produce a view descriptor to render when this end
 	 * state is entered and terminates a root flow.
 	 */
-	public void setViewDescriptorCreator(ViewSelector creator) {
-		this.viewDescriptorCreator = creator;
+	public void setViewSelector(ViewSelector creator) {
+		this.viewSelector = creator;
 	}
 
 	/**
@@ -116,7 +115,7 @@ public class EndState extends State {
 	 * state), false otherwise.
 	 */
 	public boolean isMarker() {
-		return viewDescriptorCreator == null;
+		return viewSelector == null;
 	}
 
 	/**
@@ -141,15 +140,15 @@ public class EndState extends State {
 			ViewSelection selectedView;
 			if (isMarker()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning control to client with a [null] view render request: "
+					logger.debug("Returning control to client with a [null] view selection: "
 							+ " make sure a response has already been written");
 				}
 				selectedView = null;
 			}
 			else {
-				selectedView = viewDescriptorCreator.makeSelection(context);
+				selectedView = viewSelector.makeSelection(context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning view render request to client: " + selectedView);
+					logger.debug("Returning view selection: " + selectedView);
 				}
 			}
 			context.endActiveSession();
@@ -184,13 +183,13 @@ public class EndState extends State {
 
 	/**
 	 * Returns the subflow result event parameter map. Default implementation
-	 * returns an empty map.  Subclasses may override.
+	 * returns an empty map. Subclasses may override.
 	 */
 	private Map resultParameters(RequestContext context) {
 		return Collections.EMPTY_MAP;
 	}
 
 	protected void createToString(ToStringCreator creator) {
-		creator.append("viewDescriptorCreator", viewDescriptorCreator);
+		creator.append("viewDescriptorCreator", viewSelector);
 	}
 }

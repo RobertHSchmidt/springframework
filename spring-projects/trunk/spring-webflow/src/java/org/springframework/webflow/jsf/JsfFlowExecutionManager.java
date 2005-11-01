@@ -92,7 +92,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 
 	/**
 	 * Create a new flow execution for the current request. Proceed until a
-	 * <code>ViewDescriptor</code> is returned describing the next view that
+	 * <code>ViewSelection</code> is returned describing the next view that
 	 * should be rendered.
 	 * @param context <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
@@ -151,7 +151,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * <p>JSF navigation-focused method which resumes an active flow execution for the current request.
 	 * It is expected that the flow execution itself has already been restored into the current
 	 * thread context available through {@link FlowExecutionHolder}. 
-	 * <p>Proceed until a <code>ViewDescriptor</code> is returned describing the next view that
+	 * <p>Proceed until a <code>ViewSelection</code> is returned describing the next view that
 	 * should be rendered.
 	 * @param context <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
@@ -240,13 +240,13 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	}
 
 	/**
-	 * Render the view specified by this <code>ViewDescriptor</code>, after
+	 * Render the view specified by this <code>ViewSelection</code>, after
 	 * exposing any model data it includes.
 	 * @param context <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
 	 * @param outcome The logical outcome returned by the specified action
-	 * @param viewDescriptor <code>ViewDescriptor</code> for the view to
+	 * @param viewDescriptor <code>ViewSelection</code> for the view to
 	 * render
 	 */
 	public void renderView(FacesContext context, String fromAction, String outcome, ViewSelection viewDescriptor) {

@@ -79,7 +79,7 @@ public class ViewSelection implements AttributeSource, Serializable {
 	}
 
 	/**
-	 * Creates a new ViewDescriptor given a view name and a model.
+	 * Creates a new view selection given a view name and a model.
 	 * @param viewName name of the view to render
 	 * @param model map of model names (Strings) to model objects (Objects),
 	 * model entries may not be null, but the model Map may be null if there is
