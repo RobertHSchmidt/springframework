@@ -18,7 +18,7 @@ package org.springframework.webflow.samples.phonebook.web;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.test.AbstractFlowExecutionTests;
 
 public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
@@ -42,7 +42,7 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 		Map parameters = new HashMap();
 		parameters.put("firstName", "Keith");
 		parameters.put("lastName", "Donald");
-		ViewDescriptor view = signalEvent(event("search", parameters));
+		ViewSelection view = signalEvent(event("search", parameters));
 		assertCurrentStateEquals("displayResults");
 		assertModelAttributeCollectionSize(1, "executeSearch.result", view);
 	}

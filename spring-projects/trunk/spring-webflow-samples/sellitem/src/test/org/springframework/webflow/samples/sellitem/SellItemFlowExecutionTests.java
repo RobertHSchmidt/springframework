@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean;
 import org.springframework.webflow.execution.FlowExecution;
@@ -38,7 +38,7 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 	}
 
 	public void testStartFlow() {
-		ViewDescriptor selectedView = startFlow();
+		ViewSelection selectedView = startFlow();
 		assertModelAttributeNotNull("sale", selectedView);
 		assertViewNameEquals("priceAndItemCountForm", selectedView);
 	}
@@ -48,7 +48,7 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 		Map parameters = new HashMap(2);
 		parameters.put("itemCount", 4);
 		parameters.put("price", 25);
-		ViewDescriptor selectedView = signalEvent(event("submit", parameters));
+		ViewSelection selectedView = signalEvent(event("submit", parameters));
 		assertViewNameEquals("categoryForm", selectedView);
 	}
 
@@ -56,7 +56,7 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 		testSubmitPriceAndItemCount();
 		Map parameters = new HashMap(1);
 		parameters.put("category", "A");
-		ViewDescriptor selectedView = signalEvent(event("submit", parameters));
+		ViewSelection selectedView = signalEvent(event("submit", parameters));
 		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
 	}
@@ -66,7 +66,7 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 		Map parameters = new HashMap(1);
 		parameters.put("category", "A");
 		parameters.put("shipping", "true");
-		ViewDescriptor selectedView = signalEvent(event("submit", parameters));
+		ViewSelection selectedView = signalEvent(event("submit", parameters));
 		assertViewNameEquals("shippingDetailsForm", selectedView);
 	}
 
@@ -74,7 +74,7 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 		testSubmitCategoryFormWithShipping();
 		Map parameters = new HashMap(1);
 		parameters.put("shippingType", "E");
-		ViewDescriptor selectedView = signalEvent(event("submit", parameters));
+		ViewSelection selectedView = signalEvent(event("submit", parameters));
 		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
 	}
