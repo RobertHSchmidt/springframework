@@ -23,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.servlet.ServletEvent;
@@ -128,7 +128,7 @@ public class FlowController extends AbstractController {
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		// delegate to the flow execution manager to process the request
-		ViewDescriptor selectedView = getFlowExecutionManager().onEvent(new ServletEvent(request, response));
+		ViewSelection selectedView = getFlowExecutionManager().onEvent(new ServletEvent(request, response));
 		// convert the view descriptor to a ModelAndView object
 		return toModelAndView(selectedView);
 	}
@@ -140,7 +140,7 @@ public class FlowController extends AbstractController {
 	 * @param selectedView the view descriptor to convert
 	 * @return a new ModelAndView object
 	 */
-	protected ModelAndView toModelAndView(ViewDescriptor selectedView) {
+	protected ModelAndView toModelAndView(ViewSelection selectedView) {
 		if (selectedView == null) {
 			return null;
 		}

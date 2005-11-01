@@ -9,7 +9,7 @@ import org.springframework.webflow.StateException;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionableState;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 
 /**
  * A flow state exception handler that maps the occurence of a specific type of
@@ -96,7 +96,7 @@ public class TransitionExecutorStateExceptionHandler implements StateExceptionHa
 		}
 	}
 
-	public ViewDescriptor handle(StateException e, StateContext context) {
+	public ViewSelection handle(StateException e, StateContext context) {
 		State sourceState = context.getFlowExecutionContext().getCurrentState();
 		if (!sourceState.isTransitionable()) {
 			throw new IllegalStateException("The source state: '" + sourceState.getId()

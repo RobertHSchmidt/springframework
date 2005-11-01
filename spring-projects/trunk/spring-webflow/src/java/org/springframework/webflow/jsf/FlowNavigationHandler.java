@@ -20,7 +20,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 
 /**
  * An implementation of a JSF <code>NavigationHandler</code> that provides
@@ -98,11 +98,11 @@ public class FlowNavigationHandler extends NavigationHandler {
 					+ ", outcome=" + outcome + ")");
 		}
 		if (getExecutionManager(context).isFlowLaunchRequest(context, fromAction, outcome)) {
-			ViewDescriptor nextView = getExecutionManager(context).launchFlowExecution(context, fromAction, outcome);
+			ViewSelection nextView = getExecutionManager(context).launchFlowExecution(context, fromAction, outcome);
 			getExecutionManager(context).renderView(context, fromAction, outcome, nextView);
 		}
 		else if (getExecutionManager(context).isFlowExecutionParticipationRequest(context, fromAction, outcome)) {
-			ViewDescriptor nextView = getExecutionManager(context).resumeFlowExecution(context, fromAction, outcome);
+			ViewSelection nextView = getExecutionManager(context).resumeFlowExecution(context, fromAction, outcome);
 			getExecutionManager(context).renderView(context, fromAction, outcome, nextView);
 		}
 		else {

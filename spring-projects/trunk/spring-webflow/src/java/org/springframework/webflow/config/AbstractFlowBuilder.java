@@ -29,7 +29,7 @@ import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.ViewDescriptorCreator;
+import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 
@@ -303,8 +303,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param viewName the view name (might be encoded)
 	 * @return the corresponding view descriptor creator
 	 */
-	protected ViewDescriptorCreator view(String viewName) {
-		return (ViewDescriptorCreator)fromStringTo(ViewDescriptorCreator.class).execute(viewName);
+	protected ViewSelector view(String viewName) {
+		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName);
 	}
 
 	/**
@@ -323,7 +323,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the view state
 	 * @throws IllegalArgumentException the stateId was not unique
 	 */
-	protected ViewState addViewState(String stateId, ViewDescriptorCreator creator, Transition[] transitions,
+	protected ViewState addViewState(String stateId, ViewSelector creator, Transition[] transitions,
 			Map properties) throws IllegalArgumentException {
 		return new ViewState(getFlow(), stateId, creator, transitions, properties);
 	}
@@ -694,7 +694,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
 	protected EndState addEndState(String stateId) throws IllegalArgumentException {
-		return addEndState(stateId, (ViewDescriptorCreator)null, (Map)null);
+		return addEndState(stateId, (ViewSelector)null, (Map)null);
 	}
 
 	/**
@@ -731,7 +731,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the end state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected EndState addEndState(String stateId, ViewDescriptorCreator creator) throws IllegalArgumentException {
+	protected EndState addEndState(String stateId, ViewSelector creator) throws IllegalArgumentException {
 		return addEndState(stateId, creator, null);
 	}
 
@@ -745,7 +745,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the end state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected EndState addEndState(String stateId, ViewDescriptorCreator creater, Map properties)
+	protected EndState addEndState(String stateId, ViewSelector creater, Map properties)
 			throws IllegalArgumentException {
 		return new EndState(getFlow(), stateId, creater, properties);
 	}

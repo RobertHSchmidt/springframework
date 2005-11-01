@@ -54,7 +54,7 @@ import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionableState;
-import org.springframework.webflow.ViewDescriptorCreator;
+import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.CompositeAction;
 import org.w3c.dom.Document;
@@ -439,9 +439,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * flow.
 	 */
 	protected ViewState parseViewState(Flow flow, Element element) {
-		ViewDescriptorCreator creator = null;
+		ViewSelector creator = null;
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
-			creator = (ViewDescriptorCreator)fromStringTo(ViewDescriptorCreator.class).execute(
+			creator = (ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE));
 		}
 		return new ViewState(flow, element.getAttribute(ID_ATTRIBUTE), creator, parseTransitions(element),
@@ -471,9 +471,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * flow.
 	 */
 	protected EndState parseEndState(Flow flow, Element element) {
-		ViewDescriptorCreator creator = null;
+		ViewSelector creator = null;
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
-			creator = (ViewDescriptorCreator)fromStringTo(ViewDescriptorCreator.class).execute(
+			creator = (ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE));
 		}
 		return new EndState(flow, element.getAttribute(ID_ATTRIBUTE), creator, parseProperties(element));

@@ -23,7 +23,7 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 
 /**
  * Interface to be implemented by objects that wish to listen and respond to the
@@ -125,7 +125,7 @@ public interface FlowExecutionListener {
 	 * @param context the source of the event
 	 * @param selectedView the view that will display
 	 */
-	public void paused(RequestContext context, ViewDescriptor selectedView);
+	public void paused(RequestContext context, ViewSelection selectedView);
 
 	/**
 	 * Called when the active flow execution session has been asked to end.

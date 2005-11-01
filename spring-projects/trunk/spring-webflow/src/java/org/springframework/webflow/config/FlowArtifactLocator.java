@@ -5,7 +5,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.ViewDescriptorCreator;
+import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 
 /**
@@ -50,12 +50,12 @@ public interface FlowArtifactLocator {
 	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException;
 
 	/**
-	 * Retrieve the view descriptor creator with the provided id.
+	 * Retrieve the view selector with the provided id.
 	 * @param id the id
-	 * @return the view descriptor creator
+	 * @return the view selector
 	 * @throws FlowArtifactLookupException when no such creator is found
 	 */
-	public ViewDescriptorCreator getViewDescriptorCreator(String id) throws FlowArtifactLookupException;
+	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Retrieve the exception handler with the provided id.

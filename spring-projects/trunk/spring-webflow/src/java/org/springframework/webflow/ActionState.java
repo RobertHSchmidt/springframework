@@ -258,7 +258,7 @@ public class ActionState extends TransitionableState {
 	 *         resulted in a outcome event that could be mapped to a valid state
 	 *         transition
 	 */
-	protected ViewDescriptor doEnter(StateContext context) throws StateException {
+	protected ViewSelection doEnter(StateContext context) throws StateException {
 		Iterator it = actionExecutors();
 		int executionCount = 0;
 		String[] eventIds = new String[actionExecutors.size()];

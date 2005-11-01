@@ -27,7 +27,7 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 
 /**
  * A strongly typed listener list class for FlowExecutionListeners. It helps
@@ -279,7 +279,7 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow session was paused in the
 	 * flow execution.
 	 */
-	public void firePaused(RequestContext context, ViewDescriptor selectedView) {
+	public void firePaused(RequestContext context, ViewSelection selectedView) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).paused(context, selectedView);
 		}

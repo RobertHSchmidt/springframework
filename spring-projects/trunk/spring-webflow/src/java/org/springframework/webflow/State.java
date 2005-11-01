@@ -177,7 +177,7 @@ public abstract class State extends AnnotatedObject {
 	 * render the results of the state processing
 	 * @throw StateException if an exception occurs in this state
 	 */
-	public ViewDescriptor enter(StateContext context) throws StateException {
+	public ViewSelection enter(StateContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Entering state '" + getId() + "' in flow '" + getFlow().getId() + "'");
 		}
@@ -205,7 +205,7 @@ public abstract class State extends AnnotatedObject {
 	 * render the results of the state processing
 	 * @throw StateException if an exception occurs in this state
 	 */
-	protected abstract ViewDescriptor doEnter(StateContext context) throws StateException;
+	protected abstract ViewSelection doEnter(StateContext context) throws StateException;
 
 	public String toString() {
 		ToStringCreator creator = new ToStringCreator(this).append("id", getId()).append("flow",

@@ -164,7 +164,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 *         render the results of the state execution
 	 * @throws StateException if an exception occurs in this state
 	 */
-	protected ViewDescriptor doEnter(StateContext context) throws StateException {
+	protected ViewSelection doEnter(StateContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Spawning subflow '" + getSubflow().getId() + "' within this flow '" + getFlow().getId() + "'");
 		}

@@ -23,30 +23,31 @@ import java.util.StringTokenizer;
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.ViewDescriptorCreator;
+import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.ViewSelector;
 
 /**
- * View descriptor creator that creates view descriptors requesting a
- * client side redirect. Only parameter values encoded in the view (e.g.
+ * View selector that makes selections that trigger a client side redirect. Only
+ * parameter values encoded in the view (e.g.
  * "/viewName?param0=value0&param1=value1") are exposed.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class RedirectViewDescriptorCreator implements ViewDescriptorCreator, Serializable {
-	
+public class RedirectViewSelector implements ViewSelector, Serializable {
+
 	/**
 	 * The parsed, evaluatable redirect expression.
 	 */
 	private Expression expression;
-	
+
 	/**
 	 * Create a new redirecting view descriptor creator that takes given
-	 * expression as input. The expression is the parsed form (expression-tokenized)
-	 * of the encoded view (e.g. "/viewName?param0=value0&param1=value1").
+	 * expression as input. The expression is the parsed form
+	 * (expression-tokenized) of the encoded view (e.g.
+	 * "/viewName?param0=value0&param1=value1").
 	 */
-	public RedirectViewDescriptorCreator(Expression expression) {
+	public RedirectViewSelector(Expression expression) {
 		this.expression = expression;
 	}
 
@@ -56,33 +57,34 @@ public class RedirectViewDescriptorCreator implements ViewDescriptorCreator, Ser
 	protected Expression getExpression() {
 		return expression;
 	}
-	
-	public ViewDescriptor createViewDescriptor(RequestContext context) {
-		ViewDescriptor viewDescriptor = new ViewDescriptor();
-		viewDescriptor.setRedirect(true);
+
+	public ViewSelection makeSelection(RequestContext context) {
+		ViewSelection selection = new ViewSelection();
+		selection.setRedirect(true);
 		String fullView = (String)expression.evaluateAgainst(context, getEvaluationContext(context));
-		// the resulting fullView should look something like "/viewName?param0=value0&param1=value1"
+		// the resulting fullView should look something like
+		// "/viewName?param0=value0&param1=value1"
 		// now parse that and build a corresponding view descriptor
 		int idx = fullView.indexOf('?');
 		if (idx != -1) {
-			viewDescriptor.setViewName(fullView.substring(0, idx));
+			selection.setViewName(fullView.substring(0, idx));
 			StringTokenizer parameters = new StringTokenizer(fullView.substring(idx + 1), "&");
 			while (parameters.hasMoreTokens()) {
 				String nameAndValue = parameters.nextToken();
 				idx = nameAndValue.indexOf('=');
-				if (idx !=-1) {
-					viewDescriptor.addObject(nameAndValue.substring(0, idx), nameAndValue.substring(idx + 1));
+				if (idx != -1) {
+					selection.addObject(nameAndValue.substring(0, idx), nameAndValue.substring(idx + 1));
 				}
 				else {
-					viewDescriptor.addObject(nameAndValue, "");
+					selection.addObject(nameAndValue, "");
 				}
 			}
 		}
 		else {
 			// only view name specified (e.g. "/viewName")
-			viewDescriptor.setViewName(fullView);
+			selection.setViewName(fullView);
 		}
-		return viewDescriptor;
+		return selection;
 	}
 
 	/**
@@ -91,7 +93,7 @@ public class RedirectViewDescriptorCreator implements ViewDescriptorCreator, Ser
 	protected Map getEvaluationContext(RequestContext context) {
 		return Collections.EMPTY_MAP;
 	}
-	
+
 	public String toString() {
 		return new ToStringCreator(this).append("expression", expression).toString();
 	}

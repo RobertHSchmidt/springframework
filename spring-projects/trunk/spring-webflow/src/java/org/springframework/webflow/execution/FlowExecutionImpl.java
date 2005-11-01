@@ -38,7 +38,7 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.StateContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.TransitionableState;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.access.FlowLocator;
 
 /**
@@ -288,7 +288,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 
 	// methods implementing FlowExecution
 
-	public synchronized ViewDescriptor start(Event sourceEvent) throws IllegalStateException {
+	public synchronized ViewSelection start(Event sourceEvent) throws IllegalStateException {
 		Assert.state(!isActive(), "This flow is already executing -- you cannot call start more than once");
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
@@ -298,7 +298,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
-				ViewDescriptor selectedView = context.start(getRootFlow(), new HashMap(3));
+				ViewSelection selectedView = context.start(getRootFlow(), new HashMap(3));
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -319,9 +319,9 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * @throws RuntimeException rethrows the exception parameter if the
 	 * exception was not handled
 	 */
-	protected ViewDescriptor handleStateException(StateException e, StateContext context) {
+	protected ViewSelection handleStateException(StateException e, StateContext context) {
 		Flow flow = isActive() ? getActiveFlow() : getRootFlow();
-		ViewDescriptor selectedView = flow.handleStateException(e, context);
+		ViewSelection selectedView = flow.handleStateException(e, context);
 		if (selectedView == null) {
 			throw e;
 		}
@@ -330,7 +330,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		}
 	}
 
-	public synchronized ViewDescriptor signalEvent(Event sourceEvent) throws StateException, IllegalStateException {
+	public synchronized ViewSelection signalEvent(Event sourceEvent) throws StateException, IllegalStateException {
 		assertActive();
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
@@ -363,7 +363,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 		try {
 			try {
 				resume(context);
-				ViewDescriptor selectedView = state.onEvent(sourceEvent, context);
+				ViewSelection selectedView = state.onEvent(sourceEvent, context);
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -392,7 +392,7 @@ public class FlowExecutionImpl implements FlowExecution, Serializable {
 	 * @param selectedView the initial selected view to render
 	 * @return the selected view to render
 	 */
-	protected ViewDescriptor pause(StateContext context, ViewDescriptor selectedView) {
+	protected ViewSelection pause(StateContext context, ViewSelection selectedView) {
 		if (!isActive()) {
 			return selectedView;
 		}

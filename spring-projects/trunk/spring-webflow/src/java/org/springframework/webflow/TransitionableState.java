@@ -187,7 +187,7 @@ public abstract class TransitionableState extends State {
 	 * transition could not be executed on receipt of the event, or when the
 	 * process of transition triggers an exception in the new state
 	 */
-	public ViewDescriptor onEvent(Event event, StateContext context) throws StateException {
+	public ViewSelection onEvent(Event event, StateContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Event '" + event.getId() + "' signaled in context: " + context);
 		}
@@ -211,7 +211,7 @@ public abstract class TransitionableState extends State {
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state processing
 	 */
-	public ViewDescriptor reenter(StateContext context) {
+	public ViewSelection reenter(StateContext context) {
 		return enter(context);
 	}
 

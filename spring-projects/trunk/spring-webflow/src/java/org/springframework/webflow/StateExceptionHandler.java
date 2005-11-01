@@ -22,5 +22,5 @@ public interface StateExceptionHandler {
 	 * @return the selected error view that should be displayed (may be null if
 	 * the handler chooses not to select a view)
 	 */
-	public ViewDescriptor handle(StateException e, StateContext context);
+	public ViewSelection handle(StateException e, StateContext context);
 }

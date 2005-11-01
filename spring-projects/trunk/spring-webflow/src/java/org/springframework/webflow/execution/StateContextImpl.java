@@ -35,7 +35,7 @@ import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateContext;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 
 /**
  * Default state context implementation used internally by the web flow system.
@@ -194,10 +194,10 @@ public class StateContextImpl implements StateContext {
 		flowExecution.getListeners().fireStateEntered(this, previousState);
 	}
 
-	public ViewDescriptor start(Flow flow, Map input) throws IllegalStateException {
+	public ViewSelection start(Flow flow, Map input) throws IllegalStateException {
 		flowExecution.getListeners().fireSessionStarting(this, flow, input);
 		flowExecution.activateSession(flow, input);
-		ViewDescriptor selectedView = flow.start(this);
+		ViewSelection selectedView = flow.start(this);
 		flowExecution.getListeners().fireSessionStarted(this);
 		return selectedView;
 	}

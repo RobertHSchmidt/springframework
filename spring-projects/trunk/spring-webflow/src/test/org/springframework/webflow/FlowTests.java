@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.config.ExceptionStateMapping;
 import org.springframework.webflow.config.MyCustomException;
-import org.springframework.webflow.config.SimpleViewDescriptorCreator;
+import org.springframework.webflow.config.SimpleViewSelector;
 import org.springframework.webflow.config.TransitionExecutorStateExceptionHandler;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockStateContext;
@@ -38,9 +38,9 @@ public class FlowTests extends TestCase {
 
 	private Flow createSimpleFlow() {
 		flow = new Flow("myFlow");
-		new ViewState(flow, "myState1", new SimpleViewDescriptorCreator("myView"), new Transition[] { new Transition(
+		new ViewState(flow, "myState1", new SimpleViewSelector("myView"), new Transition[] { new Transition(
 				"myState2") });
-		new EndState(flow, "myState2", new SimpleViewDescriptorCreator("myView2"));
+		new EndState(flow, "myState2", new SimpleViewSelector("myView2"));
 		flow.resolveStateTransitionsTargetStates();
 		return flow;
 	}
@@ -143,7 +143,7 @@ public class FlowTests extends TestCase {
 
 	public void testStartInCustomStartState() {
 		flow = new Flow("myFlow");
-		new ViewState(flow, "myState1", new SimpleViewDescriptorCreator("myView"), new Transition[] { new Transition(
+		new ViewState(flow, "myState1", new SimpleViewSelector("myView"), new Transition[] { new Transition(
 				"myState2") });
 		Map properties = new HashMap(1);
 		properties.put("startState", "myState3");
@@ -185,7 +185,7 @@ public class FlowTests extends TestCase {
 				MyCustomException.class, flow.getRequiredState("myState2"))));
 		MockStateContext context = new MockStateContext(new MockFlowSession(flow), new Event(this));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
-		ViewDescriptor selectedView = flow.handleStateException(e, context);
+		ViewSelection selectedView = flow.handleStateException(e, context);
 		assertNotNull("Should not have been null", selectedView);
 		assertEquals("Wrong selected view", "myView2", selectedView.getViewName());
 	}
@@ -193,7 +193,7 @@ public class FlowTests extends TestCase {
 	public void testHandleStateExceptionNoMatch() {
 		MockStateContext context = new MockStateContext(new MockFlowSession(flow), new Event(this));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
-		ViewDescriptor selectedView = flow.handleStateException(e, context);
+		ViewSelection selectedView = flow.handleStateException(e, context);
 		assertNull("Should have been null", selectedView);
 	}
 }

@@ -32,7 +32,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.access.FlowLocator;
 
 /**
@@ -439,13 +439,13 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param sourceEvent the external event that occured
 	 * @return the view descriptor of the model and view to render
 	 */
-	public ViewDescriptor onEvent(Event sourceEvent) {
+	public ViewSelection onEvent(Event sourceEvent) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("New request received from client, source event is: " + sourceEvent);
 		}
 		Serializable flowExecutionId = getFlowExecutionId(sourceEvent);
 		FlowExecution flowExecution;
-		ViewDescriptor selectedView;
+		ViewSelection selectedView;
 		if (flowExecutionId == null) {
 			flowExecution = createFlowExecution(getFlow(sourceEvent));
 			selectedView = flowExecution.start(sourceEvent);
@@ -539,7 +539,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @return the raw or unprepared view descriptor of the model and view to
 	 * render
 	 */
-	protected ViewDescriptor signalEventIn(FlowExecution flowExecution, Event event) {
+	protected ViewSelection signalEventIn(FlowExecution flowExecution, Event event) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("New request received from client, source event is: " + event);
 		}
@@ -671,7 +671,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * flow execution
 	 * @return the processed view descriptor
 	 */
-	protected ViewDescriptor prepareSelectedView(ViewDescriptor selectedView, Serializable flowExecutionId,
+	protected ViewSelection prepareSelectedView(ViewSelection selectedView, Serializable flowExecutionId,
 			FlowExecutionContext flowExecutionContext) {
 		if (flowExecutionContext.isActive() && selectedView != null) {
 			if (selectedView.isRedirect()) {

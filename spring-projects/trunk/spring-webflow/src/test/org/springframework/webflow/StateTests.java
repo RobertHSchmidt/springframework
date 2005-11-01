@@ -26,7 +26,7 @@ import org.springframework.binding.support.Mapping;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AttributeMapperAction;
 import org.springframework.webflow.config.EventIdTransitionCriteria;
-import org.springframework.webflow.config.SimpleViewDescriptorCreator;
+import org.springframework.webflow.config.SimpleViewSelector;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionImpl;
 
@@ -44,7 +44,7 @@ public class StateTests extends TestCase {
 		new EndState(flow, "finish");
 		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
+		ViewSelection view = flowExecution.start(new Event(this, "start"));
 		assertNull(view);
 		assertEquals("success", flowExecution.getLastEventId());
 		assertEquals(1, ((ExecutionCounterAction)state.getAction()).getExecutionCount());
@@ -59,7 +59,7 @@ public class StateTests extends TestCase {
 		new EndState(flow, "finish");
 		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
+		ViewSelection view = flowExecution.start(new Event(this, "start"));
 		assertNull(view);
 		assertEquals("success", flowExecution.getLastEventId());
 		Action[] actions = state.getActions();
@@ -103,7 +103,7 @@ public class StateTests extends TestCase {
 		new EndState(flow, "finish");
 		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
+		ViewSelection view = flowExecution.start(new Event(this, "start"));
 		assertNull(view);
 		assertEquals("action4.success", flowExecution.getLastEventId());
 		actions = state.getActions();
@@ -122,7 +122,7 @@ public class StateTests extends TestCase {
 		new EndState(flow, "finish");
 		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
+		ViewSelection view = flowExecution.start(new Event(this, "start"));
 		assertEquals("viewState", flowExecution.getActiveSession().getCurrentState().getId());
 		assertNotNull(view);
 		assertEquals("myViewName", view.getViewName());
@@ -135,7 +135,7 @@ public class StateTests extends TestCase {
 		new EndState(flow, "finish");
 		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
+		ViewSelection view = flowExecution.start(new Event(this, "start"));
 		assertEquals("viewState", flowExecution.getActiveSession().getCurrentState().getId());
 		assertNull(view);
 	}
@@ -153,7 +153,7 @@ public class StateTests extends TestCase {
 		flow.resolveStateTransitionsTargetStates();
 		
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewDescriptor view = flowExecution.start(new Event(this, "start"));
+		ViewSelection view = flowExecution.start(new Event(this, "start"));
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getCurrentState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
@@ -180,7 +180,7 @@ public class StateTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		Map input = new HashMap();
 		input.put("parentInputAttribute", "attributeValue");
-		ViewDescriptor view = flowExecution.start(new Event(this, "start", input));
+		ViewSelection view = flowExecution.start(new Event(this, "start", input));
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getCurrentState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
@@ -195,8 +195,8 @@ public class StateTests extends TestCase {
 		return new EventIdTransitionCriteria(event);
 	}
 
-	public static ViewDescriptorCreator view(String viewName) {
-		return new SimpleViewDescriptorCreator(viewName);
+	public static ViewSelector view(String viewName) {
+		return new SimpleViewSelector(viewName);
 	}
 
 	public static class InputOutputMapper implements FlowAttributeMapper {

@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionManager;
@@ -100,11 +100,11 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @param outcome The logical outcome returned by the specified action
 	 * @return the selected starting view
 	 */
-	public ViewDescriptor launchFlowExecution(FacesContext context, String fromAction, String outcome) {
+	public ViewSelection launchFlowExecution(FacesContext context, String fromAction, String outcome) {
 		String flowId = getRequiredFlowId(outcome);
 		JsfEvent sourceEvent = createEvent(context, fromAction, outcome, null);
 		FlowExecution flowExecution = createFlowExecution(getFlowLocator().getFlow(flowId));
-		ViewDescriptor selectedView = flowExecution.start(sourceEvent);
+		ViewSelection selectedView = flowExecution.start(sourceEvent);
 		Serializable flowExecutionId = manageStorage(null, flowExecution, sourceEvent);
 		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 	}
@@ -159,11 +159,11 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @param outcome The logical outcome returned by the specified action
 	 * @return the selected next (or ending) view
 	 */
-	public ViewDescriptor resumeFlowExecution(FacesContext context, String fromAction, String outcome) {
+	public ViewSelection resumeFlowExecution(FacesContext context, String fromAction, String outcome) {
 		JsfEvent sourceEvent = createEvent(context, fromAction, outcome, null);
 		Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-		ViewDescriptor selectedView = signalEventIn(flowExecution, sourceEvent);
+		ViewSelection selectedView = signalEventIn(flowExecution, sourceEvent);
 		manageStorage(flowExecutionId, flowExecution, sourceEvent);
 		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 	}
@@ -249,7 +249,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @param viewDescriptor <code>ViewDescriptor</code> for the view to
 	 * render
 	 */
-	public void renderView(FacesContext context, String fromAction, String outcome, ViewDescriptor viewDescriptor) {
+	public void renderView(FacesContext context, String fromAction, String outcome, ViewSelection viewDescriptor) {
 		// Expose model data specified in the descriptor
 		try {
 			context.getExternalContext().getRequestMap().putAll(viewDescriptor.getModel());

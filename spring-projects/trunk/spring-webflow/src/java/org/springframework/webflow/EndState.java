@@ -39,7 +39,7 @@ import org.springframework.util.Assert;
  * this EndState relinquishes control back to a parent flow, view rendering
  * responsibility falls on the parent flow.
  * 
- * @see org.springframework.webflow.ViewDescriptorCreator
+ * @see org.springframework.webflow.ViewSelector
  * @see org.springframework.webflow.SubflowState
  * 
  * @author Keith Donald
@@ -52,7 +52,7 @@ public class EndState extends State {
 	 * An optional view descriptor creator that will produce a view to render if
 	 * this end state terminates an executing root flow.
 	 */
-	private ViewDescriptorCreator viewDescriptorCreator;
+	private ViewSelector viewDescriptorCreator;
 
 	/**
 	 * Create a new end state with no associated view.
@@ -74,7 +74,7 @@ public class EndState extends State {
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 */
-	public EndState(Flow flow, String id, ViewDescriptorCreator creator) throws IllegalArgumentException {
+	public EndState(Flow flow, String id, ViewSelector creator) throws IllegalArgumentException {
 		super(flow, id);
 		setViewDescriptorCreator(creator);
 	}
@@ -89,7 +89,7 @@ public class EndState extends State {
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 */
-	public EndState(Flow flow, String id, ViewDescriptorCreator creator, Map properties)
+	public EndState(Flow flow, String id, ViewSelector creator, Map properties)
 			throws IllegalArgumentException {
 		super(flow, id, properties);
 		setViewDescriptorCreator(creator);
@@ -99,7 +99,7 @@ public class EndState extends State {
 	 * Returns the factory to produce a descriptor for the view to render in
 	 * this end state if it terminates a root flow.
 	 */
-	public ViewDescriptorCreator getViewDescriptorCreator() {
+	public ViewSelector getViewDescriptorCreator() {
 		return viewDescriptorCreator;
 	}
 
@@ -107,7 +107,7 @@ public class EndState extends State {
 	 * Sets the factory to produce a view descriptor to render when this end
 	 * state is entered and terminates a root flow.
 	 */
-	public void setViewDescriptorCreator(ViewDescriptorCreator creator) {
+	public void setViewDescriptorCreator(ViewSelector creator) {
 		this.viewDescriptorCreator = creator;
 	}
 
@@ -132,13 +132,13 @@ public class EndState extends State {
 	 * the client and a view rendered
 	 * @throws StateException if an exception occurs in this state
 	 */
-	protected ViewDescriptor doEnter(StateContext context) throws StateException {
+	protected ViewSelection doEnter(StateContext context) throws StateException {
 		if (context.getFlowExecutionContext().getActiveSession().isRoot()) {
 			// entire flow execution is ending, return ending view if applicable
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing flow '" + getFlow().getId() + "' has ended");
 			}
-			ViewDescriptor selectedView;
+			ViewSelection selectedView;
 			if (isMarker()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning control to client with a [null] view render request: "
@@ -147,7 +147,7 @@ public class EndState extends State {
 				selectedView = null;
 			}
 			else {
-				selectedView = viewDescriptorCreator.createViewDescriptor(context);
+				selectedView = viewDescriptorCreator.makeSelection(context);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning view render request to client: " + selectedView);
 				}

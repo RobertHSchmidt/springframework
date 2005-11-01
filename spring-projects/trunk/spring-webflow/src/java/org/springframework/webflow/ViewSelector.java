@@ -16,28 +16,31 @@
 package org.springframework.webflow;
 
 /**
- * Factory that produces a new, configured <code>ViewDescriptor</code> on each invocation,
- * taking into account the information in the provided flow execution request context.
- * Note that this is a runtime factory! It is used at flow execution time by objects like the
- * <code>ViewState</code> to produce new <code>ViewDescriptor</code>s.
+ * Factory that produces a new, configured {@link ViewSelection} object on each
+ * invocation, taking into account the information in the provided flow
+ * execution request context.
  * <p>
- * This allows easy insertion of dynamic view descriptor configuration logic, for instance, letting you
- * determine the view to render or the available model data for rendering based on contextual 
- * information.
+ * Note: this class is a runtime factory! Instances are used at flow execution
+ * time by objects like the {@link ViewState} to produce new
+ * {@link ViewSelection}s.
+ * <p>
+ * This class allows for easy insertion of dynamic view selectionlogic, for
+ * instance, letting you determine the view to render or the available model
+ * data for rendering based on contextual information.
  * 
- * @see org.springframework.webflow.ViewDescriptor
+ * @see org.springframework.webflow.ViewSelection
  * @see org.springframework.webflow.ViewState
  * @see org.springframework.webflow.EndState
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface ViewDescriptorCreator {
-	
+public interface ViewSelector {
+
 	/**
 	 * Create a new view descriptor for given request context.
 	 * @param context the current request context of the executing flow
 	 * @return the view descriptor
 	 */
-	public ViewDescriptor createViewDescriptor(RequestContext context);
+	public ViewSelection makeSelection(RequestContext context);
 }

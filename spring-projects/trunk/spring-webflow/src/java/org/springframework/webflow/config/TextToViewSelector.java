@@ -21,31 +21,30 @@ import org.springframework.binding.convert.support.ConversionServiceAwareConvert
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.CompositeStringExpression;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.ViewDescriptorCreator;
+import org.springframework.webflow.ViewSelector;
 
 /**
- * Converter that converts an encoded string representation of a view descriptor
- * into a <code>ViewDescriptorCreator</code> that will create such a view
- * descriptor.
+ * Converter that converts an encoded string representation of a view selector
+ * into a {@link ViewSelector} object that will make selections at runtime.
  * 
  * This converter supports the following encoded forms:
  * <ul>
- * <li>"viewName" - will result in a SimpleViewDescriptorCreator that returns a
- * ViewDescriptor with the provided view name.</li>
+ * <li>"viewName" - will result in a {@link SimpleViewSelector} that returns a
+ * ViewSelection with the provided view name.</li>
  * <li>"redirect:&lt;viewName&gt;" - will result in a
- * RedirectViewDescriptorCreator that returns a ViewDescriptor with the provided
+ * {@link RedirectViewSelector} that returns a ViewSelection with the provided
  * view name and redirect flag set to true.</li>
- * <li>"bean:&lt;id&gt;" - will result usage of a custom ViewDescriptorCreator
- * bean implementation.</li>
+ * <li>"bean:&lt;id&gt;" - will result usage of a custom
+ * <code>ViewSelector</code> bean implementation.</li>
  * </ul>
  * 
- * @see org.springframework.webflow.ViewDescriptor
- * @see org.springframework.webflow.ViewDescriptorCreator
+ * @see org.springframework.webflow.ViewSelection
+ * @see org.springframework.webflow.ViewSelector
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter {
+public class TextToViewSelector extends ConversionServiceAwareConverter {
 
 	/**
 	 * Prefix used when the user wants to use a ViewDescriptorCreator managed by
@@ -67,7 +66,7 @@ public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter
 	/**
 	 * Create a new text to ViewDescriptorCreator converter.
 	 */
-	public TextToViewDescriptorCreator(FlowArtifactLocator artifactLocator, ConversionService conversionService) {
+	public TextToViewSelector(FlowArtifactLocator artifactLocator, ConversionService conversionService) {
 		super(conversionService);
 		this.artifactLocator = artifactLocator;
 	}
@@ -77,42 +76,41 @@ public class TextToViewDescriptorCreator extends ConversionServiceAwareConverter
 	}
 
 	public Class[] getTargetClasses() {
-		return new Class[] { ViewDescriptorCreator.class };
+		return new Class[] { ViewSelector.class };
 	}
 
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
 		String encodedView = (String)source;
 		if (StringUtils.hasText(encodedView)) {
 			if (encodedView.startsWith(REDIRECT_PREFIX)) {
-				return createRedirectViewDescriptorCreator(encodedView.substring(REDIRECT_PREFIX.length()));
+				return createRedirectViewSelector(encodedView.substring(REDIRECT_PREFIX.length()));
 			}
 			else if (encodedView.startsWith(BEAN_PREFIX)) {
-				return artifactLocator.getViewDescriptorCreator(encodedView.substring(BEAN_PREFIX.length()));
+				return artifactLocator.getViewSelector(encodedView.substring(BEAN_PREFIX.length()));
 			}
 		}
-		return createSimpleViewDescriptorCreator(encodedView);
+		return createSimpleViewSelector(encodedView);
 	}
 
 	/**
 	 * Hook method subclasses can override to return a special simple view
-	 * descriptor implementation.
+	 * selector implementation.
 	 * @param encodedView the name of the view to render
 	 * @return the simple view descriptor creator
 	 * @throws ConversionException when an error occurs
 	 */
-	protected ViewDescriptorCreator createSimpleViewDescriptorCreator(String encodedView) throws ConversionException {
-		return new SimpleViewDescriptorCreator(encodedView);
+	protected ViewSelector createSimpleViewSelector(String encodedView) throws ConversionException {
+		return new SimpleViewSelector(encodedView);
 	}
 
 	/**
 	 * Hook method sublcasses can override to return a specialized
-	 * implementation of a view descriptor creator that does a redirect.
+	 * implementation of a view selector that triggers a redirect.
 	 * @param encodedView the encoded view, without the "redirect:" prefix
 	 * @return the redirecting view descriptor creator
 	 * @throws ConversionException when something goes wrong
 	 */
-	protected ViewDescriptorCreator createRedirectViewDescriptorCreator(String encodedView) throws ConversionException {
-		return new RedirectViewDescriptorCreator((Expression)fromStringTo(CompositeStringExpression.class).execute(
-				encodedView));
+	protected ViewSelector createRedirectViewSelector(String encodedView) throws ConversionException {
+		return new RedirectViewSelector((Expression)fromStringTo(CompositeStringExpression.class).execute(encodedView));
 	}
 }

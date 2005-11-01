@@ -157,7 +157,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 		if (getConversionService() == null) {
 			DefaultConversionService service = new DefaultConversionService();
 			service.addConverter(new TextToTransitionCriteria(getFlowArtifactLocator()));
-			service.addConverter(new TextToViewDescriptorCreator(getFlowArtifactLocator(), service));
+			service.addConverter(new TextToViewSelector(getFlowArtifactLocator(), service));
 			setConversionService(service);
 		}
 	}

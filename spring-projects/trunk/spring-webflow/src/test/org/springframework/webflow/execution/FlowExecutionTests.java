@@ -25,8 +25,8 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.ViewDescriptorCreator;
+import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.StateTests.ExecutionCounterAction;
 import org.springframework.webflow.StateTests.InputOutputMapper;
@@ -35,7 +35,7 @@ import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.EventIdTransitionCriteria;
 import org.springframework.webflow.config.FlowArtifactLocatorAdapter;
 import org.springframework.webflow.config.FlowBuilderException;
-import org.springframework.webflow.config.SimpleViewDescriptorCreator;
+import org.springframework.webflow.config.SimpleViewSelector;
 import org.springframework.webflow.config.registry.FlowAssembler;
 
 /**
@@ -93,7 +93,7 @@ public class FlowExecutionTests extends TestCase {
 			}
 		};
 		FlowExecution flowExecution = new FlowExecutionImpl(new FlowAssembler(builder).getFlow());
-		ViewDescriptor vd = flowExecution.start(new Event(this, "start"));
+		ViewSelection vd = flowExecution.start(new Event(this, "start"));
 		assertNotNull(vd);
 		assertEquals("viewName", vd.getViewName());
 		for (int i = 0; i < 10; i++) {
@@ -157,7 +157,7 @@ public class FlowExecutionTests extends TestCase {
 		return new EventIdTransitionCriteria(event);
 	}
 
-	public static ViewDescriptorCreator view(String viewName) {
-		return new SimpleViewDescriptorCreator(viewName);
+	public static ViewSelector view(String viewName) {
+		return new SimpleViewSelector(viewName);
 	}
 }

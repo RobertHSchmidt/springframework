@@ -264,8 +264,8 @@ public class Transition extends AnnotatedObject {
 	 * @throws CannotExecuteTransitionException when this transition cannot be
 	 * executed because the target state is invalid
 	 */
-	public ViewDescriptor execute(StateContext context) throws CannotExecuteTransitionException {
-		ViewDescriptor selectedView;
+	public ViewSelection execute(StateContext context) throws CannotExecuteTransitionException {
+		ViewSelection selectedView;
 		if (canExecute(context)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing transition '" + this + "' out of state '" + getSourceState().getId() + "'");

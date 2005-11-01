@@ -8,7 +8,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.ViewDescriptorCreator;
+import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.access.FlowArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.access.NoSuchFlowArtifactException;
@@ -91,8 +91,8 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 		return (TransitionCriteria)getService(id, TransitionCriteria.class);
 	}
 
-	public ViewDescriptorCreator getViewDescriptorCreator(String id) throws FlowArtifactLookupException {
-		return (ViewDescriptorCreator)getService(id, ViewDescriptorCreator.class);
+	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
+		return (ViewSelector)getService(id, ViewSelector.class);
 	}
 
 	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {

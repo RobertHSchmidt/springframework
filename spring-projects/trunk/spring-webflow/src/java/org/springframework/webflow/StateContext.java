@@ -55,7 +55,7 @@ public interface StateContext extends RequestContext {
 	 *         and requests that a view be rendered with model data
 	 * @throws IllegalStateException when the flow execution is not active
 	 */
-	public ViewDescriptor start(Flow flow, Map input) throws IllegalStateException;
+	public ViewSelection start(Flow flow, Map input) throws IllegalStateException;
 
 	/**
 	 * End the active flow session.

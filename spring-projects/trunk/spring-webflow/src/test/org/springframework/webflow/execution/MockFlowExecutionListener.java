@@ -24,7 +24,7 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 
 /**
  * Mock implementation of the <code>FlowExecutionListener</code> interface for
@@ -110,7 +110,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		stateTransitions++;
 	}
 
-	public void paused(RequestContext context, ViewDescriptor selectedView) {
+	public void paused(RequestContext context, ViewSelection selectedView) {
 		executing = false;
 	}
 

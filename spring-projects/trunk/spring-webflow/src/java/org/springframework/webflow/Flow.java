@@ -400,7 +400,7 @@ public class Flow extends AnnotatedObject {
 	 * provided input.
 	 * @param context the executing state request context
 	 */
-	public ViewDescriptor start(StateContext context) {
+	public ViewSelection start(StateContext context) {
 		if (isTransactional()) {
 			context.beginTransaction();
 		}
@@ -441,7 +441,7 @@ public class Flow extends AnnotatedObject {
 	 * paused
 	 * @return the selected view
 	 */
-	public ViewDescriptor pause(StateContext context, ViewDescriptor selectedView) {
+	public ViewSelection pause(StateContext context, ViewSelection selectedView) {
 		return selectedView;
 	}
 
@@ -468,12 +468,12 @@ public class Flow extends AnnotatedObject {
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view descriptor
 	 */
-	public ViewDescriptor handleStateException(StateException exception, StateContext context) {
+	public ViewSelection handleStateException(StateException exception, StateContext context) {
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();
 			if (handler.handles(exception)) {
-				ViewDescriptor selectedView = handler.handle(exception, context);
+				ViewSelection selectedView = handler.handle(exception, context);
 				if (selectedView != null) {
 					return selectedView;
 				}

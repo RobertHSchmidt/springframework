@@ -45,7 +45,7 @@ import org.springframework.binding.AttributeSource;
  * with all data in flow scope, is available for exposing to view templates via
  * a ViewDescriptor "model" map, returned when a ViewState or EndState is
  * entered. See ({@link org.springframework.webflow.ViewState}) for an example
- * using a specific ({@link org.springframework.webflow.ViewDescriptorCreator})
+ * using a specific ({@link org.springframework.webflow.ViewSelector})
  * strategy.
  * <p>
  * Note: the <i>request</i> context is in no way linked to an HTTP or Portlet

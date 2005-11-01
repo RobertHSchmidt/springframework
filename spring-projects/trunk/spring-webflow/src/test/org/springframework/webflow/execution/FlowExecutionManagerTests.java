@@ -14,10 +14,10 @@ import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.config.SimpleViewDescriptorCreator;
+import org.springframework.webflow.config.SimpleViewSelector;
 
 public class FlowExecutionManagerTests extends TestCase {
 	public static class MapDataStoreAccessor implements DataStoreAccessor {
@@ -35,9 +35,9 @@ public class FlowExecutionManagerTests extends TestCase {
 	public static class SimpleFlow extends Flow {
 		public SimpleFlow() {
 			super("simpleFlow");
-			add(new ViewState(this, "view", new SimpleViewDescriptorCreator("view"), new Transition[] { new Transition(
+			add(new ViewState(this, "view", new SimpleViewSelector("view"), new Transition[] { new Transition(
 					"end") }));
-			add(new EndState(this, "end", new SimpleViewDescriptorCreator("confirm")));
+			add(new EndState(this, "end", new SimpleViewSelector("confirm")));
 			resolveStateTransitionsTargetStates();
 		}
 	}
@@ -47,7 +47,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
 		Map input = new HashMap(1);
 		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		ViewDescriptor view = manager.onEvent(new Event(this, "start", input));
+		ViewSelection view = manager.onEvent(new Event(this, "start", input));
 		assertEquals("Wrong view name", "view", view.getViewName());
 	}
 
@@ -56,7 +56,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
 		Map input = new HashMap(2);
 		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		ViewDescriptor view = manager.onEvent(new Event(this, "start", input));
+		ViewSelection view = manager.onEvent(new Event(this, "start", input));
 		input.put(FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER, view.getModel().get(
 				FlowExecutionManager.FLOW_EXECUTION_ID_ATTRIBUTE));
 		view = manager.onEvent(new Event(this, "submit", input));

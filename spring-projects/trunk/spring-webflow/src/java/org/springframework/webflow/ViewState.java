@@ -24,16 +24,16 @@ import org.springframework.core.style.ToStringCreator;
  * to the user, for example, for soliciting form input.
  * <p>
  * To accomplish this, a <code>ViewState</code> returns a
- * <code>ViewDescriptor</code>, which contains the logical name of a view
- * template to render and all supporting model data needed to render it
- * correctly. It is expected that some sort of view resolver will map this view
- * name to a physical resource template (like a JSP file).
+ * {@link ViewSelection}, which contains the logical name of a view template to
+ * render and all supporting model data needed to render it correctly. It is
+ * expected that some sort of view resolver will map this view selection to a
+ * renderable resource template (like a JSP file).
  * <p>
  * A view state can also be a <i>marker</i> state with no associated view. In
  * this case it just returns control back to the client. Marker states are
  * useful for situations where an action has already generated the response.
  * 
- * @see org.springframework.webflow.ViewDescriptorCreator
+ * @see org.springframework.webflow.ViewSelector
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -41,9 +41,9 @@ import org.springframework.core.style.ToStringCreator;
 public class ViewState extends TransitionableState {
 
 	/**
-	 * The factory for the view descriptor to return when this state is entered.
+	 * The factory for the view selection to return when this state is entered.
 	 */
-	private ViewDescriptorCreator viewDescriptorCreator;
+	private ViewSelector viewSelector;
 
 	/**
 	 * Create a new marker view state, a view state that causes the flow to
@@ -62,54 +62,54 @@ public class ViewState extends TransitionableState {
 	 * Create a new view state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param creator the factory used to produce the view to render
+	 * @param viewSelector the factory used to produce the view to render
 	 * @param transitions the transitions of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 */
-	public ViewState(Flow flow, String id, ViewDescriptorCreator creator, Transition[] transitions)
+	public ViewState(Flow flow, String id, ViewSelector viewSelector, Transition[] transitions)
 			throws IllegalArgumentException {
 		super(flow, id, transitions);
-		setViewDescriptorCreator(creator);
+		setViewSelector(viewSelector);
 	}
 
 	/**
 	 * Create a new view state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param creator the factory used to produce the view to render
+	 * @param viewSelector the factory used to produce the view to render
 	 * @param transitions the transitions of this state
 	 * @param properties additional properties describing this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 */
-	public ViewState(Flow flow, String id, ViewDescriptorCreator creator, Transition[] transitions, Map properties)
+	public ViewState(Flow flow, String id, ViewSelector viewSelector, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
 		super(flow, id, transitions, properties);
-		setViewDescriptorCreator(creator);
+		setViewSelector(viewSelector);
 	}
 
 	/**
 	 * Returns the factory to produce a descriptor for the view to render in
 	 * this view state.
 	 */
-	public ViewDescriptorCreator getViewDescriptorCreator() {
-		return viewDescriptorCreator;
+	public ViewSelector getViewSelector() {
+		return viewSelector;
 	}
 
 	/**
 	 * Sets the factory to produce a descriptor for the view to render in this
 	 * view state.
 	 */
-	public void setViewDescriptorCreator(ViewDescriptorCreator viewDescriptorCreator) {
-		this.viewDescriptorCreator = viewDescriptorCreator;
+	public void setViewSelector(ViewSelector viewSelector) {
+		this.viewSelector = viewSelector;
 	}
 
 	/**
 	 * Returns true if this view state has no associated view, false otherwise.
 	 */
 	public boolean isMarker() {
-		return viewDescriptorCreator == null;
+		return viewSelector == null;
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class ViewState extends TransitionableState {
 	 * render the results of the state execution
 	 * @throws StateException if an exception occurs in this state
 	 */
-	protected ViewDescriptor doEnter(StateContext context) throws StateException {
+	protected ViewSelection doEnter(StateContext context) throws StateException {
 		return selectView(context);
 	}
 
@@ -135,24 +135,24 @@ public class ViewState extends TransitionableState {
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state execution
 	 */
-	public ViewDescriptor selectView(StateContext context) {
+	public ViewSelection selectView(StateContext context) {
 		if (isMarker()) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Returning control to client with a [null] view render request");
+				logger.debug("Returning a [null] view selection");
 			}
 			return null;
 		}
 		else {
-			ViewDescriptor selectedView = viewDescriptorCreator.createViewDescriptor(context);
+			ViewSelection selection = viewSelector.makeSelection(context);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Returning view render request to client: " + selectedView);
+				logger.debug("Returning view selection: " + selection);
 			}
-			return selectedView;
+			return selection;
 		}
 	}
 
 	protected void createToString(ToStringCreator creator) {
-		creator.append("viewDescriptorCreator", this.viewDescriptorCreator);
+		creator.append("viewSelector", this.viewSelector);
 		super.createToString(creator);
 	}
 }

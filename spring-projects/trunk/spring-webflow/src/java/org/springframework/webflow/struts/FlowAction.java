@@ -29,7 +29,7 @@ import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.FlowExecutionManager;
@@ -140,7 +140,7 @@ public class FlowAction extends ActionSupport {
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		Event event = createEvent(mapping, form, request, response);
-		ViewDescriptor viewDescriptor = getFlowExecutionManager().onEvent(event);
+		ViewSelection viewDescriptor = getFlowExecutionManager().onEvent(event);
 		return toActionForward(viewDescriptor, mapping, request);
 	}
 
@@ -161,7 +161,7 @@ public class FlowAction extends ActionSupport {
 	 * Return a Struts ActionForward given a ViewDescriptor. We need to add all
 	 * attributes from the ViewDescriptor as request attributes.
 	 */
-	private ActionForward toActionForward(ViewDescriptor viewDescriptor, ActionMapping mapping,
+	private ActionForward toActionForward(ViewSelection viewDescriptor, ActionMapping mapping,
 			HttpServletRequest request) {
 		if (viewDescriptor != null) {
 			WebUtils.exposeRequestAttributes(request, viewDescriptor.getModel());
