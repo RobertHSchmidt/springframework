@@ -38,9 +38,9 @@ package org.springframework.webflow;
 public interface ViewSelector {
 
 	/**
-	 * Create a new view descriptor for given request context.
+	 * Create a new view selection for given request context.
 	 * @param context the current request context of the executing flow
-	 * @return the view descriptor
+	 * @return the view selection
 	 */
 	public ViewSelection makeSelection(RequestContext context);
 }
