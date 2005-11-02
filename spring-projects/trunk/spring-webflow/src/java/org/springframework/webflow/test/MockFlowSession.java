@@ -39,7 +39,7 @@ public class MockFlowSession implements FlowSession {
 	
 	private FlowSessionStatus status = FlowSessionStatus.ACTIVE;
 	
-	private Scope scope = new Scope(ScopeType.FLOW);
+	private Scope scope = new Scope();
 	
 	private FlowSession parent;
 	
@@ -99,7 +99,6 @@ public class MockFlowSession implements FlowSession {
 	 */
 	public void setScope(Scope scope) {
 		Assert.notNull(scope, "The flow scope is required");
-		Assert.isTrue(scope.getScopeType() == ScopeType.FLOW, "The session maintains flow scope data");
 		this.scope = scope;
 	}
 

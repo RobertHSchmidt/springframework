@@ -62,4 +62,5 @@ public class FlowSessionStatus extends ShortCodedLabeledEnum {
 	private FlowSessionStatus(int code, String label) {
 		super(code, label);
 	}
+
 }

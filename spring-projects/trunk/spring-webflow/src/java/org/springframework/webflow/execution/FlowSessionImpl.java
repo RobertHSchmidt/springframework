@@ -85,7 +85,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The session data model ("flow scope").
 	 */
-	private Scope flowScope = new Scope(ScopeType.FLOW);
+	private Scope flowScope = new Scope();
 
 	/**
 	 * The parent session of this session (may be null if this is a root session.) 

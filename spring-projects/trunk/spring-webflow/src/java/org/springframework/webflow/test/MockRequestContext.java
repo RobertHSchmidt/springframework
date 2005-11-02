@@ -58,7 +58,7 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 
 	private Event sourceEvent;
 
-	private Scope requestScope = new Scope(ScopeType.FLOW);
+	private Scope requestScope = new Scope();
 
 	private MockFlowSession activeSession;
 

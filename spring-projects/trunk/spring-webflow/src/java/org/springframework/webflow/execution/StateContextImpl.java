@@ -79,7 +79,7 @@ public class StateContextImpl implements StateContext {
 	/**
 	 * The request scope data map.
 	 */
-	private Scope requestScope = new Scope(ScopeType.REQUEST);
+	private Scope requestScope = new Scope();
 
 	/**
 	 * Create a new request context.

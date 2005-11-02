@@ -518,7 +518,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return endingSession;
 	}
 
-	// custom serialization (implementation of Externalizable for smaller storage)
+	// custom serialization (implementation of Externalizable for optimized storage)
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		key = (Serializable)in.readObject();

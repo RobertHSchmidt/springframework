@@ -31,8 +31,8 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * Holder for data placed in a specific scope, for example "request scope"
- * or "flow scope".
+ * Holder for data placed in a specific scope, for example "request scope" or
+ * "flow scope".
  * 
  * @see org.springframework.webflow.ScopeType
  * 
@@ -40,11 +40,6 @@ import org.springframework.util.Assert;
  * @author Erwin Vervaet
  */
 public class Scope implements MutableAttributeSource, Map, Serializable {
-
-	/**
-	 * The scope type; e.g FLOW or REQUEST.
-	 */
-	private ScopeType scopeType;
 
 	/**
 	 * The data holder map.
@@ -55,15 +50,7 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	 * Create a scope attribute container for the specified scope type.
 	 * @param scopeType the scope type
 	 */
-	public Scope(ScopeType scopeType) {
-		this.scopeType = scopeType;
-	}
-	
-	/**
-	 * Returns this scope's scope type.
-	 */
-	public ScopeType getScopeType() {
-		return scopeType;
+	public Scope() {
 	}
 
 	public boolean containsAttribute(String attributeName) {
@@ -71,8 +58,8 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	}
 
 	/**
-	 * Does the attribute with the provided name exist in this scope, and is
-	 * its value of the specified class?
+	 * Does the attribute with the provided name exist in this scope, and is its
+	 * value of the specified class?
 	 * @param attributeName the attribute name
 	 * @param attributeClass the required class of the attribute value
 	 * @return true if so, false otherwise
@@ -120,12 +107,13 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	}
 
 	/**
-	 * Get the value of a required attribute and make sure it is of the required type.
+	 * Get the value of a required attribute and make sure it is of the required
+	 * type.
 	 * @param attributeName name of the attribute to get
 	 * @param requiredType the required type of the attribute value
 	 * @return the attribute value
-	 * @throws IllegalStateException when the attribute is not found or not of the
-	 *         required type
+	 * @throws IllegalStateException when the attribute is not found or not of
+	 * the required type
 	 */
 	public Object getRequiredAttribute(String attributeName, Class requiredType) throws IllegalStateException {
 		Object value = getRequiredAttribute(attributeName);
@@ -138,12 +126,13 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	/**
 	 * Gets the value of the specified <code>attributeName</code>, if such an
 	 * attribute exists in this scope. If the attribute does not exist, a new
-	 * instance will be created of the type <code>attributeClass</code>, which
-	 * will be set in this scope and returned.
+	 * instance will be created of the type <code>attributeClass</code>,
+	 * which will be set in this scope and returned.
 	 * @param attributeName the attribute name
 	 * @param attributeClass the attribute class
 	 * @return the value
-	 * @throws IllegalStateException when the attribute is not of the required type
+	 * @throws IllegalStateException when the attribute is not of the required
+	 * type
 	 * @throws BeansException if the attribute could not be created
 	 */
 	public Object getOrCreateAttribute(String attributeName, Class attributeClass) throws IllegalStateException,
@@ -157,7 +146,8 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	/**
 	 * Assert that the attribute is contained in this scope.
 	 * @param attributeName the attribute
-	 * @throws IllegalStateException the assertion failed; the attribute is not present
+	 * @throws IllegalStateException the assertion failed; the attribute is not
+	 * present
 	 */
 	public void assertAttributePresent(String attributeName) throws IllegalStateException {
 		if (!containsAttribute(attributeName)) {
@@ -192,8 +182,8 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	/**
 	 * Remove an attribute from this scope.
 	 * @param attributeName the name of the attribute to remove
-	 * @return previous value associated with specified attribute name,
-	 *         or <tt>null</tt> if there was no mapping for the name
+	 * @return previous value associated with specified attribute name, or
+	 * <tt>null</tt> if there was no mapping for the name
 	 */
 	public Object removeAttribute(String attributeName) {
 		return this.attributes.remove(attributeName);
@@ -250,6 +240,6 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("scopeType", scopeType).append("attributes", attributes).toString();
+		return new ToStringCreator(this).append("attributes", attributes).toString();
 	}
 }
