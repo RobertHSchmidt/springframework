@@ -24,7 +24,7 @@ package org.springframework.webflow;
  * time by objects like the {@link ViewState} to produce new
  * {@link ViewSelection}s.
  * <p>
- * This class allows for easy insertion of dynamic view selectionlogic, for
+ * This class allows for easy insertion of dynamic view selection logic, for
  * instance, letting you determine the view to render or the available model
  * data for rendering based on contextual information.
  * 
