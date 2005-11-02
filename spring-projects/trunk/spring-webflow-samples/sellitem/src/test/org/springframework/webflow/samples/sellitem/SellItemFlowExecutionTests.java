@@ -16,7 +16,7 @@ import org.springframework.webflow.test.AbstractFlowExecutionTests;
 public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 
 	protected String flowId() {
-		return "sellItem";
+		return "sellitem";
 	}
 
 	protected String[] getConfigLocations() {
@@ -26,7 +26,7 @@ public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
 	protected FlowLocator createFlowLocator() {
 		XmlFlowRegistryFactoryBean factory = new XmlFlowRegistryFactoryBean(applicationContext);
 		File parent = new File("src/webapp/WEB-INF");
-		Resource[] locations = new Resource[] { new FileSystemResource(new File(parent, "sellItem-flow.xml")) };
+		Resource[] locations = new Resource[] { new FileSystemResource(new File(parent, "sellItem.xml")) };
 		factory.setDefinitionLocations(locations);
 		return factory.populateFlowRegistry();
 	}
