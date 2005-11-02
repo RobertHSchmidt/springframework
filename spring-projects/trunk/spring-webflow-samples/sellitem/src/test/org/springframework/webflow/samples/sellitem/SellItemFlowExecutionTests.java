@@ -8,27 +8,22 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.test.AbstractFlowExecutionTests;
+import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 
-public class SellItemFlowExecutionTests extends AbstractFlowExecutionTests {
+public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	protected String flowId() {
 		return "sellitem";
 	}
 
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath:org/springframework/webflow/samples/sellitem/applicationContext.xml" };
+	protected Resource[] getFlowLocations() {
+		File flowDir = new File("src/webapp/WEB-INF");
+		return new Resource[] { new FileSystemResource(new File(flowDir, "sellItem.xml")) };
 	}
 
-	protected FlowLocator createFlowLocator() {
-		XmlFlowRegistryFactoryBean factory = new XmlFlowRegistryFactoryBean(applicationContext);
-		File parent = new File("src/webapp/WEB-INF");
-		Resource[] locations = new Resource[] { new FileSystemResource(new File(parent, "sellItem.xml")) };
-		factory.setDefinitionLocations(locations);
-		return factory.populateFlowRegistry();
+	protected String[] getConfigLocations() {
+		return new String[] { "classpath:org/springframework/webflow/samples/sellitem/applicationContext.xml" };
 	}
 
 	@Override
