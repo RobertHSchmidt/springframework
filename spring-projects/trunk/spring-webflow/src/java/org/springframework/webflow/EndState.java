@@ -151,7 +151,7 @@ public class EndState extends State {
 					logger.debug("Returning view selection: " + selectedView);
 				}
 			}
-			context.endActiveSession();
+			context.endActiveFlowSession();
 			return selectedView;
 		}
 		else {
@@ -165,7 +165,7 @@ public class EndState extends State {
 					"State is not an attribute mapper:");
 			FlowAttributeMapper resumingState = (FlowAttributeMapper)parentSession.getCurrentState();
 			resumingState.mapSubflowOutput(context);
-			context.endActiveSession();
+			context.endActiveFlowSession();
 			return context.signalEvent(subflowResult(context), null);
 		}
 	}

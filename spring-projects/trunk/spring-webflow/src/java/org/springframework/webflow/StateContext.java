@@ -29,50 +29,61 @@ import java.util.Map;
 public interface StateContext extends RequestContext {
 
 	/**
-	 * Update the last event that was signaled in the executing flow.
-	 * @param event the last event
+	 * Update the last event signaled in the executing flow. This method should
+	 * be called as part of signaling an event in a state to indicate the
+	 * 'lastEvent' signaled.
+	 * @param event the last event signaled
 	 */
 	public void setLastEvent(Event lastEvent);
 
 	/**
-	 * Update the last transition that executed in the executing flow.
+	 * Update the last transition that executed in the executing flow. This
+	 * method should be called as part of executing a transition from one state
+	 * to another.
 	 * @param lastTransition the last transition that executed
 	 */
 	public void setLastTransition(Transition lastTransition);
 
 	/**
-	 * Set the current state of the flow execution linked to this request.
+	 * Set the current state of the flow execution linked to this request. This
+	 * method should be called as part of entering a new state.
 	 * @param state the current state
 	 */
 	public void setCurrentState(State state);
 
 	/**
 	 * Spawn a new flow session and activate it in the currently executing flow.
-	 * Also transitions the spawned flow to its start state.
+	 * Also transitions the spawned flow to its start state. This method should
+	 * be called by states that wish to spawn new flows, such as subflow states.
 	 * @param flow the flow to start
 	 * @param input initial contents of the newly created flow session
 	 * @return the selected starting view, which returns control to the client
 	 * and requests that a view be rendered with model data
+	 * @throws StateException if an exception was thrown within a state of the
+	 * flow during execution of this start operation
 	 */
 	public ViewSelection start(Flow flow, Map input) throws StateException;
 
 	/**
 	 * Signals the occurence of an event in the state of this flow execution
-	 * request context.
-	 * 
+	 * request context. This method should be called by states that report
+	 * internal event occurences, such as action states.
 	 * @param event the event that occured
-	 * @param state the state the event should be signaled in (if
-	 * <code>null</code>, defaults to the current flow execution state)
+	 * @param state the state the event occured in (if <code>null</code>,
+	 * defaults to the current flow execution state)
 	 * @return the next selected view, which returns control to the client and
 	 * requests that a view be rendered with model data
+	 * @throws StateException if an exception was thrown within a state of the
+	 * flow during execution of this signalEvent operation
 	 */
 	public ViewSelection signalEvent(Event event, State state) throws StateException;
 
 	/**
-	 * End the active flow session.
+	 * End the active flow session. This method should be called by states that
+	 * terminate flows, such as end states.
 	 * @return the ended session
 	 * @throws IllegalStateException when the flow execution is not active
 	 */
-	public FlowSession endActiveSession() throws IllegalStateException;
+	public FlowSession endActiveFlowSession() throws IllegalStateException;
 
 }

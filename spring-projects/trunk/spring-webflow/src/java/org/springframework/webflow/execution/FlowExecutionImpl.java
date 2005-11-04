@@ -301,7 +301,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// methods implementing FlowExecution
 
-	public synchronized ViewSelection start(Event sourceEvent) throws IllegalStateException {
+	public synchronized ViewSelection start(Event sourceEvent) throws StateException, IllegalStateException {
 		Assert.state(!isActive(), "This flow is already executing -- you cannot call start more than once");
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
@@ -311,9 +311,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
-				System.out.println("Booo");
 				ViewSelection selectedView = context.start(getRootFlow(), new HashMap(3));
-				System.out.println("Booo");
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -336,13 +334,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * state or flow level
 	 */
 	protected ViewSelection handleException(StateException e, StateContext context) throws StateException {
-		System.out.println("Handling state");
-
 		ViewSelection selectedView = e.getState().handleException(e, context);
 		if (selectedView != null) {
 			return selectedView;
 		}
-		System.out.println("Handling flow");
 		selectedView = e.getState().getFlow().handleException(e, context);
 		if (selectedView != null) {
 			return selectedView;
@@ -360,11 +355,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		if (!StringUtils.hasText(stateId)) {
 			if (logger.isDebugEnabled()) {
 				logger
-						.debug("Current state id was not provided in request to signal event '"
+						.debug("The current state id was not provided in request to signal event '"
 								+ sourceEvent.getId()
 								+ "' in flow "
 								+ getCaption()
-								+ "' -- pulling current state id from session -- "
+								+ "' -- pulling current state id from FlowSession -- "
 								+ "note: if the user has been using the browser back/forward buttons, the currentState could be incorrect.");
 			}
 			stateId = getCurrentState().getId();

@@ -212,7 +212,7 @@ public class StateContextImpl implements StateContext {
 		return selectedView;
 	}
 
-	public FlowSession endActiveSession() throws IllegalStateException {
+	public FlowSession endActiveFlowSession() throws IllegalStateException {
 		flowExecution.getListeners().fireSessionEnding(this);
 		flowExecution.getActiveFlow().end(this);
 		FlowSession endedSession = flowExecution.endActiveFlowSession();
