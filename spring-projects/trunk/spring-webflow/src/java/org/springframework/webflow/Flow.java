@@ -520,5 +520,4 @@ public class Flow extends AnnotatedObject {
 		return new ToStringCreator(this).append("id", id).append("startState", startState)
 				.append("states", this.states).append("exceptionHandlers", exceptionHandlers).toString();
 	}
-
 }
