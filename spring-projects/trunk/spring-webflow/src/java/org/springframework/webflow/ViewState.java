@@ -31,7 +31,8 @@ import org.springframework.core.style.ToStringCreator;
  * <p>
  * A view state can also be a <i>marker</i> state with no associated view. In
  * this case it just returns control back to the client. Marker states are
- * useful for situations where an action has already generated the response.
+ * useful for situations where an action or custom state type has already
+ * generated the response.
  * 
  * @see org.springframework.webflow.ViewSelector
  * 
