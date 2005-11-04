@@ -197,7 +197,7 @@ public abstract class State extends AnnotatedObject {
 			addExceptionHandler(exceptionHandlers[i]);
 		}
 	}
-	
+
 	/**
 	 * Enter this state in the provided flow execution request context. This
 	 * implementation just calls the {@link #doEnter(StateContext)} hook method,
@@ -215,16 +215,7 @@ public abstract class State extends AnnotatedObject {
 		}
 		context.setCurrentState(this);
 		executeEntryAction(context);
-		try {
-			return doEnter(context);
-		}
-		catch (StateException e) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Handling exception [" + e + "] that occured entering state '" + getId() + "' of flow '"
-						+ getFlow().getId());
-			}
-			return handleException(e, context);
-		}
+		return doEnter(context);
 	}
 
 	/**
@@ -238,10 +229,11 @@ public abstract class State extends AnnotatedObject {
 	 * @param context the state request context
 	 * @param exception the exception that occured
 	 * @return the selected error view
-	 * @throw StateException if no error view was selected, rethrowing the
-	 * exception up to the calling FlowExecution for handling.
+	 * @return the selected error view, or <code>null</code> if no handler
+	 * matched or returned a non-null view descriptor
 	 */
-	protected ViewSelection handleException(StateException exception, StateContext context) throws StateException {
+	public ViewSelection handleException(StateException exception, StateContext context) throws StateException {
+		System.out.println("HADSDFSDFDSFSD");
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();
@@ -253,9 +245,9 @@ public abstract class State extends AnnotatedObject {
 			}
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("No handler found for state exception [" + exception + "], rethrowing...");
+			logger.debug("No state handler found for state exception [" + exception + "], returning [null]...");
 		}
-		throw exception;
+		return null;
 	}
 
 	/**

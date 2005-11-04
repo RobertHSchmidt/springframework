@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import org.springframework.webflow.config.ExceptionStateMapping;
 import org.springframework.webflow.config.MyCustomException;
 import org.springframework.webflow.config.SimpleViewSelector;
-import org.springframework.webflow.config.TransitionExecutorStateExceptionHandler;
+import org.springframework.webflow.config.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockStateContext;
 
@@ -38,8 +38,8 @@ public class FlowTests extends TestCase {
 
 	private Flow createSimpleFlow() {
 		flow = new Flow("myFlow");
-		new ViewState(flow, "myState1", new SimpleViewSelector("myView"), new Transition[] { new Transition(
-				"myState2") });
+		new ViewState(flow, "myState1", new SimpleViewSelector("myView"),
+				new Transition[] { new Transition("myState2") });
 		new EndState(flow, "myState2", new SimpleViewSelector("myView2"));
 		flow.resolveStateTransitionsTargetStates();
 		return flow;
@@ -143,8 +143,8 @@ public class FlowTests extends TestCase {
 
 	public void testStartInCustomStartState() {
 		flow = new Flow("myFlow");
-		new ViewState(flow, "myState1", new SimpleViewSelector("myView"), new Transition[] { new Transition(
-				"myState2") });
+		new ViewState(flow, "myState1", new SimpleViewSelector("myView"),
+				new Transition[] { new Transition("myState2") });
 		Map properties = new HashMap(1);
 		properties.put("startState", "myState3");
 		new SubflowState(flow, "myState2", flow, new Transition[] { new Transition("myState3") }, properties);
@@ -165,10 +165,18 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testResumeTransactional() {
+		flow = new Flow("myFlow");
+		new ViewState(flow, "myState1", new SimpleViewSelector("myView"),
+				new Transition[] { new Transition("myState2") });
+		new ViewState(flow, "myState2", new SimpleViewSelector("myView2"),
+				new Transition[] { new Transition("myState3") });
+		new EndState(flow, "myState3", new SimpleViewSelector("myView3"));
+		flow.resolveStateTransitionsTargetStates();
+		
 		flow.setProperty("transactional", new Boolean(true));
 		MockStateContext context = new MockStateContext(new MockFlowSession(flow), new Event(this));
 		flow.start(context);
-		flow.resume(context);
+		flow.onEvent(new Event(this, "submit"), context);
 		assertTrue("Transaction not active but should be", context.inTransaction(false));
 	}
 
@@ -181,11 +189,11 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testHandleStateException() {
-		flow.addExceptionHandler(new TransitionExecutorStateExceptionHandler(new ExceptionStateMapping(
+		flow.addExceptionHandler(new TransitionExecutingStateExceptionHandler(new ExceptionStateMapping(
 				MyCustomException.class, flow.getRequiredState("myState2"))));
 		MockStateContext context = new MockStateContext(new MockFlowSession(flow), new Event(this));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
-		ViewSelection selectedView = flow.handleStateException(e, context);
+		ViewSelection selectedView = flow.handleException(e, context);
 		assertNotNull("Should not have been null", selectedView);
 		assertEquals("Wrong selected view", "myView2", selectedView.getViewName());
 	}
@@ -193,7 +201,10 @@ public class FlowTests extends TestCase {
 	public void testHandleStateExceptionNoMatch() {
 		MockStateContext context = new MockStateContext(new MockFlowSession(flow), new Event(this));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
-		ViewSelection selectedView = flow.handleStateException(e, context);
-		assertNull("Should have been null", selectedView);
+		try {
+			flow.handleException(e, context);
+		} catch (StateException ex) {
+			// expected
+		}
 	}
 }

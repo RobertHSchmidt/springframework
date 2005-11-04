@@ -20,6 +20,7 @@ import java.util.Map;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
+import org.springframework.webflow.State;
 import org.springframework.webflow.StateContext;
 import org.springframework.webflow.ViewSelection;
 
@@ -51,15 +52,22 @@ public class MockStateContext extends MockRequestContext implements StateContext
 		super(session, sourceEvent);
 	}
 
+	public ViewSelection start(Flow flow, Map input) throws IllegalStateException {
+		setActiveSession(new MockFlowSession(flow, input));
+		return flow.start(this);
+	}
+	
+	public ViewSelection signalEvent(Event event, State state) {
+		if (state != null && !getCurrentState().equals(state)) {
+			state.enter(this);
+		}
+		return getActiveFlow().onEvent(event, this);
+	}
+
 	public FlowSession endActiveSession() throws IllegalStateException {
 		FlowSession endingSession = getActiveSession();
 		endingSession.getFlow().end(this);
 		setActiveSession(null);
 		return endingSession;
-	}
-
-	public ViewSelection start(Flow flow, Map input) throws IllegalStateException {
-		setActiveSession(new MockFlowSession(flow, input));
-		return flow.start(this);
 	}
 }

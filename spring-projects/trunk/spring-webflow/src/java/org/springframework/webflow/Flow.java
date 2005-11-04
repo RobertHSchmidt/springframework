@@ -438,29 +438,23 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Resume an execution of this flow in the current state context.
+	 * Inform this flow definition that an event was signaled in the provided
+	 * state of an active flow execution.
+	 * @param state The state the event occured in
 	 * @param context the state request context
+	 * @return the selected view
 	 */
-	public void resume(StateContext context) {
+	public ViewSelection onEvent(Event event, StateContext context) {
 		if (isTransactional()) {
 			context.assertInTransaction(false);
 		}
+		context.setLastEvent(event);
+		TransitionableState state = (TransitionableState)context.getFlowExecutionContext().getCurrentState();
+		return state.getRequiredTransition(context).execute(context);
 	}
 
 	/**
-	 * Pause an execution of this flow in the current state context.
-	 * @param context the state request context
-	 * @param selectedView the view to be rendered to the user while the flow is
-	 * paused
-	 * @return the selected view
-	 */
-	public ViewSelection pause(StateContext context, ViewSelection selectedView) {
-		return selectedView;
-	}
-
-	/**
-	 * End an active session for this flow in the context of the current
-	 * request.
+	 * Inform this flow definition that a session of itself has ended.
 	 * @param context the state request context
 	 */
 	public void end(StateContext context) {
@@ -481,7 +475,7 @@ public class Flow extends AnnotatedObject {
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view descriptor
 	 */
-	public ViewSelection handleStateException(StateException exception, StateContext context) {
+	public ViewSelection handleException(StateException exception, StateContext context) throws StateException {
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();
@@ -491,6 +485,9 @@ public class Flow extends AnnotatedObject {
 					return selectedView;
 				}
 			}
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("No flow handler found for state exception [" + exception + "], returning [null]...");
 		}
 		return null;
 	}

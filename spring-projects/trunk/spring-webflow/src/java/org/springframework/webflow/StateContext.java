@@ -18,8 +18,8 @@ package org.springframework.webflow;
 import java.util.Map;
 
 /**
- * Mutable control interface for states to use to manipulate an ongoing
- * flow execution. Used internally by the various state types when they are entered.
+ * Mutable control interface for states to use to manipulate an ongoing flow
+ * execution. Used internally by the various state types when they are entered.
  * 
  * @see org.springframework.webflow.State
  * 
@@ -27,10 +27,10 @@ import java.util.Map;
  * @author Erwin Vervaet
  */
 public interface StateContext extends RequestContext {
-	
+
 	/**
-	 * Update the last event that occured in the executing flow.
-	 * @param lastEvent the last event that occured
+	 * Update the last event that was signaled in the executing flow.
+	 * @param event the last event
 	 */
 	public void setLastEvent(Event lastEvent);
 
@@ -39,23 +39,34 @@ public interface StateContext extends RequestContext {
 	 * @param lastTransition the last transition that executed
 	 */
 	public void setLastTransition(Transition lastTransition);
-	
+
 	/**
 	 * Set the current state of the flow execution linked to this request.
 	 * @param state the current state
 	 */
 	public void setCurrentState(State state);
-	
+
 	/**
-	 * Spawn a new flow session and activate it in the currently executing
-	 * flow. Also transitions the spawned flow to its start state.
+	 * Spawn a new flow session and activate it in the currently executing flow.
+	 * Also transitions the spawned flow to its start state.
 	 * @param flow the flow to start
 	 * @param input initial contents of the newly created flow session
-	 * @return the starting view descriptor, which returns control to the client
-	 *         and requests that a view be rendered with model data
-	 * @throws IllegalStateException when the flow execution is not active
+	 * @return the selected starting view, which returns control to the client
+	 * and requests that a view be rendered with model data
 	 */
-	public ViewSelection start(Flow flow, Map input) throws IllegalStateException;
+	public ViewSelection start(Flow flow, Map input) throws StateException;
+
+	/**
+	 * Signals the occurence of an event in the state of this flow execution
+	 * request context.
+	 * 
+	 * @param event the event that occured
+	 * @param state the state the event should be signaled in (if
+	 * <code>null</code>, defaults to the current flow execution state)
+	 * @return the next selected view, which returns control to the client and
+	 * requests that a view be rendered with model data
+	 */
+	public ViewSelection signalEvent(Event event, State state) throws StateException;
 
 	/**
 	 * End the active flow session.
@@ -63,4 +74,5 @@ public interface StateContext extends RequestContext {
 	 * @throws IllegalStateException when the flow execution is not active
 	 */
 	public FlowSession endActiveSession() throws IllegalStateException;
+
 }

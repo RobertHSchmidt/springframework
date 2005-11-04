@@ -17,7 +17,7 @@ import org.springframework.webflow.ViewSelection;
  * 
  * @author Keith Donald
  */
-public class TransitionExecutorStateExceptionHandler implements StateExceptionHandler {
+public class TransitionExecutingStateExceptionHandler implements StateExceptionHandler {
 
 	/**
 	 * The exception->targetState map.
@@ -27,14 +27,14 @@ public class TransitionExecutorStateExceptionHandler implements StateExceptionHa
 	/**
 	 * Creates a state mapping exception handler with initially no mappings.
 	 */
-	public TransitionExecutorStateExceptionHandler() {
+	public TransitionExecutingStateExceptionHandler() {
 
 	}
 
 	/**
 	 * @param mapping
 	 */
-	public TransitionExecutorStateExceptionHandler(ExceptionStateMapping mapping) {
+	public TransitionExecutingStateExceptionHandler(ExceptionStateMapping mapping) {
 		add(mapping);
 	}
 
@@ -42,7 +42,7 @@ public class TransitionExecutorStateExceptionHandler implements StateExceptionHa
 	 * Creates a new state map with the configured mappings.
 	 * @param mappings
 	 */
-	public TransitionExecutorStateExceptionHandler(ExceptionStateMapping[] mappings) {
+	public TransitionExecutingStateExceptionHandler(ExceptionStateMapping[] mappings) {
 		addAll(mappings);
 	}
 

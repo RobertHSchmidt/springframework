@@ -33,6 +33,7 @@ import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateContext;
+import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewSelection;
 
@@ -60,6 +61,11 @@ public class StateContextImpl implements StateContext {
 	 */
 	private Event sourceEvent;
 
+	/**
+	 * The last event that occured in this context. 
+	 */
+	private Event lastEvent;
+	
 	/**
 	 * The list of state result events that have occured in this context.
 	 */
@@ -89,6 +95,7 @@ public class StateContextImpl implements StateContext {
 		Assert.notNull(sourceEvent, "The source event is required");
 		Assert.notNull(flowExecution, "The owning flow execution is required");
 		this.sourceEvent = sourceEvent;
+		this.lastEvent = sourceEvent;
 		this.flowExecution = flowExecution;
 	}
 
@@ -110,12 +117,7 @@ public class StateContextImpl implements StateContext {
 	}
 
 	public Event getLastEvent() {
-		if (resultEvents.size() == 0) {
-			return sourceEvent;
-		}
-		else {
-			return ((StateResultEvent)resultEvents.get(resultEvents.size() - 1)).getEvent();
-		}
+		return lastEvent;
 	}
 
 	public FlowExecutionContext getFlowExecutionContext() {
@@ -177,12 +179,12 @@ public class StateContextImpl implements StateContext {
 	// implementing StateContext
 
 	public void setLastEvent(Event lastEvent) {
-		resultEvents.add(new StateResultEvent(getFlowExecutionContext().getCurrentState().getId(), lastEvent));
+		this.lastEvent = lastEvent;
 		flowExecution.setLastEvent(lastEvent);
-		flowExecution.getListeners().fireEventSignaled(this);
 	}
 
 	public void setLastTransition(Transition lastTransition) {
+		this.resultEvents.add(new StateResultEvent(lastTransition.getSourceState().getId(), getLastEvent()));
 		this.lastTransition = lastTransition;
 	}
 
@@ -193,11 +195,20 @@ public class StateContextImpl implements StateContext {
 		flowExecution.getListeners().fireStateEntered(this, previousState);
 	}
 
-	public ViewSelection start(Flow flow, Map input) throws IllegalStateException {
+	public ViewSelection start(Flow flow, Map input) throws StateException {
 		flowExecution.getListeners().fireSessionStarting(this, flow, input);
 		flowExecution.activateSession(flow, input);
 		ViewSelection selectedView = flow.start(this);
 		flowExecution.getListeners().fireSessionStarted(this);
+		return selectedView;
+	}
+
+	public ViewSelection signalEvent(Event event, State state) throws StateException {
+		if (state != null && !getCurrentState().equals(state)) {
+			state.enter(this);
+		}
+		ViewSelection selectedView = flowExecution.getActiveFlow().onEvent(event, this);
+		flowExecution.getListeners().fireEventSignaled(this);
 		return selectedView;
 	}
 
@@ -207,6 +218,10 @@ public class StateContextImpl implements StateContext {
 		FlowSession endedSession = flowExecution.endActiveFlowSession();
 		flowExecution.getListeners().fireSessionEnded(this, endedSession);
 		return endedSession;
+	}
+
+	protected State getCurrentState() {
+		return getFlowExecutionContext().getCurrentState();
 	}
 
 	private Map getStateResultParameterMaps() {
@@ -223,8 +238,8 @@ public class StateContextImpl implements StateContext {
 	}
 
 	/**
-	 * A parameter object storing the result event for exactly one state that was entered and 
-	 * transitioned out of in this state context.
+	 * A parameter object storing the result event for exactly one state that
+	 * was entered and transitioned out of in this state context.
 	 * 
 	 * @author Keith Donald
 	 */
@@ -234,6 +249,8 @@ public class StateContextImpl implements StateContext {
 		private Event event;
 
 		public StateResultEvent(String stateId, Event event) {
+			Assert.hasText(stateId, "The stateId is required");
+			Assert.notNull(event, "The event is required");
 			this.stateId = stateId;
 			this.event = event;
 		}

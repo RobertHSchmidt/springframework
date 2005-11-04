@@ -165,9 +165,8 @@ public class EndState extends State {
 					"State is not an attribute mapper:");
 			FlowAttributeMapper resumingState = (FlowAttributeMapper)parentSession.getCurrentState();
 			resumingState.mapSubflowOutput(context);
-			Assert.isInstanceOf(TransitionableState.class, resumingState, "State is not transitionable:");
 			context.endActiveSession();
-			return ((TransitionableState)resumingState).onEvent(subflowResult(context), context);
+			return context.signalEvent(subflowResult(context), null);
 		}
 	}
 

@@ -737,7 +737,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	}
 
 	protected StateExceptionHandler parseDefaultExceptionHandler(Element element) {
-		TransitionExecutorStateExceptionHandler defaultHandler = new TransitionExecutorStateExceptionHandler();
+		TransitionExecutingStateExceptionHandler defaultHandler = new TransitionExecutingStateExceptionHandler();
 		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(CLASS_ATTRIBUTE));
 		State state = getFlow().getState(element.getAttribute(STATE_ATTRIBUTE));
 		defaultHandler.add(new ExceptionStateMapping(exceptionClass, state));

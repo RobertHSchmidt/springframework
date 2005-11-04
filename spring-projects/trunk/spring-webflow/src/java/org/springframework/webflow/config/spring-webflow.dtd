@@ -301,14 +301,14 @@
 <!ELEMENT exception-handler EMPTY>
 
 <!--
-	The class of exception that may occur.
+	The class of exception that may occur that you wish to handle.
 -->
-<!ATTLIST exception-handler class CDATA #IMPLIED>
+<!ATTLIST exception-handler on CDATA #IMPLIED>
 
 <!--
-	The id of the state to transition to when this exception does occur.
+	The id of the state to transition to when this class of exception does occur.
 -->
-<!ATTLIST exception-handler state IDREF #IMPLIED>
+<!ATTLIST exception-handler to IDREF #IMPLIED>
 
 <!--
 	The id of a custom exception handler implementation to attach.  Specify this attribute or 

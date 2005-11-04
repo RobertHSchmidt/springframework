@@ -175,32 +175,6 @@ public abstract class TransitionableState extends State {
 	}
 
 	/**
-	 * Notify this state that the specified Event was signaled within it. By
-	 * default, receipt of the event will trigger a search for a matching state
-	 * transition. If a valid transition is matched, its execution will be
-	 * requested. If a transition could not be matched, or the transition
-	 * execution failed, an exception will be thrown.
-	 * @param event the event that occured
-	 * @param context the context associated with this request
-	 * @return the view descriptor
-	 * @throws StateException when no matching transition can be found, when a
-	 * transition could not be executed on receipt of the event, or when the
-	 * process of transition triggers an exception in the new state
-	 */
-	public ViewSelection onEvent(Event event, StateContext context) throws StateException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Event '" + event.getId() + "' signaled in context: " + context);
-		}
-		context.setLastEvent(event);
-		Transition transition = getRequiredTransition(context);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Event '" + event.getId() + "' matched transition to state: '" + transition.getTargetStateId()
-					+ "'");
-		}
-		return transition.execute(context);
-	}
-
-	/**
 	 * Re-enter this state. This is typically called when a transition out of
 	 * this state is selected, but transition execution rolls back and as a
 	 * result the flow reenters the source state.

@@ -107,21 +107,15 @@ public interface FlowExecutionListener {
 	public void stateEntered(RequestContext context, State previousState, State state);
 
 	/**
-	 * Called when a flow execution is asked to resume as the result of 
-	 * a user event.
-	 * @param context the source of the event
-	 */
-	public void resuming(RequestContext context);
-
-	/**
-	 * Called after a flow execution is successfully reactivated.
+	 * Called after a flow execution is successfully reactivated (but before
+	 * event processing).
 	 * @param context the source of the event
 	 */
 	public void resumed(RequestContext context);
 
 	/**
 	 * Called when a flow execution is paused, for instance when it is waiting
-	 * for user input.
+	 * for user input (after event processing).
 	 * @param context the source of the event
 	 * @param selectedView the view that will display
 	 */

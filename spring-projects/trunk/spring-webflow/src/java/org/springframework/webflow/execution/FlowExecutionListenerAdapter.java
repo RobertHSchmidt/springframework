@@ -60,9 +60,6 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void stateEntered(RequestContext context, State previousState, State newState) {
 	}
 
-	public void resuming(RequestContext context) {
-	}
-
 	public void resumed(RequestContext context) {
 	}
 

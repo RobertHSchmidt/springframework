@@ -259,16 +259,6 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow session was activated in the
 	 * flow execution.
 	 */
-	public void fireResuming(RequestContext context) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).resuming(context);
-		}
-	}
-
-	/**
-	 * Notify all interested listeners that a flow session was activated in the
-	 * flow execution.
-	 */
 	public void fireResumed(RequestContext context) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
 			((FlowExecutionListener)it.next()).resumed(context);

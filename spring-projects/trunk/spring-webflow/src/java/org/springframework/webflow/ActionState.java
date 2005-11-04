@@ -268,11 +268,11 @@ public class ActionState extends TransitionableState {
 			if (event != null) {
 				eventIds[executionCount] = event.getId();
 				try {
-					return onEvent(event, context);
+					return context.signalEvent(event, null);
 				}
 				catch (NoMatchingTransitionException e) {
 					if (e.getState() != this) {
-						// this no-matching-transition exception is not about this state!!
+						// this no-matching-transition exception is not about this state!
 						// let it propagate
 						throw e;
 					}

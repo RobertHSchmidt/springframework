@@ -129,13 +129,13 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	private transient TransactionSynchronizer transactionSynchronizer;
 
 	/**
-	 * Default constructor required for externalizable serialization.
-	 * Should NOT be called programmatically.
+	 * Default constructor required for externalizable serialization. Should NOT
+	 * be called programmatically.
 	 */
 	public FlowExecutionImpl() {
-		
+
 	}
-	
+
 	/**
 	 * Create a new flow execution executing the provided flow. This constructor
 	 * is mainly used for testing
@@ -311,11 +311,13 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
+				System.out.println("Booo");
 				ViewSelection selectedView = context.start(getRootFlow(), new HashMap(3));
+				System.out.println("Booo");
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
-				return handleStateException(e, context);
+				return pause(context, handleException(e, context));
 			}
 		}
 		finally {
@@ -325,22 +327,27 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	/**
 	 * Handles an exception that occured performing an operation on this flow
-	 * execution.
+	 * execution. First trys the set of exception handlers associated with the
+	 * offending state, then the handlers at the flow level.
 	 * @param e the exception that occured
 	 * @param context the state context the exception occured in
 	 * @return the selected error view
-	 * @throws RuntimeException rethrows the exception parameter if the
-	 * exception was not handled
+	 * @throws StateException rethrows the exception it was not handled at the
+	 * state or flow level
 	 */
-	protected ViewSelection handleStateException(StateException e, StateContext context) {
-		Flow flow = isActive() ? getActiveFlow() : getRootFlow();
-		ViewSelection selectedView = flow.handleStateException(e, context);
-		if (selectedView == null) {
-			throw e;
-		}
-		else {
+	protected ViewSelection handleException(StateException e, StateContext context) throws StateException {
+		System.out.println("Handling state");
+
+		ViewSelection selectedView = e.getState().handleException(e, context);
+		if (selectedView != null) {
 			return selectedView;
 		}
+		System.out.println("Handling flow");
+		selectedView = e.getState().getFlow().handleException(e, context);
+		if (selectedView != null) {
+			return selectedView;
+		}
+		throw e;
 	}
 
 	public synchronized ViewSelection signalEvent(Event sourceEvent) throws StateException, IllegalStateException {
@@ -363,24 +370,16 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			stateId = getCurrentState().getId();
 		}
 		TransitionableState state = getActiveFlow().getRequiredTransitionableState(stateId);
-		if (!state.equals(getCurrentState())) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Event '" + sourceEvent.getId() + "' in state '" + state.getId()
-						+ "' was signaled by client; however the current flow execution state is '"
-						+ getCurrentState().getId() + "'; updating current state to '" + state.getId() + "'");
-			}
-			setCurrentState(state);
-		}
 		StateContext context = createStateContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
 				resume(context);
-				ViewSelection selectedView = state.onEvent(sourceEvent, context);
+				ViewSelection selectedView = context.signalEvent(sourceEvent, state);
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
-				return pause(context, handleStateException(e, context));
+				return pause(context, handleException(e, context));
 			}
 		}
 		finally {
@@ -393,8 +392,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param context the state request context
 	 */
 	protected void resume(StateContext context) {
-		getListeners().fireResuming(context);
-		getActiveFlow().resume(context);
 		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 		getListeners().fireResumed(context);
 	}
@@ -409,7 +406,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		if (!isActive()) {
 			return selectedView;
 		}
-		selectedView = getActiveFlow().pause(context, selectedView);
 		getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
 		getListeners().firePaused(context, selectedView);
 		return selectedView;
@@ -518,7 +514,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return endingSession;
 	}
 
-	// custom serialization (implementation of Externalizable for optimized storage)
+	// custom serialization (implementation of Externalizable for optimized
+	// storage)
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		key = (Serializable)in.readObject();
@@ -543,11 +540,12 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		out.writeLong(lastRequestTimestamp);
 		out.writeObject(executingFlowSessions);
 	}
-	
+
 	public synchronized void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader,
 			TransactionSynchronizer transactionSynchronizer) {
 		// implementation note: we cannot integrate this code into the
-		// {@link readExternal(ObjectInput)} method since we need the flow locator, listener list and
+		// {@link readExternal(ObjectInput)} method since we need the flow
+		// locator, listener list and
 		// tx synchronizer!
 		if (rootFlow != null) {
 			// nothing to do, we're already hydrated
