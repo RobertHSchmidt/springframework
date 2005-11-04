@@ -70,6 +70,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		try {
 			execution.start(new Event(this, "start"));
+			fail("Should have rethrown");
 		}
 		catch (StateException e) {
 			// expected

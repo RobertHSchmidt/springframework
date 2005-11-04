@@ -233,7 +233,6 @@ public abstract class State extends AnnotatedObject {
 	 * matched or returned a non-null view descriptor
 	 */
 	public ViewSelection handleException(StateException exception, StateContext context) throws StateException {
-		System.out.println("HADSDFSDFDSFSD");
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();
