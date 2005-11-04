@@ -63,10 +63,10 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  * FlowAction:
  * 
  * <pre>
- *       &lt;action path=&quot;/userRegistration&quot;
- *           type=&quot;org.springframework.webflow.struts.FlowAction&quot;
- *           name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *       &lt;/action&gt;
+ *        &lt;action path=&quot;/userRegistration&quot;
+ *            type=&quot;org.springframework.webflow.struts.FlowAction&quot;
+ *            name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *        &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -161,35 +161,22 @@ public class FlowAction extends ActionSupport {
 	 * Return a Struts ActionForward given a ViewSelection. Adds all attributes
 	 * from the ViewSelection as request attributes.
 	 */
-	protected ActionForward toActionForward(ViewSelection viewDescriptor, ActionMapping mapping,
+	protected ActionForward toActionForward(ViewSelection selectedView, ActionMapping mapping,
 			HttpServletRequest request) {
-		if (viewDescriptor != null) {
-			WebUtils.exposeRequestAttributes(request, viewDescriptor.getModel());
-			ActionForward forward = mapping.findForward(viewDescriptor.getViewName());
+		if (selectedView != null) {
+			WebUtils.exposeRequestAttributes(request, selectedView.getModel());
+			ActionForward forward = mapping.findForward(selectedView.getViewName());
 			if (forward != null) {
 				// the 1.2.1 copy constructor would ideally be better to use,
 				// but it is not Struts 1.1 compatible
-				forward = new ActionForward(forward.getName(), forward.getPath(), viewDescriptor.isRedirect());
+				forward = new ActionForward(forward.getName(), forward.getPath(), selectedView.isRedirect());
 			}
 			else {
-				if (viewDescriptor.isRedirect()) {
-					StringBuffer path = new StringBuffer(viewDescriptor.getViewName());
-					if (viewDescriptor.getModel().size() > 0) {
-						// append model attributes as redirect query parameters
-						path.append('?');
-						Iterator it = viewDescriptor.getModel().entrySet().iterator();
-						while (it.hasNext()) {
-							Map.Entry entry = (Map.Entry)it.next();
-							path.append(entry.getKey()).append('=').append(entry.getValue());
-							if (it.hasNext()) {
-								path.append('&');
-							}
-						}
-					}
-					forward = new ActionForward(path.toString(), true);
+				if (selectedView.isRedirect()) {
+					forward = new ActionForward(buildRedirectUrlPath(selectedView), true);
 				}
 				else {
-					forward = new ActionForward(viewDescriptor.getViewName(), false);
+					forward = new ActionForward(selectedView.getViewName(), false);
 				}
 			}
 			forward.freeze();
@@ -198,6 +185,29 @@ public class FlowAction extends ActionSupport {
 		else {
 			return null;
 		}
+	}
+
+	/**
+	 * Takes the view name of the selected view and appends the model properties
+	 * as query parameters.
+	 * @param selectedView the selected view
+	 * @return the relative url path to redirect to
+	 */
+	protected String buildRedirectUrlPath(ViewSelection selectedView) {
+		StringBuffer path = new StringBuffer(selectedView.getViewName());
+		if (selectedView.getModel().size() > 0) {
+			// append model attributes as redirect query parameters
+			path.append('?');
+			Iterator it = selectedView.getModel().entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry entry = (Map.Entry)it.next();
+				path.append(entry.getKey()).append('=').append(entry.getValue());
+				if (it.hasNext()) {
+					path.append('&');
+				}
+			}
+		}
+		return path.toString();
 	}
 
 	/**
