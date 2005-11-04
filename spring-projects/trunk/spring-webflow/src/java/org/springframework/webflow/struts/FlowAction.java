@@ -161,7 +161,7 @@ public class FlowAction extends ActionSupport {
 	 * Return a Struts ActionForward given a ViewSelection. Adds all attributes
 	 * from the ViewSelection as request attributes.
 	 */
-	private ActionForward toActionForward(ViewSelection viewDescriptor, ActionMapping mapping,
+	protected ActionForward toActionForward(ViewSelection viewDescriptor, ActionMapping mapping,
 			HttpServletRequest request) {
 		if (viewDescriptor != null) {
 			WebUtils.exposeRequestAttributes(request, viewDescriptor.getModel());
@@ -205,7 +205,7 @@ public class FlowAction extends ActionSupport {
 	 * supporting POJO-based data binding in request scope under a well-defined
 	 * name and adapts it to the Struts ActionForm model.
 	 */
-	private static class ActionFormAdapter extends FlowExecutionListenerAdapter {
+	protected static class ActionFormAdapter extends FlowExecutionListenerAdapter {
 		public void requestProcessed(RequestContext context) {
 			if (context.getFlowExecutionContext().isActive()) {
 				StrutsEvent event = (StrutsEvent)context.getSourceEvent();

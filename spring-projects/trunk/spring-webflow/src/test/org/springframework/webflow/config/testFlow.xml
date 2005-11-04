@@ -61,7 +61,7 @@
 	
 	<end-state id="endState2"/>
 
-	<exception-handler class="org.springframework.webflow.config.MyCustomException" state="endState1"/>
+	<exception-handler on="org.springframework.webflow.config.MyCustomException" to="endState1"/>
 	<exception-handler bean="myCustomHandler"/>
 	
 	<bean id="action1" class="org.springframework.webflow.config.XmlFlowBuilderTests$TestAction"/>
