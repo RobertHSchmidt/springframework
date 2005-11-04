@@ -21,7 +21,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	@Override
 	protected Resource[] getFlowLocations() {
 		File flowDir = new File("src/webapp/WEB-INF");
-		return new Resource[] { new FileSystemResource(new File(flowDir, "sellItem.xml")) };
+		return new Resource[] { new FileSystemResource(new File(flowDir, "sellitem.xml")) };
 	}
 
 	@Override
