@@ -3,7 +3,6 @@
 	<classpathentry output="target/classes" kind="src" path="src/java"/>
 	<classpathentry output="target/test-classes" kind="src" path="src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/test/junit.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/global/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
@@ -18,7 +17,6 @@
 	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-web.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-webflow.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/global/standard.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-collections.jar"/>
