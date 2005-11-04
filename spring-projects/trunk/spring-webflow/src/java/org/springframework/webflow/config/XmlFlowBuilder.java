@@ -182,8 +182,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 	private static final String CLASS_ATTRIBUTE = "class";
 
-	private static final String STATE_ATTRIBUTE = "state";
-
 	/**
 	 * The resource location of the XML flow definition
 	 */
@@ -738,8 +736,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 	protected StateExceptionHandler parseDefaultExceptionHandler(Element element) {
 		TransitionExecutingStateExceptionHandler defaultHandler = new TransitionExecutingStateExceptionHandler();
-		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(CLASS_ATTRIBUTE));
-		State state = getFlow().getState(element.getAttribute(STATE_ATTRIBUTE));
+		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(ON_ATTRIBUTE));
+		State state = getFlow().getState(element.getAttribute(TO_ATTRIBUTE));
 		defaultHandler.add(new ExceptionStateMapping(exceptionClass, state));
 		return defaultHandler;
 	}
