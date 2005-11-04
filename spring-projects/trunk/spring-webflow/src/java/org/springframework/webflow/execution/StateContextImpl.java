@@ -31,7 +31,6 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.Scope;
-import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateContext;
 import org.springframework.webflow.Transition;

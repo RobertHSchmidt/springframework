@@ -16,9 +16,6 @@
 
 package org.springframework.webflow.jsf;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.faces.el.EvaluationException;
 import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.PropertyResolver;
@@ -27,7 +24,6 @@ import javax.faces.el.ReferenceSyntaxException;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.test.MockFlowSession;
 

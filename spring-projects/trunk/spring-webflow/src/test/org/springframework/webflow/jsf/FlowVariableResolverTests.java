@@ -41,7 +41,7 @@ public class FlowVariableResolverTests extends TestCase {
 		assertEquals("val1", resolver.resolveVariable(null, "var1"));
 		
 		try {
-			Object o = resolver.resolveVariable(null, "flow");
+			resolver.resolveVariable(null, "flow");
 			fail("resolver can not work with no FlowExecution in thread local");
 		} catch (EvaluationException e) { 
 			// expected
