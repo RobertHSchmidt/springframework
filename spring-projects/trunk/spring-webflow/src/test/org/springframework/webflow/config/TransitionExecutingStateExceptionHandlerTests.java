@@ -30,7 +30,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 
 	public void testFlowStateExceptionHandlingTransition() {
 		Flow flow = new Flow("myFlow");
-		State state1 = new TransitionableState(flow, "exception", new Transition[] { new Transition("end") }) {
+		new TransitionableState(flow, "exception", new Transition[] { new Transition("end") }) {
 			protected ViewSelection doEnter(StateContext context) {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
@@ -62,7 +62,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 
 	public void testStateExceptionHandlingRethrow() {
 		Flow flow = new Flow("myFlow");
-		State state1 = new TransitionableState(flow, "exception", new Transition[] { new Transition("end") }) {
+		new TransitionableState(flow, "exception", new Transition[] { new Transition("end") }) {
 			protected ViewSelection doEnter(StateContext context) {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}

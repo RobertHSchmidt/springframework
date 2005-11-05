@@ -180,7 +180,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 	private static final String EXCEPTION_HANDLER_ELEMENT = "exception-handler";
 
-	private static final String CLASS_ATTRIBUTE = "class";
+	//needs to be re-introduced
+	//private static final String CLASS_ATTRIBUTE = "class";
 
 	/**
 	 * The resource location of the XML flow definition
