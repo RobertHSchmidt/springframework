@@ -37,7 +37,7 @@ public class HttpServletContextMap implements Map {
 	}
 
 	public boolean isEmpty() {
-		return context.getAttributeNames().hasMoreElements();
+		return !context.getAttributeNames().hasMoreElements();
 	}
 
 	public boolean containsKey(Object key) {
