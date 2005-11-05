@@ -31,8 +31,7 @@ import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 public class JsfFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	/**
-	 * Creates a flow execution listener using the provided faces context.
-	 * @param facesContext the context
+	 * Creates a JSF flow execution listener.
 	 */
 	public JsfFlowExecutionListener() {
 

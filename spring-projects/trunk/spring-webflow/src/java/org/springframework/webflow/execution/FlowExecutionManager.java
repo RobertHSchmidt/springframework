@@ -561,17 +561,17 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	/**
 	 * Generates (or reuses) a flow execution id for subsequent saving of flow
 	 * state in the flow storage associaed with this flow execution manager.
-	 * @param id the unique id of the flow execution, or <code>null</code> if
-	 * the flow execution does not yet have an id (e.g. was not previously
-	 * saved)
+	 * @param previousId the previous unique id of the flow execution, or
+	 * <code>null</code> if the flow execution does not yet have an id (e.g.
+	 * was not previously saved)
 	 * @return the unique id that actually identifies the saved flow execution,
 	 * this could be different from the id passed into the method
 	 * @throws UnsupportedOperationException when this storage does not support
 	 * generation of storage ids as a separate step from saving of flows to the
 	 * storage
 	 */
-	protected Serializable generateFlowExecutionStorageId(Serializable oldId) throws UnsupportedOperationException {
-		return storage.generateId(oldId);
+	protected Serializable generateFlowExecutionStorageId(Serializable previousId) throws UnsupportedOperationException {
+		return storage.generateId(previousId);
 	}
 
 	/**

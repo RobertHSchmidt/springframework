@@ -7,7 +7,7 @@ package org.springframework.webflow.config.registry;
  * <p>
  * Flow registries that implement this interface may be exposed for management
  * over the JMX protocol. The following is an example of using Spring's JMX
- * {@link org.springframework.jmx.export.MBeanExporter} to export a flow registry to an MBeanServer:
+ * <code>MBeanExporter</code> to export a flow registry to an MBeanServer:
  * 
  * <pre>
  * 	&lt;!-- Creates the registry of flow definitions for this application --&gt;

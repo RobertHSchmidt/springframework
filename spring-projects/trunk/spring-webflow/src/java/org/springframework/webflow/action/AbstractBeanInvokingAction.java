@@ -25,7 +25,7 @@ import org.springframework.webflow.RequestContext;
 /**
  * Base class for actions that delegate to methods on abritrary beans. The
  * method to invoke is determined by the value of the
- * {@link org.springframework.webflow.AnnotatedAction.METHOD_PROPERTY} action
+ * {@link org.springframework.webflow.AnnotatedAction#METHOD_PROPERTY} action
  * execution property, typically set when provisioning this Action's use as part
  * of an {@link org.springframework.webflow.ActionState}.
  * 
@@ -36,7 +36,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	/**
 	 * The method invoker that performs the action->bean method binding.
 	 */
-	private MethodInvoker beanInvoker = new MethodInvoker();
+	private MethodInvoker methodInvoker = new MethodInvoker();
 
 	/**
 	 * The strategy that saves and restores stateful bean fields in flow scope.
@@ -62,13 +62,13 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * to method arguments as neccessary.
 	 */
 	public void setConversionService(ConversionService conversionService) {
-		this.beanInvoker.setConversionService(conversionService);
+		this.methodInvoker.setConversionService(conversionService);
 	}
 
-	protected MethodInvoker getBeanInvoker() {
-		return beanInvoker;
+	protected MethodInvoker getMethodInvoker() {
+		return methodInvoker;
 	}
-	
+
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
 		getStatePersister().restoreState(bean, context);
@@ -77,7 +77,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 			throw new IllegalStateException("The method to invoke was not provided: please set the '"
 					+ AnnotatedAction.METHOD_PROPERTY + "' property");
 		}
-		Event result = toEvent(context, getBeanInvoker().invoke(methodKey, bean, context));
+		Event result = toEvent(context, getMethodInvoker().invoke(methodKey, bean, context));
 		getStatePersister().saveState(bean, context);
 		return result;
 	}

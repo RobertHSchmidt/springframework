@@ -41,7 +41,7 @@ public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAw
 
 	/**
 	 * Creates a new XML flow factory bean.
-	 * @param the XML resource location
+	 * @param location the XML resource location
 	 */
 	public XmlFlowFactoryBean(Resource location) {
 		super(new XmlFlowBuilder(location));
