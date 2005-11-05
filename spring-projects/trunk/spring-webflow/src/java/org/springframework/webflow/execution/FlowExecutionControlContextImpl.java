@@ -197,6 +197,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 
 	public ViewSelection start(Flow flow, State startState, Map input) throws StateException {
 		if (input == null) {
+			// return a mutable map so things can be added later!
 			input = new HashMap(3);
 		}
 		flowExecution.getListeners().fireSessionStarting(this, flow, input);

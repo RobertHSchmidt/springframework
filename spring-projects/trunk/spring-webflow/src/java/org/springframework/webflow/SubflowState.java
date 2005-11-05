@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
@@ -201,10 +200,9 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				logger
-						.debug("No attribute mapper is configured for the resuming state '"
-								+ getId()
-								+ "' -- as a result, no attributes in the ending subflow scope will be passed to the resuming flow");
+				logger.debug("No attribute mapper is configured for the resuming state '"
+						+ getId()
+						+ "' -- as a result, no attributes in the ending subflow scope will be passed to the resuming flow");
 			}
 		}
 	}
