@@ -143,7 +143,7 @@ public abstract class State extends AnnotatedObject {
 	 */
 	public void setId(String id) {
 		Assert.hasText(id, "This state must have a valid identifier");
-		Assert.isTrue(getFlow() == null, "You cannot change the id of a state which has already been added to a flow");
+		Assert.isTrue(getFlow() == null, "You cannot change the id of a state which has been added to a flow");
 		this.id = id;
 	}
 
@@ -199,17 +199,17 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
-	 * Enter this state in the provided flow execution request context. This
-	 * implementation just calls the {@link #doEnter(StateContext)} hook method,
+	 * Enter this state in the provided flow control context. This
+	 * implementation just calls the {@link #doEnter(FlowControlContext)} hook method,
 	 * which should be implemented by subclasses, after executing the entry
 	 * action.
-	 * @param context the request context in an executing flow (a client
+	 * @param context the flow control context in an executing flow (a client
 	 * instance of a flow)
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state processing
 	 * @throw StateException if an exception occurs in this state
 	 */
-	public ViewSelection enter(StateContext context) throws StateException {
+	public ViewSelection enter(FlowControlContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Entering state '" + getId() + "' of flow '" + getFlow().getId() + "'");
 		}
@@ -226,13 +226,13 @@ public abstract class State extends AnnotatedObject {
 	 * objects, delegating to each handler in the set until one handles the
 	 * exception that occured and selects a non-null error view. If no error
 	 * view is selected, the StateException is rethrown.
-	 * @param context the state request context
+	 * @param context the flow control context
 	 * @param exception the exception that occured
 	 * @return the selected error view
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view descriptor
 	 */
-	public ViewSelection handleException(StateException exception, StateContext context) throws StateException {
+	public ViewSelection handleException(StateException exception, FlowControlContext context) throws StateException {
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();
@@ -262,13 +262,13 @@ public abstract class State extends AnnotatedObject {
 	/**
 	 * Hook method to execute custom behaviour as a result of entering this
 	 * state.
-	 * @param context the state context in an executing flow (a client instance
+	 * @param context the flow control context in an executing flow (a client instance
 	 * of a flow)
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state processing
 	 * @throw StateException if an exception occurs in this state
 	 */
-	protected abstract ViewSelection doEnter(StateContext context) throws StateException;
+	protected abstract ViewSelection doEnter(FlowControlContext context) throws StateException;
 
 	public String toString() {
 		ToStringCreator creator =

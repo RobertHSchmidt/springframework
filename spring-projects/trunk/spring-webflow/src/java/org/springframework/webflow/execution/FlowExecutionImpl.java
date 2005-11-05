@@ -35,7 +35,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.State;
-import org.springframework.webflow.StateContext;
+import org.springframework.webflow.FlowControlContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
@@ -46,7 +46,7 @@ import org.springframework.webflow.access.FlowLocator;
  * structure to manage
  * {@link org.springframework.webflow.FlowSession flow sessions}. This class is
  * closely coupled with <code>FlowSessionImpl</code> and
- * <code>StateContextImpl</code>. The three classes work together to form a
+ * <code>FlowControlContextImpl</code>. The three classes work together to form a
  * complete flow execution implementation based on a finite state machine.
  * <p>
  * This implementation of FlowExecution is serializable so it can be safely
@@ -61,7 +61,7 @@ import org.springframework.webflow.access.FlowLocator;
  * 
  * @see org.springframework.webflow.FlowSession
  * @see org.springframework.webflow.execution.FlowSessionImpl
- * @see org.springframework.webflow.execution.StateContextImpl
+ * @see org.springframework.webflow.execution.FlowControlContextImpl
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -311,7 +311,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Start event signaled: " + sourceEvent);
 		}
-		StateContext context = createStateContext(sourceEvent);
+		FlowControlContext context = createFlowControlContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
@@ -337,7 +337,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @throws StateException rethrows the exception it was not handled at the
 	 * state or flow level
 	 */
-	protected ViewSelection handleException(StateException e, StateContext context) throws StateException {
+	protected ViewSelection handleException(StateException e, FlowControlContext context) throws StateException {
 		ViewSelection selectedView = e.getState().handleException(e, context);
 		if (selectedView != null) {
 			return selectedView;
@@ -369,7 +369,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			stateId = getCurrentState().getId();
 		}
 		TransitionableState state = getActiveFlow().getRequiredTransitionableState(stateId);
-		StateContext context = createStateContext(sourceEvent);
+		FlowControlContext context = createFlowControlContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
@@ -390,7 +390,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Resume this flow execution.
 	 * @param context the state request context
 	 */
-	protected void resume(StateContext context) {
+	protected void resume(FlowControlContext context) {
 		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 		getListeners().fireResumed(context);
 	}
@@ -401,7 +401,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param selectedView the initial selected view to render
 	 * @return the selected view to render
 	 */
-	protected ViewSelection pause(StateContext context, ViewSelection selectedView) {
+	protected ViewSelection pause(FlowControlContext context, ViewSelection selectedView) {
 		if (!isActive()) {
 			return selectedView;
 		}
@@ -417,14 +417,14 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	// flow session management helpers
 
 	/**
-	 * Create a flow execution state context for given event.
+	 * Create a flow execution control context for given event.
 	 * <p>
-	 * The default implementation uses the <code>StateContextImpl</code>
+	 * The default implementation uses the <code>FlowControlContextImpl</code>
 	 * class. Subclasses can override this to use a custom class.
 	 * @param sourceEvent the event at the origin of this request
 	 */
-	protected StateContextImpl createStateContext(Event sourceEvent) {
-		return new StateContextImpl(sourceEvent, this);
+	protected FlowControlContextImpl createFlowControlContext(Event sourceEvent) {
+		return new FlowControlContextImpl(sourceEvent, this);
 	}
 
 	/**

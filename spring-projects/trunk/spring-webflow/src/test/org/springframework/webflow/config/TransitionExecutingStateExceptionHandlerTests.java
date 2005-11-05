@@ -6,7 +6,7 @@ import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.State;
-import org.springframework.webflow.StateContext;
+import org.springframework.webflow.FlowControlContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionableState;
@@ -18,7 +18,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 	public void testTransitionExecutorHandlesException() {
 		Flow flow = new Flow("myFlow");
 		State state1 = new TransitionableState(flow, "exception", new Transition[] { new Transition("end") }) {
-			protected ViewSelection doEnter(StateContext context) {
+			protected ViewSelection doEnter(FlowControlContext context) {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};
@@ -31,7 +31,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 	public void testFlowStateExceptionHandlingTransition() {
 		Flow flow = new Flow("myFlow");
 		new TransitionableState(flow, "exception", new Transition[] { new Transition("end") }) {
-			protected ViewSelection doEnter(StateContext context) {
+			protected ViewSelection doEnter(FlowControlContext context) {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};
@@ -47,7 +47,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 	public void testStateExceptionHandlingTransition() {
 		Flow flow = new Flow("myFlow");
 		State state1 = new TransitionableState(flow, "exception", new Transition[] { new Transition("end") }) {
-			protected ViewSelection doEnter(StateContext context) throws StateException {
+			protected ViewSelection doEnter(FlowControlContext context) throws StateException {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};
@@ -63,7 +63,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 	public void testStateExceptionHandlingRethrow() {
 		Flow flow = new Flow("myFlow");
 		new TransitionableState(flow, "exception", new Transition[] { new Transition("end") }) {
-			protected ViewSelection doEnter(StateContext context) {
+			protected ViewSelection doEnter(FlowControlContext context) {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};

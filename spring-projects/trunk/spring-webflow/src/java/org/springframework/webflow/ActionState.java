@@ -268,14 +268,14 @@ public class ActionState extends TransitionableState {
 	 * <code>Action</code> returns a result event that matches a state
 	 * transition in this request context, or the set of all actions is
 	 * exhausted.
-	 * @param context the state context for the executing flow
+	 * @param context the flow control context for the executing flow
 	 * @return a view selection signaling that control should be returned to
 	 * the client and a view rendered
 	 * @throws StateException if an exception occurs in this state
 	 * @throws CannotExecuteTransitionException when no action execution
 	 * resulted in a outcome event that could be mapped to a valid state transition
 	 */
-	protected ViewSelection doEnter(StateContext context) throws StateException {
+	protected ViewSelection doEnter(FlowControlContext context) throws StateException {
 		int executionCount = 0;
 		String[] eventIds = new String[actionExecutors.size()]; // for logging purposes
 		Iterator it = actionExecutors();

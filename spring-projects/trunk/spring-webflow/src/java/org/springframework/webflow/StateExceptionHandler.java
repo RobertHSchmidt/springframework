@@ -16,12 +16,12 @@ public interface StateExceptionHandler {
 	public boolean handles(StateException e);
 
 	/**
-	 * Handle this exception in the state context of the current request and
+	 * Handle this exception in the context of the current request and
 	 * optionally select an error view that should be displayed.
 	 * @param e the exception that occured
-	 * @param context the state context
+	 * @param context the flow control context
 	 * @return the selected error view that should be displayed (may be null if
 	 * the handler chooses not to select a view)
 	 */
-	public ViewSelection handle(StateException e, StateContext context);
+	public ViewSelection handle(StateException e, FlowControlContext context);
 }

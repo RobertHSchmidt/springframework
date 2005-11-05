@@ -274,13 +274,13 @@ public class Transition extends AnnotatedObject {
 	/**
 	 * Execute this state transition. Will only be called if the
 	 * {@link #matches(RequestContext)} method returns true for given context.
-	 * @param context the flow execution request context
+	 * @param context the flow control context
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the transition execution
 	 * @throws CannotExecuteTransitionException when this transition cannot be
 	 * executed because the target state is invalid
 	 */
-	public ViewSelection execute(StateContext context) throws CannotExecuteTransitionException {
+	public ViewSelection execute(FlowControlContext context) throws CannotExecuteTransitionException {
 		ViewSelection selectedView;
 		if (canExecute(context)) {
 			if (logger.isDebugEnabled()) {

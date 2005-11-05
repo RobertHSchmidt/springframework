@@ -183,12 +183,12 @@ public abstract class TransitionableState extends State {
 	 * result the flow reenters the source state.
 	 * <p>
 	 * By default, this just calls <code>enter()</code>.
-	 * @param context the request context in an executing flow (a client
+	 * @param context the flow control context in an executing flow (a client
 	 * instance of a flow)
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state processing
 	 */
-	public ViewSelection reenter(StateContext context) {
+	public ViewSelection reenter(FlowControlContext context) {
 		return enter(context);
 	}
 
@@ -196,9 +196,9 @@ public abstract class TransitionableState extends State {
 	 * Exit this state. This is typically called when a transition takes the
 	 * flow out of this state into another state. By default just executes the
 	 * exit action, if one is registered.
-	 * @param context the flow execution request context
+	 * @param context the flow control context
 	 */
-	public void exit(StateContext context) {
+	public void exit(FlowControlContext context) {
 		if (this.exitAction != null) {
 			new ActionExecutor(exitAction).execute(context);
 		}

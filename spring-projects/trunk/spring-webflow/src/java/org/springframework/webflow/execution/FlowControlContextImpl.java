@@ -32,7 +32,7 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.State;
-import org.springframework.webflow.StateContext;
+import org.springframework.webflow.FlowControlContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewSelection;
@@ -49,7 +49,7 @@ import org.springframework.webflow.ViewSelection;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class StateContextImpl implements StateContext {
+public class FlowControlContextImpl implements FlowControlContext {
 
 	/**
 	 * The owning flow execution.
@@ -91,7 +91,7 @@ public class StateContextImpl implements StateContext {
 	 * @param sourceEvent the event at the origin of this request
 	 * @param flowExecution the owning flow execution
 	 */
-	public StateContextImpl(Event sourceEvent, FlowExecutionImpl flowExecution) {
+	public FlowControlContextImpl(Event sourceEvent, FlowExecutionImpl flowExecution) {
 		Assert.notNull(sourceEvent, "The source event is required");
 		Assert.notNull(flowExecution, "The owning flow execution is required");
 		this.sourceEvent = sourceEvent;
@@ -176,7 +176,7 @@ public class StateContextImpl implements StateContext {
 		flowExecution.getTransactionSynchronizer().endTransaction(this);
 	}
 
-	// implementing StateContext
+	// implementing FlowControlContext
 
 	public void setLastEvent(Event lastEvent) {
 		this.lastEvent = lastEvent;

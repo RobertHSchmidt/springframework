@@ -36,11 +36,11 @@ import org.springframework.webflow.access.FlowLocator;
 /**
  * Implementation of the FlowSession interfaced used internally by the
  * <code>FlowExecutionImpl</code>. This class is closely coupled with
- * <code>FlowExecutionImpl</code> and <code>StateContextImpl</code>. The
+ * <code>FlowExecutionImpl</code> and <code>FlowControlContextImpl</code>. The
  * three classes work together to form a complete flow execution implementation.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionImpl
- * @see org.springframework.webflow.execution.StateContextImpl
+ * @see org.springframework.webflow.execution.FlowControlContextImpl
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

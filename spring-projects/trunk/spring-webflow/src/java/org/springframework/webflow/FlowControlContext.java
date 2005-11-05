@@ -18,7 +18,7 @@ package org.springframework.webflow;
 import java.util.Map;
 
 /**
- * Mutable control interface for states to use to manipulate an ongoing flow
+ * Mutable control interface for clients to use to manipulate an ongoing flow
  * execution. Used internally by the various state types when they are entered.
  * 
  * @see org.springframework.webflow.State
@@ -26,7 +26,7 @@ import java.util.Map;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface StateContext extends RequestContext {
+public interface FlowControlContext extends RequestContext {
 
 	/**
 	 * Update the last event signaled in the executing flow. This method should

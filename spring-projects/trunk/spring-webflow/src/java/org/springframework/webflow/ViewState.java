@@ -120,23 +120,23 @@ public class ViewState extends TransitionableState {
 	 * Returns a view descriptor pointing callers to a logical view resource to
 	 * be displayed. The descriptor also contains a model map needed when the
 	 * view is rendered, for populating dynamic content.
-	 * @param context the state context for the executing flow
+	 * @param context the flow control context for the executing flow
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state execution
 	 * @throws StateException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(StateContext context) throws StateException {
+	protected ViewSelection doEnter(FlowControlContext context) throws StateException {
 		return selectView(context);
 	}
 
 	/**
 	 * Returns the view descriptor that should be rendered by this state for
 	 * given execution context.
-	 * @param context the state context for the executing flow
+	 * @param context the flow control context for the executing flow
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state execution
 	 */
-	public ViewSelection selectView(StateContext context) {
+	public ViewSelection selectView(FlowControlContext context) {
 		if (isMarker()) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Returning a [null] view selection");

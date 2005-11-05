@@ -159,12 +159,12 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * <p>
 	 * Entering this state, creates the sub flow input map and spawns the sub
 	 * flow in the current flow execution.
-	 * @param context the state context for the executing flow
+	 * @param context the flow control context for the executing flow
 	 * @return a view descriptor containing model and view information needed to
 	 *         render the results of the state execution
 	 * @throws StateException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(StateContext context) throws StateException {
+	protected ViewSelection doEnter(FlowControlContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Spawning subflow '" + getSubflow().getId() + "' within flow '" + getFlow().getId() + "'");
 		}

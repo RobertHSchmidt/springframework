@@ -421,9 +421,9 @@ public class Flow extends AnnotatedObject {
 	 * Start a new execution of this flow in the specified state.
 	 * @param startState the start state to use, when null, the default start state
 	 * of the flow will be used
-	 * @param context the executing state request context
+	 * @param context the executing flow control context
 	 */
-	public ViewSelection start(State startState, StateContext context) {
+	public ViewSelection start(State startState, FlowControlContext context) {
 		if (isTransactional()) {
 			context.beginTransaction();
 		}
@@ -437,10 +437,10 @@ public class Flow extends AnnotatedObject {
 	 * Inform this flow definition that an event was signaled in the provided
 	 * state of an active flow execution.
 	 * @param state The state the event occured in
-	 * @param context the state request context
+	 * @param context the flow control context
 	 * @return the selected view
 	 */
-	public ViewSelection onEvent(Event event, StateContext context) {
+	public ViewSelection onEvent(Event event, FlowControlContext context) {
 		if (isTransactional()) {
 			context.assertInTransaction(false);
 		}
@@ -451,9 +451,9 @@ public class Flow extends AnnotatedObject {
 
 	/**
 	 * Inform this flow definition that a session of itself has ended.
-	 * @param context the state request context
+	 * @param context the flow control context
 	 */
-	public void end(StateContext context) {
+	public void end(FlowControlContext context) {
 		if (isTransactional()) {
 			context.endTransaction();
 		}
@@ -466,12 +466,12 @@ public class Flow extends AnnotatedObject {
 	 * This implementation iterates over the ordered set of flow exception
 	 * handler objects, delegating to each handler in the set until one handles
 	 * the exception that occured and returns a non-null error view.
-	 * @param context the state request context
+	 * @param context the flow control context
 	 * @param exception the exception that occured
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view descriptor
 	 */
-	public ViewSelection handleException(StateException exception, StateContext context) throws StateException {
+	public ViewSelection handleException(StateException exception, FlowControlContext context) throws StateException {
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();

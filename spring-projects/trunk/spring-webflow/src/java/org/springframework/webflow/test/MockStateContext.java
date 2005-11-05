@@ -21,17 +21,17 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.State;
-import org.springframework.webflow.StateContext;
+import org.springframework.webflow.FlowControlContext;
 import org.springframework.webflow.ViewSelection;
 
 /**
- * Mock implementation of the <code>StateContext</code> interface to
+ * Mock implementation of the <code>FlowControlContext</code> interface to
  * facilitate standalone Flow and State unit tests.
  * <p>
  * NOT intended to be used for anything but standalone unit tests. This
  * is a simple state holder, a <i>stub</i> implementation, at least if you follow <a
  * href="http://www.martinfowler.com/articles/mocksArentStubs.html">Martin
- * Fowler's</a> reasoning. This class is called <i>Mock</i>StateContext to
+ * Fowler's</a> reasoning. This class is called <i>Mock</i>FlowControlContext to
  * be consistent with the naming convention in the rest of the Spring framework
  * (e.g. MockHttpServletRequest, ...).
  * 
@@ -41,7 +41,7 @@ import org.springframework.webflow.ViewSelection;
  * 
  * @author Keith Donald
  */
-public class MockStateContext extends MockRequestContext implements StateContext {
+public class MockStateContext extends MockRequestContext implements FlowControlContext {
 	
 	/**
 	 * Create a new stub state context.
