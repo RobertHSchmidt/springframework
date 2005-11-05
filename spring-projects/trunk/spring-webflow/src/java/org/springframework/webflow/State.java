@@ -205,7 +205,7 @@ public abstract class State extends AnnotatedObject {
 	 * be implemented by subclasses, after executing the entry action.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
-	 * @return a view descriptor containing model and view information needed to
+	 * @return a view selection containing model and view information needed to
 	 * render the results of the state processing
 	 * @throws StateException if an exception occurs in this state
 	 */
@@ -233,7 +233,7 @@ public abstract class State extends AnnotatedObject {
 	 * state.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
-	 * @return a view descriptor containing model and view information needed to
+	 * @return a view selection containing model and view information needed to
 	 * render the results of the state processing
 	 * @throws StateException if an exception occurs in this state
 	 */
@@ -251,7 +251,7 @@ public abstract class State extends AnnotatedObject {
 	 * @param exception the exception that occured
 	 * @return the selected error view
 	 * @return the selected error view, or <code>null</code> if no handler
-	 * matched or returned a non-null view descriptor
+	 * matched or returned a non-null view selection
 	 */
 	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
 			throws StateException {

@@ -185,7 +185,7 @@ public abstract class TransitionableState extends State {
 	 * By default, this just calls <code>enter()</code>.
 	 * @param context the flow control context in an executing flow (a client
 	 * instance of a flow)
-	 * @return a view descriptor containing model and view information needed to
+	 * @return a view selection containing model and view information needed to
 	 * render the results of the state processing
 	 */
 	public ViewSelection reenter(FlowExecutionControlContext context) {

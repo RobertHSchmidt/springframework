@@ -468,7 +468,7 @@ public class Flow extends AnnotatedObject {
 	 * @param context the flow control context
 	 * @param exception the exception that occured
 	 * @return the selected error view, or <code>null</code> if no handler
-	 * matched or returned a non-null view descriptor
+	 * matched or returned a non-null view selection
 	 */
 	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
 			throws StateException {

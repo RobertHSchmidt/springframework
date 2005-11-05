@@ -25,7 +25,7 @@ import org.springframework.core.style.ToStringCreator;
 /**
  * Value object that provides clients with information about a logical view to
  * render and the dynamic model data neccessary to render it. It is expected
- * that clients map this view descriptor to a physical view template for
+ * that clients map this view selection to a physical view template for
  * rendering.
  * <p>
  * View selections are returned as a result of entering a {@link ViewState} or

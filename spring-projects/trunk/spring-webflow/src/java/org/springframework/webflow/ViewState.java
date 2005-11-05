@@ -91,7 +91,7 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
-	 * Returns the factory to produce a descriptor for the view to render in
+	 * Returns the strategy used to select the view to render in
 	 * this view state.
 	 */
 	public ViewSelector getViewSelector() {
@@ -99,7 +99,7 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
-	 * Sets the factory to produce a descriptor for the view to render in this
+	 * Sets the strategy used to select the view to render in this
 	 * view state.
 	 */
 	public void setViewSelector(ViewSelector viewSelector) {
@@ -117,12 +117,12 @@ public class ViewState extends TransitionableState {
 	 * Specialization of State's <code>doEnter</code> template method that
 	 * executes behaviour specific to this state type in polymorphic fashion.
 	 * <p>
-	 * Returns a view descriptor pointing callers to a logical view resource to
-	 * be displayed. The descriptor also contains a model map needed when the
+	 * Returns a view selection pointing callers to a logical view resource to
+	 * be displayed. The view selection also contains a model map needed when the
 	 * view is rendered, for populating dynamic content.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
-	 * @return a view descriptor containing model and view information needed to
+	 * @return a view selection containing model and view information needed to
 	 * render the results of the state execution
 	 * @throws StateException if an exception occurs in this state
 	 */
@@ -131,10 +131,10 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
-	 * Returns the view descriptor that should be rendered by this state for
+	 * Returns the view selection that should be rendered by this state for
 	 * given execution context.
 	 * @param context the flow control context for the executing flow
-	 * @return a view descriptor containing model and view information needed to
+	 * @return a view selection containing model and view information needed to
 	 * render the results of the state execution
 	 */
 	public ViewSelection selectView(FlowExecutionControlContext context) {
