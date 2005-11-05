@@ -160,13 +160,13 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		Assert.notNull(key, "The unique key identifying this flow execution is required");
 		Assert.notNull(rootFlow, "The root flow definition is required");
 		Assert.notNull(transactionSynchronizer, "The transaction synchronizer is required");
-		creationTimestamp = System.currentTimeMillis();
+		this.key = key;
 		this.rootFlow = rootFlow;
 		getListeners().add(listeners);
 		this.transactionSynchronizer = transactionSynchronizer;
+		creationTimestamp = System.currentTimeMillis();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Created new client execution with key: '" + key + "' for flow definition: '"
-					+ rootFlow.getId() + "'");
+			logger.debug("Created new execution of flow '" + rootFlow.getId() + "' with key '" + key + "'");
 		}
 	}
 
@@ -191,38 +191,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	public String getCaption() {
-		StringBuffer caption = new StringBuffer();
-		if (isActive()) {
-			caption.append("[").append(getActiveSession().getStatus().getLabel()).append("] execution for flow '");
-			caption.append(getRootFlow().getId()).append("': [").append(getSessionPath()).append("]");
-		}
-		else {
-			caption.append("Inactive execution for flow '").append(getRootFlow().getId()).append("'");
-		}
-		caption.append("; key: '").append(getKey()).append("'");
-		return caption.toString();
-	}
-
-	/**
-	 * Helper that return a string representation of the current flow session
-	 * stack.
-	 */
-	private String getSessionPath() {
-		if (isActive()) {
-			StringBuffer qualifiedName = new StringBuffer(128);
-			Iterator it = executingFlowSessions.iterator();
-			while (it.hasNext()) {
-				FlowSession session = (FlowSession)it.next();
-				qualifiedName.append(session.getFlow().getId());
-				if (it.hasNext()) {
-					qualifiedName.append('.');
-				}
-			}
-			return qualifiedName.toString();
-		}
-		else {
-			return "";
-		}
+		return "FlowExecution:rootFlow=" + (getRootFlow() != null ? getRootFlow().getId() : rootFlowId) + ", key="
+				+ getKey();
 	}
 
 	public long getCreationTimestamp() {
@@ -295,7 +265,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	protected void assertActive() throws IllegalStateException {
 		if (!isActive()) {
 			throw new IllegalStateException(
-					"No active flow sessions executing - this flow execution has ended (or has never been started)");
+					"This flow execution is not active: it has either ended or has never been started.");
 		}
 	}
 
@@ -309,7 +279,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Start event signaled: " + sourceEvent);
+			logger.debug("Starting this execution on user event: [" + sourceEvent + "]");
 		}
 		FlowExecutionControlContext context = createControlContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
@@ -366,18 +336,13 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		assertActive();
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Resume event signaled: " + sourceEvent);
+			logger.debug("Resuming this execution on user event [" + sourceEvent + "]");
 		}
 		String stateId = sourceEvent.getStateId();
 		if (!StringUtils.hasText(stateId)) {
 			if (logger.isDebugEnabled()) {
-				logger
-						.debug("The current state id was not provided in request to signal event '"
-								+ sourceEvent.getId()
-								+ "' in flow "
-								+ getCaption()
-								+ "' -- pulling current state id from FlowSession -- "
-								+ "note: if the user has been using the browser back/forward buttons, the currentState could be incorrect.");
+				logger.debug("No stateId was provided in source event '" + sourceEvent.getId()
+						+ "', relying on the currentState of the active FlowSession.");
 			}
 			stateId = getCurrentState().getId();
 		}
@@ -420,6 +385,14 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
 		getListeners().firePaused(context, selectedView);
+		if (logger.isDebugEnabled()) {
+			if (selectedView != null) {
+				logger.debug("Paused to render [" + selectedView + "]");
+			}
+			else {
+				logger.debug("Paused to wait for user input");
+			}
+		}
 		return selectedView;
 	}
 
@@ -480,20 +453,27 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getActiveSessionInternal().setCurrentState(newState);
 	}
 
-	public FlowSession activateSession(Flow subflow, Map input) {
+	/**
+	 * Activate a new <code>FlowSession</code> for the flow definition with
+	 * the input provided. Pushes the new flow session onto the stack.
+	 * @param flow the flow definition
+	 * @param input the flow session input
+	 * @return the new flow session
+	 */
+	public FlowSession activateSession(Flow flow, Map input) {
 		FlowSessionImpl session;
 		if (!executingFlowSessions.isEmpty()) {
 			FlowSessionImpl parent = getActiveSessionInternal();
 			parent.setStatus(FlowSessionStatus.SUSPENDED);
-			session = createFlowSession(subflow, input, parent);
+			session = createFlowSession(flow, input, parent);
 		}
 		else {
-			session = createFlowSession(subflow, input, null);
+			session = createFlowSession(flow, input, null);
 		}
 		executingFlowSessions.push(session);
 		session.setStatus(FlowSessionStatus.ACTIVE);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Session activated: " + session);
+			logger.debug("Activated [" + session + "]");
 		}
 		return session;
 	}
@@ -514,13 +494,16 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	public FlowSession endActiveFlowSession() {
 		FlowSessionImpl endingSession = (FlowSessionImpl)executingFlowSessions.pop();
 		endingSession.setStatus(FlowSessionStatus.ENDED);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Session ended: " + endingSession);
-		}
 		if (!executingFlowSessions.isEmpty()) {
-			getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Session resumed: " + getActiveSessionInternal());
+				logger.debug("Resuming session '" + getActiveSessionInternal().getFlow().getId() + "' in state '"
+						+ getActiveSessionInternal().getCurrentState().getId() + "'");
+			}
+			getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
+		}
+		else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("[Ended] - this execution '" + getKey() + "' is now inactive");
 			}
 		}
 		return endingSession;
@@ -557,11 +540,13 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			TransactionSynchronizer transactionSynchronizer) {
 		// implementation note: we cannot integrate this code into the
 		// {@link readExternal(ObjectInput)} method since we need the flow
-		// locator, listener list and
-		// tx synchronizer!
+		// locator, listener list and tx synchronizer!
 		if (rootFlow != null) {
 			// nothing to do, we're already hydrated
 			return;
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Rehydrating");
 		}
 		Assert.notNull(rootFlowId, "The root flow id was not set during deserialization: cannot restore"
 				+ " -- was this flow execution deserialized properly?");
@@ -581,11 +566,14 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		listenerList = new FlowExecutionListenerList();
 		listenerList.add(listenerLoader.getListeners(rootFlow));
 		this.transactionSynchronizer = transactionSynchronizer;
+		if (logger.isDebugEnabled()) {
+			logger.debug("Rehydrated");
+		}
 	}
 
 	public String toString() {
 		if (!isActive()) {
-			return "[Empty FlowExecutionImpl with key '" + getKey() + "'; no flows are active]";
+			return "[Inactive '" + getCaption() + "']";
 		}
 		else {
 			return new ToStringCreator(this).append("key", getKey()).append("activeFlow",

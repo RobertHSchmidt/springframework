@@ -132,8 +132,8 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 		Assert.notNull(newState, "The newState is required");
 		Assert.isTrue(flow == newState.getFlow(), "The newState belongs to the flow associated with this flow session");
 		if (logger.isDebugEnabled()) {
-			logger.debug("Setting current state of flow session: '" + getFlow().getId() + "@"
-					+ ObjectUtils.getIdentityHexString(this) + "' to: '" + newState.getId() + "'");
+			logger.debug("Setting current state of '" + getFlow().getId() + "@"
+					+ ObjectUtils.getIdentityHexString(this) + "' to '" + newState.getId() + "'");
 		}
 		this.currentState = newState;
 	}

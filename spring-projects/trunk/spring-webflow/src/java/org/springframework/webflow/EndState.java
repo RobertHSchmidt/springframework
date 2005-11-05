@@ -135,13 +135,11 @@ public class EndState extends State {
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 		if (context.getFlowExecutionContext().getActiveSession().isRoot()) {
 			// entire flow execution is ending, return ending view if applicable
-			if (logger.isDebugEnabled()) {
-				logger.debug("Executing flow '" + getFlow().getId() + "' has ended");
-			}
 			ViewSelection selectedView;
 			if (isMarker()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning a [null] ending view selection: make sure a response has already been written");
+					logger
+							.debug("Returning a [null] ending view selection: make sure a response has already been written");
 				}
 				selectedView = null;
 			}
@@ -157,10 +155,6 @@ public class EndState extends State {
 		else {
 			// there is a parent flow that will resume
 			FlowSession parentSession = context.getFlowExecutionContext().getActiveSession().getParent();
-			if (logger.isDebugEnabled()) {
-				logger.debug("Resuming parent flow: '" + parentSession.getFlow().getId() + "' in state: '"
-						+ parentSession.getCurrentState().getId() + "'");
-			}
 			Assert.isInstanceOf(FlowAttributeMapper.class, parentSession.getCurrentState(),
 					"State in resuming flow is not an attribute mapper: ");
 			FlowAttributeMapper resumingState = (FlowAttributeMapper)parentSession.getCurrentState();
