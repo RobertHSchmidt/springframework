@@ -33,10 +33,10 @@ import org.springframework.util.Assert;
  * entire flow execution as a kind of flow ending "confirmation page".
  * <p>
  * Note: if no <code>viewName</code> property is specified <b>and</b> this
- * EndState terminates the entire flow execution, it is expected that some
+ * end state terminates the entire flow execution, it is expected that some
  * action has already written the response (or else a blank response will
  * result). On the other hand, if no <code>viewName</code> is specified <b>and</b>
- * this EndState relinquishes control back to a parent flow, view rendering
+ * this end state relinquishes control back to a parent flow, view rendering
  * responsibility falls on the parent flow.
  * 
  * @see org.springframework.webflow.ViewSelector
@@ -49,7 +49,7 @@ import org.springframework.util.Assert;
 public class EndState extends State {
 
 	/**
-	 * An optional view descriptor creator that will produce a view to render if
+	 * An optional view selector that will select a view to render if
 	 * this end state terminates an executing root flow.
 	 */
 	private ViewSelector viewSelector;
@@ -69,33 +69,33 @@ public class EndState extends State {
 	 * Create a new end state with specified associated view.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param creator factory used to create the view that should be rendered if
+	 * @param selector strategy used to select the view that should be rendered if
 	 * this end state terminates a flow execution
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 */
-	public EndState(Flow flow, String id, ViewSelector creator) throws IllegalArgumentException {
+	public EndState(Flow flow, String id, ViewSelector selector) throws IllegalArgumentException {
 		super(flow, id);
-		setViewSelector(creator);
+		setViewSelector(selector);
 	}
 
 	/**
 	 * Create a new end state with specified associated view.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param creator factory used to create the view that should be rendered if
+	 * @param selector strategy used to select the view that should be rendered if
 	 * this end state terminates a flow execution
 	 * @param properties additional properties describing this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 */
-	public EndState(Flow flow, String id, ViewSelector creator, Map properties) throws IllegalArgumentException {
+	public EndState(Flow flow, String id, ViewSelector selector, Map properties) throws IllegalArgumentException {
 		super(flow, id, properties);
-		setViewSelector(creator);
+		setViewSelector(selector);
 	}
 
 	/**
-	 * Returns the factory to produce a descriptor for the view to render in
+	 * Returns the strategy used to select the view to render in
 	 * this end state if it terminates a root flow.
 	 */
 	public ViewSelector getViewSelector() {
@@ -103,7 +103,7 @@ public class EndState extends State {
 	}
 
 	/**
-	 * Sets the factory to produce a view descriptor to render when this end
+	 * Sets the strategy used to select the view to render when this end
 	 * state is entered and terminates a root flow.
 	 */
 	public void setViewSelector(ViewSelector creator) {
@@ -128,7 +128,7 @@ public class EndState extends State {
 	 * returned (when viewName is not null, else null is returned).
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
-	 * @return a view descriptor signaling that control should be returned to
+	 * @return a view selection signaling that control should be returned to
 	 * the client and a view rendered
 	 * @throws StateException if an exception occurs in this state
 	 */

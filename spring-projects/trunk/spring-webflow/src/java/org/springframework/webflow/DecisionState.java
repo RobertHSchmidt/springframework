@@ -63,8 +63,8 @@ public class DecisionState extends TransitionableState {
 	 * context and executes it.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
-	 * @return a view descriptor containing model and view information needed to
-	 * render the results of the state execution *
+	 * @return a view selection containing model and view information needed to
+	 * render the results of the state execution
 	 * @throws StateException if an exception occurs in this state
 	 */
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {

@@ -28,12 +28,12 @@ import org.springframework.util.Assert;
  * Signals the occurence of something a webflow should respond to.
  * Each event has a string id that provides a key for what happened: e.g "coinInserted",
  * or "pinDropped". An event may optionally contain information about the state in
- * which it occured, e.g "displayVendingMachine" or "waitForUser".  Events may have
+ * which it occured, e.g "displayVendingMachine" or "waitForUser". Events may have
  * parameters that provide arbitrary payload data, e.g. "coin.amount=25", or "pinDropSpeed=25ms".
  * <p>
  * For example, a "submit" event might signal that a Submit button was pressed
  * in a web browser. A "success" event might signal an action executed
- * successfully. A "finish" event might signal a sub flow ended normally.
+ * successfully. A "finish" event might signal a subflow ended normally.
  * <p>
  * Why is this not an interface? A specific design choice. An event is not a strategy,
  * its essentially an immutable parameter object and it is expected that specializations 
@@ -61,7 +61,7 @@ public class Event extends EventObject implements AttributeSource {
 	private String stateId;
 
 	/**
-	 * Event parameters (optional event payload).
+	 * Event parameters (optional event payload data).
 	 */
 	private Map parameters;
 	
@@ -180,7 +180,8 @@ public class Event extends EventObject implements AttributeSource {
 	}
 
 	/**
-	 * Set the state identifier.
+	 * Set the state identifier. This could be <code>null</code>, e.g.
+	 * if the event occured in the current state of the flow.
 	 */
 	protected void setStateId(String stateId) {
 		this.stateId = stateId;

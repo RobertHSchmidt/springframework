@@ -16,7 +16,7 @@
 package org.springframework.webflow;
 
 /**
- * Thrown if the flow system cannot execute a transition from one state to
+ * Thrown if the web flow system cannot execute a transition from one state to
  * another.
  * 
  * @author Keith Donald
