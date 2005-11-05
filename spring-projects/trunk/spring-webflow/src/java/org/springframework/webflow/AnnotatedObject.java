@@ -72,7 +72,7 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 
 	/**
 	 * Returns whether or not this annotated object contains a property with
-	 * specified name
+	 * specified name.
 	 * @param propertyName the name of the property
 	 * @return true if the property is set, false otherwise
 	 */
@@ -96,7 +96,7 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	}
 
 	/**
-	 * Returns a integer property value.
+	 * Returns an integer property value.
 	 * @param propertyName the property name
 	 * @param defaultValue the default value, if the property is not set
 	 * @return the property value

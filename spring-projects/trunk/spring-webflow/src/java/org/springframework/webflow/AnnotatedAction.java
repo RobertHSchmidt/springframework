@@ -101,6 +101,8 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	/**
 	 * Returns the name of a named action, or <code>null</code> if the action
 	 * is unnamed. Used when mapping action result events to transitions.
+	 * @see #isNamed()
+	 * @see #postProcessResult(Event)
 	 */
 	public String getName() {
 		return (String)getProperty(NAME_PROPERTY);
@@ -117,6 +119,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 
 	/**
 	 * Returns whether or not the wrapped target action is a named action.
+	 * @see #setName(String)
 	 */
 	public boolean isNamed() {
 		return StringUtils.hasText(getName());
