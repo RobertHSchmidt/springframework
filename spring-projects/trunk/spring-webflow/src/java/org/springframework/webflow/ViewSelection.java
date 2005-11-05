@@ -196,7 +196,8 @@ public class ViewSelection implements AttributeSource, Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("viewName", viewName).append("redirect", redirect).append("model",
-				model).toString();
+		return
+			new ToStringCreator(this).append("viewName", viewName)
+				.append("redirect", redirect).append("model", model).toString();
 	}
 }

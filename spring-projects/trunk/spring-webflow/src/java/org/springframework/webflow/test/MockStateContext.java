@@ -52,9 +52,9 @@ public class MockStateContext extends MockRequestContext implements StateContext
 		super(session, sourceEvent);
 	}
 
-	public ViewSelection start(Flow flow, Map input) throws IllegalStateException {
+	public ViewSelection start(Flow flow, State startState, Map input) throws IllegalStateException {
 		setActiveSession(new MockFlowSession(flow, input));
-		return flow.start(this);
+		return flow.start(startState, this);
 	}
 	
 	public ViewSelection signalEvent(Event event, State state) {

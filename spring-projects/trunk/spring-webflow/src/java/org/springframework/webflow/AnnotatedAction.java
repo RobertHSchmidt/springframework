@@ -155,7 +155,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	public Event execute(RequestContext context) throws Exception {
 		context.setProperties(this);
 		try {
-			Event result = new ActionExecutor(getTargetAction()).execute(context);
+			Event result = getTargetAction().execute(context);
 			return postProcessResult(result);
 		}
 		finally {
@@ -176,6 +176,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 			return null;
 		}
 		if (isNamed()) {
+			// qualify result event id with action name for a named action
 			resultEvent.setId(getName() + "." + resultEvent.getId());
 		}
 		return resultEvent;

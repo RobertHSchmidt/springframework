@@ -53,7 +53,7 @@ public class Transition extends AnnotatedObject {
 	/**
 	 * Logger, for use in subclasses.
 	 */
-	protected final static Log logger = LogFactory.getLog(Transition.class);
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * The source state that owns this transition.
@@ -102,6 +102,21 @@ public class Transition extends AnnotatedObject {
 	 */
 	public Transition(TransitionCriteria matchingCriteria, String targetStateId) {
 		setMatchingCriteria(matchingCriteria);
+		setTargetStateId(targetStateId);
+	}
+
+	/**
+	 * Create a new annotated transition that transitions to the target state
+	 * when the provided criteria matches.
+	 * @param matchingCriteria strategy object used to determine if this
+	 * transition should be matched as elligible for execution
+	 * @param executionCriteria strategy for determining if a matched transition
+	 * should execute
+	 * @param targetStateId the id of the starget state of the transition
+	 */
+	public Transition(TransitionCriteria matchingCriteria, TransitionCriteria executionCriteria, String targetStateId) {
+		setMatchingCriteria(matchingCriteria);
+		setExecutionCriteria(executionCriteria);
 		setTargetStateId(targetStateId);
 	}
 
@@ -234,8 +249,9 @@ public class Transition extends AnnotatedObject {
 	 */
 	protected State getTargetState() {
 		if (targetState == null) {
-			throw new IllegalStateException("The target state to transition to has not been resolved: "
-					+ "call resolveTargetState() after the process of building the owning Flow has completed.  Transition details: " + this);
+			throw new IllegalStateException("The target state of the transition has not been resolved: "
+					+ "call resolveTargetState() after the process of building the owning Flow has completed. "
+					+ "Transition details: '" + this + "'");
 		}
 		return targetState;
 	}
@@ -293,8 +309,9 @@ public class Transition extends AnnotatedObject {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("targetState", getTargetStateId()).append("sourceState",
-				getSourceState().getId()).append("matchingCriteria", getMatchingCriteria()).append("executionCriteria",
-				getExecutionCriteria()).append("properties", getProperties()).toString();
+		return
+			new ToStringCreator(this).append("targetState", getTargetStateId())
+				.append("sourceState", getSourceState().getId()).append("matchingCriteria", getMatchingCriteria())
+				.append("executionCriteria", getExecutionCriteria()).append("properties", getProperties()).toString();
 	}
 }

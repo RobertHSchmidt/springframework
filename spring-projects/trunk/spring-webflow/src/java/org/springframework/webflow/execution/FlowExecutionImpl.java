@@ -303,6 +303,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	public synchronized ViewSelection start(Event sourceEvent) throws StateException, IllegalStateException {
 		Assert.state(!isActive(), "This flow is already executing -- you cannot call start more than once");
+		String startStateId = sourceEvent.getStateId();
+		if (!StringUtils.hasText(startStateId)) {
+			startStateId = getRootFlow().getStartState().getId();
+		}
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Start event signaled: " + sourceEvent);
@@ -311,7 +315,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
-				ViewSelection selectedView = context.start(getRootFlow(), new HashMap(3));
+				ViewSelection selectedView = context.start(getRootFlow(), getRootFlow().getRequiredState(startStateId), new HashMap(3));
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {

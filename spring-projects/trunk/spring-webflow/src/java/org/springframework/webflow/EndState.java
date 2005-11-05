@@ -162,7 +162,7 @@ public class EndState extends State {
 						+ parentSession.getCurrentState().getId() + "'");
 			}
 			Assert.isInstanceOf(FlowAttributeMapper.class, parentSession.getCurrentState(),
-					"State is not an attribute mapper:");
+					"State in resuming flow is not an attribute mapper: ");
 			FlowAttributeMapper resumingState = (FlowAttributeMapper)parentSession.getCurrentState();
 			resumingState.mapSubflowOutput(context);
 			context.endActiveFlowSession();
@@ -189,6 +189,6 @@ public class EndState extends State {
 	}
 
 	protected void createToString(ToStringCreator creator) {
-		creator.append("viewDescriptorCreator", viewSelector);
+		creator.append("viewSelector", viewSelector);
 	}
 }

@@ -150,10 +150,7 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	 * present
 	 */
 	public void assertAttributePresent(String attributeName) throws IllegalStateException {
-		if (!containsAttribute(attributeName)) {
-			throw new IllegalStateException("Required attribute '" + attributeName + "' is not present in " + this
-					+ "; attributes present are = " + StylerUtils.style(getAttributeMap()));
-		}
+		getRequiredAttribute(attributeName);
 	}
 
 	/**

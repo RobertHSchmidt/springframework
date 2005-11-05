@@ -48,9 +48,7 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	 * Set the additional properties describing this object.
 	 */
 	public void setProperties(Map properties) {
-		if (properties != null) {
-			this.properties = new HashMap(properties);
-		}
+		this.properties = new HashMap(properties);
 	}
 
 	/**
@@ -89,7 +87,8 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	public String getStringProperty(String propertyName, String defaultValue) {
 		if (containsProperty(propertyName)) {
 			return (String)getProperty(propertyName);
-		} else {
+		}
+		else {
 			return defaultValue;
 		}
 	}

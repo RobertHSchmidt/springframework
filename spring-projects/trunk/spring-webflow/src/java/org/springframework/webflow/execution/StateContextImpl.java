@@ -195,10 +195,10 @@ public class StateContextImpl implements StateContext {
 		flowExecution.getListeners().fireStateEntered(this, previousState);
 	}
 
-	public ViewSelection start(Flow flow, Map input) throws StateException {
+	public ViewSelection start(Flow flow, State startState, Map input) throws StateException {
 		flowExecution.getListeners().fireSessionStarting(this, flow, input);
 		flowExecution.activateSession(flow, input);
-		ViewSelection selectedView = flow.start(this);
+		ViewSelection selectedView = flow.start(startState, this);
 		flowExecution.getListeners().fireSessionStarted(this);
 		return selectedView;
 	}

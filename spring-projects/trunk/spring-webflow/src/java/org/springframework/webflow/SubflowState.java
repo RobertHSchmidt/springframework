@@ -122,11 +122,11 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	}
 
 	/**
-	 * Set the sub flow that will be spawned by this state.
+	 * Set the subflow that will be spawned by this state.
 	 * @param subflow the sub flow to spawn
 	 */
 	public void setSubflow(Flow subflow) {
-		Assert.notNull(subflow, "A sub flow state must have a sub flow");
+		Assert.notNull(subflow, "A subflow state must have a subflow");
 		this.subflow = subflow;
 	}
 
@@ -166,9 +166,9 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 */
 	protected ViewSelection doEnter(StateContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Spawning subflow '" + getSubflow().getId() + "' within this flow '" + getFlow().getId() + "'");
+			logger.debug("Spawning subflow '" + getSubflow().getId() + "' within flow '" + getFlow().getId() + "'");
 		}
-		return context.start(getSubflow(), createSubflowInput(context));
+		return context.start(getSubflow(), getSubflowStartState(context), createSubflowInput(context));
 	}
 	
 	public Map createSubflowInput(RequestContext context) {
@@ -181,10 +181,11 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				logger.debug("No attribute mapper configured for this subflow state '"	+ getId()
+				logger.debug("No attribute mapper configured for this subflow state '" + getId()
 						+ "' -- as a result, no attributes in flow scope will be passed to the spawned subflow '"
 						+ subflow.getId() + "'");
 			}
+			// return a mutable map so things can be added later!
 			return new HashMap();
 		}
 	}
@@ -192,16 +193,30 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	public void mapSubflowOutput(RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Messaging the configured attribute mapper to map subflow attributes back up to this resuming flow -- "
-						+ "I will have access to attributes passed up by the completed sub flow");
+				logger.debug("Messaging the configured attribute mapper to map subflow attributes back up to the " +
+						"resuming flow -- It will have access to attributes passed up by the completed subflow");
 			}
 			this.attributeMapper.mapSubflowOutput(context);
 		}
 		else {
 			if (logger.isDebugEnabled()) {
 				logger.debug("No attribute mapper is configured for the resuming state '" + getId()
-						+ "' -- note: as a result, no attributes in the ending subflow scope will be passed to this resuming flow");
+						+ "' -- as a result, no attributes in the ending subflow scope will be passed to the resuming flow");
 			}
+		}
+	}
+	
+	/**
+	 * Returns the start state to use in the subflow, or null if the
+	 * default start state configured for the flow should be used.
+	 */
+	protected State getSubflowStartState(RequestContext context) {
+		if (containsProperty(START_STATE_PROPERTY)) {
+			return getFlow().getRequiredState((String)getProperty(START_STATE_PROPERTY));
+		}
+		else {
+			//default start state of flow will be used
+			return null;
 		}
 	}
 	

@@ -206,15 +206,6 @@ public class ActionState extends TransitionableState {
 	}
 
 	/**
-	 * Returns the first action executed by this action state with its
-	 * annotations
-	 * @return the annotated first action
-	 */
-	public AnnotatedAction getAnnotatedAction() {
-		return getAnnotatedActions()[0];
-	}
-
-	/**
 	 * Returns the list of actions executed by this action state.
 	 * @return the action list, as a typed array
 	 */
@@ -225,6 +216,15 @@ public class ActionState extends TransitionableState {
 			actions[i++] = ((ActionExecutor)it.next()).getAction();
 		}
 		return actions;
+	}
+
+	/**
+	 * Returns the first action executed by this action state with its
+	 * annotations
+	 * @return the annotated first action
+	 */
+	public AnnotatedAction getAnnotatedAction() {
+		return getAnnotatedActions()[0];
 	}
 
 	/**
@@ -248,9 +248,9 @@ public class ActionState extends TransitionableState {
 	}
 
 	/*
-	 * Overrides getRequiredTransition to throw a local
+	 * Overrides getRequiredTransition() to throw a local
 	 * NoMatchingActionResultTransitionException if a transition on the
-	 * occurence of action result event cannot be matched. Used to facilitate an
+	 * occurence of an action result event cannot be matched. Used to facilitate an
 	 * action invocation chain.
 	 * @see org.springframework.webflow.TransitionableState#getRequiredTransition(org.springframework.webflow.RequestContext)
 	 */
@@ -280,9 +280,9 @@ public class ActionState extends TransitionableState {
 	 * transition
 	 */
 	protected ViewSelection doEnter(StateContext context) throws StateException {
-		Iterator it = actionExecutors();
 		int executionCount = 0;
-		String[] eventIds = new String[actionExecutors.size()];
+		String[] eventIds = new String[actionExecutors.size()]; // for logging purposes
+		Iterator it = actionExecutors();
 		while (it.hasNext()) {
 			ActionExecutor action = (ActionExecutor)it.next();
 			Event event = action.execute(context);
@@ -293,11 +293,8 @@ public class ActionState extends TransitionableState {
 				}
 				catch (NoMatchingActionResultTransitionException e) {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Action execution [#"
-								+ (executionCount + 1)
-								+ "] resulted in no matching transition on event '"
-								+ event.getId()
-								+ "'"
+						logger.debug("Action execution [#" + (executionCount + 1)
+								+ "] resulted in no matching transition on event '" + event.getId()	+ "'"
 								+ (it.hasNext() ? ": proceeding to the next action in the chain"
 										: ": action chain exhausted"));
 					}
@@ -305,8 +302,7 @@ public class ActionState extends TransitionableState {
 			}
 			else {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Action execution [#"
-							+ (executionCount + 1)
+					logger.debug("Action execution [#" + (executionCount + 1)
 							+ "] returned a [null] event"
 							+ (it.hasNext() ? ": proceeding to the next action in the chain"
 									: ": action chain exhausted"));
@@ -331,6 +327,11 @@ public class ActionState extends TransitionableState {
 		}
 	}
 
+	protected void createToString(ToStringCreator creator) {
+		creator.append("actions", actionExecutors);
+		super.createToString(creator);
+	}
+
 	/**
 	 * Local "no transition found" exception used to report that an action
 	 * result could not be mapped to a state transition.
@@ -348,8 +349,4 @@ public class ActionState extends TransitionableState {
 		}
 	}
 
-	protected void createToString(ToStringCreator creator) {
-		creator.append("actions", actionExecutors);
-		super.createToString(creator);
-	}
 }

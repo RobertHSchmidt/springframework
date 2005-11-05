@@ -56,13 +56,15 @@ public interface StateContext extends RequestContext {
 	 * Also transitions the spawned flow to its start state. This method should
 	 * be called by states that wish to spawn new flows, such as subflow states.
 	 * @param flow the flow to start
+	 * @param startState the start state to use, when null, the default start state
+	 * for the flow is used
 	 * @param input initial contents of the newly created flow session
 	 * @return the selected starting view, which returns control to the client
 	 * and requests that a view be rendered with model data
 	 * @throws StateException if an exception was thrown within a state of the
 	 * flow during execution of this start operation
 	 */
-	public ViewSelection start(Flow flow, Map input) throws StateException;
+	public ViewSelection start(Flow flow, State startState, Map input) throws StateException;
 
 	/**
 	 * Signals the occurence of an event in the state of this flow execution

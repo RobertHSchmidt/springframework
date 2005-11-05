@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
  */
 public class ActionExecutor {
 
-	private static final Log logger = LogFactory.getLog(ActionExecutor.class);
+	private final Log logger = LogFactory.getLog(ActionExecutor.class);
 
 	/**
 	 * The action that will be executed.
@@ -68,6 +68,7 @@ public class ActionExecutor {
 			throw e;
 		}
 		catch (Exception e) {
+			// wrap the action as an ActionExecutionException
 			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), action, e);
 		}
 	}

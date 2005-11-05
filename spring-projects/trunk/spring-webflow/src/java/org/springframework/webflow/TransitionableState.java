@@ -102,6 +102,9 @@ public abstract class TransitionableState extends State {
 	 * @param transitions the transitions to add
 	 */
 	public void addAll(Transition[] transitions) {
+		if (transitions == null) {
+			return;
+		}
 		for (int i = 0; i < transitions.length; i++) {
 			add(transitions[i]);
 		}
@@ -128,8 +131,8 @@ public abstract class TransitionableState extends State {
 	 */
 	public TransitionCriteria[] getTransitionCriterias() {
 		TransitionCriteria[] res = new TransitionCriteria[transitions.size()];
-		Iterator it = transitionsIterator();
 		int i = 0;
+		Iterator it = transitionsIterator();
 		while (it.hasNext()) {
 			res[i++] = ((Transition)it.next()).getMatchingCriteria();
 		}

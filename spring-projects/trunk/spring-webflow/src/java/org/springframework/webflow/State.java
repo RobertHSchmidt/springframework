@@ -244,7 +244,7 @@ public abstract class State extends AnnotatedObject {
 			}
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("No state handler found for state exception [" + exception + "], returning [null]...");
+			logger.debug("No exception handler found for state exception [" + exception + "]; returning [null]...");
 		}
 		return null;
 	}
@@ -271,8 +271,9 @@ public abstract class State extends AnnotatedObject {
 	protected abstract ViewSelection doEnter(StateContext context) throws StateException;
 
 	public String toString() {
-		ToStringCreator creator = new ToStringCreator(this).append("id", getId()).append("flow",
-				flow == null ? "<not set>" : flow.getId()).append("entryAction", entryAction);
+		ToStringCreator creator =
+			new ToStringCreator(this).append("id", getId())
+				.append("flow", flow == null ? "<not set>" : flow.getId()).append("entryAction", entryAction);
 		createToString(creator);
 		return creator.toString();
 	}

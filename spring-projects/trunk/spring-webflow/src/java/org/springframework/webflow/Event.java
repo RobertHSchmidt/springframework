@@ -248,7 +248,8 @@ public class Event extends EventObject implements AttributeSource {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("source", getSource()).append("id", getId()).append("stateId",
-				getStateId()).append("parameters", getParameters()).toString();
+		return
+			new ToStringCreator(this).append("source", getSource()).append("id", getId())
+				.append("stateId", getStateId()).append("parameters", getParameters()).toString();
 	}
 }

@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
 import org.springframework.webflow.config.ExceptionStateMapping;
@@ -136,7 +133,7 @@ public class FlowTests extends TestCase {
 
 	public void testStart() {
 		MockStateContext context = new MockStateContext(new MockFlowSession(flow), new Event(this));
-		flow.start(context);
+		flow.start(null, context);
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
 		assertTrue("Transaction active but should not be", !context.inTransaction(false));
 	}
@@ -145,22 +142,20 @@ public class FlowTests extends TestCase {
 		flow = new Flow("myFlow");
 		new ViewState(flow, "myState1", new SimpleViewSelector("myView"),
 				new Transition[] { new Transition("myState2") });
-		Map properties = new HashMap(1);
-		properties.put("startState", "myState3");
-		new SubflowState(flow, "myState2", flow, new Transition[] { new Transition("myState3") }, properties);
-		new EndState(flow, "myState3");
+		new SubflowState(flow, "myState2", flow, new Transition[] { new Transition("myState3") });
+		State customStartState = new EndState(flow, "myState3");
 		flow.resolveStateTransitionsTargetStates();
 
 		MockStateContext context = new MockStateContext(new MockFlowSession(flow), new Event(this));
 		context.setCurrentState(flow.getRequiredState("myState2"));
-		flow.start(context);
+		flow.start(customStartState, context);
 		assertTrue("Should have ended", !context.isActive());
 	}
 
 	public void testStartTransactional() {
 		flow.setProperty("transactional", new Boolean(true));
 		MockStateContext context = new MockStateContext(new MockFlowSession(flow), new Event(this));
-		flow.start(context);
+		flow.start(null, context);
 		assertTrue("Transaction not active but should be", context.inTransaction(false));
 	}
 
@@ -175,7 +170,7 @@ public class FlowTests extends TestCase {
 		
 		flow.setProperty("transactional", new Boolean(true));
 		MockStateContext context = new MockStateContext(new MockFlowSession(flow), new Event(this));
-		flow.start(context);
+		flow.start(null, context);
 		flow.onEvent(new Event(this, "submit"), context);
 		assertTrue("Transaction not active but should be", context.inTransaction(false));
 	}
@@ -183,7 +178,7 @@ public class FlowTests extends TestCase {
 	public void testEnd() {
 		flow.setProperty("transactional", new Boolean(true));
 		MockStateContext context = new MockStateContext(new MockFlowSession(flow), new Event(this));
-		flow.start(context);
+		flow.start(null, context);
 		flow.end(context);
 		assertTrue("Transaction active but should not be", !context.inTransaction(false));
 	}

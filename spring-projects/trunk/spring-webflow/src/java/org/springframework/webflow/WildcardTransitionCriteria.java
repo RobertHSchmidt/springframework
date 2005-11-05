@@ -46,6 +46,7 @@ public class WildcardTransitionCriteria implements TransitionCriteria, Serializa
 		return true;
 	}
 
+	// resolve the singleton instance
 	private Object readResolve() throws ObjectStreamException {
 		return INSTANCE;
 	}

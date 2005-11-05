@@ -3,6 +3,7 @@ package org.springframework.webflow;
 /**
  * A strategy for handling an exception that occurs in a state during the
  * execution of a flow definition.
+ * 
  * @author Keith Donald
  */
 public interface StateExceptionHandler {
