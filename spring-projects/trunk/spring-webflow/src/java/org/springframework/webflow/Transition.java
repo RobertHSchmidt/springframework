@@ -143,7 +143,7 @@ public class Transition extends AnnotatedObject {
 	 * executes, transitioning to the specified target state from the configured
 	 * source state.
 	 * @param sourceState the source state
-	 * @param targetStateId the target state id
+	 * @param targetState the target state
 	 */
 	public Transition(TransitionableState sourceState, State targetState) {
 		setSourceState(sourceState);

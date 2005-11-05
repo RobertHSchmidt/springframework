@@ -22,9 +22,14 @@ import java.util.Map;
  * ongoing flow execution in the context of one client request. Primarily used
  * internally by the various state types when they are entered, but also used to
  * initially start a Flow execution.
+ * <p>
+ * This interface is a facade for the core definition constructs such as the
+ * central <code>Flow</code> and <code>State</code> classes to use to
+ * manipulate runtime <i>execution</i> constructs defined in the
+ * {@link org.springframework.webflow.execution} package.
  * 
  * @see org.springframework.webflow.State
- * @see org.springframework.webflow.FlowExecution
+ * @see org.springframework.webflow.execution.FlowExecution
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -35,7 +40,7 @@ public interface FlowControlContext extends RequestContext {
 	 * Record the last event signaled in the executing flow. This method should
 	 * be called as part of signaling an event in a state to indicate the
 	 * 'lastEvent' that was signaled.
-	 * @param event the last event signaled
+	 * @param lastEvent the last event signaled
 	 */
 	public void setLastEvent(Event lastEvent);
 

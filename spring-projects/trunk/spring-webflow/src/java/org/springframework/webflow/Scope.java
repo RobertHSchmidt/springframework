@@ -32,9 +32,17 @@ import org.springframework.util.Assert;
 
 /**
  * Holder for data placed in a specific scope, for example "request scope" or
- * "flow scope".
+ * "flow scope". Clients should invoke operations on this class to access
+ * attributes placed in a specific scope by <code>attributeName</code>.
+ * <p>
+ * This class is simply a thin wrapper around a <code>java.util.HashMap</code>.
+ * <p>
+ * Usage example:
  * 
- * @see org.springframework.webflow.ScopeType
+ * <pre>
+ * context.getFlowScope().getAttribute(&quot;foo&quot;);
+ * context.getFlowScope().setAttribute(&quot;foo&quot;, &quot;bar&quot;);
+ * </pre>
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -42,15 +50,28 @@ import org.springframework.util.Assert;
 public class Scope implements MutableAttributeSource, Map, Serializable {
 
 	/**
-	 * The data holder map.
+	 * Serialization id.
 	 */
-	private Map attributes = new HashMap();
+	private static final long serialVersionUID = -8075142903027393405L;
 
 	/**
-	 * Create a scope attribute container for the specified scope type.
-	 * @param scopeType the scope type
+	 * The data holder map.
+	 */
+	private Map attributes;
+
+	/**
+	 * Creates a 'scoped' attribute map.
 	 */
 	public Scope() {
+		attributes = new HashMap();
+	}
+
+	/**
+	 * Creates a 'scoped' attribute map.
+	 * @param size the container size
+	 */
+	public Scope(int size) {
+		attributes = new HashMap(size);
 	}
 
 	public boolean containsAttribute(String attributeName) {

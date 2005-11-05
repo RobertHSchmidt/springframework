@@ -419,9 +419,9 @@ public class Flow extends AnnotatedObject {
 
 	/**
 	 * Start a new execution of this flow in the specified state.
-	 * @param startState the start state to use, when null, the default start state
-	 * of the flow will be used
-	 * @param context the executing flow control context
+	 * @param startState the start state to use--when <code>null</code>, the
+	 * default start state of the flow will be used
+	 * @param context the flow execution control context
 	 */
 	public ViewSelection start(State startState, FlowControlContext context) {
 		if (isTransactional()) {
@@ -434,10 +434,9 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Inform this flow definition that an event was signaled in the provided
+	 * Inform this flow definition that an event was signaled in the current
 	 * state of an active flow execution.
-	 * @param state The state the event occured in
-	 * @param context the flow control context
+	 * @param context the flow execution control context
 	 * @return the selected view
 	 */
 	public ViewSelection onEvent(Event event, FlowControlContext context) {
@@ -451,7 +450,7 @@ public class Flow extends AnnotatedObject {
 
 	/**
 	 * Inform this flow definition that a session of itself has ended.
-	 * @param context the flow control context
+	 * @param context the flow execution control context
 	 */
 	public void end(FlowControlContext context) {
 		if (isTransactional()) {
@@ -487,7 +486,7 @@ public class Flow extends AnnotatedObject {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Utility method that iterates over this Flow's list of state Transition
 	 * objects and resolves their target states. Designed to be called after
@@ -505,8 +504,7 @@ public class Flow extends AnnotatedObject {
 	}
 
 	public String toString() {
-		return
-			new ToStringCreator(this).append("id", id).append("startState", startState)
+		return new ToStringCreator(this).append("id", id).append("startState", startState)
 				.append("states", this.states).append("exceptionHandlers", exceptionHandlers).toString();
 	}
 }

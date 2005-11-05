@@ -207,7 +207,7 @@ public abstract class State extends AnnotatedObject {
 	 * by this state to manipulate the flow execution
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state processing
-	 * @throw StateException if an exception occurs in this state
+	 * @throws StateException if an exception occurs in this state
 	 */
 	public ViewSelection enter(FlowControlContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
@@ -217,6 +217,27 @@ public abstract class State extends AnnotatedObject {
 		executeEntryAction(context);
 		return doEnter(context);
 	}
+
+	/**
+	 * Execute the entry action registered with this state.
+	 * @param context the flow execution request context
+	 */
+	protected void executeEntryAction(RequestContext context) {
+		if (getEntryAction() != null) {
+			new ActionExecutor(getEntryAction()).execute(context);
+		}
+	}
+
+	/**
+	 * Hook method to execute custom behaviour as a result of entering this
+	 * state.
+	 * @param context the control context for the currently executing flow, used
+	 * by this state to manipulate the flow execution
+	 * @return a view descriptor containing model and view information needed to
+	 * render the results of the state processing
+	 * @throws StateException if an exception occurs in this state
+	 */
+	protected abstract ViewSelection doEnter(FlowControlContext context) throws StateException;
 
 	/**
 	 * Handle an exception that occured during the entering of this state in the
@@ -248,27 +269,6 @@ public abstract class State extends AnnotatedObject {
 		}
 		return null;
 	}
-
-	/**
-	 * Execute the entry action registered with this state.
-	 * @param context the flow execution request context
-	 */
-	protected void executeEntryAction(RequestContext context) {
-		if (getEntryAction() != null) {
-			new ActionExecutor(getEntryAction()).execute(context);
-		}
-	}
-
-	/**
-	 * Hook method to execute custom behaviour as a result of entering this
-	 * state.
-	 * @param context the control context for the currently executing flow, used
-	 * by this state to manipulate the flow execution
-	 * @return a view descriptor containing model and view information needed to
-	 * render the results of the state processing
-	 * @throw StateException if an exception occurs in this state
-	 */
-	protected abstract ViewSelection doEnter(FlowControlContext context) throws StateException;
 
 	public String toString() {
 		ToStringCreator creator = new ToStringCreator(this).append("id", getId()).append("flow",
