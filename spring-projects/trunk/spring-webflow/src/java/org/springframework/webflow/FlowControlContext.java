@@ -18,10 +18,13 @@ package org.springframework.webflow;
 import java.util.Map;
 
 /**
- * Mutable control interface for clients to use to manipulate an ongoing flow
- * execution. Used internally by the various state types when they are entered.
+ * Mutable control interface for internal artifacts to use to manipulate an
+ * ongoing flow execution in the context of one client request. Primarily used
+ * internally by the various state types when they are entered, but also used to
+ * initially start a Flow execution.
  * 
  * @see org.springframework.webflow.State
+ * @see org.springframework.webflow.FlowExecution
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -29,15 +32,15 @@ import java.util.Map;
 public interface FlowControlContext extends RequestContext {
 
 	/**
-	 * Update the last event signaled in the executing flow. This method should
+	 * Record the last event signaled in the executing flow. This method should
 	 * be called as part of signaling an event in a state to indicate the
-	 * 'lastEvent' signaled.
+	 * 'lastEvent' that was signaled.
 	 * @param event the last event signaled
 	 */
 	public void setLastEvent(Event lastEvent);
 
 	/**
-	 * Update the last transition that executed in the executing flow. This
+	 * Record the last transition that executed in the executing flow. This
 	 * method should be called as part of executing a transition from one state
 	 * to another.
 	 * @param lastTransition the last transition that executed
@@ -45,8 +48,9 @@ public interface FlowControlContext extends RequestContext {
 	public void setLastTransition(Transition lastTransition);
 
 	/**
-	 * Set the current state of the flow execution linked to this request. This
-	 * method should be called as part of entering a new state.
+	 * Record the current state that has entered in the executing flow. This
+	 * method should be called as part of entering a new state by the State type
+	 * itself.
 	 * @param state the current state
 	 */
 	public void setCurrentState(State state);
@@ -56,8 +60,8 @@ public interface FlowControlContext extends RequestContext {
 	 * Also transitions the spawned flow to its start state. This method should
 	 * be called by states that wish to spawn new flows, such as subflow states.
 	 * @param flow the flow to start
-	 * @param startState the start state to use, when null, the default start state
-	 * for the flow is used
+	 * @param startState the start state to use, when null, the default start
+	 * state for the flow is used
 	 * @param input initial contents of the newly created flow session
 	 * @return the selected starting view, which returns control to the client
 	 * and requests that a view be rendered with model data
@@ -81,8 +85,8 @@ public interface FlowControlContext extends RequestContext {
 	public ViewSelection signalEvent(Event event, State state) throws StateException;
 
 	/**
-	 * End the active flow session. This method should be called by states that
-	 * terminate flows, such as end states.
+	 * End the active flow session of the current flow execution. This method
+	 * should be called by states that terminate flows, such as end states.
 	 * @return the ended session
 	 * @throws IllegalStateException when the flow execution is not active
 	 */

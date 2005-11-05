@@ -126,7 +126,8 @@ public class EndState extends State {
 	 * stack, ending it, and resumes control in the parent flow (if neccessary).
 	 * If the ended session is the root flow, a {@link ViewSelection} is
 	 * returned (when viewName is not null, else null is returned).
-	 * @param context the flow control context for the executing flow
+	 * @param context the control context for the currently executing flow, used
+	 * by this state to manipulate the flow execution
 	 * @return a view descriptor signaling that control should be returned to
 	 * the client and a view rendered
 	 * @throws StateException if an exception occurs in this state

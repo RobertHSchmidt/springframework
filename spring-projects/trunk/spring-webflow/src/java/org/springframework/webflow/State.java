@@ -200,11 +200,11 @@ public abstract class State extends AnnotatedObject {
 
 	/**
 	 * Enter this state in the provided flow control context. This
-	 * implementation just calls the {@link #doEnter(FlowControlContext)} hook method,
-	 * which should be implemented by subclasses, after executing the entry
-	 * action.
-	 * @param context the flow control context in an executing flow (a client
-	 * instance of a flow)
+	 * implementation just calls the {@link #doEnter(FlowControlContext)} hook
+	 * method, which should be implemented by subclasses, after executing the
+	 * entry action.
+	 * @param context the control context for the currently executing flow, used
+	 * by this state to manipulate the flow execution
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state processing
 	 * @throw StateException if an exception occurs in this state
@@ -262,8 +262,8 @@ public abstract class State extends AnnotatedObject {
 	/**
 	 * Hook method to execute custom behaviour as a result of entering this
 	 * state.
-	 * @param context the flow control context in an executing flow (a client instance
-	 * of a flow)
+	 * @param context the control context for the currently executing flow, used
+	 * by this state to manipulate the flow execution
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state processing
 	 * @throw StateException if an exception occurs in this state
@@ -271,9 +271,8 @@ public abstract class State extends AnnotatedObject {
 	protected abstract ViewSelection doEnter(FlowControlContext context) throws StateException;
 
 	public String toString() {
-		ToStringCreator creator =
-			new ToStringCreator(this).append("id", getId())
-				.append("flow", flow == null ? "<not set>" : flow.getId()).append("entryAction", entryAction);
+		ToStringCreator creator = new ToStringCreator(this).append("id", getId()).append("flow",
+				flow == null ? "<not set>" : flow.getId()).append("entryAction", entryAction);
 		createToString(creator);
 		return creator.toString();
 	}

@@ -28,20 +28,20 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowControlContext;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.State;
-import org.springframework.webflow.FlowControlContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewSelection;
 
 /**
- * Default state context implementation used internally by the web flow system.
- * This class is closely coupled with <code>FlowExecutionImpl</code> and
- * <code>StateSessionImpl</code>. The three classes work together to form a
- * complete flow execution implementation.
+ * Default flow execution control context implementation used internally by the
+ * web flow system. This class is closely coupled with
+ * <code>FlowExecutionImpl</code> and <code>StateSessionImpl</code>. The
+ * three classes work together to form a complete flow execution implementation.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionImpl
  * @see org.springframework.webflow.execution.FlowSessionImpl
@@ -62,10 +62,10 @@ public class FlowControlContextImpl implements FlowControlContext {
 	private Event sourceEvent;
 
 	/**
-	 * The last event that occured in this context. 
+	 * The last event that occured in this context.
 	 */
 	private Event lastEvent;
-	
+
 	/**
 	 * The list of state result events that have occured in this context.
 	 */

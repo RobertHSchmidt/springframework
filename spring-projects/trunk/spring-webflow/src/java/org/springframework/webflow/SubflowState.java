@@ -159,7 +159,8 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * <p>
 	 * Entering this state, creates the sub flow input map and spawns the sub
 	 * flow in the current flow execution.
-	 * @param context the flow control context for the executing flow
+	 * @param context the control context for the currently executing flow, used
+	 * by this state to manipulate the flow execution
 	 * @return a view descriptor containing model and view information needed to
 	 *         render the results of the state execution
 	 * @throws StateException if an exception occurs in this state

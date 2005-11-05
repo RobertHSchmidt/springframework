@@ -268,7 +268,8 @@ public class ActionState extends TransitionableState {
 	 * <code>Action</code> returns a result event that matches a state
 	 * transition in this request context, or the set of all actions is
 	 * exhausted.
-	 * @param context the flow control context for the executing flow
+	 * @param context the control context for the currently executing flow, used
+	 * by this state to manipulate the flow execution
 	 * @return a view selection signaling that control should be returned to
 	 * the client and a view rendered
 	 * @throws StateException if an exception occurs in this state
