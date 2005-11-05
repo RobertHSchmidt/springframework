@@ -460,7 +460,7 @@ public class Flow extends AnnotatedObject {
 
 	/**
 	 * Handle an exception that occured on an execution of this flow in the
-	 * state context of the current request.
+	 * context of the current request.
 	 * <p>
 	 * This implementation iterates over the ordered set of flow exception
 	 * handler objects, delegating to each handler in the set until one handles
