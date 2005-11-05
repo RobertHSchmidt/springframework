@@ -30,6 +30,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.Scope;
+import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
 import org.springframework.webflow.access.FlowLocator;
 
@@ -84,7 +85,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The session data model ("flow scope").
 	 */
-	private Scope flowScope = new Scope();
+	private Scope flowScope = new Scope(ScopeType.FLOW);
 
 	/**
 	 * The parent session of this session (may be null if this is a root

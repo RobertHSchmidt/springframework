@@ -53,6 +53,11 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	 * Serialization id.
 	 */
 	private static final long serialVersionUID = -8075142903027393405L;
+	
+	/**
+	 * The scope type; e.g FLOW or REQUEST.
+	 */
+	private ScopeType scopeType;
 
 	/**
 	 * The data holder map.
@@ -61,17 +66,28 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 
 	/**
 	 * Creates a 'scoped' attribute map.
+	 * @param scopeType the scope type
 	 */
-	public Scope() {
-		attributes = new HashMap();
+	public Scope(ScopeType scopeType) {
+		this.attributes = new HashMap();
+		this.scopeType = scopeType;
 	}
 
 	/**
 	 * Creates a 'scoped' attribute map.
 	 * @param size the container size
+	 * @param scopeType the scope type
 	 */
-	public Scope(int size) {
-		attributes = new HashMap(size);
+	public Scope(int size, ScopeType scopeType) {
+		this.attributes = new HashMap(size);
+		this.scopeType = scopeType;
+	}
+	
+	/**
+	 * Returns this scope's scope type.
+	 */
+	public ScopeType getScopeType() {
+		return scopeType;
 	}
 
 	public boolean containsAttribute(String attributeName) {
@@ -258,6 +274,6 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("attributes", attributes).toString();
+		return new ToStringCreator(this).append("scopeType", scopeType).append("attributes", attributes).toString();
 	}
 }
