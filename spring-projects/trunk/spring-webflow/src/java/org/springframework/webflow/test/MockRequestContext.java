@@ -131,7 +131,7 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 		return activeSession.getScope();
 	}
 
-	public Event getResultEvent(String stateId) {
+	public Event getLastResultEvent(String stateId) {
 		// result events currently not supported for this mock
 		throw new UnsupportedOperationException();
 	}

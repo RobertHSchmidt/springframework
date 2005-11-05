@@ -105,7 +105,7 @@ public class StateContextImpl implements StateContext {
 		return sourceEvent;
 	}
 
-	public Event getResultEvent(String stateId) {
+	public Event getLastResultEvent(String stateId) {
 		Iterator it = resultEvents.iterator();
 		while (it.hasNext()) {
 			StateResultEvent event = (StateResultEvent)it.next();

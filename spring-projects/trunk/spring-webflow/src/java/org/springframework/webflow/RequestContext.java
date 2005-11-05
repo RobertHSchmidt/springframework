@@ -99,7 +99,7 @@ public interface RequestContext {
 	public Scope getFlowScope();
 
 	/**
-	 * Returns the result event for the State with the specified id. A state
+	 * Returns the last result event for the State with the specified id. A state
 	 * result event is the event that drove a transition out of a state to a new
 	 * state. If the state provided was never entered for this request,
 	 * <code>null</code> is returned.
@@ -109,7 +109,7 @@ public interface RequestContext {
 	 * @param stateId the state id
 	 * @return the state result event
 	 */
-	public Event getResultEvent(String stateId);
+	public Event getLastResultEvent(String stateId);
 
 	/**
 	 * Returns the last event signaled during this request. The event may or may
