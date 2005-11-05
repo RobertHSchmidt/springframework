@@ -176,7 +176,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		flowExecution.getTransactionSynchronizer().endTransaction(this);
 	}
 
-	// implementing FlowControlContext
+	// implementing FlowExecutionControlContext
 
 	public void setLastEvent(Event lastEvent) {
 		this.lastEvent = lastEvent;
@@ -196,6 +196,9 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	}
 
 	public ViewSelection start(Flow flow, State startState, Map input) throws StateException {
+		if (input == null) {
+			input = new HashMap(3);
+		}
 		flowExecution.getListeners().fireSessionStarting(this, flow, input);
 		flowExecution.activateSession(flow, input);
 		ViewSelection selectedView = flow.start(startState, this);

@@ -187,8 +187,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 						+ "' -- as a result, no attributes in flow scope will be passed to the spawned subflow '"
 						+ subflow.getId() + "'");
 			}
-			// return a mutable map so things can be added later!
-			return new HashMap();
+			return null;
 		}
 	}
 

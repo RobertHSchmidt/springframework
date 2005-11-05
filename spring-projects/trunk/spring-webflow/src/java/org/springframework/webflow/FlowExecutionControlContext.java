@@ -74,7 +74,8 @@ public interface FlowExecutionControlContext extends RequestContext {
 	 * @param flow the flow to start
 	 * @param startState the start state to use, when null, the default start
 	 * state for the flow is used
-	 * @param input initial contents of the newly created flow session
+	 * @param input initial contents of the newly created flow session (may be
+	 * <code>null</code>)
 	 * @return the selected starting view, which returns control to the client
 	 * and requests that a view be rendered with model data
 	 * @throws StateException if an exception was thrown within a state of the

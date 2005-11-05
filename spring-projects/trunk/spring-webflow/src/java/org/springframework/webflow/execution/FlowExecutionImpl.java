@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
@@ -317,7 +316,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		try {
 			try {
 				ViewSelection selectedView = context.start(getRootFlow(), getRootFlow().getRequiredState(startStateId),
-						new HashMap(3));
+						getFlowExecutionInput(sourceEvent));
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -327,6 +326,17 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		finally {
 			getListeners().fireRequestProcessed(context);
 		}
+	}
+
+	/**
+	 * Returns an initial input map to pass to a new FlowExecution that is being
+	 * started. Default implementation returns <code>null</code>
+	 * @param sourceEvent the source event that triggered flow execution
+	 * creation
+	 * @return the input map
+	 */
+	protected Map getFlowExecutionInput(Event sourceEvent) {
+		return null;
 	}
 
 	/**
