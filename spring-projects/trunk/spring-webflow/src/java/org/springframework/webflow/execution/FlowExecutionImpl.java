@@ -316,7 +316,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		try {
 			try {
 				ViewSelection selectedView = context.start(getRootFlow(), getRootFlow().getRequiredState(startStateId),
-						getFlowExecutionInput(sourceEvent));
+						createFlowExecutionInput(sourceEvent));
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -335,7 +335,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * creation
 	 * @return the input map
 	 */
-	protected Map getFlowExecutionInput(Event sourceEvent) {
+	protected Map createFlowExecutionInput(Event sourceEvent) {
 		return null;
 	}
 
