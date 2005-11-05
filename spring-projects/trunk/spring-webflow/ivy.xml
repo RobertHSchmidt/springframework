@@ -38,14 +38,14 @@
     <!-- note that at this time we depend on MyFaces, not JSF-RI -->
     <dependency	org="apache" name="commons-el" rev="1.0" conf="jsf->default"/>
     <dependency	org="apache" name="commons-fileupload" rev="1.0" conf="jsf->default"/>
-    <dependency	org="apache" name="myfaces" rev="1.1.0" conf="buildtime,jsf->default">
+    <dependency	org="apache" name="myfaces" rev="1.1.0" conf="buildtime, jsf->default">
 		<artifact name="myfaces-api" type="jar"/>
 		<artifact name="myfaces-impl" type="jar"/>
 		<artifact name="tomahawk" type="jar"/>
 	</dependency>
 
     <!-- mixed dependencies -->
-    <dependency	org="apache" name="commons-beanutils" rev="1.7.0" conf="jsf->default; struts->default"/>
+    <dependency	org="apache" name="commons-beanutils" rev="1.7.0" conf="test, jsf->default; struts->default"/>
     <dependency	org="apache" name="commons-collections"	rev="3.1" conf="jsf->default; struts->default"/>
     <dependency	org="apache" name="commons-digester" rev="1.7" conf="jsf->default; struts->default"/>
     <dependency	org="apache" name="commons-validator" rev="1.1.4" conf="jsf->default; struts->default"/>
