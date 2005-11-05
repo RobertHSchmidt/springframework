@@ -75,7 +75,7 @@ public class FlowPhaseListener implements PhaseListener {
 	 * but the value is cached, and subsequent requests return the same value.
 	 * @param context <code>FacesContext</code> for the current request
 	 */
-	private JsfFlowExecutionManager getExecutionManager(FacesContext context) {
+	protected JsfFlowExecutionManager getExecutionManager(FacesContext context) {
 		if (flowExecutionManager == null) {
 			flowExecutionManager = JsfFlowExecutionManager.getFlowExecutionManager(context);
 		}
