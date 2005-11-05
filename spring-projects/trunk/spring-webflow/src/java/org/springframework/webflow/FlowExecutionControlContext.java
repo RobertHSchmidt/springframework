@@ -18,15 +18,22 @@ package org.springframework.webflow;
 import java.util.Map;
 
 /**
- * Mutable control interface for internal artifacts to use to manipulate an
+ * Mutable control interface for internal flow artifacts to use to manipulate an
  * ongoing flow execution in the context of one client request. Primarily used
  * internally by the various state types when they are entered, but also used to
  * initially start a Flow execution.
  * <p>
- * This interface is a facade for the core definition constructs such as the
- * central <code>Flow</code> and <code>State</code> classes to use to
- * manipulate runtime <i>execution</i> constructs defined in the
+ * This interface serves as a facade for core definition constructs such as the
+ * central <code>Flow</code> and <code>State</code> classes to runtime
+ * <i>execution</i> constructs defined in the
  * {@link org.springframework.webflow.execution} package.
+ * <p>
+ * Note this type is not the same as the {@link FlowExecutionContext}! Objects
+ * of this type are <i>request specific</i>: they provide a control interface
+ * for manipulating exactly one flow execution locally from exactly one request.
+ * A <code>FlowExecutionContext</code> provides information about a single
+ * flow execution (conversation)--its scope is not local to a specific request
+ * (or thread).
  * 
  * @see org.springframework.webflow.State
  * @see org.springframework.webflow.execution.FlowExecution
@@ -34,7 +41,7 @@ import java.util.Map;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface FlowControlContext extends RequestContext {
+public interface FlowExecutionControlContext extends RequestContext {
 
 	/**
 	 * Record the last event signaled in the executing flow. This method should

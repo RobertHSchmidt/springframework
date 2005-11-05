@@ -67,7 +67,7 @@ public class DecisionState extends TransitionableState {
 	 * render the results of the state execution *
 	 * @throws StateException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(FlowControlContext context) throws StateException {
+	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 		return getRequiredTransition(context).execute(context);
 	}
 }

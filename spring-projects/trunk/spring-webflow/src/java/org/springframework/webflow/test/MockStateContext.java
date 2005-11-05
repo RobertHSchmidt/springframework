@@ -21,7 +21,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.State;
-import org.springframework.webflow.FlowControlContext;
+import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.ViewSelection;
 
 /**
@@ -41,7 +41,7 @@ import org.springframework.webflow.ViewSelection;
  * 
  * @author Keith Donald
  */
-public class MockStateContext extends MockRequestContext implements FlowControlContext {
+public class MockStateContext extends MockRequestContext implements FlowExecutionControlContext {
 	
 	/**
 	 * Create a new stub state context.

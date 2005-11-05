@@ -40,7 +40,7 @@ import org.springframework.webflow.access.FlowLocator;
  * three classes work together to form a complete flow execution implementation.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionImpl
- * @see org.springframework.webflow.execution.FlowControlContextImpl
+ * @see org.springframework.webflow.execution.FlowExecutionControlContextImpl
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

@@ -280,7 +280,7 @@ public class Transition extends AnnotatedObject {
 	 * @throws CannotExecuteTransitionException when this transition cannot be
 	 * executed because the target state is invalid
 	 */
-	public ViewSelection execute(FlowControlContext context) throws CannotExecuteTransitionException {
+	public ViewSelection execute(FlowExecutionControlContext context) throws CannotExecuteTransitionException {
 		ViewSelection selectedView;
 		if (canExecute(context)) {
 			if (logger.isDebugEnabled()) {

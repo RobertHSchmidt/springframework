@@ -16,13 +16,14 @@
 package org.springframework.webflow;
 
 /**
- * Provides contextual information about an actively executing flow.
+ * Provides contextual information about an actively executing flow (web
+ * conversation).
  * <p>
- * This is an immutable interface for accessing data about a FlowExecution.
- * It extends FlowExecutionStatistics, adding in strongly typed accessors 
- * for retrieving runtime objects such as the active flow session, as well as
- * definition objects such as the top-level flow definition, the currently active 
- * flow definition, and the current state definition.
+ * This is an immutable interface for accessing information about exactly one
+ * FlowExecution. It extends FlowExecutionStatistics, adding in strongly typed
+ * accessors for retrieving runtime objects such as the active flow session, as
+ * well as definition objects such as the top-level flow definition, the
+ * currently active flow definition, and the current state definition.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -38,21 +39,24 @@ public interface FlowExecutionContext extends FlowExecutionStatistics {
 	/**
 	 * Returns the definition for the flow that is currently executing.
 	 * @return the flow definition for the active session
-	 * @throws IllegalStateException when this flow is no longer actively executing
+	 * @throws IllegalStateException when this flow is no longer actively
+	 * executing
 	 */
 	public Flow getActiveFlow() throws IllegalStateException;
 
 	/**
 	 * Returns the current state of the executing flow.
 	 * @return the current state
-	 * @throws IllegalStateException when this flow is no longer actively executing
+	 * @throws IllegalStateException when this flow is no longer actively
+	 * executing
 	 */
 	public State getCurrentState() throws IllegalStateException;
 
 	/**
 	 * Returns the active flow session.
 	 * @return the active flow session
-	 * @throws IllegalStateException when this flow is no longer actively executing
+	 * @throws IllegalStateException when this flow is no longer actively
+	 * executing
 	 */
 	public FlowSession getActiveSession() throws IllegalStateException;
 }

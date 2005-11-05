@@ -37,7 +37,7 @@ import org.springframework.webflow.access.FlowLocator;
  * creation, the start operation is called, which causes the execution to
  * activate a new session for its root flow definition. That session is then
  * pushed onto a stack and its definition becomes the "active flow". A local,
- * internal {@link org.springframework.webflow.FlowControlContext} object (which
+ * internal {@link org.springframework.webflow.FlowExecutionControlContext} object (which
  * extends ({@link org.springframework.webflow.RequestContext}) is then
  * created and the active Flow's start {@link org.springframework.webflow.State}
  * is entered.
@@ -64,7 +64,7 @@ import org.springframework.webflow.access.FlowLocator;
  * @see org.springframework.webflow.Flow
  * @see org.springframework.webflow.State
  * @see org.springframework.webflow.FlowSession
- * @see org.springframework.webflow.FlowControlContext
+ * @see org.springframework.webflow.FlowExecutionControlContext
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

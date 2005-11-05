@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.webflow.State;
-import org.springframework.webflow.FlowControlContext;
+import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.Transition;
@@ -96,7 +96,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 		}
 	}
 
-	public ViewSelection handle(StateException e, FlowControlContext context) {
+	public ViewSelection handle(StateException e, FlowExecutionControlContext context) {
 		State sourceState = context.getFlowExecutionContext().getCurrentState();
 		if (!sourceState.isTransitionable()) {
 			throw new IllegalStateException("The source state: '" + sourceState.getId()

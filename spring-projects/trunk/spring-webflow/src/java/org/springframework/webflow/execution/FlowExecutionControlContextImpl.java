@@ -28,7 +28,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowControlContext;
+import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.Scope;
@@ -49,7 +49,7 @@ import org.springframework.webflow.ViewSelection;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowControlContextImpl implements FlowControlContext {
+public class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
 
 	/**
 	 * The owning flow execution.
@@ -91,7 +91,7 @@ public class FlowControlContextImpl implements FlowControlContext {
 	 * @param sourceEvent the event at the origin of this request
 	 * @param flowExecution the owning flow execution
 	 */
-	public FlowControlContextImpl(Event sourceEvent, FlowExecutionImpl flowExecution) {
+	public FlowExecutionControlContextImpl(Event sourceEvent, FlowExecutionImpl flowExecution) {
 		Assert.notNull(sourceEvent, "The source event is required");
 		Assert.notNull(flowExecution, "The owning flow execution is required");
 		this.sourceEvent = sourceEvent;

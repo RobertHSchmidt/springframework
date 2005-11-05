@@ -276,7 +276,7 @@ public class ActionState extends TransitionableState {
 	 * @throws CannotExecuteTransitionException when no action execution
 	 * resulted in a outcome event that could be mapped to a valid state transition
 	 */
-	protected ViewSelection doEnter(FlowControlContext context) throws StateException {
+	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 		int executionCount = 0;
 		String[] eventIds = new String[actionExecutors.size()]; // for logging purposes
 		Iterator it = actionExecutors();

@@ -126,7 +126,7 @@ public class ViewState extends TransitionableState {
 	 * render the results of the state execution
 	 * @throws StateException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(FlowControlContext context) throws StateException {
+	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 		return selectView(context);
 	}
 
@@ -137,7 +137,7 @@ public class ViewState extends TransitionableState {
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state execution
 	 */
-	public ViewSelection selectView(FlowControlContext context) {
+	public ViewSelection selectView(FlowExecutionControlContext context) {
 		if (isMarker()) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Returning a [null] view selection");

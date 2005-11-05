@@ -200,7 +200,7 @@ public abstract class State extends AnnotatedObject {
 
 	/**
 	 * Enter this state in the provided flow control context. This
-	 * implementation just calls the {@link #doEnter(FlowControlContext)} hook
+	 * implementation just calls the {@link #doEnter(FlowExecutionControlContext)} hook
 	 * method, which should be implemented by subclasses, after executing the
 	 * entry action.
 	 * @param context the control context for the currently executing flow, used
@@ -209,7 +209,7 @@ public abstract class State extends AnnotatedObject {
 	 * render the results of the state processing
 	 * @throws StateException if an exception occurs in this state
 	 */
-	public ViewSelection enter(FlowControlContext context) throws StateException {
+	public ViewSelection enter(FlowExecutionControlContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Entering state '" + getId() + "' of flow '" + getFlow().getId() + "'");
 		}
@@ -237,7 +237,7 @@ public abstract class State extends AnnotatedObject {
 	 * render the results of the state processing
 	 * @throws StateException if an exception occurs in this state
 	 */
-	protected abstract ViewSelection doEnter(FlowControlContext context) throws StateException;
+	protected abstract ViewSelection doEnter(FlowExecutionControlContext context) throws StateException;
 
 	/**
 	 * Handle an exception that occured during the entering of this state in the
@@ -253,7 +253,7 @@ public abstract class State extends AnnotatedObject {
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view descriptor
 	 */
-	public ViewSelection handleException(StateException exception, FlowControlContext context) throws StateException {
+	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context) throws StateException {
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();

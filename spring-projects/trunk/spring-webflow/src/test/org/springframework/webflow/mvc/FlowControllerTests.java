@@ -22,7 +22,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.State;
-import org.springframework.webflow.FlowControlContext;
+import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.access.FlowLocator;
@@ -83,7 +83,7 @@ public class FlowControllerTests extends TestCase {
 		final ViewSelection viewSelection = new ViewSelection("SomeView");
 		flow.setStartState(new State(flow, "SomeState") {
 
-			protected ViewSelection doEnter(FlowControlContext context) throws StateException {
+			protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 				return viewSelection;
 			}
 		});
@@ -101,7 +101,7 @@ public class FlowControllerTests extends TestCase {
 		Flow flow = new Flow("SomeFlow");
 		flow.setStartState(new State(flow, "SomeState") {
 
-			protected ViewSelection doEnter(FlowControlContext context) throws StateException {
+			protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 				return null;
 			}
 		});
@@ -121,7 +121,7 @@ public class FlowControllerTests extends TestCase {
 		viewSelection.setRedirect(true);
 		flow.setStartState(new State(flow, "SomeState") {
 
-			protected ViewSelection doEnter(FlowControlContext context) throws StateException {
+			protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 				return viewSelection;
 			}
 		});

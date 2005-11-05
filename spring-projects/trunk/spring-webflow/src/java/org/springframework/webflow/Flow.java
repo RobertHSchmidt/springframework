@@ -423,7 +423,7 @@ public class Flow extends AnnotatedObject {
 	 * default start state of the flow will be used
 	 * @param context the flow execution control context
 	 */
-	public ViewSelection start(State startState, FlowControlContext context) {
+	public ViewSelection start(State startState, FlowExecutionControlContext context) {
 		if (isTransactional()) {
 			context.beginTransaction();
 		}
@@ -439,7 +439,7 @@ public class Flow extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 * @return the selected view
 	 */
-	public ViewSelection onEvent(Event event, FlowControlContext context) {
+	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
 		if (isTransactional()) {
 			context.assertInTransaction(false);
 		}
@@ -452,7 +452,7 @@ public class Flow extends AnnotatedObject {
 	 * Inform this flow definition that a session of itself has ended.
 	 * @param context the flow execution control context
 	 */
-	public void end(FlowControlContext context) {
+	public void end(FlowExecutionControlContext context) {
 		if (isTransactional()) {
 			context.endTransaction();
 		}
@@ -470,7 +470,7 @@ public class Flow extends AnnotatedObject {
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view descriptor
 	 */
-	public ViewSelection handleException(StateException exception, FlowControlContext context) throws StateException {
+	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context) throws StateException {
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();

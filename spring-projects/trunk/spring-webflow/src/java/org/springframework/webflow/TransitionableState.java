@@ -188,7 +188,7 @@ public abstract class TransitionableState extends State {
 	 * @return a view descriptor containing model and view information needed to
 	 * render the results of the state processing
 	 */
-	public ViewSelection reenter(FlowControlContext context) {
+	public ViewSelection reenter(FlowExecutionControlContext context) {
 		return enter(context);
 	}
 
@@ -198,7 +198,7 @@ public abstract class TransitionableState extends State {
 	 * exit action, if one is registered.
 	 * @param context the flow control context
 	 */
-	public void exit(FlowControlContext context) {
+	public void exit(FlowExecutionControlContext context) {
 		if (this.exitAction != null) {
 			new ActionExecutor(exitAction).execute(context);
 		}
