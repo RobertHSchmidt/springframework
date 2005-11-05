@@ -22,16 +22,17 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * A transitionable state that spawns a subflow when executed.  When the subflow this
- * state spawns ends, the ending result is used as grounds for a state transition out
- * of this state.
+ * A transitionable state that spawns a subflow when executed. When the subflow
+ * this state spawns ends, the ending result is used as grounds for a state
+ * transition out of this state.
  * <p>
- * A sub flow state may be configured to map input data from its flow -- acting as the
- * parent flow -- down to the subflow when the subflow is spawned.  In addition, output
- * data produced by the subflow may be mapped up to the parent flow when the subflow ends
- * and the parent flow resumes.  See the {@link FlowAttributeMapper} interface definition
- * for more information on how to do this. The logic for ending a subflow is located in the
- * {@link EndState} implementation.
+ * A sub flow state may be configured to map input data from its flow -- acting
+ * as the parent flow -- down to the subflow when the subflow is spawned. In
+ * addition, output data produced by the subflow may be mapped up to the parent
+ * flow when the subflow ends and the parent flow resumes. See the
+ * {@link FlowAttributeMapper} interface definition for more information on how
+ * to do this. The logic for ending a subflow is located in the {@link EndState}
+ * implementation.
  * 
  * @see org.springframework.webflow.FlowAttributeMapper
  * @see org.springframework.webflow.EndState
@@ -40,10 +41,10 @@ import org.springframework.util.Assert;
  * @author Erwin Vervaet
  */
 public class SubflowState extends TransitionableState implements FlowAttributeMapper {
-	
+
 	/**
-	 * Name of the property used to indicate the start state in which
-	 * to start the sub flow.
+	 * Name of the property used to indicate the start state in which to start
+	 * the sub flow.
 	 */
 	public static final String START_STATE_PROPERTY = "startState";
 
@@ -65,7 +66,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * @param subflow the sub flow to spawn
 	 * @param transitions the transitions of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
+	 * flow
 	 */
 	public SubflowState(Flow flow, String id, Flow subflow, Transition[] transitions) throws IllegalArgumentException {
 		this(flow, id, subflow, null, transitions);
@@ -79,7 +80,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * @param transitions the transitions of this state
 	 * @param properties additional properties describing this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
+	 * flow
 	 */
 	public SubflowState(Flow flow, String id, Flow subflow, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
@@ -94,7 +95,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * @param attributeMapper the attribute mapper to use
 	 * @param transitions the transitions of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
+	 * flow
 	 */
 	public SubflowState(Flow flow, String id, Flow subflow, FlowAttributeMapper attributeMapper,
 			Transition[] transitions) throws IllegalArgumentException {
@@ -112,7 +113,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * @param transitions the transitions of this state
 	 * @param properties additional properties describing this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 *         flow
+	 * flow
 	 */
 	public SubflowState(Flow flow, String id, Flow subflow, FlowAttributeMapper attributeMapper,
 			Transition[] transitions, Map properties) throws IllegalArgumentException {
@@ -154,15 +155,15 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	}
 
 	/**
-	 * Specialization of State's <code>doEnter</code> template method that executes
-	 * behaviour specific to this state type in polymorphic fashion.
+	 * Specialization of State's <code>doEnter</code> template method that
+	 * executes behaviour specific to this state type in polymorphic fashion.
 	 * <p>
 	 * Entering this state, creates the sub flow input map and spawns the sub
 	 * flow in the current flow execution.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
 	 * @return a view descriptor containing model and view information needed to
-	 *         render the results of the state execution
+	 * render the results of the state execution
 	 * @throws StateException if an exception occurs in this state
 	 */
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
@@ -171,7 +172,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 		}
 		return context.start(getSubflow(), getSubflowStartState(context), createSubflowInput(context));
 	}
-	
+
 	public Map createSubflowInput(RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {
@@ -194,33 +195,35 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	public void mapSubflowOutput(RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Messaging the configured attribute mapper to map subflow attributes back up to the " +
-						"resuming flow -- It will have access to attributes passed up by the completed subflow");
+				logger.debug("Messaging the configured attribute mapper to map subflow attributes back up to the "
+						+ "resuming flow -- It will have access to attributes passed up by the completed subflow");
 			}
 			this.attributeMapper.mapSubflowOutput(context);
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				logger.debug("No attribute mapper is configured for the resuming state '" + getId()
-						+ "' -- as a result, no attributes in the ending subflow scope will be passed to the resuming flow");
+				logger
+						.debug("No attribute mapper is configured for the resuming state '"
+								+ getId()
+								+ "' -- as a result, no attributes in the ending subflow scope will be passed to the resuming flow");
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns the start state to use in the subflow, or null if the
-	 * default start state configured for the flow should be used.
+	 * Returns the start state to use in the subflow, or null if the default
+	 * start state configured for the flow should be used.
 	 */
 	protected State getSubflowStartState(RequestContext context) {
 		if (containsProperty(START_STATE_PROPERTY)) {
 			return getFlow().getRequiredState((String)getProperty(START_STATE_PROPERTY));
 		}
 		else {
-			//default start state of flow will be used
+			// default start state of flow will be used
 			return null;
 		}
 	}
-	
+
 	protected void createToString(ToStringCreator creator) {
 		creator.append("subflow", subflow.getId()).append("attributeMapper", attributeMapper);
 		super.createToString(creator);

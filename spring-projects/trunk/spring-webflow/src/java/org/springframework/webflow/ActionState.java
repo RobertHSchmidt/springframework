@@ -92,8 +92,8 @@ import org.springframework.util.Assert;
 public class ActionState extends TransitionableState {
 
 	/**
-	 * The set of actions to be executed when this action state is entered.
-	 * Each action is wrapped in a {@link ActionExecutor}.
+	 * The set of actions to be executed when this action state is entered. Each
+	 * action is wrapped in a {@link ActionExecutor}.
 	 */
 	private Set actionExecutors = CollectionFactory.createLinkedSetIfPossible(1);
 
@@ -104,7 +104,8 @@ public class ActionState extends TransitionableState {
 	 * @param action the raw target action instance to execute in this state
 	 * when entered
 	 * @param transitions the transitions out of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 * @throws IllegalArgumentException when this state cannot be added to given
+	 * flow
 	 */
 	public ActionState(Flow flow, String id, Action action, Transition[] transitions) throws IllegalArgumentException {
 		super(flow, id, transitions);
@@ -119,7 +120,8 @@ public class ActionState extends TransitionableState {
 	 * when entered
 	 * @param transitions the transitions out of this state
 	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 * @throws IllegalArgumentException when this state cannot be added to given
+	 * flow
 	 */
 	public ActionState(Flow flow, String id, Action action, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
@@ -133,7 +135,8 @@ public class ActionState extends TransitionableState {
 	 * @param id the state identifier (must be unique to the flow)
 	 * @param actions the raw actions to execute in this state
 	 * @param transitions the transitions (paths) out of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 * @throws IllegalArgumentException when this state cannot be added to given
+	 * flow
 	 */
 	public ActionState(Flow flow, String id, Action[] actions, Transition[] transitions)
 			throws IllegalArgumentException {
@@ -148,7 +151,8 @@ public class ActionState extends TransitionableState {
 	 * @param actions the raw actions to execute in this state
 	 * @param transitions the transitions (paths) out of this state
 	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
+	 * @throws IllegalArgumentException when this state cannot be added to given
+	 * flow
 	 */
 	public ActionState(Flow flow, String id, Action[] actions, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
@@ -177,8 +181,7 @@ public class ActionState extends TransitionableState {
 
 	/**
 	 * Returns an iterator that lists the set of actions to execute for this
-	 * state. It iterates over a collection of {@link ActionExecutor}
-	 * objects.
+	 * state. It iterates over a collection of {@link ActionExecutor} objects.
 	 * @return the ActionExecutor iterator
 	 */
 	private Iterator actionExecutors() {
@@ -245,10 +248,10 @@ public class ActionState extends TransitionableState {
 	}
 
 	/*
-	 * Overrides getRequiredTransition() to throw a local
+	 * Overrides getRequiredTransition(RequestContext) to throw a local
 	 * NoMatchingActionResultTransitionException if a transition on the
-	 * occurence of an action result event cannot be matched. Used to facilitate an
-	 * action invocation chain.
+	 * occurence of an action result event cannot be matched. Used to facilitate
+	 * an action invocation chain.
 	 * @see org.springframework.webflow.TransitionableState#getRequiredTransition(org.springframework.webflow.RequestContext)
 	 */
 	public Transition getRequiredTransition(RequestContext context) throws NoMatchingTransitionException {
@@ -270,15 +273,16 @@ public class ActionState extends TransitionableState {
 	 * exhausted.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
-	 * @return a view selection signaling that control should be returned to
-	 * the client and a view rendered
+	 * @return a view selection signaling that control should be returned to the
+	 * client and a view rendered
 	 * @throws StateException if an exception occurs in this state
 	 * @throws CannotExecuteTransitionException when no action execution
-	 * resulted in a outcome event that could be mapped to a valid state transition
+	 * resulted in a outcome event that could be mapped to a valid state
+	 * transition
 	 */
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 		int executionCount = 0;
-		String[] eventIds = new String[actionExecutors.size()]; // for logging purposes
+		String[] eventIds = new String[actionExecutors.size()];
 		Iterator it = actionExecutors();
 		while (it.hasNext()) {
 			ActionExecutor action = (ActionExecutor)it.next();
@@ -290,8 +294,11 @@ public class ActionState extends TransitionableState {
 				}
 				catch (NoMatchingActionResultTransitionException e) {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Action execution [#" + (executionCount + 1)
-								+ "] resulted in no matching transition on event '" + event.getId()	+ "'"
+						logger.debug("Action execution [#"
+								+ (executionCount + 1)
+								+ "] resulted in no matching transition on event '"
+								+ event.getId()
+								+ "'"
 								+ (it.hasNext() ? ": proceeding to the next action in the chain"
 										: ": action chain exhausted"));
 					}
@@ -299,7 +306,8 @@ public class ActionState extends TransitionableState {
 			}
 			else {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Action execution [#" + (executionCount + 1)
+					logger.debug("Action execution [#"
+							+ (executionCount + 1)
 							+ "] returned a [null] event"
 							+ (it.hasNext() ? ": proceeding to the next action in the chain"
 									: ": action chain exhausted"));
@@ -346,5 +354,4 @@ public class ActionState extends TransitionableState {
 			super(state, resultEvent);
 		}
 	}
-
 }

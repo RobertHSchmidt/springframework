@@ -32,10 +32,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.State;
-import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
@@ -46,8 +46,9 @@ import org.springframework.webflow.access.FlowLocator;
  * structure to manage
  * {@link org.springframework.webflow.FlowSession flow sessions}. This class is
  * closely coupled with <code>FlowSessionImpl</code> and
- * <code>FlowControlContextImpl</code>. The three classes work together to form a
- * complete flow execution implementation based on a finite state machine.
+ * <code>FlowControlContextImpl</code>. The three classes work together to
+ * form a complete flow execution implementation based on a finite state
+ * machine.
  * <p>
  * This implementation of FlowExecution is serializable so it can be safely
  * stored in an HTTP session or other persistent store such as a file, database,
@@ -315,7 +316,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
-				ViewSelection selectedView = context.start(getRootFlow(), getRootFlow().getRequiredState(startStateId), new HashMap(3));
+				ViewSelection selectedView = context.start(getRootFlow(), getRootFlow().getRequiredState(startStateId),
+						new HashMap(3));
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -337,7 +339,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @throws StateException rethrows the exception it was not handled at the
 	 * state or flow level
 	 */
-	protected ViewSelection handleException(StateException e, FlowExecutionControlContext context) throws StateException {
+	protected ViewSelection handleException(StateException e, FlowExecutionControlContext context)
+			throws StateException {
 		ViewSelection selectedView = e.getState().handleException(e, context);
 		if (selectedView != null) {
 			return selectedView;
@@ -581,5 +584,4 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 					.toString();
 		}
 	}
-
 }

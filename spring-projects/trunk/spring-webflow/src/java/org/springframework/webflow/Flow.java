@@ -470,7 +470,8 @@ public class Flow extends AnnotatedObject {
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view descriptor
 	 */
-	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context) throws StateException {
+	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
+			throws StateException {
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();
