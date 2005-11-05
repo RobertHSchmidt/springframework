@@ -143,7 +143,7 @@ public abstract class State extends AnnotatedObject {
 	 */
 	public void setId(String id) {
 		Assert.hasText(id, "This state must have a valid identifier");
-		Assert.isTrue(getFlow() == null, "You cannot change the id of a state which has been added to a flow");
+		Assert.isTrue(getFlow() == null, "You cannot change the id of a state which has already been added to a flow");
 		this.id = id;
 	}
 
