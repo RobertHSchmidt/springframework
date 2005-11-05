@@ -22,14 +22,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.AttributeSource;
 import org.springframework.binding.support.EmptyAttributeSource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowExecutionContext;
+import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.State;
@@ -50,6 +52,8 @@ import org.springframework.webflow.ViewSelection;
  * @author Erwin Vervaet
  */
 public class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
+
+	protected static final Log logger = LogFactory.getLog(FlowExecutionControlContextImpl.class);
 
 	/**
 	 * The owning flow execution.
@@ -197,8 +201,13 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 
 	public ViewSelection start(Flow flow, State startState, Map input) throws StateException {
 		if (input == null) {
-			// return a mutable map so things can be added later!
+			// create a mutable map so entries can be added by listeners!
 			input = new HashMap(3);
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Activating new session for flow '" + flow.getId() + "' in state '"
+					+ (startState != null ? startState.getId() : flow.getStartState().getId()) + "' with input "
+					+ input);
 		}
 		flowExecution.getListeners().fireSessionStarting(this, flow, input);
 		flowExecution.activateSession(flow, input);
@@ -211,6 +220,10 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		if (state != null && !getCurrentState().equals(state)) {
 			state.enter(this);
 		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Signaling event '" + event.getId() + "' in state '" + getCurrentState().getId()
+					+ "' of flow '" + getFlowExecutionContext().getActiveFlow().getId() + "'");
+		}
 		ViewSelection selectedView = flowExecution.getActiveFlow().onEvent(event, this);
 		flowExecution.getListeners().fireEventSignaled(this);
 		return selectedView;
@@ -218,6 +231,9 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 
 	public FlowSession endActiveFlowSession() throws IllegalStateException {
 		flowExecution.getListeners().fireSessionEnding(this);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Ending active session [" + getFlowExecutionContext().getActiveSession() + "]");
+		}
 		flowExecution.getActiveFlow().end(this);
 		FlowSession endedSession = flowExecution.endActiveFlowSession();
 		flowExecution.getListeners().fireSessionEnded(this, endedSession);
@@ -248,20 +264,20 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	 * @author Keith Donald
 	 */
 	private static class StateResultEvent implements AttributeSource {
-		
+
 		/**
-		 * The id of the state that transitioned. 
+		 * The id of the state that transitioned.
 		 */
 		private String stateId;
 
 		/**
-		 * The event that caused the transition. 
+		 * The event that caused the transition.
 		 */
 		private Event event;
 
 		/**
 		 * Create a new state result event.
-		 * @param stateId the state id 
+		 * @param stateId the state id
 		 * @param event the event
 		 */
 		public StateResultEvent(String stateId, Event event) {
