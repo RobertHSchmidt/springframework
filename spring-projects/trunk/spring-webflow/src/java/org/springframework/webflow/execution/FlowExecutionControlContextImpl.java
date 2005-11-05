@@ -247,10 +247,22 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	 * @author Keith Donald
 	 */
 	private static class StateResultEvent implements AttributeSource {
+		
+		/**
+		 * The id of the state that transitioned. 
+		 */
 		private String stateId;
 
+		/**
+		 * The event that caused the transition. 
+		 */
 		private Event event;
 
+		/**
+		 * Create a new state result event.
+		 * @param stateId the state id 
+		 * @param event the event
+		 */
 		public StateResultEvent(String stateId, Event event) {
 			Assert.hasText(stateId, "The stateId is required");
 			Assert.notNull(event, "The event is required");
@@ -266,10 +278,16 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 			return event.getAttribute(attributeName);
 		}
 
+		/**
+		 * Returns the id of the state that was transitioned out of.
+		 */
 		public String getStateId() {
 			return stateId;
 		}
 
+		/**
+		 * Returns the event that triggered the state transition.
+		 */
 		public Event getEvent() {
 			return event;
 		}

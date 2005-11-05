@@ -141,15 +141,14 @@ public class EndState extends State {
 			ViewSelection selectedView;
 			if (isMarker()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning control to client with a [null] view selection: "
-							+ " make sure a response has already been written");
+					logger.debug("Returning a [null] ending view selection: make sure a response has already been written");
 				}
 				selectedView = null;
 			}
 			else {
 				selectedView = viewSelector.makeSelection(context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning view selection: " + selectedView);
+					logger.debug("Returning ending view selection: " + selectedView);
 				}
 			}
 			context.endActiveFlowSession();
