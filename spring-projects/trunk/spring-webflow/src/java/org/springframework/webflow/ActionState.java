@@ -49,7 +49,7 @@ import org.springframework.util.Assert;
  * <th>Property</th>
  * <th>Description</th>
  * <tr>
- * <td valign="top">Name</td>
+ * <td valign="top">name</td>
  * <td>The 'name' property is used as a qualifier for the action's result
  * event. For example, if an action named <code>myAction</code> returns a
  * <code>success</code> result, a transition for event
@@ -72,7 +72,7 @@ import org.springframework.util.Assert;
  * 'referenceData' action. The flow will then respond to the referenceData
  * 'success' event by transitioning to 'displayForm'. </td>
  * <tr>
- * <td valign="top">Method</td>
+ * <td valign="top">method</td>
  * <td> The 'method' property is the name of the method on a
  * <code>{@link org.springframework.webflow.action.MultiAction}</code>
  * implementation to call when this action is executed. The named method must
@@ -93,6 +93,7 @@ public class ActionState extends TransitionableState {
 
 	/**
 	 * The set of actions to be executed when this action state is entered.
+	 * Each action is wrapped in a {@link ActionExecutor}.
 	 */
 	private Set actionExecutors = CollectionFactory.createLinkedSetIfPossible(1);
 
@@ -103,8 +104,7 @@ public class ActionState extends TransitionableState {
 	 * @param action the raw target action instance to execute in this state
 	 * when entered
 	 * @param transitions the transitions out of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
+	 * @throws IllegalArgumentException when this state cannot be added to given flow
 	 */
 	public ActionState(Flow flow, String id, Action action, Transition[] transitions) throws IllegalArgumentException {
 		super(flow, id, transitions);
@@ -119,8 +119,7 @@ public class ActionState extends TransitionableState {
 	 * when entered
 	 * @param transitions the transitions out of this state
 	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
+	 * @throws IllegalArgumentException when this state cannot be added to given flow
 	 */
 	public ActionState(Flow flow, String id, Action action, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
@@ -134,8 +133,7 @@ public class ActionState extends TransitionableState {
 	 * @param id the state identifier (must be unique to the flow)
 	 * @param actions the raw actions to execute in this state
 	 * @param transitions the transitions (paths) out of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
+	 * @throws IllegalArgumentException when this state cannot be added to given flow
 	 */
 	public ActionState(Flow flow, String id, Action[] actions, Transition[] transitions)
 			throws IllegalArgumentException {
@@ -150,8 +148,7 @@ public class ActionState extends TransitionableState {
 	 * @param actions the raw actions to execute in this state
 	 * @param transitions the transitions (paths) out of this state
 	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
+	 * @throws IllegalArgumentException when this state cannot be added to given flow
 	 */
 	public ActionState(Flow flow, String id, Action[] actions, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
@@ -180,7 +177,7 @@ public class ActionState extends TransitionableState {
 
 	/**
 	 * Returns an iterator that lists the set of actions to execute for this
-	 * state. Returns a iterator over a collection of {@link ActionExecutor}
+	 * state. It iterates over a collection of {@link ActionExecutor}
 	 * objects.
 	 * @return the ActionExecutor iterator
 	 */
@@ -220,7 +217,7 @@ public class ActionState extends TransitionableState {
 
 	/**
 	 * Returns the first action executed by this action state with its
-	 * annotations
+	 * annotations. This is purely a convenience method.
 	 * @return the annotated first action
 	 */
 	public AnnotatedAction getAnnotatedAction() {
@@ -229,7 +226,7 @@ public class ActionState extends TransitionableState {
 
 	/**
 	 * Returns the list of actions executed by this action state with
-	 * annotations.
+	 * annotations. This is purely a convenience method.
 	 * @return the annotated action list, as a typed array
 	 */
 	public AnnotatedAction[] getAnnotatedActions() {
@@ -272,12 +269,11 @@ public class ActionState extends TransitionableState {
 	 * transition in this request context, or the set of all actions is
 	 * exhausted.
 	 * @param context the state context for the executing flow
-	 * @return a view descriptor signaling that control should be returned to
+	 * @return a view selection signaling that control should be returned to
 	 * the client and a view rendered
 	 * @throws StateException if an exception occurs in this state
 	 * @throws CannotExecuteTransitionException when no action execution
-	 * resulted in a outcome event that could be mapped to a valid state
-	 * transition
+	 * resulted in a outcome event that could be mapped to a valid state transition
 	 */
 	protected ViewSelection doEnter(StateContext context) throws StateException {
 		int executionCount = 0;
@@ -335,12 +331,13 @@ public class ActionState extends TransitionableState {
 	/**
 	 * Local "no transition found" exception used to report that an action
 	 * result could not be mapped to a state transition.
+	 * 
 	 * @author Keith Donald
 	 */
 	private static class NoMatchingActionResultTransitionException extends NoMatchingTransitionException {
 
 		/**
-		 * Creates a new exception
+		 * Creates a new exception.
 		 * @param state the action state
 		 * @param resultEvent the action result event
 		 */

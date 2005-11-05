@@ -21,7 +21,8 @@ import org.springframework.util.Assert;
 
 /**
  * Worker object that performs an action execution, encapsulating common logging and
- * exception handling logic.
+ * exception handling logic. This is an internal helper class that is not normally
+ * used by application code.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -54,7 +55,7 @@ public class ActionExecutor {
 	/**
 	 * Execute the wrapped action.
 	 * @param context the flow execution request context
-	 * @return result of execution
+	 * @return result of action execution
 	 * @throws ActionExecutionException if the action threw an exception while executing
 	 */
 	public Event execute(RequestContext context) throws ActionExecutionException {

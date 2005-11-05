@@ -36,7 +36,7 @@ public class ActionExecutionException extends StateException {
 	private Action action;
 
 	/**
-	 * Action usage properties.
+	 * Action execution properties.
 	 */
 	private AttributeSource executionProperties;
 
@@ -56,7 +56,7 @@ public class ActionExecutionException extends StateException {
 	 * Create a new action execution exception.
 	 * @param state the active state
 	 * @param action the action that generated an unrecoverable exception
-	 * @param executionProperties action usage properties
+	 * @param executionProperties action execution properties
 	 * @param cause the underlying cause
 	 */
 	public ActionExecutionException(State state, Action action, AttributeSource executionProperties, Throwable cause) {
@@ -69,7 +69,7 @@ public class ActionExecutionException extends StateException {
 	 * Create a new action execution exception.
 	 * @param state the active state
 	 * @param action the action that generated an unrecoverable exception
-	 * @param executionProperties action usage properties
+	 * @param executionProperties action execution properties
 	 * @param message a descriptive message
 	 * @param cause the underlying cause
 	 */
@@ -81,8 +81,7 @@ public class ActionExecutionException extends StateException {
 	}
 
 	/**
-	 * Returns information about the action that threw an exception when
-	 * executed.
+	 * Returns the action that threw an exception when executed.
 	 * @return the failing action
 	 */
 	public Action getAction() {

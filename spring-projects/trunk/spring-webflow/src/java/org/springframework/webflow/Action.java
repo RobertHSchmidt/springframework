@@ -16,7 +16,7 @@
 package org.springframework.webflow;
 
 /**
- * A command that executes arbitrary behavior and returns a logical execution
+ * A command that executes arbitrary behaviour and returns a logical execution
  * result. Actions typically delegate down to the service-layer to perform
  * business operations, and/or prepare views with dynamic model data for
  * response rendering. They act as a bridge between the web-tier client and the
@@ -30,7 +30,7 @@ package org.springframework.webflow;
  * Action implementations are typically application-scoped singletons
  * instantiated and managed by a web-tier Spring application context to take
  * advantage of Spring's powerful configuration and dependency injection (IoC)
- * capabilities. Actions can also be Stateful prototypes, storing conversational
+ * capabilities. Actions can also be stateful prototypes, storing conversational
  * state as instance variables.
  * <p>
  * Note: Actions are directly instantiatable for use in a standalone test
@@ -44,10 +44,10 @@ package org.springframework.webflow;
  * independently executing thread on each invocation, so make sure you deal only
  * with local data or internal, thread-safe services.
  * <p>
- * Note: a webflow action is not a controller like a Spring MVC controller or a
+ * Note: a web flow action is not a controller like a Spring MVC controller or a
  * Struts action is a controller. Web flow actions are <i>commands</i>. Such
  * commands do not select views, they return logical execution results. The
- * webflow is responsible for responding to the result of the command to decide
+ * web flow is responsible for responding to the result of the command to decide
  * what to do next. In Spring Web Flow, the flow <i>is</i> the controller.
  * 
  * @see org.springframework.webflow.ActionState
@@ -77,7 +77,7 @@ public interface Action {
 	 * <p>
 	 * All attributes set in "flow scope" exist for the life of the flow session
 	 * and will be cleaned up when the flow session ends. All attributes set in
-	 * "request scope" exist for the life of the current executing request only.
+	 * "request scope" exist for the life of the currently executing request only.
 	 * <p>
 	 * All attributes present in any scope are automatically exposed in the
 	 * model for convenient access by the views when a <code>ViewState</code>
