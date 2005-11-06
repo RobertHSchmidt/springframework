@@ -193,7 +193,7 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	}
 
 	/**
-	 * Returns the contents of this scope as a map.
+	 * Returns the contents of this scope as an unmodifiable map.
 	 */
 	public Map getAttributeMap() {
 		return Collections.unmodifiableMap(this.attributes);

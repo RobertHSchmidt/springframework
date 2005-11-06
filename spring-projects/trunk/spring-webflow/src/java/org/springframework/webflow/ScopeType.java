@@ -26,14 +26,14 @@ import org.springframework.core.enums.ShortCodedLabeledEnum;
 public class ScopeType extends ShortCodedLabeledEnum {
 
 	/**
-	 * Constant indicating request scope.  Data in request scope lives for the life of 
+	 * Constant indicating request scope. Data in request scope lives for the life of 
 	 * a request submitted to a flow execution for processing.
 	 */
 	public static final ScopeType REQUEST = new ScopeType(0, "request");
 
 	/**
-	 * Constant indicating flow scope.  Data in flow scope is shared by all
-	 * artifacts of a flow (actions, view, states, etc) and lives for the life
+	 * Constant indicating flow scope. Data in flow scope is shared by all
+	 * artifacts of a flow (actions, view, states, etc.) and lives for the life
 	 * of the executing flow.
 	 */
 	public static final ScopeType FLOW = new ScopeType(1, "flow");
