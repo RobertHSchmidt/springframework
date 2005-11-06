@@ -164,7 +164,8 @@ public class Event extends EventObject implements AttributeSource {
 	}
 	
 	/**
-	 * Returns the time at which the event occured.
+	 * Returns the time at which the event occured, represented as
+	 * the number of milliseconds since January 1, 1970, 00:00:00 GMT.
 	 * @return the timestamp
 	 */
 	public long getTimestamp() {

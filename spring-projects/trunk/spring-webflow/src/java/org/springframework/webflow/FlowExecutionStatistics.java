@@ -19,8 +19,8 @@ import java.io.Serializable;
 
 /**
  * A generically typed flow execution statistics interface for use by management clients.
- * These stats would typically be exported for management via JMX.  References to strongly-typed
- * webflow classes (e.g Flow, State) should not go here -- put them in the FlowExecutionContext
+ * These stats would typically be exported for management via JMX. References to strongly-typed
+ * web flow classes (e.g Flow, State) should not go here -- put them in the FlowExecutionContext
  * subinterface.
  *
  * @see org.springframework.webflow.FlowExecutionContext
@@ -39,7 +39,7 @@ public interface FlowExecutionStatistics {
 	 * representations for the same logical flow execution.
 	 * <p>
 	 * This key will remain unchanged during the entire lifecycle of
-	 * the flow execution an can safely be used to identify the
+	 * the flow execution and can safely be used to identify the
 	 * flow execution among all other flow executions.
 	 * @return the flow execution identification key
 	 */
@@ -53,7 +53,8 @@ public interface FlowExecutionStatistics {
 	public String getCaption();
 
 	/**
-	 * Returns the time at which this flow started executing.
+	 * Returns the time at which this flow started executing, represented
+	 * as the number of milliseconds since January 1, 1970, 00:00:00 GMT.
 	 * @return the creation timestamp
 	 */
 	public long getCreationTimestamp();
@@ -66,7 +67,8 @@ public interface FlowExecutionStatistics {
 
 	/**
 	 * Returns the timestamp noting when the last request to manipulate this
-	 * executing flow was received.
+	 * executing flow was received, represented as the number of milliseconds
+	 * since January 1, 1970, 00:00:00 GMT.
 	 * @return the timestamp of the last client request
 	 */
 	public long getLastRequestTimestamp();

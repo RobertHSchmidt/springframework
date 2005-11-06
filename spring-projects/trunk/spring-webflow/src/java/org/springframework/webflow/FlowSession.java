@@ -17,46 +17,48 @@ package org.springframework.webflow;
 
 /**
  * A runtime object that represents a single client session of a
- * specific <code>Flow</code> definition.  This object maintains all the 
+ * specific <code>Flow</code> definition. This object maintains all the 
  * state of the session, including its status within exactly one
- * governing FlowExecution and its current State.  This object also acts
- * as the "flow scope" data model.  Data in "flow scope" lives for the life
+ * governing FlowExecution and its current State. This object also acts
+ * as the "flow scope" data model. Data in "flow scope" lives for the life
  * of this object, and is cleaned up automatically when this object is
- * destroyed.  Destruction happens when this session reaches a end state.
+ * destroyed. Destruction happens when this session reaches an end state.
  * <p>
  * This object is fully managed by a FlowExecution within a stack-based 
  * data structure, where each session in the stack is a spawned 
- * flow at a specific state.  The session at the top of the
- * stack is the currently active flow.  This stack of all flow sessions captures the
+ * flow at a specific state. The session at the top of the
+ * stack is the currently active flow. This stack of all flow sessions captures the
  * complete and current state (snapshot) of an executing flow.
  * <p>
  * A flow session will go through several status changes during its lifecycle.
- * Initially it will be {@link FlowSessionStatus#CREATED}.  For example, when 
- * a new <code>FlowExecution</code> is started to launch a new root 
- * <code>Flow</code> definition a new <code>FlowSession</code> is created.
+ * Initially it will be {@link FlowSessionStatus#CREATED}. For example, when 
+ * a new FlowExecution is started to launch a new root Flow definition a new
+ * FlowSession is created.
  * <p>
  * When a flow session is activated (about to be manipulated), it's status becomes
- * {@link FlowSessionStatus#ACTIVE}.  In the case of a new FlowExecution, 
+ * {@link FlowSessionStatus#ACTIVE}. In the case of a new FlowExecution, 
  * session activation happens immediately after creation to put the "root flow" at
  * the top of the stack and transition it to its start state.
  * <p>
  * When control returns to the client for user think time, the status is updated
- * to {@link FlowSessionStatus#PAUSED}.  The flow is no longer actively 
+ * to {@link FlowSessionStatus#PAUSED}. The flow is no longer actively 
  * processing: it's stored off somewhere waiting on the user to do something.
  * <p>
  * If a flow session is pushed down in the stack because a subflow is spawned, its 
  * status becomes {@link FlowSessionStatus#SUSPENDED} until the subflow returns (ends) 
- * and is popped off the stack.  The resuming flow session then becomes active once
+ * and is popped off the stack. The resuming flow session then becomes active once
  * again.
  * <p>
  * When a flow session is terminated because an EndState is reached, its status
- * becomes {@link FlowSessionStatus#ENDED}, ending its lifecycle.  The session is 
+ * becomes {@link FlowSessionStatus#ENDED}, ending its lifecycle. The session is 
  * popped off the stack and discarded, and any allocated resources in "flow scope" are
  * automatically cleaned up.
  * <p>
  * Note that a flow <i>session</i> is in no way linked to an HTTP session! It
  * just uses the familiar "session" naming convention to denote a stateful 
  * interaction.
+ * 
+ * @see org.springframework.webflow.execution.FlowExecution
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

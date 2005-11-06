@@ -29,13 +29,13 @@ import java.util.Map;
  * For example, say you have the following parent flow session:
  * <p>
  * <pre>
- *      Parent Flow Session 1
- *      ---------------------
+ *      Parent Flow Session
+ *      -------------------
  *      : flow = myFlow
- *      : scope = [map:attr1=value1, attr2=value2, attr3=value3]
+ *      : flow scope = [map:attr1=value1, attr2=value2, attr3=value3]
  * </pre>
  * <p>
- * For "Parent Flow Session 1" above, there are 3 attributes in flow scope
+ * For the "Parent Flow Session" above, there are 3 attributes in flow scope
  * ("attr1", "attr2" and "attr3", respectively). Any of these three attributes
  * may be mapped as input down to child subflows when those subflows are
  * spawned. An implementation of this interface performs the actual mapping,
