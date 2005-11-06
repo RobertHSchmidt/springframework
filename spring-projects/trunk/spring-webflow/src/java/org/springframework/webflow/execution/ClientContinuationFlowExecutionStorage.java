@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
@@ -25,28 +27,28 @@ import org.springframework.webflow.Event;
  * Flow execution storage implementation that will store a flow execution as a
  * <i>continuation</i> on the client side. It will actually encode the state of
  * the flow execution in the unique id that is returned from the
- * {@link #save(Serializable, FlowExecution, Event) save} method. The load method
- * just decodes the incoming id and restores the <code>FlowExecution</code>
- * object.
+ * {@link #save(Serializable, FlowExecution, Event) save} method. The load
+ * method just decodes the incoming id and restores the
+ * <code>FlowExecution</code> object.
  * <p>
  * Note that all clients in a web flow based application need to include the
  * unique flow execution id in each event they signal to the system. For HTTP
- * based clients, the flow execution id is sent using a request parameter.
- * If you're using client side continuations, you should make sure to use
- * the HTTP POST method to send the request parameters to the server. This is
- * required because there are limitations on the amount of data you can send
- * using an HTTP GET request and a client side continuation easily surpasses
- * that threshold.
+ * based clients, the flow execution id is sent using a request parameter. If
+ * you're using client side continuations, you should make sure to use the HTTP
+ * POST method to send the request parameters to the server. This is required
+ * because there are limitations on the amount of data you can send using an
+ * HTTP GET request and a client side continuation easily surpasses that
+ * threshold.
  * <p>
  * <b>Warning:</b> storing state (a flow execution continuation) on the client
  * entails a certain security risk. This implementation does not provide a
  * secure way of storing state on the client, so a malicious client could
- * reverse engineer a continuation and get access to possible sensitive data stored
- * in the flow execution. If you need more security and still want to store
- * continuations on the client, subclass this class and override the methods
- * {@link #encode(FlowExecution)} and {@link #decode(Serializable)}, implementing
- * them with a secure encoding/decoding algorithm, e.g. based on public/private
- * key encryption.
+ * reverse engineer a continuation and get access to possible sensitive data
+ * stored in the flow execution. If you need more security and still want to
+ * store continuations on the client, subclass this class and override the
+ * methods {@link #encode(FlowExecution)} and {@link #decode(Serializable)},
+ * implementing them with a secure encoding/decoding algorithm, e.g. based on
+ * public/private key encryption.
  * <p>
  * This class depends on the <a href="http://jakarta.apache.org/commons/codec/">
  * Jakarta Commons Codec</a> library to do BASE64 encoding.
@@ -76,12 +78,35 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 
 	public FlowExecution load(Serializable id, Event requestingEvent) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
-		return decode(id);
+		try {
+			return decode(id);
+		}
+		catch (IOException e) {
+			throw new FlowExecutionSerializationException(id, null,
+					"IOException thrown decoding flow execution -- this should not happen!", e);
+		}
+		catch (ClassNotFoundException e) {
+			throw new FlowExecutionSerializationException(id, null,
+					"ClassNotFoundException thrown decoding flow execution -- "
+							+ "This should not happen! Make sure there are no classloader issues."
+							+ "For example, perhaps the Web Flow system is being loaded by a classloader "
+							+ "that is a parent of the classloader loading application classes?", e);
+		}
 	}
 
 	public Serializable save(Serializable id, FlowExecution flowExecution, Event requestingEvent)
 			throws FlowExecutionStorageException {
-		return encode(flowExecution);
+		try {
+			return encode(flowExecution);
+		}
+		catch (NotSerializableException e) {
+			throw new FlowExecutionSerializationException(null, flowExecution, "Could not encode flow execution:  "
+					+ "make sure all objects stored in flow scope are serializable!", e);
+		}
+		catch (IOException e) {
+			throw new FlowExecutionSerializationException(null, flowExecution,
+					"IOException thrown encoding flow execution -- this should not happen!", e);
+		}
 	}
 
 	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException {
@@ -89,42 +114,42 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 	}
 
 	/**
-	 * Decode given data, received from the client, and return the
-	 * corresponding flow execution object.
+	 * Decode given data, received from the client, and return the corresponding
+	 * flow execution object.
 	 * <p>
-	 * Subclasses can override this to change the decoding algorithm. This
-	 * class just does a BASE64 decoding and then deserializes the flow
-	 * execution.
+	 * Subclasses can override this to change the decoding algorithm. This class
+	 * just does a BASE64 decoding and then deserializes the flow execution.
 	 * @param data the encode flow execution data
 	 * @return the decoded flow execution instance
 	 */
-	protected FlowExecution decode(Serializable data) {
+	protected FlowExecution decode(Serializable data) throws IOException, ClassNotFoundException {
 		Assert.notNull(data, "The flow execution data to decode cannot be null");
-		return new FlowExecutionContinuation(Base64.decodeBase64(String.valueOf(data).getBytes()), isCompress()).getFlowExecution();
+		return new FlowExecutionContinuation(Base64.decodeBase64(String.valueOf(data).getBytes()), isCompress())
+				.readFlowExecution();
 	}
 
 	/**
-	 * Encode given flow execution object into data that can be
-	 * stored on the client.
+	 * Encode given flow execution object into data that can be stored on the
+	 * client.
 	 * <p>
-	 * Subclasses can override this to change the encoding algorithm. This
-	 * class just does a BASE64 encoding of the serialized flow execution.
+	 * Subclasses can override this to change the encoding algorithm. This class
+	 * just does a BASE64 encoding of the serialized flow execution.
 	 * @param flowExecution the flow execution instance
 	 * @return the encoded representation
 	 */
-	protected String encode(FlowExecution flowExecution) {
+	protected String encode(FlowExecution flowExecution) throws IOException {
 		byte[] data = new FlowExecutionContinuation(flowExecution, isCompress()).getData(false);
 		return new String(Base64.encodeBase64(data));
 	}
 
 	/* not supported */
-	
+
 	public boolean supportsTwoPhaseSave() {
 		return false;
 	}
 
-	public Serializable generateId(Serializable oldId)
-			throws UnsupportedOperationException, FlowExecutionStorageException {
+	public Serializable generateId(Serializable oldId) throws UnsupportedOperationException,
+			FlowExecutionStorageException {
 		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
 	}
 
@@ -132,6 +157,4 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 			throws UnsupportedOperationException, FlowExecutionStorageException {
 		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
 	}
-	
-	
 }

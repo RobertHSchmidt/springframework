@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.core.NestedRuntimeException;
+import java.io.Serializable;
 
 /**
  * Exception signaling a fatal, technical problem while accessing
@@ -23,72 +23,32 @@ import org.springframework.core.NestedRuntimeException;
  * 
  * @author Erwin Vervaet
  */
-public class FlowExecutionStorageException extends NestedRuntimeException {
-	
-	/**
-	 * The flow execution storage strategy.
-	 */
-	private FlowExecutionStorage storage;
-	
-	/**
-	 * The id of the flow execution.
-	 */
-	private String flowExecutionId;
+public class FlowExecutionStorageException extends FlowExecutionException {
 
 	/**
-	 * The execution that could not be stored.
+	 * The flow execution storage identifier.
 	 */
-	private FlowExecution flowExecution;
-
-	/**
-	 * Create a new flow execution storage exception.
-	 * @param msg a descriptive message
-	 * @param ex the underlying cause of this exception
-	 */
-	public FlowExecutionStorageException(String msg, Throwable ex) {
-		super(msg, ex);
-	}
+	private Serializable storageId;
 
 	/**
 	 * Create a new flow execution storage exception.
 	 * @param storage the storage strategy involved
-	 * @param flowExecutionId the unique id of the flow execution (optional)
+	 * @param storageId the unique id of the flow execution (optional)
 	 * @param flowExecution the flow execution (optional)
-	 * @param msg a descriptive message
-	 * @param ex the underlying cause of this exception
+	 * @param message a descriptive message
+	 * @param cause the underlying cause of this exception
 	 */
-	public FlowExecutionStorageException(FlowExecutionStorage storage, String flowExecutionId,
-			FlowExecution flowExecution, String msg, Throwable ex) {
-		super(msg, ex);
-		this.storage = storage;
-		this.flowExecutionId = flowExecutionId;
-		this.flowExecution = flowExecution;
-	}
-	
-	/**
-	 * Returns the flow execution storage strategy involved.
-	 * Could be <code>null</code>.
-	 * @return the storage strategy
-	 */
-	public FlowExecutionStorage getStorage() {
-		return storage;
-	}
-	
-	/**
-	 * Returns the unique id of the flow execution.
-	 * Could be <code>null</code>.
-	 * @return the flow execution id
-	 */
-	public String getFlowExecutionId() {
-		return flowExecutionId;
+	public FlowExecutionStorageException(Serializable storageId,
+			FlowExecution flowExecution, String message, Throwable cause) {
+		super(flowExecution, message, cause);
+		this.storageId = storageId;
 	}
 
 	/**
-	 * Returns the flow execution involved.
-	 * Could be <code>null</code>.
-	 * @return the flow execution
+	 * Returns the storage id of the flow execution.
+	 * @return the flow execution storage id
 	 */
-	public FlowExecution getFlowExecution() {
-		return flowExecution;
+	public Serializable getStorageId() {
+		return storageId;
 	}
 }

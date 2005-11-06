@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.Serializable;
 
 import org.springframework.webflow.Event;
@@ -69,42 +71,47 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 		this.compress = compress;
 	}
 
-	public FlowExecution load(Serializable id, Event sourceEvent) throws NoSuchFlowExecutionException,
-			FlowExecutionStorageException {
+	protected FlowExecution getFlowExecution(Serializable id, Event sourceEvent) throws FlowExecutionStorageException {
 		try {
-			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getRequiredDataSourceAttribute(id,
-					sourceEvent);
-			return continuation.getFlowExecution();
+			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getDataStore(sourceEvent).getAttribute(
+					attributeName(id));
+			return continuation.readFlowExecution();
 		}
-		catch (IllegalStateException e) {
-			throw new NoSuchFlowExecutionException(id, e);
+		catch (IOException e) {
+			throw new FlowExecutionSerializationException(id, null,
+					"IOException thrown loading the flow execution continuation: this should not happen!", e);
+		}
+		catch (ClassNotFoundException e) {
+			throw new FlowExecutionSerializationException(id, null,
+					"ClassNotFoundException thrown loading the flow execution continuation:  "
+							+ "This should not happen! Make sure there are no classloader issues."
+							+ "For example, perhaps the Web Flow system is being loaded by a classloader "
+							+ "that is a parent of the classloader loading application classes?", e);
 		}
 	}
 
-	public Serializable save(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+	/**
+	 * Associate given id with given attribute value in the data store.
+	 */
+	protected void setFlowExecution(Serializable id, FlowExecution flowExecution, Event sourceEvent)
 			throws FlowExecutionStorageException {
-		// generate a new id for each continuation
-		id = createId();
-		setDataSourceAttribute(id, new FlowExecutionContinuation(flowExecution, isCompress()), sourceEvent);
-		return id;
+		try {
+			getDataStore(sourceEvent).setAttribute(attributeName(id),
+					new FlowExecutionContinuation(flowExecution, compress));
+		}
+		catch (NotSerializableException e) {
+			throw new FlowExecutionSerializationException(id, flowExecution, "Could not serialize flow execution '"
+					+ id + "'.  " + "Make sure all objects stored in flow scope are serializable!", e);
+		}
+		catch (IOException e) {
+			throw new FlowExecutionSerializationException(id, flowExecution,
+					"IOException loading the flow execution continuation -- this should not happen!", e);
+		}
 	}
 
-	public boolean supportsTwoPhaseSave() {
-		return true;
-	}
-
-	public Serializable generateId(Serializable oldId) throws UnsupportedOperationException,
-			FlowExecutionStorageException {
+	public Serializable generateId(Serializable previousId) {
 		// generate a new id for each continuation
 		return createId();
-	}
-
-	public void saveWithGeneratedId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
-			throws UnsupportedOperationException, FlowExecutionStorageException {
-		// always update data store attribute, even if just overwriting
-		// an existing one to make sure the data store knows that this
-		// attribute has changed!
-		setDataSourceAttribute(id, new FlowExecutionContinuation(flowExecution, isCompress()), sourceEvent);
 	}
 
 	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException {

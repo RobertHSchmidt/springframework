@@ -18,7 +18,6 @@ package org.springframework.webflow.execution;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -28,9 +27,9 @@ import java.util.zip.GZIPOutputStream;
 import org.springframework.util.FileCopyUtils;
 
 /**
- * Helper class that aides in handling a flow execution as if it was a continuation.
- * Mainly intended for use in FlowExecutionStorage implementations that store
- * flow executions as if they were continuations.
+ * Helper class that aides in handling a flow execution as if it was a
+ * continuation. Mainly intended for use in FlowExecutionStorage implementations
+ * that store flow executions as if they were continuations.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.execution.FlowExecutionStorage
@@ -50,12 +49,11 @@ public class FlowExecutionContinuation implements Serializable {
 	private boolean compressed;
 
 	/**
-	 * Create a new flow execution continuation using given data,
-	 * which should be a serialized representation of a 
-	 * <code>FlowExecution</code> object.
+	 * Create a new flow execution continuation using given data, which should
+	 * be a serialized representation of a <code>FlowExecution</code> object.
 	 * @param data serialized flow execution data
 	 * @param compressed indicates whether or not given data is compressed
-	 *        (using GZIP compression)
+	 * (using GZIP compression)
 	 */
 	public FlowExecutionContinuation(byte[] data, boolean compressed) {
 		this.data = data;
@@ -65,78 +63,47 @@ public class FlowExecutionContinuation implements Serializable {
 	/**
 	 * Create a new flow execution continuation for given flow execution.
 	 * @param flowExecution the flow execution to wrap
-	 * @throws FlowExecutionStorageException when the flow execution cannot
-	 *         be serialized
+	 * @throws FlowExecutionStorageException when the flow execution cannot be
+	 * serialized
 	 * @param compress indicates whether or not the flow execution continuation
-	 *        should compress its state
+	 * should compress its state
 	 */
-	public FlowExecutionContinuation(FlowExecution flowExecution, boolean compress)
-			throws FlowExecutionStorageException {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(flowExecution);
-			oos.flush();
-			if (compress) {
-				this.data = compress(baos.toByteArray());
-			}
-			else {
-				this.data = baos.toByteArray();
-			}
-			this.compressed = compress;
+	public FlowExecutionContinuation(FlowExecution flowExecution, boolean compress) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(flowExecution);
+		oos.flush();
+		if (compress) {
+			this.data = compress(baos.toByteArray());
 		}
-		catch (NotSerializableException e) {
-			throw new FlowExecutionStorageException( 
-					"Could not serialize flow execution -- make sure all objects stored in flow scope are serializable!",
-					e);
+		else {
+			this.data = baos.toByteArray();
 		}
-		catch (IOException e) {
-			throw new FlowExecutionStorageException( 
-					"IOException creating a flow execution continuation -- this should not happen!", e);
-		}
+		this.compressed = compress;
 	}
 
 	/**
 	 * Returns a clone of the flow execution wrapped by this object.
-	 * @throws FlowExecutionStorageException when the flow execution cannot
-	 *         be restored
+	 * @throws FlowExecutionStorageException when the flow execution cannot be
+	 * restored
 	 */
-	public FlowExecution getFlowExecution() throws FlowExecutionStorageException {
-		try {
-			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(getData(true)));
-			return (FlowExecution)ois.readObject();
-		}
-		catch (IOException e) {
-			throw new FlowExecutionStorageException(
-					"IOException loading the flow execution continuation -- this should not happen!", e);
-		}
-		catch (ClassNotFoundException e) {
-			throw new FlowExecutionStorageException(
-					"ClassNotFoundException loading the flow execution continuation -- this should not happen! --" +
-					"Make sure there are no classloader issues: e.g. maybe the Web Flow system is being loaded by a classloader " +
-					"that is a parent of the classloader loading application classes?",
-					e);
-		}
+	public FlowExecution readFlowExecution() throws IOException, ClassNotFoundException {
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(getData(true)));
+		return (FlowExecution)ois.readObject();
 	}
 
 	/**
 	 * Returns the binary representation of the flow execution continuation.
 	 * This is actually a serialized version of the continuation.
-	 * @param decompress indicates whether or not the data should be decompressed
-	 *        (when it's compressed) before returning it
+	 * @param decompress indicates whether or not the data should be
+	 * decompressed (when it's compressed) before returning it
 	 * @return the serialized flow execution data
-	 * @throws FlowExecutionStorageException when the flow execution data
-	 *         cannot be obtained
+	 * @throws FlowExecutionStorageException when the flow execution data cannot
+	 * be obtained
 	 */
-	public byte[] getData(boolean decompress) throws FlowExecutionStorageException {
+	public byte[] getData(boolean decompress) throws IOException {
 		if (isCompressed() && decompress) {
-			try {
-				return decompress(data);
-			}
-			catch (IOException e) {
-				throw new FlowExecutionStorageException(
-						"Cannot decompress flow execution continuation data -- this should not happen!", e);
-			}
+			return decompress(data);
 		}
 		else {
 			return data;

@@ -438,8 +438,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * the webflow system for managing all executing flows.
 	 * @param sourceEvent the external event that occured
 	 * @return the view descriptor of the model and view to render
+	 * @throws flow execution exception
 	 */
-	public ViewSelection onEvent(Event sourceEvent) {
+	public ViewSelection onEvent(Event sourceEvent) throws FlowExecutionException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("New request received from client, source event is: " + sourceEvent);
 		}
