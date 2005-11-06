@@ -2,11 +2,17 @@
 <body>
 <p>
 Contains core interfaces and classes for dealing with web flows.
+The core concepts used at configuration time to define a flow are covered
+by this package. These concepts then drive flow execution at runtime.
+As such this package provides the basic layer on which all other layers
+of the web flow system build, most importantly the
+{@link org.springframework.webflow.config configuration layer}
+and
+{@link org.springframework.webflow.execution execution layer}.
 </p>
 
 <p>
-The core concepts used at configuration time to define a flow are covered
-by this package. A {@link org.springframework.webflow.Flow web flow} is composed of a
+A {@link org.springframework.webflow.Flow web flow} is composed of a
 set of {@link org.springframework.webflow.State states}. A state is a point in the
 flow where something happens; for instance,
 {@link org.springframework.webflow.ViewState displaying a view} or
@@ -17,9 +23,12 @@ that are used to move to another state.
 
 <p>
 Furthermore, this package also defines a number of interfaces related to flow execution.
-The central concept in this regard is the {@link org.springframework.webflow.RequestContext},
+The central concepts in this regard are the {@link org.springframework.webflow.RequestContext}
+and its sub interface {@link org.springframework.webflow.FlowExecutionControlContext},
 which is used by all artifacts of a web flow to gain access to information about an
-ongoing flow execution.
+ongoing flow execution and to manipulate that flow execution. The
+<code>FlowExecutionControlContext</code> is also the primary facade used by clients of the
+core web flow system, e.g. the {@link org.springframework.webflow.execution execution layer}.
 </p>
 
 <p>
@@ -38,9 +47,10 @@ scopes. An out-of-the-box implementation is provided by the class
 {@link org.springframework.webflow.config.ParameterizableFlowAttributeMapper}.
 </li>
 <li>
-{@link org.springframework.webflow.ViewSelector} -  A factory that
-produces a new, configured {@link org.springframework.webflow.ViewSelection} instance on each invocation,
-taking into account the contextual information about an ongoing flow execution.
+{@link org.springframework.webflow.ViewSelector} - A factory that
+produces a new, configured {@link org.springframework.webflow.ViewSelection}
+instance on each invocation, taking into account the contextual information
+about an ongoing flow execution.
 </li>
 <li>
 {@link org.springframework.webflow.TransitionCriteria} - The interface for
@@ -66,12 +76,16 @@ that address common controller concerns.
 building and assembling web flows at configuration time.
 </li>
 <li>
-{@link org.springframework.webflow.config.registry config.registry} - This package contains interfaces and
-classes for working with Flow definition registries.
+{@link org.springframework.webflow.config.registry config.registry} - This package contains
+interfaces and classes for working with flow definition registries.
 </li>
 <li>
 {@link org.springframework.webflow.execution execution} - Provides classes supporting managed
 flow execution.
+</li>
+<li>
+{@link org.springframework.webflow.jsf jsf} - Integration of the Spring web flow system
+with JavaServer Faces (JSF).
 </li>
 <li>
 {@link org.springframework.webflow.mvc mvc} - Integration of the Spring web flow system
