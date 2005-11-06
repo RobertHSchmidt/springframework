@@ -73,7 +73,8 @@ public class NoMatchingTransitionException extends StateException {
 	/**
 	 * Create a new no matching transition exception.
 	 * @param state the state that could not be transitioned out of
-	 * @param event the request context that did not trigger a valid transition
+	 * @param event the event that occured that could not be matched to a
+	 * transition
 	 * @param message the message
 	 * @param cause the underlying cause
 	 */
@@ -91,9 +92,8 @@ public class NoMatchingTransitionException extends StateException {
 	}
 
 	/**
-	 * Returns the context for the current request that did not trigger any
+	 * Returns the event for the current request that did not trigger any
 	 * supported transition out of the set state.
-	 * @return the request context
 	 */
 	public Event getEvent() {
 		return event;
