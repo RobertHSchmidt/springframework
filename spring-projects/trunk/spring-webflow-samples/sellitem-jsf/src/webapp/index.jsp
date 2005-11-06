@@ -13,7 +13,7 @@
 		
 		<DIV align="left">
 			<P>
-			    <h:commandLink value="Sell Item" action="webflow:sellItem"/>
+			    <h:commandLink value="Sell Item" action="flowId:sellItem"/>
 			</P>
 			
 			<P>

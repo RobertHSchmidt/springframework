@@ -22,6 +22,7 @@
     </dependency>
     <dependency org="springframework" name="spring-webflow" rev="latest.integration"
         conf="global->default,jsf"/>
+    <dependency org="springframework" name="various" rev="1.2.5"/>
     
     <!--  build-time only dependencies -->
     <dependency org="java" name="servlet" rev="2.4" conf="buildtime->default">

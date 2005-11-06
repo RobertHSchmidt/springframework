@@ -8,6 +8,7 @@
 	-->	
 	<bean id="flowExecutionManager"
 			class="org.springframework.webflow.jsf.JsfFlowExecutionManager">
+		<constructor-arg ref="flowLocator"/>
 		<property name="listener">
 			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
 		</property>
@@ -18,32 +19,16 @@
 				</constructor-arg>
 			</bean>
 		</property>
-		<!-- 
-		<property name="storage">
-			<bean class="org.springframework.webflow.execution.servlet.HttpSessionFlowExecutionStorage"/>
-		</property>
-		-->
-		<!-- 
-		<property name="storage">
-			<bean class="org.springframework.webflow.execution.ClientContinuationFlowExecutionStorage">
-				<property name="compress" value="true"/>
-			</bean>
-		</property>
-		-->
 	</bean>
 	
-	<bean id="sellItem" class="org.springframework.webflow.config.XmlFlowFactoryBean">
-		<property name="location" value="/WEB-INF/sellItem-flow.xml"/>
+	<!-- Creates the registry of flow definitions for this application -->
+	<bean name="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
+		<property name="definitionLocations" value="/WEB-INF/sellItem-flow.xml"/>
 	</bean>
-	
+
 	<bean id="sellItemAction" class="org.springframework.webflow.samples.sellitem.SellItemAction">
 	</bean>
 
-	<bean id="statisticsService" class="org.springframework.webflow.execution.jmx.StatisticsService">
-		<constructor-arg ref="flowExecutionManager"/>
-		<property name="enabled" value="true"/>
-	</bean>
-	
 	<bean name="sale" class="org.springframework.webflow.samples.sellitem.Sale" singleton="false">
 	</bean>
 	

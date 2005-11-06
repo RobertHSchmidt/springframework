@@ -1,5 +1,7 @@
 <%@ include file="includeTop.jsp" %>
 
+<f:view>
+
 <div id="content">
 	<div id="insert"><img src="images/webflow-logo.jpg"/></div>
 	<h2>Select category</h2>
@@ -10,7 +12,8 @@
 	<tr class="readOnly">
 		<td>Item count:</td><td>${sale.itemCount}</td>
 	</tr>
-	<form name="categoryForm" method="post">
+
+	<h:form id="categoryForm">
 		<tr>
 			<td>Category:</td>
 			<td>
@@ -41,11 +44,14 @@
 		<tr>
 			<td colspan="2" class="buttonBar">
 				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
+				<input type="hidden" name="_transactionId" value="${transactionId}">
 				<input type="submit" class="button" name="_eventId_submit" value="Next">
 			</td>
 		</tr>
-	</form>
+	</h:form>
 	</table>
 </div>
+
+</f:view>
 
 <%@ include file="includeBottom.jsp" %>

@@ -21,7 +21,7 @@ import org.springframework.validation.Validator;
 public class SaleValidator implements Validator {
 
 	public boolean supports(Class clazz) {
-		return clazz.equals(Sale.class);
+		return Sale.class.equals(clazz);
 	}
 
 	public void validate(Object obj, Errors errors) {
@@ -31,10 +31,10 @@ public class SaleValidator implements Validator {
 	
 	public void validatePriceAndItemCount(Sale sale, Errors errors) {
 		if (sale.getItemCount() <= 0) {
-			errors.rejectValue("itemCount", null, "Item count must be greater than 0");
+			errors.rejectValue("itemCount", "tooLittle", "Item count must be greater than 0");
 		}
 		if (sale.getPrice() <= 0.0) {
-			errors.rejectValue("price", null, "Price must be greater than 0.0");
+			errors.rejectValue("price", "tooLittle", "Price must be greater than 0.0");
 		}
 	}
 }
