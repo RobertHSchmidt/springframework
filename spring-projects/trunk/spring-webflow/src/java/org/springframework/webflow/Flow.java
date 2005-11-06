@@ -465,8 +465,8 @@ public class Flow extends AnnotatedObject {
 	 * This implementation iterates over the ordered set of flow exception
 	 * handler objects, delegating to each handler in the set until one handles
 	 * the exception that occured and returns a non-null error view.
-	 * @param context the flow execution control context
 	 * @param exception the exception that occured
+	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
 	 */

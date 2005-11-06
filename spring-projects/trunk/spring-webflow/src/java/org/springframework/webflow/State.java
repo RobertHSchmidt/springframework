@@ -76,7 +76,7 @@ public abstract class State extends AnnotatedObject {
 	private Action entryAction;
 
 	/**
-	 * The list exception handlers for this state.
+	 * The list of exception handlers for this state.
 	 */
 	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(1);
 
@@ -131,7 +131,7 @@ public abstract class State extends AnnotatedObject {
 
 	/**
 	 * Returns the state identifier, unique to the owning flow.
-	 * @return the state identifier.
+	 * @return the state identifier
 	 */
 	public String getId() {
 		return id;
@@ -139,7 +139,7 @@ public abstract class State extends AnnotatedObject {
 
 	/**
 	 * Set the state identifier, unique to the owning flow.
-	 * @param id the state identifier.
+	 * @param id the state identifier
 	 */
 	public void setId(String id) {
 		Assert.hasText(id, "This state must have a valid identifier");
@@ -175,7 +175,7 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
-	 * Adds an exception handler to this state. Exception handles are invoked
+	 * Adds an exception handler to this state. Exception handlers are invoked
 	 * when an exception occurs when this state is entered, and can execute
 	 * custom exception handling logic as well as select an error view to
 	 * display.
@@ -230,7 +230,8 @@ public abstract class State extends AnnotatedObject {
 
 	/**
 	 * Hook method to execute custom behaviour as a result of entering this
-	 * state.
+	 * state. By implementing this method subclasses specialize the behaviour
+	 * of the state.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
 	 * @return a view selection containing model and view information needed to
@@ -245,11 +246,9 @@ public abstract class State extends AnnotatedObject {
 	 * <p>
 	 * This implementation iterates over the ordered set of exception handler
 	 * objects, delegating to each handler in the set until one handles the
-	 * exception that occured and selects a non-null error view. If no error
-	 * view is selected, the StateException is rethrown.
-	 * @param context the flow control context
+	 * exception that occured and selects a non-null error view.
 	 * @param exception the exception that occured
-	 * @return the selected error view
+	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
 	 */
