@@ -17,7 +17,6 @@ package org.springframework.webflow.execution;
 
 import org.springframework.webflow.Event;
 import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.access.FlowLocator;
 
@@ -37,10 +36,10 @@ import org.springframework.webflow.access.FlowLocator;
  * creation, the start operation is called, which causes the execution to
  * activate a new session for its root flow definition. That session is then
  * pushed onto a stack and its definition becomes the "active flow". A local,
- * internal {@link org.springframework.webflow.FlowExecutionControlContext} object (which
- * extends ({@link org.springframework.webflow.RequestContext}) is then
- * created and the active Flow's start {@link org.springframework.webflow.State}
- * is entered.
+ * internal {@link org.springframework.webflow.FlowExecutionControlContext}
+ * object (which extends ({@link org.springframework.webflow.RequestContext})
+ * is then created and the active Flow's start
+ * {@link org.springframework.webflow.State} is entered.
  * <p>
  * In a distributed environment such as HTTP, after a start or signalEvent
  * operation has completed and control returns to the caller (manager), this
@@ -80,12 +79,10 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @return the starting view selection, which requests that the calling
 	 * client render a view with configured model data (so the user may
 	 * participate in this flow execution)
-	 * @throws StateException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
-	 * @throws IllegalStateException if this execution has already been started,
-	 * or no state is marked as the start state.
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the resumed flow execution during event processing
 	 */
-	public ViewSelection start(Event sourceEvent) throws StateException, IllegalStateException;
+	public ViewSelection start(Event sourceEvent) throws FlowExecutionException;
 
 	/**
 	 * Signal an occurence of the specified event in the current state of this
@@ -96,12 +93,10 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @return the next view selection to display for this flow execution, which
 	 * requests that the calling client render a view with configured model data
 	 * (so the user may participate in this flow execution)
-	 * @throws StateException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
-	 * @throws IllegalStateException if the flow execution is not active and
-	 * thus is no longer (or not yet) processing events
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the resumed flow execution during event processing
 	 */
-	public ViewSelection signalEvent(Event sourceEvent) throws StateException, IllegalStateException;
+	public ViewSelection signalEvent(Event sourceEvent) throws FlowExecutionException;
 
 	/**
 	 * Rehydrate this flow execution after deserialization. This is called after

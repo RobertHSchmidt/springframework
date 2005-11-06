@@ -441,20 +441,21 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @return the view descriptor of the model and view to render
 	 * @throws FlowExecutionException an exception occured during event
 	 * processing
+	 * @throws FlowExecutionStorageException an exception occured managing flow
+	 * execution storage
+	 * TODO better exception definition/handling...
 	 */
-	public ViewSelection onEvent(Event sourceEvent) throws FlowExecutionException {
+	public ViewSelection onEvent(Event sourceEvent) throws FlowExecutionException, FlowExecutionStorageException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("New request received from client, source event is: " + sourceEvent);
 		}
 		Serializable flowExecutionId = getFlowExecutionId(sourceEvent);
-		FlowExecution flowExecution;
+		FlowExecution flowExecution = getFlowExecution(flowExecutionId, sourceEvent);
 		ViewSelection selectedView;
-		if (flowExecutionId == null) {
-			flowExecution = createFlowExecution(getFlow(sourceEvent));
+		if (!flowExecution.isActive()) {
 			selectedView = startFlowExecution(flowExecution, sourceEvent);
 		}
 		else {
-			flowExecution = loadFlowExecution(flowExecutionId, sourceEvent);
 			selectedView = signalEventIn(flowExecution, sourceEvent);
 		}
 		flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
@@ -462,21 +463,19 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Start the flow execution
-	 * @param flowExecution the execution to start
-	 * @param sourceEvent the event that triggered execution creation
-	 * @return the selected starting view
-	 * @throws FlowExecutionException an exception occured during the execution
-	 * of the start operation
+	 * Creates or loads the flow execution to manipulate based on the value of
+	 * <code>flowExecutionId</code>.
+	 * 
+	 * @param flowExecutionId the flow execution storage identifier
+	 * @param sourceEvent the source event
+	 * @return the flow execution
 	 */
-	protected ViewSelection startFlowExecution(FlowExecution flowExecution, Event sourceEvent)
-			throws FlowExecutionException {
-		try {
-			return flowExecution.start(sourceEvent);
+	protected FlowExecution getFlowExecution(Serializable flowExecutionId, Event sourceEvent) {
+		if (flowExecutionId == null) {
+			return createFlowExecution(getFlow(sourceEvent));
 		}
-		catch (StateException e) {
-			throw new FlowExecutionException(flowExecution, "Exception occured starting execution on event '"
-					+ sourceEvent.getId() + "'", e);
+		else {
+			return loadFlowExecution(flowExecutionId, sourceEvent);
 		}
 	}
 
@@ -534,6 +533,19 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
+	 * Start the flow execution
+	 * @param flowExecution the execution to start
+	 * @param sourceEvent the event that triggered execution creation
+	 * @return the selected starting view
+	 * @throws FlowExecutionException an exception occured during the execution
+	 * of the start operation
+	 */
+	protected ViewSelection startFlowExecution(FlowExecution flowExecution, Event sourceEvent)
+			throws FlowExecutionException {
+		return flowExecution.start(sourceEvent);
+	}
+
+	/**
 	 * Load an existing FlowExecution based on data in the specified source
 	 * event.
 	 * 
@@ -567,9 +579,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * processing
 	 */
 	protected ViewSelection signalEventIn(FlowExecution flowExecution, Event sourceEvent) throws FlowExecutionException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("New request received from client, source event is: " + sourceEvent);
-		}
 		// signal the event within the current state
 		Assert.hasText(sourceEvent.getId(),
 				"No eventId could be obtained: make sure the client provides the _eventId parameter as input; "

@@ -271,7 +271,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// methods implementing FlowExecution
 
-	public synchronized ViewSelection start(Event sourceEvent) throws StateException, IllegalStateException {
+	public synchronized ViewSelection start(Event sourceEvent) throws FlowExecutionException {
 		Assert.state(!isActive(), "This flow is already executing -- you cannot call start more than once");
 		String startStateId = sourceEvent.getStateId();
 		if (!StringUtils.hasText(startStateId)) {
@@ -320,7 +320,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * state or flow level
 	 */
 	protected ViewSelection handleException(StateException e, FlowExecutionControlContext context)
-			throws StateException {
+			throws FlowExecutionException {
 		ViewSelection selectedView = e.getState().handleException(e, context);
 		if (selectedView != null) {
 			return selectedView;
@@ -329,10 +329,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		if (selectedView != null) {
 			return selectedView;
 		}
-		throw e;
+		throw new FlowExecutionException(this, "Unhandled state exception occured", e);
 	}
 
-	public synchronized ViewSelection signalEvent(Event sourceEvent) throws StateException, IllegalStateException {
+	public synchronized ViewSelection signalEvent(Event sourceEvent) throws FlowExecutionException {
 		assertActive();
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {

@@ -17,18 +17,25 @@ package org.springframework.webflow.execution;
 
 import java.io.Serializable;
 
+import org.springframework.core.NestedRuntimeException;
+
 /**
  * Exception signaling a fatal, technical problem while accessing
  * a flow execution storage.
  * 
  * @author Erwin Vervaet
  */
-public class FlowExecutionStorageException extends FlowExecutionException {
+public class FlowExecutionStorageException extends NestedRuntimeException {
 
 	/**
 	 * The flow execution storage identifier.
 	 */
 	private Serializable storageId;
+
+	/**
+	 * The execution that could not be stored.
+	 */
+	private FlowExecution flowExecution;
 
 	/**
 	 * Create a new flow execution storage exception.
@@ -40,8 +47,9 @@ public class FlowExecutionStorageException extends FlowExecutionException {
 	 */
 	public FlowExecutionStorageException(Serializable storageId,
 			FlowExecution flowExecution, String message, Throwable cause) {
-		super(flowExecution, message, cause);
+		super(message, cause);
 		this.storageId = storageId;
+		this.flowExecution = flowExecution;
 	}
 
 	/**
@@ -50,5 +58,13 @@ public class FlowExecutionStorageException extends FlowExecutionException {
 	 */
 	public Serializable getStorageId() {
 		return storageId;
+	}
+
+	/**
+	 * Returns the flow execution involved. Could be <code>null</code>.
+	 * @return the flow execution
+	 */
+	public FlowExecution getFlowExecution() {
+		return flowExecution;
 	}
 }

@@ -18,6 +18,7 @@ package org.springframework.webflow.execution;
 import org.springframework.core.NestedRuntimeException;
 
 /**
+ * Indicates a unhandled exception occured within a FlowExecution.
  * @author Keith Donald
  * @author Erwin Vervaet
  */
@@ -27,16 +28,6 @@ public class FlowExecutionException extends NestedRuntimeException {
 	 * The execution that could not be stored.
 	 */
 	private FlowExecution flowExecution;
-
-	/**
-	 * Create a new flow execution exception.
-	 * @param flowExecution the execution
-	 * @param message the message
-	 * @param cause the cause
-	 */
-	public FlowExecutionException(FlowExecution flowExecution, String message) {
-		this(flowExecution, message, null);
-	}
 
 	/**
 	 * Create a new flow execution exception.
