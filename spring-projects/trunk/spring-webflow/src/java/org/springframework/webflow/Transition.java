@@ -24,8 +24,7 @@ import org.springframework.util.Assert;
 
 /**
  * A transition takes a flow from one state to another when executed. A
- * transition is associated with exactly one source
- * <code>TransitionableState</code>.
+ * transition is associated with exactly one source <code>TransitionableState</code>.
  * <p>
  * This class provides a simple implementation of a Transition that offers the
  * following functionality:
@@ -36,7 +35,7 @@ import org.springframework.util.Assert;
  * <li>Optionally, completion of transition execution is guarded by a
  * <code>TransitionCriteria</code> object, the so called "execution criteria".
  * When the execution criteria test fails, the transition will <i>roll back</i>,
- * transitioning back into its source state. When the execution criteria test
+ * reentering its source state. When the execution criteria test
  * succeeds, the transition continues onto the target state.</li>
  * <li>The target state of the transition is specified at configuration time
  * using the target state id.</li>
@@ -106,12 +105,13 @@ public class Transition extends AnnotatedObject {
 	}
 
 	/**
-	 * Create a new annotated transition that transitions to the target state
-	 * when the provided criteria matches.
+	 * Create a new transition that transitions to the specified target state
+	 * when the provided criteria matches. Transition execution is guarded using
+	 * given execution criteria.
 	 * @param matchingCriteria strategy object used to determine if this
 	 * transition should be matched as elligible for execution
 	 * @param executionCriteria strategy for determining if a matched transition
-	 * should execute
+	 * should complete execution or roll back
 	 * @param targetStateId the id of the starget state of the transition
 	 */
 	public Transition(TransitionCriteria matchingCriteria, TransitionCriteria executionCriteria, String targetStateId) {
@@ -121,12 +121,13 @@ public class Transition extends AnnotatedObject {
 	}
 
 	/**
-	 * Create a new annotated transition that transitions to the target state
-	 * when the provided criteria matches.
+	 * Create a new transition that transitions to the target state
+	 * when the provided criteria matches. Transition execution is guarded using
+	 * given execution criteria.
 	 * @param matchingCriteria strategy object used to determine if this
 	 * transition should be matched as elligible for execution
 	 * @param executionCriteria strategy for determining if a matched transition
-	 * should execute
+	 * should complete execution or roll back
 	 * @param targetStateId the id of the starget state of the transition
 	 * @param properties additional properties describing this transition
 	 */
@@ -274,13 +275,12 @@ public class Transition extends AnnotatedObject {
 	/**
 	 * Execute this state transition. Will only be called if the
 	 * {@link #matches(RequestContext)} method returns true for given context.
-	 * @param context the flow control context
+	 * @param context the flow execution control context
 	 * @return a view selection containing model and view information needed to
 	 * render the results of the transition execution
-	 * @throws CannotExecuteTransitionException when this transition cannot be
-	 * executed because the target state is invalid
+	 * @throws StateException when transition execution fails
 	 */
-	public ViewSelection execute(FlowExecutionControlContext context) throws CannotExecuteTransitionException {
+	public ViewSelection execute(FlowExecutionControlContext context) throws StateException {
 		ViewSelection selectedView;
 		if (canExecute(context)) {
 			if (logger.isDebugEnabled()) {

@@ -276,9 +276,6 @@ public class ActionState extends TransitionableState {
 	 * @return a view selection signaling that control should be returned to the
 	 * client and a view rendered
 	 * @throws StateException if an exception occurs in this state
-	 * @throws CannotExecuteTransitionException when no action execution
-	 * resulted in a outcome event that could be mapped to a valid state
-	 * transition
 	 */
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 		int executionCount = 0;

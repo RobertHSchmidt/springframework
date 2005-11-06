@@ -25,7 +25,7 @@ import org.springframework.util.Assert;
  * this state spawns ends, the ending result is used as grounds for a state
  * transition out of this state.
  * <p>
- * A sub flow state may be configured to map input data from its flow -- acting
+ * A subflow state may be configured to map input data from its flow -- acting
  * as the parent flow -- down to the subflow when the subflow is spawned. In
  * addition, output data produced by the subflow may be mapped up to the parent
  * flow when the subflow ends and the parent flow resumes. See the
@@ -43,7 +43,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 
 	/**
 	 * Name of the property used to indicate the start state in which to start
-	 * the sub flow.
+	 * the subflow.
 	 */
 	public static final String START_STATE_PROPERTY = "startState";
 
@@ -59,10 +59,10 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	private FlowAttributeMapper attributeMapper;
 
 	/**
-	 * Create a new sub flow state.
+	 * Create a new subflow state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param subflow the sub flow to spawn
+	 * @param subflow the subflow to spawn
 	 * @param transitions the transitions of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
@@ -72,10 +72,10 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	}
 
 	/**
-	 * Create a new sub flow state.
+	 * Create a new subflow state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param subflow the sub flow to spawn
+	 * @param subflow the subflow to spawn
 	 * @param transitions the transitions of this state
 	 * @param properties additional properties describing this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
@@ -87,10 +87,10 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	}
 
 	/**
-	 * Create a new sub flow state.
+	 * Create a new subflow state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param subflow the sub flow to spawn
+	 * @param subflow the subflow to spawn
 	 * @param attributeMapper the attribute mapper to use
 	 * @param transitions the transitions of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
@@ -104,10 +104,10 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	}
 
 	/**
-	 * Create a new sub flow state.
+	 * Create a new subflow state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param subflow the sub flow to spawn
+	 * @param subflow the subflow to spawn
 	 * @param attributeMapper the attribute mapper to use
 	 * @param transitions the transitions of this state
 	 * @param properties additional properties describing this state
@@ -123,7 +123,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 
 	/**
 	 * Set the subflow that will be spawned by this state.
-	 * @param subflow the sub flow to spawn
+	 * @param subflow the subflow to spawn
 	 */
 	public void setSubflow(Flow subflow) {
 		Assert.notNull(subflow, "A subflow state must have a subflow");
@@ -131,22 +131,22 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	}
 
 	/**
-	 * Returns the sub flow spawned by this state.
+	 * Returns the subflow spawned by this state.
 	 */
 	public Flow getSubflow() {
 		return this.subflow;
 	}
 
 	/**
-	 * Set the attribute mapper to use to map model data between parent and sub
-	 * flow model. Can be null if no mapping is needed.
+	 * Set the attribute mapper to use to map model data between parent and child
+	 * subflow model. Can be null if no mapping is needed.
 	 */
 	public void setAttributeMapper(FlowAttributeMapper attributeMapper) {
 		this.attributeMapper = attributeMapper;
 	}
 
 	/**
-	 * Returns the attribute mapper used to map data between parent and sub flow
+	 * Returns the attribute mapper used to map data between parent and child subflow
 	 * model, or null if no mapping is needed.
 	 */
 	public FlowAttributeMapper getAttributeMapper() {
@@ -157,8 +157,8 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * Specialization of State's <code>doEnter</code> template method that
 	 * executes behaviour specific to this state type in polymorphic fashion.
 	 * <p>
-	 * Entering this state, creates the sub flow input map and spawns the sub
-	 * flow in the current flow execution.
+	 * Entering this state, creates the subflow input map and spawns the subflow
+	 * in the current flow execution.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
 	 * @return a view selection containing model and view information needed to
