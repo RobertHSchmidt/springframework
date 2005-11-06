@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
+import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.access.FlowLocator;
 
@@ -438,7 +439,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * the webflow system for managing all executing flows.
 	 * @param sourceEvent the external event that occured
 	 * @return the view descriptor of the model and view to render
-	 * @throws flow execution exception
+	 * @throws FlowExecutionException an exception occured during event
+	 * processing
 	 */
 	public ViewSelection onEvent(Event sourceEvent) throws FlowExecutionException {
 		if (logger.isDebugEnabled()) {
@@ -449,7 +451,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		ViewSelection selectedView;
 		if (flowExecutionId == null) {
 			flowExecution = createFlowExecution(getFlow(sourceEvent));
-			selectedView = flowExecution.start(sourceEvent);
+			selectedView = startFlowExecution(flowExecution, sourceEvent);
 		}
 		else {
 			flowExecution = loadFlowExecution(flowExecutionId, sourceEvent);
@@ -457,6 +459,25 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		}
 		flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
 		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
+	}
+
+	/**
+	 * Start the flow execution
+	 * @param flowExecution the execution to start
+	 * @param sourceEvent the event that triggered execution creation
+	 * @return the selected starting view
+	 * @throws FlowExecutionException an exception occured during the execution
+	 * of the start operation
+	 */
+	protected ViewSelection startFlowExecution(FlowExecution flowExecution, Event sourceEvent)
+			throws FlowExecutionException {
+		try {
+			return flowExecution.start(sourceEvent);
+		}
+		catch (StateException e) {
+			throw new FlowExecutionException(flowExecution, "Exception occured starting execution on event '"
+					+ sourceEvent.getId() + "'", e);
+		}
 	}
 
 	/**
@@ -518,8 +539,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * 
 	 * @param flowExecutionId the unique id of the flow execution
 	 * @param sourceEvent the source event
+	 * @throws FlowExecutionStorageException an exception occured loading the
+	 * execution from storage
 	 */
-	public FlowExecution loadFlowExecution(Serializable flowExecutionId, Event sourceEvent) {
+	public FlowExecution loadFlowExecution(Serializable flowExecutionId, Event sourceEvent)
+			throws FlowExecutionStorageException {
 		// client is participating in an existing flow execution, retrieve
 		// information about it
 		FlowExecution flowExecution = getStorage().load(flowExecutionId, sourceEvent);
@@ -536,27 +560,36 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * Signal the occurence of the specified event on an existing flow
 	 * 
 	 * @param flowExecution the existing flow
-	 * @param event the event that occured
+	 * @param sourceEvent the event that occured
 	 * @return the raw or unprepared view descriptor of the model and view to
 	 * render
+	 * @throws FlowExecutionException an exception occured during event
+	 * processing
 	 */
-	protected ViewSelection signalEventIn(FlowExecution flowExecution, Event event) {
+	protected ViewSelection signalEventIn(FlowExecution flowExecution, Event sourceEvent) throws FlowExecutionException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("New request received from client, source event is: " + event);
+			logger.debug("New request received from client, source event is: " + sourceEvent);
 		}
 		// signal the event within the current state
-		Assert.hasText(event.getId(),
+		Assert.hasText(sourceEvent.getId(),
 				"No eventId could be obtained: make sure the client provides the _eventId parameter as input; "
-						+ "the parameters provided for this request were:" + StylerUtils.style(event.getParameters()));
+						+ "the parameters provided for this request were:"
+						+ StylerUtils.style(sourceEvent.getParameters()));
 		// see if the eventId was set to a static marker placeholder because
 		// of a client configuration error
-		if (event.getId().equals(getNotSetEventIdParameterMarker())) {
+		if (sourceEvent.getId().equals(getNotSetEventIdParameterMarker())) {
 			throw new IllegalArgumentException("The received eventId was the 'not set' marker '"
 					+ getNotSetEventIdParameterMarker()
 					+ "' -- this is likely a client view (jsp, etc) configuration error --"
 					+ "the _eventId parameter must be set to a valid event");
 		}
-		return flowExecution.signalEvent(event);
+		try {
+			return flowExecution.signalEvent(sourceEvent);
+		}
+		catch (StateException e) {
+			throw new FlowExecutionException(flowExecution, "Exception occured resuming execution on event '"
+					+ sourceEvent.getId() + "'", e);
+		}
 	}
 
 	/**
@@ -565,8 +598,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param flowExecution the execution
 	 * @param sourceEvent the source event
 	 * @return the new storage id (may be different)
+	 * @throws FlowExecutionStorageException an exception occured saving the
+	 * execution to storage
 	 */
-	public Serializable saveFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent) {
+	public Serializable saveFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent)
+			throws FlowExecutionStorageException {
 		flowExecutionId = getStorage().save(flowExecutionId, flowExecution, sourceEvent);
 		flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 		if (logger.isDebugEnabled()) {
@@ -580,8 +616,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param flowExecutionId the storage id
 	 * @param flowExecution the execution
 	 * @param sourceEvent the source event
+	 * @throws FlowExecutionStorageException an exception occured removing the
+	 * execution from storage
 	 */
-	protected void removeFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent) {
+	protected void removeFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent)
+			throws FlowExecutionStorageException {
 		// event processing resulted in a previously saved flow execution
 		// ending, cleanup
 		getStorage().remove(flowExecutionId, sourceEvent);
@@ -627,8 +666,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @return the id the managed FlowExecution is stored under (may be
 	 * different if a new id was assigned, will be null if the flow execution
 	 * was removed)
+	 * @throws FlowExecutionStorageException an exception occured managing flow
+	 * execution storage
 	 */
-	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent) {
+	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent)
+			throws FlowExecutionStorageException {
 		if (flowExecution.isActive()) {
 			// save the flow execution for future use
 			flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, sourceEvent);

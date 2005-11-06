@@ -148,13 +148,12 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 		return false;
 	}
 
-	public Serializable generateId(Serializable oldId) throws UnsupportedOperationException,
-			FlowExecutionStorageException {
+	public Serializable generateId(Serializable oldId) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
 	}
 
 	public void saveWithGeneratedId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
-			throws UnsupportedOperationException, FlowExecutionStorageException {
+			throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
 	}
 }

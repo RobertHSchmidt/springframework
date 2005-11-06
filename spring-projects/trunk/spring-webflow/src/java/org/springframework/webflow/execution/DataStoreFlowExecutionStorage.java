@@ -116,7 +116,8 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	public Serializable generateId(Serializable previousId) {
 		if (previousId != null) {
 			return previousId;
-		} else {
+		}
+		else {
 			return createId();
 		}
 	}
@@ -161,15 +162,14 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	/**
 	 * Remove identified attribute value from the data store.
 	 */
-	protected void removeFlowExecution(Serializable id, Event sourceEvent) {
+	protected void removeFlowExecution(Serializable id, Event sourceEvent) throws FlowExecutionStorageException {
 		getDataStore(sourceEvent).removeAttribute(attributeName(id));
 	}
 
 	// subclassing hooks
 
 	/**
-	 * Returns an appropriate data store attribute name for the flow execution
-	 * id.
+	 * Returns the data store attribute name for the base flow execution id.
 	 */
 	protected String attributeName(Serializable id) {
 		return FlowExecution.class.getName() + "." + id;
