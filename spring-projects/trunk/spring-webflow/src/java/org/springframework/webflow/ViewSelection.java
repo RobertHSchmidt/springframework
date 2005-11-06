@@ -26,12 +26,12 @@ import org.springframework.core.style.ToStringCreator;
  * Value object that provides clients with information about a logical view to
  * render and the dynamic model data neccessary to render it. It is expected
  * that clients map this view selection to a physical view template for
- * rendering.
+ * rendering (e.g. a JSP).
  * <p>
  * View selections are returned as a result of entering a {@link ViewState} or
  * {@link EndState}, typically created by those states delegating to a
  * {@link ViewSelector} factory. When a state of either of those types is
- * entered and returns, the caller into the webflow system is handed a
+ * entered and returns, the caller into the web flow system is handed a
  * fully-configured <code>ViewSelection</code> instance and is expected to
  * present a screen to the user that allows them to interact at that point
  * within the flow.
@@ -43,8 +43,6 @@ import org.springframework.core.style.ToStringCreator;
  * @see org.springframework.webflow.ViewSelector
  * 
  * @author Keith Donald
- * @author Rod Johnson
- * @author Juergen Hoeller
  * @author Erwin Vervaet
  */
 public class ViewSelection implements AttributeSource, Serializable {
@@ -74,7 +72,7 @@ public class ViewSelection implements AttributeSource, Serializable {
 	 * Convenient constructor when there is no model data to expose. Can also be
 	 * used in conjunction with <code>addObject()</code>.
 	 * @param viewName name of the view to render
-	 * @see #addObject
+	 * @see #addObject(String, Object)
 	 */
 	public ViewSelection(String viewName) {
 		this.viewName = viewName;
@@ -148,7 +146,7 @@ public class ViewSelection implements AttributeSource, Serializable {
 	 * @param modelName name of the object to add to the model
 	 * @param modelObject object to add to the model, may not be null
 	 * @return this ViewSelection, convenient to allow usages like
-	 * <code>return viewDesc.addObject("foo", bar);</code>
+	 * <code>return viewSelection.addObject("foo", bar);</code>
 	 */
 	public ViewSelection addObject(String modelName, Object modelObject) {
 		getModel().put(modelName, modelObject);
@@ -159,7 +157,7 @@ public class ViewSelection implements AttributeSource, Serializable {
 	 * Add all entries contained in the provided map to the model.
 	 * @param modelMap a map of modelName->modelObject pairs
 	 * @return this ViewSelection, convenient to allow usages like
-	 * <code>return viewDesc.addObject("foo", bar);</code>
+	 * <code>return viewSelection.addObject("foo", bar);</code>
 	 */
 	public ViewSelection addAllObjects(Map modelMap) {
 		getModel().putAll(modelMap);
@@ -169,7 +167,7 @@ public class ViewSelection implements AttributeSource, Serializable {
 	/**
 	 * Clear the state of this view selection. The object will be empty
 	 * afterwards.
-	 * @see #isEmpty
+	 * @see #isEmpty()
 	 */
 	public void clear() {
 		this.viewName = null;
@@ -179,7 +177,7 @@ public class ViewSelection implements AttributeSource, Serializable {
 	/**
 	 * Return whether this view selection is empty: whether it does not hold any
 	 * view and does not contain a model.
-	 * @see #clear
+	 * @see #clear()
 	 */
 	public boolean isEmpty() {
 		return (this.viewName == null && this.model == null);
