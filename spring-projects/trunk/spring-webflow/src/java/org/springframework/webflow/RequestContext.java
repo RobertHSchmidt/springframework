@@ -26,7 +26,8 @@ import org.springframework.binding.AttributeSource;
  * system by an external actor to manipulate exactly one flow execution.
  * <p>
  * A new instance of this object is created when one of the operations on a
- * <code>FlowExecution</code> facade is invoked, either ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
+ * <code>FlowExecution</code> facade is invoked, either
+ * ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
  * to activate a newly created flow execution, or
  * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(Event)})
  * to signal an event in the current state of a resumed flow execution.
@@ -38,7 +39,7 @@ import org.springframework.binding.AttributeSource;
  * When a call into a flow execution returns, this object goes out of scope and
  * is disposed of automatically. Thus, this object is an internal artifact used
  * within a FlowExecution: this object is NOT directly exposed to external
- * client code.
+ * client code, e.g. a view implementation (JSP).
  * <p>
  * Note: the "requestScope" property may be used as a store for arbitrary data
  * that should exist for the life of this object.
@@ -49,11 +50,20 @@ import org.springframework.binding.AttributeSource;
  * returned when a {@link org.springframework.webflow.ViewState} or
  * {@link org.springframework.webflow.EndState} is entered.
  * <p>
+ * This interface does not allow direct manipulation of the flow execution. That
+ * is only possible via the {@link org.springframework.webflow.FlowExecutionControlContext}
+ * sub interface.
+ * <p>
+ * The web flow system will ensure that a RequestContext object is local to
+ * the current thread, so it can be safely manipulated without needing to worry about
+ * concurrent access.
+ * <p>
  * Note: the <i>request</i> context is in no way linked to an HTTP or Portlet
  * request! It uses the familiar "request" naming convention to indicate a
  * single call to manipulate a runtime execution of a flow.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
+ * @see org.springframework.webflow.FlowExecutionControlContext
  * @see org.springframework.webflow.Action
  * @see org.springframework.webflow.TransitionCriteria
  * 
@@ -105,9 +115,8 @@ public interface RequestContext {
 	 * <code>null</code> is returned.
 	 * <p>
 	 * This method allows consistent access to state result event parameters.
-	 * 
 	 * @param stateId the state id
-	 * @return the state result event
+	 * @return the state result event, possibly <code>null</code>
 	 */
 	public Event getLastResultEvent(String stateId);
 
