@@ -53,7 +53,7 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	 * Serialization id.
 	 */
 	private static final long serialVersionUID = -8075142903027393405L;
-	
+
 	/**
 	 * The scope type; e.g FLOW or REQUEST.
 	 */
@@ -75,14 +75,14 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 
 	/**
 	 * Creates a 'scoped' attribute map.
-	 * @param size the container size
+	 * @param size the initial map size
 	 * @param scopeType the scope type
 	 */
 	public Scope(int size, ScopeType scopeType) {
 		this.attributes = new HashMap(size);
 		this.scopeType = scopeType;
 	}
-	
+
 	/**
 	 * Returns this scope's scope type.
 	 */
@@ -91,26 +91,28 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	}
 
 	public boolean containsAttribute(String attributeName) {
-		return this.attributes.containsKey(attributeName);
+		return attributes.containsKey(attributeName);
 	}
 
 	/**
 	 * Does the attribute with the provided name exist in this scope, and is its
 	 * value of the specified class?
 	 * @param attributeName the attribute name
-	 * @param attributeClass the required class of the attribute value
+	 * @param requiredType the required class of the attribute value
 	 * @return true if so, false otherwise
 	 */
-	public boolean containsAttribute(String attributeName, Class attributeClass) {
-		boolean contains = this.attributes.containsKey(attributeName);
-		if (contains && attributeClass != null) {
-			contains = attributeClass.isInstance(this.attributes.get(attributeName));
+	public boolean containsAttribute(String attributeName, Class requiredType) {
+		if (containsAttribute(attributeName)) {
+			Assert.notNull(requiredType, "The required type to assert is required");
+			return requiredType.isInstance(attributes.get(attributeName));
 		}
-		return contains;
+		else {
+			return false;
+		}
 	}
 
 	public Object getAttribute(String attributeName) {
-		return this.attributes.get(attributeName);
+		return attributes.get(attributeName);
 	}
 
 	/**
@@ -118,11 +120,12 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	 * @param attributeName name of the attribute to get
 	 * @param requiredType the required type of the attribute value
 	 * @return the attribute value, or null if not found
-	 * @throws IllegalStateException when the value is not of the required type
+	 * @throws IllegalStatetException when the value is not of the required type
 	 */
 	public Object getAttribute(String attributeName, Class requiredType) throws IllegalStateException {
 		Object value = getAttribute(attributeName);
-		if (requiredType != null && value != null) {
+		if (value != null) {
+			Assert.notNull(requiredType, "The required type to assert is required");
 			Assert.isInstanceOf(requiredType, value);
 		}
 		return value;
@@ -153,10 +156,9 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	 * the required type
 	 */
 	public Object getRequiredAttribute(String attributeName, Class requiredType) throws IllegalStateException {
+		Assert.notNull(requiredType, "The required type to assert is required");
 		Object value = getRequiredAttribute(attributeName);
-		if (requiredType != null) {
-			Assert.isInstanceOf(requiredType, value);
-		}
+		Assert.isInstanceOf(requiredType, value);
 		return value;
 	}
 
@@ -198,7 +200,7 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	}
 
 	public Object setAttribute(String attributeName, Object attributeValue) {
-		return this.attributes.put(attributeName, attributeValue);
+		return attributes.put(attributeName, attributeValue);
 	}
 
 	/**
@@ -220,33 +222,33 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	 * <tt>null</tt> if there was no mapping for the name
 	 */
 	public Object removeAttribute(String attributeName) {
-		return this.attributes.remove(attributeName);
+		return attributes.remove(attributeName);
 	}
 
 	// implementing Map
 
 	public int size() {
-		return this.attributes.size();
+		return attributes.size();
 	}
 
 	public boolean isEmpty() {
-		return this.attributes.isEmpty();
+		return attributes.isEmpty();
 	}
 
 	public boolean containsKey(Object key) {
-		return this.attributes.containsKey(key);
+		return attributes.containsKey(key);
 	}
 
 	public boolean containsValue(Object value) {
-		return this.attributes.containsValue(value);
+		return attributes.containsValue(value);
 	}
 
 	public Object get(Object key) {
-		return this.attributes.get(key);
+		return attributes.get(key);
 	}
 
 	public Object put(Object key, Object value) {
-		return this.attributes.put(key, value);
+		return attributes.put(key, value);
 	}
 
 	public Object remove(Object key) {
@@ -254,23 +256,23 @@ public class Scope implements MutableAttributeSource, Map, Serializable {
 	}
 
 	public void putAll(Map t) {
-		this.attributes.putAll(t);
+		attributes.putAll(t);
 	}
 
 	public void clear() {
-		this.attributes.clear();
+		attributes.clear();
 	}
 
 	public Set keySet() {
-		return this.attributes.keySet();
+		return attributes.keySet();
 	}
 
 	public Collection values() {
-		return this.attributes.values();
+		return attributes.values();
 	}
 
 	public Set entrySet() {
-		return this.attributes.entrySet();
+		return attributes.entrySet();
 	}
 
 	public String toString() {
