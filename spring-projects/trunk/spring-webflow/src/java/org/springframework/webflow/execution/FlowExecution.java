@@ -17,6 +17,7 @@ package org.springframework.webflow.execution;
 
 import org.springframework.webflow.Event;
 import org.springframework.webflow.FlowExecutionContext;
+import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.access.FlowLocator;
 
@@ -79,10 +80,10 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @return the starting view selection, which requests that the calling
 	 * client render a view with configured model data (so the user may
 	 * participate in this flow execution)
-	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * @throws StateException if an exception was thrown within a state
 	 * of the resumed flow execution during event processing
 	 */
-	public ViewSelection start(Event sourceEvent) throws FlowExecutionException;
+	public ViewSelection start(Event sourceEvent) throws StateException;
 
 	/**
 	 * Signal an occurence of the specified event in the current state of this
@@ -93,10 +94,10 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @return the next view selection to display for this flow execution, which
 	 * requests that the calling client render a view with configured model data
 	 * (so the user may participate in this flow execution)
-	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * @throws StateException if an exception was thrown within a state
 	 * of the resumed flow execution during event processing
 	 */
-	public ViewSelection signalEvent(Event sourceEvent) throws FlowExecutionException;
+	public ViewSelection signalEvent(Event sourceEvent) throws StateException;
 
 	/**
 	 * Rehydrate this flow execution after deserialization. This is called after

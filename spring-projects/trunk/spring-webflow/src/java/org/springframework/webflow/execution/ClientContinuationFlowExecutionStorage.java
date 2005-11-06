@@ -82,11 +82,11 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 			return decode(id);
 		}
 		catch (IOException e) {
-			throw new FlowExecutionSerializationException(id, null,
+			throw new FlowExecutionSerializationException(this, id, null,
 					"IOException thrown decoding flow execution -- this should not happen!", e);
 		}
 		catch (ClassNotFoundException e) {
-			throw new FlowExecutionSerializationException(id, null,
+			throw new FlowExecutionSerializationException(this, id, null,
 					"ClassNotFoundException thrown decoding flow execution -- "
 							+ "This should not happen! Make sure there are no classloader issues."
 							+ "For example, perhaps the Web Flow system is being loaded by a classloader "
@@ -100,11 +100,11 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 			return encode(flowExecution);
 		}
 		catch (NotSerializableException e) {
-			throw new FlowExecutionSerializationException(null, flowExecution, "Could not encode flow execution:  "
-					+ "make sure all objects stored in flow scope are serializable!", e);
+			throw new FlowExecutionSerializationException(this, null, flowExecution,
+					"Could not encode flow execution--make sure all objects stored in flow scope are serializable!", e);
 		}
 		catch (IOException e) {
-			throw new FlowExecutionSerializationException(null, flowExecution,
+			throw new FlowExecutionSerializationException(this, null, flowExecution,
 					"IOException thrown encoding flow execution -- this should not happen!", e);
 		}
 	}

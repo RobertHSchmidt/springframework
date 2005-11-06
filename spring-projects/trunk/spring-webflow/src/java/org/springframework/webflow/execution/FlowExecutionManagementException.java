@@ -15,30 +15,47 @@
  */
 package org.springframework.webflow.execution;
 
+import java.io.Serializable;
+
 import org.springframework.core.NestedRuntimeException;
 
 /**
- * Indicates a unhandled exception occured within a FlowExecution.
- * @author Keith Donald
+ * Exception thrown by execution managers indicating something went wrong.
  * @author Erwin Vervaet
  */
-public class FlowExecutionException extends NestedRuntimeException {
+public class FlowExecutionManagementException extends NestedRuntimeException {
 
 	/**
-	 * The execution that could not be stored.
+	 * The flow execution identifier.
+	 */
+	private Serializable flowExecutionId;
+
+	/**
+	 * The flow execution.
 	 */
 	private FlowExecution flowExecution;
 
 	/**
-	 * Create a new flow execution exception.
-	 * @param flowExecutionId the storage id of the flow execution
-	 * @param flowExecution the execution
-	 * @param message the message
-	 * @param cause the cause
+	 * Create a new flow execution management exception.
+	 * @param storage the storage strategy involved
+	 * @param storageId the unique id of the flow execution (optional)
+	 * @param flowExecution the flow execution (optional)
+	 * @param message a descriptive message
+	 * @param cause the underlying cause of this exception
 	 */
-	public FlowExecutionException(FlowExecution flowExecution, String message, Throwable cause) {
+	public FlowExecutionManagementException(Serializable flowExecutionId, FlowExecution flowExecution, String message,
+			Throwable cause) {
 		super(message, cause);
+		this.flowExecutionId = flowExecutionId;
 		this.flowExecution = flowExecution;
+	}
+
+	/**
+	 * Returns the storage id of the flow execution.
+	 * @return the flow execution storage id
+	 */
+	public Serializable getFlowExecutionId() {
+		return flowExecutionId;
 	}
 
 	/**

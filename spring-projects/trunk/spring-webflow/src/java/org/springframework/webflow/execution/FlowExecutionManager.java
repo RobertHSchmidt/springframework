@@ -439,13 +439,10 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * the webflow system for managing all executing flows.
 	 * @param sourceEvent the external event that occured
 	 * @return the view descriptor of the model and view to render
-	 * @throws FlowExecutionException an exception occured during event
-	 * processing
-	 * @throws FlowExecutionStorageException an exception occured managing flow
-	 * execution storage
-	 * TODO better exception definition/handling...
+	 * @throws FlowExecutionManagementException an exception occured during
+	 * event processing
 	 */
-	public ViewSelection onEvent(Event sourceEvent) throws FlowExecutionException, FlowExecutionStorageException {
+	public ViewSelection onEvent(Event sourceEvent) throws FlowExecutionManagementException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("New request received from client, source event is: " + sourceEvent);
 		}
@@ -540,8 +537,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @throws FlowExecutionException an exception occured during the execution
 	 * of the start operation
 	 */
-	protected ViewSelection startFlowExecution(FlowExecution flowExecution, Event sourceEvent)
-			throws FlowExecutionException {
+	protected ViewSelection startFlowExecution(FlowExecution flowExecution, Event sourceEvent) {
 		return flowExecution.start(sourceEvent);
 	}
 
@@ -578,7 +574,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @throws FlowExecutionException an exception occured during event
 	 * processing
 	 */
-	protected ViewSelection signalEventIn(FlowExecution flowExecution, Event sourceEvent) throws FlowExecutionException {
+	protected ViewSelection signalEventIn(FlowExecution flowExecution, Event sourceEvent) {
 		// signal the event within the current state
 		Assert.hasText(sourceEvent.getId(),
 				"No eventId could be obtained: make sure the client provides the _eventId parameter as input; "
@@ -592,13 +588,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 					+ "' -- this is likely a client view (jsp, etc) configuration error --"
 					+ "the _eventId parameter must be set to a valid event");
 		}
-		try {
-			return flowExecution.signalEvent(sourceEvent);
-		}
-		catch (StateException e) {
-			throw new FlowExecutionException(flowExecution, "Exception occured resuming execution on event '"
-					+ sourceEvent.getId() + "'", e);
-		}
+		return flowExecution.signalEvent(sourceEvent);
 	}
 
 	/**

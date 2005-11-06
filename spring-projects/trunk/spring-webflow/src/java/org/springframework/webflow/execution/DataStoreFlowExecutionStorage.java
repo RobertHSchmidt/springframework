@@ -87,7 +87,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 		}
 		FlowExecution flowExecution = getFlowExecution(id, sourceEvent);
 		if (flowExecution == null) {
-			throw new NoSuchFlowExecutionException(id);
+			throw new NoSuchFlowExecutionException(this, id);
 		}
 		return flowExecution;
 	}

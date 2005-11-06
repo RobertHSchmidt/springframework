@@ -78,11 +78,11 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 			return continuation.readFlowExecution();
 		}
 		catch (IOException e) {
-			throw new FlowExecutionSerializationException(id, null,
+			throw new FlowExecutionSerializationException(this, id, null,
 					"IOException thrown loading the flow execution continuation: this should not happen!", e);
 		}
 		catch (ClassNotFoundException e) {
-			throw new FlowExecutionSerializationException(id, null,
+			throw new FlowExecutionSerializationException(this, id, null,
 					"ClassNotFoundException thrown loading the flow execution continuation:  "
 							+ "This should not happen! Make sure there are no classloader issues."
 							+ "For example, perhaps the Web Flow system is being loaded by a classloader "
@@ -100,11 +100,12 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 					new FlowExecutionContinuation(flowExecution, compress));
 		}
 		catch (NotSerializableException e) {
-			throw new FlowExecutionSerializationException(id, flowExecution, "Could not serialize flow execution '"
-					+ id + "'.  " + "Make sure all objects stored in flow scope are serializable!", e);
+			throw new FlowExecutionSerializationException(this, id, flowExecution,
+					"Could not serialize flow execution '" + id + "'.  "
+							+ "Make sure all objects stored in flow scope are serializable!", e);
 		}
 		catch (IOException e) {
-			throw new FlowExecutionSerializationException(id, flowExecution,
+			throw new FlowExecutionSerializationException(this, id, flowExecution,
 					"IOException loading the flow execution continuation -- this should not happen!", e);
 		}
 	}

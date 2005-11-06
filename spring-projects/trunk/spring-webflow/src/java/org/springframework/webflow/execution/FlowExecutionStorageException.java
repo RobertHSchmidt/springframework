@@ -17,25 +17,18 @@ package org.springframework.webflow.execution;
 
 import java.io.Serializable;
 
-import org.springframework.core.NestedRuntimeException;
-
 /**
- * Exception signaling a fatal, technical problem while accessing
- * a flow execution storage.
+ * Exception signaling a fatal, technical problem while accessing a flow
+ * execution storage.
  * 
  * @author Erwin Vervaet
  */
-public class FlowExecutionStorageException extends NestedRuntimeException {
+public class FlowExecutionStorageException extends FlowExecutionManagementException {
 
 	/**
-	 * The flow execution storage identifier.
+	 * The storage strategy.
 	 */
-	private Serializable storageId;
-
-	/**
-	 * The execution that could not be stored.
-	 */
-	private FlowExecution flowExecution;
+	private transient FlowExecutionStorage storageStrategy;
 
 	/**
 	 * Create a new flow execution storage exception.
@@ -45,11 +38,11 @@ public class FlowExecutionStorageException extends NestedRuntimeException {
 	 * @param message a descriptive message
 	 * @param cause the underlying cause of this exception
 	 */
-	public FlowExecutionStorageException(Serializable storageId,
+	public FlowExecutionStorageException(FlowExecutionStorage storageStrategy, Serializable storageId,
 			FlowExecution flowExecution, String message, Throwable cause) {
-		super(message, cause);
-		this.storageId = storageId;
-		this.flowExecution = flowExecution;
+		super(storageId, flowExecution, message, cause);
+		this.storageStrategy = storageStrategy;
+
 	}
 
 	/**
@@ -57,14 +50,14 @@ public class FlowExecutionStorageException extends NestedRuntimeException {
 	 * @return the flow execution storage id
 	 */
 	public Serializable getStorageId() {
-		return storageId;
+		return getFlowExecutionId();
 	}
 
 	/**
-	 * Returns the flow execution involved. Could be <code>null</code>.
-	 * @return the flow execution
+	 * Returns the storage strategy that was used.
+	 * @return the storage strategy
 	 */
-	public FlowExecution getFlowExecution() {
-		return flowExecution;
+	public FlowExecutionStorage getStorageStrategy() {
+		return storageStrategy;
 	}
 }
