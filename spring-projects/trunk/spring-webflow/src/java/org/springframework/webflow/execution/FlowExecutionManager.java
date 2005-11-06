@@ -448,15 +448,22 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		}
 		Serializable flowExecutionId = getFlowExecutionId(sourceEvent);
 		FlowExecution flowExecution = getFlowExecution(flowExecutionId, sourceEvent);
-		ViewSelection selectedView;
-		if (!flowExecution.isActive()) {
-			selectedView = startFlowExecution(flowExecution, sourceEvent);
+		try {
+			ViewSelection selectedView;
+			if (!flowExecution.isActive()) {
+				selectedView = startFlowExecution(flowExecution, sourceEvent);
+			}
+			else {
+				selectedView = signalEventIn(flowExecution, sourceEvent);
+			}
+			flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
+			return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 		}
-		else {
-			selectedView = signalEventIn(flowExecution, sourceEvent);
+		catch (StateException e) {
+			flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
+			throw new FlowExecutionManagementException(flowExecutionId, flowExecution,
+					"Unhandled state exception occured", e);
 		}
-		flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
-		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 	}
 
 	/**
