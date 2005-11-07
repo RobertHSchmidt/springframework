@@ -32,16 +32,16 @@ public class SimpleFormatterLocator extends AbstractFormatterLocator {
 	}
 
 	public Formatter getDateFormatter(Style style) {
-		return new DateFormatter(SimpleDateFormat.getDateInstance(style.getShortCode(), getLocale()));
+		return new DateFormatter(SimpleDateFormat.getDateInstance(style.shortValue(), getLocale()));
 	}
 
 	public Formatter getDateTimeFormatter(Style dateStyle, Style timeStyle) {
-		return new DateFormatter(SimpleDateFormat.getDateTimeInstance(dateStyle.getShortCode(), timeStyle
-				.getShortCode(), getLocale()));
+		return new DateFormatter(SimpleDateFormat.getDateTimeInstance(dateStyle.shortValue(), timeStyle.shortValue(),
+				getLocale()));
 	}
 
 	public Formatter getTimeFormatter(Style style) {
-		return new DateFormatter(SimpleDateFormat.getTimeInstance(style.getShortCode(), getLocale()));
+		return new DateFormatter(SimpleDateFormat.getTimeInstance(style.shortValue(), getLocale()));
 	}
 
 	public Formatter getNumberFormatter(Class numberClass) {

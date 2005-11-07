@@ -40,13 +40,13 @@ public class ThreadLocalFormatterLocator extends AbstractFormatterLocator {
 	private DefaultThreadLocalContext formatterStorage = new DefaultThreadLocalContext();
 
 	public ThreadLocalFormatterLocator() {
-		
+
 	}
-	
+
 	public ThreadLocalFormatterLocator(ThreadCleanupBroadcaster broadcaster) {
 		setCleanupBroadcaster(broadcaster);
 	}
-	
+
 	protected void setCleanupBroadcaster(ThreadCleanupBroadcaster broadcaster) {
 		formatterStorage.setCleanupBroadcaster(broadcaster);
 	}
@@ -64,7 +64,7 @@ public class ThreadLocalFormatterLocator extends AbstractFormatterLocator {
 		String key = DEFAULT_DATE_FORMATTER_KEY + style.getCode();
 		DateFormatter formatter = (DateFormatter)getLocaleMap().get(key);
 		if (formatter == null) {
-			formatter = new DateFormatter(SimpleDateFormat.getDateInstance(style.getShortCode(), getLocale()));
+			formatter = new DateFormatter(SimpleDateFormat.getDateInstance(style.shortValue(), getLocale()));
 			getLocaleMap().put(key, formatter);
 		}
 		return formatter;
@@ -74,8 +74,8 @@ public class ThreadLocalFormatterLocator extends AbstractFormatterLocator {
 		String key = DEFAULT_DATE_TIME_FORMATTER_KEY + dateStyle.getCode() + timeStyle.getCode();
 		DateFormatter formatter = (DateFormatter)getLocaleMap().get(key);
 		if (formatter == null) {
-			formatter = new DateFormatter(SimpleDateFormat.getDateTimeInstance(dateStyle.getShortCode(), timeStyle
-					.getShortCode(), getLocale()));
+			formatter = new DateFormatter(SimpleDateFormat.getDateTimeInstance(dateStyle.shortValue(), timeStyle
+					.shortValue(), getLocale()));
 			getLocaleMap().put(key, formatter);
 		}
 		return formatter;
@@ -85,7 +85,7 @@ public class ThreadLocalFormatterLocator extends AbstractFormatterLocator {
 		String key = DEFAULT_TIME_FORMATTER_KEY + style.getCode();
 		DateFormatter formatter = (DateFormatter)getLocaleMap().get(key);
 		if (formatter == null) {
-			formatter = new DateFormatter(SimpleDateFormat.getTimeInstance(style.getShortCode(), getLocale()));
+			formatter = new DateFormatter(SimpleDateFormat.getTimeInstance(style.shortValue(), getLocale()));
 			getLocaleMap().put(key, formatter);
 		}
 		return formatter;

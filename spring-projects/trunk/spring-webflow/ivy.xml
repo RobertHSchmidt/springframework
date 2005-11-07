@@ -20,7 +20,7 @@
 	<dependency	org="apache" name="log4j" rev="1.2.9" conf="global->default"/>
 	<dependency	org="ognl" name="ognl" rev="2.7" conf="global->default"/>
 	<dependency	org="springframework" name="spring-beans" rev="1.2.5" conf="global->default"/>
-	<dependency	org="springframework" name="spring-core" rev="1.2.5" conf="global->default"/>
+	<dependency	org="springframework" name="spring-core" rev="1.2.6-dev-20051107100820" conf="global->default"/>
 	<dependency	org="springframework" name="spring-context"	rev="1.2.5"	conf="global->default"/>
 	<dependency	org="springframework" name="spring-web"	rev="1.2.5"	conf="global->default"/>
 	<dependency	org="springframework" name="spring-mock" rev="1.2.5" conf="global->default"/>

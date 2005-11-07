@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.core.enums.ShortCodedLabeledEnum;
+import org.springframework.core.enums.StaticLabeledEnum;
 
 /**
  * Type-safe enumeration of possible flow session statuses.
@@ -25,7 +25,7 @@ import org.springframework.core.enums.ShortCodedLabeledEnum;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowSessionStatus extends ShortCodedLabeledEnum {
+public class FlowSessionStatus extends StaticLabeledEnum {
 
 	/**
 	 * Initial status of a flow session; the session has been created but not

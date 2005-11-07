@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.core.enums.ShortCodedLabeledEnum;
+import org.springframework.core.enums.StaticLabeledEnum;
 
 /**
  * Supported scope types for the web flow system.
@@ -23,7 +23,7 @@ import org.springframework.core.enums.ShortCodedLabeledEnum;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ScopeType extends ShortCodedLabeledEnum {
+public class ScopeType extends StaticLabeledEnum {
 
 	/**
 	 * Constant indicating request scope. Data in request scope lives for the life of 
