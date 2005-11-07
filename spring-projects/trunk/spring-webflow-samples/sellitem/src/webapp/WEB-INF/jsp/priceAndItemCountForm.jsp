@@ -6,10 +6,11 @@
 	<hr>
 	<table>
 		<form name="priceAndItemCountForm" method="post">
+		<spring:nestedPath path="sale">
 		<tr>
 			<td>Price:</td>
 			<td>
-				<spring:bind path="sale.price">
+				<spring:bind path="price">
 					<input type="text" name="${status.expression}" value="${status.value}">
 					<c:if test="${status.error}">
 						<div class="error">${status.errorMessage}</div>
@@ -20,7 +21,7 @@
 		<tr>
 			<td>Item count:</td>
 			<td>
-				<spring:bind path="sale.itemCount">
+				<spring:bind path="itemCount">
 					<input type="text" name="${status.expression}" value="${status.value}">
 					<c:if test="${status.error}">
 						<div class="error">${status.errorMessage}</div>
@@ -35,6 +36,7 @@
 				<input type="submit" class="button" name="_eventId_submit" value="Next">
 			</td>
 		</tr>
+		</spring:nestedPath>
 		</form>
 	</table>
 </div>

@@ -137,7 +137,7 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 	 * @param flowExecution the flow execution instance
 	 * @return the encoded representation
 	 */
-	protected String encode(FlowExecution flowExecution) throws IOException {
+	protected Serializable encode(FlowExecution flowExecution) throws IOException {
 		byte[] data = new FlowExecutionContinuation(flowExecution, isCompress()).getData(false);
 		return new String(Base64.encodeBase64(data));
 	}

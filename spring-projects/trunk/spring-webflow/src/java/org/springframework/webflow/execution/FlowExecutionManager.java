@@ -448,22 +448,23 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		}
 		Serializable flowExecutionId = getFlowExecutionId(sourceEvent);
 		FlowExecution flowExecution = getFlowExecution(flowExecutionId, sourceEvent);
+		ViewSelection selectedView;
 		try {
-			ViewSelection selectedView;
 			if (!flowExecution.isActive()) {
 				selectedView = startFlowExecution(flowExecution, sourceEvent);
 			}
 			else {
 				selectedView = signalEventIn(flowExecution, sourceEvent);
 			}
-			flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
-			return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 		}
 		catch (StateException e) {
-			flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
 			throw new FlowExecutionManagementException(flowExecutionId, flowExecution,
-					"Unhandled state exception occured", e);
+					"Unhandled state exception occured in flow execution", e);
 		}
+		finally {
+			flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
+		}
+		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 	}
 
 	/**
@@ -488,7 +489,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param sourceEvent the event
 	 * @return the obtained id or <code>null</code> if not found
 	 */
-	public String getFlowExecutionId(Event sourceEvent) {
+	public Serializable getFlowExecutionId(Event sourceEvent) {
 		return ExternalEvent.verifySingleStringInputParameter(getFlowExecutionIdParameterName(), sourceEvent
 				.getParameter(getFlowExecutionIdParameterName()));
 	}
@@ -541,10 +542,10 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param flowExecution the execution to start
 	 * @param sourceEvent the event that triggered execution creation
 	 * @return the selected starting view
-	 * @throws FlowExecutionException an exception occured during the execution
-	 * of the start operation
+	 * @throws StateException an exception occured during the execution of the
+	 * start operation
 	 */
-	protected ViewSelection startFlowExecution(FlowExecution flowExecution, Event sourceEvent) {
+	protected ViewSelection startFlowExecution(FlowExecution flowExecution, Event sourceEvent) throws StateException {
 		return flowExecution.start(sourceEvent);
 	}
 
@@ -578,10 +579,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param sourceEvent the event that occured
 	 * @return the raw or unprepared view descriptor of the model and view to
 	 * render
-	 * @throws FlowExecutionException an exception occured during event
-	 * processing
+	 * @throwsStateException an exception occured during event processing
 	 */
-	protected ViewSelection signalEventIn(FlowExecution flowExecution, Event sourceEvent) {
+	protected ViewSelection signalEventIn(FlowExecution flowExecution, Event sourceEvent) throws StateException {
 		// signal the event within the current state
 		Assert.hasText(sourceEvent.getId(),
 				"No eventId could be obtained: make sure the client provides the _eventId parameter as input; "

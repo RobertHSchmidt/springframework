@@ -258,6 +258,19 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return getActiveSessionInternal();
 	}
 
+	public boolean equals(Object o) {
+		if (!(o instanceof FlowExecutionImpl)) {
+			return false;
+		}
+		FlowExecutionImpl other = (FlowExecutionImpl)o;
+		// two executions ("conversations") are equal if their keys are equal
+		return getKey().equals(other.getKey());
+	}
+
+	public int hashCode() {
+		return getKey().hashCode();
+	}
+
 	/**
 	 * Check that this flow execution is active and throw an exception if it's
 	 * not.
@@ -541,7 +554,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		// implementation note: we cannot integrate this code into the
 		// {@link readExternal(ObjectInput)} method since we need the flow
 		// locator, listener list and tx synchronizer!
-		if (rootFlow != null) {
+		if (isHydrated()) {
 			// nothing to do, we're already hydrated
 			return;
 		}
@@ -571,15 +584,27 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
+	/**
+	 * Returns whether this flow execution is hydrated.
+	 */
+	protected boolean isHydrated() {
+		return rootFlow != null;
+	}
+
 	public String toString() {
 		if (!isActive()) {
-			return "[Inactive '" + getCaption() + "']";
+			return "[Inactive " + getCaption() + "]";
 		}
 		else {
-			return new ToStringCreator(this).append("key", getKey()).append("activeFlow",
-					getActiveSession().getFlow().getId()).append("currentState", getCurrentState().getId()).append(
-					"rootFlow", getRootFlow().getId()).append("executingFlowSessions", executingFlowSessions)
-					.toString();
+			if (isHydrated()) {
+				return new ToStringCreator(this).append("key", getKey()).append("activeFlow",
+						getActiveSession().getFlow().getId()).append("currentState", getCurrentState().getId()).append(
+						"rootFlow", getRootFlow().getId()).append("executingFlowSessions", executingFlowSessions)
+						.toString();
+			}
+			else {
+				return "[Unhydrated " + getCaption() + "]";
+			}
 		}
 	}
 }

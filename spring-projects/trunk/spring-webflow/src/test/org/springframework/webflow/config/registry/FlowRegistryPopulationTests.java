@@ -4,6 +4,9 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.config.AbstractFlowBuilder;
@@ -53,6 +56,14 @@ public class FlowRegistryPopulationTests extends TestCase {
 		registrar.registerFlowDefinitions(registry);
 		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());
 		registry.refresh();
+		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());
+	}
+	
+	public void testXmlFlowFactoryBean() {
+		GenericApplicationContext ac = new GenericApplicationContext();
+		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(ac);
+		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
+		FlowRegistry registry = (FlowRegistry)ac.getBean("flowRegistry");
 		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());
 	}
 }

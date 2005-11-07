@@ -11,10 +11,11 @@
 		<td>Item count:</td><td>${sale.itemCount}</td>
 	</tr>
 	<form name="categoryForm" method="post">
+	<spring:nestedPath path="sale">
 		<tr>
 			<td>Category:</td>
 			<td>
-				<spring:bind path="sale.category">
+				<spring:bind path="category">
 					<select name="${status.expression}">
 						<option value="" <c:if test="${status.value ==''}">selected</c:if>>
 							None (0.02 discount rate)
@@ -32,7 +33,7 @@
 		<tr>
 			<td>Is shipping required?:</td>
 			<td>
-				<spring:bind path="sale.shipping"> 
+				<spring:bind path="shipping"> 
 					<INPUT type="hidden" name="_${status.expression}"  value="visible" /> 
 					<INPUT type="checkbox" name="${status.expression}" value="true" <c:if test="${status.value}">checked</c:if>> 
 				</spring:bind>
@@ -45,6 +46,7 @@
 				<input type="submit" class="button" name="_eventId_submit" value="Next">
 			</td>
 		</tr>
+	</spring:nestedPath>
 	</form>
 	</table>
 </div>
