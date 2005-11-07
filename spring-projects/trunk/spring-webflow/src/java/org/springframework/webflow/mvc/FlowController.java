@@ -50,7 +50,7 @@ import org.springframework.webflow.execution.servlet.ServletEvent;
  *   Exposes web flows for execution at a single request URL.
  *	 The id of a flow to launch should be passed in by clients using
  *	 the "_flowId" request parameter:
- *	     e.g. /module.htm?_flowId=flow1
+ *	     e.g. /app.htm?_flowId=flow1
  * --&gt;
  * &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.mvc.FlowController&quot;&gt;
  *     &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
