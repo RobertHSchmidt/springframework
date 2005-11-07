@@ -1,9 +1,7 @@
 package org.springframework.binding.method;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,13 +32,7 @@ public class MethodInvoker {
 	 */
 	private CachingMapDecorator methodCache = new CachingMapDecorator(true) {
 		public Object create(Object key) {
-			Signature signature = (Signature)key;
-			try {
-				return signature.lookupMethod();
-			}
-			catch (NoSuchMethodException e) {
-				throw new InvalidMethodSignatureException(signature, e);
-			}
+			return ((Signature)key).getMethod();
 		}
 	};
 
@@ -58,57 +50,55 @@ public class MethodInvoker {
 	 * @param methodKey the definition of the method to invoke, including the
 	 * method name and the method argument types
 	 * @param bean the bean to invoke
-	 * @param argumentSource the source for method argument values
+	 * @param parameterValueSource the source for method parameter values
 	 * @return the invoked method's return value
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
+	 * @throws MethodInvocationException the method could not be invoked
 	 */
-	public Object invoke(MethodKey methodKey, Object bean, Object argumentSource) throws IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
-		Object[] args = new Object[methodKey.getParameters().size()];
-		Iterator it = methodKey.getParameters().iterator();
-		int i = 0;
-		while (it.hasNext()) {
-			Parameter param = (Parameter)it.next();
-			Object arg = param.getName().evaluateAgainst(argumentSource, Collections.EMPTY_MAP);
-			args[i] = applyTypeConversion(arg, param.getType());
-			i++;
+	public Object invoke(MethodKey methodKey, Object bean, Object parameterValueSource)
+			throws MethodInvocationException {
+		Parameters parameters = methodKey.getParameters();
+		Object[] parameterValues = new Object[parameters.size()];
+		for (int i = 0; i < parameters.size(); i++) {
+			Parameter parameter = (Parameter)parameters.getParameter(i);
+			Object parameterValue = parameter.getName().evaluateAgainst(parameterValueSource, Collections.EMPTY_MAP);
+			parameterValues[i] = applyTypeConversion(parameterValue, parameter.getType());
 		}
-		Class[] parameterTypes = methodKey.getParameters().getTypesArray();
+		Class[] parameterTypes = parameters.getTypesArray();
 		for (int j = 0; j < parameterTypes.length; j++) {
 			if (parameterTypes[j] == null) {
-				parameterTypes[j] = args[j].getClass();
+				parameterTypes[j] = parameterValues[j].getClass();
 			}
 		}
 		Signature signature = new Signature(bean.getClass(), methodKey.getMethodName(), parameterTypes);
-		Method method = (Method)methodCache.get(signature);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Invoking method with signature: " + signature + " with arguments: " + StylerUtils.style(args)
-					+ " on bean: " + bean);
-		}
 		try {
-			Object returnValue = method.invoke(bean, args);
+			Method method = (Method)methodCache.get(signature);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Invoked method: '" + signature.getMethodName() + "', method returned value: " + returnValue);
+				logger.debug("Invoking method with signature [" + signature + "] with arguments "
+						+ StylerUtils.style(parameterValues) + " on bean [" + bean + "]");
+
+			}
+			Object returnValue = method.invoke(bean, parameterValues);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Invoked method with signature [" + signature + "]' returned value [" + returnValue + "]");
 			}
 			return returnValue;
-		} catch (Exception e) {
-			throw new MethodInvocationException(signature, args, e);
+		}
+		catch (Exception e) {
+			throw new MethodInvocationException(signature, parameterValues, e);
 		}
 	}
 
 	/**
 	 * Apply type conversion on the event parameter if neccessary
 	 * 
-	 * @param rawArgument the raw argument value
+	 * @param parameterValue the raw argument value
 	 * @param targetType the target type for the matching method argument
 	 * @return the converted method argument
 	 */
-	protected Object applyTypeConversion(Object rawArgument, Class targetType) {
-		if (rawArgument == null || targetType == null) {
-			return rawArgument;
+	protected Object applyTypeConversion(Object parameterValue, Class targetType) {
+		if (parameterValue == null || targetType == null) {
+			return parameterValue;
 		}
-		return conversionService.getConversionExecutor(rawArgument.getClass(), targetType).execute(rawArgument);
+		return conversionService.getConversionExecutor(parameterValue.getClass(), targetType).execute(parameterValue);
 	}
 }

@@ -35,20 +35,20 @@ public class MethodKey implements Serializable {
 	/**
 	 * Creates a method key with a single argument.
 	 * @param methodName the name of the method
-	 * @param argument the method argument
+	 * @param parameter the method argument
 	 */
-	public MethodKey(String methodName, Parameter argument) {
-		this(methodName, new Parameters(argument));
+	public MethodKey(String methodName, Parameter parameter) {
+		this(methodName, new Parameters(parameter));
 	}
 
 	/**
 	 * Creates a method key with a list of arguments.
 	 * @param methodName the name of the method
-	 * @param arguments the method arguments
+	 * @param parameters the method arguments
 	 */
-	public MethodKey(String methodName, Parameters arguments) {
+	public MethodKey(String methodName, Parameters parameters) {
 		this.methodName = methodName;
-		this.parameters = arguments;
+		this.parameters = parameters;
 	}
 
 	public Parameters getParameters() {
@@ -57,16 +57,6 @@ public class MethodKey implements Serializable {
 
 	public String getMethodName() {
 		return methodName;
-	}
-
-	/**
-	 * Lookup the method for this key on the provided class.
-	 * @param clazz the class
-	 * @return the retrieved method
-	 * @throws NoSuchMethodException no such method was found
-	 */
-	public Method lookupMethod(Class clazz) throws NoSuchMethodException {
-		return clazz.getMethod(methodName, parameters.getTypesArray());
 	}
 
 	public boolean equals(Object obj) {

@@ -3,20 +3,35 @@ package org.springframework.binding.method;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.core.style.ToStringCreator;
 
 /**
- * A method signature.
+ * A class method signature.
  * 
- * @author Keith
+ * @author Keith Donald
  */
 public class Signature implements Serializable {
 
+	/**
+	 * The class the method is a member of.
+	 */
 	private Class type;
 
+	/**
+	 * The name of the method.
+	 */
 	private String methodName;
 
+	/**
+	 * The method's parameter types.
+	 */
 	private Class[] parameterTypes;
+
+	/**
+	 * A cached handle to the resolved method (may be null).
+	 */
+	private transient Method method;
 
 	/**
 	 * Create a new named argument definition.
@@ -41,8 +56,50 @@ public class Signature implements Serializable {
 		return parameterTypes;
 	}
 
-	public Method lookupMethod() throws NoSuchMethodException {
-		return type.getMethod(getMethodName(), getParameterTypes());
+	public Method getMethod() throws InvalidMethodSignatureException {
+		if (method == null) {
+			method = resolveMethod();
+		}
+		return method;
+	}
+
+	protected Method resolveMethod() throws InvalidMethodSignatureException {
+		try {
+			return type.getMethod(getMethodName(), getParameterTypes());
+		}
+		catch (NoSuchMethodException e) {
+			Method method = findMethodConsiderAssignableParameterTypes();
+			if (method != null) {
+				return method;
+			}
+			else {
+				throw new InvalidMethodSignatureException(this, e);
+			}
+		}
+	}
+
+	protected Method findMethodConsiderAssignableParameterTypes() {
+		Method[] candidateMethods = getType().getMethods();
+		for (int i = 0; i < candidateMethods.length; i++) {
+			if (candidateMethods[i].getName().equals(getMethodName())) {
+				// Check if the method has the correct number of parameters.
+				Class[] candidateParameterTypes = candidateMethods[i].getParameterTypes();
+				if (candidateParameterTypes.length == getParameterTypes().length) {
+					int numberOfCorrectArguments = 0;
+					for (int j = 0; j < candidateParameterTypes.length; j++) {
+						// Check if the candidate type is assignable to the sig
+						// parameter type.
+						if (BeanUtils.isAssignable(candidateParameterTypes[j], parameterTypes[j])) {
+							numberOfCorrectArguments++;
+						}
+					}
+					if (numberOfCorrectArguments == parameterTypes.length) {
+						return candidateMethods[i];
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	public boolean equals(Object obj) {

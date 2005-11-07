@@ -22,9 +22,8 @@ public class MethodInvocationException extends NestedRuntimeException {
 	 * @param cause the root cause
 	 */
 	public MethodInvocationException(Signature signature, Object[] arguments, Exception cause) {
-		super(
-				"Unable to invoke method of signature: " + signature + " with arguments: "
-						+ StylerUtils.style(arguments), cause);
+		super("Unable to invoke method of signature [" + signature + "] with arguments "
+				+ StylerUtils.style(arguments), cause);
 	}
 
 	/**
