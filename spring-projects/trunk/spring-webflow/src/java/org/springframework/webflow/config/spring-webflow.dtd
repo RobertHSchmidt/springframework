@@ -4,9 +4,20 @@
 	Spring Web Flow DTD
 	Authors: Erwin Vervaet, Keith Donald
 	
-	This DTD defines the web flow XML syntax. Web flows capture the page flow
-	in (part of) a web application.
+	This DTD defines the Spring Web Flow (SWF) XML syntax.
+	
+	Web flows are blueprints for executable, single-user processes
+	(or modules) of a web application.
 
+    Each "flow" element in this document defines exactly one Flow definition.
+    A flow is composed of one or more states (or steps).  States execute 
+    behavior when entered.  What behavior is executed is a function of the
+    state's type.  Core state types include view states, action states, 
+    subflow states, decision states, and end states.
+    
+    Each flow definition must specify a start state and at least one end state.
+    Events that occur in transitionable states drive state transitions.
+    
 	XML documents that conform to this DTD should declare the following doctype:
 
 	<!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
@@ -14,102 +25,142 @@
 -->
 
 <!--
-	Defines the root element for a web flow definition. Web flows
-	are composed of one or more states.
+    TODO: under consideration for PR6
+	The root document element definining one or more flow definitions.
+-->
+<!-- <!ELEMENT webflows ( webflow+ ) )> -->
+
+<!--
+	Defines a exactly one flow definition.  Flows are composed of one or more states.  Flows may 
+	be annotated with properties and may handle state exceptions.  Flows may also define one or more
+	local bean definitions that trigger the creation of flow-local services.
 -->
 <!ELEMENT webflow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, bean* )>
 
 <!--
-	Unique identifier of the web flow; should be unique to all other web flows.
+	The identifier for this flow.  This identifier should be descriptive and unique to all other flows.
 -->
 <!ATTLIST webflow id ID #REQUIRED>
 
 <!--
-	Identifies the start state of the flow: the state where flow
-	execution will begin.
+	The the start state of this flow.  The start state is the point where flow execution will begin.
 -->
 <!ATTLIST webflow start-state IDREF #REQUIRED>
 
 <!--
-	Defines an action state: a state where an action is executed.
-	Transitions triggered by the action(s) lead on to other states.
+	Defines an action state, a state where one or more Actions (command objects) are executed.
+	Transitions triggered by action result events take this flow on to another state.
 -->
 <!ELEMENT action-state ( property*, entry-action?, action+, transition+, exit-action?, exception-handler* )>
 
 <!--
-	Unique identifier of an action state; must be unique to this flow.
+	The unique identifier of this action state; must be unique to this flow.
 -->
 <!ATTLIST action-state id ID #REQUIRED>
 
 <!--
-	Defines a single action to be executed.
+	Defines a single action to be executed.  An action may be annotated with properties.  These properties 
+	can be used to effect the action's execution in this state.
 -->
 <!ELEMENT action ( property* )>
 
 <!--
-	Identifier of the action implementation exported in the configured registry, typically
+	The identifier of the action implementation exported in the configured registry, typically
 	the Spring Bean Factory. This is similar to the <ref bean="myBean"/> notation of
 	the Spring beans DTD.
 -->
 <!ATTLIST action bean CDATA #IMPLIED>
 
 <!--
-	Optional name qualifier for the action. When specified, the action will
-	qualify execution result event identifiers by this name. An action with
-	a name is often referred to as a "named action".
+	An optional name qualifier for the action. When specified, this action will
+	qualify its execution result event identifiers by this name.  For example, if this action is
+	named "processOrder" it's "success" result event id would be "processOrder.success".
+	
+	An action with a name is often referred to as a "named action".
 -->
 <!ATTLIST action name CDATA #IMPLIED>
 
 <!--
-	Name of the target method to be invoked to execute this action. The method's signature must
-	be of the form: 'public Event ${method}(RequestContext) throws Exception'
+	The name of the target method to invoke to execute this action.
+	
+	If this action extends MultiAction, the method's signature must
+	be of the form: 'public Event <method>(RequestContext) throws Exception'
+	
+	If this action is an abritrary bean (POJO), the method's signature can 
+	match any public method on the bean's implementation.  In this case the
+	method format is as follows: <method>(${arg1}, ${arg n}) where any 
+	argument expressions are evaluated against this flow's RequestContext.
 -->
 <!ATTLIST action method CDATA #IMPLIED>
 
 <!--
-	Defines a transition from one state to another. Transitions define the supported 
-	paths through the flow.
+	Defines a transition from one state to another.
+	
+	Transitions define the supported paths through the flow.
+	Transitions may be annotated with properties and may specify one or more
+	actions to execute before completion.
 -->
 <!ELEMENT transition ( property*, action* )>
 
 <!--
-	The criteria that triggers this transition, typically taking into account the
-	last event that occured in this flow. The exact interpretation of the attribute value depends
-	on the TextToTransitionCriteria converter that is installed. The most basic value is a 
-	static event id (e.g on="success"). Sophisticated, custom transitional expressions are also
-	supported (e.g on="${#result == 'submit' && flowScope.attribute == 'foo'}, or
-	on="bean:myCustomCriteria").
+	The criteria that triggers this transition's execution, typically taking into account the
+	last event that occured in this flow.
+	
+	The most basic value is a static event id.  For example:
+  	    on="success"
+	
+	Sophisticated, custom transitional expressions are also supported.  For example:
+	    on="${#result == 'submit' && flowScope.attribute == 'foo'}"
+  	    on="bean:myCustomCriteria"
+	
+	The exact interpretation of the attribute value depends on the TextToTransitionCriteria
+	converter that is installed.
 -->
 <!ATTLIST transition on CDATA #REQUIRED>
 
 <!--
-	Target state of the transition.
+	The target state of the transition.
 -->
 <!ATTLIST transition to IDREF #REQUIRED>
 
 <!--
-	Defines a view state: a state where a view will be rendered and control will be 
+	Defines a view state, a state where a view will be selected for rendering and control will be 
 	returned to the user.
-	Transitions triggered by user input from the view lead on to other states.
+	Transitions triggered by user input events take this flow on to another state.
 -->
 <!ELEMENT view-state ( property*, entry-action?, transition+, exit-action?, exception-handler* )>
 
 <!--
-	Unique identifier of a view state; must be unique to this flow.
+	The unique identifier of this view state; must be unique to this flow.
 -->
 <!ATTLIST view-state id ID #REQUIRED>
 
 <!--
-	The name of the view that is expected to render when this view state is entered.
-	When no view name is provided, this view state will act as a marker view state. A marker
-	view state does not request the rendering of a view, it only pauses the flow and returns control 
-	the client. Use a marker end state when another object is expected to generate the response.
+	The name of the view to to render when this view state is entered.
 	
-	While this value may be a static view name, it may also be qualified with a prefix to denote a
-	specific (possibly custom) ViewSelector strategy.  The "redirect:" prefix triggers creation of a
-	RedirectViewSelector which will request a redirect to a specific URL (e.g. redirect:/home.htm).
-	The "bean:" prefix will plug in the custom ViewSelector implementation with that bean id.
-	The exact semantics are defined by the installed TextToViewSelector converter.
+	This value may be a static view name or even a direct pointer to a view template.  For example:
+	    "priceForm", or "/WEB-INF/jsp/priceForm.jsp"
+	
+	This value may also be qualified with a prefix to denote a specific (possibly custom)
+	ViewSelector strategy.  Specifically:
+	
+	Use of the "redirect:" prefix triggers creation of a RedirectViewSelector which will request
+	a redirect to a specific URL.  For example:
+	    "redirect:/home.html"
+	
+	Redirect query parameters may also be specified using ${expressions} that evaluate against
+	the request context.  For example:
+	    "redirect:/thankyou.htm?confirmationNumber=${flowScope.order.confirmation.id}"
+	
+	Use of the "bean:" prefix will plug in the custom ViewSelector implementation with that bean id:
+	    "bean:myCustomViewSelector"
+
+	The exact semantics regarding the interpretation of this value are determined by the
+	installed TextToViewSelector converter.
+
+	Note when no view name is provided, this view state will act as a marker state. A marker
+	view state does not request the rendering of a view, it only pauses the flow and returns control 
+	the client. Use a marker view state when another state is expected to generate the response.
 -->
 <!ATTLIST view-state view CDATA #IMPLIED>
 
@@ -125,54 +176,61 @@
 <!ELEMENT exit-action ( action+ )>
 
 <!--
-	Defines a decision state: a state that will evaluate one or more expressions to
-	decide which state to go to next.
+	Defines a decision state, a state that will evaluate one or more expressions to
+	decide which state to go to next.  Also referred to as a "routing" state.
+	Transitions triggered by expression evaluation take this flow on to another state.
 -->
 <!ELEMENT decision-state ( property*, entry-action?, if+, exit-action?, exception-handler* )>
 
 <!--
-	Unique identifier of this decision state; must be unique to this flow.
+	The unique identifier of this decision state; must be unique to this flow.
 -->
 <!ATTLIST decision-state id ID #REQUIRED>
 
 <!--
 	A transition specification that defines a criteria expression and a state to
-	transition to if the expression is true. Optionally, this element may also 
-	define an 'else' state to transition to if the expression is false.
+	transition to if that expression is true.  Optionally, this element may also define
+	an 'else' attribute to note the state to transition to if the expression is false.
 	The form is:
- 	    <if test="${criteria}" then="trueState" else="falseState">
+	    <if test="${criteria}" then="<trueStateId>" else="<falseStateId>"/>
 -->
 <!ELEMENT if EMPTY>
 
 <!--
-	The transition criteria expression to be tested.
+	The transition criteria expression to be tested.  This should be a ${expression} that
+	evaluates against this flow's crequest context.  For example:
+	    <if test="${flowScope.sale.shipping} then="enterShippingDetails"/>
 -->
 <!ATTLIST if test CDATA #REQUIRED>
 
 <!--
-	The state to transition to if the expression is true.
+	The state to transition to if the criteria expression is true.
 -->
 <!ATTLIST if then IDREF #REQUIRED>
 
 <!--
-	The state to transition to if the expression is false (optional).
+	The state to transition to if the criteria expression is false (optional).
 -->
 <!ATTLIST if else IDREF #IMPLIED>
 
 <!--
-	Defines a sub flow state: a state that spawns a sub flow when entered. When the
-	sub flow completes execution (reaches an end state), the result of subflow execution
-	will be used as grounds for a transition out of this state.
+	Defines a sub flow state, a state that spawns a sub flow when entered.
+	Transitions triggered by subflow result events take this flow on to another state.
+	
+	While the subflow is active, this flow is suspended waiting for it complete execution.
+	When the sub flow completes execution by reaching an end state, this state is expected 
+	to respond to the result of that execution.  The result of subflow execution, the end state
+	id, should be used as grounds for a transition out of this state.
 -->
 <!ELEMENT subflow-state ( property*, entry-action?, attribute-mapper?, transition+, exit-action?, exception-handler* )>
 
 <!--
-	Unique identifier of a subflow state; must be unique to this flow.
+	The unique identifier of this subflow state; must be unique to this flow.
 -->
 <!ATTLIST subflow-state id ID #REQUIRED>
 
 <!--
-	Reference to the id of the web flow to be spawned when this subflow state is entered.
+	The id of the flow to be spawned as a subflow when this subflow state is entered.
 -->
 <!ATTLIST subflow-state flow CDATA #REQUIRED>
 
@@ -182,9 +240,12 @@
 <!ELEMENT attribute-mapper ( input*, output* )>
 
 <!--
-	Identifier of the flow attribute mapper implementation exported in the
+	The identifier of a custom flow attribute mapper implementation exported in the
 	configured registry, typically a Spring Bean Factory. This is similar
 	to the <ref bean="myBean"/> notation of the Spring beans DTD.
+	
+	Use this as an alternative to the convenient "input" and "output" element attributes 
+	when you need full control of attribute mapping behavior for this subflow state.
 -->
 <!ATTLIST attribute-mapper bean CDATA #IMPLIED>
 
@@ -194,15 +255,26 @@
 <!ELEMENT input EMPTY>
 
 <!--
-	The name of the attribute in this flow to map into the subflow.
-	Use this OR the value attribute, not both.
+	The name of a attribute in this flow to map as input into the spawning the subflow.
+	
+	If the 'as' attribute is not specified, the mapped attribute will be assigned 
+	the same name in the subflow.
+	
+	If the 'as' attribute is specified, the mapped attribute will be assigned the name specified 
+	in the subflow.
+	
+	Use this or the value attribute, not both.
 -->
 <!ATTLIST input name CDATA #IMPLIED>
 
 <!--
-	An expression for the attribute value in this flow's request context to
-	map to the subflow. When used, you will also need to specify an 'as'
-	attribute. Use this OR the name attribute, not both.
+	An attribute value expression evaluated against this flow's request context.
+	The evaluated expression value is what is mapped as input into the spawning subflow.
+	
+	Note: you must specify the 'as' attribute to assign the expression value a name as an 
+	input attribute to the subflow.
+	
+	Use this or the name attribute, not both.
 -->
 <!ATTLIST input value CDATA #IMPLIED>
 
@@ -217,33 +289,44 @@
 <!ATTLIST input as CDATA #IMPLIED>
 
 <!--
-	The type of the source attribute to map in this flow; used with the "to" attribute to perform
+	The type of the source attribute value in this flow; used with the "to" attribute to perform
 	a value type conversion during attribute mapping.
 -->
 <!ATTLIST input from CDATA #IMPLIED>
 
 <!--
-	The target type of the target attribute in the subflow; used with the "from" attribute to perform
+	The target type of the subflow attribute value; used with the "from" attribute to perform
 	a value type conversion during attribute mapping.
 -->
 <!ATTLIST input to CDATA #IMPLIED>
 
 <!--
-	A single output mapping that maps data from the subflow back up to this flow 
-	when it resumes.
+	A single output mapping that maps data from the subflow to this flow when the subflow ends and 
+	this flow resumes.
 -->
 <!ELEMENT output EMPTY>
 
 <!--
-	The name of the attribute in the subflow to map to this flow.
-	Use this OR the value attribute, not both.
+	The name of an attribute in the ending subflow to map up into this resuming flow.
+	
+	If the 'as' attribute is not specified, the mapped attribute will be assigned
+	the same name in this flow.
+	
+	If the 'as' attribute is specified, the mapped attribute will be assigned the name specified 
+	in this flow.
+	
+	Use this or the value attribute, not both.
 -->
 <!ATTLIST output name CDATA #IMPLIED>
 
 <!--
-	An expression for the attribute value in the subflow's request context to
-	map to this flow. When used, you also need to specify the 'as' attribute.
-	Use this OR the name attribute, not both.
+	An attribute value expression evaluated against the subflow's request context.
+	The evaluated expression value is what is mapped as output up to this resuming flow.
+	
+	Note: you must specify the 'as' attribute to assign the expression value a name as an 
+	attribute in this flow.
+	
+	Use this or the name attribute, not both.
 -->
 <!ATTLIST output value CDATA #IMPLIED>
 
@@ -270,33 +353,53 @@
 <!ATTLIST output to CDATA #IMPLIED>
 
 <!--
-	Defines an end state: a state that terminates the flow.
+	Defines an end state, a state that terminates this flow when entered.  There are no transitions 
+	out of an end state.  When an end-state is entered, a session of this flow is terminated.
+	
+	Every flow must define at least one end-state.  When an end state is entered, if the executing
+	flow is a "root flow" the entire execution (conversation) is terminated.  If the executing flow
+	is a "subflow" the subflow session ends and the parent session resumes.  To resume, the parent
+	session responds to the result of the subflow, typically by reasoning on the id of the 
+	end state that was reached.
 -->
 <!ELEMENT end-state ( property*, entry-action?, exception-handler* )>
 
 <!--
-	Unique identifier of an end state; must be unique to this flow.
+	The unique identifier of this end state; must be unique to this flow.
 -->
 <!ATTLIST end-state id ID #REQUIRED>
 
 <!--
-	Optional name of the view that is expected to be rendered when this state is reached 
-	when there is no parent flow to resume. When not present, this state will be a marker end state.
-	A marker end state does request the rendering of a view, it only returns control to the client.
-	Use a marker end state when another object is expected to generate the response.
+	The name of the view to to render when this end state is entered.
+	
+	This value may be a static view name or even a direct pointer to a view template.  For example:
+	    "priceForm", or "/WEB-INF/jsp/priceForm.jsp"
+	
+	This value may also be qualified with a prefix to denote a specific (possibly custom)
+	ViewSelector strategy.  Specifically:
+	
+	Use of the "redirect:" prefix triggers creation of a RedirectViewSelector which will request
+	a redirect to a specific URL.  For example:
+	    "redirect:/home.html"
+	
+	Redirect query parameters may also be specified using ${expressions} that evaluate against
+	the request context.  For example:
+	    "redirect:/thankyou.htm?confirmationNumber=${flowScope.order.confirmation.id}"
+	
+	Use of the "bean:" prefix will plug in the custom ViewSelector implementation with that bean id.
 
-	While this value may be a static view name, it may also be qualified with a prefix to denote a
-	specific (possibly custom) ViewDescriptorCreator strategy. The "class:" prefix allows you to 
-	define a custom ViewDescriptorCreator implementation (e.g class:example.MyViewDescriptorCreator).
-	The "redirect:" prefix triggers creation of a RedirectViewDescriptorCreator which will request a
-	redirect to a specific URL (e.g. redirect:/home.htm). The exact capabilities are defined by the 
-	installed TextToViewDescriptorCreator.
+	The exact semantics regarding the interpretation of this value are determined by the
+	installed TextToViewSelector converter.
+
+	Note when no view name is provided, this end state will act as a marker state. A marker
+	end state does not request the rendering of a view, it only terminates the flow and returns control 
+	the client. Use a marker end state when another state is expected to generate the response.
 -->
 <!ATTLIST end-state view CDATA #IMPLIED>
 
 <!--
-	Defines a flow exception handler to handle one or more exceptions that may occur during the
-	execution of this flow definition.
+	Defines a state exception handler to handle one or more exceptions that may occur during the
+	execution of this flow definition.  Exception handles may be attached at the state or flow level.
 -->
 <!ELEMENT exception-handler EMPTY>
 
@@ -317,11 +420,11 @@
 <!ATTLIST exception-handler bean CDATA #IMPLIED>
 
 <!--
-	Defines a single (usually named) bean associated with this webflow definition.  Typically used to
-	configure instances of services local to this webflow, like an Action, ViewSelector,
+	Defines a single (usually named) bean associated with this flow definition.  Typically used to
+	configure instances of services local to this flow, like an Action, ViewSelector,
 	TransitionCriteria,	or FlowAttributeMapper.
 	
-	A webflow bean definition may reference any other bean defined in this file, as well as 
+	A flow bean definition may reference any other bean defined in this file, as well as 
 	beans managed in the registry associated with the builder that constructed this flow.
 
 	A bean definition may contain nested tags for constructor arguments,
