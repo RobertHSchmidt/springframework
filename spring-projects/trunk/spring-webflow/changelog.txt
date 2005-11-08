@@ -2,39 +2,46 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC1 (7.11.2005)
+Changes in version PR6 (11.11.2005)
 ------------------------------------
 * Introduced JSF integration, see the "jsf" package.
-* The "Flow" class now encapsulates FlowExecution start, resume, pause, end, and handleException behavior
-* Flows may now be annotated as "transactional" for automatic creation of a synchronized application transaction
-  to prevent duplicate submits (even with continuations!)
-* Flows may now be configured with a set of one or more FlowExeceptionHandler objects, for responding to 
-  exceptions that occur during flow execution.  
-* Added the FlowRegistry subsystem in webflow.config, for registering groups of refreshable Flow definitions.
-  With this addition, Xml Flow definitions may now be refreshed from their registries at runtime by using a
+* Added FlowExecution start, resume, pause, end, and handleException behavior to the Flow class.
+* Added state exception handling support at the State level.  States may now be configured with a set of
+  one or more StateExeceptionHandler objects, for responding to exceptions that occur within the state of a flow execution.
+* Added state exception handling support at the Flow level.  Flows may now be configured with a set of
+  one or more StateExeceptionHandler objects, for responding to exceptions that occur within a state but are not handled by that state.
+* Added a FlowExecutionManagement exception hierarchy, for reporting unhandled exceptions that occur during the management
+  of a flow execution.
+* Added the FlowRegistry subsystem in webflow.config.registry, for registering groups of refreshable Flow definitions.
+  With this addition, XML flow definitions may now be refreshed from their registries at runtime by using a
   JMX client like Sun's jConsole that ships standard with JDK 1.5.
-* Added refreshable FlowRegistryImpl, for managing a reloadable registry of Flow definitions
+* Added a refreshable FlowRegistryImpl, for managing a reloadable registry of flow definitions
   registered by an XmlFlowRegistrar or custom FlowRegistrar.  See XmlFlowRegistryFactoryBean
-  as a convenient mechanism for populating a FlowRegistry using a Spring bean definition.
+  as a convenient mechanism for populating a FlowRegistry using a standard Spring bean definition.
+* Added support for invoking strongly typed action execution methods on arbitrary beans (POJOs):
+  SWF is now capable of invoking an abitrary method like 'search(SearchCriteria critera)', when used in
+  combination with a "bean invoking action" as an alternative to implementing the
+  'execute(RequestContext context)' Action interface.  See the Phonebook sample app for an example.
+* Added BeanFactoryBeanInvokingAction, an action that can invoke any instance method on any bean managed by the Spring bean factory.
+* Added LocalBeanInvokingAction, an action that can invoke any instance method on any bean.
+* Added support for a "transactional" boolean flow property, that when 'true' triggers automatic creation
+  synchronized application transaction tokens that prevent duplicate submits (even with continuations!)
 * Added support for accessing session and application scope variables as properties of a source ExternalEvent.
-* Added resuming and sessionEnding FlowExecutionListener callbacks.
-* Added KeyGenerator strategy, providing a plugin point for custom FlowExecution key generation strategies.
+* Added a sessionEnding FlowExecutionListener callback.
+* Added a KeyGenerator strategy, providing a plugin point for custom FlowExecution key generation strategies.
 * Added "CompositeEvent" support for composite actions that may generate multiple action result events.
-* Added ExternalEvent "sessionMap" and "applicationMap" property for accessing session and application scoped 
+* Added ExternalEvent "sessionMap" and "applicationMap" properties for accessing session and application scoped 
   variables associated with a source event.
 * Added model support for "state result events", where the parameters of events that drive a state transition can be
-  accessed from views by referencing in the format: ${stateId.parameterName}
-* Added "requireValidatorMethod" property to FormAction, useful for piecemeal validation as part of a wizard flow
+  accessed from views by referencing in the format ${stateId.parameterName}
+* Added "requireValidatorMethod" property to FormAction, useful for supporting piecemeal validation as part of a wizard flow.
 * Added ActionUtils utility class, useful when implementing actions.
 * Added support for webflow definition scoped bean definitions, centralizing all flow definition code in one place.
 * Added AbstractFlowBuilder addDecisionState(...) methods for completeness.
 * Added a convenience constructor to the Event class that takes a single parameter name/value. Mainly for use in unit tests.
+* Added a convenience constructor to the FormAction class that takes the formObjectClass name.
+* Added logic in FormAction to automatically calculate a camelcase formObjectName from the formObjectClass if the name is not set.
 * Added StatefulActionProxy, an action that delegates to a stateful action managed in flow scope.
-* Added BeanFactoryBeanInvokingAction, an action that can invoke any instance method on any bean managed by the Spring bean factory.
-* Added LocalBeanInvokingAction, an action that can invoke any instance method on any bean.
-* Added support for invoking strongly typed action execution methods on arbitrary beans:
-  e.g execute(String arg1, int arg2), for use in combination with a "bean invoking action" as an alternative to
-  implementing the 'execute(RequestContext context)' Action interface.  See the Phonebook sample app for an example.
 * Added convenience methods for retrieving action execution properties to the AbstractAction class.
 * Refactored out DataSourceAccessor strategy interface from FlowExecutionStorage implementations - this change resulted in
   some minor package moves and class renames in the webflow.execution package.
