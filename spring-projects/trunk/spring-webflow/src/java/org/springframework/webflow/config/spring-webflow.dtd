@@ -7,7 +7,7 @@
 	This DTD defines the Spring Web Flow (SWF) XML syntax.
 	
 	Web flows are blueprints for executable, single-user processes
-	(or modules) of a web application.
+	(or conversations) of a web application.
 
     Each "flow" element in this document defines exactly one Flow definition.
     A flow is composed of one or more states (or steps).  States execute 
@@ -31,25 +31,26 @@
 <!-- <!ELEMENT webflows ( webflow+ ) )> -->
 
 <!--
-	Defines a exactly one flow definition.  Flows are composed of one or more states.  Flows may 
-	be annotated with properties and may handle state exceptions.  Flows may also define one or more
-	local bean definitions that trigger the creation of flow-local services.
+	Defines a exactly one flow definition.  A flow is composed of one or more states.  A flow may
+	be annotated with properties and may be configured to handle state exceptions.  A flow may also
+	define one or more local bean definitions defining custom related services.
 -->
 <!ELEMENT webflow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, bean* )>
 
 <!--
-	The identifier for this flow.  This identifier should be descriptive and unique to all other flows.
+	The identifier for this flow; this identifier should be descriptive and unique to all other flows.
 -->
 <!ATTLIST webflow id ID #REQUIRED>
 
 <!--
-	The the start state of this flow.  The start state is the point where flow execution will begin.
+	The the start state of this flow; the start state is the point where flow execution will begin.
 -->
 <!ATTLIST webflow start-state IDREF #REQUIRED>
 
 <!--
 	Defines an action state, a state where one or more Actions (command objects) are executed.
-	Transitions triggered by action result events take this flow on to another state.
+	An action state is a transitionable state.  An action state transition is triggered by an
+	action result event.
 -->
 <!ELEMENT action-state ( property*, entry-action?, action+, transition+, exit-action?, exception-handler* )>
 
@@ -59,29 +60,32 @@
 <!ATTLIST action-state id ID #REQUIRED>
 
 <!--
-	Defines a single action to be executed.  An action may be annotated with properties.  These properties 
-	can be used to effect the action's execution in this state.
+	Defines a single action to be executed in this state.  An action is a command that executes
+	arbitrary state behavior.  An action may be annotated with properties.  These properties can be
+	used to effect the action's	execution in this state.
 -->
 <!ELEMENT action ( property* )>
 
 <!--
-	The identifier of the action implementation exported in the configured registry, typically
-	the Spring Bean Factory. This is similar to the <ref bean="myBean"/> notation of
-	the Spring beans DTD.
+	The logical identifier of the action implementation to execute, typically a index into
+	a service registry like a Spring Bean Factory.  This is similar to the <ref bean="myBean"/>
+	notation of	the Spring beans DTD.
 -->
 <!ATTLIST action bean CDATA #IMPLIED>
 
 <!--
-	An optional name qualifier for the action. When specified, this action will
-	qualify its execution result event identifiers by this name.  For example, if this action is
-	named "processOrder" it's "success" result event id would be "processOrder.success".
+	An optional name qualifier for this action. When specified this action will
+	qualify execution result event ids by this name.  For example, if this action is
+	named "processOrder" and signals a "success" result event after execution, the
+	fully qualified result event the flow can respond to would be "processOrder.success".
 	
 	An action with a name is often referred to as a "named action".
 -->
 <!ATTLIST action name CDATA #IMPLIED>
 
 <!--
-	The name of the target method to invoke to execute this action.
+	The name of the target method to invoke to execute this action, allowing for
+	action method binding.
 	
 	If this action extends MultiAction, the method's signature must
 	be of the form: 'public Event <method>(RequestContext) throws Exception'
@@ -103,15 +107,16 @@
 <!--
 	Defines a transition from one state to another.
 	
-	Transitions define the supported paths through the flow.
-	Transitions may be annotated with properties and may specify one or more
-	actions to execute before completion.
+	A transitions defines a supported paths through the flow.
+	A transitions may be annotated with properties and may specify one or more
+	actions to execute before executing.
 -->
 <!ELEMENT transition ( property*, action* )>
 
 <!--
-	The criteria that triggers this transition's execution, typically taking into account the
-	last event that occured in an execution of this flow.
+	The criteria that matches this transition's execution, typically reasoning on the
+	last event that occured in an execution of this flow to determine if this transition 
+	should execute.
 	
 	The most basic value is a static event id.  For example:
   	    on="success"
@@ -126,14 +131,16 @@
 <!ATTLIST transition on CDATA #REQUIRED>
 
 <!--
-	The target state of the transition.
+	The target state of this transition.
 -->
 <!ATTLIST transition to IDREF #REQUIRED>
 
 <!--
 	Defines a view state, a state where a view will be selected for rendering and control will be 
 	returned to the user.
-	Transitions triggered by user input events take this flow on to another state.
+
+	A view state is a transitionable state.  A view state transition is triggered by an
+	user input event.
 -->
 <!ELEMENT view-state ( property*, entry-action?, transition+, exit-action?, exception-handler* )>
 
@@ -183,9 +190,11 @@
 <!ELEMENT exit-action ( action+ )>
 
 <!--
-	Defines a decision state, a state that will evaluate one or more expressions to
-	decide which state to go to next.  Also referred to as a "routing" state.
-	Transitions triggered by expression evaluation take this flow on to another state.
+	Defines a decision state, a state that evaluates one or more expressions to	decide which
+	state to go to next.  Also referred to as a "routing" state.
+	
+	A decision state is a transitionable state.  A decision state transition is triggered by an
+	boolean expression evaluating true against the flow execution request context.
 -->
 <!ELEMENT decision-state ( property*, entry-action?, if+, exit-action?, exception-handler* )>
 
@@ -222,12 +231,14 @@
 
 <!--
 	Defines a sub flow state, a state that spawns a sub flow when entered.
-	Transitions triggered by subflow result events take this flow on to another state.
+
+	A subflow state is a transitionable state.  A subflow state transition is triggered by a 
+	subflow result event, typically by reasoning on the id of the subflow end state that was reached.
 	
-	While the subflow is active, this flow is suspended waiting for it complete execution.
+	While the subflow is active, this flow is suspended waiting for the subflow to complete execution.
 	When the sub flow completes execution by reaching an end state, this state is expected 
-	to respond to the result of that execution.  The result of subflow execution, the end state
-	id, should be used as grounds for a transition out of this state.
+	to respond to the result of that execution.  The result of subflow execution, the end state 
+	that was reached, should be used as grounds for a transition out of this state.
 -->
 <!ELEMENT subflow-state ( property*, entry-action?, attribute-mapper?, transition+, exit-action?, exception-handler* )>
 
@@ -263,10 +274,10 @@
 
 <!--
 	The name of a attribute in this flow to map as input into the spawning the subflow.
-	
+
 	If the 'as' attribute is not specified, the mapped attribute will be assigned 
 	the same name in the subflow.
-	
+
 	If the 'as' attribute is specified, the mapped attribute will be assigned the name specified 
 	in the subflow.
 	
@@ -275,11 +286,11 @@
 <!ATTLIST input name CDATA #IMPLIED>
 
 <!--
-	An attribute value expression evaluated against this flow's request context.
-	The evaluated expression value is what is mapped as input into the spawning subflow.
+	A value expression evaluated against this flow's request context.
+	The evaluated expression value is what is mapped as an input attribute into the spawning subflow.
 	
-	Note: you must specify the 'as' attribute to assign the expression value a name as an 
-	input attribute to the subflow.
+	Note: you must specify the 'as' attribute to assign the expression value an attribute name 
+	in the subflow.
 	
 	Use this or the name attribute, not both.
 -->
@@ -327,11 +338,11 @@
 <!ATTLIST output name CDATA #IMPLIED>
 
 <!--
-	An attribute value expression evaluated against the subflow's request context.
+	A value expression evaluated against the subflow's request context.
 	The evaluated expression value is what is mapped as output up to this resuming flow.
 	
-	Note: you must specify the 'as' attribute to assign the expression value a name as an 
-	attribute in this flow.
+	Note: you must specify the 'as' attribute to assign the expression value a attribute name 
+	in this flow.
 	
 	Use this or the name attribute, not both.
 -->
@@ -360,8 +371,10 @@
 <!ATTLIST output to CDATA #IMPLIED>
 
 <!--
-	Defines an end state, a state that terminates this flow when entered.  There are no transitions 
-	out of an end state.  When an end-state is entered, a session of this flow is terminated.
+	Defines an end state, a state that terminates this flow when entered.
+	
+	A end state is not transitionable, there are no transitions out of an end state.
+	When an end-state is entered, a instance of this flow is terminated.
 	
 	Every flow must define at least one end-state.  When an end state is entered, if the executing
 	flow is a "root flow" the entire execution (conversation) is terminated.  If the executing flow
