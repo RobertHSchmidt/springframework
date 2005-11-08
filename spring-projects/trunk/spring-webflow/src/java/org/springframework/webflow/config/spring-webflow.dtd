@@ -85,11 +85,18 @@
 	
 	If this action extends MultiAction, the method's signature must
 	be of the form: 'public Event <method>(RequestContext) throws Exception'
-	
+
+    For example:
+        method="setupForm"
+        	
 	If this action is an abritrary bean (POJO), the method's signature can 
 	match any public method on the bean's implementation.  In this case the
 	method format is as follows: <method>(${arg1}, ${arg n}) where any 
-	argument expressions are evaluated against this flow's RequestContext.
+	${argument expression}s are evaluated against this flow's RequestContext.
+
+	For example:
+        method="processOrder(${flowScope.order})"	
+	
 -->
 <!ATTLIST action method CDATA #IMPLIED>
 
