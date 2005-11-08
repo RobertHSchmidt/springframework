@@ -66,7 +66,7 @@ Changes in version PR6 (11.11.2005)
 * Renamed ViewDescriptor and ViewDescriptorCreator to ViewSelection and ViewSelector, respectively: for clarity and consistency with lexicon.
 * Removed DelegatingAction in favor of StatefulActionProxy and bean invoking actions.
 * Small improvements in MockRequestContext to make it easier to use.
-* Added several unit tests.
+* Added many unit tests, total test coverage is nearing 70%.
 * JavaDoc polishing.
 
 Changes in version PR5 (28.7.2005)
