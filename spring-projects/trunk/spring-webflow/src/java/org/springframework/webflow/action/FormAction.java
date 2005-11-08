@@ -20,6 +20,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.binding.format.support.LabeledEnumFormatter;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.DataBinder;
@@ -94,19 +95,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *    &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *        &lt;entry&gt;
- *            &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *        &lt;/entry&gt;
- *        &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *            &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *        &lt;/transition&gt;
- *    &lt;/view-state&gt;
- *   
- *    &lt;action-state id=&quot;executeSearch&quot;&gt;
- *        &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *        &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *    &lt;/action-state&gt;
+ *       &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *           &lt;entry&gt;
+ *               &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *           &lt;/entry&gt;
+ *           &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *               &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *           &lt;/transition&gt;
+ *       &lt;/view-state&gt;
+ *      
+ *       &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *           &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *           &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *       &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -294,6 +295,24 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	private boolean requireValidatorMethod;
 
 	/**
+	 * Creates a initially unconfigured FormAction instance relying on default
+	 * property values.
+	 */
+	public FormAction() {
+
+	}
+
+	/**
+	 * Creates a new form action that manages instance(s) of the specified form
+	 * object class.
+	 * @param formObjectClass the class of the form object (must be
+	 * instantiable)
+	 */
+	public FormAction(Class formObjectClass) {
+		setFormObjectClass(formObjectClass);
+	}
+
+	/**
 	 * Return the name of the form object in the configured scope.
 	 */
 	public String getFormObjectName() {
@@ -321,6 +340,9 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	public void setFormObjectClass(Class formObjectClass) {
 		this.formObjectClass = formObjectClass;
+		if (formObjectName == null && formObjectClass != null) {
+			formObjectName = ClassUtils.getShortNameAsProperty(formObjectClass);
+		}
 	}
 
 	/**
