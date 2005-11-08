@@ -104,7 +104,7 @@
 
 <!--
 	The criteria that triggers this transition's execution, typically taking into account the
-	last event that occured in this flow.
+	last event that occured in an execution of this flow.
 	
 	The most basic value is a static event id.  For example:
   	    on="success"
