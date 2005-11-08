@@ -45,7 +45,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());
 	}
 	
-	public void testXmlPopulation() {
+	public void testXmlPopulationWithRecursion() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
 		File parent = new File("src/test/org/springframework/webflow/config/registry");
 		Resource[] locations = new Resource[] {
