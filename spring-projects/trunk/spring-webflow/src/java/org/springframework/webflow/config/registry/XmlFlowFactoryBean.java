@@ -44,7 +44,7 @@ public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAw
 	 * Creates a new XML flow factory bean.
 	 */
 	public XmlFlowFactoryBean() {
-		this(new DescriptiveResource("none"));
+		this(new DescriptiveResource("No 'location' property set"));
 	}
 
 	/**

@@ -93,6 +93,9 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		return flow.getId();
 	}
 	
+	/**
+	 * Initialize the flow definition if it has not yet been initialized.
+	 */
 	protected void initFlowIfNecessary() {
 		if (flow == null) {
 			flow = flowBuilder.init();
@@ -110,6 +113,7 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	}
 
 	public synchronized void refresh() {
+		// force re-initialization
 		flow = flowBuilder.init();
 		assembleFlow();
 	}

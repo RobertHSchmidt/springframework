@@ -26,11 +26,11 @@ import org.springframework.webflow.config.FlowBuilder;
  * Usage example:
  * 
  * <pre>
- *    &lt;bean id=&quot;myFlow&quot; class=&quot;org.springframework.webflow.config.registry.FlowFactoryBean&quot;&gt;
- *        &lt;constructor-arg&gt;
- *            &lt;bean class=&quot;example.MyFlowBuilder&quot;/&gt;
- *        &lt;/constructor-arg&gt;
- *    &lt;/bean&gt;
+ *     &lt;bean id=&quot;myFlow&quot; class=&quot;org.springframework.webflow.config.registry.FlowFactoryBean&quot;&gt;
+ *         &lt;constructor-arg&gt;
+ *             &lt;bean class=&quot;example.MyFlowBuilder&quot;/&gt;
+ *         &lt;/constructor-arg&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
  * @author Keith Donald
@@ -38,6 +38,9 @@ import org.springframework.webflow.config.FlowBuilder;
  */
 public class FlowFactoryBean implements FactoryBean {
 
+	/**
+	 * The assembler this factory bean will delegate to for flow construction.
+	 */
 	private FlowAssembler flowAssembler;
 
 	/**
@@ -48,12 +51,11 @@ public class FlowFactoryBean implements FactoryBean {
 		flowAssembler = new FlowAssembler(flowBuilder);
 	}
 
+	/**
+	 * Returns the flow builder used by this factory bean.
+	 */
 	protected FlowBuilder getFlowBuilder() {
 		return flowAssembler.getFlowBuilder();
-	}
-
-	public Object getObject() throws Exception {
-		return getFlow();
 	}
 
 	public Class getObjectType() {
@@ -64,6 +66,13 @@ public class FlowFactoryBean implements FactoryBean {
 		return true;
 	}
 
+	public Object getObject() throws Exception {
+		return getFlow();
+	}
+
+	/**
+	 * Returns the fully assembled flow.
+	 */
 	protected Flow getFlow() {
 		return flowAssembler.getFlow();
 	}
