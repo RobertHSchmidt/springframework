@@ -18,6 +18,7 @@ package org.springframework.webflow.config.registry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.core.io.DescriptiveResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
 import org.springframework.webflow.config.XmlFlowBuilder;
@@ -29,9 +30,9 @@ import org.springframework.webflow.config.XmlFlowBuilder;
  * Usage example:
  * 
  * <pre>
- * &lt;bean id=&quot;myFlow&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowFactoryBean&quot;&gt;
- *     &lt;constructor-arg value=&quot;classpath:example/myflow.xml&quot;/&gt;
- * &lt;/bean&gt;
+ *    &lt;bean id=&quot;myFlow&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowFactoryBean&quot;&gt;
+ *        &lt;constructor-arg value=&quot;classpath:example/myflow.xml&quot;/&gt;
+ *    &lt;/bean&gt;
  * </pre>
  * 
  * @author Keith Donald
@@ -41,7 +42,14 @@ public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAw
 
 	/**
 	 * Creates a new XML flow factory bean.
-	 * @param location the XML resource location
+	 */
+	public XmlFlowFactoryBean() {
+		this(new DescriptiveResource("none"));
+	}
+
+	/**
+	 * Creates a new XML flow factory bean.
+	 * @param location the location of the xml resource.
 	 */
 	public XmlFlowFactoryBean(Resource location) {
 		super(new XmlFlowBuilder(location));
@@ -52,6 +60,14 @@ public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAw
 	 */
 	protected XmlFlowBuilder getXmlFlowBuilder() {
 		return (XmlFlowBuilder)getFlowBuilder();
+	}
+
+	/**
+	 * Set the location of the xml flow definition resource.
+	 * @param location the flow definition resource
+	 */
+	public void setLocation(Resource location) {
+		getXmlFlowBuilder().setLocation(location);
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {

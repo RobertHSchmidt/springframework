@@ -14,5 +14,9 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="flow1" class="org.springframework.webflow.config.registry.XmlFlowFactoryBean">
+		<property name="location" value="classpath:org/springframework/webflow/config/registry/flow1.xml"/>
+	</bean>
 
 </beans>

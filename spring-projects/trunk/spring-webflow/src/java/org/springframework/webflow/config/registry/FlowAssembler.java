@@ -65,7 +65,6 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	 */
 	public FlowAssembler(FlowBuilder flowBuilder) {
 		setFlowBuilder(flowBuilder);
-		flow = flowBuilder.init();
 	}
 
 	/**
@@ -88,7 +87,16 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	}
 
 	public String getId() {
+		synchronized (this) {
+			initFlowIfNecessary();
+		}
 		return flow.getId();
+	}
+	
+	protected void initFlowIfNecessary() {
+		if (flow == null) {
+			flow = flowBuilder.init();
+		}
 	}
 
 	/**
@@ -96,6 +104,7 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	 */
 	public synchronized Flow getFlow() {
 		if (!assembled) {
+			initFlowIfNecessary();
 			// set the assembled flag before building states to avoid infinite
 			// loops! This would happen, for example, where Flow A spawns Flow B
 			// as a subflow which spawns Flow A again (recursively)...
@@ -112,5 +121,8 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		flowBuilder.buildStates();
 		flow = flowBuilder.getResult();
 		flowBuilder.dispose();
+		if (!assembled) {
+			assembled = true;
+		}
 	}
 }

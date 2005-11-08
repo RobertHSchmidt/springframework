@@ -9,6 +9,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.FlowArtifactLocator;
 import org.springframework.webflow.config.FlowArtifactLocatorAdapter;
@@ -59,11 +60,20 @@ public class FlowRegistryPopulationTests extends TestCase {
 		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());
 	}
 	
-	public void testXmlFlowFactoryBean() {
+	public void testXmlFlowRegistryFactoryBean() {
 		GenericApplicationContext ac = new GenericApplicationContext();
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(ac);
 		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
 		FlowRegistry registry = (FlowRegistry)ac.getBean("flowRegistry");
 		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());
 	}
+
+	public void testXmlFlowFactoryBean() {
+		GenericApplicationContext ac = new GenericApplicationContext();
+		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(ac);
+		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
+		Flow flow1 = (Flow)ac.getBean("flow1");
+		assertEquals("Wrong flow id", "flow1", flow1.getId());
+	}
+
 }
