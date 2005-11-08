@@ -32,7 +32,8 @@ import org.springframework.webflow.config.FlowBuilder;
  * 			       public void buildStates() throws FlowBuilderException {
  * 				       // add states here
  * 			       }
- * 		       };
+ * 		       }
+ *         };
  * 	       new FlowRegistrarImpl(builders).registerFlowDefinitions(registry);
  *     }
  * }
