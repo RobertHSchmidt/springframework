@@ -23,7 +23,7 @@ import org.springframework.webflow.config.ParameterizableFlowAttributeMapper;
 
 /**
  * Java-based flow builder that builds the person details flow, exactly like it
- * is defined in the "detail-flow.xml" XML flow definition.
+ * is defined in the <code>detail.xml</code> XML flow definition.
  * <p>
  * This encapsulates the page flow of viewing a person's details and their
  * collegues in a reusable, self-contained module.
@@ -44,7 +44,7 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
-		addActionState(GET_PERSON, method("getPerson(id)", action("phoneBook")), on(success(), DISPLAY_DETAILS));
+		addActionState(GET_PERSON, method("getPerson(${flowScope.id})", action("phonebook")), on(success(), DISPLAY_DETAILS));
 
 		// view the person details
 		addViewState(DISPLAY_DETAILS, "details", new Transition[] { on(back(), "finish"),

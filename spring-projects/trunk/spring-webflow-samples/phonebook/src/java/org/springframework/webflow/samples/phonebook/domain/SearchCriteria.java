@@ -15,20 +15,27 @@
  */
 package org.springframework.webflow.samples.phonebook.domain;
 
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
+import java.io.Serializable;
 
-public class PhoneBookSearchCriteriaValidator implements Validator {
+public class SearchCriteria implements Serializable {
 
-	public boolean supports(Class clazz) {
-		return clazz.equals(PhoneBookSearchCriteria.class);
+	private String firstName = "";
+
+	private String lastName = "";
+
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void validate(Object obj, Errors errors) {
-		PhoneBookSearchCriteria query = (PhoneBookSearchCriteria)obj;
-		if ((query.getFirstName() == null || query.getFirstName().length() == 0)
-				&& (query.getLastName() == null || query.getLastName().length() == 0)) {
-			errors.reject("noCriteria", "Please provide some query criteria!");
-		}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 }

@@ -16,16 +16,20 @@
 package org.springframework.webflow.samples.phonebook.web;
 
 import org.springframework.binding.support.Mapping;
+import org.springframework.webflow.Action;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.action.FormAction;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.ParameterizableFlowAttributeMapper;
+import org.springframework.webflow.samples.phonebook.domain.SearchCriteria;
+import org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValidator;
 
 /**
  * Java-based flow builder that searches for people in the phonebook. The flow
  * defined by this class is exactly the same as that defined in the
- * "search-flow.xml" XML flow definition.
+ * <code>search.xml</code> XML flow definition.
  * <p>
  * This encapsulates the page flow of searching for some people, selecting a
  * person you care about, and viewing their person's details and those of their
@@ -49,12 +53,13 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
+		Action searchFormAction = createSearchFormAction();
 		ViewState displayCriteria = addViewState(DISPLAY_CRITERIA, "searchCriteria", on("search", EXECUTE_SEARCH,
-				beforeExecute(method("bindAndValidate", action("searchFormAction")))));
-		displayCriteria.setEntryAction(method("setupForm", action("searchFormAction")));
+				beforeExecute(method("bindAndValidate", searchFormAction))));
+		displayCriteria.setEntryAction(method("setupForm", searchFormAction));
 
 		// execute query
-		addActionState(EXECUTE_SEARCH, method("search(${searchCriteria})", action("phoneBook")), new Transition[] {
+		addActionState(EXECUTE_SEARCH, method("search(${flowScope.searchCriteria})", action("phonebook")), new Transition[] {
 				on(error(), DISPLAY_CRITERIA), on(success(), DISPLAY_RESULTS) });
 
 		// view results
@@ -69,5 +74,11 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 		// end - an error occured
 		addEndState(error(), "error");
+	}
+	
+	protected FormAction createSearchFormAction() {
+		FormAction action = new FormAction(SearchCriteria.class);
+		action.setValidator(new SearchCriteriaValidator());
+		return action;
 	}
 }
