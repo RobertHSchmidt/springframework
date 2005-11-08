@@ -52,9 +52,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 				new FileSystemResource(new File(parent, "flow1.xml")),
 				new FileSystemResource(new File(parent, "flow2.xml"))
 		};
-		XmlFlowRegistrar registrar = new XmlFlowRegistrar(new FlowArtifactLocatorAdapter());
-		registrar.setDefinitionLocations(locations);
-		registrar.registerFlowDefinitions(registry);
+		new XmlFlowRegistrar(new FlowArtifactLocatorAdapter(registry), locations).registerDefinitions(registry);
 		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());
 		registry.refresh();
 		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());

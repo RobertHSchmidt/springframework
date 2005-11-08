@@ -7,6 +7,7 @@ import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.access.FlowArtifactLookupException;
+import org.springframework.webflow.access.FlowLocator;
 
 /**
  * Dummy implementation of a flow artifact locator that throws unsupported
@@ -17,8 +18,35 @@ import org.springframework.webflow.access.FlowArtifactLookupException;
  */
 public class FlowArtifactLocatorAdapter implements FlowArtifactLocator {
 
+	/**
+	 * The flow locator delegate (may be <code>null</code>).
+	 */
+	private FlowLocator flowLocator;
+
+	/**
+	 * Creates an artifact locator adapter that does not natively support any
+	 * artifact lookup operations.
+	 */
+	public FlowArtifactLocatorAdapter() {
+
+	}
+
+	/**
+	 * Creates an artifact locator adapter that delegates to the provided 
+	 * flow locator for subflow resolution.
+	 * @param flowLocator the flow locator (may be <code>null</code).
+	 */
+	public FlowArtifactLocatorAdapter(FlowLocator flowLocator) {
+		this.flowLocator = flowLocator;
+	}
+
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
-		throw new UnsupportedOperationException("Subflow lookup is not supported by this artifact locator");
+		if (flowLocator != null) {
+			return flowLocator.getFlow(id);
+		}
+		else {
+			throw new UnsupportedOperationException("Subflow lookup is not supported by this artifact locator");
+		}
 	}
 
 	public Action getAction(String id) throws FlowArtifactLookupException {
