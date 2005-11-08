@@ -5,7 +5,7 @@ http://www.springframework.org
 Changes in version PR6 (11.11.2005)
 ------------------------------------
 * Introduced JSF integration, see the "jsf" package.
-* Added FlowExecution start, resume, pause, end, and handleException behavior to the Flow class.
+* Added support for custom start, signal event, end, and handleException behavior to the Flow class.
 * Added state exception handling support at the State level.  States may now be configured with a set of
   one or more StateExeceptionHandler objects, for responding to exceptions that occur within the state of a flow execution.
 * Added state exception handling support at the Flow level.  Flows may now be configured with a set of
