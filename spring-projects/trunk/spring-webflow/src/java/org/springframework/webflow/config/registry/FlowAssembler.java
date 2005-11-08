@@ -103,26 +103,27 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	 * Returns the flow assembled by this assembler.
 	 */
 	public synchronized Flow getFlow() {
-		if (!assembled) {
-			initFlowIfNecessary();
-			// set the assembled flag before building states to avoid infinite
-			// loops! This would happen, for example, where Flow A spawns Flow B
-			// as a subflow which spawns Flow A again (recursively)...
-			assembled = true;
-			flowBuilder.buildStates();
-			flow = flowBuilder.getResult();
-			flowBuilder.dispose();
+		if (!isAssembled()) {
+			assembleFlow();
 		}
 		return flow;
 	}
 
 	public synchronized void refresh() {
 		flow = flowBuilder.init();
-		flowBuilder.buildStates();
-		flow = flowBuilder.getResult();
-		flowBuilder.dispose();
+		assembleFlow();
+	}
+	
+	protected void assembleFlow() {
+		initFlowIfNecessary();
+		// set the assembled flag before building states to avoid infinite
+		// loops! This would happen, for example, where Flow A spawns Flow B
+		// as a subflow which spawns Flow A again (recursively)...
 		if (!assembled) {
 			assembled = true;
 		}
+		flowBuilder.buildStates();
+		flow = flowBuilder.getResult();
+		flowBuilder.dispose();
 	}
 }
