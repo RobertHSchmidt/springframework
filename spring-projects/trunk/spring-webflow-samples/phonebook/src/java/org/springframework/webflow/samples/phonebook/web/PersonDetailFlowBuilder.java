@@ -44,7 +44,8 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
-		addActionState(GET_PERSON, method("getPerson(${flowScope.id})", action("phonebook")), on(success(), DISPLAY_DETAILS));
+		addActionState(GET_PERSON, method("getPerson(${flowScope.id})", action("phonebook")), on(success(),
+				DISPLAY_DETAILS));
 
 		// view the person details
 		addViewState(DISPLAY_DETAILS, "details", new Transition[] { on(back(), "finish"),
@@ -53,8 +54,8 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 		// view details for selected collegue
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("sourceEvent.parameters.id", "id", fromStringTo(Long.class)));
-		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detail"), idMapper, new Transition[] {
-				on(finish(), GET_PERSON), on(error(), "error") });
+		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detail"), idMapper,
+				new Transition[] { on(finish(), GET_PERSON) });
 
 		// end
 		addEndState("finish");

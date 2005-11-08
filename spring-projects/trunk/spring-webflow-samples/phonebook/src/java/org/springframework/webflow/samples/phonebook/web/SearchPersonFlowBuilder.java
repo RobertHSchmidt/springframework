@@ -59,8 +59,8 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 		displayCriteria.setEntryAction(method("setupForm", searchFormAction));
 
 		// execute query
-		addActionState(EXECUTE_SEARCH, method("search(${flowScope.searchCriteria})", action("phonebook")), new Transition[] {
-				on(error(), DISPLAY_CRITERIA), on(success(), DISPLAY_RESULTS) });
+		addActionState(EXECUTE_SEARCH, method("search(${flowScope.searchCriteria})", action("phonebook")),
+				new Transition[] { on(success(), DISPLAY_RESULTS) });
 
 		// view results
 		addViewState(DISPLAY_RESULTS, "searchResults", new Transition[] { on("newSearch", DISPLAY_CRITERIA),
@@ -69,13 +69,12 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 		// view details for selected user id
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("sourceEvent.parameters.id", "id", fromStringTo(Long.class)));
-		addSubflowState(BROWSE_DETAILS, flow("detail"), idMapper, new Transition[] { on(finish(), EXECUTE_SEARCH),
-				on(error(), "error") });
+		addSubflowState(BROWSE_DETAILS, flow("detail"), idMapper, new Transition[] { on(finish(), EXECUTE_SEARCH), });
 
 		// end - an error occured
 		addEndState(error(), "error");
 	}
-	
+
 	protected FormAction createSearchFormAction() {
 		FormAction action = new FormAction(SearchCriteria.class);
 		action.setValidator(new SearchCriteriaValidator());
