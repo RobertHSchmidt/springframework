@@ -400,7 +400,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getListeners().firePaused(context, selectedView);
 		if (logger.isDebugEnabled()) {
 			if (selectedView != null) {
-				logger.debug("Paused to render " + selectedView);
+				logger.debug("Paused to render " + selectedView + "' and wait for user input");
 			}
 			else {
 				logger.debug("Paused to wait for user input");
