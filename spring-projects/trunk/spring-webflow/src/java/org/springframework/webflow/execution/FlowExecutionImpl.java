@@ -292,7 +292,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Starting this execution on user event: [" + sourceEvent + "]");
+			logger.debug("Starting this execution on user event " + sourceEvent);
 		}
 		FlowExecutionControlContext context = createControlContext(sourceEvent);
 		getListeners().fireRequestSubmitted(context);
@@ -349,7 +349,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		assertActive();
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Resuming this execution on user event [" + sourceEvent + "]");
+			logger.debug("Resuming this execution on user event " + sourceEvent);
 		}
 		String stateId = sourceEvent.getStateId();
 		if (!StringUtils.hasText(stateId)) {
@@ -400,7 +400,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getListeners().firePaused(context, selectedView);
 		if (logger.isDebugEnabled()) {
 			if (selectedView != null) {
-				logger.debug("Paused to render [" + selectedView + "]");
+				logger.debug("Paused to render " + selectedView);
 			}
 			else {
 				logger.debug("Paused to wait for user input");
@@ -486,7 +486,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		executingFlowSessions.push(session);
 		session.setStatus(FlowSessionStatus.ACTIVE);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Activated [" + session + "]");
+			logger.debug("Activated " + session);
 		}
 		return session;
 	}
