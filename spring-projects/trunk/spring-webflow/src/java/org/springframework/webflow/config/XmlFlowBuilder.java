@@ -112,7 +112,7 @@ import org.xml.sax.SAXException;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class XmlFlowBuilder extends BaseFlowBuilder {
+public class XmlFlowBuilder extends BaseFlowBuilder implements FlowDefinitionResourceHolder {
 
 	// recognized XML elements and attributes
 
@@ -235,6 +235,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 */
 	public Resource getLocation() {
 		return location;
+	}
+	
+	public Resource getFlowDefinitionResource() {
+		return getLocation();
 	}
 
 	/**
