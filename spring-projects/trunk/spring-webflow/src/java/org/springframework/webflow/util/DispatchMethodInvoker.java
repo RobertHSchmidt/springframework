@@ -38,7 +38,7 @@ public class DispatchMethodInvoker {
 	private Object target = this;
 
 	/**
-	 * The method parameter types describing the form of the dispatcher methods.
+	 * The method parameter types describing the signature of the dispatcher methods.
 	 */
 	private Class[] parameterTypes = new Class[0];
 
@@ -83,7 +83,7 @@ public class DispatchMethodInvoker {
 
 	/**
 	 * Creates a dispatch method invoker.
-	 * @param parameterTypes the parameter types defining the form of the
+	 * @param parameterTypes the parameter types defining the signature of the
 	 *        dispatch methods
 	 * @param returnType the return type of the dispatch methods, use null for void
 	 * @param typeCaption a description of the method type
@@ -98,7 +98,7 @@ public class DispatchMethodInvoker {
 	/**
 	 * Creates a dispatch method invoker.
 	 * @param target the object
-	 * @param parameterTypes the parameter types defining the form of the
+	 * @param parameterTypes the parameter types defining the signature of the
 	 *        dispatch methods
 	 * @param returnType the return type of the dispatch methods, use null for void
 	 * @param typeCaption a description of the method type
@@ -121,7 +121,7 @@ public class DispatchMethodInvoker {
 	}
 
 	/**
-	 * Set the parameter types defining the form of the dispatch methods.
+	 * Set the parameter types defining the signature of the dispatch methods.
 	 */
 	public void setParameterTypes(Class[] parameterTypes) {
 		this.parameterTypes = parameterTypes;
@@ -152,7 +152,7 @@ public class DispatchMethodInvoker {
 	}
 
 	/**
-	 * Returns the parameter types describing the form of the dispatch method.
+	 * Returns the parameter types describing the signature of the dispatch methods.
 	 * @return the parameter types
 	 */
 	public Class[] getParameterTypes() {
@@ -160,7 +160,7 @@ public class DispatchMethodInvoker {
 	}
 
 	/**
-	 * Convenience method that returns the parameter types describing the form of
+	 * Convenience method that returns the parameter types describing the signature of
 	 * the dispatch method as a string.
 	 */
 	protected String getParameterTypesString() {
@@ -254,7 +254,7 @@ public class DispatchMethodInvoker {
 	public static class MethodLookupException extends NestedRuntimeException {
 		
 		/**
-		 * Create a new method lookup exception
+		 * Create a new method lookup exception.
 		 * @param msg a descriptive message
 		 * @param ex the underlying cause of this exception
 		 */
