@@ -1,51 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-	Spring Web Flow DTD
+	Spring Web Flow 1.0 DTD
 	Authors: Erwin Vervaet, Keith Donald
 	
 	This DTD defines the Spring Web Flow (SWF) XML syntax.
 	
-	Web flows are blueprints for executable, single-user processes
-	(or conversations) of a web application.
-
-    Each "flow" element in this document defines exactly one Flow definition.
-    A flow is composed of one or more states (or steps).  States execute 
-    behavior when entered.  What behavior is executed is a function of the
-    state's type.  Core state types include view states, action states, 
-    subflow states, decision states, and end states.
+	The root "flow" element of this document defines exactly one Flow definition.
+    A Flow definition is a blueprint for an executable, single-user process
+	(or conversation).
+	
+	A flow is composed of one or more states (or steps).  Each state executes 
+	behavior when entered.  What behavior is executed is a function of the
+	state's type.  Core state types include view states, action states,
+	subflow states, decision states, and end states.
     
-    Each flow definition must specify a start state and at least one end state.
+    Each flow definition must specify exactly one start state and at least one end state.
     Events that occur in transitionable states drive state transitions.
     
 	XML documents that conform to this DTD should declare the following doctype:
 
-	<!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
+	<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
 		"http://www.springframework.org/dtd/spring-webflow.dtd">
 -->
-
-<!--
-    TODO: under consideration for PR6
-	The root document element definining one or more flow definitions.
--->
-<!-- <!ELEMENT webflows ( webflow+ ) )> -->
 
 <!--
 	Defines a exactly one flow definition.  A flow is composed of one or more states.  A flow may
 	be annotated with properties and may be configured to handle state exceptions.  A flow may also
 	define one or more local bean definitions defining custom related services.
 -->
-<!ELEMENT webflow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, bean* )>
+<!ELEMENT flow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, bean* )>
 
 <!--
 	The identifier for this flow; this identifier should be descriptive and unique to all other flows.
 -->
-<!ATTLIST webflow id ID #REQUIRED>
+<!ATTLIST flow id ID #REQUIRED>
 
 <!--
 	The the start state of this flow; the start state is the point where flow execution will begin.
 -->
-<!ATTLIST webflow start-state IDREF #REQUIRED>
+<!ATTLIST flow start-state IDREF #REQUIRED>
 
 <!--
 	Defines an action state, a state where one or more Actions (command objects) are executed.
