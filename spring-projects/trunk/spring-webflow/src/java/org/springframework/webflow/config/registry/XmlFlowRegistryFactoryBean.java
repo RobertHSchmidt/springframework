@@ -13,10 +13,10 @@ import org.springframework.core.io.Resource;
  * <pre>
  *  &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
  *      &lt;property name=&quot;definitionLocations&quot;&gt;
- *  	       &lt;list&gt;
- *  		       &lt;value&gt;/WEB-INF/flow1.xml&lt;/value&gt;
- *  			   &lt;value&gt;/WEB-INF/flow2.xml&lt;/value&gt;
- *  		   &lt;/list&gt;
+ *          &lt;list&gt;
+ *              &lt;value&gt;/WEB-INF/flow1.xml&lt;/value&gt;
+ *              &lt;value&gt;/WEB-INF/flow2.xml&lt;/value&gt;
+ *          &lt;/list&gt;
  *      &lt;/property&gt;
  *  &lt;/bean&gt;
  * </pre>
