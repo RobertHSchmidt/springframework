@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
-	"http://www.springframework.org/dtd/spring-webflow.dtd">
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
-<webflow id="mastermind" start-state="enterGuess">
+<flow id="mastermind" start-state="enterGuess">
 	
 	<view-state id="enterGuess" view="mastermind.enterGuess">
 		<transition on="submit" to="guess"/>
@@ -25,4 +25,4 @@
 	
 	<bean id="mastermindGame" class="org.springframework.webflow.samples.numberguess.MastermindGame" singleton="false"/>
 
-</webflow>
+</flow>

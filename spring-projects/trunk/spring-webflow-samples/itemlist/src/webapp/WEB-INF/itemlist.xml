@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
-<!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
-	"http://www.springframework.org/dtd/spring-webflow.dtd">
-
-<webflow id="itemlist" start-state="displayItemlist">
+<flow id="itemlist" start-state="displayItemlist">
 
 	<view-state id="displayItemlist" view="itemlist">
 		<transition on="add" to="createItem"/>
@@ -27,4 +26,4 @@
 	
 	<bean id="addItemAction" class="org.springframework.webflow.samples.itemlist.AddItemAction"/>
 	
-</webflow>
+</flow>

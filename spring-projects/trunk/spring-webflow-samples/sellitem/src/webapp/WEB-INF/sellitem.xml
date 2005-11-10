@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
-	"http://www.springframework.org/dtd/spring-webflow.dtd">
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
-<webflow id="sellitem" start-state="enterPriceAndItemCount">
+<flow id="sellitem" start-state="enterPriceAndItemCount">
 	<property name="transactional" value="true" type="boolean"/>
 	
 	<view-state id="enterPriceAndItemCount" view="priceAndItemCountForm">
@@ -52,4 +52,4 @@
 		<property name="requireValidatorMethod" value="true"/>
 	</bean>
 
-</webflow>
+</flow>

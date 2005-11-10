@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
-<!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
-	"http://www.springframework.org/dtd/spring-webflow.dtd">
-
-<webflow id="detail" start-state="getDetails">
+<flow id="detail" start-state="getDetails">
 
 	<action-state id="getDetails">
 		<action bean="phonebook" method="getPerson(${flowScope.id})"/>
@@ -24,4 +23,4 @@
 	
 	<end-state id="finish"/>
 	
-</webflow>
+</flow>

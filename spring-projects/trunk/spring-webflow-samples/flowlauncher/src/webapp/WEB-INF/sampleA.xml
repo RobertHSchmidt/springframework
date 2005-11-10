@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
-	"http://www.springframework.org/dtd/spring-webflow.dtd">
-
-<webflow id="sampleA" start-state="aPage">
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
+	
+<flow id="sampleA" start-state="aPage">
 
 	<view-state id="aPage" view="aPage">
 		<transition on="launch-B-as-subflow" to="launchB"/>
@@ -18,4 +18,4 @@
 
 	<bean id="mapper" class="org.springframework.webflow.samples.flowlauncher.SampleFlowAttributeMapper"/>
 	
-</webflow>
+</flow>

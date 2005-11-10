@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
-<webflow id="testFlow" start-state="actionState1">
+<flow id="testFlow" start-state="actionState1">
 	<property name="propInteger" value="12345" type="integer"/>
 	
 	<action-state id="actionState1">
@@ -68,4 +68,4 @@
 	<bean id="action3" class="org.springframework.webflow.config.XmlFlowBuilderTests$TestMultiAction"/>
 	<bean id="myCustomHandler" class="org.springframework.webflow.config.MyCustomStateExceptionHandler"/>
 	
-</webflow> 
+</flow> 
