@@ -4,29 +4,25 @@
 
 <webflow id="sellItem" start-state="enterPriceAndItemCount">
 
-	<property name="transactional" value="true" type="boolean"/>
+	<!--property name="transactional" value="true" type="boolean"/-->
 
-	<view-state id="enterPriceAndItemCount" view="priceAndItemCountForm">
+	<view-state id="enterPriceAndItemCount" view="/priceAndItemCountForm">
 		<transition on="submit" to="enterCategory">
 			<action bean="sellItemAction" />
 		</transition>
 	</view-state>
 
-	<!--  everything from here on still needs to be converted! -->
-	
-	<view-state id="enterCategory" view="categoryForm">
-		<transition on="submit" to="requiresShipping">
-			<action bean="sellItemAction"/>
-		</transition>
+	<view-state id="enterCategory" view="/categoryForm">
+		<transition on="submit" to="requiresShipping"/>
 	</view-state>
 
 	<decision-state id="requiresShipping">
 		<if test="${flowScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
 	</decision-state>
 
-	<view-state id="enterShippingDetails" view="shippingDetailsForm">
+	<view-state id="enterShippingDetails" view="/shippingDetailsForm">
 		<transition on="submit" to="processSale">
-			<action bean="sellItemAction" method="bindAndValidate"/>
+			<action bean="sellItemAction" />
 		</transition>
 	</view-state>
 
@@ -35,7 +31,7 @@
 		<transition on="success" to="showCostOverview"/>
 	</action-state>
 	
-	<end-state id="showCostOverview" view="costOverview"/>
+	<end-state id="showCostOverview" view="/costOverview"/>
 
 	<end-state id="error" view="error"/>
 	
