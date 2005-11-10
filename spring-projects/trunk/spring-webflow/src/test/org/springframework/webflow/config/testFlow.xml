@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
-	"http://www.springframework.org/dtd/spring-webflow.dtd">
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
 <flow id="testFlow" start-state="actionState1">
 	<property name="propInteger" value="12345" type="integer"/>

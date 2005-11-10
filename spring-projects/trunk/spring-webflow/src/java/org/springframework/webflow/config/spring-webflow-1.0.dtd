@@ -21,7 +21,7 @@
 	XML documents that conform to this DTD should declare the following doctype:
 
 	<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
-		"http://www.springframework.org/dtd/spring-webflow.dtd">
+		"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 -->
 
 <!--
