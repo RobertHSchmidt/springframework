@@ -112,7 +112,7 @@ import org.xml.sax.SAXException;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class XmlFlowBuilder extends BaseFlowBuilder implements FlowDefinitionResourceHolder {
+public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	// recognized XML elements and attributes
 
@@ -230,6 +230,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements FlowDefinitionRes
 		setFlowArtifactLocator(artifactLocator);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.webflow.config.ResourceHolder#getResource()
+	 */
+	public Resource getResource() {
+		return getLocation();
+	}
+
 	/**
 	 * Returns the XML resource from which the flow definition is read.
 	 */
@@ -237,10 +244,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements FlowDefinitionRes
 		return location;
 	}
 	
-	public Resource getFlowDefinitionResource() {
-		return getLocation();
-	}
-
 	/**
 	 * Set the resource from which the XML flow definition will be read.
 	 */

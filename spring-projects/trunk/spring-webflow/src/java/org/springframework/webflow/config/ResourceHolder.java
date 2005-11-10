@@ -25,11 +25,11 @@ import org.springframework.core.io.Resource;
  * 
  * @author Erwin Vervaet
  */
-public interface FlowDefinitionResourceHolder {
+public interface ResourceHolder {
 	
 	/**
 	 * Returns the flow definition resource held by this holder.
 	 */
-	public Resource getFlowDefinitionResource();
+	public Resource getResource();
 
 }
