@@ -121,8 +121,6 @@ public class FlowNavigationHandler extends NavigationHandler {
 	protected JsfFlowExecutionManager getExecutionManager(FacesContext context) {
 		if (flowExecutionManager == null) {
 			flowExecutionManager = (JsfFlowExecutionManager.getFlowExecutionManager(context));
-			// by default add a JsfFlowExecutionListener (TODO is this really needed?)
-			flowExecutionManager.addListener(new JsfFlowExecutionListener());
 		}
 		return flowExecutionManager;
 	}

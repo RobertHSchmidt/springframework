@@ -64,6 +64,8 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 */
 	protected static final String FLOW_ID_PREFIX = "flowId:";
 
+	private ViewIdResolver viewIdResolver = new DefaultViewIdResolver();
+	
 	/**
 	 * Create a new flow execution manager using the specified flow locator for
 	 * loading Flow definitions.
@@ -71,8 +73,18 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 */
 	public JsfFlowExecutionManager(FlowLocator flowLocator) {
 		super(flowLocator);
+		// the listener adds adds the HTTP request attribute map to the flow request scope
+		addListener(new JsfFlowExecutionListener());
 	}
 
+	/**
+	 * Allows the standard view id resolver to be overriden
+	 * @param viewIdResolver the new view id resolver
+	 */
+	public void setViewIdResolver(ViewIdResolver viewIdResolver) {
+		this.viewIdResolver = viewIdResolver;
+	}
+	
 	/**
 	 * Return <code>true</code> if the current request is asking for the
 	 * creation of a new flow. The default implementation examines the logical
@@ -80,7 +92,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * {@link #FLOW_ID_PREFIX}.
 	 * @param context <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
-	 * retrieve the specified outcome (if any)
+	 * retrieve the specified outcome (if any)	
 	 * @param outcome The logical outcome returned by the specified action
 	 */
 	public boolean isFlowLaunchRequest(FacesContext context, String fromAction, String outcome) {
@@ -264,13 +276,14 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 				requestMap.put(entry.getKey(), entry.getValue());
 			}
 		}
-		// Stay on the same view if requested
+		// stay on the same view if requested
 		if (viewDescriptor.getViewName() == null) {
 			return;
 		}
-		// Create the specified view so that it can be rendered
+		// create the specified view so that it can be rendered
 		ViewHandler handler = context.getApplication().getViewHandler();
-		UIViewRoot view = handler.createView(context, viewDescriptor.getViewName());
+		UIViewRoot view = handler.createView(context,
+				viewIdResolver.resolveViewName(viewDescriptor.getViewName()));
 		context.setViewRoot(view);
 	}
 
@@ -306,5 +319,13 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	public static JsfFlowExecutionManager getFlowExecutionManager(FacesContext context) {
 		WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
 		return (JsfFlowExecutionManager)wac.getBean(JsfFlowExecutionManager.BEAN_NAME, JsfFlowExecutionManager.class);
+	}
+	
+	// standard default view id resolver which uses the web flow view name as the jsf view id
+	static class DefaultViewIdResolver implements ViewIdResolver {
+
+		public String resolveViewName(String viewName) {
+			return viewName;
+		}
 	}
 }
