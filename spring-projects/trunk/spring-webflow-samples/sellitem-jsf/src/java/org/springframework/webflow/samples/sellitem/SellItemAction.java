@@ -12,6 +12,7 @@ public class SellItemAction extends AbstractAction {
         Scope flow = context.getFlowScope();
         
         Sale sale = (Sale) flow.get("sale");
+        sale.getAmount();
         
         return success();
     }
