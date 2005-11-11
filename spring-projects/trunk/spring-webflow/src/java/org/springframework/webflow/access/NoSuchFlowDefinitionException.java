@@ -22,7 +22,7 @@ public class NoSuchFlowDefinitionException extends NoSuchFlowArtifactException {
 	 * @param cause the root cause
 	 */
 	public NoSuchFlowDefinitionException(String flowId, Throwable cause) {
-		super(Flow.class, flowId, "No such flow definition with id: '" + flowId + "' found", cause);
+		super(Flow.class, flowId, "No such flow definition with id '" + flowId + "' found", cause);
 	}
 
 	/**
