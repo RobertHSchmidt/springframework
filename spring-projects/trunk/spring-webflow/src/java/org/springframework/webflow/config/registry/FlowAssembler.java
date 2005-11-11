@@ -15,9 +15,13 @@
  */
 package org.springframework.webflow.config.registry;
 
+import java.io.IOException;
+
+import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.config.FlowBuilder;
+import org.springframework.webflow.config.ResourceHolder;
 
 /**
  * A director for assembling flows, delegating to a {@link FlowBuilder} to
@@ -57,7 +61,12 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	 * A flag indicating if the flow has been assembled. Set to true when
 	 * {@link #getFlow} is called for the first time and assembly commences.
 	 */
-	private boolean assembled;
+	private boolean assembling;
+
+	/**
+	 * A last modified date for the backing flow resource.
+	 */
+	private long lastModified;
 
 	/**
 	 * Create a new flow assembler using the specified builder strategy.
@@ -82,52 +91,84 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		this.flowBuilder = flowBuilder;
 	}
 
-	public synchronized boolean isAssembled() {
-		return assembled;
-	}
-
 	public String getId() {
 		synchronized (this) {
-			initFlowIfNecessary();
+			if (flow == null) {
+				flow = flowBuilder.init();
+				flowBuilder.dispose();
+			}
 		}
 		return flow.getId();
 	}
-	
-	/**
-	 * Initialize the flow definition if it has not yet been initialized.
-	 */
-	protected void initFlowIfNecessary() {
-		if (flow == null) {
-			flow = flowBuilder.init();
-		}
+
+	protected boolean isAssembled() {
+		return flow == null || flow.getStateCount() == 0;
 	}
 
 	/**
 	 * Returns the flow assembled by this assembler.
 	 */
 	public synchronized Flow getFlow() {
+		if (assembling) {
+			return flow;
+		}
 		if (!isAssembled()) {
 			assembleFlow();
 		}
+		else {
+			refreshIfChanged();
+		}
 		return flow;
-	}
-
-	public synchronized void refresh() {
-		// force re-initialization
-		flow = flowBuilder.init();
-		assembleFlow();
 	}
 	
 	protected void assembleFlow() {
-		initFlowIfNecessary();
-		// set the assembled flag before building states to avoid infinite
-		// loops! This would happen, for example, where Flow A spawns Flow B
-		// as a subflow which spawns Flow A again (recursively)...
-		if (!assembled) {
-			assembled = true;
+		try {
+			// set the assembling flag before building states to avoid infinite
+			// loops! This would happen, for example, where Flow A spawns Flow B
+			// as a subflow which spawns Flow A again (recursively)...
+			assembling = true;
+			this.lastModified = getLastModified();
+			flow = flowBuilder.init();
+			flowBuilder.buildStates();
+			flow = flowBuilder.getResult();
+			flowBuilder.dispose();
 		}
-		flowBuilder.buildStates();
-		flow = flowBuilder.getResult();
-		flowBuilder.dispose();
+		finally {
+			assembling = false;
+		}
+	}
+
+	public synchronized void refresh() {
+		assembleFlow();
+	}
+
+	/**
+	 * Reassemble the flow if its underlying resource has changed.
+	 */
+	protected void refreshIfChanged() {
+		if (this.lastModified == -1) {
+			return;
+		}
+		long lastModified = getLastModified();
+		if (this.lastModified != lastModified) {
+			this.lastModified = lastModified;
+			refresh();
+		}
+	}
+
+	private long getLastModified() {
+		if (getFlowBuilder() instanceof ResourceHolder) {
+			Resource resource = ((ResourceHolder)getFlowBuilder()).getResource();
+			try {
+				return resource.getFile().lastModified();
+			}
+			catch (IOException e) {
+
+			}
+			catch (SecurityException e) {
+
+			}
+		}
+		return -1;
 	}
 }
