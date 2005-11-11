@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
+
+<flow id="search" start-state="displayCriteria">
+
+	<view-state id="displayCriteria" view="searchCriteria">
+		<entry-action>
+			<action bean="searchFormAction" method="setupForm"/>
+		</entry-action>
+		<transition on="search" to="executeSearch">
+			<action bean="searchFormAction" method="bindAndValidate"/>
+		</transition>
+	</view-state>
+
+	<action-state id="executeSearch">
+		<action bean="phonebook" method="search(${flowScope.searchCriteria})"/>
+		<transition on="success" to="displayResults"/>
+	</action-state>	
+	
+	<view-state id="displayResults" view="searchResults">
+		<transition on="newSearch" to="displayCriteria"/>
+		<transition on="select" to="browseDetails"/>
+	</view-state>
+
+	<subflow-state id="browseDetails" flow="detail">
+		<attribute-mapper>
+			<input value="${sourceEvent.parameters.id}" as="id" from="string" to="long"/>
+		</attribute-mapper>
+		<transition on="finish" to="executeSearch"/>
+	</subflow-state>
+	
+	<!-- Search form action that setups the form and processes form submissions -->
+	<bean id="searchFormAction" class="org.springframework.webflow.action.FormAction">
+		<property name="formObjectName" value="searchCriteria"/>
+		<property name="formObjectClass" value="org.springframework.webflow.samples.phonebook.domain.SearchCriteria"/>
+		<property name="validator">
+			<bean class="org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValidator"/>
+		</property>
+	</bean>
+	
+</flow>
