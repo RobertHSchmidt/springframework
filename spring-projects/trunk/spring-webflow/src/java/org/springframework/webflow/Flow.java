@@ -26,6 +26,7 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 
 /**
  * A single definition of a web flow.
@@ -125,6 +126,11 @@ public class Flow extends AnnotatedObject {
 	 * The list of exception handlers for this flow.
 	 */
 	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(3);
+
+	/**
+	 * The set of inner flow definitions for this flow.
+	 */
+	private Set flows = CollectionFactory.createLinkedSetIfPossible(6);
 
 	/**
 	 * Construct a new flow definition with the given id. The id should be
@@ -417,6 +423,35 @@ public class Flow extends AnnotatedObject {
 		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
 	}
 
+	/**
+	 * Adds an inner flow definition to this flow.
+	 * @param flow a flow definition to make a "inner" flow definition of this flow
+	 */
+	public void addFlow(Flow flow) {
+		flows.add(flow);
+	}
+
+	/**
+	 * Returns a inner flow with the provided id.
+	 */
+	public Flow getFlow(String id) throws NoSuchFlowDefinitionException {
+		Iterator it = flows.iterator();
+		while (it.hasNext()) {
+			Flow flow = (Flow)it.next();
+			if (flow.getId().equals(id)) {
+				return flow;
+			}
+		}
+		throw new NoSuchFlowDefinitionException(id);
+	}
+	
+	/**
+	 * Returns the list of inner flows for this flow.
+	 */
+	public Flow[] getFlows() {
+		return (Flow[])flows.toArray(new Flow[flows.size()]);
+	}
+	
 	/**
 	 * Start a new execution of this flow in the specified state.
 	 * @param startState the start state to use -- when <code>null</code>, the
