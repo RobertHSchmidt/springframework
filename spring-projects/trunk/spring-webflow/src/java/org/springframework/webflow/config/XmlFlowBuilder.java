@@ -69,8 +69,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
+ *       &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
+ *       &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -180,8 +180,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String EXCEPTION_HANDLER_ELEMENT = "exception-handler";
 
-	//needs to be re-introduced
-	//private static final String CLASS_ATTRIBUTE = "class";
+	private static final String FLOW_ELEMENT = "flow";
+
+	// needs to be re-introduced
+	// private static final String CLASS_ATTRIBUTE = "class";
 
 	/**
 	 * The resource location of the XML flow definition
@@ -230,7 +232,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		setFlowArtifactLocator(artifactLocator);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.springframework.webflow.config.ResourceHolder#getResource()
 	 */
 	public Resource getResource() {
@@ -243,7 +246,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	public Resource getLocation() {
 		return location;
 	}
-	
+
 	/**
 	 * Set the resource from which the XML flow definition will be read.
 	 */
@@ -319,19 +322,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			throw new FlowBuilderException("Cannot parse the flow definition XML document '" + location + "'", e);
 		}
 		parseFlowDefinition();
-		loadFlowBeanDefinitions();
 		return getFlow();
 	}
 
-	public void buildStates() throws FlowBuilderException {
-		addStateDefinitions();
-		getFlow().addExceptionHandlers(parseExceptionHandlers(document.getDocumentElement()));
-	}
-
-	public void dispose() {
-		setFlow(null);
-		document = null;
-	}
 
 	/**
 	 * Load the flow definition from the configured resource. This helper method
@@ -376,39 +369,64 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		setFlow(getFlowCreator().createFlow(root.getAttribute(ID_ATTRIBUTE), parseProperties(root)));
 	}
 
+	public void buildStates() throws FlowBuilderException {
+		// consider breaking these out into different public FlowBuilder methods
+		loadFlowBeanDefinitions();
+		addInnerFlowDefinitions(getFlow(), document.getDocumentElement());
+		addStateDefinitions(getFlow(), document.getDocumentElement());
+		getFlow().addExceptionHandlers(parseExceptionHandlers(document.getDocumentElement()));
+	}
+
+	/**
+	 * Parse the inner flow definitions in the XML file and add them to the flow
+	 * object we're constructing.
+	 */
+	protected void addInnerFlowDefinitions(Flow flow, Element element) {
+		NodeList nodeList = element.getElementsByTagName(FLOW_ELEMENT);
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node node = nodeList.item(i);
+			if (node instanceof Element) {
+				Element childElement = (Element)node;
+				Flow innerFlow = getFlowCreator().createFlow(childElement.getAttribute(ID_ATTRIBUTE),
+						parseProperties(childElement));
+				flow.addFlow(innerFlow);
+				addInnerFlowDefinitions(getFlow(), childElement);
+				addStateDefinitions(innerFlow, childElement);
+				getFlow().addExceptionHandlers(parseExceptionHandlers(childElement));
+			}
+		}
+	}
+
 	/**
 	 * Parse the state definitions in the XML file and add them to the flow
 	 * object we're constructing.
 	 */
-	protected void addStateDefinitions() {
-		Element root = document.getDocumentElement();
-		String startStateId = root.getAttribute(START_STATE_ATTRIBUTE);
-		// get the flow under construction
-		Flow flow = getFlow();
-		NodeList nodeList = root.getChildNodes();
+	protected void addStateDefinitions(Flow flow, Element element) {
+		String startStateId = element.getAttribute(START_STATE_ATTRIBUTE);
+		NodeList nodeList = element.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
 			if (node instanceof Element) {
-				Element element = (Element)node;
+				Element childElement = (Element)node;
 				State state = null;
-				if (ACTION_STATE_ELEMENT.equals(element.getNodeName())) {
-					state = parseActionState(flow, element);
+				if (ACTION_STATE_ELEMENT.equals(childElement.getNodeName())) {
+					state = parseActionState(flow, childElement);
 				}
-				else if (VIEW_STATE_ELEMENT.equals(element.getNodeName())) {
-					state = parseViewState(flow, element);
+				else if (VIEW_STATE_ELEMENT.equals(childElement.getNodeName())) {
+					state = parseViewState(flow, childElement);
 				}
-				else if (DECISION_STATE_ELEMENT.equals(element.getNodeName())) {
-					state = parseDecisionState(flow, element);
+				else if (DECISION_STATE_ELEMENT.equals(childElement.getNodeName())) {
+					state = parseDecisionState(flow, childElement);
 				}
-				else if (SUBFLOW_STATE_ELEMENT.equals(element.getNodeName())) {
-					state = parseSubFlowState(flow, element);
+				else if (SUBFLOW_STATE_ELEMENT.equals(childElement.getNodeName())) {
+					state = parseSubFlowState(flow, childElement);
 				}
-				else if (END_STATE_ELEMENT.equals(element.getNodeName())) {
-					state = parseEndState(flow, element);
+				else if (END_STATE_ELEMENT.equals(childElement.getNodeName())) {
+					state = parseEndState(flow, childElement);
 				}
 				if (state != null) {
-					parseStateActions(element, state);
-					state.addExceptionHandlers(parseExceptionHandlers(element));
+					parseStateActions(childElement, state);
+					state.addExceptionHandlers(parseExceptionHandlers(childElement));
 				}
 			}
 		}
@@ -749,4 +767,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		defaultHandler.add(new ExceptionStateMapping(exceptionClass, state));
 		return defaultHandler;
 	}
+	
+	public void dispose() {
+		setFlow(null);
+		document = null;
+	}
+
 }
