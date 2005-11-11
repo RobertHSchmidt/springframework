@@ -7,7 +7,9 @@
  * itemlist - demonstrates application transaction tokens and expired flow cleanup
  * numberguess - demonstrates how to play a game with spring web flow
  * phonebook - central sample demonstrating most webflow features
+ * phonebook-portlet - the phonebook sample in a portlet environment (notice how the flow definitions do not change)
  * sellitem - demonstrates a wizard with conditional transitions, continuations, and jmx-enabled statistics
+ * sellitem-jsf - the sellitem sample in a jsf environment (notice how the flow definition does not change)
  */
 
 Sample pre-requisites:
@@ -16,14 +18,15 @@ Sample pre-requisites:
 
 * Ant 1.6 must be installed and in your system path
 
-* A Servlet 2.4/JSP 2.0-capable servlet container (e.g. tomcat 5.5) must be installed for sample app deployment
+* A Servlet 2.4 and JSP 2.0-capable servlet container must be installed for sample app deployment
+    - The samples all use jsp 2.0 to take advantage of ${expressions} for elegance.
 
 
 To build each sample:
 ---------------------
 1. cd to the sample root directory
 
-2. run 'ant dist' to produce a deployable .war file
+2. run 'ant war' to produce a deployable .war file
 
 
 Assistance with .war deployment in tomcat:
