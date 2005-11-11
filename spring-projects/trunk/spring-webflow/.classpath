@@ -23,5 +23,7 @@
 	<classpathentry kind="lib" path="lib/global/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-web.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/spring-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-portlet.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/portlet-api.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

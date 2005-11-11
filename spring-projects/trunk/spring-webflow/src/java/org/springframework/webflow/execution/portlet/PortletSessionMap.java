@@ -1,33 +1,32 @@
-package org.springframework.webflow.execution.servlet;
+package org.springframework.webflow.execution.portlet;
 
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
+import javax.portlet.PortletSession;
 
 /**
- * Map backed by the Servlet context, for accessing application scoped
- * variables.
+ * Map backed by the Portlet session, for accessing session scoped variables.
  * @author Keith Donald
  */
-public class HttpServletContextMap implements Map {
+public class PortletSessionMap implements Map {
 
 	/**
-	 * The wrapped servlet context.
+	 * The wrapped http session.
 	 */
-	private ServletContext context;
+	private PortletSession session;
 
 	/**
-	 * @param context the servlet context
+	 * @param session the session
 	 */
-	public HttpServletContextMap(ServletContext context) {
-		this.context = context;
+	public PortletSessionMap(PortletSession session) {
+		this.session = session;
 	}
 
 	public int size() {
-		Enumeration it = context.getAttributeNames();
+		Enumeration it = session.getAttributeNames();
 		int i = 0;
 		while (it.hasMoreElements()) {
 			i++;
@@ -37,11 +36,11 @@ public class HttpServletContextMap implements Map {
 	}
 
 	public boolean isEmpty() {
-		return !context.getAttributeNames().hasMoreElements();
+		return session.getAttributeNames().hasMoreElements();
 	}
 
 	public boolean containsKey(Object key) {
-		return context.getAttribute((String)key) != null;
+		return session.getAttribute((String)key) != null;
 	}
 
 	public boolean containsValue(Object value) {
@@ -49,18 +48,18 @@ public class HttpServletContextMap implements Map {
 	}
 
 	public Object get(Object key) {
-		return context.getAttribute((String)key);
+		return session.getAttribute((String)key);
 	}
 
 	public Object put(Object arg0, Object arg1) {
 		Object old = get(arg0);
-		context.setAttribute((String)arg0, arg1);
+		session.setAttribute((String)arg0, arg1);
 		return old;
 	}
 
 	public Object remove(Object key) {
 		Object old = get(key);
-		context.removeAttribute((String)key);
+		session.removeAttribute((String)key);
 		return old;
 	}
 

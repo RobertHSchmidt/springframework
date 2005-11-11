@@ -8,13 +8,14 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 
 /**
- * Map backed by the HTTP session, for accessing session scoped variables.
+ * Map backed by the Servlet HTTP session, for accessing session scoped
+ * variables.
  * @author Keith Donald
  */
 public class HttpSessionMap implements Map {
 
 	/**
-	 * The wrapped http session. 
+	 * The wrapped http session.
 	 */
 	private HttpSession session;
 
@@ -72,14 +73,17 @@ public class HttpSessionMap implements Map {
 	}
 
 	public Set keySet() {
+		// TODO
 		throw new UnsupportedOperationException();
 	}
 
 	public Collection values() {
+		// TODO
 		throw new UnsupportedOperationException();
 	}
 
 	public Set entrySet() {
+		// TODO
 		throw new UnsupportedOperationException();
 	}
 }

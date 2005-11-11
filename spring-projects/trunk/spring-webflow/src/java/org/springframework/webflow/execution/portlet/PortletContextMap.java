@@ -1,28 +1,28 @@
-package org.springframework.webflow.execution.servlet;
+package org.springframework.webflow.execution.portlet;
 
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
+import javax.portlet.PortletContext;
 
 /**
- * Map backed by the Servlet context, for accessing application scoped
+ * Map backed by the Portlet context, for accessing application scoped
  * variables.
  * @author Keith Donald
  */
-public class HttpServletContextMap implements Map {
+public class PortletContextMap implements Map {
 
 	/**
 	 * The wrapped servlet context.
 	 */
-	private ServletContext context;
+	private PortletContext context;
 
 	/**
 	 * @param context the servlet context
 	 */
-	public HttpServletContextMap(ServletContext context) {
+	public PortletContextMap(PortletContext context) {
 		this.context = context;
 	}
 
