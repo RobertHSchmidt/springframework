@@ -27,7 +27,7 @@
 		- appropriate _flowExecutionId and _eventId.
 	-->
 	<bean id="viewModeFrontController" class="org.springframework.web.flow.portlet.PortletFlowController">
-		<property name="flow" ref="person.Search" />
+		<property name="flowLocator" ref="flowLocator" />
 	</bean>
 
 </beans>
