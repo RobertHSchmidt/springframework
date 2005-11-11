@@ -141,7 +141,10 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(endState2);
 		assertTrue(endState2.isMarker());
 		assertNull(endState2.getViewSelector());
-
+		
+		Flow innerFlow = flow.getFlow("innerFlow");
+		assertNotNull(innerFlow);
+		assertEquals("innerFlow", innerFlow.getId());
 	}
 
 	/**
