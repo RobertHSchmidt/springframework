@@ -8,35 +8,30 @@ import org.springframework.webflow.config.FlowBuilder;
  * built by a configured set of Flow builders. This class is useful in
  * conjunction with use of custom FlowBuilder implementations.
  * <p>
- * Usage example that extends {@link AbstractFlowRegistryFactoryBean}:
- * <p>
- * 
+ * Usage example:
  * <pre>
- * public class MyFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
- *     public void registerFlowDefinitions(FlowRegistry registry) {
- *         FlowBuilder[] builders = new FlowBuilder[] {
- *             new AbstractFlowBuilder() {
- * 			       protected String flowId() {
- * 				       return &quot;flowId1&quot;;
- * 			       }
+ * FlowRegistry registry = new FlowRegistryImpl();
+ * FlowBuilder[] builders = new FlowBuilder[] {
+ *     new AbstractFlowBuilder() {
+ *         protected String flowId() {
+ *             return &quot;flowId1&quot;;
+ *         }
  * 
- * 			       public void buildStates() throws FlowBuilderException {
- *                     // add states here
- * 			       }
- *             },
- * 		       new AbstractFlowBuilder() {
- * 			       protected String flowId() {
- * 				       return &quot;flowId2&quot;;
- * 			       }
+ *         public void buildStates() throws FlowBuilderException {
+ *             // add states here
+ *         }
+ *     },
+ *     new AbstractFlowBuilder() {
+ *         protected String flowId() {
+ *             return &quot;flowId2&quot;;
+ *         }
  * 
- * 			       public void buildStates() throws FlowBuilderException {
- * 				       // add states here
- * 			       }
- * 		       }
- *         };
- * 	       new FlowRegistrarImpl(builders).registerFlowDefinitions(registry);
+ *         public void buildStates() throws FlowBuilderException {
+ *             // add states here
+ *         }
  *     }
- * }
+ * };
+ * new FlowRegistrarImpl(builders).registerFlowDefinitions(registry);
  * </pre>
  * 
  * @author Keith Donald
