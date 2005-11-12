@@ -10,9 +10,10 @@ import org.springframework.webflow.access.FlowArtifactException;
 import org.springframework.webflow.access.FlowLocator;
 
 /**
- * Dummy implementation of a flow artifact locator that throws unsupported
- * operation exceptions for each lookup artifact. May be subclassed to offer
- * some lookup support.
+ * Dummy implementation of a flow artifact factory that throws unsupported
+ * operation exceptions for each operation.
+ * <p>
+ * May be subclassed to offer some lookup support.
  * 
  * @author Keith Donald
  */

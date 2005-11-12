@@ -65,13 +65,4 @@ public class FlowRegistryPopulationTests extends TestCase {
 		FlowRegistry registry = (FlowRegistry)ac.getBean("flowRegistry");
 		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());
 	}
-
-	public void testXmlFlowFactoryBean() {
-		GenericApplicationContext ac = new GenericApplicationContext();
-		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(ac);
-		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
-		Flow flow1 = (Flow)ac.getBean("flow1");
-		assertEquals("Wrong flow id", "flow1", flow1.getId());
-	}
-
 }
