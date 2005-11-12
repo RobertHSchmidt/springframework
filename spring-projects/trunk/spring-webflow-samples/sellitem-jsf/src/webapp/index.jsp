@@ -13,7 +13,7 @@
 		
 		<DIV align="left">
 			<P>
-			    <h:commandLink value="Sell Item" action="flowId:sellItem"/>
+			    <h:commandLink value="Sell Item" action="flowId:sellitem"/>
 			</P>
 			
 			<P>
