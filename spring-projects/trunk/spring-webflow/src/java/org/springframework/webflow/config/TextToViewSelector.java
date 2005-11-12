@@ -61,14 +61,14 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	/**
 	 * Locator to use for loading custom ViewSelector beans.
 	 */
-	private FlowArtifactLocator artifactLocator;
+	private FlowArtifactFactory flowArtifactFactory;
 
 	/**
 	 * Create a new text to ViewSelector converter.
 	 */
-	public TextToViewSelector(FlowArtifactLocator artifactLocator, ConversionService conversionService) {
+	public TextToViewSelector(FlowArtifactFactory artifactLocator, ConversionService conversionService) {
 		super(conversionService);
-		this.artifactLocator = artifactLocator;
+		this.flowArtifactFactory = artifactLocator;
 	}
 
 	public Class[] getSourceClasses() {
@@ -86,7 +86,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 				return createRedirectViewSelector(encodedView.substring(REDIRECT_PREFIX.length()));
 			}
 			else if (encodedView.startsWith(BEAN_PREFIX)) {
-				return artifactLocator.getViewSelector(encodedView.substring(BEAN_PREFIX.length()));
+				return flowArtifactFactory.getViewSelector(encodedView.substring(BEAN_PREFIX.length()));
 			}
 		}
 		return createSimpleViewSelector(encodedView);

@@ -37,6 +37,7 @@ import org.springframework.binding.method.MethodKey;
 import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.binding.support.Mapping;
 import org.springframework.core.io.Resource;
+import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
@@ -56,6 +57,8 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.access.FlowArtifactException;
+import org.springframework.webflow.access.NoSuchFlowArtifactException;
 import org.springframework.webflow.action.CompositeAction;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -69,8 +72,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *       &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
- *       &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
+ *         &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
+ *         &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -103,7 +106,7 @@ import org.xml.sax.SAXException;
  * </tr>
  * <tr>
  * <td>flowArtifactLocator</td>
- * <td><i>{@link FlowArtifactLocator}</i></td>
+ * <td><i>{@link FlowArtifactFactory}</i></td>
  * <td>Set the flow artifact location strategy to use to resolve externally
  * managed flow artifacts during the build process.</td>
  * </tr>
@@ -227,9 +230,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * @param location resource to read the XML flow definition from
 	 * @param artifactLocator the flow artifact location strategy to use
 	 */
-	public XmlFlowBuilder(Resource location, FlowArtifactLocator artifactLocator) {
+	public XmlFlowBuilder(Resource location, FlowArtifactFactory artifactLocator) {
 		setLocation(location);
-		setFlowArtifactLocator(artifactLocator);
+		setFlowArtifactFactory(artifactLocator);
 	}
 
 	/*
@@ -292,21 +295,21 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * child of the parent registry.
 	 * @see org.springframework.webflow.config.BaseFlowBuilder#setFlowArtifactLocator(org.springframework.webflow.config.FlowArtifactLocator)
 	 */
-	public void setFlowArtifactLocator(FlowArtifactLocator artifactLocator) {
-		FlowArtifactLocator localLocator = new BeanFactoryFlowArtifactLocator(localArtifactRegistry);
+	public void setFlowArtifactFactory(FlowArtifactFactory artifactLocator) {
+		FlowArtifactFactory localLocator = new DefaultFlowArtifactFactory(localArtifactRegistry);
 		if (artifactLocator != null) {
-			super.setFlowArtifactLocator(new CompositeFlowArtifactLocator(new FlowArtifactLocator[] { localLocator,
+			super.setFlowArtifactFactory(new CompositeFlowArtifactLocator(new FlowArtifactFactory[] { localLocator,
 					artifactLocator }));
 		}
 		else {
-			super.setFlowArtifactLocator(localLocator);
+			super.setFlowArtifactFactory(localLocator);
 		}
 	}
 
 	public Flow init() throws FlowBuilderException {
 		Assert.notNull(location,
 				"The location property specifying the XML flow definition resource location is required");
-		Assert.notNull(getFlowArtifactLocator(),
+		Assert.notNull(getFlowArtifactFactory(),
 				"The flowArtifactLocator property for loading actions and subflows is required");
 		initConversionService();
 		try {
@@ -324,7 +327,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		parseFlowDefinition();
 		return getFlow();
 	}
-
 
 	/**
 	 * Load the flow definition from the configured resource. This helper method
@@ -485,7 +487,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * given flow.
 	 */
 	protected SubflowState parseSubflowState(Flow flow, Element element) {
-		return new SubflowState(flow, element.getAttribute(ID_ATTRIBUTE), getFlowArtifactLocator().getSubflow(
+		return new SubflowState(flow, element.getAttribute(ID_ATTRIBUTE), getFlowArtifactFactory().getSubflow(
 				element.getAttribute(FLOW_ATTRIBUTE)), parseAttributeMapper(element), parseTransitions(element),
 				parseProperties(element));
 	}
@@ -537,7 +539,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Parse an action definition and return the corresponding object.
 	 */
 	protected Action parseAction(Element element) throws FlowBuilderException {
-		return getFlowArtifactLocator().getAction(element.getAttribute(BEAN_ATTRIBUTE));
+		return getFlowArtifactFactory().getAction(element.getAttribute(BEAN_ATTRIBUTE));
 	}
 
 	/**
@@ -672,7 +674,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		else {
 			Element mapperElement = (Element)mapperElements.get(0);
 			if (StringUtils.hasText(mapperElement.getAttribute(BEAN_ATTRIBUTE))) {
-				return getFlowArtifactLocator().getAttributeMapper(mapperElement.getAttribute(BEAN_ATTRIBUTE));
+				return getFlowArtifactFactory().getAttributeMapper(mapperElement.getAttribute(BEAN_ATTRIBUTE));
 			}
 			else {
 				// inline definition of a mapping
@@ -749,7 +751,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			if (node instanceof Element) {
 				Element handlerElement = (Element)node;
 				if (handlerElement.hasAttribute(BEAN_ATTRIBUTE)) {
-					exceptionHandlers[i] = getFlowArtifactLocator().getExceptionHandler(
+					exceptionHandlers[i] = getFlowArtifactFactory().getExceptionHandler(
 							handlerElement.getAttribute(BEAN_ATTRIBUTE));
 				}
 				else {
@@ -767,10 +769,155 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		defaultHandler.add(new ExceptionStateMapping(exceptionClass, state));
 		return defaultHandler;
 	}
-	
+
 	public void dispose() {
 		setFlow(null);
 		document = null;
 	}
 
+	/**
+	 * A flow artifact locator that queries an ordered chain of flow artifact
+	 * locators, stopping when one of those locators fulfills a request for an
+	 * artifact or the chain is exhausted and an ArtifactLookupException
+	 * exception is thrown.
+	 * @author Keith Donald
+	 */
+	protected static class CompositeFlowArtifactLocator implements FlowArtifactFactory {
+
+		/**
+		 * The artifact locator chain.
+		 */
+		public FlowArtifactFactory[] locatorChain;
+
+		/**
+		 * Creates a chained artifact locator that queries the specified
+		 * locators in the order provided.
+		 * @param locatorChain the artifact locator chain
+		 */
+		public CompositeFlowArtifactLocator(FlowArtifactFactory[] locatorChain) {
+			Assert.notEmpty(locatorChain, "The artifact locator chain must have at least one element");
+			this.locatorChain = locatorChain;
+		}
+
+		public Flow getSubflow(String id) throws FlowArtifactException {
+			List exceptions = new LinkedList();
+			for (int i = 0; i < locatorChain.length; i++) {
+				FlowArtifactFactory locator = locatorChain[i];
+				try {
+					return locator.getSubflow(id);
+				}
+				catch (NoSuchFlowArtifactException e) {
+					exceptions.add(e);
+				}
+			}
+			throw new FlowArtifactLocatorChainExaustedException(Flow.class, id, exceptions);
+		}
+
+		public Action getAction(String id) throws FlowArtifactException {
+			List exceptions = new LinkedList();
+			for (int i = 0; i < locatorChain.length; i++) {
+				FlowArtifactFactory locator = locatorChain[i];
+				try {
+					return locator.getAction(id);
+				}
+				catch (NoSuchFlowArtifactException e) {
+					exceptions.add(e);
+				}
+			}
+			throw new FlowArtifactLocatorChainExaustedException(Action.class, id, exceptions);
+		}
+
+		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
+			List exceptions = new LinkedList();
+			for (int i = 0; i < locatorChain.length; i++) {
+				FlowArtifactFactory locator = locatorChain[i];
+				try {
+					return locator.getAttributeMapper(id);
+				}
+				catch (NoSuchFlowArtifactException e) {
+
+				}
+			}
+			throw new FlowArtifactLocatorChainExaustedException(FlowAttributeMapper.class, id, exceptions);
+		}
+
+		public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
+			List exceptions = new LinkedList();
+			for (int i = 0; i < locatorChain.length; i++) {
+				FlowArtifactFactory locator = locatorChain[i];
+				try {
+					return locator.getTransitionCriteria(id);
+				}
+				catch (NoSuchFlowArtifactException e) {
+					exceptions.add(e);
+				}
+			}
+			throw new FlowArtifactLocatorChainExaustedException(TransitionCriteria.class, id, exceptions);
+		}
+
+		public ViewSelector getViewSelector(String id) throws FlowArtifactException {
+			List exceptions = new LinkedList();
+			for (int i = 0; i < locatorChain.length; i++) {
+				FlowArtifactFactory locator = locatorChain[i];
+				try {
+					return locator.getViewSelector(id);
+				}
+				catch (NoSuchFlowArtifactException e) {
+					exceptions.add(e);
+				}
+			}
+			throw new FlowArtifactLocatorChainExaustedException(ViewSelector.class, id, exceptions);
+		}
+
+		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
+			List exceptions = new LinkedList();
+			for (int i = 0; i < locatorChain.length; i++) {
+				FlowArtifactFactory locator = locatorChain[i];
+				try {
+					return locator.getExceptionHandler(id);
+				}
+				catch (NoSuchFlowArtifactException e) {
+					exceptions.add(e);
+				}
+			}
+			throw new FlowArtifactLocatorChainExaustedException(StateExceptionHandler.class, id, exceptions);
+		}
+	}
+	
+	/**
+	 * A lookup exception thrown when a composite flow artifact locator cannot
+	 * locate an artifact.
+	 * @author Keith Donald
+	 */
+	public static class FlowArtifactLocatorChainExaustedException extends NoSuchFlowArtifactException {
+
+		/**
+		 * The individual lookup exceptions thrown during the composite lookup
+		 * operation.
+		 */
+		private FlowArtifactException[] lookupExceptions;
+
+		/**
+		 * Constructs an exception indicating an artifact locator chain was
+		 * exhausted with no match for the request artifact.
+		 * @param artifactType the artifact type
+		 * @param id the artifact id
+		 * @param lookupExceptions the individual lookup exceptions
+		 */
+		public FlowArtifactLocatorChainExaustedException(Class artifactType, String id, List lookupExceptions) {
+			super(artifactType, id, "Flow artifact locator chain exhausted looking for artifact of type: " + artifactType
+					+ " with id: '" + id + "', " + lookupExceptions.size() + " lookup exceptions thrown, they are: "
+					+ StylerUtils.style(lookupExceptions), null);
+			this.lookupExceptions = (FlowArtifactException[])lookupExceptions
+					.toArray(new FlowArtifactException[0]);
+		}
+
+		/**
+		 * Returns the lookup exceptions thrown during the composite flow artifact
+		 * lookup operation.
+		 */
+		public FlowArtifactException[] getLookupExceptions() {
+			return lookupExceptions;
+		}
+	}
 }

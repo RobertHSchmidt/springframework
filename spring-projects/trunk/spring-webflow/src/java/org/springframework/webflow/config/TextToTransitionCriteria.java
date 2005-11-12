@@ -66,15 +66,15 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	/**
 	 * Locator to use for loading custom TransitionCriteria beans.
 	 */
-	private FlowArtifactLocator artifactLocator;
+	private FlowArtifactFactory flowArtifactFactory;
 
 	/**
 	 * Create a new converter that converts strings to transition criteria
 	 * objects. The given conversion service will be used to do all necessary
 	 * internal conversion (e.g. parsing expression strings).
 	 */
-	public TextToTransitionCriteria(FlowArtifactLocator artifactLocator) {
-		this.artifactLocator = artifactLocator;
+	public TextToTransitionCriteria(FlowArtifactFactory artifactLocator) {
+		this.flowArtifactFactory = artifactLocator;
 	}
 
 	public Class[] getSourceClasses() {
@@ -97,7 +97,7 @@ public class TextToTransitionCriteria extends AbstractConverter {
 			return createBooleanExpressionTransitionCriteria(expression);
 		}
 		else if (encodedCriteria.startsWith(BEAN_PREFIX)) {
-			return artifactLocator.getTransitionCriteria(encodedCriteria.substring(BEAN_PREFIX.length()));
+			return flowArtifactFactory.getTransitionCriteria(encodedCriteria.substring(BEAN_PREFIX.length()));
 		}
 		else {
 			return createEventIdTransitionCriteria(encodedCriteria);

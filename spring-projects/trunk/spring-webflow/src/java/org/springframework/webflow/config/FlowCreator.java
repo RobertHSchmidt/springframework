@@ -20,7 +20,7 @@ import java.util.Map;
 import org.springframework.webflow.Flow;
 
 /**
- * Abstract factory that encapsulates the creation of a <code>Flow</code>
+ * Creational strategy that encapsulates the creation of a <code>Flow</code>
  * instance. The instance may be <code>Flow</code>, in the default case, or a
  * custom extension.
  * <p>
@@ -39,7 +39,7 @@ public interface FlowCreator {
 	/**
 	 * Creates a new <code>Flow</code> instance.
 	 * @return The <code>Flow</code> (or a custom specialization of
-	 *         <code>Flow</code>)
+	 * <code>Flow</code>)
 	 */
 	public Flow createFlow(String id, Map properties);
 }

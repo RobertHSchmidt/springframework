@@ -11,15 +11,15 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.config.AbstractFlowBuilder;
-import org.springframework.webflow.config.FlowArtifactLocator;
-import org.springframework.webflow.config.FlowArtifactLocatorAdapter;
+import org.springframework.webflow.config.FlowArtifactFactory;
+import org.springframework.webflow.config.FlowArtifactFactoryAdapter;
 import org.springframework.webflow.config.FlowBuilder;
 import org.springframework.webflow.config.FlowBuilderException;
 
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
-		FlowArtifactLocator artifactLocator = new FlowArtifactLocatorAdapter();
+		FlowArtifactFactory artifactLocator = new FlowArtifactFactoryAdapter();
 		FlowBuilder[] builders = new FlowBuilder[] {
 			new AbstractFlowBuilder(artifactLocator) {
 				protected String flowId() {
@@ -52,7 +52,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 				new FileSystemResource(new File(parent, "flow1.xml")),
 				new FileSystemResource(new File(parent, "flow2.xml"))
 		};
-		new XmlFlowRegistrar(new FlowArtifactLocatorAdapter(registry), locations).registerDefinitions(registry);
+		new XmlFlowRegistrar(new FlowArtifactFactoryAdapter(registry), locations).registerDefinitions(registry);
 		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());
 		registry.refresh();
 		assertEquals("Wrong registry definition count", 2, registry.getFlowDefinitionCount());

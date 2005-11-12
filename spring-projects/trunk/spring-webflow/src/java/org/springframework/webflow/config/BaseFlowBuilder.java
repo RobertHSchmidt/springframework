@@ -30,12 +30,12 @@ import org.springframework.webflow.Flow;
  * The Flow definition implementation created by this builder may be customized
  * by configuring a custom {@link FlowCreator}.
  * <p>
- * Subclasses may delegate to a configured {@link FlowArtifactLocator} to
+ * Subclasses may delegate to a configured {@link FlowArtifactFactory} to
  * resolve any externally managed flow artifacts the flow being built depends on
  * (actions, subflows, etc.)
  * 
  * @see org.springframework.webflow.config.FlowCreator
- * @see org.springframework.webflow.config.FlowArtifactLocator
+ * @see org.springframework.webflow.config.FlowArtifactFactory
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -61,7 +61,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * Locates actions, attribute mappers, and other artifacts usable by the
 	 * flow built by this builder.
 	 */
-	private FlowArtifactLocator flowArtifactLocator;
+	private FlowArtifactFactory flowArtifactFactory;
 
 	/**
 	 * The conversion service to convert to flow-related artifacts, typically
@@ -79,8 +79,8 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * Creates a flow builder using the locator to link in artifacts
 	 * @param artifactLocator the flow artifact locator.
 	 */
-	protected BaseFlowBuilder(FlowArtifactLocator artifactLocator) {
-		setFlowArtifactLocator(artifactLocator);
+	protected BaseFlowBuilder(FlowArtifactFactory artifactLocator) {
+		setFlowArtifactFactory(artifactLocator);
 	}
 
 	/**
@@ -89,9 +89,9 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * @param flowCreator the flow creator
 	 * @param artifactLocator the flow artifact locator.
 	 */
-	protected BaseFlowBuilder(FlowCreator flowCreator, FlowArtifactLocator artifactLocator) {
+	protected BaseFlowBuilder(FlowCreator flowCreator, FlowArtifactFactory artifactLocator) {
 		setFlowCreator(flowCreator);
-		setFlowArtifactLocator(artifactLocator);
+		setFlowArtifactFactory(artifactLocator);
 	}
 
 	/**
@@ -111,27 +111,27 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	/**
 	 * Returns the artifact locator.
 	 */
-	protected FlowArtifactLocator getFlowArtifactLocator() {
-		return flowArtifactLocator;
+	protected FlowArtifactFactory getFlowArtifactFactory() {
+		return flowArtifactFactory;
 	}
 
 	/**
 	 * Returns the artifact locator
 	 * @throws an IllegalStateException if the artifact locator is not set
 	 */
-	protected FlowArtifactLocator getRequiredFlowArtifactLocator() {
-		if (flowArtifactLocator == null) {
+	protected FlowArtifactFactory getRequiredFlowArtifactLocator() {
+		if (flowArtifactFactory == null) {
 			throw new IllegalStateException("The flowArtifactLocator property must be set before you can use it to "
 					+ "load actions, attribute mappers, subflows, and other Flow artifacts needed by this builder");
 		}
-		return getFlowArtifactLocator();
+		return getFlowArtifactFactory();
 	}
 
 	/**
 	 * Sets the artifact locator.
 	 */
-	public void setFlowArtifactLocator(FlowArtifactLocator flowArtifactLocator) {
-		this.flowArtifactLocator = flowArtifactLocator;
+	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactLocator) {
+		this.flowArtifactFactory = flowArtifactLocator;
 	}
 
 	/**
@@ -156,8 +156,8 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	protected void initConversionService() {
 		if (getConversionService() == null) {
 			DefaultConversionService service = new DefaultConversionService();
-			service.addConverter(new TextToTransitionCriteria(getFlowArtifactLocator()));
-			service.addConverter(new TextToViewSelector(getFlowArtifactLocator(), service));
+			service.addConverter(new TextToTransitionCriteria(getFlowArtifactFactory()));
+			service.addConverter(new TextToViewSelector(getFlowArtifactFactory(), service));
 			setConversionService(service);
 		}
 	}

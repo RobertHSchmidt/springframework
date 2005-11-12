@@ -25,7 +25,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.access.ArtifactLookupException;
+import org.springframework.webflow.access.FlowArtifactException;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionImpl;
@@ -122,10 +122,10 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	/**
 	 * Get the singleton flow definition whose execution is being tested.
 	 * @return the singleton flow definition
-	 * @throws ArtifactLookupException if the flow identified by flowId()
+	 * @throws FlowArtifactException if the flow identified by flowId()
 	 * could not be resolved (if <code>this.flow</code> was null)
 	 */
-	protected Flow getFlow() throws ArtifactLookupException {
+	protected Flow getFlow() throws FlowArtifactException {
 		return getFlowLocator().getFlow(flowId());
 	}
 

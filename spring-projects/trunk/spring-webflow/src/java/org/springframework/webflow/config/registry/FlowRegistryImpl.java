@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.access.ArtifactLookupException;
+import org.springframework.webflow.access.FlowArtifactException;
 import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 
 /**
@@ -119,7 +119,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 		return flowHolder;
 	}
 
-	public Flow getFlow(String id) throws ArtifactLookupException {
+	public Flow getFlow(String id) throws FlowArtifactException {
 		return getFlowDefinitionHolder(id).getFlow();
 	}
 

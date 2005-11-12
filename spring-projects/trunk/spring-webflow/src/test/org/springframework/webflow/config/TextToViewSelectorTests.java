@@ -32,7 +32,7 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class TextToViewSelectorTests extends TestCase {
 
-	private TextToViewSelector converter = new TextToViewSelector(new FlowArtifactLocatorAdapter(),
+	private TextToViewSelector converter = new TextToViewSelector(new FlowArtifactFactoryAdapter(),
 			new DefaultConversionService());
 
 	public void testStaticView() {

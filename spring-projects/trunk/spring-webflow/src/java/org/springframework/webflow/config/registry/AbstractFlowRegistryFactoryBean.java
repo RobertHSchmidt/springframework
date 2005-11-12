@@ -4,8 +4,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
-import org.springframework.webflow.config.FlowArtifactLocator;
+import org.springframework.webflow.config.DefaultFlowArtifactFactory;
+import org.springframework.webflow.config.FlowArtifactFactory;
 
 /**
  * A base class for a factory bean that creates a populated Flow Registry.
@@ -14,13 +14,13 @@ import org.springframework.webflow.config.FlowArtifactLocator;
  * {@link FlowRegistrar}.
  * 
  * This class is also <code>BeanFactoryAware</code> and when used with Spring
- * will automatically create a configured {@link BeanFactoryFlowArtifactLocator}
+ * will automatically create a configured {@link DefaultFlowArtifactFactory}
  * for loading Flow artifacts like Actions from the Spring bean factory during
  * the Flow registration process.
  * 
  * @see FlowRegistrar
- * @see FlowArtifactLocator
- * @see BeanFactoryFlowArtifactLocator
+ * @see FlowArtifactFactory
+ * @see DefaultFlowArtifactFactory
  * 
  * @author Keith Donald
  */
@@ -34,7 +34,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	/**
 	 * The flow artifact locator.
 	 */
-	private FlowArtifactLocator artifactLocator;
+	private FlowArtifactFactory flowArtifactFactory;
 
 	/**
 	 * Creates a xml flow registry factory bean.
@@ -55,13 +55,13 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 		return registry;
 	}
 
-	protected FlowArtifactLocator getFlowArtifactLocator() {
-		return artifactLocator;
+	protected FlowArtifactFactory getFlowArtifactLocator() {
+		return flowArtifactFactory;
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		if (artifactLocator == null) {
-			this.artifactLocator = new BeanFactoryFlowArtifactLocator(beanFactory, getFlowRegistry());
+		if (flowArtifactFactory == null) {
+			this.flowArtifactFactory = new DefaultFlowArtifactFactory(beanFactory, getFlowRegistry());
 		}
 	}
 

@@ -6,7 +6,7 @@ import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.access.ArtifactLookupException;
+import org.springframework.webflow.access.FlowArtifactException;
 import org.springframework.webflow.access.FlowLocator;
 
 /**
@@ -16,7 +16,7 @@ import org.springframework.webflow.access.FlowLocator;
  * 
  * @author Keith Donald
  */
-public class FlowArtifactLocatorAdapter implements FlowArtifactLocator {
+public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 
 	/**
 	 * The flow locator delegate (may be <code>null</code>).
@@ -27,7 +27,7 @@ public class FlowArtifactLocatorAdapter implements FlowArtifactLocator {
 	 * Creates an artifact locator adapter that does not natively support any
 	 * artifact lookup operations.
 	 */
-	public FlowArtifactLocatorAdapter() {
+	public FlowArtifactFactoryAdapter() {
 
 	}
 
@@ -36,11 +36,11 @@ public class FlowArtifactLocatorAdapter implements FlowArtifactLocator {
 	 * flow locator for subflow resolution.
 	 * @param flowLocator the flow locator (may be <code>null</code).
 	 */
-	public FlowArtifactLocatorAdapter(FlowLocator flowLocator) {
+	public FlowArtifactFactoryAdapter(FlowLocator flowLocator) {
 		this.flowLocator = flowLocator;
 	}
 
-	public Flow getSubflow(String id) throws ArtifactLookupException {
+	public Flow getSubflow(String id) throws FlowArtifactException {
 		if (flowLocator != null) {
 			return flowLocator.getFlow(id);
 		}
@@ -49,24 +49,24 @@ public class FlowArtifactLocatorAdapter implements FlowArtifactLocator {
 		}
 	}
 
-	public Action getAction(String id) throws ArtifactLookupException {
+	public Action getAction(String id) throws FlowArtifactException {
 		throw new UnsupportedOperationException("Action lookup is not supported by this artifact locator");
 	}
 
-	public FlowAttributeMapper getAttributeMapper(String id) throws ArtifactLookupException {
+	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 		throw new UnsupportedOperationException("Attribute mapper lookup is not supported by this artifact locator");
 	}
 
-	public TransitionCriteria getTransitionCriteria(String id) throws ArtifactLookupException {
+	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
 		throw new UnsupportedOperationException("Transition criteria lookup is not supported by this artifact locator");
 	}
 
-	public ViewSelector getViewSelector(String id) throws ArtifactLookupException {
+	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
 		throw new UnsupportedOperationException(
 				"View descriptor creator lookup is not supported by this artifact locator");
 	}
 
-	public StateExceptionHandler getExceptionHandler(String id) throws ArtifactLookupException {
+	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
 		throw new UnsupportedOperationException(
 				"Flow exception handler lookup is not supported by this artifact locator");
 	}

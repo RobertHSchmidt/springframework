@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.access.ArtifactLookupException;
+import org.springframework.webflow.access.FlowArtifactException;
 import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 import org.springframework.webflow.config.XmlFlowBuilder;
@@ -54,7 +54,7 @@ public class FlowExecutionImplTests extends TestCase {
 				new XmlFlowBuilderTests.TestFlowArtifactLocator());
 		final Flow flow = new FlowAssembler(builder).getFlow();
 		flowLocator = new FlowLocator() {
-			public Flow getFlow(String flowId) throws ArtifactLookupException {
+			public Flow getFlow(String flowId) throws FlowArtifactException {
 				if (flow.getId().equals(flowId)) {
 					return flow;
 				}

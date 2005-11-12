@@ -33,7 +33,7 @@ import org.springframework.webflow.StateTests.InputOutputMapper;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.EventIdTransitionCriteria;
-import org.springframework.webflow.config.FlowArtifactLocatorAdapter;
+import org.springframework.webflow.config.FlowArtifactFactoryAdapter;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.SimpleViewSelector;
 import org.springframework.webflow.config.registry.FlowAssembler;
@@ -81,7 +81,7 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public void testLoopInFlow() throws Exception {
-		AbstractFlowBuilder builder = new AbstractFlowBuilder(new FlowArtifactLocatorAdapter()) {
+		AbstractFlowBuilder builder = new AbstractFlowBuilder(new FlowArtifactFactoryAdapter()) {
 			protected String flowId() {
 				return "flow";
 			}
@@ -108,7 +108,7 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public void testLoopInFlowWithSubFlow() throws Exception {
-		AbstractFlowBuilder childBuilder = new AbstractFlowBuilder(new FlowArtifactLocatorAdapter()) {
+		AbstractFlowBuilder childBuilder = new AbstractFlowBuilder(new FlowArtifactFactoryAdapter()) {
 			protected String flowId() {
 				return "childFlow";
 			}
@@ -130,7 +130,7 @@ public class FlowExecutionTests extends TestCase {
 			}
 		};
 		final Flow childFlow = new FlowAssembler(childBuilder).getFlow();
-		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder(new FlowArtifactLocatorAdapter()) {
+		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder(new FlowArtifactFactoryAdapter()) {
 			protected String flowId() {
 				return "parentFlow";
 			}

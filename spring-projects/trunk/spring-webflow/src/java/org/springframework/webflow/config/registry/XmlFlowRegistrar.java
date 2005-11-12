@@ -7,7 +7,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.config.FlowArtifactLocator;
+import org.springframework.webflow.config.FlowArtifactFactory;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.XmlFlowBuilder;
 
@@ -48,7 +48,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	/**
 	 * Strategy for locating dependent artifacts when a Flow is being built.
 	 */
-	private FlowArtifactLocator artifactLocator;
+	private FlowArtifactFactory artifactLocator;
 
 	/**
 	 * Creates an XML flow registrar.
@@ -62,7 +62,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	 * @param artifactLocator the flow artifact locator that will find artifacts
 	 * needed by Flows registered by this registrar
 	 */
-	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator) {
+	public XmlFlowRegistrar(FlowArtifactFactory artifactLocator) {
 		setFlowArtifactLocator(artifactLocator);
 	}
 
@@ -72,7 +72,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	 * needed by Flows registered by this registrar
 	 * @param definitionLocations the XML flow definition resource locations
 	 */
-	public XmlFlowRegistrar(FlowArtifactLocator artifactLocator, Resource[] definitionLocations) {
+	public XmlFlowRegistrar(FlowArtifactFactory artifactLocator, Resource[] definitionLocations) {
 		setFlowArtifactLocator(artifactLocator);
 		setDefinitionLocations(definitionLocations);
 	}
@@ -99,7 +99,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	 * built.
 	 * @param artifactLocator the flow artifact locator
 	 */
-	public void setFlowArtifactLocator(FlowArtifactLocator artifactLocator) {
+	public void setFlowArtifactLocator(FlowArtifactFactory artifactLocator) {
 		Assert.notNull(artifactLocator, "The flow artifact locator is required");
 		this.artifactLocator = artifactLocator;
 	}

@@ -30,7 +30,7 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.access.ArtifactLookupException;
+import org.springframework.webflow.access.FlowArtifactException;
 import org.springframework.webflow.config.registry.FlowAssembler;
 
 /**
@@ -50,28 +50,28 @@ public class AbstractFlowBuilderTests extends TestCase {
 
 	public void testDependencyLookup() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
-		master.setFlowArtifactLocator(new FlowArtifactLocatorAdapter() {
-			public Flow getSubflow(String id) throws ArtifactLookupException {
+		master.setFlowArtifactFactory(new FlowArtifactFactoryAdapter() {
+			public Flow getSubflow(String id) throws FlowArtifactException {
 				if (id.equals(PERSON_DETAILS)) {
 					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();
-					builder.setFlowArtifactLocator(this);
+					builder.setFlowArtifactFactory(this);
 					return new FlowAssembler(builder).getFlow();
 				}
 				else {
-					throw new ArtifactLookupException(Flow.class, id);
+					throw new FlowArtifactException(Flow.class, id);
 				}
 			}
 
-			public Action getAction(String actionId) throws ArtifactLookupException {
+			public Action getAction(String actionId) throws FlowArtifactException {
 				return new NoOpAction();
 			}
 
-			public FlowAttributeMapper getAttributeMapper(String id) throws ArtifactLookupException {
+			public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 				if (id.equals("id.attributeMapper")) {
 					return new PersonIdMapper();
 				}
 				else {
-					throw new ArtifactLookupException(FlowAttributeMapper.class, id);
+					throw new FlowArtifactException(FlowAttributeMapper.class, id);
 				}
 			}
 		});

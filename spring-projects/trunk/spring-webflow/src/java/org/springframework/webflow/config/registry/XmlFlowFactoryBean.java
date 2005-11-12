@@ -20,7 +20,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.core.io.DescriptiveResource;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.config.BeanFactoryFlowArtifactLocator;
+import org.springframework.webflow.config.DefaultFlowArtifactFactory;
 import org.springframework.webflow.config.XmlFlowBuilder;
 
 /**
@@ -71,6 +71,6 @@ public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAw
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		getXmlFlowBuilder().setFlowArtifactLocator(new BeanFactoryFlowArtifactLocator(beanFactory));
+		getXmlFlowBuilder().setFlowArtifactFactory(new DefaultFlowArtifactFactory(beanFactory));
 	}
 }

@@ -9,9 +9,9 @@ import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.access.ArtifactLookupException;
+import org.springframework.webflow.access.FlowArtifactException;
 import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.access.NoSuchArtifactException;
+import org.springframework.webflow.access.NoSuchFlowArtifactException;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 
 /**
@@ -19,7 +19,7 @@ import org.springframework.webflow.action.LocalBeanInvokingAction;
  * BeanFactory.
  * @author Keith Donald
  */
-public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
+public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 
 	/**
 	 * The Spring bean factory.
@@ -37,7 +37,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	 * provided bean factory
 	 * @param beanFactory The spring bean factory, may not be null.
 	 */
-	public BeanFactoryFlowArtifactLocator(BeanFactory beanFactory) {
+	public DefaultFlowArtifactFactory(BeanFactory beanFactory) {
 		this(beanFactory, null);
 	}
 
@@ -47,13 +47,13 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 	 * @param beanFactory The spring bean factory, may not be null.
 	 * @param subflowLocator The locator for loading subflows
 	 */
-	public BeanFactoryFlowArtifactLocator(BeanFactory beanFactory, FlowLocator subflowLocator) {
+	public DefaultFlowArtifactFactory(BeanFactory beanFactory, FlowLocator subflowLocator) {
 		Assert.notNull(beanFactory, "The beanFactory to retrieve flow artifacts is required");
 		this.beanFactory = beanFactory;
 		this.subflowLocator = subflowLocator;
 	}
 
-	public Flow getSubflow(String id) throws ArtifactLookupException {
+	public Flow getSubflow(String id) throws FlowArtifactException {
 		if (subflowLocator != null) {
 			return subflowLocator.getFlow(id);
 		}
@@ -62,7 +62,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 		}
 	}
 
-	public Action getAction(String id) throws ArtifactLookupException {
+	public Action getAction(String id) throws FlowArtifactException {
 		return toAction(getService(id, Action.class));
 	}
 
@@ -83,19 +83,19 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 		}
 	}
 
-	public FlowAttributeMapper getAttributeMapper(String id) throws ArtifactLookupException {
+	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 		return (FlowAttributeMapper)getService(id, FlowAttributeMapper.class);
 	}
 
-	public TransitionCriteria getTransitionCriteria(String id) throws ArtifactLookupException {
+	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
 		return (TransitionCriteria)getService(id, TransitionCriteria.class);
 	}
 
-	public ViewSelector getViewSelector(String id) throws ArtifactLookupException {
+	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
 		return (ViewSelector)getService(id, ViewSelector.class);
 	}
 
-	public StateExceptionHandler getExceptionHandler(String id) throws ArtifactLookupException {
+	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
 		return (StateExceptionHandler)getService(id, StateExceptionHandler.class);
 	}
 
@@ -104,7 +104,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 			return beanFactory.getBean(id);
 		}
 		catch (NoSuchBeanDefinitionException e) {
-			throw new NoSuchArtifactException(serviceType, id, e);
+			throw new NoSuchFlowArtifactException(serviceType, id, e);
 		}
 	}
 }

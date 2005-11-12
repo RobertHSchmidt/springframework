@@ -31,7 +31,7 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.access.ArtifactLookupException;
+import org.springframework.webflow.access.FlowArtifactException;
 import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.config.registry.FlowAssembler;
@@ -153,23 +153,23 @@ public class XmlFlowBuilderTests extends TestCase {
 	 * 
 	 * @author Erwin Vervaet
 	 */
-	public static class TestFlowArtifactLocator extends FlowArtifactLocatorAdapter {
+	public static class TestFlowArtifactLocator extends FlowArtifactFactoryAdapter {
 
-		public Flow getSubflow(String id) throws ArtifactLookupException {
+		public Flow getSubflow(String id) throws FlowArtifactException {
 			if ("subFlow1".equals(id) || "subFlow2".equals(id)) {
 				return new Flow(id);
 			}
 			throw new NoSuchFlowDefinitionException(id);
 		}
 
-		public Action getAction(String id) throws ArtifactLookupException {
+		public Action getAction(String id) throws FlowArtifactException {
 			if ("action1".equals(id) || "action2".equals(id)) {
 				return new TestAction();
 			}
-			throw new ArtifactLookupException(Action.class, id);
+			throw new FlowArtifactException(Action.class, id);
 		}
 
-		public FlowAttributeMapper getAttributeMapper(String id) throws ArtifactLookupException {
+		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 			if ("attributeMapper1".equals(id)) {
 				return new FlowAttributeMapper() {
 					public Map createSubflowInput(RequestContext context) {
@@ -180,7 +180,7 @@ public class XmlFlowBuilderTests extends TestCase {
 					}
 				};
 			}
-			throw new ArtifactLookupException(FlowAttributeMapper.class, id);
+			throw new FlowArtifactException(FlowAttributeMapper.class, id);
 		}
 	};
 
