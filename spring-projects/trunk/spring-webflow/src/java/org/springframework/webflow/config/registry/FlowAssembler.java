@@ -138,10 +138,6 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		}
 	}
 
-	public synchronized void refresh() {
-		assembleFlow();
-	}
-
 	/**
 	 * Reassemble the flow if its underlying resource has changed.
 	 */
@@ -171,4 +167,9 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		}
 		return -1;
 	}
+	
+	public synchronized void refresh() {
+		assembleFlow();
+	}
+
 }
