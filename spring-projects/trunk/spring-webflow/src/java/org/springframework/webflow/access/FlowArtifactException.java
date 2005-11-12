@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ArtifactLookupException extends NestedRuntimeException {
+public class FlowArtifactException extends NestedRuntimeException {
 	
 	/**
 	 * The type of artifact that could not be retrieved.
@@ -43,7 +43,7 @@ public class ArtifactLookupException extends NestedRuntimeException {
 	 * @param artifactType the expected service type
 	 * @param artifactId the id of the service that cannot be found
 	 */
-	public ArtifactLookupException(Class artifactType, String artifactId) {
+	public FlowArtifactException(Class artifactType, String artifactId) {
 		this(artifactType, artifactId, null, null);
 	}
 
@@ -53,7 +53,7 @@ public class ArtifactLookupException extends NestedRuntimeException {
 	 * @param artifactId the id of the service that cannot be found
 	 * @param cause the underlying cause of this exception
 	 */
-	public ArtifactLookupException(Class artifactType, String artifactId, Throwable cause) {
+	public FlowArtifactException(Class artifactType, String artifactId, Throwable cause) {
 		this(artifactType, artifactId, null, cause);
 	}
 
@@ -63,7 +63,7 @@ public class ArtifactLookupException extends NestedRuntimeException {
 	 * @param artifactId the id of the service that cannot be found
 	 * @param message descriptive message
 	 */
-	public ArtifactLookupException(Class artifactType, String artifactId, String message) {
+	public FlowArtifactException(Class artifactType, String artifactId, String message) {
 		this(artifactType, artifactId, message, null);
 	}
 
@@ -74,7 +74,7 @@ public class ArtifactLookupException extends NestedRuntimeException {
 	 * @param message descriptive message
 	 * @param cause the underlying cause of this exception
 	 */
-	public ArtifactLookupException(Class artifactType, String artifactId, String message, Throwable cause) {
+	public FlowArtifactException(Class artifactType, String artifactId, String message, Throwable cause) {
 		super((StringUtils.hasText(message) ? message :
 				"Unable to look up flow artifact of type '" + ClassUtils.getShortName(artifactType) + "' with id '" + artifactId
 				+ "'; make sure there is at least one '" + ClassUtils.getShortName(artifactType)
