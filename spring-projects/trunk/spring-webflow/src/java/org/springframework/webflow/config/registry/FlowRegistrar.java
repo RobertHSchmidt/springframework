@@ -9,7 +9,14 @@ package org.springframework.webflow.config.registry;
  * This design where various FlowRegistrars populate a generic FlowRegistry was
  * inspired by Spring's GenericApplicationContext, which can use any number of
  * BeanDefinitionReaders to drive context population.
- * 
+ * <p>
+ * The typical usage pattern is as follows:
+ * <ol>
+ * <li>Create a new (initially empty) flow registry.
+ * <li>Use any number of flow registrars to populate that registry by calling
+ * {@link #registerFlowDefinitions(FlowRegistry)}.
+ * </ol>
+ * </p>
  * @see FlowRegistry
  * @see FlowRegistrarImpl
  * @see XmlFlowRegistrar
