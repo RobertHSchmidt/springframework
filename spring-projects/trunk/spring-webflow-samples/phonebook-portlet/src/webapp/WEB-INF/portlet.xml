@@ -5,16 +5,16 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd">
 
   <portlet>
+
     <portlet-name>phonebook</portlet-name>
+
 	<display-name>Phone Book</display-name>
 
     <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
 
     <init-param>
       <name>contextConfigLocation</name>
-      <value>
-		classpath:org/springframework/samples/phonebook/deploy/portlet.xml
-      </value>
+      <value>classpath:org/springframework/samples/phonebook/deploy/portlet.xml</value>
     </init-param>
 
     <init-param>
@@ -23,10 +23,12 @@
     </init-param>
 
     <expiration-cache>0</expiration-cache>
+
     <supports>
       <mime-type>text/html</mime-type>
       <portlet-mode>view</portlet-mode>
     </supports>
+
     <supported-locale>en</supported-locale>
 
     <portlet-preferences>
@@ -39,12 +41,15 @@
     <security-role-ref>
       <role-name>Guest</role-name>
     </security-role-ref>
+
     <security-role-ref>
       <role-name>User</role-name>
     </security-role-ref>
+
     <security-role-ref>
       <role-name>Power User</role-name>
     </security-role-ref>
+
   </portlet>
 
 </portlet-app>

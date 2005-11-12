@@ -8,8 +8,8 @@
 	<table>
 		<tr>
 			<td>
-                           <div class="portlet-section-header">Search Criteria</div>
-                        </td>
+            	<div class="portlet-section-header">Search Criteria</div>
+            </td>
 		</tr>
 		<tr>
 			<td colspan="2">

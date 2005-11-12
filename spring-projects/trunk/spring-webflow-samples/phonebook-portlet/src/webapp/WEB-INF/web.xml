@@ -17,9 +17,7 @@
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>
-			classpath:org/springframework/webflow/samples/phonebook/deploy/service-layer.xml
-		</param-value>
+		<param-value>classpath:org/springframework/webflow/samples/phonebook/deploy/service-layer.xml</param-value>
 	</context-param>
 	
 	<listener>
@@ -34,7 +32,7 @@
 
 	<servlet>
 		<servlet-name>viewRendererServlet</servlet-name>
-		<servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
+		<servlet-class>org.springframework.web.portlet.ViewRendererServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>

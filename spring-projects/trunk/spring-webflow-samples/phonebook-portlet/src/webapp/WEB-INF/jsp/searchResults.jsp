@@ -31,12 +31,12 @@
 							<td>${person.lastName}</td>
 							<td>
 								<a href="
-                                                                    <portlet:renderURL>
-						            	        <portlet:param name="_flowExecutionId" value="${flowExecutionId}" />
-						            	        <portlet:param name="_eventId" value="select" />
-						            	        <portlet:param name="id" value="${person.id}>" />
-						            	    </portlet:renderURL>">
-									${person.userId}
+                                    <portlet:renderURL>
+						                <portlet:param name="_flowExecutionId" value="${flowExecutionId}" />
+						            	<portlet:param name="_eventId" value="select" />
+						            	<portlet:param name="id" value="${person.id}>" />
+						            </portlet:renderURL>">
+							        ${person.userId}
 								</a>
 							</td>
 							<td>${person.phone}</td>

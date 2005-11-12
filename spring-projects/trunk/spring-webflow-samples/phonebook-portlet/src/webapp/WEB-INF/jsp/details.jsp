@@ -35,11 +35,12 @@
 				<br>
 				<c:forEach var="colleague" items="${getDetails.result.colleagues}">
 					<a href="
-                                            <portlet:renderURL>
-			            	        <portlet:param name="_flowExecutionId" value="${flowExecutionId}" />
-			            	        <portlet:param name="_eventId" value="select" />
-			            	        <portlet:param name="id" value="${colleague.id}>" />
-			            	    </portlet:renderURL>">
+                        <portlet:renderURL>
+			                <portlet:param name="_flowExecutionId" value="${flowExecutionId}" />
+			            	<portlet:param name="_eventId" value="select" />
+			            	<portlet:param name="id" value="${colleague.id}>" />
+			            </portlet:renderURL>">
+  			            ${colleague.userId}
 					</a>
 				</c:forEach>				
 			</td>
