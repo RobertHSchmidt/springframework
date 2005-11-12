@@ -6,7 +6,7 @@ import org.springframework.webflow.Flow;
  * Thrown when no flow definition was found during a lookup operation.
  * @author Keith Donald
  */
-public class NoSuchFlowDefinitionException extends NoSuchFlowArtifactException {
+public class NoSuchFlowDefinitionException extends NoSuchArtifactException {
 
 	/**
 	 * Creates an exception indicating a flow definition could not be found.

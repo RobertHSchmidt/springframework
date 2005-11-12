@@ -10,8 +10,8 @@ import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.access.FlowArtifactLookupException;
-import org.springframework.webflow.access.NoSuchFlowArtifactException;
+import org.springframework.webflow.access.ArtifactLookupException;
+import org.springframework.webflow.access.NoSuchArtifactException;
 
 /**
  * A flow artifact locator that queries an ordered chain of flow artifact
@@ -37,84 +37,84 @@ public class CompositeFlowArtifactLocator implements FlowArtifactLocator {
 		this.locatorChain = locatorChain;
 	}
 
-	public Flow getSubflow(String id) throws FlowArtifactLookupException {
+	public Flow getSubflow(String id) throws ArtifactLookupException {
 		List exceptions = new LinkedList();
 		for (int i = 0; i < locatorChain.length; i++) {
 			FlowArtifactLocator locator = locatorChain[i];
 			try {
 				return locator.getSubflow(id);
 			}
-			catch (NoSuchFlowArtifactException e) {
+			catch (NoSuchArtifactException e) {
 				exceptions.add(e);
 			}
 		}
 		throw new FlowArtifactLocatorChainExaustedException(Flow.class, id, exceptions);
 	}
 
-	public Action getAction(String id) throws FlowArtifactLookupException {
+	public Action getAction(String id) throws ArtifactLookupException {
 		List exceptions = new LinkedList();
 		for (int i = 0; i < locatorChain.length; i++) {
 			FlowArtifactLocator locator = locatorChain[i];
 			try {
 				return locator.getAction(id);
 			}
-			catch (NoSuchFlowArtifactException e) {
+			catch (NoSuchArtifactException e) {
 				exceptions.add(e);
 			}
 		}
 		throw new FlowArtifactLocatorChainExaustedException(Action.class, id, exceptions);
 	}
 
-	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
+	public FlowAttributeMapper getAttributeMapper(String id) throws ArtifactLookupException {
 		List exceptions = new LinkedList();
 		for (int i = 0; i < locatorChain.length; i++) {
 			FlowArtifactLocator locator = locatorChain[i];
 			try {
 				return locator.getAttributeMapper(id);
 			}
-			catch (NoSuchFlowArtifactException e) {
+			catch (NoSuchArtifactException e) {
 
 			}
 		}
 		throw new FlowArtifactLocatorChainExaustedException(FlowAttributeMapper.class, id, exceptions);
 	}
 
-	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException {
+	public TransitionCriteria getTransitionCriteria(String id) throws ArtifactLookupException {
 		List exceptions = new LinkedList();
 		for (int i = 0; i < locatorChain.length; i++) {
 			FlowArtifactLocator locator = locatorChain[i];
 			try {
 				return locator.getTransitionCriteria(id);
 			}
-			catch (NoSuchFlowArtifactException e) {
+			catch (NoSuchArtifactException e) {
 				exceptions.add(e);
 			}
 		}
 		throw new FlowArtifactLocatorChainExaustedException(TransitionCriteria.class, id, exceptions);
 	}
 
-	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
+	public ViewSelector getViewSelector(String id) throws ArtifactLookupException {
 		List exceptions = new LinkedList();
 		for (int i = 0; i < locatorChain.length; i++) {
 			FlowArtifactLocator locator = locatorChain[i];
 			try {
 				return locator.getViewSelector(id);
 			}
-			catch (NoSuchFlowArtifactException e) {
+			catch (NoSuchArtifactException e) {
 				exceptions.add(e);
 			}
 		}
 		throw new FlowArtifactLocatorChainExaustedException(ViewSelector.class, id, exceptions);
 	}
 
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
+	public StateExceptionHandler getExceptionHandler(String id) throws ArtifactLookupException {
 		List exceptions = new LinkedList();
 		for (int i = 0; i < locatorChain.length; i++) {
 			FlowArtifactLocator locator = locatorChain[i];
 			try {
 				return locator.getExceptionHandler(id);
 			}
-			catch (NoSuchFlowArtifactException e) {
+			catch (NoSuchArtifactException e) {
 				exceptions.add(e);
 			}
 		}

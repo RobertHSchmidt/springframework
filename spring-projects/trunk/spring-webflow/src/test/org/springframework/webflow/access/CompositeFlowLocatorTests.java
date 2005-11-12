@@ -27,8 +27,8 @@ import org.springframework.webflow.Flow;
 public class CompositeFlowLocatorTests extends TestCase {
 	public void testGetFlowLookupProblem() throws Exception {
 		FlowLocator flowLocator = new FlowLocator() {
-			public Flow getFlow(String id) throws FlowArtifactLookupException {
-				throw new FlowArtifactLookupException(Object.class, "SomeArtifact");
+			public Flow getFlow(String id) throws ArtifactLookupException {
+				throw new ArtifactLookupException(Object.class, "SomeArtifact");
 			}
 
 		};
@@ -38,14 +38,14 @@ public class CompositeFlowLocatorTests extends TestCase {
 			tested.getFlow("SomeFlow");
 			fail("FlowArtifactLookupException expected");
 		}
-		catch (FlowArtifactLookupException expected) {
+		catch (ArtifactLookupException expected) {
 			// expected
 		}
 	}
 
 	public void testGetFlow() throws Exception {
 		FlowLocator flowLocator = new FlowLocator() {
-			public Flow getFlow(String id) throws FlowArtifactLookupException {
+			public Flow getFlow(String id) throws ArtifactLookupException {
 				return new Flow(id);
 			}
 

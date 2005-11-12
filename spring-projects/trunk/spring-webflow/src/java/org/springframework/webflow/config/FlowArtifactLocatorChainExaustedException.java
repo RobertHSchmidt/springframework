@@ -3,21 +3,21 @@ package org.springframework.webflow.config;
 import java.util.List;
 
 import org.springframework.core.style.StylerUtils;
-import org.springframework.webflow.access.FlowArtifactLookupException;
-import org.springframework.webflow.access.NoSuchFlowArtifactException;
+import org.springframework.webflow.access.ArtifactLookupException;
+import org.springframework.webflow.access.NoSuchArtifactException;
 
 /**
  * A lookup exception thrown when a composite flow artifact locator cannot
  * locate an artifact.
  * @author Keith Donald
  */
-public class FlowArtifactLocatorChainExaustedException extends NoSuchFlowArtifactException {
+public class FlowArtifactLocatorChainExaustedException extends NoSuchArtifactException {
 
 	/**
 	 * The individual lookup exceptions thrown during the composite lookup
 	 * operation.
 	 */
-	private FlowArtifactLookupException[] lookupExceptions;
+	private ArtifactLookupException[] lookupExceptions;
 
 	/**
 	 * Constructs an exception indicating an artifact locator chain was
@@ -30,15 +30,15 @@ public class FlowArtifactLocatorChainExaustedException extends NoSuchFlowArtifac
 		super(artifactType, id, "Flow artifact locator chain exhausted looking for artifact of type: " + artifactType
 				+ " with id: '" + id + "', " + lookupExceptions.size() + " lookup exceptions thrown, they are: "
 				+ StylerUtils.style(lookupExceptions), null);
-		this.lookupExceptions = (FlowArtifactLookupException[])lookupExceptions
-				.toArray(new FlowArtifactLookupException[0]);
+		this.lookupExceptions = (ArtifactLookupException[])lookupExceptions
+				.toArray(new ArtifactLookupException[0]);
 	}
 
 	/**
 	 * Returns the lookup exceptions thrown during the composite flow artifact
 	 * lookup operation.
 	 */
-	public FlowArtifactLookupException[] getLookupExceptions() {
+	public ArtifactLookupException[] getLookupExceptions() {
 		return lookupExceptions;
 	}
 }

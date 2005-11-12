@@ -9,9 +9,9 @@ import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.access.FlowArtifactLookupException;
+import org.springframework.webflow.access.ArtifactLookupException;
 import org.springframework.webflow.access.FlowLocator;
-import org.springframework.webflow.access.NoSuchFlowArtifactException;
+import org.springframework.webflow.access.NoSuchArtifactException;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 
 /**
@@ -53,7 +53,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 		this.subflowLocator = subflowLocator;
 	}
 
-	public Flow getSubflow(String id) throws FlowArtifactLookupException {
+	public Flow getSubflow(String id) throws ArtifactLookupException {
 		if (subflowLocator != null) {
 			return subflowLocator.getFlow(id);
 		}
@@ -62,7 +62,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 		}
 	}
 
-	public Action getAction(String id) throws FlowArtifactLookupException {
+	public Action getAction(String id) throws ArtifactLookupException {
 		return toAction(getService(id, Action.class));
 	}
 
@@ -83,19 +83,19 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 		}
 	}
 
-	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
+	public FlowAttributeMapper getAttributeMapper(String id) throws ArtifactLookupException {
 		return (FlowAttributeMapper)getService(id, FlowAttributeMapper.class);
 	}
 
-	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException {
+	public TransitionCriteria getTransitionCriteria(String id) throws ArtifactLookupException {
 		return (TransitionCriteria)getService(id, TransitionCriteria.class);
 	}
 
-	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
+	public ViewSelector getViewSelector(String id) throws ArtifactLookupException {
 		return (ViewSelector)getService(id, ViewSelector.class);
 	}
 
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
+	public StateExceptionHandler getExceptionHandler(String id) throws ArtifactLookupException {
 		return (StateExceptionHandler)getService(id, StateExceptionHandler.class);
 	}
 
@@ -104,7 +104,7 @@ public class BeanFactoryFlowArtifactLocator implements FlowArtifactLocator {
 			return beanFactory.getBean(id);
 		}
 		catch (NoSuchBeanDefinitionException e) {
-			throw new NoSuchFlowArtifactException(serviceType, id, e);
+			throw new NoSuchArtifactException(serviceType, id, e);
 		}
 	}
 }

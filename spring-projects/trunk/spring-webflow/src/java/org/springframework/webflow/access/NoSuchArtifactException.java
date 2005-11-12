@@ -3,11 +3,11 @@ package org.springframework.webflow.access;
 import org.springframework.webflow.Flow;
 
 /**
- * Thrown when a requested flow artifact like a Flow, Action, etc. could not be
- * found found during a lookup operation.
+ * Thrown when a requested artifact like a Flow, Action, TransitionCriteria,
+ * ViewSelector, etc. could not be found.
  * @author Keith Donald
  */
-public class NoSuchFlowArtifactException extends FlowArtifactLookupException {
+public class NoSuchArtifactException extends ArtifactLookupException {
 
 	/**
 	 * Creates an exception indicating a flow artifact could not be found.
@@ -15,8 +15,8 @@ public class NoSuchFlowArtifactException extends FlowArtifactLookupException {
 	 * @param id the artifact id
 	 * @param cause the root cause
 	 */
-	public NoSuchFlowArtifactException(Class artifactType, String id, Throwable cause) {
-		super(Flow.class, id, "No such artifact of type: " + artifactType + " with id: '" + id + "' found", cause);
+	public NoSuchArtifactException(Class artifactType, String id, Throwable cause) {
+		super(Flow.class, id, "No such artifact of type [" + artifactType + "] with id '" + id + "' found", cause);
 	}
 
 	/**
@@ -26,7 +26,7 @@ public class NoSuchFlowArtifactException extends FlowArtifactLookupException {
 	 * @param message a custom message
 	 * @param cause the root cause
 	 */
-	public NoSuchFlowArtifactException(Class artifactType, String id, String message, Throwable cause) {
+	public NoSuchArtifactException(Class artifactType, String id, String message, Throwable cause) {
 		super(artifactType, id, message, cause);
 	}
 

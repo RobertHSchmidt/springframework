@@ -16,11 +16,17 @@
 package org.springframework.webflow.access;
 
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * Service locator interface for retrieving a flow by id. Needed at runtime
- * to load a configured flow instance from a registry, to support launching
- * new flow executions. The default registry is typically the Spring application context.
+ * A service locator interface for retrieving flow definitions by id.
+ * 
+ * Flow locators are needed at two points within an application:
+ * <ul>
+ * <li>At runtime, to access a fully-configured Flow definition from a registry
+ * to support launching a new {@link FlowExecution}.
+ * <li>At configuration time, to locate a flow definition to be used as subflow
+ * from within a flow that is in the process of being built.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -28,10 +34,11 @@ import org.springframework.webflow.Flow;
 public interface FlowLocator {
 
 	/**
-	 * Lookup a flow definition with specified id.
+	 * Lookup the flow definition with the specified id.
 	 * @param id the flow definition id
-	 * @return the flow
-	 * @throws FlowArtifactLookupException when the flow cannot be found
+	 * @return the flow definition
+	 * @throws ArtifactLookupException when the flow definition with that id
+	 * cannot be found
 	 */
-	public Flow getFlow(String id) throws FlowArtifactLookupException;
+	public Flow getFlow(String id) throws ArtifactLookupException;
 }

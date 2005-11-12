@@ -25,12 +25,12 @@ public class CompositeFlowLocator implements FlowLocator {
 		this.locators = locators;
 	}
 
-	public Flow getFlow(String id) throws FlowArtifactLookupException {
+	public Flow getFlow(String id) throws ArtifactLookupException {
 		for (int i = 0; i < locators.length; i++) {
 			try {
 				return locators[i].getFlow(id);
 			}
-			catch (FlowArtifactLookupException e) {
+			catch (ArtifactLookupException e) {
 
 			}
 		}
