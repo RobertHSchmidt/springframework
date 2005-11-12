@@ -72,12 +72,12 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *         &lt;!DOCTYPE webflow PUBLIC &quot;-//SPRING//DTD WEBFLOW//EN&quot;
- *         &quot;http://www.springframework.org/dtd/spring-webflow.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+ *     "http://www.springframework.org/dtd/spring-webflow-1.0.dtd"&gt;
  * </pre>
  * 
  * Consult the <a
- * href="http://www.springframework.org/dtd/spring-webflow.dtd">web flow DTD</a>
+ * href="http://www.springframework.org/dtd/spring-webflow-1.0.dtd">web flow DTD</a>
  * for more information on the XML flow definition format.
  * <p>
  * <b>Exposed configuration properties: </b> <br>
