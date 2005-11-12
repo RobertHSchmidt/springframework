@@ -419,7 +419,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 					state = parseDecisionState(flow, childElement);
 				}
 				else if (SUBFLOW_STATE_ELEMENT.equals(childElement.getNodeName())) {
-					state = parseSubFlowState(flow, childElement);
+					state = parseSubflowState(flow, childElement);
 				}
 				else if (END_STATE_ELEMENT.equals(childElement.getNodeName())) {
 					state = parseEndState(flow, childElement);
@@ -484,7 +484,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Parse given sub flow state definition and add a corresponding state to
 	 * given flow.
 	 */
-	protected SubflowState parseSubFlowState(Flow flow, Element element) {
+	protected SubflowState parseSubflowState(Flow flow, Element element) {
 		return new SubflowState(flow, element.getAttribute(ID_ATTRIBUTE), getFlowArtifactLocator().getSubflow(
 				element.getAttribute(FLOW_ATTRIBUTE)), parseAttributeMapper(element), parseTransitions(element),
 				parseProperties(element));
