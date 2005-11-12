@@ -115,9 +115,10 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		if (!isAssembled()) {
 			assembleFlow();
 		}
-		else {
-			refreshIfChanged();
-		}
+		// not yet tested
+		//else {
+		//	refreshIfChanged();
+		//}
 		return flow;
 	}
 	
