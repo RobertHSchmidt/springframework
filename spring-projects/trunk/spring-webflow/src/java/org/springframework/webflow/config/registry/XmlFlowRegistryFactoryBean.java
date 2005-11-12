@@ -28,7 +28,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	/**
 	 * The flow registrar that will perform the definition registrations.
 	 */
-	private XmlFlowRegistrar registrar = new XmlFlowRegistrar();
+	private XmlFlowRegistrar flowRegistrar = new XmlFlowRegistrar();
 
 	/**
 	 * Creates a xml flow registry factory bean.
@@ -49,7 +49,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * Returns the configured Xml flow registrar.
 	 */
 	protected XmlFlowRegistrar getXmlFlowRegistrar() {
-		return registrar;
+		return flowRegistrar;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	}
 
 	protected void init() {
-		getXmlFlowRegistrar().setFlowArtifactLocator(getFlowArtifactLocator());
+		getXmlFlowRegistrar().setFlowArtifactFactory(getFlowArtifactFactory());
 	}
 
 	/**

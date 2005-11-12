@@ -77,21 +77,21 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 
 	/**
 	 * Creates a flow builder using the locator to link in artifacts
-	 * @param artifactLocator the flow artifact locator.
+	 * @param flowArtifactFactory the flow artifact locator.
 	 */
-	protected BaseFlowBuilder(FlowArtifactFactory artifactLocator) {
-		setFlowArtifactFactory(artifactLocator);
+	protected BaseFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
+		setFlowArtifactFactory(flowArtifactFactory);
 	}
 
 	/**
 	 * Creates a flow builder using the provided creation and locator
 	 * strategies.
 	 * @param flowCreator the flow creator
-	 * @param artifactLocator the flow artifact locator.
+	 * @param flowArtifactFactory the flow artifact locator.
 	 */
-	protected BaseFlowBuilder(FlowCreator flowCreator, FlowArtifactFactory artifactLocator) {
+	protected BaseFlowBuilder(FlowCreator flowCreator, FlowArtifactFactory flowArtifactFactory) {
 		setFlowCreator(flowCreator);
-		setFlowArtifactFactory(artifactLocator);
+		setFlowArtifactFactory(flowArtifactFactory);
 	}
 
 	/**
@@ -119,9 +119,9 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * Returns the artifact locator
 	 * @throws an IllegalStateException if the artifact locator is not set
 	 */
-	protected FlowArtifactFactory getRequiredFlowArtifactLocator() {
+	protected FlowArtifactFactory getRequiredFlowArtifactFactory() {
 		if (flowArtifactFactory == null) {
-			throw new IllegalStateException("The flowArtifactLocator property must be set before you can use it to "
+			throw new IllegalStateException("The 'flowArtifactFactory' property must be set before you can use it to "
 					+ "load actions, attribute mappers, subflows, and other Flow artifacts needed by this builder");
 		}
 		return getFlowArtifactFactory();

@@ -152,10 +152,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Create an instance of an abstract flow builder, using the specified
 	 * service locator to obtain needed flow services during configuation.
-	 * @param flowArtifactLocator the artifact locator
+	 * @param flowArtifactFactory the artifact locator
 	 */
-	protected AbstractFlowBuilder(FlowArtifactFactory flowArtifactLocator) {
-		super(flowArtifactLocator);
+	protected AbstractFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
+		super(flowArtifactFactory);
 	}
 
 	public final Flow init() throws FlowBuilderException {
@@ -450,7 +450,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
 	protected Action action(String id) throws FlowArtifactException {
-		return getRequiredFlowArtifactLocator().getAction(id);
+		return getRequiredFlowArtifactFactory().getAction(id);
 	}
 
 	/**
@@ -621,7 +621,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * was exported with the specified id
 	 */
 	protected FlowAttributeMapper attributeMapper(String attributeMapperId) throws FlowArtifactException {
-		return getRequiredFlowArtifactLocator().getAttributeMapper(attributeMapperId);
+		return getRequiredFlowArtifactFactory().getAttributeMapper(attributeMapperId);
 	}
 
 	/**
@@ -635,7 +635,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactException when the flow cannot be resolved
 	 */
 	protected Flow flow(String flowId) throws FlowArtifactException {
-		return getRequiredFlowArtifactLocator().getSubflow(flowId);
+		return getRequiredFlowArtifactFactory().getSubflow(flowId);
 	}
 
 	/**

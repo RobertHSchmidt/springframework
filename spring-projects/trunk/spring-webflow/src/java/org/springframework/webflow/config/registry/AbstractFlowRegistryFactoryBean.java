@@ -29,7 +29,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	/**
 	 * The flow registry to register Flow definitions in.
 	 */
-	private FlowRegistry registry = new FlowRegistryImpl();
+	private FlowRegistry flowRegistry = new FlowRegistryImpl();
 
 	/**
 	 * The flow artifact locator.
@@ -52,10 +52,10 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	}
 
 	protected FlowRegistry getFlowRegistry() {
-		return registry;
+		return flowRegistry;
 	}
 
-	protected FlowArtifactFactory getFlowArtifactLocator() {
+	protected FlowArtifactFactory getFlowArtifactFactory() {
 		return flowArtifactFactory;
 	}
 

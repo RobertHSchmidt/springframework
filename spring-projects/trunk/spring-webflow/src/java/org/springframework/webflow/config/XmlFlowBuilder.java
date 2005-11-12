@@ -228,11 +228,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	/**
 	 * Creates a new XML flow builder.
 	 * @param location resource to read the XML flow definition from
-	 * @param artifactLocator the flow artifact location strategy to use
+	 * @param flowArtifactFactory the flow artifact location strategy to use
 	 */
-	public XmlFlowBuilder(Resource location, FlowArtifactFactory artifactLocator) {
+	public XmlFlowBuilder(Resource location, FlowArtifactFactory flowArtifactFactory) {
 		setLocation(location);
-		setFlowArtifactFactory(artifactLocator);
+		setFlowArtifactFactory(flowArtifactFactory);
 	}
 
 	/*
