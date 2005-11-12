@@ -25,7 +25,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	private FlowLocator flowLocator;
 
 	/**
-	 * Creates an artifact locator adapter that does not natively support any
+	 * Creates an artifact factory adapter that does not natively support any
 	 * artifact lookup operations.
 	 */
 	public FlowArtifactFactoryAdapter() {
@@ -33,7 +33,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	}
 
 	/**
-	 * Creates an artifact locator adapter that delegates to the provided 
+	 * Creates an artifact factory adapter that delegates to the provided 
 	 * flow locator for subflow resolution.
 	 * @param flowLocator the flow locator (may be <code>null</code).
 	 */
@@ -46,29 +46,29 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 			return flowLocator.getFlow(id);
 		}
 		else {
-			throw new UnsupportedOperationException("Subflow lookup is not supported by this artifact locator");
+			throw new UnsupportedOperationException("Subflow lookup is not supported by this artifact factory");
 		}
 	}
 
 	public Action getAction(String id) throws FlowArtifactException {
-		throw new UnsupportedOperationException("Action lookup is not supported by this artifact locator");
+		throw new UnsupportedOperationException("Action lookup is not supported by this artifact factory");
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
-		throw new UnsupportedOperationException("Attribute mapper lookup is not supported by this artifact locator");
+		throw new UnsupportedOperationException("Attribute mapper lookup is not supported by this artifact factory");
 	}
 
 	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
-		throw new UnsupportedOperationException("Transition criteria lookup is not supported by this artifact locator");
+		throw new UnsupportedOperationException("Transition criteria lookup is not supported by this artifact factory");
 	}
 
 	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
 		throw new UnsupportedOperationException(
-				"View descriptor creator lookup is not supported by this artifact locator");
+				"View descriptor creator lookup is not supported by this artifact factory");
 	}
 
 	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
 		throw new UnsupportedOperationException(
-				"Flow exception handler lookup is not supported by this artifact locator");
+				"Flow exception handler lookup is not supported by this artifact factory");
 	}
 }
