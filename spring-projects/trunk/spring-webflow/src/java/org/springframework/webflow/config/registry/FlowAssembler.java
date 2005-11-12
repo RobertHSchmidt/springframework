@@ -102,7 +102,11 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	}
 
 	protected boolean isAssembled() {
-		return flow == null || flow.getStateCount() == 0;
+		if (flow == null || flow.getStateCount() == 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	/**

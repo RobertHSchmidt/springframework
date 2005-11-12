@@ -194,13 +194,13 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 		Assert
 				.notNull(flowId,
 						"The flow id was not set during deserialization: cannot restore -- was this flow session deserialized properly?");
-		flow = flowLocator.getFlow(this.flowId);
+		flow = flowLocator.getFlow(flowId);
 		flowId = null;
 		Assert
 				.notNull(
 						currentStateId,
 						"The current state id was not set during deserialization: cannot restore -- was this flow session deserialized properly?");
-		currentState = this.flow.getRequiredState(this.currentStateId);
+		currentState = this.flow.getRequiredState(currentStateId);
 		currentStateId = null;
 	}
 
