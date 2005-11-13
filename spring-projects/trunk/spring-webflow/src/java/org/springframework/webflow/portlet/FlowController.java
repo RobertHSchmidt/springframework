@@ -33,17 +33,51 @@ import org.springframework.webflow.execution.portlet.PortletEvent;
 /**
  * Point of integration between Spring Portlet MVC and Spring Web Flow: a
  * {@link Controller} that routes incoming portlet requests to one or more
- * managed web flows.
+ * managed flow executions.
  * <p>
  * Requests into the web flow system are handled by a
  * {@link FlowExecutionManager}, which this class delegates to. Consult the
  * JavaDoc of that class for more information on how requests are processed.
  * <p>
- * Note that a single FlowController may manage executions for all flows of your
- * application: simply parameterize this controller from client code by
- * providing a request parameter <code>_flowId</code> indicating the flow
- * definition to execute. See the flowLauncher sample application for an example
- * of this.
+ * Note: a single FlowController may manage executing all flows of your
+ * application. Specifically:
+ * <ul>
+ * <li>To have this controller launch a new flow execution (conversation), have
+ * the client send a <code>_flowId</code> request parameter indicating the
+ * flow definition to launch.
+ * <li>To have this controller participate in an existing flow execution
+ * (conversation), have the client send a <code>_flowExecutionId</code>
+ * request parameter identifying the conversation to participate in.
+ * </ul>
+ * <p>
+ * See the flowLauncher sample application for an example of this controller
+ * parameterization.
+ * <p>
+ * Usage example:
+ *  * <p>
+ * Usage example:
+ * 
+ * <pre>
+ * &lt;!--
+ *   Exposes flows for execution at a single request URL.
+ *	 The id of a flow to launch should be passed in by clients using
+ *	 the "_flowId" request parameter:
+ *	     e.g. /app.htm?_flowId=flow1
+ * --&gt;
+ * &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.portlet.FlowController&quot;&gt;
+ *     &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ * &lt;/bean&gt;
+ *              
+ * &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ * &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *     &lt;property name=&quot;definitionLocations&quot;&gt;
+ *         &lt;list&gt;
+ *             &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *             &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *         &lt;/list&gt;
+ *     &lt;/property&gt;
+ * &lt;/bean&gt;
+ * </pre>
  * 
  * @author J.Enrique Ruiz
  * @author César Ordiñana

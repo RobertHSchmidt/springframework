@@ -30,24 +30,32 @@ import org.springframework.webflow.execution.servlet.ServletEvent;
 
 /**
  * Point of integration between Spring MVC and Spring Web Flow: a
- * {@link Controller} that routes incoming requests to one or more managed web
- * flows.
+ * {@link Controller} that routes incoming requests to one or more managed flow
+ * executions.
  * <p>
  * Requests into the web flow system are handled by a
  * {@link FlowExecutionManager}, which this class delegates to. Consult the
  * JavaDoc of that class for more information on how requests are processed.
  * <p>
- * Note that a single FlowController may manage executions for all flows of your
- * application: simply parameterize this controller from client code by
- * providing a request parameter <code>_flowId</code> indicating the flow
- * definition to execute. See the flowLauncher sample application for an example
- * of this.
+ * Note: a single FlowController may manage executing all flows of your
+ * application. Specifically:
+ * <ul>
+ * <li>To have this controller launch a new flow execution (conversation), have
+ * the client send a <code>_flowId</code> request parameter indicating the
+ * flow definition to launch.
+ * <li>To have this controller participate in an existing flow execution
+ * (conversation), have the client send a <code>_flowExecutionId</code>
+ * request parameter identifying the conversation to participate in.
+ * </ul>
+ * <p>
+ * See the flowLauncher sample application for an example of this controller
+ * parameterization.
  * <p>
  * Usage example:
  * 
  * <pre>
  * &lt;!--
- *   Exposes web flows for execution at a single request URL.
+ *   Exposes flows for execution at a single request URL.
  *	 The id of a flow to launch should be passed in by clients using
  *	 the "_flowId" request parameter:
  *	     e.g. /app.htm?_flowId=flow1
