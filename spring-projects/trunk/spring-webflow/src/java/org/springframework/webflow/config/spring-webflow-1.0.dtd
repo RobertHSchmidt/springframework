@@ -42,6 +42,36 @@
 <!ATTLIST flow start-state IDREF #REQUIRED>
 
 <!--
+	A property associated with an another element (action, state, ...). Properties are simple
+	strings or typed information that allow you to annotate the element.
+	For example, the 'caption' property might serve a GUI tooltip or logging statement, and
+	the 'validatorMethod' property might specify a target method to invoke on a form action's
+	validator in a particular action state.
+-->
+<!ELEMENT property ( value? )>
+
+<!--
+	The name of the property.
+-->
+<!ATTLIST property name CDATA #REQUIRED>
+
+<!--
+	The target type of the property value; to facilitate from-string type conversion. This type
+	string may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer').
+-->
+<!ATTLIST property type CDATA #IMPLIED>
+
+<!--
+	The value of the property; a short-cut alternative to an explicit child 'value' element.
+-->
+<!ATTLIST property value CDATA #IMPLIED>
+
+<!--
+	The value of the property.
+-->
+<!ELEMENT value ( #PCDATA )>
+
+<!--
 	Defines an action state, a state where one or more Actions (command objects) are executed.
 	An action state is a transitionable state.  An action state transition is triggered by an
 	action result event.

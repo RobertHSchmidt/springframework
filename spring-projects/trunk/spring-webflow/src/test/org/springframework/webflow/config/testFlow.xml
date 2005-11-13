@@ -21,7 +21,7 @@
 	</action-state>
 
 	<action-state id="actionState2">
-		<action bean="action3" method="actionMethod"/>
+		<action bean="action1" method="actionMethod"/>
 		<transition on="success" to="viewState1"/>
 	</action-state>
 
@@ -61,11 +61,6 @@
 	<end-state id="endState2"/>
 
 	<exception-handler on="org.springframework.webflow.config.MyCustomException" to="endState1"/>
-	<exception-handler bean="myCustomHandler"/>
-	
-	<bean id="action1" class="org.springframework.webflow.config.XmlFlowBuilderTests$TestAction"/>
-	<bean id="action3" class="org.springframework.webflow.config.XmlFlowBuilderTests$TestMultiAction"/>
-	<bean id="myCustomHandler" class="org.springframework.webflow.config.MyCustomStateExceptionHandler"/>
 	
 	<flow id="innerFlow" start-state="end">
 		<end-state id="end"/>
