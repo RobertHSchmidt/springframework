@@ -21,7 +21,10 @@
 			</td>
 		</tr>
 		</spring:hasBindErrors>
-		<spring:bind path="searchCriteria.firstName">
+		
+		<spring:nestedPath path="searchCriteria">
+		
+		<spring:bind path="firstName">
 		<tr>
 			<td>First Name</td>
 			<td>
@@ -29,7 +32,7 @@
 			</td>
 		</tr>
 		</spring:bind>		
-		<spring:bind path="searchCriteria.lastName">
+		<spring:bind path="lastName">
 		<TR>
 			<td>Last Name</td>
 			<td>
@@ -48,6 +51,9 @@
 				<input type="submit" class="button" name="_eventId_search" value="Search">
 			</td>
 		</tr>
+		
+		</spring:nestedPath>
+		
 	</table>
 	</form>
 </div>
