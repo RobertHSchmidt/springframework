@@ -84,17 +84,6 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	}
 
 	/**
-	 * Creates a flow builder using the provided creation and locator
-	 * strategies.
-	 * @param flowCreator the flow creator
-	 * @param flowArtifactFactory the flow artifact locator.
-	 */
-	protected BaseFlowBuilder(FlowCreator flowCreator, FlowArtifactFactory flowArtifactFactory) {
-		setFlowCreator(flowCreator);
-		setFlowArtifactFactory(flowArtifactFactory);
-	}
-
-	/**
 	 * Returns the flow creator.
 	 */
 	protected FlowCreator getFlowCreator() {
