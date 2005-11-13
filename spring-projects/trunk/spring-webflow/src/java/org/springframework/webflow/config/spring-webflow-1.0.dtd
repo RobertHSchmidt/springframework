@@ -42,11 +42,12 @@
 <!ATTLIST flow start-state IDREF #REQUIRED>
 
 <!--
-	A property associated with an another element (action, state, ...). Properties are simple
-	strings or typed information that allow you to annotate the element.
-	For example, the 'caption' property might serve a GUI tooltip or logging statement, and
-	the 'validatorMethod' property might specify a target method to invoke on a form action's
-	validator in a particular action state.
+	A property associated with an another element (flow, action, state, transition, etc).
+	Properties are simple strings or typed attributes that allow you to annotate an element.
+	For example:
+	- an element's 'caption' property might serve a GUI tooltip or logging statement
+	- an Action's 'validatorMethod' property might specify a target method to invoke on a validator.
+	- a Flow's 'transactional' property might indicate the flow should exhibit transactionl characteristics.
 -->
 <!ELEMENT property ( value? )>
 

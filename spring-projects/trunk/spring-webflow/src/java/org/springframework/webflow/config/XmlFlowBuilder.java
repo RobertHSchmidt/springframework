@@ -74,8 +74,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *                           &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *                           &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -192,65 +192,61 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String RESOURCE_ATTRIBUTE = "resource";
 
 	/**
-	 * The resource location of the XML flow definition
+	 * The resource location of the XML flow definition.
 	 */
 	private Resource location;
 
 	/**
-	 * Flag indicating if the the XML document parser will perform DTD
-	 * validation
-	 */
-	private boolean validating = true;
-
-	/**
-	 * The webflow DTD resolution strategy
-	 */
-	private EntityResolver entityResolver = new WebFlowDtdResolver();
-
-	/**
-	 * The in-memory DOM of the XML Document loaded from the flow definition
-	 * resource
-	 */
-	protected Document document;
-
-	/**
-	 * A flow artifact factory specific to this builder that first looks in
-	 * local Spring application contexts for flow artifacts before searching an
-	 * external factory.
+	 * A flow artifact factory specific to this builder that first looks in a
+	 * locally-managed Spring application context for flow artifacts before
+	 * searching an externally managed factory.
 	 */
 	private LocalFlowArtifactFactory flowArtifactFactory = new LocalFlowArtifactFactory();
 
 	/**
-	 * The resource loader strategy to use during the build process to load
-	 * artifact resources. The default stategy pulls from the classpath--set
-	 * this to customize how resources are resolved.
+	 * The resource loader strategy to use with any local flow application
+	 * contexts created during the building process.
 	 */
 	private ResourceLoader resourceLoader;
 
 	/**
-	 * Creates a new XML flow builder.
-	 * @param location the resource location to read the XML flow definition
-	 * from
+	 * Flag indicating if the the XML document parser will perform DTD
+	 * validation.
+	 */
+	private boolean validating = true;
+
+	/**
+	 * The spring-webflow DTD resolution strategy.
+	 */
+	private EntityResolver entityResolver = new WebFlowDtdResolver();
+
+	/**
+	 * The in-memory document object model (DOM) of the XML Document read from
+	 * the flow definition resource.
+	 */
+	protected Document document;
+
+	/**
+	 * Creates a new XML flow builder that builds the flow contained within the
+	 * provided XML document.
+	 * @param location the location of the XML document resource
 	 */
 	public XmlFlowBuilder(Resource location) {
 		setLocation(location);
 	}
 
 	/**
-	 * Creates a new XML flow builder.
-	 * @param location resource to read the XML flow definition from
-	 * @param flowArtifactFactory the flow artifact location strategy to use
+	 * Creates a new XML flow builder that builds the flow contained within the
+	 * provided XML document. Sets a specific "flowArtifactFactory" to provide
+	 * access to dependent, but externally managed flow artifacts (actions,
+	 * etc).
+	 * @param location the location of the XML document resource
+	 * @param flowArtifactFactory the flow artifact factory to use for accessing
+	 * externally managed flow artifacts
 	 */
 	public XmlFlowBuilder(Resource location, FlowArtifactFactory flowArtifactFactory) {
 		setLocation(location);
 		setFlowArtifactFactory(flowArtifactFactory);
-	}
-
-	/*
-	 * @see org.springframework.webflow.config.ResourceHolder#getResource()
-	 */
-	public Resource getResource() {
-		return getLocation();
 	}
 
 	/**
@@ -265,6 +261,35 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 */
 	public void setLocation(Resource location) {
 		this.location = location;
+	}
+
+	/*
+	 * @see org.springframework.webflow.config.ResourceHolder#getResource()
+	 */
+	public Resource getResource() {
+		return getLocation();
+	}
+
+	/*
+	 * Overriden to return the local registry
+	 * @see org.springframework.webflow.config.BaseFlowBuilder#getFlowArtifactFactory()
+	 */
+	protected FlowArtifactFactory getFlowArtifactFactory() {
+		return flowArtifactFactory;
+	}
+
+	/**
+	 * Returns the resource loader.
+	 */
+	protected ResourceLoader getResourceLoader() {
+		return resourceLoader;
+	}
+
+	/**
+	 * Sets the resource loader.
+	 */
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
 	}
 
 	/**
@@ -298,18 +323,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 */
 	public void setEntityResolver(EntityResolver entityResolver) {
 		this.entityResolver = entityResolver;
-	}
-
-	protected ResourceLoader getResourceLoader() {
-		return resourceLoader;
-	}
-
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
-	}
-
-	protected FlowArtifactFactory getFlowArtifactFactory() {
-		return flowArtifactFactory;
 	}
 
 	public Flow init() throws FlowBuilderException {
@@ -938,20 +951,19 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	/**
-	 * Simple value object that holds a local registry for a flow definition
-	 * that is in the process of being constructed.
+	 * Simple value object that holds a reference to a local artifact registry
+	 * of a flow definition that is in the process of being constructed.
 	 * @author Keith Donald
 	 */
 	private static class LocalFlowArtifactRegistry {
 
 		/**
-		 * The flow that is being built which provides the source of flow-local
-		 * artifacts.
+		 * The flow in the process of being built.
 		 */
 		private Flow flow;
 
 		/**
-		 * The local registry holding the artifacts scoped by the flow.
+		 * The local registry holding the artifacts local to the flow.
 		 */
 		private ConfigurableApplicationContext registry;
 
