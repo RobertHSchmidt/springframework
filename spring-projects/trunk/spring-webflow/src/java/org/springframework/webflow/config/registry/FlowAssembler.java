@@ -134,6 +134,7 @@ public class FlowAssembler implements FlowDefinitionHolder {
 			this.lastModified = getLastModified();
 			flow = flowBuilder.init();
 			flowBuilder.buildStates();
+			flowBuilder.buildExceptionHandlers();
 			flow = flowBuilder.getResult();
 			flowBuilder.dispose();
 		}

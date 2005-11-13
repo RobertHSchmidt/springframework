@@ -23,18 +23,25 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.binding.support.Mapping;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
@@ -45,6 +52,7 @@ import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
@@ -67,8 +75,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
- *     "http://www.springframework.org/dtd/spring-webflow-1.0.dtd"&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -102,7 +110,7 @@ import org.xml.sax.SAXException;
  * <tr>
  * <td>flowArtifactLocator</td>
  * <td><i>{@link FlowArtifactFactory}</i></td>
- * <td>Set the flow artifact location strategy to use to resolve externally
+ * <td>Set the flow artifact factory facade to use to resolve externally
  * managed flow artifacts during the build process.</td>
  * </tr>
  * </table>
@@ -180,6 +188,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String FLOW_ELEMENT = "flow";
 
+	private static final String IMPORT_ELEMENT = "import";
+
+	private static final String RESOURCE_ATTRIBUTE = "resource";
+
 	/**
 	 * The resource location of the XML flow definition
 	 */
@@ -203,8 +215,23 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected Document document;
 
 	/**
+	 * A flow artifact factory specific to this builder that first looks in
+	 * local Spring application contexts for flow artifacts before searching an
+	 * external factory.
+	 */
+	private LocalFlowArtifactFactory flowArtifactFactory = new LocalFlowArtifactFactory();
+
+	/**
+	 * The resource loader strategy to use during the build process to load
+	 * artifact resources. The default stategy pulls from the classpath--set
+	 * this to customize how resources are resolved.
+	 */
+	private ResourceLoader resourceLoader = new DefaultResourceLoader();
+
+	/**
 	 * Creates a new XML flow builder.
-	 * @param location resource to read the XML flow definition from
+	 * @param location the resource location to read the XML flow definition
+	 * from
 	 */
 	public XmlFlowBuilder(Resource location) {
 		setLocation(location);
@@ -221,7 +248,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.springframework.webflow.config.ResourceHolder#getResource()
 	 */
 	public Resource getResource() {
@@ -275,11 +301,23 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		this.entityResolver = entityResolver;
 	}
 
+	protected ResourceLoader getResourceLoader() {
+		return resourceLoader;
+	}
+
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
+	}
+
+	protected FlowArtifactFactory getFlowArtifactFactory() {
+		return flowArtifactFactory;
+	}
+
 	public Flow init() throws FlowBuilderException {
 		Assert.notNull(location,
 				"The location property specifying the XML flow definition resource location is required");
 		Assert.notNull(getFlowArtifactFactory(),
-				"The flowArtifactLocator property for loading actions and subflows is required");
+				"The flowArtifactFactory property for loading actions and subflows is required");
 		initConversionService();
 		try {
 			loadDocument();
@@ -288,12 +326,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			throw new FlowBuilderException("Cannot load the XML flow definition resource '" + location + "'", e);
 		}
 		catch (ParserConfigurationException e) {
-			throw new FlowBuilderException("Cannot configure parser to parse the XML flow definition", e);
+			throw new FlowBuilderException("Cannot configure the parser to parse the XML flow definition", e);
 		}
 		catch (SAXException e) {
-			throw new FlowBuilderException("Cannot parse the flow definition XML document '" + location + "'", e);
+			throw new FlowBuilderException("Cannot parse the flow definition XML document at'" + location + "'", e);
 		}
-		parseFlowDefinition();
+		setFlow(parseFlowDefinition(document.getDocumentElement()));
+		initFlowArtifactRegistry(getFlow(), document.getDocumentElement());
+		addInnerFlowDefinitions(getFlow(), document.getDocumentElement());
 		return getFlow();
 	}
 
@@ -324,42 +364,76 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 	}
 
-	// XML parsing logic
-
 	/**
 	 * Parse the XML flow definitions and construct a Flow object. This helper
 	 * method will set the "flow" property.
 	 */
-	protected void parseFlowDefinition() {
-		Element root = document.getDocumentElement();
-		setFlow(getFlowCreator().createFlow(root.getAttribute(ID_ATTRIBUTE), parseProperties(root)));
+	protected Flow parseFlowDefinition(Element element) {
+		return getFlowCreator().createFlow(element.getAttribute(ID_ATTRIBUTE), parseProperties(element));
 	}
 
-	public void buildStates() throws FlowBuilderException {
-		// consider breaking these out into different public FlowBuilder methods
-		addInnerFlowDefinitions(getFlow(), document.getDocumentElement());
-		addStateDefinitions(getFlow(), document.getDocumentElement());
-		getFlow().addExceptionHandlers(parseExceptionHandlers(document.getDocumentElement()));
+	/**
+	 * Intialize a local artifact registry for the flow that is currently in the
+	 * process of being built. Pushes the registry onto the stack so artifacts can be
+	 * loaded during state construction.
+	 * 
+	 * @param flow the flow that is being constructed
+	 * @param element the flow's root XML element
+	 */
+	protected void initFlowArtifactRegistry(Flow flow, Element element) {
+		NodeList nodeList = element.getElementsByTagName(IMPORT_ELEMENT);
+		Resource[] resources = new Resource[nodeList.getLength()];
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node node = nodeList.item(i);
+			if (node instanceof Element) {
+				Element childElement = (Element)node;
+				resources[i] = getResourceLoader().getResource(childElement.getAttribute(RESOURCE_ATTRIBUTE));
+			}
+		}
+		GenericApplicationContext registry = new GenericApplicationContext();
+		registry.setResourceLoader(getResourceLoader());
+		new XmlBeanDefinitionReader(registry).loadBeanDefinitions(resources);
+		flowArtifactFactory.push(new LocalFlowArtifactRegistry(flow, registry));
 	}
 
 	/**
 	 * Parse the inner flow definitions in the XML file and add them to the flow
 	 * object we're constructing.
+	 * @param flow the outer flow
+	 * @param the outer flow element
 	 */
 	protected void addInnerFlowDefinitions(Flow flow, Element element) {
 		NodeList nodeList = element.getElementsByTagName(FLOW_ELEMENT);
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
 			if (node instanceof Element) {
-				Element childElement = (Element)node;
-				Flow innerFlow = getFlowCreator().createFlow(childElement.getAttribute(ID_ATTRIBUTE),
-						parseProperties(childElement));
-				flow.addFlow(innerFlow);
-				addInnerFlowDefinitions(getFlow(), childElement);
-				addStateDefinitions(innerFlow, childElement);
-				getFlow().addExceptionHandlers(parseExceptionHandlers(childElement));
+				addInnerFlowDefinition(flow, ((Element)node));
 			}
 		}
+	}
+
+	/**
+	 * Parse a single inner flow definition in the XML document and add it to
+	 * the flow object in construction.
+	 * @param flow the outer flow
+	 * @param the inner flow element
+	 */
+	protected void addInnerFlowDefinition(Flow flow, Element element) {
+		Flow innerFlow = parseFlowDefinition(element);
+		flow.addFlow(innerFlow);
+		initFlowArtifactRegistry(innerFlow, element);
+		addInnerFlowDefinitions(innerFlow, element);
+		addStateDefinitions(innerFlow, element);
+		innerFlow.addExceptionHandlers(parseExceptionHandlers(element));
+		destroyFlowArtifactRegistry(innerFlow);
+	}
+
+	public void buildStates() throws FlowBuilderException {
+		addStateDefinitions(getFlow(), document.getDocumentElement());
+	}
+
+	public void buildExceptionHandlers() throws FlowBuilderException {
+		getFlow().addExceptionHandlers(parseExceptionHandlers(document.getDocumentElement()));
 	}
 
 	/**
@@ -734,7 +808,153 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	public void dispose() {
+		destroyFlowArtifactRegistry(getFlow());
+		Assert.isTrue(flowArtifactFactory.registries.isEmpty());
 		setFlow(null);
 		document = null;
+	}
+
+	/**
+	 * Pops the local registry off the stack for the flow definition that has
+	 * just been constructed.
+	 * @param flow the built flow
+	 */
+	protected void destroyFlowArtifactRegistry(Flow flow) {
+		flowArtifactFactory.pop();
+	}
+
+	/**
+	 * A local artifact factory that searches local registries first before
+	 * querying the global artifact factory.
+	 * @author Keith Donald
+	 */
+	private class LocalFlowArtifactFactory extends FlowArtifactFactoryAdapter {
+
+		/**
+		 * The stack of registries.
+		 */
+		private Stack registries = new Stack();
+
+		/**
+		 * Push a new registry onto the stack
+		 * @param registry the local registry
+		 */
+		public void push(LocalFlowArtifactRegistry registry) {
+			if (!registries.isEmpty()) {
+				top().registry.setParent(registry.registry);
+			}
+			registries.push(registry);
+		}
+
+		/**
+		 * Pop a registry off the stack
+		 */
+		public LocalFlowArtifactRegistry pop() {
+			return (LocalFlowArtifactRegistry)registries.pop();
+		}
+
+		/**
+		 * Returns the top registry on the stack
+		 */
+		public LocalFlowArtifactRegistry top() {
+			return (LocalFlowArtifactRegistry)registries.peek();
+		}
+
+		public Flow getSubflow(String id) throws FlowArtifactException {
+			if (!registries.isEmpty() && top().flow.containsFlow(id)) {
+				return top().flow.getFlow(id);
+			}
+			else {
+				return XmlFlowBuilder.super.getFlowArtifactFactory().getSubflow(id);
+			}
+		}
+
+		public Action getAction(String id) throws FlowArtifactException {
+			if (!registries.isEmpty()) {
+				try {
+					return toAction(top().registry.getBean(id));
+				}
+				catch (NoSuchBeanDefinitionException e) {
+
+				}
+			}
+			return XmlFlowBuilder.super.getFlowArtifactFactory().getAction(id);
+		}
+
+		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
+			if (!registries.isEmpty()) {
+				try {
+					return (FlowAttributeMapper)top().registry.getBean(id);
+				}
+				catch (NoSuchBeanDefinitionException e) {
+
+				}
+			}
+			return XmlFlowBuilder.super.getFlowArtifactFactory().getAttributeMapper(id);
+		}
+
+		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
+			if (!registries.isEmpty()) {
+				try {
+					return (StateExceptionHandler)top().registry.getBean(id);
+				}
+				catch (NoSuchBeanDefinitionException e) {
+
+				}
+			}
+			return XmlFlowBuilder.super.getFlowArtifactFactory().getExceptionHandler(id);
+		}
+
+		public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
+			if (!registries.isEmpty()) {
+				try {
+					return (TransitionCriteria)top().registry.getBean(id);
+				}
+				catch (NoSuchBeanDefinitionException e) {
+
+				}
+			}
+			return XmlFlowBuilder.super.getFlowArtifactFactory().getTransitionCriteria(id);
+		}
+
+		public ViewSelector getViewSelector(String id) throws FlowArtifactException {
+			if (!registries.isEmpty()) {
+				try {
+					return (ViewSelector)top().registry.getBean(id);
+				}
+				catch (NoSuchBeanDefinitionException e) {
+
+				}
+			}
+			return XmlFlowBuilder.super.getFlowArtifactFactory().getViewSelector(id);
+		}
+	}
+
+	/**
+	 * Simple value object that holds a local registry for a flow definition
+	 * that is in the process of being constructed.
+	 * @author Keith Donald
+	 */
+	private static class LocalFlowArtifactRegistry {
+		
+		/**
+		 * The flow that is being built which provides the source of flow-local artifacts. 
+		 */
+		private Flow flow;
+
+		/**
+		 * The local registry holding the artifacts scoped by the flow. 
+		 */
+		private ConfigurableApplicationContext registry;
+
+		/**
+		 * Create new registry
+		 * @param flow the flow
+		 * @param registry the local registry
+		 */
+		public LocalFlowArtifactRegistry(Flow flow, ConfigurableApplicationContext registry) {
+			this.flow = flow;
+			this.registry = registry;
+		}
 	}
 }

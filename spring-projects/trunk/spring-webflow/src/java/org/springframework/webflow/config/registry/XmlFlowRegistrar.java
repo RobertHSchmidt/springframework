@@ -3,8 +3,10 @@ package org.springframework.webflow.config.registry;
 import java.io.File;
 import java.io.IOException;
 
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.config.FlowArtifactFactory;
@@ -23,10 +25,8 @@ import org.springframework.webflow.config.XmlFlowBuilder;
  * <pre>
  * FlowRegistryImpl registry = new FlowRegistryImpl();
  * File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- * Resource[] locations = new Resource[] {
- *     new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
- *     new FileSystemResource(new File(parent, &quot;flow2.xml&quot;))
- * };
+ * Resource[] locations = new Resource[] { new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
+ * 		new FileSystemResource(new File(parent, &quot;flow2.xml&quot;)) };
  * XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowArtifactLocator, locations);
  * registrar.registerFlowDefinitions(registry);
  * </pre>
@@ -48,7 +48,13 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	/**
 	 * Strategy for locating dependent artifacts when a Flow is being built.
 	 */
-	private FlowArtifactFactory artifactLocator;
+	private FlowArtifactFactory flowArtifactFactory;
+
+	/**
+	 * Strategy for loading depenent resources needed by the Flow while it is
+	 * being built.
+	 */
+	private ResourceLoader resourceLoader = new DefaultResourceLoader();
 
 	/**
 	 * Creates an XML flow registrar.
@@ -101,7 +107,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	 */
 	public void setFlowArtifactFactory(FlowArtifactFactory artifactLocator) {
 		Assert.notNull(artifactLocator, "The flow artifact locator is required");
-		this.artifactLocator = artifactLocator;
+		this.flowArtifactFactory = artifactLocator;
 	}
 
 	public void registerFlowDefinitions(FlowRegistry registry) {
@@ -160,12 +166,14 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	 * @param location the XML resource
 	 */
 	protected void registerFlow(Resource location, FlowRegistry registry) {
-		registry.registerFlowDefinition(new FlowAssembler(new XmlFlowBuilder(location, artifactLocator)));
+		XmlFlowBuilder builder = new XmlFlowBuilder(location, flowArtifactFactory);
+		builder.setResourceLoader(resourceLoader);
+		registry.registerFlowDefinition(new FlowAssembler(builder));
 	}
 
 	public String toString() {
 		return new ToStringCreator(this).append("definitionLocation", definitionLocations).append(
 				"definitionDirectoryLocations", definitionDirectoryLocations).append("flowArtifactLocator",
-				artifactLocator).toString();
+				flowArtifactFactory).toString();
 	}
 }

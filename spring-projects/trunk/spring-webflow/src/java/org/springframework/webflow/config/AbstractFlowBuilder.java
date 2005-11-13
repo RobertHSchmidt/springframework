@@ -180,6 +180,12 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		return null;
 	}
 
+	public abstract void buildStates();
+	
+	public void buildExceptionHandlers() {
+	
+	}
+	
 	public void dispose() {
 		setFlow(null);
 	}

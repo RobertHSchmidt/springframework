@@ -24,6 +24,8 @@ import org.springframework.webflow.Flow;
  * <li> Initialize this builder, creating the initial flow definition.
  * <li> Call {@link #buildStates} to create the states of the flow and add them
  * to the flow definition.
+ * <li> Call {@link #buildExceptionHandlers} to create the state exception handlers
+ * of the flow and add them to to the flow definition.
  * <li> Call {@link #getResult} to return the fully-built {@link Flow}
  * definition.
  * <li> Dispose this builder, releasing any resources allocated during the
@@ -71,6 +73,13 @@ public interface FlowBuilder {
 	 * @throws FlowBuilderException an exception occured building the flow
 	 */
 	public void buildStates() throws FlowBuilderException;
+
+	
+	/**
+	 * Creates and adds all state exception handlers to the flow built by this builder.
+	 * @throws FlowBuilderException an exception occured building this flow
+	 */
+	public void buildExceptionHandlers() throws FlowBuilderException;
 
 	/**
 	 * Get the fully constructed and configured Flow object - called by the

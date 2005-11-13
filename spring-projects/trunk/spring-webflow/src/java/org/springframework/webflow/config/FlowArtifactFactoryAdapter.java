@@ -8,6 +8,7 @@ import org.springframework.webflow.FlowLocator;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
+import org.springframework.webflow.action.LocalBeanInvokingAction;
 
 /**
  * Dummy implementation of a flow artifact factory that throws unsupported
@@ -22,7 +23,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	/**
 	 * The flow locator delegate (may be <code>null</code>).
 	 */
-	private FlowLocator flowLocator;
+	private FlowLocator subflowLocator;
 
 	/**
 	 * Creates an artifact factory adapter that does not natively support any
@@ -33,17 +34,17 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	}
 
 	/**
-	 * Creates an artifact factory adapter that delegates to the provided 
-	 * flow locator for subflow resolution.
-	 * @param flowLocator the flow locator (may be <code>null</code).
+	 * Creates an artifact factory adapter that delegates to the provided flow
+	 * locator for subflow resolution.
+	 * @param subflowLocator the flow locator (may be <code>null</code).
 	 */
-	public FlowArtifactFactoryAdapter(FlowLocator flowLocator) {
-		this.flowLocator = flowLocator;
+	public FlowArtifactFactoryAdapter(FlowLocator subflowLocator) {
+		this.subflowLocator = subflowLocator;
 	}
 
 	public Flow getSubflow(String id) throws FlowArtifactException {
-		if (flowLocator != null) {
-			return flowLocator.getFlow(id);
+		if (subflowLocator != null) {
+			return subflowLocator.getFlow(id);
 		}
 		else {
 			throw new UnsupportedOperationException("Subflow lookup is not supported by this artifact factory");
@@ -52,6 +53,23 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 
 	public Action getAction(String id) throws FlowArtifactException {
 		throw new UnsupportedOperationException("Action lookup is not supported by this artifact factory");
+	}
+
+	/**
+	 * Helper method to the given service object into an action. If the given
+	 * service object implements the <code>Action</code> interface, it is
+	 * returned as is, otherwise it is wrapped in an action that can invoke a
+	 * method on the service bean.
+	 * @param artifact the service bean
+	 * @return the action
+	 */
+	protected Action toAction(Object artifact) {
+		if (artifact instanceof Action) {
+			return (Action)artifact;
+		}
+		else {
+			return new LocalBeanInvokingAction(artifact);
+		}
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {

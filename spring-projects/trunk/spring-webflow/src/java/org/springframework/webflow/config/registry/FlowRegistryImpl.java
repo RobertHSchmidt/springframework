@@ -12,8 +12,13 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.NoSuchFlowDefinitionException;
 
 /**
- * A generic registry of Flow definitions. May also be refreshed at runtime to
- * support "hot reloading" of refreshable Flow definitions.
+ * A generic registry of one or more Flow definitions.
+ * <p>
+ * This registry may be refreshed at runtime to "hot reload" refreshable Flow
+ * definitions.
+ * <p>
+ * This registry be configured with a "parent" flow registry to provide a hook
+ * into a larger flow definition registry hierarchy.
  * 
  * @author Keith Donald
  */
@@ -23,6 +28,15 @@ public class FlowRegistryImpl implements FlowRegistry {
 	 * The map of loaded Flow definitions maintained in this registry.
 	 */
 	private Map flowDefinitions = new TreeMap();
+
+	/**
+	 * An optional parent flow registry.
+	 */
+	private FlowRegistry parent;
+
+	public void setParent(FlowRegistry parent) {
+		this.parent = parent;
+	}
 
 	public String[] getFlowDefinitionIds() {
 		return (String[])flowDefinitions.keySet().toArray(new String[0]);
@@ -91,10 +105,11 @@ public class FlowRegistryImpl implements FlowRegistry {
 				if (!holder.getId().equals(id)) {
 					reindex(holder, id);
 				}
-			} catch (NoSuchFlowDefinitionException e) {
+			}
+			catch (NoSuchFlowDefinitionException e) {
 				// rethrow without context for generic JMX clients
-				throw new IllegalArgumentException("Unable to complete refresh operation: " + 
-						"no flow definition with id '" + id + "' is stored in this registry");
+				throw new IllegalArgumentException("Unable to complete refresh operation: "
+						+ "no flow definition with id '" + id + "' is stored in this registry");
 			}
 		}
 		finally {
@@ -120,10 +135,18 @@ public class FlowRegistryImpl implements FlowRegistry {
 	}
 
 	public Flow getFlow(String id) throws FlowArtifactException {
-		return getFlowDefinitionHolder(id).getFlow();
+		try {
+			return getFlowDefinitionHolder(id).getFlow();
+		}
+		catch (NoSuchFlowDefinitionException e) {
+			if (parent != null) {
+				return parent.getFlow(id);
+			}
+			throw e;
+		}
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("flowDefinitions", flowDefinitions).toString();
+		return new ToStringCreator(this).append("flowDefinitions", flowDefinitions).append("parent", parent).toString();
 	}
 }

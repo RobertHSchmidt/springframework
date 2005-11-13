@@ -28,13 +28,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * A single definition of a web flow.
- * <p>
- * A Flow represents a reusable, self-contained controller module that captures
- * the definition (or blueprint) of a logical page flow within a web
- * application. A page flow is defined as a controlled navigation that guides a
- * user through fulfillment of a business process/goal that takes place over a
- * series of steps (modeled as states).
+ * A single flow definition. A Flow represents a reusable, self-contained
+ * controller module that provides the blue print for a logical page flow of a
+ * web application. A "logical page flow" is defined as a controlled navigation
+ * that guides a user through fulfillment of a business process/goal that takes
+ * place over a series of steps (modeled as states).
  * <p>
  * A simple Flow definition could do nothing more than execute an action and
  * display a view, all in one request. A more elaborate Flow definition may be
@@ -61,22 +59,24 @@ import org.springframework.util.StringUtils;
  * "success" or "error".
  * <p>
  * Each Flow has exactly one start state. A start state is simply a marker
- * noting the state executions of this Flow definition should start in.
- * The first state added to the flow will become the start state by default.
+ * noting the state executions of this Flow definition should start in. The
+ * first state added to the flow will become the start state by default.
  * <p>
  * Flow definitions may have one or more flow exception handlers. A
  * {@link StateExceptionHandler} can execute custom behavior in response to a
- * specific exception (or set of exceptions) that occur during this flow's
- * execution.
+ * specific exception (or set of exceptions) that occur in a state of one of
+ * this flow's executions.
  * </p>
  * Instances of this class are typically built by
  * {@link org.springframework.webflow.config.FlowBuilder} implementations, but
- * may also be directly subclassed. This class, and the rest of the Spring Web
- * Flow (SWF) core, has been designed with minimal dependencies on other parts
- * of Spring, and is usable in a standalone fashion (as well as in the context
- * of other frameworks like Struts, WebWork, Tapestry, or JSF, for example). The
- * core system is also fully usable outside an HTTP servlet environment, for
- * example in Portlets, tests, or standalone applications.
+ * may also be directly subclassed.
+ * <p>
+ * This class, and the rest of the Spring Web Flow (SWF) core, has been designed
+ * with minimal dependencies on other parts of Spring, and is usable in a
+ * standalone fashion (as well as in the context of other frameworks like
+ * Struts, WebWork, Tapestry, or JSF, for example). The core system is fully
+ * usable outside an HTTP servlet environment, for example in Portlets, tests,
+ * or standalone applications.
  * <p>
  * Note: flows are singleton definition objects so they should be thread-safe!
  * 
@@ -94,7 +94,7 @@ import org.springframework.util.StringUtils;
  * @author Erwin Vervaet
  * @author Colin Sampaleanu
  */
-public class Flow extends AnnotatedObject {
+public class Flow extends AnnotatedObject implements FlowLocator {
 
 	/**
 	 * Name of the property used to indicate if this flow is transactional.
@@ -129,7 +129,7 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * The set of inner flow definitions for this flow.
 	 */
-	private Set flows = CollectionFactory.createLinkedSetIfPossible(6);
+	private Set flows = CollectionFactory.createLinkedSetIfPossible(3);
 
 	/**
 	 * Construct a new flow definition with the given id. The id should be
@@ -340,8 +340,8 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Return the <code>TransitionableState</code> with given <code>stateId</code>,
-	 * or <code>null</code> when not found.
+	 * Return the <code>TransitionableState</code> with given
+	 * <code>stateId</code>, or <code>null</code> when not found.
 	 * @param stateId id of the state to look up
 	 * @return the transitionable state, or null when not found
 	 * @throws IllegalStateException when the identified state is not
@@ -357,8 +357,8 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Return the <code>TransitionableState</code> with given <code>stateId</code>,
-	 * throwing an exception if not found.
+	 * Return the <code>TransitionableState</code> with given
+	 * <code>stateId</code>, throwing an exception if not found.
 	 * @param stateId id of the state to look up
 	 * @return the transitionable state
 	 * @throws IllegalStateException when the identified state is not
@@ -392,10 +392,10 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Adds a state exception handler to this flow definition. Exception handlers
-	 * are invoked when an exception occurs during this flow's execution, and
-	 * can execute custom exception handling logic as well as select an error
-	 * view to display.
+	 * Adds a state exception handler to this flow definition. Exception
+	 * handlers are invoked when an exception occurs during this flow's
+	 * execution, and can execute custom exception handling logic as well as
+	 * select an error view to display.
 	 * @param exceptionHandler the state exception handler
 	 */
 	public void addExceptionHandler(StateExceptionHandler exceptionHandler) {
@@ -424,16 +424,17 @@ public class Flow extends AnnotatedObject {
 
 	/**
 	 * Adds an inner flow definition to this flow.
-	 * @param flow a flow definition to make a "inner" flow definition of this flow
+	 * @param flow a flow definition to make a "inner" flow definition of this
+	 * flow
 	 */
 	public void addFlow(Flow flow) {
 		flows.add(flow);
 	}
 
-	/**
-	 * Returns a inner flow with the provided id.
+	/*
+	 * @see org.springframework.webflow.FlowLocator#getFlow(java.lang.String)
 	 */
-	public Flow getFlow(String id) throws NoSuchFlowDefinitionException {
+	public Flow getFlow(String id) throws FlowArtifactException {
 		Iterator it = flows.iterator();
 		while (it.hasNext()) {
 			Flow flow = (Flow)it.next();
@@ -443,18 +444,35 @@ public class Flow extends AnnotatedObject {
 		}
 		throw new NoSuchFlowDefinitionException(id);
 	}
-	
+
+	/**
+	 * Returns <code>true</code> if this flow contains an inner flow with the
+	 * specified id.
+	 * @param id the inner flow id
+	 * @return true if yes, false otherwise
+	 */
+	public boolean containsFlow(String id) {
+		Iterator it = flows.iterator();
+		while (it.hasNext()) {
+			Flow flow = (Flow)it.next();
+			if (flow.getId().equals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Returns the list of inner flows for this flow.
 	 */
 	public Flow[] getFlows() {
 		return (Flow[])flows.toArray(new Flow[flows.size()]);
 	}
-	
+
 	/**
 	 * Start a new execution of this flow in the specified state.
-	 * @param startState the start state to use -- when <code>null</code>, the
-	 * default start state of the flow will be used
+	 * @param startState the start state to use -- when <code>null</code>,
+	 * the default start state of the flow will be used
 	 * @param context the flow execution control context
 	 */
 	public ViewSelection start(State startState, FlowExecutionControlContext context) {
