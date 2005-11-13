@@ -1,6 +1,6 @@
 package org.springframework.webflow.config.registry;
 
-import org.springframework.webflow.access.FlowLocator;
+import org.springframework.webflow.FlowLocator;
 
 /**
  * A interface for registering Flow definitions. Extends the FlowRegistryMBean

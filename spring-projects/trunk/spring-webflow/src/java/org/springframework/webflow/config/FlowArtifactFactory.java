@@ -2,11 +2,11 @@ package org.springframework.webflow.config;
 
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.access.FlowArtifactException;
 
 /**
  * A support interface used by FlowBuilders at configuration time to retrieve

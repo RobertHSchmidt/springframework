@@ -21,11 +21,11 @@ import org.easymock.MockControl;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowLocator;
 import org.springframework.webflow.State;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionManager;
 
 /**

@@ -25,13 +25,13 @@ import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.access.FlowArtifactException;
 
 /**
  * Base class for flow builders that programmatically build flows in Java

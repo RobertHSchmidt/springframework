@@ -8,8 +8,8 @@ import java.util.TreeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.access.FlowArtifactException;
-import org.springframework.webflow.access.NoSuchFlowDefinitionException;
+import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.NoSuchFlowDefinitionException;
 
 /**
  * A generic registry of Flow definitions. May also be refreshed at runtime to

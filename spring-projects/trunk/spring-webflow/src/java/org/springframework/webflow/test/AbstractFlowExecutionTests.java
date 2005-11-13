@@ -23,10 +23,10 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowExecutionContext;
+import org.springframework.webflow.FlowLocator;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.access.FlowArtifactException;
-import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionImpl;
 

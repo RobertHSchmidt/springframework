@@ -32,13 +32,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
+import org.springframework.webflow.FlowLocator;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.access.FlowLocator;
 
 /**
  * Default implementation of FlowExecution that uses a stack-based data

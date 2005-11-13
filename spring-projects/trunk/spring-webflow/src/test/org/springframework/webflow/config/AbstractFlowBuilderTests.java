@@ -25,12 +25,12 @@ import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.access.FlowArtifactException;
 import org.springframework.webflow.config.registry.FlowAssembler;
 
 /**
