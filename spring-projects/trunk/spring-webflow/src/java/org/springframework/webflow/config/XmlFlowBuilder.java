@@ -39,7 +39,6 @@ import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.binding.support.Mapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
@@ -75,8 +74,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -226,7 +225,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * artifact resources. The default stategy pulls from the classpath--set
 	 * this to customize how resources are resolved.
 	 */
-	private ResourceLoader resourceLoader = new DefaultResourceLoader();
+	private ResourceLoader resourceLoader;
 
 	/**
 	 * Creates a new XML flow builder.
@@ -374,8 +373,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	/**
 	 * Intialize a local artifact registry for the flow that is currently in the
-	 * process of being built. Pushes the registry onto the stack so artifacts can be
-	 * loaded during state construction.
+	 * process of being built. Pushes the registry onto the stack so artifacts
+	 * can be loaded during state construction.
 	 * 
 	 * @param flow the flow that is being constructed
 	 * @param element the flow's root XML element
@@ -387,11 +386,19 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Node node = nodeList.item(i);
 			if (node instanceof Element) {
 				Element childElement = (Element)node;
-				resources[i] = getResourceLoader().getResource(childElement.getAttribute(RESOURCE_ATTRIBUTE));
+				try {
+					resources[i] = getLocation().createRelative(childElement.getAttribute(RESOURCE_ATTRIBUTE));
+				}
+				catch (IOException e) {
+					throw new FlowBuilderException("Could not access flow-relative artifact resource '"
+							+ childElement.getAttribute(RESOURCE_ATTRIBUTE) + "", e);
+				}
 			}
 		}
 		GenericApplicationContext registry = new GenericApplicationContext();
-		registry.setResourceLoader(getResourceLoader());
+		if (getResourceLoader() == null) {
+			registry.setResourceLoader(getResourceLoader());
+		}
 		new XmlBeanDefinitionReader(registry).loadBeanDefinitions(resources);
 		flowArtifactFactory.push(new LocalFlowArtifactRegistry(flow, registry));
 	}
@@ -936,14 +943,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * @author Keith Donald
 	 */
 	private static class LocalFlowArtifactRegistry {
-		
+
 		/**
-		 * The flow that is being built which provides the source of flow-local artifacts. 
+		 * The flow that is being built which provides the source of flow-local
+		 * artifacts.
 		 */
 		private Flow flow;
 
 		/**
-		 * The local registry holding the artifacts scoped by the flow. 
+		 * The local registry holding the artifacts scoped by the flow.
 		 */
 		private ConfigurableApplicationContext registry;
 

@@ -42,14 +42,7 @@
 	<end-state id="error" view="error"/>
 	
 	<exception-handler on="org.springframework.webflow.RequestNotInTransactionException" to="error"/>
-	
-	<bean id="sellItemAction" class="org.springframework.webflow.action.FormAction">
-		<property name="formObjectName" value="sale"/>
-		<property name="formObjectClass" value="org.springframework.webflow.samples.sellitem.Sale"/>
-		<property name="validator">
-			<bean class="org.springframework.webflow.samples.sellitem.SaleValidator"/>
-		</property>
-		<property name="requireValidatorMethod" value="true"/>
-	</bean>
 
+	<import resource="sellitem-artifacts.xml"/>
+	
 </flow>
