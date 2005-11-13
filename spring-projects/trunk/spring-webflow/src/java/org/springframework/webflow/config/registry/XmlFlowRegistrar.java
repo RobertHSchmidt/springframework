@@ -25,8 +25,10 @@ import org.springframework.webflow.config.XmlFlowBuilder;
  * <pre>
  * FlowRegistryImpl registry = new FlowRegistryImpl();
  * File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- * Resource[] locations = new Resource[] { new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
- * 		new FileSystemResource(new File(parent, &quot;flow2.xml&quot;)) };
+ * Resource[] locations = new Resource[] {
+ *     new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
+ *     new FileSystemResource(new File(parent, &quot;flow2.xml&quot;))
+ * };
  * XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowArtifactLocator, locations);
  * registrar.registerFlowDefinitions(registry);
  * </pre>
@@ -108,6 +110,15 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	public void setFlowArtifactFactory(FlowArtifactFactory artifactLocator) {
 		Assert.notNull(artifactLocator, "The flow artifact locator is required");
 		this.flowArtifactFactory = artifactLocator;
+	}
+
+	/**
+	 * Sets the resource loading strategy to use to load local flow artifacts
+	 * during the flow building process.
+	 * @param resourceLoader the resource loader
+	 */
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
 	}
 
 	public void registerFlowDefinitions(FlowRegistry registry) {

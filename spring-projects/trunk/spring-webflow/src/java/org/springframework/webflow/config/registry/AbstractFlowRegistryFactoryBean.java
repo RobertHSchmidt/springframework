@@ -8,10 +8,10 @@ import org.springframework.webflow.config.DefaultFlowArtifactFactory;
 import org.springframework.webflow.config.FlowArtifactFactory;
 
 /**
- * A base class for a factory bean that creates a populated Flow Registry.
- * Subclasses should override the {@link #registerFlowDefinitions(FlowRegistry)}
+ * A base class for factory beans that create populated Flow Registries.
+ * Subclasses should override the {@link #doPopulate(FlowRegistry)}
  * to perform the registry population logic, typically delegating to a
- * {@link FlowRegistrar}.
+ * {@link FlowRegistrar} strategy.
  * 
  * This class is also <code>BeanFactoryAware</code> and when used with Spring
  * will automatically create a configured {@link DefaultFlowArtifactFactory}
@@ -29,40 +29,53 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	/**
 	 * The flow registry to register Flow definitions in.
 	 */
-	private FlowRegistry flowRegistry = new FlowRegistryImpl();
+	private FlowRegistryImpl flowRegistry = new FlowRegistryImpl();
 
 	/**
-	 * The flow artifact locator.
+	 * The flow artifact factory.
 	 */
 	private FlowArtifactFactory flowArtifactFactory;
 
 	/**
-	 * Creates a xml flow registry factory bean.
+	 * Creates a flow registry factory bean.
 	 */
 	public AbstractFlowRegistryFactoryBean() {
 
 	}
 
 	/**
-	 * Creates a xml flow registry factory bean, for programmatic usage only.
+	 * Creates a flow registry factory bean, for programmatic usage only.
 	 * @param beanFactory the bean factory to use for locating flow artifacts.
 	 */
 	public AbstractFlowRegistryFactoryBean(BeanFactory beanFactory) {
 		setBeanFactory(beanFactory);
 	}
 
+	/**
+	 * Sets the parent registry of the registry constructed by this factory bean.
+	 * @param parent the parent flow definition registry
+	 */
+	public void setParent(FlowRegistry parent) {
+		this.flowRegistry.setParent(parent);
+	}
+
+	/**
+	 * Returns the flow registry constructed by the factory bean.
+	 */
 	protected FlowRegistry getFlowRegistry() {
 		return flowRegistry;
 	}
 
+	/**
+	 * Returns the flow artifact factory strategy to use to access flow artifacts during the registry 
+	 * population process.
+	 */
 	protected FlowArtifactFactory getFlowArtifactFactory() {
 		return flowArtifactFactory;
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		if (flowArtifactFactory == null) {
-			this.flowArtifactFactory = new DefaultFlowArtifactFactory(beanFactory, getFlowRegistry());
-		}
+		this.flowArtifactFactory = new DefaultFlowArtifactFactory(beanFactory, getFlowRegistry());
 	}
 
 	public Object getObject() throws Exception {
@@ -73,16 +86,16 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * Populates and returns the configured flow definition registry.
 	 */
 	public FlowRegistry populateFlowRegistry() {
-		registerFlowDefinitions(getFlowRegistry());
+		doPopulate(getFlowRegistry());
 		return getFlowRegistry();
 	}
 
 	/**
 	 * Template method subclasses must override to perform registry
-	 * registration.
+	 * population.
 	 * @param registry the flow definition registry
 	 */
-	protected abstract void registerFlowDefinitions(FlowRegistry registry);
+	protected abstract void doPopulate(FlowRegistry registry);
 
 	public Class getObjectType() {
 		return FlowRegistry.class;
