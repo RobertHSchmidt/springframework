@@ -26,10 +26,12 @@
 
 <!--
 	Defines a exactly one flow definition.  A flow is composed of one or more states.  A flow may
-	be annotated with properties and may be configured to handle state exceptions.  A flow may also
-	define one or more local bean definitions defining custom related services.
+    annotated with properties and may be configured to handle state exceptions.  A flow may import
+    one or more bean definition resources defining custom flow artifacts (such as actions, 
+	exception handlers, view selectors, transition criteria, etc).  A flow may nest one or more other 
+	flows in-line to use as subflows, referred to as 'inner flows'.
 -->
-<!ELEMENT flow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, bean*, import*, flow* )>
+<!ELEMENT flow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, import*, flow* )>
 
 <!--
 	The identifier for this flow; this identifier should be descriptive and unique to all other flows.
@@ -465,11 +467,13 @@
 <!ATTLIST exception-handler bean CDATA #IMPLIED>
 
 <!--
-    A indicator to import definitions located in a separate flow artifact resource.
+    Requests the import of all custom flow artifacts contained within a single bean
+    definition resource location.
 -->
 <!ELEMENT import EMPTY>
 
 <!--
-	The path to the resource to import.
+	The relative resource path to the bean definition resource to import.  This path is relative to 
+	this document.
 -->
 <!ATTLIST import resource CDATA #REQUIRED>
