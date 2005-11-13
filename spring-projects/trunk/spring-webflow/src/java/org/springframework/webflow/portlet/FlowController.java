@@ -86,6 +86,10 @@ import org.springframework.webflow.execution.portlet.PortletEvent;
  */
 public class FlowController extends AbstractController {
 
+	/**
+	 * The attribute name of the last <code>ViewSelection</code> made by this controller for one user's 
+	 * <code>PortletSession</code>
+	 */
 	private static final String VIEW_SELECTION_ATTRIBUTE_NAME = FlowController.class + ".viewSelection";
 
 	/**
