@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.core.NestedRuntimeException;
 import org.springframework.core.style.StylerUtils;
 
 /**
@@ -25,17 +24,12 @@ import org.springframework.core.style.StylerUtils;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class NoSuchFlowStateException extends NestedRuntimeException {
+public class NoSuchFlowStateException extends NoSuchFlowArtifactException {
 
 	/**
 	 * The flow where the state could not be found.
 	 */
 	private Flow flow;
-
-	/**
-	 * The identifier of the state that could not be found.
-	 */
-	private String stateId;
 
 	/**
 	 * Create a new flow state lookup exception.
@@ -53,11 +47,10 @@ public class NoSuchFlowStateException extends NestedRuntimeException {
 	 * @param cause the underlying cause of this exception
 	 */
 	public NoSuchFlowStateException(Flow flow, String stateId, Throwable cause) {
-		super("No state with state id '" + stateId + "' exists for flow '" + flow.getId() + "' -- valid states are "
+		super(State.class, stateId, "No state with state id '" + stateId + "' exists for flow '" + flow.getId() + "' -- valid states are "
 				+ StylerUtils.style(flow.getStateIds()) + "-- likely programmer error, check your flow configuration",
 				cause);
 		this.flow = flow;
-		this.stateId = stateId;
 	}
 
 	/**
@@ -73,6 +66,6 @@ public class NoSuchFlowStateException extends NestedRuntimeException {
 	 * @return the state id
 	 */
 	public String getStateId() {
-		return stateId;
+		return getArtifactId();
 	}
 }

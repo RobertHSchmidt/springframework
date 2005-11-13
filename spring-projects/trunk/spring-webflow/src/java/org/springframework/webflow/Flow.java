@@ -26,7 +26,6 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.access.NoSuchFlowDefinitionException;
 
 /**
  * A single definition of a web flow.

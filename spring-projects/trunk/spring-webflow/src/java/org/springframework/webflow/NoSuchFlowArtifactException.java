@@ -1,6 +1,19 @@
-package org.springframework.webflow.access;
-
-import org.springframework.webflow.Flow;
+/*
+ * Copyright 2002-2005 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.springframework.webflow;
 
 /**
  * Thrown when a requested artifact like a Flow, Action, TransitionCriteria,
@@ -16,7 +29,7 @@ public class NoSuchFlowArtifactException extends FlowArtifactException {
 	 * @param cause the root cause
 	 */
 	public NoSuchFlowArtifactException(Class artifactType, String id, Throwable cause) {
-		super(Flow.class, id, "No such artifact of type [" + artifactType + "] with id '" + id + "' found", cause);
+		super(artifactType, id, "No such artifact of type [" + artifactType + "] with id '" + id + "' found", cause);
 	}
 
 	/**
