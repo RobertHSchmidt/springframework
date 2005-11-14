@@ -210,9 +210,9 @@ public class FlowExecutionListenerList {
 	/**
 	 * Notify all interested listeners that a flow execution session is starting.
 	 */
-	public void fireSessionStarting(RequestContext context, Flow flow, Map input) {
+	public void fireSessionStarting(RequestContext context, State startState, Map input) {
 		for (Iterator it = iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).sessionStarting(context, flow, input);
+			((FlowExecutionListener)it.next()).sessionStarting(context, startState, input);
 		}
 	}
 

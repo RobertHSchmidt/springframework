@@ -45,7 +45,7 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void requestProcessed(RequestContext context) {
 	}
 
-	public void sessionStarting(RequestContext context, Flow flow, Map input) throws EnterStateVetoException {
+	public void sessionStarting(RequestContext context, State startState, Map input) throws EnterStateVetoException {
 	}
 
 	public void sessionStarted(RequestContext context) {

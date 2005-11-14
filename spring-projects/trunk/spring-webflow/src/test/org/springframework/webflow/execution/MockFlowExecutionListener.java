@@ -72,7 +72,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		requestInProcess = true;
 	}
 
-	public void sessionStarting(RequestContext context, Flow flow, Map input) throws EnterStateVetoException {
+	public void sessionStarting(RequestContext context, State startState, Map input) throws EnterStateVetoException {
 		if (!context.getFlowExecutionContext().isActive()) {
 			Assert.state(!started, "The flow execution was already started");
 			flowNestingLevel = 0;

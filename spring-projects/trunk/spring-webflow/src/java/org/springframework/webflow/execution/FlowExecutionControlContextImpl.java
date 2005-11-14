@@ -210,7 +210,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 					+ (startState != null ? startState.getId() : flow.getStartState().getId()) + "' with input "
 					+ input);
 		}
-		flowExecution.getListeners().fireSessionStarting(this, flow, input);
+		flowExecution.getListeners().fireSessionStarting(this, startState, input);
 		flowExecution.activateSession(flow, input);
 		ViewSelection selectedView = flow.start(startState, this);
 		flowExecution.getListeners().fireSessionStarted(this);
