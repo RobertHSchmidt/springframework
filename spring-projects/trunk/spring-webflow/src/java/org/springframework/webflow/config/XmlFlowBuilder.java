@@ -385,7 +385,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	/**
-	 * Intialize a local artifact registry for the flow that is currently in the
+	 * Initialize a local artifact registry for the flow that is currently in the
 	 * process of being built. Pushes the registry onto the stack so artifacts
 	 * can be loaded during state construction.
 	 * 
@@ -830,7 +830,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	public void dispose() {
 		destroyFlowArtifactRegistry(getFlow());
-		Assert.isTrue(flowArtifactFactory.localFlowRegistries.isEmpty());
 		setFlow(null);
 		document = null;
 	}
