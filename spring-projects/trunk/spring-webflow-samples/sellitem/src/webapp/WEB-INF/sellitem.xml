@@ -43,6 +43,6 @@
 	
 	<exception-handler on="org.springframework.webflow.RequestNotInTransactionException" to="error"/>
 
-	<import resource="sellitem-artifacts.xml"/>
+	<import resource="sellitem-beans.xml"/>
 	
 </flow>

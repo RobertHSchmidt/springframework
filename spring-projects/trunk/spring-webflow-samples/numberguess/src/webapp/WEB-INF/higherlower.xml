@@ -18,13 +18,6 @@
 	
 	<end-state id="showAnswer" view="higherlower.showAnswer"/>
 
-	<!-- the proxy to the stateful higher lower game (a multi action) -->
-	<bean id="higherlowerGameProxy" class="org.springframework.webflow.action.StatefulActionProxy">
-		<property name="actionAttribute" value="game"/>
-		<property name="actionId" value="higherlowerGame"/>
-	</bean>
-
-	<!-- note: higherlower is a prototype, it holds caller state in flow scope transparently -->
-	<bean id="higherlowerGame" class="org.springframework.webflow.samples.numberguess.HigherLowerGame" singleton="false"/>
+	<import resource="higherlower-beans.xml"/>
 
 </flow>

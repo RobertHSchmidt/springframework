@@ -12,5 +12,7 @@
 	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
 		<property name="definitionLocations" value="/WEB-INF/birthdate-flow.xml"/>
 	</bean>
-	
+
+	<bean id="formAction" class="org.springframework.webflow.samples.birthdate.BirthDateFormAction"/>
+
 </beans>

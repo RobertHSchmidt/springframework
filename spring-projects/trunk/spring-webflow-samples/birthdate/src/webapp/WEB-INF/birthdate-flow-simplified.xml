@@ -32,6 +32,4 @@
 	
 	<end-state id="displayAge" view="yourAge"/>
 
-	<bean id="formAction" class="org.springframework.webflow.samples.birthdate.BirthDateFormAction"/>
-
 </flow>

@@ -13,7 +13,7 @@
 		
 		<DIV align="left">
 			<P>
-				<A href="executor.do?_flowId=birthdate">Birth Date</A>
+				<A href="flowAction.do?_flowId=birthdate">Birth Date</A>
 			</P>
 			
 			<P>

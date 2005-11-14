@@ -18,6 +18,4 @@
 		<transition on="back" to="selectFile"/>
 	</view-state>
 
-	<bean id="uploadFileAction" class="org.springframework.webflow.samples.fileupload.ProcessUploadAction"/>
-
 </flow>

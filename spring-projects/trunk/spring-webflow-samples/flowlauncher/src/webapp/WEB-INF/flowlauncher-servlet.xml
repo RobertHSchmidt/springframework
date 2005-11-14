@@ -7,9 +7,9 @@
 	  Exposes web flows for execution at a single request URL.
 	  The id of a flow to launch should be passed in by clients using
 	  the "_flowId" request parameter:
-	      e.g. /executor.htm?_flowId=sampleA
+	      e.g. /flowController.htm?_flowId=sampleA
 	-->
-	<bean name="/executor.htm" class="org.springframework.webflow.mvc.FlowController">
+	<bean name="/flowController.htm" class="org.springframework.webflow.mvc.FlowController">
 		<constructor-arg ref="flowExecutionManager"/>
 		<property name="cacheSeconds" value="5"/>
 	</bean>
@@ -41,4 +41,6 @@
 		<property name="suffix" value=".jsp"/>
 	</bean>
 
+	<bean id="mapper" class="org.springframework.webflow.samples.flowlauncher.SampleFlowAttributeMapper"/>
+	
 </beans>

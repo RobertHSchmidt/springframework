@@ -2,7 +2,7 @@
 
 <div id="content">
 	<hr>
-	<html:form action="birthdate" method="post">
+	<html:form action="flowAction" method="post">
 	<table>
 	<tr>
 		<td colspan="2">

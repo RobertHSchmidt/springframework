@@ -29,5 +29,7 @@
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>
 	</bean>
+
+	<bean id="uploadFileAction" class="org.springframework.webflow.samples.fileupload.ProcessUploadAction"/>
 	
 </beans>
