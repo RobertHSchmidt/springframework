@@ -23,8 +23,11 @@
 				Use continuations to develop complex Web applications</A>. It illustrates
 				the following concepts:
 				<UL>
+				    <LI>
+				    	Spring Web Flow's JSF integration.
+				    </LI>
 					<LI>
-						Using the "_flowId" request parameter to let the view tell the web
+						Using the flowId: command link prefix to let the view tell the web
 						flow controller which flow needs to be started.
 					</LI>
 					<LI>
@@ -40,10 +43,6 @@
 					</LI>
 					<LI>
 						Using <A href="http://www.ognl.org/">OGNL</A> based conditional expressions.
-					</LI>
-					<LI>
-						Collecting statistics on flows using the JMX protocol (via a standard JMX client
-						like JConsole).
 					</LI>
 				</UL>
 			</P>

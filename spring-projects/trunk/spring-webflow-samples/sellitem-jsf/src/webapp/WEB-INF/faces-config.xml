@@ -4,8 +4,6 @@
   "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN"
   "http://java.sun.com/dtd/web-facesconfig_1_0.dtd">
 
-<!-- =========== FULL CONFIGURATION FILE ================================== -->
-
 <faces-config>
 	<application>
 		<!-- Navigation handler that delegates to Spring Web Flow -->

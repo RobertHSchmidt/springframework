@@ -93,9 +93,9 @@ public class AbstractFlowBuilderTests extends TestCase {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
 		try {
 			new FlowAssembler(master).getFlow();
-			fail("Should have failed, no bean factory set for default bean factory flow service locator");
+			fail("Should have failed, artifact lookup not supported");
 		}
-		catch (IllegalStateException e) {
+		catch (UnsupportedOperationException e) {
 			// expected
 		}
 	}
