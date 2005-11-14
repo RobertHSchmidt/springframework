@@ -74,8 +74,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *                           &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *                           &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -829,7 +829,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	public void dispose() {
 		destroyFlowArtifactRegistry(getFlow());
-		Assert.isTrue(flowArtifactFactory.registries.isEmpty());
+		Assert.isTrue(flowArtifactFactory.localFlowRegistries.isEmpty());
 		setFlow(null);
 		document = null;
 	}
@@ -853,46 +853,49 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		/**
 		 * The stack of registries.
 		 */
-		private Stack registries = new Stack();
+		private Stack localFlowRegistries = new Stack();
 
 		/**
 		 * Push a new registry onto the stack
 		 * @param registry the local registry
 		 */
 		public void push(LocalFlowArtifactRegistry registry) {
-			if (!registries.isEmpty()) {
-				top().registry.setParent(registry.registry);
+			if (!localFlowRegistries.isEmpty()) {
+				registry.context.setParent(top().context);
 			}
-			registries.push(registry);
+			localFlowRegistries.push(registry);
 		}
 
 		/**
 		 * Pop a registry off the stack
 		 */
 		public LocalFlowArtifactRegistry pop() {
-			return (LocalFlowArtifactRegistry)registries.pop();
+			return (LocalFlowArtifactRegistry)localFlowRegistries.pop();
 		}
 
 		/**
 		 * Returns the top registry on the stack
 		 */
 		public LocalFlowArtifactRegistry top() {
-			return (LocalFlowArtifactRegistry)registries.peek();
+			return (LocalFlowArtifactRegistry)localFlowRegistries.peek();
 		}
 
 		public Flow getSubflow(String id) throws FlowArtifactException {
-			if (!registries.isEmpty() && top().flow.containsFlow(id)) {
-				return top().flow.getFlow(id);
+			if (!localFlowRegistries.isEmpty()) {
+				Flow currentFlow = top().flow;
+				if (currentFlow.getId().equals(id)) {
+					return currentFlow;
+				} else if (currentFlow.containsFlow(id)) {
+					return currentFlow.getFlow(id);
+				}
 			}
-			else {
-				return XmlFlowBuilder.super.getFlowArtifactFactory().getSubflow(id);
-			}
+			return XmlFlowBuilder.super.getFlowArtifactFactory().getSubflow(id);
 		}
 
 		public Action getAction(String id) throws FlowArtifactException {
-			if (!registries.isEmpty()) {
+			if (!localFlowRegistries.isEmpty()) {
 				try {
-					return toAction(top().registry.getBean(id));
+					return toAction(top().context.getBean(id));
 				}
 				catch (NoSuchBeanDefinitionException e) {
 
@@ -902,9 +905,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
-			if (!registries.isEmpty()) {
+			if (!localFlowRegistries.isEmpty()) {
 				try {
-					return (FlowAttributeMapper)top().registry.getBean(id);
+					return (FlowAttributeMapper)top().context.getBean(id);
 				}
 				catch (NoSuchBeanDefinitionException e) {
 
@@ -914,9 +917,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 
 		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
-			if (!registries.isEmpty()) {
+			if (!localFlowRegistries.isEmpty()) {
 				try {
-					return (StateExceptionHandler)top().registry.getBean(id);
+					return (StateExceptionHandler)top().context.getBean(id);
 				}
 				catch (NoSuchBeanDefinitionException e) {
 
@@ -926,9 +929,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 
 		public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
-			if (!registries.isEmpty()) {
+			if (!localFlowRegistries.isEmpty()) {
 				try {
-					return (TransitionCriteria)top().registry.getBean(id);
+					return (TransitionCriteria)top().context.getBean(id);
 				}
 				catch (NoSuchBeanDefinitionException e) {
 
@@ -938,9 +941,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 
 		public ViewSelector getViewSelector(String id) throws FlowArtifactException {
-			if (!registries.isEmpty()) {
+			if (!localFlowRegistries.isEmpty()) {
 				try {
-					return (ViewSelector)top().registry.getBean(id);
+					return (ViewSelector)top().context.getBean(id);
 				}
 				catch (NoSuchBeanDefinitionException e) {
 
@@ -965,7 +968,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		/**
 		 * The local registry holding the artifacts local to the flow.
 		 */
-		private ConfigurableApplicationContext registry;
+		private ConfigurableApplicationContext context;
 
 		/**
 		 * Create new registry
@@ -974,7 +977,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		 */
 		public LocalFlowArtifactRegistry(Flow flow, ConfigurableApplicationContext registry) {
 			this.flow = flow;
-			this.registry = registry;
+			this.context = registry;
 		}
 	}
 }
