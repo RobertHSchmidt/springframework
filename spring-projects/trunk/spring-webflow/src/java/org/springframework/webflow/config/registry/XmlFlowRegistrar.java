@@ -3,7 +3,6 @@ package org.springframework.webflow.config.registry;
 import java.io.File;
 import java.io.IOException;
 
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -56,7 +55,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	 * Strategy for loading depenent resources needed by the Flow while it is
 	 * being built.
 	 */
-	private ResourceLoader resourceLoader = new DefaultResourceLoader();
+	private ResourceLoader resourceLoader;
 
 	/**
 	 * Creates an XML flow registrar.

@@ -107,7 +107,7 @@ import org.xml.sax.SAXException;
  * <td>Set a SAX entity resolver to be used for parsing.</td>
  * </tr>
  * <tr>
- * <td>flowArtifactLocator</td>
+ * <td>flowArtifactFactory</td>
  * <td><i>{@link FlowArtifactFactory}</i></td>
  * <td>Set the flow artifact factory facade to use to resolve externally
  * managed flow artifacts during the build process.</td>
