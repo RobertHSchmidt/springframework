@@ -34,8 +34,8 @@ import org.springframework.webflow.config.ResourceHolder;
  * Flow assemblers may be used in a standalone, programmatic fashion as follows:
  * 
  * <pre>
- *     FlowBuilder builder = ...;
- *     Flow flow = new FlowAssembler(builder).getFlow();
+ *       FlowBuilder builder = ...;
+ *       Flow flow = new FlowAssembler(builder).getFlow();
  * </pre>
  * 
  * @see FlowBuilder
@@ -58,8 +58,8 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	private Flow flow;
 
 	/**
-	 * A flag indicating if the flow has been assembled. Set to true when
-	 * {@link #getFlow} is called for the first time and assembly commences.
+	 * A flag indicating whether or not this assembler is in the middle of the
+	 * assembly process.
 	 */
 	private boolean assembling;
 
@@ -104,7 +104,8 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	protected boolean isAssembled() {
 		if (flow == null || flow.getStateCount() == 0) {
 			return false;
-		} else {
+		}
+		else {
 			return true;
 		}
 	}
@@ -114,6 +115,7 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	 */
 	public synchronized Flow getFlow() {
 		if (assembling) {
+			// we're in the middle of assembling, just return
 			return flow;
 		}
 		if (!isAssembled()) {
@@ -124,7 +126,7 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		}
 		return flow;
 	}
-	
+
 	protected void assembleFlow() {
 		try {
 			// set the assembling flag before building states to avoid infinite
@@ -172,7 +174,7 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		}
 		return -1;
 	}
-	
+
 	public synchronized void refresh() {
 		assembleFlow();
 	}
