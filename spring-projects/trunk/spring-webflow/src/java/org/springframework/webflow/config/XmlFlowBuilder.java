@@ -445,6 +445,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		addInnerFlowDefinitions(innerFlow, element);
 		addStateDefinitions(innerFlow, element);
 		innerFlow.addExceptionHandlers(parseExceptionHandlers(element));
+		innerFlow.resolveStateTransitionsTargetStates();
 		destroyFlowArtifactRegistry(innerFlow);
 	}
 
