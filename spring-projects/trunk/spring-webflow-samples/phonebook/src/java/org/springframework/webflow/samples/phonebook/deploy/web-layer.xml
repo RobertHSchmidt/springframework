@@ -8,7 +8,6 @@
 		<property name="definitionLocations">
 			<list>
 				<value>classpath:org/springframework/webflow/samples/phonebook/web/search.xml</value>
-				<value>classpath:org/springframework/webflow/samples/phonebook/web/detail.xml</value>
 			</list>
 		</property>
 	</bean>

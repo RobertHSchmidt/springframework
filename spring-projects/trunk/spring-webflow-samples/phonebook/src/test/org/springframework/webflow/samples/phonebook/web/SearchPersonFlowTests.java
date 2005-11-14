@@ -24,7 +24,7 @@ import org.springframework.webflow.test.AbstractFlowExecutionTests;
 public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 
 	protected String flowId() {
-		return "searchFlow";
+		return "search";
 	}
 
 	protected String[] getConfigLocations() {
