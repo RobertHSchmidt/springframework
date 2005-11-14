@@ -54,9 +54,6 @@ import org.springframework.webflow.execution.portlet.PortletEvent;
  * parameterization.
  * <p>
  * Usage example:
- *  * <p>
- * Usage example:
- * 
  * <pre>
  * &lt;!--
  *   Exposes flows for execution at a single request URL.
