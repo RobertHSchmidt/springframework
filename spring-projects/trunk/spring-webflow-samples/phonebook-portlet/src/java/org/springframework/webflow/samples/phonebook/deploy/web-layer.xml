@@ -12,7 +12,16 @@
 			</list>
 		</property>
 	</bean>
-		
+
+	<!-- Search form action that setups the form and processes form submissions -->
+	<bean id="searchFormAction" class="org.springframework.webflow.action.FormAction">
+		<property name="formObjectName" value="searchCriteria"/>
+		<property name="formObjectClass" value="org.springframework.webflow.samples.phonebook.domain.SearchCriteria"/>
+		<property name="validator">
+			<bean class="org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValidator"/>
+		</property>
+	</bean>
+	
 	<!-- comment in to test Java-based flow builders 
 	<bean id="flowLocator" class="org.springframework.webflow.samples.phonebook.web.FlowRegistryFactoryBean"/>
 	 -->
