@@ -54,26 +54,27 @@ import org.springframework.webflow.execution.portlet.PortletEvent;
  * parameterization.
  * <p>
  * Usage example:
+ * 
  * <pre>
- * &lt;!--
- *   Exposes flows for execution at a single request URL.
- *	 The id of a flow to launch should be passed in by clients using
- *	 the "_flowId" request parameter:
- *	     e.g. /app.htm?_flowId=flow1
- * --&gt;
- * &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.portlet.FlowController&quot;&gt;
- *     &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- * &lt;/bean&gt;
- *              
- * &lt;!-- Creates the registry of flow definitions for this application --&gt;
- * &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *     &lt;property name=&quot;definitionLocations&quot;&gt;
- *         &lt;list&gt;
- *             &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *             &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *         &lt;/list&gt;
- *     &lt;/property&gt;
- * &lt;/bean&gt;
+ *   &lt;!--
+ *     Exposes flows for execution at a single request URL.
+ *  	 The id of a flow to launch should be passed in by clients using
+ *  	 the &quot;_flowId&quot; request parameter:
+ *  	     e.g. /app.htm?_flowId=flow1
+ *   --&gt;
+ *   &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.portlet.FlowController&quot;&gt;
+ *       &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *   &lt;/bean&gt;
+ *                
+ *   &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *   &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *       &lt;property name=&quot;definitionLocations&quot;&gt;
+ *           &lt;list&gt;
+ *               &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *               &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *           &lt;/list&gt;
+ *       &lt;/property&gt;
+ *   &lt;/bean&gt;
  * </pre>
  * 
  * @author J.Enrique Ruiz
@@ -84,8 +85,8 @@ import org.springframework.webflow.execution.portlet.PortletEvent;
 public class FlowController extends AbstractController {
 
 	/**
-	 * The attribute name of the last <code>ViewSelection</code> made by this controller for one user's 
-	 * <code>PortletSession</code>
+	 * The attribute name of the last <code>ViewSelection</code> made by this
+	 * controller for one user's <code>PortletSession</code>
 	 */
 	private static final String VIEW_SELECTION_ATTRIBUTE_NAME = FlowController.class + ".viewSelection";
 
@@ -151,10 +152,18 @@ public class FlowController extends AbstractController {
 	}
 
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
-		ViewSelection selectedView = (ViewSelection)request.getPortletSession().getAttribute(
-				VIEW_SELECTION_ATTRIBUTE_NAME);
-		// convert selected view to a renderable portlet mvc "model and view"
-		return toModelAndView(selectedView);
+		try {
+			ViewSelection selectedView = (ViewSelection)request.getPortletSession().getAttribute(
+					VIEW_SELECTION_ATTRIBUTE_NAME);
+			if (selectedView == null) {
+				selectedView = flowExecutionManager.onEvent(new PortletEvent(request, response));
+			}
+			// convert view to a renderable portlet mvc "model and view"
+			return toModelAndView(selectedView);
+		}
+		finally {
+			request.getPortletSession().removeAttribute(VIEW_SELECTION_ATTRIBUTE_NAME);
+		}
 	}
 
 	/**
