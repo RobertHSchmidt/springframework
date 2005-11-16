@@ -43,16 +43,6 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	public static final String NAME_PROPERTY = "name";
 
 	/**
-	 * The action caption (short description / tooltip) property ("caption").
-	 */
-	public static final String CAPTION_PROPERTY = "caption";
-
-	/**
-	 * The action long description property ("description")
-	 */
-	public static final String DESCRIPTION_PROPERTY = "description";
-
-	/**
 	 * The action execution method property ("method").
 	 */
 	public static final String METHOD_PROPERTY = "method";
@@ -123,36 +113,6 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 */
 	public boolean isNamed() {
 		return StringUtils.hasText(getName());
-	}
-
-	/**
-	 * Returns the short description of the action.
-	 */
-	public String getCaption() {
-		return (String)getProperty(CAPTION_PROPERTY);
-	}
-
-	/**
-	 * Sets the short description for the action.
-	 * @param caption the caption
-	 */
-	public void setCaption(String caption) {
-		setProperty(CAPTION_PROPERTY, caption);
-	}
-
-	/**
-	 * Returns the long description of this action.
-	 */
-	public String getDescription() {
-		return (String)getProperty(DESCRIPTION_PROPERTY);
-	}
-
-	/**
-	 * Sets the long description for the action.
-	 * @param description the long description
-	 */
-	public void setDescription(String description) {
-		setProperty(DESCRIPTION_PROPERTY, description);
 	}
 
 	public Event execute(RequestContext context) throws Exception {
