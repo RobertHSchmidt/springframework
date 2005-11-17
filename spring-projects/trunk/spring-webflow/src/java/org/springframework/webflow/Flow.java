@@ -94,7 +94,7 @@ import org.springframework.util.StringUtils;
  * @author Erwin Vervaet
  * @author Colin Sampaleanu
  */
-public class Flow extends AnnotatedObject implements FlowLocator {
+public class Flow extends AnnotatedObject {
 
 	/**
 	 * Name of the property used to indicate if this flow is transactional.
@@ -125,11 +125,6 @@ public class Flow extends AnnotatedObject implements FlowLocator {
 	 * The list of exception handlers for this flow.
 	 */
 	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(3);
-
-	/**
-	 * The set of inner flow definitions for this flow.
-	 */
-	private Set flows = CollectionFactory.createLinkedSetIfPossible(3);
 
 	/**
 	 * Construct a new flow definition with the given id. The id should be
@@ -420,53 +415,6 @@ public class Flow extends AnnotatedObject implements FlowLocator {
 	 */
 	public StateExceptionHandler[] getExceptionHandlers() {
 		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
-	}
-
-	/**
-	 * Adds an inner flow definition to this flow.
-	 * @param flow a flow definition to make a "inner" flow definition of this
-	 * flow
-	 */
-	public void addFlow(Flow flow) {
-		flows.add(flow);
-	}
-
-	/*
-	 * @see org.springframework.webflow.FlowLocator#getFlow(java.lang.String)
-	 */
-	public Flow getFlow(String id) throws FlowArtifactException {
-		Iterator it = flows.iterator();
-		while (it.hasNext()) {
-			Flow flow = (Flow)it.next();
-			if (flow.getId().equals(id)) {
-				return flow;
-			}
-		}
-		throw new NoSuchFlowDefinitionException(id);
-	}
-
-	/**
-	 * Returns <code>true</code> if this flow contains an inner flow with the
-	 * specified id.
-	 * @param id the inner flow id
-	 * @return true if yes, false otherwise
-	 */
-	public boolean containsFlow(String id) {
-		Iterator it = flows.iterator();
-		while (it.hasNext()) {
-			Flow flow = (Flow)it.next();
-			if (flow.getId().equals(id)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns the list of inner flows for this flow.
-	 */
-	public Flow[] getFlows() {
-		return (Flow[])flows.toArray(new Flow[flows.size()]);
 	}
 
 	/**

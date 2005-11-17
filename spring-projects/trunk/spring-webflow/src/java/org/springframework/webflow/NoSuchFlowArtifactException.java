@@ -17,7 +17,7 @@ package org.springframework.webflow;
 
 /**
  * Thrown when a requested artifact like a Flow, Action, TransitionCriteria,
- * ViewSelector, etc. could not be found.
+ * ViewSelector, State, etc. could not be found.
  * @author Keith Donald
  */
 public class NoSuchFlowArtifactException extends FlowArtifactException {
