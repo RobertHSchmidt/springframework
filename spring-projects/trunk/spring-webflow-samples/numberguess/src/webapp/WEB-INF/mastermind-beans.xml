@@ -4,11 +4,11 @@
 
 <beans>
 
-	<bean id="mastermindGameProxy" class="org.springframework.webflow.action.StatefulActionProxy">
+	<bean id="mastermindGame" class="org.springframework.webflow.action.StatefulActionProxy">
 		<property name="actionAttribute" value="game"/>	
-		<property name="actionId" value="mastermindGame"/>
+		<property name="actionId" value="mastermindGamePrototype"/>
 	</bean>
 	
-	<bean id="mastermindGame" class="org.springframework.webflow.samples.numberguess.MastermindGame" singleton="false"/>
+	<bean id="mastermindGamePrototype" class="org.springframework.webflow.samples.numberguess.MastermindGame" singleton="false"/>
 
 </beans>

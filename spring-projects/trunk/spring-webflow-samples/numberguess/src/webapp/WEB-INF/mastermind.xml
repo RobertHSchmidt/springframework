@@ -9,8 +9,7 @@
 	</view-state>
 	
 	<action-state id="guess">
-		<!-- access the stateful action via a proxy -->
-		<action bean="mastermindGameProxy"/>
+		<action bean="mastermindGame"/>
 		<transition on="invalidInput" to="enterGuess"/>
 		<transition on="retry" to="enterGuess"/>
 		<transition on="success" to="showAnswer"/>
