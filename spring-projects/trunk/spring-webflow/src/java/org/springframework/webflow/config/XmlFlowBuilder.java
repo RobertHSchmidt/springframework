@@ -884,6 +884,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				registry.context.setParent(top().context);
 			}
 			localFlowArtifactRegistries.push(registry);
+			localFlowRegistry.registerFlowDefinition(new StaticFlowDefinitionHolder(registry.flow));
 		}
 		
 		private void initIfNecessary() {
@@ -900,7 +901,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		 */
 		public LocalFlowArtifactRegistry pop() {
 			LocalFlowArtifactRegistry registry = (LocalFlowArtifactRegistry)localFlowArtifactRegistries.pop();
-			localFlowRegistry.registerFlowDefinition(new StaticFlowDefinitionHolder(registry.flow));
 			return registry;
 		}
 
