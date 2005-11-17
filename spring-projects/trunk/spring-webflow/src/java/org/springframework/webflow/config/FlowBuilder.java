@@ -78,7 +78,6 @@ public interface FlowBuilder {
 	 */
 	public void buildStates() throws FlowBuilderException;
 
-	
 	/**
 	 * Creates and adds all state exception handlers to the flow built by this builder.
 	 * @throws FlowBuilderException an exception occured building this flow
