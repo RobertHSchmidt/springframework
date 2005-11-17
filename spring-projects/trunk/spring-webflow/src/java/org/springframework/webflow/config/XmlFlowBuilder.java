@@ -1032,7 +1032,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		public void refresh() {
 			throw new UnsupportedOperationException();
 		}
-
 	}
 
 }
