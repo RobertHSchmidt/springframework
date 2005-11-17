@@ -11,7 +11,7 @@
 	Note that this flow implements the exact flow of the SimpleFormController as an example.
 	If you only need this flow, it is advised that you just use the SimpleFormController.
 -->
-<flow id="birthdate" start-state="setupForm">
+<flow start-state="setupForm">
 
 	<!--
 		Prepare to display a new form. This is very similar to the showNewForm() method

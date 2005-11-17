@@ -2,7 +2,7 @@
 <!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
-<flow id="sellitem" start-state="enterPriceAndItemCount">
+<flow start-state="enterPriceAndItemCount">
 
 	<property name="transactional" value="true" type="boolean"/>
 	

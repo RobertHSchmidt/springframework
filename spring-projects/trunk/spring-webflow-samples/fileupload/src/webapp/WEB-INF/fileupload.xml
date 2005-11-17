@@ -2,7 +2,7 @@
 <!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 	
-<flow id="fileupload" start-state="selectFile">
+<flow start-state="selectFile">
 
 	<view-state id="selectFile" view="fileForm">
 		<transition on="submit" to="uploadFile"/>

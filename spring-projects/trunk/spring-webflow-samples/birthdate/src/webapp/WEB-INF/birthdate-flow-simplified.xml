@@ -14,7 +14,7 @@
 	This is a simplified definition of the BirthDate flow (see birthDate-flow.xml) that
 	uses view state entry actions and transition actions to make the flow definition more compact.
 -->
-<flow id="birthdate" start-state="enterBirthdate">
+<flow start-state="enterBirthdate">
 
 	<view-state id="enterBirthdate" view="enterBirthdate">
 		<entry-action>

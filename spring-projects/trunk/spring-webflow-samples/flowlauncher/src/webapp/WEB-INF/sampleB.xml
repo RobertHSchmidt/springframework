@@ -2,7 +2,7 @@
 <!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
-<flow id="sampleB" start-state="bPage">
+<flow start-state="bPage">
 
 	<view-state id="bPage" view="bPage">
 		<transition on="end" to="end"/>

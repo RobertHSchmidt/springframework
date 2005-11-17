@@ -38,10 +38,6 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	private static final String BROWSE_COLLEAGUE_DETAILS = "browseColleagueDetails";
 
-	protected String flowId() {
-		return "detail";
-	}
-
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
 		addActionState(GET_PERSON, method("getPerson(${flowScope.id})", action("phonebook")), on(success(),

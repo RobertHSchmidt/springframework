@@ -2,7 +2,7 @@
 <!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 	
-<flow id="sampleA" start-state="aPage">
+<flow start-state="aPage">
 
 	<view-state id="aPage" view="aPage">
 		<transition on="launch-B-as-subflow" to="launchB"/>

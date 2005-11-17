@@ -47,10 +47,6 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	private static final String BROWSE_DETAILS = "browseDetails";
 
-	protected String flowId() {
-		return "search";
-	}
-
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
 		Action searchFormAction = createSearchFormAction();
