@@ -36,7 +36,7 @@ import org.springframework.webflow.config.ResourceHolder;
  * 
  * <pre>
  *       FlowBuilder builder = ...;
- *       Flow flow = new FlowAssembler(builder).getFlow();
+ *       Flow flow = new FlowAssembler("myFlow", builder).getFlow();
  * </pre>
  * 
  * @see FlowBuilder
@@ -81,10 +81,23 @@ public class FlowAssembler implements FlowDefinitionHolder {
 
 	/**
 	 * Create a new flow assembler using the specified builder strategy.
+	 * @param flowId the assigned flow id
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
 	public FlowAssembler(String flowId, FlowBuilder flowBuilder) {
 		setFlowId(flowId);
+		setFlowBuilder(flowBuilder);
+	}
+
+	/**
+	 * Create a new flow assembler using the specified builder strategy.
+	 * @param flowId the assigned flow id
+	 * @param flowProperties the assigned flow properties
+	 * @param flowBuilder the builder the factory will use to build flows
+	 */
+	public FlowAssembler(String flowId, Map flowProperties, FlowBuilder flowBuilder) {
+		setFlowId(flowId);
+		setFlowProperties(flowProperties);
 		setFlowBuilder(flowBuilder);
 	}
 
