@@ -27,6 +27,4 @@
 	<!-- "Sale" managed bean created by JSF for each 'sellitem' flow execution -->
 	<bean name="sale" class="org.springframework.webflow.samples.sellitem.Sale" singleton="false"/>
 
-	<bean id="sellItemAction" class="org.springframework.webflow.samples.sellitem.SellItemAction"/>
-	
 </beans>
