@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Stack;
 
@@ -444,7 +443,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
 			if (node instanceof Element) {
-				addInlineFlowDefinition(flow, ((Element)node));
+				addInlineFlowDefinition((Element)node);
 			}
 		}
 	}
@@ -455,9 +454,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * @param flow the outer flow
 	 * @param the inner flow element
 	 */
-	protected void addInlineFlowDefinition(Flow flow, Element element) {
+	protected void addInlineFlowDefinition(Element element) {
 		String flowId = element.getAttribute(ID_ATTRIBUTE);
-		Element flowElement = (Element)element.getElementsByTagName("flow").item(0);
+		Element flowElement = (Element)element.getElementsByTagName(FLOW_ATTRIBUTE).item(0);
 		Flow inlineFlow = parseFlowDefinition(flowId, null, flowElement);
 		initFlowArtifactRegistry(inlineFlow, flowElement);
 		addInlineFlowDefinitions(inlineFlow, flowElement);
@@ -468,7 +467,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	public void buildStates() throws FlowBuilderException {
-		System.out.println("Building states");
 		addStateDefinitions(getFlow(), document.getDocumentElement());
 	}
 
