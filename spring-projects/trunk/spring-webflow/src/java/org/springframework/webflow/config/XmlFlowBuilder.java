@@ -30,7 +30,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.convert.ConversionExecutor;
@@ -900,8 +899,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		 * Pop a registry off the stack
 		 */
 		public LocalFlowArtifactRegistry pop() {
-			LocalFlowArtifactRegistry registry = (LocalFlowArtifactRegistry)localFlowArtifactRegistries.pop();
-			return registry;
+			return (LocalFlowArtifactRegistry)localFlowArtifactRegistries.pop();
 		}
 
 		/**
@@ -921,11 +919,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		public Action getAction(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				try {
+				if (top().context.containsBean(id)) {
 					return toAction(top().context.getBean(id));
-				}
-				catch (NoSuchBeanDefinitionException e) {
-
 				}
 			}
 			return XmlFlowBuilder.super.getFlowArtifactFactory().getAction(id);
@@ -933,11 +928,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				try {
+				if (top().context.containsBean(id)) {
 					return (FlowAttributeMapper)top().context.getBean(id);
-				}
-				catch (NoSuchBeanDefinitionException e) {
-
 				}
 			}
 			return XmlFlowBuilder.super.getFlowArtifactFactory().getAttributeMapper(id);
@@ -945,11 +937,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				try {
+				if (top().context.containsBean(id)) {
 					return (StateExceptionHandler)top().context.getBean(id);
-				}
-				catch (NoSuchBeanDefinitionException e) {
-
 				}
 			}
 			return XmlFlowBuilder.super.getFlowArtifactFactory().getExceptionHandler(id);
@@ -957,11 +946,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				try {
+				if (top().context.containsBean(id)) {
 					return (TransitionCriteria)top().context.getBean(id);
-				}
-				catch (NoSuchBeanDefinitionException e) {
-
 				}
 			}
 			return XmlFlowBuilder.super.getFlowArtifactFactory().getTransitionCriteria(id);
@@ -969,11 +955,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		public ViewSelector getViewSelector(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				try {
+				if (top().context.containsBean(id)) {
 					return (ViewSelector)top().context.getBean(id);
-				}
-				catch (NoSuchBeanDefinitionException e) {
-
 				}
 			}
 			return XmlFlowBuilder.super.getFlowArtifactFactory().getViewSelector(id);
