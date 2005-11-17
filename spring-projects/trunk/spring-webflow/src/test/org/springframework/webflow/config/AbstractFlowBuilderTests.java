@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.config;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,7 +55,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 				if (id.equals(PERSON_DETAILS)) {
 					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();
 					builder.setFlowArtifactFactory(this);
-					return new FlowAssembler(builder).getFlow();
+					return new FlowAssembler(PERSON_DETAILS, builder).getFlow();
 				}
 				else {
 					throw new FlowArtifactException(Flow.class, id);
@@ -76,7 +75,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 				}
 			}
 		});
-		Flow flow = new FlowAssembler(master).getFlow();
+		Flow flow = new FlowAssembler(PERSONS_LIST, master).getFlow();
 		assertEquals("person.List", flow.getId());
 		assertTrue(flow.getStateCount() == 4);
 		assertTrue(flow.containsState("getPersonList"));
@@ -92,7 +91,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 	public void testNoBeanFactorySet() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
 		try {
-			new FlowAssembler(master).getFlow();
+			new FlowAssembler(PERSONS_LIST, master).getFlow();
 			fail("Should have failed, artifact lookup not supported");
 		}
 		catch (UnsupportedOperationException e) {
@@ -101,10 +100,6 @@ public class AbstractFlowBuilderTests extends TestCase {
 	}
 
 	public class TestMasterFlowBuilderLookupById extends AbstractFlowBuilder {
-		protected String flowId() {
-			return PERSONS_LIST;
-		}
-
 		public void buildStates() {
 			addActionState("getPersonList", action("noOptAction"), on(success(), "viewPersonList"));
 			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
@@ -133,10 +128,6 @@ public class AbstractFlowBuilderTests extends TestCase {
 			this.subFlow = subFlow;
 		}
 
-		protected String flowId() {
-			return PERSONS_LIST;
-		}
-
 		public void buildStates() {
 			addActionState("getPersonList", noOpAction, on(success(), "viewPersonList"));
 			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
@@ -157,10 +148,6 @@ public class AbstractFlowBuilderTests extends TestCase {
 	}
 
 	public class TestDetailFlowBuilderLookupById extends AbstractFlowBuilder {
-		protected String flowId() {
-			return PERSON_DETAILS;
-		}
-
 		public void buildStates() {
 			addActionState("getDetails", action("noOpAction"), on(success(), "viewDetails"));
 			addViewState("viewDetails", "person.Detail.view", on(submit(), "bindAndValidateDetails"));
@@ -176,10 +163,6 @@ public class AbstractFlowBuilderTests extends TestCase {
 
 		public void setNoOpAction(NoOpAction noOpAction) {
 			this.noOpAction = noOpAction;
-		}
-
-		protected String flowId() {
-			return PERSON_DETAILS;
 		}
 
 		public void buildStates() {

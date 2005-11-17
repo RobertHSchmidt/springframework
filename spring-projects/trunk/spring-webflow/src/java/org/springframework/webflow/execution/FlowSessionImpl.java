@@ -27,12 +27,12 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowLocator;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
+import org.springframework.webflow.config.FlowLocator;
 
 /**
  * Implementation of the FlowSession interfaced used internally by the

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -325,7 +326,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		this.entityResolver = entityResolver;
 	}
 
-	public Flow init() throws FlowBuilderException {
+	public Flow init(String flowId, Map flowProperties) throws FlowBuilderException {
 		Assert.notNull(location,
 				"The location property specifying the XML flow definition resource location is required");
 		Assert.notNull(getFlowArtifactFactory(),
@@ -343,7 +344,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		catch (SAXException e) {
 			throw new FlowBuilderException("Cannot parse the flow definition XML document at'" + location + "'", e);
 		}
-		setFlow(parseFlowDefinition(document.getDocumentElement()));
+		setFlow(parseFlowDefinition(flowId, flowProperties, document.getDocumentElement()));
 		initFlowArtifactRegistry(getFlow(), document.getDocumentElement());
 		addInnerFlowDefinitions(getFlow(), document.getDocumentElement());
 		return getFlow();
@@ -380,8 +381,20 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Parse the XML flow definitions and construct a Flow object. This helper
 	 * method will set the "flow" property.
 	 */
-	protected Flow parseFlowDefinition(Element element) {
-		return getFlowCreator().createFlow(element.getAttribute(ID_ATTRIBUTE), parseProperties(element));
+	protected Flow parseFlowDefinition(String id, Map flowProperties, Element element) {
+		return getFlowCreator().createFlow(id, buildFlowProperties(flowProperties, element));
+	}
+	
+	private Map buildFlowProperties(Map assignedProperties, Element element) {
+		Map properties = parseProperties(element);
+		if (assignedProperties != null) {
+			if (properties!= null) {
+				properties.putAll(assignedProperties);
+			} else {
+				properties = new HashMap(assignedProperties);
+			}
+		}
+		return properties;
 	}
 
 	/**
@@ -439,14 +452,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * @param the inner flow element
 	 */
 	protected void addInnerFlowDefinition(Flow flow, Element element) {
+		/*
 		Flow innerFlow = parseFlowDefinition(element);
-		flow.addFlow(innerFlow);
 		initFlowArtifactRegistry(innerFlow, element);
 		addInnerFlowDefinitions(innerFlow, element);
 		addStateDefinitions(innerFlow, element);
 		innerFlow.addExceptionHandlers(parseExceptionHandlers(element));
 		innerFlow.resolveStateTransitionsTargetStates();
 		destroyFlowArtifactRegistry(innerFlow);
+		*/
 	}
 
 	public void buildStates() throws FlowBuilderException {
@@ -883,11 +897,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		public Flow getSubflow(String id) throws FlowArtifactException {
 			if (!localFlowRegistries.isEmpty()) {
 				Flow currentFlow = top().flow;
-				if (currentFlow.getId().equals(id)) {
-					return currentFlow;
-				} else if (currentFlow.containsFlow(id)) {
-					return currentFlow.getFlow(id);
-				}
+				// TODO
 			}
 			return XmlFlowBuilder.super.getFlowArtifactFactory().getSubflow(id);
 		}

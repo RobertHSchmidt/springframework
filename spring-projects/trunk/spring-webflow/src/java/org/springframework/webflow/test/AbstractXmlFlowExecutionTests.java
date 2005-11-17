@@ -16,7 +16,7 @@
 package org.springframework.webflow.test;
 
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.FlowLocator;
+import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean;
 
 /**

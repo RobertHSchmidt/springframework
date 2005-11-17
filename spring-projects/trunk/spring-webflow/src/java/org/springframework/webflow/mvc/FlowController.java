@@ -23,8 +23,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
-import org.springframework.webflow.FlowLocator;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.servlet.ServletEvent;
 

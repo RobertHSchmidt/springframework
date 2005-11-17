@@ -31,12 +31,7 @@
 	exception handlers, view selectors, transition criteria, etc).  A flow may nest one or more other 
 	flows in-line to use as subflows, referred to as 'inner flows'.
 -->
-<!ELEMENT flow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, import*, flow* )>
-
-<!--
-	The identifier for this flow; this identifier should be descriptive and unique to all other flows.
--->
-<!ATTLIST flow id ID #REQUIRED>
+<!ELEMENT flow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, import*, inline-flow* )>
 
 <!--
 	The the start state of this flow; the start state is the point where flow execution will begin.
@@ -477,3 +472,13 @@
 	this document.
 -->
 <!ATTLIST import resource CDATA #REQUIRED>
+
+<!--
+	Defines a exactly one inline flow definition.
+-->
+<!ELEMENT inline-flow ( flow+ )>
+
+<!--
+	The assigned identifier of this in-line flow.  Must be unique to all other inline flows.
+-->
+<!ATTLIST inline-flow id ID #REQUIRED>

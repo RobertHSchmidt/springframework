@@ -16,14 +16,14 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowLocator;
-import org.springframework.webflow.NoSuchFlowDefinitionException;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.config.RedirectViewSelector;
 import org.springframework.webflow.config.SimpleViewSelector;
+import org.springframework.webflow.config.registry.NoSuchFlowDefinitionException;
 
 public class FlowExecutionManagerTests extends TestCase {
 	public static class MapDataStoreAccessor implements DataStoreAccessor {

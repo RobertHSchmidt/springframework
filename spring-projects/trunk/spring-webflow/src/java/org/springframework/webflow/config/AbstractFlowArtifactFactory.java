@@ -4,7 +4,6 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.FlowLocator;
 import org.springframework.webflow.NoSuchFlowArtifactException;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;

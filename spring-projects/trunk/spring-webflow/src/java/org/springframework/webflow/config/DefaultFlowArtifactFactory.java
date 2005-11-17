@@ -2,7 +2,6 @@ package org.springframework.webflow.config;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.util.Assert;
-import org.springframework.webflow.FlowLocator;
 
 /**
  * A flow artifact locator that pulls its artifacts from a standard Spring
@@ -22,7 +21,7 @@ public class DefaultFlowArtifactFactory extends AbstractFlowArtifactFactory {
 	 * @param beanFactory The spring bean factory, may not be null.
 	 * @param subflowLocator The locator for loading subflows
 	 */
-	public DefaultFlowArtifactFactory(BeanFactory beanFactory, FlowLocator subflowLocator) {
+	public DefaultFlowArtifactFactory(FlowLocator subflowLocator, BeanFactory beanFactory) {
 		super(subflowLocator);
 		Assert.notNull(beanFactory, "The beanFactory to retrieve flow artifacts is required");
 		this.beanFactory = beanFactory;

@@ -2,7 +2,7 @@
 <!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 	
-<flow id="flow1" start-state="flow2">
+<flow start-state="flow2">
 	<subflow-state id="flow2" flow="flow2">
 		<transition on="end" to="end"/>
 	</subflow-state> 

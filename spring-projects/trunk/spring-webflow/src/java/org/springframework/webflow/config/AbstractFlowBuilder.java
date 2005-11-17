@@ -44,27 +44,26 @@ import org.springframework.webflow.ViewState;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- * 	 protected String flowId() {
- * 	   return &quot;customerDetails&quot;;
- * 	 }
+ * 	protected String flowId() {
+ * 		return &quot;customerDetails&quot;;
+ * 	}
  * 
- *   public void buildStates() {
- *     // get customer information
- *     addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
- *         on(success(), &quot;displayDetails&quot;));
- *     // view customer information               
- *     addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *         on(submit(), &quot;bindAndValidate&quot;);
- *     // bind and validate customer information updates 
- *     addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
- *         new Transition[] {
- *             on(error(), &quot;displayDetails&quot;),
- *             on(success(), &quot;finish&quot;)
- *         });
- *     // finish
- *     addEndState(&quot;finish&quot;);
- *   }
- * }
+ * public void buildStates() {
+ *      // get customer information
+ *      addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
+ *          on(success(), &quot;displayDetails&quot;));
+ *      // view customer information               
+ *      addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *          on(submit(), &quot;bindAndValidate&quot;);
+ *      // bind and validate customer information updates 
+ *      addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
+ *          new Transition[] {
+ *              on(error(), &quot;displayDetails&quot;),
+ *              on(success(), &quot;finish&quot;)
+ *          });
+ *      // finish
+ *      addEndState(&quot;finish&quot;);
+ *    }}
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
@@ -158,18 +157,29 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		super(flowArtifactFactory);
 	}
 
-	public final Flow init() throws FlowBuilderException {
+	public Flow init(String flowId, Map flowProperties) throws FlowBuilderException {
 		initConversionService();
-		setFlow(getFlowCreator().createFlow(flowId(), flowProperties()));
+		setFlow(getFlowCreator().createFlow(flowId, buildFlowProperties(flowProperties)));
 		return getFlow();
 	}
 
 	/**
-	 * Returns the id (name) of the flow built by this builder. Subclasses
-	 * should override to return the unique flowId.
-	 * @return the unique flow id
+	 * Builds a flow property map consisting of any externally assigned
+	 * properties plus any internally assigned properties.
+	 * @param assignedProperties the externally assigned properties
+	 * @return the full property map
 	 */
-	protected abstract String flowId();
+	private Map buildFlowProperties(Map assignedProperties) {
+		Map propertyMap = flowProperties();
+		if (assignedProperties != null) {
+			if (propertyMap != null) {
+				propertyMap.putAll(assignedProperties);
+			} else {
+				propertyMap = new HashMap(assignedProperties);
+			}
+		}
+		return propertyMap;
+	}
 
 	/**
 	 * Hook subclasses may override to provide additional properties about the
@@ -181,11 +191,11 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	public abstract void buildStates();
-	
+
 	public void buildExceptionHandlers() {
-	
+		// default implementation assumes no exception handlers to build
 	}
-	
+
 	public void dispose() {
 		setFlow(null);
 	}
@@ -332,7 +342,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 			throws IllegalArgumentException {
 		return new ViewState(getFlow(), stateId, selector, transitions);
 	}
-	
+
 	/**
 	 * Adds a <code>ViewState</code> to the flow built by this builder. A view
 	 * state triggers the rendering of a view template when entered.
@@ -623,8 +633,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param attributeMapperId the id of the attribute mapper that will map
 	 * attributes between the flow built by this builder and the subflow
 	 * @return the attribute mapper
-	 * @throws FlowArtifactException no FlowAttributeMapper implementation
-	 * was exported with the specified id
+	 * @throws FlowArtifactException no FlowAttributeMapper implementation was
+	 * exported with the specified id
 	 */
 	protected FlowAttributeMapper attributeMapper(String attributeMapperId) throws FlowArtifactException {
 		return getRequiredFlowArtifactFactory().getAttributeMapper(attributeMapperId);

@@ -8,6 +8,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.config.FlowArtifactFactory;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.XmlFlowBuilder;
@@ -35,6 +36,8 @@ import org.springframework.webflow.config.XmlFlowBuilder;
  * @author Keith Donald
  */
 public class XmlFlowRegistrar implements FlowRegistrar {
+
+	private static final String XML_SUFFIX = ".xml";
 
 	/**
 	 * XML flow definition resources to load.
@@ -160,7 +163,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 			if (file.isDirectory()) {
 				addDirectory(file, registry);
 			}
-			else if (file.getName().endsWith(".xml")) {
+			else if (file.getName().endsWith(XML_SUFFIX)) {
 				addFile(file, registry);
 			}
 		}
@@ -178,7 +181,11 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 	protected void registerFlow(Resource location, FlowRegistry registry) {
 		XmlFlowBuilder builder = new XmlFlowBuilder(location, flowArtifactFactory);
 		builder.setResourceLoader(resourceLoader);
-		registry.registerFlowDefinition(new FlowAssembler(builder));
+		registry.registerFlowDefinition(new FlowAssembler(getFlowId(location), builder));
+	}
+	
+	protected String getFlowId(Resource location) {
+		return StringUtils.delete(location.getFilename(), XML_SUFFIX);
 	}
 
 	public String toString() {

@@ -28,13 +28,13 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.NoSuchFlowDefinitionException;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.config.registry.FlowAssembler;
+import org.springframework.webflow.config.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -53,7 +53,7 @@ public class XmlFlowBuilderTests extends TestCase {
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow.xml", XmlFlowBuilderTests.class),
 				new TestFlowArtifactLocator());
-		flow = new FlowAssembler(builder).getFlow();
+		flow = new FlowAssembler("testFlow", builder).getFlow();
 		context = new MockRequestContext();
 	}
 
@@ -65,7 +65,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(flow);
 		assertEquals("testFlow", flow.getId());
 		assertEquals("actionState1", flow.getStartState().getId());
-		assertEquals(9, flow.getStateIds().length);
+		assertEquals(8, flow.getStateIds().length);
 
 		assertEquals(1, flow.getExceptionHandlers().length);
 		assertTrue(flow.getExceptionHandlers()[0] instanceof TransitionExecutingStateExceptionHandler);
@@ -139,11 +139,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		EndState endState2 = (EndState)flow.getState("endState2");
 		assertNotNull(endState2);
 		assertTrue(endState2.isMarker());
-		assertNull(endState2.getViewSelector());
-		
-		Flow innerFlow = flow.getFlow("innerFlow");
-		assertNotNull(innerFlow);
-		assertEquals("innerFlow", innerFlow.getId());
+		assertNull(endState2.getViewSelector());		
 	}
 
 	/**

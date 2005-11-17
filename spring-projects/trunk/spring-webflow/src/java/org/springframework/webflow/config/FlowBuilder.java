@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.config;
 
+import java.util.Map;
+
 import org.springframework.webflow.Flow;
 
 /**
@@ -63,10 +65,12 @@ public interface FlowBuilder {
 	 * loops in the build process. The returned flow object is still under
 	 * construction and not yet ready for use. The only property that is
 	 * guaranteed to be filled is the id of the flow.
+	 * @param flowId the externally assigned flow identifier
+	 * @param flowProperties any externally assigned flow properties
 	 * @return the initialized (but yet to be built) flow
 	 * @throws FlowBuilderException an exception occured building the flow
 	 */
-	public Flow init() throws FlowBuilderException;
+	public Flow init(String flowId, Map flowProperties) throws FlowBuilderException;
 
 	/**
 	 * Creates and adds all states to the flow built by this builder.

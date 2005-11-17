@@ -16,6 +16,7 @@
 package org.springframework.webflow.config.registry;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
@@ -47,13 +48,23 @@ import org.springframework.webflow.config.ResourceHolder;
 public class FlowAssembler implements FlowDefinitionHolder {
 
 	/**
+	 * The id of the flow definition to be assembled. 
+	 */
+	private String flowId;
+
+	/**
+	 * Additional properties about the flow definition to be assembled.
+	 */
+	private Map flowProperties;
+	
+	/**
 	 * The flow builder strategy used to assemble the flow produced by this
 	 * assembler.
 	 */
 	private FlowBuilder flowBuilder;
 
 	/**
-	 * The flow definition assembled by this factory bean.
+	 * The flow definition assembled by this assembler.
 	 */
 	private Flow flow;
 
@@ -72,7 +83,8 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	 * Create a new flow assembler using the specified builder strategy.
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
-	public FlowAssembler(FlowBuilder flowBuilder) {
+	public FlowAssembler(String flowId, FlowBuilder flowBuilder) {
+		setFlowId(flowId);
 		setFlowBuilder(flowBuilder);
 	}
 
@@ -92,13 +104,24 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	}
 
 	public String getId() {
-		synchronized (this) {
-			if (flow == null) {
-				flow = flowBuilder.init();
-				flowBuilder.dispose();
-			}
-		}
-		return flow.getId();
+		return getFlowId();
+	}
+
+	protected String getFlowId() {
+		return flowId;
+	}
+	
+	protected void setFlowId(String flowId) {
+		Assert.hasText("The flow definition identifier property is required for assembly");
+		this.flowId = flowId;
+	}
+	
+	public Map getFlowProperties() {
+		return flowProperties;
+	}
+
+	public void setFlowProperties(Map flowProperties) {
+		this.flowProperties = flowProperties;
 	}
 
 	protected boolean isAssembled() {
@@ -134,7 +157,7 @@ public class FlowAssembler implements FlowDefinitionHolder {
 			// as a subflow which spawns Flow A again (recursively)...
 			assembling = true;
 			this.lastModified = getLastModified();
-			flow = flowBuilder.init();
+			flow = flowBuilder.init(getFlowId(), getFlowProperties());
 			flowBuilder.buildStates();
 			flowBuilder.buildExceptionHandlers();
 			flow = flowBuilder.getResult();
@@ -178,5 +201,4 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	public synchronized void refresh() {
 		assembleFlow();
 	}
-
 }

@@ -75,7 +75,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		this.flowArtifactFactory = new DefaultFlowArtifactFactory(beanFactory, getFlowRegistry());
+		this.flowArtifactFactory = new DefaultFlowArtifactFactory(getFlowRegistry(), beanFactory);
 	}
 
 	public Object getObject() throws Exception {

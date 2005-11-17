@@ -9,7 +9,6 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
-import org.springframework.webflow.NoSuchFlowDefinitionException;
 
 /**
  * A generic registry of one or more Flow definitions.

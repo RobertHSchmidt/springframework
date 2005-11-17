@@ -82,17 +82,13 @@ public class FlowExecutionTests extends TestCase {
 
 	public void testLoopInFlow() throws Exception {
 		AbstractFlowBuilder builder = new AbstractFlowBuilder(new FlowArtifactFactoryAdapter()) {
-			protected String flowId() {
-				return "flow";
-			}
-
 			public void buildStates() throws FlowBuilderException {
 				addViewState("viewState", "viewName", new Transition[] { on(submit(), "viewState"),
 						on(finish(), "endState") });
 				addEndState("endState");
 			}
 		};
-		FlowExecution flowExecution = new FlowExecutionImpl(new FlowAssembler(builder).getFlow());
+		FlowExecution flowExecution = new FlowExecutionImpl(new FlowAssembler("flow", builder).getFlow());
 		ViewSelection vd = flowExecution.start(new Event(this, "start"));
 		assertNotNull(vd);
 		assertEquals("viewName", vd.getViewName());
@@ -109,10 +105,6 @@ public class FlowExecutionTests extends TestCase {
 
 	public void testLoopInFlowWithSubFlow() throws Exception {
 		AbstractFlowBuilder childBuilder = new AbstractFlowBuilder(new FlowArtifactFactoryAdapter()) {
-			protected String flowId() {
-				return "childFlow";
-			}
-
 			public void buildStates() throws FlowBuilderException {
 				addActionState("doOtherStuff", new AbstractAction() {
 					private int executionCount = 0;
@@ -129,12 +121,8 @@ public class FlowExecutionTests extends TestCase {
 				addEndState("stopTest");
 			}
 		};
-		final Flow childFlow = new FlowAssembler(childBuilder).getFlow();
+		final Flow childFlow = new FlowAssembler("childFlow", childBuilder).getFlow();
 		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder(new FlowArtifactFactoryAdapter()) {
-			protected String flowId() {
-				return "parentFlow";
-			}
-
 			public void buildStates() throws FlowBuilderException {
 				addActionState("doStuff", new AbstractAction() {
 					protected Event doExecute(RequestContext context) throws Exception {
@@ -146,7 +134,7 @@ public class FlowExecutionTests extends TestCase {
 				addEndState("stopTest");
 			}
 		};
-		Flow parentFlow = new FlowAssembler(parentBuilder).getFlow();
+		Flow parentFlow = new FlowAssembler("parentFlow", parentBuilder).getFlow();
 
 		FlowExecution flowExecution = new FlowExecutionImpl(parentFlow);
 		flowExecution.start(new Event(this, "start"));

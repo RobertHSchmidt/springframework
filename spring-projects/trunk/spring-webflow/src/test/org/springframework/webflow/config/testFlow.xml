@@ -2,7 +2,7 @@
 <!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
-<flow id="testFlow" start-state="actionState1">
+<flow start-state="actionState1">
 	<property name="propInteger" value="12345" type="integer"/>
 	
 	<action-state id="actionState1">
@@ -56,18 +56,23 @@
 		<transition on="event2" to="endState2"/>
 	</subflow-state>
 	
+	<!-- 
 	<subflow-state id="spawnInnerFlow" flow="innerFlow">
 		<transition on="end" to="endState1"/>
 	</subflow-state>
-	
+ 	-->
+ 	
 	<end-state id="endState1" view="endView1"/>
 	
 	<end-state id="endState2"/>
 
 	<exception-handler on="org.springframework.webflow.config.MyCustomException" to="endState1"/>
 
-	<flow id="innerFlow" start-state="end">
-		<end-state id="end"/>
-	</flow>
-	
+	<!-- 
+	<inline-flow id="inline-flow">
+		<flow start-state="end">
+			<end-state id="end"/>
+		</flow>
+	</inline-flow>
+	 -->
 </flow> 
