@@ -133,6 +133,10 @@ public class FlowRegistryImpl implements FlowRegistry {
 		return flowHolder;
 	}
 
+	public boolean containsFlow(String id) {
+		return flowDefinitions.get(id) != null;
+	}
+
 	public Flow getFlow(String id) throws FlowArtifactException {
 		try {
 			return getFlowDefinitionHolder(id).getFlow();
@@ -148,4 +152,5 @@ public class FlowRegistryImpl implements FlowRegistry {
 	public String toString() {
 		return new ToStringCreator(this).append("flowDefinitions", flowDefinitions).append("parent", parent).toString();
 	}
+
 }

@@ -307,7 +307,7 @@ public class Flow extends AnnotatedObject {
 	public State getState(String stateId) {
 		if (!StringUtils.hasText(stateId)) {
 			throw new IllegalArgumentException(
-					"The specified stateId is invalid: state identifiers must be non-blank and unique to the containing flow definition");
+					"The specified stateId is invalid: state identifiers must be non-blank");
 		}
 		Iterator it = statesIterator();
 		while (it.hasNext()) {
