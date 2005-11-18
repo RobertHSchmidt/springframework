@@ -63,6 +63,7 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.CompositeAction;
 import org.springframework.webflow.config.registry.FlowDefinitionHolder;
+import org.springframework.webflow.config.registry.FlowRegistry;
 import org.springframework.webflow.config.registry.FlowRegistryImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -192,6 +193,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String IMPORT_ELEMENT = "import";
 
 	private static final String RESOURCE_ATTRIBUTE = "resource";
+
+	private static final String INLINE_FLOW_REGISTRY_PROPERTY = XmlFlowBuilder.class + ".inlineFlowRegistry";
 
 	/**
 	 * The resource location of the XML flow definition.
@@ -346,8 +349,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			throw new FlowBuilderException("Cannot parse the flow definition XML document at'" + location + "'", e);
 		}
 		setFlow(parseFlowDefinition(flowId, flowProperties, document.getDocumentElement()));
-		initFlowArtifactRegistry(getFlow(), document.getDocumentElement());
 		addInlineFlowDefinitions(getFlow(), document.getDocumentElement());
+		initFlowArtifactRegistry(getFlow(), document.getDocumentElement());
 		return getFlow();
 	}
 
@@ -423,12 +426,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				}
 			}
 		}
-		GenericApplicationContext registry = new GenericApplicationContext();
+		GenericApplicationContext context = new GenericApplicationContext();
 		if (getResourceLoader() == null) {
-			registry.setResourceLoader(getResourceLoader());
+			context.setResourceLoader(getResourceLoader());
 		}
-		new XmlBeanDefinitionReader(registry).loadBeanDefinitions(resources);
-		flowArtifactFactory.push(new LocalFlowArtifactRegistry(flow, registry));
+		new XmlBeanDefinitionReader(context).loadBeanDefinitions(resources);
+		flowArtifactFactory.push(new LocalFlowArtifactRegistry(flow, context));
 	}
 
 	/**
@@ -439,10 +442,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 */
 	protected void addInlineFlowDefinitions(Flow flow, Element element) {
 		NodeList nodeList = element.getElementsByTagName(INLINE_FLOW_ELEMENT);
+		if (nodeList.getLength() == 0) {
+			return;
+		}
+		FlowRegistryImpl inlineFlowRegistry = new FlowRegistryImpl();
+		flow.setProperty(INLINE_FLOW_REGISTRY_PROPERTY, inlineFlowRegistry);
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
 			if (node instanceof Element) {
-				addInlineFlowDefinition((Element)node);
+				addInlineFlowDefinition(inlineFlowRegistry, (Element)node);
 			}
 		}
 	}
@@ -453,16 +461,18 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * @param flow the outer flow
 	 * @param the inner flow element
 	 */
-	protected void addInlineFlowDefinition(Element element) {
+	protected void addInlineFlowDefinition(FlowRegistry registry, Element element) {
 		String flowId = element.getAttribute(ID_ATTRIBUTE);
 		Element flowElement = (Element)element.getElementsByTagName(FLOW_ATTRIBUTE).item(0);
 		Flow inlineFlow = parseFlowDefinition(flowId, null, flowElement);
-		initFlowArtifactRegistry(inlineFlow, flowElement);
+		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(inlineFlow));
 		addInlineFlowDefinitions(inlineFlow, flowElement);
+		initFlowArtifactRegistry(inlineFlow, flowElement);
 		addStateDefinitions(inlineFlow, flowElement);
 		inlineFlow.addExceptionHandlers(parseExceptionHandlers(flowElement));
 		inlineFlow.resolveStateTransitionsTargetStates();
 		destroyFlowArtifactRegistry(inlineFlow);
+		inlineFlow.setProperty(INLINE_FLOW_REGISTRY_PROPERTY, null);
 	}
 
 	public void buildStates() throws FlowBuilderException {
@@ -846,6 +856,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	public void dispose() {
 		destroyFlowArtifactRegistry(getFlow());
+		getFlow().setProperty(INLINE_FLOW_REGISTRY_PROPERTY, null);
 		setFlow(null);
 		document = null;
 	}
@@ -866,8 +877,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 */
 	private class LocalFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 
-		private FlowRegistryImpl localFlowRegistry;
-
 		/**
 		 * The stack of registries.
 		 */
@@ -883,13 +892,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				registry.context.setParent(top().context);
 			}
 			localFlowArtifactRegistries.push(registry);
-			localFlowRegistry.registerFlowDefinition(new StaticFlowDefinitionHolder(registry.flow));
 		}
 		
 		private void initIfNecessary() {
-			if (localFlowRegistry == null) {
-				localFlowRegistry = new FlowRegistryImpl();
-			}
 			if (localFlowArtifactRegistries == null) {
 				localFlowArtifactRegistries = new Stack();
 			}
@@ -910,11 +915,20 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 
 		public Flow getSubflow(String id) throws FlowArtifactException {
-			if (localFlowRegistry.containsFlow(id)) {
-				return localFlowRegistry.getFlow(id);
-			} else {
-				return XmlFlowBuilder.super.getFlowArtifactFactory().getSubflow(id);
+			Flow currentFlow = top().flow;
+			// quick check for recursive subflow
+			if (currentFlow.getId().equals(id)) {
+				return currentFlow;
 			}
+			// check inline flows
+			if (currentFlow.containsProperty(INLINE_FLOW_REGISTRY_PROPERTY)) {
+				FlowRegistryImpl registry = (FlowRegistryImpl)currentFlow.getProperty(INLINE_FLOW_REGISTRY_PROPERTY);
+				if (registry.containsFlowDefinition(id)) {
+					return registry.getFlow(id);
+				}
+			}
+			// check other toplevel flows
+			return XmlFlowBuilder.super.getFlowArtifactFactory().getSubflow(id);
 		}
 
 		public Action getAction(String id) throws FlowArtifactException {
@@ -970,11 +984,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 */
 	private static class LocalFlowArtifactRegistry {
 
-		/**
-		 * The flow in the process of being built.
-		 */
 		private Flow flow;
-
+		
 		/**
 		 * The local registry holding the artifacts local to the flow.
 		 */
@@ -988,10 +999,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		public LocalFlowArtifactRegistry(Flow flow, ConfigurableApplicationContext registry) {
 			this.flow = flow;
 			this.context = registry;
-		}
-
-		public String toString() {
-			return flow.getId();
 		}
 	}
 
@@ -1014,5 +1021,4 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			throw new UnsupportedOperationException();
 		}
 	}
-
 }

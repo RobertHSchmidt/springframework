@@ -33,6 +33,10 @@ public class FlowRegistryImpl implements FlowRegistry {
 	 */
 	private FlowRegistry parent;
 
+	public FlowRegistryImpl() {
+		
+	}
+	
 	public void setParent(FlowRegistry parent) {
 		this.parent = parent;
 	}
@@ -48,6 +52,14 @@ public class FlowRegistryImpl implements FlowRegistry {
 	public void registerFlowDefinition(FlowDefinitionHolder flowHolder) {
 		Assert.notNull(flowHolder, "The flow definition holder to register is required");
 		index(flowHolder);
+	}
+
+	public boolean containsFlowDefinition(String id) {
+		return flowDefinitions.get(id) != null;
+	}
+
+	public void removeFlowDefinition(String id) {
+		flowDefinitions.remove(id);
 	}
 
 	public void refresh() {
@@ -93,22 +105,22 @@ public class FlowRegistryImpl implements FlowRegistry {
 		}
 	}
 
-	public void refresh(String id) throws IllegalArgumentException {
+	public void refresh(String flowId) throws IllegalArgumentException {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
 			// workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 			try {
-				FlowDefinitionHolder holder = getFlowDefinitionHolder(id);
+				FlowDefinitionHolder holder = getFlowDefinitionHolder(flowId);
 				holder.refresh();
-				if (!holder.getId().equals(id)) {
-					reindex(holder, id);
+				if (!holder.getId().equals(flowId)) {
+					reindex(holder, flowId);
 				}
 			}
 			catch (NoSuchFlowDefinitionException e) {
 				// rethrow without context for generic JMX clients
 				throw new IllegalArgumentException("Unable to complete refresh operation: "
-						+ "no flow definition with id '" + id + "' is stored in this registry");
+						+ "no flow definition with id '" + flowId + "' is stored in this registry");
 			}
 		}
 		finally {
@@ -133,10 +145,6 @@ public class FlowRegistryImpl implements FlowRegistry {
 		return flowHolder;
 	}
 
-	public boolean containsFlow(String id) {
-		return flowDefinitions.get(id) != null;
-	}
-
 	public Flow getFlow(String id) throws FlowArtifactException {
 		try {
 			return getFlowDefinitionHolder(id).getFlow();
@@ -152,5 +160,4 @@ public class FlowRegistryImpl implements FlowRegistry {
 	public String toString() {
 		return new ToStringCreator(this).append("flowDefinitions", flowDefinitions).append("parent", parent).toString();
 	}
-
 }

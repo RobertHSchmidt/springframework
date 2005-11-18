@@ -58,10 +58,10 @@ public interface FlowRegistryMBean {
 	/**
 	 * Refresh the Flow definition in this registry with the <code>id</code>
 	 * provided, reloading it from it's externalized representation.
-	 * @param id the id of the flow definition to refresh.
+	 * @param flowId the id of the flow definition to refresh.
 	 * @throws IllegalArgumentException if a flow with the id provided is not 
 	 * stored in this registry.
 	 */
-	public void refresh(String id) throws IllegalArgumentException;
+	public void refresh(String flowId) throws IllegalArgumentException;
 
 }
