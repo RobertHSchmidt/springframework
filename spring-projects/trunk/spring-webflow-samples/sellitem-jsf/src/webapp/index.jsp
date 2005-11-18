@@ -45,7 +45,9 @@
 						situation) but since JSF components themselves have state, the JSF
 						engine needs to be set to use client side storaage (or some other
 						continuation style storage). We have not yet investigated how to set
-						MyFaces or the JSR RI to use client side storage.
+						MyFaces or the JSR RI to use client side storage.<br/>
+						As such, since the continuation storage does not add any value, this
+						version of sellitem is currently set to use normal session storage.
 					</LI>
 					<LI>
 						Using <A href="http://www.ognl.org/">OGNL</A> based conditional expressions.
