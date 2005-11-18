@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
