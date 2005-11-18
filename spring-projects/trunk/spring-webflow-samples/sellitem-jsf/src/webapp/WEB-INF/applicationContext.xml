@@ -12,15 +12,14 @@
 			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
 		</property>
 		<property name="storage">
-
+			<!-- 
 			<bean class="org.springframework.webflow.execution.DataStoreFlowExecutionStorage">
 				<constructor-arg>
 					<bean class="org.springframework.webflow.execution.SessionDataStoreAccessor"/>
 				</constructor-arg>
 			</bean>
-			<!-- 
-			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage"/>
 			 -->
+			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage"/>
 		</property>
 		
 		<property name="transactionSynchronizer">

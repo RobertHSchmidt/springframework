@@ -7,7 +7,7 @@
 	
 <f:view>
 	
-		<DIV align="left">Sell Item - A Spring Web Flow Sample</DIV>
+		<DIV align="left">Sell Item - A Spring Web Flow Sample (JSF Version)</DIV>
 		
 		<HR>
 		
@@ -35,11 +35,17 @@
 					</LI>
 					<LI>
 						Using continuations to make the flow completely stable, no matter
-						how browser navigation buttons are used.
-					</LI>
-					<LI>
-						Multi actions to group several action execution methods together on
-						a single action implementation class.
+						how browser navigation buttons are used.<br/>
+						NOTE: NOT YET IMPLEMENTED FULLY<br/>
+						The JSF Web Flow integration does support the continuation storages
+						(note that in the case of client side continuation storage it does
+						mean that pages can not trigger the creation of flow variables on
+						demand since the flow execution id needs to be known to the page, and
+						the id _is_ the storage for those variable, a classic chicken and egg
+						situation) but since JSF components themselves have state, the JSF
+						engine needs to be set to use client side storaage (or some other
+						continuation style storage). We have not yet investigated how to set
+						MyFaces or the JSR RI to use client side storage.
 					</LI>
 					<LI>
 						Using <A href="http://www.ognl.org/">OGNL</A> based conditional expressions.

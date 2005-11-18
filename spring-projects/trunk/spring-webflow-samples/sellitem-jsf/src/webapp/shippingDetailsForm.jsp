@@ -23,7 +23,7 @@
 		<tr>
 			<td>Shipping type:</td>
 			<td>
-				<h:selectOneMenu value="#{sale.shippingType}">
+				<h:selectOneMenu value="#{flow.sale.shippingType}">
 					<f:selectItem itemLabel="Standard (10 extra cost)" itemValue="S"/>
 					<f:selectItem itemLabel="Express (20 extra cost)" itemValue="E"/>
 				</h:selectOneMenu>
