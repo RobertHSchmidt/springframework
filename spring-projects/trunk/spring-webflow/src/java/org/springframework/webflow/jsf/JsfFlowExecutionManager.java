@@ -176,7 +176,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
 		ViewSelection selectedView = signalEventIn(flowExecution, sourceEvent);
-		manageStorage(flowExecutionId, flowExecution, sourceEvent);
+		flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
 		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 	}
 
