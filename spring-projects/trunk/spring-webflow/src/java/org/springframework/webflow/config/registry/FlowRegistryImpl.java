@@ -33,10 +33,6 @@ public class FlowRegistryImpl implements FlowRegistry {
 	 */
 	private FlowRegistry parent;
 
-	public FlowRegistryImpl() {
-		
-	}
-	
 	public void setParent(FlowRegistry parent) {
 		this.parent = parent;
 	}
