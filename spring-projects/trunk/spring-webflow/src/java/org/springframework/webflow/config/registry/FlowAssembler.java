@@ -35,8 +35,8 @@ import org.springframework.webflow.config.ResourceHolder;
  * Flow assemblers may be used in a standalone, programmatic fashion as follows:
  * 
  * <pre>
- *       FlowBuilder builder = ...;
- *       Flow flow = new FlowAssembler("myFlow", builder).getFlow();
+ *     FlowBuilder builder = ...;
+ *     Flow flow = new FlowAssembler(&quot;myFlow&quot;, builder).getFlow();
  * </pre>
  * 
  * @see FlowBuilder
@@ -48,18 +48,19 @@ import org.springframework.webflow.config.ResourceHolder;
 public class FlowAssembler implements FlowDefinitionHolder {
 
 	/**
-	 * The id of the flow definition to be assembled. 
+	 * The id to be assigned to the flow definition assembled by this assembler.
 	 */
 	private String flowId;
 
 	/**
-	 * Additional properties about the flow definition to be assembled.
+	 * Arbitrary properties to be assigned to the flow definition assembled by
+	 * this assembler.
 	 */
 	private Map flowProperties;
-	
+
 	/**
-	 * The flow builder strategy used to assemble the flow produced by this
-	 * assembler.
+	 * The flow builder strategy used to construct the flow from its component
+	 * parts.
 	 */
 	private FlowBuilder flowBuilder;
 
@@ -75,7 +76,8 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	private boolean assembling;
 
 	/**
-	 * A last modified date for the backing flow resource.
+	 * A last modified date for the backing flow resource, used to support
+	 * automatic reassembly on resource change.
 	 */
 	private long lastModified;
 
@@ -120,23 +122,43 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		return getFlowId();
 	}
 
+	/**
+	 * Returns the id that will be assigned to the Flow built by this assembler.
+	 */
 	protected String getFlowId() {
 		return flowId;
 	}
-	
+
+	/**
+	 * Sets the id that will be assigned to the Flow built by this assembler.
+	 * @param flowId the flow id
+	 */
 	protected void setFlowId(String flowId) {
-		Assert.hasText("The flow definition identifier property is required for assembly");
+		Assert.hasText("A unique flow definition identifier property is required for flow assembly");
 		this.flowId = flowId;
 	}
-	
+
+	/**
+	 * Returns the flow properties that will be assigned to the Flow built by
+	 * this assembler.
+	 */
 	public Map getFlowProperties() {
 		return flowProperties;
 	}
 
+	/**
+	 * Sets the flow properties that will be assigned to the Flow built by this
+	 * assembler.
+	 * @param flowProperties the flow properties
+	 */
 	public void setFlowProperties(Map flowProperties) {
 		this.flowProperties = flowProperties;
 	}
 
+	/**
+	 * Returns a flag indicating if this assembler has performed and completed
+	 * Flow assembly.
+	 */
 	protected boolean isAssembled() {
 		if (flow == null || flow.getStateCount() == 0) {
 			return false;
@@ -163,6 +185,11 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		return flow;
 	}
 
+	/**
+	 * Assembles the flow, directing the construction process by delegating to
+	 * the configured Flow Builder. While the assembly process is ongoing the
+	 * "assembling" flag is set to true.
+	 */
 	protected void assembleFlow() {
 		try {
 			// set the assembling flag before building states to avoid infinite
@@ -186,6 +213,7 @@ public class FlowAssembler implements FlowDefinitionHolder {
 	 */
 	protected void refreshIfChanged() {
 		if (this.lastModified == -1) {
+			// just ignore, tracking last modified date not supported
 			return;
 		}
 		long lastModified = getLastModified();
@@ -195,6 +223,11 @@ public class FlowAssembler implements FlowDefinitionHolder {
 		}
 	}
 
+	/**
+	 * Helper that retrieves the last modified date by querying the backing flow
+	 * resource.
+	 * @return the last modified date, or -1 if it could not be retrieved
+	 */
 	private long getLastModified() {
 		if (getFlowBuilder() instanceof ResourceHolder) {
 			Resource resource = ((ResourceHolder)getFlowBuilder()).getResource();

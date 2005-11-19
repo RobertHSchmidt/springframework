@@ -10,7 +10,7 @@ import org.springframework.webflow.ViewSelector;
 
 /**
  * A support interface used by FlowBuilders at configuration time to retrieve
- * dependent (but externally managed) flow artifacts neededed to build a flow
+ * dependent (but externally managed) flow artifacts needed to build a flow
  * definition.
  * 
  * @author Keith Donald
@@ -18,7 +18,7 @@ import org.springframework.webflow.ViewSelector;
 public interface FlowArtifactFactory {
 
 	/**
-	 * Retrieve the Flow to be used as a subflow by id.
+	 * Retrieve the Flow to be used as a subflow with the provided id.
 	 * @param id the flow id
 	 * @return the flow to be used as a subflow
 	 * @throws FlowArtifactException when no such flow is found
@@ -26,7 +26,7 @@ public interface FlowArtifactFactory {
 	public Flow getSubflow(String id) throws FlowArtifactException;
 
 	/**
-	 * Retrieve the action with the provided id.
+	 * Retrieve the action to be executed within a flow with the provided id.
 	 * @param id the id
 	 * @return the action
 	 * @throws FlowArtifactException when no such mapper is found
@@ -34,7 +34,8 @@ public interface FlowArtifactFactory {
 	public Action getAction(String id) throws FlowArtifactException;
 
 	/**
-	 * Retrieve the flow attribute mapper with the provided id.
+	 * Retrieve the flow attribute mapper to be used in a subflow state with the
+	 * provided id.
 	 * @param id the id
 	 * @return the attribute mapper
 	 * @throws FlowArtifactException when no such mapper is found
@@ -42,7 +43,8 @@ public interface FlowArtifactFactory {
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException;
 
 	/**
-	 * Retrieve the transition criteria with the provided id.
+	 * Retrieve the transition criteria to drive state transitions with the
+	 * provided id.
 	 * @param id the id
 	 * @return the transition criteria
 	 * @throws FlowArtifactException when no such criteria is found
@@ -50,7 +52,8 @@ public interface FlowArtifactFactory {
 	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException;
 
 	/**
-	 * Retrieve the view selector with the provided id.
+	 * Retrieve the view selector to make view selections in view states with
+	 * the provided id.
 	 * @param id the id
 	 * @return the view selector
 	 * @throws FlowArtifactException when no such creator is found
@@ -58,7 +61,8 @@ public interface FlowArtifactFactory {
 	public ViewSelector getViewSelector(String id) throws FlowArtifactException;
 
 	/**
-	 * Retrieve the exception handler with the provided id.
+	 * Retrieve the exception handler to handle state exceptions with the
+	 * provided id.
 	 * @param id the id
 	 * @return the exception handler
 	 * @throws FlowArtifactException when no such handler is found

@@ -45,7 +45,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	private DataStoreAccessor dataStoreAccessor;
 
 	/**
-	 * The Flow Execution key generation strategy.
+	 * The Flow Execution storage key generation strategy.
 	 */
 	private KeyGenerator keyGenerator = new RandomGuidKeyGenerator();
 
@@ -58,7 +58,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	}
 
 	/**
-	 * Create a new flow execution storage using given data store accessor.
+	 * Create a new flow execution storage using the configured data store accessor.
 	 * @param dataStoreAccessor the data store accessor to use
 	 */
 	public DataStoreFlowExecutionStorage(DataStoreAccessor dataStoreAccessor) {
@@ -68,14 +68,14 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	}
 
 	/**
-	 * Returns the key generation strategy to use.
+	 * Returns the flow execution key generation strategy in use.
 	 */
 	protected KeyGenerator getKeyGenerator() {
 		return keyGenerator;
 	}
 
 	/**
-	 * Sets the storage key generation strategy to use.
+	 * Sets the flow execution storage key generation strategy to use.
 	 */
 	public void setKeyGenerator(KeyGenerator keyGenerator) {
 		this.keyGenerator = keyGenerator;
@@ -169,7 +169,8 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	// subclassing hooks
 
 	/**
-	 * Returns the data store attribute name for the base flow execution id.
+	 * Factory method that returns the data store attribute name for the flow
+	 * execution to be placed or accessed in/from storage.
 	 */
 	protected String attributeName(Serializable id) {
 		return FlowExecution.class.getName() + "." + id;

@@ -19,10 +19,20 @@ import org.springframework.binding.MutableAttributeSource;
 import org.springframework.webflow.Event;
 
 /**
- * Strategy interface for objects that can access an external data store. Used
- * by e.g. the DefaultFlowExecutionStorage implementation to make the data store
- * used to store flow executions pluggable. In essence, object implementing this
- * interface act as factories for attribute sources.
+ * Strategy interface for objects that can provide an interface to an external
+ * attribute data store.
+ * <p>
+ * Objects implementing this interface act as factories for attribute sources
+ * that when invoked pull attributes from an externally managed source.
+ * <p>
+ * Used by
+ * {@link org.springframework.webflow.execution.DataStoreFlowExecutionStorage}
+ * storage implementation to make the underlying storage strategy of an flow
+ * execution pluggable.
+ * <p>
+ * Used by
+ * {@link org.springframework.webflow.execution.DataStoreTokenTransactionSynchronizer}
+ * to make the underlying storage strategy of an transaction token pluggable.
  * 
  * @see org.springframework.binding.AttributeSource
  * @see org.springframework.binding.MutableAttributeSource
