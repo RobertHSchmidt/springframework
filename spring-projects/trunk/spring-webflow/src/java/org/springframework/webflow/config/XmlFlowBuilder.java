@@ -74,8 +74,8 @@ import org.xml.sax.SAXException;
  * this class should use the following doctype:
  * 
  * <pre>
- *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *        &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *        &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * Consult the <a
@@ -191,7 +191,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String RESOURCE_ATTRIBUTE = "resource";
 
-	private static final String INLINE_FLOW_REGISTRY_PROPERTY = XmlFlowBuilder.class + ".inlineFlowRegistry";
+	private static final String INLINE_FLOW_MAP_PROPERTY = XmlFlowBuilder.class + ".inlineFlowRegistry";
 
 	/**
 	 * The resource location of the XML flow definition.
@@ -442,34 +442,35 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		if (nodeList.getLength() == 0) {
 			return;
 		}
-		Map inlineFlowRegistry = new HashMap(nodeList.getLength());
-		flow.setAttribute(INLINE_FLOW_REGISTRY_PROPERTY, inlineFlowRegistry);
+		Map inlineFlows = new HashMap(nodeList.getLength());
+		flow.setAttribute(INLINE_FLOW_MAP_PROPERTY, inlineFlows);
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
 			if (node instanceof Element) {
-				addInlineFlowDefinition(inlineFlowRegistry, (Element)node);
+				Element inlineElement = (Element)node;
+				String inlineFlowId = inlineElement.getAttribute(ID_ATTRIBUTE);
+				Element flowElement = (Element)inlineElement.getElementsByTagName(FLOW_ATTRIBUTE).item(0);
+				Flow inlineFlow = parseFlowDefinition(inlineFlowId, null, flowElement);
+				inlineFlows.put(inlineFlow.getId(), inlineFlow);
+				buildInlineFlow(inlineFlow, flowElement);
 			}
 		}
 	}
 
 	/**
-	 * Parse a single inner flow definition in the XML document and add it to
-	 * the flow object in construction.
-	 * @param flow the outer flow
-	 * @param the inner flow element
+	 * Build the nested inline flow definition.
+	 * 
+	 * @param inlineFlow the inline flow to build
+	 * @param element the "flow" element
 	 */
-	protected void addInlineFlowDefinition(Map registry, Element element) {
-		String flowId = element.getAttribute(ID_ATTRIBUTE);
-		Element flowElement = (Element)element.getElementsByTagName(FLOW_ATTRIBUTE).item(0);
-		Flow inlineFlow = parseFlowDefinition(flowId, null, flowElement);
-		registry.put(inlineFlow.getId(), inlineFlow);
-		addInlineFlowDefinitions(inlineFlow, flowElement);
-		initFlowArtifactRegistry(inlineFlow, flowElement);
-		addStateDefinitions(inlineFlow, flowElement);
-		inlineFlow.addExceptionHandlers(parseExceptionHandlers(flowElement));
+	protected void buildInlineFlow(Flow inlineFlow, Element element) {
+		addInlineFlowDefinitions(inlineFlow, element);
+		initFlowArtifactRegistry(inlineFlow, element);
+		addStateDefinitions(inlineFlow, element);
+		inlineFlow.addExceptionHandlers(parseExceptionHandlers(element));
 		inlineFlow.resolveStateTransitionsTargetStates();
 		destroyFlowArtifactRegistry(inlineFlow);
-		inlineFlow.removeAttribute(INLINE_FLOW_REGISTRY_PROPERTY);
+		inlineFlow.removeAttribute(INLINE_FLOW_MAP_PROPERTY);
 	}
 
 	public void buildStates() throws FlowBuilderException {
@@ -853,7 +854,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	public void dispose() {
 		destroyFlowArtifactRegistry(getFlow());
-		getFlow().removeAttribute(INLINE_FLOW_REGISTRY_PROPERTY);
+		getFlow().removeAttribute(INLINE_FLOW_MAP_PROPERTY);
 		setFlow(null);
 		document = null;
 	}
@@ -890,7 +891,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			}
 			localFlowArtifactRegistries.push(registry);
 		}
-		
+
 		private void initIfNecessary() {
 			if (localFlowArtifactRegistries == null) {
 				localFlowArtifactRegistries = new Stack();
@@ -918,8 +919,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				return currentFlow;
 			}
 			// check inline flows
-			if (currentFlow.containsProperty(INLINE_FLOW_REGISTRY_PROPERTY)) {
-				Map registry = (Map)currentFlow.getProperty(INLINE_FLOW_REGISTRY_PROPERTY);
+			if (currentFlow.containsProperty(INLINE_FLOW_MAP_PROPERTY)) {
+				Map registry = (Map)currentFlow.getProperty(INLINE_FLOW_MAP_PROPERTY);
 				if (registry.containsKey(id)) {
 					return (Flow)registry.get(id);
 				}
@@ -982,7 +983,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static class LocalFlowArtifactRegistry {
 
 		private Flow flow;
-		
+
 		/**
 		 * The local registry holding the artifacts local to the flow.
 		 */
