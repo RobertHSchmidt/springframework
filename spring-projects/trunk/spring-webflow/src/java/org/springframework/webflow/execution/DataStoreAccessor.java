@@ -22,7 +22,7 @@ import org.springframework.webflow.Event;
  * Strategy interface for objects that can provide an interface to an external
  * attribute data store.
  * <p>
- * Objects implementing this interface act as factories for attribute sources
+ * Objects implementing this interface act  as factories for attribute sources
  * that when invoked pull attributes from an externally managed source.
  * <p>
  * Used by
