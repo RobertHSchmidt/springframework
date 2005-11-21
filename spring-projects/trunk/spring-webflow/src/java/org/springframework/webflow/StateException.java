@@ -22,8 +22,15 @@ import org.springframework.core.NestedRuntimeException;
  * reference to the State definition where the exception occured.
  * Can be used directly, but you are encouraged to create a specific subclass
  * for a particular use case.
+ * <p>
+ * State exceptions occur at runtime, when the flow is executing requests
+ * on behalf of a client. They signal that an execution problem occured: e.g.
+ * action execution failed or no transition was would matching a particular
+ * request context. A state exception does not indicate a flow definition
+ * problem, a FlowArtifactLookupException is used for that.
  * 
  * @see org.springframework.webflow.State
+ * @see org.springframework.webflow.FlowArtifactLookupException
  * 
  * @author Keith Donald
  */

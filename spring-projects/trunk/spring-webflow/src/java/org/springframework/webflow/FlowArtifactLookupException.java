@@ -25,6 +25,12 @@ import org.springframework.util.StringUtils;
  * at flow configuration time or at runtime.
  * Can be used directly, but you are encouraged to create a specific subclass
  * for a particular use case.
+ * <p>
+ * Flow artifact lookup exception indicate problems with the flow definition, e.g.
+ * a required state of a flow cannot be found. They're not used to signal problems
+ * related to execution of a client request. A StateException is used for that.
+ * 
+ * @see org.springframework.webflow.StateException
  *  
  * @author Keith Donald
  * @author Erwin Vervaet
