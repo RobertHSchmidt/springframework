@@ -44,30 +44,27 @@ import org.springframework.webflow.ViewState;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- * 	protected String flowId() {
- * 		return &quot;customerDetails&quot;;
- * 	}
- * 
- * public void buildStates() {
- *      // get customer information
- *      addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
- *          on(success(), &quot;displayDetails&quot;));
- *      // view customer information               
- *      addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *          on(submit(), &quot;bindAndValidate&quot;);
- *      // bind and validate customer information updates 
- *      addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
- *          new Transition[] {
- *              on(error(), &quot;displayDetails&quot;),
- *              on(success(), &quot;finish&quot;)
- *          });
- *      // finish
- *      addEndState(&quot;finish&quot;);
- *    }}
+ *     public void buildStates() {
+ *         // get customer information
+ *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
+ *             on(success(), &quot;displayDetails&quot;));
+ *         // view customer information               
+ *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *             on(submit(), &quot;bindAndValidate&quot;);
+ *         // bind and validate customer information updates 
+ *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
+ *             new Transition[] {
+ *                 on(error(), &quot;displayDetails&quot;),
+ *                 on(success(), &quot;finish&quot;)
+ *             });
+ *         // finish
+ *         addEndState(&quot;finish&quot;);
+ *     }
+ * }
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
- * flow identified as "customerDetails". These include a "get"
+ * flow.  These include a "get"
  * <code>ActionState</code> (the start state), a <code>ViewState</code>
  * state, a "bind and validate" <code>ActionState</code>, and an end marker
  * state (<code>EndState</code>).
@@ -76,12 +73,12 @@ import org.springframework.webflow.ViewState;
  * <code>getDetails</code>. This action state will automatically be
  * configured with the following defaults:
  * <ol>
- * <li>An autowired action instance of <code>GetCustomerDetails.class</code>.
+ * <li>The action instance with id <code>customerAction</code>.
  * This is the <code>Action</code> implementation that will execute when this
  * state is entered. In this example, that <code>Action</code> will go out to
  * the DB, load the Customer, and put it in the Flow's request context.
  * <li>A <code>success</code> transition to a default view state, called
- * <code>displayDetails</code>. This means when the get <code>Action</code>
+ * <code>displayDetails</code>. This means when the <code>Action</code>
  * returns a <code>success</code> result event (aka outcome), the
  * <code>displayDetails</code> state will be entered.
  * <li>It will act as the start state for this flow (by default, the first
@@ -93,7 +90,7 @@ import org.springframework.webflow.ViewState;
  * <code>displayDetails</code>. This view state will automatically be
  * configured with the following defaults:
  * <ol>
- * <li>A view name called <code>customerDetails</code> -- this is the logical
+ * <li>A view name called <code>customerDetails</code>.  This is the logical
  * name of a view resource. This logical view name gets mapped to a physical
  * view resource (jsp, etc.) by the calling front controller (via a Spring view
  * resolver, or a Struts action forward, for example).
