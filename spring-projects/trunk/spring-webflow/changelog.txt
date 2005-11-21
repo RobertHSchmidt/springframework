@@ -2,7 +2,7 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version PR6 (11.11.2005)
+Changes in version 1.0 RC1 (12.2.2005)
 ------------------------------------
 * Introduced JSF integration, see the "jsf" package.
 * Added support for custom start, signal event, end, and handleException behavior to the Flow class.
@@ -27,6 +27,7 @@ Changes in version PR6 (11.11.2005)
 * Added support for a "transactional" boolean flow property, that when 'true' triggers automatic creation
   synchronized application transaction tokens that prevent duplicate submits (even with continuations!)
 * Added support for accessing session and application scope variables as properties of a source ExternalEvent.
+* Added support for "inline-flows", local flow definitions fully nested within another flow definition.
 * Added a sessionEnding FlowExecutionListener callback.
 * Added a KeyGenerator strategy, providing a plugin point for custom FlowExecution key generation strategies.
 * Added "CompositeEvent" support for composite actions that may generate multiple action result events.
@@ -51,6 +52,7 @@ Changes in version PR6 (11.11.2005)
   should have a signature matching "public void ${validatorMethod}(Object obj, Errors errors)". When you do specify a
   formObjectClass, everything works like before, e.g. the signature will be
   "public void ${validatorMethod}(${formObjectClass} obj, Errors errors)".
+* Reworked FlowBuilder, externalizing flow id assignment from the builder itself (assignment is now a responsibility of the assembler).
 * Reworked FlowExecutionManager: it is much easier now to customize flow execution workflow (neccessary for JSF).
   The FlowLocator is now a required dependency, and support for setting a single Flow to execute has been removed.
   FlowController and FlowAction now all require a FlowExecutionManager to be set, for clarity.
