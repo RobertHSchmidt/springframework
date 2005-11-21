@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
  */
 public class WebFlowDtdResolver implements EntityResolver {
 
-	private static final String WEBFLOW_ELEMENT = "spring-webflow";
+	private static final String WEBFLOW_ELEMENT = "spring-webflow-1.0";
 
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
 		if (systemId != null && systemId.indexOf(WEBFLOW_ELEMENT) > systemId.lastIndexOf("/")) {
