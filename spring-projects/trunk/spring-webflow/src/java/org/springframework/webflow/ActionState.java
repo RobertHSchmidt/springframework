@@ -41,7 +41,7 @@ import org.springframework.util.Assert;
  * <p>
  * Each action executed by this action state may be provisioned with a set of
  * arbitrary execution properties. These properties are made available to the
- * action at execution time, and may be used to influence action execution
+ * action at execution time and may be used to influence action execution
  * behavior.
  * <p>
  * Common action execution properties include:
@@ -82,16 +82,17 @@ import org.springframework.util.Assert;
  * execute, or the name of a specific method on a arbitrary POJO (plain old
  * java.lang.Object). In the MultiAction scenario, the named method must have
  * the signature <code>public Event ${method}(RequestContext)</code>. As an
- * example, a method property with value <code>setupForm</code> would bind to
- * a method on a MultiAction instance with the signature:
+ * example of this scenario, a method property with value <code>setupForm</code>
+ * would bind to a method on a MultiAction instance with the signature:
  * <code>public Event setupForm(RequestContext context)</code>. <br>
  * <br>
- * The 'method' property may also be the name of an method of an arbitrary POJO
- * (plain old java.lang.Object). In this case the named method must be public
- * and may have any signature. If the method signature does accept parameters,
- * those parameters may be specified by using the format:
- * <code>${methodName}(${param1}, ${param2}, ...)</code>. Parameter
- * expressions are evaluated against the <code>RequestContext</code>,
+ * As an alternative to a MultiAction method binding, the 'method' property may
+ * instead be the name of an method of an arbitrary POJO (plain old
+ * java.lang.Object). In this case the named method must be public and may have
+ * any signature. If the method signature does accept parameters, those
+ * parameters may be specified by using the format:
+ * <code>methodName(${param1}, ${param2}, ...)</code>. Parameter
+ * ${expressions} are evaluated against the current <code>RequestContext</code>,
  * allowing for data stored in flow scope or request scope to be passed as
  * arguments to the POJO in an automatic fashion.</td>
  * </tr>
