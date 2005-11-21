@@ -16,7 +16,7 @@
 package org.springframework.webflow.config;
 
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 
 /**
  * A service locator interface for retrieving flow definitions by id.
@@ -37,8 +37,8 @@ public interface FlowLocator {
 	 * Lookup the flow definition with the specified id.
 	 * @param id the flow definition id
 	 * @return the flow definition
-	 * @throws FlowArtifactException when the flow definition with that id
+	 * @throws FlowArtifactLookupException when the flow definition with that id
 	 * cannot be found
 	 */
-	public Flow getFlow(String id) throws FlowArtifactException;
+	public Flow getFlow(String id) throws FlowArtifactLookupException;
 }

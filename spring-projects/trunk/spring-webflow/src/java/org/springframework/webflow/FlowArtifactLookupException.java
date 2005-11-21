@@ -20,14 +20,16 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * A flow artifact exception is thrown when a service artifact required by the
+ * A flow artifact lookup exception is thrown when a service artifact required by the
  * webflow system cannot be obtained (like a flow, state, action, etc), either
  * at flow configuration time or at runtime.
- * 
+ * Can be used directly, but you are encouraged to create a specific subclass
+ * for a particular use case.
+ *  
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowArtifactException extends NestedRuntimeException {
+public class FlowArtifactLookupException extends NestedRuntimeException {
 
 	/**
 	 * The type of artifact that could not be retrieved.
@@ -40,43 +42,43 @@ public class FlowArtifactException extends NestedRuntimeException {
 	private String artifactId;
 
 	/**
-	 * Create a new flow artifact exception.
+	 * Create a new flow artifact lookup exception.
 	 * @param artifactType the expected service type
 	 * @param artifactId the id of the service that cannot be found
 	 */
-	public FlowArtifactException(Class artifactType, String artifactId) {
+	public FlowArtifactLookupException(Class artifactType, String artifactId) {
 		this(artifactType, artifactId, null, null);
 	}
 
 	/**
-	 * Create a new flow artifact exception.
+	 * Create a new flow artifact lookup exception.
 	 * @param artifactType the expected service type
 	 * @param artifactId the id of the service that cannot be found
 	 * @param cause the underlying cause of this exception
 	 */
-	public FlowArtifactException(Class artifactType, String artifactId, Throwable cause) {
+	public FlowArtifactLookupException(Class artifactType, String artifactId, Throwable cause) {
 		this(artifactType, artifactId, null, cause);
 	}
 
 	/**
-	 * Create a new flow artifact exception.
+	 * Create a new flow artifact lookup exception.
 	 * @param artifactType the expected service type
 	 * @param artifactId the id of the service that cannot be found
 	 * @param message descriptive message
 	 */
-	public FlowArtifactException(Class artifactType, String artifactId, String message) {
+	public FlowArtifactLookupException(Class artifactType, String artifactId, String message) {
 		this(artifactType, artifactId, message, null);
 	}
 
 	/**
-	 * Create a new flow artifact exception.
+	 * Create a new flow artifact lookup exception.
 	 * @param artifactType the expected service type
 	 * @param artifactId the id of the service that cannot be found
 	 * @param message descriptive message
 	 * @param cause the underlying cause of this exception
 	 */
-	public FlowArtifactException(Class artifactType, String artifactId, String message, Throwable cause) {
-		super((StringUtils.hasText(message) ? message : "Unable to look up flow artifact of type '"
+	public FlowArtifactLookupException(Class artifactType, String artifactId, String message, Throwable cause) {
+		super((StringUtils.hasText(message) ? message : "Unable to lookup flow artifact of type '"
 				+ ClassUtils.getShortName(artifactType) + "' with id '" + artifactId
 				+ "'; make sure there is at least one [" + artifactType + "] exported with this id"), cause);
 		this.artifactType = artifactType;

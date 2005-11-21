@@ -16,13 +16,13 @@
 package org.springframework.webflow.config.registry;
 
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.NoSuchFlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 
 /**
  * Thrown when no flow definition was found during a lookup operation.
  * @author Keith Donald
  */
-public class NoSuchFlowDefinitionException extends NoSuchFlowArtifactException {
+public class NoSuchFlowDefinitionException extends FlowArtifactLookupException {
 
 	/**
 	 * Creates an exception indicating a flow definition could not be found.

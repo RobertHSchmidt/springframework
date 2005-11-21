@@ -51,7 +51,7 @@ import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
@@ -912,7 +912,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return (LocalFlowArtifactRegistry)localFlowArtifactRegistries.peek();
 		}
 
-		public Flow getSubflow(String id) throws FlowArtifactException {
+		public Flow getSubflow(String id) throws FlowArtifactLookupException {
 			Flow currentFlow = top().flow;
 			// quick check for recursive subflow
 			if (currentFlow.getId().equals(id)) {
@@ -929,7 +929,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return XmlFlowBuilder.super.getFlowArtifactFactory().getSubflow(id);
 		}
 
-		public Action getAction(String id) throws FlowArtifactException {
+		public Action getAction(String id) throws FlowArtifactLookupException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {
 					return toAction(top().context.getBean(id));
@@ -938,7 +938,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return XmlFlowBuilder.super.getFlowArtifactFactory().getAction(id);
 		}
 
-		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
+		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {
 					return (FlowAttributeMapper)top().context.getBean(id);
@@ -947,7 +947,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return XmlFlowBuilder.super.getFlowArtifactFactory().getAttributeMapper(id);
 		}
 
-		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
+		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {
 					return (StateExceptionHandler)top().context.getBean(id);
@@ -956,7 +956,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return XmlFlowBuilder.super.getFlowArtifactFactory().getExceptionHandler(id);
 		}
 
-		public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
+		public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {
 					return (TransitionCriteria)top().context.getBean(id);
@@ -965,7 +965,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return XmlFlowBuilder.super.getFlowArtifactFactory().getTransitionCriteria(id);
 		}
 
-		public ViewSelector getViewSelector(String id) throws FlowArtifactException {
+		public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {
 					return (ViewSelector)top().context.getBean(id);

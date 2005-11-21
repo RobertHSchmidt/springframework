@@ -18,8 +18,10 @@ package org.springframework.webflow;
 import org.springframework.core.NestedRuntimeException;
 
 /**
- * Core base class for exceptions that occur during in a flow state. Provides a
+ * Core base class for exceptions that occur in a flow state. Provides a
  * reference to the State definition where the exception occured.
+ * Can be used directly, but you are encouraged to create a specific subclass
+ * for a particular use case.
  * 
  * @see org.springframework.webflow.State
  * 

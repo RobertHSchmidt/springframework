@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 
 /**
  * A generic registry of one or more Flow definitions.
@@ -141,7 +141,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 		return flowHolder;
 	}
 
-	public Flow getFlow(String id) throws FlowArtifactException {
+	public Flow getFlow(String id) throws FlowArtifactLookupException {
 		try {
 			return getFlowDefinitionHolder(id).getFlow();
 		}

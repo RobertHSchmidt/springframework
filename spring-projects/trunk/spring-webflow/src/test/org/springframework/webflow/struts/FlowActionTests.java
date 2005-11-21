@@ -26,7 +26,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -61,7 +61,7 @@ public class FlowActionTests extends TestCase {
 		mockRequest = new MockHttpServletRequest();
 
 		FlowLocator flowLocator = new FlowLocator() {
-			public Flow getFlow(String id) throws FlowArtifactException {
+			public Flow getFlow(String id) throws FlowArtifactLookupException {
 				return null;
 			}
 		};

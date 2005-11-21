@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.State;
@@ -63,7 +63,7 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 		mockFacesContext = new MockFacesContext();
 		mockFacesContext.setExternalContext(mockExternalContext);
 		flowLocator = new FlowLocator() {
-			public Flow getFlow(String id) throws FlowArtifactException {
+			public Flow getFlow(String id) throws FlowArtifactLookupException {
 				Flow flow = new Flow("SomeFlow");
 				flow.setStartState(new State(flow, "SomeState") {
 					protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {

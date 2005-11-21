@@ -4,9 +4,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.NoSuchFlowArtifactException;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
@@ -35,23 +34,23 @@ public class DefaultFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 		this.beanFactory = beanFactory;
 	}
 
-	public Action getAction(String id) throws FlowArtifactException {
+	public Action getAction(String id) throws FlowArtifactLookupException {
 		return toAction(getArtifact(id, Action.class));
 	}
 
-	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
+	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 		return (FlowAttributeMapper)getArtifact(id, FlowAttributeMapper.class);
 	}
 
-	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
+	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException {
 		return (TransitionCriteria)getArtifact(id, TransitionCriteria.class);
 	}
 
-	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
+	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
 		return (ViewSelector)getArtifact(id, ViewSelector.class);
 	}
 
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
+	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
 		return (StateExceptionHandler)getArtifact(id, StateExceptionHandler.class);
 	}
 
@@ -60,7 +59,7 @@ public class DefaultFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 			return doGetArtifact(id, artifactType);
 		}
 		catch (NoSuchBeanDefinitionException e) {
-			throw new NoSuchFlowArtifactException(artifactType, id, e);
+			throw new FlowArtifactLookupException(artifactType, id, e);
 		}
 	}
 

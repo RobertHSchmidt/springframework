@@ -24,7 +24,7 @@ import org.springframework.core.style.StylerUtils;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class NoSuchFlowStateException extends NoSuchFlowArtifactException {
+public class NoSuchFlowStateException extends FlowArtifactLookupException {
 
 	/**
 	 * The flow where the state could not be found.
@@ -47,7 +47,8 @@ public class NoSuchFlowStateException extends NoSuchFlowArtifactException {
 	 * @param cause the underlying cause of this exception
 	 */
 	public NoSuchFlowStateException(Flow flow, String stateId, Throwable cause) {
-		super(State.class, stateId, "No state with state id '" + stateId + "' exists for flow '" + flow.getId() + "' -- valid states are "
+		super(State.class, stateId,
+				"No state with state id '" + stateId + "' exists for flow '" + flow.getId() + "' -- valid states are "
 				+ StylerUtils.style(flow.getStateIds()) + "-- likely programmer error, check your flow configuration",
 				cause);
 		this.flow = flow;

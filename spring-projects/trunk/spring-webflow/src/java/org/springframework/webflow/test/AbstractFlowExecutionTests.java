@@ -23,7 +23,7 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.config.FlowLocator;
@@ -122,10 +122,10 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	/**
 	 * Get the singleton flow definition whose execution is being tested.
 	 * @return the singleton flow definition
-	 * @throws FlowArtifactException if the flow identified by flowId()
+	 * @throws FlowArtifactLookupException if the flow identified by flowId()
 	 * could not be resolved (if <code>this.flow</code> was null)
 	 */
-	protected Flow getFlow() throws FlowArtifactException {
+	protected Flow getFlow() throws FlowArtifactLookupException {
 		return getFlowLocator().getFlow(flowId());
 	}
 

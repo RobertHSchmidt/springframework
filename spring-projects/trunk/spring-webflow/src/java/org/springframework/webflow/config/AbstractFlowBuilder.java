@@ -25,7 +25,7 @@ import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
@@ -460,9 +460,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * returns it.
 	 * @param id the action id
 	 * @return the action
-	 * @throws FlowArtifactException the action could not be resolved
+	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
-	protected Action action(String id) throws FlowArtifactException {
+	protected Action action(String id) throws FlowArtifactLookupException {
 		return getRequiredFlowArtifactFactory().getAction(id);
 	}
 
@@ -472,9 +472,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * returns it.
 	 * @param id the action id
 	 * @return the action
-	 * @throws FlowArtifactException the action could not be resolved
+	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
-	protected AnnotatedAction annotatedAction(String id, Map properties) throws FlowArtifactException {
+	protected AnnotatedAction annotatedAction(String id, Map properties) throws FlowArtifactLookupException {
 		return new AnnotatedAction(action(id), properties);
 	}
 
@@ -630,10 +630,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param attributeMapperId the id of the attribute mapper that will map
 	 * attributes between the flow built by this builder and the subflow
 	 * @return the attribute mapper
-	 * @throws FlowArtifactException no FlowAttributeMapper implementation was
+	 * @throws FlowArtifactLookupException no FlowAttributeMapper implementation was
 	 * exported with the specified id
 	 */
-	protected FlowAttributeMapper attributeMapper(String attributeMapperId) throws FlowArtifactException {
+	protected FlowAttributeMapper attributeMapper(String attributeMapperId) throws FlowArtifactLookupException {
 		return getRequiredFlowArtifactFactory().getAttributeMapper(attributeMapperId);
 	}
 
@@ -645,9 +645,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param flowId the flow definition id
 	 * @return the flow to be used as a subflow, this should be passed to a
 	 * addSubflowState call
-	 * @throws FlowArtifactException when the flow cannot be resolved
+	 * @throws FlowArtifactLookupException when the flow cannot be resolved
 	 */
-	protected Flow flow(String flowId) throws FlowArtifactException {
+	protected Flow flow(String flowId) throws FlowArtifactLookupException {
 		return getRequiredFlowArtifactFactory().getSubflow(flowId);
 	}
 
