@@ -139,8 +139,7 @@ public class EndState extends State {
 			ViewSelection selectedView;
 			if (isMarker()) {
 				if (logger.isDebugEnabled()) {
-					logger
-							.debug("Returning a [null] ending view selection: make sure a response has already been written");
+					logger.debug("Returning a [null] ending view selection: make sure a response has already been written");
 				}
 				selectedView = null;
 			}

@@ -74,10 +74,8 @@ public interface FlowExecutionControlContext extends RequestContext {
 	/**
 	 * Spawn a new flow session and activate it in the currently executing flow.
 	 * Also transitions the spawned flow to its start state. This method should
-	 * be called by clients that wish to spawn new flows, such as subflow
-	 * states.
-	 * @param flow the flow to start, its <code>start()</code> method will be
-	 * called
+	 * be called by clients that wish to spawn new flows, such as subflow states.
+	 * @param flow the flow to start, its <code>start()</code> method will be called
 	 * @param startState the start state to use, when <code>null</code>, the
 	 * default start state for the flow is used
 	 * @param input initial contents of the newly created flow session (may be
