@@ -11,6 +11,12 @@ import org.springframework.core.io.ResourceLoader;
  * using a Spring BeanFactory to deploy a registry of XML-based Flow definitions
  * for execution.
  * <p>
+ * By default, a configured flow definitions will be assigned a
+ * registry identifier equal to the filename of the underlying definition
+ * resource, minus the filename extension. For example, a XML-based flow
+ * definition defined in the file "flow1.xml" will be identified as "flow1" when
+ * in the registry created by this factory bean.
+ * <p> 
  * This class is also <code>ResourceLoaderAware</code>; when an instance is
  * created by a Spring BeanFactory the factory will automatically configure the
  * XmlFlowRegistrar with a context-relative resource loader for accessing other
@@ -19,14 +25,14 @@ import org.springframework.core.io.ResourceLoader;
  * Usage example:
  * 
  * <pre>
- *      &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *          &lt;property name=&quot;definitionLocations&quot;&gt;
- *              &lt;list&gt;
- *                  &lt;value&gt;/WEB-INF/flow1.xml&lt;/value&gt;
- *                  &lt;value&gt;/WEB-INF/flow2.xml&lt;/value&gt;
- *              &lt;/list&gt;
- *           &lt;/property&gt;
- *      &lt;/bean&gt;
+ *     &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;definitionLocations&quot;&gt;
+ *             &lt;list&gt;
+ *                 &lt;value&gt;/WEB-INF/flow1.xml&lt;/value&gt;
+ *                 &lt;value&gt;/WEB-INF/flow2.xml&lt;/value&gt;
+ *             &lt;/list&gt;
+ *         &lt;/property&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
  * @author Keith Donald
