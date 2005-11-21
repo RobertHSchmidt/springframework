@@ -95,19 +95,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *       &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *           &lt;entry&gt;
- *               &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *           &lt;/entry&gt;
- *           &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *               &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *           &lt;/transition&gt;
- *       &lt;/view-state&gt;
+ *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *         &lt;entry&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *         &lt;/entry&gt;
+ *         &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *         &lt;/transition&gt;
+ *     &lt;/view-state&gt;
  *      
- *       &lt;action-state id=&quot;executeSearch&quot;&gt;
- *           &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *           &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *       &lt;/action-state&gt;
+ *     &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *     &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -144,9 +144,9 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * 
  * <pre>
  * public Event setupReferenceData(RequestContext context) throws Exception {
- * 	Scope requestScope = context.getRequestScope();
- * 	requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
- * 	return success();
+ *     Scope requestScope = context.getRequestScope();
+ *     requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ *     return success();
  * }
  * </pre>
  * 
@@ -172,7 +172,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </tr>
  * <tr>
  * <td>formObjectScope</td>
- * <td>{@link org.springframework.webflow.ScopeType#REQUEST request}</td>
+ * <td>{@link org.springframework.webflow.ScopeType#FLOW flow}</td>
  * <td>The scope in which the form object will be put. If put in flow scope the
  * object will be cached and reused over the life of the flow, preserving
  * previous values. Request scope will cause a new fresh form object instance to
