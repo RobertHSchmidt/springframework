@@ -7,7 +7,7 @@ Changes in version 1.0 RC1 (12.2.2005)
 * Introduced JSF integration, see the "jsf" package.
 * Added support for custom start, signal event, end, and handleException behavior to the Flow class.
 * Added state exception handling support at the State level.  States may now be configured with a set of
-  one or more StateExeceptionHandler objects, for responding to exceptions that occur within the state of a flow execution.
+  one or more StateExceptionHandler objects for responding to exceptions that occur within the state of a flow execution.
 * Added state exception handling support at the Flow level.  Flows may now be configured with a set of
   one or more StateExeceptionHandler objects, for responding to exceptions that occur within a state but are not handled by that state.
 * Added a FlowExecutionManagement exception hierarchy, for reporting unhandled exceptions that occur during the management
@@ -28,6 +28,7 @@ Changes in version 1.0 RC1 (12.2.2005)
   synchronized application transaction tokens that prevent duplicate submits (even with continuations!)
 * Added support for accessing session and application scope variables as properties of a source ExternalEvent.
 * Added support for "inline-flows", local flow definitions fully nested within another flow definition.
+* Added support for locally flow scoped artifacts, importable as bean definitions using the "import" element.
 * Added a sessionEnding FlowExecutionListener callback.
 * Added a KeyGenerator strategy, providing a plugin point for custom FlowExecution key generation strategies.
 * Added "CompositeEvent" support for composite actions that may generate multiple action result events.
@@ -37,7 +38,6 @@ Changes in version 1.0 RC1 (12.2.2005)
   accessed from views by referencing in the format ${stateId.parameterName}
 * Added "requireValidatorMethod" property to FormAction, useful for supporting piecemeal validation as part of a wizard flow.
 * Added ActionUtils utility class, useful when implementing actions.
-* Added support for webflow definition scoped bean definitions, centralizing all flow definition code in one place.
 * Added AbstractFlowBuilder addDecisionState(...) methods for completeness.
 * Added a convenience constructor to the Event class that takes a single parameter name/value. Mainly for use in unit tests.
 * Added a convenience constructor to the FormAction class that takes the formObjectClass name.
