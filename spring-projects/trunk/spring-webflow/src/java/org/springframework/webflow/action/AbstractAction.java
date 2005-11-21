@@ -31,8 +31,7 @@ import org.springframework.webflow.RequestContext;
  * useful to any action command. These include:
  * <ul>
  * <li>Creating common action result events
- * <li>Inserting action pre and post execution logic (may also be done with an
- * interceptor)
+ * <li>Inserting action pre and post execution logic
  * </ul>
  * 
  * @author Keith Donald
@@ -41,32 +40,32 @@ import org.springframework.webflow.RequestContext;
 public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
-	 * Event id of the default 'success' result event ("success").
+	 * The default 'success' result event identifier ("success").
 	 */
 	public static final String SUCCESS_EVENT_ID = "success";
-	
+
 	/**
-	 * Event id of the default 'error' result event ("error").
+	 * The default 'error' result event identifier ("error").
 	 */
 	public static final String ERROR_EVENT_ID = "error";
 
 	/**
-	 * Event id of the default 'yes' result event ("yes").
+	 * The default 'yes' result event identifier ("yes").
 	 */
 	public static final String YES_EVENT_ID = "yes";
 
 	/**
-	 * Event id of the default 'no' result event ("no").
+	 * The default 'no' result event identifier ("no").
 	 */
 	public static final String NO_EVENT_ID = "no";
 
 	/**
-	 * Constant for the error exception event parameter name ("exception").
+	 * The error event 'exception' parameter name ("exception").
 	 */
 	public static final String EXCEPTION_PARAMETER = "exception";
 
 	/**
-	 * Constant for the success result object event parameter name ("result").
+	 * The success event 'result' parameter name ("result").
 	 */
 	public static final String RESULT_PARAMETER = "result";
 
@@ -91,34 +90,34 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	protected void initAction() throws Exception {
 	}
 
-	// creating common events
+	// factory methods for creating common events
 
 	/**
-	 * Returns the default error event.
+	 * Returns an "error" result event.
 	 */
 	protected Event error() {
 		return result(ERROR_EVENT_ID);
 	}
 
 	/**
-	 * Returns the default error event caused by the provided exception.
-	 * @param e the exception that caused the error event, to be sent as
-	 *        an event parameter under the name {@link AbstractAction#EXCEPTION_PARAMETER}
+	 * Returns an "error" result event caused by the provided exception.
+	 * @param e the exception that caused the error event, to be sent as an
+	 * event parameter under the name {@link AbstractAction#EXCEPTION_PARAMETER}
 	 */
 	protected Event error(Exception e) {
 		return result(ERROR_EVENT_ID, EXCEPTION_PARAMETER, e);
 	}
 
 	/**
-	 * Returns the default success event.
+	 * Returns a "success" result event.
 	 */
 	protected Event success() {
 		return result(SUCCESS_EVENT_ID);
 	}
 
 	/**
-	 * Returns the default success event with the provided result object
-	 * as a parameter. The result object is identified by the parameter name
+	 * Returns a "success" result event with the provided result object as a
+	 * parameter. The result object is identified by the parameter name
 	 * {@link AbstractAction#RESULT_PARAMETER}.
 	 * @param result the action success result;
 	 */
@@ -127,9 +126,10 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
-	 * Returns the default success event with the provided result object
-	 * as a parameter.
-	 * @param resultParameterName the name of the result paramter in the created event
+	 * Returns a "success" result event with the provided result object as a
+	 * parameter.
+	 * @param resultParameterName the name of the result paramter in the created
+	 * event
 	 * @param result the action success result
 	 */
 	protected Event success(String resultParameterName, Object result) {
@@ -137,14 +137,14 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
-	 * Returns the default yes event.
+	 * Returns a "yes" result event.
 	 */
 	protected Event yes() {
 		return result(YES_EVENT_ID);
 	}
 
 	/**
-	 * Returns the default no event.
+	 * Returns a "no" result event.
 	 */
 	protected Event no() {
 		return result(NO_EVENT_ID);
@@ -155,14 +155,14 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Typically called as part of return, for example:
 	 * 
 	 * <pre>
-	 *    protected Event doExecute(RequestContext context) {
-	 *      // do some work
-	 *      if (some condition) {
-	 *        return result(&quot;success&quot;);
-	 *      } else {
-	 *        return result(&quot;error&quot;);
-	 *      }
-	 *    }
+	 *     protected Event doExecute(RequestContext context) {
+	 *       // do some work
+	 *       if (some condition) {
+	 *         return result(&quot;success&quot;);
+	 *       } else {
+	 *         return result(&quot;error&quot;);
+	 *       }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
@@ -175,21 +175,21 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
-	 * Returns a result event for this action with the specified identifier
-	 * and the specified set of parameters. Typically called as part of
-	 * return, for example:
+	 * Returns a result event for this action with the specified identifier and
+	 * the specified set of parameters. Typically called as part of return, for
+	 * example:
 	 * 
 	 * <pre>
-	 *    protected Event doExecute(RequestContext context) {
-	 *      // do some work
-	 *      Map resultParameters = new HashMap();
-	 *      resultParameters.put("parameterName", "parameterValue");
-	 *      if (some condition) {
-	 *        return result(&quot;success&quot;, resultParameters);
-	 *      } else {
-	 *        return result(&quot;error&quot;, resultParameters);
-	 *      }
-	 *    }
+	 *     protected Event doExecute(RequestContext context) {
+	 *       // do some work
+	 *       Map resultParameters = new HashMap();
+	 *       resultParameters.put(&quot;parameterName&quot;, &quot;parameterValue&quot;);
+	 *       if (some condition) {
+	 *         return result(&quot;success&quot;, resultParameters);
+	 *       } else {
+	 *         return result(&quot;error&quot;, resultParameters);
+	 *       }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
@@ -203,23 +203,28 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
-	 * Returns a result event for this action with the specified identifier
-	 * and a single parameter. Typically called as part of return, for example:
+	 * Returns a result event for this action with the specified identifier and
+	 * a single parameter. Typically called as part of return, for example:
+	 * 
 	 * <pre>
-	 *   public Event makeSelection(RequestContext context) throws Exception {
-	 *      try {
-	 *         String selection = (String) context.getSourceEvent().getParameter("selection");
-	 *         selectionSensorHelper.fireSelectionMade(selection);
-	 *         return success();
-	 *      } catch (NoSuchBinException e) {
-	 *         return result("noSuchBin", "exception", e);
-	 *      } catch (BinEmptyException e) {
-	 *         return result("binEmpty", "exception", e);
-	 *      } catch (NotEnoughFundsException e) {
-	 *         return result("notEnoughFunds", "exception", e);
-	 *      }
-	 *   }
+	 * public Event makeSelection(RequestContext context) throws Exception {
+	 * 	try {
+	 * 		String selection = (String)context.getSourceEvent().getParameter(&quot;selection&quot;);
+	 * 		fireSelectionMade(selection);
+	 * 		return success();
+	 * 	}
+	 * 	catch (NoSuchBinException e) {
+	 * 		return result(&quot;noSuchBin&quot;, &quot;exception&quot;, e);
+	 * 	}
+	 * 	catch (BinEmptyException e) {
+	 * 		return result(&quot;binEmpty&quot;, &quot;exception&quot;, e);
+	 * 	}
+	 * 	catch (NotEnoughFundsException e) {
+	 * 		return result(&quot;notEnoughFunds&quot;, &quot;exception&quot;, e);
+	 * 	}
+	 * }
 	 * </pre>
+	 * 
 	 * @param eventId the result id
 	 * @param parameterName the parameter name
 	 * @param parameterValue the parameter value
@@ -235,8 +240,8 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Get a named execution property for this action from the request context.
 	 * @param context the flow execution request context
 	 * @param propertyName the name of the property to get
-	 * @param defaultValue the default value to use when the named property cannot be
-	 *        found in the execution properties
+	 * @param defaultValue the default value to use when the named property
+	 * cannot be found in the execution properties
 	 * @return the property value
 	 */
 	protected Object getActionProperty(RequestContext context, String propertyName, Object defaultValue) {
@@ -244,14 +249,15 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
-	 * Get a names execution property for this action from the request context. Throw
-	 * an exception if the property is not defined.
+	 * Get a names execution property for this action from the request context.
+	 * Throw an exception if the property is not defined.
 	 * @param context the flow execution request context
 	 * @param propertyName the name of the property to get
 	 * @return the property value
 	 * @throws IllegalStateException when the property is not defined
 	 */
-	protected Object getRequiredActionProperty(RequestContext context, String propertyName) throws IllegalStateException {
+	protected Object getRequiredActionProperty(RequestContext context, String propertyName)
+			throws IllegalStateException {
 		return ActionUtils.getRequiredActionProperty(context, propertyName);
 	}
 
@@ -283,22 +289,21 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
 	 * Pre-action-execution hook, subclasses may override. If this method
-	 * returns a non-<code>null</code> event, the
-	 * <code>doExecute()</code> method will <b>not</b> be called and
-	 * the returned event will be used to select a transition to trigger in the
-	 * calling action state. If this method returns <code>null</code>,
-	 * <code>doExecute()</code> will be called to obtain an action
-	 * result event.
+	 * returns a non-<code>null</code> event, the <code>doExecute()</code>
+	 * method will <b>not</b> be called and the returned event will be used to
+	 * select a transition to trigger in the calling action state. If this
+	 * method returns <code>null</code>, <code>doExecute()</code> will be
+	 * called to obtain an action result event.
 	 * <p>
 	 * This implementation just returns <code>null</code>.
 	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * data in "flow scope" or "request scope"
 	 * @return the non-<code>null</code> action result, in which case the
-	 *         <code>doExecute()</code> will not be called, or
-	 *         <code>null</code> if the <code>doExecute()</code>
-	 *         method should be called to obtain the action result
+	 * <code>doExecute()</code> will not be called, or <code>null</code> if
+	 * the <code>doExecute()</code> method should be called to obtain the
+	 * action result
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
-	 *         checked or unchecked
+	 * checked or unchecked
 	 */
 	protected Event doPreExecute(RequestContext context) throws Exception {
 		return null;
@@ -308,10 +313,10 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Template hook method subclasses should override to encapsulate their
 	 * specific action execution logic.
 	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * data in "flow scope" or "request scope"
 	 * @return the action result event
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
-	 *         checked or unchecked
+	 * checked or unchecked
 	 */
 	protected abstract Event doExecute(RequestContext context) throws Exception;
 
@@ -320,9 +325,9 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * <p>
 	 * This implementation does nothing.
 	 * @param context the action execution context, for accessing and setting
-	 *        data in "flow scope" or "request scope"
+	 * data in "flow scope" or "request scope"
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
-	 *         checked or unchecked
+	 * checked or unchecked
 	 */
 	protected void doPostExecute(RequestContext context) throws Exception {
 	}

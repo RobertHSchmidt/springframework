@@ -22,7 +22,7 @@ import org.springframework.webflow.Event;
  * Strategy interface for objects that can provide an interface to an external
  * attribute data store.
  * <p>
- * Objects implementing this interface act  as factories for attribute sources
+ * Objects implementing this interface act as factories for attribute sources
  * that when invoked pull attributes from an externally managed source.
  * <p>
  * Used by
@@ -44,8 +44,9 @@ public interface DataStoreAccessor {
 
 	/**
 	 * Returns a mutable attribute accessor providing access to the data store.
-	 * @param sourceEvent the event requesting access to the data store
-	 * @return the mutable attribute source given access to the data store
+	 * @param sourceEvent the event, acting as a context object for locating the
+	 * data store.
+	 * @return the mutable attribute source providing access to the data store
 	 */
 	public MutableAttributeSource getDataStore(Event sourceEvent);
 }
