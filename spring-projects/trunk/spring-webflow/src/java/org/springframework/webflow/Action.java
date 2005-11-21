@@ -16,39 +16,48 @@
 package org.springframework.webflow;
 
 /**
- * A command that executes arbitrary behaviour and returns a logical execution
- * result. Actions typically delegate down to the service-layer to perform
- * business operations, and/or prepare views with dynamic model data for
- * response rendering. They act as a bridge between the web-tier client and the
- * middle-tier service layer.
+ * A command that executes arbitrary behavior and returns a logical execution
+ * result a Flow can respond to. Actions typically delegate down to the
+ * service-layer to perform business operations, and prepare views with dynamic
+ * model data to support response rendering. They often act as a bridge between
+ * the web-tier and the middle-tier business logic layer.
  * <p>
- * When an action completes execution, it signals a single result event
- * describing the outcome of the execution ("success", "error", "yes", "no",
- * etc). This result event is used as grounds for a state transition in the
- * current state.
+ * When an action completes execution, it signals a result event describing the
+ * outcome of that execution (for example: "success", "error", "yes", "no",
+ * "tryAgain", etc). This result event is used as grounds for a state transition
+ * in the current state of the calling Flow.
  * <p>
- * Action implementations are typically application-scoped singletons
- * instantiated and managed by a web-tier Spring application context to take
- * advantage of Spring's powerful configuration and dependency injection (IoC)
- * capabilities. Actions can also be stateful prototypes, storing conversational
- * state as instance variables.
+ * Action implementations are often application-scoped singletons instantiated
+ * and managed by a web-tier Spring application context to take advantage of
+ * Spring's powerful configuration and dependency injection (IoC) capabilities.
+ * Actions may also be stateful prototypes, storing conversational state as
+ * instance variables (see
+ * {@link org.springframework.webflow.action.StatefulActionProxy} and
+ * {@link org.springframework.webflow.action.AbstractBeanInvokingAction} for
+ * more information). Action instances may also be locally scoped to a specific
+ * flow definition (see use of the "import" element of the root XML flow
+ * definition element.)
  * <p>
  * Note: Actions are directly instantiatable for use in a standalone test
  * environment and can be parameterized with mocks or stubs, as they are simple
  * POJOs. Action proxies may also be generated at runtime for delegating to POJO
- * business operations with no dependency on the SWF API.
+ * business operations with no dependency on the SWF API (see the
+ * {@link org.springframework.webflow.action.LocalBeanInvokingAction} proxy
+ * which is used by default when a POJO is referenced as an action from a Flow
+ * definition).
  * <p>
- * Note: because Actions are typically singletons managed in application scope,
- * take care not to store and/or modify caller-specific state in a unsafe
- * manner. The Action {@link #execute(RequestContext)} method runs in an
- * independently executing thread on each invocation, so make sure you deal only
- * with local data or internal, thread-safe services.
+ * Note: if an Action is a singleton managed in application scope, take care not
+ * to store and/or modify caller-specific state in a unsafe manner. The Action
+ * {@link #execute(RequestContext)} method runs in an independently executing
+ * thread on each invocation, so make sure you deal only with local data or
+ * internal, thread-safe services.
  * <p>
- * Note: a web flow action is not a controller like a Spring MVC controller or a
- * Struts action is a controller. Web flow actions are <i>commands</i>. Such
- * commands do not select views, they return logical execution results. The
- * web flow is responsible for responding to the result of the command to decide
- * what to do next. In Spring Web Flow, the flow <i>is</i> the controller.
+ * Note: an Action is not a controller like a Spring MVC controller or a Struts
+ * action is a controller. <b>Web flow actions are <i>commands</i></b>. Such
+ * commands do not select views, they execute arbitrary worker logic and then
+ * return an logical execution result. The flow that invokes an Action is
+ * responsible for responding to the execution result to decide what to do next.
+ * In Spring Web Flow, the flow <i>is</i> the controller.
  * 
  * @see org.springframework.webflow.ActionState
  * @see org.springframework.webflow.test.MockRequestContext
@@ -64,10 +73,10 @@ public interface Action {
 	 * request associated with an active flow execution.
 	 * <p>
 	 * More specifically, action execution is triggered in a production
-	 * environment when an <code>ActionState</code> is entered as part of an
-	 * ongoing flow execution for a specific <code>Flow</code> definition. The
-	 * result of action execution, a logical outcome event, is used as grounds
-	 * for a transition out of the calling action state.
+	 * environment when invoked as part of a state of an ongoing flow execution
+	 * for a specific <code>Flow</code> definition. The result of action
+	 * execution, a logical outcome event, is typically used as grounds for a
+	 * transition out of the calling state.
 	 * <p>
 	 * Note: The <code>RequestContext</code> argument to this method provides
 	 * access to the <b>data model</b> of the active flow execution in the
@@ -75,9 +84,10 @@ public interface Action {
 	 * allows this action to access model data set by other actions, as well as
 	 * set its own attributes it wishes to expose in a given scope.
 	 * <p>
-	 * All attributes set in "flow scope" exist for the life of the flow session
-	 * and will be cleaned up when the flow session ends. All attributes set in
-	 * "request scope" exist for the life of the currently executing request only.
+	 * All attributes set in "flow scope" by Actions will exist for the life of
+	 * the flow session and will be cleaned up automatically when the flow
+	 * session ends. All attributes set in "request scope" exist for the life of
+	 * the currently executing request only.
 	 * <p>
 	 * All attributes present in any scope are automatically exposed in the
 	 * model for convenient access by the views when a <code>ViewState</code>
@@ -102,10 +112,10 @@ public interface Action {
 	 * @return a logical result outcome, used as grounds for a transition out of
 	 * the current calling action state (e.g. "success", "error", "yes", "no",
 	 * ...)
-	 * @throws Exception an <b>unrecoverable</b> exception occured, either
+	 * @throws Exception a exception occured during action execution, either
 	 * checked or unchecked; note, any <i>recoverable</i> exceptions should be
 	 * caught within this method and an appropriate result outcome returned
-	 * instead
+	 * <i>or</i> be handled by the current state of the calling flow execution.
 	 */
 	public Event execute(RequestContext context) throws Exception;
 }
