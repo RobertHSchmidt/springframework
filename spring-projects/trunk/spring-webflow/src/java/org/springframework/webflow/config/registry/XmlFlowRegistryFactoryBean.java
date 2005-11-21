@@ -11,10 +11,10 @@ import org.springframework.core.io.ResourceLoader;
  * using a Spring BeanFactory to deploy a registry of XML-based Flow definitions
  * for execution.
  * <p>
- * By default, a configured flow definitions will be assigned a
+ * By default, a configured flow definition will be assigned a
  * registry identifier equal to the filename of the underlying definition
  * resource, minus the filename extension. For example, a XML-based flow
- * definition defined in the file "flow1.xml" will be identified as "flow1" when
+ * definition defined in the file "flow1.xml" will be identified as "flow1"
  * in the registry created by this factory bean.
  * <p> 
  * This class is also <code>ResourceLoaderAware</code>; when an instance is
