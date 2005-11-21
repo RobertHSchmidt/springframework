@@ -19,8 +19,14 @@ import org.springframework.binding.AttributeSource;
 import org.springframework.binding.support.EmptyAttributeSource;
 
 /**
- * Thrown if an unhandled, uncoverable exception occurs when an action is
- * executed.
+ * Thrown if an unhandled exception occurs when an action is executed. Typically
+ * wraps another exception noting the root cause failure, which may be checked
+ * or unchecked.
+ * <p>
+ * Is a StateException, recording information about what state the Flow was in
+ * when the exception was thrown. Also provides a reference to the Action
+ * instance itself and the execution properties that may have affected its
+ * execution.
  * 
  * @see org.springframework.webflow.Action
  * @see org.springframework.webflow.ActionState
@@ -36,7 +42,8 @@ public class ActionExecutionException extends StateException {
 	private Action action;
 
 	/**
-	 * Action execution properties.
+	 * The action's execution properties, which may have affected its execution
+	 * and possibly contributed to this exception being thrown.
 	 */
 	private AttributeSource executionProperties;
 
@@ -47,11 +54,10 @@ public class ActionExecutionException extends StateException {
 	 * @param cause the underlying cause
 	 */
 	public ActionExecutionException(State state, Action action, Throwable cause) {
-		this(state, action, EmptyAttributeSource.INSTANCE,
-				"Exception thrown executing action '" + action + "' in state '" + state.getId() + "' of flow '"
-				+ state.getFlow().getId() + "'", cause);
+		this(state, action, EmptyAttributeSource.INSTANCE, "Exception thrown executing action '" + action
+				+ "' in state '" + state.getId() + "' of flow '" + state.getFlow().getId() + "'", cause);
 	}
-	
+
 	/**
 	 * Create a new action execution exception.
 	 * @param state the active state
@@ -60,9 +66,8 @@ public class ActionExecutionException extends StateException {
 	 * @param cause the underlying cause
 	 */
 	public ActionExecutionException(State state, Action action, AttributeSource executionProperties, Throwable cause) {
-		this(state, action, executionProperties,
-				"Exception thrown executing action '" + action + "' in state '" + state.getId() + "' of flow '"
-				+ state.getFlow().getId() + "'", cause);
+		this(state, action, executionProperties, "Exception thrown executing action '" + action + "' in state '"
+				+ state.getId() + "' of flow '" + state.getFlow().getId() + "'", cause);
 	}
 
 	/**
@@ -73,8 +78,8 @@ public class ActionExecutionException extends StateException {
 	 * @param message a descriptive message
 	 * @param cause the underlying cause
 	 */
-	public ActionExecutionException(State state, Action action, AttributeSource executionProperties,
-			String message, Throwable cause) {
+	public ActionExecutionException(State state, Action action, AttributeSource executionProperties, String message,
+			Throwable cause) {
 		super(state, message, cause);
 		this.action = action;
 		this.executionProperties = executionProperties;
@@ -87,9 +92,10 @@ public class ActionExecutionException extends StateException {
 	public Action getAction() {
 		return action;
 	}
-	
+
 	/**
-	 * Returns the properties (attributes) associated with the action during execution.
+	 * Returns the properties (attributes) associated with the action during
+	 * execution.
 	 */
 	public AttributeSource getExecutionProperties() {
 		return executionProperties;

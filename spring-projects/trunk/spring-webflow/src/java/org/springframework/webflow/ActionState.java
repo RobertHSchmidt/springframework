@@ -34,14 +34,15 @@ import org.springframework.util.Assert;
  * this state. This is a form of the Chain of Responsibility (CoR) pattern.
  * <p>
  * The result of an action's execution is treated as a contributing criterion
- * for a state transition. In addition, anything else in the Flow's
+ * for a state transition. In addition, anything else in the current
  * <code>RequestContext</code> may be tested as part of custom transitional
  * criteria, allowing for sophisticated transition expressions that reason on
  * contextual state.
  * <p>
  * Each action executed by this action state may be provisioned with a set of
- * arbitrary properties. These properties are made available to the action at
- * execution time.
+ * arbitrary execution properties. These properties are made available to the
+ * action at execution time, and may be used to influence action execution
+ * behavior.
  * <p>
  * Common action execution properties include:
  * <p>
@@ -50,12 +51,14 @@ import org.springframework.util.Assert;
  * <th>Description</th>
  * <tr>
  * <td valign="top">name</td>
- * <td>The 'name' property is used as a qualifier for the action's result
- * event. For example, if an action named <code>myAction</code> returns a
- * <code>success</code> result, a transition for event
- * <code>myAction.success</code> will be searched, and if found, executed. If
- * the action is not named a transition for the base <code>success</code>
- * event will be searched and if found, executed. <br>
+ * <td>The 'name' property is used as a qualifier for an action's result event,
+ * and is typically used to allow the flow to respond to a specific action's
+ * outcome within a larger action execution chain. For example, if an action
+ * named <code>myAction</code> returns a <code>success</code> result, a
+ * transition that matches on event <code>myAction.success</code> will be
+ * searched, and if found, executed. If this action is not assigned a name, a
+ * transition for the base <code>success</code> event will be searched and if
+ * found, executed. <br>
  * This is useful in situations where you want to execute actions in an ordered
  * chain as part of one action state, and wish to transition on the result of
  * the last one in the chain. For example:
@@ -68,18 +71,29 @@ import org.springframework.util.Assert;
  *     &lt;/action-state&gt;
  * </pre>
  * 
- * The above will trigger the execution of the 'setup' action followed by the
- * 'referenceData' action. The flow will then respond to the referenceData
- * 'success' event by transitioning to 'displayForm'. </td>
+ * When the 'setupForm' state above is entered, the 'setup' action will execute,
+ * followed by the 'referenceData' action. After 'referenceData' execution, the
+ * flow will then respond to the 'referenceData.success' event by transitioning
+ * to the 'displayForm' state. </td>
  * <tr>
  * <td valign="top">method</td>
- * <td> The 'method' property is the name of the method on a
- * <code>{@link org.springframework.webflow.action.MultiAction}</code>
- * implementation to call when this action is executed. The named method must
- * have the signature <code>public Event ${method}(RequestContext)</code>,
- * for example a method property with value <code>setupForm</code> would bind
- * to a method on the MultiAction with the signature:
- * <code>public Event setupForm(RequestContext context)</code>. </td>
+ * <td>The 'method' property is the name of a specific method on a
+ * <code>{@link org.springframework.webflow.action.MultiAction}</code> to
+ * execute, or the name of a specific method on a arbitrary POJO (plain old
+ * java.lang.Object). In the MultiAction scenario, the named method must have
+ * the signature <code>public Event ${method}(RequestContext)</code>. As an
+ * example, a method property with value <code>setupForm</code> would bind to
+ * a method on a MultiAction instance with the signature:
+ * <code>public Event setupForm(RequestContext context)</code>. <br>
+ * <br>
+ * The 'method' property may also be the name of an method of an arbitrary POJO
+ * (plain old java.lang.Object). In this case the named method must be public
+ * and may have any signature. If the method signature does accept parameters,
+ * those parameters may be specified by using the format:
+ * <code>${methodName}(${param1}, ${param2}, ...)</code>. Parameter
+ * expressions are evaluated against the <code>RequestContext</code>,
+ * allowing for data stored in flow scope or request scope to be passed as
+ * arguments to the POJO in an automatic fashion.</td>
  * </tr>
  * </table>
  * 

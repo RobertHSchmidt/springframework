@@ -20,9 +20,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 
 /**
- * Worker object that performs an action execution, encapsulating common logging and
- * exception handling logic. This is an internal helper class that is not normally
- * used by application code.
+ * Helper that performs action execution, encapsulating common logging and
+ * exception handling logic. This is an internal helper class that is not
+ * normally used by application code.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -56,12 +56,14 @@ public class ActionExecutor {
 	 * Execute the wrapped action.
 	 * @param context the flow execution request context
 	 * @return result of action execution
-	 * @throws ActionExecutionException if the action threw an exception while executing
+	 * @throws ActionExecutionException if the action threw an exception while
+	 * executing
 	 */
 	public Event execute(RequestContext context) throws ActionExecutionException {
 		try {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Executing action [" + action + "] in state '" + context.getFlowExecutionContext().getCurrentState().getId() + "'");
+				logger.debug("Executing action [" + action + "] in state '"
+						+ context.getFlowExecutionContext().getCurrentState().getId() + "'");
 			}
 			return action.execute(context);
 		}
@@ -73,7 +75,7 @@ public class ActionExecutor {
 			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), action, e);
 		}
 	}
-	
+
 	public String toString() {
 		return action.toString();
 	}
