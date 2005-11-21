@@ -37,7 +37,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.config.FlowLocator;
 
 /**
- * A manager for the executing flows of the application. This object is
+ * A manager for the executing flows of a an application. This object is
  * responsible for creating new flow executions as requested by clients, as well
  * as signaling events for processing by existing, paused executions (that are
  * waiting to be resumed in response to a user event).
