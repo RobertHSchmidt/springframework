@@ -41,14 +41,14 @@ import org.springframework.webflow.ViewSelection;
  * 
  * @author Keith Donald
  */
-public class MockStateContext extends MockRequestContext implements FlowExecutionControlContext {
+public class MockFlowExecutionControlContext extends MockRequestContext implements FlowExecutionControlContext {
 	
 	/**
 	 * Create a new stub state context.
 	 * @param session the active flow session
 	 * @param sourceEvent the event originating this request context
 	 */
-	public MockStateContext(MockFlowSession session, Event sourceEvent) {
+	public MockFlowExecutionControlContext(MockFlowSession session, Event sourceEvent) {
 		super(session, sourceEvent);
 	}
 
