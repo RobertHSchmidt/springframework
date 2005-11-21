@@ -20,21 +20,21 @@ import java.util.Map;
 /**
  * Mutable control interface used to manipulate an ongoing flow execution in the
  * context of one client request. Primarily used internally by the various flow
- * artifacts when they are invoked, but also used by the flow execution management
- * layer to drive flow execution.
+ * artifacts when they are invoked, but also used by the flow execution
+ * management layer to drive flow execution.
  * <p>
- * This interface serves as a facade for core definition constructs such as the
- * central <code>Flow</code> and <code>State</code> classes to runtime
- * <i>execution</i> constructs defined in the
+ * This interface acts as a facade for core definition constructs such as the
+ * central <code>Flow</code> and <code>State</code> classes, abstracting
+ * away details about the runtime <i>execution</i> subsystem defined in the
  * {@link org.springframework.webflow.execution} package.
  * <p>
  * Note this type is not the same as the {@link FlowExecutionContext}! Objects
  * of this type are <i>request specific</i>: they provide a control interface
  * for manipulating exactly one flow execution locally from exactly one request.
  * A <code>FlowExecutionContext</code> provides information about a single
- * flow execution (conversation)--its scope is not local to a specific request
- * (or thread).
- *
+ * flow execution (conversation), and it's scope is not local to a specific
+ * request (or thread).
+ * 
  * @see org.springframework.webflow.Flow
  * @see org.springframework.webflow.State
  * @see org.springframework.webflow.execution.FlowExecution
@@ -45,8 +45,8 @@ import java.util.Map;
 public interface FlowExecutionControlContext extends RequestContext {
 
 	/**
-	 * Record the last event signaled in the executing flow. This method will
-	 * be called as part of signaling an event in a flow to indicate the
+	 * Record the last event signaled in the executing flow. This method will be
+	 * called as part of signaling an event in a flow to indicate the
 	 * 'lastEvent' that was signaled.
 	 * @param lastEvent the last event signaled
 	 * @see Flow#onEvent(Event, FlowExecutionControlContext)
@@ -55,8 +55,8 @@ public interface FlowExecutionControlContext extends RequestContext {
 
 	/**
 	 * Record the last transition that executed in the executing flow. This
-	 * method will be called as part of executing a transition from one state
-	 * to another.
+	 * method will be called as part of executing a transition from one state to
+	 * another.
 	 * @param lastTransition the last transition that executed
 	 * @see Transition#execute(FlowExecutionControlContext)
 	 */
@@ -74,10 +74,12 @@ public interface FlowExecutionControlContext extends RequestContext {
 	/**
 	 * Spawn a new flow session and activate it in the currently executing flow.
 	 * Also transitions the spawned flow to its start state. This method should
-	 * be called by clients that wish to spawn new flows, such as subflow states.
-	 * @param flow the flow to start, its <code>start()</code> method will be called
-	 * @param startState the start state to use, when <code>null</code>, the default start
-	 * state for the flow is used
+	 * be called by clients that wish to spawn new flows, such as subflow
+	 * states.
+	 * @param flow the flow to start, its <code>start()</code> method will be
+	 * called
+	 * @param startState the start state to use, when <code>null</code>, the
+	 * default start state for the flow is used
 	 * @param input initial contents of the newly created flow session (may be
 	 * <code>null</code>, e.g. empty)
 	 * @return the selected starting view, which returns control to the client
@@ -89,10 +91,11 @@ public interface FlowExecutionControlContext extends RequestContext {
 	public ViewSelection start(Flow flow, State startState, Map input) throws StateException;
 
 	/**
-	 * Signals the occurence of an event in the current state of this flow execution
-	 * request context. This method should be called by clients that report
-	 * internal event occurences, such as action states. The <code>onEvent()</code> method
-	 * of the flow involved in the flow execution will be called.
+	 * Signals the occurence of an event in the current state of this flow
+	 * execution request context. This method should be called by clients that
+	 * report internal event occurences, such as action states. The
+	 * <code>onEvent()</code> method of the flow involved in the flow
+	 * execution will be called.
 	 * @param event the event that occured
 	 * @param state the state the event occured in (if <code>null</code>,
 	 * defaults to the current flow execution state)
@@ -106,8 +109,8 @@ public interface FlowExecutionControlContext extends RequestContext {
 
 	/**
 	 * End the active flow session of the current flow execution. This method
-	 * should be called by clients that terminate flows, such as end states.
-	 * The <code>end()</code> method of the flow involved in the flow execution
+	 * should be called by clients that terminate flows, such as end states. The
+	 * <code>end()</code> method of the flow involved in the flow execution
 	 * will be called.
 	 * @return the ended session
 	 * @throws IllegalStateException when the flow execution is not active
