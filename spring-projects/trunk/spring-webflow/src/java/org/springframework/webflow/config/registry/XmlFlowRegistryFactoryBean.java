@@ -6,10 +6,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- * A factory bean that produces a populated flow registry using a XML flow
- * definition registrar. This is the simplest implementation to use when using a
- * Spring BeanFactory to deploy a registry of XML-based Flow definitions for
- * execution.
+ * A factory bean that produces a populated flow registry using a
+ * @{link XmlFlowRegistrar}. This is the simplest implementation to use when
+ * using a Spring BeanFactory to deploy a registry of XML-based Flow definitions
+ * for execution.
  * <p>
  * This class is also <code>ResourceLoaderAware</code>; when an instance is
  * created by a Spring BeanFactory the factory will automatically configure the
@@ -19,14 +19,14 @@ import org.springframework.core.io.ResourceLoader;
  * Usage example:
  * 
  * <pre>
- *     &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;definitionLocations&quot;&gt;
- *             &lt;list&gt;
- *                 &lt;value&gt;/WEB-INF/flow1.xml&lt;/value&gt;
- *                 &lt;value&gt;/WEB-INF/flow2.xml&lt;/value&gt;
- *             &lt;/list&gt;
- *          &lt;/property&gt;
- *     &lt;/bean&gt;
+ *      &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *          &lt;property name=&quot;definitionLocations&quot;&gt;
+ *              &lt;list&gt;
+ *                  &lt;value&gt;/WEB-INF/flow1.xml&lt;/value&gt;
+ *                  &lt;value&gt;/WEB-INF/flow2.xml&lt;/value&gt;
+ *              &lt;/list&gt;
+ *           &lt;/property&gt;
+ *      &lt;/bean&gt;
  * </pre>
  * 
  * @author Keith Donald

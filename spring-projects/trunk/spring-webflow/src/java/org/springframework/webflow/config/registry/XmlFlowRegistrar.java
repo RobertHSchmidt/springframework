@@ -19,6 +19,12 @@ import org.springframework.webflow.config.XmlFlowBuilder;
  * {@link XmlFlowRegistryFactoryBean} but may also be used standalone in
  * programmatic fashion.
  * <p>
+ * By default, a flow definition registered by this registrar will be assigned a
+ * registry identifier equal to the filename of the underlying definition
+ * resource, minus the filename extension. For example, a XML-based flow
+ * definition defined in the file "flow1.xml" will be identified as "flow1" when
+ * registered in a registry.
+ * 
  * Programmatic usage example:
  * </p>
  * 
@@ -37,6 +43,9 @@ import org.springframework.webflow.config.XmlFlowBuilder;
  */
 public class XmlFlowRegistrar implements FlowRegistrar {
 
+	/**
+	 * The xml file suffix constant.
+	 */
 	private static final String XML_SUFFIX = ".xml";
 
 	/**
@@ -183,7 +192,13 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 		builder.setResourceLoader(resourceLoader);
 		registry.registerFlowDefinition(new FlowAssembler(getFlowId(location), builder));
 	}
-	
+
+	/**
+	 * Calculates the <code>flowId</code> to assign to the Flow definition
+	 * to be built from the specified resource location.
+	 * @param location ther resource
+	 * @return the flow id
+	 */
 	protected String getFlowId(Resource location) {
 		return StringUtils.delete(location.getFilename(), XML_SUFFIX);
 	}
