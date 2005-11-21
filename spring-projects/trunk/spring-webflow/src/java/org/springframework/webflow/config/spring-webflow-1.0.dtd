@@ -29,7 +29,7 @@
     annotated with properties and may be configured to handle state exceptions.  A flow may import
     one or more bean definition resources defining custom flow artifacts (such as actions, 
 	exception handlers, view selectors, transition criteria, etc).  A flow may nest one or more other 
-	flows in-line to use as subflows, referred to as 'inner flows'.
+	flows in-line to use as subflows, referred to as 'inline flows'.
 -->
 <!ELEMENT flow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, import*, inline-flow* )>
 
@@ -43,7 +43,7 @@
 	Properties are simple strings or typed attributes that allow you to annotate an element.
 	For example:
 	- an element's 'caption' property might serve a GUI tooltip or logging statement
-	- an Action's 'validatorMethod' property might specify a target method to invoke on a validator.
+	- a FormAction's 'validatorMethod' property might specify a target method to invoke on a form validator.
 	- a Flow's 'transactional' property might indicate the flow should exhibit transactionl characteristics.
 -->
 <!ELEMENT property ( value? )>
@@ -117,8 +117,8 @@
         	
 	If this action is an abritrary bean (POJO), the method's signature can 
 	match any public method on the bean's implementation.  In this case the
-	method format is as follows: <method>(${arg1}, ${arg n}) where any 
-	${argument expression}s are evaluated against this flow's RequestContext.
+	method format is as follows: <method>(${param1}, ${param n}) where any 
+	${parameter expressions} are evaluated against this flow's RequestContext.
 
 	For example:
         method="processOrder(${flowScope.order})"	
@@ -426,7 +426,7 @@
 	
 	Redirect query parameters may also be specified using ${expressions} that evaluate against
 	the request context.  For example:
-	    "redirect:/thankyou.htm?confirmationNumber=${flowScope.order.confirmation.id}"
+	    "redirect:/thankyou.htm?confirmationNumber=${flowScope.orderConfirmation.number}"
 	
 	Use of the "bean:" prefix will plug in the custom ViewSelector implementation with that bean id.
 
@@ -441,7 +441,7 @@
 
 <!--
 	Defines a state exception handler to handle one or more exceptions that may occur during the
-	execution of this flow definition.  Exception handles may be attached at the state or flow level.
+	execution of this flow definition.  Exception handlers may be attached at the state or flow level.
 -->
 <!ELEMENT exception-handler EMPTY>
 
@@ -474,11 +474,13 @@
 <!ATTLIST import resource CDATA #REQUIRED>
 
 <!--
-	Defines a exactly one inline flow definition.
+	Defines a exactly one inline flow definition, a flow definition fully contained within and locally
+	scoped to this flow.
 -->
 <!ELEMENT inline-flow ( flow+ )>
 
 <!--
-	The assigned identifier of this in-line flow.  Must be unique to all other inline flows.
+	The assigned identifier of this in-line flow.  Must be unique to all other inline flows contained
+	by this flow.
 -->
 <!ATTLIST inline-flow id ID #REQUIRED>
