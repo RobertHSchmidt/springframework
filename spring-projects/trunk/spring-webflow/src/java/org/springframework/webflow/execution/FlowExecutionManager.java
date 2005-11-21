@@ -660,7 +660,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Process updating FlowExecutionStorage if neccessary for the manipulated
+	 * Handles updating FlowExecutionStorage as neccessary for the manipulated
 	 * FlowExecution. Saves the FlowExecution out to storage if the execution is
 	 * still active. Removes the FlowExecution from storage if it is no longer
 	 * active.
@@ -691,18 +691,20 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Do any processing necessary before given view descriptor can be returned
-	 * to the client of the flow execution manager. This implementation adds a
-	 * number of <i>infrastructure attributes</i> to the model that will be
-	 * exposed to the view. More specifically, it will add the
+	 * Perform any processing necessary before the view selection made is
+	 * returned to the client of the flow execution manager and rendered out.
+	 * This implementation adds a number of <i>infrastructure attributes</i> to
+	 * the model that will be exposed to the view so clients may record
+	 * information about the flow to support participation in the flow on a
+	 * subsequent request. More specifically, this method will add the
 	 * {@link #FLOW_EXECUTION_CONTEXT_ATTRIBUTE},
 	 * {@link #FLOW_EXECUTION_ID_ATTRIBUTE} and
 	 * {@link #CURRENT_STATE_ID_ATTRIBUTE}.
-	 * @param selectedView the view descriptor to be processed
+	 * @param selectedView the view selection to be prepared
 	 * @param flowExecutionId the unique id of the flow execution
 	 * @param flowExecutionContext the flow context providing info about the
 	 * flow execution
-	 * @return the processed view descriptor
+	 * @return the prepped view selection
 	 */
 	protected ViewSelection prepareSelectedView(ViewSelection selectedView, Serializable flowExecutionId,
 			FlowExecutionContext flowExecutionContext) {
@@ -720,7 +722,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 			}
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("Returning selected view to client: " + selectedView);
+			logger.debug("Returning selected view to client " + selectedView);
 		}
 		return selectedView;
 	}
