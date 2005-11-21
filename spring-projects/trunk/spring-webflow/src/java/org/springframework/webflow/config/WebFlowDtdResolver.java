@@ -24,9 +24,16 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * EntityResolver implementation for the Spring web flow DTD, to load the DTD
- * from the classpath. The implementation is similar to that of the
+ * EntityResolver implementation for the Spring Web Flow 1.0 DTD, to load the
+ * DTD from the classpath. The implementation is similar to that of the
  * <code>org.springframework.beans.factory.xml.BeansDtdResolver</code>.
+ * <p>
+ * The doctype of the DTD expected to be resolved:
+ * 
+ * <pre>
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ * </pre>
  * 
  * @see org.springframework.webflow.config.XmlFlowBuilder
  * 
@@ -38,9 +45,9 @@ public class WebFlowDtdResolver implements EntityResolver {
 
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
 		if (systemId != null && systemId.indexOf(WEBFLOW_ELEMENT) > systemId.lastIndexOf("/")) {
-			String dtdFile = systemId.substring(systemId.indexOf(WEBFLOW_ELEMENT));
+			String dtdFilename = systemId.substring(systemId.indexOf(WEBFLOW_ELEMENT));
 			try {
-				Resource resource = new ClassPathResource(dtdFile, getClass());
+				Resource resource = new ClassPathResource(dtdFilename, getClass());
 				InputSource source = new InputSource(resource.getInputStream());
 				source.setPublicId(publicId);
 				source.setSystemId(systemId);
@@ -50,7 +57,7 @@ public class WebFlowDtdResolver implements EntityResolver {
 				// fall through below
 			}
 		}
-		// let the parser handle it		
-		return null; 
+		// let the parser handle it
+		return null;
 	}
 }
