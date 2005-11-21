@@ -22,8 +22,8 @@ import java.util.Map;
  * whose matching criteria evaluates to <code>true</code> in the context of
  * the current request.
  * <p>
- * A decision state is a convenient way to encapsulate reusable state transition
- * logic in one place.
+ * A decision state is a convenient, simple way to encapsulate reusable state
+ * transition logic in one place.
  * 
  * @author Keith Donald
  */

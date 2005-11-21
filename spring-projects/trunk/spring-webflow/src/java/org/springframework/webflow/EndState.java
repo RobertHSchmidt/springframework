@@ -22,11 +22,12 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * Terminates an active web flow session when entered. If the terminated session
- * is the root flow session, the entire flow execution ends. If the terminated
+ * Terminates an active flow session when entered. If the terminated session is
+ * the root flow session, the entire flow execution ends. If the terminated
  * session was acting as a subflow, the governing flow execution continues and
- * control is returned to the parent flow. In that case, this state is treated
- * as an ending result event the resuming parent flow is expected to respond to.
+ * control is returned to the parent flow session. In that case, this state is
+ * treated as an ending result event the resuming parent flow is expected to
+ * respond to.
  * <p>
  * An end state may optionally be configured with the name of a view to render
  * when entered. This view will be rendered if the end state terminates the
@@ -49,8 +50,8 @@ import org.springframework.util.Assert;
 public class EndState extends State {
 
 	/**
-	 * An optional view selector that will select a view to render if
-	 * this end state terminates an executing root flow.
+	 * An optional view selector that will select a view to render if this end
+	 * state terminates an executing root flow.
 	 */
 	private ViewSelector viewSelector;
 
@@ -69,8 +70,8 @@ public class EndState extends State {
 	 * Create a new end state with specified associated view.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param selector strategy used to select the view that should be rendered if
-	 * this end state terminates a flow execution
+	 * @param selector strategy used to select the view that should be rendered
+	 * if this end state terminates a flow execution
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 */
@@ -83,8 +84,8 @@ public class EndState extends State {
 	 * Create a new end state with specified associated view.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param selector strategy used to select the view that should be rendered if
-	 * this end state terminates a flow execution
+	 * @param selector strategy used to select the view that should be rendered
+	 * if this end state terminates a flow execution
 	 * @param properties additional properties describing this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
@@ -95,16 +96,16 @@ public class EndState extends State {
 	}
 
 	/**
-	 * Returns the strategy used to select the view to render in
-	 * this end state if it terminates a root flow.
+	 * Returns the strategy used to select the view to render in this end state
+	 * if it terminates a root flow.
 	 */
 	public ViewSelector getViewSelector() {
 		return viewSelector;
 	}
 
 	/**
-	 * Sets the strategy used to select the view to render when this end
-	 * state is entered and terminates a root flow.
+	 * Sets the strategy used to select the view to render when this end state
+	 * is entered and terminates a root flow.
 	 */
 	public void setViewSelector(ViewSelector creator) {
 		this.viewSelector = creator;
@@ -128,8 +129,8 @@ public class EndState extends State {
 	 * returned (when viewName is not null, else null is returned).
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
-	 * @return a view selection signaling that control should be returned to
-	 * the client and a view rendered
+	 * @return a view selection signaling that control should be returned to the
+	 * client and a view rendered
 	 * @throws StateException if an exception occurs in this state
 	 */
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
@@ -138,7 +139,8 @@ public class EndState extends State {
 			ViewSelection selectedView;
 			if (isMarker()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning a [null] ending view selection: make sure a response has already been written");
+					logger
+							.debug("Returning a [null] ending view selection: make sure a response has already been written");
 				}
 				selectedView = null;
 			}

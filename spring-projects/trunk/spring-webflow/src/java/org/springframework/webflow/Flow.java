@@ -28,35 +28,40 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * A single flow definition. A Flow represents a reusable, self-contained
- * controller module that provides the blue print for a logical page flow of a
- * web application. A "logical page flow" is defined as a controlled navigation
- * that guides a user through fulfillment of a business process/goal that takes
- * place over a series of steps (modeled as states).
+ * A single flow definition. A Flow definition represents a reusable,
+ * self-contained controller module that provides the blue print for a logical
+ * page flow of a web application. A "logical page flow" is defined as a
+ * controlled navigation that guides a single user through fulfillment of a
+ * business process/goal that takes place over a series of steps, modeled as
+ * states.
  * <p>
  * A simple Flow definition could do nothing more than execute an action and
  * display a view, all in one request. A more elaborate Flow definition may be
  * long-lived, executing accross a series of requests, invoking many possible
  * paths, actions, and subflows.
  * <p>
- * Note: A flow is not a single welcome page or an index page: don't use flows
- * for those cases, use simple controllers/actions/portlets instead. Don't use
- * flows where your application demands "free browsing": flows force strict
+ * Note: A flow is not a welcome page or an index page: don't use flows for
+ * those cases, use simple controllers/actions/portlets instead. Don't use flows
+ * where your application demands "free browsing": flows force strict
  * navigation. Especially in Intranet applications, there are often "controlled
- * navigations", where the user is not free to do what he/she wants but must
- * follow the guidelines provided by the system (the quinessential example would
- * be a 'checkout' flow of a shopping cart application). This is a typical use
- * case appropriate for a web flow.
+ * navigations" where the user is not free to do what he or she wants but must
+ * follow the guidelines provided by the system to complete a process that is
+ * transactional in nature (the quinessential example would be a 'checkout' flow
+ * of a shopping cart application). This is a typical use case appropriate for a
+ * flow.
  * <p>
  * Structurally, a Flow is composed of a set of states. A {@link State} is a
- * point in the flow where something happens; for example, showing a view,
+ * point in a flow where a behavior is executed; for example, showing a view,
  * executing an action, spawning a subflow, or terminating the flow. Different
- * types of states execute different behaviours.
+ * types of states execute different behaviors in a polymorphic fashion.
  * <p>
- * Each state can have transitions that are used to move to another state. A
- * transition is triggered by the occurence of a event. An event is an
- * identifier signaling the occurence of something: e.g. "submit", "back",
- * "success" or "error".
+ * Each {@link TransitionableState} type has one or more transitions that when
+ * executed, move a Flow to another state, defining the supported <i>paths</i>
+ * through the flow. A state transition is triggered by the occurence of an
+ * event. An event is something that happens externally the flow should respond
+ * to, for example, a user input event ("submit"), or an action execution result
+ * event ("success"). When an event occurs in a state of a Flow, that event
+ * drives a state transition that decides what to do next.
  * <p>
  * Each Flow has exactly one start state. A start state is simply a marker
  * noting the state executions of this Flow definition should start in. The
@@ -66,7 +71,7 @@ import org.springframework.util.StringUtils;
  * {@link StateExceptionHandler} can execute custom behavior in response to a
  * specific exception (or set of exceptions) that occur in a state of one of
  * this flow's executions.
- * </p>
+ * <p>
  * Instances of this class are typically built by
  * {@link org.springframework.webflow.config.FlowBuilder} implementations, but
  * may also be directly subclassed.
@@ -76,7 +81,9 @@ import org.springframework.util.StringUtils;
  * standalone fashion (as well as in the context of other frameworks like
  * Struts, WebWork, Tapestry, or JSF, for example). The core system is fully
  * usable outside an HTTP servlet environment, for example in Portlets, tests,
- * or standalone applications.
+ * or standalone applications. One of the major architectural benefits of Spring
+ * Web Flow is the ability to design reusable controller modules that may be
+ * executed in <b>any</b> environment.
  * <p>
  * Note: flows are singleton definition objects so they should be thread-safe!
  * 
@@ -306,8 +313,7 @@ public class Flow extends AnnotatedObject {
 	 */
 	public State getState(String stateId) {
 		if (!StringUtils.hasText(stateId)) {
-			throw new IllegalArgumentException(
-					"The specified stateId is invalid: state identifiers must be non-blank");
+			throw new IllegalArgumentException("The specified stateId is invalid: state identifiers must be non-blank");
 		}
 		Iterator it = statesIterator();
 		while (it.hasNext()) {

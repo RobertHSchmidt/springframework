@@ -32,17 +32,21 @@ import org.springframework.binding.MutableAttributeSource;
 public abstract class AnnotatedObject implements MutableAttributeSource {
 
 	/**
-	 * The action caption (short description / tooltip) property ("caption").
+	 * The caption (property name ("caption"). A caption is also known as a
+	 * "short description" and may be used in a GUI tooltip.
 	 */
 	public static final String CAPTION_PROPERTY = "caption";
 
 	/**
-	 * The action long description property ("description")
+	 * The long description property name ("description"). A description
+	 * provides additional, free-form detail about this object and might be
+	 * shown in a GUI text area.
 	 */
 	public static final String DESCRIPTION_PROPERTY = "description";
 
 	/**
-	 * Additional properties further describing this object.
+	 * Additional properties further describing this object. The properties set
+	 * in this map may be arbitrary.
 	 */
 	private Map properties = new HashMap();
 
@@ -136,7 +140,8 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	}
 
 	/**
-	 * Returns the short description of the action (suitable for display in a tooltip).
+	 * Returns the short description of the action (suitable for display in a
+	 * tooltip).
 	 */
 	public String getCaption() {
 		return (String)getProperty(CAPTION_PROPERTY);

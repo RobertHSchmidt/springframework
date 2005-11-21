@@ -25,19 +25,21 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * Signals the occurence of something a webflow should respond to.
- * Each event has a string id that provides a key for what happened: e.g "coinInserted",
- * or "pinDropped". An event may optionally contain information about the state in
- * which it occured, e.g "displayVendingMachine" or "waitForUser". Events may have
- * parameters that provide arbitrary payload data, e.g. "coin.amount=25", or "pinDropSpeed=25ms".
+ * Signals the occurence of something an executing flow should respond to. Each
+ * event has a string id that provides a key for what happened: e.g
+ * "coinInserted", or "pinDropped". An event may optionally contain information
+ * about the state in which it occured, e.g "displayVendingMachine" or
+ * "waitForUser". Events may have parameters that provide arbitrary payload
+ * data, e.g. "coin.amount=25", or "pinDropSpeed=25ms".
  * <p>
  * For example, a "submit" event might signal that a Submit button was pressed
  * in a web browser. A "success" event might signal an action executed
  * successfully. A "finish" event might signal a subflow ended normally.
  * <p>
- * Why is this not an interface? A specific design choice. An event is not a strategy,
- * its essentially an immutable parameter object and it is expected that specializations 
- * of this base class be "Events" and not part of some other inheritence hierarchy.
+ * Why is this not an interface? A specific design choice. An event is not a
+ * strategy that defines a generic type or role, its essentially an immutable
+ * value object. It is expected that specializations of this base class be
+ * "Events" and not part of some other inheritence hierarchy.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -61,10 +63,10 @@ public class Event extends EventObject implements AttributeSource {
 	private String stateId;
 
 	/**
-	 * Event parameters (optional event payload data).
+	 * Additional event parameters that form this event's payload.
 	 */
 	private Map parameters;
-	
+
 	/**
 	 * Constructs a new event with the specified source.
 	 * @param source the source of the event
@@ -84,8 +86,8 @@ public class Event extends EventObject implements AttributeSource {
 	}
 
 	/**
-	 * Create a new event with the specified <code>id</code> and the
-	 * provided contextual parameters.
+	 * Create a new event with the specified <code>id</code> and the provided
+	 * contextual parameters.
 	 * @param source the source of the event
 	 * @param id the event identifier
 	 * @param parameters the event parameters
@@ -95,7 +97,7 @@ public class Event extends EventObject implements AttributeSource {
 		setRequiredId(id);
 		setParameters(parameters);
 	}
-	
+
 	/**
 	 * Create a new event with the provided contextual parameters.
 	 * @param source the source of the event
@@ -162,10 +164,10 @@ public class Event extends EventObject implements AttributeSource {
 	protected void setId(String id) {
 		this.id = id;
 	}
-	
+
 	/**
-	 * Returns the time at which the event occured, represented as
-	 * the number of milliseconds since January 1, 1970, 00:00:00 GMT.
+	 * Returns the time at which the event occured, represented as the number of
+	 * milliseconds since January 1, 1970, 00:00:00 GMT.
 	 * @return the timestamp
 	 */
 	public long getTimestamp() {
@@ -181,8 +183,8 @@ public class Event extends EventObject implements AttributeSource {
 	}
 
 	/**
-	 * Set the state identifier. This could be <code>null</code>, e.g.
-	 * if the event occured in the current state of the flow.
+	 * Set the state identifier. This could be <code>null</code>, e.g. if the
+	 * event occured in the current state of the flow.
 	 */
 	protected void setStateId(String stateId) {
 		this.stateId = stateId;
@@ -193,7 +195,7 @@ public class Event extends EventObject implements AttributeSource {
 	 * if the parameter was not found.
 	 * @param parameterName the name of the parameter
 	 * @return the parameter value, or <code>null</code> if the parameter is
-	 *         not present in the event
+	 * not present in the event
 	 */
 	public Object getParameter(String parameterName) {
 		if (parameters != null) {
@@ -250,8 +252,7 @@ public class Event extends EventObject implements AttributeSource {
 	}
 
 	public String toString() {
-		return
-			new ToStringCreator(this).append("source", getSource()).append("id", getId())
-				.append("stateId", getStateId()).append("parameters", getParameters()).toString();
+		return new ToStringCreator(this).append("source", getSource()).append("id", getId()).append("stateId",
+				getStateId()).append("parameters", getParameters()).toString();
 	}
 }

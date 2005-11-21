@@ -23,20 +23,20 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * An action that allows for storing arbitrary properties about a
- * target <code>Action</code> implementation for use in exactly one
- * context, for example an <code>ActionState</code> definition, a
+ * An action decorator that stores arbitrary properties about a target
+ * <code>Action</code> implementation for use in exactly one context, for
+ * example an <code>ActionState</code> definition, a
  * <code>TransitionCriteria</code> definition, or in a test environment.
  * <p>
- * An annotated action is an action that wraps another action (the
- * <i>target</i>).
+ * An annotated action is an action that wraps another action (referred to as
+ * the <i>target action</i>).
  * 
  * @author Keith Donald
  */
 public class AnnotatedAction extends AnnotatedObject implements Action {
-	
+
 	// well known properties
-	
+
 	/**
 	 * The action name property ("name").
 	 */
@@ -53,8 +53,8 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	private Action targetAction;
 
 	/**
-	 * Creates a new annotated action object for the specified action.
-	 * No contextual properties are provided.
+	 * Creates a new annotated action object for the specified action. No
+	 * contextual properties are provided.
 	 * @param targetAction the action
 	 */
 	public AnnotatedAction(Action targetAction) {
@@ -62,8 +62,8 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	}
 
 	/**
-	 * Creates a new annotated action object for the specified action.
-	 * The map of properties is provided.
+	 * Creates a new annotated action object for the specified action. The map
+	 * of properties is provided.
 	 * @param targetAction the action
 	 * @param properties the properties describing usage of the action
 	 */
@@ -127,11 +127,11 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	}
 
 	/**
-	 * Get the event id to be used as grounds for a transition in the
-	 * containing state, based on given result returned from action execution.
+	 * Get the event id to be used as grounds for a transition in the containing
+	 * state, based on given result returned from action execution.
 	 * <p>
-	 * If the wrapped action is named, the name will be used as a qualifier
-	 * for the event (e.g. "myAction.success").
+	 * If the wrapped action is named, the name will be used as a qualifier for
+	 * the event (e.g. "myAction.success").
 	 * @param resultEvent the action result event
 	 */
 	protected Event postProcessResult(Event resultEvent) {
@@ -144,8 +144,9 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 		}
 		return resultEvent;
 	}
-	
+
 	public String toString() {
-		return new ToStringCreator(this).append("properties", getProperties()).append("action", getTargetAction()).toString();
+		return new ToStringCreator(this).append("properties", getProperties()).append("action", getTargetAction())
+				.toString();
 	}
 }
