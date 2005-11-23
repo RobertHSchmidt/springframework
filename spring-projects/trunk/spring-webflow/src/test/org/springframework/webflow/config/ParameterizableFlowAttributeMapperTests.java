@@ -288,7 +288,7 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 	}
 	
 	public void testFormActionInCombinationWithMapping() throws Exception {
-		context.setLastEvent(new Event(this));
+		context.setLastEvent(new Event(this, "start"));
 
 		context.setActiveSession(parentSession);
 		assertTrue(context.getFlowScope().isEmpty());

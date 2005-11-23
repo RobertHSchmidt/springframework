@@ -18,10 +18,10 @@ package org.springframework.webflow.action;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.webflow.Event;
-import org.springframework.webflow.test.MockRequestContext;
-
 import junit.framework.TestCase;
+
+import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * Unit test for the AttributeMapperAction.
@@ -34,15 +34,13 @@ public class AttributeMapperActionTests extends TestCase {
 
 	public void testMapping() throws Exception {
 		AttributeMapperAction ama = new AttributeMapperAction();
-		ama.setSourceExpression("${sourceEvent.parameters.foo}");
+		ama.setSourceExpression("${externalContext.requestParameterMap.foo}");
 		ama.setTargetExpression("${flowScope.bar}");
 		ama.initAction();
 		
-		MockRequestContext context = new MockRequestContext();
 		Map params = new HashMap(1);
 		params.put("foo", "value");
-		Event sourceEvent = new Event(this, "test", params);
-		context.setSourceEvent(sourceEvent);
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(params));
 		
 		assertTrue(context.getFlowScope().isEmpty());
 		

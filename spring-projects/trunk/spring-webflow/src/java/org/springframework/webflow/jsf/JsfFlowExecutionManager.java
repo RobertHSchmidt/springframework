@@ -17,7 +17,6 @@
 package org.springframework.webflow.jsf;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ import javax.faces.context.FacesContext;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
-import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.execution.FlowExecution;
@@ -64,8 +63,11 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 */
 	protected static final String FLOW_ID_PREFIX = "flowId:";
 
+	/**
+	 * Resolves view selection names to JSF view IDs.
+	 */
 	private DefaultViewIdResolver viewIdResolver = new DefaultViewIdResolver();
-	
+
 	/**
 	 * Create a new flow execution manager using the specified flow locator for
 	 * loading Flow definitions.
@@ -73,8 +75,6 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 */
 	public JsfFlowExecutionManager(FlowLocator flowLocator) {
 		super(flowLocator);
-		// the listener adds adds the HTTP request attribute map to the flow request scope
-		addListener(new JsfFlowExecutionListener());
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	public void setViewIdResolver(DefaultViewIdResolver viewIdResolver) {
 		this.viewIdResolver = viewIdResolver;
 	}
-	
+
 	/**
 	 * Return <code>true</code> if the current request is asking for the
 	 * creation of a new flow. The default implementation examines the logical
@@ -92,7 +92,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * {@link #FLOW_ID_PREFIX}.
 	 * @param context <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
-	 * retrieve the specified outcome (if any)	
+	 * retrieve the specified outcome (if any)
 	 * @param outcome The logical outcome returned by the specified action
 	 */
 	public boolean isFlowLaunchRequest(FacesContext context, String fromAction, String outcome) {
@@ -114,11 +114,15 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 */
 	public ViewSelection launchFlowExecution(FacesContext context, String fromAction, String outcome) {
 		String flowId = getRequiredFlowId(outcome);
-		JsfEvent sourceEvent = createEvent(context, fromAction, outcome, null);
+		ExternalContext jsfContext = createExternalContext(context, fromAction, outcome);
 		FlowExecution flowExecution = createFlowExecution(getFlowLocator().getFlow(flowId));
-		ViewSelection selectedView = flowExecution.start(sourceEvent);
-		Serializable flowExecutionId = manageStorage(null, flowExecution, sourceEvent);
+		ViewSelection selectedView = flowExecution.start(extractStateId(jsfContext), jsfContext);
+		Serializable flowExecutionId = manageStorage(null, flowExecution, jsfContext);
 		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
+	}
+
+	protected ExternalContext createExternalContext(FacesContext context, String fromAction, String outcome) {
+		return new JsfExternalContext(context, fromAction, outcome);
 	}
 
 	/**
@@ -152,19 +156,20 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		boolean flowExecutionIdPresent = context.getExternalContext().getRequestParameterMap().containsKey(
 				FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER);
 		// assert an invariant, just to be safe
-		Assert
-				.isTrue(
-						executionBound == flowExecutionIdPresent,
-						"The flow execution bound to the current thread context must match the existence of a _flowExecutionId request attribute");
+		Assert.isTrue(executionBound == flowExecutionIdPresent,
+				"The flow execution bound to the current thread context must match "
+						+ "the existence of a _flowExecutionId request attribute");
 		return executionBound;
 	}
 
 	/**
-	 * <p>JSF navigation-focused method which resumes an active flow execution for the current request.
-	 * It is expected that the flow execution itself has already been restored into the current
-	 * thread context available through {@link FlowExecutionHolder}. 
-	 * <p>Proceed until a <code>ViewSelection</code> is returned describing the next view that
-	 * should be rendered.
+	 * JSF navigation-focused method which resumes an active flow execution for
+	 * the current request. It is expected that the flow execution itself has
+	 * already been restored into the current thread context available through
+	 * {@link FlowExecutionHolder}.
+	 * <p>
+	 * Proceed until a <code>ViewSelection</code> is returned describing the
+	 * next view that should be rendered.
 	 * @param context <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
@@ -172,11 +177,11 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @return the selected next (or ending) view
 	 */
 	public ViewSelection resumeFlowExecution(FacesContext context, String fromAction, String outcome) {
-		JsfEvent sourceEvent = createEvent(context, fromAction, outcome, null);
 		Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-		ViewSelection selectedView = signalEventIn(flowExecution, sourceEvent);
-		flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
+		ExternalContext jsfContext = createExternalContext(context, fromAction, outcome);
+		ViewSelection selectedView = signalEventIn(flowExecution, jsfContext);
+		flowExecutionId = manageStorage(flowExecutionId, flowExecution, jsfContext);
 		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 	}
 
@@ -187,25 +192,25 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * org.springframework.webflow.execution.FlowExecution,
 	 * org.springframework.webflow.Event)
 	 */
-	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent) {
+	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution,
+			ExternalContext context) {
 		if (flowExecution.isActive()) {
 			if (getStorage().supportsTwoPhaseSave()) {
 				// just generate the flow execution id, an actual save will be
 				// done after response rendering
 				// see {@link #saveFlowExecutionIfNecessary()}
 				flowExecutionId = getStorage().generateId(null);
-				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, (JsfEvent)sourceEvent, false);
+				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, context, false);
 			}
 			else {
-				// two-phase save not supported: save the flow execution now in
-				// one step
-				flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, sourceEvent);
-				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, (JsfEvent)sourceEvent, true);
+				// two-phase save not supported, save out in one step
+				flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, context);
+				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, context, true);
 			}
 		}
 		else {
 			if (flowExecutionId != null) {
-				removeFlowExecution(flowExecutionId, flowExecution, sourceEvent);
+				removeFlowExecution(flowExecutionId, flowExecution, context);
 				flowExecutionId = null;
 			}
 		}
@@ -213,20 +218,20 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	}
 
 	/**
-	 * Saves the current thread-bound FlowExecution out to storage if
-	 * necessary; specifically, only if it actually exsists, and only if
-	 * saving is a two phase process. In this case, the first part of a save
-	 * happens after event processing when a storage ID is generated, the
-	 * second part happens here and actually puts the execution into storage
-	 * after response rendering with that generated
+	 * Saves the current thread-bound FlowExecution out to storage if necessary;
+	 * specifically, only if it actually exsists, and only if saving is a two
+	 * phase process. In this case, the first part of a save happens after event
+	 * processing when a storage ID is generated, the second part happens here
+	 * and actually puts the execution into storage after response rendering
+	 * with that generated
 	 */
-	public void saveFlowExecutionIfNecessary(FacesContext context) {
+	public void saveFlowExecutionIfNecessary() {
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-		if (flowExecution != null && !FlowExecutionHolder.isFlowExecutionSaved() ) {
+		if (flowExecution != null && !FlowExecutionHolder.isFlowExecutionSaved()) {
 			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
 			Assert.notNull(flowExecutionId,
 					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
-			getStorage().saveWithGeneratedId(flowExecutionId, flowExecution, FlowExecutionHolder.getSourceEvent());
+			getStorage().saveWithGeneratedId(flowExecutionId, flowExecution, FlowExecutionHolder.getExternalContext());
 			FlowExecutionHolder.setFlowExecutionSaved(true);
 			flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 			if (logger.isDebugEnabled()) {
@@ -234,21 +239,6 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 						+ "'");
 			}
 		}
-	}
-	
-	/**
-	 * Construct and return an <code>Event</code> reflecting the flow
-	 * execution event that represents this request. The default implementation
-	 * constructs and returns a <code>JsfEvent</code> reflecting the current
-	 * request.
-	 * @param context <code>FacesContext</code> for the current request
-	 * @param fromAction The action binding expression that was evaluated to
-	 * retrieve the specified outcome (if any)
-	 * @param outcome The logical outcome returned by the specified action
-	 * @param parameters Optional additional event parameters
-	 */
-	public JsfEvent createEvent(FacesContext context, String fromAction, String outcome, Map parameters) {
-		return new JsfEvent(outcome, context, fromAction, parameters);
 	}
 
 	/**
@@ -258,8 +248,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
 	 * @param outcome The logical outcome returned by the specified action
-	 * @param viewDescriptor <code>ViewSelection</code> for the view to
-	 * render
+	 * @param viewDescriptor <code>ViewSelection</code> for the view to render
 	 */
 	public void renderView(FacesContext context, String fromAction, String outcome, ViewSelection viewDescriptor) {
 		// Expose model data specified in the descriptor
@@ -282,32 +271,31 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		}
 		// create the specified view so that it can be rendered
 		ViewHandler handler = context.getApplication().getViewHandler();
-		UIViewRoot view = handler.createView(context,
-				viewIdResolver.resolveViewName(viewDescriptor.getViewName()));
+		UIViewRoot view = handler.createView(context, viewIdResolver.resolveViewName(viewDescriptor.getViewName()));
 		context.setViewRoot(view);
 	}
 
 	/**
-	 * <p>Responsible for restoring (loading) the flow execution if the appropriate
+	 * <p>
+	 * Responsible for restoring (loading) the flow execution if the appropriate
 	 * flow execution id parameter is found in the faces context request map.
-	 * <p>Normally called by the phase listener.
-	 * <p>The flow execution (if any) is also loaded into the FlowExecutionHolder.
+	 * <p>
+	 * Normally called by the phase listener.
+	 * <p>
+	 * The flow execution (if any) is also loaded into the FlowExecutionHolder.
 	 * @param context <code>FacesContext</code> for the current request
 	 */
 	public void restoreFlowExecution(FacesContext context) {
 		Map parameters = context.getExternalContext().getRequestParameterMap();
 		if (parameters.containsKey(getFlowExecutionIdParameterName())) {
 			Serializable id = (Serializable)parameters.get(getFlowExecutionIdParameterName());
-			Map map = new HashMap(1);
-			map.put(getFlowExecutionIdParameterName(), id);
-			JsfEvent sourceEvent = createEvent(context, null, null, map);
-			FlowExecution flowExecution = loadFlowExecution(id, sourceEvent);
-			// note that the event will be replaced in the case of actual
-			// navigation
-			FlowExecutionHolder.setFlowExecution(id, flowExecution, sourceEvent, false);
+			// note the event will be replaced during navigation
+			JsfExternalContext jsfContext = new JsfExternalContext(context);
+			FlowExecution flowExecution = loadFlowExecution(id, jsfContext);
+			FlowExecutionHolder.setFlowExecution(id, flowExecution, jsfContext, false);
 		}
 	}
-	
+
 	/**
 	 * Return the JsfFlowExecutionManager from a known location, as a bean
 	 * called FlowNavigationHandlerStrategy.BEAN_NAME in the web application
@@ -320,10 +308,10 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		WebApplicationContext wac = FacesContextUtils.getWebApplicationContext(context);
 		return (JsfFlowExecutionManager)wac.getBean(JsfFlowExecutionManager.BEAN_NAME, JsfFlowExecutionManager.class);
 	}
-	
-	// standard default view id resolver which uses the web flow view name as the jsf view id
-	static class DefaultViewIdResolver {
 
+	// standard default view id resolver which uses the web flow view name as
+	// the jsf view id
+	static class DefaultViewIdResolver {
 		public String resolveViewName(String viewName) {
 			return viewName;
 		}

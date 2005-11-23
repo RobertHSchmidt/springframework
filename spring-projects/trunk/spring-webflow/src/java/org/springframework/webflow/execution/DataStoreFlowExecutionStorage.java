@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.MutableAttributeSource;
 import org.springframework.util.Assert;
-import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 
 /**
  * Flow execution storage implementation that stores the flow execution in an
@@ -81,11 +81,11 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 		this.keyGenerator = keyGenerator;
 	}
 
-	public FlowExecution load(Serializable id, Event sourceEvent) throws FlowExecutionStorageException {
+	public FlowExecution load(Serializable id, ExternalContext context) throws FlowExecutionStorageException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Loading flow execution from data store with id '" + id + "'");
 		}
-		FlowExecution flowExecution = getFlowExecution(id, sourceEvent);
+		FlowExecution flowExecution = getFlowExecution(id, context);
 		if (flowExecution == null) {
 			throw new NoSuchFlowExecutionException(this, id);
 		}
@@ -96,11 +96,11 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 * Access the flow execution with the provided storage id in the configured
 	 * data store.
 	 */
-	protected FlowExecution getFlowExecution(Serializable id, Event sourceEvent) throws FlowExecutionStorageException {
-		return (FlowExecution)getDataStore(sourceEvent).getAttribute(attributeName(id));
+	protected FlowExecution getFlowExecution(Serializable id, ExternalContext context) throws FlowExecutionStorageException {
+		return (FlowExecution)getDataStore(context).getAttribute(attributeName(id));
 	}
 
-	public Serializable save(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+	public Serializable save(Serializable id, FlowExecution flowExecution, ExternalContext context)
 			throws FlowExecutionStorageException {
 		id = generateId(id);
 		if (logger.isDebugEnabled()) {
@@ -109,7 +109,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 		// always update data store attribute, even if just overwriting
 		// an existing one to make sure the data store knows that this
 		// attribute has changed!
-		setFlowExecution(id, flowExecution, sourceEvent);
+		setFlowExecution(id, flowExecution, context);
 		return id;
 	}
 
@@ -133,28 +133,28 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 * Set the flow execution in the configured data store with the provided
 	 * storage id.
 	 */
-	protected void setFlowExecution(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+	protected void setFlowExecution(Serializable id, FlowExecution flowExecution, ExternalContext context)
 			throws FlowExecutionStorageException {
-		getDataStore(sourceEvent).setAttribute(attributeName(id), flowExecution);
+		getDataStore(context).setAttribute(attributeName(id), flowExecution);
 	}
 
 	public boolean supportsTwoPhaseSave() {
 		return true;
 	}
 
-	public void saveWithGeneratedId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+	public void saveWithGeneratedId(Serializable id, FlowExecution flowExecution, ExternalContext context)
 			throws UnsupportedOperationException, FlowExecutionStorageException {
 		// always update data store attribute, even if just overwriting
 		// an existing one to make sure the data store knows that this
 		// attribute has changed!
-		setFlowExecution(id, flowExecution, sourceEvent);
+		setFlowExecution(id, flowExecution, context);
 	}
 
-	public void remove(Serializable id, Event sourceEvent) throws FlowExecutionStorageException {
+	public void remove(Serializable id, ExternalContext context) throws FlowExecutionStorageException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removing flow execution with id '" + id + "' from data store");
 		}
-		removeFlowExecution(id, sourceEvent);
+		removeFlowExecution(id, context);
 	}
 
 	// helpers
@@ -162,8 +162,8 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	/**
 	 * Remove identified attribute value from the data store.
 	 */
-	protected void removeFlowExecution(Serializable id, Event sourceEvent) throws FlowExecutionStorageException {
-		getDataStore(sourceEvent).removeAttribute(attributeName(id));
+	protected void removeFlowExecution(Serializable id, ExternalContext context) throws FlowExecutionStorageException {
+		getDataStore(context).removeAttribute(attributeName(id));
 	}
 
 	// subclassing hooks
@@ -182,7 +182,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 * @param sourceEvent the event
 	 * @return the data store
 	 */
-	protected MutableAttributeSource getDataStore(Event sourceEvent) {
-		return dataStoreAccessor.getDataStore(sourceEvent);
+	protected MutableAttributeSource getDataStore(ExternalContext context) {
+		return dataStoreAccessor.getDataStore(context);
 	}
 }

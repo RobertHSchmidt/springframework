@@ -3,15 +3,15 @@ package org.springframework.webflow.config;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.EndState;
-import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.State;
 import org.springframework.webflow.FlowExecutionControlContext;
+import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecutionImpl;
+import org.springframework.webflow.test.MockExternalContext;
 
 public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 
@@ -40,7 +40,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		handler.add(new ExceptionStateMapping(MyCustomException.class, state2));
 		flow.addExceptionHandler(handler);
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
-		execution.start(new Event(this, "start"));
+		execution.start(null, new MockExternalContext());
 		assertTrue("Should have ended", !execution.isActive());
 	}
 
@@ -56,7 +56,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		handler.add(new ExceptionStateMapping(MyCustomException.class, state2));
 		state1.addExceptionHandler(handler);
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
-		execution.start(new Event(this, "start"));
+		execution.start(null, new MockExternalContext());
 		assertTrue("Should have ended", !execution.isActive());
 	}
 
@@ -69,7 +69,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		};
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		try {
-			execution.start(new Event(this, "start"));
+			execution.start(null, new MockExternalContext());
 			fail("Should have rethrown");
 		}
 		catch (StateException e) {

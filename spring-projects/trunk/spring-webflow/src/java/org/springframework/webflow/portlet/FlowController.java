@@ -25,10 +25,11 @@ import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionManager;
-import org.springframework.webflow.execution.portlet.PortletEvent;
+import org.springframework.webflow.execution.portlet.PortletExternalContext;
 
 /**
  * Point of integration between Spring Portlet MVC and Spring Web Flow: a
@@ -56,25 +57,25 @@ import org.springframework.webflow.execution.portlet.PortletEvent;
  * Usage example:
  * 
  * <pre>
- *   &lt;!--
- *     Exposes flows for execution at a single request URL.
- *  	 The id of a flow to launch should be passed in by clients using
- *  	 the &quot;_flowId&quot; request parameter:
- *  	     e.g. /app.htm?_flowId=flow1
- *   --&gt;
- *   &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.portlet.FlowController&quot;&gt;
- *       &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *   &lt;/bean&gt;
- *                
- *   &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *   &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *       &lt;property name=&quot;definitionLocations&quot;&gt;
- *           &lt;list&gt;
- *               &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *               &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *           &lt;/list&gt;
- *       &lt;/property&gt;
- *   &lt;/bean&gt;
+ *       &lt;!--
+ *         Exposes flows for execution at a single request URL.
+ *      	 The id of a flow to launch should be passed in by clients using
+ *      	 the &quot;_flowId&quot; request parameter:
+ *      	     e.g. /app.htm?_flowId=flow1
+ *       --&gt;
+ *       &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.portlet.FlowController&quot;&gt;
+ *           &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *       &lt;/bean&gt;
+ *                    
+ *       &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *       &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *           &lt;property name=&quot;definitionLocations&quot;&gt;
+ *               &lt;list&gt;
+ *                   &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                   &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *               &lt;/list&gt;
+ *           &lt;/property&gt;
+ *       &lt;/bean&gt;
  * </pre>
  * 
  * @author J.Enrique Ruiz
@@ -91,7 +92,8 @@ public class FlowController extends AbstractController {
 	private static final String VIEW_SELECTION_ATTRIBUTE_NAME = FlowController.class + ".viewSelection";
 
 	/**
-	 * The manager for flow executions.
+	 * Delegate for managing flow executions (launching new executions, and
+	 * resuming existing executions).
 	 */
 	private FlowExecutionManager flowExecutionManager;
 
@@ -145,8 +147,9 @@ public class FlowController extends AbstractController {
 	}
 
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
+		ExternalContext context = new PortletExternalContext(request, response);
 		// delegate to the flow execution manager to process the request
-		ViewSelection selectedView = getFlowExecutionManager().onEvent(new PortletEvent(request, response));
+		ViewSelection selectedView = getFlowExecutionManager().onEvent(context);
 		// expose selected view in session for access during render phase
 		request.getPortletSession().setAttribute(VIEW_SELECTION_ATTRIBUTE_NAME, selectedView);
 	}
@@ -156,7 +159,8 @@ public class FlowController extends AbstractController {
 			ViewSelection selectedView = (ViewSelection)request.getPortletSession().getAttribute(
 					VIEW_SELECTION_ATTRIBUTE_NAME);
 			if (selectedView == null) {
-				selectedView = flowExecutionManager.onEvent(new PortletEvent(request, response));
+				ExternalContext context = new PortletExternalContext(request, response);
+				selectedView = getFlowExecutionManager().onEvent(context);
 			}
 			// convert view to a renderable portlet mvc "model and view"
 			return toModelAndView(selectedView);

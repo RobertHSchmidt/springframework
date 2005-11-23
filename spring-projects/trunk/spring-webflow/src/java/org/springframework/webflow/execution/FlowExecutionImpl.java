@@ -30,6 +30,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
@@ -284,22 +285,22 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// methods implementing FlowExecution
 
-	public synchronized ViewSelection start(Event sourceEvent) throws StateException {
+	public synchronized ViewSelection start(String stateId, ExternalContext externalContext)
+			throws StateException {
 		Assert.state(!isActive(), "This flow is already executing -- you cannot call start more than once");
-		String startStateId = sourceEvent.getStateId();
-		if (!StringUtils.hasText(startStateId)) {
-			startStateId = getRootFlow().getStartState().getId();
+		if (!StringUtils.hasText(stateId)) {
+			stateId = getRootFlow().getStartState().getId();
 		}
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Starting this execution on user event " + sourceEvent);
+			logger.debug("Starting this execution in state " + stateId);
 		}
-		FlowExecutionControlContext context = createControlContext(sourceEvent);
+		FlowExecutionControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
-				ViewSelection selectedView = context.start(getRootFlow(), getRootFlow().getRequiredState(startStateId),
-						createFlowExecutionInput(sourceEvent));
+				State startState = getRootFlow().getRequiredState(stateId);
+				ViewSelection selectedView = context.start(getRootFlow(), startState, null);
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -309,17 +310,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		finally {
 			getListeners().fireRequestProcessed(context);
 		}
-	}
-
-	/**
-	 * Returns an initial input map to pass to a new FlowExecution that is being
-	 * started. Default implementation returns <code>null</code>
-	 * @param sourceEvent the source event that triggered flow execution
-	 * creation
-	 * @return the input map
-	 */
-	protected Map createFlowExecutionInput(Event sourceEvent) {
-		return null;
 	}
 
 	/**
@@ -345,27 +335,27 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		throw e;
 	}
 
-	public synchronized ViewSelection signalEvent(Event sourceEvent) throws StateException {
+	public synchronized ViewSelection signalEvent(String eventId, String stateId, ExternalContext externalContext)
+			throws StateException {
 		assertActive();
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Resuming this execution on user event " + sourceEvent);
+			logger.debug("Resuming this execution on user event '" + eventId + "'");
 		}
-		String stateId = sourceEvent.getStateId();
 		if (!StringUtils.hasText(stateId)) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("No stateId was provided in source event '" + sourceEvent.getId()
+				logger.debug("No stateId was provided on event '" + eventId
 						+ "', relying on the currentState of the active FlowSession.");
 			}
 			stateId = getCurrentState().getId();
 		}
 		TransitionableState state = getActiveFlow().getRequiredTransitionableState(stateId);
-		FlowExecutionControlContext context = createControlContext(sourceEvent);
+		FlowExecutionControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
 				resume(context);
-				ViewSelection selectedView = context.signalEvent(sourceEvent, state);
+				ViewSelection selectedView = context.signalEvent(new Event(state, eventId), state);
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -422,8 +412,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * class. Subclasses can override this to use a custom class.
 	 * @param sourceEvent the event at the origin of this request
 	 */
-	protected FlowExecutionControlContextImpl createControlContext(Event sourceEvent) {
-		return new FlowExecutionControlContextImpl(sourceEvent, this);
+	protected FlowExecutionControlContextImpl createControlContext(ExternalContext externalContext) {
+		return new FlowExecutionControlContextImpl(this, externalContext);
 	}
 
 	/**

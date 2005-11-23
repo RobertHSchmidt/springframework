@@ -22,6 +22,7 @@ import java.io.Serializable;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 
 /**
  * Flow execution storage implementation that will store a flow execution as a
@@ -76,7 +77,7 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 		this.compress = compress;
 	}
 
-	public FlowExecution load(Serializable id, Event requestingEvent) throws NoSuchFlowExecutionException,
+	public FlowExecution load(Serializable id, ExternalContext context) throws NoSuchFlowExecutionException,
 			FlowExecutionStorageException {
 		try {
 			return decode(id);
@@ -94,7 +95,7 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 		}
 	}
 
-	public Serializable save(Serializable id, FlowExecution flowExecution, Event requestingEvent)
+	public Serializable save(Serializable id, FlowExecution flowExecution, ExternalContext context)
 			throws FlowExecutionStorageException {
 		try {
 			return encode(flowExecution);
@@ -109,7 +110,7 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 		}
 	}
 
-	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException {
+	public void remove(Serializable id, ExternalContext context) throws FlowExecutionStorageException {
 		// nothing to do here
 	}
 
@@ -152,7 +153,7 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
 	}
 
-	public void saveWithGeneratedId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+	public void saveWithGeneratedId(Serializable id, FlowExecution flowExecution, ExternalContext context)
 			throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Storage does not support pre-generation of storage IDs");
 	}

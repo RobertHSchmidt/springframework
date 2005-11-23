@@ -18,6 +18,7 @@ package org.springframework.webflow.execution;
 import java.io.Serializable;
 
 import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 
 /**
  * Storage strategy for flow executions. A flow execution manager uses this
@@ -65,7 +66,7 @@ public interface FlowExecutionStorage {
 	 * @throws FlowExecutionStorageException when there is a problem accessing
 	 * the flow execution storage
 	 */
-	public FlowExecution load(Serializable id, Event sourceEvent) throws FlowExecutionStorageException;
+	public FlowExecution load(Serializable id, ExternalContext context) throws FlowExecutionStorageException;
 
 	/**
 	 * Save the flow execution out to storage.
@@ -78,7 +79,7 @@ public interface FlowExecutionStorage {
 	 * @throws FlowExecutionStorageException when there is a problem accessing
 	 * the flow execution storage
 	 */
-	public Serializable save(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+	public Serializable save(Serializable id, FlowExecution flowExecution, ExternalContext context)
 			throws FlowExecutionStorageException;
 
 	/**
@@ -89,7 +90,7 @@ public interface FlowExecutionStorage {
 	 * @throws FlowExecutionStorageException when there is a technical problem
 	 * accessing the flow execution storage
 	 */
-	public void remove(Serializable id, Event sourceEvent) throws FlowExecutionStorageException;
+	public void remove(Serializable id, ExternalContext context) throws FlowExecutionStorageException;
 
 	/* Optional methods */
 
@@ -134,6 +135,6 @@ public interface FlowExecutionStorage {
 	 * storage
 	 * @throws FlowExecutionStorageException
 	 */
-	public void saveWithGeneratedId(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+	public void saveWithGeneratedId(Serializable id, FlowExecution flowExecution, ExternalContext context)
 			throws UnsupportedOperationException, FlowExecutionStorageException;
 }

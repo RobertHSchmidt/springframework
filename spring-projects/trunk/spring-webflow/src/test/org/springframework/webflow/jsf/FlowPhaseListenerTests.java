@@ -108,7 +108,7 @@ public class FlowPhaseListenerTests extends TestCase {
 			super(locator);
 		}
 
-		public void saveFlowExecutionIfNecessary(FacesContext context) {
+		public void saveFlowExecutionIfNecessary() {
 			saved = true;
 		}
 

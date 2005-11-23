@@ -27,6 +27,7 @@ import org.springframework.validation.Validator;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -92,7 +93,7 @@ public class FormActionTests extends TestCase {
 	}
 	
 	public void testSetupForm() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this, "test", "prop", "value"));
+		MockRequestContext context = new MockRequestContext();
 		
 		// setupForm() should initialize the form object and the Errors
 		// instance, but no bind & validate should happen since bindOnSetupForm
@@ -106,9 +107,20 @@ public class FormActionTests extends TestCase {
 		assertNull(getFormObject(context).getProp());
 	}
 	
-	public void testSetupFormWithBinding() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this, "test", "prop", "value"));
+	protected Map parameters() {
+		Map map = new HashMap(1);
+		map.put("prop", "value");
+		return map;
+	}
 
+	protected Map blankParameters() {
+		Map map = new HashMap(1);
+		map.put("prop", "");
+		return map;
+	}
+
+	public void testSetupFormWithBinding() throws Exception {
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(parameters()));
 		action.setBindOnSetupForm(true);
 		
 		// setupForm() should initialize the form object and the Errors
@@ -123,7 +135,7 @@ public class FormActionTests extends TestCase {
 	}
 	
 	public void testSetupFormWithExistingFormObject() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this, "test", "prop", "value"));
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(parameters()));
 		
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
 		
@@ -146,8 +158,7 @@ public class FormActionTests extends TestCase {
 	}
 	
 	public void testSetupFormWithExistingFormObjectAndWithBinding() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this, "test", "prop", "value"));
-		
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(parameters()));
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
 		
 		Errors errors = getErrors(context);
@@ -171,8 +182,8 @@ public class FormActionTests extends TestCase {
 	}
 	
 	public void testBindAndValidate() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this, "test", "prop", "value"));
-		
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(parameters()));
+
 		// bindAndValidate() should setup a new form object and errors instance
 		// and do a bind & validate
 		
@@ -186,7 +197,7 @@ public class FormActionTests extends TestCase {
 	}
 	
 	public void testBindAndValidateFailure() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this));
+		MockRequestContext context = new MockRequestContext();
 		
 		// bindAndValidate() should setup a new form object and errors instance
 		// and do a bind & validate, which fails because the provided value is empty
@@ -200,7 +211,7 @@ public class FormActionTests extends TestCase {
 	}
 	
 	public void testBindAndValidateWithExistingFormObject() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this, "test", "prop", "value"));
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(parameters()));
 		
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
 		
@@ -224,7 +235,7 @@ public class FormActionTests extends TestCase {
 	
 	// this is what happens in a 'form state'
 	public void testBindAndValidateFailureThenSetupForm() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this, "test", "prop", ""));
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(blankParameters()));
 		
 		// setup existing form object & errors
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());		
@@ -255,7 +266,7 @@ public class FormActionTests extends TestCase {
 	}
 	
 	public void testMultipleFormObjectsInOneFlow() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this, "test", "prop", "value"));
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(parameters()));
 
 		FormActionMethods otherAction = createFormAction("otherTest");
 		
@@ -282,7 +293,7 @@ public class FormActionTests extends TestCase {
 		assertEquals("value", getFormObject(context).getProp());
 		assertNull(getFormObject(context, "otherTest").getProp());
 		
-		context.setLastEvent(new Event(this, "test", "prop", ""));
+		context.setExternalContext(new MockExternalContext(blankParameters()));
 		
 		assertEquals(AbstractAction.ERROR_EVENT_ID, otherAction.bindAndValidate(context).getId());
 		
@@ -297,7 +308,7 @@ public class FormActionTests extends TestCase {
 	}
 	
 	public void testGetFormObject() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this));
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(parameters()));
 		FormAction action = createFormAction("test");
 		TestBean formObject = (TestBean)action.getFormObject(context);
 		assertNotNull(formObject);
@@ -309,7 +320,7 @@ public class FormActionTests extends TestCase {
 	}
 	
 	public void testGetFormErrors() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this));
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(parameters()));
 		FormAction action = createFormAction("test");
 		action.setupForm(context);
 		Errors errors = action.getFormErrors(context);
@@ -323,7 +334,7 @@ public class FormActionTests extends TestCase {
 	}
 	
 	public void testFormObjectAccessUsingAlias() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this));
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(blankParameters()));
 
 		FormActionMethods otherAction = createFormAction("otherTest");
 		
@@ -342,7 +353,7 @@ public class FormActionTests extends TestCase {
 		assertSame(getFormObject(context), new FormObjectAccessor(context).getFormObject());
 		assertSame(getErrors(context), new FormObjectAccessor(context).getFormErrors());
 		
-		context.setLastEvent(new Event(this, "test", "prop", "value"));
+		context.setExternalContext(new MockExternalContext(parameters()));
 
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, otherAction.bindAndValidate(context).getId());
 
@@ -352,7 +363,7 @@ public class FormActionTests extends TestCase {
 	
 	// as reported in SWF-4
 	public void testInconsistentFormObjectAndErrors() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this));	
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(parameters()));
 		
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
 		
@@ -364,7 +375,7 @@ public class FormActionTests extends TestCase {
 		assertSame(formObject, errors.getTarget());
 		
 		context = new MockRequestContext();
-		context.setLastEvent(new Event(this));
+		context.setLastEvent(new Event(this, "start"));
 		
 		OtherTestBean freshBean = new OtherTestBean();
 		context.getFlowScope().setAttribute("test", freshBean);
@@ -385,7 +396,7 @@ public class FormActionTests extends TestCase {
 	}
 	
 	public void testMultipleFormObjects() throws Exception {
-		MockRequestContext context = new MockRequestContext(new Event(this));	
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(parameters()));
 
 		FormActionMethods action1 = createFormAction("test1");
 		action1.setupForm(context);
@@ -401,7 +412,7 @@ public class FormActionTests extends TestCase {
 		
 		Map props = new HashMap();
 		props.put("prop", "12345");
-		context.setLastEvent(new Event(this, "submit", props));
+		context.setExternalContext(new MockExternalContext(props));
 		action1.bindAndValidate(context);
 		TestBean test11 = (TestBean)context.getFlowScope().getAttribute("test1");
 		assertSame(test1, test11);
@@ -410,7 +421,7 @@ public class FormActionTests extends TestCase {
 
 		props = new HashMap();
 		props.put("prop", "123456");
-		context.setLastEvent(new Event(this, "submit", props));
+		context.setExternalContext(new MockExternalContext(props));
 		action2.bindAndValidate(context);
 		TestBean test22 = (TestBean)context.getFlowScope().getAttribute("test2");
 		assertSame(test22, test2);
@@ -420,7 +431,7 @@ public class FormActionTests extends TestCase {
 	
 	public void testFormObjectAndNoErrors() throws Exception {
 		// this typically happens with mapping from parent flow to subflow	
-		MockRequestContext context = new MockRequestContext(new Event(this, "test", "prop", "value"));
+		MockRequestContext context = new MockRequestContext(new MockExternalContext(parameters()));
 		
 		TestBean testBean = new TestBean();
 		testBean.setProp("bla");

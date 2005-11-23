@@ -82,7 +82,6 @@ public class FlowControllerTests extends TestCase {
 		Flow flow = new Flow("SomeFlow");
 		final ViewSelection viewSelection = new ViewSelection("SomeView");
 		flow.setStartState(new State(flow, "SomeState") {
-
 			protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 				return viewSelection;
 			}
@@ -100,7 +99,6 @@ public class FlowControllerTests extends TestCase {
 	public void testHandleRequestInternalWithNullView() throws Exception {
 		Flow flow = new Flow("SomeFlow");
 		flow.setStartState(new State(flow, "SomeState") {
-
 			protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 				return null;
 			}

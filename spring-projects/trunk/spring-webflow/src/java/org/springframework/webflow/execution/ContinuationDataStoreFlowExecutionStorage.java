@@ -20,6 +20,7 @@ import java.io.NotSerializableException;
 import java.io.Serializable;
 
 import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 
 /**
  * Flow execution storage that stores flow executions as <i>continuations</i>
@@ -71,9 +72,10 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 		this.compress = compress;
 	}
 
-	protected FlowExecution getFlowExecution(Serializable id, Event sourceEvent) throws FlowExecutionStorageException {
+	protected FlowExecution getFlowExecution(Serializable id, ExternalContext context)
+			throws FlowExecutionStorageException {
 		try {
-			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getDataStore(sourceEvent).getAttribute(
+			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getDataStore(context).getAttribute(
 					attributeName(id));
 			return continuation.readFlowExecution();
 		}
@@ -93,10 +95,10 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 	/**
 	 * Associate given id with given attribute value in the data store.
 	 */
-	protected void setFlowExecution(Serializable id, FlowExecution flowExecution, Event sourceEvent)
+	protected void setFlowExecution(Serializable id, FlowExecution flowExecution, ExternalContext context)
 			throws FlowExecutionStorageException {
 		try {
-			getDataStore(sourceEvent).setAttribute(attributeName(id),
+			getDataStore(context).setAttribute(attributeName(id),
 					new FlowExecutionContinuation(flowExecution, compress));
 		}
 		catch (NotSerializableException e) {

@@ -27,12 +27,13 @@ import org.apache.struts.action.ActionMapping;
 import org.springframework.web.struts.ActionSupport;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
-import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.servlet.ServletExternalContext;
 
 /**
  * Point of integration between Struts and Spring Web Flow: a Struts Action that
@@ -63,10 +64,10 @@ import org.springframework.webflow.execution.FlowExecutionManager;
  * FlowAction:
  * 
  * <pre>
- *        &lt;action path=&quot;/userRegistration&quot;
- *            type=&quot;org.springframework.webflow.struts.FlowAction&quot;
- *            name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *        &lt;/action&gt;
+ *           &lt;action path=&quot;/userRegistration&quot;
+ *               type=&quot;org.springframework.webflow.struts.FlowAction&quot;
+ *               name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *           &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -139,22 +140,9 @@ public class FlowAction extends ActionSupport {
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		Event event = createEvent(mapping, form, request, response);
-		ViewSelection viewDescriptor = getFlowExecutionManager().onEvent(event);
+		ExternalContext context = new StrutsExternalContext(mapping, form, request, response);
+		ViewSelection viewDescriptor = getFlowExecutionManager().onEvent(context);
 		return toActionForward(viewDescriptor, mapping, request);
-	}
-
-	/**
-	 * Creates a Struts event based on given information. Subclasses can
-	 * override this to return a specialized event object.
-	 * @param mapping the action mapping
-	 * @param form the action form
-	 * @param request the current request
-	 * @param response the current response
-	 */
-	protected StrutsEvent createEvent(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) {
-		return new StrutsEvent(mapping, form, request, response);
 	}
 
 	/**
@@ -218,12 +206,34 @@ public class FlowAction extends ActionSupport {
 	protected static class ActionFormAdapter extends FlowExecutionListenerAdapter {
 		public void requestProcessed(RequestContext context) {
 			if (context.getFlowExecutionContext().isActive()) {
-				StrutsEvent event = (StrutsEvent)context.getSourceEvent();
-				if (event.getActionForm() instanceof SpringBindingActionForm) {
-					SpringBindingActionForm bindingForm = (SpringBindingActionForm)event.getActionForm();
-					bindingForm.expose(new FormObjectAccessor(context).getFormErrors(), event.getRequest());
+				StrutsExternalContext strutsContext = (StrutsExternalContext)context.getExternalContext();
+				if (strutsContext.getActionForm() instanceof SpringBindingActionForm) {
+					SpringBindingActionForm bindingForm = (SpringBindingActionForm)strutsContext.getActionForm();
+					bindingForm.expose(new FormObjectAccessor(context).getFormErrors(), strutsContext.getRequest());
 				}
 			}
+		}
+	}
+
+	public static class StrutsExternalContext extends ServletExternalContext {
+
+		private ActionMapping actionMapping;
+
+		private ActionForm actionForm;
+
+		public StrutsExternalContext(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+				HttpServletResponse response) {
+			super(request, response);
+			this.actionMapping = mapping;
+			this.actionForm = form;
+		}
+
+		public ActionForm getActionForm() {
+			return actionForm;
+		}
+
+		public ActionMapping getActionMapping() {
+			return actionMapping;
 		}
 	}
 }

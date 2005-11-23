@@ -16,12 +16,14 @@
 package org.springframework.webflow.test;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowExecutionContext;
@@ -153,19 +155,45 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * (returned when the first view state is entered)
 	 */
 	protected ViewSelection startFlow() {
-		return startFlow(event("start"));
+		return startFlow(null, new MockExternalContext(Collections.EMPTY_MAP));
 	}
 
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
-	 * @param event the starting event
+	 * @return the model and view returned as a result of starting the flow
+	 * (returned when the first view state is entered)
+	 */
+	protected ViewSelection startFlow(Map parameters) {
+		return startFlow(null, new MockExternalContext(parameters));
+	}
+
+	/**
+	 * Start a new flow execution for the flow definition that is being tested.
 	 * @return the selected model and view returned as a result of starting the
 	 * flow (returned when the first view state is entered)
 	 */
-	protected ViewSelection startFlow(Event event) {
+	protected ViewSelection startFlow(String stateId, Map parameters) {
+		return startFlow(stateId, new MockExternalContext(parameters));
+	}
+
+	/**
+	 * Start a new flow execution for the flow definition that is being tested.
+	 * @return the selected model and view returned as a result of starting the
+	 * flow (returned when the first view state is entered)
+	 */
+	protected ViewSelection startFlow(ExternalContext context) {
+		return startFlow(null, context);
+	}
+
+	/**
+	 * Start a new flow execution for the flow definition that is being tested.
+	 * @return the selected model and view returned as a result of starting the
+	 * flow (returned when the first view state is entered)
+	 */
+	protected ViewSelection startFlow(String stateId, ExternalContext context) {
 		this.flowExecution = new FlowExecutionImpl(getFlow());
-		onSetupFlowExecution(flowExecution);
-		return this.flowExecution.start(event);
+		onFlowExecutionStarting(flowExecution);
+		return this.flowExecution.start(stateId, context);
 	}
 
 	/**
@@ -173,28 +201,19 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * it is started, like register an execution listener.
 	 * @param flowExecution the flow execution
 	 */
-	protected void onSetupFlowExecution(FlowExecution flowExecution) {
+	protected void onFlowExecutionStarting(FlowExecution flowExecution) {
 	}
 
-	/**
-	 * Convenience factory method that returns an event instance for this test
-	 * client with the specified id.
-	 * @param eventId the event id
-	 * @return the event
-	 */
-	protected Event event(String eventId) {
-		return new Event(this, eventId);
+	protected ViewSelection signalEvent(String eventId, Map parameters) {
+		return this.flowExecution.signalEvent(eventId, null, new MockExternalContext(parameters));
 	}
 
-	/**
-	 * Convenience factory method that returns an event instance for this test
-	 * client with the specified id and parameters
-	 * @param eventId the event id
-	 * @param parameters the event parameters
-	 * @return the event
-	 */
-	protected Event event(String eventId, Map parameters) {
-		return new Event(this, eventId, parameters);
+	protected ViewSelection signalEvent(String eventId, String stateId, Map parameters) {
+		return this.flowExecution.signalEvent(eventId, stateId, new MockExternalContext(parameters));
+	}
+
+	protected ViewSelection signalEvent(String eventId, MockExternalContext context) {
+		return this.flowExecution.signalEvent(eventId, null, context);
 	}
 
 	/**
@@ -231,12 +250,11 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * interface. It is recommended you extend
 	 * {@link org.springframework.webflow.execution.FlowExecutionListenerAdapter}
 	 * and only override what you need.
-	 * @param event the event to signal
 	 * @return the selected model and view, returned once control is returned to
 	 * the client (occurs when the flow enters a view state, or an end state)
 	 */
-	protected ViewSelection signalEvent(Event event) {
-		return this.flowExecution.signalEvent(event);
+	protected ViewSelection signalEvent(String eventId, String stateId, MockExternalContext context) {
+		return this.flowExecution.signalEvent(eventId, stateId, context);
 	}
 
 	/**

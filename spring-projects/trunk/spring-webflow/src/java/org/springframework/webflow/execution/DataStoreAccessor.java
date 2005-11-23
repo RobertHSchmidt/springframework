@@ -16,7 +16,7 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.binding.MutableAttributeSource;
-import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 
 /**
  * Strategy interface for objects that can provide an interface to an external
@@ -48,5 +48,5 @@ public interface DataStoreAccessor {
 	 * data store.
 	 * @return the mutable attribute source providing access to the data store
 	 */
-	public MutableAttributeSource getDataStore(Event sourceEvent);
+	public MutableAttributeSource getDataStore(ExternalContext context);
 }

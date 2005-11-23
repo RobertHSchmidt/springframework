@@ -58,22 +58,9 @@ public class Event extends EventObject implements AttributeSource {
 	private long timestamp = System.currentTimeMillis();
 
 	/**
-	 * The state the event occured in (optional).
-	 */
-	private String stateId;
-
-	/**
 	 * Additional event parameters that form this event's payload.
 	 */
 	private Map parameters;
-
-	/**
-	 * Constructs a new event with the specified source.
-	 * @param source the source of the event
-	 */
-	public Event(Object source) {
-		this(source, "event");
-	}
 
 	/**
 	 * Create a new event with the specified <code>id</code>.
@@ -86,57 +73,16 @@ public class Event extends EventObject implements AttributeSource {
 	}
 
 	/**
-	 * Create a new event with the specified <code>id</code> and the provided
-	 * contextual parameters.
-	 * @param source the source of the event
-	 * @param id the event identifier
-	 * @param parameters the event parameters
-	 */
-	public Event(Object source, String id, Map parameters) {
-		super(source);
-		setRequiredId(id);
-		setParameters(parameters);
-	}
-
-	/**
-	 * Create a new event with the provided contextual parameters.
-	 * @param source the source of the event
-	 * @param parameters the event parameters
-	 */
-	public Event(Object source, Map parameters) {
-		super(source);
-		setParameters(parameters);
-	}
-
-	/**
-	 * Create a new event with the specified <code>id</code> and a single
-	 * contextual parameter.
-	 * @param source the source of the event
-	 * @param id the event identifier
-	 * @param parameterName the name of the single parameter
-	 * @param parameterValue the value of the single parameter
-	 */
-	public Event(Object source, String id, String parameterName, Object parameterValue) {
-		super(source);
-		setRequiredId(id);
-		Map parameters = new HashMap(1);
-		parameters.put(parameterName, parameterValue);
-		setParameters(parameters);
-	}
-
-	/**
 	 * Create a new event with the specified <code>id</code> occuring in the
 	 * state with the specified <code>stateId</code> and the provided
 	 * contextual parameters.
 	 * @param source the source of the event
 	 * @param id the event identifier
-	 * @param stateId the state in which this event occured
 	 * @param parameters contextual parameters
 	 */
-	public Event(Object source, String id, String stateId, Map parameters) {
+	public Event(Object source, String id, Map parameters) {
 		super(source);
 		setRequiredId(id);
-		setStateId(stateId);
 		setParameters(parameters);
 	}
 
@@ -154,7 +100,7 @@ public class Event extends EventObject implements AttributeSource {
 	 * @param id the event identifier
 	 */
 	protected void setRequiredId(String id) {
-		Assert.hasText(id, "The event id is required for this use -- please set to a non-blank string identifier");
+		Assert.hasText(id, "The event id is required: please set this event's id to a non-blank string identifier");
 		setId(id);
 	}
 
@@ -172,22 +118,6 @@ public class Event extends EventObject implements AttributeSource {
 	 */
 	public long getTimestamp() {
 		return this.timestamp;
-	}
-
-	/**
-	 * Returns the state in which this event occured (optional).
-	 * @return the state id, or <code>null</code> if not specified
-	 */
-	public String getStateId() {
-		return this.stateId;
-	}
-
-	/**
-	 * Set the state identifier. This could be <code>null</code>, e.g. if the
-	 * event occured in the current state of the flow.
-	 */
-	protected void setStateId(String stateId) {
-		this.stateId = stateId;
 	}
 
 	/**
@@ -224,9 +154,7 @@ public class Event extends EventObject implements AttributeSource {
 	 * Set the contextual parameters.
 	 */
 	protected void setParameters(Map parameters) {
-		if (parameters != null) {
-			this.parameters = new HashMap(parameters);
-		}
+		this.parameters = parameters;
 	}
 
 	/**
@@ -252,7 +180,7 @@ public class Event extends EventObject implements AttributeSource {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("source", getSource()).append("id", getId()).append("stateId",
-				getStateId()).append("parameters", getParameters()).toString();
+		return new ToStringCreator(this).append("source", getSource()).append("id", getId()).append("parameters",
+				getParameters()).toString();
 	}
 }

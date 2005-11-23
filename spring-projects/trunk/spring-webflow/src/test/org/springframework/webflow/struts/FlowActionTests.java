@@ -24,13 +24,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.struts.SpringBindingActionForm;
-import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.struts.FlowAction.StrutsExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -67,12 +68,12 @@ public class FlowActionTests extends TestCase {
 		};
 		viewSelection = new ViewSelection("SomeView", "SomeKey", "SomeValue");
 		validViewSelectionFlowExecutionManager = new FlowExecutionManager(flowLocator) {
-			public ViewSelection onEvent(Event sourceEvent) {
+			public ViewSelection onEvent(ExternalContext context) {
 				return viewSelection;
 			}
 		};
 		nullViewSelectionFlowExecutionManager = new FlowExecutionManager(flowLocator) {
-			public ViewSelection onEvent(Event sourceEvent) {
+			public ViewSelection onEvent(ExternalContext context) {
 				return null;
 			}
 		};
@@ -118,8 +119,8 @@ public class FlowActionTests extends TestCase {
 
 		// might as well test the ActionFormAdapter, while we have it available
 		SpringBindingActionForm bindingActionForm = new SpringBindingActionForm();
-		StrutsEvent event = new StrutsEvent(validForwardActionMapping, bindingActionForm, mockRequest, null);
-		MockRequestContext mockRequestContext = new MockRequestContext(event);
+		StrutsExternalContext externalContext = new StrutsExternalContext(validForwardActionMapping, bindingActionForm, mockRequest, null);
+		MockRequestContext mockRequestContext = new MockRequestContext(externalContext);
 		// FlowAction.ActionFormAdapter is private, but we know its interface
 		FlowExecutionListener listener = (FlowExecutionListener)listenerMap.keySet().iterator().next();
 		listener.requestProcessed(mockRequestContext);

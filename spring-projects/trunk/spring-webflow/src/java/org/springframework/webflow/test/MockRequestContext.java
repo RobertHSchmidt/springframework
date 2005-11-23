@@ -24,6 +24,7 @@ import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
@@ -56,7 +57,7 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 
 	private Flow rootFlow;
 
-	private Event sourceEvent;
+	private ExternalContext externalContext;
 
 	private Scope requestScope = new Scope(ScopeType.REQUEST);
 
@@ -79,45 +80,35 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	 * session that simulates a mock Flow in its start state.
 	 */
 	public MockRequestContext() {
-		setSourceEvent(new Event(this, "start"));
+		setExternalContext(new MockExternalContext());
 		setActiveSession(new MockFlowSession());
 	}
 
 	/**
 	 * Create a new stub request context. Automatically creates an initial flow
 	 * session that simulates a mock Flow in its start state.
-	 * @param sourceEvent the event originating this request context
 	 */
-	public MockRequestContext(Event sourceEvent) {
-		setSourceEvent(sourceEvent);
+	public MockRequestContext(ExternalContext externalContext) {
+		setExternalContext(externalContext);
 		setActiveSession(new MockFlowSession());
 	}
 
 	/**
 	 * Create a new stub request context.
-	 * @param session the active flow session
-	 * @param sourceEvent the event originating this request context
 	 */
-	public MockRequestContext(MockFlowSession session, Event sourceEvent) {
+	public MockRequestContext(MockFlowSession session, ExternalContext externalContext) {
 		setActiveSession(session);
-		setSourceEvent(sourceEvent);
+		setExternalContext(externalContext);
 	}
 
 	// implementing RequestContext
 
-	public Event getSourceEvent() {
-		return sourceEvent;
+	public ExternalContext getExternalContext() {
+		return externalContext;
 	}
 
-	/**
-	 * Set the event originating this request context.
-	 * @param sourceEvent the source event to set
-	 */
-	public void setSourceEvent(Event sourceEvent) {
-		this.sourceEvent = sourceEvent;
-		if (getLastEvent() == null) {
-			setLastEvent(sourceEvent);
-		}
+	public void setExternalContext(ExternalContext externalContext) {
+		this.externalContext = externalContext;
 	}
 
 	public FlowExecutionContext getFlowExecutionContext() {

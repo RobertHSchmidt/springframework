@@ -19,6 +19,7 @@ package org.springframework.webflow.jsf;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
@@ -55,8 +56,8 @@ public abstract class FlowExecutionHolder {
 	 * Returns the source <code>JsfEvent</code> that triggered the request in
 	 * process. Provides access to an external JSF context.
 	 */
-	public static JsfEvent getSourceEvent() {
-		return getContext().event;
+	public static ExternalContext getExternalContext() {
+		return getContext().context;
 	}
 
 	/**
@@ -86,13 +87,13 @@ public abstract class FlowExecutionHolder {
 	 * been saved to storage or is still live reset the thread-bound context
 	 */
 	public static void setFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution,
-			JsfEvent sourceEvent, boolean flowExecutionSaved) {
+			ExternalContext context, boolean flowExecutionSaved) {
 		if (flowExecutionId != null) {
 			Assert.notNull(flowExecution, "It is illegal to store a flow execution with a null flow execution id");
 		}
 		getContext().flowExecutionId = flowExecutionId;
 		getContext().flowExecution = flowExecution;
-		getContext().event = sourceEvent;
+		getContext().context = context;
 		getContext().flowExecutionSaved = flowExecutionSaved;
 	}
 
@@ -114,7 +115,7 @@ public abstract class FlowExecutionHolder {
 
 		public FlowExecution flowExecution;
 
-		public JsfEvent event;
+		public ExternalContext context;
 
 		public boolean flowExecutionSaved;
 	}

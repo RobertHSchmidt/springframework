@@ -14,7 +14,7 @@ import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.EndState;
-import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.Transition;
@@ -24,6 +24,7 @@ import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.config.RedirectViewSelector;
 import org.springframework.webflow.config.SimpleViewSelector;
 import org.springframework.webflow.config.registry.NoSuchFlowDefinitionException;
+import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionManagerTests extends TestCase {
 	public static class MapDataStoreAccessor implements DataStoreAccessor {
@@ -33,7 +34,7 @@ public class FlowExecutionManagerTests extends TestCase {
 			return source.getAttributeMap();
 		}
 
-		public MutableAttributeSource getDataStore(Event sourceEvent) {
+		public MutableAttributeSource getDataStore(ExternalContext context) {
 			return source;
 		}
 	}
@@ -59,8 +60,8 @@ public class FlowExecutionManagerTests extends TestCase {
 		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
 		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
 		Map input = new HashMap(1);
-		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		ViewSelection view = manager.onEvent(new Event(this, "start", input));
+		input.put(manager.getFlowIdParameterName(), "simpleFlow");
+		ViewSelection view = manager.onEvent(new MockExternalContext(input));
 		assertNotNull(view.getModel().get(FlowExecutionManager.FLOW_EXECUTION_ID_ATTRIBUTE));
 		assertNotNull(view.getModel().get(FlowExecutionManager.CURRENT_STATE_ID_ATTRIBUTE));
 		assertEquals(view.getModel().get(FlowExecutionManager.CURRENT_STATE_ID_ATTRIBUTE), "view");
@@ -72,9 +73,9 @@ public class FlowExecutionManagerTests extends TestCase {
 		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
 		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
 		Map input = new HashMap(1);
-		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "nonexistantFlow");
+		input.put(manager.getFlowIdParameterName(), "nonexistantFlow");
 		try {
-			ViewSelection view = manager.onEvent(new Event(this, "start", input));
+			ViewSelection view = manager.onEvent(new MockExternalContext(input));
 			fail("Should have thrown no such flow exception");
 		}
 		catch (NoSuchFlowDefinitionException e) {
@@ -87,11 +88,12 @@ public class FlowExecutionManagerTests extends TestCase {
 		MapDataStoreAccessor map = new MapDataStoreAccessor();
 		manager.setStorage(new DataStoreFlowExecutionStorage(map));
 		Map input = new HashMap(2);
-		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		ViewSelection view = manager.onEvent(new Event(this, "start", input));
-		input.put(FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER, view.getModel().get(
+		input.put(manager.getFlowIdParameterName(), "simpleFlow");
+		ViewSelection view = manager.onEvent(new MockExternalContext(input));
+		input.put(manager.getFlowExecutionIdParameterName(), view.getModel().get(
 				FlowExecutionManager.FLOW_EXECUTION_ID_ATTRIBUTE));
-		view = manager.onEvent(new Event(this, "submit", input));
+		input.put(manager.getEventIdParameterName(), "submit");
+		view = manager.onEvent(new MockExternalContext(input));
 		assertEquals("Wrong view name", "confirm", view.getViewName());
 		assertTrue("Should have been a redirect", view.isRedirect());
 		assertNull("Flow has ended", view.getModel().get(FlowExecutionManager.FLOW_EXECUTION_ID_ATTRIBUTE));
@@ -102,11 +104,11 @@ public class FlowExecutionManagerTests extends TestCase {
 		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
 		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
 		Map input = new HashMap(2);
-		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		ViewSelection view = manager.onEvent(new Event(this, "start", input));
+		input.put(manager.getFlowIdParameterName(), "simpleFlow");
+		manager.onEvent(new MockExternalContext(input));
 		input.put(FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER, "not correct");
 		try {
-			view = manager.onEvent(new Event(this, "submit", input));
+			manager.onEvent(new MockExternalContext(input));
 			fail("should have thrown no such flow execution exception");
 		}
 		catch (NoSuchFlowExecutionException e) {
@@ -121,7 +123,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		manager.addListener(listener);
 		Map input = new HashMap(1);
 		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		ViewSelection view = manager.onEvent(new Event(this, "start", input));
+		ViewSelection view = manager.onEvent(new MockExternalContext(input));
 		assertTrue("Listener not invoked", listener.invoked);
 	}
 
@@ -141,7 +143,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		manager.setListenerMap(listenerMap);
 		Map input = new HashMap(1);
 		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		ViewSelection view = manager.onEvent(new Event(this, "start", input));
+		ViewSelection view = manager.onEvent(new MockExternalContext(input));
 		assertTrue("Listener not invoked", listener1.invoked);
 		assertFalse("Listener invoked", listener2.invoked);
 		assertFalse("Listener invoked", listener3.invoked);
@@ -154,7 +156,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		manager.addListenerCriteria(listener, FlowExecutionListenerCriteriaFactory.flow("not this one"));
 		Map input = new HashMap(1);
 		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		ViewSelection view = manager.onEvent(new Event(this, "start", input));
+		ViewSelection view = manager.onEvent(new MockExternalContext(input));
 		assertFalse("Listener invoked", listener.invoked);
 	}
 

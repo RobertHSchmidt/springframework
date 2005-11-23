@@ -27,7 +27,6 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.config.FlowLocator;
@@ -35,6 +34,7 @@ import org.springframework.webflow.config.XmlFlowBuilder;
 import org.springframework.webflow.config.XmlFlowBuilderTests;
 import org.springframework.webflow.config.registry.FlowAssembler;
 import org.springframework.webflow.config.registry.NoSuchFlowDefinitionException;
+import org.springframework.webflow.test.MockExternalContext;
 
 /**
  * Test case for FlowExecutionStack.
@@ -105,10 +105,10 @@ public class FlowExecutionImplTests extends TestCase {
 
 	public void testRehydrate() throws Exception {
 		// setup some input data
-		Map inputData = new HashMap(1);
-		inputData.put("name", "value");
+		Map input = new HashMap(1);
+		input.put("name", "value");
 		// start the flow execution
-		flowExecution.start(new Event(this, "start", inputData));
+		flowExecution.start(null, new MockExternalContext(input));
 		runFlowExecutionRehydrationTest();
 	}
 

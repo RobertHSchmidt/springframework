@@ -29,6 +29,7 @@ import org.springframework.binding.support.EmptyAttributeSource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowExecutionControlContext;
@@ -64,7 +65,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	/**
 	 * The original event that triggered the creation of this state context.
 	 */
-	private Event sourceEvent;
+	private ExternalContext externalContext;
 
 	/**
 	 * The last event that occured in this context.
@@ -96,20 +97,18 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	 * @param sourceEvent the event at the origin of this request
 	 * @param flowExecution the owning flow execution
 	 */
-	public FlowExecutionControlContextImpl(Event sourceEvent, FlowExecutionImpl flowExecution) {
-		Assert.notNull(sourceEvent, "The source event is required");
+	public FlowExecutionControlContextImpl(FlowExecutionImpl flowExecution, ExternalContext externalContext) {
 		Assert.notNull(flowExecution, "The owning flow execution is required");
-		this.sourceEvent = sourceEvent;
-		this.lastEvent = sourceEvent;
+		this.externalContext = externalContext;
 		this.flowExecution = flowExecution;
 	}
 
 	// implementing RequestContext
 
-	public Event getSourceEvent() {
-		return sourceEvent;
+	public ExternalContext getExternalContext() {
+		return externalContext;
 	}
-
+	
 	public Event getLastResultEvent(String stateId) {
 		Iterator it = resultEvents.iterator();
 		while (it.hasNext()) {
@@ -253,7 +252,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		Iterator it = this.resultEvents.iterator();
 		while (it.hasNext()) {
 			StateResultEvent event = (StateResultEvent)it.next();
-			parameters.put(event.getStateId(), event.getEvent().getParameters());
+			parameters.put(event.getStateId(), event.getParameters());
 		}
 		return parameters;
 	}
@@ -283,7 +282,6 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		 */
 		public StateResultEvent(String stateId, Event event) {
 			Assert.hasText(stateId, "The stateId is required");
-			Assert.notNull(event, "The event is required");
 			this.stateId = stateId;
 			this.event = event;
 		}
@@ -303,6 +301,14 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 			return stateId;
 		}
 
+		public Map getParameters() {
+			if (event != null) {
+				return event.getParameters();
+			} else {
+				return Collections.EMPTY_MAP;
+			}
+		}
+		
 		/**
 		 * Returns the event that triggered the state transition.
 		 */
@@ -316,7 +322,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("sourceEvent", sourceEvent).append("resultEvents", resultEvents)
+		return new ToStringCreator(this).append("externalContext", externalContext).append("resultEvents", resultEvents)
 				.append("requestScope", requestScope).append("executionProperties", executionProperties).append(
 						"flowExecution", flowExecution).toString();
 	}

@@ -24,7 +24,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.springframework.webflow.execution.servlet.ServletEvent;
+import org.springframework.webflow.execution.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -35,28 +35,28 @@ import org.springframework.webflow.test.MockRequestContext;
  * @author Erwin Vervaet
  */
 public class FormActionBindingTests extends TestCase {
-	
+
 	public static class TestBean {
-		
+
 		private Long prop;
-		
+
 		public Long getProp() {
 			return prop;
 		}
-		
+
 		public void setProp(Long prop) {
 			this.prop = prop;
 		}
 	}
-	
+
 	public void testMessageCodesOnBindFailure() throws Exception {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setMethod("POST");
 		request.addParameter("prop", "A");
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockRequestContext context = new MockRequestContext(new ServletEvent(request, response));
+		MockRequestContext context = new MockRequestContext(new ServletExternalContext(request, response));
 		context.setProperty("method", new MethodKey("bindAndValidate"));
-		
+
 		// use a FormAction to do the binding
 		FormAction formAction = new FormAction();
 		formAction.setFormObjectClass(TestBean.class);
@@ -64,24 +64,27 @@ public class FormActionBindingTests extends TestCase {
 		Errors formActionErrors = (Errors)context.getRequestScope().get(BindException.ERROR_KEY_PREFIX + "formObject");
 		assertNotNull(formActionErrors);
 		assertTrue(formActionErrors.hasErrors());
-		
+
 		// use a SimpleFormController to do the binding
 		SimpleFormController simpleFormController = new SimpleFormController();
 		simpleFormController.setCommandClass(TestBean.class);
 		simpleFormController.setCommandName("formObject");
 		ModelAndView modelAndView = simpleFormController.handleRequest(request, response);
-		Errors simpleFormControllerErrors = (Errors)modelAndView.getModel().get(BindException.ERROR_KEY_PREFIX + "formObject");
+		Errors simpleFormControllerErrors = (Errors)modelAndView.getModel().get(
+				BindException.ERROR_KEY_PREFIX + "formObject");
 		assertNotNull(simpleFormControllerErrors);
 		assertTrue(simpleFormControllerErrors.hasErrors());
-		
+
 		assertNotSame(formActionErrors, simpleFormControllerErrors);
 		assertEquals(formActionErrors.getErrorCount(), simpleFormControllerErrors.getErrorCount());
 		assertEquals(formActionErrors.getGlobalErrorCount(), simpleFormControllerErrors.getGlobalErrorCount());
 		assertEquals(formActionErrors.getFieldErrorCount("prop"), simpleFormControllerErrors.getFieldErrorCount("prop"));
 		assertEquals(1, formActionErrors.getFieldErrorCount("prop"));
-		assertEquals(formActionErrors.getFieldError("prop").getCodes().length, simpleFormControllerErrors.getFieldError("prop").getCodes().length);
-		for (int i=0; i<formActionErrors.getFieldError("prop").getCodes().length; i++) {
-			assertEquals(formActionErrors.getFieldError("prop").getCodes()[i], simpleFormControllerErrors.getFieldError("prop").getCodes()[i]);
+		assertEquals(formActionErrors.getFieldError("prop").getCodes().length, simpleFormControllerErrors
+				.getFieldError("prop").getCodes().length);
+		for (int i = 0; i < formActionErrors.getFieldError("prop").getCodes().length; i++) {
+			assertEquals(formActionErrors.getFieldError("prop").getCodes()[i], simpleFormControllerErrors
+					.getFieldError("prop").getCodes()[i]);
 		}
 	}
 }

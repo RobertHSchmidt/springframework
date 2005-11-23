@@ -13,6 +13,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.config.RedirectViewSelector;
 import org.springframework.webflow.config.SimpleViewSelector;
+import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionStorageTests extends TestCase {
 
@@ -28,18 +29,14 @@ public class FlowExecutionStorageTests extends TestCase {
 	public void testClientContinuationStorageDecoding() throws IOException {
 		ClientContinuationFlowExecutionStorage storage = new ClientContinuationFlowExecutionStorage();
 		FlowExecutionImpl impl = new FlowExecutionImpl(new SimpleFlow());
-		impl.start(new Event(this, "start"));
-		Event event = new Event(this, "submit");
-		FlowExecution execution = storage.load(storage.encode(impl), event);
+		FlowExecution execution = storage.load(storage.encode(impl), new MockExternalContext());
 		assertEquals("Not equal", impl, execution);
 	}
 
 	public void testClientContinuationStorageEncoding() throws IOException, ClassNotFoundException {
 		ClientContinuationFlowExecutionStorage storage = new ClientContinuationFlowExecutionStorage();
 		FlowExecutionImpl impl = new FlowExecutionImpl(new SimpleFlow());
-		Event event = new Event(this, "start");
-		impl.start(event);
-		Serializable id = storage.save(null, impl, event);
+		Serializable id = storage.save(null, impl, new MockExternalContext());
 		FlowExecution execution = storage.decode(id);
 		assertEquals("Not equal", impl, execution);
 	}

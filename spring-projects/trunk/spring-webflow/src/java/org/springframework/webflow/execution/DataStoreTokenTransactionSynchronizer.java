@@ -42,7 +42,8 @@ public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransact
 	private DataStoreAccessor dataStoreAccessor;
 
 	/**
-	 * Create a new token transaction synchronizer using the default session map data store.
+	 * Create a new token transaction synchronizer using the default session map
+	 * data store.
 	 */
 	public DataStoreTokenTransactionSynchronizer() {
 		this(new SessionDataStoreAccessor());
@@ -60,15 +61,16 @@ public class DataStoreTokenTransactionSynchronizer extends AbstractTokenTransact
 	}
 
 	public Serializable getToken(RequestContext context) {
-		return (Serializable)dataStoreAccessor.getDataStore(context.getSourceEvent()).getAttribute(getTokenName(context));
+		return (Serializable)dataStoreAccessor.getDataStore(context.getExternalContext()).getAttribute(
+				getTokenName(context));
 	}
 
 	public void setToken(RequestContext context, Serializable token) {
-		dataStoreAccessor.getDataStore(context.getSourceEvent()).setAttribute(getTokenName(context), token);
+		dataStoreAccessor.getDataStore(context.getExternalContext()).setAttribute(getTokenName(context), token);
 	}
 
 	public void clearToken(RequestContext context) {
-		dataStoreAccessor.getDataStore(context.getSourceEvent()).removeAttribute(getTokenName(context));
+		dataStoreAccessor.getDataStore(context.getExternalContext()).removeAttribute(getTokenName(context));
 	}
 
 	// subclassing hooks

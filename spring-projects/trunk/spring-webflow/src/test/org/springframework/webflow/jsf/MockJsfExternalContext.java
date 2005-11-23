@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -29,10 +30,10 @@ import java.util.Set;
 
 import javax.faces.context.ExternalContext;
 
-public class MockExternalContext extends ExternalContext {
-	private Map requestMap;
+public class MockJsfExternalContext extends ExternalContext {
+	private Map requestMap = new HashMap();
 
-	private Map requestParameterMap;
+	private Map requestParameterMap = Collections.EMPTY_MAP;
 
 	public void dispatch(String arg0) throws IOException {
 	}

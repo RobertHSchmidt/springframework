@@ -25,7 +25,7 @@ import org.springframework.webflow.ActionExecutionException;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.execution.portlet.PortletEvent;
+import org.springframework.webflow.execution.portlet.PortletExternalContext;
 
 /**
  * Action implementation that changes a PortletResponse mode.
@@ -83,17 +83,17 @@ public class SetPortletModeAction extends AbstractAction {
 	 *         unchecked
 	 */
 	protected Event doExecute(RequestContext context) throws Exception {
-		Assert.isInstanceOf(PortletEvent.class, context.getSourceEvent(), "'"
+		Assert.isInstanceOf(PortletExternalContext.class, context.getExternalContext(), "'"
 				+ ClassUtils.getShortName(this.getClass())
-				+ "' can only work with 'PortletRequestEvent'");
-		PortletEvent event = (PortletEvent)context.getSourceEvent();
-		if (event.getResponse() instanceof ActionResponse) {
+				+ "' can only work with 'PortletExternalContext'");
+		PortletExternalContext portletContext = (PortletExternalContext)context.getExternalContext();
+		if (portletContext.getResponse() instanceof ActionResponse) {
 			PortletMode mode = getPortletMode();
 			if (context.getProperties().containsAttribute(PORTLET_MODE_PROPERTY)) {
 				mode = (PortletMode)PORTLET_MODE_CONSTANTS.asObject(
 						(String)context.getProperties().getAttribute(PORTLET_MODE_PROPERTY));
 			}
-			((ActionResponse)event.getResponse()).setPortletMode(mode);
+			((ActionResponse)portletContext.getResponse()).setPortletMode(mode);
 			return success();
 		}
 		else {

@@ -18,6 +18,7 @@ package org.springframework.webflow.test;
 import java.util.Map;
 
 import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
@@ -48,8 +49,17 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 	 * @param session the active flow session
 	 * @param sourceEvent the event originating this request context
 	 */
-	public MockFlowExecutionControlContext(MockFlowSession session, Event sourceEvent) {
-		super(session, sourceEvent);
+	public MockFlowExecutionControlContext(MockFlowSession session) {
+		this(session, new MockExternalContext());
+	}
+	
+	/**
+	 * Create a new stub state context.
+	 * @param session the active flow session
+	 * @param sourceEvent the event originating this request context
+	 */
+	public MockFlowExecutionControlContext(MockFlowSession session, ExternalContext externalContext) {
+		super(session, externalContext);
 	}
 
 	public ViewSelection start(Flow flow, State startState, Map input) throws IllegalStateException {

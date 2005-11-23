@@ -17,7 +17,6 @@ package org.springframework.webflow.jsf;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
@@ -25,6 +24,7 @@ import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowExecutionContext;
@@ -55,7 +55,7 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 		flowExecutionControl = MockControl.createControl(FlowExecution.class);
 		flowExecutionMock = (FlowExecution)flowExecutionControl.getMock();
 
-		MockExternalContext mockExternalContext = new MockExternalContext();
+		MockJsfExternalContext mockExternalContext = new MockJsfExternalContext();
 		// HashMap requestMap = new HashMap();
 		// requestMap.put("SomeKey", "SomeValue");
 		// mockExternalContext.setRequestMap(requestMap);
@@ -108,17 +108,13 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 	 * called. The methods are tested elsewhere in this class.
 	 */
 	public void testLaunchFlowExecution() throws Exception {
-		final JsfEvent startEvent = new JsfEvent("SomeOutcome", mockFacesContext, "FromAction", null);
+		final JsfExternalContext jsfContext = new JsfExternalContext(mockFacesContext, "FromAction", "SomeOutcome");
 		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator) {
 			// not interested in testing this method in this test
+			
 			protected ViewSelection prepareSelectedView(ViewSelection selectedView, Serializable flowExecutionId,
 					FlowExecutionContext flowExecutionContext) {
 				return selectedView;
-			}
-
-			// not interested in testing this method in this test
-			public JsfEvent createEvent(FacesContext context, String fromAction, String outcome, Map parameters) {
-				return startEvent;
 			}
 
 			// not interested in testing this method in this test
@@ -132,9 +128,14 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 			protected FlowExecution createFlowExecution(Flow flow) {
 				return flowExecutionMock;
 			}
+
+			protected ExternalContext createExternalContext(FacesContext context, String fromAction, String outcome) {
+				return jsfContext;
+			}
 		};
 
-		flowExecutionControl.expectAndReturn(flowExecutionMock.start(startEvent), new ViewSelection("SomeView"));
+		flowExecutionControl.expectAndReturn(flowExecutionMock.start(null, jsfContext), new ViewSelection("SomeView"));
+		flowExecutionControl.expectAndReturn(flowExecutionMock.isActive(), true);
 		flowExecutionControl.replay();
 
 		// perform test
@@ -145,7 +146,7 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 	}
 
 	public void testIsFlowExecutionParticipationRequest() throws Exception {
-		MockExternalContext mockExternalContext = new MockExternalContext();
+		MockJsfExternalContext mockExternalContext = new MockJsfExternalContext();
 		HashMap requestParameterMap = new HashMap();
 		Serializable flowExecutionId = new Serializable() {
 		};
@@ -167,7 +168,7 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 	}
 
 	public void testIsFlowExecutionParticipationRequestNoFlowExecution() throws Exception {
-		MockExternalContext mockExternalContext = new MockExternalContext();
+		MockJsfExternalContext mockExternalContext = new MockJsfExternalContext();
 		HashMap requestParameterMap = new HashMap();
 		mockExternalContext.setRequestParameterMap(requestParameterMap);
 		mockFacesContext.setExternalContext(mockExternalContext);

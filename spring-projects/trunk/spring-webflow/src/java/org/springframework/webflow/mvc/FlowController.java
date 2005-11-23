@@ -23,10 +23,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.config.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionManager;
-import org.springframework.webflow.execution.servlet.ServletEvent;
+import org.springframework.webflow.execution.servlet.ServletExternalContext;
 
 /**
  * Point of integration between Spring MVC and Spring Web Flow: a
@@ -54,25 +55,25 @@ import org.springframework.webflow.execution.servlet.ServletEvent;
  * Usage example:
  * 
  * <pre>
- * &lt;!--
- *   Exposes flows for execution at a single request URL.
- *	 The id of a flow to launch should be passed in by clients using
- *	 the "_flowId" request parameter:
- *	     e.g. /app.htm?_flowId=flow1
- * --&gt;
- * &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.mvc.FlowController&quot;&gt;
- *     &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- * &lt;/bean&gt;
- *              
- * &lt;!-- Creates the registry of flow definitions for this application --&gt;
- * &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *     &lt;property name=&quot;definitionLocations&quot;&gt;
- *         &lt;list&gt;
- *             &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *             &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *         &lt;/list&gt;
- *     &lt;/property&gt;
- * &lt;/bean&gt;
+ *       &lt;!--
+ *         Exposes flows for execution at a single request URL.
+ *      	 The id of a flow to launch should be passed in by clients using
+ *      	 the &quot;_flowId&quot; request parameter:
+ *      	     e.g. /app.htm?_flowId=flow1
+ *       --&gt;
+ *       &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.mvc.FlowController&quot;&gt;
+ *           &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *       &lt;/bean&gt;
+ *                    
+ *       &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *       &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *           &lt;property name=&quot;definitionLocations&quot;&gt;
+ *               &lt;list&gt;
+ *                   &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                   &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *               &lt;/list&gt;
+ *           &lt;/property&gt;
+ *       &lt;/bean&gt;
  * </pre>
  * 
  * @author Erwin Vervaet
@@ -81,14 +82,16 @@ import org.springframework.webflow.execution.servlet.ServletEvent;
 public class FlowController extends AbstractController {
 
 	/**
-	 * The manager for flow executions.
+	 * Delegate for managing flow executions (launching new executions, and
+	 * resuming existing executions).
 	 */
 	private FlowExecutionManager flowExecutionManager;
 
 	/**
 	 * Creates a new FlowController that initially relies on a default
-	 * {@link org.springframework.webflow.execution.FlowExecutionManager} implementation
-	 * that uses the provided flow locator to access flow definitions at runtime.
+	 * {@link org.springframework.webflow.execution.FlowExecutionManager}
+	 * implementation that uses the provided flow locator to access flow
+	 * definitions at runtime.
 	 */
 	public FlowController(FlowLocator flowLocator) {
 		initDefaults();
@@ -135,9 +138,8 @@ public class FlowController extends AbstractController {
 
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		// delegate to the flow execution manager to process the request
-		ViewSelection selectedView = getFlowExecutionManager().onEvent(new ServletEvent(request, response));
-		// convert the view descriptor to a ModelAndView object
+		ExternalContext context = new ServletExternalContext(request, response);
+		ViewSelection selectedView = getFlowExecutionManager().onEvent(context);
 		return toModelAndView(selectedView);
 	}
 

@@ -29,7 +29,7 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.Event;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.StateException;
@@ -112,6 +112,10 @@ import org.springframework.webflow.config.FlowLocator;
  * @author Keith Donald
  * @author Colin Sampaleanu
  */
+/**
+ * @author Keith
+ * 
+ */
 public class FlowExecutionManager implements FlowExecutionListenerLoader {
 
 	/**
@@ -127,6 +131,24 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	public static final String FLOW_EXECUTION_ID_PARAMETER = "_flowExecutionId";
 
 	/**
+	 * Clients can send the event to be signaled in an event parameter with this
+	 * name ("_eventId").
+	 */
+	public static final String EVENT_ID_PARAMETER = "_eventId";
+
+	/**
+	 * Clients can send the state in an event parameter with this name
+	 * ("_stateId").
+	 */
+	public static final String STATE_ID_PARAMETER = "_stateId";
+
+	/**
+	 * The default delimiter used when a parameter value is sent as part of the
+	 * name of an event parameter (e.g. "_eventId_submit").
+	 */
+	public static final String PARAMETER_VALUE_DELIMITER = "_";
+
+	/**
 	 * The id of the flow execution will be exposed to the view in a model
 	 * attribute with this name ("flowExecutionId").
 	 */
@@ -139,8 +161,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	public static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
 
 	/**
-	 * The current state of the flow execution will be exposed to the view in a
-	 * model attribute with this name ("currentStateId").
+	 * The current state of an executing flow will be exposed to the view in a
+	 * model attribute with this name ("stateId").
 	 */
 	public static final String CURRENT_STATE_ID_ATTRIBUTE = "currentStateId";
 
@@ -190,6 +212,37 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * token is managed in flow scope.
 	 */
 	private TransactionSynchronizer transactionSynchronizer = new FlowScopeTokenTransactionSynchronizer();
+
+	/**
+	 * Identifies a flow definition to launch a new execution for, defaults to
+	 * ("_flowId").
+	 */
+	private String flowIdParameterName = FLOW_ID_PARAMETER;
+
+	/**
+	 * Identifies an existing flow execution to participate in, defaults to
+	 * ("_flowExecutionId").
+	 */
+	private String flowExecutionIdParameterName = FLOW_EXECUTION_ID_PARAMETER;
+
+	/**
+	 * Identifies an event that occured in an existing flow execution, defaults
+	 * to ("_eventId_submit").
+	 */
+	private String eventIdParameterName = EVENT_ID_PARAMETER;
+
+	/**
+	 * Identifies the state that an external event occured in for an existing
+	 * flow execution, defaults to ("_stateId").
+	 */
+	private String stateIdParameterName = STATE_ID_PARAMETER;
+
+	/**
+	 * The embedded parameter name/value delimiter value, used to parse a
+	 * parameter value when a value is embedded in a parameter name (e.g.
+	 * "_eventId_bar").
+	 */
+	private String parameterDelimiter = PARAMETER_VALUE_DELIMITER;
 
 	/**
 	 * Create a new flow execution manager using the specified flow locator for
@@ -344,6 +397,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		}
 	}
 
+	/**
+	 * Helper that converts from text to a FlowExecutionListenerCriteria
+	 * @param encodedCriteria the encoded text
+	 * @return the criteria
+	 */
 	protected FlowExecutionListenerCriteria convertEncodedListenerCriteria(String encodedCriteria) {
 		return new TextToFlowExecutionListenerCriteria().convert(encodedCriteria);
 	}
@@ -432,29 +490,98 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		this.keyGenerator = keyGenerator;
 	}
 
+	/**
+	 * Returns the name of the flow id parameter.
+	 */
+	public String getFlowIdParameterName() {
+		return flowIdParameterName;
+	}
+
+	/**
+	 * Sets the flow id parameter name.
+	 */
+	public void setFlowIdParameterName(String flowIdParameterName) {
+		this.flowIdParameterName = flowIdParameterName;
+	}
+
+	/**
+	 * Returns the name of the flow execution id parameter.
+	 */
+	public String getFlowExecutionIdParameterName() {
+		return flowExecutionIdParameterName;
+	}
+
+	/**
+	 * Sets the flow execution id parameter name.
+	 */
+	public void setFlowExecutionIdParameterName(String flowExecutionIdParameterName) {
+		this.flowExecutionIdParameterName = flowExecutionIdParameterName;
+	}
+
+	/**
+	 * Returns the name of the request parameter that stores the event
+	 * identifier.
+	 */
+	public String getEventIdParameterName() {
+		return eventIdParameterName;
+	}
+
+	/**
+	 * Sets the event id parameter name.
+	 */
+	public void setEventIdParameterName(String eventIdParameterName) {
+		this.eventIdParameterName = eventIdParameterName;
+	}
+
+	/**
+	 * Returns the name of the request parameter that stores the event state
+	 * identifier.
+	 */
+	public String getStateIdParameterName() {
+		return stateIdParameterName;
+	}
+
+	/**
+	 * Sets the state id parameter name.
+	 */
+	public void setStateIdParameterName(String stateIdParameterName) {
+		this.stateIdParameterName = stateIdParameterName;
+	}
+
+	/**
+	 * Returns the embedded eventId parameter delimiter.
+	 */
+	public String getParameterDelimiter() {
+		return parameterDelimiter;
+	}
+
+	/**
+	 * Sets the embedded eventId parameter delimiter.
+	 */
+	public void setParameterDelimiter(String parameterDelimiter) {
+		this.parameterDelimiter = parameterDelimiter;
+	}
+
 	// event processing
 
 	/**
-	 * Signal the occurence of the specified event. This is the entry point into
-	 * the webflow system for managing all executing flows.
-	 * @param sourceEvent the external event that occured
+	 * Signal the occurence of an external user event. This is the entry point
+	 * into the webflow system for managing all executing flows.
+	 * @param context the context in which the external event occured
 	 * @return the view descriptor of the model and view to render
 	 * @throws FlowExecutionManagementException an exception occured during
 	 * event processing
 	 */
-	public ViewSelection onEvent(Event sourceEvent) throws FlowExecutionManagementException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("New request received from client, source event is: " + sourceEvent);
-		}
-		Serializable flowExecutionId = getFlowExecutionId(sourceEvent);
-		FlowExecution flowExecution = getFlowExecution(flowExecutionId, sourceEvent);
+	public ViewSelection onEvent(ExternalContext context) throws FlowExecutionManagementException {
+		Serializable flowExecutionId = getFlowExecutionId(context);
+		FlowExecution flowExecution = getFlowExecution(flowExecutionId, context);
 		ViewSelection selectedView;
 		try {
 			if (!flowExecution.isActive()) {
-				selectedView = startFlowExecution(flowExecution, sourceEvent);
+				selectedView = startFlowExecution(flowExecution, context);
 			}
 			else {
-				selectedView = signalEventIn(flowExecution, sourceEvent);
+				selectedView = signalEventIn(flowExecution, context);
 			}
 		}
 		catch (StateException e) {
@@ -462,7 +589,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 					"Unhandled state exception occured in flow execution", e);
 		}
 		finally {
-			flowExecutionId = manageStorage(flowExecutionId, flowExecution, sourceEvent);
+			flowExecutionId = manageStorage(flowExecutionId, flowExecution, context);
 		}
 		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 	}
@@ -472,26 +599,26 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * <code>flowExecutionId</code>.
 	 * 
 	 * @param flowExecutionId the flow execution storage identifier
-	 * @param sourceEvent the source event
+	 * @param context the context in which an external user event occured
 	 * @return the flow execution
 	 */
-	protected FlowExecution getFlowExecution(Serializable flowExecutionId, Event sourceEvent) {
+	protected FlowExecution getFlowExecution(Serializable flowExecutionId, ExternalContext context) {
 		if (flowExecutionId == null) {
-			return createFlowExecution(getFlow(sourceEvent));
+			return createFlowExecution(getFlow(context));
 		}
 		else {
-			return loadFlowExecution(flowExecutionId, sourceEvent);
+			return loadFlowExecution(flowExecutionId, context);
 		}
 	}
 
 	/**
 	 * Obtain a unique flow execution id from given event.
-	 * @param sourceEvent the event
+	 * @param context the context in which an external user event occured
 	 * @return the obtained id or <code>null</code> if not found
 	 */
-	public Serializable getFlowExecutionId(Event sourceEvent) {
-		return ExternalEvent.verifySingleStringInputParameter(getFlowExecutionIdParameterName(), sourceEvent
-				.getParameter(getFlowExecutionIdParameterName()));
+	public Serializable getFlowExecutionId(ExternalContext context) {
+		return verifySingleStringInputParameter(getFlowExecutionIdParameterName(), context.getRequestParameterMap()
+				.get(getFlowExecutionIdParameterName()));
 	}
 
 	/**
@@ -506,7 +633,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 				getTransactionSynchronizer());
 		flowExecution.getListeners().fireCreated(flowExecution);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Created a new flow execution for flow definition: '" + flow.getId() + "'");
+			logger.debug("Created a new flow execution for flow definition '" + flow.getId() + "'");
 		}
 		return flowExecution;
 	}
@@ -516,37 +643,34 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * specified in the event, the flow with that id will be returend after
 	 * lookup using the flow locator. If no "_flowId" parameter is present in
 	 * the event, the default top-level flow will be returned.
+	 * @param context the context in which an external user event occured
 	 */
-	protected Flow getFlow(Event sourceEvent) {
-		String flowId = ExternalEvent.verifySingleStringInputParameter(getFlowIdParameterName(), sourceEvent
-				.getParameter(getFlowIdParameterName()));
+	protected Flow getFlow(ExternalContext context) {
+		String flowId = verifySingleStringInputParameter(getFlowIdParameterName(), context.getRequestParameterMap()
+				.get(getFlowIdParameterName()));
 		if (StringUtils.hasText(flowId)) {
 			return getFlowLocator().getFlow(flowId);
 		}
 		else {
 			throw new IllegalArgumentException("The flow to launch must be provided by the client via the '"
 					+ getFlowIdParameterName() + "' parameter, yet no such parameter was provided in this event."
-					+ " Parameters provided were: " + StylerUtils.style(sourceEvent.getParameters()));
+					+ " Parameters provided were " + StylerUtils.style(context.getRequestParameterMap()));
 		}
-	}
-
-	/**
-	 * Returns the name of the flow id parameter in the event ("_flowId").
-	 */
-	public String getFlowIdParameterName() {
-		return FLOW_ID_PARAMETER;
 	}
 
 	/**
 	 * Start the flow execution
 	 * @param flowExecution the execution to start
-	 * @param sourceEvent the event that triggered execution creation
+	 * @param context the context that trigged flow execution creation
 	 * @return the selected starting view
 	 * @throws StateException an exception occured during the execution of the
 	 * start operation
 	 */
-	protected ViewSelection startFlowExecution(FlowExecution flowExecution, Event sourceEvent) throws StateException {
-		return flowExecution.start(sourceEvent);
+	protected ViewSelection startFlowExecution(FlowExecution flowExecution, ExternalContext context)
+			throws StateException {
+		String stateId = verifySingleStringInputParameter(getStateIdParameterName(), context.getRequestParameterMap()
+				.get(getStateIdParameterName()));
+		return flowExecution.start(stateId, context);
 	}
 
 	/**
@@ -554,15 +678,15 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * event.
 	 * 
 	 * @param flowExecutionId the unique id of the flow execution
-	 * @param sourceEvent the source event
+	 * @param context the context in which the external user event occured
 	 * @throws FlowExecutionStorageException an exception occured loading the
 	 * execution from storage
 	 */
-	public FlowExecution loadFlowExecution(Serializable flowExecutionId, Event sourceEvent)
+	public FlowExecution loadFlowExecution(Serializable flowExecutionId, ExternalContext context)
 			throws FlowExecutionStorageException {
 		// client is participating in an existing flow execution, retrieve
 		// information about it
-		FlowExecution flowExecution = getStorage().load(flowExecutionId, sourceEvent);
+		FlowExecution flowExecution = getStorage().load(flowExecutionId, context);
 		// rehydrate the execution if neccessary (if it had been serialized out)
 		flowExecution.rehydrate(getFlowLocator(), this, getTransactionSynchronizer());
 		flowExecution.getListeners().fireLoaded(flowExecution, flowExecutionId);
@@ -576,40 +700,78 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * Signal the occurence of the specified event on an existing flow
 	 * 
 	 * @param flowExecution the existing flow
-	 * @param sourceEvent the event that occured
+	 * @param context the context in which the external user event occured
 	 * @return the raw or unprepared view descriptor of the model and view to
 	 * render
 	 * @throwsStateException an exception occured during event processing
 	 */
-	protected ViewSelection signalEventIn(FlowExecution flowExecution, Event sourceEvent) throws StateException {
-		// signal the event within the current state
-		Assert.hasText(sourceEvent.getId(),
-				"No eventId could be obtained: make sure the client provides the _eventId parameter as input; "
-						+ "the parameters provided for this request were:"
-						+ StylerUtils.style(sourceEvent.getParameters()));
-		// see if the eventId was set to a static marker placeholder because
-		// of a client configuration error
-		if (sourceEvent.getId().equals(getNotSetEventIdParameterMarker())) {
+	protected ViewSelection signalEventIn(FlowExecution flowExecution, ExternalContext context) throws StateException {
+		return flowExecution.signalEvent(extractEventId(context), extractStateId(context), context);
+	}
+
+	/**
+	 * Obtain this event's id from the parameter map.
+	 * <p>
+	 * This is a multi-step process consisting of:
+	 * <ol>
+	 * <li>Try the {@link #eventIdParameterName} parameter first, if it is
+	 * present, return its value as the eventId.
+	 * <li>Try a parameter search looking for parameters of the format:
+	 * {@link #eventIdParameterName}_value. If a match is found, return the
+	 * value as the eventId.
+	 * </ol>
+	 * @param context the context in which the external user event occured
+	 * @param request the http servlet request
+	 * @return the event id
+	 */
+	protected String extractEventId(ExternalContext context) throws IllegalArgumentException {
+		Object parameter = findParameter(getEventIdParameterName(), context.getRequestParameterMap());
+		String eventId = verifySingleStringInputParameter(getEventIdParameterName(), parameter);
+		Assert.hasText(eventId, "No eventId could be obtained: make sure the client provides the '"
+				+ getEventIdParameterName() + "' parameter as input; "
+				+ "the parameters provided for this request were:"
+				+ StylerUtils.style(context.getRequestParameterMap()));
+		if (eventId.equals(getNotSetEventIdParameterMarker())) {
 			throw new IllegalArgumentException("The received eventId was the 'not set' marker '"
 					+ getNotSetEventIdParameterMarker()
-					+ "' -- this is likely a client view (jsp, etc) configuration error --"
-					+ "the _eventId parameter must be set to a valid event");
+					+ "' -- this is likely a client view (jsp, etc) configuration error --" + "the '"
+					+ getEventIdParameterName() + "' parameter must be set to a valid event");
 		}
-		return flowExecution.signalEvent(sourceEvent);
+		return eventId;
+	}
+
+	/**
+	 * Obtain the id of the state in which this event occured from the parameter
+	 * map.
+	 * <p>
+	 * This is a multi-step process consisting of:
+	 * <ol>
+	 * <li>Try the {@link #stateIdParameterName} parameter first, if it is
+	 * present, return its value as the eventId.
+	 * <li>Try a parameter search looking for parameters of the format:
+	 * {@link #stateIdParameterName}_value. If a match is found, return the
+	 * value as the stateId.
+	 * </ol>
+	 * @param context the context in which the external user event occured
+	 * @return the state id, or null if not found
+	 */
+	protected String extractStateId(ExternalContext context) {
+		Object parameter = findParameter(getStateIdParameterName(), context.getRequestParameterMap());
+		return verifySingleStringInputParameter(getStateIdParameterName(), parameter);
 	}
 
 	/**
 	 * Save the flow execution to storage.
 	 * @param flowExecutionId the previous storage id (if previously saved)
 	 * @param flowExecution the execution
-	 * @param sourceEvent the source event
+	 * @param context the context in which the external user event occured
 	 * @return the new storage id (may be different)
 	 * @throws FlowExecutionStorageException an exception occured saving the
 	 * execution to storage
 	 */
-	public Serializable saveFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent)
-			throws FlowExecutionStorageException {
-		flowExecutionId = getStorage().save(flowExecutionId, flowExecution, sourceEvent);
+	public Serializable saveFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution,
+			ExternalContext context) throws FlowExecutionStorageException {
+		flowExecutionId = getStorage().save(flowExecutionId, flowExecution, context);
 		flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Saved flow execution out to storage with id: '" + flowExecutionId + "'");
@@ -621,27 +783,19 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * Remove the flow execution from storage
 	 * @param flowExecutionId the storage id
 	 * @param flowExecution the execution
-	 * @param sourceEvent the source event
+	 * @param context the context in which the external user event occured
 	 * @throws FlowExecutionStorageException an exception occured removing the
 	 * execution from storage
 	 */
-	protected void removeFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent)
-			throws FlowExecutionStorageException {
+	protected void removeFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution,
+			ExternalContext context) throws FlowExecutionStorageException {
 		// event processing resulted in a previously saved flow execution
 		// ending, cleanup
-		getStorage().remove(flowExecutionId, sourceEvent);
+		getStorage().remove(flowExecutionId, context);
 		flowExecution.getListeners().fireRemoved(flowExecution, flowExecutionId);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removed flow execution from storage with id: '" + flowExecutionId + "'");
 		}
-	}
-
-	/**
-	 * Returns the name of the flow execution id parameter in the event
-	 * ("_flowExecutionId").
-	 */
-	public String getFlowExecutionIdParameterName() {
-		return FLOW_EXECUTION_ID_PARAMETER;
 	}
 
 	/**
@@ -667,23 +821,22 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param flowExecutionId the previous execution id (may be null if a new
 	 * flow execution was launched)
 	 * @param flowExecution the manipulated flow execution (state machine)
-	 * @param sourceEvent the external event that triggered flow execution
-	 * manipulation
+	 * @param context the context in which the external user event occured
 	 * @return the id the managed FlowExecution is stored under (may be
 	 * different if a new id was assigned, will be null if the flow execution
 	 * was removed)
 	 * @throws FlowExecutionStorageException an exception occured managing flow
 	 * execution storage
 	 */
-	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution, Event sourceEvent)
-			throws FlowExecutionStorageException {
+	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution,
+			ExternalContext context) throws FlowExecutionStorageException {
 		if (flowExecution.isActive()) {
 			// save the flow execution for future use
-			flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, sourceEvent);
+			flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, context);
 		}
 		else {
 			if (flowExecutionId != null) {
-				removeFlowExecution(flowExecutionId, flowExecution, sourceEvent);
+				removeFlowExecution(flowExecutionId, flowExecution, context);
 				flowExecutionId = null;
 			}
 		}
@@ -725,5 +878,88 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 			logger.debug("Returning selected view to client " + selectedView);
 		}
 		return selectedView;
+	}
+
+	// utility methods
+
+	/**
+	 * Utility method that makes sure the value for the specified parameter, if
+	 * present, is a single valued string.
+	 * @param parameterName the parameter name
+	 * @param parameterValue the parameter value
+	 * @return the string value
+	 */
+	public static String verifySingleStringInputParameter(String parameterName, Object parameterValue) {
+		String str = null;
+		if (parameterValue != null) {
+			try {
+				str = (String)parameterValue;
+			}
+			catch (ClassCastException e) {
+				if (parameterValue.getClass().isArray()) {
+					throw new IllegalArgumentException("The '" + parameterName
+							+ "' parameter was unexpectedly set to an array with values: "
+							+ StylerUtils.style(parameterValue) + "; this is likely a view configuration error: "
+							+ "make sure you submit a single string value for the '" + parameterName + "' parameter!");
+				}
+				else {
+					throw new IllegalArgumentException("Parameter '" + parameterName
+							+ " should have been a single string value but was: '" + parameterValue + "' of class: + "
+							+ parameterValue.getClass());
+				}
+			}
+		}
+		return str;
+	}
+
+	// support methods
+
+	/**
+	 * Obtain a named parameter from the event parameters. This method will try
+	 * to obtain a parameter value using the following algorithm:
+	 * <ol>
+	 * <li>Try to get the parameter value using just the given <i>logical</i>
+	 * name. This handles parameters of the form <tt>logicalName = value</tt>.
+	 * For normal parameters, e.g. submitted using a hidden HTML form field,
+	 * this will return the requested value.</li>
+	 * <li>Try to obtain the parameter value from the parameter name, where the
+	 * parameter name in the event is of the form
+	 * <tt>logicalName_value = xyz</tt> with "_" being the specified
+	 * delimiter. This deals with parameter values submitted using an HTML form
+	 * submit button.</li>
+	 * <li>If the value obtained in the previous step has a ".x" or ".y"
+	 * suffix, remove that. This handles cases where the value was submitted
+	 * using an HTML form image button. In this case the parameter in the event
+	 * would actually be of the form <tt>logicalName_value.x = 123</tt>.
+	 * </li>
+	 * </ol>
+	 * @param logicalParameterName the <i>logical</i> name of the request
+	 * parameter
+	 * @return the value of the parameter, or <code>null</code> if the
+	 * parameter does not exist in given request
+	 */
+	protected Object findParameter(String logicalParameterName, Map parameters) {
+		// first try to get it as a normal name=value parameter
+		Object value = parameters.get(logicalParameterName);
+		if (value != null) {
+			return value;
+		}
+		// if no value yet, try to get it as a name_value=xyz parameter
+		String prefix = logicalParameterName + parameterDelimiter;
+		Iterator paramNames = parameters.keySet().iterator();
+		while (paramNames.hasNext()) {
+			String paramName = (String)paramNames.next();
+			if (paramName.startsWith(prefix)) {
+				String strValue = paramName.substring(prefix.length());
+				// support images buttons, which would submit parameters as
+				// name_value.x=123
+				if (strValue.endsWith(".x") || strValue.endsWith(".y")) {
+					strValue = strValue.substring(0, strValue.length() - 2);
+				}
+				return strValue;
+			}
+		}
+		// we couldn't find the parameter value
+		return null;
 	}
 }

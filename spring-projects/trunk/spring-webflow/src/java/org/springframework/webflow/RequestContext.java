@@ -84,7 +84,7 @@ public interface RequestContext {
 	 * @return the originating event, the one that triggered the current
 	 * execution request
 	 */
-	public Event getSourceEvent();
+	public ExternalContext getExternalContext();
 
 	/**
 	 * Returns additional contextual information about the executing flow.

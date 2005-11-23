@@ -21,8 +21,8 @@ import org.springframework.webflow.config.ExceptionStateMapping;
 import org.springframework.webflow.config.MyCustomException;
 import org.springframework.webflow.config.SimpleViewSelector;
 import org.springframework.webflow.config.TransitionExecutingStateExceptionHandler;
-import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockFlowExecutionControlContext;
+import org.springframework.webflow.test.MockFlowSession;
 
 /**
  * Unit test for the Flow class.
@@ -132,7 +132,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testStart() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow), new Event(this));
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		flow.start(null, context);
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
 		assertTrue("Transaction active but should not be", !context.inTransaction(false));
@@ -146,7 +146,7 @@ public class FlowTests extends TestCase {
 		State customStartState = new EndState(flow, "myState3");
 		flow.resolveStateTransitionsTargetStates();
 
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow), new Event(this));
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		context.setCurrentState(flow.getRequiredState("myState2"));
 		flow.start(customStartState, context);
 		assertTrue("Should have ended", !context.isActive());
@@ -154,7 +154,7 @@ public class FlowTests extends TestCase {
 
 	public void testStartTransactional() {
 		flow.setProperty("transactional", new Boolean(true));
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow), new Event(this));
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		flow.start(null, context);
 		assertTrue("Transaction not active but should be", context.inTransaction(false));
 	}
@@ -167,9 +167,9 @@ public class FlowTests extends TestCase {
 				new Transition[] { new Transition("myState3") });
 		new EndState(flow, "myState3", new SimpleViewSelector("myView3"));
 		flow.resolveStateTransitionsTargetStates();
-		
+
 		flow.setProperty("transactional", new Boolean(true));
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow), new Event(this));
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		flow.start(null, context);
 		flow.onEvent(new Event(this, "submit"), context);
 		assertTrue("Transaction not active but should be", context.inTransaction(false));
@@ -177,7 +177,7 @@ public class FlowTests extends TestCase {
 
 	public void testEnd() {
 		flow.setProperty("transactional", new Boolean(true));
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow), new Event(this));
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		flow.start(null, context);
 		flow.end(context);
 		assertTrue("Transaction active but should not be", !context.inTransaction(false));
@@ -186,7 +186,7 @@ public class FlowTests extends TestCase {
 	public void testHandleStateException() {
 		flow.addExceptionHandler(new TransitionExecutingStateExceptionHandler(new ExceptionStateMapping(
 				MyCustomException.class, flow.getRequiredState("myState2"))));
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow), new Event(this));
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
 		ViewSelection selectedView = flow.handleException(e, context);
 		assertNotNull("Should not have been null", selectedView);
@@ -194,11 +194,12 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testHandleStateExceptionNoMatch() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow), new Event(this));
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
 		try {
 			flow.handleException(e, context);
-		} catch (StateException ex) {
+		}
+		catch (StateException ex) {
 			// expected
 		}
 	}

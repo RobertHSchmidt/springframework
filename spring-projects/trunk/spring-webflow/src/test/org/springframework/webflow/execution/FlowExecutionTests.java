@@ -37,6 +37,7 @@ import org.springframework.webflow.config.FlowArtifactFactoryAdapter;
 import org.springframework.webflow.config.FlowBuilderException;
 import org.springframework.webflow.config.SimpleViewSelector;
 import org.springframework.webflow.config.registry.FlowAssembler;
+import org.springframework.webflow.test.MockExternalContext;
 
 /**
  * General flow execution tests.
@@ -66,15 +67,15 @@ public class FlowExecutionTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		MockFlowExecutionListener flowExecutionListener = new MockFlowExecutionListener();
 		flowExecution.getListeners().add(flowExecutionListener);
-		flowExecution.start(new Event(this));
+		flowExecution.start(null, new MockExternalContext());
 		assertTrue(!flowExecutionListener.isExecuting());
 		assertEquals(0, flowExecutionListener.getFlowNestingLevel());
 		assertEquals(2, flowExecutionListener.getTransitionCount());
-		flowExecution.signalEvent(new Event(this, "submit"));
+		flowExecution.signalEvent("submit", null, new MockExternalContext());
 		assertTrue(!flowExecutionListener.isExecuting());
 		assertEquals(1, flowExecutionListener.getFlowNestingLevel());
 		assertEquals(4, flowExecutionListener.getTransitionCount());
-		flowExecution.signalEvent(new Event(this, "submit"));
+		flowExecution.signalEvent("submit", null, new MockExternalContext());
 		assertTrue(!flowExecutionListener.isExecuting());
 		assertEquals(0, flowExecutionListener.getFlowNestingLevel());
 		assertEquals(6, flowExecutionListener.getTransitionCount());
@@ -89,17 +90,17 @@ public class FlowExecutionTests extends TestCase {
 			}
 		};
 		FlowExecution flowExecution = new FlowExecutionImpl(new FlowAssembler("flow", builder).getFlow());
-		ViewSelection vd = flowExecution.start(new Event(this, "start"));
-		assertNotNull(vd);
-		assertEquals("viewName", vd.getViewName());
+		ViewSelection view = flowExecution.start(null, new MockExternalContext());
+		assertNotNull(view);
+		assertEquals("viewName", view.getViewName());
 		for (int i = 0; i < 10; i++) {
-			vd = flowExecution.signalEvent(new Event(this, "submit"));
-			assertNotNull(vd);
-			assertEquals("viewName", vd.getViewName());
+			view = flowExecution.signalEvent("submit", null, new MockExternalContext());
+			assertNotNull(view);
+			assertEquals("viewName", view.getViewName());
 		}
 		assertTrue(flowExecution.isActive());
-		vd = flowExecution.signalEvent(new Event(this, "finish"));
-		assertNull(vd);
+		view = flowExecution.signalEvent("finish", null, new MockExternalContext());
+		assertNull(view);
 		assertFalse(flowExecution.isActive());
 	}
 
@@ -137,7 +138,7 @@ public class FlowExecutionTests extends TestCase {
 		Flow parentFlow = new FlowAssembler("parentFlow", parentBuilder).getFlow();
 
 		FlowExecution flowExecution = new FlowExecutionImpl(parentFlow);
-		flowExecution.start(new Event(this, "start"));
+		flowExecution.start(null, new MockExternalContext());
 		assertFalse(flowExecution.isActive());
 	}
 
