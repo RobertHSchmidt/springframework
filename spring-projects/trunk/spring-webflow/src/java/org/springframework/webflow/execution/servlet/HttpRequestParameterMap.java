@@ -1,9 +1,7 @@
 package org.springframework.webflow.execution.servlet;
 
-import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * variables.
  * @author Keith Donald
  */
-public class HttpRequestParameterMap extends HashMap implements Map {
+public class HttpRequestParameterMap implements Map {
 
 	/**
 	 * The wrapped http session.
@@ -48,7 +46,13 @@ public class HttpRequestParameterMap extends HashMap implements Map {
 	}
 
 	public boolean containsValue(Object value) {
-		throw new UnsupportedOperationException();
+		String[] values = request.getParameterValues(null);
+		for (int i = 0; i < values.length; i++) {
+			if (values[i].equals(value)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public Object get(Object key) {
@@ -60,48 +64,79 @@ public class HttpRequestParameterMap extends HashMap implements Map {
 	}
 
 	public Object remove(Object key) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("You cannot modify an immutable parameter map");
 	}
 
 	public void putAll(Map arg0) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("You cannot modify an immutable parameter map");
 	}
 
 	public void clear() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("You cannot modify an immutable parameter map");
 	}
 
 	public Set keySet() {
-		// TODO
-		throw new UnsupportedOperationException();
+		return new KeySet();
 	}
 
 	public Collection values() {
-		// TODO
-		throw new UnsupportedOperationException();
+		return new ValueSet();
 	}
 
 	public Set entrySet() {
 		return new EntrySet();
 	}
-	
-	private class EntrySet extends AbstractSet {
-		public Iterator iterator() {
-			return new EntryIterator();
-		}
 
+	private abstract class AbstractSet extends java.util.AbstractSet {
 		public int size() {
 			return size();
 		}
 	}
-	
-	private class EntryIterator implements Iterator {
-		private Enumeration parameterNames = request.getParameterNames();
-		
+
+	private class KeySet extends AbstractSet {
+		public Iterator iterator() {
+			return new KeyIterator();
+		}
+	}
+
+	private class ValueSet extends AbstractSet {
+		public Iterator iterator() {
+			return new ValueIterator();
+		}
+	}
+
+	private class EntrySet extends AbstractSet {
+		public Iterator iterator() {
+			return new EntryIterator();
+		}
+	}
+
+	private abstract class AbstractIterator implements Iterator {
+		protected Enumeration parameterNames = request.getParameterNames();
+
 		public boolean hasNext() {
 			return parameterNames.hasMoreElements();
 		}
 
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	private class KeyIterator extends AbstractIterator {
+		public Object next() {
+			return parameterNames.nextElement();
+		}
+	}
+
+	private class ValueIterator extends AbstractIterator {
+		public Object next() {
+			String name = (String)parameterNames.nextElement();
+			return request.getParameter(name);
+		}
+	}
+
+	private class EntryIterator extends AbstractIterator {
 		public Object next() {
 			final String name = (String)parameterNames.nextElement();
 			return new Map.Entry() {
@@ -116,12 +151,8 @@ public class HttpRequestParameterMap extends HashMap implements Map {
 				public Object setValue(Object arg0) {
 					throw new UnsupportedOperationException();
 				}
-				
-			};
-		}
 
-		public void remove() {
-			throw new UnsupportedOperationException();
+			};
 		}
 	}
 }
