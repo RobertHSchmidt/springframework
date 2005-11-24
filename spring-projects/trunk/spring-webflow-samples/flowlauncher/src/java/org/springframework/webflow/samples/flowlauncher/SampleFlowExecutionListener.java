@@ -18,35 +18,34 @@ package org.springframework.webflow.samples.flowlauncher;
 import java.util.Map;
 
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.execution.EnterStateVetoException;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 
 public class SampleFlowExecutionListener extends FlowExecutionListenerAdapter {
-	
+
 	public static final String INPUT_ATTRIBUTE = "input";
-	
+
 	public void sessionStarting(RequestContext context, State startState, Map input) throws EnterStateVetoException {
 		/*
 		 * Each time a flow is starting, check if there is input data in the
-		 * request and if so, put it in flow scope.
-		 * You could also do this in a "captureInput" action, but using a flow execution
-		 * listener is more flexible.
+		 * request and if so, put it in flow scope. You could also do this in a
+		 * "captureInput" action, but using a flow execution listener is more
+		 * flexible.
 		 */
-		addInput(context.getSourceEvent(), input);
+		addInput(context.getExternalContext().getRequestParameterMap(), input);
 	}
-	
+
 	public void resumed(RequestContext context) {
 		// the flow is up & running, map input in the request into it
-		addInput(context.getSourceEvent(), context.getFlowScope());
+		addInput(context.getExternalContext().getRequestParameterMap(), context.getFlowScope());
 	}
-	
-	private void addInput(Event sourceEvent, Map targetMap) {
-		String inputParam = (String)sourceEvent.getParameter(INPUT_ATTRIBUTE);
+
+	private void addInput(Map sourceMap, Map targetMap) {
+		String inputParam = (String)sourceMap.get(INPUT_ATTRIBUTE);
 		if (StringUtils.hasText(inputParam)) {
 			targetMap.put(INPUT_ATTRIBUTE, inputParam);
-		}		
+		}
 	}
 }
