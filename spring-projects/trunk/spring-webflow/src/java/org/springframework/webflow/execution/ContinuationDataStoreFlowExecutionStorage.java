@@ -117,7 +117,7 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 		return createId();
 	}
 
-	public void remove(Serializable id, Event requestingEvent) throws FlowExecutionStorageException {
+	public void remove(Serializable id, ExternalContext context) throws FlowExecutionStorageException {
 		// nothing to do - note that we should not remove the identified flow
 		// execution continuation because that id actually identifies the
 		// 'previous' flow execution, not the one that has ended (because the
