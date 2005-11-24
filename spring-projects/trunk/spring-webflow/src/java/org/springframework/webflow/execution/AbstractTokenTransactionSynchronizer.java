@@ -124,7 +124,7 @@ public abstract class AbstractTokenTransactionSynchronizer implements Transactio
 		// we use the source event because we want to verify that the
 		// client request that came into the system has a matching transaction
 		// token!
-		Serializable tokenValue = (Serializable)context.getExternalContext().getRequestMap().get(
+		Serializable tokenValue = (Serializable)context.getExternalContext().getRequestParameterMap().get(
 				getTransactionTokenParameterName());
 		if (tokenValue == null) {
 			return false;
