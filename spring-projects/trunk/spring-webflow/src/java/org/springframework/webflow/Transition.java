@@ -32,18 +32,21 @@ import org.springframework.util.Assert;
  * <ul>
  * <li>Execution of a transition is guarded by a
  * <code>TransitionCriteria</code> object, the so called "matching criteria",
- * which, when matched, makes the transition elligible for execution.</li>
+ * which, when matched, makes this transition eligible for execution.</li>
  * <li>Optionally, completion of transition execution is guarded by a
  * <code>TransitionCriteria</code> object, the so called "execution criteria".
- * When the execution criteria test fails, the transition will <i>roll back</i>,
+ * When the execution criteria test fails, this transition will <i>roll back</i>,
  * reentering its source state. When the execution criteria test succeeds, the
  * transition continues onto the target state.</li>
- * <li>The target state of the transition is specified at configuration time
- * using the target state id.</li>
+ * <li>The target state of this transition is typically specified at
+ * configuration time using the target state id. If the target state needs to be
+ * calculated in a dynamic fashion at runtime, set a custom
+ * <code>TransitionTargetStateResolver</code></li>
  * </ul>
  * 
  * @see org.springframework.webflow.TransitionableState
  * @see org.springframework.webflow.TransitionCriteria
+ * @see org.springframework.webflow.TransitionTargetStateResolver
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
