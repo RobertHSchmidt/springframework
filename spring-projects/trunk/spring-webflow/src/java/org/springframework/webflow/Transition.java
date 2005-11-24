@@ -285,12 +285,12 @@ public class Transition extends AnnotatedObject {
 		}
 		if (logger.isDebugEnabled()) {
 			if (context.getFlowExecutionContext().isActive()) {
-				logger.debug("Completed execution of " + this + ": as a result the new state is '"
+				logger.debug("Completed execution of " + this + ", as a result the new state is '"
 						+ context.getFlowExecutionContext().getCurrentState().getId() + "' in flow '"
 						+ context.getFlowExecutionContext().getActiveFlow().getId() + "'");
 			}
 			else {
-				logger.debug("Completed execution of " + this + ": as a result the flow execution has ended");
+				logger.debug("Completed execution of " + this + ", as a result the flow execution has ended");
 			}
 		}
 		return selectedView;
