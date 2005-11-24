@@ -4,14 +4,14 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
+import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP request parameter map, for accessing request
  * parameters.
  * @author Keith Donald
  */
-public class HttpRequestParameterMap extends AbstractStringKeyedAttributeMap {
+public class HttpRequestParameterMap extends StringKeyedAttributeMapAdapter {
 
 	/**
 	 * The wrapped http request.

@@ -4,14 +4,14 @@ import java.util.Enumeration;
 
 import javax.portlet.PortletRequest;
 
-import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
+import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 
 /**
  * Map backed by the Portlet request parameter map, for accessing request local
  * portlet parameters.
  * @author Keith Donald
  */
-public class PortletRequestParameterMap extends AbstractStringKeyedAttributeMap {
+public class PortletRequestParameterMap extends StringKeyedAttributeMapAdapter {
 
 	private PortletRequest request;
 

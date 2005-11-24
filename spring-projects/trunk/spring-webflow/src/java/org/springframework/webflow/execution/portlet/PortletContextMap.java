@@ -4,14 +4,14 @@ import java.util.Enumeration;
 
 import javax.portlet.PortletContext;
 
-import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
+import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 
 /**
  * Map backed by the Portlet context, for accessing application scoped
  * attributes.
  * @author Keith Donald
  */
-public class PortletContextMap extends AbstractStringKeyedAttributeMap {
+public class PortletContextMap extends StringKeyedAttributeMapAdapter {
 
 	/**
 	 * The wrapped servlet context.

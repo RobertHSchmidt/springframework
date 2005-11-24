@@ -6,6 +6,11 @@ import java.util.TreeMap;
 
 import org.springframework.webflow.ExternalContext;
 
+/**
+ * Mock implementation of the <code>ExternalContext</code> interface.
+ * 
+ * @author Keith Donald
+ */
 public class MockExternalContext implements ExternalContext {
 
 	private Map requestParameterMap = Collections.EMPTY_MAP;

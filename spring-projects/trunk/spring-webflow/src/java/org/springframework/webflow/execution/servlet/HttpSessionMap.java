@@ -5,7 +5,7 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
+import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 import org.springframework.webflow.util.EmptyEnumeration;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.webflow.util.EmptyEnumeration;
  * attributes.
  * @author Keith Donald
  */
-public class HttpSessionMap extends AbstractStringKeyedAttributeMap {
+public class HttpSessionMap extends StringKeyedAttributeMapAdapter {
 
 	/**
 	 * The wrapped http request, providing access to the session.

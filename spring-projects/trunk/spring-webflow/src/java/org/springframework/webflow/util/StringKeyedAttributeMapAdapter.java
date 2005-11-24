@@ -24,7 +24,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-public abstract class AbstractStringKeyedAttributeMap implements Map {
+/**
+ * Base class for attribute map adapters whose keys are String values.
+ * @author Keith Donald
+ */
+public abstract class StringKeyedAttributeMapAdapter implements Map {
 	private Set keySet;
 
 	private Collection values;
@@ -118,29 +122,29 @@ public abstract class AbstractStringKeyedAttributeMap implements Map {
 
 	private abstract class AbstractSet extends java.util.AbstractSet {
 		public boolean isEmpty() {
-			return AbstractStringKeyedAttributeMap.this.isEmpty();
+			return StringKeyedAttributeMapAdapter.this.isEmpty();
 		}
 
 		public int size() {
-			return AbstractStringKeyedAttributeMap.this.size();
+			return StringKeyedAttributeMapAdapter.this.size();
 		}
 
 		public void clear() {
-			AbstractStringKeyedAttributeMap.this.clear();
+			StringKeyedAttributeMapAdapter.this.clear();
 		}
 	}
-	
+
 	private class KeySet extends AbstractSet {
 		public Iterator iterator() {
 			return new KeyIterator();
 		}
 
 		public boolean contains(Object o) {
-			return AbstractStringKeyedAttributeMap.this.containsKey(o);
+			return StringKeyedAttributeMapAdapter.this.containsKey(o);
 		}
 
 		public boolean remove(Object o) {
-			return AbstractStringKeyedAttributeMap.this.remove(o) != null;
+			return StringKeyedAttributeMapAdapter.this.remove(o) != null;
 		}
 
 	}
@@ -154,7 +158,7 @@ public abstract class AbstractStringKeyedAttributeMap implements Map {
 			if (currentKey == null) {
 				throw new NoSuchElementException("You must call next() at least once");
 			}
-			AbstractStringKeyedAttributeMap.this.remove(currentKey);
+			StringKeyedAttributeMapAdapter.this.remove(currentKey);
 		}
 
 		public boolean hasNext() {
@@ -172,7 +176,7 @@ public abstract class AbstractStringKeyedAttributeMap implements Map {
 		}
 
 		public boolean contains(Object o) {
-			return AbstractStringKeyedAttributeMap.this.containsValue(o);
+			return StringKeyedAttributeMapAdapter.this.containsValue(o);
 		}
 
 		public boolean remove(Object o) {
@@ -192,7 +196,7 @@ public abstract class AbstractStringKeyedAttributeMap implements Map {
 	private class ValuesIterator extends KeyIterator {
 		public Object next() {
 			super.next();
-			return AbstractStringKeyedAttributeMap.this.get(currentKey);
+			return StringKeyedAttributeMapAdapter.this.get(currentKey);
 		}
 	}
 
@@ -211,7 +215,7 @@ public abstract class AbstractStringKeyedAttributeMap implements Map {
 			if (key == null || value == null) {
 				return false;
 			}
-			return value.equals(AbstractStringKeyedAttributeMap.this.get(key));
+			return value.equals(StringKeyedAttributeMapAdapter.this.get(key));
 		}
 
 		public boolean remove(Object o) {
@@ -221,10 +225,10 @@ public abstract class AbstractStringKeyedAttributeMap implements Map {
 			Entry entry = (Entry)o;
 			Object key = entry.getKey();
 			Object value = entry.getValue();
-			if (key == null || value == null || !value.equals(AbstractStringKeyedAttributeMap.this.get(key))) {
+			if (key == null || value == null || !value.equals(StringKeyedAttributeMapAdapter.this.get(key))) {
 				return false;
 			}
-			return AbstractStringKeyedAttributeMap.this.remove(((Entry)o).getKey()) != null;
+			return StringKeyedAttributeMapAdapter.this.remove(((Entry)o).getKey()) != null;
 		}
 	}
 
@@ -247,11 +251,11 @@ public abstract class AbstractStringKeyedAttributeMap implements Map {
 		}
 
 		public Object getValue() {
-			return AbstractStringKeyedAttributeMap.this.get(currentKey);
+			return StringKeyedAttributeMapAdapter.this.get(currentKey);
 		}
 
 		public Object setValue(Object value) {
-			return AbstractStringKeyedAttributeMap.this.put(currentKey, value);
+			return StringKeyedAttributeMapAdapter.this.put(currentKey, value);
 		}
 	}
 }
