@@ -64,11 +64,11 @@ public class MethodInvoker {
 			parameterValues[i] = applyTypeConversion(parameterValue, parameter.getType());
 		}
 		Class[] parameterTypes = parameters.getTypesArray();
-		for (int j = 0; j < parameterTypes.length; j++) {
-			if (parameterTypes[j] == null) {
-				Object parameterValue = parameterValues[j];
+		for (int i = 0; i < parameterTypes.length; i++) {
+			if (parameterTypes[i] == null) {
+				Object parameterValue = parameterValues[i];
 				if (parameterValue != null) {
-					parameterTypes[j] = parameterValue.getClass();
+					parameterTypes[i] = parameterValue.getClass();
 				}
 			}
 		}
