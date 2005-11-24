@@ -22,7 +22,6 @@ import java.util.Map;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
-import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
@@ -42,14 +41,17 @@ import org.springframework.webflow.execution.FlowExecutionImpl;
  * More specifically, a typical flow execution test case will test:
  * <ul>
  * <li>That the flow execution starts as expected given a source event with
- * potential input parameters (see {@link #startFlow(Event)}).
+ * potential input request parameters (see the {@link #startFlow(Map)}
+ * variants).
  * <li>That given the set of supported transition criteria for a given state,
  * that the state executes the appropriate transition when an event is signaled
- * (with potential input parameters). A test case should be coded for each
- * logical event that can occur, where an event drives a possible path through
- * the flow. The goal should be to exercise all possible paths of the flow.
+ * (with potential input request parameters, see the
+ * {@link #signalEvent(String, Map)} variants). A test case should be coded for
+ * each logical event that can occur, where an event drives a possible path
+ * through the flow. The goal should be to exercise all possible paths of the
+ * flow.
  * <li>That given a transition that leads to an interactive state type (a view
- * state or an end state), that the view descriptor returned to the client
+ * state or an end state), that the view selection returned to the client
  * matches what was expected and the current state of the flow matches what is
  * expected.
  * </ul>
@@ -151,8 +153,9 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
-	 * @return the model and view returned as a result of starting the flow
-	 * (returned when the first view state is entered)
+	 * @return the view selection made as a result of starting the flow
+	 * (returned when the first interactive state (a view state or end state) is
+	 * entered)
 	 */
 	protected ViewSelection startFlow() {
 		return startFlow(null, new MockExternalContext(Collections.EMPTY_MAP));
@@ -160,8 +163,10 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
-	 * @return the model and view returned as a result of starting the flow
-	 * (returned when the first view state is entered)
+	 * @param input request parameters needed by the flow execution to start
+	 * @return the view selection made as a result of starting the flow
+	 * (returned when the first interactive state (a view state or end state) is
+	 * entered)
 	 */
 	protected ViewSelection startFlow(Map parameters) {
 		return startFlow(null, new MockExternalContext(parameters));
@@ -169,8 +174,11 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
-	 * @return the selected model and view returned as a result of starting the
-	 * flow (returned when the first view state is entered)
+	 * @param stateId the state to start the flow execution in
+	 * @param input request parameters needed by the flow execution to start
+	 * @return the view selection made as a result of starting the flow
+	 * (returned when the first interactive state (a view state or end state) is
+	 * entered)
 	 */
 	protected ViewSelection startFlow(String stateId, Map parameters) {
 		return startFlow(stateId, new MockExternalContext(parameters));
@@ -178,8 +186,12 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
-	 * @return the selected model and view returned as a result of starting the
-	 * flow (returned when the first view state is entered)
+	 * @param context the external context providing information about the
+	 * caller's environment, used by the flow execution during the start
+	 * operation
+	 * @return the view selection made as a result of starting the flow
+	 * (returned when the first interactive state (a view state or end state) is
+	 * entered)
 	 */
 	protected ViewSelection startFlow(ExternalContext context) {
 		return startFlow(null, context);
@@ -187,8 +199,13 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
-	 * @return the selected model and view returned as a result of starting the
-	 * flow (returned when the first view state is entered)
+	 * @param stateId the state to start the flow execution in
+	 * @param context the external context providing information about the
+	 * caller's environment, used by the flow execution during the start
+	 * operation
+	 * @return the view selection made as a result of starting the flow
+	 * (returned when the first interactive state (a view state or end state) is
+	 * entered)
 	 */
 	protected ViewSelection startFlow(String stateId, ExternalContext context) {
 		this.flowExecution = new FlowExecutionImpl(getFlow());
@@ -204,36 +221,58 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	protected void onFlowExecutionStarting(FlowExecution flowExecution) {
 	}
 
+	/**
+	 * Signal an occurence of an event in the state of the flow execution being
+	 * tested.
+	 * @param eventId the event that occured
+	 * @param input request parameters needed by the flow execution to complete event processing
+	 */
 	protected ViewSelection signalEvent(String eventId, Map parameters) {
 		return this.flowExecution.signalEvent(eventId, null, new MockExternalContext(parameters));
 	}
 
+	/**
+	 * Signal an occurence of an event in the state of the flow execution being
+	 * tested.
+	 * @param eventId the event that occured
+	 * @param stateId the state the event occured in
+	 * @param input request parameters needed by the flow execution to complete event processing
+	 */
 	protected ViewSelection signalEvent(String eventId, String stateId, Map parameters) {
 		return this.flowExecution.signalEvent(eventId, stateId, new MockExternalContext(parameters));
 	}
 
-	protected ViewSelection signalEvent(String eventId, MockExternalContext context) {
+	/**
+	 * Signal an occurence of an event in the state of the flow execution being
+	 * tested.
+	 * @param eventId the event that occured
+	 * @param context the external context providing information about the
+	 * caller's environment, used by the flow execution during the start
+	 * operation
+	 */
+	protected ViewSelection signalEvent(String eventId, ExternalContext context) {
 		return this.flowExecution.signalEvent(eventId, null, context);
 	}
 
 	/**
-	 * Signal an occurence of an event in the current state of the flow
-	 * execution being tested.
+	 * Signal an occurence of an event in the state of the flow execution being
+	 * tested.
 	 * <p>
 	 * Note: signaling an event will cause state transitions to occur in a chain
-	 * UNTIL control is returned to the caller. Control will be returned once a
-	 * view state is entered or an end state is entered and the flow terminates.
-	 * Action states are executed without returning control, as their result
-	 * always triggers another state transition, executed internally. Action
-	 * states can also be executed in a chain like fashion (e.g. action state 1
-	 * (result), action state 2 (result), action state 3 (result), view state
-	 * <control returns so view can be rendered>).
+	 * UNTIL control is returned to the caller. Control is returned once a
+	 * "interactive" state type is entered: either a view state when the flow is
+	 * paused or an end state when the flow terminates. Action states are
+	 * executed without returning control, as their result always triggers
+	 * another state transition, executed internally. Action states can also be
+	 * executed in a chain like fashion (e.g. action state 1 (result), action
+	 * state 2 (result), action state 3 (result), view state <control returns so
+	 * view can be rendered>).
 	 * <p>
 	 * If you wish to verify expected behavior on each state transition (and not
 	 * just when the view state triggers return of control back to the client),
 	 * you have a few options:
 	 * <p>
-	 * First, you can always write a standalone unit test for the
+	 * First, you may implement a standalone unit test for your
 	 * <code>Action</code> implementation. There you can verify that the
 	 * action executes its core logic and responds to any exceptions it must
 	 * handle. When you do this, you may mock or stub out services the Action
@@ -250,8 +289,14 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * interface. It is recommended you extend
 	 * {@link org.springframework.webflow.execution.FlowExecutionListenerAdapter}
 	 * and only override what you need.
-	 * @return the selected model and view, returned once control is returned to
-	 * the client (occurs when the flow enters a view state, or an end state)
+	 * @param eventId the event that occured
+	 * @param stateId the state the event occured in
+	 * @param context the external context providing information about the
+	 * caller's environment, used by the flow execution during the start
+	 * operation
+	 * @return the view selection that was made, returned once control is
+	 * returned to the client (occurs when the flow enters a view state, or an
+	 * end state)
 	 */
 	protected ViewSelection signalEvent(String eventId, String stateId, MockExternalContext context) {
 		return this.flowExecution.signalEvent(eventId, stateId, context);
