@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.ObjectUtils;
 
 /**
  * A class method signature.
@@ -119,7 +120,7 @@ public class Signature implements Serializable {
 			return false;
 		}
 		for (int i = 0; i < this.parameterTypes.length; i++) {
-			if (!parameterTypes[i].equals(other[i])) {
+			if (!ObjectUtils.nullSafeEquals(parameterTypes[i], other[i])) {
 				return false;
 			}
 		}
@@ -136,7 +137,10 @@ public class Signature implements Serializable {
 		}
 		int hash = 0;
 		for (int i = 0; i < parameterTypes.length; i++) {
-			hash += parameterTypes[i].hashCode();
+			Class parameterType = parameterTypes[i];
+			if (parameterType != null) {
+				hash += parameterTypes[i].hashCode();
+			}
 		}
 		return hash;
 	}
