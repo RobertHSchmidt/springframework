@@ -15,7 +15,7 @@
 	<classpathentry kind="lib" path="lib/global/commons-codec.jar"/>
 	<classpathentry kind="lib" path="lib/global/jstl.jar"/>
 	<classpathentry kind="lib" path="lib/global/junit.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-binding.jar"/>
+	<classpathentry sourcepath="/spring-binding" kind="lib" path="lib/global/spring-binding.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-web.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-webflow.jar"/>

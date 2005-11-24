@@ -17,9 +17,9 @@
 <flow start-state="enterBirthdate">
 
 	<view-state id="enterBirthdate" view="enterBirthdate">
-		<entry-action>
+		<entry-actions>
 			<action bean="formAction" method="setupForm"/>
-		</entry-action>
+		</entry-actions>
 		<transition on="submit" to="calculateAge">
 			<action bean="formAction" method="bindAndValidate"/>
 		</transition>

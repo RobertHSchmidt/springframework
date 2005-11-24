@@ -33,7 +33,7 @@ public class AddItemAction extends AbstractAction {
 			return result("txError");
 		}
 		List list = (List)context.getFlowScope().getOrCreateAttribute("list", ArrayList.class);
-		String data = (String)context.getSourceEvent().getParameter("data");
+		String data = (String)context.getExternalContext().getRequestParameterMap().get("data");
 		if (data != null && data.length() > 0) {
 			list.add(data);
 		}

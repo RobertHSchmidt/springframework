@@ -42,7 +42,7 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 		Map parameters = new HashMap();
 		parameters.put("firstName", "Keith");
 		parameters.put("lastName", "Donald");
-		ViewSelection view = signalEvent(event("search", parameters));
+		ViewSelection view = signalEvent("search", parameters);
 		assertCurrentStateEquals("displayResults");
 		assertModelAttributeCollectionSize(1, "executeSearch.result", view);
 	}
@@ -50,7 +50,7 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 	public void testCriteriaView_Submit_Error() {
 		startFlow();
 		// simulate user error by not passing in any params
-		signalEvent(event("search"));
+		signalEvent("search");
 		assertCurrentStateEquals("displayCriteria");
 	}
 

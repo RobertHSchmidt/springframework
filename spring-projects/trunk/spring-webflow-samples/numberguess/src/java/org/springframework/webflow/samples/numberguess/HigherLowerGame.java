@@ -25,16 +25,16 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.MultiAction;
 
 /**
- * Action that encapsulates logic for the number guess sample flow. Note
- * that this is a stateful action: it holds modifiable state in instance memebers!
+ * Action that encapsulates logic for the number guess sample flow. Note that
+ * this is a stateful action: it holds modifiable state in instance memebers!
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
  */
 public class HigherLowerGame extends MultiAction implements Serializable {
-	
+
 	private static final String GUESS_PARAMETER = "guess";
-	
+
 	private static final Random random = new Random();
 
 	private Calendar start = Calendar.getInstance();
@@ -91,8 +91,8 @@ public class HigherLowerGame extends MultiAction implements Serializable {
 
 	private int getGuess(RequestContext context) {
 		try {
-			return ((Integer)new TextToNumber().convert(
-					context.getSourceEvent().getParameter(GUESS_PARAMETER), Integer.class)).intValue();
+			return ((Integer)new TextToNumber().convert(context.getExternalContext().getRequestParameterMap().get(
+					GUESS_PARAMETER), Integer.class)).intValue();
 		}
 		catch (Exception e) {
 			return -1;
