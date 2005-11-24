@@ -1,6 +1,7 @@
 package org.springframework.webflow.test;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -23,6 +24,11 @@ public class MockExternalContext implements ExternalContext {
 	
 	public MockExternalContext() {
 		
+	}
+	
+	public MockExternalContext(String singleRequestParameterName, Object singleRequestParameterValue) {
+		this.requestParameterMap = new HashMap(1);
+		this.requestParameterMap.put(singleRequestParameterName, singleRequestParameterValue);
 	}
 	
 	public MockExternalContext(Map requestParameterMap) {
