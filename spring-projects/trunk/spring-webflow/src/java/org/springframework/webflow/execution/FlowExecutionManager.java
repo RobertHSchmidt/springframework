@@ -42,23 +42,23 @@ import org.springframework.webflow.config.FlowLocator;
  * as signaling events for processing by existing, paused executions (that are
  * waiting to be resumed in response to a user event).
  * <p>
- * The {@link #onEvent(Event)} method is the central operation and implements
- * the following algorithm:
+ * The {@link #onEvent(ExternalContext)} method is the central operation and
+ * implements the following algorithm:
  * <ol>
- * <li>Look for a flow execution id in the event (in a parameter named
- * "_flowExecutionId").</li>
+ * <li>Look for a flow execution id in the event context (in a request
+ * parameter named {@link #getFlowExecutionIdParameterName()).</li>
  * <li>If no flow execution id was submitted, create a new flow execution. The
  * top-level flow definition for which an execution is created for is determined
- * by the value of the "_flowId" event parameter. If this parameter parameter is
- * not present, an exception is thrown.</li>
+ * by the value of the {@link #getFlowIdParameterName()} request parameter. If
+ * this parameter parameter is not present, an exception is thrown.</li>
  * <li>If a flow execution id <em>was</em> submitted, load the previously
  * saved FlowExecution with that id from storage.</li>
  * <li>If a new flow execution was created in the previous steps, start that
  * execution.</li>
- * <li>If an existing flow execution was loaded from storage, extract the
- * current state id ("_currentStateId") and event id ("_eventId") parameter
- * values from the event. Signal the occurence of the user event in the current
- * state, resuming the flow execution in that state.</li>
+ * <li>If an existing flow execution was loaded from storage, extract the value
+ * of the event id ({@link #getEventIdParameterName()) and state id ({@link #getStateIdParameterName()})
+ * request parameters. Signal the occurence of the event, resuming the flow
+ * execution in the requested state.</li>
  * <li>If the flow execution is still active after event processing, save it
  * out to storage. This process generates a unique flow execution id that will
  * be exposed to the caller for identifying the same FlowExecution
@@ -68,8 +68,8 @@ import org.springframework.webflow.config.FlowLocator;
  * <p>
  * By default, this class will use the flow execution implementation provided by
  * the <code>FlowExecutionImpl</code> class. If you would like to use a
- * different implementation, just override the
- * {@link #createFlowExecution(Flow)} method in a subclass.
+ * different implementation, override the {@link #createFlowExecution(Flow)}
+ * method in a subclass.
  * 
  * <p>
  * <b>Typical FlowExecutionManager configurable properties</b><br>
@@ -149,20 +149,20 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	public static final String PARAMETER_VALUE_DELIMITER = "_";
 
 	/**
-	 * The id of the flow execution will be exposed to the view in a model
-	 * attribute with this name ("flowExecutionId").
-	 */
-	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
-
-	/**
 	 * The flow context itself will be exposed to the view in a model attribute
 	 * with this name ("flowExecutionContext").
 	 */
 	public static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
 
 	/**
+	 * The id of the flow execution will be exposed to the view in a model
+	 * attribute with this name ("flowExecutionId").
+	 */
+	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
+
+	/**
 	 * The current state of an executing flow will be exposed to the view in a
-	 * model attribute with this name ("stateId").
+	 * model attribute with this name ("currentSstateId").
 	 */
 	public static final String CURRENT_STATE_ID_ATTRIBUTE = "currentStateId";
 
@@ -599,7 +599,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * <code>flowExecutionId</code>.
 	 * 
 	 * @param flowExecutionId the flow execution storage identifier
-	 * @param context the context in which an external user event occured
+	 * @param context the context in which the external user event occured
 	 * @return the flow execution
 	 */
 	protected FlowExecution getFlowExecution(Serializable flowExecutionId, ExternalContext context) {
@@ -613,7 +613,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 
 	/**
 	 * Obtain a unique flow execution id from given event.
-	 * @param context the context in which an external user event occured
+	 * @param context the context in which the external user event occured
 	 * @return the obtained id or <code>null</code> if not found
 	 */
 	public Serializable getFlowExecutionId(ExternalContext context) {
@@ -639,11 +639,13 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Obtain a flow to use from given event. If there is a "_flowId" parameter
-	 * specified in the event, the flow with that id will be returend after
-	 * lookup using the flow locator. If no "_flowId" parameter is present in
-	 * the event, the default top-level flow will be returned.
-	 * @param context the context in which an external user event occured
+	 * Obtain a flow to launch a new execution of. If there is a
+	 * {@link #getFlowIdParameterName()} parameter specified in the event, the
+	 * flow with that id will be returned after lookup using the flow locator.
+	 * If no {@link #getFlowIdParameterName()} parameter is present in the
+	 * event, the default top-level flow will be returned.
+	 * @param context the context in which the external user event occured
+	 * @return the flow definition to launch
 	 */
 	protected Flow getFlow(ExternalContext context) {
 		String flowId = verifySingleStringInputParameter(getFlowIdParameterName(), context.getRequestParameterMap()
@@ -661,7 +663,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	/**
 	 * Start the flow execution
 	 * @param flowExecution the execution to start
-	 * @param context the context that trigged flow execution creation
+	 * @param context the external context that trigged flow execution creation
 	 * @return the selected starting view
 	 * @throws StateException an exception occured during the execution of the
 	 * start operation
@@ -714,11 +716,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * <p>
 	 * This is a multi-step process consisting of:
 	 * <ol>
-	 * <li>Try the {@link #eventIdParameterName} parameter first, if it is
+	 * <li>Try the {@link #getEventIdParameterName()} parameter first, if it is
 	 * present, return its value as the eventId.
 	 * <li>Try a parameter search looking for parameters of the format:
-	 * {@link #eventIdParameterName}_value. If a match is found, return the
-	 * value as the eventId.
+	 * {@link #getEventIdParameterName()}_value. If a match is found, return
+	 * the value as the eventId.
 	 * </ol>
 	 * @param context the context in which the external user event occured
 	 * @param request the http servlet request
@@ -746,11 +748,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * <p>
 	 * This is a multi-step process consisting of:
 	 * <ol>
-	 * <li>Try the {@link #stateIdParameterName} parameter first, if it is
+	 * <li>Try the {@link #getStateIdParameterName()} parameter first, if it is
 	 * present, return its value as the eventId.
 	 * <li>Try a parameter search looking for parameters of the format:
-	 * {@link #stateIdParameterName}_value. If a match is found, return the
-	 * value as the stateId.
+	 * {@link #getStateIdParameterName()}_value. If a match is found, return
+	 * the value as the stateId.
 	 * </ol>
 	 * @param context the context in which the external user event occured
 	 * @return the state id, or null if not found
@@ -935,6 +937,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * </ol>
 	 * @param logicalParameterName the <i>logical</i> name of the request
 	 * parameter
+	 * @param parameters the available parameter map
 	 * @return the value of the parameter, or <code>null</code> if the
 	 * parameter does not exist in given request
 	 */
