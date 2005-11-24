@@ -74,7 +74,7 @@
 	An action state is a transitionable state.  An action state transition is triggered by an
 	action result event.
 -->
-<!ELEMENT action-state ( property*, entry-action?, action+, transition+, exit-action?, exception-handler* )>
+<!ELEMENT action-state ( property*, entry-actions?, action+, transition+, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this action state; must be unique to this flow.
@@ -164,7 +164,7 @@
 	A view state is a transitionable state.  A view state transition is triggered by an
 	user input event.
 -->
-<!ELEMENT view-state ( property*, entry-action?, transition+, exit-action?, exception-handler* )>
+<!ELEMENT view-state ( property*, entry-actions?, transition+, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this view state; must be unique to this flow.
@@ -203,13 +203,13 @@
 <!--
 	Defines state entry logic to be executed.  This logic will always execute when this state is entered.
 -->
-<!ELEMENT entry-action ( action+ )>
+<!ELEMENT entry-actions ( action+ )>
 
 <!--
 	Defines state exit logic to be executed.  This logic will always execute when this state is exited 
 	regardless of what transition is executed.
 -->
-<!ELEMENT exit-action ( action+ )>
+<!ELEMENT exit-actions ( action+ )>
 
 <!--
 	Defines a decision state, a state that evaluates one or more expressions to	decide which
@@ -218,7 +218,7 @@
 	A decision state is a transitionable state.  A decision state transition is triggered by an
 	boolean expression evaluating true against the flow execution request context.
 -->
-<!ELEMENT decision-state ( property*, entry-action?, if+, exit-action?, exception-handler* )>
+<!ELEMENT decision-state ( property*, entry-actions?, if+, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this decision state; must be unique to this flow.
@@ -262,7 +262,7 @@
 	to respond to the result of that execution.  The result of subflow execution, the end state 
 	that was reached, should be used as grounds for a transition out of this state.
 -->
-<!ELEMENT subflow-state ( property*, entry-action?, attribute-mapper?, transition+, exit-action?, exception-handler* )>
+<!ELEMENT subflow-state ( property*, entry-actions?, attribute-mapper?, transition+, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this subflow state; must be unique to this flow.
@@ -404,7 +404,7 @@
 	session responds to the result of the subflow, typically by reasoning on the id of the 
 	end state that was reached.
 -->
-<!ELEMENT end-state ( property*, entry-action?, exception-handler* )>
+<!ELEMENT end-state ( property*, entry-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this end state; must be unique to this flow.
