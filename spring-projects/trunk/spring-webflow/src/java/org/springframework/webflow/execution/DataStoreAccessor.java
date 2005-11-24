@@ -43,9 +43,10 @@ import org.springframework.webflow.ExternalContext;
 public interface DataStoreAccessor {
 
 	/**
-	 * Returns a mutable attribute accessor providing access to the data store.
-	 * @param sourceEvent the event, acting as a context object for locating the
+	 * Returns a mutable attribute accessor providing access to an underlying
 	 * data store.
+	 * @param context an external user context object which may provide
+	 * assistance in locating the datastore.
 	 * @return the mutable attribute source providing access to the data store
 	 */
 	public MutableAttributeSource getDataStore(ExternalContext context);
