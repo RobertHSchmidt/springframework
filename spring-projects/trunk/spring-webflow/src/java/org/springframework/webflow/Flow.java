@@ -42,13 +42,13 @@ import org.springframework.util.StringUtils;
  * <p>
  * Note: A flow is not a welcome page or an index page: don't use flows for
  * those cases, use simple controllers/actions/portlets instead. Don't use flows
- * where your application demands "free browsing": flows force strict
- * navigation. Especially in Intranet applications, there are often "controlled
- * navigations" where the user is not free to do what he or she wants but must
- * follow the guidelines provided by the system to complete a process that is
- * transactional in nature (the quinessential example would be a 'checkout' flow
- * of a shopping cart application). This is a typical use case appropriate for a
- * flow.
+ * where your application demands a significant amount of "free browsing": flows
+ * force strict navigation. Especially in Intranet applications, there are often
+ * "controlled navigations" where the user is not free to do what he or she
+ * wants but must follow the guidelines provided by the system to complete a
+ * process that is transactional in nature (the quinessential example would be a
+ * 'checkout' flow of a shopping cart application). This is a typical use case
+ * appropriate for a flow.
  * <p>
  * Structurally, a Flow is composed of a set of states. A {@link State} is a
  * point in a flow where a behavior is executed; for example, showing a view,
@@ -82,8 +82,8 @@ import org.springframework.util.StringUtils;
  * Struts, WebWork, Tapestry, or JSF, for example). The core system is fully
  * usable outside an HTTP servlet environment, for example in Portlets, tests,
  * or standalone applications. One of the major architectural benefits of Spring
- * Web Flow is the ability to design reusable controller modules that may be
- * executed in <b>any</b> environment.
+ * Web Flow is the ability to design reusable, high-level controller modules
+ * that may be executed in <b>any</b> environment.
  * <p>
  * Note: flows are singleton definition objects so they should be thread-safe!
  * 

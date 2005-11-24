@@ -30,29 +30,32 @@ import java.util.Map;
 public interface ExternalContext {
 
 	/**
-	 * Returns access to the parameters associated with the request that led to
-	 * SWF being called.  This map is immutable and cannot be changed
+	 * Provides access to the parameters associated with the user request that
+	 * led to SWF being called. This map is immutable and cannot be changed.
 	 * @return the request parameter map
 	 */
 	public Map getRequestParameterMap();
 
 	/**
-	 * Returns access to an external request attribute map, providing a storage for 
-	 * data local to the current request and accessible to both internal and external SWF artifacts.
+	 * Provides access to the external request attribute map, providing a
+	 * storage for data local to the current user request and accessible to both
+	 * internal and external SWF artifacts.
 	 * @return the request attribute map
 	 */
 	public Map getRequestMap();
 
 	/**
-	 * Returns access to an external session map, providing a storage for 
-	 * data local to the current user session and accessible to both internal and external SWF artifacts.
+	 * Provides access to the external session map, providing a storage for data
+	 * local to the current user session and accessible to both internal and
+	 * external SWF artifacts.
 	 * @return the session attribute map
 	 */
 	public Map getSessionMap();
 
 	/**
-	 * Returns access to an external application map, providing a storage for 
-	 * data local to the current application and accessible to both internal and external SWF artifacts.
+	 * Provides access to the external application map, providing a storage for
+	 * data local to the current user application and accessible to both
+	 * internal and external SWF artifacts.
 	 * @return the application attribute map
 	 */
 	public Map getApplicationMap();
