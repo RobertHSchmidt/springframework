@@ -7,7 +7,7 @@ import javax.portlet.PortletRequest;
 import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
 
 /**
- * Map backed by the Portlet session, for accessing session scoped variables.
+ * Map backed by the Portlet request, for accessing request scoped attributes.
  * @author Keith Donald
  */
 public class PortletRequestMap extends AbstractStringKeyedAttributeMap {

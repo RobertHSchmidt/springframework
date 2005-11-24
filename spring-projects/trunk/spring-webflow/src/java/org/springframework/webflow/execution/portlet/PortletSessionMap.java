@@ -1,7 +1,6 @@
 package org.springframework.webflow.execution.portlet;
 
 import java.util.Enumeration;
-import java.util.Map;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
@@ -10,19 +9,16 @@ import org.springframework.webflow.execution.servlet.EmptyEnumeration;
 import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
 
 /**
- * Map backed by the Portlet session, for accessing session scoped variables.
+ * Map backed by the Portlet session, for accessing session scoped attributes.
  * @author Keith Donald
  */
 public class PortletSessionMap extends AbstractStringKeyedAttributeMap {
 
 	/**
-	 * The wrapped http session.
+	 * The wrapped portlet request, providing access to the session.
 	 */
 	private PortletRequest request;
 
-	/**
-	 * @param session the session
-	 */
 	public PortletSessionMap(PortletRequest request) {
 		this.request = request;
 	}

@@ -1,7 +1,6 @@
 package org.springframework.webflow.execution.portlet;
 
 import java.util.Enumeration;
-import java.util.Map;
 
 import javax.portlet.PortletRequest;
 
@@ -25,11 +24,11 @@ public class PortletRequestParameterMap extends AbstractStringKeyedAttributeMap 
 	}
 
 	protected void setAttribute(String key, Object value) {
-		throw new UnsupportedOperationException("HttpServletRequest parameter maps are immutable");
+		throw new UnsupportedOperationException("PortletRequest parameter maps are immutable");
 	}
 
 	protected void removeAttribute(String key) {
-		throw new UnsupportedOperationException("HttpServletRequest parameter maps are immutable");
+		throw new UnsupportedOperationException("PortletRequest parameter maps are immutable");
 	}
 
 	protected Enumeration getAttributeNames() {

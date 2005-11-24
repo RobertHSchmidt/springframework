@@ -18,14 +18,6 @@ public class PortletExternalContext implements ExternalContext {
 		this.response = response;
 	}
 
-	public PortletRequest getRequest() {
-		return request;
-	}
-
-	public PortletResponse getResponse() {
-		return response;
-	}
-
 	public Map getRequestParameterMap() {
 		return new PortletRequestParameterMap(request);
 	}
@@ -42,4 +34,12 @@ public class PortletExternalContext implements ExternalContext {
 		return new PortletContextMap(request.getPortletSession().getPortletContext());
 	}
 
+	public PortletRequest getRequest() {
+		return request;
+	}
+
+	public PortletResponse getResponse() {
+		return response;
+	}
+	
 }
