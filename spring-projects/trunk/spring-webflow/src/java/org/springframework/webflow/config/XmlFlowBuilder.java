@@ -179,9 +179,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String VALUE_ELEMENT = "value";
 
-	private static final String ENTRY_ACTION_ELEMENT = "entry-action";
+	private static final String ENTRY_ACTIONS_ELEMENT = "entry-actions";
 
-	private static final String EXIT_ACTION_ELEMENT = "exit-action";
+	private static final String EXIT_ACTIONS_ELEMENT = "exit-actions";
 
 	private static final String EXCEPTION_HANDLER_ELEMENT = "exception-handler";
 
@@ -519,14 +519,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	protected void parseStateActions(Element element, State state) {
 		// parse any state entry actions
-		List entryElements = DomUtils.getChildElementsByTagName(element, ENTRY_ACTION_ELEMENT);
+		List entryElements = DomUtils.getChildElementsByTagName(element, ENTRY_ACTIONS_ELEMENT);
 		if (!entryElements.isEmpty()) {
 			Element entryElement = (Element)entryElements.get(0);
 			state.setEntryAction(new CompositeAction(parseAnnotatedActions(entryElement)));
 		}
 		if (state instanceof TransitionableState) {
 			// parse any state exit actions
-			List exitElements = DomUtils.getChildElementsByTagName(element, EXIT_ACTION_ELEMENT);
+			List exitElements = DomUtils.getChildElementsByTagName(element, EXIT_ACTIONS_ELEMENT);
 			if (!exitElements.isEmpty()) {
 				Element exitElement = (Element)exitElements.get(0);
 				((TransitionableState)state).setExitAction(new CompositeAction(parseAnnotatedActions(exitElement)));
