@@ -112,10 +112,6 @@ import org.springframework.webflow.config.FlowLocator;
  * @author Keith Donald
  * @author Colin Sampaleanu
  */
-/**
- * @author Keith
- * 
- */
 public class FlowExecutionManager implements FlowExecutionListenerLoader {
 
 	/**
