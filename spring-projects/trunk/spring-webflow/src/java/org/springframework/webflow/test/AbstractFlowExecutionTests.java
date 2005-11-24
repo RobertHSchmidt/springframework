@@ -225,6 +225,15 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * Signal an occurence of an event in the state of the flow execution being
 	 * tested.
 	 * @param eventId the event that occured
+	 */
+	protected ViewSelection signalEvent(String eventId) {
+		return this.flowExecution.signalEvent(eventId, null, new MockExternalContext());
+	}
+	
+	/**
+	 * Signal an occurence of an event in the state of the flow execution being
+	 * tested.
+	 * @param eventId the event that occured
 	 * @param input request parameters needed by the flow execution to complete event processing
 	 */
 	protected ViewSelection signalEvent(String eventId, Map parameters) {

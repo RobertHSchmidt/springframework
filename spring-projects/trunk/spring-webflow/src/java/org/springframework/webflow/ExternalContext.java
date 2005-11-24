@@ -24,6 +24,9 @@ import java.util.Map;
  * This context object provides a single, consistent interface for internal SWF
  * artifacts to use to reason and manipulate the state of an external actor
  * calling into SWF to execute flows.
+ * <p>
+ * The design of this interface was inspired by JSF's own ExternalContext
+ * abstraction, and thus shares the same name for consistency.
  * 
  * @author Keith Donald
  */

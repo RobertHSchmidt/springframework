@@ -190,7 +190,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * two-phase FlowExecution saves.
 	 * @see org.springframework.webflow.execution.FlowExecutionManager#manageStorage(java.io.Serializable,
 	 * org.springframework.webflow.execution.FlowExecution,
-	 * org.springframework.webflow.Event)
+	 * org.springframework.webflow.ExternalContext)
 	 */
 	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution,
 			ExternalContext context) {
@@ -248,35 +248,34 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
 	 * @param outcome The logical outcome returned by the specified action
-	 * @param viewDescriptor <code>ViewSelection</code> for the view to render
+	 * @param selectedView <code>ViewSelection</code> for the view to render
 	 */
-	public void renderView(FacesContext context, String fromAction, String outcome, ViewSelection viewDescriptor) {
+	public void renderView(FacesContext context, String fromAction, String outcome, ViewSelection selectedView) {
 		// Expose model data specified in the descriptor
 		try {
-			context.getExternalContext().getRequestMap().putAll(viewDescriptor.getModel());
+			context.getExternalContext().getRequestMap().putAll(selectedView.getModel());
 		}
 		catch (UnsupportedOperationException e) {
 			// work around nasty MyFaces bug where it's RequestMap doesn't
 			// support putAll remove after it's fixed in MyFaces
 			Map requestMap = context.getExternalContext().getRequestMap();
-			Iterator it = viewDescriptor.getModel().entrySet().iterator();
+			Iterator it = selectedView.getModel().entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry)it.next();
 				requestMap.put(entry.getKey(), entry.getValue());
 			}
 		}
 		// stay on the same view if requested
-		if (viewDescriptor.getViewName() == null) {
+		if (selectedView.getViewName() == null) {
 			return;
 		}
 		// create the specified view so that it can be rendered
 		ViewHandler handler = context.getApplication().getViewHandler();
-		UIViewRoot view = handler.createView(context, viewIdResolver.resolveViewName(viewDescriptor.getViewName()));
+		UIViewRoot view = handler.createView(context, viewIdResolver.resolveViewName(selectedView.getViewName()));
 		context.setViewRoot(view);
 	}
 
 	/**
-	 * <p>
 	 * Responsible for restoring (loading) the flow execution if the appropriate
 	 * flow execution id parameter is found in the faces context request map.
 	 * <p>

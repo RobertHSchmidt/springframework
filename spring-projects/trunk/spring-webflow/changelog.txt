@@ -29,7 +29,7 @@ Changes in version 1.0 RC1 (12.2.2005)
 * Added support for accessing session and application scope variables as properties of a source ExternalEvent.
 * Added support for "inline-flows", local flow definitions fully nested within another flow definition.
 * Added support for locally flow scoped artifacts, importable as bean definitions using the "import" element.
-* Added a sessionEnding FlowExecutionListener callback.
+* Added paused, resumed, and sessionEnding FlowExecutionListener callbacks.
 * Added a KeyGenerator strategy, providing a plugin point for custom FlowExecution key generation strategies.
 * Added "CompositeEvent" support for composite actions that may generate multiple action result events.
 * Added ExternalEvent "sessionMap" and "applicationMap" properties for accessing session and application scoped 
@@ -52,6 +52,9 @@ Changes in version 1.0 RC1 (12.2.2005)
   should have a signature matching "public void ${validatorMethod}(Object obj, Errors errors)". When you do specify a
   formObjectClass, everything works like before, e.g. the signature will be
   "public void ${validatorMethod}(${formObjectClass} obj, Errors errors)".
+* Reworked the flow execution package, decoupling the Event abstraction from the notion of an ExternalContext.
+* Reworked FlowExecution interface, making central start and signalEvent operations more explicit.
+* Introduced ExternalContext implementations for Servlet, Portlet, JSF, and Struts environments.
 * Reworked FlowBuilder, externalizing flow id assignment from the builder itself (assignment is now a responsibility of the assembler).
 * Reworked FlowExecutionManager: it is much easier now to customize flow execution workflow (neccessary for JSF).
   The FlowLocator is now a required dependency, and support for setting a single Flow to execute has been removed.
