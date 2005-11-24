@@ -54,11 +54,11 @@ import org.springframework.webflow.config.FlowLocator;
  * stored in an HTTP session or other persistent store such as a file, database,
  * or client-side form field.
  * <p>
- * Note: this implementation synchronizes both execution entry points
- * {@link #start(Event)} and {@link #signalEvent(Event)}. They are locked on a
- * per client basis for this flow execution. Synchronization prevents a client
- * from being able to signal other events before previously signaled ones have
- * processed in-full, preventing possible race conditions.
+ * Note: this implementation synchronizes the signalEvent Flow execution entry
+ * point. It is locked on a per client basis for this flow execution.
+ * Synchronization prevents a client from being able to signal other events
+ * before previously signaled ones have processed in-full, preventing possible
+ * race conditions.
  * 
  * @see org.springframework.webflow.FlowSession
  * @see org.springframework.webflow.execution.FlowSessionImpl
@@ -285,7 +285,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// methods implementing FlowExecution
 
-	public synchronized ViewSelection start(String stateId, ExternalContext externalContext) throws StateException {
+	public ViewSelection start(String stateId, ExternalContext externalContext) throws StateException {
 		Assert.state(!isActive(), "This flow is already executing -- you cannot call start more than once");
 		if (!StringUtils.hasText(stateId)) {
 			stateId = getRootFlow().getStartState().getId();
