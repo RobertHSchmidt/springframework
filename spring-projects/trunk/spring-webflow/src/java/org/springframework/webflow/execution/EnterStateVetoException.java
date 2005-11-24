@@ -19,7 +19,7 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 
 /**
- * Exception thrown to veto entering of a state in a web flow.
+ * Exception thrown to veto the entering of a state in a web flow.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
