@@ -14,13 +14,10 @@ import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
 public class HttpRequestParameterMap extends AbstractStringKeyedAttributeMap {
 
 	/**
-	 * The wrapped http session.
+	 * The wrapped http request.
 	 */
 	private HttpServletRequest request;
 
-	/**
-	 * @param request the session
-	 */
 	public HttpRequestParameterMap(HttpServletRequest request) {
 		this.request = request;
 	}

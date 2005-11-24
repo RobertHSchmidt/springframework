@@ -18,14 +18,6 @@ public class ServletExternalContext implements ExternalContext {
 		this.response = response;
 	}
 	
-	public HttpServletRequest getRequest() {
-		return request;
-	}
-	
-	public HttpServletResponse getResponse() {
-		return response;
-	}
-	
 	public Map getRequestParameterMap() {
 		return new HttpRequestParameterMap(request);
 	}
@@ -40,5 +32,13 @@ public class ServletExternalContext implements ExternalContext {
 
 	public Map getApplicationMap() {
 		return new HttpServletContextMap(request.getSession().getServletContext());
+	}
+
+	public HttpServletRequest getRequest() {
+		return request;
+	}
+	
+	public HttpServletResponse getResponse() {
+		return response;
 	}
 }

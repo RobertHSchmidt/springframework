@@ -42,11 +42,12 @@ import org.springframework.webflow.execution.servlet.ServletExternalContext;
  * application. Specifically:
  * <ul>
  * <li>To have this controller launch a new flow execution (conversation), have
- * the client send a <code>_flowId</code> request parameter indicating the
- * flow definition to launch.
+ * the client send a {@link FlowExecutionManager#getFlowIdParameterName()}
+ * request parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
- * (conversation), have the client send a <code>_flowExecutionId</code>
- * request parameter identifying the conversation to participate in.
+ * (conversation), have the client send a
+ * {@link FlowExecutionManager#getFlowExecutionIdParameterName()} request
+ * parameter identifying the conversation to participate in.
  * </ul>
  * <p>
  * See the flowLauncher sample application for an example of this controller

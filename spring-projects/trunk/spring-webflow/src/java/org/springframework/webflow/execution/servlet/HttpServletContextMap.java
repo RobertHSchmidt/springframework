@@ -8,7 +8,7 @@ import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
 
 /**
  * Map backed by the Servlet context, for accessing application scoped
- * variables.
+ * attributes.
  * @author Keith Donald
  */
 public class HttpServletContextMap extends AbstractStringKeyedAttributeMap {
@@ -18,9 +18,6 @@ public class HttpServletContextMap extends AbstractStringKeyedAttributeMap {
 	 */
 	private ServletContext context;
 
-	/**
-	 * @param context the servlet context
-	 */
 	public HttpServletContextMap(ServletContext context) {
 		this.context = context;
 	}

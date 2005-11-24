@@ -38,19 +38,26 @@ import org.springframework.webflow.execution.servlet.ServletExternalContext;
 /**
  * Point of integration between Struts and Spring Web Flow: a Struts Action that
  * acts a front controller entry point into the web flow system. A single
- * FlowAction may launch any new FlowExecution with the appropriate
- * <code>_flowId</code> passed in by client views (jsps, etc). In addition, a
- * single Flow Action may signal events in any existing/restored FlowExecution
- * with the appropriate <code>_flowExecutionId</code> passed in.
+ * FlowAction may launch any new FlowExecution. In addition, a single Flow
+ * Action may signal events in any existing/restored FlowExecutions.
  * <p>
  * Requests are managed by and delegated to a {@link FlowExecutionManager},
  * allowing reuse of common front flow controller logic in other environments.
  * Consult the JavaDoc of that class for more information on how requests are
  * processed.
  * <p>
- * On each request received by this action, a StrutsEvent object is created as
- * input to the web flow system. This external source event provides access to
- * the action form, action mapping, and other struts-specific constructs.
+ * <li>To have this controller launch a new flow execution (conversation), have
+ * the client send a {@link FlowExecutionManager#getFlowIdParameterName()}
+ * request parameter indicating the flow definition to launch.
+ * <li>To have this controller participate in an existing flow execution
+ * (conversation), have the client send a
+ * {@link FlowExecutionManager#getFlowExecutionIdParameterName()} request
+ * parameter identifying the conversation to participate in.
+ * <p>
+ * On each request received by this action, a {@link StrutsExternalContext}
+ * object is created as input to the web flow system. This external source event
+ * provides access to the action form, action mapping, and other struts-specific
+ * constructs.
  * <p>
  * This class also is aware of the <code>SpringBindingActionForm</code>
  * adapter, which adapts Spring's data binding infrastructure (based on POJO
@@ -64,10 +71,10 @@ import org.springframework.webflow.execution.servlet.ServletExternalContext;
  * FlowAction:
  * 
  * <pre>
- *           &lt;action path=&quot;/userRegistration&quot;
- *               type=&quot;org.springframework.webflow.struts.FlowAction&quot;
- *               name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *           &lt;/action&gt;
+ *     &lt;action path=&quot;/userRegistration&quot;
+ *         type=&quot;org.springframework.webflow.struts.FlowAction&quot;
+ *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *     &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL

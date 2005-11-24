@@ -6,22 +6,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
+import org.springframework.webflow.util.EmptyEnumeration;
 
 /**
  * Map backed by the Servlet HTTP session, for accessing session scoped
- * variables.
+ * attributes.
  * @author Keith Donald
  */
 public class HttpSessionMap extends AbstractStringKeyedAttributeMap {
 
 	/**
-	 * The wrapped http session.
+	 * The wrapped http request, providing access to the session.
 	 */
 	private HttpServletRequest request;
 
-	/**
-	 * @param session the session
-	 */
 	public HttpSessionMap(HttpServletRequest request) {
 		this.request = request;
 	}

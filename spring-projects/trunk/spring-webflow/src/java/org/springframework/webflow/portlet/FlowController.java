@@ -44,11 +44,12 @@ import org.springframework.webflow.execution.portlet.PortletExternalContext;
  * application. Specifically:
  * <ul>
  * <li>To have this controller launch a new flow execution (conversation), have
- * the client send a <code>_flowId</code> request parameter indicating the
- * flow definition to launch.
+ * the client send a {@link FlowExecutionManager#getFlowIdParameterName()}
+ * request parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
- * (conversation), have the client send a <code>_flowExecutionId</code>
- * request parameter identifying the conversation to participate in.
+ * (conversation), have the client send a
+ * {@link FlowExecutionManager#getFlowExecutionIdParameterName()} request
+ * parameter identifying the conversation to participate in.
  * </ul>
  * <p>
  * See the flowLauncher sample application for an example of this controller
@@ -57,25 +58,25 @@ import org.springframework.webflow.execution.portlet.PortletExternalContext;
  * Usage example:
  * 
  * <pre>
- *       &lt;!--
+ *     &lt;!--
  *         Exposes flows for execution at a single request URL.
- *      	 The id of a flow to launch should be passed in by clients using
- *      	 the &quot;_flowId&quot; request parameter:
- *      	     e.g. /app.htm?_flowId=flow1
- *       --&gt;
- *       &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.portlet.FlowController&quot;&gt;
- *           &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *       &lt;/bean&gt;
- *                    
- *       &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *       &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *           &lt;property name=&quot;definitionLocations&quot;&gt;
- *               &lt;list&gt;
- *                   &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *                   &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *               &lt;/list&gt;
- *           &lt;/property&gt;
- *       &lt;/bean&gt;
+ *         The id of a flow to launch should be passed in by clients using
+ *         the &quot;_flowId&quot; request parameter:
+ *             e.g. /app.htm?_flowId=flow1
+ *     --&gt;
+ *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.portlet.FlowController&quot;&gt;
+ *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *     &lt;/bean&gt;
+ *                      
+ *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;definitionLocations&quot;&gt;
+ *             &lt;list&gt;
+ *                 &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                 &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *             &lt;/list&gt;
+ *         &lt;/property&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
  * @author J.Enrique Ruiz

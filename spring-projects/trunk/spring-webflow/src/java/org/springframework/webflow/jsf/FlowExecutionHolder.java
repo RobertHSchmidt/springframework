@@ -53,8 +53,7 @@ public abstract class FlowExecutionHolder {
 	}
 
 	/**
-	 * Returns the source <code>JsfEvent</code> that triggered the request in
-	 * process. Provides access to an external JSF context.
+	 * Provides access to an external JSF context.
 	 */
 	public static ExternalContext getExternalContext() {
 		return getContext().context;
@@ -83,8 +82,9 @@ public abstract class FlowExecutionHolder {
 	 * to reset the thread-bound context
 	 * @param flowExecution the current FlowExecution, or <code>null</code> to
 	 * @param sourceEvent the source event which triggered the current execution
-	 * @param flowExecutionSaved boolean indicating whether the flow execution has already
-	 * been saved to storage or is still live reset the thread-bound context
+	 * @param flowExecutionSaved boolean indicating whether the flow execution
+	 * has already been saved to storage or is still live reset the thread-bound
+	 * context
 	 */
 	public static void setFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution,
 			ExternalContext context, boolean flowExecutionSaved) {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.springframework.webflow.execution.servlet;
+package org.springframework.webflow.util;
 
 import java.util.Enumeration;
 
