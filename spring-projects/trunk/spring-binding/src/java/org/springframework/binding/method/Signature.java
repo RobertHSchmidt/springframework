@@ -90,7 +90,14 @@ public class Signature implements Serializable {
 					for (int j = 0; j < candidateParameterTypes.length; j++) {
 						// Check if the candidate type is assignable to the sig
 						// parameter type.
-						if (BeanUtils.isAssignable(candidateParameterTypes[j], parameterTypes[j])) {
+						Class candidateType = candidateParameterTypes[j];
+						Class parameterType = parameterTypes[j];
+						if (parameterType != null) {
+							if (BeanUtils.isAssignable(candidateType, parameterType)) {
+								numberOfCorrectArguments++;
+							}
+						} else {
+							// just match on a null param type (effectively 'any')
 							numberOfCorrectArguments++;
 						}
 					}
