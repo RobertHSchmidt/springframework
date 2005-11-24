@@ -95,19 +95,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *         &lt;entry-actions&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *         &lt;/entry-actions&gt;
- *         &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *         &lt;/transition&gt;
- *     &lt;/view-state&gt;
- *       
- *     &lt;action-state id=&quot;executeSearch&quot;&gt;
- *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *     &lt;/action-state&gt;
+ *      &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *          &lt;entry-actions&gt;
+ *              &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *          &lt;/entry-actions&gt;
+ *          &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *              &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *          &lt;/transition&gt;
+ *      &lt;/view-state&gt;
+ *        
+ *      &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *          &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *          &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *      &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -230,6 +230,11 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
 public class FormAction extends MultiAction implements InitializingBean, FormActionMethods {
 
 	/**
+	 * The default form object name ("formObject").
+	 */
+	public static final String DEFAULT_FORM_OBJECT_NAME = "formObject";
+
+	/**
 	 * Optional property that identifies the method that should be invoked on
 	 * the configured validator instance, to support piecemeal wizard page
 	 * validation.
@@ -239,7 +244,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	/**
 	 * The name the form object should be exposed under.
 	 */
-	private String formObjectName = "formObject";
+	private String formObjectName = DEFAULT_FORM_OBJECT_NAME;
 
 	/**
 	 * The type of form object -- typically a instantiable class.
@@ -340,7 +345,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	public void setFormObjectClass(Class formObjectClass) {
 		this.formObjectClass = formObjectClass;
-		if (formObjectName == null && formObjectClass != null) {
+		if ((formObjectName == null || formObjectName == DEFAULT_FORM_OBJECT_NAME) && formObjectClass != null) {
 			formObjectName = ClassUtils.getShortNameAsProperty(formObjectClass);
 		}
 	}

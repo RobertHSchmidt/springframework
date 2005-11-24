@@ -5,9 +5,9 @@
 <flow start-state="displayCriteria">
 
 	<view-state id="displayCriteria" view="searchCriteria">
-		<entry-action>
+		<entry-actions>
 			<action bean="searchFormAction" method="setupForm"/>
-		</entry-action>
+		</entry-actions>
 		<transition on="search" to="executeSearch">
 			<action bean="searchFormAction" method="bindAndValidate"/>
 		</transition>
