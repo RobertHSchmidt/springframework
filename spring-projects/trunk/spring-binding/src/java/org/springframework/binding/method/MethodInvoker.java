@@ -66,7 +66,10 @@ public class MethodInvoker {
 		Class[] parameterTypes = parameters.getTypesArray();
 		for (int j = 0; j < parameterTypes.length; j++) {
 			if (parameterTypes[j] == null) {
-				parameterTypes[j] = parameterValues[j].getClass();
+				Object parameterValue = parameterValues[j];
+				if (parameterValue != null) {
+					parameterTypes[j] = parameterValue.getClass();
+				}
 			}
 		}
 		Signature signature = new Signature(bean.getClass(), methodKey.getMethodName(), parameterTypes);
