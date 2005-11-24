@@ -6,9 +6,9 @@
 	<property name="transactional" value="true" type="boolean"/>
 	
 	<view-state id="enterPriceAndItemCount" view="priceAndItemCountForm">
-		<entry-action>
+		<entry-actions>
 			<action bean="sellItemAction" method="setupForm"/>
-		</entry-action>
+		</entry-actions>
 		<transition on="submit" to="enterCategory">
 			<action bean="sellItemAction" method="bindAndValidate">
 				<property name="validatorMethod" value="validatePriceAndItemCount"/>

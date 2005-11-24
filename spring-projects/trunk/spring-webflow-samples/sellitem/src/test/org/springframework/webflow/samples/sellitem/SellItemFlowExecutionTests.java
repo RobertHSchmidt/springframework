@@ -30,7 +30,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	}
 
 	@Override
-	protected void onSetupFlowExecution(FlowExecution flowExecution) {
+	protected void onFlowExecutionStarting(FlowExecution flowExecution) {
 		// turn off transactionality for test run
 		getFlow().setProperty(Flow.TRANSACTIONAL_PROPERTY, false);
 	}
@@ -46,7 +46,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		Map parameters = new HashMap(2);
 		parameters.put("itemCount", 4);
 		parameters.put("price", 25);
-		ViewSelection selectedView = signalEvent(event("submit", parameters));
+		ViewSelection selectedView = signalEvent("submit", parameters);
 		assertViewNameEquals("categoryForm", selectedView);
 	}
 
@@ -54,7 +54,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		testSubmitPriceAndItemCount();
 		Map parameters = new HashMap(1);
 		parameters.put("category", "A");
-		ViewSelection selectedView = signalEvent(event("submit", parameters));
+		ViewSelection selectedView = signalEvent("submit", parameters);
 		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
 	}
@@ -64,7 +64,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		Map parameters = new HashMap(1);
 		parameters.put("category", "A");
 		parameters.put("shipping", "true");
-		ViewSelection selectedView = signalEvent(event("submit", parameters));
+		ViewSelection selectedView = signalEvent("submit", parameters);
 		assertViewNameEquals("shippingDetailsForm", selectedView);
 	}
 
@@ -72,7 +72,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		testSubmitCategoryFormWithShipping();
 		Map parameters = new HashMap(1);
 		parameters.put("shippingType", "E");
-		ViewSelection selectedView = signalEvent(event("submit", parameters));
+		ViewSelection selectedView = signalEvent("submit", parameters);
 		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
 	}
