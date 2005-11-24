@@ -277,9 +277,9 @@ public class Transition extends AnnotatedObject {
 				logger.debug("Executing " + this + " out of state '" + getSourceState().getId() + "'");
 			}
 			getSourceState().exit(context);
-			// enter the target state (note: any exceptions are propagated)
 			State targetState = getTargetState(context);
 			context.setLastTransition(this);
+			// enter the target state (note: any exceptions are propagated)
 			selectedView = targetState.enter(context);
 		}
 		else {
