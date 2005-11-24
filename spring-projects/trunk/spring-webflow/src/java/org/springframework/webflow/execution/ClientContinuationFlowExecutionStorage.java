@@ -21,15 +21,14 @@ import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.util.Assert;
-import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 
 /**
  * Flow execution storage implementation that will store a flow execution as a
  * <i>continuation</i> on the client side. It will actually encode the state of
  * the flow execution in the unique id that is returned from the
- * {@link #save(Serializable, FlowExecution, Event) save} method. The load
- * method just decodes the incoming id and restores the
+ * {@link #save(Serializable, FlowExecution, ExternalContext) save} method. The
+ * load method just decodes the incoming id and restores the
  * <code>FlowExecution</code> object.
  * <p>
  * Note that all clients in a web flow based application need to include the
