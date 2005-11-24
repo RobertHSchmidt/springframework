@@ -35,7 +35,7 @@ public class ServletExternalContext implements ExternalContext {
 	}
 
 	public Map getSessionMap() {
-		return new HttpSessionMap(request.getSession());
+		return new HttpSessionMap(request);
 	}
 
 	public Map getApplicationMap() {

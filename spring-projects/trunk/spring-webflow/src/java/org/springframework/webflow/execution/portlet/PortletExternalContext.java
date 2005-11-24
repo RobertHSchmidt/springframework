@@ -35,7 +35,7 @@ public class PortletExternalContext implements ExternalContext {
 	}
 
 	public Map getSessionMap() {
-		return new PortletSessionMap(request.getPortletSession());
+		return new PortletSessionMap(request);
 	}
 
 	public Map getApplicationMap() {

@@ -68,13 +68,8 @@ public class HttpServletContextMapTests extends TestCase {
 	}
 
 	public void testContainsValue() {
-		try {
-			tested.containsValue("SomeValue");
-			fail("UnsupportedOperationException expected");
-		}
-		catch (UnsupportedOperationException expected) {
-			// expected
-		}
+		tested.containsValue("SomeValue");
+		// TODO
 	}
 
 	public void testGet() {
@@ -96,52 +91,27 @@ public class HttpServletContextMapTests extends TestCase {
 	}
 
 	public void testPutAll() {
-		try {
-			tested.putAll(new HashMap());
-			fail("UnsupportedOperationException expected");
-		}
-		catch (UnsupportedOperationException expected) {
-			// expected
-		}
+		tested.putAll(new HashMap());
+		// TODO
 	}
 
 	public void testClear() {
-		try {
-			tested.clear();
-			fail("UnsupportedOperationException expected");
-		}
-		catch (UnsupportedOperationException expected) {
-			// expected
-		}
+		tested.clear();
+		// TODO
 	}
 
 	public void testKeySet() {
-		try {
-			tested.keySet();
-			fail("UnsupportedOperationException expected");
-		}
-		catch (UnsupportedOperationException expected) {
-			// expected
-		}
+		tested.keySet();
+		// TODO
 	}
 
 	public void testValues() {
-		try {
-			tested.values();
-			fail("UnsupportedOperationException expected");
-		}
-		catch (UnsupportedOperationException expected) {
-			// expected
-		}
+		tested.values();
+		// TODO
 	}
 
 	public void testEntrySet() {
-		try {
-			tested.entrySet();
-			fail("UnsupportedOperationException expected");
-		}
-		catch (UnsupportedOperationException expected) {
-			// expected
-		}
+		tested.entrySet();
+		// TODO
 	}
 }

@@ -1,18 +1,17 @@
 package org.springframework.webflow.execution.servlet;
 
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
+
+import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
 
 /**
  * Map backed by the Servlet context, for accessing application scoped
  * variables.
  * @author Keith Donald
  */
-public class HttpServletContextMap implements Map {
+public class HttpServletContextMap extends AbstractStringKeyedAttributeMap {
 
 	/**
 	 * The wrapped servlet context.
@@ -26,64 +25,20 @@ public class HttpServletContextMap implements Map {
 		this.context = context;
 	}
 
-	public int size() {
-		Enumeration it = context.getAttributeNames();
-		int i = 0;
-		while (it.hasMoreElements()) {
-			i++;
-			it.nextElement();
-		}
-		return i;
+	protected Object getAttribute(String key) {
+		return context.getAttribute(key);
 	}
 
-	public boolean isEmpty() {
-		return !context.getAttributeNames().hasMoreElements();
+	protected void setAttribute(String key, Object value) {
+		context.setAttribute(key, value);
 	}
 
-	public boolean containsKey(Object key) {
-		return context.getAttribute((String)key) != null;
+	protected void removeAttribute(String key) {
+		context.removeAttribute(key);
 	}
 
-	public boolean containsValue(Object value) {
-		throw new UnsupportedOperationException();
+	protected Enumeration getAttributeNames() {
+		return context.getAttributeNames();
 	}
 
-	public Object get(Object key) {
-		return context.getAttribute((String)key);
-	}
-
-	public Object put(Object arg0, Object arg1) {
-		Object old = get(arg0);
-		context.setAttribute((String)arg0, arg1);
-		return old;
-	}
-
-	public Object remove(Object key) {
-		Object old = get(key);
-		context.removeAttribute((String)key);
-		return old;
-	}
-
-	public void putAll(Map arg0) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void clear() {
-		throw new UnsupportedOperationException();
-	}
-
-	public Set keySet() {
-		// TODO
-		throw new UnsupportedOperationException();
-	}
-
-	public Collection values() {
-		// TODO
-		throw new UnsupportedOperationException();
-	}
-
-	public Set entrySet() {
-		// TODO
-		throw new UnsupportedOperationException();
-	}
 }

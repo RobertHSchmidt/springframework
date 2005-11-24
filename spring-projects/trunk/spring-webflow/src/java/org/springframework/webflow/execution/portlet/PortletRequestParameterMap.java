@@ -1,126 +1,38 @@
 package org.springframework.webflow.execution.portlet;
 
-import java.util.AbstractSet;
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import javax.portlet.PortletRequest;
 
+import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
+
 /**
- * Map backed by the Servlet HTTP session, for accessing session scoped
- * variables.
+ * Map backed by the Portlet request parameter map, for accessing request local
+ * portlet parameters.
  * @author Keith Donald
  */
-public class PortletRequestParameterMap implements Map {
+public class PortletRequestParameterMap extends AbstractStringKeyedAttributeMap {
 
-	/**
-	 * The wrapped http session.
-	 */
 	private PortletRequest request;
 
-	/**
-	 * @param request the session
-	 */
 	public PortletRequestParameterMap(PortletRequest request) {
 		this.request = request;
 	}
 
-	public int size() {
-		Enumeration it = request.getParameterNames();
-		int i = 0;
-		while (it.hasMoreElements()) {
-			i++;
-			it.nextElement();
-		}
-		return i;
+	protected Object getAttribute(String key) {
+		return request.getParameter(key);
 	}
 
-	public boolean isEmpty() {
-		return request.getParameterNames().hasMoreElements();
+	protected void setAttribute(String key, Object value) {
+		throw new UnsupportedOperationException("HttpServletRequest parameter maps are immutable");
 	}
 
-	public boolean containsKey(Object key) {
-		return request.getParameter((String)key) != null;
+	protected void removeAttribute(String key) {
+		throw new UnsupportedOperationException("HttpServletRequest parameter maps are immutable");
 	}
 
-	public boolean containsValue(Object value) {
-		throw new UnsupportedOperationException();
-	}
-
-	public Object get(Object key) {
-		return request.getParameter((String)key);
-	}
-
-	public Object put(Object arg0, Object arg1) {
-		throw new UnsupportedOperationException();
-	}
-
-	public Object remove(Object key) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void putAll(Map arg0) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void clear() {
-		throw new UnsupportedOperationException();
-	}
-
-	public Set keySet() {
-		// TODO
-		throw new UnsupportedOperationException();
-	}
-
-	public Collection values() {
-		// TODO
-		throw new UnsupportedOperationException();
-	}
-
-	public Set entrySet() {
-		return new EntrySet();
-	}
-	
-	private class EntrySet extends AbstractSet {
-		public Iterator iterator() {
-			return new EntryIterator();
-		}
-
-		public int size() {
-			return size();
-		}
-	}
-	
-	private class EntryIterator implements Iterator {
-		private Enumeration parameterNames = request.getParameterNames();
-		
-		public boolean hasNext() {
-			return parameterNames.hasMoreElements();
-		}
-
-		public Object next() {
-			final String name = (String)parameterNames.nextElement();
-			return new Map.Entry() {
-				public Object getKey() {
-					return name;
-				}
-
-				public Object getValue() {
-					return request.getParameter(name);
-				}
-
-				public Object setValue(Object arg0) {
-					throw new UnsupportedOperationException();
-				}
-				
-			};
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
+	protected Enumeration getAttributeNames() {
+		return request.getParameterNames();
 	}
 }

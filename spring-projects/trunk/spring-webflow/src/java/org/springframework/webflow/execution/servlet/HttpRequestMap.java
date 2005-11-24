@@ -1,89 +1,37 @@
 package org.springframework.webflow.execution.servlet;
 
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.webflow.util.AbstractStringKeyedAttributeMap;
+
 /**
- * Map backed by the Servlet HTTP session, for accessing session scoped
- * variables.
+ * Map backed by the Servlet HTTP request attribute map, for accessing request
+ * local attributes.
  * @author Keith Donald
  */
-public class HttpRequestMap implements Map {
+public class HttpRequestMap extends AbstractStringKeyedAttributeMap {
 
-	/**
-	 * The wrapped http session.
-	 */
 	private HttpServletRequest request;
 
-	/**
-	 * @param request the session
-	 */
 	public HttpRequestMap(HttpServletRequest request) {
 		this.request = request;
 	}
 
-	public int size() {
-		Enumeration it = request.getAttributeNames();
-		int i = 0;
-		while (it.hasMoreElements()) {
-			i++;
-			it.nextElement();
-		}
-		return i;
+	protected Object getAttribute(String key) {
+		return request.getAttribute(key);
 	}
 
-	public boolean isEmpty() {
-		return request.getAttributeNames().hasMoreElements();
+	protected void setAttribute(String key, Object value) {
+		request.setAttribute(key, value);
 	}
 
-	public boolean containsKey(Object key) {
-		return request.getAttribute((String)key) != null;
+	protected void removeAttribute(String key) {
+		request.removeAttribute(key);
 	}
 
-	public boolean containsValue(Object value) {
-		throw new UnsupportedOperationException();
-	}
-
-	public Object get(Object key) {
-		return request.getAttribute((String)key);
-	}
-
-	public Object put(Object arg0, Object arg1) {
-		Object old = get(arg0);
-		request.setAttribute((String)arg0, arg1);
-		return old;
-	}
-
-	public Object remove(Object key) {
-		Object old = get(key);
-		request.removeAttribute((String)key);
-		return old;
-	}
-
-	public void putAll(Map arg0) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void clear() {
-		throw new UnsupportedOperationException();
-	}
-
-	public Set keySet() {
-		// TODO
-		throw new UnsupportedOperationException();
-	}
-
-	public Collection values() {
-		// TODO
-		throw new UnsupportedOperationException();
-	}
-
-	public Set entrySet() {
-		// TODO
-		throw new UnsupportedOperationException();
+	protected Enumeration getAttributeNames() {
+		return request.getAttributeNames();
 	}
 }
