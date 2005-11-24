@@ -23,10 +23,10 @@ import org.springframework.binding.support.EmptyAttributeSource;
  * wraps another exception noting the root cause failure, which may be checked
  * or unchecked.
  * <p>
- * Is a StateException, recording information about what state the Flow was in
- * when the exception was thrown. Also provides a reference to the Action
- * instance itself and the execution properties that may have affected its
- * execution.
+ * Is a StateException, recording information about what state a FlowExecution
+ * was in when this exception was thrown. Also provides a reference to the
+ * Action instance itself and the execution properties that may have affected
+ * its execution.
  * 
  * @see org.springframework.webflow.Action
  * @see org.springframework.webflow.ActionState

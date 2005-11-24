@@ -26,8 +26,7 @@ import org.springframework.binding.AttributeSource;
  * system by an external actor to manipulate exactly one flow execution.
  * <p>
  * A new instance of this object is created when one of the operations on a
- * <code>FlowExecution</code> facade is invoked, either
- * ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
+ * <code>FlowExecution</code> facade is invoked, either ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
  * to activate a newly created flow execution, or
  * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(Event)})
  * to signal an event in the current state of a resumed flow execution.
@@ -51,12 +50,13 @@ import org.springframework.binding.AttributeSource;
  * {@link org.springframework.webflow.EndState} is entered.
  * <p>
  * This interface does not allow direct manipulation of the flow execution. That
- * is only possible via the {@link org.springframework.webflow.FlowExecutionControlContext}
- * sub interface.
+ * is only possible via the
+ * {@link org.springframework.webflow.FlowExecutionControlContext} sub
+ * interface.
  * <p>
- * The web flow system will ensure that a RequestContext object is local to
- * the current thread, so it can be safely manipulated without needing to worry about
- * concurrent access.
+ * The web flow system will ensure that a RequestContext object is local to the
+ * current thread, so it can be safely manipulated without needing to worry
+ * about concurrent access.
  * <p>
  * Note: the <i>request</i> context is in no way linked to an HTTP or Portlet
  * request! It uses the familiar "request" naming convention to indicate a
@@ -75,14 +75,14 @@ public interface RequestContext {
 	/**
 	 * Returns the external client event that originated (or triggered) this
 	 * request. This event may contain parameters provided as input by the
-	 * client. In addition, this event may be downcastable to a specific event
-	 * type for a specific client environment, such as a ServletEvent for
-	 * servlets or a PortletEvent for portlets. Such downcasting will give you
-	 * full access to a native HttpServletRequest, for example. That said, you
-	 * should avoid coupling your flow artifacts to a specific deployment where
-	 * possible.
-	 * @return the originating event, the one that triggered the current
-	 * execution request
+	 * client. In addition, this event may be downcastable to a specific context
+	 * type for a specific client environment, such as a ServletExternalContext
+	 * for servlets or a PortletExternalContext for portlets. Such downcasting
+	 * will give you full access to a native HttpServletRequest, for example.
+	 * That said, for portability reasons you should avoid coupling your flow
+	 * artifacts to a specific deployment where possible.
+	 * @return the originating external context, the one that triggered the
+	 * current execution request
 	 */
 	public ExternalContext getExternalContext();
 
@@ -109,9 +109,9 @@ public interface RequestContext {
 	public Scope getFlowScope();
 
 	/**
-	 * Returns the last result event for the State with the specified id. A state
-	 * result event is the event that drove a transition out of a state to a new
-	 * state. If the state provided was never entered for this request,
+	 * Returns the last result event for the State with the specified id. A
+	 * state result event is the event that drove a transition out of a state to
+	 * a new state. If the state provided was never entered for this request,
 	 * <code>null</code> is returned.
 	 * <p>
 	 * This method allows consistent access to state result event parameters.

@@ -27,14 +27,14 @@ import org.springframework.util.Assert;
 /**
  * A transitionable state that executes one or more actions when entered. When
  * the action(s) are executed, this state responds to their result(s) to decide
- * where to go next.
+ * what state to transition to next.
  * <p>
  * If more than one action is configured, they are executed in an ordered chain
  * until one returns a result event that matches a valid state transition out of
  * this state. This is a form of the Chain of Responsibility (CoR) pattern.
  * <p>
- * The result of an action's execution is treated as a contributing criterion
- * for a state transition. In addition, anything else in the current
+ * The result of an action's execution is typically treated as the contributing
+ * criteria for a state transition. In addition, any state accessible via the
  * <code>RequestContext</code> may be tested as part of custom transitional
  * criteria, allowing for sophisticated transition expressions that reason on
  * contextual state.

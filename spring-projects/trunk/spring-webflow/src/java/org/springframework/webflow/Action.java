@@ -17,21 +17,24 @@ package org.springframework.webflow;
 
 /**
  * A command that executes arbitrary behavior and returns a logical execution
- * result a Flow can respond to. Actions typically delegate down to the
- * service-layer to perform business operations, and prepare views with dynamic
- * model data to support response rendering. They often act as a bridge between
- * the web-tier and the middle-tier business logic layer.
+ * result a calling Flow can respond to. Actions typically delegate down to the
+ * service-layer to perform business operations. They often prepare views with
+ * dynamic or calculated model data to support response rendering. They act as a
+ * bridge between a SWF web-tier and your middle-tier business logic layer.
  * <p>
- * When an action completes execution, it signals a result event describing the
- * outcome of that execution (for example: "success", "error", "yes", "no",
- * "tryAgain", etc). This result event is used as grounds for a state transition
- * in the current state of the calling Flow.
+ * When an action completes execution it signals a result event describing the
+ * outcome of that execution (for example, "success", "error", "yes", "no",
+ * "tryAgain", etc). In addition to providing a logical outcome the flow can
+ * respond to, a result event may have payload associated with it, for example a
+ * "success" return value or an "error" error code. The result event is
+ * typically used as grounds for a state transition out of the current state of
+ * the calling Flow.
  * <p>
  * Action implementations are often application-scoped singletons instantiated
  * and managed by a web-tier Spring application context to take advantage of
- * Spring's powerful configuration and dependency injection (IoC) capabilities.
- * Actions may also be stateful prototypes, storing conversational state as
- * instance variables (see
+ * Spring's externalized configuration and dependency injection capabilities
+ * (which is a form of Inversion of Control [IoC]). Actions may also be stateful
+ * prototypes, storing conversational state as instance variables (see
  * {@link org.springframework.webflow.action.StatefulActionProxy} and
  * {@link org.springframework.webflow.action.AbstractBeanInvokingAction} for
  * more information). Action instances may also be locally scoped to a specific
@@ -41,7 +44,7 @@ package org.springframework.webflow;
  * Note: Actions are directly instantiatable for use in a standalone test
  * environment and can be parameterized with mocks or stubs, as they are simple
  * POJOs. Action proxies may also be generated at runtime for delegating to POJO
- * business operations with no dependency on the SWF API (see the
+ * business operations that have no dependency on the SWF API (see the
  * {@link org.springframework.webflow.action.LocalBeanInvokingAction} proxy
  * which is used by default when a POJO is referenced as an action from a Flow
  * definition).
@@ -54,10 +57,10 @@ package org.springframework.webflow;
  * <p>
  * Note: an Action is not a controller like a Spring MVC controller or a Struts
  * action is a controller. <b>Web flow actions are <i>commands</i></b>. Such
- * commands do not select views, they execute arbitrary worker logic and then
- * return an logical execution result. The flow that invokes an Action is
- * responsible for responding to the execution result to decide what to do next.
- * In Spring Web Flow, the flow <i>is</i> the controller.
+ * commands do not select views, they execute arbitrary command logic and then
+ * return an logical command execution result. The flow that invokes an Action
+ * is responsible for responding to the execution result to decide what to do
+ * next. In Spring Web Flow, the flow <i>is</i> the controller.
  * 
  * @see org.springframework.webflow.ActionState
  * @see org.springframework.webflow.test.MockRequestContext
@@ -73,7 +76,7 @@ public interface Action {
 	 * request associated with an active flow execution.
 	 * <p>
 	 * More specifically, action execution is triggered in a production
-	 * environment when invoked as part of a state of an ongoing flow execution
+	 * environment when invoked within the state of an ongoing flow execution
 	 * for a specific <code>Flow</code> definition. The result of action
 	 * execution, a logical outcome event, is typically used as grounds for a
 	 * transition out of the calling state.
@@ -90,17 +93,17 @@ public interface Action {
 	 * the currently executing request only.
 	 * <p>
 	 * All attributes present in any scope are automatically exposed in the
-	 * model for convenient access by the views when a <code>ViewState</code>
-	 * is entered.
+	 * model for access by a view when a <code>ViewState</code> or other
+	 * "interactive" state type is entered.
 	 * <p>
-	 * Note: flow scope should NOT be used as a general purpose cache, but
+	 * Note: the flow scope should NOT be used as a general purpose cache, but
 	 * rather as a context for data needed locally by other states of the flow
 	 * this action participates in. For example, it would be inappropriate to
 	 * stuff large collections of objects (like those returned to support a
 	 * search results view) into flow scope. Instead, put such result
 	 * collections in request scope, and ensure you execute this action again
-	 * each time you wish to view those results. 2nd level caches are much
-	 * better cache solutions.
+	 * each time you wish to view those results. 2nd level caches managed
+	 * outside of SWF are much better cache solutions.
 	 * <p>
 	 * Note: as flow scoped attributes are eligible for serialization they
 	 * should be <code>Serializable</code>.

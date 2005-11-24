@@ -24,8 +24,8 @@ import org.springframework.util.StringUtils;
 
 /**
  * An action decorator that stores arbitrary properties about a target
- * <code>Action</code> implementation for use in exactly one context, for
- * example an <code>ActionState</code> definition, a
+ * <code>Action</code> implementation for use within a specific Action
+ * execution context, for example an <code>ActionState</code> definition, a
  * <code>TransitionCriteria</code> definition, or in a test environment.
  * <p>
  * An annotated action is an action that wraps another action (referred to as
@@ -39,16 +39,27 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 
 	/**
 	 * The action name property ("name").
+	 * 
+	 * The name property is often used as a qualifier for an action's result
+	 * event, and is typically used to allow the flow to respond to a specific
+	 * action's outcome within a larger action execution chain.
+	 * {@see ActionState} for more information.
 	 */
 	public static final String NAME_PROPERTY = "name";
 
 	/**
 	 * The action execution method property ("method").
+	 * 
+	 * The method property is the name of a specific method on a
+	 * <code>{@link org.springframework.webflow.action.MultiAction}</code> to
+	 * execute, or the name of a specific method on a arbitrary POJO (plain old
+	 * java.lang.Object)
+	 * {@see ActionState} for more information.
 	 */
 	public static final String METHOD_PROPERTY = "method";
 
 	/**
-	 * The action to execute.
+	 * The target action to execute.
 	 */
 	private Action targetAction;
 
@@ -81,7 +92,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	}
 
 	/**
-	 * Set the target action wrapped by this object.
+	 * Set the target action wrapped by this decorator.
 	 */
 	private void setTargetAction(Action targetAction) {
 		Assert.notNull(targetAction, "The target Action instance is required");
