@@ -30,18 +30,18 @@
 	</view-state>
 	
 	<view-state id="viewState2">
-		<entry-action>
+		<entry-actions>
 			<action bean="action2"/>
-		</entry-action>
+		</entry-actions>
 		<transition on="event2" to="subFlowState2"/>
 	</view-state>
 
 	<subflow-state id="subFlowState1" flow="subFlow1">
 		<attribute-mapper bean="attributeMapper1"/>
 		<transition on="event1" to="endState1"/>
-		<exit-action>
+		<exit-actions>
 			<action bean="action2"/>
-		</exit-action>
+		</exit-actions>
 	</subflow-state>
 
 	<subflow-state id="subFlowState2" flow="subFlow2">
