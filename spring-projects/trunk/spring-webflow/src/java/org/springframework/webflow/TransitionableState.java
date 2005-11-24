@@ -213,7 +213,7 @@ public abstract class TransitionableState extends State {
 	protected void resolveTransitionsTargetStates() {
 		Iterator it = transitionsIterator();
 		while (it.hasNext()) {
-			((Transition)it.next()).resolveTargetState();
+			((Transition)it.next()).resolveTargetStateIfApplicable();
 		}
 	}
 
