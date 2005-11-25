@@ -57,6 +57,15 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * to the spawned subflow and visa versa.
 	 */
 	private FlowAttributeMapper attributeMapper;
+	
+	/**
+	 * Default constructor for bean style usage.
+	 * @see TransitionableState#TransitionableState()
+	 * @see #setSubflow(Flow)
+	 * @see #setAttributeMapper(FlowAttributeMapper)
+	 */
+	public SubflowState() {
+	}
 
 	/**
 	 * Create a new subflow state.

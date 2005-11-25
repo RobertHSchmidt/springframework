@@ -54,6 +54,14 @@ public class EndState extends State {
 	 * state terminates an executing root flow.
 	 */
 	private ViewSelector viewSelector;
+	
+	/**
+	 * Default constructor for bean style usage.
+	 * @see State#State()
+	 * @see #setViewSelector(ViewSelector)
+	 */
+	public EndState() {
+	}
 
 	/**
 	 * Create a new end state with no associated view.

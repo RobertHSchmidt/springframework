@@ -28,6 +28,13 @@ import java.util.Map;
  * @author Keith Donald
  */
 public class DecisionState extends TransitionableState {
+	
+	/**
+	 * Default constructor for bean style usage.
+	 * @see TransitionableState#TransitionableState()
+	 */
+	public DecisionState() {
+	}
 
 	/**
 	 * Creates a new decision state with the supported set of transitions.

@@ -45,6 +45,14 @@ public class ViewState extends TransitionableState {
 	 * The factory for the view selection to return when this state is entered.
 	 */
 	private ViewSelector viewSelector;
+	
+	/**
+	 * Default constructor for bean style usage.
+	 * @see TransitionableState#TransitionableState()
+	 * @see #setViewSelector(ViewSelector)
+	 */
+	public ViewState() {
+	}
 
 	/**
 	 * Create a new marker view state, a view state that causes the flow to

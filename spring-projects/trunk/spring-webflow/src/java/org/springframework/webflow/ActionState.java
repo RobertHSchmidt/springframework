@@ -111,6 +111,15 @@ public class ActionState extends TransitionableState {
 	 * action is wrapped in a {@link ActionExecutor}.
 	 */
 	private Set actionExecutors = CollectionFactory.createLinkedSetIfPossible(1);
+	
+	/**
+	 * Default constructor for bean style usage.
+	 * @see TransitionableState#TransitionableState()
+	 * @see #addAction(Action)
+	 * @see #addActions(Action[])
+	 */
+	public ActionState() {
+	}
 
 	/**
 	 * Create a new action state.

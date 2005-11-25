@@ -79,6 +79,14 @@ public abstract class State extends AnnotatedObject {
 	 * The list of exception handlers for this state.
 	 */
 	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(1);
+	
+	/**
+	 * Default constructor for bean style usage
+	 * @see #setFlow(Flow)
+	 * @see #setId(String)
+	 */
+	protected State() {
+	}
 
 	/**
 	 * Creates a state for the provided <code>flow</code> identified by the

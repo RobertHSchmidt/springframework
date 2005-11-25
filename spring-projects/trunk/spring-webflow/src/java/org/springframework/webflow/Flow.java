@@ -132,6 +132,13 @@ public class Flow extends AnnotatedObject {
 	 * The list of exception handlers for this flow.
 	 */
 	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(3);
+	
+	/**
+	 * Default constructor for bean style usage.
+	 * @see #setId(String)
+	 */
+	public Flow() {
+	}
 
 	/**
 	 * Construct a new flow definition with the given id. The id should be
