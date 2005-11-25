@@ -67,7 +67,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	 * @param mappings the mappings to add
 	 */
 	public void addAll(Map mappings) {
-		for (Iterator entries=mappings.entrySet().iterator(); entries.hasNext(); ) {
+		for (Iterator entries = mappings.entrySet().iterator(); entries.hasNext();) {
 			Entry entry = (Entry)entries.next();
 			add((Class)entry.getKey(), (State)entry.getValue());
 		}
@@ -85,13 +85,13 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 		}
 		return new Transition((TransitionableState)sourceState, getTargetState(e)).execute(context);
 	}
-	
-	//helpers
-	
+
+	// helpers
+
 	/**
-	 * Find the mapped target state for given exception. Returns null
-	 * if no mapping can be found for given exception. Will try all
-	 * exceptions in the exception cause chain.
+	 * Find the mapped target state for given exception. Returns null if no
+	 * mapping can be found for given exception. Will try all exceptions in the
+	 * exception cause chain.
 	 */
 	protected State getTargetState(StateException e) {
 		if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_13) {
@@ -101,7 +101,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 			return getTargetState14(e);
 		}
 	}
-	
+
 	/**
 	 * Internal getTargetState implementation for use with JDK 1.3.
 	 */
@@ -111,7 +111,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 		}
 		else {
 			Throwable t = e.getCause();
-			if (t!=null && t instanceof NestedRuntimeException) {
+			if (t != null && t instanceof NestedRuntimeException) {
 				return getTargetState13((NestedRuntimeException)t);
 			}
 			else {
@@ -119,7 +119,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 			}
 		}
 	}
-	
+
 	/**
 	 * Internal getTargetState implementation for use with JDK 1.4 or later.
 	 */
