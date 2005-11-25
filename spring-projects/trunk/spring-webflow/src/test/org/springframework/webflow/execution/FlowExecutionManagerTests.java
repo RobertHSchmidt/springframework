@@ -21,7 +21,6 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.support.RedirectViewSelector;
 import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.test.MockExternalContext;

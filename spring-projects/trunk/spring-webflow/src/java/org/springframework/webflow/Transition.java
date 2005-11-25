@@ -41,12 +41,12 @@ import org.springframework.util.Assert;
  * <li>The target state of this transition is typically specified at
  * configuration time using the target state id. If the target state needs to be
  * calculated in a dynamic fashion at runtime, set a custom
- * <code>TransitionTargetStateResolver</code></li>
+ * <code>TargetStateResolver</code></li>
  * </ul>
  * 
- * @see org.springframework.webflow.TransitionableState
- * @see org.springframework.webflow.TransitionCriteria
- * @see org.springframework.webflow.TargetStateResolver
+ * @see TransitionableState
+ * @see TransitionCriteria
+ * @see TargetStateResolver
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

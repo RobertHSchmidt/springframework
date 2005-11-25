@@ -25,8 +25,8 @@ import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.FlowLocator;
 
 /**
  * Unit test for the FlowController class.
