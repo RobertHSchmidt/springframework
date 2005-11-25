@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.Serializable;
 
-import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 
 /**
