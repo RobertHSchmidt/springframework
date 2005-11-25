@@ -224,7 +224,7 @@ public class Transition extends AnnotatedObject {
 		}
 		else {
 			throw new UnsupportedOperationException(
-					"This transition's target state is not known: it is calculated dynamically at runtime");
+					"This transition's target state is not known, it is calculated dynamically at runtime");
 		}
 	}
 
