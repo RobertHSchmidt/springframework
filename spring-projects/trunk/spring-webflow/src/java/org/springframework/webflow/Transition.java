@@ -117,22 +117,6 @@ public class Transition extends AnnotatedObject {
 	}
 
 	/**
-	 * Create a new transition that transitions to the specified target state
-	 * when the provided criteria matches. Transition execution is guarded using
-	 * given execution criteria.
-	 * @param matchingCriteria strategy object used to determine if this
-	 * transition should be matched as elligible for execution
-	 * @param executionCriteria strategy for determining if a matched transition
-	 * should complete execution or roll back
-	 * @param targetStateId the id of the starget state of the transition
-	 */
-	public Transition(TransitionCriteria matchingCriteria, TransitionCriteria executionCriteria, String targetStateId) {
-		setMatchingCriteria(matchingCriteria);
-		setExecutionCriteria(executionCriteria);
-		setTargetStateId(targetStateId);
-	}
-
-	/**
 	 * Create a new transition that transitions to the target state
 	 * when the provided criteria matches. Transition execution is guarded using
 	 * given execution criteria.
