@@ -311,7 +311,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		this.entityResolver = entityResolver;
 	}
 
-	public Flow init(String flowId, Map flowProperties) throws FlowBuilderException {
+	public void init(String flowId, Map flowProperties) throws FlowBuilderException {
 		Assert.notNull(getLocation(),
 				"The location property specifying the XML flow definition resource location is required");
 		try {
@@ -332,7 +332,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		setFlow(parseFlow(flowId, flowProperties, getDocumentElement()));
 		addInlineFlowDefinitions(getFlow(), getDocumentElement());
 		initFlowArtifactRegistry(getFlow(), getDocumentElement());
-		return getFlow();
 	}
 
 	/**

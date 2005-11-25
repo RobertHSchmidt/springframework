@@ -153,10 +153,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		super(flowArtifactFactory);
 	}
 
-	public Flow init(String flowId, Map flowProperties) throws FlowBuilderException {
+	public void init(String flowId, Map flowProperties) throws FlowBuilderException {
 		initConversionService();
 		setFlow(createFlow(flowId, buildFlowProperties(flowProperties)));
-		return getFlow();
 	}
 
 	/**

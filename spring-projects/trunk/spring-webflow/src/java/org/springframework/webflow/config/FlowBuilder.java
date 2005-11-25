@@ -23,12 +23,15 @@ import org.springframework.webflow.Flow;
  * Builder interface used to build a flow definition. The process of building a
  * flow consists of the following steps:
  * <ol>
- * <li> Initialize this builder, creating the initial flow definition, by calling
- * {@link #init(String, Map)}.
+ * <li> Initialize this builder, creating the initial flow definition, by
+ * calling {@link #init(String, Map)}.
  * <li> Call {@link #buildStates} to create the states of the flow and add them
  * to the flow definition.
- * <li> Call {@link #buildExceptionHandlers} to create the state exception handlers
- * of the flow and add them to the flow definition.
+ * <li> Call {@link #buildExceptionHandlers} to create the state exception
+ * handlers of the flow and add them to the flow definition.
+ * <li> Call {@link #buildPostProcess} to do any build post processing, for
+ * example, making a second pass through the fully configured Flow to resolve
+ * artifacts.
  * <li> Call {@link #getResult} to return the fully-built {@link Flow}
  * definition.
  * <li> Dispose this builder, releasing any resources allocated during the
@@ -41,11 +44,11 @@ import org.springframework.webflow.Flow;
  * <code>XmlFlowBuilder</code>, for building flows from an XML-definition.
  * <p>
  * Flow builders are used by the
- * {@link org.springframework.webflow.config.FlowAssembler}, which
- * acts as an assembler (director). Flow Builders may be reused, however,
- * exercise caution when doing this as these objects are not thread safe. Also,
- * for each use, be sure to call init, buildStates, getResult, and dispose
- * completely in that order.
+ * {@link org.springframework.webflow.config.FlowAssembler}, which acts as an
+ * assembler (director). Flow Builders may be reused, however, exercise caution
+ * when doing this as these objects are not thread safe. Also, for each use, be
+ * sure to call init, buildStates, getResult, and dispose completely in that
+ * order.
  * <p>
  * This is an example of the classic GoF Builder pattern.
  * 
@@ -71,7 +74,7 @@ public interface FlowBuilder {
 	 * @return the initialized (but yet to be built) flow
 	 * @throws FlowBuilderException an exception occured building the flow
 	 */
-	public Flow init(String flowId, Map flowProperties) throws FlowBuilderException;
+	public void init(String flowId, Map flowProperties) throws FlowBuilderException;
 
 	/**
 	 * Creates and adds all states to the flow built by this builder.
@@ -80,7 +83,8 @@ public interface FlowBuilder {
 	public void buildStates() throws FlowBuilderException;
 
 	/**
-	 * Creates and adds all state exception handlers to the flow built by this builder.
+	 * Creates and adds all state exception handlers to the flow built by this
+	 * builder.
 	 * @throws FlowBuilderException an exception occured building this flow
 	 */
 	public void buildExceptionHandlers() throws FlowBuilderException;
@@ -90,7 +94,7 @@ public interface FlowBuilder {
 	 * @throws FlowBuilderException an exception occured during post processing
 	 */
 	public void buildPostProcess() throws FlowBuilderException;
-	
+
 	/**
 	 * Get the fully constructed and configured Flow object - called by the
 	 * builder's assembler (director) after assembly. Note that this method will
