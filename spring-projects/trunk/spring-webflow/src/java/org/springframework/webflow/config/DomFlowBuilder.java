@@ -622,7 +622,7 @@ public class DomFlowBuilder extends BaseFlowBuilder {
 		transition.setMatchingCriteria(
 				(TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(element.getAttribute(ON_ATTRIBUTE)));
 		transition.setExecutionCriteria(TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element)));
-		transition.setTargetStateId(element.getAttribute(TO_ATTRIBUTE));
+		transition.setTargetStateResolver(new Transition.StaticTargetStateResolver(element.getAttribute(TO_ATTRIBUTE)));
 		transition.setProperties(parseProperties(element));
 		return transition;
 	}
