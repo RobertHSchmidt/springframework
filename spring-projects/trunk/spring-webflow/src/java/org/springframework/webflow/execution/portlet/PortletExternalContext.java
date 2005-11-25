@@ -30,8 +30,14 @@ import org.springframework.webflow.ExternalContext;
  */
 public class PortletExternalContext implements ExternalContext {
 
+	/**
+	 * The request.
+	 */
 	private PortletRequest request;
 
+	/**
+	 * The response.
+	 */
 	private PortletResponse response;
 
 	/**

@@ -30,8 +30,14 @@ import org.springframework.webflow.ExternalContext;
  */
 public class ServletExternalContext implements ExternalContext {
 
+	/**
+	 * The request.
+	 */
 	private HttpServletRequest request;
 	
+	/**
+	 * The response.
+	 */
 	private HttpServletResponse response;
 	
 	/**

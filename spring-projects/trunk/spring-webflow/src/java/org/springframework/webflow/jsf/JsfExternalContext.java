@@ -29,16 +29,35 @@ import org.springframework.webflow.ExternalContext;
  */
 public class JsfExternalContext implements ExternalContext {
 
+	/**
+	 * The JSF Faces context.
+	 */
 	private FacesContext facesContext;
 	
+	/**
+	 * The id of the action or "command button" that fired. 
+	 */
 	private String actionId;
 	
+	/**
+	 * The action outcome. 
+	 */
 	private String outcome;
 
+	/**
+	 * Creates a JSF External Context.
+	 * @param facesContext the JSF faces context
+	 */
 	public JsfExternalContext(FacesContext facesContext) {
 		this.facesContext = facesContext;
 	}
 
+	/**
+	 * Creates a JSF External Context.
+	 * @param facesContext the JSF faces context.
+	 * @param actionId the action that fired
+	 * @param outcome the action outcome
+	 */
 	public JsfExternalContext(FacesContext facesContext, String actionId, String outcome) {
 		this.facesContext = facesContext;
 		this.actionId = actionId;
@@ -61,14 +80,23 @@ public class JsfExternalContext implements ExternalContext {
 		return facesContext.getExternalContext().getApplicationMap();
 	}
 
+	/**
+	 * Returns the JSF FacesContext.
+	 */
 	public FacesContext getFacesContext() {
 		return facesContext;
 	}
 
+	/**
+	 * Returns the action identifier.
+	 */
 	public String getActionId() {
 		return actionId;
 	}
 
+	/**
+	 * Returns the action outcome.
+	 */
 	public String getOutcome() {
 		return outcome;
 	}	
