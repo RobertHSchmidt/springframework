@@ -44,7 +44,7 @@ import org.springframework.webflow.ViewSelection;
 /**
  * Default flow execution control context implementation used internally by the
  * web flow system. This class is closely coupled with
- * <code>FlowExecutionImpl</code> and <code>StateSessionImpl</code>. The
+ * <code>FlowExecutionImpl</code> and <code>FlowSessionImpl</code>. The
  * three classes work together to form a complete flow execution implementation.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionImpl
