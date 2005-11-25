@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.springframework.core.JdkVersion;
+import org.springframework.core.NestedRuntimeException;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
@@ -91,13 +93,43 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	 * if no mapping can be found for given exception. Will try all
 	 * exceptions in the exception cause chain.
 	 */
-	protected State getTargetState(Throwable t) {
+	protected State getTargetState(StateException e) {
+		if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_13) {
+			return getTargetState13(e);
+		}
+		else {
+			return getTargetState14(e);
+		}
+	}
+	
+	/**
+	 * Internal getTargetState implementation for use with JDK 1.3.
+	 */
+	private State getTargetState13(NestedRuntimeException e) {
+		if (exceptionStateMap.containsKey(e.getClass())) {
+			return (State)exceptionStateMap.get(e.getClass());
+		}
+		else {
+			Throwable t = e.getCause();
+			if (t!=null && t instanceof NestedRuntimeException) {
+				return getTargetState13((NestedRuntimeException)t);
+			}
+			else {
+				return null;
+			}
+		}
+	}
+	
+	/**
+	 * Internal getTargetState implementation for use with JDK 1.4 or later.
+	 */
+	private State getTargetState14(Throwable t) {
 		if (exceptionStateMap.containsKey(t.getClass())) {
 			return (State)exceptionStateMap.get(t.getClass());
 		}
 		else {
 			if (t.getCause() != null) {
-				return getTargetState(t.getCause());
+				return getTargetState14(t.getCause());
 			}
 			else {
 				return null;
