@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support;
+package org.springframework.webflow.config;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionService;
@@ -22,6 +22,8 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.CompositeStringExpression;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.ViewSelector;
+import org.springframework.webflow.support.RedirectViewSelector;
+import org.springframework.webflow.support.SimpleViewSelector;
 
 /**
  * Converter that converts an encoded string representation of a view selector

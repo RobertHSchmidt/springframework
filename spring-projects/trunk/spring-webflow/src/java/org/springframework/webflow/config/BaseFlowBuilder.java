@@ -25,8 +25,6 @@ import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.support.TextToTransitionCriteria;
-import org.springframework.webflow.support.TextToViewSelector;
 
 /**
  * Abstract base implementation of a flow builder defining common functionality

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support;
+package org.springframework.webflow.config;
 
 import java.util.Collections;
 
@@ -25,6 +25,8 @@ import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.WildcardTransitionCriteria;
+import org.springframework.webflow.support.BooleanExpressionTransitionCriteria;
+import org.springframework.webflow.support.EventIdTransitionCriteria;
 
 /**
  * Converter that takes an encoded string representation and produces a
