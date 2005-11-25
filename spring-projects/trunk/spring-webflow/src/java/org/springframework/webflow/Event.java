@@ -27,10 +27,8 @@ import org.springframework.util.Assert;
 /**
  * Signals the occurence of something an executing flow should respond to. Each
  * event has a string id that provides a key for what happened: e.g
- * "coinInserted", or "pinDropped". An event may optionally contain information
- * about the state in which it occured, e.g "displayVendingMachine" or
- * "waitForUser". Events may have parameters that provide arbitrary payload
- * data, e.g. "coin.amount=25", or "pinDropSpeed=25ms".
+ * "coinInserted", or "pinDropped". Events may have parameters that provide
+ * arbitrary payload data, e.g. "coin.amount=25", or "pinDropSpeed=25ms".
  * <p>
  * For example, a "submit" event might signal that a Submit button was pressed
  * in a web browser. A "success" event might signal an action executed
@@ -73,8 +71,7 @@ public class Event extends EventObject implements AttributeSource {
 	}
 
 	/**
-	 * Create a new event with the specified <code>id</code> occuring in the
-	 * state with the specified <code>stateId</code> and the provided
+	 * Create a new event with the specified <code>id</code> and the provided
 	 * contextual parameters.
 	 * @param source the source of the event
 	 * @param id the event identifier
@@ -98,8 +95,10 @@ public class Event extends EventObject implements AttributeSource {
 	/**
 	 * Set the event identifier and make sure it is not null.
 	 * @param id the event identifier
+	 * @throws IllegalArgumentException when the provided id is null or an
+	 * empty string
 	 */
-	protected void setRequiredId(String id) {
+	protected void setRequiredId(String id) throws IllegalArgumentException {
 		Assert.hasText(id, "The event id is required: please set this event's id to a non-blank string identifier");
 		setId(id);
 	}

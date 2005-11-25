@@ -26,7 +26,8 @@ import org.springframework.binding.AttributeSource;
  * system by an external actor to manipulate exactly one flow execution.
  * <p>
  * A new instance of this object is created when one of the operations on a
- * <code>FlowExecution</code> facade is invoked, either ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
+ * <code>FlowExecution</code> facade is invoked, either
+ * ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
  * to activate a newly created flow execution, or
  * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(Event)})
  * to signal an event in the current state of a resumed flow execution.
@@ -73,9 +74,9 @@ import org.springframework.binding.AttributeSource;
 public interface RequestContext {
 
 	/**
-	 * Returns the external client event that originated (or triggered) this
-	 * request. This event may contain parameters provided as input by the
-	 * client. In addition, this event may be downcastable to a specific context
+	 * Returns the external client context that originated (or triggered) this
+	 * request. This context may contain parameters provided as input by the
+	 * client. In addition, this context may be downcastable to a specific context
 	 * type for a specific client environment, such as a ServletExternalContext
 	 * for servlets or a PortletExternalContext for portlets. Such downcasting
 	 * will give you full access to a native HttpServletRequest, for example.
@@ -150,7 +151,7 @@ public interface RequestContext {
 	/**
 	 * Returns the data model for this context, suitable for exposing to clients
 	 * (mostly web views). Typically the model will contain the union of the
-	 * data available in request scope, flow scope, state result events.
+	 * data available in request scope, flow scope and state result events.
 	 * @return the model that can be exposed to a client
 	 */
 	public Map getModel();

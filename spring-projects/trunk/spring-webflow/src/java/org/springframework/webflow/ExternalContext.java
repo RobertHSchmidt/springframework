@@ -22,11 +22,13 @@ import java.util.Map;
  * Spring Web Flow.
  * <p>
  * This context object provides a single, consistent interface for internal SWF
- * artifacts to use to reason and manipulate the state of an external actor
+ * artifacts to use to reason on and manipulate the state of an external actor
  * calling into SWF to execute flows.
  * <p>
  * The design of this interface was inspired by JSF's own ExternalContext
- * abstraction, and thus shares the same name for consistency.
+ * abstraction, and thus shares the same name for consistency. If a particular
+ * external client type does not support all methods defined by this interface,
+ * they can just be implemented as returning an emtpy, immutable map.
  * 
  * @author Keith Donald
  */
@@ -35,7 +37,7 @@ public interface ExternalContext {
 	/**
 	 * Provides access to the parameters associated with the user request that
 	 * led to SWF being called. This map is immutable and cannot be changed.
-	 * @return the request parameter map
+	 * @return the immutable request parameter map
 	 */
 	public Map getRequestParameterMap();
 
