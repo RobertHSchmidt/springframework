@@ -25,6 +25,8 @@ import org.springframework.util.Assert;
 /**
  * A transition takes a flow from one state to another when executed. A
  * transition is associated with exactly one source <code>TransitionableState</code>.
+ * This state is sometimes referred to as the <i>from</i> state of the
+ * transition.
  * <p>
  * This class provides a simple implementation of a Transition that offers the
  * following functionality:
@@ -36,7 +38,8 @@ import org.springframework.util.Assert;
  * <code>TransitionCriteria</code> object, the so called "execution criteria".
  * When the execution criteria test fails, the transition will <i>roll back</i>,
  * reentering its source state. When the execution criteria test
- * succeeds, the transition continues onto the target state.</li>
+ * succeeds, the transition continues onto the target state (also referred to
+ * as the <i>to</i> state).</li>
  * <li>The target state of the transition is specified at configuration time
  * using the target state id.</li>
  * </ul>
@@ -149,8 +152,8 @@ public class Transition extends AnnotatedObject {
 	}
 
 	/**
-	 * Create a new transition at runtime that always matches and always
-	 * executes, transitioning to the specified target state from the configured
+	 * Create a new transition at that always matches and always executes,
+	 * transitioning to the specified target state from the configured
 	 * source state.
 	 * @param sourceState the source state
 	 * @param targetState the target state
@@ -255,7 +258,9 @@ public class Transition extends AnnotatedObject {
 	}
 
 	/**
-	 * Returns the target state of this transition
+	 * Returns the target state of this transition, as resolved by
+	 * the {@link #resolveTargetState()} method. Should only be called after
+	 * target state resolution.
 	 */
 	protected State getTargetState() {
 		if (targetState == null) {
@@ -280,6 +285,20 @@ public class Transition extends AnnotatedObject {
 			}
 		}
 	}
+	
+	/**
+	 * Hook method subclasses can override to resolve the target state at
+	 * runtime based on information available in given flow execution request
+	 * context. Called by {@link #execute(FlowExecutionControlContext)} to
+	 * determine the target state of the transtion. The default implementation
+	 * just calls {@link #getTargetState()}, not taking the request context
+	 * into account.
+	 * @param context the flow execution request context
+	 * @return the target state to transtion to
+	 */
+	protected State getTargetState(RequestContext context) {
+		return getTargetState();
+	}
 
 	/**
 	 * Execute this state transition. Will only be called if the
@@ -298,7 +317,7 @@ public class Transition extends AnnotatedObject {
 			getSourceState().exit(context);
 			context.setLastTransition(this);
 			// enter the target state (note: any exceptions are propagated)
-			selectedView = getTargetState().enter(context);
+			selectedView = getTargetState(context).enter(context);
 		}
 		else {
 			// 'roll back' and re-enter the source state
@@ -319,8 +338,8 @@ public class Transition extends AnnotatedObject {
 
 	public String toString() {
 		return
-			new ToStringCreator(this).append("targetState", getTargetStateId())
-				.append("sourceState", getSourceState().getId()).append("matchingCriteria", getMatchingCriteria())
+			new ToStringCreator(this).append("sourceState", getSourceState().getId())
+				.append("targetState", getTargetStateId()).append("matchingCriteria", getMatchingCriteria())
 				.append("executionCriteria", getExecutionCriteria()).append("properties", getProperties()).toString();
 	}
 }
