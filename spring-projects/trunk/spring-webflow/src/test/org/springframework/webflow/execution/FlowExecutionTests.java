@@ -17,6 +17,7 @@ package org.springframework.webflow.execution;
 
 import junit.framework.TestCase;
 
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
@@ -81,7 +82,7 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public void testLoopInFlow() throws Exception {
-		AbstractFlowBuilder builder = new AbstractFlowBuilder() {
+		AbstractFlowBuilder builder = new AbstractFlowBuilder(new DefaultListableBeanFactory()) {
 			public void buildStates() throws FlowBuilderException {
 				addViewState("viewState", "viewName", new Transition[] { on(submit(), "viewState"),
 						on(finish(), "endState") });
@@ -104,7 +105,7 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public void testLoopInFlowWithSubFlow() throws Exception {
-		AbstractFlowBuilder childBuilder = new AbstractFlowBuilder() {
+		AbstractFlowBuilder childBuilder = new AbstractFlowBuilder(new DefaultListableBeanFactory()) {
 			public void buildStates() throws FlowBuilderException {
 				addActionState("doOtherStuff", new AbstractAction() {
 					private int executionCount = 0;
@@ -122,7 +123,7 @@ public class FlowExecutionTests extends TestCase {
 			}
 		};
 		final Flow childFlow = new FlowAssembler("childFlow", childBuilder).getFlow();
-		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder() {
+		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder(new DefaultListableBeanFactory()) {
 			public void buildStates() throws FlowBuilderException {
 				addActionState("doStuff", new AbstractAction() {
 					protected Event doExecute(RequestContext context) throws Exception {

@@ -17,6 +17,7 @@ package org.springframework.webflow.config;
 
 import junit.framework.TestCase;
 
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.support.Assert;
 import org.springframework.webflow.Event;
@@ -33,7 +34,8 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class TextToViewSelectorTests extends TestCase {
 
-	private TextToViewSelector converter = new TextToViewSelector(new DefaultConversionService());
+	private TextToViewSelector converter = new TextToViewSelector(
+			new FlowArtifactFactory(new DefaultListableBeanFactory()), new DefaultConversionService());
 
 	public void testStaticView() {
 		ViewSelector selector = (ViewSelector)converter.convert("myView");

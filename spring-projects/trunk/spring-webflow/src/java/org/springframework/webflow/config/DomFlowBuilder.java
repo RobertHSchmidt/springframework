@@ -246,8 +246,8 @@ public class DomFlowBuilder extends BaseFlowBuilder {
 		Assert.notNull(location,
 				"The resource from which the DOM element to parse was loaded is required " +
 				"for location relative loading of other resources");
-		initConversionService();
 		initFlowArtifactFactory();
+		initConversionService();
 		addInlineFlowDefinitions();
 		setFlow(parseFlow(flowId, flowProperties));
 		return getFlow();

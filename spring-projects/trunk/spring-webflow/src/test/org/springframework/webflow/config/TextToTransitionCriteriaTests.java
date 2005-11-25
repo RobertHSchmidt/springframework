@@ -17,6 +17,7 @@ package org.springframework.webflow.config;
 
 import junit.framework.TestCase;
 
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -29,7 +30,8 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class TextToTransitionCriteriaTests extends TestCase {
 
-	private TextToTransitionCriteria converter = new TextToTransitionCriteria();
+	private TextToTransitionCriteria converter = new TextToTransitionCriteria(
+			new FlowArtifactFactory(new DefaultListableBeanFactory()));
 	
 	public void testAny() {
 		String expression = "*";
