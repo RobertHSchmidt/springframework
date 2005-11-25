@@ -20,18 +20,20 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyValue;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.config.registry.FlowAssembler;
 
 /**
  * Test Java based flow builder logic (subclasses of AbstractFlowBuilder).
@@ -50,31 +52,15 @@ public class AbstractFlowBuilderTests extends TestCase {
 
 	public void testDependencyLookup() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
-		master.setFlowArtifactFactory(new FlowArtifactFactoryAdapter() {
-			public Flow getSubflow(String id) throws FlowArtifactLookupException {
-				if (id.equals(PERSON_DETAILS)) {
-					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();
-					builder.setFlowArtifactFactory(this);
-					return new FlowAssembler(PERSON_DETAILS, builder).getFlow();
-				}
-				else {
-					throw new FlowArtifactLookupException(Flow.class, id);
-				}
-			}
-
-			public Action getAction(String actionId) throws FlowArtifactLookupException {
-				return new NoOpAction();
-			}
-
-			public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
-				if (id.equals("id.attributeMapper")) {
-					return new PersonIdMapper();
-				}
-				else {
-					throw new FlowArtifactLookupException(FlowAttributeMapper.class, id);
-				}
-			}
-		});
+		
+		StaticApplicationContext context = new StaticApplicationContext();
+		context.registerSingleton("personDetailsFlowBuilder", TestDetailFlowBuilderLookupById.class);
+		context.registerSingleton(PERSON_DETAILS, FlowFactoryBean.class, new MutablePropertyValues().addPropertyValue(
+				new PropertyValue("flowBuilder", new RuntimeBeanReference("personDetailsFlowBuilder"))));
+		context.registerSingleton("noOpAction", NoOpAction.class);
+		context.registerSingleton("id.attributeMapper", PersonIdMapper.class);
+		master.setBeanFactory(context);
+		
 		Flow flow = new FlowAssembler(PERSONS_LIST, master).getFlow();
 		assertEquals("person.List", flow.getId());
 		assertTrue(flow.getStateCount() == 4);
@@ -94,14 +80,14 @@ public class AbstractFlowBuilderTests extends TestCase {
 			new FlowAssembler(PERSONS_LIST, master).getFlow();
 			fail("Should have failed, artifact lookup not supported");
 		}
-		catch (UnsupportedOperationException e) {
+		catch (IllegalArgumentException e) {
 			// expected
 		}
 	}
 
 	public class TestMasterFlowBuilderLookupById extends AbstractFlowBuilder {
 		public void buildStates() {
-			addActionState("getPersonList", action("noOptAction"), on(success(), "viewPersonList"));
+			addActionState("getPersonList", action("noOpAction"), on(success(), "viewPersonList"));
 			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
 			addSubflowState(PERSON_DETAILS, flow("person.Detail"), attributeMapper("id.attributeMapper"),
 					onAnyEvent("getPersonList"));
@@ -147,7 +133,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 		}
 	}
 
-	public class TestDetailFlowBuilderLookupById extends AbstractFlowBuilder {
+	public static class TestDetailFlowBuilderLookupById extends AbstractFlowBuilder {
 		public void buildStates() {
 			addActionState("getDetails", action("noOpAction"), on(success(), "viewDetails"));
 			addViewState("viewDetails", "person.Detail.view", on(submit(), "bindAndValidateDetails"));

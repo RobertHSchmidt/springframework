@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
+
+<flow bean="customFlow" start-state="actionState1">
+
+	<action-state bean="customActionState" id="actionState1">
+		<action bean="customAction"/>
+		<transition on="success" to="subFlowState1"/>
+	</action-state>
+
+	<subflow-state bean="customSubflowState" id="subFlowState1" flow="subFlow1">
+		<attribute-mapper bean="customAttributeMapper"/>
+		<transition on="end" to="viewState1"/>
+	</subflow-state>
+	
+	<view-state bean="customViewState" id="viewState1" view="someView">
+		<transition bean="customTransition" on="ok" to="endState1"/>
+	</view-state>
+	
+	<decision-state bean="customDecisionState" id="decisionState1">
+		<if test="${true}" then="endState1"/>
+	</decision-state>
+	
+	<end-state bean="customEndState" id="endState1"/>
+
+	<exception-handler bean="customExceptionHandler"/>
+
+	<import resource="testFlow3Context.xml"/>
+
+	<inline-flow id="subFlow1">
+		<flow start-state="end">			
+			<end-state id="end"/>
+		</flow>
+	</inline-flow>
+	
+</flow> 
+
+ 

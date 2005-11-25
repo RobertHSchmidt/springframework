@@ -39,7 +39,7 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.config.FlowLocator;
+import org.springframework.webflow.access.FlowLocator;
 
 /**
  * Default implementation of FlowExecution that uses a stack-based data

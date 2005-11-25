@@ -38,15 +38,6 @@ public class FlowBuilderException extends NestedRuntimeException {
 
 	/**
 	 * Create a new flow builder exception.
-	 * @param message descriptive message
-	 * @param cause the underlying cause of this exception
-	 */
-	public FlowBuilderException(String message, Throwable cause) {
-		this(null, message, cause);
-	}
-
-	/**
-	 * Create a new flow builder exception.
 	 * @param builder the flow builder that encountered the problem
 	 * @param message descriptive message
 	 * @param cause the underlying cause of this exception

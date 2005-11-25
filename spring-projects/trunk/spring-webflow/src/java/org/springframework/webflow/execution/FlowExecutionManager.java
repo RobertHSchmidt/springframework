@@ -34,7 +34,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.config.FlowLocator;
+import org.springframework.webflow.access.FlowLocator;
 
 /**
  * A manager for the executing flows of a an application. This object is

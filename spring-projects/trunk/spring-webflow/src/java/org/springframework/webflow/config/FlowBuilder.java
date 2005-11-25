@@ -23,15 +23,16 @@ import org.springframework.webflow.Flow;
  * Builder interface used to build a flow definition. The process of building a
  * flow consists of the following steps:
  * <ol>
- * <li> Initialize this builder, creating the initial flow definition.
+ * <li> Initialize this builder, creating the initial flow definition, by calling
+ * {@link #init(String, Map)}.
  * <li> Call {@link #buildStates} to create the states of the flow and add them
  * to the flow definition.
  * <li> Call {@link #buildExceptionHandlers} to create the state exception handlers
- * of the flow and add them to to the flow definition.
+ * of the flow and add them to the flow definition.
  * <li> Call {@link #getResult} to return the fully-built {@link Flow}
  * definition.
  * <li> Dispose this builder, releasing any resources allocated during the
- * building process.
+ * building process by calling {@link #dispose()}.
  * </ol>
  * <p>
  * Implementations should encapsulate flow construction logic, either for a
@@ -40,7 +41,7 @@ import org.springframework.webflow.Flow;
  * <code>XmlFlowBuilder</code>, for building flows from an XML-definition.
  * <p>
  * Flow builders are used by the
- * {@link org.springframework.webflow.config.registry.FlowAssembler}, which
+ * {@link org.springframework.webflow.config.FlowAssembler}, which
  * acts as an assembler (director). Flow Builders may be reused, however,
  * exercise caution when doing this as these objects are not thread safe. Also,
  * for each use, be sure to call init, buildStates, getResult, and dispose
@@ -50,7 +51,7 @@ import org.springframework.webflow.Flow;
  * 
  * @see org.springframework.webflow.config.AbstractFlowBuilder
  * @see org.springframework.webflow.config.XmlFlowBuilder
- * @see org.springframework.webflow.config.registry.FlowAssembler
+ * @see org.springframework.webflow.config.FlowAssembler
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

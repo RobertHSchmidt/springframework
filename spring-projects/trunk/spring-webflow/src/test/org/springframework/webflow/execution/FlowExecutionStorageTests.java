@@ -7,12 +7,11 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.webflow.EndState;
-import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.config.RedirectViewSelector;
-import org.springframework.webflow.config.SimpleViewSelector;
+import org.springframework.webflow.config.support.RedirectViewSelector;
+import org.springframework.webflow.config.support.SimpleViewSelector;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionStorageTests extends TestCase {

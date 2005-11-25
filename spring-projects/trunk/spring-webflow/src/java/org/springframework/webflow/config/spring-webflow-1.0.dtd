@@ -10,9 +10,9 @@
     A Flow definition is a blueprint for an executable, single-user process
 	(or conversation).
 	
-	A flow is composed of one or more states (or steps).  Each state executes 
-	behavior when entered.  What behavior is executed is a function of the
-	state's type.  Core state types include view states, action states,
+	A flow is composed of one or more states (or steps). Each state executes 
+	behavior when entered. What behavior is executed is a function of the
+	state's type. Core state types include view states, action states,
 	subflow states, decision states, and end states.
     
     Each flow definition must specify exactly one start state and at least one end state.
@@ -25,10 +25,10 @@
 -->
 
 <!--
-	Defines a exactly one flow definition.  A flow is composed of one or more states.  A flow may
-    annotated with properties and may be configured to handle state exceptions.  A flow may import
+	Defines exactly one flow definition. A flow is composed of one or more states. A flow may be
+    annotated with properties and may be configured to handle state exceptions. A flow may import
     one or more bean definition resources defining custom flow artifacts (such as actions, 
-	exception handlers, view selectors, transition criteria, etc).  A flow may nest one or more other 
+	exception handlers, view selectors, transition criteria, etc). A flow may nest one or more other 
 	flows in-line to use as subflows, referred to as 'inline flows'.
 -->
 <!ELEMENT flow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, import*, inline-flow* )>
@@ -39,12 +39,18 @@
 <!ATTLIST flow start-state IDREF #REQUIRED>
 
 <!--
+	Identifier of a flow implementation exported in the bean factory that should be used.
+	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
+-->
+<!ATTLIST flow bean CDATA #IMPLIED>
+
+<!--
 	A property associated with an another element (flow, action, state, transition, etc).
 	Properties are simple strings or typed attributes that allow you to annotate an element.
 	For example:
 	- an element's 'caption' property might serve a GUI tooltip or logging statement
-	- a FormAction's 'validatorMethod' property might specify a target method to invoke on a form validator.
-	- a Flow's 'transactional' property might indicate the flow should exhibit transactionl characteristics.
+	- an Action's 'validatorMethod' property might specify a target method to invoke on a validator
+	- a Flow's 'transactional' property might indicate the flow should exhibit transactionl characteristics
 -->
 <!ELEMENT property ( value? )>
 
@@ -71,7 +77,7 @@
 
 <!--
 	Defines an action state, a state where one or more Actions (command objects) are executed.
-	An action state is a transitionable state.  An action state transition is triggered by an
+	An action state is a transitionable state. An action state transition is triggered by an
 	action result event.
 -->
 <!ELEMENT action-state ( property*, entry-actions?, action+, transition+, exit-actions?, exception-handler* )>
@@ -82,22 +88,28 @@
 <!ATTLIST action-state id ID #REQUIRED>
 
 <!--
-	Defines a single action to be executed in this state.  An action is a command that executes
-	arbitrary state behavior.  An action may be annotated with properties.  These properties can be
-	used to effect the action's	execution in this state.
+	Identifier of an action state implementation exported in the bean factory that should be used.
+	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
+-->
+<!ATTLIST action-state bean CDATA #IMPLIED>
+
+<!--
+	Defines a single action to be executed. An action is a command that executes
+	arbitrary behavior. An action may be annotated with properties. These properties can be
+	used to effect the action's execution.
 -->
 <!ELEMENT action ( property* )>
 
 <!--
-	The logical identifier of the action implementation to execute, typically a index into
-	a service registry like a Spring Bean Factory.  This is similar to the <ref bean="myBean"/>
-	notation of	the Spring beans DTD.
+	The logical identifier of the action implementation to execute, typically an the id of a bean
+	in the Spring bean factory. This is similar to the <ref bean="myBean"/>
+	notation of the Spring beans DTD.
 -->
 <!ATTLIST action bean CDATA #IMPLIED>
 
 <!--
 	An optional name qualifier for this action. When specified this action will
-	qualify execution result event ids by this name.  For example, if this action is
+	qualify execution result event ids by this name. For example, if this action is
 	named "processOrder" and signals a "success" result event after execution, the
 	fully qualified result event the flow can respond to would be "processOrder.success".
 	
@@ -110,15 +122,15 @@
 	action method binding.
 	
 	If this action extends MultiAction, the method's signature must
-	be of the form: 'public Event <method>(RequestContext) throws Exception'
+	be of the form: 'public Event <method>(RequestContext) throws Exception'.
 
     For example:
         method="setupForm"
         	
 	If this action is an abritrary bean (POJO), the method's signature can 
-	match any public method on the bean's implementation.  In this case the
-	method format is as follows: <method>(${param1}, ${param n}) where any 
-	${parameter expressions} are evaluated against this flow's RequestContext.
+	match any public method on the bean's implementation. In this case the
+	method format is as follows: <method>(${arg 1}, ..., ${arg n}) where any 
+	${argument expression}s are evaluated against this flow's RequestContext.
 
 	For example:
         method="processOrder(${flowScope.order})"	
@@ -129,23 +141,28 @@
 <!--
 	Defines a transition from one state to another.
 	
-	A transitions defines a supported paths through the flow.
+	A transitions defines a supported path through the flow.
 	A transitions may be annotated with properties and may specify one or more
 	actions to execute before executing.
 -->
 <!ELEMENT transition ( property*, action* )>
 
 <!--
-	The criteria that matches this transition's execution, typically reasoning on the
+	Identifier of a transition implementation exported in the bean factory that should be used.
+	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
+-->
+<!ATTLIST transition bean CDATA #IMPLIED>
+
+<!--
+	The criteria that guards this transition's execution, typically reasoning on the
 	last event that occured in an execution of this flow to determine if this transition 
 	should execute.
 	
-	The most basic value is a static event id.  For example:
+	The most basic value is a static event id. For example:
   	    on="success"
 	
-	Sophisticated, custom transitional expressions are also supported.  For example:
+	Sophisticated transitional expressions are also supported. For example:
 	    on="${#result == 'submit' && flowScope.attribute == 'foo'}"
-  	    on="bean:myCustomCriteria"
 	
 	The exact interpretation of the attribute value depends on the TextToTransitionCriteria
 	converter that is installed.
@@ -161,7 +178,7 @@
 	Defines a view state, a state where a view will be selected for rendering and control will be 
 	returned to the user.
 
-	A view state is a transitionable state.  A view state transition is triggered by an
+	A view state is a transitionable state. A view state transition is triggered by a
 	user input event.
 -->
 <!ELEMENT view-state ( property*, entry-actions?, transition+, exit-actions?, exception-handler* )>
@@ -172,25 +189,28 @@
 <!ATTLIST view-state id ID #REQUIRED>
 
 <!--
-	The name of the view to to render when this view state is entered.
+	Identifier of a view state implementation exported in the bean factory that should be used.
+	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
+-->
+<!ATTLIST view-state bean CDATA #IMPLIED>
+
+<!--
+	The name of the view to render when this view state is entered.
 	
-	This value may be a static view name or even a direct pointer to a view template.  For example:
+	This value may be a static view name or even a direct pointer to a view template. For example:
 	    "priceForm", or "/WEB-INF/jsp/priceForm.jsp"
 	
 	This value may also be qualified with a prefix to denote a specific (possibly custom)
-	ViewSelector strategy.  Specifically:
+	ViewSelector strategy. Specifically:
 	
 	Use of the "redirect:" prefix triggers creation of a RedirectViewSelector which will request
-	a redirect to a specific URL.  For example:
+	a redirect to a specific URL. For example:
 	    "redirect:/home.html"
 	
 	Redirect query parameters may also be specified using ${expressions} that evaluate against
-	the request context.  For example:
+	the request context. For example:
 	    "redirect:/thankyou.htm?confirmationNumber=${flowScope.order.confirmation.id}"
 	
-	Use of the "bean:" prefix will plug in the custom ViewSelector implementation with that bean id:
-	    "bean:myCustomViewSelector"
-
 	The exact semantics regarding the interpretation of this value are determined by the
 	installed TextToViewSelector converter.
 
@@ -201,21 +221,21 @@
 <!ATTLIST view-state view CDATA #IMPLIED>
 
 <!--
-	Defines state entry logic to be executed.  This logic will always execute when this state is entered.
+	Defines state entry logic to be executed. This logic will always execute when the state is entered.
 -->
 <!ELEMENT entry-actions ( action+ )>
 
 <!--
-	Defines state exit logic to be executed.  This logic will always execute when this state is exited 
+	Defines state exit logic to be executed. This logic will always execute when the state is exited 
 	regardless of what transition is executed.
 -->
 <!ELEMENT exit-actions ( action+ )>
 
 <!--
 	Defines a decision state, a state that evaluates one or more expressions to	decide which
-	state to go to next.  Also referred to as a "routing" state.
+	state to go to next.
 	
-	A decision state is a transitionable state.  A decision state transition is triggered by an
+	A decision state is a transitionable state. A decision state transition is triggered by an
 	boolean expression evaluating true against the flow execution request context.
 -->
 <!ELEMENT decision-state ( property*, entry-actions?, if+, exit-actions?, exception-handler* )>
@@ -226,8 +246,14 @@
 <!ATTLIST decision-state id ID #REQUIRED>
 
 <!--
+	Identifier of a decision state exported in the bean factory that should be used.
+	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
+-->
+<!ATTLIST decision-state bean CDATA #IMPLIED>
+
+<!--
 	A transition specification that defines a criteria expression and a state to
-	transition to if that expression is true.  Optionally, this element may also define
+	transition to if that expression is true. Optionally, this element may also define
 	an 'else' attribute to note the state to transition to if the expression is false.
 	The form is:
 	    <if test="${criteria}" then="<trueStateId>" else="<falseStateId>"/>
@@ -235,8 +261,8 @@
 <!ELEMENT if EMPTY>
 
 <!--
-	The transition criteria expression to be tested.  This should be a ${expression} that
-	evaluates against this flow's crequest context.  For example:
+	The transition criteria expression to be tested. This should be an ${expression} that
+	evaluates against this flow's request context. For example:
 	    <if test="${flowScope.sale.shipping} then="enterShippingDetails"/>
 -->
 <!ATTLIST if test CDATA #REQUIRED>
@@ -252,14 +278,14 @@
 <!ATTLIST if else IDREF #IMPLIED>
 
 <!--
-	Defines a sub flow state, a state that spawns a sub flow when entered.
+	Defines a subflow state, a state that spawns a subflow when entered.
 
-	A subflow state is a transitionable state.  A subflow state transition is triggered by a 
+	A subflow state is a transitionable state. A subflow state transition is triggered by a 
 	subflow result event, typically by reasoning on the id of the subflow end state that was reached.
 	
 	While the subflow is active, this flow is suspended waiting for the subflow to complete execution.
-	When the sub flow completes execution by reaching an end state, this state is expected 
-	to respond to the result of that execution.  The result of subflow execution, the end state 
+	When the subflow completes execution by reaching an end state, this state is expected 
+	to respond to the result of that execution. The result of subflow execution, the end state 
 	that was reached, should be used as grounds for a transition out of this state.
 -->
 <!ELEMENT subflow-state ( property*, entry-actions?, attribute-mapper?, transition+, exit-actions?, exception-handler* )>
@@ -268,6 +294,12 @@
 	The unique identifier of this subflow state; must be unique to this flow.
 -->
 <!ATTLIST subflow-state id ID #REQUIRED>
+
+<!--
+	Identifier of a flow implementation exported in the bean factory that should be used.
+	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
+-->
+<!ATTLIST subflow-state bean CDATA #IMPLIED>
 
 <!--
 	The id of the flow to be spawned as a subflow when this subflow state is entered.
@@ -281,8 +313,7 @@
 
 <!--
 	The identifier of a custom flow attribute mapper implementation exported in the
-	configured registry, typically a Spring Bean Factory. This is similar
-	to the <ref bean="myBean"/> notation of the Spring beans DTD.
+	Spring bean factory. This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 	
 	Use this as an alternative to the convenient "input" and "output" element attributes 
 	when you need full control of attribute mapping behavior for this subflow state.
@@ -295,12 +326,12 @@
 <!ELEMENT input EMPTY>
 
 <!--
-	The name of a attribute in this flow to map as input into the spawning the subflow.
+	The name of an attribute in this flow to map as input into the spawning the subflow.
 
 	If the 'as' attribute is not specified, the mapped attribute will be assigned 
 	the same name in the subflow.
 
-	If the 'as' attribute is specified, the mapped attribute will be assigned the name specified 
+	If the 'as' attribute is specified, the mapped attribute will be assigned that name 
 	in the subflow.
 	
 	Use this or the value attribute, not both.
@@ -352,7 +383,7 @@
 	If the 'as' attribute is not specified, the mapped attribute will be assigned
 	the same name in this flow.
 	
-	If the 'as' attribute is specified, the mapped attribute will be assigned the name specified 
+	If the 'as' attribute is specified, the mapped attribute will be assigned that name
 	in this flow.
 	
 	Use this or the value attribute, not both.
@@ -363,7 +394,7 @@
 	A value expression evaluated against the subflow's request context.
 	The evaluated expression value is what is mapped as output up to this resuming flow.
 	
-	Note: you must specify the 'as' attribute to assign the expression value a attribute name 
+	Note: you must specify the 'as' attribute to assign the expression value an attribute name 
 	in this flow.
 	
 	Use this or the name attribute, not both.
@@ -398,11 +429,10 @@
 	A end state is not transitionable, there are no transitions out of an end state.
 	When an end-state is entered, a instance of this flow is terminated.
 	
-	Every flow must define at least one end-state.  When an end state is entered, if the executing
-	flow is a "root flow" the entire execution (conversation) is terminated.  If the executing flow
-	is a "subflow" the subflow session ends and the parent session resumes.  To resume, the parent
-	session responds to the result of the subflow, typically by reasoning on the id of the 
-	end state that was reached.
+	When an end state is entered, if the executing	flow is a "root flow" the entire execution
+	(conversation) is terminated. If the executing flow is a "subflow" the subflow session ends
+	and the parent session resumes. To resume, the parent session responds to the result of
+	the subflow, typically by reasoning on the id of the end state that was reached.
 -->
 <!ELEMENT end-state ( property*, entry-actions?, exception-handler* )>
 
@@ -412,24 +442,28 @@
 <!ATTLIST end-state id ID #REQUIRED>
 
 <!--
+	Identifier of an end state exported in the bean factory that should be used.
+	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
+-->
+<!ATTLIST end-state bean CDATA #IMPLIED>
+
+<!--
 	The name of the view to to render when this end state is entered.
 	
-	This value may be a static view name or even a direct pointer to a view template.  For example:
+	This value may be a static view name or even a direct pointer to a view template. For example:
 	    "priceForm", or "/WEB-INF/jsp/priceForm.jsp"
 	
 	This value may also be qualified with a prefix to denote a specific (possibly custom)
-	ViewSelector strategy.  Specifically:
+	ViewSelector strategy. Specifically:
 	
 	Use of the "redirect:" prefix triggers creation of a RedirectViewSelector which will request
-	a redirect to a specific URL.  For example:
+	a redirect to a specific URL. For example:
 	    "redirect:/home.html"
 	
 	Redirect query parameters may also be specified using ${expressions} that evaluate against
-	the request context.  For example:
-	    "redirect:/thankyou.htm?confirmationNumber=${flowScope.orderConfirmation.number}"
+	the request context. For example:
+	    "redirect:/thankyou.htm?confirmationNumber=${flowScope.order.confirmation.id}"
 	
-	Use of the "bean:" prefix will plug in the custom ViewSelector implementation with that bean id.
-
 	The exact semantics regarding the interpretation of this value are determined by the
 	installed TextToViewSelector converter.
 
@@ -441,7 +475,7 @@
 
 <!--
 	Defines a state exception handler to handle one or more exceptions that may occur during the
-	execution of this flow definition.  Exception handlers may be attached at the state or flow level.
+	execution of this flow definition. Exception handlers may be attached at the state or flow level.
 -->
 <!ELEMENT exception-handler EMPTY>
 
@@ -456,8 +490,7 @@
 <!ATTLIST exception-handler to IDREF #IMPLIED>
 
 <!--
-	The id of a custom exception handler implementation to attach.  Specify this attribute or 
-	the class and state attributes, not both.
+	The id of a custom exception handler implementation to attach.
 -->
 <!ATTLIST exception-handler bean CDATA #IMPLIED>
 
@@ -468,19 +501,17 @@
 <!ELEMENT import EMPTY>
 
 <!--
-	The relative resource path to the bean definition resource to import.  This path is relative to 
-	this document.
+	The relative resource path to the bean definition resource to import.
+	This path is relative to this document.
 -->
 <!ATTLIST import resource CDATA #REQUIRED>
 
 <!--
-	Defines a exactly one inline flow definition, a flow definition fully contained within and locally
-	scoped to this flow.
+	Defines exactly one inline flow definition and assign an id to it.
 -->
 <!ELEMENT inline-flow ( flow+ )>
 
 <!--
-	The assigned identifier of this in-line flow.  Must be unique to all other inline flows contained
-	by this flow.
+	The assigned identifier of this in-line flow. Must be unique to all other inline flows.
 -->
 <!ATTLIST inline-flow id ID #REQUIRED>

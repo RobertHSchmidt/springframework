@@ -20,21 +20,13 @@ constructs the flow accordingly.
 </li>
 </ul>
 During flow construction, a flow builder will need to locate a number of
-<i>artifacts</i> required by the flow definition: actions, other flows, attribute
-mappers and so on. To do this, the flow builder uses a configured
-FlowArtifactFactory. Most Spring applications will use the
-{@link org.springframework.webflow.config.DefaultFlowArtifactFactory},
-which delegates to a standard Spring BeanFactory.
+<i>artifacts</i> required by the flow definition in the Spring bean factory:
+actions, other flows, attribute mappers and so on.
 </p>
 <p>
-To direct flow construction, you use the {@link org.springframework.webflow.config.registry.FlowAssembler}.
-This is based on the class GOF Builder design pattern.
-</p>
-<p>
-Assembled Flows are typically registered in a
-{@link org.springframework.webflow.config.registry.FlowRegistry} where they may be accessed for execution 
-at runtime.  A flow registry is typically populated by using a {@link org.springframework.webflow.config.registry.FlowRegistrar} 
-in conjunction with a {@link org.springframework.webflow.config.registry.AbstractFlowRegistryFactoryBean}.
+To direct flow construction, you use the
+{@link org.springframework.webflow.config.registry.FlowAssembler}.
+This is based on the class GoF builder design pattern.
 </p>
 </body>
 </html>

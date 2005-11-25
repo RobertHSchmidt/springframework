@@ -40,7 +40,7 @@ import javax.faces.render.RenderKit;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.config.FlowLocator;
+import org.springframework.webflow.access.FlowLocator;
 
 /**
  * Test case for the FlowNavigationHandler class.

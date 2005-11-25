@@ -32,11 +32,10 @@ import org.springframework.webflow.StateTests.ExecutionCounterAction;
 import org.springframework.webflow.StateTests.InputOutputMapper;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.config.AbstractFlowBuilder;
-import org.springframework.webflow.config.EventIdTransitionCriteria;
-import org.springframework.webflow.config.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.FlowBuilderException;
-import org.springframework.webflow.config.SimpleViewSelector;
-import org.springframework.webflow.config.registry.FlowAssembler;
+import org.springframework.webflow.config.support.EventIdTransitionCriteria;
+import org.springframework.webflow.config.support.SimpleViewSelector;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -82,7 +81,7 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public void testLoopInFlow() throws Exception {
-		AbstractFlowBuilder builder = new AbstractFlowBuilder(new FlowArtifactFactoryAdapter()) {
+		AbstractFlowBuilder builder = new AbstractFlowBuilder() {
 			public void buildStates() throws FlowBuilderException {
 				addViewState("viewState", "viewName", new Transition[] { on(submit(), "viewState"),
 						on(finish(), "endState") });
@@ -105,7 +104,7 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public void testLoopInFlowWithSubFlow() throws Exception {
-		AbstractFlowBuilder childBuilder = new AbstractFlowBuilder(new FlowArtifactFactoryAdapter()) {
+		AbstractFlowBuilder childBuilder = new AbstractFlowBuilder() {
 			public void buildStates() throws FlowBuilderException {
 				addActionState("doOtherStuff", new AbstractAction() {
 					private int executionCount = 0;
@@ -123,7 +122,7 @@ public class FlowExecutionTests extends TestCase {
 			}
 		};
 		final Flow childFlow = new FlowAssembler("childFlow", childBuilder).getFlow();
-		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder(new FlowArtifactFactoryAdapter()) {
+		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder() {
 			public void buildStates() throws FlowBuilderException {
 				addActionState("doStuff", new AbstractAction() {
 					protected Event doExecute(RequestContext context) throws Exception {

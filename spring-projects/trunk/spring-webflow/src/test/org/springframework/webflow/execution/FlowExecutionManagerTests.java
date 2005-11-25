@@ -16,14 +16,14 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.config.FlowLocator;
-import org.springframework.webflow.config.RedirectViewSelector;
-import org.springframework.webflow.config.SimpleViewSelector;
-import org.springframework.webflow.config.registry.NoSuchFlowDefinitionException;
+import org.springframework.webflow.access.FlowLocator;
+import org.springframework.webflow.config.support.RedirectViewSelector;
+import org.springframework.webflow.config.support.SimpleViewSelector;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionManagerTests extends TestCase {
@@ -75,11 +75,10 @@ public class FlowExecutionManagerTests extends TestCase {
 		Map input = new HashMap(1);
 		input.put(manager.getFlowIdParameterName(), "nonexistantFlow");
 		try {
-			ViewSelection view = manager.onEvent(new MockExternalContext(input));
+			manager.onEvent(new MockExternalContext(input));
 			fail("Should have thrown no such flow exception");
 		}
-		catch (NoSuchFlowDefinitionException e) {
-
+		catch (FlowArtifactLookupException e) {
 		}
 	}
 
@@ -123,7 +122,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		manager.addListener(listener);
 		Map input = new HashMap(1);
 		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		ViewSelection view = manager.onEvent(new MockExternalContext(input));
+		manager.onEvent(new MockExternalContext(input));
 		assertTrue("Listener not invoked", listener.invoked);
 	}
 
@@ -143,7 +142,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		manager.setListenerMap(listenerMap);
 		Map input = new HashMap(1);
 		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		ViewSelection view = manager.onEvent(new MockExternalContext(input));
+		manager.onEvent(new MockExternalContext(input));
 		assertTrue("Listener not invoked", listener1.invoked);
 		assertFalse("Listener invoked", listener2.invoked);
 		assertFalse("Listener invoked", listener3.invoked);
@@ -156,7 +155,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		manager.addListenerCriteria(listener, FlowExecutionListenerCriteriaFactory.flow("not this one"));
 		Map input = new HashMap(1);
 		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		ViewSelection view = manager.onEvent(new MockExternalContext(input));
+		manager.onEvent(new MockExternalContext(input));
 		assertFalse("Listener invoked", listener.invoked);
 	}
 
@@ -179,7 +178,7 @@ public class FlowExecutionManagerTests extends TestCase {
 				return simpleFlow;
 			}
 			else {
-				throw new NoSuchFlowDefinitionException(id);
+				throw new FlowArtifactLookupException(Flow.class, id);
 			}
 		}
 	}

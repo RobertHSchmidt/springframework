@@ -18,6 +18,7 @@ package org.springframework.webflow.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
@@ -32,6 +33,8 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.access.FlowArtifactFactory;
+import org.springframework.webflow.config.support.ActionTransitionCriteria;
 
 /**
  * Base class for flow builders that programmatically build flows in Java
@@ -64,7 +67,7 @@ import org.springframework.webflow.ViewState;
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
- * flow.  These include a "get"
+ * flow. These include a "get"
  * <code>ActionState</code> (the start state), a <code>ViewState</code>
  * state, a "bind and validate" <code>ActionState</code>, and an end marker
  * state (<code>EndState</code>).
@@ -139,27 +142,39 @@ import org.springframework.webflow.ViewState;
 public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	/**
-	 * Create an instance of a abstract flow builder; default constructor.
+	 * Default constructor for subclassing.
 	 */
 	protected AbstractFlowBuilder() {
 		super();
 	}
 
 	/**
-	 * Create an instance of an abstract flow builder, using the specified
-	 * service locator to obtain needed flow services during configuation.
-	 * @param flowArtifactFactory the artifact locator
+	 * Create a new Java flow builder looking up required flow artifacts
+	 * in given bean factory.
+	 * @param beanFactory the bean factory to used, typically the bean
+	 * factory defining this flow builder
 	 */
-	protected AbstractFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
-		super(flowArtifactFactory);
+	protected AbstractFlowBuilder(BeanFactory beanFactory) {
+		super(beanFactory);
 	}
 
 	public Flow init(String flowId, Map flowProperties) throws FlowBuilderException {
 		initConversionService();
-		setFlow(getFlowCreator().createFlow(flowId, buildFlowProperties(flowProperties)));
+		setFlow(createFlow(flowId, buildFlowProperties(flowProperties)));
 		return getFlow();
 	}
 
+	/**
+	 * Create a new flow instance. Subclasses can override this hook method
+	 * if they want to use a custom flow subclass.
+	 * @param id the id of the flow
+	 * @param properties additional properties to be assigned to the flow
+	 * @return the newly created flow instance
+	 */
+	protected Flow createFlow(String id, Map properties) {
+		return new Flow(id, properties);
+	}
+	
 	/**
 	 * Builds a flow property map consisting of any externally assigned
 	 * properties plus any internally assigned properties.
@@ -171,7 +186,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		if (assignedProperties != null) {
 			if (propertyMap != null) {
 				propertyMap.putAll(assignedProperties);
-			} else {
+			}
+			else {
 				propertyMap = new HashMap(assignedProperties);
 			}
 		}
@@ -179,7 +195,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Hook subclasses may override to provide additional properties about the
+	 * Hook subclasses may override to provide additional properties for the
 	 * flow built by this builder. Returns <code>null</code> by default.
 	 * @return additional properties describing the flow being built
 	 */
@@ -195,6 +211,15 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	public void dispose() {
 		setFlow(null);
+	}
+	
+	/**
+	 * Returns a flow artifact factory wrapping the bean factory
+	 * defining this flow builder. The returned factory will lookup all
+	 * required flow artifacts in that bean factory.
+	 */
+	protected FlowArtifactFactory getFlowArtifactFactory() {
+		return new FlowArtifactFactory(getBeanFactory());
 	}
 
 	/**
@@ -312,15 +337,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Turn given view name into a corresponding view selector.
-	 * @param viewName the view name (might be encoded)
-	 * @return the corresponding view selector
-	 */
-	protected ViewSelector view(String viewName) {
-		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName);
-	}
-
-	/**
 	 * Adds a <code>ViewState</code> to the flow built by this builder. A view
 	 * state triggers the rendering of a view template when entered.
 	 * @param stateId the <code>ViewState</code> id; must be unique in the
@@ -359,6 +375,15 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected ViewState addViewState(String stateId, ViewSelector selector, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
 		return new ViewState(getFlow(), stateId, selector, transitions, properties);
+	}
+
+	/**
+	 * Turn given view name into a corresponding view selector.
+	 * @param viewName the view name (might be encoded)
+	 * @return the corresponding view selector
+	 */
+	protected ViewSelector view(String viewName) {
+		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName);
 	}
 
 	/**
@@ -463,7 +488,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
 	protected Action action(String id) throws FlowArtifactLookupException {
-		return getRequiredFlowArtifactFactory().getAction(id);
+		return getFlowArtifactFactory().getAction(id);
 	}
 
 	/**
@@ -634,7 +659,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * exported with the specified id
 	 */
 	protected FlowAttributeMapper attributeMapper(String attributeMapperId) throws FlowArtifactLookupException {
-		return getRequiredFlowArtifactFactory().getAttributeMapper(attributeMapperId);
+		return getFlowArtifactFactory().getAttributeMapper(attributeMapperId);
 	}
 
 	/**
@@ -648,7 +673,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactLookupException when the flow cannot be resolved
 	 */
 	protected Flow flow(String flowId) throws FlowArtifactLookupException {
-		return getRequiredFlowArtifactFactory().getSubflow(flowId);
+		return getFlowArtifactFactory().getFlow(flowId);
 	}
 
 	/**
@@ -907,6 +932,17 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
+	 * Creates a transition stating:
+	 * <tt>On the occurence of any event (*), transition to state ${stateId}.
+	 * </tt>
+	 * @param stateId the target state id
+	 * @return the transition (*->stateId)
+	 */
+	protected Transition onAnyEvent(String stateId) {
+		return new Transition(stateId);
+	}
+
+	/**
 	 * Produces a <code>TransitionCriteria</code> that will execute the
 	 * specified action when the Transition is executed but before the
 	 * transition's target state is entered.
@@ -928,17 +964,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected TransitionCriteria beforeExecute(AnnotatedAction action) {
 		return new ActionTransitionCriteria(action);
-	}
-
-	/**
-	 * Creates a transition stating:
-	 * <tt>On the occurence of any event (*), transition to state ${stateId}.
-	 * </tt>
-	 * @param stateId the target state id
-	 * @return the transition (*->stateId)
-	 */
-	protected Transition onAnyEvent(String stateId) {
-		return new Transition(stateId);
 	}
 
 	/**

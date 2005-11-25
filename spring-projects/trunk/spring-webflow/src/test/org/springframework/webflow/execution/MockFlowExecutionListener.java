@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;

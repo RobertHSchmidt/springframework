@@ -23,7 +23,6 @@ import javax.faces.context.FacesContext;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
@@ -32,7 +31,7 @@ import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.config.FlowLocator;
+import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionManager;
 
@@ -115,13 +114,6 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 			protected ViewSelection prepareSelectedView(ViewSelection selectedView, Serializable flowExecutionId,
 					FlowExecutionContext flowExecutionContext) {
 				return selectedView;
-			}
-
-			// not interested in testing this method in this test
-			protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution,
-					Event sourceEvent) {
-				return new Serializable() {
-				};
 			}
 
 			// not interested in testing this method in this test

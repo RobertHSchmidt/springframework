@@ -29,11 +29,10 @@ import junit.framework.TestCase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
-import org.springframework.webflow.config.FlowLocator;
+import org.springframework.webflow.access.FlowLocator;
+import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.XmlFlowBuilder;
 import org.springframework.webflow.config.XmlFlowBuilderTests;
-import org.springframework.webflow.config.registry.FlowAssembler;
-import org.springframework.webflow.config.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -50,15 +49,15 @@ public class FlowExecutionImplTests extends TestCase {
 	private FlowExecutionImpl flowExecution;
 
 	protected void setUp() throws Exception {
-		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow.xml", XmlFlowBuilderTests.class),
-				new XmlFlowBuilderTests.TestFlowArtifactLocator());
+		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
+				new XmlFlowBuilderTests.TestContext());
 		final Flow flow = new FlowAssembler("testFlow", builder).getFlow();
 		flowLocator = new FlowLocator() {
 			public Flow getFlow(String flowId) throws FlowArtifactLookupException {
 				if (flow.getId().equals(flowId)) {
 					return flow;
 				}
-				throw new NoSuchFlowDefinitionException(flowId);
+				throw new FlowArtifactLookupException(Flow.class, flowId);
 			}
 		};
 		flowExecution = new FlowExecutionImpl(flow);
@@ -70,7 +69,6 @@ public class FlowExecutionImplTests extends TestCase {
 		ObjectOutputStream oout = new ObjectOutputStream(bout);
 		oout.writeObject(flowExecution);
 		oout.flush();
-		System.out.println("FlowExecutionImpl byte array size: " + bout.size());
 
 		// deserialize the flowExecution
 		ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());

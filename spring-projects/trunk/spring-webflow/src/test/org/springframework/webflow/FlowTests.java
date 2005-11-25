@@ -17,10 +17,9 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.config.ExceptionStateMapping;
 import org.springframework.webflow.config.MyCustomException;
-import org.springframework.webflow.config.SimpleViewSelector;
-import org.springframework.webflow.config.TransitionExecutingStateExceptionHandler;
+import org.springframework.webflow.config.support.SimpleViewSelector;
+import org.springframework.webflow.config.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockFlowExecutionControlContext;
 import org.springframework.webflow.test.MockFlowSession;
 
@@ -184,8 +183,8 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testHandleStateException() {
-		flow.addExceptionHandler(new TransitionExecutingStateExceptionHandler(new ExceptionStateMapping(
-				MyCustomException.class, flow.getRequiredState("myState2"))));
+		flow.addExceptionHandler(new TransitionExecutingStateExceptionHandler().add(
+				MyCustomException.class, flow.getRequiredState("myState2")));
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
 		ViewSelection selectedView = flow.handleException(e, context);
