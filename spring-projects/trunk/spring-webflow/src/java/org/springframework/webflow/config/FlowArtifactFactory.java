@@ -34,9 +34,7 @@ import org.springframework.webflow.action.LocalBeanInvokingAction;
 
 /**
  * Helper class used to pull flow artifacts from a standard Spring
- * BeanFactory. Note that this class implements the FlowLocator interface, so it
- * can be used as a general utility to lookup flows at configuration
- * time or at runtime.
+ * BeanFactory at configuration time.
  * 
  * @author Erwin Vervaet
  */
@@ -72,6 +70,12 @@ public class FlowArtifactFactory {
 		return (BeanDefinitionRegistry)getBeanFactory();
 	}
 	
+	/**
+	 * Lookup a subflow with the specified id.
+	 * @param id the subflow id
+	 * @return the subflow
+	 * @throws FlowArtifactLookupException when the subflow cannot be found
+	 */
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		return (Flow)getArtifact(id, Flow.class);
 	}
