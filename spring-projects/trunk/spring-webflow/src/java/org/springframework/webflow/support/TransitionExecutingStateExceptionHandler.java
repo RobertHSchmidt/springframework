@@ -115,7 +115,12 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 				return getTargetState13((NestedRuntimeException)t);
 			}
 			else {
-				return null;
+				if (exceptionStateMap.containsKey(t.getClass())) {
+					return (State)exceptionStateMap.get(t.getClass());
+				}
+				else {
+					return null;
+				}
 			}
 		}
 	}
