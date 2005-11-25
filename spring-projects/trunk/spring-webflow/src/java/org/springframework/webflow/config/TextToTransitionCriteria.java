@@ -38,11 +38,13 @@ import org.springframework.webflow.support.EventIdTransitionCriteria;
  * everything ({@link org.springframework.webflow.WildcardTransitionCriteria})
  * </li>
  * <li>"eventId" - will result in a TransitionCriteria object that matches
- * given event id ({@link org.springframework.webflow.support.EventIdTransitionCriteria})
+ * given event id ({@link org.springframework.webflow.config.EventIdTransitionCriteria})
  * </li>
  * <li>"${...}" - will result in a TransitionCriteria object that evaluates
- * given condition, expressed as an expression ({@link org.springframework.webflow.support.BooleanExpressionTransitionCriteria})
+ * given condition, expressed as an expression ({@link org.springframework.webflow.config.BooleanExpressionTransitionCriteria})
  * </li>
+ * <li>"bean:&lt;id&gt;" - will result in usage of a custom TransitionCriteria
+ * bean implementation.</li>
  * </ul>
  * 
  * @see org.springframework.webflow.TransitionCriteria
@@ -53,16 +55,28 @@ import org.springframework.webflow.support.EventIdTransitionCriteria;
 public class TextToTransitionCriteria extends AbstractConverter {
 
 	/**
+	 * Prefix used when the user wants to use a custom TransitionCriteria
+	 * implementation managed by a factory.
+	 */
+	private static final String BEAN_PREFIX = "bean:";
+
+	/**
 	 * Parser to user for parsing transition criteria expressions.
 	 */
 	private ExpressionParser expressionParser = ExpressionParserUtils.getDefaultExpressionParser();
+
+	/**
+	 * Locator to use for loading custom TransitionCriteria beans.
+	 */
+	private FlowArtifactFactory flowArtifactFactory;
 
 	/**
 	 * Create a new converter that converts strings to transition criteria
 	 * objects. The given conversion service will be used to do all necessary
 	 * internal conversion (e.g. parsing expression strings).
 	 */
-	public TextToTransitionCriteria() {
+	public TextToTransitionCriteria(FlowArtifactFactory artifactLocator) {
+		this.flowArtifactFactory = artifactLocator;
 	}
 
 	public Class[] getSourceClasses() {
@@ -83,6 +97,9 @@ public class TextToTransitionCriteria extends AbstractConverter {
 			Expression expression = (Expression)expressionParser
 					.parseExpression(encodedCriteria, Collections.EMPTY_MAP);
 			return createBooleanExpressionTransitionCriteria(expression);
+		}
+		else if (encodedCriteria.startsWith(BEAN_PREFIX)) {
+			return flowArtifactFactory.getTransitionCriteria(encodedCriteria.substring(BEAN_PREFIX.length()));
 		}
 		else {
 			return createEventIdTransitionCriteria(encodedCriteria);

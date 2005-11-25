@@ -28,10 +28,11 @@ import org.springframework.webflow.Flow;
 
 /**
  * Abstract base implementation of a flow builder defining common functionality
- * needed by most concrete flow builder implementations. All flow related artifacts
- * are expected to be defined in the bean factory defining this flow builder.
- * Subclasses can use a {@link org.springframework.webflow.config.FlowArtifactFactory}
- * to easily access that bean factory.
+ * needed by most concrete flow builder implementations. All flow related
+ * artifacts are expected to be defined in the bean factory defining this flow
+ * builder. Subclasses can use a
+ * {@link org.springframework.webflow.config.FlowArtifactFactory} to easily
+ * access that bean factory.
  * 
  * @see org.springframework.beans.factory.BeanFactory
  * @see org.springframework.webflow.config.FlowArtifactFactory
@@ -67,24 +68,24 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	 */
 	protected BaseFlowBuilder() {
 	}
-	
+
 	/**
-	 * Create a new flow builder looking up required flow artifacts
-	 * in given bean factory.
+	 * Create a new flow builder looking up required flow artifacts in given
+	 * bean factory.
 	 * @param beanFactory the bean factory to be used, typically the bean
 	 * factory defining this flow builder
 	 */
 	protected BaseFlowBuilder(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
-	
+
 	/**
 	 * Returns the bean factory defining this flow builder.
 	 */
 	protected BeanFactory getBeanFactory() {
 		return beanFactory;
 	}
-	
+
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
 	}
@@ -111,8 +112,8 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	protected void initConversionService() {
 		if (getConversionService() == null) {
 			DefaultConversionService service = new DefaultConversionService();
-			service.addConverter(new TextToTransitionCriteria());
-			service.addConverter(new TextToViewSelector(service));
+			service.addConverter(new TextToTransitionCriteria(new FlowArtifactFactory(beanFactory)));
+			service.addConverter(new TextToViewSelector(new FlowArtifactFactory(beanFactory), service));
 			setConversionService(service);
 		}
 	}

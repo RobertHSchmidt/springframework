@@ -36,6 +36,8 @@ import org.springframework.webflow.support.SimpleViewSelector;
  * <li>"redirect:&lt;viewName&gt;" - will result in a
  * {@link RedirectViewSelector} that returns a ViewSelection with the provided
  * view name and redirect flag set to true.</li>
+ * <li>"bean:&lt;id&gt;" - will result usage of a custom
+ * <code>ViewSelector</code> bean implementation.</li>
  * </ul>
  * 
  * @see org.springframework.webflow.ViewSelection
@@ -47,16 +49,28 @@ import org.springframework.webflow.support.SimpleViewSelector;
 public class TextToViewSelector extends ConversionServiceAwareConverter {
 
 	/**
+	 * Prefix used when the user wants to use a ViewSelector implementation
+	 * managed by a factory.
+	 */
+	private static final String BEAN_PREFIX = "bean:";
+
+	/**
 	 * Prefix used when the encoded view name wants to specify that a redirect
 	 * is required.
 	 */
 	public static final String REDIRECT_PREFIX = "redirect:";
 
 	/**
+	 * Locator to use for loading custom ViewSelector beans.
+	 */
+	private FlowArtifactFactory flowArtifactFactory;
+
+	/**
 	 * Create a new text to ViewSelector converter.
 	 */
-	public TextToViewSelector(ConversionService conversionService) {
+	public TextToViewSelector(FlowArtifactFactory artifactLocator, ConversionService conversionService) {
 		super(conversionService);
+		this.flowArtifactFactory = artifactLocator;
 	}
 
 	public Class[] getSourceClasses() {
@@ -72,6 +86,9 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		if (StringUtils.hasText(encodedView)) {
 			if (encodedView.startsWith(REDIRECT_PREFIX)) {
 				return createRedirectViewSelector(encodedView.substring(REDIRECT_PREFIX.length()));
+			}
+			else if (encodedView.startsWith(BEAN_PREFIX)) {
+				return flowArtifactFactory.getViewSelector(encodedView.substring(BEAN_PREFIX.length()));
 			}
 		}
 		return createSimpleViewSelector(encodedView);
