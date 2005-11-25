@@ -34,8 +34,8 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.config.AbstractFlowBuilder;
 import org.springframework.webflow.config.FlowAssembler;
 import org.springframework.webflow.config.FlowBuilderException;
-import org.springframework.webflow.config.support.EventIdTransitionCriteria;
-import org.springframework.webflow.config.support.SimpleViewSelector;
+import org.springframework.webflow.support.EventIdTransitionCriteria;
+import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**

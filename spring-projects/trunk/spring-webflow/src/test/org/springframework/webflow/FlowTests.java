@@ -18,8 +18,8 @@ package org.springframework.webflow;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.config.MyCustomException;
-import org.springframework.webflow.config.support.SimpleViewSelector;
-import org.springframework.webflow.config.support.TransitionExecutingStateExceptionHandler;
+import org.springframework.webflow.support.SimpleViewSelector;
+import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockFlowExecutionControlContext;
 import org.springframework.webflow.test.MockFlowSession;
 

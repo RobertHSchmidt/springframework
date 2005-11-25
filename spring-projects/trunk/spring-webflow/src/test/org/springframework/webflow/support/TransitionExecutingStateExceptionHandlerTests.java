@@ -1,4 +1,4 @@
-package org.springframework.webflow.config.support;
+package org.springframework.webflow.support;
 
 import junit.framework.TestCase;
 
@@ -12,6 +12,8 @@ import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.config.MyCustomException;
 import org.springframework.webflow.execution.FlowExecutionImpl;
+import org.springframework.webflow.support.SimpleViewSelector;
+import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class TransitionExecutingStateExceptionHandlerTests extends TestCase {

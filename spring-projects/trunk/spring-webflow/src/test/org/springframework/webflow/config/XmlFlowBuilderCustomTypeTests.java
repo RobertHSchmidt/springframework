@@ -33,7 +33,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.config.XmlFlowBuilderTests.TestContext;
-import org.springframework.webflow.config.support.ParameterizableFlowAttributeMapper;
+import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
 /**
  * Test case for XML flow builder, testing pluggability of custom types.

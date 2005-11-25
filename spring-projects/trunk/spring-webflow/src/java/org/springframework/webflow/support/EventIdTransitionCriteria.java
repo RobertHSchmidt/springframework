@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config.support;
+package org.springframework.webflow.support;
 
 import java.io.Serializable;
 
@@ -22,33 +22,34 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
 
 /**
- * Transition criteria that negates the result of the evaluation of
- * another criteria object.
+ * Simple transition criteria that matches on an eventId and
+ * nothing else. Specifically, if the last event that occured has id
+ * ${eventId}, this criteria will return true.
  * 
+ * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class NotTransitionCriteria implements TransitionCriteria, Serializable {
+public class EventIdTransitionCriteria implements TransitionCriteria, Serializable {
 
 	/**
-	 * The criteria to 'not'.
+	 * The id of event to match.
 	 */
-	private TransitionCriteria criteria;
-	
+	private String eventId;
+
 	/**
-	 * Create a new transition criteria object that will negate
-	 * the result of given criteria object.
-	 * @param criteria the criteria to negate 
+	 * Create a new event id matching criteria object.
+	 * @param eventId the event id
 	 */
-	public NotTransitionCriteria(TransitionCriteria criteria) {
-		Assert.notNull(criteria, "The criteria object to negate is required");
-		this.criteria = criteria;
+	public EventIdTransitionCriteria(String eventId) {
+		Assert.notNull(eventId, "The event id is required");
+		this.eventId = eventId;
 	}
-	
+
 	public boolean test(RequestContext context) {
-		return !criteria.test(context);
+		return eventId.equals(context.getLastEvent().getId());
 	}
-	
+
 	public String toString() {
-		return "not(" + criteria + ")";
+		return "'" + eventId + "'";
 	}
 }

@@ -10,8 +10,8 @@ import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.config.support.RedirectViewSelector;
-import org.springframework.webflow.config.support.SimpleViewSelector;
+import org.springframework.webflow.support.RedirectViewSelector;
+import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionStorageTests extends TestCase {

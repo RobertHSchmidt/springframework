@@ -34,7 +34,7 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.access.FlowArtifactFactory;
-import org.springframework.webflow.config.support.ActionTransitionCriteria;
+import org.springframework.webflow.support.ActionTransitionCriteria;
 
 /**
  * Base class for flow builders that programmatically build flows in Java

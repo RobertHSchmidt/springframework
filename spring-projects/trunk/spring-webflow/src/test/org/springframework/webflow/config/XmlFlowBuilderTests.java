@@ -35,8 +35,8 @@ import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.config.support.SimpleViewSelector;
-import org.springframework.webflow.config.support.TransitionExecutingStateExceptionHandler;
+import org.springframework.webflow.support.SimpleViewSelector;
+import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

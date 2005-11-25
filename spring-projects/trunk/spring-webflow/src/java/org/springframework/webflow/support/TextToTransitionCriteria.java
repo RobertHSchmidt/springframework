@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config.support;
+package org.springframework.webflow.support;
 
 import java.util.Collections;
 
@@ -36,10 +36,10 @@ import org.springframework.webflow.WildcardTransitionCriteria;
  * everything ({@link org.springframework.webflow.WildcardTransitionCriteria})
  * </li>
  * <li>"eventId" - will result in a TransitionCriteria object that matches
- * given event id ({@link org.springframework.webflow.config.support.EventIdTransitionCriteria})
+ * given event id ({@link org.springframework.webflow.support.EventIdTransitionCriteria})
  * </li>
  * <li>"${...}" - will result in a TransitionCriteria object that evaluates
- * given condition, expressed as an expression ({@link org.springframework.webflow.config.support.BooleanExpressionTransitionCriteria})
+ * given condition, expressed as an expression ({@link org.springframework.webflow.support.BooleanExpressionTransitionCriteria})
  * </li>
  * </ul>
  * 
