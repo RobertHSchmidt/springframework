@@ -162,23 +162,25 @@ public class FlowArtifactFactory implements FlowLocator {
 	}
 	
 	//helpers
-	
+
 	/**
-	 * Helper to create an artifact of specified type. The default constructor
-	 * will be used.
+	 * Helper to lookup an identified artifact of specified type. If not found
+	 * in the bean factory, a new instance will be created with the default
+	 * constructor.
+	 * @param beanId the id of the artifact bean to lookup (optional)
 	 * @param id the id of the artifact to create
 	 * @param artifactType the expected type of the artifact
-	 * @throws FlowArtifactLookupException when the artifact cannot be created
+	 * @throws FlowArtifactLookupException when the artifact cannot be found or created
 	 */
-	public Object createArtifact(String id, Class artifactType) {
-		try {
-			return BeanUtils.instantiateClass(artifactType);
+	public Object getOrCreateArtifact(String beanId, String id, Class artifactType) throws FlowArtifactLookupException {
+		if (StringUtils.hasText(beanId) && beanFactory.containsBean(beanId)) {
+			return getArtifact(beanId, artifactType);
 		}
-		catch (BeansException e) {
-			throw new FlowArtifactLookupException(artifactType, id, e);
+		else {
+			return createArtifact(id, artifactType);
 		}
 	}
-
+	
 	/**
 	 * Helper to lookup an identified artifact of specified type.
 	 * @param id the id of the artifact to lookup
@@ -196,20 +198,18 @@ public class FlowArtifactFactory implements FlowLocator {
 	}
 	
 	/**
-	 * Helper to lookup an identified artifact of specified type. If not found
-	 * in the bean factory, a new instance will be created with the default
-	 * constructor.
-	 * @param beanId the id of the artifact bean to lookup (optional)
+	 * Helper to create an artifact of specified type. The default constructor
+	 * will be used.
 	 * @param id the id of the artifact to create
 	 * @param artifactType the expected type of the artifact
-	 * @throws FlowArtifactLookupException when the artifact cannot be found or created
+	 * @throws FlowArtifactLookupException when the artifact cannot be created
 	 */
-	public Object getOrCreateArtifact(String beanId, String id, Class artifactType) throws FlowArtifactLookupException {
-		if (StringUtils.hasText(beanId) && beanFactory.containsBean(beanId)) {
-			return getArtifact(beanId, artifactType);
+	public Object createArtifact(String id, Class artifactType) {
+		try {
+			return BeanUtils.instantiateClass(artifactType);
 		}
-		else {
-			return createArtifact(id, artifactType);
+		catch (BeansException e) {
+			throw new FlowArtifactLookupException(artifactType, id, e);
 		}
 	}
 }
