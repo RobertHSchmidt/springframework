@@ -136,6 +136,7 @@ public class FlowAssembler {
 		flowBuilder.init(getFlowId(), getFlowProperties());
 		flowBuilder.buildStates();
 		flowBuilder.buildExceptionHandlers();
+		flowBuilder.buildPostProcess();
 		flowBuilder.dispose();
 	}
 }

@@ -953,14 +953,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			if (currentFlow.getId().equals(id)) {
 				return currentFlow;
 			}
-			// check inline flows
+			// check local inline flows
 			if (currentFlow.containsProperty(INLINE_FLOW_MAP_PROPERTY)) {
 				Map registry = (Map)currentFlow.getProperty(INLINE_FLOW_MAP_PROPERTY);
 				if (registry.containsKey(id)) {
 					return (Flow)registry.get(id);
 				}
 			}
-			// check other toplevel flows
+			// check externally managed toplevel flows
 			return getFlowArtifactFactory().getSubflow(id);
 		}
 
