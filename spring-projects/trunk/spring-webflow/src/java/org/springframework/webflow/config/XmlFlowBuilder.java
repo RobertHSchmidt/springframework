@@ -113,20 +113,6 @@ public class XmlFlowBuilder extends DomFlowBuilder implements ResourceHolder {
 		setLocation(location);
 	}
 
-	/**
-	 * Returns the XML resource from which the flow definition is read.
-	 */
-	public Resource getLocation() {
-		return getDocumentResource();
-	}
-
-	/**
-	 * Set the resource from which the XML flow definition will be read.
-	 */
-	public void setLocation(Resource location) {
-		super.setDocumentResource(location);
-	}
-
 	public Resource getResource() {
 		return getLocation();
 	}
@@ -165,18 +151,18 @@ public class XmlFlowBuilder extends DomFlowBuilder implements ResourceHolder {
 	}
 	
 	public Flow init(String flowId, Map flowProperties) throws FlowBuilderException {
-		Assert.notNull(getDocumentResource(), "The location property specifying the XML flow definition resource location is required");
+		Assert.notNull(getLocation(), "The location property specifying the XML flow definition resource location is required");
 		try {
 			setDocumentElement(loadDocument().getDocumentElement());
 		}
 		catch (IOException e) {
-			throw new FlowBuilderException(this, "Cannot load the XML flow definition resource '" + getDocumentResource() + "'", e);
+			throw new FlowBuilderException(this, "Cannot load the XML flow definition resource '" + getLocation() + "'", e);
 		}
 		catch (ParserConfigurationException e) {
 			throw new FlowBuilderException(this, "Cannot configure the parser to parse the XML flow definition", e);
 		}
 		catch (SAXException e) {
-			throw new FlowBuilderException(this, "Cannot parse the flow definition XML document at'" + getDocumentResource() + "'", e);
+			throw new FlowBuilderException(this, "Cannot parse the flow definition XML document at'" + getLocation() + "'", e);
 		}
 		
 		return super.init(flowId, flowProperties);
@@ -194,7 +180,7 @@ public class XmlFlowBuilder extends DomFlowBuilder implements ResourceHolder {
 			DocumentBuilder docBuilder = factory.newDocumentBuilder();
 			docBuilder.setErrorHandler(new SimpleSaxErrorHandler(logger));
 			docBuilder.setEntityResolver(getEntityResolver());
-			is = getDocumentResource().getInputStream();
+			is = getLocation().getInputStream();
 			return docBuilder.parse(is);
 		}
 		finally {

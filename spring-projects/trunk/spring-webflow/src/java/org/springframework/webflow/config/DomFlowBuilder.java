@@ -37,7 +37,6 @@ import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.binding.support.Mapping;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -171,9 +170,9 @@ public class DomFlowBuilder extends BaseFlowBuilder {
 	
 	/**
 	 * The resource from which the document element being parsed was read.
-	 * Used for relative resource lookup.
+	 * Used as a location for relative resource lookup.
 	 */
-	protected Resource documentResource;
+	protected Resource location;
 
 	/**
 	 * Helper to access the bean factory defining flow artifacts.
@@ -222,16 +221,16 @@ public class DomFlowBuilder extends BaseFlowBuilder {
 	 * Returns the resource from which the document element was loaded.
 	 * This is used for location relative loading of other resources.
 	 */
-	public Resource getDocumentResource() {
-		return documentResource;
+	public Resource getLocation() {
+		return location;
 	}
 	
 	/**
 	 * Sets the resource from which the document element was loaded.
 	 * This is used for location relative loading of other resources.
 	 */
-	public void setDocumentResource(Resource documentResource) {
-		this.documentResource = documentResource;
+	public void setLocation(Resource location) {
+		this.location = location;
 	}
 
 	/**
@@ -245,6 +244,9 @@ public class DomFlowBuilder extends BaseFlowBuilder {
 
 	public Flow init(String flowId, Map flowProperties) throws FlowBuilderException {
 		Assert.notNull(documentElement, "The DOM element to parse is required");
+		Assert.notNull(location,
+				"The resource from which the DOM element to parse was loaded is required " +
+				"for location relative loading of other resources");
 		initConversionService();
 		initFlowArtifactFactory();
 		addInlineFlowDefinitions();
@@ -275,8 +277,7 @@ public class DomFlowBuilder extends BaseFlowBuilder {
 		for (int i = 0; i < importElements.size(); i++) {
 			Element importElement = (Element)importElements.get(i);
 			try {
-				Resource baseResource = getDocumentResource() != null ? getDocumentResource() : new FileSystemResource("");
-				resources[i] = baseResource.createRelative(importElement.getAttribute(RESOURCE_ATTRIBUTE));
+				resources[i] = getLocation().createRelative(importElement.getAttribute(RESOURCE_ATTRIBUTE));
 			}
 			catch (IOException e) {
 				throw new FlowBuilderException(this, "Could not access flow-relative artifact resource '"
@@ -307,7 +308,7 @@ public class DomFlowBuilder extends BaseFlowBuilder {
 			RootBeanDefinition inlineFlowBuilderBeanDef = new RootBeanDefinition(DomFlowBuilder.class,
 					new MutablePropertyValues()
 						.addPropertyValue(new PropertyValue("documentElement", inlineFlowDefElement))
-						.addPropertyValue(new PropertyValue("documentResource", getDocumentResource())));
+						.addPropertyValue(new PropertyValue("location", getLocation())));
 			RootBeanDefinition inlineFlowFactoryBeanDef = new RootBeanDefinition(FlowFactoryBean.class,
 					new MutablePropertyValues()
 						.addPropertyValue(new PropertyValue("flowBuilder",	new RuntimeBeanReference(builderId(inlineFlowId)))));
