@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.registry;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.core.io.DescriptiveResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
+import org.springframework.webflow.config.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.config.FlowBuilder;
+import org.springframework.webflow.config.XmlFlowBuilder;
 
 /**
  * Convenient specialization of FlowFactoryBean that uses an XmlFlowBuilder to
@@ -26,7 +30,7 @@ import org.springframework.util.Assert;
  * using the "location" property.
  * 
  * @see org.springframework.webflow.config.XmlFlowBuilder
- * @see org.springframework.webflow.config.FlowFactoryBean
+ * @see org.springframework.webflow.registry.FlowFactoryBean
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -37,9 +41,9 @@ public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAw
 	 * Creates an XML flow factory bean.
 	 */
 	public XmlFlowFactoryBean() {
-		super(new XmlFlowBuilder());
+		super(new XmlFlowBuilder(new DescriptiveResource("Not yet set"), new FlowArtifactFactoryAdapter()));
 	}
-	
+
 	/**
 	 * Set the resource from which an XML flow definition will be read.
 	 * @param location the resource location
@@ -47,16 +51,16 @@ public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAw
 	public void setLocation(Resource location) {
 		getXmlFlowBuilder().setLocation(location);
 	}
-	
+
 	public void setFlowBuilder(FlowBuilder flowBuilder) {
 		Assert.isInstanceOf(XmlFlowBuilder.class, flowBuilder);
 		super.setFlowBuilder(flowBuilder);
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		getXmlFlowBuilder().setBeanFactory(beanFactory);
+		getXmlFlowBuilder().setFlowArtifactFactory(new BeanFactoryFlowArtifactFactory(beanFactory));
 	}
-	
+
 	/**
 	 * Returns the XML based flow builder used by this factory bean.
 	 */

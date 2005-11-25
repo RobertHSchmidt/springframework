@@ -17,8 +17,6 @@ package org.springframework.webflow.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
@@ -40,7 +38,7 @@ import org.springframework.webflow.Flow;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
+public abstract class BaseFlowBuilder implements FlowBuilder {
 
 	/**
 	 * A logger instance that can be used in subclasses.
@@ -53,15 +51,16 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	private Flow flow;
 
 	/**
+	 * Locates actions, attribute mappers, and other artifacts usable by the
+	 * flow built by this builder.
+	 */
+	private FlowArtifactFactory flowArtifactFactory;
+
+	/**
 	 * The conversion service to convert to flow-related artifacts, typically
 	 * from string encoded representations.
 	 */
 	private ConversionService conversionService;
-
-	/**
-	 * The bean factory defining this flow builder.
-	 */
-	private BeanFactory beanFactory;
 
 	/**
 	 * Default constructor for subclassing.
@@ -70,24 +69,37 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	}
 
 	/**
-	 * Create a new flow builder looking up required flow artifacts in given
-	 * bean factory.
-	 * @param beanFactory the bean factory to be used, typically the bean
-	 * factory defining this flow builder
+	 * Creates a flow builder using the locator to link in artifacts
+	 * @param flowArtifactFactory the flow artifact locator.
 	 */
-	protected BaseFlowBuilder(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
+	protected BaseFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
+		setFlowArtifactFactory(flowArtifactFactory);
 	}
 
 	/**
-	 * Returns the bean factory defining this flow builder.
+	 * Returns the artifact locator.
 	 */
-	protected BeanFactory getBeanFactory() {
-		return beanFactory;
+	protected FlowArtifactFactory getFlowArtifactFactory() {
+		return flowArtifactFactory;
 	}
 
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		this.beanFactory = beanFactory;
+	/**
+	 * Returns the artifact locator
+	 * @throws an IllegalStateException if the artifact locator is not set
+	 */
+	protected FlowArtifactFactory getRequiredFlowArtifactFactory() {
+		if (flowArtifactFactory == null) {
+			throw new IllegalStateException("The 'flowArtifactFactory' property must be set before you can use it to "
+					+ "load actions, attribute mappers, subflows, and other Flow artifacts needed by this builder");
+		}
+		return getFlowArtifactFactory();
+	}
+
+	/**
+	 * Sets the artifact locator.
+	 */
+	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactLocator) {
+		this.flowArtifactFactory = flowArtifactLocator;
 	}
 
 	/**
@@ -112,8 +124,8 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 	protected void initConversionService() {
 		if (getConversionService() == null) {
 			DefaultConversionService service = new DefaultConversionService();
-			service.addConverter(new TextToTransitionCriteria(new FlowArtifactFactory(beanFactory)));
-			service.addConverter(new TextToViewSelector(new FlowArtifactFactory(beanFactory), service));
+			service.addConverter(new TextToTransitionCriteria(getFlowArtifactFactory()));
+			service.addConverter(new TextToViewSelector(getFlowArtifactFactory(), service));
 			setConversionService(service);
 		}
 	}
@@ -154,8 +166,11 @@ public abstract class BaseFlowBuilder implements FlowBuilder, BeanFactoryAware {
 		this.flow = flow;
 	}
 
-	public Flow getResult() {
+	public void buildPostProcess() {
 		getFlow().resolveStateTransitionsTargetStates();
+	}
+	
+	public Flow getResult() {
 		return getFlow();
 	}
 }

@@ -18,7 +18,6 @@ package org.springframework.webflow.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
@@ -46,39 +45,37 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- *     public void buildStates() {
- *         // get customer information
- *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
- *             on(success(), &quot;displayDetails&quot;));
- *         // view customer information               
- *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *             on(submit(), &quot;bindAndValidate&quot;);
- *         // bind and validate customer information updates 
- *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
- *             new Transition[] {
- *                 on(error(), &quot;displayDetails&quot;),
- *                 on(success(), &quot;finish&quot;)
- *             });
- *         // finish
- *         addEndState(&quot;finish&quot;);
- *     }
- * }
+ * public void buildStates() {
+ *          // get customer information
+ *          addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
+ *              on(success(), &quot;displayDetails&quot;));
+ *          // view customer information               
+ *          addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *              on(submit(), &quot;bindAndValidate&quot;);
+ *          // bind and validate customer information updates 
+ *          addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
+ *              new Transition[] {
+ *                  on(error(), &quot;displayDetails&quot;),
+ *                  on(success(), &quot;finish&quot;)
+ *              });
+ *          // finish
+ *          addEndState(&quot;finish&quot;);
+ *      }}
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
- * flow. These include a "get"
- * <code>ActionState</code> (the start state), a <code>ViewState</code>
- * state, a "bind and validate" <code>ActionState</code>, and an end marker
- * state (<code>EndState</code>).
+ * flow. These include a "get" <code>ActionState</code> (the start state), a
+ * <code>ViewState</code> state, a "bind and validate"
+ * <code>ActionState</code>, and an end marker state (<code>EndState</code>).
  * 
  * The first state, an action state, will be assigned the indentifier
  * <code>getDetails</code>. This action state will automatically be
  * configured with the following defaults:
  * <ol>
- * <li>The action instance with id <code>customerAction</code>.
- * This is the <code>Action</code> implementation that will execute when this
- * state is entered. In this example, that <code>Action</code> will go out to
- * the DB, load the Customer, and put it in the Flow's request context.
+ * <li>The action instance with id <code>customerAction</code>. This is the
+ * <code>Action</code> implementation that will execute when this state is
+ * entered. In this example, that <code>Action</code> will go out to the DB,
+ * load the Customer, and put it in the Flow's request context.
  * <li>A <code>success</code> transition to a default view state, called
  * <code>displayDetails</code>. This means when the <code>Action</code>
  * returns a <code>success</code> result event (aka outcome), the
@@ -92,7 +89,7 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * <code>displayDetails</code>. This view state will automatically be
  * configured with the following defaults:
  * <ol>
- * <li>A view name called <code>customerDetails</code>.  This is the logical
+ * <li>A view name called <code>customerDetails</code>. This is the logical
  * name of a view resource. This logical view name gets mapped to a physical
  * view resource (jsp, etc.) by the calling front controller (via a Spring view
  * resolver, or a Struts action forward, for example).
@@ -148,13 +145,12 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Create a new Java flow builder looking up required flow artifacts
-	 * in given bean factory.
-	 * @param beanFactory the bean factory to used, typically the bean
-	 * factory defining this flow builder
+	 * Create an instance of an abstract flow builder, using the specified
+	 * factory to obtain needed flow services during configuation.
+	 * @param flowArtifactFactory the artifact locator
 	 */
-	protected AbstractFlowBuilder(BeanFactory beanFactory) {
-		super(beanFactory);
+	protected AbstractFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
+		super(flowArtifactFactory);
 	}
 
 	public Flow init(String flowId, Map flowProperties) throws FlowBuilderException {
@@ -164,8 +160,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Create a new flow instance. Subclasses can override this hook method
-	 * if they want to use a custom flow subclass.
+	 * Create a new flow instance. Subclasses can override this hook method if
+	 * they want to use a custom flow subclass.
 	 * @param id the id of the flow
 	 * @param properties additional properties to be assigned to the flow
 	 * @return the newly created flow instance
@@ -173,7 +169,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected Flow createFlow(String id, Map properties) {
 		return new Flow(id, properties);
 	}
-	
+
 	/**
 	 * Builds a flow property map consisting of any externally assigned
 	 * properties plus any internally assigned properties.
@@ -210,15 +206,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	public void dispose() {
 		setFlow(null);
-	}
-	
-	/**
-	 * Returns a flow artifact factory wrapping the bean factory
-	 * defining this flow builder. The returned factory will lookup all
-	 * required flow artifacts in that bean factory.
-	 */
-	protected FlowArtifactFactory getFlowArtifactFactory() {
-		return new FlowArtifactFactory(getBeanFactory());
 	}
 
 	/**
@@ -654,8 +641,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param attributeMapperId the id of the attribute mapper that will map
 	 * attributes between the flow built by this builder and the subflow
 	 * @return the attribute mapper
-	 * @throws FlowArtifactLookupException no FlowAttributeMapper implementation was
-	 * exported with the specified id
+	 * @throws FlowArtifactLookupException no FlowAttributeMapper implementation
+	 * was exported with the specified id
 	 */
 	protected FlowAttributeMapper attributeMapper(String attributeMapperId) throws FlowArtifactLookupException {
 		return getFlowArtifactFactory().getAttributeMapper(attributeMapperId);

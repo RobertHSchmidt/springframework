@@ -86,6 +86,12 @@ public interface FlowBuilder {
 	public void buildExceptionHandlers() throws FlowBuilderException;
 
 	/**
+	 * Do any post processing necessary by this builder.
+	 * @throws FlowBuilderException an exception occured during post processing
+	 */
+	public void buildPostProcess() throws FlowBuilderException;
+	
+	/**
 	 * Get the fully constructed and configured Flow object - called by the
 	 * builder's assembler (director) after assembly. Note that this method will
 	 * return the same Flow object as that returned from the <code>init()</code>
