@@ -43,6 +43,14 @@ public abstract class TransitionableState extends State {
 	 * An action to execute when exiting this state.
 	 */
 	private Action exitAction;
+	
+	/**
+	 * Default constructor for bean style usage
+	 * @see State#State()
+	 * @see #addAll(Transition[])
+	 */
+	protected TransitionableState() {
+	}
 
 	/**
 	 * Create a new transitionable state.
@@ -213,7 +221,7 @@ public abstract class TransitionableState extends State {
 	protected void resolveTransitionsTargetStates() {
 		Iterator it = transitionsIterator();
 		while (it.hasNext()) {
-			((Transition)it.next()).resolveTargetStateIfApplicable();
+			((Transition)it.next()).resolveTargetState();
 		}
 	}
 
