@@ -47,8 +47,8 @@ import org.springframework.webflow.Flow;
  * {@link org.springframework.webflow.config.FlowAssembler}, which acts as an
  * assembler (director). Flow Builders may be reused, however, exercise caution
  * when doing this as these objects are not thread safe. Also, for each use, be
- * sure to call init, buildStates, getResult, and dispose completely in that
- * order.
+ * sure to call init, buildStates, buildExceptionHandlers, buildPostProcess,
+ * getResult, and dispose completely in that order.
  * <p>
  * This is an example of the classic GoF Builder pattern.
  * 
