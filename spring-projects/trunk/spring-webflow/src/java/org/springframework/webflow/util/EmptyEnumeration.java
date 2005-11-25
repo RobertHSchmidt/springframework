@@ -24,8 +24,6 @@ import java.util.Enumeration;
  */
 public class EmptyEnumeration implements Enumeration {
 
-	public static final EmptyEnumeration INSTANCE = new EmptyEnumeration();
-
 	public boolean hasMoreElements() {
 		return false;
 	}

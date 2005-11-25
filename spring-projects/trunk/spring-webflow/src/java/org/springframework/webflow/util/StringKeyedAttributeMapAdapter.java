@@ -15,20 +15,21 @@
  */
 package org.springframework.webflow.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
- * Base class for attribute map adapters whose keys are String values.
+ * Base class for attribute map adapters whose keys are String values. Concrete`
+ * classses need only implement the abstract hook method defined by this class.
+ * 
  * @author Keith Donald
  */
 public abstract class StringKeyedAttributeMapAdapter implements Map {
+	
 	private Set keySet;
 
 	private Collection values;
@@ -36,12 +37,8 @@ public abstract class StringKeyedAttributeMapAdapter implements Map {
 	private Set entrySet;
 
 	public void clear() {
-		List names = new ArrayList();
 		for (Enumeration e = getAttributeNames(); e.hasMoreElements();) {
-			names.add(e.nextElement());
-		}
-		for (Iterator it = names.iterator(); it.hasNext();) {
-			removeAttribute((String)it.next());
+			removeAttribute((String)e.nextElement());
 		}
 	}
 
@@ -112,13 +109,38 @@ public abstract class StringKeyedAttributeMapAdapter implements Map {
 		return (values != null) ? values : (values = new Values());
 	}
 
+	/**
+	 * Hook method that needs to be implemented by concrete subclasses.
+	 * Gets a value associated with a key.
+	 * @param key the key to lookup
+	 * @return the associated value, or null if none
+	 */
 	abstract protected Object getAttribute(String key);
 
+	/**
+	 * Hook method that needs to be implemented by concrete subclasses.
+	 * Puts a key-value pair in the map, overwriting any possible earlier
+	 * value associated with the same key.
+	 * @param key the key to associate the value with
+	 * @param value the value to associate with the key
+	 */
 	abstract protected void setAttribute(String key, Object value);
 
+	/**
+	 * Hook method that needs to be implemented by concrete subclasses.
+	 * Removes a key and its associated value from the map.
+	 * @param key the key to remove
+	 */
 	abstract protected void removeAttribute(String key);
 
+	/**
+	 * Hook method that needs to be implemented by concrete subclasses.
+	 * Returns an enumeration listing all keys known to the map.
+	 * @return the key enumeration
+	 */
 	abstract protected Enumeration getAttributeNames();
+	
+	//internal helper classes -- is there no easier way to do this?
 
 	private abstract class AbstractSet extends java.util.AbstractSet {
 		public boolean isEmpty() {
