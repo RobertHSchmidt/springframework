@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.webflow.ExternalContext;
 
 /**
- * Provides contextual information about a HTTP environment that 
+ * Provides contextual information about an HTTP Servlet environment that 
  * has interacted with SWF.
  * 
  * @author Keith Donald
@@ -34,6 +34,12 @@ public class ServletExternalContext implements ExternalContext {
 	
 	private HttpServletResponse response;
 	
+	/**
+	 * Create a new external context wrapping given servlet HTTP request
+	 * and response.
+	 * @param request the HTTP request
+	 * @param response the HTTP response
+	 */
 	public ServletExternalContext(HttpServletRequest request, HttpServletResponse response) {
 		this.request = request;
 		this.response = response;
@@ -55,10 +61,16 @@ public class ServletExternalContext implements ExternalContext {
 		return new HttpServletContextMap(request.getSession().getServletContext());
 	}
 
+	/**
+	 * Return the wrapped HTTP servlet request.
+	 */
 	public HttpServletRequest getRequest() {
 		return request;
 	}
 	
+	/**
+	 * Return the wrapped HTTP servlet response.
+	 */
 	public HttpServletResponse getResponse() {
 		return response;
 	}

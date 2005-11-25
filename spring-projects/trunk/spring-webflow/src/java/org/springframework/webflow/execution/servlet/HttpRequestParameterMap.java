@@ -24,6 +24,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 /**
  * Map backed by the Servlet HTTP request parameter map, for accessing request
  * parameters.
+ * 
  * @author Keith Donald
  */
 public class HttpRequestParameterMap extends StringKeyedAttributeMapAdapter {
@@ -33,6 +34,9 @@ public class HttpRequestParameterMap extends StringKeyedAttributeMapAdapter {
 	 */
 	private HttpServletRequest request;
 
+	/**
+	 * Create a new map wrapping the parameters of given request.
+	 */
 	public HttpRequestParameterMap(HttpServletRequest request) {
 		this.request = request;
 	}

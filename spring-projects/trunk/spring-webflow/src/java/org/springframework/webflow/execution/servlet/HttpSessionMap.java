@@ -26,6 +26,7 @@ import org.springframework.webflow.util.EmptyEnumeration;
 /**
  * Map backed by the Servlet HTTP session, for accessing session scoped
  * attributes.
+ * 
  * @author Keith Donald
  */
 public class HttpSessionMap extends StringKeyedAttributeMapAdapter {
@@ -35,17 +36,24 @@ public class HttpSessionMap extends StringKeyedAttributeMapAdapter {
 	 */
 	private HttpServletRequest request;
 
+	/**
+	 * Create a map wrapping the session of given request.
+	 */
 	public HttpSessionMap(HttpServletRequest request) {
 		this.request = request;
+	}
+
+	/**
+	 * Internal helper to get the HTTP session associated with
+	 * the wrapped request, or null if there is no such session.
+	 */
+	private HttpSession getSession() {
+		return request.getSession(false);
 	}
 
 	protected Object getAttribute(String key) {
 		HttpSession session = getSession();
 		return (session == null) ? null : session.getAttribute(key);
-	}
-
-	private HttpSession getSession() {
-		return request.getSession(false);
 	}
 
 	protected void setAttribute(String key, Object value) {
@@ -61,6 +69,6 @@ public class HttpSessionMap extends StringKeyedAttributeMapAdapter {
 
 	protected Enumeration getAttributeNames() {
 		HttpSession session = getSession();
-		return (session == null) ? EmptyEnumeration.INSTANCE : session.getAttributeNames();
+		return (session == null) ? new EmptyEnumeration() : session.getAttributeNames();
 	}
 }

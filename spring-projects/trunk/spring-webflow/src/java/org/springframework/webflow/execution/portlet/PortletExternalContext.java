@@ -23,7 +23,7 @@ import javax.portlet.PortletResponse;
 import org.springframework.webflow.ExternalContext;
 
 /**
- * Provides contextual information about a HTTP environment that 
+ * Provides contextual information about a HTTP portlet environment that 
  * has interacted with SWF.
  * 
  * @author Keith Donald
@@ -34,6 +34,11 @@ public class PortletExternalContext implements ExternalContext {
 
 	private PortletResponse response;
 
+	/**
+	 * Create an external context wrapping given portlet request and response.
+	 * @param request the portlet request
+	 * @param response the portlet response
+	 */
 	public PortletExternalContext(PortletRequest request, PortletResponse response) {
 		this.request = request;
 		this.response = response;
@@ -55,10 +60,16 @@ public class PortletExternalContext implements ExternalContext {
 		return new PortletContextMap(request.getPortletSession().getPortletContext());
 	}
 
+	/**
+	 * Returns the wrapped portlet request.
+	 */
 	public PortletRequest getRequest() {
 		return request;
 	}
 
+	/**
+	 * Returns the wrapped portlet response.
+	 */
 	public PortletResponse getResponse() {
 		return response;
 	}

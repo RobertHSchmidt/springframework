@@ -24,6 +24,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 /**
  * Map backed by the Servlet context, for accessing application scoped
  * attributes.
+ * 
  * @author Keith Donald
  */
 public class HttpServletContextMap extends StringKeyedAttributeMapAdapter {
@@ -33,6 +34,9 @@ public class HttpServletContextMap extends StringKeyedAttributeMapAdapter {
 	 */
 	private ServletContext context;
 
+	/**
+	 * Create a map wrapping given servlet context.
+	 */
 	public HttpServletContextMap(ServletContext context) {
 		this.context = context;
 	}

@@ -24,12 +24,19 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 /**
  * Map backed by the Servlet HTTP request attribute map, for accessing request
  * local attributes.
+ * 
  * @author Keith Donald
  */
 public class HttpRequestMap extends StringKeyedAttributeMapAdapter {
 
+	/**
+	 * The wrapped http request.
+	 */
 	private HttpServletRequest request;
 
+	/**
+	 * Create a new map wrapping the attributes of given request.
+	 */
 	public HttpRequestMap(HttpServletRequest request) {
 		this.request = request;
 	}

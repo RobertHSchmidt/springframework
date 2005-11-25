@@ -24,15 +24,19 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 /**
  * Map backed by the Portlet context, for accessing application scoped
  * attributes.
+ * 
  * @author Keith Donald
  */
 public class PortletContextMap extends StringKeyedAttributeMapAdapter {
 
 	/**
-	 * The wrapped servlet context.
+	 * The wrapped portlet context.
 	 */
 	private PortletContext context;
 
+	/**
+	 * Create a new map wrapping given portlet context.
+	 */
 	public PortletContextMap(PortletContext context) {
 		this.context = context;
 	}

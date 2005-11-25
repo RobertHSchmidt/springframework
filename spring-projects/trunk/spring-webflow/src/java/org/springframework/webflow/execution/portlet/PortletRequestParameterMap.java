@@ -24,12 +24,19 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 /**
  * Map backed by the Portlet request parameter map, for accessing request local
  * portlet parameters.
+ * 
  * @author Keith Donald
  */
 public class PortletRequestParameterMap extends StringKeyedAttributeMapAdapter {
 
+	/**
+	 * The wrapped portlet request.
+	 */
 	private PortletRequest request;
 
+	/**
+	 * Create a new map wrapping the parameters of given portlet request.
+	 */
 	public PortletRequestParameterMap(PortletRequest request) {
 		this.request = request;
 	}
