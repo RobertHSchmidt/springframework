@@ -56,7 +56,6 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.access.FlowArtifactFactory;
 import org.springframework.webflow.action.CompositeAction;
 import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
@@ -472,7 +471,7 @@ public class DomFlowBuilder extends BaseFlowBuilder {
 				SubflowState.class);
 		subflowState.setId(element.getAttribute(ID_ATTRIBUTE));
 		subflowState.setFlow(getFlow());
-		subflowState.setSubflow(getFlowArtifactFactory().getFlow(element.getAttribute(FLOW_ATTRIBUTE)));
+		subflowState.setSubflow(getFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE)));
 		subflowState.setAttributeMapper(parseAttributeMapper(element));
 		subflowState.addAll(parseTransitions(element));
 		subflowState.setProperties(parseProperties(element));

@@ -27,8 +27,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.access.FlowLocator;
 import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.portlet.PortletExternalContext;
 
 /**

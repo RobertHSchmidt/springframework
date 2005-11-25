@@ -20,8 +20,8 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 import org.springframework.webflow.util.EmptyEnumeration;
+import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP session, for accessing session scoped

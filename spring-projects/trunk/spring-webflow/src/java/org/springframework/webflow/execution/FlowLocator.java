@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.access;
+package org.springframework.webflow.execution;
 
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;

@@ -17,11 +17,11 @@ import org.springframework.webflow.support.TextToViewSelector;
  * Abstract base implementation of a flow builder defining common functionality
  * needed by most concrete flow builder implementations. All flow related artifacts
  * are expected to be defined in the bean factory defiing this flow builder.
- * Subclasses can use a {@link org.springframework.webflow.access.FlowArtifactFactory}
+ * Subclasses can use a {@link org.springframework.webflow.config.FlowArtifactFactory}
  * to easily access that bean factory.
  * 
  * @see org.springframework.beans.factory.BeanFactory
- * @see org.springframework.webflow.access.FlowArtifactFactory
+ * @see org.springframework.webflow.config.FlowArtifactFactory
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

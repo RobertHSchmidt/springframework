@@ -20,7 +20,6 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.access.FlowLocator;
 
 /**
  * A <i>client instance</i> of an executing top-level flow, representing a

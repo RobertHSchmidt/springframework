@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.access;
+package org.springframework.webflow.config;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -40,7 +40,7 @@ import org.springframework.webflow.action.LocalBeanInvokingAction;
  * 
  * @author Erwin Vervaet
  */
-public class FlowArtifactFactory implements FlowLocator {
+public class FlowArtifactFactory {
 
 	/**
 	 * The Spring bean factory wrapped by this object.
@@ -72,7 +72,7 @@ public class FlowArtifactFactory implements FlowLocator {
 		return (BeanDefinitionRegistry)getBeanFactory();
 	}
 	
-	public Flow getFlow(String id) throws FlowArtifactLookupException {
+	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		return (Flow)getArtifact(id, Flow.class);
 	}
 	

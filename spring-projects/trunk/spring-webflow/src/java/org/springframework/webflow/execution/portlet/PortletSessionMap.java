@@ -20,8 +20,8 @@ import java.util.Enumeration;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
-import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 import org.springframework.webflow.util.EmptyEnumeration;
+import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 
 /**
  * Map backed by the Portlet session, for accessing session scoped attributes.

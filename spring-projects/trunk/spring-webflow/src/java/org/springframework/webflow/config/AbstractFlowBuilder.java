@@ -33,7 +33,6 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.access.FlowArtifactFactory;
 import org.springframework.webflow.support.ActionTransitionCriteria;
 
 /**
@@ -673,7 +672,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactLookupException when the flow cannot be resolved
 	 */
 	protected Flow flow(String flowId) throws FlowArtifactLookupException {
-		return getFlowArtifactFactory().getFlow(flowId);
+		return getFlowArtifactFactory().getSubflow(flowId);
 	}
 
 	/**
