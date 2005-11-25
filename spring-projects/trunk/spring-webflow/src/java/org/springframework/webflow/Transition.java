@@ -56,7 +56,7 @@ public class Transition extends AnnotatedObject {
 	/**
 	 * Logger, for use in subclasses.
 	 */
-	private static final Log logger = LogFactory.getLog(Transition.class);
+	protected final Log logger = LogFactory.getLog(Transition.class);
 
 	/**
 	 * The source state that owns this transition.
@@ -220,11 +220,11 @@ public class Transition extends AnnotatedObject {
 	 */
 	public String getTargetStateId() throws UnsupportedOperationException {
 		if (getTargetStateResolver() instanceof StaticTargetStateResolver) {
-			return ((StaticTargetStateResolver)getTargetStateResolver()).targetStateId;
+			return ((StaticTargetStateResolver)getTargetStateResolver()).getTargetStateId();
 		}
 		else {
-			throw new UnsupportedOperationException("This transition's target state is not known: "
-					+ "it is calculated dynamically at runtime");
+			throw new UnsupportedOperationException(
+					"This transition's target state is not known: it is calculated dynamically at runtime");
 		}
 	}
 
@@ -250,10 +250,12 @@ public class Transition extends AnnotatedObject {
 	}
 
 	/**
-	 * Returns the target state of this transition
+	 * Returns the target state of this transition, possibly taking
+	 * the request context into account.
+	 * @param context the flow execution request context
 	 */
 	protected State getTargetState(RequestContext context) {
-		return targetStateResolver.resolveTargetState(this, context);
+		return getTargetStateResolver().resolveTargetState(this, context);
 	}
 
 	/**
@@ -325,6 +327,7 @@ public class Transition extends AnnotatedObject {
 	/**
 	 * A transition target state resolver that always resolves to the same
 	 * target state.
+	 * 
 	 * @author Keith Donald
 	 */
 	public static class StaticTargetStateResolver implements TargetStateResolver {
@@ -358,25 +361,35 @@ public class Transition extends AnnotatedObject {
 		 */
 		public StaticTargetStateResolver(State targetState) {
 			this.targetState = targetState;
+			this.targetStateId = targetState.getId();
+		}
+		
+		/**
+		 * Returns the id of the target state resolved by this resolver.
+		 */
+		public String getTargetStateId() {
+			return targetStateId;
 		}
 
-		public State resolveTargetState(Transition transition, RequestContext context) {
-			synchronized (this) {
-				if (targetState == null) {
-					resolveAndSetTargetState(transition);
-				}
+		public synchronized State resolveTargetState(Transition transition, RequestContext context) {
+			if (targetState == null) {
+				resolveAndSetTargetState(transition);
 			}
 			return targetState;
 		}
 
+		/**
+		 * Resolve the target state of given transtion and set
+		 * it in <i>this</i> object.
+		 */
 		public void resolveAndSetTargetState(Transition transition) {
 			this.targetState = transition.getSourceState().getFlow().getRequiredState(targetStateId);
 		}
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("sourceState", getSourceState().getId()).append("matchingCriteria",
-				getMatchingCriteria()).append("executionCriteria", getExecutionCriteria()).append(
-				"targetStateResolver", getTargetStateResolver()).append("properties", getProperties()).toString();
+		return new ToStringCreator(this).append("sourceState", getSourceState().getId())
+			.append("matchingCriteria", getMatchingCriteria()).append("executionCriteria", getExecutionCriteria())
+			.append(	"targetStateResolver", getTargetStateResolver()).append("properties", getProperties()).toString();
 	}
 }
