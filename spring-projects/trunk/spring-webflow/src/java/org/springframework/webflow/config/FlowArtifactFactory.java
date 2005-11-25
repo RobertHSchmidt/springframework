@@ -71,7 +71,6 @@ public interface FlowArtifactFactory {
 	 */
 	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException;
 
-
 	/**
 	 * Retrieve the transition target state resolver with the specified id.
 	 * @param id the id

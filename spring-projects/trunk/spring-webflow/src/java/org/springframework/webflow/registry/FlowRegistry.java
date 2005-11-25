@@ -18,7 +18,7 @@ public interface FlowRegistry extends FlowRegistryMBean, FlowLocator {
 	 * @param id the flow id
 	 * @return true if a flow is contained in this registry with the id provided
 	 */
-	public boolean containsFlowDefinition(String id);
+	public boolean containsFlow(String id);
 	
 	/**
 	 * Register the flow definition in this registry. Registers a "holder", not
@@ -26,6 +26,6 @@ public interface FlowRegistry extends FlowRegistryMBean, FlowLocator {
 	 * lazily only when needed, and rebuilt at runtime without redeploy.
 	 * @param flowHolder a holder holding the flow definition to register
 	 */
-	public void registerFlowDefinition(FlowHolder flowHolder);
+	public void registerFlow(FlowHolder flowHolder);
 
 }

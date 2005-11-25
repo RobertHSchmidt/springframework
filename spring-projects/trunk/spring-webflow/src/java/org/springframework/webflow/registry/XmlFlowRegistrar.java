@@ -204,7 +204,7 @@ public class XmlFlowRegistrar implements FlowRegistrar {
 		XmlFlowBuilder builder = new XmlFlowBuilder(location, flowArtifactFactory);
 		builder.setResourceLoader(resourceLoader);
 		FlowAssembler assembler = new FlowAssembler(getFlowId(location), builder);
-		registry.registerFlowDefinition(new RefreshingFlowHolder(assembler));
+		registry.registerFlow(new RefreshingFlowHolder(assembler));
 	}
 
 	/**

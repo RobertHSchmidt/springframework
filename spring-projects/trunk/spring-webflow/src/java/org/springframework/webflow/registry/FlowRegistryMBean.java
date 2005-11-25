@@ -41,13 +41,13 @@ public interface FlowRegistryMBean {
 	 * Returns the names of the flow definitions registered in this registry.
 	 * @return the flow definition names
 	 */
-	public String[] getFlowDefinitionIds();
+	public String[] getFlowIds();
 
 	/**
 	 * Return the number of flow definitions registered in this registry.
 	 * @return the flow definition count;
 	 */
-	public int getFlowDefinitionCount();
+	public int getFlowCount();
 
 	/**
 	 * Refresh this flow definition registry, reloading all Flow definitions

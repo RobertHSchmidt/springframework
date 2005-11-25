@@ -11,7 +11,6 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.Transition.TargetStateResolver;
-import org.springframework.webflow.action.LocalBeanInvokingAction;
 
 /**
  * Dummy implementation of a flow artifact factory that throws unsupported
@@ -23,37 +22,12 @@ import org.springframework.webflow.action.LocalBeanInvokingAction;
  */
 public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 
-	/**
-	 * Creates an artifact factory adapter that does not natively support any
-	 * artifact lookup operations.
-	 */
-	public FlowArtifactFactoryAdapter() {
-
-	}
-
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		throw new UnsupportedOperationException("Subflow lookup is not supported by this artifact factory");
 	}
 
 	public Action getAction(String id) throws FlowArtifactLookupException {
 		throw new UnsupportedOperationException("Action lookup is not supported by this artifact factory");
-	}
-
-	/**
-	 * Helper method to the given service object into an action. If the given
-	 * service object implements the <code>Action</code> interface, it is
-	 * returned as is, otherwise it is wrapped in an action that can invoke a
-	 * method on the service bean.
-	 * @param artifact the service bean
-	 * @return the action
-	 */
-	protected Action toAction(Object artifact) {
-		if (artifact instanceof Action) {
-			return (Action)artifact;
-		}
-		else {
-			return new LocalBeanInvokingAction(artifact);
-		}
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
@@ -79,14 +53,18 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	}
 
 	public Flow createFlow(String id) throws FlowArtifactLookupException {
-		return (Flow)BeanUtils.instantiateClass(Flow.class);
+		return (Flow)newInstance(Flow.class);
 	}
 
 	public State createState(String id, Class stateType) throws FlowArtifactLookupException {
-		return (State)BeanUtils.instantiateClass(stateType);
+		return (State)newInstance(stateType);
 	}
 
 	public Transition createTransition(String id) throws FlowArtifactLookupException {
-		return (Transition)BeanUtils.instantiateClass(Transition.class);
+		return (Transition)newInstance(Transition.class);
+	}
+	
+	protected Object newInstance(Class artifactType) {
+		return BeanUtils.instantiateClass(artifactType);
 	}
 }

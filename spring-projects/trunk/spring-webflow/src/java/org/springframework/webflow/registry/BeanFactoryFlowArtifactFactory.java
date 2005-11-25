@@ -15,6 +15,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.Transition.TargetStateResolver;
+import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.config.FlowArtifactFactoryAdapter;
 
 /**
@@ -47,6 +48,23 @@ public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 		return toAction(getBean(id, Action.class, false));
 	}
 
+	/**
+	 * Helper method to the given service object into an action. If the given
+	 * service object implements the <code>Action</code> interface, it is
+	 * returned as is, otherwise it is wrapped in an action that can invoke a
+	 * method on the service bean.
+	 * @param artifact the service bean
+	 * @return the action
+	 */
+	protected Action toAction(Object artifact) {
+		if (artifact instanceof Action) {
+			return (Action)artifact;
+		}
+		else {
+			return new LocalBeanInvokingAction(artifact);
+		}
+	}
+	
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 		return (FlowAttributeMapper)getBean(id, FlowAttributeMapper.class, true);
 	}

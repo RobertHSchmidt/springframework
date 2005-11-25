@@ -62,6 +62,7 @@ import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.CompositeAction;
+import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 import org.springframework.webflow.support.TransitionCriteriaChain;
@@ -972,6 +973,23 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			return getFlowArtifactFactory().getAction(id);
 		}
 
+		/**
+		 * Helper method to the given service object into an action. If the given
+		 * service object implements the <code>Action</code> interface, it is
+		 * returned as is, otherwise it is wrapped in an action that can invoke a
+		 * method on the service bean.
+		 * @param artifact the service bean
+		 * @return the action
+		 */
+		protected Action toAction(Object artifact) {
+			if (artifact instanceof Action) {
+				return (Action)artifact;
+			}
+			else {
+				return new LocalBeanInvokingAction(artifact);
+			}
+		}
+		
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {

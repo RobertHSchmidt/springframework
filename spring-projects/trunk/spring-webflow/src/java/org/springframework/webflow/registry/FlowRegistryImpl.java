@@ -37,20 +37,20 @@ public class FlowRegistryImpl implements FlowRegistry {
 		this.parent = parent;
 	}
 
-	public String[] getFlowDefinitionIds() {
+	public String[] getFlowIds() {
 		return (String[])flowDefinitions.keySet().toArray(new String[0]);
 	}
 
-	public int getFlowDefinitionCount() {
+	public int getFlowCount() {
 		return flowDefinitions.size();
 	}
 
-	public void registerFlowDefinition(FlowHolder flowHolder) {
+	public void registerFlow(FlowHolder flowHolder) {
 		Assert.notNull(flowHolder, "The flow definition holder to register is required");
 		index(flowHolder);
 	}
 
-	public boolean containsFlowDefinition(String id) {
+	public boolean containsFlow(String id) {
 		return flowDefinitions.get(id) != null;
 	}
 
