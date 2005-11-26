@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
 	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/spring-webflow"/>
 	<classpathentry kind="lib" path="lib/buildtime/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-codec.jar"/>
 	<classpathentry kind="lib" path="lib/global/jstl.jar"/>
