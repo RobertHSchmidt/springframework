@@ -80,8 +80,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -339,7 +339,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 					+ "'", e);
 		}
 		initConversionService();
-		initFlowArtifactRegistry(getDocumentElement());
 		setFlow(parseFlow(flowId, flowProperties, getDocumentElement()));
 		addInlineFlowDefinitions(getFlow(), getDocumentElement());
 	}
@@ -393,11 +392,33 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
+	 * Parse the XML flow definitions and construct a Flow object. Will not
+	 * parse all state definitions for the flow!
+	 */
+	protected Flow parseFlow(String id, Map properties, Element flowElement) {
+		Assert.state(FLOW_ELEMENT.equals(flowElement.getTagName()), "This is not the '" + FLOW_ELEMENT + "' element");
+		initFlowArtifactRegistry(flowElement);
+		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(flowElement.getAttribute(BEAN_ATTRIBUTE));
+		flow.setId(id);
+		Map flowProperties = parseProperties(flowElement);
+		if (properties != null) {
+			if (flowProperties != null) {
+				flowProperties.putAll(properties);
+			}
+			else {
+				flowProperties = new HashMap(properties);
+			}
+		}
+		flow.setProperties(flowProperties);
+		return flow;
+	}
+
+	/**
 	 * Initialize a local flow artifact registry to access the flow local bean
 	 * factory.
 	 */
-	protected void initFlowArtifactRegistry(Element element) {
-		List importElements = DomUtils.getChildElementsByTagName(element, IMPORT_ELEMENT);
+	protected void initFlowArtifactRegistry(Element flowElement) {
+		List importElements = DomUtils.getChildElementsByTagName(flowElement, IMPORT_ELEMENT);
 		Resource[] resources = new Resource[importElements.size()];
 		for (int i = 0; i < importElements.size(); i++) {
 			Element importElement = (Element)importElements.get(i);
@@ -421,8 +442,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * Parse the inline flow definitions in the XML file and add corresponding
 	 * flow factory beans to the flow local bean factory.
 	 */
-	protected void addInlineFlowDefinitions(Flow flow, Element element) {
-		List inlineFlowElements = DomUtils.getChildElementsByTagName(element, INLINE_FLOW_ELEMENT);
+	protected void addInlineFlowDefinitions(Flow flow, Element parentFlowElement) {
+		List inlineFlowElements = DomUtils.getChildElementsByTagName(parentFlowElement, INLINE_FLOW_ELEMENT);
 		if (inlineFlowElements.isEmpty()) {
 			return;
 		}
@@ -432,7 +453,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			Element inlineFlowElement = (Element)inlineFlowElements.get(i);
 			String inlineFlowId = inlineFlowElement.getAttribute(ID_ATTRIBUTE);
 			Element flowElement = (Element)inlineFlowElement.getElementsByTagName(FLOW_ATTRIBUTE).item(0);
-			initFlowArtifactRegistry(flowElement);
 			Flow inlineFlow = parseFlow(inlineFlowId, null, flowElement);
 			inlineFlows.put(inlineFlow.getId(), inlineFlow);
 			buildInlineFlow(inlineFlow, flowElement);
@@ -443,36 +463,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * Build the nested inline flow definition.
 	 * 
 	 * @param inlineFlow the inline flow to build
-	 * @param element the "flow" element
+	 * @param flowElement the inline flow's "flow" element
 	 */
-	protected void buildInlineFlow(Flow inlineFlow, Element element) {
-		addInlineFlowDefinitions(inlineFlow, element);
-		addStateDefinitions(inlineFlow, element);
-		inlineFlow.addExceptionHandlers(parseExceptionHandlers(element));
+	protected void buildInlineFlow(Flow inlineFlow, Element flowElement) {
+		addInlineFlowDefinitions(inlineFlow, flowElement);
+		addStateDefinitions(inlineFlow, flowElement);
+		inlineFlow.addExceptionHandlers(parseExceptionHandlers(flowElement));
 		inlineFlow.resolveStateTransitionsTargetStates();
 		destroyFlowArtifactRegistry(inlineFlow);
 		inlineFlow.removeAttribute(INLINE_FLOW_MAP_PROPERTY);
-	}
-
-	/**
-	 * Parse the XML flow definitions and construct a Flow object. Will not
-	 * parse all state definitions for the flow!
-	 */
-	protected Flow parseFlow(String id, Map properties, Element element) {
-		Assert.state(FLOW_ELEMENT.equals(element.getTagName()), "Not the '" + FLOW_ELEMENT + "' element");
-		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(element.getAttribute(BEAN_ATTRIBUTE));
-		flow.setId(id);
-		Map flowProperties = parseProperties(element);
-		if (properties != null) {
-			if (flowProperties != null) {
-				flowProperties.putAll(properties);
-			}
-			else {
-				flowProperties = new HashMap(properties);
-			}
-		}
-		flow.setProperties(flowProperties);
-		return flow;
 	}
 
 	public void buildStates() throws FlowBuilderException {
@@ -483,9 +482,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * Parse the state definitions in given element and add them to the flow
 	 * object we're constructing.
 	 */
-	protected void addStateDefinitions(Flow flow, Element element) {
-		String startStateId = element.getAttribute(START_STATE_ATTRIBUTE);
-		NodeList nodeList = element.getChildNodes();
+	protected void addStateDefinitions(Flow flow, Element flowElement) {
+		String startStateId = flowElement.getAttribute(START_STATE_ATTRIBUTE);
+		NodeList nodeList = flowElement.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
 			if (node instanceof Element) {
@@ -924,7 +923,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		public void push(LocalFlowArtifactRegistry registry) {
 			if (localFlowArtifactRegistries.isEmpty()) {
 				attachRootServiceRegistryIfSupported(registry.context);
-			} else {
+			}
+			else {
 				registry.context.setParent(top().context);
 			}
 			localFlowArtifactRegistries.push(registry);
@@ -933,7 +933,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		/**
 		 * Attach a master service registry as a parent registry of the local
 		 * context, if supported by the configured flow artifact factory.
-		 * @param context the local context to attach a global service registry to
+		 * @param context the local context to attach a global service registry
+		 * to
 		 */
 		protected void attachRootServiceRegistryIfSupported(ConfigurableApplicationContext context) {
 			try {
@@ -943,7 +944,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 			}
 		}
-		
+
 		/**
 		 * Pop a registry off the stack
 		 */
