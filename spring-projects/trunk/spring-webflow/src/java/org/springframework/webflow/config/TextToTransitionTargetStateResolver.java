@@ -20,6 +20,8 @@ import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.webflow.Transition;
+import org.springframework.webflow.Transition.StaticTargetStateResolver;
+import org.springframework.webflow.Transition.TargetStateResolver;
 
 /**
  * Converter that takes an encoded string representation and produces a
@@ -83,7 +85,7 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 			return flowArtifactFactory.getTargetStateResolver(encodedCriteria.substring(BEAN_PREFIX.length()));
 		}
 		else {
-			return createStaticTransitionTargetStateResolver(encodedCriteria);
+			return createStaticTargetStateResolver(encodedCriteria);
 		}
 	}
 
@@ -93,8 +95,7 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 	 * @return the target state resolver
 	 * @throws ConversionException when something goes wrong
 	 */
-	protected Transition.TargetStateResolver createStaticTransitionTargetStateResolver(String stateId)
-			throws ConversionException {
-		return new Transition.StaticTargetStateResolver(stateId);
+	protected TargetStateResolver createStaticTargetStateResolver(String stateId) throws ConversionException {
+		return new StaticTargetStateResolver(stateId);
 	}
 }
