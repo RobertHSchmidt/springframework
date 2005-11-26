@@ -25,7 +25,7 @@ import org.springframework.core.io.ResourceLoader;
  * Usage example:
  * 
  * <pre>
- *     &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *     &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
  *         &lt;property name=&quot;definitionLocations&quot;&gt;
  *             &lt;list&gt;
  *                 &lt;value&gt;/WEB-INF/flow1.xml&lt;/value&gt;

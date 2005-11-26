@@ -44,11 +44,15 @@ import org.springframework.webflow.config.XmlFlowBuilder;
  * </p>
  * 
  * <pre>
+ * BeanFactory beanFactory = ...
  * FlowRegistryImpl registry = new FlowRegistryImpl();
+ * FlowArtifactFactory flowArtifactFactory = new FlowRegistryFlowArtifactFactory(registry, beanFactory);
  * File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- * Resource[] locations = new Resource[] { new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
- * 		new FileSystemResource(new File(parent, &quot;flow2.xml&quot;)) };
- * XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowArtifactLocator, locations);
+ * Resource[] locations = new Resource[] {
+ *     new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
+ * 	   new FileSystemResource(new File(parent, &quot;flow2.xml&quot;))
+ * };
+ * XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowArtifactFactory, locations);
  * registrar.registerFlowDefinitions(registry);
  * </pre>
  * 

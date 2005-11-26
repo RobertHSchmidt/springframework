@@ -11,7 +11,7 @@ package org.springframework.webflow.registry;
  * 
  * <pre>
  * 	&lt;!-- Creates the registry of flow definitions for this application --&gt;
- * 	&lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ * 	&lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
  * 		&lt;property name=&quot;definitionLocations&quot; value=&quot;/WEB-INF/flow1.xml&quot;/&gt;
  * 	&lt;/bean&gt;
  * 
