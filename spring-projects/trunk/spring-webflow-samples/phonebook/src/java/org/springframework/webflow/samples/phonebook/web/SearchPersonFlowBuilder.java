@@ -17,6 +17,7 @@ package org.springframework.webflow.samples.phonebook.web;
 
 import org.springframework.binding.support.Mapping;
 import org.springframework.webflow.Action;
+import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.FormAction;
@@ -73,6 +74,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	protected FormAction createSearchFormAction() {
 		FormAction action = new FormAction(SearchCriteria.class);
+		action.setFormObjectScope(ScopeType.FLOW);
 		action.setValidator(new SearchCriteriaValidator());
 		return action;
 	}

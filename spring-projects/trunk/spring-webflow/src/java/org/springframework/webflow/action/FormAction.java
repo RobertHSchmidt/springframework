@@ -19,6 +19,7 @@ import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.binding.format.support.LabeledEnumFormatter;
+import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -95,19 +96,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *      &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *          &lt;entry-actions&gt;
- *              &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *          &lt;/entry-actions&gt;
- *          &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *              &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *          &lt;/transition&gt;
- *      &lt;/view-state&gt;
- *        
- *      &lt;action-state id=&quot;executeSearch&quot;&gt;
- *          &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *          &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *      &lt;/action-state&gt;
+ *        &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *            &lt;entry-actions&gt;
+ *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *            &lt;/entry-actions&gt;
+ *            &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *            &lt;/transition&gt;
+ *        &lt;/view-state&gt;
+ *          
+ *        &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *            &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *            &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *        &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -144,9 +145,9 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * 
  * <pre>
  * public Event setupReferenceData(RequestContext context) throws Exception {
- * 	Scope requestScope = context.getRequestScope();
- * 	requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
- * 	return success();
+ *     Scope requestScope = context.getRequestScope();
+ * 	   requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ * 	   return success();
  * }
  * </pre>
  * 
@@ -667,11 +668,11 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	protected void doBind(RequestContext context, DataBinder binder) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Binding allowed parameters in event: " + context.getLastEvent()
-					+ " to form object with name: '" + binder.getObjectName() + "', prebind-toString: "
+			logger.debug("Binding allowed request parameters in '" + StylerUtils.style(context.getExternalContext().getRequestParameterMap()) 
+					+ " to form object with name '" + binder.getObjectName() + "', prebind formObject toString = "
 					+ binder.getTarget());
 			if (binder.getAllowedFields() != null && binder.getAllowedFields().length > 0) {
-				logger.debug("(Allowed event parameters are: " + binder.getAllowedFields() + ")");
+				logger.debug("(Allowed event parameters are " + StylerUtils.style(binder.getAllowedFields()) + ")");
 			}
 			else {
 				logger.debug("(Any event parameter is allowed)");
@@ -679,8 +680,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 		}
 		binder.bind(new MutablePropertyValues(context.getExternalContext().getRequestParameterMap()));
 		if (logger.isDebugEnabled()) {
-			logger.debug("Binding completed for form object with name: '" + binder.getObjectName()
-					+ "', postbind-toString: " + binder.getTarget());
+			logger.debug("Binding completed for form object with name '" + binder.getObjectName()
+					+ "', postbind formObject toString = " + binder.getTarget());
 			logger.debug("There are [" + binder.getErrors().getErrorCount() + "] errors, details: "
 					+ binder.getErrors().getAllErrors());
 		}
@@ -697,15 +698,14 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * @param binder the data binder to use
 	 */
 	protected void doValidate(RequestContext context, DataBinder binder) throws Exception {
-		Assert.notNull(validator,
-				"The validator must not be null when attempting validation, but it is: programmer error");
+		Assert.notNull(validator, "The validator must not be null when attempting validation -- programmer error");
 		String validatorMethod = (String)context.getProperties().getAttribute(VALIDATOR_METHOD_PROPERTY);
 		if (StringUtils.hasText(validatorMethod)) {
 			invokeValidatorMethod(validatorMethod, binder.getTarget(), binder.getErrors());
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Invoking validator: " + validator);
+				logger.debug("Invoking validator " + validator);
 			}
 			getValidator().validate(binder.getTarget(), binder.getErrors());
 		}
@@ -725,9 +725,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	private void invokeValidatorMethod(String validatorMethod, Object formObject, Errors errors) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger
-					.debug("Invoking piecemeal validator method: '" + validatorMethod + "' on form object: "
-							+ formObject);
+			logger.debug("Invoking piecemeal validator method '" + validatorMethod + "' on form object " + formObject);
 		}
 		getValidateMethodInvoker().invoke(validatorMethod, new Object[] { formObject, errors });
 	}
@@ -752,6 +750,10 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * Put given form object in the configured scope of given context.
 	 */
 	private void setFormObject(RequestContext context, Object formObject) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Setting form object instance with name '" + getFormObjectName() + 
+					"' in scope " + getFormObjectScope());
+		}
 		getFormObjectAccessor(context).setFormObject(formObject, getFormObjectName(), getFormObjectScope());
 	}
 
@@ -780,18 +782,11 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 			BindException be = (BindException)errors;
 			if (be.getTarget() != formObject) {
 				if (logger.isInfoEnabled()) {
-					logger
-							.info("Inconsistency detected: the Errors instance in '"
-									+ getFormErrorsScope()
-									+ "' does NOT wrap the current form object: "
-									+ formObject
-									+ " of class: "
-									+ formObject.getClass()
-									+ "; instead this Errors instance unexpectedly wraps the target object: "
-									+ be.getTarget()
-									+ " of class: "
-									+ be.getTarget().getClass()
-									+ ". [Taking corrective action: overwriting the existing Errors instance with an empty one for the current form object]");
+					logger.info("Inconsistency detected: the Errors instance in '" + getFormErrorsScope()
+							+ "' does NOT wrap the current form object " + formObject + " of class " + formObject.getClass()
+							+ "; instead this Errors instance unexpectedly wraps the target object " + be.getTarget() +
+							" of class: " + be.getTarget().getClass() + ". " + 
+							"[Taking corrective action: overwriting the existing Errors instance with an empty one for the current form object]");
 				}
 				// fall through below
 				errors = null;
@@ -818,6 +813,9 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * Put given errors instance in the configured scope of given context.
 	 */
 	private void setFormErrors(RequestContext context, Errors errors) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Setting form errors instance in scope " + getFormObjectScope());
+		}		
 		getFormObjectAccessor(context).setFormErrors(errors, getFormErrorsScope());
 	}
 
@@ -869,7 +867,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	protected Object createFormObject(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Creating new form object '" + getFormObjectName() + "'");
+			logger.debug("Creating new form object with name '" + getFormObjectName() + "'");
 		}
 		if (this.formObjectClass == null) {
 			throw new IllegalStateException("Cannot create form object without formObjectClass being set -- "
