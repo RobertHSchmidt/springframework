@@ -204,10 +204,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		// default implementation assumes no exception handlers to build
 	}
 
-	public void dispose() {
-		setFlow(null);
-	}
-
 	/**
 	 * Adds a <code>ViewState</code> marker to the flow built by this builder.
 	 * <p>

@@ -892,7 +892,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	public void dispose() {
 		destroyFlowArtifactRegistry(getFlow());
 		getFlow().removeAttribute(INLINE_FLOW_MAP_PROPERTY);
-		setFlow(null);
 		document = null;
 	}
 
