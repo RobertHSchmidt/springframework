@@ -895,8 +895,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	}
 
 	public void dispose() {
-		System.out.println(getFlow().getId());
-		Thread.currentThread().dumpStack();
 		destroyFlowArtifactRegistry(getFlow());
 		getFlow().removeAttribute(INLINE_FLOW_MAP_PROPERTY);
 		document = null;
@@ -967,12 +965,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		}
 
 		public Flow getCurrentFlow() {
-			if (top().flow != null) {
-				return top().flow;
-			}
-			else {
-				return getFlow();
-			}
+			return top().flow;
 		}
 
 		public Flow getSubflow(String id) throws FlowArtifactLookupException {

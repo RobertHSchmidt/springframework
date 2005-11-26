@@ -105,7 +105,7 @@ public class RefreshingFlowHolder implements FlowHolder {
 	}
 
 	public void refresh() {
-		assembler.assembleFlow();
+		assembleFlow();
 	}
 
 	/**
