@@ -50,9 +50,7 @@ import org.springframework.webflow.config.FlowBuilder;
  *    &lt;bean id=&quot;user.RegistrationFlow&quot; class=&quot;org.springframework.webflow.config.FlowFactoryBean&quot;&gt;
  *        &lt;property name=&quot;flowBuilder&quot;&gt;
  *            &lt;bean class=&quot;org.springframework.webflow.config.XmlFlowBuilder&quot;&gt;
- *                &lt;property name=&quot;location&quot;&gt;
- *                    &lt;value&gt;userRegistrationFlow.xml&lt;/value&gt;
- *                &lt;/property&gt;
+ *                &lt;constructor-arg value=&quot;/WEB-INF/userRegistrationFlow.xml&quot;/&gt;
  *             &lt;/bean&gt;
  *        &lt;/property&gt;
  *    &lt;/bean&gt;
@@ -65,8 +63,8 @@ import org.springframework.webflow.config.FlowBuilder;
  * factory, in a standalone, programmatic fashion:
  * 
  * <pre>
- *        FlowBuilder builder = ...;
- *        Flow flow = new FlowFactoryBean(builder).getFlow();
+ *     FlowBuilder builder = ...;
+ *     Flow flow = new FlowFactoryBean(builder).getFlow();
  * </pre>
  * 
  * @author Keith Donald
