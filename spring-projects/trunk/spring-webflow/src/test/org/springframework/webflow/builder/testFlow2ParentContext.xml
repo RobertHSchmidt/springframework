@@ -2,9 +2,9 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-	<bean id="testService" class="org.springframework.webflow.config.XmlFlowBuilderNestingTests$TestService"/>
+	<bean id="testService" class="org.springframework.webflow.builder.XmlFlowBuilderNestingTests$TestService"/>
 	
 	<bean id="testFlow2" class="org.springframework.webflow.registry.XmlFlowFactoryBean">
-		<property name="location" value="classpath:/org/springframework/webflow/config/testFlow2.xml"/>
+		<property name="location" value="classpath:/org/springframework/webflow/builder/testFlow2.xml"/>
 	</bean>
 </beans>

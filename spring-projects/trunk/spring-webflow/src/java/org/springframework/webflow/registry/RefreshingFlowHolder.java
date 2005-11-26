@@ -19,9 +19,9 @@ import java.io.IOException;
 
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.config.FlowAssembler;
-import org.springframework.webflow.config.FlowBuilder;
-import org.springframework.webflow.config.ResourceHolder;
+import org.springframework.webflow.builder.FlowAssembler;
+import org.springframework.webflow.builder.FlowBuilder;
+import org.springframework.webflow.builder.ResourceHolder;
 
 /**
  * A flow definition holder that is refreshable.

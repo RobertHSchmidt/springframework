@@ -17,7 +17,7 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.Transition.TargetStateResolver;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
-import org.springframework.webflow.config.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
 
 /**
  * A flow artifact locator that pulls its artifacts from a standard Spring

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.webflow.config.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowArtifactFactory;
 
 /**
  * A base class for factory beans that create populated Flow Registries.

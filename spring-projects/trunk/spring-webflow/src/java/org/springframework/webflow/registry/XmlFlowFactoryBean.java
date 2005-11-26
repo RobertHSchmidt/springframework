@@ -22,15 +22,15 @@ import org.springframework.core.io.DescriptiveResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
-import org.springframework.webflow.config.FlowBuilder;
-import org.springframework.webflow.config.XmlFlowBuilder;
+import org.springframework.webflow.builder.FlowBuilder;
+import org.springframework.webflow.builder.XmlFlowBuilder;
 
 /**
  * Convenient specialization of FlowFactoryBean that uses an XmlFlowBuilder to
  * build flows from an XML file. The XML file to load can be specified directly
  * using the "location" property.
  * 
- * @see org.springframework.webflow.config.XmlFlowBuilder
+ * @see org.springframework.webflow.builder.XmlFlowBuilder
  * @see org.springframework.webflow.registry.FlowFactoryBean
  * 
  * @author Keith Donald

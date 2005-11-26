@@ -24,9 +24,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.config.FlowArtifactFactory;
-import org.springframework.webflow.config.FlowAssembler;
-import org.springframework.webflow.config.XmlFlowBuilder;
+import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowAssembler;
+import org.springframework.webflow.builder.XmlFlowBuilder;
 
 /**
  * A flow registrar that populates a flow registry from flow definitions defined

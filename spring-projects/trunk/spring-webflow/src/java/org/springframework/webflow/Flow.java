@@ -73,7 +73,7 @@ import org.springframework.util.StringUtils;
  * this flow's executions.
  * <p>
  * Instances of this class are typically built by
- * {@link org.springframework.webflow.config.FlowBuilder} implementations, but
+ * {@link org.springframework.webflow.builder.FlowBuilder} implementations, but
  * may also be directly subclassed.
  * <p>
  * This class, and the rest of the Spring Web Flow (SWF) core, has been designed

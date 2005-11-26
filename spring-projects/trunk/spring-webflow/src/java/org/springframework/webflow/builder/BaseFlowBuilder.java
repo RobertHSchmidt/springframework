@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.builder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,11 +28,11 @@ import org.springframework.webflow.Flow;
  * needed by most concrete flow builder implementations. All flow related
  * artifacts are expected to be defined in the bean factory defining this flow
  * builder. Subclasses can use a
- * {@link org.springframework.webflow.config.FlowArtifactFactory} to easily
+ * {@link org.springframework.webflow.builder.FlowArtifactFactory} to easily
  * access that bean factory.
  * 
  * @see org.springframework.beans.factory.BeanFactory
- * @see org.springframework.webflow.config.FlowArtifactFactory
+ * @see org.springframework.webflow.builder.FlowArtifactFactory
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

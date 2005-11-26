@@ -23,8 +23,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.config.FlowAssembler;
-import org.springframework.webflow.config.FlowBuilder;
+import org.springframework.webflow.builder.FlowAssembler;
+import org.springframework.webflow.builder.FlowBuilder;
 
 /**
  * Factory bean that acts as a director for assembling flows, delegating to a

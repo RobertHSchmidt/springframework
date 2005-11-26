@@ -10,7 +10,7 @@ import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.config.MyCustomException;
+import org.springframework.webflow.builder.MyCustomException;
 import org.springframework.webflow.execution.FlowExecutionImpl;
 import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;

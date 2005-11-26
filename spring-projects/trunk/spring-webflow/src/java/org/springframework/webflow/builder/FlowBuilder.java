@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.builder;
 
 import java.util.Map;
 
@@ -44,7 +44,7 @@ import org.springframework.webflow.Flow;
  * <code>XmlFlowBuilder</code>, for building flows from an XML-definition.
  * <p>
  * Flow builders are used by the
- * {@link org.springframework.webflow.config.FlowAssembler}, which acts as an
+ * {@link org.springframework.webflow.builder.FlowAssembler}, which acts as an
  * assembler (director). Flow Builders may be reused, however, exercise caution
  * when doing this as these objects are not thread safe. Also, for each use, be
  * sure to call init, buildStates, buildExceptionHandlers, buildPostProcess,
@@ -52,9 +52,9 @@ import org.springframework.webflow.Flow;
  * <p>
  * This is an example of the classic GoF Builder pattern.
  * 
- * @see org.springframework.webflow.config.AbstractFlowBuilder
- * @see org.springframework.webflow.config.XmlFlowBuilder
- * @see org.springframework.webflow.config.FlowAssembler
+ * @see org.springframework.webflow.builder.AbstractFlowBuilder
+ * @see org.springframework.webflow.builder.XmlFlowBuilder
+ * @see org.springframework.webflow.builder.FlowAssembler
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

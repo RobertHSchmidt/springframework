@@ -64,7 +64,7 @@
 	
 	<end-state id="endState2"/>
 
-	<exception-handler on="org.springframework.webflow.config.MyCustomException" to="endState1"/>
+	<exception-handler on="org.springframework.webflow.builder.MyCustomException" to="endState1"/>
 
 	<inline-flow id="inline-flow">
 		<flow start-state="end">

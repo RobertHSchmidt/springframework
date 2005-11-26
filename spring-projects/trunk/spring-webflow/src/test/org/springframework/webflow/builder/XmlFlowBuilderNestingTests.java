@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.builder;
 
 import junit.framework.TestCase;
 
@@ -35,7 +35,7 @@ import org.springframework.webflow.action.AbstractAction;
 /**
  * Test case for XML flow builder, testing flow nesting.
  * 
- * @see org.springframework.webflow.config.XmlFlowBuilder
+ * @see org.springframework.webflow.builder.XmlFlowBuilder
  * 
  * @author Erwin Vervaet
  */
@@ -47,7 +47,7 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		ClassPathXmlApplicationContext parentContext =
-			new ClassPathXmlApplicationContext("/org/springframework/webflow/config/testFlow2ParentContext.xml");
+			new ClassPathXmlApplicationContext("/org/springframework/webflow/builder/testFlow2ParentContext.xml");
 		this.parentBeanFactory = parentContext.getBeanFactory();
 		this.flow = (Flow)parentContext.getBean("testFlow2");
 		this.testService = (TestService)parentContext.getBean("testService");

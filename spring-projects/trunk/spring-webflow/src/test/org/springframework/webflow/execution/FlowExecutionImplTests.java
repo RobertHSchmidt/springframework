@@ -29,9 +29,9 @@ import junit.framework.TestCase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
-import org.springframework.webflow.config.FlowAssembler;
-import org.springframework.webflow.config.XmlFlowBuilder;
-import org.springframework.webflow.config.XmlFlowBuilderTests;
+import org.springframework.webflow.builder.FlowAssembler;
+import org.springframework.webflow.builder.XmlFlowBuilder;
+import org.springframework.webflow.builder.XmlFlowBuilderTests;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**

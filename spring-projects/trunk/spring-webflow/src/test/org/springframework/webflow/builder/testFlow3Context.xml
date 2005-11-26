@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<bean id="customFlow" class="org.springframework.webflow.builder.XmlFlowBuilderCustomTypeTests$CustomFlow"/>
+	<bean id="customActionState" class="org.springframework.webflow.builder.XmlFlowBuilderCustomTypeTests$CustomActionState"/>
+	<bean id="customAction" class="org.springframework.webflow.builder.XmlFlowBuilderCustomTypeTests$CustomAction"/>
+	<bean id="customSubflowState" class="org.springframework.webflow.builder.XmlFlowBuilderCustomTypeTests$CustomSubflowState"/>
+	<bean id="customAttributeMapper" class="org.springframework.webflow.builder.XmlFlowBuilderCustomTypeTests$CustomAttributeMapper"/>
+	<bean id="customViewState" class="org.springframework.webflow.builder.XmlFlowBuilderCustomTypeTests$CustomViewState"/>
+	<bean id="customTransition" class="org.springframework.webflow.builder.XmlFlowBuilderCustomTypeTests$CustomTransition"/>
+	<bean id="customDecisionState" class="org.springframework.webflow.builder.XmlFlowBuilderCustomTypeTests$CustomDecisionState"/>
+	<bean id="customEndState" class="org.springframework.webflow.builder.XmlFlowBuilderCustomTypeTests$CustomEndState"/>
+	<bean id="customExceptionHandler" class="org.springframework.webflow.builder.XmlFlowBuilderCustomTypeTests$CustomExceptionHandler"/>
+</beans>

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.builder;
 
 import java.util.Map;
 
@@ -33,7 +33,7 @@ import org.springframework.util.Assert;
  *     Flow flow = builder.getResult();
  * </pre>
  * 
- * @see org.springframework.webflow.config.FlowBuilder
+ * @see org.springframework.webflow.builder.FlowBuilder
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.builder;
 
 import java.io.IOException;
 
@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
  *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
- * @see org.springframework.webflow.config.XmlFlowBuilder
+ * @see org.springframework.webflow.builder.XmlFlowBuilder
  * 
  * @author Erwin Vervaet
  */

@@ -5,16 +5,16 @@ Contains interfaces and classes for building and assembling web flows.
 </p>
 
 <p>
-You construct a web flow using a {@link org.springframework.webflow.config.FlowBuilder}.
+You construct a web flow using a {@link org.springframework.webflow.builder.FlowBuilder}.
 This package defines the following flow builder implementations:
 <ul>
 <li>
-{@link org.springframework.webflow.config.AbstractFlowBuilder} - A
+{@link org.springframework.webflow.builder.AbstractFlowBuilder} - A
 convenience superclass to use when you want to assemble the web flow
 in Java code.
 </li>
 <li>
-{@link org.springframework.webflow.config.XmlFlowBuilder} - A flow
+{@link org.springframework.webflow.builder.XmlFlowBuilder} - A flow
 builder that reads an XML file containing a web flow definition and
 constructs the flow accordingly.
 </li>
@@ -25,7 +25,7 @@ actions, other flows, attribute mappers and so on.
 </p>
 <p>
 To direct flow construction, you use the
-{@link org.springframework.webflow.config.registry.FlowAssembler}.
+{@link org.springframework.webflow.builder.FlowAssembler}.
 This is based on the class GoF builder design pattern.
 </p>
 </body>

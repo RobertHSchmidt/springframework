@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.builder;
 
 import junit.framework.TestCase;
 
@@ -21,6 +21,8 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.builder.TextToTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

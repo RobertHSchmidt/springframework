@@ -1,4 +1,4 @@
-package org.springframework.webflow.config;
+package org.springframework.webflow.builder;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.webflow.Action;

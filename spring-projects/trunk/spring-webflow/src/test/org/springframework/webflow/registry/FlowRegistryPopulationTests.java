@@ -11,12 +11,12 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.config.AbstractFlowBuilder;
-import org.springframework.webflow.config.FlowArtifactFactory;
-import org.springframework.webflow.config.FlowArtifactFactoryAdapter;
-import org.springframework.webflow.config.FlowAssembler;
-import org.springframework.webflow.config.FlowBuilder;
-import org.springframework.webflow.config.FlowBuilderException;
+import org.springframework.webflow.builder.AbstractFlowBuilder;
+import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.builder.FlowAssembler;
+import org.springframework.webflow.builder.FlowBuilder;
+import org.springframework.webflow.builder.FlowBuilderException;
 
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {

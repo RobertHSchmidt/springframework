@@ -13,7 +13,8 @@ with Flow definitions using a FlowRegistrar as follows:
        new FileSystemResource("WEB-INF/flowA.xml"),
        new FileSystemResource("WEB-INF/flowB.xml")
     };
-    XmlFlowRegistrar registrar = new XmlFlowRegistrar(new DefaultFlowArtifactFactory(beanFactory), locations);
+    FlowArtifactFactory flowArtifactFactory = new FlowRegistryFlowArtifactFactory(registry, beanFactory);
+    XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowArtifactFactory, locations);
     registrar.registerFlowDefinitions(registry);
 </pre>
 </p>

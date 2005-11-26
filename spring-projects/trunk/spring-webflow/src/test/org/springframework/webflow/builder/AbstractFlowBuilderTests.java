@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.builder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +31,15 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.builder.AbstractFlowBuilder;
+import org.springframework.webflow.builder.BaseFlowBuilder;
+import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.builder.FlowAssembler;
 
 /**
  * Test Java based flow builder logic (subclasses of AbstractFlowBuilder).
  * 
- * @see org.springframework.webflow.config.AbstractFlowBuilder
+ * @see org.springframework.webflow.builder.AbstractFlowBuilder
  * 
  * @author Keith Donald
  * @author Rod Johnson

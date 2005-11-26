@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.builder;
 
 import org.springframework.core.io.Resource;
 
@@ -22,7 +22,7 @@ import org.springframework.core.io.Resource;
  * resource defining a flow (e.g. an XML file). Provides a way to access
  * information about the underlying resource like the last modified date.
  * 
- * @see org.springframework.webflow.config.FlowBuilder
+ * @see org.springframework.webflow.builder.FlowBuilder
  * 
  * @author Erwin Vervaet
  */

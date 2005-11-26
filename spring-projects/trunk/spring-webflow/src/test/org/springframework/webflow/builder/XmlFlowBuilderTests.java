@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.builder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +33,9 @@ import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.MultiAction;
+import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.builder.FlowAssembler;
+import org.springframework.webflow.builder.XmlFlowBuilder;
 import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
@@ -41,7 +44,7 @@ import org.springframework.webflow.test.MockRequestContext;
 /**
  * Test case for XML flow builder.
  * 
- * @see org.springframework.webflow.config.XmlFlowBuilder
+ * @see org.springframework.webflow.builder.XmlFlowBuilder
  * 
  * @author Erwin Vervaet
  */

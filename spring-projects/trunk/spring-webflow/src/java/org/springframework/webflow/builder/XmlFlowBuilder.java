@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.builder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -320,7 +320,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * WebFlowDtdResolver will be used. Can be overridden for custom entity
 	 * resolution, for example relative to some specific base path.
 	 * 
-	 * @see org.springframework.webflow.config.WebFlowDtdResolver
+	 * @see org.springframework.webflow.builder.WebFlowDtdResolver
 	 */
 	public void setEntityResolver(EntityResolver entityResolver) {
 		this.entityResolver = entityResolver;
