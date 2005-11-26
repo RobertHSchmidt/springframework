@@ -24,6 +24,9 @@ import org.springframework.core.NestedRuntimeException;
  */
 public class FlowBuilderException extends NestedRuntimeException {
 	
+	/**
+	 * The builder that had a problem.
+	 */
 	private FlowBuilder builder;
 
 	/**
