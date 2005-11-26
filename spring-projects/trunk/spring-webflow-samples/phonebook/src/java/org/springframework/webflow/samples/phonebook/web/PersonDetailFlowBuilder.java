@@ -19,7 +19,7 @@ import org.springframework.binding.support.Mapping;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.FlowBuilderException;
-import org.springframework.webflow.config.ParameterizableFlowAttributeMapper;
+import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
 /**
  * Java-based flow builder that builds the person details flow, exactly like it
