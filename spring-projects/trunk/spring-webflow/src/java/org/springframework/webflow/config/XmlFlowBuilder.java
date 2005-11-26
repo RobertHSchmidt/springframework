@@ -61,6 +61,7 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.Transition.TargetStateResolver;
 import org.springframework.webflow.action.CompositeAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.support.FlowScopeExpression;
@@ -1047,6 +1048,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			return getFlowArtifactFactory().getViewSelector(id);
 		}
 
+		public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException {
+			if (!localFlowArtifactRegistries.isEmpty()) {
+				if (top().context.containsBean(id)) {
+					return (TargetStateResolver)top().context.getBean(id);
+				}
+			}
+			return getFlowArtifactFactory().getTargetStateResolver(id);		}
+
+		
 		public Flow createFlow(String id) throws FlowArtifactLookupException {
 			Flow flow = null;
 			if (!localFlowArtifactRegistries.isEmpty()) {
