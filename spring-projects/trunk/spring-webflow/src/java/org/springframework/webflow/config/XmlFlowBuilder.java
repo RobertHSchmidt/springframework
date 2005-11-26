@@ -914,24 +914,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		/**
 		 * The stack of registries.
 		 */
-		private Stack localFlowArtifactRegistries;
+		private Stack localFlowArtifactRegistries = new Stack();
 
 		/**
 		 * Push a new registry onto the stack
 		 * @param registry the local registry
 		 */
 		public void push(LocalFlowArtifactRegistry registry) {
-			initIfNecessary();
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				registry.context.setParent(top().context);
 			}
 			localFlowArtifactRegistries.push(registry);
-		}
-
-		private void initIfNecessary() {
-			if (localFlowArtifactRegistries == null) {
-				localFlowArtifactRegistries = new Stack();
-			}
 		}
 
 		/**
