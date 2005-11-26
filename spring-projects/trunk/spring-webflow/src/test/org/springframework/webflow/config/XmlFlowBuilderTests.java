@@ -20,21 +20,20 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.beans.MutablePropertyValues;
-import org.springframework.beans.PropertyValue;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.MultiAction;
+import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockRequestContext;
@@ -54,7 +53,7 @@ public class XmlFlowBuilderTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
-				new FlowArtifactFactoryAdapter());
+				new TestFlowArtifactLocator());
 		new FlowAssembler("testFlow", builder).assembleFlow();
 		flow = builder.getResult();
 		context = new MockRequestContext();
@@ -72,7 +71,7 @@ public class XmlFlowBuilderTests extends TestCase {
 
 		assertEquals(1, flow.getExceptionHandlers().length);
 		assertTrue(flow.getExceptionHandlers()[0] instanceof TransitionExecutingStateExceptionHandler);
-		
+
 		ActionState actionState1 = (ActionState)flow.getState("actionState1");
 		assertNotNull(actionState1);
 		assertEquals(2, actionState1.getActionCount());
@@ -142,7 +141,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		EndState endState2 = (EndState)flow.getState("endState2");
 		assertNotNull(endState2);
 		assertTrue(endState2.isMarker());
-		assertNull(endState2.getViewSelector());		
+		assertNull(endState2.getViewSelector());
 	}
 
 	/**
@@ -151,15 +150,34 @@ public class XmlFlowBuilderTests extends TestCase {
 	 * 
 	 * @author Erwin Vervaet
 	 */
-	public static class TestContext extends StaticApplicationContext {
-		public TestContext() {
-			registerSingleton("subFlow1", Flow.class,
-					new MutablePropertyValues().addPropertyValue(new PropertyValue("id", "subFlow1")));
-			registerSingleton("subFlow2", Flow.class,
-					new MutablePropertyValues().addPropertyValue(new PropertyValue("id", "subFlow2")));
-			registerSingleton("action1", TestAction.class);
-			registerSingleton("action2", TestAction.class);
-			registerSingleton("attributeMapper1", TestFlowAttributeMapper.class);
+	public static class TestFlowArtifactLocator extends FlowArtifactFactoryAdapter {
+
+		public Flow getSubflow(String id) throws FlowArtifactLookupException {
+			if ("subFlow1".equals(id) || "subFlow2".equals(id)) {
+				return new Flow(id);
+			}
+			throw new NoSuchFlowDefinitionException(id);
+		}
+
+		public Action getAction(String id) throws FlowArtifactLookupException {
+			if ("action1".equals(id) || "action2".equals(id)) {
+				return new TestAction();
+			}
+			throw new FlowArtifactLookupException(Action.class, id);
+		}
+
+		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
+			if ("attributeMapper1".equals(id)) {
+				return new FlowAttributeMapper() {
+					public Map createSubflowInput(RequestContext context) {
+						return new HashMap();
+					}
+
+					public void mapSubflowOutput(RequestContext context) {
+					}
+				};
+			}
+			throw new FlowArtifactLookupException(FlowAttributeMapper.class, id);
 		}
 	};
 
@@ -174,7 +192,7 @@ public class XmlFlowBuilderTests extends TestCase {
 			throw new MyCustomException("Oops!");
 		}
 	}
-	
+
 	public static class TestFlowAttributeMapper implements FlowAttributeMapper {
 		public Map createSubflowInput(RequestContext context) {
 			return new HashMap();
