@@ -329,6 +329,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 				"The location property specifying the XML flow definition resource location is required");
 		try {
 			this.document = loadDocument();
+			Assert.notNull(document, "Document should never be null");
 		}
 		catch (IOException e) {
 			throw new FlowBuilderException(this,
@@ -894,6 +895,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	}
 
 	public void dispose() {
+		System.out.println(getFlow().getId());
+		Thread.currentThread().dumpStack();
 		destroyFlowArtifactRegistry(getFlow());
 		getFlow().removeAttribute(INLINE_FLOW_MAP_PROPERTY);
 		document = null;
