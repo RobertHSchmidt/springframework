@@ -35,7 +35,7 @@
 	</bean>
 
 	<!-- Creates the registry of flow definitions for this application -->
-	<bean name="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
+	<bean name="flowLocator" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
 		<property name="definitionLocations" value="/WEB-INF/sellitem.xml"/>
 	</bean>
 
@@ -48,7 +48,7 @@
 		</property>
 		<property name="assembler">
 			<bean class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler">
-				<property name="managedInterfaces" value="org.springframework.webflow.config.registry.FlowRegistryMBean"/>
+				<property name="managedInterfaces" value="org.springframework.webflow.registry.FlowRegistryMBean"/>
 			</bean>
 		</property>
 	</bean>

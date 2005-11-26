@@ -4,7 +4,7 @@
 <beans>
 
 	<!-- Creates the registry of flow definitions for this application. -->
-	<bean id="flowLocator" class="org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean">
+	<bean id="flowLocator" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
 		<property name="definitionLocations">
 			<list>
 				<value>classpath:org/springframework/webflow/samples/phonebook/web/search.xml</value>
