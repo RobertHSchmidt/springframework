@@ -80,8 +80,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *        &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *        &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -91,7 +91,7 @@ import org.xml.sax.SAXException;
  * <p>
  * This builder will setup a flow-local bean factory for the flow being
  * constructed. That flow-local bean factory will be populated with the XML bean
- * definition file referenced using the "resource" element. The flow-local bean
+ * definition file referenced using the "import" element. The flow-local bean
  * factory will use the bean factory defing this flow builder as a parent. As
  * such, the flow can access artifacts in either its flow-local bean factory, or
  * in the parent bean factory hierarchy, e.g. the bean factory of the
@@ -240,7 +240,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	private Document document;
 
 	/**
-	 * Create a new DOM flow builder parsing given element.
+	 * Create a new XML flow builder parsing the document at the specified
+	 * location.
 	 * @param artifactFactory the bean factory defining this flow builder
 	 * @param documentElement the document element to parse
 	 */
@@ -249,7 +250,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Create a new DOM flow builder parsing given element.
+	 * Create a new XML flow builder parsing the document at the specified
+	 * location, using the provided factory to access externally managed flow
+	 * artifacts.
 	 * @param artifactFactory the bean factory defining this flow builder
 	 * @param documentElement the document element to parse
 	 */
@@ -397,7 +400,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected Flow parseFlow(String id, Map properties, Element flowElement) {
 		Assert.state(FLOW_ELEMENT.equals(flowElement.getTagName()), "This is not the '" + FLOW_ELEMENT + "' element");
-		initFlowArtifactRegistry(flowElement);
+		initLocalFlowArtifactFactoryRegistry(flowElement);
 		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(flowElement.getAttribute(BEAN_ATTRIBUTE));
 		flow.setId(id);
 		Map flowProperties = parseProperties(flowElement);
@@ -417,7 +420,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * Initialize a local flow artifact registry to access the flow local bean
 	 * factory.
 	 */
-	protected void initFlowArtifactRegistry(Element flowElement) {
+	protected void initLocalFlowArtifactFactoryRegistry(Element flowElement) {
 		List importElements = DomUtils.getChildElementsByTagName(flowElement, IMPORT_ELEMENT);
 		Resource[] resources = new Resource[importElements.size()];
 		for (int i = 0; i < importElements.size(); i++) {
@@ -432,6 +435,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		}
 		GenericApplicationContext context = new GenericApplicationContext();
 		if (getResourceLoader() == null) {
+			// for context relative resource loading
 			context.setResourceLoader(getResourceLoader());
 		}
 		new XmlBeanDefinitionReader(context).loadBeanDefinitions(resources);
