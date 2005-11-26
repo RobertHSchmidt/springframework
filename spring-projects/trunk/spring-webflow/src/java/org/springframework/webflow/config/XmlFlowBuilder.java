@@ -248,6 +248,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 */
 	public XmlFlowBuilder(Resource location) {
 		super();
+		setLocation(location);
 	}
 
 	/**
