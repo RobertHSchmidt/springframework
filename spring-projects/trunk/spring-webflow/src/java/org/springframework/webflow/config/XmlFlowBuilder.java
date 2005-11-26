@@ -41,7 +41,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
@@ -248,7 +247,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	public XmlFlowBuilder(Resource location) {
 		super();
 	}
-	
+
 	/**
 	 * Create a new DOM flow builder parsing given element.
 	 * @param artifactFactory the bean factory defining this flow builder
@@ -340,8 +339,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 					+ "'", e);
 		}
 		initConversionService();
+		initFlowArtifactRegistry(getDocumentElement());
 		setFlow(parseFlow(flowId, flowProperties, getDocumentElement()));
-		initFlowArtifactRegistry(getFlow(), getDocumentElement());
 		addInlineFlowDefinitions(getFlow(), getDocumentElement());
 	}
 
@@ -394,10 +393,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Initialize a flow artifact factory helper to access the flow local bean
-	 * factory. Sets the {@link #flowArtifactFactory} member variable.
+	 * Initialize a local flow artifact registry to access the flow local bean
+	 * factory.
 	 */
-	protected void initFlowArtifactRegistry(Flow flow, Element element) {
+	protected void initFlowArtifactRegistry(Element element) {
 		List importElements = DomUtils.getChildElementsByTagName(element, IMPORT_ELEMENT);
 		Resource[] resources = new Resource[importElements.size()];
 		for (int i = 0; i < importElements.size(); i++) {
@@ -415,7 +414,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			context.setResourceLoader(getResourceLoader());
 		}
 		new XmlBeanDefinitionReader(context).loadBeanDefinitions(resources);
-		localFlowArtifactFactory.push(new LocalFlowArtifactRegistry(flow, context));
+		localFlowArtifactFactory.push(new LocalFlowArtifactRegistry(context));
 	}
 
 	/**
@@ -433,6 +432,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			Element inlineFlowElement = (Element)inlineFlowElements.get(i);
 			String inlineFlowId = inlineFlowElement.getAttribute(ID_ATTRIBUTE);
 			Element flowElement = (Element)inlineFlowElement.getElementsByTagName(FLOW_ATTRIBUTE).item(0);
+			initFlowArtifactRegistry(flowElement);
 			Flow inlineFlow = parseFlow(inlineFlowId, null, flowElement);
 			inlineFlows.put(inlineFlow.getId(), inlineFlow);
 			buildInlineFlow(inlineFlow, flowElement);
@@ -447,7 +447,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected void buildInlineFlow(Flow inlineFlow, Element element) {
 		addInlineFlowDefinitions(inlineFlow, element);
-		initFlowArtifactRegistry(inlineFlow, element);
 		addStateDefinitions(inlineFlow, element);
 		inlineFlow.addExceptionHandlers(parseExceptionHandlers(element));
 		inlineFlow.resolveStateTransitionsTargetStates();
@@ -460,7 +459,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * parse all state definitions for the flow!
 	 */
 	protected Flow parseFlow(String id, Map properties, Element element) {
-		Assert.state(FLOW_ELEMENT.equals(element.getTagName()));
+		Assert.state(FLOW_ELEMENT.equals(element.getTagName()), "Not the '" + FLOW_ELEMENT + "' element");
 		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(element.getAttribute(BEAN_ATTRIBUTE));
 		flow.setId(id);
 		Map flowProperties = parseProperties(element);
@@ -923,12 +922,28 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		 * @param registry the local registry
 		 */
 		public void push(LocalFlowArtifactRegistry registry) {
-			if (!localFlowArtifactRegistries.isEmpty()) {
+			if (localFlowArtifactRegistries.isEmpty()) {
+				attachRootServiceRegistryIfSupported(registry.context);
+			} else {
 				registry.context.setParent(top().context);
 			}
 			localFlowArtifactRegistries.push(registry);
 		}
 
+		/**
+		 * Attach a master service registry as a parent registry of the local
+		 * context, if supported by the configured flow artifact factory.
+		 * @param context the local context to attach a global service registry to
+		 */
+		protected void attachRootServiceRegistryIfSupported(ConfigurableApplicationContext context) {
+			try {
+				context.getBeanFactory().setParentBeanFactory(getFlowArtifactFactory().getServiceRegistry());
+			}
+			catch (UnsupportedOperationException e) {
+
+			}
+		}
+		
 		/**
 		 * Pop a registry off the stack
 		 */
@@ -943,11 +958,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			return (LocalFlowArtifactRegistry)localFlowArtifactRegistries.peek();
 		}
 
+		public Flow getCurrentFlow() {
+			if (top().flow != null) {
+				return top().flow;
+			}
+			else {
+				return getFlow();
+			}
+		}
+
 		public Flow getSubflow(String id) throws FlowArtifactLookupException {
-			Flow currentFlow = top().flow;
-			System.out.println(currentFlow.getId());
-			System.out.println(currentFlow.getProperty(INLINE_FLOW_MAP_PROPERTY));
-			System.out.println(StylerUtils.style(top().context.getBeanDefinitionNames()));
+			Flow currentFlow = getCurrentFlow();
 			// quick check for recursive subflow
 			if (currentFlow.getId().equals(id)) {
 				return currentFlow;
@@ -1026,13 +1047,18 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		}
 
 		public Flow createFlow(String id) throws FlowArtifactLookupException {
+			Flow flow = null;
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (top().context.containsBean(id)) {
+				if (StringUtils.hasText(id) && top().context.containsBean(id)) {
 					Assert.isTrue(top().context.isSingleton(id), "Flows must be prototypes");
-					return (Flow)top().context.getBean(id);
+					flow = (Flow)top().context.getBean(id);
 				}
 			}
-			return getFlowArtifactFactory().createFlow(id);
+			if (flow == null) {
+				flow = getFlowArtifactFactory().createFlow(id);
+			}
+			top().flow = flow;
+			return flow;
 		}
 
 		public State createState(String id, Class stateType) throws FlowArtifactLookupException {
@@ -1075,8 +1101,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		 * @param flow the flow
 		 * @param registry the local registry
 		 */
-		public LocalFlowArtifactRegistry(Flow flow, ConfigurableApplicationContext registry) {
-			this.flow = flow;
+		public LocalFlowArtifactRegistry(ConfigurableApplicationContext registry) {
 			this.context = registry;
 		}
 	}

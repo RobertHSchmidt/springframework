@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -63,7 +64,7 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 		assertSame(testService, action1.getTestService());
 		assertSame(action1, testFlow2BeanFactory.getBean("action1"));
 		assertSame(parentBeanFactory, ((HierarchicalBeanFactory)testFlow2BeanFactory).getParentBeanFactory());
-		assertEquals(3, ((ListableBeanFactory)testFlow2BeanFactory).getBeanDefinitionCount()); //action1, subFlow1 and subFlow1.builder
+		assertEquals(3, BeanFactoryUtils.countBeansIncludingAncestors(((ListableBeanFactory)testFlow2BeanFactory))); //action1, subFlow1 and subFlow1.builder
 		
 		Flow subFlow1 = ((SubflowState)flow.getState("subFlowState1")).getSubflow();
 		assertNotSame(flow, subFlow1);

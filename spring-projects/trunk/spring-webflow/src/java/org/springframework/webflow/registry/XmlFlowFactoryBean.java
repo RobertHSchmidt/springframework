@@ -17,8 +17,10 @@ package org.springframework.webflow.registry;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.DescriptiveResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.webflow.config.FlowBuilder;
 import org.springframework.webflow.config.XmlFlowBuilder;
@@ -34,7 +36,7 @@ import org.springframework.webflow.config.XmlFlowBuilder;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAware {
+public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAware, ResourceLoaderAware {
 
 	/**
 	 * Creates an XML flow factory bean.
@@ -60,6 +62,10 @@ public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAw
 		getXmlFlowBuilder().setFlowArtifactFactory(new BeanFactoryFlowArtifactFactory(beanFactory));
 	}
 
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		getXmlFlowBuilder().setResourceLoader(resourceLoader);
+	}
+	
 	/**
 	 * Returns the XML based flow builder used by this factory bean.
 	 */

@@ -1,6 +1,7 @@
 package org.springframework.webflow.config;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
@@ -72,4 +73,9 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	protected Object newInstance(Class artifactType) {
 		return BeanUtils.instantiateClass(artifactType);
 	}
+
+	public BeanFactory getServiceRegistry() throws UnsupportedOperationException {
+		throw new UnsupportedOperationException("Service registry lookup not supported by this artifact factory");
+	}
+
 }

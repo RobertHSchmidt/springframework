@@ -5,6 +5,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
@@ -114,7 +115,7 @@ public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 	}
 
 	protected Object createPrototype(String id, Class artifactType) {
-		if (beanFactory.containsBean(id)) {
+		if (StringUtils.hasText(id) && beanFactory.containsBean(id)) {
 			Assert.isTrue(beanFactory.isSingleton(id), "Artifact with id '" + id + "' and type [" + artifactType
 					+ "] must be a prototype");
 			return beanFactory.getBean(id, artifactType);
@@ -123,4 +124,9 @@ public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 			return BeanUtils.instantiateClass(artifactType);
 		}
 	}
+
+	public BeanFactory getServiceRegistry() throws UnsupportedOperationException {
+		return beanFactory;
+	}
+	
 }

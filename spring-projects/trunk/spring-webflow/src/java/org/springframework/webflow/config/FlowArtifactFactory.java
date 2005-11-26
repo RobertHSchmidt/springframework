@@ -1,5 +1,6 @@
 package org.springframework.webflow.config;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
@@ -88,7 +89,7 @@ public interface FlowArtifactFactory {
 
 	/**
 	 * Retrieve a new state definition instance with the specified id.
-	 * @param id the id 
+	 * @param id the id
 	 * @param stateType the state type
 	 * @return the state
 	 */
@@ -100,5 +101,12 @@ public interface FlowArtifactFactory {
 	 * @return the transition
 	 */
 	public Transition createTransition(String id) throws FlowArtifactLookupException;
+
+	/**
+	 * Returns a generic bean (service) registry, for accessing arbitrary beans.
+	 * 
+	 * @return the generic service registry
+	 */
+	public BeanFactory getServiceRegistry() throws UnsupportedOperationException;
 
 }
