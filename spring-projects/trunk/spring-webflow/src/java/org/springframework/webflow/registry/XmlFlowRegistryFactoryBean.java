@@ -7,16 +7,16 @@ import org.springframework.core.io.ResourceLoader;
 
 /**
  * A factory bean that produces a populated flow registry using a
- * @{link XmlFlowRegistrar}. This is the simplest implementation to use when
- * using a Spring BeanFactory to deploy a registry of XML-based Flow definitions
- * for execution.
+ * {@link XmlFlowRegistrar}. This is the simplest implementation to use when
+ * using a Spring BeanFactory to deploy an explicit registry of XML-based Flow
+ * definitions for execution.
  * <p>
- * By default, a configured flow definition will be assigned a
- * registry identifier equal to the filename of the underlying definition
- * resource, minus the filename extension. For example, a XML-based flow
- * definition defined in the file "flow1.xml" will be identified as "flow1"
- * in the registry created by this factory bean.
- * <p> 
+ * By default, a configured flow definition will be assigned a registry
+ * identifier equal to the filename of the underlying definition resource, minus
+ * the filename extension. For example, a XML-based flow definition defined in
+ * the file "flow1.xml" will be identified as "flow1" in the registry created by
+ * this factory bean.
+ * <p>
  * This class is also <code>ResourceLoaderAware</code>; when an instance is
  * created by a Spring BeanFactory the factory will automatically configure the
  * XmlFlowRegistrar with a context-relative resource loader for accessing other
