@@ -18,10 +18,10 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 	}
 
 	private FlowHolder getSearchFlow() {
-		return new RefreshingFlowHolder(new FlowAssembler("detail", new PersonDetailFlowBuilder()));
+		return new RefreshingFlowHolder(new FlowAssembler("search", new PersonDetailFlowBuilder()));
 	}
 
 	private FlowHolder getDetailFlow() {
-		return new RefreshingFlowHolder(new FlowAssembler("search", new SearchPersonFlowBuilder()));
+		return new RefreshingFlowHolder(new FlowAssembler("detail", new SearchPersonFlowBuilder()));
 	}
 }
