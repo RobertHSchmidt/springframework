@@ -96,19 +96,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *        &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *            &lt;entry-actions&gt;
- *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *            &lt;/entry-actions&gt;
- *            &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *            &lt;/transition&gt;
- *        &lt;/view-state&gt;
- *          
- *        &lt;action-state id=&quot;executeSearch&quot;&gt;
- *            &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *            &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *        &lt;/action-state&gt;
+ *          &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *              &lt;entry-actions&gt;
+ *                  &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *              &lt;/entry-actions&gt;
+ *              &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *                  &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *              &lt;/transition&gt;
+ *          &lt;/view-state&gt;
+ *            
+ *          &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *              &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *              &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *          &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -145,9 +145,9 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * 
  * <pre>
  * public Event setupReferenceData(RequestContext context) throws Exception {
- *     Scope requestScope = context.getRequestScope();
- * 	   requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
- * 	   return success();
+ * 	Scope requestScope = context.getRequestScope();
+ * 	requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ * 	return success();
  * }
  * </pre>
  * 
@@ -370,7 +370,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	/**
 	 * Convenience setter that performs a string to ScopeType conversion for
 	 * you.
-	 * @param encodedScopeType the encoded scope type string
+	 * @param encodedScopeType the encoded scope type string, either "flow" or
+	 * "request"
 	 * @throws InvalidFormatException the encoded value was invalid
 	 */
 	public void setFormObjectScopeAsString(String encodedScopeType) throws InvalidFormatException {
@@ -396,7 +397,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	/**
 	 * Convenience setter that performs a string to ScopeType conversion for
 	 * you.
-	 * @param encodedScopeType the encoded scope type string
+	 * @param encodedScopeType the encoded scope type string, either "flow" or
+	 * "request"
 	 * @throws InvalidFormatException the encoded value was invalid
 	 */
 	public void setFormErrorsScopeAsString(String encodedScopeType) throws InvalidFormatException {
@@ -668,7 +670,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	protected void doBind(RequestContext context, DataBinder binder) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Binding allowed request parameters in '" + StylerUtils.style(context.getExternalContext().getRequestParameterMap()) 
+			logger.debug("Binding allowed request parameters in '"
+					+ StylerUtils.style(context.getExternalContext().getRequestParameterMap())
 					+ " to form object with name '" + binder.getObjectName() + "', prebind formObject toString = "
 					+ binder.getTarget());
 			if (binder.getAllowedFields() != null && binder.getAllowedFields().length > 0) {
@@ -751,8 +754,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	private void setFormObject(RequestContext context, Object formObject) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Setting form object instance with name '" + getFormObjectName() + 
-					"' in scope " + getFormObjectScope());
+			logger.debug("Setting form object instance with name '" + getFormObjectName() + "' in scope "
+					+ getFormObjectScope());
 		}
 		getFormObjectAccessor(context).setFormObject(formObject, getFormObjectName(), getFormObjectScope());
 	}
@@ -782,11 +785,19 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 			BindException be = (BindException)errors;
 			if (be.getTarget() != formObject) {
 				if (logger.isInfoEnabled()) {
-					logger.info("Inconsistency detected: the Errors instance in '" + getFormErrorsScope()
-							+ "' does NOT wrap the current form object " + formObject + " of class " + formObject.getClass()
-							+ "; instead this Errors instance unexpectedly wraps the target object " + be.getTarget() +
-							" of class: " + be.getTarget().getClass() + ". " + 
-							"[Taking corrective action: overwriting the existing Errors instance with an empty one for the current form object]");
+					logger
+							.info("Inconsistency detected: the Errors instance in '"
+									+ getFormErrorsScope()
+									+ "' does NOT wrap the current form object "
+									+ formObject
+									+ " of class "
+									+ formObject.getClass()
+									+ "; instead this Errors instance unexpectedly wraps the target object "
+									+ be.getTarget()
+									+ " of class: "
+									+ be.getTarget().getClass()
+									+ ". "
+									+ "[Taking corrective action: overwriting the existing Errors instance with an empty one for the current form object]");
 				}
 				// fall through below
 				errors = null;
@@ -815,7 +826,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	private void setFormErrors(RequestContext context, Errors errors) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Setting form errors instance in scope " + getFormObjectScope());
-		}		
+		}
 		getFormObjectAccessor(context).setFormErrors(errors, getFormErrorsScope());
 	}
 

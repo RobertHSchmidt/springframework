@@ -463,6 +463,15 @@ public class FormActionTests extends TestCase {
 		return res;
 	}
 	
+	public void testSetFormObjectScopeAsString() {
+		FormAction action = new FormAction();
+		action.setFormObjectScopeAsString("flow");
+		assertEquals(ScopeType.FLOW, action.getFormObjectScope());
+
+		action.setFormObjectScopeAsString("request");
+		assertEquals(ScopeType.REQUEST, action.getFormObjectScope());
+
+	}
 	private Errors getErrors(RequestContext context) {
 		return getErrors(context, "test");
 	}
