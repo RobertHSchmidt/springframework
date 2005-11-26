@@ -80,8 +80,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *        &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *        &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -540,14 +540,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * flow.
 	 */
 	protected ActionState parseActionState(Flow flow, Element element) {
-		ActionState actionState = (ActionState)getLocalFlowArtifactFactory().createState(
+		ActionState state = (ActionState)getLocalFlowArtifactFactory().createState(
 				element.getAttribute(BEAN_ATTRIBUTE), ActionState.class);
-		actionState.setId(element.getAttribute(ID_ATTRIBUTE));
-		actionState.setFlow(flow);
-		actionState.addActions(parseAnnotatedActions(element));
-		actionState.addAll(parseTransitions(element));
-		actionState.setProperties(parseProperties(element));
-		return actionState;
+		state.setId(element.getAttribute(ID_ATTRIBUTE));
+		state.setFlow(flow);
+		state.addActions(parseAnnotatedActions(element));
+		state.addAll(parseTransitions(element));
+		state.setProperties(parseProperties(element));
+		return state;
 	}
 
 	/**
@@ -555,17 +555,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * flow.
 	 */
 	protected ViewState parseViewState(Flow flow, Element element) {
-		ViewState viewState = (ViewState)getLocalFlowArtifactFactory().createState(
-				element.getAttribute(BEAN_ATTRIBUTE), ViewState.class);
-		viewState.setId(element.getAttribute(ID_ATTRIBUTE));
-		viewState.setFlow(flow);
+		ViewState state = (ViewState)getLocalFlowArtifactFactory().createState(element.getAttribute(BEAN_ATTRIBUTE),
+				ViewState.class);
+		state.setId(element.getAttribute(ID_ATTRIBUTE));
+		state.setFlow(flow);
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
-			viewState.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
+			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE)));
 		}
-		viewState.addAll(parseTransitions(element));
-		viewState.setProperties(parseProperties(element));
-		return viewState;
+		state.addAll(parseTransitions(element));
+		state.setProperties(parseProperties(element));
+		return state;
 	}
 
 	/**
@@ -573,13 +573,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * the flow.
 	 */
 	protected DecisionState parseDecisionState(Flow flow, Element element) {
-		DecisionState decisionState = (DecisionState)getLocalFlowArtifactFactory().createState(
+		DecisionState state = (DecisionState)getLocalFlowArtifactFactory().createState(
 				element.getAttribute(BEAN_ATTRIBUTE), DecisionState.class);
-		decisionState.setId(element.getAttribute(ID_ATTRIBUTE));
-		decisionState.setFlow(flow);
-		decisionState.addAll(parseIfs(element));
-		decisionState.setProperties(parseProperties(element));
-		return decisionState;
+		state.setId(element.getAttribute(ID_ATTRIBUTE));
+		state.setFlow(flow);
+		state.addAll(parseIfs(element));
+		state.setProperties(parseProperties(element));
+		return state;
 	}
 
 	/**
@@ -587,15 +587,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * flow.
 	 */
 	protected SubflowState parseSubflowState(Flow flow, Element element) {
-		SubflowState subflowState = (SubflowState)getLocalFlowArtifactFactory().createState(
+		SubflowState state = (SubflowState)getLocalFlowArtifactFactory().createState(
 				element.getAttribute(BEAN_ATTRIBUTE), SubflowState.class);
-		subflowState.setId(element.getAttribute(ID_ATTRIBUTE));
-		subflowState.setFlow(flow);
-		subflowState.setSubflow(getLocalFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE)));
-		subflowState.setAttributeMapper(parseAttributeMapper(element));
-		subflowState.addAll(parseTransitions(element));
-		subflowState.setProperties(parseProperties(element));
-		return subflowState;
+		state.setId(element.getAttribute(ID_ATTRIBUTE));
+		state.setFlow(flow);
+		state.setSubflow(getLocalFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE)));
+		state.setAttributeMapper(parseAttributeMapper(element));
+		state.addAll(parseTransitions(element));
+		state.setProperties(parseProperties(element));
+		return state;
 	}
 
 	/**
@@ -603,16 +603,16 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * flow.
 	 */
 	protected EndState parseEndState(Flow flow, Element element) {
-		EndState endState = (EndState)getLocalFlowArtifactFactory().createState(element.getAttribute(BEAN_ATTRIBUTE),
+		EndState state = (EndState)getLocalFlowArtifactFactory().createState(element.getAttribute(BEAN_ATTRIBUTE),
 				EndState.class);
-		endState.setId(element.getAttribute(ID_ATTRIBUTE));
-		endState.setFlow(flow);
+		state.setId(element.getAttribute(ID_ATTRIBUTE));
+		state.setFlow(flow);
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
-			endState.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
+			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE)));
 		}
-		endState.setProperties(parseProperties(element));
-		return endState;
+		state.setProperties(parseProperties(element));
+		return state;
 	}
 
 	/**
