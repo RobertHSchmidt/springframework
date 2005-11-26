@@ -36,26 +36,26 @@ import org.springframework.webflow.config.FlowBuilder;
  * this:
  * 
  * <pre>
- *        &lt;bean id=&quot;user.RegistrationFlow&quot; class=&quot;org.springframework.webflow.config.FlowFactoryBean&quot;&gt;
- *           &lt;property name=&quot;flowBuilder&quot;&gt;
- *               &lt;bean class=&quot;com.mycompany.myapp.webflow.user.UserRegistrationFlowBuilder&quot;/&gt;
- *           &lt;/property&gt;
- *        &lt;/bean&gt;
+ *     &lt;bean id=&quot;user.RegistrationFlow&quot; class=&quot;org.springframework.webflow.registry.FlowFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;flowBuilder&quot;&gt;
+ *             &lt;bean class=&quot;com.mycompany.myapp.webflow.user.UserRegistrationFlowBuilder&quot;/&gt;
+ *          &lt;/property&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
  * The above definition is configured with a specific, Java-based FlowBuilder
  * implementation. An XmlFlowBuilder could instead be used, for example:
  * 
  * <pre>
- *        &lt;bean id=&quot;user.RegistrationFlow&quot; class=&quot;org.springframework.webflow.config.FlowFactoryBean&quot;&gt;
- *            &lt;property name=&quot;flowBuilder&quot;&gt;
- *                &lt;bean class=&quot;org.springframework.webflow.config.XmlFlowBuilder&quot;&gt;
- *                    &lt;property name=&quot;location&quot;&gt;
- *                        &lt;value&gt;userRegistrationFlow.xml&lt;/value&gt;
- *                    &lt;/property&gt;
- *                &lt;/bean&gt;
- *             &lt;/property&gt;
- *        &lt;/bean&gt;
+ *    &lt;bean id=&quot;user.RegistrationFlow&quot; class=&quot;org.springframework.webflow.config.FlowFactoryBean&quot;&gt;
+ *        &lt;property name=&quot;flowBuilder&quot;&gt;
+ *            &lt;bean class=&quot;org.springframework.webflow.config.XmlFlowBuilder&quot;&gt;
+ *                &lt;property name=&quot;location&quot;&gt;
+ *                    &lt;value&gt;userRegistrationFlow.xml&lt;/value&gt;
+ *                &lt;/property&gt;
+ *             &lt;/bean&gt;
+ *        &lt;/property&gt;
+ *    &lt;/bean&gt;
  * </pre>
  * 
  * In both cases the constructed flow will be assigned the id of the defining
