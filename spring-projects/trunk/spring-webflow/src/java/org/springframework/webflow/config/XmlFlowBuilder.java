@@ -80,9 +80,10 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
+ * 
  * <p>
  * Consult the <a
  * href="http://www.springframework.org/dtd/spring-webflow-1.0.dtd">web flow DTD</a>
@@ -243,6 +244,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * @param artifactFactory the bean factory defining this flow builder
 	 * @param documentElement the document element to parse
 	 */
+	public XmlFlowBuilder(Resource location) {
+		super();
+	}
+	
+	/**
+	 * Create a new DOM flow builder parsing given element.
+	 * @param artifactFactory the bean factory defining this flow builder
+	 * @param documentElement the document element to parse
+	 */
 	public XmlFlowBuilder(Resource location, FlowArtifactFactory artifactFactory) {
 		super(artifactFactory);
 		setLocation(location);
@@ -381,7 +391,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	protected FlowArtifactFactory getLocalFlowArtifactFactory() {
 		return localFlowArtifactFactory;
 	}
-	
+
 	/**
 	 * Initialize a flow artifact factory helper to access the flow local bean
 	 * factory. Sets the {@link #flowArtifactFactory} member variable.
@@ -441,14 +451,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		inlineFlow.resolveStateTransitionsTargetStates();
 		destroyFlowArtifactRegistry(inlineFlow);
 		inlineFlow.removeAttribute(INLINE_FLOW_MAP_PROPERTY);
-	}
-
-	/**
-	 * Generate a bean id for a flow builder building a flow with given id.
-	 * Defaults to returning the flowId with a suffix ".builder" appended to it.
-	 */
-	protected String builderId(String flowId) {
-		return flowId + ".builder";
 	}
 
 	/**
@@ -553,8 +555,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 * flow.
 	 */
 	protected ViewState parseViewState(Flow flow, Element element) {
-		ViewState viewState = (ViewState)getLocalFlowArtifactFactory().createState(element.getAttribute(BEAN_ATTRIBUTE),
-				ViewState.class);
+		ViewState viewState = (ViewState)getLocalFlowArtifactFactory().createState(
+				element.getAttribute(BEAN_ATTRIBUTE), ViewState.class);
 		viewState.setId(element.getAttribute(ID_ATTRIBUTE));
 		viewState.setFlow(flow);
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
@@ -735,7 +737,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		transition.setMatchingCriteria((TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(ON_ATTRIBUTE)));
 		transition.setExecutionCriteria(TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element)));
-		transition.setTargetStateResolver(new Transition.StaticTargetStateResolver(element.getAttribute(TO_ATTRIBUTE)));
+		transition.setTargetStateResolver((Transition.TargetStateResolver)fromStringTo(
+				Transition.TargetStateResolver.class).execute(element.getAttribute(TO_ATTRIBUTE)));
 		transition.setProperties(parseProperties(element));
 		return transition;
 	}
@@ -904,7 +907,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * A local artifact factory that searches local registries first before
-	 * querying the global artifact factory.
+	 * querying the global, externally managed artifact factory.
 	 * @author Keith Donald
 	 */
 	private class LocalFlowArtifactFactory extends FlowArtifactFactoryAdapter {
@@ -973,10 +976,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		}
 
 		/**
-		 * Helper method to the given service object into an action. If the given
-		 * service object implements the <code>Action</code> interface, it is
-		 * returned as is, otherwise it is wrapped in an action that can invoke a
-		 * method on the service bean.
+		 * Helper method to the given service object into an action. If the
+		 * given service object implements the <code>Action</code> interface,
+		 * it is returned as is, otherwise it is wrapped in an action that can
+		 * invoke a method on the service bean.
 		 * @param artifact the service bean
 		 * @return the action
 		 */
@@ -988,7 +991,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 				return new LocalBeanInvokingAction(artifact);
 			}
 		}
-		
+
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {

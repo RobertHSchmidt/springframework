@@ -17,7 +17,6 @@ package org.springframework.webflow.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
@@ -66,6 +65,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * Default constructor for subclassing.
 	 */
 	protected BaseFlowBuilder() {
+		setFlowArtifactFactory(new FlowArtifactFactoryAdapter());
 	}
 
 	/**

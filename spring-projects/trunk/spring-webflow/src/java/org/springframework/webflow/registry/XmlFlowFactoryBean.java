@@ -20,7 +20,6 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.core.io.DescriptiveResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
-import org.springframework.webflow.config.FlowArtifactFactoryAdapter;
 import org.springframework.webflow.config.FlowBuilder;
 import org.springframework.webflow.config.XmlFlowBuilder;
 
@@ -41,7 +40,7 @@ public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAw
 	 * Creates an XML flow factory bean.
 	 */
 	public XmlFlowFactoryBean() {
-		super(new XmlFlowBuilder(new DescriptiveResource("Not yet set"), new FlowArtifactFactoryAdapter()));
+		super(new XmlFlowBuilder(new DescriptiveResource("Not yet set")));
 	}
 
 	/**
