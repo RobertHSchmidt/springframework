@@ -20,16 +20,16 @@
 	<dependency	org="apache" name="commons-logging"	rev="1.0.4"/>
 	<dependency	org="apache" name="log4j" rev="1.2.9"/>
 	<dependency	org="ognl" name="ognl" rev="2.7"/>
-	<dependency	org="springframework" name="spring-beans" rev="1.2.5"/>
-	<dependency	org="springframework" name="spring-core" rev="1.2.6-dev-20051107100820"/>
-	<dependency	org="springframework" name="spring-context"	rev="1.2.5"/>
-	<dependency	org="springframework" name="spring-web"	rev="1.2.5"/>
-	<dependency	org="springframework" name="spring-mock" rev="1.2.5"/>
+	<dependency	org="springframework" name="spring-beans" rev="1.2.6"/>
+	<dependency	org="springframework" name="spring-core" rev="1.2.6"/>
+	<dependency	org="springframework" name="spring-context"	rev="1.2.6"/>
+	<dependency	org="springframework" name="spring-web"	rev="1.2.6"/>
+	<dependency	org="springframework" name="spring-mock" rev="1.2.6"/>
 	<dependency	org="springframework" name="spring-binding"	rev="latest.integration"/>
 	<dependency	org="junit"	name="junit" rev="3.8.1"/>
 
 	<!-- spring	mvc	only dependencies -->
-	<dependency	org="springframework" name="spring-webmvc" rev="1.2.5" conf="buildtime,mvc->default"/>
+	<dependency	org="springframework" name="spring-webmvc" rev="1.2.6" conf="buildtime,mvc->default"/>
 
 	<!-- spring portlet mvc only dependencies -->
 	<dependency org="springframework" name="spring-portlet" rev="20050928120603" conf="buildtime,portlet->default"/>
