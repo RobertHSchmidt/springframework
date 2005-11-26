@@ -1055,8 +1055,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 					return (TargetStateResolver)top().context.getBean(id);
 				}
 			}
-			return getFlowArtifactFactory().getTargetStateResolver(id);		}
-
+			return getFlowArtifactFactory().getTargetStateResolver(id);
+		}
 		
 		public Flow createFlow(String id) throws FlowArtifactLookupException {
 			Flow flow = null;
