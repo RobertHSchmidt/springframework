@@ -4,7 +4,7 @@
 <beans>
 	<bean id="testService" class="org.springframework.webflow.config.XmlFlowBuilderNestingTests$TestService"/>
 	
-	<bean id="testFlow2" class="org.springframework.webflow.config.XmlFlowFactoryBean">
+	<bean id="testFlow2" class="org.springframework.webflow.registry.XmlFlowFactoryBean">
 		<property name="location" value="classpath:/org/springframework/webflow/config/testFlow2.xml"/>
 	</bean>
 </beans>
