@@ -126,6 +126,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 			DefaultConversionService service = new DefaultConversionService();
 			service.addConverter(new TextToTransitionCriteria(getFlowArtifactFactory()));
 			service.addConverter(new TextToViewSelector(getFlowArtifactFactory(), service));
+			service.addConverter(new TextToTransitionTargetStateResolver(getFlowArtifactFactory()));
 			setConversionService(service);
 		}
 	}

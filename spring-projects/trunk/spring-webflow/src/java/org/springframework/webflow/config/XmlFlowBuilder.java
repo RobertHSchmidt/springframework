@@ -41,6 +41,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
@@ -340,8 +341,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		}
 		initConversionService();
 		setFlow(parseFlow(flowId, flowProperties, getDocumentElement()));
-		addInlineFlowDefinitions(getFlow(), getDocumentElement());
 		initFlowArtifactRegistry(getFlow(), getDocumentElement());
+		addInlineFlowDefinitions(getFlow(), getDocumentElement());
 	}
 
 	/**
@@ -427,6 +428,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			return;
 		}
 		Map inlineFlows = new HashMap(inlineFlowElements.size());
+		flow.setAttribute(INLINE_FLOW_MAP_PROPERTY, inlineFlows);
 		for (int i = 0; i < inlineFlowElements.size(); i++) {
 			Element inlineFlowElement = (Element)inlineFlowElements.get(i);
 			String inlineFlowId = inlineFlowElement.getAttribute(ID_ATTRIBUTE);
@@ -484,7 +486,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected void addStateDefinitions(Flow flow, Element element) {
 		String startStateId = element.getAttribute(START_STATE_ATTRIBUTE);
-		NodeList nodeList = getDocumentElement().getChildNodes();
+		NodeList nodeList = element.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
 			if (node instanceof Element) {
@@ -943,6 +945,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 
 		public Flow getSubflow(String id) throws FlowArtifactLookupException {
 			Flow currentFlow = top().flow;
+			System.out.println(currentFlow.getId());
+			System.out.println(currentFlow.getProperty(INLINE_FLOW_MAP_PROPERTY));
+			System.out.println(StylerUtils.style(top().context.getBeanDefinitionNames()));
 			// quick check for recursive subflow
 			if (currentFlow.getId().equals(id)) {
 				return currentFlow;
