@@ -32,7 +32,6 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.config.XmlFlowBuilderTests.TestContext;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
 /**
@@ -43,20 +42,22 @@ import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
  * @author Erwin Vervaet
  */
 public class XmlFlowBuilderCustomTypeTests extends TestCase {
-	
+
 	private Flow flow;
 
 	protected void setUp() throws Exception {
-		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource(
-				"testFlow3.xml", XmlFlowBuilderCustomTypeTests.class), new TestContext());
-		flow = new FlowAssembler("testFlow3", builder).getFlow();
+		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow3.xml",
+				XmlFlowBuilderCustomTypeTests.class), new FlowArtifactFactoryAdapter());
+		FlowAssembler assembler = new FlowAssembler("testFlow3", builder);
+		assembler.assembleFlow();
+		flow = builder.getResult();
 	}
 
 	public void testBuildResult() {
 		assertEquals("testFlow3", flow.getId());
 		assertEquals(5, flow.getStateCount());
 		assertEquals(1, flow.getExceptionHandlers().length);
-		
+
 		assertSame(flow.getClass(), CustomFlow.class);
 		assertSame(flow.getState("actionState1").getClass(), CustomActionState.class);
 		assertSame(((ActionState)flow.getState("actionState1")).getAnnotatedAction().getTargetAction().getClass(),
@@ -73,39 +74,39 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 
 	public static class CustomFlow extends Flow {
 	}
-	
+
 	public static class CustomActionState extends ActionState {
 	}
-	
+
 	public static class CustomAction extends AbstractAction {
 		protected Event doExecute(RequestContext context) throws Exception {
 			return success();
 		}
 	}
-	
+
 	public static class CustomSubflowState extends SubflowState {
 	}
-	
+
 	public static class CustomAttributeMapper extends ParameterizableFlowAttributeMapper {
 	}
-	
+
 	public static class CustomViewState extends ViewState {
 	}
-	
+
 	public static class CustomTransition extends Transition {
 	}
-	
+
 	public static class CustomDecisionState extends DecisionState {
 	}
-	
+
 	public static class CustomEndState extends EndState {
 	}
-	
+
 	public static class CustomExceptionHandler implements StateExceptionHandler {
 		public boolean handles(StateException exception) {
 			return false;
 		}
-		
+
 		public ViewSelection handle(StateException exception, FlowExecutionControlContext context) {
 			return null;
 		}

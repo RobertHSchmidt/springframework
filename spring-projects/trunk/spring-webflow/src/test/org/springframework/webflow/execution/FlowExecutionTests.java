@@ -17,7 +17,6 @@ package org.springframework.webflow.execution;
 
 import junit.framework.TestCase;
 
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
@@ -82,14 +81,16 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public void testLoopInFlow() throws Exception {
-		AbstractFlowBuilder builder = new AbstractFlowBuilder(new DefaultListableBeanFactory()) {
+		AbstractFlowBuilder builder = new AbstractFlowBuilder() {
 			public void buildStates() throws FlowBuilderException {
 				addViewState("viewState", "viewName", new Transition[] { on(submit(), "viewState"),
 						on(finish(), "endState") });
 				addEndState("endState");
 			}
 		};
-		FlowExecution flowExecution = new FlowExecutionImpl(new FlowAssembler("flow", builder).getFlow());
+		new FlowAssembler("flow", builder).assembleFlow();
+		Flow flow = builder.getResult();
+		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(null, new MockExternalContext());
 		assertNotNull(view);
 		assertEquals("viewName", view.getViewName());
@@ -105,7 +106,7 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public void testLoopInFlowWithSubFlow() throws Exception {
-		AbstractFlowBuilder childBuilder = new AbstractFlowBuilder(new DefaultListableBeanFactory()) {
+		AbstractFlowBuilder childBuilder = new AbstractFlowBuilder() {
 			public void buildStates() throws FlowBuilderException {
 				addActionState("doOtherStuff", new AbstractAction() {
 					private int executionCount = 0;
@@ -122,8 +123,9 @@ public class FlowExecutionTests extends TestCase {
 				addEndState("stopTest");
 			}
 		};
-		final Flow childFlow = new FlowAssembler("childFlow", childBuilder).getFlow();
-		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder(new DefaultListableBeanFactory()) {
+		new FlowAssembler("flow", childBuilder).assembleFlow();
+		final Flow childFlow = childBuilder.getResult();
+		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder() {
 			public void buildStates() throws FlowBuilderException {
 				addActionState("doStuff", new AbstractAction() {
 					protected Event doExecute(RequestContext context) throws Exception {
@@ -135,7 +137,8 @@ public class FlowExecutionTests extends TestCase {
 				addEndState("stopTest");
 			}
 		};
-		Flow parentFlow = new FlowAssembler("parentFlow", parentBuilder).getFlow();
+		new FlowAssembler("parentFlow", parentBuilder).assembleFlow();
+		Flow parentFlow = parentBuilder.getResult();
 
 		FlowExecution flowExecution = new FlowExecutionImpl(parentFlow);
 		flowExecution.start(null, new MockExternalContext());

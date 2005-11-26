@@ -54,8 +54,9 @@ public class XmlFlowBuilderTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
-				new TestContext());
-		flow = new FlowAssembler("testFlow", builder).getFlow();
+				new FlowArtifactFactoryAdapter());
+		FlowAssembler assembler = new FlowAssembler("testFlow", builder);
+		flow = builder.getResult();
 		context = new MockRequestContext();
 	}
 

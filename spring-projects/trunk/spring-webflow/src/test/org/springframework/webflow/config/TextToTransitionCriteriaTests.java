@@ -17,12 +17,10 @@ package org.springframework.webflow.config;
 
 import junit.framework.TestCase;
 
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.config.TextToTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -30,23 +28,22 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class TextToTransitionCriteriaTests extends TestCase {
 
-	private TextToTransitionCriteria converter = new TextToTransitionCriteria(
-			new FlowArtifactFactory(new DefaultListableBeanFactory()));
-	
+	private TextToTransitionCriteria converter = new TextToTransitionCriteria(new FlowArtifactFactoryAdapter());
+
 	public void testAny() {
 		String expression = "*";
 		TransitionCriteria criterion = (TransitionCriteria)converter.convert(expression);
 		RequestContext ctx = getRequestContext();
 		assertTrue("Criterion should evaluate to true", criterion.test(ctx));
 	}
-	
+
 	public void testStaticEventId() {
 		String expression = "sample";
 		TransitionCriteria criterion = (TransitionCriteria)converter.convert(expression);
 		RequestContext ctx = getRequestContext();
 		assertTrue("Criterion should evaluate to true", criterion.test(ctx));
 	}
-	
+
 	public void testTrueEvaluation() throws Exception {
 		String expression = "${flowScope.foo == 'bar'}";
 		TransitionCriteria criterion = (TransitionCriteria)converter.convert(expression);

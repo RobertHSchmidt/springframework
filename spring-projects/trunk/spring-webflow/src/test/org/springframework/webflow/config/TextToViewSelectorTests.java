@@ -17,14 +17,12 @@ package org.springframework.webflow.config;
 
 import junit.framework.TestCase;
 
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.support.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.config.TextToViewSelector;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -34,8 +32,8 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class TextToViewSelectorTests extends TestCase {
 
-	private TextToViewSelector converter = new TextToViewSelector(
-			new FlowArtifactFactory(new DefaultListableBeanFactory()), new DefaultConversionService());
+	private TextToViewSelector converter = new TextToViewSelector(new FlowArtifactFactoryAdapter(),
+			new DefaultConversionService());
 
 	public void testStaticView() {
 		ViewSelector selector = (ViewSelector)converter.convert("myView");
@@ -72,8 +70,7 @@ public class TextToViewSelectorTests extends TestCase {
 		context.getFlowScope().setAttribute("foo", "foo");
 		context.getFlowScope().setAttribute("bar", "bar");
 
-		ViewSelection selection = converter.createRedirectViewSelector("/viewName")
-				.makeSelection(context);
+		ViewSelection selection = converter.createRedirectViewSelector("/viewName").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
 		assertEquals(0, selection.getModel().size());
 
@@ -89,32 +86,28 @@ public class TextToViewSelectorTests extends TestCase {
 		assertEquals("/viewName", selection.getViewName());
 		assertEquals(0, selection.getModel().size());
 
-		selection = converter.createRedirectViewSelector("/viewName?param0=").makeSelection(
-				context);
+		selection = converter.createRedirectViewSelector("/viewName?param0=").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
 		assertEquals(1, selection.getModel().size());
 		assertEquals("", selection.getModel().get("param0"));
 
-		selection = converter.createRedirectViewSelector("/viewName?=value0").makeSelection(
-				context);
+		selection = converter.createRedirectViewSelector("/viewName?=value0").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
 		assertEquals(1, selection.getModel().size());
 		assertEquals("value0", selection.getModel().get(""));
 
-		selection = converter.createRedirectViewSelector("/viewName?param0=value0").makeSelection(
-				context);
+		selection = converter.createRedirectViewSelector("/viewName?param0=value0").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
 		assertEquals(1, selection.getModel().size());
 		assertEquals("value0", selection.getModel().get("param0"));
 
-		selection = converter.createRedirectViewSelector("/viewName?param0=${flowScope.foo}")
-				.makeSelection(context);
+		selection = converter.createRedirectViewSelector("/viewName?param0=${flowScope.foo}").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
 		assertEquals(1, selection.getModel().size());
 		assertEquals("foo", selection.getModel().get("param0"));
 
-		selection = converter.createRedirectViewSelector(
-				"/viewName?param0=${flowScope.foo}&param1=${flowScope.bar}").makeSelection(context);
+		selection = converter.createRedirectViewSelector("/viewName?param0=${flowScope.foo}&param1=${flowScope.bar}")
+				.makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
 		assertEquals(2, selection.getModel().size());
 		assertEquals("foo", selection.getModel().get("param0"));
