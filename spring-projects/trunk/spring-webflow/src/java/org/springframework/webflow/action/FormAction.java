@@ -16,6 +16,7 @@
 package org.springframework.webflow.action;
 
 import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.binding.format.support.LabeledEnumFormatter;
@@ -27,7 +28,6 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.MessageCodesResolver;
-import org.springframework.validation.PropertyEditorRegistrar;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.webflow.Event;
@@ -96,19 +96,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *          &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *              &lt;entry-actions&gt;
- *                  &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *              &lt;/entry-actions&gt;
- *              &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *                  &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *              &lt;/transition&gt;
- *          &lt;/view-state&gt;
- *            
- *          &lt;action-state id=&quot;executeSearch&quot;&gt;
- *              &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *              &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *          &lt;/action-state&gt;
+ *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *         &lt;entry-actions&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *         &lt;/entry-actions&gt;
+ *         &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *         &lt;/transition&gt;
+ *     &lt;/view-state&gt;
+ *           
+ *     &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *     &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -123,11 +123,12 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <p>
  * <b>Subclassing hooks:</b>
  * <ul>
- * <li>An important hook method provided by this class is
+ * <li>An option hook method provided by this class is
  * {@link #initBinder(RequestContext, DataBinder) initBinder}. This is called
  * after a new data binder is created by any of the action execution methods. It
  * allows you to install any custom property editors required to format
- * richly-typed form object property values.
+ * richly-typed form object property values (consider setting an explicit
+ * {@link org.springframework.beans.PropertyEditorRegistrar} strategy as an alternative).
  * <li>Another important hook is
  * {@link #loadFormObject(RequestContext) loadFormObject}. You may override
  * this to customize where the backing form object comes from (e.g instantiated
@@ -825,7 +826,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	private void setFormErrors(RequestContext context, Errors errors) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Setting form errors instance in scope " + getFormObjectScope());
+			logger.debug("Setting form errors instance in scope " + getFormErrorsScope());
 		}
 		getFormObjectAccessor(context).setFormErrors(errors, getFormErrorsScope());
 	}
