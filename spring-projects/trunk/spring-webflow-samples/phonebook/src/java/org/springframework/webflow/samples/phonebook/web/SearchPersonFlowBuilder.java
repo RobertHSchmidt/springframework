@@ -22,6 +22,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.FormAction;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
+import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.samples.phonebook.domain.SearchCriteria;
 import org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValidator;
@@ -47,6 +48,10 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 	private static final String DISPLAY_RESULTS = "displayResults";
 
 	private static final String BROWSE_DETAILS = "browseDetails";
+
+	public SearchPersonFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
+		super(flowArtifactFactory);
+	}
 
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria

@@ -18,6 +18,7 @@ package org.springframework.webflow.samples.phonebook.web;
 import org.springframework.binding.support.Mapping;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
+import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
@@ -38,6 +39,10 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	private static final String BROWSE_COLLEAGUE_DETAILS = "browseColleagueDetails";
 
+	public PersonDetailFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
+		super(flowArtifactFactory);
+	}
+	
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
 		addActionState(GET_PERSON, method("getPerson(${flowScope.id})", action("phonebook")), on(success(),
