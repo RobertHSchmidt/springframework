@@ -314,13 +314,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		}
 		catch (IOException e) {
 			throw new FlowBuilderException(this,
-					"Cannot load the XML flow definition resource '" + getLocation() + "'", e);
+					"Could not load the XML flow definition resource at '" + getLocation() + "'", e);
 		}
 		catch (ParserConfigurationException e) {
-			throw new FlowBuilderException(this, "Cannot configure the parser to parse the XML flow definition", e);
+			throw new FlowBuilderException(this, "Could not configure the parser to parse the XML flow definition", e);
 		}
 		catch (SAXException e) {
-			throw new FlowBuilderException(this, "Cannot parse the flow definition XML document at'" + getLocation()
+			throw new FlowBuilderException(this, "Could not parse the flow definition XML document at '" + getLocation()
 					+ "'", e);
 		}
 		initConversionService();
