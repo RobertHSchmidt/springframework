@@ -528,7 +528,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the annotated action
 	 */
 	protected AnnotatedAction method(String methodName, Action action) {
-		return method(new MethodKey(methodName), action);
+		return method((MethodKey)fromStringTo(MethodKey.class).execute(methodName), action);
 	}
 
 	/**
