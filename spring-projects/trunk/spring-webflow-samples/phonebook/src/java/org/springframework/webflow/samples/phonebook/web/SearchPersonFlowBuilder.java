@@ -70,7 +70,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 		// view details for selected user id
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
-		idMapper.setInputMapping(new Mapping("sourceEvent.parameters.id", "id", fromStringTo(Long.class)));
+		idMapper.setInputMapping(new Mapping("externalContext.requestParameterMap.id", "id", fromStringTo(Long.class)));
 		addSubflowState(BROWSE_DETAILS, flow("detail"), idMapper, new Transition[] { on(finish(), EXECUTE_SEARCH), });
 
 		// end - an error occured
