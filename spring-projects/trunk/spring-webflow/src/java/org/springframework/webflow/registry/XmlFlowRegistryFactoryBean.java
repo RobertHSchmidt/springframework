@@ -1,9 +1,7 @@
 package org.springframework.webflow.registry;
 
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 
 /**

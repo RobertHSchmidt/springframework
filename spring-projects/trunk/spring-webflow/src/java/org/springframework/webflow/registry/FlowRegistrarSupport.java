@@ -3,7 +3,6 @@ package org.springframework.webflow.registry;
 import java.util.Map;
 
 import org.springframework.webflow.builder.FlowArtifactFactory;
-import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
 

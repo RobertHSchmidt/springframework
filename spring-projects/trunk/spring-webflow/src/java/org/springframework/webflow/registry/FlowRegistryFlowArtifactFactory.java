@@ -3,6 +3,7 @@ package org.springframework.webflow.registry;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.builder.FlowArtifactFactory;
 
 /**
  * A flow artifact locator that pulls subflow definitions from a explict

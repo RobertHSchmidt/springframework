@@ -136,5 +136,9 @@ public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 
 	public BeanFactory getServiceRegistry() throws UnsupportedOperationException {
 		return beanFactory;
-	}	
+	}
+
+	public ResourceLoader getResourceLoader() throws UnsupportedOperationException {
+		return resourceLoader;
+	}
 }
