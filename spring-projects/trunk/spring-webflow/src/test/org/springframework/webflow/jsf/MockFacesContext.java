@@ -45,8 +45,20 @@ import javax.faces.render.RenderKit;
 public class MockFacesContext extends FacesContext {
 	private ExternalContext externalContext;
 
+	private Application application;
+
+	private UIViewRoot viewRoot;
+
 	public Application getApplication() {
-		return null;
+		return application;
+	}
+
+	/**
+	 * Set the application to be used by this faces context.
+	 * @param application the applicaiton to set.
+	 */
+	public void setApplication(Application application) {
+		this.application = application;
 	}
 
 	public Iterator getClientIdsWithMessages() {
@@ -105,14 +117,13 @@ public class MockFacesContext extends FacesContext {
 	}
 
 	public UIViewRoot getViewRoot() {
-		UIViewRoot viewRoot = new UIViewRoot();
-		viewRoot.setViewId("ViewId");
 		return viewRoot;
 	}
 
-	public void setViewRoot(UIViewRoot arg0) {
+	public void setViewRoot(UIViewRoot viewRoot) {
+		this.viewRoot = viewRoot;
 	}
-
+	
 	public void addMessage(String arg0, FacesMessage arg1) {
 	}
 

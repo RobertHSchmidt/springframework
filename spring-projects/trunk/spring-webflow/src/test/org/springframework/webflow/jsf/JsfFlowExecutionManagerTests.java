@@ -17,7 +17,9 @@ package org.springframework.webflow.jsf;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
 import junit.framework.TestCase;
@@ -32,7 +34,10 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionListenerList;
 import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.FlowExecutionStorage;
+import org.springframework.webflow.execution.FlowExecutionStorageException;
 import org.springframework.webflow.execution.FlowLocator;
 
 /**
@@ -49,16 +54,13 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 
 	private FlowLocator flowLocator;
 
+	private MockJsfExternalContext mockExternalContext;
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		flowExecutionControl = MockControl.createControl(FlowExecution.class);
 		flowExecutionMock = (FlowExecution)flowExecutionControl.getMock();
-
-		MockJsfExternalContext mockExternalContext = new MockJsfExternalContext();
-		// HashMap requestMap = new HashMap();
-		// requestMap.put("SomeKey", "SomeValue");
-		// mockExternalContext.setRequestMap(requestMap);
-
+		mockExternalContext = new MockJsfExternalContext();
 		mockFacesContext = new MockFacesContext();
 		mockFacesContext.setExternalContext(mockExternalContext);
 		flowLocator = new FlowLocator() {
@@ -76,6 +78,7 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		mockExternalContext = null;
 		mockFacesContext = null;
 		flowLocator = null;
 	}
@@ -84,21 +87,18 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator);
 		boolean result = tested.isFlowLaunchRequest(mockFacesContext, null, JsfFlowExecutionManager.FLOW_ID_PREFIX
 				+ "SomeOutcome");
-
 		assertEquals(true, result);
 	}
 
 	public void testIsFlowLaunchRequestNoPrefix() {
 		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator);
 		boolean result = tested.isFlowLaunchRequest(mockFacesContext, null, "SomeOutcome");
-
 		assertEquals(false, result);
 	}
 
 	public void testIsFlowLaunchRequestNullOutcome() {
 		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator);
 		boolean result = tested.isFlowLaunchRequest(mockFacesContext, null, null);
-
 		assertEquals(false, result);
 	}
 
@@ -110,7 +110,6 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 		final JsfExternalContext jsfContext = new JsfExternalContext(mockFacesContext, "FromAction", "SomeOutcome");
 		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator) {
 			// not interested in testing this method in this test
-			
 			protected ViewSelection prepareSelectedView(ViewSelection selectedView, Serializable flowExecutionId,
 					FlowExecutionContext flowExecutionContext) {
 				return selectedView;
@@ -176,5 +175,191 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 
 		flowExecutionControl.verify();
 		assertEquals(false, result);
+	}
+
+	public void testManageStorageFlowNotActiveNullId() throws Exception {
+		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator);
+		flowExecutionControl.expectAndReturn(flowExecutionMock.isActive(), false);
+		flowExecutionControl.replay();
+
+		// perform test
+		Serializable flowExecutionId = tested.manageStorage(null, flowExecutionMock, null);
+
+		flowExecutionControl.verify();
+		assertNull("should be null id", flowExecutionId);
+	}
+
+	public void testManageStorageFlowNotActive() throws Exception {
+		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator) {
+			protected void removeFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution,
+					ExternalContext context) throws FlowExecutionStorageException {
+			}
+		};
+
+		flowExecutionControl.expectAndReturn(flowExecutionMock.isActive(), false);
+		flowExecutionControl.replay();
+
+		// perform test
+		Serializable flowExecutionId = tested.manageStorage(new Serializable() {
+		}, flowExecutionMock, null);
+
+		flowExecutionControl.verify();
+		assertNull("should be null id", flowExecutionId);
+	}
+
+	public void testManageStorageFlowActiveSupportsTwoPhase() throws Exception {
+		MockControl flowExecutionStorageControl = MockControl.createControl(FlowExecutionStorage.class);
+		final FlowExecutionStorage flowExecutionStorageMock = (FlowExecutionStorage)flowExecutionStorageControl
+				.getMock();
+
+		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator) {
+
+			protected FlowExecutionStorage getStorage() {
+				return flowExecutionStorageMock;
+			}
+		};
+
+		flowExecutionStorageControl.expectAndReturn(flowExecutionStorageMock.supportsTwoPhaseSave(), true);
+		flowExecutionStorageControl.expectAndReturn(flowExecutionStorageMock.generateId(null), new Serializable() {
+		});
+
+		flowExecutionControl.expectAndReturn(flowExecutionMock.isActive(), true);
+
+		flowExecutionStorageControl.replay();
+		flowExecutionControl.replay();
+
+		// perform test
+		Serializable flowExecutionId = tested.manageStorage(new Serializable() {
+		}, flowExecutionMock, null);
+
+		flowExecutionStorageControl.verify();
+		flowExecutionControl.verify();
+		assertNotNull("should not be null id", flowExecutionId);
+	}
+
+	public void testManageStorageFlowActiveDoesNotSupportTwoPhase() throws Exception {
+		MockControl flowExecutionStorageControl = MockControl.createControl(FlowExecutionStorage.class);
+		final FlowExecutionStorage flowExecutionStorageMock = (FlowExecutionStorage)flowExecutionStorageControl
+				.getMock();
+
+		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator) {
+			protected FlowExecutionStorage getStorage() {
+				return flowExecutionStorageMock;
+			}
+
+			public Serializable saveFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution,
+					ExternalContext context) throws FlowExecutionStorageException {
+				return flowExecutionId;
+			}
+		};
+		flowExecutionStorageControl.expectAndReturn(flowExecutionStorageMock.supportsTwoPhaseSave(), false);
+		flowExecutionControl.expectAndReturn(flowExecutionMock.isActive(), true);
+		flowExecutionStorageControl.replay();
+		flowExecutionControl.replay();
+
+		// perform test
+		Serializable flowExecutionId = tested.manageStorage(new Serializable() {
+		}, flowExecutionMock, null);
+
+		flowExecutionStorageControl.verify();
+		flowExecutionControl.verify();
+		assertNotNull("should not be null id", flowExecutionId);
+	}
+
+	public void testSaveFlowExecutionIfNecessary() throws Exception {
+		MockControl flowExecutionStorageControl = MockControl.createControl(FlowExecutionStorage.class);
+		final FlowExecutionStorage flowExecutionStorageMock = (FlowExecutionStorage)flowExecutionStorageControl
+				.getMock();
+
+		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator) {
+			protected FlowExecutionStorage getStorage() {
+				return flowExecutionStorageMock;
+			}
+		};
+
+		Serializable expectedFlowExecutionId = new Serializable() {
+		};
+		FlowExecutionHolder.setFlowExecution(expectedFlowExecutionId, flowExecutionMock, null, false);
+		flowExecutionStorageMock.saveWithGeneratedId(expectedFlowExecutionId, flowExecutionMock, null);
+		flowExecutionControl.expectAndReturn(flowExecutionMock.getListeners(), new FlowExecutionListenerList());
+		flowExecutionStorageControl.replay();
+		flowExecutionControl.replay();
+
+		// perform test
+		tested.saveFlowExecutionIfNecessary();
+
+		flowExecutionStorageControl.verify();
+		flowExecutionControl.verify();
+		assertTrue(FlowExecutionHolder.isFlowExecutionSaved());
+	}
+
+	public void testRenderView() throws Exception {
+		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator);
+		ViewSelection viewSelection = new ViewSelection("SomeView", "SomeKey", "SomeValue");
+		HashMap requestMap = new HashMap();
+		mockExternalContext.setRequestMap(requestMap);
+
+		MockViewHandler mockViewHandler = new MockViewHandler();
+		UIViewRoot viewRoot = new UIViewRoot();
+		viewRoot.setId("SomeViewRootId");
+		mockViewHandler.setCreateView(viewRoot);
+
+		MockApplication mockApplication = new MockApplication();
+		mockApplication.setViewHandler(mockViewHandler);
+		mockFacesContext.setApplication(mockApplication);
+
+		// perform test
+		tested.renderView(mockFacesContext, "FromAction", "SomeOutcome", viewSelection);
+		assertEquals("SomeViewRootId", mockFacesContext.getViewRoot().getId());
+		assertEquals("SomeValue", mockExternalContext.getRequestMap().get("SomeKey"));
+	}
+
+	public void testRenderViewPutAllNotSupported() throws Exception {
+		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator);
+		ViewSelection viewSelection = new ViewSelection("SomeView", "SomeKey", "SomeValue");
+		HashMap requestMap = new HashMap() {
+			public void putAll(Map m) {
+				throw new UnsupportedOperationException("Fake bug in MyFaces");
+			}
+		};
+		mockExternalContext.setRequestMap(requestMap);
+
+		MockViewHandler mockViewHandler = new MockViewHandler();
+		UIViewRoot viewRoot = new UIViewRoot();
+		viewRoot.setId("SomeViewRootId");
+		mockViewHandler.setCreateView(viewRoot);
+
+		MockApplication mockApplication = new MockApplication();
+		mockApplication.setViewHandler(mockViewHandler);
+		mockFacesContext.setApplication(mockApplication);
+
+		// perform test
+		tested.renderView(mockFacesContext, "FromAction", "SomeOutcome", viewSelection);
+		assertEquals("SomeViewRootId", mockFacesContext.getViewRoot().getId());
+		assertEquals("SomeValue", mockExternalContext.getRequestMap().get("SomeKey"));
+	}
+
+	public void testRestoreFlowExecution() throws Exception {
+		JsfFlowExecutionManager tested = new JsfFlowExecutionManager(flowLocator) {
+			// not interested in testing this method in this test
+			public FlowExecution loadFlowExecution(Serializable flowExecutionId, ExternalContext context)
+					throws FlowExecutionStorageException {
+				return flowExecutionMock;
+			}
+		};
+
+		flowExecutionControl.replay();
+
+		HashMap requestParameterMap = new HashMap();
+		Serializable flowExecutionId = new Serializable() {
+		};
+		requestParameterMap.put(FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER, flowExecutionId);
+		MockJsfExternalContext mockExternalContext = (MockJsfExternalContext)mockFacesContext.getExternalContext();
+		mockExternalContext.setRequestParameterMap(requestParameterMap);
+
+		// perform test
+		tested.restoreFlowExecution(mockFacesContext);
+		flowExecutionControl.verify();
+		assertSame(flowExecutionId, FlowExecutionHolder.getFlowExecutionId());
 	}
 }
