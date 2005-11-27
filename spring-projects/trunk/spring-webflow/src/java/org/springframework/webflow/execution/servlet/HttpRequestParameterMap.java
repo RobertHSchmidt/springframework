@@ -19,6 +19,7 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 
 /**
@@ -42,7 +43,14 @@ public class HttpRequestParameterMap extends StringKeyedAttributeMapAdapter {
 	}
 
 	protected Object getAttribute(String key) {
-		return request.getParameter(key);
+		Object value = request.getParameter(key);
+		if (value == null) {
+			if (request instanceof MultipartHttpServletRequest) {
+				MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
+				value = multipartRequest.getFileMap().get(key);
+			}
+		}
+		return value;
 	}
 
 	protected void setAttribute(String key, Object value) {
