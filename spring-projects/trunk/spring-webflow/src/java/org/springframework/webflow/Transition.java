@@ -387,7 +387,7 @@ public class Transition extends AnnotatedObject {
 		}
 
 		public String toString() {
-			return "[targetState = '" + (targetState == null ? targetStateId : targetState.getId()) + "]";
+			return "[targetState = '" + (targetState == null ? targetStateId : targetState.getId()) + "']";
 		}
 	}
 
