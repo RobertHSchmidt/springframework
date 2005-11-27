@@ -13,7 +13,7 @@ import org.springframework.webflow.builder.FlowArtifactFactory;
  * The typical usage pattern is as follows:
  * <ol>
  * <li>Create a new (initially empty) flow registry.
- * <li>Create a flow artifact factory to create flow artifacts during the flow
+ * <li>Create a flow artifact factory that will create flow artifacts during the flow
  * registration process.
  * <li>Use any number of flow registrars to populate the registry by calling
  * {@link #registerFlows(FlowRegistry, FlowArtifactFactory)}.

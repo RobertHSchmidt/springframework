@@ -24,7 +24,8 @@ import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.builder.ResourceHolder;
 
 /**
- * A flow definition holder that is refreshable.
+ * A flow definition holder that can detect changes on an underlying flow
+ * definition resource and refresh that resource automatically.
  * 
  * @author Keith Donald
  */
@@ -52,6 +53,11 @@ public class RefreshableFlowHolder implements FlowHolder {
 	 */
 	private FlowAssembler assembler;
 
+	/**
+	 * Creates a new refreshable flow holder that uses the configured assembler (GOF director) to
+	 * drive flow assembly, on initial use and on any resource change.
+	 * @param assembler the flow assembler (director)
+	 */
 	public RefreshableFlowHolder(FlowAssembler assembler) {
 		this.assembler = assembler;
 	}

@@ -54,7 +54,7 @@ public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAw
 	}
 
 	public void setFlowBuilder(FlowBuilder flowBuilder) {
-		Assert.isInstanceOf(XmlFlowBuilder.class, flowBuilder);
+		Assert.isInstanceOf(XmlFlowBuilder.class, flowBuilder, "Builder is of wrong type: ");
 		super.setFlowBuilder(flowBuilder);
 	}
 

@@ -25,6 +25,7 @@ import org.springframework.core.io.Resource;
  * @see org.springframework.webflow.builder.FlowBuilder
  * 
  * @author Erwin Vervaet
+ * @author Keith Donald
  */
 public interface ResourceHolder {
 
