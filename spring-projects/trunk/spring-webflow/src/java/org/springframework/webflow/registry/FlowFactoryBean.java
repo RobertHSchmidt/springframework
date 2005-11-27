@@ -167,6 +167,23 @@ public class FlowFactoryBean implements FactoryBean, BeanNameAware, Initializing
 		this.flowProperties = flowProperties;
 	}
 
+	public void afterPropertiesSet() {
+		Assert.notNull(flowBuilder, "The flow builder is required to assemble the flow produced by this factory");
+	}
+
+	public Class getObjectType() {
+		return Flow.class;
+	}
+
+	public boolean isSingleton() {
+		// the holder could refresh the flow definition
+		return false;
+	}
+
+	public Object getObject() throws Exception {
+		return getFlowHolder().getFlow();
+	}
+
 	/**
 	 * Returns the flow assembler used by this flow factory bean. The flow
 	 * assembler is a helper that directs flow construction.
@@ -180,22 +197,5 @@ public class FlowFactoryBean implements FactoryBean, BeanNameAware, Initializing
 
 	protected FlowHolder createFlowHolder() {
 		return new RefreshableFlowHolder(new FlowAssembler(getFlowId(), getFlowProperties(), getFlowBuilder()));
-	}
-
-	public void afterPropertiesSet() {
-		Assert.notNull(flowBuilder, "The flow builder is required to assemble the flow produced by this factory");
-	}
-
-	public Object getObject() throws Exception {
-		return getFlowHolder().getFlow();
-	}
-
-	public Class getObjectType() {
-		return Flow.class;
-	}
-
-	public boolean isSingleton() {
-		// the holder could refresh the flow definition
-		return false;
-	}
+	}	
 }
