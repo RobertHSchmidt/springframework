@@ -33,7 +33,7 @@ import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
  */
 public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
-	private static final String GET_PERSON = "getPerson";
+	private static final String GET_DETAILS = "getDetails";
 
 	private static final String DISPLAY_DETAILS = "displayDetails";
 
@@ -45,7 +45,7 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 	
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
-		addActionState(GET_PERSON, method("getPerson(${flowScope.id})", action("phonebook")), on(success(),
+		addActionState(GET_DETAILS, method("getPerson(${flowScope.id})", action("phonebook")), on(success(),
 				DISPLAY_DETAILS));
 
 		// view the person details
@@ -56,7 +56,7 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("externalContext.requestParameterMap.id", "id", fromStringTo(Long.class)));
 		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detail"), idMapper,
-				new Transition[] { on(finish(), GET_PERSON) });
+				new Transition[] { on(finish(), GET_DETAILS) });
 
 		// end
 		addEndState("finish");

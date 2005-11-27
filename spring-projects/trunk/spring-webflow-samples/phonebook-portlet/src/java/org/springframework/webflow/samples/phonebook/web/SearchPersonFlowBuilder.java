@@ -22,6 +22,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.FormAction;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
+import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.samples.phonebook.domain.SearchCriteria;
 import org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValidator;
@@ -48,6 +49,10 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	private static final String BROWSE_DETAILS = "browseDetails";
 
+	public SearchPersonFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
+		super(flowArtifactFactory);
+	}
+
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
 		Action searchFormAction = createSearchFormAction();
@@ -65,7 +70,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 		// view details for selected user id
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
-		idMapper.setInputMapping(new Mapping("sourceEvent.parameters.id", "id", fromStringTo(Long.class)));
+		idMapper.setInputMapping(new Mapping("externalContext.requestParameterMap.id", "id", fromStringTo(Long.class)));
 		addSubflowState(BROWSE_DETAILS, flow("detail"), idMapper, new Transition[] { on(finish(), EXECUTE_SEARCH), });
 
 		// end - an error occured

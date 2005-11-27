@@ -18,6 +18,7 @@ package org.springframework.webflow.samples.phonebook.web;
 import org.springframework.binding.support.Mapping;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
+import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
@@ -32,15 +33,19 @@ import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
  */
 public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
-	private static final String GET_PERSON = "getPerson";
+	private static final String GET_DETAILS = "getDetails";
 
 	private static final String DISPLAY_DETAILS = "displayDetails";
 
 	private static final String BROWSE_COLLEAGUE_DETAILS = "browseColleagueDetails";
 
+	public PersonDetailFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
+		super(flowArtifactFactory);
+	}
+	
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
-		addActionState(GET_PERSON, method("getPerson(${flowScope.id})", action("phonebook")), on(success(),
+		addActionState(GET_DETAILS, method("getPerson(${flowScope.id})", action("phonebook")), on(success(),
 				DISPLAY_DETAILS));
 
 		// view the person details
@@ -49,9 +54,9 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 		// view details for selected collegue
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
-		idMapper.setInputMapping(new Mapping("sourceEvent.parameters.id", "id", fromStringTo(Long.class)));
+		idMapper.setInputMapping(new Mapping("externalContext.requestParameterMap.id", "id", fromStringTo(Long.class)));
 		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detail"), idMapper,
-				new Transition[] { on(finish(), GET_PERSON) });
+				new Transition[] { on(finish(), GET_DETAILS) });
 
 		// end
 		addEndState("finish");
