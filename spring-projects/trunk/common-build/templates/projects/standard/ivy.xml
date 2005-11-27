@@ -45,10 +45,10 @@
         <dependency org="postgresql" name="postgresql" rev="8.0-310">
             <artifact name="postgresql-jdbc3" type="jar"/>
         </dependency>
-        <dependency org="springframework" name="springframework" rev="1.2.4">
+        <dependency org="springframework" name="springframework" rev="1.2.6">
             <artifact name="spring" type="jar"/>
         </dependency>
-        <dependency org="springframework" name="spring-mock" rev="1.2.4"/>
+        <dependency org="springframework" name="spring-mock" rev="1.2.6"/>
         <dependency org="springframework" name="acegi-security" rev="0.8.2"/>
 
 		<!-- buildtime dependencies -->
