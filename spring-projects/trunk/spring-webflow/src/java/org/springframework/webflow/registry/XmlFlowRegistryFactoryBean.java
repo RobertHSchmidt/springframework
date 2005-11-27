@@ -48,12 +48,12 @@ import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
  * 
  * @author Keith Donald
  */
-public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean implements BeanFactoryAware, ResourceLoaderAware {
+public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean implements ResourceLoaderAware {
 
 	/**
 	 * The flow registrar that will perform the definition registrations.
 	 */
-	private XmlFlowRegistrar flowRegistrar = new XmlFlowRegistrar(new FlowArtifactFactoryAdapter());
+	private XmlFlowRegistrar flowRegistrar = new XmlFlowRegistrar();
 
 	/**
 	 * Creates a xml flow registry factory bean.
@@ -93,15 +93,11 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 		getXmlFlowRegistrar().setDefinitionDirectoryLocations(locations);
 	}
 
-	public void setBeanFactory(BeanFactory beanFactory) {
-		getXmlFlowRegistrar().setFlowArtifactFactory(new FlowRegistryFlowArtifactFactory(getFlowRegistry(), beanFactory));
-	}
-
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		getXmlFlowRegistrar().setResourceLoader(resourceLoader);
 	}
 
 	protected void doPopulate(FlowRegistry registry) {
-		getXmlFlowRegistrar().registerFlowDefinitions(registry);
+		getXmlFlowRegistrar().registerFlows(registry, getFlowArtifactFactory());
 	}
 }

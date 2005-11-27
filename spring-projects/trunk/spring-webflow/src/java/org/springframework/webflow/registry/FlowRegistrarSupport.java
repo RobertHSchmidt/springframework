@@ -15,43 +15,6 @@ import org.springframework.webflow.builder.FlowBuilder;
 public abstract class FlowRegistrarSupport implements FlowRegistrar {
 
 	/**
-	 * Strategy for locating dependent artifacts when a Flow is being built.
-	 */
-	private FlowArtifactFactory flowArtifactFactory;
-
-	/**
-	 * Creates a new flow registrar.
-	 */
-	protected FlowRegistrarSupport() {
-		setFlowArtifactFactory(new FlowArtifactFactoryAdapter());
-	}
-	
-	/**
-	 * Creates a new flow registrar.
-	 * @param flowArtifactFactory the flow artifact factory
-	 */
-	protected FlowRegistrarSupport(FlowArtifactFactory flowArtifactFactory) {
-		setFlowArtifactFactory(flowArtifactFactory);
-	}
-
-	/**
-	 * Returns the strategy for locating dependent artifacts when a Flow is
-	 * being built.
-	 */
-	public FlowArtifactFactory getFlowArtifactFactory() {
-		return this.flowArtifactFactory;
-	}
-
-	/**
-	 * Sets the strategy for locating dependent artifacts when a Flow is being
-	 * built.
-	 * @param flowArtifactFactory the flow artifact locator
-	 */
-	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
-		this.flowArtifactFactory = flowArtifactFactory;
-	}
-	
-	/**
 	 * Register the flow built by the builder in the registry.
 	 * @param flowId the flow identifier to be assigned (should be unique to
 	 * flows in the registry)
@@ -85,6 +48,6 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 		return new RefreshableFlowHolder(assembler);
 	}
 
-	public abstract void registerFlowDefinitions(FlowRegistry registry);
+	public abstract void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory);
 
 }

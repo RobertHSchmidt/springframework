@@ -1,6 +1,9 @@
 package org.springframework.webflow.registry;
 
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.webflow.builder.FlowArtifactFactory;
 
 /**
  * A base class for factory beans that create populated Flow Registries.
@@ -10,12 +13,17 @@ import org.springframework.beans.factory.FactoryBean;
  * 
  * @author Keith Donald
  */
-public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean {
+public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, BeanFactoryAware {
 
 	/**
 	 * The flow registry to register Flow definitions in.
 	 */
 	private FlowRegistryImpl flowRegistry = new FlowRegistryImpl();
+
+	/**
+	 * Strategy for locating dependent artifacts when a Flow is being built.
+	 */
+	private FlowArtifactFactory flowArtifactFactory;
 
 	/**
 	 * Creates a flow registry factory bean.
@@ -32,11 +40,23 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean {
 		this.flowRegistry.setParent(parent);
 	}
 
+	public void setBeanFactory(BeanFactory beanFactory) {
+		this.flowArtifactFactory = new FlowRegistryFlowArtifactFactory(getFlowRegistry(), beanFactory);
+	}
+
 	/**
 	 * Returns the flow registry constructed by the factory bean.
 	 */
 	protected FlowRegistry getFlowRegistry() {
 		return flowRegistry;
+	}
+
+	/**
+	 * Returns the strategy for locating dependent artifacts when a Flow is
+	 * being built.
+	 */
+	protected FlowArtifactFactory getFlowArtifactFactory() {
+		return this.flowArtifactFactory;
 	}
 
 	public Object getObject() throws Exception {

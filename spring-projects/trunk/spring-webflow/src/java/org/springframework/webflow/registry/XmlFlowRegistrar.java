@@ -45,16 +45,15 @@ import org.springframework.webflow.builder.XmlFlowBuilder;
  * </p>
  * 
  * <pre>
- *  BeanFactory beanFactory = ...
- *  FlowRegistryImpl registry = new FlowRegistryImpl();
- *  FlowArtifactFactory flowArtifactFactory = new FlowRegistryFlowArtifactFactory(registry, beanFactory);
- *  File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- *  Resource[] locations = new Resource[] {
- *      new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
- *  	   new FileSystemResource(new File(parent, &quot;flow2.xml&quot;))
- *  };
- *  XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowArtifactFactory, locations);
- *  registrar.registerFlowDefinitions(registry);
+ *      BeanFactory beanFactory = ...
+ *      FlowRegistryImpl registry = new FlowRegistryImpl();
+ *      FlowArtifactFactory flowArtifactFactory = new FlowRegistryFlowArtifactFactory(registry, beanFactory);
+ *      File parent = new File(&quot;src/webapp/WEB-INF&quot;);
+ *      Resource[] locations = new Resource[] {
+ *          new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
+ *      	   new FileSystemResource(new File(parent, &quot;flow2.xml&quot;))
+ *      };
+ *      new XmlFlowRegistrar(locations).registerFlows(locations, flowArtifactFactory);
  * </pre>
  * 
  * @author Keith Donald
@@ -86,21 +85,15 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 
 	/**
 	 * Creates an XML flow registrar.
-	 * @param flowArtifactFactory the flow artifact locator that will find
-	 * artifacts needed by Flows registered by this registrar
 	 */
-	public XmlFlowRegistrar(FlowArtifactFactory flowArtifactFactory) {
-		super(flowArtifactFactory);
+	public XmlFlowRegistrar() {
 	}
 
 	/**
 	 * Creates an XML flow registrar.
-	 * @param flowArtifactFactory the flow artifact locator that will find
-	 * artifacts needed by Flows registered by this registrar
 	 * @param definitionLocations the XML flow definition resource locations
 	 */
-	public XmlFlowRegistrar(FlowArtifactFactory flowArtifactFactory, Resource[] definitionLocations) {
-		super(flowArtifactFactory);
+	public XmlFlowRegistrar(Resource[] definitionLocations) {
 		setDefinitionLocations(definitionLocations);
 	}
 
@@ -130,31 +123,36 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 		this.resourceLoader = resourceLoader;
 	}
 
-	public void registerFlowDefinitions(FlowRegistry registry) {
-		registerDefinitions(registry);
-		registerDirectoryDefinitions(registry);
+	public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
+		registerDefinitions(registry, flowArtifactFactory);
+		registerDirectoryDefinitions(registry, flowArtifactFactory);
 	}
 
 	/**
-	 * Register the Flow definitions at the configured file locations.
+	 * Register the Flow definitions at the configured file locations
+	 * @param registry the registry
+	 * @param flowArtifactFactory the flow artifactFactory
 	 */
-	protected void registerDefinitions(FlowRegistry registry) {
+	protected void registerDefinitions(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
 		if (definitionLocations != null) {
 			for (int i = 0; i < definitionLocations.length; i++) {
-				registerFlow(definitionLocations[i], registry);
+				registerFlow(definitionLocations[i], registry, flowArtifactFactory);
 			}
 		}
 	}
 
 	/**
-	 * Register the Flow definitions at the configured directory locations.
+	 * Register the Flow definitions at the configured directory locations,
+	 * automatically adding flow definitions in any subdirectories.
+	 * @param registry the registry
+	 * @param flowArtifactFactory the flow artifactFactory
 	 */
-	protected void registerDirectoryDefinitions(FlowRegistry registry) {
+	protected void registerDirectoryDefinitions(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
 		if (definitionDirectoryLocations != null) {
 			for (int i = 0; i < definitionDirectoryLocations.length; i++) {
 				Resource resource = definitionDirectoryLocations[i];
 				try {
-					addDirectory(resource.getFile(), registry);
+					addDirectory(resource.getFile(), registry, flowArtifactFactory);
 				}
 				catch (IOException e) {
 					logger.warn("Unable to add directory resource " + resource + ", skipping", e);
@@ -163,31 +161,45 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 		}
 	}
 
-	protected void addDirectory(File directory, FlowRegistry registry) {
+	/**
+	 * Adds the flow definitions in the provided directory to the registry.
+	 * @param directory the directory containing flow definitions
+	 * @param registry the flow registry
+	 * @param flowArtifactFactory the flow artifact factory
+	 */
+	protected void addDirectory(File directory, FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
 		Assert.isTrue(directory.isDirectory(), "The file must be a directory, programmer error");
 		File[] files = directory.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			File file = files[i];
 			if (file.isDirectory()) {
-				addDirectory(file, registry);
+				addDirectory(file, registry, flowArtifactFactory);
 			}
 			else if (file.getName().endsWith(XML_SUFFIX)) {
-				addFile(file, registry);
+				addFile(file, registry, flowArtifactFactory);
 			}
 		}
 	}
 
-	protected void addFile(File file, FlowRegistry registry) {
-		registerFlow(new FileSystemResource(file), registry);
+	/**
+	 * Adds the flow definitions in the provided file to the registry.
+	 * @param file the file containing a flow definition
+	 * @param registry the flow registry
+	 * @param flowArtifactFactory the flow artifact factory
+	 */
+	protected void addFile(File file, FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
+		registerFlow(new FileSystemResource(file), registry, flowArtifactFactory);
 	}
 
 	/**
 	 * Register the Flow definition from the XML resource provided in the
 	 * provided registry.
 	 * @param location the XML resource
+	 * @param registry the registry
+	 * @param flowArtifactFactory the flow artifactFactory
 	 */
-	protected void registerFlow(Resource location, FlowRegistry registry) {
-		XmlFlowBuilder builder = new XmlFlowBuilder(location, getFlowArtifactFactory());
+	protected void registerFlow(Resource location, FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
+		XmlFlowBuilder builder = new XmlFlowBuilder(location, flowArtifactFactory);
 		builder.setResourceLoader(resourceLoader);
 		registerFlow(getFlowId(location), builder, registry);
 	}

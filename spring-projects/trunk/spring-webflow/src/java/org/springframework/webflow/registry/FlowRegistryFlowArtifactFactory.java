@@ -5,8 +5,13 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
 
 /**
- * A flow artifact locator that pulls its artifacts from a standard Spring
- * BeanFactory.
+ * A flow artifact locator that pulls subflow definitions from a explict
+ * {@link FlowRegistry} The rest of the artifacts ared sourced from a standard
+ * Spring BeanFactory.
+ * 
+ * @see FlowRegistry
+ * @see FlowArtifactFactory#getSubflow(String)
+ * 
  * @author Keith Donald
  */
 public class FlowRegistryFlowArtifactFactory extends BeanFactoryFlowArtifactFactory {

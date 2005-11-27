@@ -64,11 +64,14 @@ public class FlowRegistryPopulationTests extends TestCase {
 
 	public void testXmlPopulationWithRecursion() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
+		FlowArtifactFactory flowArtifactFactory = new FlowRegistryFlowArtifactFactory(registry,
+				new DefaultListableBeanFactory());
 		File parent = new File("src/test/org/springframework/webflow/registry");
-		Resource[] locations = new Resource[] { new FileSystemResource(new File(parent, "flow1.xml")),
-				new FileSystemResource(new File(parent, "flow2.xml")) };
-		new XmlFlowRegistrar(new FlowRegistryFlowArtifactFactory(registry, new DefaultListableBeanFactory()), locations)
-				.registerDefinitions(registry);
+		Resource[] locations = new Resource[] {
+			new FileSystemResource(new File(parent, "flow1.xml")),
+			new FileSystemResource(new File(parent, "flow2.xml"))
+		};
+		new XmlFlowRegistrar(locations).registerFlows(registry, flowArtifactFactory);
 		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());
 		registry.refresh();
 		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());

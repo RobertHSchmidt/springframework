@@ -27,17 +27,18 @@ import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
 public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 
 	/**
-	 * The Spring bean factory.
+	 * The Spring bean factory that manages configured flow artifacts.
 	 */
 	private BeanFactory beanFactory;
 
 	/**
 	 * Creates a flow artifact locator that retrieves artifacts from the
 	 * provided bean factory
-	 * @param beanFactory The spring bean factory, may not be null.
+	 * @param beanFactory The spring bean factory that manages configured flow artifacts, may not be null.
 	 * @param subflowLocator The locator for loading subflows
 	 */
 	public BeanFactoryFlowArtifactFactory(BeanFactory beanFactory) {
+		Assert.notNull(beanFactory, "The bean factory is required to access flow artifacts");
 		this.beanFactory = beanFactory;
 	}
 

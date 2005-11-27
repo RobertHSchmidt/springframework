@@ -1,5 +1,7 @@
 package org.springframework.webflow.registry;
 
+import org.springframework.webflow.builder.FlowArtifactFactory;
+
 /**
  * A strategy to use to populate a flow registry with one or more flow
  * definitions.
@@ -15,12 +17,15 @@ package org.springframework.webflow.registry;
  * The typical usage pattern is as follows:
  * <ol>
  * <li>Create a new (initially empty) flow registry.
- * <li>Use any number of flow registrars to populate that registry by calling
- * {@link #registerFlowDefinitions(FlowRegistry)}.
+ * <li>Create a flow artifact factory to create flow artifacts during the flow
+ * registration process.
+ * <li>Use any number of flow registrars to populate the registry by calling
+ * {@link #registerFlows(FlowRegistry, FlowArtifactFactory)}.
  * </ol>
  * </p>
  * @see FlowRegistry
- * @see FlowRegistrarImpl
+ * @see FlowArtifactFactory
+ * @see FlowRegistrarSupport
  * @see XmlFlowRegistrar
  * 
  * @author Keith Donald
@@ -31,6 +36,8 @@ public interface FlowRegistrar {
 	 * Register flow definition resources managed by this registrar in the
 	 * registry provided.
 	 * @param registry the registry to register flow definitions in
+	 * @param flowArtifactFactory the flow artifact factory for accessing externally managed flow 
+	 * artifacts, typically used by flow builders that build flow definitions
 	 */
-	public void registerFlowDefinitions(FlowRegistry registry);
+	public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory);
 }
