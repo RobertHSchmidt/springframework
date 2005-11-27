@@ -90,7 +90,7 @@ public class Transition extends AnnotatedObject {
 	 */
 	public Transition() {
 	}
-	
+
 	/**
 	 * Create a new transition that always matches and always executes,
 	 * transitioning to the specified target state.
@@ -142,7 +142,7 @@ public class Transition extends AnnotatedObject {
 		setSourceState(sourceState);
 		setTargetStateResolver(new StaticTargetStateResolver(targetState));
 	}
-	
+
 	/**
 	 * Returns the owning source (<i>from</i>) state of this transition.
 	 * @return the source state
@@ -250,8 +250,8 @@ public class Transition extends AnnotatedObject {
 	}
 
 	/**
-	 * Returns the target state of this transition, possibly taking
-	 * the request context into account.
+	 * Returns the target state of this transition, possibly taking the request
+	 * context into account.
 	 * @param context the flow execution request context
 	 */
 	protected State getTargetState(RequestContext context) {
@@ -306,9 +306,9 @@ public class Transition extends AnnotatedObject {
 	}
 
 	/**
-	 * A strategy for calculating the target state of a transition. This facilitates
-	 * dynamic transition target state resolution that takes into account runtime
-	 * contextual information.
+	 * A strategy for calculating the target state of a transition. This
+	 * facilitates dynamic transition target state resolution that takes into
+	 * account runtime contextual information.
 	 * 
 	 * @author Keith Donald
 	 */
@@ -323,7 +323,7 @@ public class Transition extends AnnotatedObject {
 		 */
 		public State resolveTargetState(Transition transition, RequestContext context);
 	}
-	
+
 	/**
 	 * A transition target state resolver that always resolves to the same
 	 * target state.
@@ -363,7 +363,7 @@ public class Transition extends AnnotatedObject {
 			this.targetState = targetState;
 			this.targetStateId = targetState.getId();
 		}
-		
+
 		/**
 		 * Returns the id of the target state resolved by this resolver.
 		 */
@@ -379,17 +379,21 @@ public class Transition extends AnnotatedObject {
 		}
 
 		/**
-		 * Resolve the target state of given transtion and set
-		 * it in <i>this</i> object.
+		 * Resolve the target state of given transtion and set it in <i>this</i>
+		 * object.
 		 */
 		public void resolveAndSetTargetState(Transition transition) {
 			this.targetState = transition.getSourceState().getFlow().getRequiredState(targetStateId);
 		}
+
+		public String toString() {
+			return "[targetState = '" + (targetState == null ? targetStateId : targetState.getId()) + "]";
+		}
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("sourceState", getSourceState().getId())
-			.append("matchingCriteria", getMatchingCriteria()).append("executionCriteria", getExecutionCriteria())
-			.append(	"targetStateResolver", getTargetStateResolver()).append("properties", getProperties()).toString();
+		return new ToStringCreator(this).append("sourceState", getSourceState().getId()).append("matchingCriteria",
+				getMatchingCriteria()).append("executionCriteria", getExecutionCriteria()).append(
+				"targetStateResolver", getTargetStateResolver()).append("properties", getProperties()).toString();
 	}
 }
