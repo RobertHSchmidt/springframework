@@ -49,6 +49,6 @@ public class NotTransitionCriteria implements TransitionCriteria, Serializable {
 	}
 	
 	public String toString() {
-		return "not(" + criteria + ")";
+		return "[not(" + criteria + ")]";
 	}
 }

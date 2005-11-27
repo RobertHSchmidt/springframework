@@ -50,6 +50,6 @@ public class EventIdTransitionCriteria implements TransitionCriteria, Serializab
 	}
 
 	public String toString() {
-		return "'" + eventId + "'";
+		return "[eventId = '" + eventId + "']";
 	}
 }
