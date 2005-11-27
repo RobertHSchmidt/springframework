@@ -21,7 +21,7 @@
 			<td class="buttonBar">
 				<!-- Tell webflow what executing flow we're participating in -->
 				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"/>
-				<input type="hidden" name="_currentStateId" value="displayItemlist"/>
+				<input type="hidden" name="_stateId" value="displayItemlist"/>
 				<!-- Tell webflow what event happened -->
 				<input type="submit" name="_eventId_add" value="Add New Item">
 			</td>
