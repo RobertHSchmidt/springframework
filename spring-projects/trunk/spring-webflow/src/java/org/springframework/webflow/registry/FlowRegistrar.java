@@ -10,10 +10,6 @@ import org.springframework.webflow.builder.FlowArtifactFactory;
  * definition resources, and the behavior necessary to add those resources to a
  * flow registry.
  * <p>
- * This design where various FlowRegistrars populate a generic FlowRegistry was
- * inspired by Spring's GenericApplicationContext, which can use any number of
- * BeanDefinitionReaders to drive context population.
- * <p>
  * The typical usage pattern is as follows:
  * <ol>
  * <li>Create a new (initially empty) flow registry.
@@ -23,6 +19,11 @@ import org.springframework.webflow.builder.FlowArtifactFactory;
  * {@link #registerFlows(FlowRegistry, FlowArtifactFactory)}.
  * </ol>
  * </p>
+ * <p>
+ * This design where various FlowRegistrars populate a generic FlowRegistry was
+ * inspired by Spring's GenericApplicationContext, which can use any number of
+ * BeanDefinitionReaders to drive context population.
+ * <p>
  * @see FlowRegistry
  * @see FlowArtifactFactory
  * @see FlowRegistrarSupport
