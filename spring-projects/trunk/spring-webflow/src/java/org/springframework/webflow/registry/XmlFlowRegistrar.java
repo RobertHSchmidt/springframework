@@ -69,11 +69,6 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 	private static final String XML_SUFFIX = ".xml";
 
 	/**
-	 * Strategy for locating dependent artifacts when a Flow is being built.
-	 */
-	private FlowArtifactFactory flowArtifactFactory;
-
-	/**
 	 * XML flow definition resources to load.
 	 */
 	private Resource[] definitionLocations;
@@ -95,7 +90,7 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 	 * artifacts needed by Flows registered by this registrar
 	 */
 	public XmlFlowRegistrar(FlowArtifactFactory flowArtifactFactory) {
-		setFlowArtifactFactory(flowArtifactFactory);
+		super(flowArtifactFactory);
 	}
 
 	/**
@@ -105,27 +100,10 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 	 * @param definitionLocations the XML flow definition resource locations
 	 */
 	public XmlFlowRegistrar(FlowArtifactFactory flowArtifactFactory, Resource[] definitionLocations) {
-		setFlowArtifactFactory(flowArtifactFactory);
+		super(flowArtifactFactory);
 		setDefinitionLocations(definitionLocations);
 	}
 
-	/**
-	 * Returns the strategy for locating dependent artifacts when a Flow is
-	 * being built.
-	 */
-	public FlowArtifactFactory getFlowArtifactFactory() {
-		return this.flowArtifactFactory;
-	}
-
-	/**
-	 * Sets the strategy for locating dependent artifacts when a Flow is being
-	 * built.
-	 * @param flowArtifactFactory the flow artifact locator
-	 */
-	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
-		this.flowArtifactFactory = flowArtifactFactory;
-	}
-	
 	/**
 	 * Sets the locations (file paths) pointing to XML-based flow definitions.
 	 * @param locations the resource locations
