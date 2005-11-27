@@ -8,7 +8,6 @@
 		<property name="definitionLocations">
 			<list>
 				<value>classpath:org/springframework/webflow/samples/phonebook/web/search.xml</value>
-				<value>classpath:org/springframework/webflow/samples/phonebook/web/detail.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -23,7 +22,14 @@
 		</property>
 	</bean>
 	
-	<!-- comment in to test Java-based flow builders 
-	<bean id="flowLocator" class="org.springframework.webflow.samples.phonebook.web.FlowRegistryFactoryBean"/>
+	<!--
+	  Shows how to create a registry populated with programatically built flow definitions
+	  To use, point the Phonebook flow controller 'flowLocator' constructor arg at this bean definition.
 	 -->
+	<bean id="flowLocatorJava" class="org.springframework.webflow.registry.FlowRegistryFactoryBean">
+		<property name="flowRegistrars">
+			<bean class="org.springframework.webflow.samples.phonebook.web.PhonebookFlowRegistrar"/>
+		</property>
+	</bean>
+	
 </beans>
