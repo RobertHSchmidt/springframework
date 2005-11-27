@@ -1,9 +1,12 @@
 package org.springframework.webflow.registry;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
 
 /**
  * A factory bean that produces a populated flow registry using a
@@ -16,6 +19,11 @@ import org.springframework.core.io.ResourceLoader;
  * the filename extension. For example, a XML-based flow definition defined in
  * the file "flow1.xml" will be identified as "flow1" in the registry created by
  * this factory bean.
+ * <p>
+ * This class is also <code>BeanFactoryAware</code> and when used with Spring
+ * will automatically create a configured {@link FlowRegistryFlowArtifactFactory}
+ * for loading Flow artifacts like Actions from the Spring bean factory during
+ * the Flow registration process.
  * <p>
  * This class is also <code>ResourceLoaderAware</code>; when an instance is
  * created by a Spring BeanFactory the factory will automatically configure the
@@ -35,14 +43,17 @@ import org.springframework.core.io.ResourceLoader;
  *     &lt;/bean&gt;
  * </pre>
  * 
+ * @see FlowArtifactFactory
+ * @see FlowRegistryFlowArtifactFactory
+ * 
  * @author Keith Donald
  */
-public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean implements ResourceLoaderAware {
+public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean implements BeanFactoryAware, ResourceLoaderAware {
 
 	/**
 	 * The flow registrar that will perform the definition registrations.
 	 */
-	private XmlFlowRegistrar flowRegistrar = new XmlFlowRegistrar();
+	private XmlFlowRegistrar flowRegistrar = new XmlFlowRegistrar(new FlowArtifactFactoryAdapter());
 
 	/**
 	 * Creates a xml flow registry factory bean.
@@ -55,8 +66,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * @param beanFactory the bean factory to use for locating flow artifacts.
 	 */
 	public XmlFlowRegistryFactoryBean(BeanFactory beanFactory) {
-		super(beanFactory);
-		init();
+		setBeanFactory(beanFactory);
 	}
 
 	/**
@@ -77,18 +87,18 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	/**
 	 * Sets the locations pointing to directories containing XML-based flow
 	 * definitions.
-	 * @param locations the directory locationsd
+	 * @param locations the directory locations
 	 */
 	public void setDefinitionDirectoryLocations(Resource[] locations) {
 		getXmlFlowRegistrar().setDefinitionDirectoryLocations(locations);
 	}
 
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		getXmlFlowRegistrar().setResourceLoader(resourceLoader);
+	public void setBeanFactory(BeanFactory beanFactory) {
+		getXmlFlowRegistrar().setFlowArtifactFactory(new FlowRegistryFlowArtifactFactory(getFlowRegistry(), beanFactory));
 	}
 
-	protected void init() {
-		getXmlFlowRegistrar().setFlowArtifactFactory(getFlowArtifactFactory());
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		getXmlFlowRegistrar().setResourceLoader(resourceLoader);
 	}
 
 	protected void doPopulate(FlowRegistry registry) {

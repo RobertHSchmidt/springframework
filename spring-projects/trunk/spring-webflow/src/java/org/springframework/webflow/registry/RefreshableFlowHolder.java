@@ -28,7 +28,7 @@ import org.springframework.webflow.builder.ResourceHolder;
  * 
  * @author Keith Donald
  */
-public class RefreshingFlowHolder implements FlowHolder {
+public class RefreshableFlowHolder implements FlowHolder {
 
 	/**
 	 * The flow definition assembled by this assembler.
@@ -52,7 +52,7 @@ public class RefreshingFlowHolder implements FlowHolder {
 	 */
 	private FlowAssembler assembler;
 
-	public RefreshingFlowHolder(FlowAssembler assembler) {
+	public RefreshableFlowHolder(FlowAssembler assembler) {
 		this.assembler = assembler;
 	}
 

@@ -179,7 +179,7 @@ public class FlowFactoryBean implements FactoryBean, BeanNameAware, Initializing
 	}
 
 	protected FlowHolder createFlowHolder() {
-		return new RefreshingFlowHolder(new FlowAssembler(getFlowId(), getFlowProperties(), getFlowBuilder()));
+		return new RefreshableFlowHolder(new FlowAssembler(getFlowId(), getFlowProperties(), getFlowBuilder()));
 	}
 
 	public void afterPropertiesSet() {
