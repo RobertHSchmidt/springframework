@@ -23,7 +23,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	private FlowRegistryImpl flowRegistry = new FlowRegistryImpl();
 
 	/**
-	 * Strategy for locating dependent artifacts when a Flow is being built.
+	 * Strategy for locating dependent artifacts when a registered Flow is being built.
 	 */
 	private FlowRegistryFlowArtifactFactory flowArtifactFactory;
 
