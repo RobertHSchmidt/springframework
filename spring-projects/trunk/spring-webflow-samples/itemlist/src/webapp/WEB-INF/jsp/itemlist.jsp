@@ -1,7 +1,7 @@
 <%@ include file="includeTop.jsp" %>
 
 <div id="content">
-	<form action="itemlist.htm" method="post"/>
+	<form action="app.htm" method="post"/>
 	<table>
 		<tr>
 			<td>

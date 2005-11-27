@@ -1,7 +1,7 @@
 <%@ include file="includeTop.jsp" %>
 
 <div id="content">
-	<form action="itemlist.htm" method="post"/>
+	<form action="app.htm" method="post"/>
 	<table>
 		<tr>
 			<td>
@@ -14,10 +14,10 @@
 		<tr>
 			<td colspan="2" class="buttonBar">
 				<!-- Tell webflow what transaction we're in  -->
-				<input type="hidden" name="_txToken" value="${txToken}">
+				<input type="hidden" name="_transactionId" value="${transactionId}">
 				<!-- Tell webflow what executing flow we're participating in -->
 				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"/>
-				<input type="hidden" name="_currentStateId" value="displayItem"/>
+				<input type="hidden" name="_stateId" value="displayItem"/>
 				<!-- Tell webflow what event happened -->
 				<input type="submit" name="_eventId_submit" value="Submit">
 			</td>

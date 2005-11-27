@@ -17,7 +17,7 @@
 	<bean id="flowLocator" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
 		<property name="definitionLocations">
 			<list>
-				<value>/WEB-INF/higherLower.xml</value>
+				<value>/WEB-INF/higherlower.xml</value>
 				<value>/WEB-INF/mastermind.xml</value>
 			</list>
 		</property>
