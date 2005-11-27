@@ -39,7 +39,7 @@
 <!ATTLIST flow start-state IDREF #REQUIRED>
 
 <!--
-	Identifier of a flow implementation exported in the bean factory that should be used.
+	Identifier of a custom flow implementation prototype exported in the flow artifact factory.
 	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
 <!ATTLIST flow bean CDATA #IMPLIED>
@@ -88,7 +88,7 @@
 <!ATTLIST action-state id ID #REQUIRED>
 
 <!--
-	Identifier of an action state implementation exported in the bean factory that should be used.
+	Identifier of an action state implementation prototype exported in the flow artifact factory.
 	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
 <!ATTLIST action-state bean CDATA #IMPLIED>
@@ -189,7 +189,7 @@
 <!ATTLIST view-state id ID #REQUIRED>
 
 <!--
-	Identifier of a view state implementation exported in the bean factory that should be used.
+	Identifier of a view state implementation prototype exported in the flow artifact factory.
 	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
 <!ATTLIST view-state bean CDATA #IMPLIED>
@@ -246,7 +246,7 @@
 <!ATTLIST decision-state id ID #REQUIRED>
 
 <!--
-	Identifier of a decision state exported in the bean factory that should be used.
+	Identifier of a decision state implementation prototype exported in the flow artifact factory.
 	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
 <!ATTLIST decision-state bean CDATA #IMPLIED>
@@ -296,7 +296,7 @@
 <!ATTLIST subflow-state id ID #REQUIRED>
 
 <!--
-	Identifier of a flow implementation exported in the bean factory that should be used.
+	Identifier of a custom subflow state implementation prototype exported in the flow artifact factory.
 	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
 <!ATTLIST subflow-state bean CDATA #IMPLIED>
@@ -442,7 +442,7 @@
 <!ATTLIST end-state id ID #REQUIRED>
 
 <!--
-	Identifier of an end state exported in the bean factory that should be used.
+	Identifier of a custom end state implementation prototype exported in the flow artifact factory.
 	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
 <!ATTLIST end-state bean CDATA #IMPLIED>
