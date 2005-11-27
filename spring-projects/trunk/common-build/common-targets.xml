@@ -277,6 +277,7 @@
 
     <mkdir dir="${target.dir}" />
     <mkdir dir="${target.gen.java.dir}" />
+    <mkdir dir="${target.gen.java.test.dir}" />
     <mkdir dir="${target.testresults.dir}" />
     <mkdir dir="${target.classes.dir}" />
     <mkdir dir="${target.testclasses.dir}" />
@@ -501,6 +502,14 @@
       </fileset>
     </copy>
 
+	<!-- copy any non-java files from the generated test java source dir -->
+    <echo>copying generated test resources</echo>
+    <copy todir="${target.testclasses.dir}" >
+      <fileset dir="${target.gen.java.test.dir}">
+        <exclude name="**/*.java" />
+      </fileset>
+    </copy>
+
     <!-- we also redo this when we actually produce a distribution -->
     <filter token="VERSION" value="${project.version}" />
     <filter token="DATE" value="${DSTAMP}" />
@@ -528,7 +537,9 @@
 
   <target name="compile.tests">
     <echo>compiling test sources</echo>
-    <javac srcdir="${src.java.test.dir}" destdir="${target.testclasses.dir}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${target.testclasses.dir}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}" source="${javac.source}" target="${javac.target}">
+		<src path="${src.java.test.dir}" />
+		<src path="${target.gen.java.test.dir}" />
       <classpath>
         <pathelement location="${target.classes.dir}" />
         <path refid="test.classpath" />

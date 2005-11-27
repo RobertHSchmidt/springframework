@@ -1,0 +1,4 @@
+version 20051127-1
+
+Changelog:
+2005-11-27: Arjen: add gen java source dir functionality for test sources too
