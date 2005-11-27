@@ -2,7 +2,6 @@ package org.springframework.webflow.registry;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.builder.FlowArtifactFactory;
 
 /**
  * A factory bean that produces a populated flow registry using a
@@ -38,9 +37,6 @@ import org.springframework.webflow.builder.FlowArtifactFactory;
  *         &lt;/property&gt;
  *     &lt;/bean&gt;
  * </pre>
- * 
- * @see FlowArtifactFactory
- * @see FlowRegistryFlowArtifactFactory
  * 
  * @author Keith Donald
  */
