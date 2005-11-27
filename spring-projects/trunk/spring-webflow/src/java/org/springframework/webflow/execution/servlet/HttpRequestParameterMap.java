@@ -16,6 +16,7 @@
 package org.springframework.webflow.execution.servlet;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,7 +25,8 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP request parameter map, for accessing request
- * parameters.
+ * parameters. Also provides support for multi-part requests, providing
+ * transparent access to the request "fileMap" as a request parameter entry.
  * 
  * @author Keith Donald
  */
@@ -43,14 +45,14 @@ public class HttpRequestParameterMap extends StringKeyedAttributeMapAdapter {
 	}
 
 	protected Object getAttribute(String key) {
-		Object value = request.getParameter(key);
-		if (value == null) {
-			if (request instanceof MultipartHttpServletRequest) {
-				MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
-				value = multipartRequest.getFileMap().get(key);
+		if (request instanceof MultipartHttpServletRequest) {
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
+			Object data = multipartRequest.getFileMap().get(key);
+			if (data != null) {
+				return data;
 			}
 		}
-		return value;
+		return request.getParameter(key);
 	}
 
 	protected void setAttribute(String key, Object value) {
@@ -62,6 +64,43 @@ public class HttpRequestParameterMap extends StringKeyedAttributeMapAdapter {
 	}
 
 	protected Enumeration getAttributeNames() {
-		return request.getParameterNames();
+		Enumeration parameterNames = request.getParameterNames();
+		if (request instanceof MultipartHttpServletRequest) {
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
+			return new MultiPartEnumeration(multipartRequest.getFileMap().keySet().iterator(), parameterNames);
+		}
+		else {
+			return parameterNames;
+		}
+	}
+
+	/**
+	 * A enumeration that combines elements in the multipart map with that of
+	 * the request parameter map.
+	 * @author Keith Donald
+	 */
+	private static class MultiPartEnumeration implements Enumeration {
+
+		private Iterator fileMapNames;
+
+		private Enumeration parameterNames;
+
+		public MultiPartEnumeration(Iterator fileMapNames, Enumeration parameterNames) {
+			this.fileMapNames = fileMapNames;
+			this.parameterNames = parameterNames;
+		}
+
+		public boolean hasMoreElements() {
+			return fileMapNames.hasNext() || parameterNames.hasMoreElements();
+		}
+
+		public Object nextElement() {
+			if (fileMapNames.hasNext()) {
+				return fileMapNames.next();
+			}
+			else {
+				return parameterNames.nextElement();
+			}
+		}
 	}
 }

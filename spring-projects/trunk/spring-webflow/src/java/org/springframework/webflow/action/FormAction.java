@@ -671,7 +671,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	protected void doBind(RequestContext context, DataBinder binder) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Binding allowed request parameters in '"
+			logger.debug("Binding allowed request parameters in "
 					+ StylerUtils.style(context.getExternalContext().getRequestParameterMap())
 					+ " to form object with name '" + binder.getObjectName() + "', prebind formObject toString = "
 					+ binder.getTarget());
