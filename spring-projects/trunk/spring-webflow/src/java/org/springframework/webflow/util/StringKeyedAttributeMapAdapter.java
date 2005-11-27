@@ -140,7 +140,7 @@ public abstract class StringKeyedAttributeMapAdapter implements Map {
 	 */
 	abstract protected Enumeration getAttributeNames();
 	
-	//internal helper classes -- is there no easier way to do this?
+	// internal helper classes
 
 	private abstract class AbstractSet extends java.util.AbstractSet {
 		public boolean isEmpty() {
