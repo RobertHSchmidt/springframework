@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -45,16 +44,16 @@ import org.springframework.webflow.builder.XmlFlowBuilder;
  * </p>
  * 
  * <pre>
- *      BeanFactory beanFactory = ...
- *      FlowRegistryImpl registry = new FlowRegistryImpl();
- *      FlowArtifactFactory flowArtifactFactory =
- *          new FlowRegistryFlowArtifactFactory(registry, beanFactory);
- *      File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- *      Resource[] locations = new Resource[] {
- *          new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
- *      	new FileSystemResource(new File(parent, &quot;flow2.xml&quot;))
- *      };
- *      new XmlFlowRegistrar(locations).registerFlows(locations, flowArtifactFactory);
+ *     BeanFactory beanFactory = ...
+ *     FlowRegistryImpl registry = new FlowRegistryImpl();
+ *     FlowArtifactFactory flowArtifactFactory =
+ *         new FlowRegistryFlowArtifactFactory(registry, beanFactory);
+ *     File parent = new File(&quot;src/webapp/WEB-INF&quot;);
+ *     Resource[] locations = new Resource[] {
+ *         new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
+ *         new FileSystemResource(new File(parent, &quot;flow2.xml&quot;))
+ *     };
+ *     new XmlFlowRegistrar(locations).registerFlows(locations, flowArtifactFactory);
  * </pre>
  * 
  * @author Keith Donald
@@ -79,12 +78,6 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 	private Resource[] definitionDirectoryLocations;
 
 	/**
-	 * Strategy for loading depenent resources needed by the Flow while it is
-	 * being built.
-	 */
-	private ResourceLoader resourceLoader;
-
-	/**
 	 * Creates an XML flow registrar.
 	 */
 	public XmlFlowRegistrar() {
@@ -100,28 +93,19 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 
 	/**
 	 * Sets the locations (file paths) pointing to XML-based flow definitions.
-	 * @param locations the resource locations
+	 * @param definitionLocations the resource locations
 	 */
-	public void setDefinitionLocations(Resource[] locations) {
-		this.definitionLocations = locations;
+	public void setDefinitionLocations(Resource[] definitionLocations) {
+		this.definitionLocations = definitionLocations;
 	}
 
 	/**
 	 * Sets the locations pointing to directories containing XML-based flow
 	 * definitions.
-	 * @param locations the directory locationsd
+	 * @param definitionDirectoryLocations the directory locationsd
 	 */
-	public void setDefinitionDirectoryLocations(Resource[] locations) {
-		this.definitionDirectoryLocations = locations;
-	}
-
-	/**
-	 * Sets the resource loading strategy to use to load local flow artifacts
-	 * during the flow building process.
-	 * @param resourceLoader the resource loader
-	 */
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
+	public void setDefinitionDirectoryLocations(Resource[] definitionDirectoryLocations) {
+		this.definitionDirectoryLocations = definitionDirectoryLocations;
 	}
 
 	public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
@@ -200,9 +184,7 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 	 * @param flowArtifactFactory the flow artifactFactory
 	 */
 	protected void registerFlow(Resource location, FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
-		XmlFlowBuilder builder = new XmlFlowBuilder(location, flowArtifactFactory);
-		builder.setResourceLoader(resourceLoader);
-		registerFlow(getFlowId(location), builder, registry);
+		registerFlow(getFlowId(location), new XmlFlowBuilder(location, flowArtifactFactory), registry);
 	}
 
 	/**

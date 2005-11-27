@@ -4,6 +4,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Action;
@@ -32,12 +33,21 @@ public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 	private BeanFactory beanFactory;
 
 	/**
+	 * An optional resource loader that can load resources.
+	 */
+	private ResourceLoader resourceLoader;
+	
+	/**
 	 * Creates a flow artifact locator that retrieves artifacts from the
 	 * provided bean factory
 	 * @param beanFactory The spring bean factory that manages configured flow artifacts.
 	 */
 	public BeanFactoryFlowArtifactFactory(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
+	}
+
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
 	}
 
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {

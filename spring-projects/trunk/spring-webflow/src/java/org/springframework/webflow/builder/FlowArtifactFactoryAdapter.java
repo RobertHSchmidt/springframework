@@ -2,6 +2,7 @@ package org.springframework.webflow.builder;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
@@ -77,5 +78,11 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	public BeanFactory getServiceRegistry() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Service registry lookup not supported by this artifact factory");
 	}
+
+	public ResourceLoader getResourceLoader() throws UnsupportedOperationException {
+		throw new UnsupportedOperationException("Resource lookup not supported by this artifact factory");
+	}
+	
+	
 
 }

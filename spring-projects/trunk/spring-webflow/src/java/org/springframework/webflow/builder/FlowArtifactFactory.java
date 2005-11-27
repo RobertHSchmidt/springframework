@@ -1,6 +1,7 @@
 package org.springframework.webflow.builder;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
@@ -105,9 +106,16 @@ public interface FlowArtifactFactory {
 
 	/**
 	 * Returns a generic bean (service) registry, for accessing arbitrary beans.
-	 * 
 	 * @return the generic service registry
+	 * @throws UnsupportedOperationException when not supported by this factory
 	 */
 	public BeanFactory getServiceRegistry() throws UnsupportedOperationException;
+	
+	/**
+	 * Returns a generic resource loader for accessing file-based resources.
+	 * @return the generic resource loader
+	 * @throws UnsupportedOperationException when not supported by this factory
+	 */
+	public ResourceLoader getResourceLoader() throws UnsupportedOperationException;
 
 }

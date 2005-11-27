@@ -79,7 +79,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	/**
 	 * Returns the artifact locator.
 	 */
-	protected FlowArtifactFactory getFlowArtifactFactory() {
+	public FlowArtifactFactory getFlowArtifactFactory() {
 		return flowArtifactFactory;
 	}
 

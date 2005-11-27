@@ -63,9 +63,10 @@ public class XmlFlowFactoryBean extends FlowFactoryBean implements BeanFactoryAw
 	}
 
 	public void setResourceLoader(ResourceLoader resourceLoader) {
-		getXmlFlowBuilder().setResourceLoader(resourceLoader);
+		((BeanFactoryFlowArtifactFactory)getXmlFlowBuilder().getFlowArtifactFactory())
+				.setResourceLoader(resourceLoader);
 	}
-	
+
 	/**
 	 * Returns the XML based flow builder used by this factory bean.
 	 */

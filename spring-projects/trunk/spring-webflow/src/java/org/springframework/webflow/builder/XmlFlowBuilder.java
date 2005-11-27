@@ -40,7 +40,6 @@ import org.springframework.binding.support.Mapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
@@ -218,12 +217,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	private LocalFlowArtifactFactory localFlowArtifactFactory = new LocalFlowArtifactFactory();
 
 	/**
-	 * The resource loader strategy to use with any local flow application
-	 * contexts created during the building process.
-	 */
-	private ResourceLoader resourceLoader;
-
-	/**
 	 * Flag indicating if the the XML document parser will perform DTD
 	 * validation.
 	 */
@@ -277,20 +270,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 	 */
 	public void setLocation(Resource location) {
 		this.location = location;
-	}
-
-	/**
-	 * Returns the resource loader.
-	 */
-	protected ResourceLoader getResourceLoader() {
-		return resourceLoader;
-	}
-
-	/**
-	 * Sets the resource loader.
-	 */
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
 	}
 
 	/**
@@ -437,12 +416,26 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			}
 		}
 		GenericApplicationContext context = new GenericApplicationContext();
-		if (getResourceLoader() == null) {
-			// for context relative resource loading
-			context.setResourceLoader(getResourceLoader());
-		}
+		setResourceLoaderIfSupported(context);
 		new XmlBeanDefinitionReader(context).loadBeanDefinitions(resources);
 		localFlowArtifactFactory.push(new LocalFlowArtifactRegistry(context));
+	}
+
+	/**
+	 * Sets a context relative resource loader if supported by the configured
+	 * FlowArtifactFactory.
+	 * @param context the resource loading context
+	 */
+	protected void setResourceLoaderIfSupported(GenericApplicationContext context) {
+		try {
+			if (getFlowArtifactFactory().getResourceLoader() == null) {
+				// for context relative resource loading
+				context.setResourceLoader(getFlowArtifactFactory().getResourceLoader());
+			}
+		}
+		catch (UnsupportedOperationException e) {
+
+		}
 	}
 
 	/**
@@ -1057,7 +1050,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 			}
 			return getFlowArtifactFactory().getTargetStateResolver(id);
 		}
-		
+
 		public Flow createFlow(String id) throws FlowArtifactLookupException {
 			Flow flow = null;
 			if (!localFlowArtifactRegistries.isEmpty()) {
