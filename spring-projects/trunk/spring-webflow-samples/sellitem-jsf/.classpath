@@ -16,7 +16,7 @@
 	<classpathentry kind="lib" path="lib/global/spring-binding.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-web.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-webflow.jar"/>
+	<classpathentry sourcepath="/spring-webflow/src/java" kind="lib" path="lib/global/spring-webflow.jar"/>
 	<classpathentry kind="lib" path="lib/global/standard.jar"/>
 	<classpathentry kind="lib" path="lib/global/myfaces-api.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-aop.jar"/>

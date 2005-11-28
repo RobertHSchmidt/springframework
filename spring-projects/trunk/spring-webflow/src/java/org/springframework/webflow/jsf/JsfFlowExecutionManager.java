@@ -24,6 +24,7 @@ import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
+import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
@@ -294,7 +295,34 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			FlowExecutionHolder.setFlowExecution(id, flowExecution, jsfContext, false);
 		}
 	}
-
+    
+	/**
+     *  Extract the event id for the JSF case. The superclass method looks for an _eventId
+     *  request param, while for JSF we need to treat the JSF outcome (that was passed to
+     *  our navigation handler) as the event id. The Outcome is actually the static action
+     *  that the JSF page submitted.
+     *  
+     * @param context the context in which the external user event occured
+     * @return the event id
+	 */
+    protected String extractEventId(ExternalContext context) throws IllegalArgumentException {
+        
+        JsfExternalContext jsfContext = (JsfExternalContext) context;
+        
+        String eventId = jsfContext.getOutcome();
+        Assert.hasText(eventId, "No eventId could be obtained: make sure the client provides "
+                + "the event id in the form of a JSF static action; "
+                + "the parameters provided for this request were:"
+                + StylerUtils.style(context.getRequestParameterMap()));
+        if (eventId.equals(getNotSetEventIdParameterMarker())) {
+            throw new IllegalArgumentException("The received eventId was the 'not set' marker '"
+                    + getNotSetEventIdParameterMarker()
+                    + "' -- this is likely a client view (jsp, etc) configuration error --" + "the '"
+                    + getEventIdParameterName() + "' parameter must be set to a valid event");
+        }
+        return eventId;
+    }
+    
 	/**
 	 * Return the JsfFlowExecutionManager from a known location, as a bean
 	 * called FlowNavigationHandlerStrategy.BEAN_NAME in the web application
@@ -315,4 +343,5 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			return viewName;
 		}
 	}
+   
 }
