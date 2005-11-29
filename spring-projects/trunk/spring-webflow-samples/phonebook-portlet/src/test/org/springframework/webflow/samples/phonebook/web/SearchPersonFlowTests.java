@@ -23,6 +23,10 @@ import org.springframework.webflow.test.AbstractFlowExecutionTests;
 
 public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 
+	public SearchPersonFlowTests() {
+		setAutowireMode(AUTOWIRE_BY_NAME);
+	}
+	
 	protected String flowId() {
 		return "search";
 	}
