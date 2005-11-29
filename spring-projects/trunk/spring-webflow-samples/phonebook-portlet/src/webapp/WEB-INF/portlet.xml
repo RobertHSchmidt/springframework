@@ -14,7 +14,10 @@
 
     <init-param>
       <name>contextConfigLocation</name>
-      <value>classpath:org/springframework/samples/phonebook/deploy/portlet.xml</value>
+      <value>
+		  classpath:org/springframework/webflow/samples/phonebook/deploy/servlet.xml
+		  classpath:org/springframework/webflow/samples/phonebook/deploy/web-layer.xml
+      </value>
     </init-param>
 
     <init-param>
