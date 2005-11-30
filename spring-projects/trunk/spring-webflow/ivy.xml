@@ -9,7 +9,7 @@
 	<conf name="test" visibility="private" />
 	<!-- public	webflow	configurations other projects may use -->
 	<conf name="mvc" visibility="public" extends="global"/>
-	<conf name="portlet" visibility="public" extends="global"/>
+	<conf name="portlet" visibility="public" extends="mvc"/>
 	<conf name="struts"	visibility="public"	extends="global"/>
 	<conf name="jsf" visibility="public" extends="global"/>
   </configurations>
