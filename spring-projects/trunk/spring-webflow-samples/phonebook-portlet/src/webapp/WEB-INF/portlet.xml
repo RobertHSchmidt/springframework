@@ -15,7 +15,7 @@
     <init-param>
       <name>contextConfigLocation</name>
       <value>
-		  classpath:org/springframework/webflow/samples/phonebook/deploy/servlet.xml
+		  classpath:org/springframework/webflow/samples/phonebook/deploy/portlet.xml
 		  classpath:org/springframework/webflow/samples/phonebook/deploy/web-layer.xml
       </value>
     </init-param>
@@ -41,6 +41,7 @@
       </preference>
     </portlet-preferences>
 
+	<!-- 
     <security-role-ref>
       <role-name>Guest</role-name>
     </security-role-ref>
@@ -52,7 +53,8 @@
     <security-role-ref>
       <role-name>Power User</role-name>
     </security-role-ref>
-
+ 	-->
+ 	
   </portlet>
 
 </portlet-app>
