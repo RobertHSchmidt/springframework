@@ -90,7 +90,7 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 	}
 
 	/**
-	 * Hook method subclasses can overridw.
+	 * Hook method subclasses can override.
 	 * @param stateId the stateid
 	 * @return the target state resolver
 	 * @throws ConversionException when something goes wrong
