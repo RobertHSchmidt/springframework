@@ -72,6 +72,7 @@ public class RefreshableFlowHolder implements FlowHolder {
 			return getFlowBuilder().getResult();
 		}
 		if (!isAssembled()) {
+			lastModified = calculateLastModified();
 			assembleFlow();
 		}
 		else {
@@ -88,11 +89,26 @@ public class RefreshableFlowHolder implements FlowHolder {
 	}
 
 	/**
-	 * Returns a flag indicating if this assembler has performed and completed
+	 * Returns a flag indicating if this holder has performed and completed
 	 * Flow assembly.
 	 */
 	protected boolean isAssembled() {
 		return flow != null;
+	}
+
+	/**
+	 * Returns a flag indicating if this holder is performing assembly.
+	 */
+	protected boolean isAssembling() {
+		return assembling;
+	}
+	
+	/**
+	 * Returns the last modifed date of the backed builder resource.
+	 * @return the last modified date
+	 */
+	protected long getLastModified() {
+		return lastModified;
 	}
 
 	/**
@@ -122,7 +138,7 @@ public class RefreshableFlowHolder implements FlowHolder {
 			// just ignore, tracking last modified date not supported
 			return;
 		}
-		if (this.lastModified < getLastModified()) {
+		if (this.lastModified < calculateLastModified()) {
 			refresh();
 		}
 	}
@@ -132,7 +148,7 @@ public class RefreshableFlowHolder implements FlowHolder {
 	 * resource.
 	 * @return the last modified date, or -1 if it could not be retrieved
 	 */
-	protected long getLastModified() {
+	protected long calculateLastModified() {
 		if (getFlowBuilder() instanceof ResourceHolder) {
 			Resource resource = ((ResourceHolder)getFlowBuilder()).getResource();
 			try {

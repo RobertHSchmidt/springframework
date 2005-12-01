@@ -125,7 +125,7 @@ import org.xml.sax.SAXException;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class XmlFlowBuilder extends BaseFlowBuilder {
+public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	// recognized XML elements and attributes
 
@@ -272,6 +272,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder {
 		this.location = location;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.webflow.builder.ResourceHolder#getResource()
+	 */
+	public Resource getResource() {
+		return location;
+	}
+	
 	/**
 	 * Returns whether or not the XML parser will validate the document.
 	 */
