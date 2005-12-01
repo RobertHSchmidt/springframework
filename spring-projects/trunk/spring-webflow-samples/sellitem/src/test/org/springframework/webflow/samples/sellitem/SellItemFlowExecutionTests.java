@@ -44,8 +44,8 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	public void testSubmitPriceAndItemCount() {
 		testStartFlow();
 		Map parameters = new HashMap(2);
-		parameters.put("itemCount", 4);
-		parameters.put("price", 25);
+		parameters.put("itemCount", "4");
+		parameters.put("price", "25");
 		ViewSelection selectedView = signalEvent("submit", parameters);
 		assertViewNameEquals("categoryForm", selectedView);
 	}
