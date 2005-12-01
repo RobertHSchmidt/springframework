@@ -37,6 +37,11 @@ public class RefreshableFlowHolder implements FlowHolder {
 	private Flow flow;
 
 	/**
+	 * The flow assembler.
+	 */
+	private FlowAssembler assembler;
+
+	/**
 	 * A last modified date for the backing flow resource, used to support
 	 * automatic reassembly on resource change.
 	 */
@@ -47,11 +52,6 @@ public class RefreshableFlowHolder implements FlowHolder {
 	 * assembly process.
 	 */
 	private boolean assembling;
-
-	/**
-	 * The flow assembler.
-	 */
-	private FlowAssembler assembler;
 
 	/**
 	 * Creates a new refreshable flow holder that uses the configured assembler (GOF director) to
