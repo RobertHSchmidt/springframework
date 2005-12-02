@@ -21,13 +21,12 @@ import org.springframework.webflow.ExternalContext;
 
 /**
  * Storage strategy for flow executions. A flow execution manager uses this
- * interface to load and save flow executions.
+ * interface to load and save flow executions on every request into the webflow
+ * system.
  * <p>
  * Note that implementations of this interface may impact on application
- * transaction management for a flow execution.
- * <p>
- * For instance, the default application transaction synchronization
- * implementation ({@link org.springframework.webflow.execution.FlowScopeTokenTransactionSynchronizer})
+ * transaction management for a flow execution. For instance, the default
+ * application transaction synchronization implementation ({@link org.springframework.webflow.execution.FlowScopeTokenTransactionSynchronizer})
  * uses a simple <i>synchronizer token</i> stored in the flow scope, which
  * implies that there is a single flow execution for the transaction However,
  * some flow execution storage strategies (like
