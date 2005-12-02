@@ -72,8 +72,8 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * Sets the locations (file paths) pointing to XML-based flow definitions.
 	 * @param locations the resource locations
 	 */
-	public void setDefinitionLocations(Resource[] locations) {
-		getXmlFlowRegistrar().setDefinitionLocations(locations);
+	public void setFlowLocations(Resource[] locations) {
+		getXmlFlowRegistrar().setFlowLocations(locations);
 	}
 
 	/**
@@ -81,8 +81,8 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * definitions.
 	 * @param locations the directory locations
 	 */
-	public void setDefinitionDirectoryLocations(Resource[] locations) {
-		getXmlFlowRegistrar().setDefinitionDirectoryLocations(locations);
+	public void setFlowDirectoryLocations(Resource[] locations) {
+		getXmlFlowRegistrar().setFlowDirectoryLocations(locations);
 	}
 
 	protected void doPopulate(FlowRegistry registry) {

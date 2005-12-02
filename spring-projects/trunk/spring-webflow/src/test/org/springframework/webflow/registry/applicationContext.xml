@@ -7,7 +7,7 @@
 <beans>
 
 	<bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
-		<property name="definitionLocations">
+		<property name="flowLocations">
 			<list>
 				<value>classpath:org/springframework/webflow/config/registry/flow1.xml</value>
 				<value>classpath:org/springframework/webflow/config/registry/flow2.xml</value>

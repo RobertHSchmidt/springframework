@@ -29,7 +29,6 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionImpl;
-import org.springframework.webflow.execution.FlowLocator;
 
 /**
  * Base class for integration tests that verify a flow executes as expected.
@@ -73,12 +72,6 @@ import org.springframework.webflow.execution.FlowLocator;
 public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSpringContextTests {
 
 	/**
-	 * The flow locator; providing means to lookup and retrieve configured
-	 * flows. Used to resolve the Flow to be tested by <code>id</code>.
-	 */
-	private FlowLocator flowLocator;
-
-	/**
 	 * The flow execution running the flow when the test is active (runtime
 	 * object).
 	 */
@@ -92,53 +85,6 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	public AbstractFlowExecutionTests() {
 		setDependencyCheck(false);
 	}
-
-	/**
-	 * Returns the flow locator used to resolve the Flow to be tested by
-	 * <code>id</code>.
-	 */
-	protected FlowLocator getFlowLocator() {
-		if (this.flowLocator == null) {
-			this.flowLocator = createFlowLocator();
-		}
-		return flowLocator;
-	}
-
-	/**
-	 * Sets the flow locator used to resolve the Flow definition whose execution
-	 * is to be tested by this test.
-	 */
-	public void setFlowLocator(FlowLocator flowLocator) {
-		this.flowLocator = flowLocator;
-	}
-
-	/**
-	 * Subclasses should override this method to customize the FlowLocator
-	 * implementation that is returned to locate the Flow definition whose
-	 * execution will be tested.
-	 */
-	protected FlowLocator createFlowLocator() {
-		throw new IllegalStateException("Override this method to return a custom FlowLocator or "
-				+ "make sure one of the 'configLocations' XML files defines a FlowLocator bean definition Spring can "
-				+ "automatically inject into this test");
-	}
-
-	/**
-	 * Get the singleton flow definition whose execution is being tested.
-	 * @return the singleton flow definition
-	 * @throws FlowArtifactLookupException if the flow identified by flowId()
-	 * could not be resolved (if <code>this.flow</code> was null)
-	 */
-	protected Flow getFlow() throws FlowArtifactLookupException {
-		return getFlowLocator().getFlow(flowId());
-	}
-
-	/**
-	 * Subclasses should override to return the <code>flowId</code> whose
-	 * execution should be tested.
-	 * @return the flow id, whose execution is to be tested
-	 */
-	protected abstract String flowId();
 
 	protected final void onSetUpInTransaction() throws Exception {
 		onSetUpInTransactionalFlowTest();
@@ -212,6 +158,14 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 		onFlowExecutionStarting(flowExecution);
 		return this.flowExecution.start(stateId, context);
 	}
+
+	/**
+	 * Get the singleton flow definition whose execution is being tested.
+	 * @return the singleton flow definition to test
+	 * @throws FlowArtifactLookupException if the flow identified by flowId()
+	 * could not be resolved (if <code>this.flow</code> was null)
+	 */
+	protected abstract Flow getFlow() throws FlowArtifactLookupException;
 
 	/**
 	 * Hook method where you can do additional setup of a flow execution before
