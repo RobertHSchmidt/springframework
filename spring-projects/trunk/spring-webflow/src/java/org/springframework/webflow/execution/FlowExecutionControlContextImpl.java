@@ -39,6 +39,7 @@ import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
+import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
 
 /**
@@ -216,15 +217,12 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return selectedView;
 	}
 
-	public ViewSelection signalEvent(Event event, State state) throws StateException {
-		if (state != null && !getCurrentState().equals(state)) {
-			state.enter(this);
-		}
+	public ViewSelection signalEvent(Event event, TransitionableState state) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Signaling event '" + event.getId() + "' in state '" + getCurrentState().getId()
 					+ "' of flow '" + getFlowExecutionContext().getActiveFlow().getId() + "'");
 		}
-		ViewSelection selectedView = flowExecution.getActiveFlow().onEvent(event, this);
+		ViewSelection selectedView = flowExecution.getActiveFlow().onEvent(event, state, this);
 		flowExecution.getListeners().fireEventSignaled(this);
 		return selectedView;
 	}

@@ -170,7 +170,7 @@ public class FlowTests extends TestCase {
 		flow.setProperty("transactional", new Boolean(true));
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		flow.start(null, context);
-		flow.onEvent(new Event(this, "submit"), context);
+		flow.onEvent(new Event(this, "submit"), null, context);
 		assertTrue("Transaction not active but should be", context.inTransaction(false));
 	}
 

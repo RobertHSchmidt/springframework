@@ -132,7 +132,7 @@ public class Flow extends AnnotatedObject {
 	 * The list of exception handlers for this flow.
 	 */
 	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(3);
-	
+
 	/**
 	 * Default constructor for bean style usage.
 	 * @see #setId(String)
@@ -452,13 +452,32 @@ public class Flow extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 * @return the selected view
 	 */
-	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
+	public ViewSelection onEvent(Event event, TransitionableState state, FlowExecutionControlContext context) {
 		if (isTransactional()) {
 			context.assertInTransaction(false);
 		}
 		context.setLastEvent(event);
-		TransitionableState state = (TransitionableState)context.getFlowExecutionContext().getCurrentState();
-		return state.getRequiredTransition(context).execute(context);
+		if (state != null) {
+			TransitionableState currentState = getCurrentTransitionableState(context);
+			if (!currentState.equals(state)) {
+				return new Transition((TransitionableState)currentState, state).execute(context);
+			}
+			else {
+				return state.getRequiredTransition(context).execute(context);
+			}
+		}
+		else {
+			return getCurrentTransitionableState(context).getRequiredTransition(context).execute(context);
+		}
+	}
+
+	private TransitionableState getCurrentTransitionableState(FlowExecutionControlContext context) {
+		State currentState = context.getFlowExecutionContext().getCurrentState();
+		if (!currentState.isTransitionable()) {
+			throw new IllegalStateException("You can only signal events in transitionable states, and state "
+					+ context.getFlowExecutionContext().getCurrentState() + "  is not - programmer error");
+		}
+		return (TransitionableState)currentState;
 	}
 
 	/**

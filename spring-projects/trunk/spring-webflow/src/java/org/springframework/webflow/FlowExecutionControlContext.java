@@ -103,7 +103,7 @@ public interface FlowExecutionControlContext extends RequestContext {
 	 * flow during execution of this signalEvent operation
 	 * @see Flow#onEvent(Event, FlowExecutionControlContext)
 	 */
-	public ViewSelection signalEvent(Event event, State state) throws StateException;
+	public ViewSelection signalEvent(Event event, TransitionableState state) throws StateException;
 
 	/**
 	 * End the active flow session of the current flow execution. This method

@@ -5,6 +5,9 @@ import org.springframework.webflow.registry.XmlFlowRegistrar;
 
 public abstract class AbstractXmlFlowExecutionTests extends AbstractRegisteredFlowExecutionTests {
 
+	/* (non-Javadoc)
+	 * @see org.springframework.webflow.test.AbstractRegisteredFlowExecutionTests#populateFlowRegistry()
+	 */
 	protected void populateFlowRegistry() { 
 		XmlFlowRegistrar registrar = new XmlFlowRegistrar();
 		registrar.addFlowLocation(getFlowLocation());

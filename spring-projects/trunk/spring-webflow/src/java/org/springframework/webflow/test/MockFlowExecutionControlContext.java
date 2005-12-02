@@ -23,6 +23,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.State;
+import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
 
 /**
@@ -67,11 +68,8 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 		return flow.start(startState, this);
 	}
 	
-	public ViewSelection signalEvent(Event event, State state) {
-		if (state != null && !getCurrentState().equals(state)) {
-			state.enter(this);
-		}
-		return getActiveFlow().onEvent(event, this);
+	public ViewSelection signalEvent(Event event, TransitionableState state) {
+		return getActiveFlow().onEvent(event, state, this);
 	}
 
 	public FlowSession endActiveFlowSession() throws IllegalStateException {
