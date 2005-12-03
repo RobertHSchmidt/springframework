@@ -18,17 +18,19 @@ package org.springframework.webflow.samples.phonebook.web;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.test.AbstractFlowExecutionTests;
+import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 
-public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
+public class SearchPersonFlowTests extends AbstractXmlFlowExecutionTests {
 
 	public SearchPersonFlowTests() {
 		setAutowireMode(AUTOWIRE_BY_NAME);
 	}
 	
-	protected String flowId() {
-		return "search";
+	protected Resource getFlowLocation() {
+		return new ClassPathResource("search.xml", getClass());
 	}
 
 	protected String[] getConfigLocations() {
@@ -57,5 +59,4 @@ public class SearchPersonFlowTests extends AbstractFlowExecutionTests {
 		signalEvent("search");
 		assertCurrentStateEquals("displayCriteria");
 	}
-
 }

@@ -7,12 +7,20 @@
 	  Exposes web flows for execution at a single request URL.
 	  The id of a flow to launch should be passed in by clients using
 	  the "_flowId" request parameter:
-	      e.g. /phonebook.htm?_flowId=searchFlow
+	      e.g. /phonebook.htm?_flowId=search
 	-->
 	<bean name="/phonebook.htm" class="org.springframework.webflow.mvc.FlowController">
-		<constructor-arg ref="flowLocator"/>
+		<constructor-arg ref="flowExecutionManager"/>
+		<property name="cacheSeconds" value="5"/>
 	</bean>
 
+	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
+		<constructor-arg ref="flowLocator"/>
+		<property name="storage">
+			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage"/>
+		</property>
+	</bean>
+	
 	<!-- Resolves flow view names to .jsp templates -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>

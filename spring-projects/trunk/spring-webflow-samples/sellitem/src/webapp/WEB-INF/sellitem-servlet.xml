@@ -36,7 +36,7 @@
 
 	<!-- Creates the registry of flow definitions for this application -->
 	<bean name="flowLocator" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
-		<property name="definitionLocations" value="/WEB-INF/sellitem.xml"/>
+		<property name="flowLocations" value="/WEB-INF/sellitem.xml"/>
 	</bean>
 
 	<!-- Automatically exports the created flowRegistry as an MBean -->

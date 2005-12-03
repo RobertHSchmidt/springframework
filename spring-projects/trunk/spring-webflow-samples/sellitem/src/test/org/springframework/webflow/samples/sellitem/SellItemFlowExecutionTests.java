@@ -14,14 +14,9 @@ import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	@Override
-	protected String flowId() {
-		return "sellitem";
-	}
-
-	@Override
-	protected Resource[] getFlowLocations() {
+	protected Resource getFlowLocation() {
 		File flowDir = new File("src/webapp/WEB-INF");
-		return new Resource[] { new FileSystemResource(new File(flowDir, "sellitem.xml")) };
+		return new FileSystemResource(new File(flowDir, "sellitem.xml"));
 	}
 
 	@Override
