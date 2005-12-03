@@ -23,33 +23,54 @@ import org.springframework.webflow.registry.FlowRegistryFlowArtifactFactory;
 import org.springframework.webflow.registry.FlowRegistryImpl;
 
 /**
- * Base class for integration tests that verify a XML flow definition executes
- * as expected.
+ * Base class for flow integration tests that manage flow definitions to be
+ * tested in an explicit Flow registry.
  * 
  * @author Keith Donald
  */
-public abstract class AbstractRegisteredFlowExecutionTests extends AbstractFlowExecutionTests {
+public abstract class AbstractFlowRegistryFlowExecutionTests extends AbstractFlowExecutionTests {
 
+	/**
+	 * The flow registry.
+	 */
 	private static FlowRegistry flowRegistry;
 
+	/**
+	 * The flow artifact factory.
+	 */
 	private static FlowArtifactFactory flowArtifactFactory;
-	
+
+	/**
+	 * Returns the flow artifact factory.
+	 */
 	public static FlowArtifactFactory getFlowArtifactFactory() {
 		return flowArtifactFactory;
 	}
 
+	/**
+	 * Returns the flow registry.
+	 */
 	public static FlowRegistry getFlowRegistry() {
 		return flowRegistry;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.webflow.test.AbstractFlowExecutionTests#getFlow()
+	 */
 	protected Flow getFlow() throws FlowArtifactLookupException {
-  		return flowRegistry.getFlow(flowId());
+		return flowRegistry.getFlow(flowId());
 	}
-	
+
+	/**
+	 * Returns the <code>id</code> of the flow this execution test should
+	 * test. By default, returns the first entry in the flow registry.
+	 * Subclasses may override.
+	 */
 	protected String flowId() {
 		return getFlowRegistry().getFlowIds()[0];
 	}
-	
+
 	protected void onSetUpInTransactionalFlowTest() {
 		if (flowRegistry == null) {
 			initFlowRegistry();
@@ -58,14 +79,20 @@ public abstract class AbstractRegisteredFlowExecutionTests extends AbstractFlowE
 		}
 	}
 
+	/**
+	 * Initialize the flow registry.
+	 */
 	protected void initFlowRegistry() {
 		flowRegistry = new FlowRegistryImpl();
 	}
-	
+
+	/**
+	 * Initialize the flow artifact factory.
+	 */
 	protected void initFlowArtifactFactory() {
 		flowArtifactFactory = new FlowRegistryFlowArtifactFactory(flowRegistry, applicationContext);
 	}
-	
+
 	protected abstract void populateFlowRegistry();
 
 }
