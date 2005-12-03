@@ -29,8 +29,8 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.ViewSelection;
 
 /**
- * A strongly typed listener list class for FlowExecutionListeners. It helps
- * in managing a list of <code>FlowExecutionListener</code>s.
+ * A strongly typed listener list class for FlowExecutionListeners. It helps in
+ * managing a list of <code>FlowExecutionListener</code>s.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionListener
  * 
@@ -118,16 +118,16 @@ public class FlowExecutionListenerList {
 	}
 
 	/**
-	 * Is at least one instance of the provided FlowExecutionListener implementation
-	 * present in the listener list?
+	 * Is at least one instance of the provided FlowExecutionListener
+	 * implementation present in the listener list?
 	 * @param listenerImplementationClass the flow execution listener
-	 *        implementation, must be an implementation of FlowExecutionListener
+	 * implementation, must be an implementation of FlowExecutionListener
 	 * @return true if present, false otherwise
 	 */
 	public boolean isAdded(Class listenerImplementationClass) {
 		Assert.isTrue(FlowExecutionListener.class.isAssignableFrom(listenerImplementationClass),
 				"Listener class must be a FlowExecutionListener");
-		for (Iterator it = this.flowExecutionListeners.iterator(); it.hasNext(); ) {
+		for (Iterator it = this.flowExecutionListeners.iterator(); it.hasNext();) {
 			if (it.next().getClass().equals(listenerImplementationClass)) {
 				return true;
 			}
@@ -136,7 +136,8 @@ public class FlowExecutionListenerList {
 	}
 
 	/**
-	 * Is the provided FlowExecutionListener instance present in the listener list?
+	 * Is the provided FlowExecutionListener instance present in the listener
+	 * list?
 	 * @param listener the execution listener
 	 * @return true if present, false otherwise
 	 */
@@ -173,25 +174,24 @@ public class FlowExecutionListenerList {
 	public FlowExecutionListener[] toArray() {
 		return (FlowExecutionListener[])flowExecutionListeners.toArray(new FlowExecutionListener[size()]);
 	}
-	
+
 	// methods to fire events to all listeners
-	
 
 	/**
 	 * Notify all interested listeners that a flow execution was created.
 	 */
 	public void fireCreated(FlowExecutionContext context) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).created(context);
 		}
 	}
-	
+
 	/**
 	 * Notify all interested listeners that a request was submitted to the flow
 	 * execution.
 	 */
 	public void fireRequestSubmitted(RequestContext context) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).requestSubmitted(context);
 		}
 	}
@@ -201,25 +201,27 @@ public class FlowExecutionListenerList {
 	 * processing a request.
 	 */
 	public void fireRequestProcessed(RequestContext context) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).requestProcessed(context);
 		}
 	}
-	
+
 	/**
-	 * Notify all interested listeners that a flow execution session is starting.
+	 * Notify all interested listeners that a flow execution session is
+	 * starting.
 	 */
 	public void fireSessionStarting(RequestContext context, State startState, Map input) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).sessionStarting(context, startState, input);
 		}
 	}
 
 	/**
-	 * Notify all interested listeners that a flow execution session has started.
+	 * Notify all interested listeners that a flow execution session has
+	 * started.
 	 */
 	public void fireSessionStarted(RequestContext context) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).sessionStarted(context);
 		}
 	}
@@ -229,28 +231,40 @@ public class FlowExecutionListenerList {
 	 * execution.
 	 */
 	public void fireEventSignaled(RequestContext context) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).eventSignaled(context);
+		for (Iterator it = iterator(); it.hasNext();) {
+			((FlowExecutionListener)it.next()).eventSignaled(context, context.getFlowExecutionContext()
+					.getCurrentState());
 		}
 	}
 
 	/**
-	 * Notify all interested listeners that a state is being entered in the
-	 * flow execution.
+	 * Notify all interested listeners that an event was signaled in the flow
+	 * execution.
+	 */
+	public void fireEventSignaled(RequestContext context, State state) {
+		for (Iterator it = iterator(); it.hasNext();) {
+			((FlowExecutionListener)it.next()).eventSignaled(context, state);
+		}
+	}
+
+	/**
+	 * Notify all interested listeners that a state is being entered in the flow
+	 * execution.
 	 */
 	public void fireStateEntering(RequestContext context, State nextState) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).stateEntering(context, nextState);
 		}
 	}
 
 	/**
-	 * Notify all interested listeners that a state was entered in the
-	 * flow execution.
+	 * Notify all interested listeners that a state was entered in the flow
+	 * execution.
 	 */
 	public void fireStateEntered(RequestContext context, State previousState) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
-			((FlowExecutionListener)it.next()).stateEntered(context, previousState, context.getFlowExecutionContext().getCurrentState());
+		for (Iterator it = iterator(); it.hasNext();) {
+			((FlowExecutionListener)it.next()).stateEntered(context, previousState, context.getFlowExecutionContext()
+					.getCurrentState());
 		}
 	}
 
@@ -259,7 +273,7 @@ public class FlowExecutionListenerList {
 	 * flow execution.
 	 */
 	public void fireResumed(RequestContext context) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).resumed(context);
 		}
 	}
@@ -269,16 +283,17 @@ public class FlowExecutionListenerList {
 	 * flow execution.
 	 */
 	public void firePaused(RequestContext context, ViewSelection selectedView) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).paused(context, selectedView);
 		}
 	}
 
 	/**
-	 * Notify all interested listeners that the active flow execution session is ending.
+	 * Notify all interested listeners that the active flow execution session is
+	 * ending.
 	 */
 	public void fireSessionEnding(RequestContext context) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).sessionEnding(context);
 		}
 	}
@@ -287,37 +302,37 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution session has ended.
 	 */
 	public void fireSessionEnded(RequestContext context, FlowSession endedSession) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).sessionEnded(context, endedSession);
 		}
 	}
-	
+
 	/**
 	 * Notify all interested listeners that a flow execution was loaded from
 	 * storage.
 	 */
 	public void fireLoaded(FlowExecutionContext context, Serializable id) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).loaded(context, id);
 		}
 	}
-	
+
 	/**
 	 * Notify all interested listeners that a flow execution was saved to
 	 * storage.
 	 */
 	public void fireSaved(FlowExecutionContext context, Serializable id) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).saved(context, id);
 		}
 	}
-	
+
 	/**
 	 * Notify all interested listeners that a flow execution was removed from
 	 * storage.
 	 */
 	public void fireRemoved(FlowExecutionContext context, Serializable id) {
-		for (Iterator it = iterator(); it.hasNext(); ) {
+		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).removed(context, id);
 		}
 	}

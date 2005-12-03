@@ -230,7 +230,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return selectedView;
 	}
 
-	public ViewSelection handleNewStateRequest(TransitionableState newState, Event event) {
+	protected ViewSelection handleNewStateRequest(TransitionableState newState, Event event) {
 		if (newState instanceof DecisionState) {
 			return transitionTo((DecisionState)newState, event);
 		}
@@ -243,25 +243,25 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		}
 	}
 
-	public ViewSelection transitionTo(DecisionState navigationState, Event event) {
+	protected ViewSelection transitionTo(DecisionState navigationState, Event event) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Transitioning to navigation decision state '" + getCurrentState().getId() + "' on event '"
 					+ event.getId() + "' that occured in flow " + getFlowExecutionContext().getActiveFlow().getId()
 					+ "'");
 		}
 		setLastEvent(event);
-		flowExecution.getListeners().fireEventSignaled(this);
+		flowExecution.getListeners().fireEventSignaled(this, navigationState);
 		return new Transition((TransitionableState)getCurrentState(), navigationState).execute(this);
 	}
 
-	public ViewSelection transitionFrom(ViewState state, Event event) {
+	protected ViewSelection transitionFrom(ViewState previousViewState, Event event) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Transitioning from view state '" + getCurrentState().getId() + "' on event '" + event.getId()
+			logger.debug("Transitioning from previous view state '" + getCurrentState().getId() + "' on event '" + event.getId()
 					+ "' that occured in flow " + getFlowExecutionContext().getActiveFlow().getId() + "'");
 		}
 		setLastEvent(event);
-		flowExecution.getListeners().fireEventSignaled(this);
-		return state.getRequiredTransition(this).execute(this);
+		flowExecution.getListeners().fireEventSignaled(this, previousViewState);
+		return previousViewState.getRequiredTransition(this).execute(this);
 	}
 
 	public FlowSession endActiveFlowSession() throws IllegalStateException {

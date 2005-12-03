@@ -50,7 +50,7 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void sessionStarted(RequestContext context) {
 	}
 
-	public void eventSignaled(RequestContext context) {
+	public void eventSignaled(RequestContext context, State state) {
 	}
 
 	public void stateEntering(RequestContext context, State nextState) throws EnterStateVetoException {

@@ -84,8 +84,9 @@ public interface FlowExecutionListener {
 	 * transition.
 	 * @param context the source of the event, with a 'lastEvent' property for
 	 * accessing the signaled event
+	 * @param state the state the event was signaled in
 	 */
-	public void eventSignaled(RequestContext context);
+	public void eventSignaled(RequestContext context, State state);
 
 	/**
 	 * Called when a state transitions, after the transition is matched but
