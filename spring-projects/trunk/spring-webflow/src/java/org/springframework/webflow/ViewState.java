@@ -120,7 +120,7 @@ public class ViewState extends TransitionableState {
 	public boolean isMarker() {
 		return viewSelector == null;
 	}
-
+	
 	/**
 	 * Specialization of State's <code>doEnter</code> template method that
 	 * executes behaviour specific to this state type in polymorphic fashion.
@@ -155,7 +155,7 @@ public class ViewState extends TransitionableState {
 		else {
 			ViewSelection selection = viewSelector.makeSelection(context);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Returning view selection: " + selection);
+				logger.debug("Made view selection " + selection);
 			}
 			return selection;
 		}

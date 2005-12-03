@@ -76,7 +76,11 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 		try {
 			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getDataStore(context).getAttribute(
 					attributeName(id));
-			return continuation.readFlowExecution();
+			if (continuation != null) {
+				return continuation.readFlowExecution();
+			} else {
+				return null;
+			}
 		}
 		catch (IOException e) {
 			throw new FlowExecutionSerializationException(this, id, null,

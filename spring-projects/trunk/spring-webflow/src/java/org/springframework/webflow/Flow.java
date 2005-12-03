@@ -134,6 +134,11 @@ public class Flow extends AnnotatedObject {
 	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(3);
 
 	/**
+	 * The list of exception handlers for this flow.
+	 */
+	private Set inlineFlows = CollectionFactory.createLinkedSetIfPossible(3);
+
+	/**
 	 * Default constructor for bean style usage.
 	 * @see #setId(String)
 	 */
@@ -214,7 +219,7 @@ public class Flow extends AnnotatedObject {
 					+ "existing state-ids of this flow include: " + StylerUtils.style(getStateIds()));
 		}
 		boolean firstAdd = states.isEmpty();
-		this.states.add(state);
+		states.add(state);
 		if (firstAdd) {
 			setStartState(state);
 		}
@@ -234,14 +239,14 @@ public class Flow extends AnnotatedObject {
 	 * @return the states iterator
 	 */
 	public Iterator statesIterator() {
-		return this.states.iterator();
+		return states.iterator();
 	}
 
 	/**
 	 * Returns the list of states in this flow.
 	 */
 	public State[] getStates() {
-		return (State[])this.states.toArray(new State[this.states.size()]);
+		return (State[])states.toArray(new State[states.size()]);
 	}
 
 	/**
@@ -430,6 +435,50 @@ public class Flow extends AnnotatedObject {
 		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
 	}
 
+	public void addInlineFlow(Flow flow) {
+		inlineFlows.add(flow);
+	}
+	
+	public String[] getInlineFlowIds() {
+		String[] flowIds = new String[getInlineFlowCount()];
+		int i = 0;
+		Iterator it = inlineFlowIterator();
+		while (it.hasNext()) {
+			flowIds[i++] = ((Flow)it.next()).getId();
+		}
+		return flowIds;
+	}
+	
+	public Flow[] getInlineFlows() {
+		return (Flow[])inlineFlows.toArray(new Flow[inlineFlows.size()]);
+	}
+
+	public int getInlineFlowCount() {
+		return inlineFlows.size();
+	}
+	
+	public boolean containsInlineFlow(String id) {
+		return getInlineFlow(id) != null;
+	}
+
+	public Flow getInlineFlow(String flowId) {
+		if (!StringUtils.hasText(flowId)) {
+			throw new IllegalArgumentException("The specified inline flowId is invalid: flow identifiers must be non-blank");
+		}
+		Iterator it = inlineFlowIterator();
+		while (it.hasNext()) {
+			Flow flow = (Flow)it.next();
+			if (flow.getId().equals(flowId)) {
+				return flow;
+			}
+		}
+		return null;
+	}
+	
+	public Iterator inlineFlowIterator() {
+		return inlineFlows.iterator();
+	}
+
 	/**
 	 * Start a new execution of this flow in the specified state.
 	 * @param startState the start state to use -- when <code>null</code>,
@@ -453,18 +502,12 @@ public class Flow extends AnnotatedObject {
 	 * @return the selected view
 	 */
 	public ViewSelection onEvent(Event event, TransitionableState state, FlowExecutionControlContext context) {
+		context.setLastEvent(event);
 		if (isTransactional()) {
 			context.assertInTransaction(false);
 		}
-		context.setLastEvent(event);
 		if (state != null) {
-			TransitionableState currentState = getCurrentTransitionableState(context);
-			if (!currentState.equals(state)) {
-				return new Transition((TransitionableState)currentState, state).execute(context);
-			}
-			else {
-				return state.getRequiredTransition(context).execute(context);
-			}
+			return state.getRequiredTransition(context).execute(context);
 		}
 		else {
 			return getCurrentTransitionableState(context).getRequiredTransition(context).execute(context);

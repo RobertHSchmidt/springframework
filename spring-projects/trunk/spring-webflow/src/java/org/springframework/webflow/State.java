@@ -79,7 +79,7 @@ public abstract class State extends AnnotatedObject {
 	 * The list of exception handlers for this state.
 	 */
 	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(1);
-	
+
 	/**
 	 * Default constructor for bean style usage
 	 * @see #setFlow(Flow)
@@ -172,9 +172,9 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
-	 * Checks if this state is transitionable. That is, is this state capable of
-	 * executing a transition to another state on the occurence of an event? All
-	 * subclasses of <code>TransitionableState</code> are transitionable.
+	 * Checks if this state is transitionable. A transitionable is state capable
+	 * of executing a transition to another state on the occurence of an event.
+	 * All subclasses of <code>TransitionableState</code> are transitionable.
 	 * @return true when this state is a <code>TransitionableState</code>,
 	 * false otherwise
 	 */
@@ -238,8 +238,8 @@ public abstract class State extends AnnotatedObject {
 
 	/**
 	 * Hook method to execute custom behaviour as a result of entering this
-	 * state. By implementing this method subclasses specialize the behaviour
-	 * of the state.
+	 * state. By implementing this method subclasses specialize the behaviour of
+	 * the state.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
 	 * @return a view selection containing model and view information needed to

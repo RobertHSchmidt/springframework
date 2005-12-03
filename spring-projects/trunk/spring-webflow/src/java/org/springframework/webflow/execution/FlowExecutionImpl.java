@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
@@ -557,7 +558,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		Iterator it = this.executingFlowSessions.iterator();
 		while (it.hasNext()) {
 			FlowSessionImpl session = (FlowSessionImpl)it.next();
-			session.rehydrate(flowLocator);
+			session.rehydrate(new FlowSessionFlowLocator(rootFlow, flowLocator));
 		}
 		if (isActive()) {
 			// sanity check
@@ -572,6 +573,28 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
+	private static class FlowSessionFlowLocator implements FlowLocator {
+		private FlowLocator flowLocator;
+		
+		private Flow rootFlow;
+		
+		public FlowSessionFlowLocator(Flow rootFlow, FlowLocator flowLocator) {
+			this.rootFlow = rootFlow;
+			this.flowLocator = flowLocator;
+		}
+
+		public Flow getFlow(String id) throws FlowArtifactLookupException {
+			if (rootFlow.getId().equals(id)) {
+				return rootFlow;
+			} else if (rootFlow.containsInlineFlow(id)) {
+				return rootFlow.getInlineFlow(id);
+			} else {
+				return flowLocator.getFlow(id);
+			}
+		}
+		
+		
+	}
 	/**
 	 * Returns whether this flow execution is hydrated.
 	 */

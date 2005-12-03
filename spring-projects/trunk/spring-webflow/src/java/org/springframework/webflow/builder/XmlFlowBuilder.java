@@ -454,15 +454,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		if (inlineFlowElements.isEmpty()) {
 			return;
 		}
-		Map inlineFlows = new HashMap(inlineFlowElements.size());
-		flow.setAttribute(INLINE_FLOW_MAP_PROPERTY, inlineFlows);
 		for (int i = 0; i < inlineFlowElements.size(); i++) {
 			Element inlineFlowElement = (Element)inlineFlowElements.get(i);
 			String inlineFlowId = inlineFlowElement.getAttribute(ID_ATTRIBUTE);
 			Element flowElement = (Element)inlineFlowElement.getElementsByTagName(FLOW_ATTRIBUTE).item(0);
 			Flow inlineFlow = parseFlow(inlineFlowId, null, flowElement);
-			inlineFlows.put(inlineFlow.getId(), inlineFlow);
 			buildInlineFlow(inlineFlow, flowElement);
+			flow.addInlineFlow(inlineFlow);
 		}
 	}
 
@@ -478,7 +476,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		inlineFlow.addExceptionHandlers(parseExceptionHandlers(flowElement));
 		inlineFlow.resolveStateTransitionsTargetStates();
 		destroyFlowArtifactRegistry(inlineFlow);
-		inlineFlow.removeAttribute(INLINE_FLOW_MAP_PROPERTY);
 	}
 
 	public void buildStates() throws FlowBuilderException {
@@ -977,11 +974,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				return currentFlow;
 			}
 			// check local inline flows
-			if (currentFlow.containsProperty(INLINE_FLOW_MAP_PROPERTY)) {
-				Map registry = (Map)currentFlow.getProperty(INLINE_FLOW_MAP_PROPERTY);
-				if (registry.containsKey(id)) {
-					return (Flow)registry.get(id);
-				}
+			if (currentFlow.containsInlineFlow(id)) {
+				return currentFlow.getInlineFlow(id);
 			}
 			// check externally managed toplevel flows
 			return getFlowArtifactFactory().getSubflow(id);

@@ -46,7 +46,9 @@ public abstract class AbstractRegisteredFlowExecutionTests extends AbstractFlowE
   		return flowRegistry.getFlow(flowId());
 	}
 	
-	protected abstract String flowId();
+	protected String flowId() {
+		return getFlowRegistry().getFlowIds()[0];
+	}
 	
 	protected void onSetUpInTransactionalFlowTest() {
 		if (flowRegistry == null) {

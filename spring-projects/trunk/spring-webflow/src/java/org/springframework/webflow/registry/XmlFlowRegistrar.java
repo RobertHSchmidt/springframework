@@ -125,6 +125,9 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 	 * @param flowLocations the definition locations
 	 */
 	public void addFlowLocations(Resource[] flowLocations) {
+		if (flowLocations == null) {
+			return;
+		}
 		this.flowLocations.addAll(Arrays.asList(flowLocations));
 	}
 

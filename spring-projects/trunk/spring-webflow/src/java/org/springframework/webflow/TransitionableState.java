@@ -138,13 +138,13 @@ public abstract class TransitionableState extends State {
 	 * @return the list of transitional criteria
 	 */
 	public TransitionCriteria[] getTransitionCriterias() {
-		TransitionCriteria[] res = new TransitionCriteria[transitions.size()];
+		TransitionCriteria[] criterias = new TransitionCriteria[transitions.size()];
 		int i = 0;
 		Iterator it = transitionsIterator();
 		while (it.hasNext()) {
-			res[i++] = ((Transition)it.next()).getMatchingCriteria();
+			criterias[i++] = ((Transition)it.next()).getMatchingCriteria();
 		}
-		return res;
+		return criterias;
 	}
 
 	/**

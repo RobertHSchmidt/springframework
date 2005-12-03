@@ -13,7 +13,7 @@ public abstract class AbstractXmlFlowExecutionTests extends AbstractRegisteredFl
 		registrar.addFlowLocation(getFlowLocation());
 		registrar.addFlowLocations(getSubflowLocations());
 		registrar.registerFlows(getFlowRegistry(), getFlowArtifactFactory());
-	} 
+	}
 	
 	/**
 	 * Returns the array of resources pointing to the XML-based flow definitions
