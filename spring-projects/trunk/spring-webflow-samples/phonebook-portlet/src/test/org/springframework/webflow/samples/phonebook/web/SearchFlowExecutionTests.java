@@ -23,9 +23,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 
-public class SearchPersonFlowTests extends AbstractXmlFlowExecutionTests {
+public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
-	public SearchPersonFlowTests() {
+	public SearchFlowExecutionTests() {
 		setAutowireMode(AUTOWIRE_BY_NAME);
 	}
 	
