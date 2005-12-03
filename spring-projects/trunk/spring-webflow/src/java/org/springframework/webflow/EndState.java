@@ -168,7 +168,7 @@ public class EndState extends State {
 			FlowAttributeMapper resumingState = (FlowAttributeMapper)parentSession.getCurrentState();
 			resumingState.mapSubflowOutput(context);
 			context.endActiveFlowSession();
-			return context.signalEvent(subflowResult(context), null);
+			return context.signalEvent(subflowResult(context));
 		}
 	}
 

@@ -170,37 +170,8 @@ public class FlowTests extends TestCase {
 		flow.setProperty("transactional", new Boolean(true));
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		flow.start(null, context);
-		flow.onEvent(new Event(this, "submit"), null, context);
+		flow.onEvent(new Event(this, "submit"), context);
 		assertTrue("Transaction not active but should be", context.inTransaction(false));
-	}
-
-	public void testResumeInDifferentViewState() {
-		flow = new Flow("myFlow");
-		new ViewState(flow, "myState1", new SimpleViewSelector("myView"),
-				new Transition[] { new Transition("myState2") });
-		TransitionableState state = new ViewState(flow, "myState2", new SimpleViewSelector("myView2"),
-				new Transition[] { new Transition("myState3") });
-		new EndState(flow, "myState3", new SimpleViewSelector("myView3"));
-		new DecisionState(flow, "navigate", new Transition[] { new Transition("myState1") });
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
-		flow.start(null, context);
-		flow.onEvent(new Event(this, "submit"), state, context);
-		assertTrue("Should have ended", !context.isActive());
-	}
-
-	public void testResumeInDifferentDecisionState() {
-		flow = new Flow("myFlow");
-		new ViewState(flow, "myState1", new SimpleViewSelector("myView"),
-				new Transition[] { new Transition("myState2") });
-		new ViewState(flow, "myState2", new SimpleViewSelector("myView2"),
-				new Transition[] { new Transition("myState3") });
-		new EndState(flow, "myState3", new SimpleViewSelector("myView3"));
-		TransitionableState state = new DecisionState(flow, "navigate", new Transition[] { new Transition("myState1") });
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
-		flow.start(null, context);
-		flow.onEvent(new Event(this, "submit"), state, context);
-		assertEquals("Should have navigated to view state", "myState1", context.getFlowExecutionContext()
-				.getCurrentState().getId());
 	}
 
 	public void testEnd() {

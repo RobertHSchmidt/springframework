@@ -438,7 +438,7 @@ public class Flow extends AnnotatedObject {
 	public void addInlineFlow(Flow flow) {
 		inlineFlows.add(flow);
 	}
-	
+
 	public String[] getInlineFlowIds() {
 		String[] flowIds = new String[getInlineFlowCount()];
 		int i = 0;
@@ -448,7 +448,7 @@ public class Flow extends AnnotatedObject {
 		}
 		return flowIds;
 	}
-	
+
 	public Flow[] getInlineFlows() {
 		return (Flow[])inlineFlows.toArray(new Flow[inlineFlows.size()]);
 	}
@@ -456,14 +456,15 @@ public class Flow extends AnnotatedObject {
 	public int getInlineFlowCount() {
 		return inlineFlows.size();
 	}
-	
+
 	public boolean containsInlineFlow(String id) {
 		return getInlineFlow(id) != null;
 	}
 
 	public Flow getInlineFlow(String flowId) {
 		if (!StringUtils.hasText(flowId)) {
-			throw new IllegalArgumentException("The specified inline flowId is invalid: flow identifiers must be non-blank");
+			throw new IllegalArgumentException(
+					"The specified inline flowId is invalid: flow identifiers must be non-blank");
 		}
 		Iterator it = inlineFlowIterator();
 		while (it.hasNext()) {
@@ -474,7 +475,7 @@ public class Flow extends AnnotatedObject {
 		}
 		return null;
 	}
-	
+
 	public Iterator inlineFlowIterator() {
 		return inlineFlows.iterator();
 	}
@@ -501,17 +502,8 @@ public class Flow extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 * @return the selected view
 	 */
-	public ViewSelection onEvent(Event event, TransitionableState state, FlowExecutionControlContext context) {
-		context.setLastEvent(event);
-		if (isTransactional()) {
-			context.assertInTransaction(false);
-		}
-		if (state != null) {
-			return state.getRequiredTransition(context).execute(context);
-		}
-		else {
-			return getCurrentTransitionableState(context).getRequiredTransition(context).execute(context);
-		}
+	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
+		return getCurrentTransitionableState(context).getRequiredTransition(context).execute(context);
 	}
 
 	private TransitionableState getCurrentTransitionableState(FlowExecutionControlContext context) {

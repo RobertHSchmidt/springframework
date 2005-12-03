@@ -311,7 +311,7 @@ public class ActionState extends TransitionableState {
 			if (event != null) {
 				eventIds[executionCount] = event.getId();
 				try {
-					return context.signalEvent(event, null);
+					return context.signalEvent(event);
 				}
 				catch (NoMatchingActionResultTransitionException e) {
 					if (logger.isDebugEnabled()) {

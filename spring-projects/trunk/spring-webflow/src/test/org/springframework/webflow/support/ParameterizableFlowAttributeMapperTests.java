@@ -31,7 +31,6 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.action.FormAction;
-import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 

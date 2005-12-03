@@ -341,20 +341,25 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Resuming this execution on user event '" + eventId + "'");
 		}
-		if (!StringUtils.hasText(stateId)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("No stateId was provided on event '" + eventId
-						+ "', relying on the currentState of the active FlowSession.");
-			}
-			stateId = getCurrentState().getId();
-		}
-		TransitionableState state = getActiveFlow().getRequiredTransitionableState(stateId);
-		FlowExecutionControlContext context = createControlContext(externalContext);
+		FlowExecutionControlContextImpl context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
 				resume(context);
-				ViewSelection selectedView = context.signalEvent(new Event(externalContext, eventId), state);
+				ViewSelection selectedView;
+				Event event = new Event(externalContext, eventId);
+				if (!StringUtils.hasText(stateId)) {
+					selectedView = context.signalEvent(event);
+				}
+				else {
+					if (!stateId.equals(getCurrentState().getId())) {
+						TransitionableState state = getActiveFlow().getRequiredTransitionableState(stateId);
+						selectedView = context.handleNewStateRequest(state, event);
+					}
+					else {
+						selectedView = context.signalEvent(event);
+					}
+				}
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -371,6 +376,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param context the state request context
 	 */
 	protected void resume(FlowExecutionControlContext context) {
+		if (context.getFlowExecutionContext().getActiveFlow().isTransactional()) {
+			context.assertInTransaction(false);
+		}
 		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 		getListeners().fireResumed(context);
 	}
@@ -575,9 +583,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	private static class FlowSessionFlowLocator implements FlowLocator {
 		private FlowLocator flowLocator;
-		
+
 		private Flow rootFlow;
-		
+
 		public FlowSessionFlowLocator(Flow rootFlow, FlowLocator flowLocator) {
 			this.rootFlow = rootFlow;
 			this.flowLocator = flowLocator;
@@ -586,15 +594,17 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		public Flow getFlow(String id) throws FlowArtifactLookupException {
 			if (rootFlow.getId().equals(id)) {
 				return rootFlow;
-			} else if (rootFlow.containsInlineFlow(id)) {
+			}
+			else if (rootFlow.containsInlineFlow(id)) {
 				return rootFlow.getInlineFlow(id);
-			} else {
+			}
+			else {
 				return flowLocator.getFlow(id);
 			}
 		}
-		
-		
+
 	}
+
 	/**
 	 * Returns whether this flow execution is hydrated.
 	 */

@@ -17,9 +17,9 @@ package org.springframework.webflow.execution.portlet;
 
 import java.util.Enumeration;
 
-import org.springframework.mock.web.portlet.MockPortletContext;
-
 import junit.framework.TestCase;
+
+import org.springframework.mock.web.portlet.MockPortletContext;
 
 /**
  * Unit test for the PortletContextMap class.

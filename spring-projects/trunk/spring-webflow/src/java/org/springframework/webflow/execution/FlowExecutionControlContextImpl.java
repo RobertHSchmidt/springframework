@@ -28,6 +28,7 @@ import org.springframework.binding.AttributeSource;
 import org.springframework.binding.support.EmptyAttributeSource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
@@ -41,6 +42,7 @@ import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.ViewState;
 
 /**
  * Default flow execution control context implementation used internally by the
@@ -109,7 +111,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	public ExternalContext getExternalContext() {
 		return externalContext;
 	}
-	
+
 	public Event getLastResultEvent(String stateId) {
 		Iterator it = resultEvents.iterator();
 		while (it.hasNext()) {
@@ -217,14 +219,49 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return selectedView;
 	}
 
-	public ViewSelection signalEvent(Event event, TransitionableState state) throws StateException {
+	public ViewSelection signalEvent(Event event) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Signaling event '" + event.getId() + "' in state '" + getCurrentState().getId()
 					+ "' of flow '" + getFlowExecutionContext().getActiveFlow().getId() + "'");
 		}
-		ViewSelection selectedView = flowExecution.getActiveFlow().onEvent(event, state, this);
+		setLastEvent(event);
 		flowExecution.getListeners().fireEventSignaled(this);
+		ViewSelection selectedView = flowExecution.getActiveFlow().onEvent(event, this);
 		return selectedView;
+	}
+
+	public ViewSelection handleNewStateRequest(TransitionableState newState, Event event) {
+		if (newState instanceof DecisionState) {
+			return transitionTo((DecisionState)newState, event);
+		}
+		else if (newState instanceof ViewState) {
+			return transitionFrom((ViewState)newState, event);
+		}
+		else {
+			throw new IllegalArgumentException(
+					"Only [ViewState] or [DecisionState] instances can be handled, this state is " + newState);
+		}
+	}
+
+	public ViewSelection transitionTo(DecisionState navigationState, Event event) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Transitioning to navigation decision state '" + getCurrentState().getId() + "' on event '"
+					+ event.getId() + "' that occured in flow " + getFlowExecutionContext().getActiveFlow().getId()
+					+ "'");
+		}
+		setLastEvent(event);
+		flowExecution.getListeners().fireEventSignaled(this);
+		return new Transition((TransitionableState)getCurrentState(), navigationState).execute(this);
+	}
+
+	public ViewSelection transitionFrom(ViewState state, Event event) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Transitioning from view state '" + getCurrentState().getId() + "' on event '" + event.getId()
+					+ "' that occured in flow " + getFlowExecutionContext().getActiveFlow().getId() + "'");
+		}
+		setLastEvent(event);
+		flowExecution.getListeners().fireEventSignaled(this);
+		return state.getRequiredTransition(this).execute(this);
 	}
 
 	public FlowSession endActiveFlowSession() throws IllegalStateException {
@@ -302,11 +339,12 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		public Map getParameters() {
 			if (event != null) {
 				return event.getParameters();
-			} else {
+			}
+			else {
 				return Collections.EMPTY_MAP;
 			}
 		}
-		
+
 		/**
 		 * Returns the event that triggered the state transition.
 		 */
@@ -320,8 +358,8 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("externalContext", externalContext).append("resultEvents", resultEvents)
-				.append("requestScope", requestScope).append("executionProperties", executionProperties).append(
-						"flowExecution", flowExecution).toString();
+		return new ToStringCreator(this).append("externalContext", externalContext)
+				.append("resultEvents", resultEvents).append("requestScope", requestScope).append(
+						"executionProperties", executionProperties).append("flowExecution", flowExecution).toString();
 	}
 }

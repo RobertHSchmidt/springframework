@@ -23,8 +23,6 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
-import org.springframework.webflow.builder.TextToViewSelector;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
