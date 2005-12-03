@@ -27,7 +27,7 @@
 	
 	<!-- Creates the registry of flow definitions for this application -->
 	<bean id="flowLocator" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
-		<property name="definitionLocations">
+		<property name="flowLocations">
 			<list>
 				<value>/WEB-INF/sampleA.xml</value>
 				<value>/WEB-INF/sampleB.xml</value>

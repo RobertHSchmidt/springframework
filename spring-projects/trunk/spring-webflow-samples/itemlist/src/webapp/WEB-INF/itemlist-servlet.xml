@@ -15,7 +15,7 @@
 
 	<!-- Creates the registry of flow definitions for this application -->
 	<bean id="flowLocator" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
-		<property name="definitionLocations" value="/WEB-INF/itemlist.xml"/>
+		<property name="flowLocations" value="/WEB-INF/itemlist.xml"/>
 	</bean>
 	
 	<!-- Resolves flow view names to .jsp templates -->
