@@ -239,7 +239,8 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		}
 		else {
 			throw new IllegalArgumentException(
-					"Only [ViewState] or [DecisionState] instances can be handled, this state is " + newState);
+					"Only [ViewState] or [DecisionState] instances can be invoked externally; "
+							+ "however the requested state was " + newState);
 		}
 	}
 
@@ -256,8 +257,9 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 
 	protected ViewSelection transitionFrom(ViewState previousViewState, Event event) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Transitioning from previous view state '" + getCurrentState().getId() + "' on event '" + event.getId()
-					+ "' that occured in flow " + getFlowExecutionContext().getActiveFlow().getId() + "'");
+			logger.debug("Transitioning from previous view state '" + getCurrentState().getId() + "' on event '"
+					+ event.getId() + "' that occured in flow " + getFlowExecutionContext().getActiveFlow().getId()
+					+ "'");
 		}
 		setLastEvent(event);
 		flowExecution.getListeners().fireEventSignaled(this, previousViewState);
