@@ -95,8 +95,6 @@ public interface FlowExecutionControlContext extends RequestContext {
 	 * <code>onEvent()</code> method of the flow involved in the flow
 	 * execution will be called.
 	 * @param event the event that occured
-	 * @param state the state the event occured in (if <code>null</code>,
-	 * defaults to the current flow execution state)
 	 * @return the next selected view, which returns control to the client and
 	 * requests that a view be rendered with model data
 	 * @throws StateException if an exception was thrown within a state of the

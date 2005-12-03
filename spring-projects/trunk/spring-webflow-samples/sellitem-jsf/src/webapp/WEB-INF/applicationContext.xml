@@ -3,25 +3,15 @@
 
 <beans>
 
-	<!--
-		Launches new flow executions in a JSF environment.
-	-->	
+	<!-- Launches new flow executions in a JSF environment. -->	
 	<bean id="flowExecutionManager" class="org.springframework.webflow.jsf.JsfFlowExecutionManager">
 		<constructor-arg ref="flowLocator"/>
 		<property name="listener">
 			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
 		</property>
 		<property name="storage">
-			<bean class="org.springframework.webflow.execution.DataStoreFlowExecutionStorage">
-				<constructor-arg>
-					<bean class="org.springframework.webflow.execution.SessionDataStoreAccessor"/>
-				</constructor-arg>
-			</bean>
-			<!-- 
-			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage"/>
-			 -->
+			<bean class="org.springframework.webflow.execution.DataStoreFlowExecutionStorage"/>
 		</property>
-		
 		<property name="transactionSynchronizer">
 			<bean class="org.springframework.webflow.execution.DataStoreTokenTransactionSynchronizer"/>
 		</property>
