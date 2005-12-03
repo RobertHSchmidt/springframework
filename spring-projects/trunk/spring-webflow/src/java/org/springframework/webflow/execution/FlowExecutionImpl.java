@@ -279,14 +279,15 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	protected void assertActive() throws IllegalStateException {
 		if (!isActive()) {
 			throw new IllegalStateException(
-					"This flow execution is not active: it has either ended or has never been started.");
+					"This flow execution is not active, it has either ended or has never been started.");
 		}
 	}
 
 	// methods implementing FlowExecution
 
 	public ViewSelection start(String stateId, ExternalContext externalContext) throws StateException {
-		Assert.state(!isActive(), "This flow is already executing -- you cannot call start more than once");
+		Assert.state(!isActive(),
+				"This flow is already executing -- you cannot call 'start(stateId, externalContxt)' more than once");
 		if (!StringUtils.hasText(stateId)) {
 			stateId = getRootFlow().getStartState().getId();
 		}
@@ -397,7 +398,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getListeners().firePaused(context, selectedView);
 		if (logger.isDebugEnabled()) {
 			if (selectedView != null) {
-				logger.debug("Paused to render " + selectedView + "' and wait for user input");
+				logger.debug("Paused to render " + selectedView + " and wait for user input");
 			}
 			else {
 				logger.debug("Paused to wait for user input");
