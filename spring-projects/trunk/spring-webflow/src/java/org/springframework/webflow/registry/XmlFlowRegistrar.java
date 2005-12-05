@@ -121,7 +121,7 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 	}
 
 	/**
-	 * Adds flow locations pointing to an XML-based flow definitions.
+	 * Adds flow locations pointing to a set of XML-based flow definitions.
 	 * @param flowLocations the definition locations
 	 */
 	public void addFlowLocations(Resource[] flowLocations) {
