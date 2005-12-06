@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Application context definition -->
 
 <beans>
 
@@ -24,5 +27,15 @@
 	
 	<!-- "Sale" managed bean created by JSF for each 'sellitem' flow execution -->
 	<bean name="sale" class="org.springframework.webflow.samples.sellitem.Sale" singleton="false"/>
-
+	
+	<bean id="sellItemAction" class="org.springframework.webflow.action.FormAction">
+		<property name="formObjectName" value="sale"/>
+		<property name="formObjectClass" value="org.springframework.webflow.samples.sellitem.Sale"/>
+		<property name="formObjectScopeAsString" value="flow"/>
+		<property name="validator">
+			<bean class="org.springframework.webflow.samples.sellitem.SaleValidator"/>
+		</property>
+		<property name="requireValidatorMethod" value="true"/>
+	</bean>
+	
 </beans>

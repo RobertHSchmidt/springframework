@@ -19,7 +19,7 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
 			classpath:org/springframework/webflow/samples/sellitem/applicationContext.xml
-			/WEB-INF/applicationContext.xml
+			/WEB-INF/applicationContext-flow.xml
 		</param-value>
 	</context-param>
 

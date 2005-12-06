@@ -17,6 +17,7 @@
 package org.springframework.webflow.jsf;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -29,7 +30,9 @@ import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.AbstractTokenTransactionSynchronizer;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.FlowLocator;
@@ -219,14 +222,40 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	}
 
 	/**
+	 * Saves contextual flow information in the JSF RequestMap. While this may
+	 * already be there in the case of normal view generation, when we are 
+	 * going back to the same view as before due to validation errors, the
+	 * flow will not have run at all, so will not have generated a view
+	 * @param context 
+	 */
+	public void saveContextualFlowInformationInRequest(FacesContext context) {
+		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
+		if (flowExecution != null) {
+			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
+			Assert.notNull(flowExecutionId,
+					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
+			Map contextualInfo = new HashMap();
+			prepareViewModelContextualInfo(contextualInfo, flowExecutionId, flowExecution);
+			// this is pretty unclean
+			Serializable transactionId = (Serializable) context.getExternalContext().getRequestParameterMap()
+				.get(AbstractTokenTransactionSynchronizer.TRANSACTION_TOKEN_PARAMETER_NAME);
+			if (transactionId != null)
+				contextualInfo.put(AbstractTokenTransactionSynchronizer.TRANSACTION_TOKEN_ATTRIBUTE_NAME,
+						transactionId);
+			addMapViaPutAllWithFallback(context.getExternalContext().getRequestMap(), contextualInfo);			
+		}
+	}
+	
+	/**
 	 * Saves the current thread-bound FlowExecution out to storage if necessary;
 	 * specifically, only if it actually exsists, and only if saving is a two
 	 * phase process. In this case, the first part of a save happens after event
 	 * processing when a storage ID is generated, the second part happens here
 	 * and actually puts the execution into storage after response rendering
 	 * with that generated
+	 * @param context 
 	 */
-	public void saveFlowExecutionIfNecessary() {
+	public void saveFlowExecutionIfNecessary(FacesContext context) {
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
 		if (flowExecution != null && !FlowExecutionHolder.isFlowExecutionSaved()) {
 			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
@@ -239,6 +268,10 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 				logger.debug("Saved flow execution out to storage with previously generated id: '" + flowExecutionId
 						+ "'");
 			}
+			
+			Map contextualInfo = new HashMap();
+			prepareViewModelContextualInfo(contextualInfo, flowExecutionId, flowExecution);
+			addMapViaPutAllWithFallback(context.getExternalContext().getRequestMap(), contextualInfo);			
 		}
 	}
 
@@ -252,20 +285,9 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @param selectedView <code>ViewSelection</code> for the view to render
 	 */
 	public void renderView(FacesContext context, String fromAction, String outcome, ViewSelection selectedView) {
-		// Expose model data specified in the descriptor
-		try {
-			context.getExternalContext().getRequestMap().putAll(selectedView.getModel());
-		}
-		catch (UnsupportedOperationException e) {
-			// work around nasty MyFaces bug where it's RequestMap doesn't
-			// support putAll remove after it's fixed in MyFaces
-			Map requestMap = context.getExternalContext().getRequestMap();
-			Iterator it = selectedView.getModel().entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry)it.next();
-				requestMap.put(entry.getKey(), entry.getValue());
-			}
-		}
+
+		Map viewModel = selectedView.getModel();
+		addMapViaPutAllWithFallback(context.getExternalContext().getRequestMap(), viewModel);
 		// stay on the same view if requested
 		if (selectedView.getViewName() == null) {
 			return;
@@ -275,6 +297,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		UIViewRoot view = handler.createView(context, viewIdResolver.resolveViewName(selectedView.getViewName()));
 		context.setViewRoot(view);
 	}
+
 
 	/**
 	 * Responsible for restoring (loading) the flow execution if the appropriate
@@ -322,6 +345,28 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
         }
         return eventId;
     }
+
+    /**
+     * Utility method needed needed only because we can not rely on JSF RequestMap
+     * supporting Map's putAll method. Tries putAll, falls back to individual adds
+     * @param targetMap the target map to add the model data to
+     * @param map the model data to add to the target map
+     */
+    protected void addMapViaPutAllWithFallback(Map targetMap, Map model) {
+		// Expose model data specified in the descriptor
+		try {
+			targetMap.putAll(model);
+		}
+		catch (UnsupportedOperationException e) {
+			// work around nasty MyFaces bug where it's RequestMap doesn't
+			// support putAll remove after it's fixed in MyFaces
+			Iterator it = model.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry entry = (Map.Entry)it.next();
+				targetMap.put(entry.getKey(), entry.getValue());
+			}
+		}
+	}
     
 	/**
 	 * Return the JsfFlowExecutionManager from a known location, as a bean

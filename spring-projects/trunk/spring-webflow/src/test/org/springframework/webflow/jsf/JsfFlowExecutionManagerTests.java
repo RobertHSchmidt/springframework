@@ -284,13 +284,17 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 		flowExecutionControl.expectAndReturn(flowExecutionMock.getListeners(), new FlowExecutionListenerList());
 		flowExecutionStorageControl.replay();
 		flowExecutionControl.replay();
-
+		
+		HashMap requestMap = new HashMap();
+		mockExternalContext.setRequestMap(requestMap);
+		
 		// perform test
-		tested.saveFlowExecutionIfNecessary();
+		tested.saveFlowExecutionIfNecessary(mockFacesContext);
 
 		flowExecutionStorageControl.verify();
 		flowExecutionControl.verify();
 		assertTrue(FlowExecutionHolder.isFlowExecutionSaved());
+		assertTrue(requestMap.containsKey(FlowExecutionManager.FLOW_EXECUTION_CONTEXT_ATTRIBUTE));
 	}
 
 	public void testRenderView() throws Exception {

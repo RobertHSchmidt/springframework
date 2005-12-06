@@ -863,18 +863,30 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 				selectedView.addObject(getFlowExecutionIdParameterName(), flowExecutionId);
 			}
 			else {
-				// make the entire flow execution context available in the model
-				selectedView.addObject(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
-				// make the unique flow execution id and current state id
-				// available in the model as convenience to views
-				selectedView.addObject(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
-				selectedView.addObject(CURRENT_STATE_ID_ATTRIBUTE, flowExecutionContext.getCurrentState().getId());
+				Map viewModel = selectedView.getModel();
+				prepareViewModelContextualInfo(viewModel, flowExecutionId, flowExecutionContext);
 			}
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Returning selected view to client " + selectedView);
 		}
 		return selectedView;
+	}
+
+	/**
+	 * Stores contextual info in the view model, inlcuding flow execution context,
+	 * flow execution id, and the current transaction id
+	 * @param viewModel the view model
+	 * @param flowExecutionId the flow execution id
+	 * @param flowExecutionContext the flow execution context
+	 */
+	protected void prepareViewModelContextualInfo(Map viewModel, Serializable flowExecutionId, FlowExecutionContext flowExecutionContext) {
+		// make the entire flow execution context available in the model
+		viewModel.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
+		// make the unique flow execution id and current state id
+		// available in the model as convenience to views
+		viewModel.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
+		viewModel.put(CURRENT_STATE_ID_ATTRIBUTE, flowExecutionContext.getCurrentState().getId());
 	}
 
 	// utility methods

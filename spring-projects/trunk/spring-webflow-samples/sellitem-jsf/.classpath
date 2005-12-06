@@ -28,5 +28,7 @@
 	<classpathentry kind="lib" path="lib/global/spring-remoting.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-support.jar"/>
 	<classpathentry kind="lib" path="lib/global/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib/global/myfaces-impl.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

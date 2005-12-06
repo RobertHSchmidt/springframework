@@ -46,6 +46,11 @@ public class FlowPhaseListener implements PhaseListener {
 	private JsfFlowExecutionManager flowExecutionManager;
 
 	public void beforePhase(PhaseEvent event) {
+		FacesContext context = event.getFacesContext();
+		if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
+			// save the flow execution out to storage after response rendering if neccessary
+			getExecutionManager(context).saveContextualFlowInformationInRequest(context);
+		}
 	}
 
 	public void afterPhase(PhaseEvent event) {
@@ -58,7 +63,7 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 		else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
 			// save the flow execution out to storage after response rendering if neccessary
-			getExecutionManager(context).saveFlowExecutionIfNecessary();
+			getExecutionManager(context).saveFlowExecutionIfNecessary(context);
 			FlowExecutionHolder.clearFlowExecution();
 		}
 	}

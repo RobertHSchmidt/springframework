@@ -1,9 +1,20 @@
+<%@ page contentType="text/html" %>
 <%@ include file="includeTop.jsp"%>
 
 <f:view>
 
 	<div id="content">
 	<div id="insert"><img src="images/webflow-logo.jpg" /></div>
+
+	<!-- display any errors from sale Validator -->
+    <c:if test="${not empty sale}">
+      <spring:bind path="sale.*">
+        <c:forEach items="${status.errorMessages}" var="error">
+	      <div class="error">${status.errorMessage}</div>
+        </c:forEach>
+      </spring:bind>
+    </c:if>
+
 	<h2>Enter price and item count</h2>
 	<hr>
 	<table>
