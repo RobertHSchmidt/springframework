@@ -30,7 +30,6 @@ import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.AbstractTokenTransactionSynchronizer;
 import org.springframework.webflow.execution.FlowExecution;
@@ -217,6 +216,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 				removeFlowExecution(flowExecutionId, flowExecution, context);
 				flowExecutionId = null;
 			}
+			FlowExecutionHolder.clearFlowExecution();
 		}
 		return flowExecutionId;
 	}
@@ -230,7 +230,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 */
 	public void saveContextualFlowInformationInRequest(FacesContext context) {
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-		if (flowExecution != null) {
+		if (flowExecution != null && flowExecution.isActive()) {
 			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
 			Assert.notNull(flowExecutionId,
 					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
@@ -257,7 +257,8 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 */
 	public void saveFlowExecutionIfNecessary(FacesContext context) {
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-		if (flowExecution != null && !FlowExecutionHolder.isFlowExecutionSaved()) {
+		if (flowExecution != null && flowExecution.isActive() &&
+				!FlowExecutionHolder.isFlowExecutionSaved()) {
 			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
 			Assert.notNull(flowExecutionId,
 					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
