@@ -77,9 +77,11 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 			throw new IllegalStateException("The method to invoke was not provided: please set the '"
 					+ AnnotatedAction.METHOD_PROPERTY + "' property");
 		}
-		Event result = toEvent(context, getMethodInvoker().invoke(methodKey, bean, context));
+		Object returnValue = getMethodInvoker().invoke(methodKey, bean, context);
+		processMethodReturnValue(returnValue, context);
+		Event resultEvent = toEvent(context, returnValue);
 		getStatePersister().saveState(bean, context);
-		return result;
+		return resultEvent;
 	}
 
 	/**
@@ -88,17 +90,42 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 */
 	protected abstract Object getBean(RequestContext context);
 
+	protected void processMethodReturnValue(Object returnValue, RequestContext context) {
+		String resultAttributeName = (String)getActionProperty(context, RESULT_PARAMETER, null);
+		if (resultAttributeName != null) {
+			String resultScope = (String)getActionProperty(context, "resultScope", "request");
+			// TODO this parsing needs to be done at build time
+			if (resultScope.equals("flow")) {
+				context.getFlowScope().setAttribute(resultAttributeName, returnValue);
+			}
+			else if (resultScope.equals("request")) {
+				context.getRequestScope().setAttribute(resultAttributeName, returnValue);
+			} else {
+				throw new IllegalArgumentException("Unknown result scope '" + resultScope + "'");
+			}
+		}
+	}
+
 	/**
 	 * Hook method that converts the return value of bean method invokation into
 	 * a web flow event. Subclasses can override this if needed.
 	 */
-	protected Event toEvent(RequestContext context, Object result) {
-		if (result instanceof Event) {
-			return (Event)result;
+	protected Event toEvent(RequestContext context, Object returnValue) {
+		if (returnValue instanceof Event) {
+			return (Event)returnValue;
 		}
 		else {
 			String resultParameterName = (String)getActionProperty(context, RESULT_PARAMETER, RESULT_PARAMETER);
-			return success(resultParameterName, result);
+			if (returnValue instanceof Boolean) {
+				boolean b = ((Boolean)returnValue).booleanValue();
+				if (b) {
+					return yes();
+				} else {
+					return no();
+				}
+			} else {
+				return success(resultParameterName, returnValue);
+			}
 		}
 	}
 

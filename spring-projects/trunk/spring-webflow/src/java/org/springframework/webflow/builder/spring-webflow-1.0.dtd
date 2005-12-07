@@ -31,7 +31,7 @@
 	exception handlers, view selectors, transition criteria, etc). A flow may nest one or more other 
 	flows in-line to use as subflows, referred to as 'inline flows'.
 -->
-<!ELEMENT flow ( property*, ( action-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, import*, inline-flow* )>
+<!ELEMENT flow ( property*, var*, ( action-state | mapper-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, import*, inline-flow* )>
 
 <!--
 	The the start state of this flow; the start state is the point where flow execution will begin.
@@ -43,6 +43,32 @@
 	for this flow.  This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
 <!ATTLIST flow bean CDATA #IMPLIED>
+
+<!--
+	A property associated with an another element (flow, action, state, transition, etc).
+	Properties are simple strings or typed attributes that allow you to annotate an element.
+	For example:
+	- an element's 'caption' property might serve a GUI tooltip or logging statement
+	- an Action's 'validatorMethod' property might specify a target method to invoke on a validator
+	- a Flow's 'transactional' property might indicate the flow should exhibit transactionl characteristics
+-->
+<!ELEMENT var EMPTY>
+
+<!--
+	The name of the flow-scoped variable.
+-->
+<!ATTLIST var name CDATA #REQUIRED>
+
+<!--
+	The type of the variable; to facilitate from-string type conversion. This type
+	string may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer').
+-->
+<!ATTLIST var type CDATA #IMPLIED>
+
+<!--
+	The value of the property; a short-cut alternative to an explicit child 'value' element.
+-->
+<!ATTLIST property value CDATA #IMPLIED>
 
 <!--
 	A property associated with an another element (flow, action, state, transition, etc).
@@ -174,6 +200,51 @@
 	The target state of this transition.
 -->
 <!ATTLIST transition to IDREF #REQUIRED>
+
+<!--
+	Defines a mapper state, an action state where a single AttributeMapperAction configured 
+	with one or more mapping policies is executed.
+	An attribute mapper action maps the value of one or more source expressions to specific target 
+	property expressions.
+-->
+<!ELEMENT mapper-state ( property*, entry-actions?, mapping+, transition+, exit-actions?, exception-handler* )>
+
+<!--
+	The unique identifier of this action state; must be unique to this flow.
+-->
+<!ATTLIST mapper-state id ID #REQUIRED>
+
+<!--
+	Identifier of a custon mapper action state implementation prototype exported in the flow artifact factory
+	to use for this state.  This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
+-->
+<!ATTLIST mapper-state bean CDATA #IMPLIED>
+
+<!--
+	Defines a single mapping rule that maps a value of a source expression to a target property expression.
+-->
+<!ELEMENT mapping EMPTY>
+
+<!--
+	The mapping's source expression, a value expression evaluated against this flow's request context.
+-->
+<!ATTLIST mapping source CDATA #IMPLIED>
+
+<!--
+	The mapping's target expression, a property expression evaluated against this flow's request context.
+-->
+<!ATTLIST mapping target CDATA #IMPLIED>
+
+<!--
+	The type of the source attribute expression.
+-->
+<!ATTLIST mapping from CDATA #IMPLIED>
+
+<!--
+	The target type of the target property expression value; used with the "from" attribute to perform
+	a value type conversion during attribute mapping.
+-->
+<!ATTLIST mapping to CDATA #IMPLIED>
 
 <!--
 	Defines a view state, a state where a view will be selected for rendering and control will be 

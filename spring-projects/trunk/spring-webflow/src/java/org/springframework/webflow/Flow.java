@@ -129,6 +129,11 @@ public class Flow extends AnnotatedObject {
 	private Set states = CollectionFactory.createLinkedSetIfPossible(6);
 
 	/**
+	 * A set of variable definitions for this flow.
+	 */
+	private Set variables = CollectionFactory.createLinkedSetIfPossible(6);
+
+	/**
 	 * The list of exception handlers for this flow.
 	 */
 	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(3);
@@ -404,6 +409,23 @@ public class Flow extends AnnotatedObject {
 		return stateIds;
 	}
 
+	public void addVariable(FlowVariable variable) {
+		variables.add(variable);
+	}
+
+	public void addVariable(FlowVariable[] variables) {
+		if (variables == null) {
+			return;
+		}
+		for (int i = 0; i < variables.length; i++) {
+			addVariable(variables[i]);
+		}
+	}
+
+	public FlowVariable[] getVariables() {
+		return (FlowVariable[])variables.toArray(new FlowVariable[variables.size()]);
+	}
+
 	/**
 	 * Adds a state exception handler to this flow definition. Exception
 	 * handlers are invoked when an exception occurs during this flow's
@@ -493,7 +515,16 @@ public class Flow extends AnnotatedObject {
 		if (startState == null) {
 			startState = getStartState();
 		}
+		createFlowVariables(context);
 		return startState.enter(context);
+	}
+	
+	protected void createFlowVariables(FlowExecutionControlContext context) {
+		Iterator it = this.variables.iterator();
+		while (it.hasNext()) {
+			FlowVariable var = (FlowVariable)it.next();
+			var.create(context);
+		}
 	}
 
 	/**

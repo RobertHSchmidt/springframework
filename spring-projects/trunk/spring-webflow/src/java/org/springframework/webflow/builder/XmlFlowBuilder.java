@@ -52,6 +52,7 @@ import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.FlowVariable;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.SubflowState;
@@ -188,6 +189,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String VALUE_ATTRIBUTE = "value";
 
 	private static final String TYPE_ATTRIBUTE = "type";
+
+	private static final String VAR_ELEMENT = "var";
 
 	private static final String ENTRY_ACTIONS_ELEMENT = "entry-actions";
 
@@ -402,6 +405,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			}
 		}
 		flow.setProperties(flowProperties);
+		flow.addVariable(parseVariables(flowElement));
 		return flow;
 	}
 
@@ -443,6 +447,20 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		catch (UnsupportedOperationException e) {
 
 		}
+	}
+
+	protected FlowVariable[] parseVariables(Element element) {
+		List variables = new LinkedList();
+		List varElements = DomUtils.getChildElementsByTagName(element, VAR_ELEMENT);
+		for (int i = 0; i < varElements.size(); i++) {
+			variables.add(parseVariable((Element)varElements.get(i)));
+		}
+		return (FlowVariable[])variables.toArray(new FlowVariable[variables.size()]);
+	}
+	
+	protected FlowVariable parseVariable(Element element) {
+		Class type = (Class)fromStringTo(Class.class).execute(element.getAttribute(TYPE_ATTRIBUTE));
+		return new FlowVariable(element.getAttribute(NAME_ATTRIBUTE), type);
 	}
 
 	/**
@@ -730,7 +748,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
 	}
-
+	
 	/**
 	 * Parse a transition definition and return a corresponding Transition
 	 * object.
