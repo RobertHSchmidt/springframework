@@ -9,8 +9,8 @@
 	<!-- display any errors from sale Validator -->
     <c:if test="${not empty sale}">
       <spring:bind path="sale.*">
-        <c:forEach items="${status.errorMessages}" var="error">
-	      <div class="error">${status.errorMessage}</div>
+        <c:forEach items="${status.errorMessages}" var="curError">
+	      <div class="error">${curError}</div>
         </c:forEach>
       </spring:bind>
     </c:if>
@@ -21,13 +21,24 @@
 		<h:form id="priceAndItemCountForm">
 			<tr>
 				<td>Price:</td>
-				<td><h:inputText value="#{flow.sale.price}"
-					required="true" /></td>
+				<td><h:inputText id="price" value="#{flow.sale.price}"
+					required="true">
+					  <f:validateDoubleRange minimum="0.01"/>
+					</h:inputText>
+					&nbsp;&nbsp;
+					<h:message for="price" style="color: red"/>
+				</td>
 			</tr>
 			<tr>
 				<td>Item count:</td>
-				<td><h:inputText value="#{flow.sale.itemCount}"
-					required="true" /></td>
+				<td><h:inputText id="itemCount" value="#{flow.sale.itemCount}"
+					required="true">
+
+					  <f:validateLongRange minimum="1"/>
+					</h:inputText>
+					&nbsp;&nbsp;
+					<h:message for="itemCount" style="color: red"/>
+				</td>
 			</tr>
 			<tr>
 				<td colspan="2" class="buttonBar">
