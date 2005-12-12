@@ -955,7 +955,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * querying the global, externally managed artifact factory.
 	 * @author Keith Donald
 	 */
-	private class LocalFlowArtifactFactory extends AbstractFlowArtifactFactory {
+	private class LocalFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 
 		/**
 		 * The stack of registries.

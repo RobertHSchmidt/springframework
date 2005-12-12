@@ -15,14 +15,14 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.Transition.TargetStateResolver;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
-import org.springframework.webflow.builder.AbstractFlowArtifactFactory;
+import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
 
 /**
  * A flow artifact locator that obtains its artifacts by delegating to a
  * standard Spring BeanFactory.
  * @author Keith Donald
  */
-public class BeanFactoryFlowArtifactFactory extends AbstractFlowArtifactFactory implements ResourceLoaderAware {
+public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter implements ResourceLoaderAware {
 
 	/**
 	 * The Spring bean factory that manages configured flow artifacts.

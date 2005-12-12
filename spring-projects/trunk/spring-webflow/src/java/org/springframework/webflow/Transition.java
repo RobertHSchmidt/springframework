@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow;
 
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
@@ -30,14 +28,15 @@ import org.springframework.util.Assert;
  * This class provides a simple implementation of a Transition that offers the
  * following functionality:
  * <ul>
- * <li>Execution of a transition is guarded by a
- * <code>TransitionCriteria</code> object, the so called "matching criteria",
- * which, when matched, makes this transition eligible for execution.</li>
- * <li>Optionally, completion of transition execution is guarded by a
- * <code>TransitionCriteria</code> object, the so called "execution criteria".
- * When the execution criteria test fails, this transition will <i>roll back</i>,
- * reentering its source state. When the execution criteria test succeeds, the
- * transition continues onto the target state.</li>
+ * <li>Determining the eligibility of this transition is handled by a
+ * <code>TransitionCriteria</code> object called the "matching criteria". If
+ * the matching criteria returns true this transition is marked eligible for
+ * execution.</li>
+ * <li>Determing if an eligible transition should be allowed to execute is
+ * handled by a <code>TransitionCriteria</code> object called the "execution
+ * criteria". If the execution criteria test fails, this transition will <i>roll
+ * back</i>, reentering its source state. If the execution criteria test
+ * succeeds, the transition executes, continuing to the target state.</li>
  * <li>The target state of this transition is typically specified at
  * configuration time using the target state id. If the target state needs to be
  * calculated in a dynamic fashion at runtime, set a custom
@@ -95,6 +94,8 @@ public class Transition extends AnnotatedObject {
 	 * Create a new transition that always matches and always executes,
 	 * transitioning to the specified target state.
 	 * @param targetStateId the id of the starget state of the transition
+	 * @see #setMatchingCriteria(TransitionCriteria)
+	 * @see #setExecutionCriteria(TransitionCriteria)
 	 */
 	public Transition(String targetStateId) {
 		setTargetStateResolver(new StaticTargetStateResolver(targetStateId));
@@ -106,29 +107,11 @@ public class Transition extends AnnotatedObject {
 	 * @param matchingCriteria strategy object used to determine if this
 	 * transition should be matched as eligible for execution
 	 * @param targetStateId the id of the starget state of the transition
+	 * @see #setExecutionCriteria(TransitionCriteria)
 	 */
 	public Transition(TransitionCriteria matchingCriteria, String targetStateId) {
 		setMatchingCriteria(matchingCriteria);
 		setTargetStateResolver(new StaticTargetStateResolver(targetStateId));
-	}
-
-	/**
-	 * Create a new transition that transitions to the target state when the
-	 * provided criteria matches. Transition execution is guarded using given
-	 * execution criteria.
-	 * @param matchingCriteria strategy object used to determine if this
-	 * transition should be matched as eligible for execution
-	 * @param executionCriteria strategy for determining if a matched transition
-	 * should complete execution or roll back
-	 * @param targetStateId the id of the starget state of the transition
-	 * @param properties additional properties describing this transition
-	 */
-	public Transition(TransitionCriteria matchingCriteria, TransitionCriteria executionCriteria, String targetStateId,
-			Map properties) {
-		setMatchingCriteria(matchingCriteria);
-		setExecutionCriteria(executionCriteria);
-		setTargetStateResolver(new StaticTargetStateResolver(targetStateId));
-		setProperties(properties);
 	}
 
 	/**
@@ -137,6 +120,8 @@ public class Transition extends AnnotatedObject {
 	 * source state.
 	 * @param sourceState the source state
 	 * @param targetState the target state
+	 * @see #setMatchingCriteria(TransitionCriteria)
+	 * @see #setExecutionCriteria(TransitionCriteria)
 	 */
 	public Transition(TransitionableState sourceState, State targetState) {
 		setSourceState(sourceState);
@@ -155,7 +140,9 @@ public class Transition extends AnnotatedObject {
 	 * Set the owning source (<i>from</i>) state of this transition.
 	 */
 	public void setSourceState(TransitionableState sourceState) {
-		Assert.isTrue(getSourceState() == null, "This transition was already added to a source state");
+		if (getSourceState() != null && getSourceState() != sourceState) {
+			throw new IllegalStateException("This transition was already added to a different source state");
+		}
 		Assert.notNull(sourceState, "The source state of this transition is required");
 		this.sourceState = sourceState;
 	}

@@ -834,7 +834,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the transition (event matching criteria->stateId)
 	 */
 	protected Transition on(TransitionCriteria criteria, String stateId, Map properties) {
-		return new Transition(criteria, null, stateId, properties);
+		Transition transition = new Transition(criteria, stateId);
+		transition.setProperties(properties);
+		return transition;
 	}
 
 	/**

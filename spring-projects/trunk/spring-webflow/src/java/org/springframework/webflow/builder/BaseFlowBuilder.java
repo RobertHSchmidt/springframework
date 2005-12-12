@@ -65,7 +65,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * Default constructor for subclassing.
 	 */
 	protected BaseFlowBuilder() {
-		setFlowArtifactFactory(new AbstractFlowArtifactFactory());
+		setFlowArtifactFactory(new FlowArtifactFactoryAdapter());
 	}
 
 	/**

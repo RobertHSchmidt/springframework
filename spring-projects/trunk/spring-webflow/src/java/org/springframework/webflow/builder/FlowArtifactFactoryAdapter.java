@@ -25,7 +25,7 @@ import org.springframework.webflow.Transition.TargetStateResolver;
  * May be subclassed to offer additional factory/lookup support.
  * @author Keith Donald
  */
-public class AbstractFlowArtifactFactory implements FlowArtifactFactory {
+public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 
 	public Flow getSubflow(String id) throws FlowArtifactException {
 		throw new FlowArtifactException(Flow.class, id,

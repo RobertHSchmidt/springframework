@@ -13,7 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.FlowArtifactFactory;
-import org.springframework.webflow.builder.AbstractFlowArtifactFactory;
+import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.builder.FlowBuilderException;
@@ -21,7 +21,7 @@ import org.springframework.webflow.builder.FlowBuilderException;
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
-		FlowArtifactFactory artifactLocator = new AbstractFlowArtifactFactory();
+		FlowArtifactFactory artifactLocator = new FlowArtifactFactoryAdapter();
 		FlowBuilder builder1 = new AbstractFlowBuilder(artifactLocator) {
 			public void buildStates() throws FlowBuilderException {
 				addEndState("end");
