@@ -80,8 +80,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *         &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *         &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *          &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *          &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -652,8 +652,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * flow.
 	 */
 	protected EndState parseEndState(Flow flow, Element element) {
-		EndState state = (EndState)getLocalFlowArtifactFactory().createState(flow,
-				element.getAttribute(ID_ATTRIBUTE), EndState.class, parseProperties(element));
+		EndState state = (EndState)getLocalFlowArtifactFactory().createState(flow, element.getAttribute(ID_ATTRIBUTE),
+				EndState.class, parseProperties(element));
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
 			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE)));
@@ -680,7 +680,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected AnnotatedAction parseAnnotatedAction(Element element) {
 		AnnotatedAction action = new AnnotatedAction((Action)parseAction(element));
 		if (element.hasAttribute(NAME_ATTRIBUTE)) {
-			System.out.println("Setting name to " + element.getAttribute(NAME_ATTRIBUTE));
 			action.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)) {
@@ -779,8 +778,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * object.
 	 */
 	protected Transition parseTransition(TransitionableState sourceState, Element element) {
-		Transition transition = (Transition)getLocalFlowArtifactFactory().createTransition(
-				sourceState, parseProperties(element));
+		Transition transition = (Transition)getLocalFlowArtifactFactory().createTransition(sourceState,
+				parseProperties(element));
 		transition.setMatchingCriteria((TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(ON_ATTRIBUTE)));
 		transition.setExecutionCriteria(TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element)));
@@ -1103,7 +1102,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().createState(flow, id, stateType, properties);
 		}
 
-		public Transition createTransition(TransitionableState sourceState, Map properties) throws FlowArtifactException {
+		public Transition createTransition(TransitionableState sourceState, Map properties)
+				throws FlowArtifactException {
 			return getFlowArtifactFactory().createTransition(sourceState, properties);
 		}
 	}

@@ -19,8 +19,6 @@ import junit.framework.TestCase;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.ActionState;
-import org.springframework.webflow.DecisionState;
-import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
@@ -28,9 +26,7 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.SubflowState;
-import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 
@@ -57,25 +53,11 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 		assertEquals("testFlow3", flow.getId());
 		assertEquals(5, flow.getStateCount());
 		assertEquals(1, flow.getExceptionHandlerSet().size());
-
-		assertSame(flow.getClass(), CustomFlow.class);
-		assertSame(flow.getState("actionState1").getClass(), CustomActionState.class);
-		assertSame(((ActionState)flow.getState("actionState1")).getActionList().getAnnotated(0).getTargetAction().getClass(),
-				CustomAction.class);
-		assertSame(flow.getState("subFlowState1").getClass(), CustomSubflowState.class);
+		assertSame(((ActionState)flow.getState("actionState1")).getActionList().getAnnotated(0).getTargetAction()
+				.getClass(), CustomAction.class);
 		assertSame(((SubflowState)flow.getState("subFlowState1")).getAttributeMapper().getClass(),
 				CustomAttributeMapper.class);
-		assertSame(flow.getState("viewState1").getClass(), CustomViewState.class);
-		assertSame(((ViewState)flow.getState("viewState1")).getTransitions()[0].getClass(), CustomTransition.class);
-		assertSame(flow.getState("decisionState1").getClass(), CustomDecisionState.class);
-		assertSame(flow.getState("endState1").getClass(), CustomEndState.class);
 		assertSame(flow.getExceptionHandlerSet().toArray()[0].getClass(), CustomExceptionHandler.class);
-	}
-
-	public static class CustomFlow extends Flow {
-	}
-
-	public static class CustomActionState extends ActionState {
 	}
 
 	public static class CustomAction extends AbstractAction {
@@ -84,22 +66,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 		}
 	}
 
-	public static class CustomSubflowState extends SubflowState {
-	}
-
 	public static class CustomAttributeMapper extends ParameterizableFlowAttributeMapper {
-	}
-
-	public static class CustomViewState extends ViewState {
-	}
-
-	public static class CustomTransition extends Transition {
-	}
-
-	public static class CustomDecisionState extends DecisionState {
-	}
-
-	public static class CustomEndState extends EndState {
 	}
 
 	public static class CustomExceptionHandler implements StateExceptionHandler {
