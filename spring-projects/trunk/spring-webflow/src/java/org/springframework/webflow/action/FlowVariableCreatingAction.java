@@ -4,39 +4,59 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.springframework.core.CollectionFactory;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.support.FlowVariable;
 
 /**
- * A action that creates one or more variables in flow scope when executed.
+ * An action that creates one or more variables in flow scope when executed.  Typically 
+ * used as part of flow startup action logic.
+ * <p>
+ * Sample usage:
+ * 
+ * <pre>
+ *    FlowVariableCreatingAction action = new FlowVariableCreationAction();
+ *    action.addVariable(new FlowVariable(&quot;reservation&quot;, Reservation.class);
+ *    MockRequestContext context = new MockRequestContext();
+ *    action.execute(context);
+ * </pre>
+ * 
+ * @see FlowVariable
+ * @see Flow#getStartActionList()
+ * 
  * @author Keith Donald
  */
 public class FlowVariableCreatingAction extends AbstractAction {
 
 	/**
-	 * The variables to create
+	 * The flow variables to create.
 	 */
 	private Set variables = CollectionFactory.createLinkedSetIfPossible(3);
 
 	/**
-	 * Creates a new flow variable creating action.
+	 * Creates a new flow variable creating action, intially with an empty
+	 * variable set.
+	 * @see #addVariable(FlowVariable)
 	 */
 	public FlowVariableCreatingAction() {
 
 	}
 
 	/**
-	 * Creates a new flow variable creating action.
-	 * @param variable the var
+	 * Creates a new flow variable creating action that creates a single
+	 * variable.
+	 * @param variable the variable
 	 */
 	public FlowVariableCreatingAction(FlowVariable variable) {
 		addVariable(variable);
 	}
 
 	/**
-	 * Creates a new flow variable creating action.
-	 * @param variables the vars
+	 * Creates a new flow variable creating action that creates the set of
+	 * variables.
+	 * @param variables the variables
 	 */
 	public FlowVariableCreatingAction(FlowVariable[] variables) {
 		addVariables(variables);
@@ -67,7 +87,7 @@ public class FlowVariableCreatingAction extends AbstractAction {
 	 * Returns the flow variables.
 	 */
 	public FlowVariable[] getVariables() {
-		return (FlowVariable[])variables.toArray(new FlowVariable[variables.size()]);
+		return (FlowVariable[])variables.toArray(new FlowVariable[0]);
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
@@ -80,10 +100,14 @@ public class FlowVariableCreatingAction extends AbstractAction {
 	 * @param context the request context
 	 */
 	protected void createFlowVariables(RequestContext context) {
-		Iterator it = this.variables.iterator();
+		Iterator it = variables.iterator();
 		while (it.hasNext()) {
 			FlowVariable var = (FlowVariable)it.next();
 			var.create(context);
 		}
+	}
+	
+	public String toString() {
+		return new ToStringCreator(this).append("variables", getVariables()).toString();
 	}
 }

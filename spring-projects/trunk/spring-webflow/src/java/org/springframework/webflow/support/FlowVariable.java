@@ -1,13 +1,14 @@
 package org.springframework.webflow.support;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 
 /**
- * A value object that defines a flow variable. Encapsulates information about
- * the variable (name and type), and the behaivior to create a new variable
- * instance in flow execution scope.
+ * A value object that defines a specification for a flow variable. Encapsulates
+ * information about the variable (name and type), and the behavior necessary
+ * to create a new variable instance in a flow execution scope.
  * @author Keith Donald
  */
 public class FlowVariable {
@@ -39,7 +40,7 @@ public class FlowVariable {
 			return false;
 		}
 		FlowVariable other = (FlowVariable)o;
-		return this.name.equals(other.name);
+		return name.equals(other.name);
 	}
 
 	public int hashCode() {
@@ -51,10 +52,10 @@ public class FlowVariable {
 	 * @param context the flow execution request context
 	 */
 	public void create(RequestContext context) {
-		context.getFlowScope().setAttribute(name, newInstance(type, context));
+		context.getFlowScope().setAttribute(name, BeanUtils.instantiateClass(type));
 	}
 
-	protected Object newInstance(Class type, RequestContext context) {
-		return BeanUtils.instantiateClass(type);
+	public String toString() {
+		return new ToStringCreator(this).append("name", name).append("type", type).toString();
 	}
 }
