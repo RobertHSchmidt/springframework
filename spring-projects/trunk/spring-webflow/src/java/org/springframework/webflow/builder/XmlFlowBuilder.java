@@ -52,7 +52,6 @@ import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.FlowVariable;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.SubflowState;
@@ -65,6 +64,7 @@ import org.springframework.webflow.Transition.TargetStateResolver;
 import org.springframework.webflow.action.CompositeAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.support.FlowScopeExpression;
+import org.springframework.webflow.support.FlowVariable;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 import org.springframework.webflow.support.TransitionCriteriaChain;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
@@ -81,8 +81,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -192,6 +192,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String VAR_ELEMENT = "var";
 
+	private static final String START_ACTIONS_ELEMENT = "start-actions";
+
+	private static final String END_ACTIONS_ELEMENT = "end-actions";
+
 	private static final String ENTRY_ACTIONS_ELEMENT = "entry-actions";
 
 	private static final String EXIT_ACTIONS_ELEMENT = "exit-actions";
@@ -275,13 +279,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		this.location = location;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.springframework.webflow.builder.ResourceHolder#getResource()
 	 */
 	public Resource getResource() {
 		return location;
 	}
-	
+
 	/**
 	 * Returns whether or not the XML parser will validate the document.
 	 */
@@ -323,15 +328,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Assert.notNull(document, "Document should never be null");
 		}
 		catch (IOException e) {
-			throw new FlowBuilderException(this,
-					"Could not load the XML flow definition resource at '" + getLocation() + "'", e);
+			throw new FlowBuilderException(this, "Could not load the XML flow definition resource at '" + getLocation()
+					+ "'", e);
 		}
 		catch (ParserConfigurationException e) {
 			throw new FlowBuilderException(this, "Could not configure the parser to parse the XML flow definition", e);
 		}
 		catch (SAXException e) {
-			throw new FlowBuilderException(this, "Could not parse the flow definition XML document at '" + getLocation()
-					+ "'", e);
+			throw new FlowBuilderException(this, "Could not parse the flow definition XML document at '"
+					+ getLocation() + "'", e);
 		}
 		initConversionService();
 		setFlow(parseFlow(flowId, flowProperties, getDocumentElement()));
@@ -395,17 +400,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		initLocalFlowArtifactFactoryRegistry(flowElement);
 		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(flowElement.getAttribute(BEAN_ATTRIBUTE));
 		flow.setId(id);
-		Map flowProperties = parseProperties(flowElement);
-		if (properties != null) {
-			if (flowProperties != null) {
-				flowProperties.putAll(properties);
-			}
-			else {
-				flowProperties = new HashMap(properties);
-			}
-		}
-		flow.setProperties(flowProperties);
-		flow.addVariable(parseVariables(flowElement));
+		flow.setProperties(buildProperties(properties, flowElement));
+		parseAndAddFlowActions(flowElement, flow);
 		return flow;
 	}
 
@@ -449,18 +445,64 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 	}
 
-	protected FlowVariable[] parseVariables(Element element) {
+	/**
+	 * Build the flow property map.
+	 * @param properties the initial set of assigned properties
+	 * @param flowElement the flow element that may define additional properties
+	 * @return the flow property map
+	 */
+	protected Map buildProperties(Map properties, Element flowElement) {
+		Map flowProperties = parseProperties(flowElement);
+		if (properties != null) {
+			if (flowProperties != null) {
+				flowProperties.putAll(properties);
+			}
+			else {
+				flowProperties = new HashMap(properties);
+			}
+		}
+		return flowProperties;
+	}
+
+	/**
+	 * Parse a list of flow variables to create when the flow starts.
+	 * @param flowElement the flow element
+	 * @return the flow variables
+	 */
+	protected FlowVariable[] parseVariables(Element flowElement) {
 		List variables = new LinkedList();
-		List varElements = DomUtils.getChildElementsByTagName(element, VAR_ELEMENT);
+		List varElements = DomUtils.getChildElementsByTagName(flowElement, VAR_ELEMENT);
 		for (int i = 0; i < varElements.size(); i++) {
 			variables.add(parseVariable((Element)varElements.get(i)));
 		}
 		return (FlowVariable[])variables.toArray(new FlowVariable[variables.size()]);
 	}
-	
+
+	/**
+	 * Parse the flow variable.
+	 * @param element the var element
+	 * @return the flow variable
+	 */
 	protected FlowVariable parseVariable(Element element) {
 		Class type = (Class)fromStringTo(Class.class).execute(element.getAttribute(TYPE_ATTRIBUTE));
 		return new FlowVariable(element.getAttribute(NAME_ATTRIBUTE), type);
+	}
+
+	/**
+	 * Parse all state entry and exit actions defined in given element and add
+	 * them to given state.
+	 */
+	protected void parseAndAddFlowActions(Element element, Flow flow) {
+		List startElements = DomUtils.getChildElementsByTagName(element, START_ACTIONS_ELEMENT);
+		if (!startElements.isEmpty()) {
+			Element startElement = (Element)startElements.get(0);
+			flow.setStartAction(new CompositeAction(parseAnnotatedActions(startElement)));
+		}
+		List endElements = DomUtils.getChildElementsByTagName(element, END_ACTIONS_ELEMENT);
+		if (!endElements.isEmpty()) {
+			Element endElement = (Element)endElements.get(0);
+			flow.setEndAction(new CompositeAction(parseAnnotatedActions(endElement)));
+		}
 	}
 
 	/**
@@ -748,7 +790,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
 	}
-	
+
 	/**
 	 * Parse a transition definition and return a corresponding Transition
 	 * object.

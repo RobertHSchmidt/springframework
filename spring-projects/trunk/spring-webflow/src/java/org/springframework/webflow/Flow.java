@@ -124,14 +124,14 @@ public class Flow extends AnnotatedObject {
 	private State startState;
 
 	/**
+	 * A action to execute when this flow starts.
+	 */
+	private Action startAction;
+
+	/**
 	 * The set of state definitions for this flow.
 	 */
 	private Set states = CollectionFactory.createLinkedSetIfPossible(6);
-
-	/**
-	 * A set of variable definitions for this flow.
-	 */
-	private Set variables = CollectionFactory.createLinkedSetIfPossible(6);
 
 	/**
 	 * The list of exception handlers for this flow.
@@ -142,6 +142,11 @@ public class Flow extends AnnotatedObject {
 	 * The list of exception handlers for this flow.
 	 */
 	private Set inlineFlows = CollectionFactory.createLinkedSetIfPossible(3);
+
+	/**
+	 * A action to execute when this flow ends.
+	 */
+	private Action endAction;
 
 	/**
 	 * Default constructor for bean style usage.
@@ -409,21 +414,32 @@ public class Flow extends AnnotatedObject {
 		return stateIds;
 	}
 
-	public void addVariable(FlowVariable variable) {
-		variables.add(variable);
+	/**
+	 * Returns the action to execute when this flow starts.
+	 */
+	public Action getStartAction() {
+		return startAction;
 	}
 
-	public void addVariable(FlowVariable[] variables) {
-		if (variables == null) {
-			return;
-		}
-		for (int i = 0; i < variables.length; i++) {
-			addVariable(variables[i]);
-		}
+	/**
+	 * Sets the action to execute when this flow starts.
+	 */
+	public void setStartAction(Action startAction) {
+		this.startAction = startAction;
 	}
 
-	public FlowVariable[] getVariables() {
-		return (FlowVariable[])variables.toArray(new FlowVariable[variables.size()]);
+	/**
+	 * Returns the action to execute when this flow ends.
+	 */
+	public Action getEndAction() {
+		return endAction;
+	}
+
+	/**
+	 * Sets the action to execute when this flow ends.
+	 */
+	public void setEndAction(Action endAction) {
+		this.endAction = endAction;
 	}
 
 	/**
@@ -457,10 +473,18 @@ public class Flow extends AnnotatedObject {
 		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
 	}
 
+	/**
+	 * Adds an inline flow to this flow.
+	 * @param flow the inline flow to add
+	 */
 	public void addInlineFlow(Flow flow) {
 		inlineFlows.add(flow);
 	}
 
+	/**
+	 * Returns the list of inline flow ids.
+	 * @return a string array of inline flow identifiers
+	 */
 	public String[] getInlineFlowIds() {
 		String[] flowIds = new String[getInlineFlowCount()];
 		int i = 0;
@@ -471,33 +495,56 @@ public class Flow extends AnnotatedObject {
 		return flowIds;
 	}
 
+	/**
+	 * Returns the list of inline flows.
+	 * @return the list of inline flows
+	 */
 	public Flow[] getInlineFlows() {
 		return (Flow[])inlineFlows.toArray(new Flow[inlineFlows.size()]);
 	}
 
+	/**
+	 * Returns the count of registered inline flows.
+	 * @return the count
+	 */
 	public int getInlineFlowCount() {
 		return inlineFlows.size();
 	}
 
+	/**
+	 * Tests if this flow contains an in-line flow with the specified id.
+	 * @param id the inline flow id
+	 * @return true if this flow contains a inline flow with that id, false
+	 * otherwise
+	 */
 	public boolean containsInlineFlow(String id) {
 		return getInlineFlow(id) != null;
 	}
 
-	public Flow getInlineFlow(String flowId) {
-		if (!StringUtils.hasText(flowId)) {
+	/**
+	 * Returns the inline flow with the provided id, or <code>null</code> if
+	 * no such inline flow exists.
+	 * @param id the inline flow id
+	 * @return the inline flow
+	 */
+	public Flow getInlineFlow(String id) {
+		if (!StringUtils.hasText(id)) {
 			throw new IllegalArgumentException(
 					"The specified inline flowId is invalid: flow identifiers must be non-blank");
 		}
 		Iterator it = inlineFlowIterator();
 		while (it.hasNext()) {
 			Flow flow = (Flow)it.next();
-			if (flow.getId().equals(flowId)) {
+			if (flow.getId().equals(id)) {
 				return flow;
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Returns an inline flow iterator.
+	 */
 	public Iterator inlineFlowIterator() {
 		return inlineFlows.iterator();
 	}
@@ -515,15 +562,17 @@ public class Flow extends AnnotatedObject {
 		if (startState == null) {
 			startState = getStartState();
 		}
-		createFlowVariables(context);
+		executeStartAction(context);
 		return startState.enter(context);
 	}
-	
-	protected void createFlowVariables(FlowExecutionControlContext context) {
-		Iterator it = this.variables.iterator();
-		while (it.hasNext()) {
-			FlowVariable var = (FlowVariable)it.next();
-			var.create(context);
+
+	/**
+	 * Execute the start action registered with this flow.
+	 * @param context the flow execution request context
+	 */
+	protected void executeStartAction(RequestContext context) {
+		if (getStartAction() != null) {
+			new ActionExecutor(getStartAction()).execute(context);
 		}
 	}
 
@@ -553,6 +602,17 @@ public class Flow extends AnnotatedObject {
 	public void end(FlowExecutionControlContext context) {
 		if (isTransactional()) {
 			context.endTransaction();
+		}
+		executeEndAction(context);
+	}
+
+	/**
+	 * Execute the start action registered with this flow.
+	 * @param context the flow execution request context
+	 */
+	protected void executeEndAction(RequestContext context) {
+		if (getEndAction() != null) {
+			new ActionExecutor(getEndAction()).execute(context);
 		}
 	}
 

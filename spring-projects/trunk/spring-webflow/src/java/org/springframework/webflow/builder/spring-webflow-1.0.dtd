@@ -31,7 +31,7 @@
 	exception handlers, view selectors, transition criteria, etc). A flow may nest one or more other 
 	flows in-line to use as subflows, referred to as 'inline flows'.
 -->
-<!ELEMENT flow ( property*, var*, ( action-state | mapper-state | view-state | decision-state | subflow-state | end-state )+, exception-handler*, import*, inline-flow* )>
+<!ELEMENT flow ( property*, start-actions*, var*, ( action-state | view-state | decision-state | subflow-state | end-state )+, end-actions*, exception-handler*, import*, inline-flow* )>
 
 <!--
 	The the start state of this flow; the start state is the point where flow execution will begin.
@@ -39,10 +39,9 @@
 <!ATTLIST flow start-state IDREF #REQUIRED>
 
 <!--
-	Identifier of a custom flow implementation prototype exported in the flow artifact factory to use
-	for this flow.  This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
+	Defines flow startup logic to be executed. This logic will always execute when this flow is started.
 -->
-<!ATTLIST flow bean CDATA #IMPLIED>
+<!ELEMENT start-actions ( action+ )>
 
 <!--
 	A property associated with an another element (flow, action, state, transition, etc).
@@ -114,12 +113,6 @@
 <!ATTLIST action-state id ID #REQUIRED>
 
 <!--
-	Identifier of a custon action state implementation prototype exported in the flow artifact factory
-	to use for this state.  This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
--->
-<!ATTLIST action-state bean CDATA #IMPLIED>
-
-<!--
 	Defines a single action to be executed. An action is a command that executes
 	arbitrary behavior. An action may be annotated with properties. These properties can be
 	used to effect the action's execution.
@@ -174,13 +167,6 @@
 <!ELEMENT transition ( property*, action* )>
 
 <!--
-	Identifier of a custom transition implementation exported in the flow artifact factory
-	to use for this transition.  This is similar to the <ref bean="myBean"/> notation of
-	the Spring beans DTD.
--->
-<!ATTLIST transition bean CDATA #IMPLIED>
-
-<!--
 	The criteria that guards this transition's execution, typically reasoning on the
 	last event that occured in an execution of this flow to determine if this transition 
 	should execute.
@@ -202,51 +188,6 @@
 <!ATTLIST transition to IDREF #REQUIRED>
 
 <!--
-	Defines a mapper state, an action state where a single AttributeMapperAction configured 
-	with one or more mapping policies is executed.
-	An attribute mapper action maps the value of one or more source expressions to specific target 
-	property expressions.
--->
-<!ELEMENT mapper-state ( property*, entry-actions?, mapping+, transition+, exit-actions?, exception-handler* )>
-
-<!--
-	The unique identifier of this action state; must be unique to this flow.
--->
-<!ATTLIST mapper-state id ID #REQUIRED>
-
-<!--
-	Identifier of a custon mapper action state implementation prototype exported in the flow artifact factory
-	to use for this state.  This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
--->
-<!ATTLIST mapper-state bean CDATA #IMPLIED>
-
-<!--
-	Defines a single mapping rule that maps a value of a source expression to a target property expression.
--->
-<!ELEMENT mapping EMPTY>
-
-<!--
-	The mapping's source expression, a value expression evaluated against this flow's request context.
--->
-<!ATTLIST mapping source CDATA #IMPLIED>
-
-<!--
-	The mapping's target expression, a property expression evaluated against this flow's request context.
--->
-<!ATTLIST mapping target CDATA #IMPLIED>
-
-<!--
-	The type of the source attribute expression.
--->
-<!ATTLIST mapping from CDATA #IMPLIED>
-
-<!--
-	The target type of the target property expression value; used with the "from" attribute to perform
-	a value type conversion during attribute mapping.
--->
-<!ATTLIST mapping to CDATA #IMPLIED>
-
-<!--
 	Defines a view state, a state where a view will be selected for rendering and control will be 
 	returned to the user.
 
@@ -259,12 +200,6 @@
 	The unique identifier of this view state; must be unique to this flow.
 -->
 <!ATTLIST view-state id ID #REQUIRED>
-
-<!--
-	Identifier of a custom view state implementation prototype exported in the flow artifact factory 
-	to use for this state.  This is similar to the <ref bean="myBean"/> notation of	the Spring beans DTD.
--->
-<!ATTLIST view-state bean CDATA #IMPLIED>
 
 <!--
 	The name of the view to render when this view state is entered.
@@ -318,12 +253,6 @@
 <!ATTLIST decision-state id ID #REQUIRED>
 
 <!--
-	Identifier of a custom decision state implementation prototype exported in the flow artifact factory 
-	to use for this state.  This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
--->
-<!ATTLIST decision-state bean CDATA #IMPLIED>
-
-<!--
 	A transition specification that defines a criteria expression and a state to
 	transition to if that expression is true. Optionally, this element may also define
 	an 'else' attribute to note the state to transition to if the expression is false.
@@ -366,12 +295,6 @@
 	The unique identifier of this subflow state; must be unique to this flow.
 -->
 <!ATTLIST subflow-state id ID #REQUIRED>
-
-<!--
-	Identifier of a custom subflow state implementation prototype exported in the flow artifact factory 
-	to use for this state.  This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
--->
-<!ATTLIST subflow-state bean CDATA #IMPLIED>
 
 <!--
 	The id of the flow to be spawned as a subflow when this subflow state is entered.
@@ -514,12 +437,6 @@
 <!ATTLIST end-state id ID #REQUIRED>
 
 <!--
-	Identifier of a custom end state implementation prototype exported in the flow artifact factory
-	to use for this state.  This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
--->
-<!ATTLIST end-state bean CDATA #IMPLIED>
-
-<!--
 	The name of the view to to render when this end state is entered.
 	
 	This value may be a static view name or even a direct pointer to a view template. For example:
@@ -544,6 +461,11 @@
 	the client. Use a marker end state when another state is expected to generate the response.
 -->
 <!ATTLIST end-state view CDATA #IMPLIED>
+
+<!--
+	Defines flow ending logic to be executed. This logic will always execute when this flow is ended.
+-->
+<!ELEMENT end-actions ( action+ )>
 
 <!--
 	Defines a state exception handler to handle one or more exceptions that may occur during the
