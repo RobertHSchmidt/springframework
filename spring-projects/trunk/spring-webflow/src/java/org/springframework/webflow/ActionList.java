@@ -110,7 +110,6 @@ public class ActionList {
 	public AnnotatedAction getAnnotated(int index) throws IndexOutOfBoundsException {
 		Action action = get(index);
 		if (action instanceof AnnotatedAction) {
-			System.out.println("Returning " + action);
 			return (AnnotatedAction)action;
 		}
 		else {
