@@ -6,7 +6,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.FlowArtifactException;
 
 /**
  * A simple flow locator that uses a bean factory as a registry for locating
@@ -45,16 +45,16 @@ public class BeanFactoryFlowLocator implements FlowLocator, BeanFactoryAware {
 	 */
 	private BeanFactory beanFactory;
 
-	public Flow getFlow(String id) throws FlowArtifactLookupException {
+	public Flow getFlow(String id) throws FlowArtifactException {
 		try {
 			return (Flow)beanFactory.getBean(id, Flow.class);
 		}
 		catch (NoSuchBeanDefinitionException e) {
-			throw new FlowArtifactLookupException(Flow.class, id, "Could not locate flow in beanfactory with id '" + id
+			throw new FlowArtifactException(Flow.class, id, "Could not locate flow in beanfactory with id '" + id
 					+ "' - check your bean factory configuration", e);
 		}
 		catch (BeanNotOfRequiredTypeException e) {
-			throw new FlowArtifactLookupException(Flow.class, id, "A bean was found in the factory with id '" + id
+			throw new FlowArtifactException(Flow.class, id, "A bean was found in the factory with id '" + id
 					+ "' but it was not a Flow definition: check your bean factory configuration", e);
 		}
 	}

@@ -2,13 +2,13 @@ package org.springframework.webflow.registry;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 
 /**
- * A flow artifact locator that pulls subflow definitions from a explict
- * {@link FlowRegistry} The rest of the artifacts ared sourced from a standard
- * Spring BeanFactory.
+ * A flow artifact locator that obtains subflow definitions from a explict
+ * {@link FlowRegistry} The remaining types of artifacts ared sourced from a
+ * standard Spring BeanFactory.
  * 
  * @see FlowRegistry
  * @see FlowArtifactFactory#getSubflow(String)
@@ -33,7 +33,7 @@ public class FlowRegistryFlowArtifactFactory extends BeanFactoryFlowArtifactFact
 		this.subflowRegistry = subflowRegistry;
 	}
 
-	public Flow getSubflow(String id) throws FlowArtifactLookupException {
+	public Flow getSubflow(String id) throws FlowArtifactException {
 		return subflowRegistry.getFlow(id);
 	}
 }

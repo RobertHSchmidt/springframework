@@ -30,7 +30,7 @@ import org.springframework.core.NestedRuntimeException;
  * problem, a FlowArtifactLookupException is used for that.
  * 
  * @see org.springframework.webflow.State
- * @see org.springframework.webflow.FlowArtifactLookupException
+ * @see org.springframework.webflow.FlowArtifactException
  * 
  * @author Keith Donald
  */

@@ -32,7 +32,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
@@ -592,7 +592,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			this.flowLocator = flowLocator;
 		}
 
-		public Flow getFlow(String id) throws FlowArtifactLookupException {
+		public Flow getFlow(String id) throws FlowArtifactException {
 			if (rootFlow.getId().equals(id)) {
 				return rootFlow;
 			}

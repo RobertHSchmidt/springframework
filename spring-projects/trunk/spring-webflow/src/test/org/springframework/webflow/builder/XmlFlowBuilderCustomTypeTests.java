@@ -47,7 +47,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow3.xml",
-				XmlFlowBuilderCustomTypeTests.class), new FlowArtifactFactoryAdapter());
+				XmlFlowBuilderCustomTypeTests.class), new AbstractFlowArtifactFactory());
 		FlowAssembler assembler = new FlowAssembler("testFlow3", builder);
 		assembler.assembleFlow();
 		flow = builder.getResult();

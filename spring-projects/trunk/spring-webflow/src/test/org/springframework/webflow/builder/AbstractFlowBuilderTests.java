@@ -25,7 +25,7 @@ import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
@@ -49,8 +49,8 @@ public class AbstractFlowBuilderTests extends TestCase {
 
 	public void testDependencyLookup() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
-		master.setFlowArtifactFactory(new FlowArtifactFactoryAdapter() {
-			public Flow getSubflow(String id) throws FlowArtifactLookupException {
+		master.setFlowArtifactFactory(new AbstractFlowArtifactFactory() {
+			public Flow getSubflow(String id) throws FlowArtifactException {
 				if (id.equals(PERSON_DETAILS)) {
 					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();
 					builder.setFlowArtifactFactory(this);
@@ -59,20 +59,20 @@ public class AbstractFlowBuilderTests extends TestCase {
 					return builder.getResult();
 				}
 				else {
-					throw new FlowArtifactLookupException(Flow.class, id);
+					throw new FlowArtifactException(Flow.class, id);
 				}
 			}
 
-			public Action getAction(String actionId) throws FlowArtifactLookupException {
+			public Action getAction(String actionId) throws FlowArtifactException {
 				return new NoOpAction();
 			}
 
-			public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
+			public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 				if (id.equals("id.attributeMapper")) {
 					return new PersonIdMapper();
 				}
 				else {
-					throw new FlowArtifactLookupException(FlowAttributeMapper.class, id);
+					throw new FlowArtifactException(FlowAttributeMapper.class, id);
 				}
 			}
 		});
@@ -100,7 +100,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 			assembler.assembleFlow();
 			fail("Should have failed, artifact lookup not supported");
 		}
-		catch (FlowArtifactLookupException e) {
+		catch (FlowArtifactException e) {
 			// expected
 		}
 	}

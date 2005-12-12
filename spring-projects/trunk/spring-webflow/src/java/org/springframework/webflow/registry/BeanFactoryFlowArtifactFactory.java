@@ -1,31 +1,28 @@
 package org.springframework.webflow.registry;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.Transition.TargetStateResolver;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
-import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.builder.AbstractFlowArtifactFactory;
 
 /**
- * A flow artifact locator that pulls its artifacts from a standard Spring
- * BeanFactory.
+ * A flow artifact locator that obtains its artifacts by delegating to a
+ * standard Spring BeanFactory.
  * @author Keith Donald
  */
-public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter {
+public class BeanFactoryFlowArtifactFactory extends AbstractFlowArtifactFactory implements ResourceLoaderAware {
 
 	/**
 	 * The Spring bean factory that manages configured flow artifacts.
@@ -36,11 +33,12 @@ public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 	 * An optional resource loader that can load resources.
 	 */
 	private ResourceLoader resourceLoader;
-	
+
 	/**
 	 * Creates a flow artifact locator that retrieves artifacts from the
 	 * provided bean factory
-	 * @param beanFactory The spring bean factory that manages configured flow artifacts.
+	 * @param beanFactory The spring bean factory that manages configured flow
+	 * artifacts.
 	 */
 	public BeanFactoryFlowArtifactFactory(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
@@ -50,11 +48,11 @@ public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 		this.resourceLoader = resourceLoader;
 	}
 
-	public Flow getSubflow(String id) throws FlowArtifactLookupException {
+	public Flow getSubflow(String id) throws FlowArtifactException {
 		return (Flow)getBean(id, Flow.class, true);
 	}
-	
-	public Action getAction(String id) throws FlowArtifactLookupException {
+
+	public Action getAction(String id) throws FlowArtifactException {
 		return toAction(getBean(id, Action.class, false));
 	}
 
@@ -74,37 +72,25 @@ public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 			return new LocalBeanInvokingAction(artifact);
 		}
 	}
-	
-	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
+
+	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 		return (FlowAttributeMapper)getBean(id, FlowAttributeMapper.class, true);
 	}
 
-	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException {
+	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
 		return (TransitionCriteria)getBean(id, TransitionCriteria.class, true);
 	}
 
-	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
+	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
 		return (ViewSelector)getBean(id, ViewSelector.class, true);
 	}
 
-	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException {
+	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
 		return (TargetStateResolver)getBean(id, Transition.TargetStateResolver.class, true);
 	}
 
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
+	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
 		return (StateExceptionHandler)getBean(id, StateExceptionHandler.class, true);
-	}
-
-	public State createState(String id, Class stateType) throws FlowArtifactLookupException {
-		return (State)createPrototype(id, stateType);
-	}
-
-	public Transition createTransition(String id) throws FlowArtifactLookupException {
-		return (Transition)createPrototype(id, Transition.class);
-	}
-
-	public Flow createFlow(String id) throws FlowArtifactLookupException {
-		return (Flow)createPrototype(id, Flow.class);
 	}
 
 	private Object getBean(String id, Class artifactType, boolean enforceTypeCheck) {
@@ -117,20 +103,10 @@ public class BeanFactoryFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 			}
 		}
 		catch (NoSuchBeanDefinitionException e) {
-			throw new FlowArtifactLookupException(artifactType, id, e);
-		} catch (BeanNotOfRequiredTypeException e) {
-			throw new FlowArtifactLookupException(artifactType, id, e);
+			throw new FlowArtifactException(artifactType, id, e);
 		}
-	}
-
-	protected Object createPrototype(String id, Class artifactType) {
-		if (StringUtils.hasText(id) && beanFactory.containsBean(id)) {
-			Assert.isTrue(beanFactory.isSingleton(id), "Artifact with id '" + id + "' and type [" + artifactType
-					+ "] must be a prototype");
-			return beanFactory.getBean(id, artifactType);
-		}
-		else {
-			return BeanUtils.instantiateClass(artifactType);
+		catch (BeanNotOfRequiredTypeException e) {
+			throw new FlowArtifactException(artifactType, id, e);
 		}
 	}
 

@@ -26,7 +26,7 @@ import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
@@ -150,23 +150,23 @@ public class XmlFlowBuilderTests extends TestCase {
 	 * 
 	 * @author Erwin Vervaet
 	 */
-	public static class TestFlowArtifactLocator extends FlowArtifactFactoryAdapter {
+	public static class TestFlowArtifactLocator extends AbstractFlowArtifactFactory {
 
-		public Flow getSubflow(String id) throws FlowArtifactLookupException {
+		public Flow getSubflow(String id) throws FlowArtifactException {
 			if ("subFlow1".equals(id) || "subFlow2".equals(id)) {
 				return new Flow(id);
 			}
 			throw new NoSuchFlowDefinitionException(id);
 		}
 
-		public Action getAction(String id) throws FlowArtifactLookupException {
+		public Action getAction(String id) throws FlowArtifactException {
 			if ("action1".equals(id) || "action2".equals(id)) {
 				return new TestAction();
 			}
-			throw new FlowArtifactLookupException(Action.class, id);
+			throw new FlowArtifactException(Action.class, id);
 		}
 
-		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
+		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 			if ("attributeMapper1".equals(id)) {
 				return new FlowAttributeMapper() {
 					public Map createSubflowInput(RequestContext context) {
@@ -177,7 +177,7 @@ public class XmlFlowBuilderTests extends TestCase {
 					}
 				};
 			}
-			throw new FlowArtifactLookupException(FlowAttributeMapper.class, id);
+			throw new FlowArtifactException(FlowAttributeMapper.class, id);
 		}
 	};
 

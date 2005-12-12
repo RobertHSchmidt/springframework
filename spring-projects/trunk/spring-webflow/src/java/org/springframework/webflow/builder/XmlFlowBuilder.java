@@ -50,7 +50,7 @@ import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
@@ -80,8 +80,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *         &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *         &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -397,9 +397,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected Flow parseFlow(String id, Map properties, Element flowElement) {
 		Assert.state(FLOW_ELEMENT.equals(flowElement.getTagName()), "This is not the '" + FLOW_ELEMENT + "' element");
 		initLocalFlowArtifactFactoryRegistry(flowElement);
-		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(flowElement.getAttribute(BEAN_ATTRIBUTE));
-		flow.setId(id);
-		flow.setProperties(buildProperties(properties, flowElement));
+		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(id, buildProperties(properties, flowElement));
 		parseAndAddFlowActions(flowElement, flow);
 		return flow;
 	}
@@ -603,13 +601,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * flow.
 	 */
 	protected ActionState parseActionState(Flow flow, Element element) {
-		ActionState state = (ActionState)getLocalFlowArtifactFactory().createState(
-				element.getAttribute(BEAN_ATTRIBUTE), ActionState.class);
-		state.setId(element.getAttribute(ID_ATTRIBUTE));
-		state.setFlow(flow);
+		ActionState state = (ActionState)getLocalFlowArtifactFactory().createState(flow,
+				element.getAttribute(ID_ATTRIBUTE), ActionState.class, parseProperties(element));
 		state.getActionList().addAll(parseAnnotatedActions(element));
-		state.addTransitions(parseTransitions(element));
-		state.setProperties(parseProperties(element));
+		state.addTransitions(parseTransitions(state, element));
 		return state;
 	}
 
@@ -618,16 +613,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * flow.
 	 */
 	protected ViewState parseViewState(Flow flow, Element element) {
-		ViewState state = (ViewState)getLocalFlowArtifactFactory().createState(element.getAttribute(BEAN_ATTRIBUTE),
-				ViewState.class);
-		state.setId(element.getAttribute(ID_ATTRIBUTE));
-		state.setFlow(flow);
+		ViewState state = (ViewState)getLocalFlowArtifactFactory().createState(flow,
+				element.getAttribute(ID_ATTRIBUTE), ViewState.class, parseProperties(element));
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
 			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE)));
 		}
-		state.addTransitions(parseTransitions(element));
-		state.setProperties(parseProperties(element));
+		state.addTransitions(parseTransitions(state, element));
 		return state;
 	}
 
@@ -636,12 +628,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * the flow.
 	 */
 	protected DecisionState parseDecisionState(Flow flow, Element element) {
-		DecisionState state = (DecisionState)getLocalFlowArtifactFactory().createState(
-				element.getAttribute(BEAN_ATTRIBUTE), DecisionState.class);
-		state.setId(element.getAttribute(ID_ATTRIBUTE));
-		state.setFlow(flow);
+		DecisionState state = (DecisionState)getLocalFlowArtifactFactory().createState(flow,
+				element.getAttribute(ID_ATTRIBUTE), DecisionState.class, parseProperties(element));
 		state.addTransitions(parseIfs(element));
-		state.setProperties(parseProperties(element));
 		return state;
 	}
 
@@ -650,14 +639,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * flow.
 	 */
 	protected SubflowState parseSubflowState(Flow flow, Element element) {
-		SubflowState state = (SubflowState)getLocalFlowArtifactFactory().createState(
-				element.getAttribute(BEAN_ATTRIBUTE), SubflowState.class);
-		state.setId(element.getAttribute(ID_ATTRIBUTE));
-		state.setFlow(flow);
+		SubflowState state = (SubflowState)getLocalFlowArtifactFactory().createState(flow,
+				element.getAttribute(ID_ATTRIBUTE), SubflowState.class, parseProperties(element));
 		state.setSubflow(getLocalFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE)));
 		state.setAttributeMapper(parseAttributeMapper(element));
-		state.addTransitions(parseTransitions(element));
-		state.setProperties(parseProperties(element));
+		state.addTransitions(parseTransitions(state, element));
 		return state;
 	}
 
@@ -666,15 +652,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * flow.
 	 */
 	protected EndState parseEndState(Flow flow, Element element) {
-		EndState state = (EndState)getLocalFlowArtifactFactory().createState(element.getAttribute(BEAN_ATTRIBUTE),
-				EndState.class);
-		state.setId(element.getAttribute(ID_ATTRIBUTE));
-		state.setFlow(flow);
+		EndState state = (EndState)getLocalFlowArtifactFactory().createState(flow,
+				element.getAttribute(ID_ATTRIBUTE), EndState.class, parseProperties(element));
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
 			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE)));
 		}
-		state.setProperties(parseProperties(element));
 		return state;
 	}
 
@@ -782,11 +765,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Find all transition definitions in given state definition and return a
 	 * list of corresponding Transition objects.
 	 */
-	protected Transition[] parseTransitions(Element element) {
+	protected Transition[] parseTransitions(TransitionableState sourceState, Element element) {
 		List transitions = new LinkedList();
 		List transitionElements = DomUtils.getChildElementsByTagName(element, TRANSITION_ELEMENT);
 		for (int i = 0; i < transitionElements.size(); i++) {
-			transitions.add(parseTransition((Element)transitionElements.get(i)));
+			transitions.add(parseTransition(sourceState, (Element)transitionElements.get(i)));
 		}
 		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
 	}
@@ -795,15 +778,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Parse a transition definition and return a corresponding Transition
 	 * object.
 	 */
-	protected Transition parseTransition(Element element) {
+	protected Transition parseTransition(TransitionableState sourceState, Element element) {
 		Transition transition = (Transition)getLocalFlowArtifactFactory().createTransition(
-				element.getAttribute(BEAN_ATTRIBUTE));
+				sourceState, parseProperties(element));
 		transition.setMatchingCriteria((TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(ON_ATTRIBUTE)));
 		transition.setExecutionCriteria(TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element)));
 		transition.setTargetStateResolver((Transition.TargetStateResolver)fromStringTo(
 				Transition.TargetStateResolver.class).execute(element.getAttribute(TO_ATTRIBUTE)));
-		transition.setProperties(parseProperties(element));
 		return transition;
 	}
 
@@ -973,7 +955,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * querying the global, externally managed artifact factory.
 	 * @author Keith Donald
 	 */
-	private class LocalFlowArtifactFactory extends FlowArtifactFactoryAdapter {
+	private class LocalFlowArtifactFactory extends AbstractFlowArtifactFactory {
 
 		/**
 		 * The stack of registries.
@@ -1027,7 +1009,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return top().flow;
 		}
 
-		public Flow getSubflow(String id) throws FlowArtifactLookupException {
+		public Flow getSubflow(String id) throws FlowArtifactException {
 			Flow currentFlow = getCurrentFlow();
 			// quick check for recursive subflow
 			if (currentFlow.getId().equals(id)) {
@@ -1041,7 +1023,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getSubflow(id);
 		}
 
-		public Action getAction(String id) throws FlowArtifactLookupException {
+		public Action getAction(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {
 					return toAction(top().context.getBean(id));
@@ -1067,7 +1049,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			}
 		}
 
-		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
+		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {
 					return (FlowAttributeMapper)top().context.getBean(id);
@@ -1076,7 +1058,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getAttributeMapper(id);
 		}
 
-		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
+		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {
 					return (StateExceptionHandler)top().context.getBean(id);
@@ -1085,7 +1067,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getExceptionHandler(id);
 		}
 
-		public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException {
+		public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {
 					return (TransitionCriteria)top().context.getBean(id);
@@ -1094,7 +1076,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getTransitionCriteria(id);
 		}
 
-		public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
+		public ViewSelector getViewSelector(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {
 					return (ViewSelector)top().context.getBean(id);
@@ -1103,7 +1085,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getViewSelector(id);
 		}
 
-		public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException {
+		public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (top().context.containsBean(id)) {
 					return (TargetStateResolver)top().context.getBean(id);
@@ -1112,39 +1094,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getTargetStateResolver(id);
 		}
 
-		public Flow createFlow(String id) throws FlowArtifactLookupException {
-			Flow flow = null;
-			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (StringUtils.hasText(id) && top().context.containsBean(id)) {
-					Assert.isTrue(top().context.isSingleton(id), "Flows must be prototypes");
-					flow = (Flow)top().context.getBean(id);
-				}
-			}
-			if (flow == null) {
-				flow = getFlowArtifactFactory().createFlow(id);
-			}
-			top().flow = flow;
-			return flow;
+		public Flow createFlow(String id, Map properties) throws FlowArtifactException {
+			top().flow = getFlowArtifactFactory().createFlow(id, properties);
+			return top().flow;
 		}
 
-		public State createState(String id, Class stateType) throws FlowArtifactLookupException {
-			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (top().context.containsBean(id)) {
-					Assert.isTrue(top().context.isSingleton(id), "States must be prototypes");
-					return (State)top().context.getBean(id, stateType);
-				}
-			}
-			return getFlowArtifactFactory().createState(id, stateType);
+		public State createState(Flow flow, String id, Class stateType, Map properties) throws FlowArtifactException {
+			return getFlowArtifactFactory().createState(flow, id, stateType, properties);
 		}
 
-		public Transition createTransition(String id) throws FlowArtifactLookupException {
-			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (top().context.containsBean(id)) {
-					Assert.isTrue(top().context.isSingleton(id), "Transitions must be prototypes");
-					return (Transition)top().context.getBean(id);
-				}
-			}
-			return getFlowArtifactFactory().createTransition(id);
+		public Transition createTransition(TransitionableState sourceState, Map properties) throws FlowArtifactException {
+			return getFlowArtifactFactory().createTransition(sourceState, properties);
 		}
 	}
 

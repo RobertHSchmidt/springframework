@@ -14,7 +14,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SimpleFlow;
 import org.springframework.webflow.ViewSelection;
@@ -63,7 +63,7 @@ public class FlowExecutionManagerTests extends TestCase {
 			manager.onEvent(new MockExternalContext(input));
 			fail("Should have thrown no such flow exception");
 		}
-		catch (FlowArtifactLookupException e) {
+		catch (FlowArtifactException e) {
 		}
 	}
 
@@ -163,7 +163,7 @@ public class FlowExecutionManagerTests extends TestCase {
 				return simpleFlow;
 			}
 			else {
-				throw new FlowArtifactLookupException(Flow.class, id);
+				throw new FlowArtifactException(Flow.class, id);
 			}
 		}
 	}

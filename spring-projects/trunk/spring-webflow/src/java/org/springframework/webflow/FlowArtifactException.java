@@ -20,22 +20,22 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * A flow artifact lookup exception is thrown when a service artifact required by the
+ * A flow artifact exception is thrown when a service artifact required by the
  * webflow system cannot be obtained (like a flow, state, action, etc), either
- * at flow configuration time or at runtime.
- * Can be used directly, but you are encouraged to create a specific subclass
- * for a particular use case.
+ * at flow configuration time or at runtime. Can be used directly, but you are
+ * encouraged to create a specific subclass for a particular use case.
  * <p>
- * Flow artifact lookup exception indicate problems with the flow definition, e.g.
- * a required state of a flow cannot be found. They're not used to signal problems
- * related to execution of a client request. A StateException is used for that.
+ * Flow artifact exceptions indicate unrecoverable problems with the flow
+ * definition, e.g. a required state of a flow cannot be found. They're not used
+ * to signal problems related to execution of a client request. A StateException
+ * is used for that.
  * 
  * @see org.springframework.webflow.StateException
- *  
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowArtifactLookupException extends NestedRuntimeException {
+public class FlowArtifactException extends NestedRuntimeException {
 
 	/**
 	 * The type of artifact that could not be retrieved.
@@ -48,42 +48,42 @@ public class FlowArtifactLookupException extends NestedRuntimeException {
 	private String artifactId;
 
 	/**
-	 * Create a new flow artifact lookup exception.
+	 * Create a new flow artifact exception.
 	 * @param artifactType the expected service type
 	 * @param artifactId the id of the service that cannot be found
 	 */
-	public FlowArtifactLookupException(Class artifactType, String artifactId) {
+	public FlowArtifactException(Class artifactType, String artifactId) {
 		this(artifactType, artifactId, null, null);
 	}
 
 	/**
-	 * Create a new flow artifact lookup exception.
-	 * @param artifactType the expected service type
-	 * @param artifactId the id of the service that cannot be found
+	 * Create a new flow artifact exception.
+	 * @param artifactType the expected artifact type
+	 * @param artifactId the id of the artifact
 	 * @param cause the underlying cause of this exception
 	 */
-	public FlowArtifactLookupException(Class artifactType, String artifactId, Throwable cause) {
+	public FlowArtifactException(Class artifactType, String artifactId, Throwable cause) {
 		this(artifactType, artifactId, null, cause);
 	}
 
 	/**
-	 * Create a new flow artifact lookup exception.
-	 * @param artifactType the expected service type
-	 * @param artifactId the id of the service that cannot be found
+	 * Create a new flow artifact exception.
+	 * @param artifactType the expected artifact type
+	 * @param artifactId the id of the artifact
 	 * @param message descriptive message
 	 */
-	public FlowArtifactLookupException(Class artifactType, String artifactId, String message) {
+	public FlowArtifactException(Class artifactType, String artifactId, String message) {
 		this(artifactType, artifactId, message, null);
 	}
 
 	/**
 	 * Create a new flow artifact lookup exception.
-	 * @param artifactType the expected service type
-	 * @param artifactId the id of the service that cannot be found
+	 * @param artifactType the expected artifact type
+	 * @param artifactId the id of the artifact
 	 * @param message descriptive message
 	 * @param cause the underlying cause of this exception
 	 */
-	public FlowArtifactLookupException(Class artifactType, String artifactId, String message, Throwable cause) {
+	public FlowArtifactException(Class artifactType, String artifactId, String message, Throwable cause) {
 		super((StringUtils.hasText(message) ? message : "Unable to lookup flow artifact of type '"
 				+ ClassUtils.getShortName(artifactType) + "' with id '" + artifactId
 				+ "'; make sure there is at least one [" + artifactType + "] exported with this id"), cause);

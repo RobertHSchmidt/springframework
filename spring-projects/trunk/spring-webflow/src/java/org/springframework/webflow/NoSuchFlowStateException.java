@@ -24,7 +24,7 @@ import org.springframework.core.style.StylerUtils;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class NoSuchFlowStateException extends FlowArtifactLookupException {
+public class NoSuchFlowStateException extends FlowArtifactException {
 
 	/**
 	 * The flow where the state could not be found.

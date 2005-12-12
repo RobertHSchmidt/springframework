@@ -16,7 +16,7 @@
 package org.springframework.webflow.test;
 
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.registry.FlowRegistry;
 import org.springframework.webflow.registry.FlowRegistryFlowArtifactFactory;
@@ -58,7 +58,7 @@ public abstract class AbstractFlowRegistryFlowExecutionTests extends AbstractFlo
 	 * (non-Javadoc)
 	 * @see org.springframework.webflow.test.AbstractFlowExecutionTests#getFlow()
 	 */
-	protected Flow getFlow() throws FlowArtifactLookupException {
+	protected Flow getFlow() throws FlowArtifactException {
 		return flowRegistry.getFlow(flowId());
 	}
 
