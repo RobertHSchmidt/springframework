@@ -24,7 +24,7 @@ import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 
 /**
- * A typed list of state exception handlers, mainly for use internally by
+ * A typed set of state exception handlers, mainly for use internally by
  * artifacts that can apply state exception handling logic.
  * 
  * @see Flow#getExceptionHandlerList()
@@ -35,21 +35,25 @@ import org.springframework.core.style.ToStringCreator;
 public class StateExceptionHandlerSet {
 
 	/**
-	 * The set of exception handlers
+	 * The set of exception handlers.
 	 */
 	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(3);
 
 	/**
-	 * Add an exception handler to this list.
+	 * Add a state exception handler to this list.
 	 * @param exception handler the exception handler to add
+	 * @return true if this list's contents changed as a result of the add
+	 * operation
 	 */
 	public boolean add(StateExceptionHandler exceptionHandler) {
 		return exceptionHandlers.add(exceptionHandler);
 	}
 
 	/**
-	 * Add a collection of exception handler instances to this list.
+	 * Add a collection of state exception handler instances to this list.
 	 * @param exception handlers the exception handlers to add
+	 * @return true if this list's contents changed as a result of the add
+	 * operation
 	 */
 	public boolean addAll(StateExceptionHandler[] exceptionHandlers) {
 		if (exceptionHandlers == null) {
@@ -59,25 +63,27 @@ public class StateExceptionHandlerSet {
 	}
 
 	/**
-	 * Tests if this exception handler is in this list.
+	 * Tests if this state exception handler is in this list.
 	 * @param exception handler the exception handler
-	 * @return true if the exception handler is contained in this list, false
-	 * otherwise
+	 * @return true if the state exception handler is contained in this list,
+	 * false otherwise
 	 */
 	public boolean contains(StateExceptionHandler exceptionHandler) {
 		return exceptionHandlers.contains(exceptionHandler);
 	}
 
 	/**
-	 * Remove a exception handler instance from this list.
+	 * Remove the exception handler instance from this list.
 	 * @param exception handler the exception handler to add
+	 * @return true if this list's contents changed as a result of the remove
+	 * operation
 	 */
 	public boolean remove(StateExceptionHandler exceptionHandler) {
 		return exceptionHandlers.remove(exceptionHandler);
 	}
 
 	/**
-	 * Returns the size of this exception handler list.
+	 * Returns the size of this state exception handler list.
 	 * @return the exception handler list size.
 	 */
 	public int size() {
@@ -85,8 +91,8 @@ public class StateExceptionHandlerSet {
 	}
 
 	/**
-	 * Returns an iterator that lists the set of exception handlers to execute
-	 * for this state.
+	 * Returns an iterator that allows iteration over the set of exception
+	 * handlers in this set.
 	 * @return the StateExceptionHandler iterator
 	 */
 	public Iterator iterator() {
@@ -94,7 +100,7 @@ public class StateExceptionHandlerSet {
 	}
 
 	/**
-	 * Convert this list to an exception handler array.
+	 * Convert this list to a typed state exception handler array.
 	 * @return the exception handler list, as a typed array
 	 */
 	public StateExceptionHandler[] toArray() {
@@ -102,7 +108,7 @@ public class StateExceptionHandlerSet {
 	}
 
 	/**
-	 * Convert this list to a java.util.List.
+	 * Convert this list to a <code>java.util.List</code>.
 	 * @return the exception handler list, as a java.util.List
 	 */
 	public Set toSet() {

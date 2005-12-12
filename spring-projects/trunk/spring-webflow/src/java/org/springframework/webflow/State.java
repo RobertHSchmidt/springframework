@@ -36,7 +36,7 @@ import org.springframework.util.Assert;
  * <p>
  * Why is this class abstract and not an interface? A specific design choice. It
  * is expected that specializations of this base class be "States" and not part
- * of some other inheritence hierarchy.
+ * of some other inheritance hierarchy.
  * 
  * @see org.springframework.webflow.TransitionableState
  * @see org.springframework.webflow.ActionState
@@ -167,11 +167,12 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
-	 * Adds an exception handler to this state.
+	 * Adds a exception handler to this state.
 	 * <p>
-	 * Exception handlers are invoked when an exception occurs when this state
-	 * is entered, and can execute custom exception handling logic as well as
-	 * select an error view to display.
+	 * State exception handlers are invoked when an unhandled
+	 * {@link StateException} exception occurs while this state is entered. They
+	 * can execute custom exception handling logic as well as select an error
+	 * view to display.
 	 * @param handler the exception handler
 	 */
 	public void addExceptionHandler(StateExceptionHandler handler) {

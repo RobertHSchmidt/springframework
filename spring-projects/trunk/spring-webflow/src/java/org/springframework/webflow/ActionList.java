@@ -77,6 +77,8 @@ public class ActionList {
 	/**
 	 * Remove the action instance from this list.
 	 * @param action the action to add
+	 * @return true if this list's contents changed as a result of the remove
+	 * operation 
 	 */
 	public boolean remove(Action action) {
 		return actions.remove(action);
