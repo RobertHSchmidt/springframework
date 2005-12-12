@@ -265,6 +265,7 @@
 	The transition criteria expression to be tested. This should be an ${expression} that
 	evaluates against this flow's request context. For example:
 	    <if test="${flowScope.sale.shipping} then="enterShippingDetails"/>
+	    <if test="${lastEvent.id == 'search'} then="bindSearchParameters"/>
 -->
 <!ATTLIST if test CDATA #REQUIRED>
 
