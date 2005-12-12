@@ -15,13 +15,8 @@
  */
 package org.springframework.webflow;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
@@ -71,19 +66,21 @@ public abstract class State extends AnnotatedObject {
 	private String id;
 
 	/**
-	 * The action to invoke when this state is entered.
+	 * The list of actions to invoke when this state is entered.
 	 */
-	private Action entryAction;
+	private ActionList entryActionList = new ActionList();
 
 	/**
-	 * The list of exception handlers for this state.
+	 * The set of exception handlers for this state.
 	 */
-	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(1);
+	private StateExceptionHandlerSet exceptionHandlerSet = new StateExceptionHandlerSet();
 
 	/**
 	 * Default constructor for bean style usage
 	 * @see #setFlow(Flow)
 	 * @see #setId(String)
+	 * @see #addEntryAction(Action)
+	 * @see #addExceptionHandler(StateExceptionHandler)
 	 */
 	protected State() {
 	}
@@ -96,26 +93,12 @@ public abstract class State extends AnnotatedObject {
 	 * @param id the state identifier (must be unique to the flow)
 	 * @throws IllegalArgumentException if this state cannot be added to the
 	 * flow
+	 * @see #addEntryAction(Action)
+	 * @see #addExceptionHandler(StateExceptionHandler)
 	 */
 	protected State(Flow flow, String id) throws IllegalArgumentException {
 		setId(id);
 		setFlow(flow);
-	}
-
-	/**
-	 * Creates a state for the provided <code>flow</code> identified by the
-	 * provided <code>id</code>. The id must be locally unique to the owning
-	 * flow. The flow state will be automatically added to the flow.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException if this state cannot be added to the
-	 * flow
-	 */
-	protected State(Flow flow, String id, Map properties) throws IllegalArgumentException {
-		setId(id);
-		setFlow(flow);
-		setProperties(properties);
 	}
 
 	/**
@@ -156,19 +139,20 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
-	 * Returns the action to invoke when this state is entered.
-	 * @return the entry action (may be null)
+	 * Convenience method to add a single action to this state's entry action
+	 * list. Entry actions are executed when this state is entered.
+	 * @param action the action to add
 	 */
-	public Action getEntryAction() {
-		return entryAction;
+	public void addEntryAction(Action action) {
+		getEntryActionList().add(action);
 	}
 
 	/**
-	 * Sets the action to invoke when this state is entered.
-	 * @param entryAction the entry action (may be null)
+	 * Returns the list of actions executed by this state when it is entered.
+	 * @return the state entry action list
 	 */
-	public void setEntryAction(Action entryAction) {
-		this.entryAction = entryAction;
+	public ActionList getEntryActionList() {
+		return entryActionList;
 	}
 
 	/**
@@ -183,27 +167,28 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
-	 * Adds an exception handler to this state. Exception handlers are invoked
-	 * when an exception occurs when this state is entered, and can execute
-	 * custom exception handling logic as well as select an error view to
-	 * display.
+	 * Adds an exception handler to this state.
+	 * <p>
+	 * Exception handlers are invoked when an exception occurs when this state
+	 * is entered, and can execute custom exception handling logic as well as
+	 * select an error view to display.
 	 * @param handler the exception handler
 	 */
 	public void addExceptionHandler(StateExceptionHandler handler) {
-		exceptionHandlers.add(handler);
+		exceptionHandlerSet.add(handler);
 	}
 
 	/**
-	 * Adds the list of state exception handlers to this state definition.
-	 * @param exceptionHandlers the state exception handlers
+	 * Returns a mutable set of exception handlers, allowing manipulation of how
+	 * exceptions are handled when thrown within this state.
+	 * <p>
+	 * Exception handlers are invoked when an exception occurs when this state
+	 * is entered, and can execute custom exception handling logic as well as
+	 * select an error view to display.
+	 * @return the state exception handler set
 	 */
-	public void addExceptionHandlers(StateExceptionHandler[] exceptionHandlers) {
-		if (exceptionHandlers == null) {
-			return;
-		}
-		for (int i = 0; i < exceptionHandlers.length; i++) {
-			addExceptionHandler(exceptionHandlers[i]);
-		}
+	public StateExceptionHandlerSet getExceptionHandlerSet() {
+		return exceptionHandlerSet;
 	}
 
 	/**
@@ -222,18 +207,8 @@ public abstract class State extends AnnotatedObject {
 			logger.debug("Entering state '" + getId() + "' of flow '" + getFlow().getId() + "'");
 		}
 		context.setCurrentState(this);
-		executeEntryAction(context);
+		entryActionList.execute(context);
 		return doEnter(context);
-	}
-
-	/**
-	 * Execute the entry action registered with this state.
-	 * @param context the flow execution request context
-	 */
-	protected void executeEntryAction(RequestContext context) {
-		if (getEntryAction() != null) {
-			new ActionExecutor(getEntryAction()).execute(context);
-		}
 	}
 
 	/**
@@ -249,38 +224,21 @@ public abstract class State extends AnnotatedObject {
 	protected abstract ViewSelection doEnter(FlowExecutionControlContext context) throws StateException;
 
 	/**
-	 * Handle an exception that occured during the entering of this state in the
-	 * context of the current request.
-	 * <p>
-	 * This implementation iterates over the ordered set of exception handler
-	 * objects, delegating to each handler in the set until one handles the
-	 * exception that occured and selects a non-null error view.
+	 * Handle an exception that occured in this state during the context of the
+	 * current flow execution request.
 	 * @param exception the exception that occured
 	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
 	 */
-	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
-			throws StateException {
-		Iterator it = exceptionHandlers.iterator();
-		while (it.hasNext()) {
-			StateExceptionHandler handler = (StateExceptionHandler)it.next();
-			if (handler.handles(exception)) {
-				ViewSelection selectedView = handler.handle(exception, context);
-				if (selectedView != null) {
-					return selectedView;
-				}
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("No exception handler found for state exception [" + exception + "]; returning [null]...");
-		}
-		return null;
+	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context) {
+		return getExceptionHandlerSet().handleException(exception, context);
 	}
 
 	public String toString() {
 		ToStringCreator creator = new ToStringCreator(this).append("id", getId()).append("flow",
-				flow == null ? "<not set>" : flow.getId()).append("entryAction", entryAction);
+				flow == null ? "<not set>" : flow.getId()).append("entryActionList", entryActionList).append(
+				"exceptionHandlerSet", exceptionHandlerSet);
 		createToString(creator);
 		return creator.toString();
 	}

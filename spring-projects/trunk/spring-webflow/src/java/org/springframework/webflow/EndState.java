@@ -69,38 +69,11 @@ public class EndState extends State {
 	 * @param id the state identifier (must be unique to the flow)
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
+	 * @see State#State(Flow, String)
+	 * @see #setViewSelector(ViewSelector)
 	 */
 	public EndState(Flow flow, String id) throws IllegalArgumentException {
 		super(flow, id);
-	}
-
-	/**
-	 * Create a new end state with specified associated view.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param selector strategy used to select the view that should be rendered
-	 * if this end state terminates a flow execution
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	public EndState(Flow flow, String id, ViewSelector selector) throws IllegalArgumentException {
-		super(flow, id);
-		setViewSelector(selector);
-	}
-
-	/**
-	 * Create a new end state with specified associated view.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param selector strategy used to select the view that should be rendered
-	 * if this end state terminates a flow execution
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	public EndState(Flow flow, String id, ViewSelector selector, Map properties) throws IllegalArgumentException {
-		super(flow, id, properties);
-		setViewSelector(selector);
 	}
 
 	/**
@@ -115,8 +88,8 @@ public class EndState extends State {
 	 * Sets the strategy used to select the view to render when this end state
 	 * is entered and terminates a root flow.
 	 */
-	public void setViewSelector(ViewSelector creator) {
-		this.viewSelector = creator;
+	public void setViewSelector(ViewSelector viewSelector) {
+		this.viewSelector = viewSelector;
 	}
 
 	/**
@@ -177,8 +150,7 @@ public class EndState extends State {
 	 * this if necessary.
 	 */
 	protected Event subflowResult(RequestContext context) {
-		// treat this end state id as a transitional event in the
-		// resuming state, this is so cool!
+		// treat this end state id as a transitional event in the resuming state
 		return new Event(this, getId(), resultParameters(context));
 	}
 

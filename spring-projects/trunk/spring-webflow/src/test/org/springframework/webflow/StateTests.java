@@ -17,7 +17,6 @@ package org.springframework.webflow;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import junit.framework.TestCase;
 
@@ -40,30 +39,31 @@ public class StateTests extends TestCase {
 
 	public void testActionStateSingleAction() {
 		Flow flow = new Flow("myFlow");
-		ActionState state = new ActionState(flow, "actionState", new ExecutionCounterAction(),
-				new Transition[] { new Transition(on("success"), "finish") });
+		ActionState state = new ActionState(flow, "actionState");
+		state.addAction(new ExecutionCounterAction());
+		state.addTransition(new Transition(on("success"), "finish"));
 		new EndState(flow, "finish");
-		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(null, new MockExternalContext());
 		assertNull(view);
 		assertEquals("success", flowExecution.getLastEventId());
-		assertEquals(1, ((ExecutionCounterAction)state.getAction()).getExecutionCount());
+		assertEquals(1, ((ExecutionCounterAction)state.getActionList().get(0)).getExecutionCount());
 	}
 
 	public void testActionAttributesChain() {
 		Flow flow = new Flow("myFlow");
-		ActionState state = new ActionState(flow, "actionState", new Action[] {
-				new ExecutionCounterAction("not mapped result"), new ExecutionCounterAction(null),
-				new ExecutionCounterAction(""), new ExecutionCounterAction("success") },
-				new Transition[] { new Transition(on("success"), "finish") });
+		ActionState state = new ActionState(flow, "actionState");
+		state.addAction(new ExecutionCounterAction("not mapped result"));
+		state.addAction(new ExecutionCounterAction(null));
+		state.addAction(new ExecutionCounterAction(""));
+		state.addAction(new ExecutionCounterAction("success"));
+		state.addTransition(new Transition(on("success"), "finish"));
 		new EndState(flow, "finish");
-		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(null, new MockExternalContext());
 		assertNull(view);
 		assertEquals("success", flowExecution.getLastEventId());
-		Action[] actions = state.getActions();
+		Action[] actions = state.getActionList().toArray();
 		for (int i = 0; i < actions.length; i++) {
 			ExecutionCounterAction action = (ExecutionCounterAction)actions[i];
 			assertEquals(1, action.getExecutionCount());
@@ -72,12 +72,13 @@ public class StateTests extends TestCase {
 
 	public void testActionAttributesChainNoMatchingTransition() {
 		Flow flow = new Flow("myFlow");
-		new ActionState(flow, "actionState", new Action[] { new ExecutionCounterAction("not mapped result"),
-				new ExecutionCounterAction(null), new ExecutionCounterAction(""),
-				new ExecutionCounterAction("yet another not mapped result") }, new Transition[] { new Transition(
-				on("success"), "finish") });
+		ActionState state = new ActionState(flow, "actionState");
+		state.addAction(new ExecutionCounterAction("not mapped result"));
+		state.addAction(new ExecutionCounterAction(null));
+		state.addAction(new ExecutionCounterAction(""));
+		state.addAction(new ExecutionCounterAction("yet another not mapped result"));
+		state.addTransition(new Transition(on("success"), "finish"));
 		new EndState(flow, "finish");
-		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		try {
 			flowExecution.start(null, new MockExternalContext());
@@ -90,24 +91,22 @@ public class StateTests extends TestCase {
 
 	public void testActionAttributesChainNamedActions() {
 		Flow flow = new Flow("myFlow");
-		Action[] actions = new AnnotatedAction[4];
-		actions[0] = new AnnotatedAction(new ExecutionCounterAction("not mapped result"));
-		actions[1] = new AnnotatedAction(new ExecutionCounterAction(null));
-		Properties properties = new Properties();
-		properties.put("name", "action3");
-		actions[2] = new AnnotatedAction(new ExecutionCounterAction(""), properties);
-		properties = new Properties();
-		properties.put("name", "action4");
-		actions[3] = new AnnotatedAction(new ExecutionCounterAction("success"), properties);
-		ActionState state = new ActionState(flow, "actionState", actions, new Transition[] { new Transition(
-				on("action4.success"), "finish") });
+		ActionState state = new ActionState(flow, "actionState");
+		state.addAction(new AnnotatedAction(new ExecutionCounterAction("not mapped result")));
+		state.addAction(new AnnotatedAction(new ExecutionCounterAction(null)));
+		AnnotatedAction action3 = new AnnotatedAction(new ExecutionCounterAction(""));
+		action3.setName("action3");
+		state.addAction(action3);
+		AnnotatedAction action4 = new AnnotatedAction(new ExecutionCounterAction("success"));
+		action4.setName("action4");
+		state.addAction(action4);
+		state.addTransition(new Transition(on("action4.success"), "finish"));
 		new EndState(flow, "finish");
-		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(null, new MockExternalContext());
 		assertNull(view);
 		assertEquals("action4.success", flowExecution.getLastEventId());
-		actions = state.getActions();
+		Action[] actions = state.getActionList().toArray();
 		for (int i = 0; i < actions.length; i++) {
 			AnnotatedAction action = (AnnotatedAction)actions[i];
 			assertEquals(1, ((ExecutionCounterAction)(action.getTargetAction())).getExecutionCount());
@@ -116,8 +115,9 @@ public class StateTests extends TestCase {
 
 	public void testViewState() {
 		Flow flow = new Flow("myFlow");
-		ViewState state = new ViewState(flow, "viewState", view("myViewName"), new Transition[] { new Transition(
-				on("submit"), "finish") });
+		ViewState state = new ViewState(flow, "viewState");
+		state.setViewSelector(view("myViewName"));
+		state.addTransition(new Transition(on("submit"), "finish"));
 		assertTrue(state.isTransitionable());
 		assertTrue(!state.isMarker());
 		new EndState(flow, "finish");
@@ -131,7 +131,8 @@ public class StateTests extends TestCase {
 
 	public void testViewStateMarker() {
 		Flow flow = new Flow("myFlow");
-		ViewState state = new ViewState(flow, "viewState", new Transition[] { new Transition(on("submit"), "finish") });
+		ViewState state = new ViewState(flow, "viewState");
+		state.addTransition(new Transition(on("submit"), "finish"));
 		assertTrue(state.isMarker());
 		new EndState(flow, "finish");
 		flow.resolveStateTransitionsTargetStates();
@@ -143,16 +144,18 @@ public class StateTests extends TestCase {
 
 	public void testSubFlowState() {
 		Flow subFlow = new Flow("mySubFlow");
-		new ViewState(subFlow, "subFlowViewState", view("mySubFlowViewName"), new Transition[] { new Transition(
-				on("submit"), "finish") });
+		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
+		state1.setViewSelector(view("mySubFlowViewName"));
+		state1.addTransition(new Transition(on("submit"), "finish"));
 		new EndState(subFlow, "finish");
-		subFlow.resolveStateTransitionsTargetStates();
 
 		Flow flow = new Flow("myFlow");
-		new SubflowState(flow, "subFlowState", subFlow, new Transition[] { new Transition(on("finish"), "finish") });
-		new EndState(flow, "finish", view("myParentFlowEndingViewName"));
-		flow.resolveStateTransitionsTargetStates();
-		
+		SubflowState state2 = new SubflowState(flow, "subFlowState", subFlow);
+		state2.addTransition(new Transition(on("finish"), "finish"));
+
+		EndState state3 = new EndState(flow, "finish");
+		state3.setViewSelector(view("myParentFlowEndingViewName"));
+
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(null, new MockExternalContext());
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
@@ -165,19 +168,25 @@ public class StateTests extends TestCase {
 
 	public void testSubFlowStateModelMapping() {
 		Flow subFlow = new Flow("mySubFlow");
-		new ViewState(subFlow, "subFlowViewState", view("mySubFlowViewName"), new Transition[] { new Transition(
-				on("submit"), "finish") });
+		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
+		state1.setViewSelector(view("mySubFlowViewName"));
+		state1.addTransition(new Transition(on("submit"), "finish"));
 		new EndState(subFlow, "finish");
-		subFlow.resolveStateTransitionsTargetStates();
 
 		Flow flow = new Flow("myFlow");
-		new ActionState(flow, "mapperState", new AttributeMapperAction(new Mapping(
-				"externalContext.requestParameterMap.parentInputAttribute", "flowScope.parentInputAttribute")),
-				new Transition[] { new Transition(on("success"), "subFlowState") });
-		new SubflowState(flow, "subFlowState", subFlow, new InputOutputMapper(), new Transition[] { new Transition(
-				on("finish"), "finish") });
-		new EndState(flow, "finish", view("myParentFlowEndingViewName"));
-		flow.resolveStateTransitionsTargetStates();
+		ActionState mapperState = new ActionState(flow, "mapperState");
+		Action mapperAction = new AttributeMapperAction(new Mapping(
+				"externalContext.requestParameterMap.parentInputAttribute", "flowScope.parentInputAttribute"));
+		mapperState.addAction(mapperAction);
+		mapperState.addTransition(new Transition(on("success"), "subFlowState"));
+
+		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
+		subflowState.setAttributeMapper(new InputOutputMapper());
+		subflowState.addTransition(new Transition(on("finish"), "finish"));
+
+		EndState endState = new EndState(flow, "finish");
+		endState.setViewSelector(view("myParentFlowEndingViewName"));
+
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		Map input = new HashMap();
 		input.put("parentInputAttribute", "attributeValue");

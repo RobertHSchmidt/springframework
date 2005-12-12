@@ -316,23 +316,23 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Handles an exception that occured performing an operation on this flow
 	 * execution. First trys the set of exception handlers associated with the
 	 * offending state, then the handlers at the flow level.
-	 * @param e the exception that occured
+	 * @param exception the exception that occured
 	 * @param context the state context the exception occured in
 	 * @return the selected error view
 	 * @throws StateException rethrows the exception it was not handled at the
 	 * state or flow level
 	 */
-	protected ViewSelection handleException(StateException e, FlowExecutionControlContext context)
+	protected ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
 			throws StateException {
-		ViewSelection selectedView = e.getState().handleException(e, context);
+		ViewSelection selectedView = exception.getState().handleException(exception, context);
 		if (selectedView != null) {
 			return selectedView;
 		}
-		selectedView = e.getState().getFlow().handleException(e, context);
+		selectedView = exception.getState().getFlow().handleException(exception, context);
 		if (selectedView != null) {
 			return selectedView;
 		}
-		throw e;
+		throw exception;
 	}
 
 	public synchronized ViewSelection signalEvent(String eventId, String stateId, ExternalContext externalContext)

@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow;
 
-import java.util.Map;
-
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -55,19 +53,6 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
-	 * Create a new marker view state, a view state that causes the flow to
-	 * pause but does not trigger the rendering of a response.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param transitions the transitions of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	public ViewState(Flow flow, String id, Transition[] transitions) throws IllegalArgumentException {
-		super(flow, id, transitions);
-	}
-
-	/**
 	 * Create a new view state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
@@ -76,26 +61,9 @@ public class ViewState extends TransitionableState {
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 */
-	public ViewState(Flow flow, String id, ViewSelector viewSelector, Transition[] transitions)
+	public ViewState(Flow flow, String id)
 			throws IllegalArgumentException {
-		super(flow, id, transitions);
-		setViewSelector(viewSelector);
-	}
-
-	/**
-	 * Create a new view state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param viewSelector the factory used to produce the view to render
-	 * @param transitions the transitions of this state
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	public ViewState(Flow flow, String id, ViewSelector viewSelector, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
-		super(flow, id, transitions, properties);
-		setViewSelector(viewSelector);
+		super(flow, id);
 	}
 
 	/**

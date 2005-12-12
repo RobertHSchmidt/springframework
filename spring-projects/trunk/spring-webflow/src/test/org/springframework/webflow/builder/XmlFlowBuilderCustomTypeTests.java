@@ -56,11 +56,11 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 	public void testBuildResult() {
 		assertEquals("testFlow3", flow.getId());
 		assertEquals(5, flow.getStateCount());
-		assertEquals(1, flow.getExceptionHandlers().length);
+		assertEquals(1, flow.getExceptionHandlerSet().size());
 
 		assertSame(flow.getClass(), CustomFlow.class);
 		assertSame(flow.getState("actionState1").getClass(), CustomActionState.class);
-		assertSame(((ActionState)flow.getState("actionState1")).getAnnotatedAction().getTargetAction().getClass(),
+		assertSame(((ActionState)flow.getState("actionState1")).getActionList().getAnnotated(0).getTargetAction().getClass(),
 				CustomAction.class);
 		assertSame(flow.getState("subFlowState1").getClass(), CustomSubflowState.class);
 		assertSame(((SubflowState)flow.getState("subFlowState1")).getAttributeMapper().getClass(),
@@ -69,7 +69,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 		assertSame(((ViewState)flow.getState("viewState1")).getTransitions()[0].getClass(), CustomTransition.class);
 		assertSame(flow.getState("decisionState1").getClass(), CustomDecisionState.class);
 		assertSame(flow.getState("endState1").getClass(), CustomEndState.class);
-		assertSame(flow.getExceptionHandlers()[0].getClass(), CustomExceptionHandler.class);
+		assertSame(flow.getExceptionHandlerSet().toArray()[0].getClass(), CustomExceptionHandler.class);
 	}
 
 	public static class CustomFlow extends Flow {

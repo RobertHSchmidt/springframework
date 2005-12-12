@@ -167,7 +167,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the newly created flow instance
 	 */
 	protected Flow createFlow(String id, Map properties) {
-		return new Flow(id, properties);
+		Flow flow = new Flow(id);
+		flow.setProperties(properties);
+		return flow;
 	}
 
 	/**
@@ -323,7 +325,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * state triggers the rendering of a view template when entered.
 	 * @param stateId the <code>ViewState</code> id; must be unique in the
 	 * context of the flow built by this builder
-	 * @param selector the factory to produce a selection noting the name of the
+	 * @param viewSelector the factory to produce a selection noting the name of the
 	 * logical view to render; this name will be mapped to a physical resource
 	 * template such as a JSP when the ViewState is entered and control returns
 	 * to the front controller
@@ -333,9 +335,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the view state
 	 * @throws IllegalArgumentException the stateId was not unique
 	 */
-	protected ViewState addViewState(String stateId, ViewSelector selector, Transition[] transitions)
+	protected ViewState addViewState(String stateId, ViewSelector viewSelector, Transition[] transitions)
 			throws IllegalArgumentException {
-		return new ViewState(getFlow(), stateId, selector, transitions);
+		return addViewState(stateId, viewSelector, transitions, null);
 	}
 
 	/**
@@ -343,7 +345,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * state triggers the rendering of a view template when entered.
 	 * @param stateId the <code>ViewState</code> id; must be unique in the
 	 * context of the flow built by this builder
-	 * @param selector the factory to produce a selection noting the name of the
+	 * @param viewSelector the factory to produce a selection noting the name of the
 	 * logical view to render; this name will be mapped to a physical resource
 	 * template such as a JSP when the ViewState is entered and control returns
 	 * to the front controller
@@ -354,9 +356,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the view state
 	 * @throws IllegalArgumentException the stateId was not unique
 	 */
-	protected ViewState addViewState(String stateId, ViewSelector selector, Transition[] transitions, Map properties)
+	protected ViewState addViewState(String stateId, ViewSelector viewSelector, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
-		return new ViewState(getFlow(), stateId, selector, transitions, properties);
+		ViewState state = new ViewState(getFlow(), stateId);
+		state.setViewSelector(viewSelector);
+		state.addTransitions(transitions);
+		state.setProperties(properties);
+		return state;
 	}
 
 	/**
@@ -458,7 +464,11 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected ActionState addActionState(String stateId, Action[] actions, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
-		return new ActionState(getFlow(), stateId, actions, transitions, properties);
+		ActionState state = new ActionState(getFlow(), stateId);
+		state.addTransitions(transitions);
+		state.getActionList().addAll(actions);
+		state.setProperties(properties);
+		return state;
 	}
 
 	/**
@@ -627,7 +637,11 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected SubflowState addSubflowState(String stateId, Flow subFlow, FlowAttributeMapper attributeMapper,
 			Transition[] transitions, Map properties) {
-		return new SubflowState(getFlow(), stateId, subFlow, attributeMapper, transitions, properties);
+		SubflowState state = new SubflowState(getFlow(), stateId, subFlow);
+		state.addTransitions(transitions);
+		state.setAttributeMapper(attributeMapper);
+		state.setProperties(properties);
+		return state;
 	}
 
 	/**
@@ -723,7 +737,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected DecisionState addDecisionState(String stateId, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
-		return new DecisionState(getFlow(), stateId, transitions, properties);
+		DecisionState state = new DecisionState(getFlow(), stateId);
+		state.addTransitions(transitions);
+		state.setProperties(properties);
+		return state;
 	}
 
 	/**
@@ -780,14 +797,17 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * view selector to produce a view to display when entered as part of a root
 	 * flow termination.
 	 * @param stateId the end state id
-	 * @param selector the view selector
+	 * @param viewSelector the view selector
 	 * @param properties additional properties describing the state
 	 * @return the end state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected EndState addEndState(String stateId, ViewSelector selector, Map properties)
+	protected EndState addEndState(String stateId, ViewSelector viewSelector, Map properties)
 			throws IllegalArgumentException {
-		return new EndState(getFlow(), stateId, selector, properties);
+		EndState state = new EndState(getFlow(), stateId);
+		state.setViewSelector(viewSelector);
+		state.setProperties(properties);
+		return state;
 	}
 
 	/**

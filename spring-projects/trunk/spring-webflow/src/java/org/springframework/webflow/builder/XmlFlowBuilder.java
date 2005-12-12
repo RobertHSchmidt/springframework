@@ -61,7 +61,6 @@ import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.Transition.TargetStateResolver;
-import org.springframework.webflow.action.CompositeAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.FlowVariable;
@@ -496,12 +495,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		List startElements = DomUtils.getChildElementsByTagName(element, START_ACTIONS_ELEMENT);
 		if (!startElements.isEmpty()) {
 			Element startElement = (Element)startElements.get(0);
-			flow.setStartAction(new CompositeAction(parseAnnotatedActions(startElement)));
+			flow.getStartActionList().addAll(parseAnnotatedActions(startElement));
 		}
 		List endElements = DomUtils.getChildElementsByTagName(element, END_ACTIONS_ELEMENT);
 		if (!endElements.isEmpty()) {
 			Element endElement = (Element)endElements.get(0);
-			flow.setEndAction(new CompositeAction(parseAnnotatedActions(endElement)));
+			flow.getEndActionList().addAll(parseAnnotatedActions(endElement));
 		}
 	}
 
@@ -533,7 +532,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected void buildInlineFlow(Flow inlineFlow, Element flowElement) {
 		addInlineFlowDefinitions(inlineFlow, flowElement);
 		addStateDefinitions(inlineFlow, flowElement);
-		inlineFlow.addExceptionHandlers(parseExceptionHandlers(flowElement));
+		inlineFlow.getExceptionHandlerSet().addAll(parseExceptionHandlers(flowElement));
 		inlineFlow.resolveStateTransitionsTargetStates();
 		destroyFlowArtifactRegistry(inlineFlow);
 	}
@@ -571,7 +570,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				}
 				if (state != null) {
 					parseAndAddStateActions(childElement, state);
-					state.addExceptionHandlers(parseExceptionHandlers(childElement));
+					state.getExceptionHandlerSet().addAll(parseExceptionHandlers(childElement));
 				}
 			}
 		}
@@ -587,14 +586,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		List entryElements = DomUtils.getChildElementsByTagName(element, ENTRY_ACTIONS_ELEMENT);
 		if (!entryElements.isEmpty()) {
 			Element entryElement = (Element)entryElements.get(0);
-			state.setEntryAction(new CompositeAction(parseAnnotatedActions(entryElement)));
+			state.getEntryActionList().addAll(parseAnnotatedActions(entryElement));
 		}
 		if (state instanceof TransitionableState) {
 			// parse any state exit actions
 			List exitElements = DomUtils.getChildElementsByTagName(element, EXIT_ACTIONS_ELEMENT);
 			if (!exitElements.isEmpty()) {
 				Element exitElement = (Element)exitElements.get(0);
-				((TransitionableState)state).setExitAction(new CompositeAction(parseAnnotatedActions(exitElement)));
+				((TransitionableState)state).getExitActionList().addAll(parseAnnotatedActions(exitElement));
 			}
 		}
 	}
@@ -608,8 +607,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				element.getAttribute(BEAN_ATTRIBUTE), ActionState.class);
 		state.setId(element.getAttribute(ID_ATTRIBUTE));
 		state.setFlow(flow);
-		state.addActions(parseAnnotatedActions(element));
-		state.addAll(parseTransitions(element));
+		state.getActionList().addAll(parseAnnotatedActions(element));
+		state.addTransitions(parseTransitions(element));
 		state.setProperties(parseProperties(element));
 		return state;
 	}
@@ -627,7 +626,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE)));
 		}
-		state.addAll(parseTransitions(element));
+		state.addTransitions(parseTransitions(element));
 		state.setProperties(parseProperties(element));
 		return state;
 	}
@@ -641,7 +640,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				element.getAttribute(BEAN_ATTRIBUTE), DecisionState.class);
 		state.setId(element.getAttribute(ID_ATTRIBUTE));
 		state.setFlow(flow);
-		state.addAll(parseIfs(element));
+		state.addTransitions(parseIfs(element));
 		state.setProperties(parseProperties(element));
 		return state;
 	}
@@ -657,7 +656,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		state.setFlow(flow);
 		state.setSubflow(getLocalFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE)));
 		state.setAttributeMapper(parseAttributeMapper(element));
-		state.addAll(parseTransitions(element));
+		state.addTransitions(parseTransitions(element));
 		state.setProperties(parseProperties(element));
 		return state;
 	}
@@ -689,7 +688,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		while (it.hasNext()) {
 			actions.add(parseAnnotatedAction((Element)it.next()));
 		}
-		return (AnnotatedAction[])actions.toArray(new AnnotatedAction[actions.size()]);
+		return (AnnotatedAction[])actions.toArray(new AnnotatedAction[0]);
 	}
 
 	/**
@@ -698,6 +697,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected AnnotatedAction parseAnnotatedAction(Element element) {
 		AnnotatedAction action = new AnnotatedAction((Action)parseAction(element));
 		if (element.hasAttribute(NAME_ATTRIBUTE)) {
+			System.out.println("Setting name to " + element.getAttribute(NAME_ATTRIBUTE));
 			action.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)) {
@@ -916,7 +916,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	public void buildExceptionHandlers() throws FlowBuilderException {
-		getFlow().addExceptionHandlers(parseExceptionHandlers(getDocumentElement()));
+		getFlow().getExceptionHandlerSet().addAll(parseExceptionHandlers(getDocumentElement()));
 	}
 
 	/**

@@ -69,16 +69,16 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals("actionState1", flow.getStartState().getId());
 		assertEquals(9, flow.getStateIds().length);
 
-		assertEquals(1, flow.getExceptionHandlers().length);
-		assertTrue(flow.getExceptionHandlers()[0] instanceof TransitionExecutingStateExceptionHandler);
+		assertEquals(1, flow.getExceptionHandlerSet().size());
+		assertTrue(flow.getExceptionHandlerSet().toArray()[0] instanceof TransitionExecutingStateExceptionHandler);
 
 		ActionState actionState1 = (ActionState)flow.getState("actionState1");
 		assertNotNull(actionState1);
-		assertEquals(2, actionState1.getActionCount());
-		assertEquals(null, actionState1.getAnnotatedAction().getCaption());
+		assertEquals(2, actionState1.getActionList().size());
+		assertEquals(null, actionState1.getActionList().getAnnotated(0).getCaption());
 		assertEquals(Boolean.TRUE, (Boolean)actionState1.getProperty("propBoolean"));
 		assertEquals("aString", actionState1.getProperty("propString"));
-		assertEquals("action2Name", actionState1.getAnnotatedActions()[1].getName());
+		assertEquals("action2Name", actionState1.getActionList().getAnnotated(1).getName());
 		assertEquals(3, actionState1.getTransitions().length);
 		context.setLastEvent(createEvent("event1"));
 		assertTrue(actionState1.hasTransitionFor(context));
@@ -88,8 +88,8 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertTrue(actionState1.hasTransitionFor(context));
 		transition = actionState1.getRequiredTransition(context);
 		assertEquals("viewState2", transition.getTargetStateId());
-		assertEquals("prop1Value", actionState1.getAnnotatedActions()[0].getAttribute("prop1"));
-		assertEquals("prop2Value", actionState1.getAnnotatedActions()[0].getAttribute("prop2"));
+		assertEquals("prop1Value", actionState1.getActionList().getAnnotated(0).getAttribute("prop1"));
+		assertEquals("prop2Value", actionState1.getActionList().getAnnotated(0).getAttribute("prop2"));
 
 		ViewState viewState1 = (ViewState)flow.getState("viewState1");
 		assertNotNull(viewState1);

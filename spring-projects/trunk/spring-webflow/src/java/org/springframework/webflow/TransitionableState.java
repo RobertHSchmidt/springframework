@@ -16,7 +16,6 @@
 package org.springframework.webflow;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.springframework.core.CollectionFactory;
@@ -40,14 +39,14 @@ public abstract class TransitionableState extends State {
 	private Set transitions = CollectionFactory.createLinkedSetIfPossible(6);
 
 	/**
-	 * An action to execute when exiting this state.
+	 * An actions to execute when exiting this state.
 	 */
-	private Action exitAction;
+	private ActionList exitActionList = new ActionList();
 	
 	/**
 	 * Default constructor for bean style usage
 	 * @see State#State()
-	 * @see #addAll(Transition[])
+	 * @see #addTransition(Transition)
 	 */
 	protected TransitionableState() {
 	}
@@ -56,51 +55,20 @@ public abstract class TransitionableState extends State {
 	 * Create a new transitionable state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param transitions the transitions of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
+	 * @see State#State(Flow, String)
+	 * @see #addTransition(Transition)
 	 */
-	protected TransitionableState(Flow flow, String id, Transition[] transitions) throws IllegalArgumentException {
+	protected TransitionableState(Flow flow, String id) throws IllegalArgumentException {
 		super(flow, id);
-		addAll(transitions);
-	}
-
-	/**
-	 * Create a new transitionable state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param transitions the transitions of this state
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	protected TransitionableState(Flow flow, String id, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
-		super(flow, id, properties);
-		addAll(transitions);
-	}
-
-	/**
-	 * Returns the exit action for this state (may be null).
-	 * @return the exit action
-	 */
-	public Action getExitAction() {
-		return exitAction;
-	}
-
-	/**
-	 * Sets the exit action for this state.
-	 * @param exitAction the exit action (may be null)
-	 */
-	public void setExitAction(Action exitAction) {
-		this.exitAction = exitAction;
 	}
 
 	/**
 	 * Add a transition to this state.
 	 * @param transition the transition to add
 	 */
-	public void add(Transition transition) {
+	public void addTransition(Transition transition) {
 		transition.setSourceState(this);
 		this.transitions.add(transition);
 	}
@@ -109,12 +77,12 @@ public abstract class TransitionableState extends State {
 	 * Add given list of transitions to this state.
 	 * @param transitions the transitions to add
 	 */
-	public void addAll(Transition[] transitions) {
+	public void addTransitions(Transition[] transitions) {
 		if (transitions == null) {
 			return;
 		}
 		for (int i = 0; i < transitions.length; i++) {
-			add(transitions[i]);
+			addTransition(transitions[i]);
 		}
 	}
 
@@ -186,6 +154,23 @@ public abstract class TransitionableState extends State {
 	}
 
 	/**
+	 * Convenience method to add a single action to this state's exit action
+	 * list. Exit actions are executed when this state is transitioned out of.
+	 * @param action the exit action to add
+	 */
+	public void addExitAction(Action action) {
+		getExitActionList().add(action);
+	}
+
+	/**
+	 * Returns the list of actions executed by this state when it is exited.
+	 * @return the state exit action list
+	 */
+	public ActionList getExitActionList() {
+		return exitActionList;
+	}
+	
+	/**
 	 * Re-enter this state. This is typically called when a transition out of
 	 * this state is selected, but transition execution rolls back and as a
 	 * result the flow reenters the source state.
@@ -207,9 +192,7 @@ public abstract class TransitionableState extends State {
 	 * @param context the flow control context
 	 */
 	public void exit(FlowExecutionControlContext context) {
-		if (this.exitAction != null) {
-			new ActionExecutor(exitAction).execute(context);
-		}
+		exitActionList.execute(context);
 	}
 
 	/**
@@ -226,6 +209,6 @@ public abstract class TransitionableState extends State {
 	}
 
 	protected void createToString(ToStringCreator creator) {
-		creator.append("transitions", this.transitions).append("exitAction", exitAction);
+		creator.append("transitions", transitions).append("exitActionList", exitActionList);
 	}
 }

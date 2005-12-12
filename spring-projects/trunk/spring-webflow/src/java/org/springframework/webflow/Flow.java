@@ -16,7 +16,6 @@
 package org.springframework.webflow;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -124,9 +123,9 @@ public class Flow extends AnnotatedObject {
 	private State startState;
 
 	/**
-	 * A action to execute when this flow starts.
+	 * The list of actions to execute when this flow starts.
 	 */
-	private Action startAction;
+	private ActionList startActionList = new ActionList();
 
 	/**
 	 * The set of state definitions for this flow.
@@ -136,7 +135,7 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * The list of exception handlers for this flow.
 	 */
-	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(3);
+	private StateExceptionHandlerSet exceptionHandlerSet = new StateExceptionHandlerSet();
 
 	/**
 	 * The list of exception handlers for this flow.
@@ -144,9 +143,9 @@ public class Flow extends AnnotatedObject {
 	private Set inlineFlows = CollectionFactory.createLinkedSetIfPossible(3);
 
 	/**
-	 * A action to execute when this flow ends.
+	 * The list of actions to execute when this flow ends.
 	 */
-	private Action endAction;
+	private ActionList endActionList = new ActionList();
 
 	/**
 	 * Default constructor for bean style usage.
@@ -162,17 +161,6 @@ public class Flow extends AnnotatedObject {
 	 */
 	public Flow(String id) {
 		setId(id);
-	}
-
-	/**
-	 * Construct a new flow definition with the given id. The id should be
-	 * unique among all flows.
-	 * @param id the flow identifier
-	 * @param properties additional properties describing the flow
-	 */
-	public Flow(String id, Map properties) {
-		setId(id);
-		setProperties(properties);
 	}
 
 	/**
@@ -201,8 +189,8 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Set whether or not this flow is transactional.
 	 */
-	public void setTransactional(boolean b) {
-		setProperty(TRANSACTIONAL_PROPERTY, new Boolean(b));
+	public void setTransactional(boolean transactional) {
+		setProperty(TRANSACTIONAL_PROPERTY, Boolean.valueOf(transactional));
 	}
 
 	/**
@@ -415,62 +403,64 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Returns the action to execute when this flow starts.
+	 * Convenience method to add a single action to this flows's start action
+	 * list. Start actions are executed when this flow is started.
+	 * @param action the action to add
 	 */
-	public Action getStartAction() {
-		return startAction;
+	public void addStartAction(Action action) {
+		getStartActionList().add(action);
 	}
 
 	/**
-	 * Sets the action to execute when this flow starts.
+	 * Returns the list of actions executed by this flow when an execution of it
+	 * starts.
+	 * @return the start action list
 	 */
-	public void setStartAction(Action startAction) {
-		this.startAction = startAction;
+	public ActionList getStartActionList() {
+		return startActionList;
 	}
 
 	/**
-	 * Returns the action to execute when this flow ends.
+	 * Convenience method to add a single action to this flows's end action
+	 * list. End actions are executed when this flow is ended.
+	 * @param action the action to add
 	 */
-	public Action getEndAction() {
-		return endAction;
+	public void addEndAction(Action action) {
+		getEndActionList().add(action);
 	}
 
 	/**
-	 * Sets the action to execute when this flow ends.
+	 * Returns the list of actions executed by this flow when an execution of it
+	 * ends.
+	 * @return the end action list
 	 */
-	public void setEndAction(Action endAction) {
-		this.endAction = endAction;
+	public ActionList getEndActionList() {
+		return endActionList;
 	}
 
 	/**
-	 * Adds a state exception handler to this flow definition. Exception
-	 * handlers are invoked when an exception occurs during this flow's
-	 * execution, and can execute custom exception handling logic as well as
+	 * Adds an exception handler to this flow.
+	 * <p>
+	 * Exception handlers are invoked when an unhandled exception occurs when
+	 * this flow is executing. They can execute custom exception handling logic
+	 * as well as select an error view to display.
+	 * @param handler the exception handler
+	 */
+	public void addExceptionHandler(StateExceptionHandler handler) {
+		exceptionHandlerSet.add(handler);
+	}
+
+	/**
+	 * Returns a mutable set of exception handlers, allowing manipulation of how
+	 * exceptions are handled when thrown during flow execution.
+	 * <p>
+	 * Exception handlers are invoked when an exception occurs when this state
+	 * is entered, and can execute custom exception handling logic as well as
 	 * select an error view to display.
-	 * @param exceptionHandler the state exception handler
+	 * @return the state exception handler set
 	 */
-	public void addExceptionHandler(StateExceptionHandler exceptionHandler) {
-		exceptionHandlers.add(exceptionHandler);
-	}
-
-	/**
-	 * Adds the list of state exception handlers to this flow definition.
-	 * @param exceptionHandlers the state exception handlers
-	 */
-	public void addExceptionHandlers(StateExceptionHandler[] exceptionHandlers) {
-		if (exceptionHandlers == null) {
-			return;
-		}
-		for (int i = 0; i < exceptionHandlers.length; i++) {
-			addExceptionHandler(exceptionHandlers[i]);
-		}
-	}
-
-	/**
-	 * Returns the list of exception handlers for this flow.
-	 */
-	public StateExceptionHandler[] getExceptionHandlers() {
-		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
+	public StateExceptionHandlerSet getExceptionHandlerSet() {
+		return exceptionHandlerSet;
 	}
 
 	/**
@@ -550,6 +540,22 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
+	 * Utility method that iterates over this Flow's list of state Transition
+	 * objects and resolves their target states. Designed to be called after
+	 * Flow construction and all states have been added as a 'second pass' to
+	 * allow for transition target state resolution.
+	 */
+	public void resolveStateTransitionsTargetStates() {
+		Iterator it = statesIterator();
+		while (it.hasNext()) {
+			State state = (State)it.next();
+			if (state.isTransitionable()) {
+				((TransitionableState)state).resolveTransitionsTargetStates();
+			}
+		}
+	}
+
+	/**
 	 * Start a new execution of this flow in the specified state.
 	 * @param startState the start state to use -- when <code>null</code>,
 	 * the default start state of the flow will be used
@@ -562,18 +568,8 @@ public class Flow extends AnnotatedObject {
 		if (startState == null) {
 			startState = getStartState();
 		}
-		executeStartAction(context);
+		startActionList.execute(context);
 		return startState.enter(context);
-	}
-
-	/**
-	 * Execute the start action registered with this flow.
-	 * @param context the flow execution request context
-	 */
-	protected void executeStartAction(RequestContext context) {
-		if (getStartAction() != null) {
-			new ActionExecutor(getStartAction()).execute(context);
-		}
 	}
 
 	/**
@@ -603,67 +599,22 @@ public class Flow extends AnnotatedObject {
 		if (isTransactional()) {
 			context.endTransaction();
 		}
-		executeEndAction(context);
+		endActionList.execute(context);
 	}
 
 	/**
-	 * Execute the start action registered with this flow.
-	 * @param context the flow execution request context
-	 */
-	protected void executeEndAction(RequestContext context) {
-		if (getEndAction() != null) {
-			new ActionExecutor(getEndAction()).execute(context);
-		}
-	}
-
-	/**
-	 * Handle an exception that occured on an execution of this flow in the
-	 * context of the current request.
-	 * <p>
-	 * This implementation iterates over the ordered set of flow exception
-	 * handler objects, delegating to each handler in the set until one handles
-	 * the exception that occured and returns a non-null error view.
+	 * Handle an exception that occured during an execution of this flow.
 	 * @param exception the exception that occured
 	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
 	 */
-	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
-			throws StateException {
-		Iterator it = exceptionHandlers.iterator();
-		while (it.hasNext()) {
-			StateExceptionHandler handler = (StateExceptionHandler)it.next();
-			if (handler.handles(exception)) {
-				ViewSelection selectedView = handler.handle(exception, context);
-				if (selectedView != null) {
-					return selectedView;
-				}
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("No exception handler found for state exception [" + exception + "], returning [null]...");
-		}
-		return null;
+	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context) {
+		return getExceptionHandlerSet().handleException(exception, context);
 	}
-
-	/**
-	 * Utility method that iterates over this Flow's list of state Transition
-	 * objects and resolves their target states. Designed to be called after
-	 * Flow construction and all states have been added as a 'second pass' to
-	 * allow for transition target state resolution.
-	 */
-	public void resolveStateTransitionsTargetStates() {
-		Iterator it = statesIterator();
-		while (it.hasNext()) {
-			State state = (State)it.next();
-			if (state.isTransitionable()) {
-				((TransitionableState)state).resolveTransitionsTargetStates();
-			}
-		}
-	}
-
+	
 	public String toString() {
 		return new ToStringCreator(this).append("id", id).append("startState", startState)
-				.append("states", this.states).append("exceptionHandlers", exceptionHandlers).toString();
+				.append("states", this.states).append("exceptionHandlerSet", exceptionHandlerSet).toString();
 	}
 }

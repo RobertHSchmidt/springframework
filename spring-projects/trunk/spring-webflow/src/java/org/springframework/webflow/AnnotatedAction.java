@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
@@ -23,7 +22,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * An action decorator that stores arbitrary properties about a target
+ * An action proxy/decorator that stores arbitrary properties about a target
  * <code>Action</code> implementation for use within a specific Action
  * execution context, for example an <code>ActionState</code> definition, a
  * <code>TransitionCriteria</code> definition, or in a test environment.
@@ -53,8 +52,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * The method property is the name of a specific method on a
 	 * <code>{@link org.springframework.webflow.action.MultiAction}</code> to
 	 * execute, or the name of a specific method on a arbitrary POJO (plain old
-	 * java.lang.Object)
-	 * {@see ActionState} for more information.
+	 * java.lang.Object) {@see ActionState} for more information.
 	 */
 	public static final String METHOD_PROPERTY = "method";
 
@@ -69,14 +67,13 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param targetAction the action
 	 */
 	public AnnotatedAction(Action targetAction) {
-		this(targetAction, new HashMap(3));
+		setTargetAction(targetAction);
 	}
 
 	/**
-	 * Creates a new annotated action object for the specified action. The map
-	 * of properties is provided.
+	 * Creates a new annotated action object for the specified action. No
+	 * contextual properties are provided.
 	 * @param targetAction the action
-	 * @param properties the properties describing usage of the action
 	 */
 	public AnnotatedAction(Action targetAction, Map properties) {
 		setTargetAction(targetAction);
@@ -127,8 +124,8 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	}
 
 	public Event execute(RequestContext context) throws Exception {
-		context.setProperties(this);
 		try {
+			context.setProperties(this);
 			Event result = getTargetAction().execute(context);
 			return postProcessResult(result);
 		}
@@ -157,7 +154,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("properties", getProperties()).append("action", getTargetAction())
-				.toString();
+		return new ToStringCreator(this).append("targetAction", getTargetAction())
+				.append("properties", getProperties()).toString();
 	}
 }

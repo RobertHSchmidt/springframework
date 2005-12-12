@@ -40,14 +40,16 @@ import org.springframework.webflow.action.AbstractAction;
  * @author Erwin Vervaet
  */
 public class XmlFlowBuilderNestingTests extends TestCase {
-	
+
 	private BeanFactory parentBeanFactory;
+
 	private Flow flow;
+
 	private TestService testService;
 
 	protected void setUp() throws Exception {
-		ClassPathXmlApplicationContext parentContext =
-			new ClassPathXmlApplicationContext("/org/springframework/webflow/builder/testFlow2ParentContext.xml");
+		ClassPathXmlApplicationContext parentContext = new ClassPathXmlApplicationContext(
+				"/org/springframework/webflow/builder/testFlow2ParentContext.xml");
 		this.parentBeanFactory = parentContext.getBeanFactory();
 		this.flow = (Flow)parentContext.getBean("testFlow2");
 		this.testService = (TestService)parentContext.getBean("testService");
@@ -57,25 +59,30 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 		assertEquals("testFlow2", flow.getId());
 		assertEquals(3, flow.getStateCount());
 		assertEquals("actionState1", flow.getStartState().getId());
-		
-		TestAction action1 = (TestAction)((ActionState)flow.getState("actionState1")).getAnnotatedAction().getTargetAction();
+
+		TestAction action1 = (TestAction)((ActionState)flow.getState("actionState1")).getActionList().getAnnotated(0)
+				.getTargetAction();
 		BeanFactory testFlow2BeanFactory = action1.getBeanFactory();
 		assertNotNull(testFlow2BeanFactory);
 		assertSame(testService, action1.getTestService());
 		assertSame(action1, testFlow2BeanFactory.getBean("action1"));
 		assertSame(parentBeanFactory, ((HierarchicalBeanFactory)testFlow2BeanFactory).getParentBeanFactory());
-		assertEquals(3, BeanFactoryUtils.countBeansIncludingAncestors(((ListableBeanFactory)testFlow2BeanFactory))); //action1, subFlow1 and subFlow1.builder
-		
+		assertEquals(3, BeanFactoryUtils.countBeansIncludingAncestors(((ListableBeanFactory)testFlow2BeanFactory))); // action1,
+																														// subFlow1
+																														// and
+																														// subFlow1.builder
+
 		Flow subFlow1 = ((SubflowState)flow.getState("subFlowState1")).getSubflow();
 		assertNotSame(flow, subFlow1);
 		assertEquals("subFlow1", subFlow1.getId());
 		assertEquals(2, subFlow1.getStateCount());
 		assertEquals("subActionState1", subFlow1.getStartState().getId());
-		
-		AnnotatedAction[] actions = ((ActionState)subFlow1.getState("subActionState1")).getAnnotatedActions();
+
+		AnnotatedAction[] actions = ((ActionState)subFlow1.getState("subActionState1")).getActionList()
+				.toAnnotatedArray();
 		assertEquals(2, actions.length);
 		SubTestAction subAction1 = null;
-		if (action1==actions[0].getTargetAction()) {
+		if (action1 == actions[0].getTargetAction()) {
 			subAction1 = (SubTestAction)actions[1].getTargetAction();
 		}
 		else {
@@ -85,13 +92,15 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 		BeanFactory testFlow2SubFlow1BeanFactory = subAction1.getBeanFactory();
 		assertNotNull(testFlow2SubFlow1BeanFactory);
 		assertSame(testService, subAction1.getTestService());
-		assertNull(subAction1.getTestAction()); //autowire by name should have failed
+		assertNull(subAction1.getTestAction()); // autowire by name should have
+												// failed
 		assertSame(action1, subAction1.getAction1());
 		assertSame(subAction1, testFlow2SubFlow1BeanFactory.getBean("subAction1"));
 		assertSame(testFlow2BeanFactory, ((HierarchicalBeanFactory)testFlow2SubFlow1BeanFactory).getParentBeanFactory());
-		assertEquals(1, ((ListableBeanFactory)testFlow2SubFlow1BeanFactory).getBeanDefinitionCount()); //only subAction1
+		assertEquals(1, ((ListableBeanFactory)testFlow2SubFlow1BeanFactory).getBeanDefinitionCount()); // only
+																										// subAction1
 	}
-	
+
 	public static class TestService {
 		public void doIt() {
 		}
@@ -99,68 +108,72 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 
 	public static class TestAction extends AbstractAction implements BeanFactoryAware {
 		private TestService testService;
+
 		private BeanFactory beanFactory;
-		
+
 		public TestService getTestService() {
 			return testService;
 		}
-		
+
 		public void setTestService(TestService testService) {
 			this.testService = testService;
 		}
-		
+
 		public BeanFactory getBeanFactory() {
 			return beanFactory;
 		}
-		
+
 		public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 			this.beanFactory = beanFactory;
 		}
-		
+
 		protected Event doExecute(RequestContext context) throws Exception {
 			testService.doIt();
 			return success();
 		}
 	}
-	
+
 	public static class SubTestAction extends AbstractAction implements BeanFactoryAware {
 		private TestService testService;
+
 		private TestAction testAction;
+
 		private TestAction action1;
+
 		private BeanFactory beanFactory;
-		
+
 		public TestService getTestService() {
 			return testService;
 		}
-		
+
 		public void setTestService(TestService testService) {
 			this.testService = testService;
 		}
-		
+
 		public TestAction getTestAction() {
 			return testAction;
 		}
-		
+
 		public void setTestAction(TestAction testAction) {
 			this.testAction = testAction;
 		}
-		
+
 		public TestAction getAction1() {
 			return action1;
 		}
-		
+
 		public void setAction1(TestAction action1) {
 			this.action1 = action1;
 		}
-		
+
 		public BeanFactory getBeanFactory() {
 			return beanFactory;
 		}
-		
+
 		public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 			this.beanFactory = beanFactory;
 		}
-		
+
 		protected Event doExecute(RequestContext context) throws Exception {
 			testService.doIt();
 			return testAction.execute(context);

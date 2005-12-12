@@ -16,13 +16,9 @@
 package org.springframework.webflow;
 
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
-import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.Assert;
 
 /**
  * A transitionable state that executes one or more actions when entered. When
@@ -107,168 +103,46 @@ import org.springframework.util.Assert;
 public class ActionState extends TransitionableState {
 
 	/**
-	 * The set of actions to be executed when this action state is entered. Each
-	 * action is wrapped in a {@link ActionExecutor}.
+	 * The list of actions to be executed when this action state is entered.
 	 */
-	private Set actionExecutors = CollectionFactory.createLinkedSetIfPossible(1);
-	
+	private ActionList actionList = new ActionList();
+
 	/**
 	 * Default constructor for bean style usage.
 	 * @see TransitionableState#TransitionableState()
 	 * @see #addAction(Action)
-	 * @see #addActions(Action[])
 	 */
 	public ActionState() {
 	}
 
 	/**
-	 * Create a new action state.
+	 * Creates a new action state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param action the raw target action instance to execute in this state
-	 * when entered
-	 * @param transitions the transitions out of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
+	 * @see TransitionableState#TransitionableState(Flow, String)
+	 * @see #addAction(Action)
 	 */
-	public ActionState(Flow flow, String id, Action action, Transition[] transitions) throws IllegalArgumentException {
-		super(flow, id, transitions);
-		addAction(action);
+	public ActionState(Flow flow, String id) throws IllegalArgumentException {
+		super(flow, id);
 	}
 
 	/**
-	 * Create a new action state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param action the raw target action instance to execute in this state
-	 * when entered
-	 * @param transitions the transitions out of this state
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	public ActionState(Flow flow, String id, Action action, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
-		super(flow, id, transitions, properties);
-		addAction(action);
-	}
-
-	/**
-	 * Create a new action state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param actions the raw actions to execute in this state
-	 * @param transitions the transitions (paths) out of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	public ActionState(Flow flow, String id, Action[] actions, Transition[] transitions)
-			throws IllegalArgumentException {
-		super(flow, id, transitions);
-		addActions(actions);
-	}
-
-	/**
-	 * Create a new action state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param actions the raw actions to execute in this state
-	 * @param transitions the transitions (paths) out of this state
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	public ActionState(Flow flow, String id, Action[] actions, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
-		super(flow, id, transitions, properties);
-		addActions(actions);
-	}
-
-	/**
-	 * Add a target action instance to this state.
+	 * Convenience method to add a single action to this state's executable
+	 * action list.
 	 * @param action the action to add
 	 */
 	public void addAction(Action action) {
-		this.actionExecutors.add(new ActionExecutor(action));
+		getActionList().add(action);
 	}
 
 	/**
-	 * Add a collection of target action instances to this state.
-	 * @param actions the actions to add
+	 * Returns the list of actions executable by this action state.
+	 * @return the state action list
 	 */
-	public void addActions(Action[] actions) {
-		Assert.notEmpty(actions, "You must add at least one action");
-		for (int i = 0; i < actions.length; i++) {
-			addAction(actions[i]);
-		}
-	}
-
-	/**
-	 * Returns an iterator that lists the set of actions to execute for this
-	 * state. It iterates over a collection of {@link ActionExecutor} objects.
-	 * @return the ActionExecutor iterator
-	 */
-	private Iterator actionExecutors() {
-		return this.actionExecutors.iterator();
-	}
-
-	/**
-	 * Returns the number of actions executed by this action state when it is
-	 * entered.
-	 * @return the action count
-	 */
-	public int getActionCount() {
-		return actionExecutors.size();
-	}
-
-	/**
-	 * Returns the first action executed by this action state.
-	 * @return the first action
-	 */
-	public Action getAction() {
-		return getActions()[0];
-	}
-
-	/**
-	 * Returns the list of actions executed by this action state.
-	 * @return the action list, as a typed array
-	 */
-	public Action[] getActions() {
-		Action[] actions = new Action[actionExecutors.size()];
-		int i = 0;
-		for (Iterator it = actionExecutors(); it.hasNext();) {
-			actions[i++] = ((ActionExecutor)it.next()).getAction();
-		}
-		return actions;
-	}
-
-	/**
-	 * Returns the first action executed by this action state with its
-	 * annotations. This is purely a convenience method.
-	 * @return the annotated first action
-	 */
-	public AnnotatedAction getAnnotatedAction() {
-		return getAnnotatedActions()[0];
-	}
-
-	/**
-	 * Returns the list of actions executed by this action state with
-	 * annotations. This is purely a convenience method.
-	 * @return the annotated action list, as a typed array
-	 */
-	public AnnotatedAction[] getAnnotatedActions() {
-		AnnotatedAction[] actions = new AnnotatedAction[actionExecutors.size()];
-		int i = 0;
-		for (Iterator it = actionExecutors(); it.hasNext();) {
-			Action action = ((ActionExecutor)it.next()).getAction();
-			if (action instanceof AnnotatedAction) {
-				actions[i++] = (AnnotatedAction)action;
-			}
-			else {
-				actions[i++] = new AnnotatedAction(action);
-			}
-		}
-		return actions;
+	public ActionList getActionList() {
+		return actionList;
 	}
 
 	/*
@@ -303,11 +177,11 @@ public class ActionState extends TransitionableState {
 	 */
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 		int executionCount = 0;
-		String[] eventIds = new String[actionExecutors.size()];
-		Iterator it = actionExecutors();
+		String[] eventIds = new String[actionList.size()];
+		Iterator it = actionList.iterator();
 		while (it.hasNext()) {
-			ActionExecutor action = (ActionExecutor)it.next();
-			Event event = action.execute(context);
+			Action action = (Action)it.next();
+			Event event = new ActionExecutor(action).execute(context);
 			if (event != null) {
 				eventIds[executionCount] = event.getId();
 				try {
@@ -315,23 +189,24 @@ public class ActionState extends TransitionableState {
 				}
 				catch (NoMatchingActionResultTransitionException e) {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Action execution [#"
+						logger.debug("Action execution ["
 								+ (executionCount + 1)
 								+ "] resulted in no matching transition on event '"
 								+ event.getId()
 								+ "'"
-								+ (it.hasNext() ? ": proceeding to the next action in the chain"
-										: ": action chain exhausted"));
+								+ (it.hasNext() ? ": proceeding to the next action in the list"
+										: ": action list exhausted"));
 					}
 				}
 			}
 			else {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Action execution [#"
-							+ (executionCount + 1)
-							+ "] returned a [null] event"
-							+ (it.hasNext() ? ": proceeding to the next action in the chain"
-									: ": action chain exhausted"));
+					logger
+							.debug("Action execution ["
+									+ (executionCount + 1)
+									+ "] returned a [null] event"
+									+ (it.hasNext() ? ": proceeding to the next action in the list"
+											: ": action list exhausted"));
 				}
 				eventIds[executionCount] = null;
 			}
@@ -339,8 +214,8 @@ public class ActionState extends TransitionableState {
 		}
 		if (executionCount > 0) {
 			throw new NoMatchingTransitionException(this, context.getLastEvent(),
-					"No transition was matched on the event(s) signaled by the " + executionCount
-							+ " action(s) that executed in this action state '" + getId() + "' of flow '"
+					"No transition was matched on the event(s) signaled by the [" + executionCount
+							+ "] action(s) that executed in this action state '" + getId() + "' of flow '"
 							+ getFlow().getId() + "'; transitions must be defined to handle action result outcomes -- "
 							+ "possible flow configuration error? Note: the eventIds signaled were: '"
 							+ StylerUtils.style(eventIds)
@@ -348,13 +223,14 @@ public class ActionState extends TransitionableState {
 							+ StylerUtils.style(getTransitionCriterias()) + "'");
 		}
 		else {
-			throw new IllegalStateException("No actions were executed, thus I cannot execute any state transition "
-					+ "-- programmer configuration error; make sure you add at least one action to this state");
+			throw new IllegalStateException(
+					"No actions were executed, thus I cannot execute any state transition "
+							+ "-- programmer configuration error; make sure you add at least one action to this state's action list");
 		}
 	}
 
 	protected void createToString(ToStringCreator creator) {
-		creator.append("actions", actionExecutors);
+		creator.append("actionList", actionList);
 		super.createToString(creator);
 	}
 

@@ -48,20 +48,26 @@ public class FlowExecutionTests extends TestCase {
 
 	public void testFlowExecutionListener() {
 		Flow subFlow = new Flow("mySubFlow");
-		new ViewState(subFlow, "subFlowViewState", view("mySubFlowViewName"), new Transition[] { new Transition(
-				on("submit"), "finish") });
+		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
+		state1.setViewSelector(view("mySubFlowViewName"));
+		state1.addTransition(new Transition(on("submit"), "finish"));
 		new EndState(subFlow, "finish");
-		subFlow.resolveStateTransitionsTargetStates();
 
 		Flow flow = new Flow("myFlow");
-		new ActionState(flow, "actionState", new ExecutionCounterAction(), new Transition[] { new Transition(
-				on("success"), "viewState") });
-		new ViewState(flow, "viewState", view("myView"),
-				new Transition[] { new Transition(on("submit"), "subFlowState") });
-		new SubflowState(flow, "subFlowState", subFlow, new InputOutputMapper(), new Transition[] { new Transition(
-				on("finish"), "finish") });
+
+		ActionState actionState = new ActionState(flow, "actionState");
+		actionState.addAction(new ExecutionCounterAction());
+		actionState.addTransition(new Transition(on("success"), "viewState"));
+
+		ViewState viewState = new ViewState(flow, "viewState");
+		viewState.setViewSelector(view("myView"));
+		viewState.addTransition(new Transition(on("submit"), "subFlowState"));
+
+		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
+		subflowState.setAttributeMapper(new InputOutputMapper());
+		subflowState.addTransition(new Transition(on("finish"), "finish"));
+		
 		new EndState(flow, "finish");
-		flow.resolveStateTransitionsTargetStates();
 
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		MockFlowExecutionListener flowExecutionListener = new MockFlowExecutionListener();

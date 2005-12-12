@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-import java.util.Map;
 
 /**
  * A simple decision state that when entered will execute the first transition
@@ -40,26 +39,12 @@ public class DecisionState extends TransitionableState {
 	 * Creates a new decision state with the supported set of transitions.
 	 * @param flow the owning flow
 	 * @param stateId the state identifier (must be unique to the flow)
-	 * @param transitions the transitions
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
+	 * @see TransitionableState#TransitionableState(Flow, String)
 	 */
-	public DecisionState(Flow flow, String stateId, Transition[] transitions) throws IllegalArgumentException {
-		super(flow, stateId, transitions);
-	}
-
-	/**
-	 * Creates a new decision state with the supported set of transitions.
-	 * @param flow the owning flow
-	 * @param stateId the state identifier (must be unique to the flow)
-	 * @param transitions the transitions
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	public DecisionState(Flow flow, String stateId, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
-		super(flow, stateId, transitions, properties);
+	public DecisionState(Flow flow, String stateId) throws IllegalArgumentException {
+		super(flow, stateId);
 	}
 
 	/**

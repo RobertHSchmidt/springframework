@@ -75,59 +75,12 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * @param transitions the transitions of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
+	 * @see TransitionableState#TransitionableState(Flow, String)
+	 * @see #setAttributeMapper(FlowAttributeMapper)
 	 */
-	public SubflowState(Flow flow, String id, Flow subflow, Transition[] transitions) throws IllegalArgumentException {
-		this(flow, id, subflow, null, transitions);
-	}
-
-	/**
-	 * Create a new subflow state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param subflow the subflow to spawn
-	 * @param transitions the transitions of this state
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	public SubflowState(Flow flow, String id, Flow subflow, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
-		this(flow, id, subflow, null, transitions, properties);
-	}
-
-	/**
-	 * Create a new subflow state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param subflow the subflow to spawn
-	 * @param attributeMapper the attribute mapper to use
-	 * @param transitions the transitions of this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	public SubflowState(Flow flow, String id, Flow subflow, FlowAttributeMapper attributeMapper,
-			Transition[] transitions) throws IllegalArgumentException {
-		super(flow, id, transitions);
+	public SubflowState(Flow flow, String id, Flow subflow) throws IllegalArgumentException {
+		super(flow, id);
 		setSubflow(subflow);
-		setAttributeMapper(attributeMapper);
-	}
-
-	/**
-	 * Create a new subflow state.
-	 * @param flow the owning flow
-	 * @param id the state identifier (must be unique to the flow)
-	 * @param subflow the subflow to spawn
-	 * @param attributeMapper the attribute mapper to use
-	 * @param transitions the transitions of this state
-	 * @param properties additional properties describing this state
-	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 */
-	public SubflowState(Flow flow, String id, Flow subflow, FlowAttributeMapper attributeMapper,
-			Transition[] transitions, Map properties) throws IllegalArgumentException {
-		super(flow, id, transitions, properties);
-		setSubflow(subflow);
-		setAttributeMapper(attributeMapper);
 	}
 
 	/**

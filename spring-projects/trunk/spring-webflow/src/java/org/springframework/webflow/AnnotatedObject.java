@@ -19,7 +19,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.MutableAttributeSource;
+import org.springframework.core.style.StylerUtils;
 
 /**
  * Superclass of all objects in the web flow system that support annotation
@@ -30,6 +33,11 @@ import org.springframework.binding.MutableAttributeSource;
  * @author Keith Donald
  */
 public abstract class AnnotatedObject implements MutableAttributeSource {
+
+	/**
+	 * Logger, for use in subclasses.
+	 */
+	private final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * The caption (property name ("caption"). A caption is also known as a
@@ -48,7 +56,7 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	 * Additional properties further describing this object. The properties set
 	 * in this map may be arbitrary.
 	 */
-	private Map properties = new HashMap();
+	private Map properties = new HashMap(6);
 
 	/**
 	 * Returns the additional properties describing this object in an
@@ -63,6 +71,9 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	 */
 	public void setProperties(Map properties) {
 		if (properties != null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Setting properties to " + StylerUtils.style(properties));
+			}
 			this.properties = new HashMap(properties);
 		}
 	}
@@ -70,39 +81,42 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	/**
 	 * Returns the value of given property, or <code>null</code> if not found.
 	 */
-	public Object getProperty(String propertyName) {
-		return this.properties.get(propertyName);
+	public Object getProperty(String name) {
+		return properties.get(name);
 	}
 
 	/**
 	 * Set the value of named property.
-	 * @param propertyName the name of the property
+	 * @param name the name of the property
 	 * @param value the value to set
 	 * @return previous value associated with specified name
 	 */
-	public Object setProperty(String propertyName, Object value) {
-		return this.properties.put(propertyName, value);
+	public Object setProperty(String name, Object value) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Setting property '" + name + "' to " + value);
+		}
+		return properties.put(name, value);
 	}
 
 	/**
 	 * Returns whether or not this annotated object contains a property with
 	 * specified name.
-	 * @param propertyName the name of the property
+	 * @param name the name of the property
 	 * @return true if the property is set, false otherwise
 	 */
-	public boolean containsProperty(String propertyName) {
-		return this.properties.containsKey(propertyName);
+	public boolean containsProperty(String name) {
+		return properties.containsKey(name);
 	}
 
 	/**
 	 * Returns a string property value.
-	 * @param propertyName the property name
+	 * @param name the property name
 	 * @param defaultValue the default value, if the property is not set
 	 * @return the property value
 	 */
-	public String getStringProperty(String propertyName, String defaultValue) {
-		if (containsProperty(propertyName)) {
-			return (String)getProperty(propertyName);
+	public String getStringProperty(String name, String defaultValue) {
+		if (containsProperty(name)) {
+			return (String)getProperty(name);
 		}
 		else {
 			return defaultValue;
@@ -111,13 +125,13 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 
 	/**
 	 * Returns an integer property value.
-	 * @param propertyName the property name
+	 * @param name the property name
 	 * @param defaultValue the default value, if the property is not set
 	 * @return the property value
 	 */
-	public int getIntProperty(String propertyName, int defaultValue) {
-		if (containsProperty(propertyName)) {
-			return ((Integer)getProperty(propertyName)).intValue();
+	public int getIntProperty(String name, int defaultValue) {
+		if (containsProperty(name)) {
+			return ((Integer)getProperty(name)).intValue();
 		}
 		else {
 			return defaultValue;
@@ -126,13 +140,13 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 
 	/**
 	 * Returns a boolean property value.
-	 * @param propertyName the property name
+	 * @param name the property name
 	 * @param defaultValue the default value, if the property is not set
 	 * @return the property value
 	 */
-	public boolean getBooleanProperty(String propertyName, boolean defaultValue) {
-		if (containsProperty(propertyName)) {
-			return ((Boolean)getProperty(propertyName)).booleanValue();
+	public boolean getBooleanProperty(String name, boolean defaultValue) {
+		if (containsProperty(name)) {
+			return ((Boolean)getProperty(name)).booleanValue();
 		}
 		else {
 			return defaultValue;
@@ -185,6 +199,6 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	}
 
 	public Object removeAttribute(String attributeName) {
-		return this.properties.remove(attributeName);
+		return properties.remove(attributeName);
 	}
 }

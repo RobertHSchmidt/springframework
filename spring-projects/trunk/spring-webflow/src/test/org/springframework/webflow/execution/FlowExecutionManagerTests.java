@@ -9,20 +9,15 @@ import junit.framework.TestCase;
 
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.MutableAttributeSource;
-import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.EndState;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.Transition;
+import org.springframework.webflow.SimpleFlow;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.ViewState;
-import org.springframework.webflow.support.RedirectViewSelector;
-import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionManagerTests extends TestCase {
@@ -43,15 +38,6 @@ public class FlowExecutionManagerTests extends TestCase {
 
 		public void requestSubmitted(RequestContext context) {
 			invoked = true;
-		}
-	}
-
-	public static class SimpleFlow extends Flow {
-		public SimpleFlow() {
-			super("simpleFlow");
-			add(new ViewState(this, "view", new SimpleViewSelector("view"), new Transition[] { new Transition("end") }));
-			add(new EndState(this, "end", new RedirectViewSelector(new StaticExpression("confirm"))));
-			resolveStateTransitionsTargetStates();
 		}
 	}
 

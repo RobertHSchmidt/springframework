@@ -34,10 +34,11 @@ public class FlowTests extends TestCase {
 
 	private Flow createSimpleFlow() {
 		flow = new Flow("myFlow");
-		new ViewState(flow, "myState1", new SimpleViewSelector("myView"),
-				new Transition[] { new Transition("myState2") });
-		new EndState(flow, "myState2", new SimpleViewSelector("myView2"));
-		flow.resolveStateTransitionsTargetStates();
+		ViewState state1 = new ViewState(flow, "myState1");
+		state1.setViewSelector(new SimpleViewSelector("myView"));
+		state1.addTransition(new Transition("myState2"));
+		EndState state2 = new EndState(flow, "myState2");
+		state2.setViewSelector(new SimpleViewSelector("myView2"));
 		return flow;
 	}
 
@@ -139,12 +140,12 @@ public class FlowTests extends TestCase {
 
 	public void testStartInCustomStartState() {
 		flow = new Flow("myFlow");
-		new ViewState(flow, "myState1", new SimpleViewSelector("myView"),
-				new Transition[] { new Transition("myState2") });
-		new SubflowState(flow, "myState2", flow, new Transition[] { new Transition("myState3") });
+		ViewState state1 = new ViewState(flow, "myState1");
+		state1.setViewSelector(new SimpleViewSelector("myView"));
+		state1.addTransition(new Transition("myState2"));
+		SubflowState state2 = new SubflowState(flow, "myState2", flow);
+		state2.addTransition(new Transition("myState3"));
 		State customStartState = new EndState(flow, "myState3");
-		flow.resolveStateTransitionsTargetStates();
-
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		context.setCurrentState(flow.getRequiredState("myState2"));
 		flow.start(customStartState, context);
@@ -160,12 +161,16 @@ public class FlowTests extends TestCase {
 
 	public void testResumeTransactional() {
 		flow = new Flow("myFlow");
-		new ViewState(flow, "myState1", new SimpleViewSelector("myView"),
-				new Transition[] { new Transition("myState2") });
-		new ViewState(flow, "myState2", new SimpleViewSelector("myView2"),
-				new Transition[] { new Transition("myState3") });
-		new EndState(flow, "myState3", new SimpleViewSelector("myView3"));
-		flow.resolveStateTransitionsTargetStates();
+		ViewState state1 = new ViewState(flow, "myState1");
+		state1.setViewSelector(new SimpleViewSelector("myView"));
+		state1.addTransition(new Transition("myState2"));
+
+		ViewState state2 = new ViewState(flow, "myState2");
+		state2.setViewSelector(new SimpleViewSelector("myView2"));
+		state2.addTransition(new Transition("myState3"));
+
+		EndState state3 = new EndState(flow, "myState3");
+		state3.setViewSelector(new SimpleViewSelector("myView3"));
 
 		flow.setProperty("transactional", new Boolean(true));
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
