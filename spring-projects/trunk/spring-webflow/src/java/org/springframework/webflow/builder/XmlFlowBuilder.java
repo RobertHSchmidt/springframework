@@ -61,6 +61,7 @@ import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.Transition.TargetStateResolver;
+import org.springframework.webflow.action.FlowVariableCreatingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.FlowVariable;
@@ -80,8 +81,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *          &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *          &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -398,6 +399,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Assert.state(FLOW_ELEMENT.equals(flowElement.getTagName()), "This is not the '" + FLOW_ELEMENT + "' element");
 		initLocalFlowArtifactFactoryRegistry(flowElement);
 		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(id, buildProperties(properties, flowElement));
+		parseAndAddFlowVariables(flowElement, flow);
 		parseAndAddFlowActions(flowElement, flow);
 		return flow;
 	}
@@ -464,15 +466,18 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	/**
 	 * Parse a list of flow variables to create when the flow starts.
 	 * @param flowElement the flow element
-	 * @return the flow variables
+	 * @param flow the flow
 	 */
-	protected FlowVariable[] parseVariables(Element flowElement) {
-		List variables = new LinkedList();
+	protected void parseAndAddFlowVariables(Element flowElement, Flow flow) {
 		List varElements = DomUtils.getChildElementsByTagName(flowElement, VAR_ELEMENT);
-		for (int i = 0; i < varElements.size(); i++) {
-			variables.add(parseVariable((Element)varElements.get(i)));
+		if (varElements.isEmpty()) {
+			return;
 		}
-		return (FlowVariable[])variables.toArray(new FlowVariable[variables.size()]);
+		FlowVariableCreatingAction variableCreator = new FlowVariableCreatingAction();
+		for (int i = 0; i < varElements.size(); i++) {
+			variableCreator.addVariable(parseVariable((Element)varElements.get(i)));
+		}
+		flow.getStartActionList().add(variableCreator);
 	}
 
 	/**
