@@ -412,8 +412,8 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Returns the list of actions executed by this flow when an execution of it
-	 * starts.
+	 * Returns the list of actions executed by this flow when an execution of
+	 * the flow <i>starts</i>.
 	 * @return the start action list
 	 */
 	public ActionList getStartActionList() {
@@ -421,17 +421,17 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Convenience method to add a single action to this flows's end action
-	 * list. End actions are executed when this flow is ended.
-	 * @param action the action to add
+	 * Convenience method that adds anaction to this flows's end action list.
+	 * End actions are executed when this flow ends.
+	 * @param action the end action to add
 	 */
 	public void addEndAction(Action action) {
 		getEndActionList().add(action);
 	}
 
 	/**
-	 * Returns the list of actions executed by this flow when an execution of it
-	 * ends.
+	 * Returns the list of actions executed by this flow when an execution of
+	 * the flow <i>ends</i>.
 	 * @return the end action list
 	 */
 	public ActionList getEndActionList() {
@@ -439,11 +439,15 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Adds an exception handler to this flow.
+	 * Adds a state exception handler to this flow.
 	 * <p>
-	 * Exception handlers are invoked when an unhandled exception occurs when
-	 * this flow is executing. They can execute custom exception handling logic
-	 * as well as select an error view to display.
+	 * State exception handlers are invoked when an unhandled
+	 * {@link StateException} exception occurs when this flow is executing. They
+	 * can execute custom exception handling logic as well as select an error
+	 * view to display.
+	 * <p>
+	 * State exception handlers attached at the flow level have a opportunity to
+	 * handle exceptions that aren't handled at the state level.
 	 * @param handler the exception handler
 	 */
 	public void addExceptionHandler(StateExceptionHandler handler) {
@@ -451,12 +455,15 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Returns a mutable set of exception handlers, allowing manipulation of how
+	 * Returns the set of exception handlers, allowing manipulation of how state
 	 * exceptions are handled when thrown during flow execution.
 	 * <p>
 	 * Exception handlers are invoked when an exception occurs when this state
 	 * is entered, and can execute custom exception handling logic as well as
 	 * select an error view to display.
+	 * <p>
+	 * State exception handlers attached at the flow level have a opportunity to
+	 * handle exceptions that aren't handled at the state level.
 	 * @return the state exception handler set
 	 */
 	public StateExceptionHandlerSet getExceptionHandlerSet() {
@@ -612,7 +619,7 @@ public class Flow extends AnnotatedObject {
 	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context) {
 		return getExceptionHandlerSet().handleException(exception, context);
 	}
-	
+
 	public String toString() {
 		return new ToStringCreator(this).append("id", id).append("startState", startState)
 				.append("states", this.states).append("exceptionHandlerSet", exceptionHandlerSet).toString();

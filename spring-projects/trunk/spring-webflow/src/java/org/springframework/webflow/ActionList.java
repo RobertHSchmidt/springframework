@@ -24,8 +24,8 @@ import java.util.List;
 import org.springframework.core.style.ToStringCreator;
 
 /**
- * A typed list of actions, mainly for use internally by artifacts that can
- * execute groups of actions.
+ * An ordered, typed list of actions, mainly for use internally by artifacts
+ * that can execute groups of actions.
  * 
  * @see Flow#getStartActionList()
  * @see State#getEntryActionList()
@@ -45,14 +45,18 @@ public class ActionList {
 	/**
 	 * Add an action to this list.
 	 * @param action the action to add
+	 * @return true if this list's contents changed as a result of the add
+	 * operation
 	 */
 	public boolean add(Action action) {
 		return actions.add(action);
 	}
 
 	/**
-	 * Add a collection of action instances to this list.
+	 * Add a collection of actions to this list.
 	 * @param actions the actions to add
+	 * @return true if this list's contents changed as a result of the add
+	 * operation
 	 */
 	public boolean addAll(Action[] actions) {
 		if (actions == null) {
@@ -62,7 +66,7 @@ public class ActionList {
 	}
 
 	/**
-	 * Tests if this action is in this list.
+	 * Tests if the action is in this list.
 	 * @param action the action
 	 * @return true if the action is contained in this list, false otherwise
 	 */
@@ -71,7 +75,7 @@ public class ActionList {
 	}
 
 	/**
-	 * Remove a action instance from this list.
+	 * Remove the action instance from this list.
 	 * @param action the action to add
 	 */
 	public boolean remove(Action action) {
@@ -87,25 +91,27 @@ public class ActionList {
 	}
 
 	/**
-	 * Returns an iterator that lists the set of actions to execute for this
-	 * state. It iterates over a collection of {@link ActionExecutor} objects.
-	 * @return the ActionExecutor iterator
+	 * Returns an iterator over the list of actions in this list.
+	 * @return the action list iterator
 	 */
 	public Iterator iterator() {
 		return actions.iterator();
 	}
 
 	/**
-	 * Returns the action in this list.
-	 * @return the action
+	 * Returns the action in this list at the provided index.
+	 * @param index the action index
+	 * @return the action the action
 	 */
 	public Action get(int index) throws IndexOutOfBoundsException {
 		return (Action)actions.get(index);
 	}
 
 	/**
-	 * Returns the action in this list as an annotated action.
-	 * @return the action
+	 * Returns the action in this list at the provided index, exposing it as an
+	 * annotated action. This allows clients to access specific properties about
+	 * a target action instance if they exist.
+	 * @return the action, as an annotated action
 	 */
 	public AnnotatedAction getAnnotated(int index) throws IndexOutOfBoundsException {
 		Action action = get(index);
@@ -118,7 +124,7 @@ public class ActionList {
 	}
 
 	/**
-	 * Convert this list to an action array.
+	 * Convert this list to a typed action array.
 	 * @return the action list, as a typed array
 	 */
 	public Action[] toArray() {
@@ -126,7 +132,7 @@ public class ActionList {
 	}
 
 	/**
-	 * Convert this list to a java.util.List.
+	 * Convert this list to a <code>java.util.List</code>.
 	 * @return the action list, as a java.util.List
 	 */
 	public List toList() {
@@ -134,8 +140,9 @@ public class ActionList {
 	}
 
 	/**
-	 * Returns the list of actions in this list as annotated actions. This is
-	 * purely a convenience method.
+	 * Returns the list of actions in this list as a typed annotated action
+	 * array. This is a convenience method allowing clients to access properties
+	 * about an action if they exist.
 	 * @return the annotated action list, as a typed array
 	 */
 	public AnnotatedAction[] toAnnotatedArray() {
@@ -153,7 +160,8 @@ public class ActionList {
 	}
 
 	/**
-	 * Execute the actions in this list - a convenience method.
+	 * Executes the actions contained within this action list. Simply executes
+	 * over each action and calls execute. Action result events are ignored.
 	 * @param context the action execution request context
 	 */
 	public void execute(RequestContext context) {
