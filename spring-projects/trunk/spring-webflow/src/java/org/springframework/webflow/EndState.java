@@ -54,7 +54,7 @@ public class EndState extends State {
 	 * state terminates an executing root flow.
 	 */
 	private ViewSelector viewSelector;
-	
+
 	/**
 	 * Default constructor for bean style usage.
 	 * @see State#State()
@@ -120,14 +120,15 @@ public class EndState extends State {
 			ViewSelection selectedView;
 			if (isMarker()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning a [null] ending view selection: make sure a response has already been written");
+					logger.debug("Returning a [null] ending view selection--"
+							+ "assuming a response has already been written or the parent flow will care for view selection");
 				}
 				selectedView = null;
 			}
 			else {
 				selectedView = viewSelector.makeSelection(context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning ending view selection: " + selectedView);
+					logger.debug("Returning ending view selection " + selectedView);
 				}
 			}
 			context.endActiveFlowSession();

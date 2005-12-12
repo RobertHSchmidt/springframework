@@ -19,7 +19,7 @@ import org.springframework.webflow.Transition.TargetStateResolver;
 /**
  * A support interface used by FlowBuilders at configuration time to retrieve
  * dependent (but externally managed) flow artifacts needed to build a flow
- * definition.
+ * definition. Acts a facade to accessing externally managed flow artifacts.
  * 
  * @author Keith Donald
  */
