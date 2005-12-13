@@ -54,8 +54,8 @@ public class ActionExecutionException extends StateException {
 	 * @param cause the underlying cause
 	 */
 	public ActionExecutionException(State state, Action action, Throwable cause) {
-		this(state, action, EmptyAttributeSource.INSTANCE, "Exception thrown executing action '" + action
-				+ "' in state '" + state.getId() + "' of flow '" + state.getFlow().getId() + "'", cause);
+		this(state, action, EmptyAttributeSource.INSTANCE, "Exception thrown executing action " + action
+				+ " in state '" + state.getId() + "' of flow '" + state.getFlow().getId() + "'", cause);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class ActionExecutionException extends StateException {
 	 * @param cause the underlying cause
 	 */
 	public ActionExecutionException(State state, Action action, AttributeSource executionProperties, Throwable cause) {
-		this(state, action, executionProperties, "Exception thrown executing action '" + action + "' in state '"
+		this(state, action, executionProperties, "Exception thrown executing action " + action + " in state '"
 				+ state.getId() + "' of flow '" + state.getFlow().getId() + "'", cause);
 	}
 
