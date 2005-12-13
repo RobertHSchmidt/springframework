@@ -37,16 +37,6 @@ import org.springframework.webflow.ScopeType;
 public abstract class AbstractBeanInvokingAction extends AbstractAction {
 
 	/**
-	 * Constant for the result name action property.
-	 */
-	public static final String RESULT_NAME_ACTION_PROPERTY = "resultName";
-
-	/**
-	 * Constant for the result scope action property.
-	 */
-	public static final String RESULT_SCOPE_ACTION_PROPERTY = "resultScope";
-
-	/**
 	 * The method invoker that performs the action-to-bean method binding.
 	 */
 	private MethodInvoker methodInvoker = new MethodInvoker();
@@ -107,9 +97,9 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	protected abstract Object getBean(RequestContext context);
 
 	protected void processMethodReturnValue(Object returnValue, RequestContext context) {
-		String resultName = (String)getActionProperty(context, RESULT_NAME_ACTION_PROPERTY, null);
+		String resultName = (String)getActionProperty(context, AnnotatedAction.RESULT_NAME_PROPERTY, null);
 		if (resultName != null) {
-			ScopeType scopeType = (ScopeType)getActionProperty(context, RESULT_SCOPE_ACTION_PROPERTY, ScopeType.REQUEST);
+			ScopeType scopeType = (ScopeType)getActionProperty(context, AnnotatedAction.RESULT_SCOPE_PROPERTY, ScopeType.REQUEST);
 			scopeType.getScope(context).setAttribute(resultName, returnValue);
 		}
 	}

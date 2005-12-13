@@ -17,9 +17,11 @@ package org.springframework.webflow;
 
 import java.util.Map;
 
+import org.springframework.binding.method.MethodKey;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.action.MultiAction;
 
 /**
  * An action proxy/decorator that stores arbitrary properties about a target
@@ -38,23 +40,35 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 
 	/**
 	 * The action name property ("name").
-	 * 
+	 * <p>
 	 * The name property is often used as a qualifier for an action's result
 	 * event, and is typically used to allow the flow to respond to a specific
 	 * action's outcome within a larger action execution chain.
+	 * <p>
 	 * {@see ActionState} for more information.
 	 */
 	public static final String NAME_PROPERTY = "name";
 
 	/**
 	 * The action execution method property ("method").
-	 * 
+	 * <p>
 	 * The method property is the name of a specific method on a
-	 * <code>{@link org.springframework.webflow.action.MultiAction}</code> to
-	 * execute, or the name of a specific method on a arbitrary POJO (plain old
-	 * java.lang.Object) {@see ActionState} for more information.
+	 * <code>{@link MultiAction}</code> to execute, or the name of a specific
+	 * method on a arbitrary POJO (plain old java.lang.Object.
+	 * <p>
+	 * {@see ActionState} for more information.
 	 */
 	public static final String METHOD_PROPERTY = "method";
+
+	/**
+	 * The action execution method result attribute property ("resultName");
+	 */
+	public static final String RESULT_NAME_PROPERTY = "resultName";
+
+	/**
+	 * The action execution method result attribute scope property ("resultScope");
+	 */
+	public static final String RESULT_SCOPE_PROPERTY = "resultScope";
 
 	/**
 	 * The target action to execute.
@@ -121,6 +135,56 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 */
 	public boolean isNamed() {
 		return StringUtils.hasText(getName());
+	}
+
+	/**
+	 * Returns the name of the action method to invoke when the target action is
+	 * executed.
+	 */
+	public MethodKey getMethod() {
+		return (MethodKey)getProperty(AnnotatedAction.METHOD_PROPERTY);
+	}
+
+	/**
+	 * Sets the name of the action method to invoke when the target action is
+	 * executed.
+	 * @param method the action method name.
+	 */
+	public void setMethod(MethodKey method) {
+		setProperty(AnnotatedAction.METHOD_PROPERTY, method);
+	}
+
+	/**
+	 * Returns the name of the attribute to export the action method return
+	 * value under.
+	 */
+	public String getResultName() {
+		return (String)getProperty(AnnotatedAction.RESULT_NAME_PROPERTY);
+	}
+
+	/**
+	 * Sets the name of the action method to invoke when the target action is
+	 * executed.
+	 * @param resultName the action return value attribute name
+	 */
+	public void setResultName(String resultName) {
+		setProperty(AnnotatedAction.RESULT_NAME_PROPERTY, resultName);
+	}
+
+	/**
+	 * Returns the name of the attribute to export the action method return
+	 * value under.
+	 */
+	public String getResultScope() {
+		return (String)getProperty(AnnotatedAction.RESULT_NAME_PROPERTY);
+	}
+
+	/**
+	 * Sets the scope of the attribute storing the action method return value.
+	 * @param resultScope the result scope
+	 */
+	public void setResultScope(ScopeType resultScope) {
+		setProperty(AnnotatedAction.RESULT_SCOPE_PROPERTY, resultScope);
 	}
 
 	public Event execute(RequestContext context) throws Exception {

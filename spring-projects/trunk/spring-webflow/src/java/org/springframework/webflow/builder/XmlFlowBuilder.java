@@ -52,6 +52,7 @@ import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.SubflowState;
@@ -81,8 +82,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *          &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *          &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -145,6 +146,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String NAME_ATTRIBUTE = "name";
 
 	private static final String METHOD_ATTRIBUTE = "method";
+
+	private static final String RESULT_NAME_ATTRIBUTE = "resultName";
+
+	private static final String RESULT_SCOPE_ATTRIBUTE = "resultScope";
+
+	private static final String NONE_VALUE = "none";
 
 	private static final String VIEW_STATE_ELEMENT = "view-state";
 
@@ -686,10 +693,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			action.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)) {
-			// direct support for bean invoking actions
-			MethodKey methodKey = (MethodKey)fromStringTo(MethodKey.class).execute(
-					element.getAttribute(METHOD_ATTRIBUTE));
-			action.setProperty(AnnotatedAction.METHOD_PROPERTY, methodKey);
+			MethodKey method = (MethodKey)fromStringTo(MethodKey.class).execute(element.getAttribute(METHOD_ATTRIBUTE));
+			action.setMethod(method);
+		}
+		if (element.hasAttribute(RESULT_NAME_ATTRIBUTE)) {
+			action.setResultName(element.getAttribute(RESULT_NAME_ATTRIBUTE));
+		}
+		if (element.hasAttribute(RESULT_SCOPE_ATTRIBUTE)
+				&& !element.getAttribute(RESULT_SCOPE_ATTRIBUTE).equals(NONE_VALUE)) {
+			ScopeType scopeType = (ScopeType)fromStringTo(ScopeType.class).execute(
+					element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
+			action.setResultScope(scopeType);
 		}
 		parseAndSetProperties(element, action);
 		return action;
