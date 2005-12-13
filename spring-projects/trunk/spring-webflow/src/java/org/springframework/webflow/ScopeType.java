@@ -52,6 +52,10 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	private ScopeType(int code, String label) {
 		super(code, label);
 	}
-	
-	public abstract Scope getScope(RequestContext context);
+
+	public Class getType() {
+		return ScopeType.class;
+	}
+
+	public abstract Scope getScope(RequestContext context);	
 }
