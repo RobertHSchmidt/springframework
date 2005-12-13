@@ -17,6 +17,8 @@ package org.springframework.webflow.registry;
 
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
@@ -27,6 +29,11 @@ import org.springframework.webflow.builder.FlowBuilder;
  * @author Keith Donald
  */
 public abstract class FlowRegistrarSupport implements FlowRegistrar {
+
+	/**
+	 * Logger, for subclasses.
+	 */
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * Register the flow built by the builder in the registry.

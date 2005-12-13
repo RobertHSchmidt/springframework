@@ -22,8 +22,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
@@ -63,8 +61,6 @@ import org.springframework.webflow.builder.XmlFlowBuilder;
  * @author Keith Donald
  */
 public class XmlFlowRegistrar extends FlowRegistrarSupport {
-
-	private static final Log logger = LogFactory.getLog(XmlFlowRegistrar.class);
 
 	/**
 	 * The xml file suffix constant.
