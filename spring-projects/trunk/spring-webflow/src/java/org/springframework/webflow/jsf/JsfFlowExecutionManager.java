@@ -223,29 +223,29 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 
 	/**
 	 * Saves contextual flow information in the JSF RequestMap. While this may
-	 * already be there in the case of normal view generation, when we are 
-	 * going back to the same view as before due to validation errors, the
-	 * flow will not have run at all, so will not have generated a view
-	 * @param context 
+	 * already be there in the case of normal view generation, when we are going
+	 * back to the same view as before due to validation errors, the flow will
+	 * not have run at all, so will not have generated a view
+	 * @param context
 	 */
-	public void saveContextualFlowInformationInRequest(FacesContext context) {
+	public void exposeFlowAttributes(FacesContext context) {
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
 		if (flowExecution != null && flowExecution.isActive()) {
 			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
 			Assert.notNull(flowExecutionId,
 					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
-			Map contextualInfo = new HashMap();
-			prepareViewModelContextualInfo(contextualInfo, flowExecutionId, flowExecution);
+			Map model = new HashMap();
+			exposeFlowAttributes(model, flowExecutionId, flowExecution);
 			// this is pretty unclean
-			Serializable transactionId = (Serializable) context.getExternalContext().getRequestParameterMap()
-				.get(AbstractTokenTransactionSynchronizer.TRANSACTION_TOKEN_PARAMETER_NAME);
-			if (transactionId != null)
-				contextualInfo.put(AbstractTokenTransactionSynchronizer.TRANSACTION_TOKEN_ATTRIBUTE_NAME,
-						transactionId);
-			addMapViaPutAllWithFallback(context.getExternalContext().getRequestMap(), contextualInfo);			
+			Serializable transactionId = (Serializable)context.getExternalContext().getRequestParameterMap().get(
+					AbstractTokenTransactionSynchronizer.TRANSACTION_TOKEN_PARAMETER_NAME);
+			if (transactionId != null) {
+				model.put(AbstractTokenTransactionSynchronizer.TRANSACTION_TOKEN_ATTRIBUTE_NAME, transactionId);
+			}
+			putInto(context.getExternalContext().getRequestMap(), model);
 		}
 	}
-	
+
 	/**
 	 * Saves the current thread-bound FlowExecution out to storage if necessary;
 	 * specifically, only if it actually exsists, and only if saving is a two
@@ -253,12 +253,11 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * processing when a storage ID is generated, the second part happens here
 	 * and actually puts the execution into storage after response rendering
 	 * with that generated
-	 * @param context 
+	 * @param context
 	 */
 	public void saveFlowExecutionIfNecessary(FacesContext context) {
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-		if (flowExecution != null && flowExecution.isActive() &&
-				!FlowExecutionHolder.isFlowExecutionSaved()) {
+		if (flowExecution != null && flowExecution.isActive() && !FlowExecutionHolder.isFlowExecutionSaved()) {
 			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
 			Assert.notNull(flowExecutionId,
 					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
@@ -269,10 +268,10 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 				logger.debug("Saved flow execution out to storage with previously generated id: '" + flowExecutionId
 						+ "'");
 			}
-			
+
 			Map contextualInfo = new HashMap();
-			prepareViewModelContextualInfo(contextualInfo, flowExecutionId, flowExecution);
-			addMapViaPutAllWithFallback(context.getExternalContext().getRequestMap(), contextualInfo);			
+			exposeFlowAttributes(contextualInfo, flowExecutionId, flowExecution);
+			putInto(context.getExternalContext().getRequestMap(), contextualInfo);
 		}
 	}
 
@@ -288,7 +287,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	public void renderView(FacesContext context, String fromAction, String outcome, ViewSelection selectedView) {
 
 		Map viewModel = selectedView.getModel();
-		addMapViaPutAllWithFallback(context.getExternalContext().getRequestMap(), viewModel);
+		putInto(context.getExternalContext().getRequestMap(), viewModel);
 		// stay on the same view if requested
 		if (selectedView.getViewName() == null) {
 			return;
@@ -298,7 +297,6 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		UIViewRoot view = handler.createView(context, viewIdResolver.resolveViewName(selectedView.getViewName()));
 		context.setViewRoot(view);
 	}
-
 
 	/**
 	 * Responsible for restoring (loading) the flow execution if the appropriate
@@ -319,41 +317,42 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			FlowExecutionHolder.setFlowExecution(id, flowExecution, jsfContext, false);
 		}
 	}
-    
-	/**
-     *  Extract the event id for the JSF case. The superclass method looks for an _eventId
-     *  request param, while for JSF we need to treat the JSF outcome (that was passed to
-     *  our navigation handler) as the event id. The Outcome is actually the static action
-     *  that the JSF page submitted.
-     *  
-     * @param context the context in which the external user event occured
-     * @return the event id
-	 */
-    protected String extractEventId(ExternalContext context) throws IllegalArgumentException {
-        
-        JsfExternalContext jsfContext = (JsfExternalContext) context;
-        
-        String eventId = jsfContext.getOutcome();
-        Assert.hasText(eventId, "No eventId could be obtained: make sure the client provides "
-                + "the event id in the form of a JSF static action; "
-                + "the parameters provided for this request were:"
-                + StylerUtils.style(context.getRequestParameterMap()));
-        if (eventId.equals(getNotSetEventIdParameterMarker())) {
-            throw new IllegalArgumentException("The received eventId was the 'not set' marker '"
-                    + getNotSetEventIdParameterMarker()
-                    + "' -- this is likely a client view (jsp, etc) configuration error --" + "the '"
-                    + getEventIdParameterName() + "' parameter must be set to a valid event");
-        }
-        return eventId;
-    }
 
-    /**
-     * Utility method needed needed only because we can not rely on JSF RequestMap
-     * supporting Map's putAll method. Tries putAll, falls back to individual adds
-     * @param targetMap the target map to add the model data to
-     * @param map the model data to add to the target map
-     */
-    protected void addMapViaPutAllWithFallback(Map targetMap, Map model) {
+	/**
+	 * Extract the event id for the JSF case. The superclass method looks for an
+	 * _eventId request param, while for JSF we need to treat the JSF outcome
+	 * (that was passed to our navigation handler) as the event id. The Outcome
+	 * is actually the static action that the JSF page submitted.
+	 * 
+	 * @param context the context in which the external user event occured
+	 * @return the event id
+	 */
+	protected String extractEventId(ExternalContext context) throws IllegalArgumentException {
+
+		JsfExternalContext jsfContext = (JsfExternalContext)context;
+
+		String eventId = jsfContext.getOutcome();
+		Assert.hasText(eventId, "No eventId could be obtained: make sure the client provides "
+				+ "the event id in the form of a JSF static action; "
+				+ "the parameters provided for this request were:"
+				+ StylerUtils.style(context.getRequestParameterMap()));
+		if (eventId.equals(getNotSetEventIdParameterMarker())) {
+			throw new IllegalArgumentException("The received eventId was the 'not set' marker '"
+					+ getNotSetEventIdParameterMarker()
+					+ "' -- this is likely a client view (jsp, etc) configuration error --" + "the '"
+					+ getEventIdParameterName() + "' parameter must be set to a valid event");
+		}
+		return eventId;
+	}
+
+	/**
+	 * Utility method needed needed only because we can not rely on JSF
+	 * RequestMap supporting Map's putAll method. Tries putAll, falls back to
+	 * individual adds
+	 * @param targetMap the target map to add the model data to
+	 * @param map the model data to add to the target map
+	 */
+	private void putInto(Map targetMap, Map model) {
 		// Expose model data specified in the descriptor
 		try {
 			targetMap.putAll(model);
@@ -368,7 +367,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			}
 		}
 	}
-    
+
 	/**
 	 * Return the JsfFlowExecutionManager from a known location, as a bean
 	 * called FlowNavigationHandlerStrategy.BEAN_NAME in the web application
@@ -389,5 +388,5 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			return viewName;
 		}
 	}
-   
+
 }

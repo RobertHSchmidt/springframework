@@ -863,8 +863,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 				selectedView.addObject(getFlowExecutionIdParameterName(), flowExecutionId);
 			}
 			else {
-				Map viewModel = selectedView.getModel();
-				prepareViewModelContextualInfo(viewModel, flowExecutionId, flowExecutionContext);
+				exposeFlowAttributes(selectedView.getModel(), flowExecutionId, flowExecutionContext);
 			}
 		}
 		if (logger.isDebugEnabled()) {
@@ -874,19 +873,20 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Stores contextual info in the view model, inlcuding flow execution context,
-	 * flow execution id, and the current transaction id
-	 * @param viewModel the view model
+	 * Stores contextual info in the view model, including the flow execution
+	 * context, flow execution id
+	 * @param model the view model
 	 * @param flowExecutionId the flow execution id
 	 * @param flowExecutionContext the flow execution context
 	 */
-	protected void prepareViewModelContextualInfo(Map viewModel, Serializable flowExecutionId, FlowExecutionContext flowExecutionContext) {
+	protected void exposeFlowAttributes(Map model, Serializable flowExecutionId,
+			FlowExecutionContext flowExecutionContext) {
 		// make the entire flow execution context available in the model
-		viewModel.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
+		model.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
 		// make the unique flow execution id and current state id
 		// available in the model as convenience to views
-		viewModel.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
-		viewModel.put(CURRENT_STATE_ID_ATTRIBUTE, flowExecutionContext.getCurrentState().getId());
+		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
+		model.put(CURRENT_STATE_ID_ATTRIBUTE, flowExecutionContext.getCurrentState().getId());
 	}
 
 	// utility methods
