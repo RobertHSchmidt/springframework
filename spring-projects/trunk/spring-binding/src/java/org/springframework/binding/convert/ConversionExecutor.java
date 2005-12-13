@@ -44,5 +44,5 @@ public class ConversionExecutor implements Serializable {
 	 */
 	public Object execute(Object source) throws ConversionException {
 		return this.converter.convert(source, this.targetClass);
-	}	
+	}
 }

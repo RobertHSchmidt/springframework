@@ -27,7 +27,7 @@ public class ChainedAttributeSource implements AttributeSource {
 	public void assertElementsNotNull(AttributeSource[] sources) {
 		for (int i = 0; i < sources.length; i++) {
 			if (sources[i] == null) {
-				throw new IllegalArgumentException("Null element at index [" + i  + "] not allowed");
+				throw new IllegalArgumentException("Null element at index [" + i + "] not allowed");
 			}
 		}
 	}

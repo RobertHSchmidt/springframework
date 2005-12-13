@@ -23,7 +23,7 @@ package org.springframework.binding.convert;
  * @author Keith Donald
  */
 public interface ConversionService {
-	
+
 	/**
 	 * Return a conversion executor command object capable of converting source
 	 * objects of the specified <code>sourceClass</code> to instances of the
@@ -32,29 +32,27 @@ public interface ConversionService {
 	 * The returned ConversionExecutor is thread-safe and may safely be cached
 	 * for use in client code.
 	 * 
-	 * @param sourceClass
-	 *            The source class to convert from
-	 * @param targetClass
-	 *            The target class to convert to
+	 * @param sourceClass The source class to convert from
+	 * @param targetClass The target class to convert to
 	 * @return The executor that can execute instance conversion
-	 * @throws ConversionException
-	 *             An exception occured retrieving a converter for the
-	 *             source-to-target pair.
+	 * @throws ConversionException An exception occured retrieving a converter
+	 * for the source-to-target pair.
 	 */
 	public ConversionExecutor getConversionExecutor(Class sourceClass, Class targetClass) throws ConversionException;
-	
+
 	/**
 	 * Return a conversion executor command object capable of converting source
-	 * objects of the specified <code>sourceClass</code> to target objects of the
-	 * type associated with the specified alias.
-	 *
+	 * objects of the specified <code>sourceClass</code> to target objects of
+	 * the type associated with the specified alias.
+	 * 
 	 * @param sourceClass the sourceClass
-	 * @param targetAlias the target alias, may also be the fully qualified target class name
+	 * @param targetAlias the target alias, may also be the fully qualified
+	 * target class name
 	 * @return the conversion executor
 	 */
-	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass,
-			String targetAlias) throws IllegalArgumentException;
-	
+	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass, String targetAlias)
+			throws IllegalArgumentException;
+
 	/**
 	 * Return the class with the specified alias.
 	 * @param alias the class alias

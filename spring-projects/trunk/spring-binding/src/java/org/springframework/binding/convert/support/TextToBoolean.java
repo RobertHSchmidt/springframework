@@ -25,15 +25,19 @@ import org.springframework.util.StringUtils;
 public class TextToBoolean extends AbstractConverter {
 
 	public static final String VALUE_TRUE = "true";
+
 	public static final String VALUE_FALSE = "false";
 
 	public static final String VALUE_ON = "on";
+
 	public static final String VALUE_OFF = "off";
 
 	public static final String VALUE_YES = "yes";
+
 	public static final String VALUE_NO = "no";
 
 	public static final String VALUE_1 = "1";
+
 	public static final String VALUE_0 = "0";
 
 	private String trueString;
@@ -41,14 +45,14 @@ public class TextToBoolean extends AbstractConverter {
 	private String falseString;
 
 	public TextToBoolean() {
-		
+
 	}
-	
+
 	public TextToBoolean(String trueString, String falseString) {
 		this.trueString = trueString;
 		this.falseString = falseString;
 	}
-	
+
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class };
 	}
@@ -68,18 +72,18 @@ public class TextToBoolean extends AbstractConverter {
 		else if (this.falseString != null && text.equalsIgnoreCase(this.falseString)) {
 			return Boolean.FALSE;
 		}
-		else if (this.trueString == null &&
-				(text.equalsIgnoreCase(VALUE_TRUE) || text.equalsIgnoreCase(VALUE_ON) ||
-				text.equalsIgnoreCase(VALUE_YES) || text.equals(VALUE_1))) {
+		else if (this.trueString == null
+				&& (text.equalsIgnoreCase(VALUE_TRUE) || text.equalsIgnoreCase(VALUE_ON)
+						|| text.equalsIgnoreCase(VALUE_YES) || text.equals(VALUE_1))) {
 			return Boolean.TRUE;
 		}
-		else if (this.falseString == null &&
-				(text.equalsIgnoreCase(VALUE_FALSE) || text.equalsIgnoreCase(VALUE_OFF) ||
-				text.equalsIgnoreCase(VALUE_NO) || text.equals(VALUE_0))) {
+		else if (this.falseString == null
+				&& (text.equalsIgnoreCase(VALUE_FALSE) || text.equalsIgnoreCase(VALUE_OFF)
+						|| text.equalsIgnoreCase(VALUE_NO) || text.equals(VALUE_0))) {
 			return Boolean.FALSE;
 		}
 		else {
 			throw new IllegalArgumentException("Invalid boolean value [" + text + "]");
-		}		
+		}
 	}
 }

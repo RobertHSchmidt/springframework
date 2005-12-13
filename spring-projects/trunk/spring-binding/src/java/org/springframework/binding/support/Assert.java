@@ -31,7 +31,8 @@ import org.springframework.util.ObjectUtils;
 public class Assert extends org.springframework.util.Assert {
 
 	/**
-	 * Assert that an attribute with specified name is present in given attributes.
+	 * Assert that an attribute with specified name is present in given
+	 * attributes.
 	 */
 	public static void attributePresent(AttributeSource attributes, String attributeName) {
 		isTrue(attributes.containsAttribute(attributeName), "The attribute '" + attributeName
@@ -48,7 +49,8 @@ public class Assert extends org.springframework.util.Assert {
 	}
 
 	/**
-	 * Assert that an attribute exists in the attributes map of the specified type.
+	 * Assert that an attribute exists in the attributes map of the specified
+	 * type.
 	 * @param attributes the attributes map
 	 * @param attributeName the attribute name
 	 * @param clazz the required type
@@ -59,7 +61,8 @@ public class Assert extends org.springframework.util.Assert {
 	}
 
 	/**
-	 * Assert that an attribute exists in the attributes map of the specified value.
+	 * Assert that an attribute exists in the attributes map of the specified
+	 * value.
 	 * @param attributes the attributes map
 	 * @param attributeName the attribute name
 	 * @param attributeValue the attribute value
@@ -70,15 +73,15 @@ public class Assert extends org.springframework.util.Assert {
 		}
 		valueEquals(attributes.getAttribute(attributeName), attributeValue);
 	}
-	
+
 	/**
 	 * Assert that a value equals an expected value
 	 * @param value the actual value
 	 * @param expected the expected value
 	 */
 	public static void valueEquals(Object value, Object expected) {
-		Assert.isTrue(ObjectUtils.nullSafeEquals(expected, value),
-				"The attribute '" + value + "' must equal '" + expected + "'");
+		Assert.isTrue(ObjectUtils.nullSafeEquals(expected, value), "The attribute '" + value + "' must equal '"
+				+ expected + "'");
 	}
 
 	/**
@@ -95,8 +98,8 @@ public class Assert extends org.springframework.util.Assert {
 	}
 
 	/**
-	 * Assert that a bean attribute in the attributes map has a property
-	 * with the provided property value.
+	 * Assert that a bean attribute in the attributes map has a property with
+	 * the provided property value.
 	 * @param attributes the attributes map
 	 * @param attributeName the attribute name (of a javabean)
 	 * @param propertyName the bean property name

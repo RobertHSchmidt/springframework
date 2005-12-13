@@ -31,7 +31,7 @@ public class TextToNumber extends AbstractFormattingConverter {
 	public TextToNumber() {
 		super(new SimpleFormatterFactory());
 	}
-	
+
 	public TextToNumber(FormatterFactory locator) {
 		super(locator);
 	}
@@ -41,8 +41,8 @@ public class TextToNumber extends AbstractFormattingConverter {
 	}
 
 	public Class[] getTargetClasses() {
-		return new Class[] { Integer.class, Short.class, Byte.class, Long.class, Float.class, Double.class, BigInteger.class,
-				BigDecimal.class };
+		return new Class[] { Integer.class, Short.class, Byte.class, Long.class, Float.class, Double.class,
+				BigInteger.class, BigDecimal.class };
 	}
 
 	protected Object doConvert(Object source, Class targetClass) throws Exception {

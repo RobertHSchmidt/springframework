@@ -42,9 +42,9 @@ public interface Converter {
 	 * specified target class.
 	 * 
 	 * @param source the source object to convert, its class must be one of the
-	 *        supported <code>sourceClasses</code>
-	 * @param targetClass the target class to convert the source to, must be one of the
-	 *        supported <code>targetClasses</code>
+	 * supported <code>sourceClasses</code>
+	 * @param targetClass the target class to convert the source to, must be one
+	 * of the supported <code>targetClasses</code>
 	 * @return The converted object, an instance of the default target type
 	 * @throws ConversionException An exception occured during the conversion
 	 */

@@ -37,11 +37,11 @@ import org.springframework.binding.convert.Converter;
  * 
  * @author Keith Donald
  */
-public class BeanFactoryAwareConversionService extends DefaultConversionService
-		implements InitializingBean, BeanFactoryAware, BeanFactoryPostProcessor {
+public class BeanFactoryAwareConversionService extends DefaultConversionService implements InitializingBean,
+		BeanFactoryAware, BeanFactoryPostProcessor {
 
 	private BeanFactory beanFactory;
-	
+
 	public BeanFactoryAwareConversionService() {
 	}
 
@@ -53,19 +53,16 @@ public class BeanFactoryAwareConversionService extends DefaultConversionService
 		addConverter(new TextToBean(beanFactory), "bean");
 	}
 
-	public void postProcessBeanFactory(
-			ConfigurableListableBeanFactory beanFactory) throws BeansException {
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		if (getSourceClassConverters() != null) {
-			Map sourceStringConverters = (Map) getSourceClassConverters().get(
-					String.class);
+			Map sourceStringConverters = (Map)getSourceClassConverters().get(String.class);
 			if (sourceStringConverters != null) {
 				Iterator it = sourceStringConverters.entrySet().iterator();
 				while (it.hasNext()) {
-					Map.Entry entry = (Map.Entry) it.next();
-					Class targetClass = (Class) entry.getKey();
-					PropertyEditor editor = new ConverterPropertyEditorAdapter(
-							new ConversionExecutor(
-									(Converter) entry.getValue(), targetClass));
+					Map.Entry entry = (Map.Entry)it.next();
+					Class targetClass = (Class)entry.getKey();
+					PropertyEditor editor = new ConverterPropertyEditorAdapter(new ConversionExecutor((Converter)entry
+							.getValue(), targetClass));
 					beanFactory.registerCustomEditor(targetClass, editor);
 				}
 			}

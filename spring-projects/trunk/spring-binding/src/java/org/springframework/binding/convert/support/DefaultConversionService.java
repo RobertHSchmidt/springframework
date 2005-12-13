@@ -165,7 +165,7 @@ public class DefaultConversionService implements ConversionService {
 			return new ConversionExecutor(new NoOpConverter(sourceClass, targetClass), targetClass);
 		}
 		Map sourceTargetConverters = (Map)findConvertersForSource(sourceClass);
-		Converter converter = (Converter)sourceTargetConverters.get(targetClass);
+		Converter converter = (Converter)findTargetConverter(sourceTargetConverters, targetClass);
 		if (converter != null) {
 			return new ConversionExecutor(converter, targetClass);
 		}
@@ -209,6 +209,27 @@ public class DefaultConversionService implements ConversionService {
 		return Collections.EMPTY_MAP;
 	}
 
+	private Converter findTargetConverter(Map sourceTargetConverters, Class targetClass) {
+		LinkedList classQueue = new LinkedList();
+		classQueue.addFirst(targetClass);
+		while (!classQueue.isEmpty()) {
+			targetClass = (Class)classQueue.removeLast();
+			Converter converter = (Converter)sourceTargetConverters.get(targetClass);
+			if (converter != null) {
+				return converter;
+			}
+			if (!targetClass.isInterface() && (targetClass.getSuperclass() != null)) {
+				classQueue.addFirst(targetClass.getSuperclass());
+			}
+			// queue up target class's implemented interfaces.
+			Class[] interfaces = targetClass.getInterfaces();
+			for (int i = 0; i < interfaces.length; i++) {
+				classQueue.addFirst(interfaces[i]);
+			}
+		}
+		return null;
+	}
+	
 	public ConversionService getParent() {
 		return parent;
 	}

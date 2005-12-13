@@ -22,9 +22,9 @@ import org.springframework.core.NestedRuntimeException;
  * @author Keith Donald
  */
 public class ConversionException extends NestedRuntimeException {
-	
+
 	/**
-	 * The value we tried to convert. 
+	 * The value we tried to convert.
 	 */
 	private Object value;
 
@@ -38,8 +38,8 @@ public class ConversionException extends NestedRuntimeException {
 	 * @param targetClass
 	 */
 	public ConversionException(Object value, Class targetClass) {
-		super("Unable to convert value '" + value + "' of type '" + (value != null ? value.getClass().getName() : null) + "' to class '"
-				+ targetClass.getName() + "'");
+		super("Unable to convert value '" + value + "' of type '" + (value != null ? value.getClass().getName() : null)
+				+ "' to class '" + targetClass.getName() + "'");
 		this.value = value;
 		this.targetClass = targetClass;
 	}
@@ -50,8 +50,8 @@ public class ConversionException extends NestedRuntimeException {
 	 * @param cause
 	 */
 	public ConversionException(Object value, Class targetClass, Throwable cause) {
-		super("Unable to convert value '" + value + "' of type '" + (value != null ? value.getClass().getName() : null) + "' to class '"
-				+ targetClass.getName() + "'", cause);
+		super("Unable to convert value '" + value + "' of type '" + (value != null ? value.getClass().getName() : null)
+				+ "' to class '" + targetClass.getName() + "'", cause);
 		this.value = value;
 		this.targetClass = targetClass;
 	}

@@ -21,7 +21,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * Converts a text-encoded representation of a <code>Mapping</code> object to a valid instance.
+ * Converts a text-encoded representation of a <code>Mapping</code> object to
+ * a valid instance.
  * @author Keith Donald
  */
 public class TextToMapping extends AbstractConverter {
@@ -54,8 +55,9 @@ public class TextToMapping extends AbstractConverter {
 	}
 
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
-		//format: <sourceAttributeExpression>[,class][->targetAttributeExpression[,class]]
-		String[] sourceTarget = StringUtils.delimitedListToStringArray((String) source, "->");
+		// format:
+		// <sourceAttributeExpression>[,class][->targetAttributeExpression[,class]]
+		String[] sourceTarget = StringUtils.delimitedListToStringArray((String)source, "->");
 		if (sourceTarget.length == 1) {
 			// just target mapping info is specified
 			String[] targetMappingInfo = StringUtils.commaDelimitedListToStringArray(sourceTarget[0]);
@@ -63,12 +65,12 @@ public class TextToMapping extends AbstractConverter {
 			String targetAttribute = targetMappingInfo[0];
 			Class targetAttributeClass = null;
 			if (targetMappingInfo.length == 2) {
-				targetAttributeClass = (Class) getConversionService().getConversionExecutor(String.class, Class.class)
+				targetAttributeClass = (Class)getConversionService().getConversionExecutor(String.class, Class.class)
 						.execute(targetMappingInfo[1]);
 			}
 			if (targetAttributeClass != null) {
-				return new Mapping(sourceAttribute, targetAttribute, getConversionService()
-						.getConversionExecutor(String.class, targetAttributeClass));
+				return new Mapping(sourceAttribute, targetAttribute, getConversionService().getConversionExecutor(
+						String.class, targetAttributeClass));
 			}
 			else {
 				return new Mapping(sourceAttribute, targetAttribute);
@@ -80,19 +82,19 @@ public class TextToMapping extends AbstractConverter {
 			String sourceAttribute = sourceMappingInfo[0];
 			Class sourceAttributeClass = String.class;
 			if (sourceMappingInfo.length == 2) {
-				sourceAttributeClass = (Class) getConversionService().getConversionExecutor(String.class, Class.class)
+				sourceAttributeClass = (Class)getConversionService().getConversionExecutor(String.class, Class.class)
 						.execute(sourceMappingInfo[1]);
 			}
 			String[] targetMappingInfo = StringUtils.commaDelimitedListToStringArray(sourceTarget[1]);
 			String targetAttribute = targetMappingInfo[0];
 			Class targetAttributeClass = String.class;
 			if (targetMappingInfo.length == 2) {
-				targetAttributeClass = (Class) getConversionService().getConversionExecutor(String.class, Class.class)
+				targetAttributeClass = (Class)getConversionService().getConversionExecutor(String.class, Class.class)
 						.execute(targetMappingInfo[1]);
 			}
 			if (!sourceAttributeClass.equals(targetAttributeClass)) {
-				return new Mapping(sourceAttribute, targetAttribute, getConversionService()
-						.getConversionExecutor(sourceAttributeClass, targetAttributeClass));
+				return new Mapping(sourceAttribute, targetAttribute, getConversionService().getConversionExecutor(
+						sourceAttributeClass, targetAttributeClass));
 			}
 			else {
 				return new Mapping(sourceAttribute, targetAttribute);

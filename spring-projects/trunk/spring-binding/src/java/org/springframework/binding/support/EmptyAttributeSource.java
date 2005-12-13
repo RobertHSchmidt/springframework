@@ -19,12 +19,12 @@ import org.springframework.binding.AttributeSource;
 
 public class EmptyAttributeSource implements AttributeSource {
 
-	public static final AttributeSource INSTANCE = new EmptyAttributeSource(); 
-	
+	public static final AttributeSource INSTANCE = new EmptyAttributeSource();
+
 	public EmptyAttributeSource() {
-		
+
 	}
-	
+
 	public boolean containsAttribute(String attributeName) {
 		return false;
 	}
@@ -32,7 +32,7 @@ public class EmptyAttributeSource implements AttributeSource {
 	public Object getAttribute(String attributeName) {
 		return null;
 	}
-	
+
 	public String toString() {
 		return "empty";
 	}

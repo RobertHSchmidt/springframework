@@ -44,11 +44,13 @@ public class TextToClass extends ConversionServiceAwareConverter {
 			String classNameOrAlias = text.trim();
 			if (classNameOrAlias.startsWith(CLASS_PREFIX)) {
 				return ClassUtils.forName(text.substring(CLASS_PREFIX.length()));
-			} else if (classNameOrAlias.startsWith(TYPE_PREFIX)) {
+			}
+			else if (classNameOrAlias.startsWith(TYPE_PREFIX)) {
 				Class clazz = getConversionService().getClassByAlias(text);
 				Assert.notNull(clazz, "No class found associated with type alias '" + classNameOrAlias + "'");
 				return clazz;
-			} else {
+			}
+			else {
 				// try first an aliased based lookup
 				if (getConversionService() != null) {
 					Class aliasedClass = getConversionService().getClassByAlias(text);

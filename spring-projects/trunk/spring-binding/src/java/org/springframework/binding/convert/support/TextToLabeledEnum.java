@@ -47,7 +47,8 @@ public class TextToLabeledEnum extends AbstractFormattingConverter {
 	public Class[] getTargetClasses() {
 		if (labeledEnumClasses == null) {
 			return new Class[] { LabeledEnum.class };
-		} else {
+		}
+		else {
 			return labeledEnumClasses;
 		}
 	}

@@ -85,18 +85,19 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 
 	/**
 	 * Set the mappings that will be executed when mapping model data from one
-	 * attributes source to another. Each list item must be a String, a
-	 * Mapping object, a List, or a Map.
+	 * attributes source to another. Each list item must be a String, a Mapping
+	 * object, a List, or a Map.
 	 * <p>
-	 * If the list item is a simple String value, the attribute will be mapped with
-	 * the same name and type.
+	 * If the list item is a simple String value, the attribute will be mapped
+	 * with the same name and type.
 	 * <p>
 	 * If the list item is a Map, each map entry must be a String key naming the
 	 * attribute in the source model, and a String value naming the attribute in
 	 * the target model.
 	 * <p>
-	 * If the list item is another List, then that list is itself evaluated recursively,
-	 * and must itself contain Strings, Mapping objects, other Lists, or Maps.
+	 * If the list item is another List, then that list is itself evaluated
+	 * recursively, and must itself contain Strings, Mapping objects, other
+	 * Lists, or Maps.
 	 * @param mappings The mappings
 	 */
 	public void setMappingsCollection(Collection mappings) {
@@ -108,9 +109,9 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	 * Set the mappings that will be executed when mapping model data from one
 	 * attributes collection to another.
 	 * @link ParameterizableAttributesMapper#setMappings(List) with a List
-	 *       containing one item which is a Map. Each map entry must be a String
-	 *       key naming the attribute in the parent flow, and a String value
-	 *       naming the attribute in the child flow.
+	 * containing one item which is a Map. Each map entry must be a String key
+	 * naming the attribute in the parent flow, and a String value naming the
+	 * attribute in the child flow.
 	 * @param mappingsMap The mappings map
 	 */
 	public void setMappingsMap(Map mappingsMap) {
@@ -150,7 +151,8 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	}
 
 	/**
-	 * Add a mapping where the source and target attribute expressions are the same.
+	 * Add a mapping where the source and target attribute expressions are the
+	 * same.
 	 * @param expression the attribute expression to map
 	 */
 	public void addMapping(String expression) {
@@ -173,7 +175,7 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	public void addMapping(Mapping mapping) {
 		this.mappings.add(mapping);
 	}
-	
+
 	/**
 	 * Map data from one map to another map using specified mappings.
 	 */
@@ -186,7 +188,7 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 			}
 		}
 	}
-	
+
 	public String toString() {
 		return new ToStringCreator(this).append("mappings", mappings).toString();
 	}

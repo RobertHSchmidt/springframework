@@ -22,7 +22,6 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.ConversionServiceAware;
 import org.springframework.binding.expression.Expression;
 
-
 /**
  * Base class for converters that use other converters to convert things, thus
  * they are conversion-service aware.
@@ -39,7 +38,7 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 	private ConversionService conversionService;
 
 	public ConversionServiceAwareConverter() {
-		
+
 	}
 
 	public ConversionServiceAwareConverter(ConversionService conversionService) {
@@ -56,9 +55,9 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 	public void setConversionService(ConversionService conversionService) {
 		this.conversionService = conversionService;
 	}
-	
+
 	/**
-	 * Returns a conversion executor capable of converting string objects to the 
+	 * Returns a conversion executor capable of converting string objects to the
 	 * specified target class.
 	 * @param targetClass the target class
 	 * @return the conversion executor
@@ -66,19 +65,20 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 	protected ConversionExecutor fromStringTo(Class targetClass) {
 		return getConversionService().getConversionExecutor(String.class, targetClass);
 	}
-	
+
 	/**
-	 * Returns a conversion executor capable of converting string objects to the 
+	 * Returns a conversion executor capable of converting string objects to the
 	 * target class aliased by the provided alias.
 	 * @param targetAlias the target class alias, e.g "long" or "float"
-	 * @return the conversion executor, or <code>null</code> if no suitable converter exists for alias
+	 * @return the conversion executor, or <code>null</code> if no suitable
+	 * converter exists for alias
 	 */
 	protected ConversionExecutor fromStringToAliased(String targetAlias) {
 		return getConversionService().getConversionExecutorByTargetAlias(String.class, targetAlias);
 	}
-		
+
 	/**
-	 * Returns a conversion executor capable of converting objects from one 
+	 * Returns a conversion executor capable of converting objects from one
 	 * class to another.
 	 * @param sourceClass the source class to convert from
 	 * @param targetClass the target class to convert to
@@ -89,20 +89,21 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 	}
 
 	/**
-	 * Helper that parses given encoded class (which may start with "class:") and
-	 * instantiates the identified class using the default constructor.
+	 * Helper that parses given encoded class (which may start with "class:")
+	 * and instantiates the identified class using the default constructor.
 	 * @param encodedClass the encoded class reference, starting with "class:"
 	 * @return an instantiated objected of the identified class
-	 * @throws ConversionException when the class cannot be found or cannot be instantiated
+	 * @throws ConversionException when the class cannot be found or cannot be
+	 * instantiated
 	 */
 	protected Object newInstance(String encodedClass) throws ConversionException {
 		Class clazz = (Class)fromStringTo(Class.class).execute(encodedClass);
 		return BeanUtils.instantiateClass(clazz);
 	}
-	
+
 	/**
-	 * Helper that parsers the given expression string into an expression, using the 
-	 * installed String->Expression converter.
+	 * Helper that parsers the given expression string into an expression, using
+	 * the installed String->Expression converter.
 	 * @param expressionString the expression string to parse
 	 * @return the parsed, evaluatable expression
 	 */
