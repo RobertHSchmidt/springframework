@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 
 /**
- * Helper that performs action execution, encapsulating common logging and
+ * A helper that performs action execution, encapsulating common logging and
  * exception handling logic. This is an internal helper class that is not
  * normally used by application code.
  * 
@@ -62,8 +62,15 @@ public class ActionExecutor {
 	public Event execute(RequestContext context) throws ActionExecutionException {
 		try {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Executing action " + action + " in state '"
-						+ context.getFlowExecutionContext().getCurrentState().getId() + "'");
+				if (context.getFlowExecutionContext().getActiveSession().getStatus() == FlowSessionStatus.STARTING) {
+					logger.debug("Executing starting " + action + " for flow '"
+							+ context.getFlowExecutionContext().getActiveFlow().getId() + "'");
+				}
+				else {
+					logger.debug("Executing " + action + " in state '"
+							+ context.getFlowExecutionContext().getCurrentState().getId() + "' of flow '"
+							+ context.getFlowExecutionContext().getActiveFlow().getId() + "'");
+				}
 			}
 			return action.execute(context);
 		}
@@ -72,7 +79,14 @@ public class ActionExecutor {
 		}
 		catch (Exception e) {
 			// wrap the action as an ActionExecutionException
-			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), action, e);
+			if (context.getFlowExecutionContext().getActiveSession().getStatus() == FlowSessionStatus.STARTING) {
+				throw new ActionExecutionException(context.getFlowExecutionContext().getActiveFlow(), action, context
+						.getProperties(), e);
+			}
+			else {
+				throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), action, context
+						.getProperties(), e);
+			}
 		}
 	}
 

@@ -16,7 +16,6 @@
 package org.springframework.webflow;
 
 import org.springframework.binding.AttributeSource;
-import org.springframework.binding.support.EmptyAttributeSource;
 
 /**
  * Thrown if an unhandled exception occurs when an action is executed. Typically
@@ -37,6 +36,11 @@ import org.springframework.binding.support.EmptyAttributeSource;
 public class ActionExecutionException extends StateException {
 
 	/**
+	 * THe flow that was executing when the exception occured.
+	 */
+	private Flow flow;
+
+	/**
 	 * The action that threw an exception while executing.
 	 */
 	private Action action;
@@ -49,13 +53,13 @@ public class ActionExecutionException extends StateException {
 
 	/**
 	 * Create a new action execution exception.
-	 * @param state the active state
+	 * @param flow the flow
 	 * @param action the action that generated an unrecoverable exception
 	 * @param cause the underlying cause
 	 */
-	public ActionExecutionException(State state, Action action, Throwable cause) {
-		this(state, action, EmptyAttributeSource.INSTANCE, "Exception thrown executing action " + action
-				+ " in state '" + state.getId() + "' of flow '" + state.getFlow().getId() + "'", cause);
+	public ActionExecutionException(Flow flow, Action action, AttributeSource executionProperties, Throwable cause) {
+		this(null, action, executionProperties, "Exception thrown executing start " + action + " of flow '"
+				+ flow.getId() + "'", cause);
 	}
 
 	/**
@@ -66,8 +70,8 @@ public class ActionExecutionException extends StateException {
 	 * @param cause the underlying cause
 	 */
 	public ActionExecutionException(State state, Action action, AttributeSource executionProperties, Throwable cause) {
-		this(state, action, executionProperties, "Exception thrown executing action " + action + " in state '"
-				+ state.getId() + "' of flow '" + state.getFlow().getId() + "'", cause);
+		this(state, action, executionProperties, "Exception thrown executing " + action + " in state '" + state.getId()
+				+ "' of flow '" + state.getFlow().getId() + "'", cause);
 	}
 
 	/**
@@ -83,6 +87,19 @@ public class ActionExecutionException extends StateException {
 		super(state, message, cause);
 		this.action = action;
 		this.executionProperties = executionProperties;
+	}
+
+	/**
+	 * Returns the flow that was executing when this exception occured.
+	 * @return the flow
+	 */
+	public Flow getFlow() {
+		if (getState() != null) {
+			return getState().getFlow();
+		}
+		else {
+			return flow;
+		}
 	}
 
 	/**

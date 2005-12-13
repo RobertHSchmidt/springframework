@@ -482,9 +482,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			session = createFlowSession(flow, input, null);
 		}
 		executingFlowSessions.push(session);
-		session.setStatus(FlowSessionStatus.ACTIVE);
+		session.setStatus(FlowSessionStatus.STARTING);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Activated " + session);
+			logger.debug("Starting " + session);
 		}
 		return session;
 	}

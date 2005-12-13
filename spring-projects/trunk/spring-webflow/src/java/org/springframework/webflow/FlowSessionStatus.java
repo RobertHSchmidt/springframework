@@ -34,21 +34,26 @@ public class FlowSessionStatus extends StaticLabeledEnum {
 	public static FlowSessionStatus CREATED = new FlowSessionStatus(0, "Created");
 
 	/**
+	 * A flow session with STARTING status is about to enter its start state.
+	 */
+	public static FlowSessionStatus STARTING = new FlowSessionStatus(1, "Created");
+
+	/**
 	 * A flow session with ACTIVE status is currently executing.
 	 */
-	public static FlowSessionStatus ACTIVE = new FlowSessionStatus(1, "Active");
+	public static FlowSessionStatus ACTIVE = new FlowSessionStatus(2, "Active");
 
 	/**
 	 * A flow session with PAUSED status is currently waiting on the user to
 	 * signal an event.
 	 */
-	public static FlowSessionStatus PAUSED = new FlowSessionStatus(2, "Paused");
+	public static FlowSessionStatus PAUSED = new FlowSessionStatus(3, "Paused");
 
 	/**
 	 * A flow session that is SUSPENDED is not actively executing a flow. It is
 	 * waiting for subflow execution to complete before continuing.
 	 */
-	public static FlowSessionStatus SUSPENDED = new FlowSessionStatus(3, "Suspended");
+	public static FlowSessionStatus SUSPENDED = new FlowSessionStatus(4, "Suspended");
 
 	/**
 	 * A flow session that has ENDED is no longer actively executing a flow.

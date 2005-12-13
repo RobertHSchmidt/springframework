@@ -35,6 +35,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
+import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
@@ -199,6 +200,9 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		flowExecution.getListeners().fireStateEntering(this, state);
 		State previousState = flowExecution.getCurrentState();
 		flowExecution.setCurrentState(state);
+		if (previousState == null) {
+			flowExecution.getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
+		}
 		flowExecution.getListeners().fireStateEntered(this, previousState);
 	}
 
