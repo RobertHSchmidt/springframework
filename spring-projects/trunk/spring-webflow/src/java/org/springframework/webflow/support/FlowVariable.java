@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.support;
 
+import java.io.Serializable;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
@@ -26,7 +28,7 @@ import org.springframework.webflow.RequestContext;
  * to create a new variable instance in a flow execution scope.
  * @author Keith Donald
  */
-public class FlowVariable {
+public class FlowVariable implements Serializable {
 
 	/**
 	 * The variable name.
