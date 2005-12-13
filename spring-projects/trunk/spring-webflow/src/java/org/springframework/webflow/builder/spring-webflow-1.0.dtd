@@ -154,7 +154,7 @@
 <!--
 	The name of the attribute that will expose the return value of the target action method.
 	Used in conjunction with the 'method' and 'resultScope' attributes.
-	Only applicable when this action invokes an arbitrary bean (POJO).
+	Only applicable when this action invokes a method on a bean (POJO) that returns a value.
 
 	For example:
         method="processOrder(${flowScope.order})" resultName="orderConfirmation"

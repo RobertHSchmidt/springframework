@@ -38,7 +38,7 @@ public abstract class AbstractFormatterFactory implements FormatterFactory {
 	private Style defaultTimeStyle = Style.MEDIUM;
 
 	private LabeledEnumResolver labeledEnumResolver = new StaticLabeledEnumResolver();
-	
+
 	public void setLocaleContext(LocaleContext localeContext) {
 		this.localeContext = localeContext;
 	}
@@ -50,7 +50,7 @@ public abstract class AbstractFormatterFactory implements FormatterFactory {
 	public void setDefaultTimeStyle(Style style) {
 		this.defaultTimeStyle = style;
 	}
-	
+
 	public void setLabeledEnumResolver(LabeledEnumResolver labeledEnumResolver) {
 		this.labeledEnumResolver = labeledEnumResolver;
 	}

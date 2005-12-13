@@ -57,7 +57,6 @@ public class EvaluationAttempt implements Serializable {
 	}
 
 	protected ToStringCreator createToString(ToStringCreator creator) {
-		return creator.append("expression", expression)
-				.append("target", target).append("context", context);
+		return creator.append("expression", expression).append("target", target).append("context", context);
 	}
 }

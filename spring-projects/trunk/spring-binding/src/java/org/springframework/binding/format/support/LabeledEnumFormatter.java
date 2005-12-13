@@ -60,13 +60,13 @@ public class LabeledEnumFormatter extends AbstractFormatter {
 	protected Object doParseValue(String formattedString, Class targetClass) throws IllegalArgumentException {
 		LabeledEnum labeledEnum = resolver.getLabeledEnumByLabel(targetClass, formattedString);
 		if (!isAllowEmpty()) {
-			Assert.notNull(labeledEnum, "The label '" + formattedString + "' did not map to a valid enum instance for type "
-					+ targetClass);
+			Assert.notNull(labeledEnum, "The label '" + formattedString
+					+ "' did not map to a valid enum instance for type " + targetClass);
 			Assert.isInstanceOf(targetClass, labeledEnum);
 		}
 		return labeledEnum;
 	}
-	
+
 	public LabeledEnum parseLabeledEnum(String formattedString, Class enumClass) throws InvalidFormatException {
 		return (LabeledEnum)parseValue(formattedString, enumClass);
 	}

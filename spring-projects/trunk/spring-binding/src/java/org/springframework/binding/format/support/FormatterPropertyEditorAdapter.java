@@ -9,17 +9,17 @@ import org.springframework.binding.format.Formatter;
  * @author Keith Donald
  */
 public class FormatterPropertyEditorAdapter extends PropertyEditorSupport {
-	
+
 	/**
-	 * The formatter 
+	 * The formatter
 	 */
 	private Formatter formatter;
-	
+
 	/**
 	 * The target value class (may be null).
 	 */
 	private Class targetClass;
-	
+
 	/**
 	 * Creates a formatter property editor.
 	 * @param formatter the formatter to adapt

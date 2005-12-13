@@ -10,7 +10,7 @@ import org.springframework.binding.support.Assert;
  * @author Keith
  */
 public class ExpressionFactory {
-	
+
 	/**
 	 * Is the provided string a parseable expression?
 	 * 
@@ -20,24 +20,27 @@ public class ExpressionFactory {
 	public static boolean isParseableExpression(String expressionString) {
 		return ExpressionParserUtils.getDefaultExpressionParser().isExpression(expressionString);
 	}
-	
+
 	/**
 	 * Return the evaluator for the specified expression string.
 	 * @param expressionString the expression string
 	 * @return the evaluator
 	 */
 	public static Expression parseExpression(String expressionString) {
-		return ExpressionParserUtils.getDefaultExpressionParser().parseExpression(expressionString, Collections.EMPTY_MAP);
+		return ExpressionParserUtils.getDefaultExpressionParser().parseExpression(expressionString,
+				Collections.EMPTY_MAP);
 	}
-	
+
 	/**
 	 * Retrun the evaluator/setter for the specified expression string.
 	 * @param expressionString the expression string
 	 * @return the evaluator setter
 	 */
 	public static PropertyExpression parsePropertyExpression(String expressionString) {
-		Expression evaluator = ExpressionParserUtils.getDefaultExpressionParser().parseExpression(expressionString, Collections.EMPTY_MAP);
-		Assert.isInstanceOf(PropertyExpression.class, evaluator, "The expression evaluator is not a PropertyExpressionEvaluator");
+		Expression evaluator = ExpressionParserUtils.getDefaultExpressionParser().parseExpression(expressionString,
+				Collections.EMPTY_MAP);
+		Assert.isInstanceOf(PropertyExpression.class, evaluator,
+				"The expression evaluator is not a PropertyExpressionEvaluator");
 		return (PropertyExpression)evaluator;
 	}
 }

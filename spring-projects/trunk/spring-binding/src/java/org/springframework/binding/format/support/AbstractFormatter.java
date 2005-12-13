@@ -89,12 +89,13 @@ public abstract class AbstractFormatter implements Formatter {
 	protected Object getEmptyValue() {
 		return null;
 	}
-	
+
 	protected String getExpectedFormat(Class targetClass) {
 		return null;
 	}
-	
-	protected abstract Object doParseValue(String formattedString, Class targetClass) throws InvalidFormatException, ParseException;
+
+	protected abstract Object doParseValue(String formattedString, Class targetClass) throws InvalidFormatException,
+			ParseException;
 
 	protected boolean isEmpty(Object o) {
 		if (o == null) {

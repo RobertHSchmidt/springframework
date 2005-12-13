@@ -43,11 +43,11 @@ public class InvalidFormatException extends NestedRuntimeException {
 		this.invalidValue = invalidValue;
 		this.expectedFormat = expectedFormat;
 	}
-	
+
 	public String getInvalidValue() {
 		return invalidValue;
 	}
-	
+
 	public String getExpectedFormat() {
 		return expectedFormat;
 	}

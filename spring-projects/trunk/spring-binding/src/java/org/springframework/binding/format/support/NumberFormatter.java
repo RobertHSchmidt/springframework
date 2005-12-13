@@ -60,7 +60,7 @@ public class NumberFormatter extends AbstractFormatter {
 			return NumberUtils.parseNumber((String)text, targetClass);
 		}
 	}
-	
+
 	public Short parseShort(String formattedString) throws InvalidFormatException {
 		return (Short)parseValue(formattedString, Short.class);
 	}

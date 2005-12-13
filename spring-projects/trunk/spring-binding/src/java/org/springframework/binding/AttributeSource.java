@@ -20,8 +20,8 @@ package org.springframework.binding;
  * Useful for hiding the structure or source of the underlying attribute
  * collection.
  * <p>
- * For example, the backing collection might be a javabean, an http request,
- * an http session, a map, an mbean, or some other attribute holder.
+ * For example, the backing collection might be a javabean, an http request, an
+ * http session, a map, an mbean, or some other attribute holder.
  * 
  * @author Keith Donald
  */

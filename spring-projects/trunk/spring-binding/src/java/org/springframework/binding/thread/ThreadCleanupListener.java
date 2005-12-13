@@ -21,7 +21,7 @@ package org.springframework.binding.thread;
  * @author Keith Donald
  */
 public interface ThreadCleanupListener {
-	
+
 	/**
 	 * The thread cleanup event was signaled; do your cleanup.
 	 */

@@ -111,10 +111,10 @@ public class DefaultConversionService implements ConversionService {
 		Class[] targetClasses = converter.getTargetClasses();
 		for (int i = 0; i < sourceClasses.length; i++) {
 			Class sourceClass = sourceClasses[i];
-			Map sourceMap = (Map)this.sourceClassConverters.get(sourceClass);
+			Map sourceMap = (Map)sourceClassConverters.get(sourceClass);
 			if (sourceMap == null) {
 				sourceMap = new HashMap();
-				this.sourceClassConverters.put(sourceClass, sourceMap);
+				sourceClassConverters.put(sourceClass, sourceMap);
 			}
 			for (int j = 0; j < targetClasses.length; j++) {
 				Class targetClass = targetClasses[j];
@@ -170,8 +170,8 @@ public class DefaultConversionService implements ConversionService {
 			return new ConversionExecutor(converter, targetClass);
 		}
 		else {
-			if (this.parent != null) {
-				return this.parent.getConversionExecutor(sourceClass, targetClass);
+			if (parent != null) {
+				return parent.getConversionExecutor(sourceClass, targetClass);
 			}
 			else {
 				throw new IllegalArgumentException("No converter registered to convert from sourceClass '"
@@ -229,7 +229,7 @@ public class DefaultConversionService implements ConversionService {
 		}
 		return null;
 	}
-	
+
 	public ConversionService getParent() {
 		return parent;
 	}

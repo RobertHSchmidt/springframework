@@ -24,8 +24,8 @@ import org.springframework.binding.thread.ThreadCleanupListener;
 import org.springframework.binding.thread.ThreadLocalContext;
 
 /**
- * The default thread-local storage context implementation that manages 
- * a thread-local map for holding abritrary thread-local objects.
+ * The default thread-local storage context implementation that manages a
+ * thread-local map for holding abritrary thread-local objects.
  * <p>
  * If the <code>ThreadCleanupBroadcaster</code> property is set, this context
  * will register as a cleanup listener for lifecycle callbacks indicating when
@@ -68,7 +68,7 @@ public class DefaultThreadLocalContext implements ThreadLocalContext, ThreadClea
 	public Object removeAttribute(String attributeName) {
 		return getThreadLocalStorageMap().remove(attributeName);
 	}
-	
+
 	public Object get(Object key) {
 		Map map = getThreadLocalStorageMap();
 		return map.get(key);

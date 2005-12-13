@@ -1,7 +1,6 @@
 package org.springframework.binding.method;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 
 import org.springframework.core.style.ToStringCreator;
 

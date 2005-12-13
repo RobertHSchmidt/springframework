@@ -12,8 +12,7 @@ import org.springframework.core.style.ToStringCreator;
 public class SetPropertyAttempt extends EvaluationAttempt {
 	private Object value;
 
-	public SetPropertyAttempt(Expression expression, Object target,
-			Object value, Map context) {
+	public SetPropertyAttempt(Expression expression, Object target, Object value, Map context) {
 		super(expression, target, context);
 		this.value = value;
 	}

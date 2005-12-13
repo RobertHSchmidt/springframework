@@ -59,7 +59,7 @@ public class DateFormatter extends AbstractFormatter {
 	protected Object doParseValue(String formattedString, Class targetClass) throws ParseException {
 		return dateFormat.parse(formattedString);
 	}
-	
+
 	public Date parseDate(String formattedString) throws InvalidFormatException {
 		return (Date)parseValue(formattedString, Date.class);
 	}

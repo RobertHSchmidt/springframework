@@ -32,10 +32,10 @@ public class ExpressionParserUtils {
 	public static void load(ExpressionParser defaultInstance) {
 		defaultExpressionParser = defaultInstance;
 	}
-	
+
 	/**
-	 * Utility method that checks which expression parsers are available
-	 * on the classpath and returns the appropriate default one.
+	 * Utility method that checks which expression parsers are available on the
+	 * classpath and returns the appropriate default one.
 	 */
 	public static synchronized ExpressionParser getDefaultExpressionParser() {
 		if (defaultExpressionParser == null) {
@@ -44,13 +44,13 @@ public class ExpressionParserUtils {
 				defaultExpressionParser = new OgnlExpressionParser();
 			}
 			catch (ClassNotFoundException e) {
-				IllegalStateException ise =
-					new IllegalStateException("Unable to access the default expression parser: OGNL could not be found in the classpath.  " + 
-							"Please add OGNL to your classpath or set the default ExpressionParser instance to something that is in the classpath.  " + 
-							"Details: " + e.getMessage());
+				IllegalStateException ise = new IllegalStateException(
+						"Unable to access the default expression parser: OGNL could not be found in the classpath.  "
+								+ "Please add OGNL to your classpath or set the default ExpressionParser instance to something that is in the classpath.  "
+								+ "Details: " + e.getMessage());
 				throw ise;
 			}
 		}
 		return defaultExpressionParser;
-	}	
+	}
 }

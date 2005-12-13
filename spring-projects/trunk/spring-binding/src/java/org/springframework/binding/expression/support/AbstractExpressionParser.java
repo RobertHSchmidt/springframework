@@ -39,7 +39,7 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	 * The expression suffix.
 	 */
 	private static final String DEFAULT_EXPRESSION_SUFFIX = "}";
-	
+
 	/**
 	 * Check whether or not given criteria are expressed as an expression.
 	 */
@@ -52,10 +52,10 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	 */
 	protected String cutExpression(String encodedCriteria) {
 		if (isExpression(encodedCriteria)) {
-			return encodedCriteria.substring(
-				DEFAULT_EXPRESSION_PREFIX.length(),
-				encodedCriteria.length() - DEFAULT_EXPRESSION_SUFFIX.length());
-		} else {
+			return encodedCriteria.substring(DEFAULT_EXPRESSION_PREFIX.length(), encodedCriteria.length()
+					- DEFAULT_EXPRESSION_SUFFIX.length());
+		}
+		else {
 			return encodedCriteria;
 		}
 	}
@@ -63,21 +63,20 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	protected String getExpressionPrefix() {
 		return DEFAULT_EXPRESSION_PREFIX;
 	}
-	
+
 	protected String getExpressionSuffix() {
 		return DEFAULT_EXPRESSION_SUFFIX;
 	}
-	
+
 	/*
-	 * Helper that parses given expression string using the configured parser. The expression
-	 * string can contain any number of expressions, all contained in "${...}" markers. For
-	 * instance: "foo${expr0}bar${expr1}". The static pieces of text will also be returned
-	 * as Expressions that just return that static piece of text. As a result, evaluating all
-	 * returned expressions and concatenagint the results produces the complete evaluated
-	 * string.
-	 * @param expressionString the expression string
-	 * @return the parsed expressions
-	 * @throws ParserException when the expressions cannot be parsed
+	 * Helper that parses given expression string using the configured parser.
+	 * The expression string can contain any number of expressions, all
+	 * contained in "${...}" markers. For instance: "foo${expr0}bar${expr1}".
+	 * The static pieces of text will also be returned as Expressions that just
+	 * return that static piece of text. As a result, evaluating all returned
+	 * expressions and concatenagint the results produces the complete evaluated
+	 * string. @param expressionString the expression string @return the parsed
+	 * expressions @throws ParserException when the expressions cannot be parsed
 	 */
 	public Expression[] parseExpressions(String expressionString, Map context) throws ParserException {
 		List expressions = new LinkedList();
@@ -93,7 +92,8 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 					}
 					int exprEndIdx = expressionString.indexOf(getExpressionSuffix(), exprStartIdx);
 					if (exprEndIdx >= exprStartIdx) {
-						expressions.add(parseExpression(expressionString.substring(exprStartIdx, exprEndIdx + 1), context));
+						expressions.add(parseExpression(expressionString.substring(exprStartIdx, exprEndIdx + 1),
+								context));
 						startIdx = exprEndIdx + 1;
 					}
 					else {

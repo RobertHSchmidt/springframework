@@ -96,8 +96,10 @@ public class Signature implements Serializable {
 							if (BeanUtils.isAssignable(candidateType, parameterType)) {
 								numberOfCorrectArguments++;
 							}
-						} else {
-							// just match on a null param type (effectively 'any')
+						}
+						else {
+							// just match on a null param type (effectively
+							// 'any')
 							numberOfCorrectArguments++;
 						}
 					}

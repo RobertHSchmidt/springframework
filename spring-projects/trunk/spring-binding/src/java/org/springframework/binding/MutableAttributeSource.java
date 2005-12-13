@@ -34,7 +34,7 @@ public interface MutableAttributeSource extends AttributeSource {
 	 * @return the previous value, or null if no previous value was held
 	 */
 	public Object setAttribute(String attributeName, Object attributeValue);
-	
+
 	/**
 	 * Remote the attribute with the providd name
 	 * @param attributeName the attribute name

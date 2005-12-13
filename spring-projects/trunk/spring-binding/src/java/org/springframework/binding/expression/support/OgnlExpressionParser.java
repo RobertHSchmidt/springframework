@@ -31,7 +31,8 @@ public class OgnlExpressionParser extends AbstractExpressionParser {
 	public Expression parseExpression(String expressionString, Map context) throws ParserException {
 		try {
 			return new OgnlExpression(Ognl.parseExpression(cutExpression(expressionString)));
-		} catch (OgnlException e) {
+		}
+		catch (OgnlException e) {
 			throw new ParserException(expressionString, e);
 		}
 	}

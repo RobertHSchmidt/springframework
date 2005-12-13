@@ -45,11 +45,12 @@ public class StaticExpression implements Expression {
 	public int hashCode() {
 		if (value == null) {
 			return 0;
-		} else {
+		}
+		else {
 			return value.hashCode();
 		}
 	}
-	
+
 	public boolean equals(Object o) {
 		if (!(o instanceof StaticExpression)) {
 			return false;

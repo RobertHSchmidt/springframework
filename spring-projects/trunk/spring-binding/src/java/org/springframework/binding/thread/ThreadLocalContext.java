@@ -20,7 +20,7 @@ package org.springframework.binding.thread;
  * @author Keith Donald
  */
 public interface ThreadLocalContext {
-	
+
 	/**
 	 * Get an object from thread local storage
 	 * @param key the object's key
