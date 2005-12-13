@@ -21,10 +21,13 @@ import org.springframework.binding.method.MethodKey;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.ScopeType;
 
 /**
- * Base class for actions that delegate to methods on abritrary beans. The
- * method to invoke is determined by the value of the
+ * Base class for actions that delegate to methods on abritrary beans. Acts as
+ * an adapter that adapts a JavaBean method to the SWF Action contract.
+ * <p>
+ * The method to invoke is determined by the value of the
  * {@link org.springframework.webflow.AnnotatedAction#METHOD_PROPERTY} action
  * execution property, typically set when provisioning this Action's use as part
  * of an {@link org.springframework.webflow.ActionState}.
@@ -34,7 +37,17 @@ import org.springframework.webflow.RequestContext;
 public abstract class AbstractBeanInvokingAction extends AbstractAction {
 
 	/**
-	 * The method invoker that performs the action->bean method binding.
+	 * Constant for the action result property name.
+	 */
+	public static final String RESULT_ACTION_PROPERTY = "result";
+
+	/**
+	 * Constant for the action result scope property name.
+	 */
+	public static final String RESULT_SCOPE_ACTION_PROPERTY = "resultScope";
+
+	/**
+	 * The method invoker that performs the action-to-bean method binding.
 	 */
 	private MethodInvoker methodInvoker = new MethodInvoker();
 
@@ -65,6 +78,9 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 		this.methodInvoker.setConversionService(conversionService);
 	}
 
+	/**
+	 * Returns the bean method invoker helper.
+	 */
 	protected MethodInvoker getMethodInvoker() {
 		return methodInvoker;
 	}
@@ -91,18 +107,10 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	protected abstract Object getBean(RequestContext context);
 
 	protected void processMethodReturnValue(Object returnValue, RequestContext context) {
-		String resultAttributeName = (String)getActionProperty(context, RESULT_PARAMETER, null);
+		String resultAttributeName = (String)getActionProperty(context, RESULT_ACTION_PROPERTY, null);
 		if (resultAttributeName != null) {
-			String resultScope = (String)getActionProperty(context, "resultScope", "request");
-			// TODO this parsing needs to be done at build time
-			if (resultScope.equals("flow")) {
-				context.getFlowScope().setAttribute(resultAttributeName, returnValue);
-			}
-			else if (resultScope.equals("request")) {
-				context.getRequestScope().setAttribute(resultAttributeName, returnValue);
-			} else {
-				throw new IllegalArgumentException("Unknown result scope '" + resultScope + "'");
-			}
+			ScopeType scopeType = (ScopeType)getActionProperty(context, RESULT_SCOPE_ACTION_PROPERTY, ScopeType.REQUEST);
+			scopeType.getScope(context).setAttribute(resultAttributeName, returnValue);
 		}
 	}
 
@@ -117,13 +125,9 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 		else {
 			String resultParameterName = (String)getActionProperty(context, RESULT_PARAMETER, RESULT_PARAMETER);
 			if (returnValue instanceof Boolean) {
-				boolean b = ((Boolean)returnValue).booleanValue();
-				if (b) {
-					return yes();
-				} else {
-					return no();
-				}
-			} else {
+				return yesOrNo(((Boolean)returnValue).booleanValue());
+			}
+			else {
 				return success(resultParameterName, returnValue);
 			}
 		}

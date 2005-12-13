@@ -23,20 +23,28 @@ import org.springframework.core.enums.StaticLabeledEnum;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ScopeType extends StaticLabeledEnum {
+public abstract class ScopeType extends StaticLabeledEnum {
 
 	/**
 	 * Constant indicating request scope. Data in request scope lives for the life of 
 	 * a request submitted to a flow execution for processing.
 	 */
-	public static final ScopeType REQUEST = new ScopeType(0, "request");
+	public static final ScopeType REQUEST = new ScopeType(0, "request") {
+		public Scope getScope(RequestContext context) {
+			return context.getRequestScope();
+		}
+	};
 
 	/**
 	 * Constant indicating flow scope. Data in flow scope is shared by all
 	 * artifacts of a flow (actions, view, states, etc.) and lives for the life
 	 * of the executing flow.
 	 */
-	public static final ScopeType FLOW = new ScopeType(1, "flow");
+	public static final ScopeType FLOW = new ScopeType(1, "flow") {
+		public Scope getScope(RequestContext context) {
+			return context.getFlowScope();
+		}
+	};
 
 	/**
 	 * Private constructor because this is a typesafe enum!
@@ -44,4 +52,6 @@ public class ScopeType extends StaticLabeledEnum {
 	private ScopeType(int code, String label) {
 		super(code, label);
 	}
+	
+	public abstract Scope getScope(RequestContext context);
 }
