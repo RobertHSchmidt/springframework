@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,7 +63,6 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.Transition.TargetStateResolver;
 import org.springframework.webflow.action.FlowVariableCreatingAction;
-import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.FlowVariable;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
@@ -326,7 +324,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		this.entityResolver = entityResolver;
 	}
 
-	public void init(String flowId, Map flowProperties) throws FlowBuilderException {
+	public void init(FlowArtifactParameters flowParameters) throws FlowBuilderException {
 		Assert.notNull(getLocation(),
 				"The location property specifying the XML flow definition resource location is required");
 		try {
@@ -345,7 +343,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 					+ getLocation() + "'", e);
 		}
 		initConversionService();
-		setFlow(parseFlow(flowId, flowProperties, getDocumentElement()));
+		setFlow(parseFlow(flowParameters, getDocumentElement()));
 		addInlineFlowDefinitions(getFlow(), getDocumentElement());
 	}
 
@@ -401,10 +399,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Parse the XML flow definitions and construct a Flow object. Will not
 	 * parse all state definitions for the flow!
 	 */
-	protected Flow parseFlow(String id, Map properties, Element flowElement) {
+	protected Flow parseFlow(FlowArtifactParameters flowParameters, Element flowElement) {
 		Assert.state(FLOW_ELEMENT.equals(flowElement.getTagName()), "This is not the '" + FLOW_ELEMENT + "' element");
 		initLocalFlowArtifactFactoryRegistry(flowElement);
-		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(id, buildProperties(properties, flowElement));
+		flowParameters.addProperties(parseProperties(flowElement));
+		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(flowParameters);
 		parseAndAddFlowVariables(flowElement, flow);
 		parseAndAddFlowActions(flowElement, flow);
 		return flow;
@@ -448,25 +447,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		catch (UnsupportedOperationException e) {
 
 		}
-	}
-
-	/**
-	 * Build the flow property map.
-	 * @param properties the initial set of assigned properties
-	 * @param flowElement the flow element that may define additional properties
-	 * @return the flow property map
-	 */
-	protected Map buildProperties(Map properties, Element flowElement) {
-		Map flowProperties = parseProperties(flowElement);
-		if (properties != null) {
-			if (flowProperties != null) {
-				flowProperties.putAll(properties);
-			}
-			else {
-				flowProperties = new HashMap(properties);
-			}
-		}
-		return flowProperties;
 	}
 
 	/**
@@ -526,7 +506,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Element inlineFlowElement = (Element)inlineFlowElements.get(i);
 			String inlineFlowId = inlineFlowElement.getAttribute(ID_ATTRIBUTE);
 			Element flowElement = (Element)inlineFlowElement.getElementsByTagName(FLOW_ATTRIBUTE).item(0);
-			Flow inlineFlow = parseFlow(inlineFlowId, null, flowElement);
+			Flow inlineFlow = parseFlow(new FlowArtifactParameters(inlineFlowId), flowElement);
 			buildInlineFlow(inlineFlow, flowElement);
 			flow.addInlineFlow(inlineFlow);
 		}
@@ -612,8 +592,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * flow.
 	 */
 	protected ActionState parseActionState(Flow flow, Element element) {
-		ActionState state = (ActionState)getLocalFlowArtifactFactory().createState(flow,
-				element.getAttribute(ID_ATTRIBUTE), ActionState.class, parseProperties(element));
+		ActionState state = (ActionState)getLocalFlowArtifactFactory().createState(flow, ActionState.class,
+				parseParameters(element));
 		state.getActionList().addAll(parseAnnotatedActions(element));
 		state.addTransitions(parseTransitions(state, element));
 		return state;
@@ -624,8 +604,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * flow.
 	 */
 	protected ViewState parseViewState(Flow flow, Element element) {
-		ViewState state = (ViewState)getLocalFlowArtifactFactory().createState(flow,
-				element.getAttribute(ID_ATTRIBUTE), ViewState.class, parseProperties(element));
+		ViewState state = (ViewState)getLocalFlowArtifactFactory().createState(flow, ViewState.class,
+				parseParameters(element));
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
 			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE)));
@@ -634,13 +614,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return state;
 	}
 
+	protected FlowArtifactParameters parseParameters(Element element) {
+		return new FlowArtifactParameters(element.getAttribute(ID_ATTRIBUTE), parseProperties(element));
+	}
+	
 	/**
 	 * Parse given decision state definition and add a corresponding state to
 	 * the flow.
 	 */
 	protected DecisionState parseDecisionState(Flow flow, Element element) {
-		DecisionState state = (DecisionState)getLocalFlowArtifactFactory().createState(flow,
-				element.getAttribute(ID_ATTRIBUTE), DecisionState.class, parseProperties(element));
+		DecisionState state = (DecisionState)getLocalFlowArtifactFactory().createState(flow, DecisionState.class,
+				parseParameters(element));
 		state.addTransitions(parseIfs(element));
 		return state;
 	}
@@ -650,8 +634,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * flow.
 	 */
 	protected SubflowState parseSubflowState(Flow flow, Element element) {
-		SubflowState state = (SubflowState)getLocalFlowArtifactFactory().createState(flow,
-				element.getAttribute(ID_ATTRIBUTE), SubflowState.class, parseProperties(element));
+		SubflowState state = (SubflowState)getLocalFlowArtifactFactory().createState(flow, SubflowState.class,
+				parseParameters(element));
 		state.setSubflow(getLocalFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE)));
 		state.setAttributeMapper(parseAttributeMapper(element));
 		state.addTransitions(parseTransitions(state, element));
@@ -663,8 +647,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * flow.
 	 */
 	protected EndState parseEndState(Flow flow, Element element) {
-		EndState state = (EndState)getLocalFlowArtifactFactory().createState(flow, element.getAttribute(ID_ATTRIBUTE),
-				EndState.class, parseProperties(element));
+		EndState state = (EndState)getLocalFlowArtifactFactory().createState(flow, EndState.class,
+				parseParameters(element));
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
 			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE)));
@@ -1093,32 +1077,34 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getTargetStateResolver(id);
 		}
 
-		public Flow createFlow(String id, Map properties) throws FlowArtifactException {
-			top().flow = getFlowArtifactFactory().createFlow(id, properties);
+		public Flow createFlow(FlowArtifactParameters flowParameters) throws FlowArtifactException {
+			top().flow = getFlowArtifactFactory().createFlow(flowParameters);
 			return top().flow;
 		}
 
-		public State createState(Flow flow, String id, Class stateType, Map properties) throws FlowArtifactException {
-			return getFlowArtifactFactory().createState(flow, id, stateType, properties);
+		public State createState(Flow flow, Class stateType, FlowArtifactParameters parameters) throws FlowArtifactException {
+			return getFlowArtifactFactory().createState(flow, stateType, parameters);
 		}
 
 		public Transition createTransition(TransitionableState sourceState, Map properties)
 				throws FlowArtifactException {
 			return getFlowArtifactFactory().createTransition(sourceState, properties);
 		}
-		
+
 		protected boolean containsBean(String id) {
 			return top().context.containsBean(id);
 		}
-		
+
 		protected Object getBean(String id, Class type, boolean enforceTypeCheck) {
 			try {
 				if (enforceTypeCheck) {
 					return top().context.getBean(id, type);
-				} else {
+				}
+				else {
 					return top().context.getBean(id);
 				}
-			} catch (BeansException e) {
+			}
+			catch (BeansException e) {
 				throw new FlowArtifactException(id, type, e);
 			}
 		}

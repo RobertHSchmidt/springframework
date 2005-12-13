@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.builder;
 
-import java.util.Map;
-
 import org.springframework.util.Assert;
 
 /**
@@ -41,15 +39,10 @@ import org.springframework.util.Assert;
 public class FlowAssembler {
 
 	/**
-	 * The id to be assigned to the flow definition assembled by this assembler.
+	 * Parameters neccessary to assemble the flow, most notably the flow
+	 * identifier.
 	 */
-	private String flowId;
-
-	/**
-	 * Arbitrary properties to be assigned to the flow definition assembled by
-	 * this assembler.
-	 */
-	private Map flowProperties;
+	private FlowArtifactParameters flowParameters;
 
 	/**
 	 * The flow builder strategy used to construct the flow from its component
@@ -63,20 +56,32 @@ public class FlowAssembler {
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
 	public FlowAssembler(String flowId, FlowBuilder flowBuilder) {
-		setFlowId(flowId);
-		setFlowBuilder(flowBuilder);
+		this(new FlowArtifactParameters(flowId), flowBuilder);
 	}
 
 	/**
 	 * Create a new flow assembler using the specified builder strategy.
 	 * @param flowId the assigned flow id
-	 * @param flowProperties the assigned flow properties
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
-	public FlowAssembler(String flowId, Map flowProperties, FlowBuilder flowBuilder) {
-		setFlowId(flowId);
-		setFlowProperties(flowProperties);
+	public FlowAssembler(FlowArtifactParameters flowParameters, FlowBuilder flowBuilder) {
+		setFlowParameters(flowParameters);
 		setFlowBuilder(flowBuilder);
+	}
+
+	/**
+	 * Returns the flow parameters to assign during flow assembly.
+	 */
+	public FlowArtifactParameters getFlowParameters() {
+		return flowParameters;
+	}
+
+	/**
+	 * Sets the flow parameters to assign during flow assembly.
+	 * @param flowParameters flow parameters
+	 */
+	public void setFlowParameters(FlowArtifactParameters flowParameters) {
+		this.flowParameters = flowParameters;
 	}
 
 	/**
@@ -95,45 +100,12 @@ public class FlowAssembler {
 	}
 
 	/**
-	 * Returns the id that will be assigned to the Flow built by this assembler.
-	 */
-	public String getFlowId() {
-		return flowId;
-	}
-
-	/**
-	 * Sets the id that will be assigned to the Flow built by this assembler.
-	 * @param flowId the flow id
-	 */
-	public void setFlowId(String flowId) {
-		Assert.hasText("A unique flow definition identifier property is required for flow assembly");
-		this.flowId = flowId;
-	}
-
-	/**
-	 * Returns the flow properties that will be assigned to the Flow built by
-	 * this assembler. The returned map is mutable.
-	 */
-	public Map getFlowProperties() {
-		return flowProperties;
-	}
-
-	/**
-	 * Sets the flow properties that will be assigned to the Flow built by this
-	 * assembler.
-	 * @param flowProperties the flow properties
-	 */
-	public void setFlowProperties(Map flowProperties) {
-		this.flowProperties = flowProperties;
-	}
-
-	/**
 	 * Assembles the flow, directing the construction process by delegating to
 	 * the configured FlowBuilder. While the assembly process is ongoing the
 	 * "assembling" flag is set to true.
 	 */
 	public void assembleFlow() {
-		flowBuilder.init(getFlowId(), getFlowProperties());
+		flowBuilder.init(flowParameters);
 		flowBuilder.buildStates();
 		flowBuilder.buildExceptionHandlers();
 		flowBuilder.buildPostProcess();

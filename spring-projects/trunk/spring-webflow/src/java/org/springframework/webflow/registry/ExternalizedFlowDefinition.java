@@ -1,13 +1,14 @@
 package org.springframework.webflow.registry;
 
 import org.springframework.core.io.Resource;
+import org.springframework.webflow.builder.FlowArtifactParameters;
 
 /**
  * A descriptor for a Flow to be assembled from a externalized resource.
  * Describes exactly one externalized flow definition resource.
  * @author Keith Donald
  */
-public class ExternalizedFlowDefinition extends FlowParameters {
+public class ExternalizedFlowDefinition extends FlowArtifactParameters {
 
 	/**
 	 * The externalized flow resource location.
@@ -16,7 +17,7 @@ public class ExternalizedFlowDefinition extends FlowParameters {
 
 	/**
 	 * Default constructor for bean-style usage.
-	 * @see FlowParameters#FlowParameters()
+	 * @see FlowArtifactParameters#FlowParameters()
 	 * @see #setLocation(Resource)
 	 */
 	public ExternalizedFlowDefinition() {

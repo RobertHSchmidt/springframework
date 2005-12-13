@@ -61,18 +61,19 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 				"Transition target state resolver lookup is not supported by this artifact factory");
 	}
 
-	public Flow createFlow(String id, Map properties) throws FlowArtifactException {
+	public Flow createFlow(FlowArtifactParameters flowParameters) throws FlowArtifactException {
 		Flow flow = (Flow)newInstance(Flow.class);
-		flow.setId(id);
-		flow.setProperties(properties);
+		flow.setId(flowParameters.getId());
+		flow.setProperties(flowParameters.getProperties());
 		return flow;
 	}
 
-	public State createState(Flow flow, String id, Class stateType, Map properties) throws FlowArtifactException {
+	public State createState(Flow flow, Class stateType, FlowArtifactParameters stateParameters)
+			throws FlowArtifactException {
 		State state = (State)newInstance(stateType);
-		state.setId(id);
+		state.setId(stateParameters.getId());
 		state.setFlow(flow);
-		state.setProperties(properties);
+		state.setProperties(stateParameters.getProperties());
 		return state;
 	}
 

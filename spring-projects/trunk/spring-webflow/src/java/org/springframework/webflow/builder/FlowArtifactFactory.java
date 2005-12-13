@@ -91,7 +91,7 @@ public interface FlowArtifactFactory {
 	 * @param properties the flow properties
 	 * @return the flow definition
 	 */
-	public Flow createFlow(String id, Map properties) throws FlowArtifactException;
+	public Flow createFlow(FlowArtifactParameters flowParameters) throws FlowArtifactException;
 
 	/**
 	 * Create a new state definition with the specified id.
@@ -101,7 +101,7 @@ public interface FlowArtifactFactory {
 	 * @param properties the properties
 	 * @return the state
 	 */
-	public State createState(Flow flow, String id, Class stateType, Map properties) throws FlowArtifactException;
+	public State createState(Flow flow, Class stateType, FlowArtifactParameters stateParameters) throws FlowArtifactException;
 
 	/**
 	 * Create a new state transition with the specified id.

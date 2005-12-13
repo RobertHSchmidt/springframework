@@ -45,23 +45,22 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- *     public void buildStates() {
- *         // get customer information
- *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
- *             on(success(), &quot;displayDetails&quot;));
- *         // view customer information               
- *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *             on(submit(), &quot;bindAndValidate&quot;);
- *         // bind and validate customer information updates 
- *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
- *             new Transition[] {
- *                 on(error(), &quot;displayDetails&quot;),
- *                 on(success(), &quot;finish&quot;)
- *             });
- *          // finish
- *          addEndState(&quot;finish&quot;);
- *      }
- * }
+ * public void buildStates() {
+ *            // get customer information
+ *            addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
+ *                on(success(), &quot;displayDetails&quot;));
+ *            // view customer information               
+ *            addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *                on(submit(), &quot;bindAndValidate&quot;);
+ *            // bind and validate customer information updates 
+ *            addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
+ *                new Transition[] {
+ *                    on(error(), &quot;displayDetails&quot;),
+ *                    on(success(), &quot;finish&quot;)
+ *                });
+ *             // finish
+ *             addEndState(&quot;finish&quot;);
+ *         }}
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
@@ -154,41 +153,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		super(flowArtifactFactory);
 	}
 
-	public void init(String flowId, Map flowProperties) throws FlowBuilderException {
+	public void init(FlowArtifactParameters flowParameters) throws FlowBuilderException {
 		initConversionService();
-		setFlow(createFlow(flowId, buildFlowProperties(flowProperties)));
-	}
-
-	/**
-	 * Create a new flow instance. Subclasses can override this hook method if
-	 * they want to use a custom flow subclass.
-	 * @param id the id of the flow
-	 * @param properties additional properties to be assigned to the flow
-	 * @return the newly created flow instance
-	 */
-	protected Flow createFlow(String id, Map properties) {
-		Flow flow = new Flow(id);
-		flow.setProperties(properties);
-		return flow;
-	}
-
-	/**
-	 * Builds a flow property map consisting of any externally assigned
-	 * properties plus any internally assigned properties.
-	 * @param assignedProperties the externally assigned properties
-	 * @return the full property map
-	 */
-	private Map buildFlowProperties(Map assignedProperties) {
-		Map propertyMap = flowProperties();
-		if (assignedProperties != null) {
-			if (propertyMap != null) {
-				propertyMap.putAll(assignedProperties);
-			}
-			else {
-				propertyMap = new HashMap(assignedProperties);
-			}
-		}
-		return propertyMap;
+		flowParameters.addProperties(flowProperties());
+		setFlow(getFlowArtifactFactory().createFlow(flowParameters));
 	}
 
 	/**
@@ -325,10 +293,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * state triggers the rendering of a view template when entered.
 	 * @param stateId the <code>ViewState</code> id; must be unique in the
 	 * context of the flow built by this builder
-	 * @param viewSelector the factory to produce a selection noting the name of the
-	 * logical view to render; this name will be mapped to a physical resource
-	 * template such as a JSP when the ViewState is entered and control returns
-	 * to the front controller
+	 * @param viewSelector the factory to produce a selection noting the name of
+	 * the logical view to render; this name will be mapped to a physical
+	 * resource template such as a JSP when the ViewState is entered and control
+	 * returns to the front controller
 	 * @param transitions the supported transitions for this state, where each
 	 * transition maps a path from this state to another state (triggered by an
 	 * event)
@@ -345,10 +313,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * state triggers the rendering of a view template when entered.
 	 * @param stateId the <code>ViewState</code> id; must be unique in the
 	 * context of the flow built by this builder
-	 * @param viewSelector the factory to produce a selection noting the name of the
-	 * logical view to render; this name will be mapped to a physical resource
-	 * template such as a JSP when the ViewState is entered and control returns
-	 * to the front controller
+	 * @param viewSelector the factory to produce a selection noting the name of
+	 * the logical view to render; this name will be mapped to a physical
+	 * resource template such as a JSP when the ViewState is entered and control
+	 * returns to the front controller
 	 * @param transitions the supported transitions for this state, where each
 	 * transition maps a path from this state to another state (triggered by an
 	 * event)
@@ -651,8 +619,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param attributeMapperId the id of the attribute mapper that will map
 	 * attributes between the flow built by this builder and the subflow
 	 * @return the attribute mapper
-	 * @throws FlowArtifactException no FlowAttributeMapper implementation
-	 * was exported with the specified id
+	 * @throws FlowArtifactException no FlowAttributeMapper implementation was
+	 * exported with the specified id
 	 */
 	protected FlowAttributeMapper attributeMapper(String attributeMapperId) throws FlowArtifactException {
 		return getFlowArtifactFactory().getAttributeMapper(attributeMapperId);

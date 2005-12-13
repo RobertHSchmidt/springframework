@@ -63,7 +63,7 @@ public class RefreshableFlowHolder implements FlowHolder {
 	}
 
 	public String getId() {
-		return assembler.getFlowId();
+		return assembler.getFlowParameters().getId();
 	}
 
 	public Flow getFlow() {
