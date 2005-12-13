@@ -78,7 +78,7 @@ public interface Action {
 	 * More specifically, action execution is triggered in a production
 	 * environment when invoked within the state of an ongoing flow execution
 	 * for a specific <code>Flow</code> definition. The result of action
-	 * execution, a logical outcome event, is typically used as grounds for a
+	 * execution, a logical outcome event, can be used as grounds for a
 	 * transition out of the calling state.
 	 * <p>
 	 * Note: The <code>RequestContext</code> argument to this method provides
