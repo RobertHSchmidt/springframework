@@ -30,7 +30,8 @@ import org.springframework.webflow.action.MultiAction;
  * <code>TransitionCriteria</code> definition, or in a test environment.
  * <p>
  * An annotated action is an action that wraps another action (referred to as
- * the <i>target action</i>).
+ * the <i>target action), setting up target action's execution properties before
+ * invoking execute.
  * 
  * @author Keith Donald
  */
@@ -66,7 +67,8 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	public static final String RESULT_NAME_PROPERTY = "resultName";
 
 	/**
-	 * The action execution method result attribute scope property ("resultScope");
+	 * The action execution method result attribute scope property
+	 * ("resultScope");
 	 */
 	public static final String RESULT_SCOPE_PROPERTY = "resultScope";
 
@@ -142,7 +144,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * executed.
 	 */
 	public MethodKey getMethod() {
-		return (MethodKey)getProperty(AnnotatedAction.METHOD_PROPERTY);
+		return (MethodKey)getProperty(METHOD_PROPERTY);
 	}
 
 	/**
@@ -151,7 +153,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param method the action method name.
 	 */
 	public void setMethod(MethodKey method) {
-		setProperty(AnnotatedAction.METHOD_PROPERTY, method);
+		setProperty(METHOD_PROPERTY, method);
 	}
 
 	/**
@@ -159,7 +161,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * value under.
 	 */
 	public String getResultName() {
-		return (String)getProperty(AnnotatedAction.RESULT_NAME_PROPERTY);
+		return (String)getProperty(RESULT_NAME_PROPERTY);
 	}
 
 	/**
@@ -168,15 +170,15 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param resultName the action return value attribute name
 	 */
 	public void setResultName(String resultName) {
-		setProperty(AnnotatedAction.RESULT_NAME_PROPERTY, resultName);
+		setProperty(RESULT_NAME_PROPERTY, resultName);
 	}
 
 	/**
-	 * Returns the name of the attribute to export the action method return
+	 * Returns the scope of the attribute to export the action method return
 	 * value under.
 	 */
-	public String getResultScope() {
-		return (String)getProperty(AnnotatedAction.RESULT_NAME_PROPERTY);
+	public ScopeType getResultScope() {
+		return (ScopeType)getProperty(RESULT_SCOPE_PROPERTY);
 	}
 
 	/**
@@ -184,7 +186,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param resultScope the result scope
 	 */
 	public void setResultScope(ScopeType resultScope) {
-		setProperty(AnnotatedAction.RESULT_SCOPE_PROPERTY, resultScope);
+		setProperty(RESULT_SCOPE_PROPERTY, resultScope);
 	}
 
 	public Event execute(RequestContext context) throws Exception {
