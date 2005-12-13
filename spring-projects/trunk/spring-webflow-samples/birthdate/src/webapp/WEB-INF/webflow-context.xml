@@ -10,7 +10,7 @@
 
 	<!-- Creates the registry of flow definitions for this application -->
 	<bean id="flowLocator" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
-		<property name="definitionLocations" value="/WEB-INF/birthdate.xml"/>
+		<property name="flowLocations" value="/WEB-INF/birthdate.xml"/>
 	</bean>
 
 	<bean id="formAction" class="org.springframework.webflow.samples.birthdate.BirthDateFormAction"/>
