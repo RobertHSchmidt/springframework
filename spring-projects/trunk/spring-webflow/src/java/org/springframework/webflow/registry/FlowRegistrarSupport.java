@@ -20,6 +20,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowArtifactParameters;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
 
@@ -49,14 +50,12 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	/**
 	 * Register the flow built by the builder in the registry with the
 	 * properties provided.
-	 * @param flowId the flow definition identifier to be assigned (should be
-	 * unique to flows in the registry)
+	 * @param flowParameters the flow definition parameters
 	 * @param flowBuilder the flow builder to use to construct the flow
 	 * @param registry the flow registry to register the flow in
-	 * @param properties assigned flow definition properties
 	 */
-	protected void registerFlow(String flowId, FlowBuilder flowBuilder, FlowRegistry registry, Map properties) {
-		registry.registerFlow(createFlowHolder(new FlowAssembler(flowId, flowBuilder)));
+	protected void registerFlow(FlowArtifactParameters flowParameters, FlowBuilder flowBuilder, FlowRegistry registry) {
+		registry.registerFlow(createFlowHolder(new FlowAssembler(flowParameters, flowBuilder)));
 	}
 
 	/**

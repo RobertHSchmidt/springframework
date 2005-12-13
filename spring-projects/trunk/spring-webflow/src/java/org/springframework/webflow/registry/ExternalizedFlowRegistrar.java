@@ -170,7 +170,8 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	}
 
 	/**
-	 * Adds the externalzied flow definitions pointing to externalized flow resources.
+	 * Adds the externalzied flow definitions pointing to externalized flow
+	 * resources.
 	 * <p>
 	 * Use this method when you want full control over the assigned flow id and
 	 * the set of properties applied to the externalized flow resource.
@@ -182,7 +183,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 		}
 		return this.flowDefinitions.addAll(Arrays.asList(flowDefinitions));
 	}
-	
+
 	public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
 		processFlowLocations(registry, flowArtifactFactory);
 		processDirectoryLocations(registry, flowArtifactFactory);
@@ -230,7 +231,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 		while (it.hasNext()) {
 			ExternalizedFlowDefinition definition = (ExternalizedFlowDefinition)it.next();
 			FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowArtifactFactory);
-			registerFlow(definition.getId(), builder, registry, definition.getProperties());
+			registerFlow(definition, builder, registry);
 		}
 	}
 

@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.builder;
 
-import java.util.Map;
-
 import org.springframework.webflow.Flow;
 
 /**
@@ -24,7 +22,7 @@ import org.springframework.webflow.Flow;
  * flow consists of the following steps:
  * <ol>
  * <li> Initialize this builder, creating the initial flow definition, by
- * calling {@link #init(String, Map)}.
+ * calling {@link #init(FlowArtifactParameters)}.
  * <li> Call {@link #buildStates} to create the states of the flow and add them
  * to the flow definition.
  * <li> Call {@link #buildExceptionHandlers} to create the state exception
