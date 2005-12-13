@@ -2,17 +2,18 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC1 (12.2.2005)
+Changes in version 1.0 RC1 (14.2.2005)
 ------------------------------------
 * Introduced JSF integration, see the "jsf" package.
 * Added support for custom start, signal event, end, and handleException behavior to the Flow class.
+* Added support for automatic creation of flow variables during flow startup, see 'var' element in XML DTD.
 * Added state exception handling support at the State level.  States may now be configured with a set of
   one or more StateExceptionHandler objects for responding to exceptions that occur within the state of a flow execution.
 * Added state exception handling support at the Flow level.  Flows may now be configured with a set of
   one or more StateExeceptionHandler objects, for responding to exceptions that occur within a state but are not handled by that state.
 * Added a FlowExecutionManagement exception hierarchy, for reporting unhandled exceptions that occur during the management
   of a flow execution.
-* Added the FlowRegistry subsystem in webflow.config.registry, for registering groups of refreshable Flow definitions.
+* Added the FlowRegistry subsystem in webflow.registry, for registering groups of refreshable Flow definitions.
   With this addition, XML flow definitions may now be refreshed from their registries at runtime by using a
   JMX client like Sun's jConsole that ships standard with JDK 1.5.
 * Added a refreshable FlowRegistryImpl, for managing a reloadable registry of flow definitions
@@ -24,6 +25,8 @@ Changes in version 1.0 RC1 (12.2.2005)
   'execute(RequestContext context)' Action interface.  See the Phonebook sample app for an example.
 * Added BeanFactoryBeanInvokingAction, an action that can invoke any instance method on any bean managed by the Spring bean factory.
 * Added LocalBeanInvokingAction, an action that can invoke any instance method on any bean.
+* Added support for action "resultName" and "resultScope" properties, for exposing POJO method return values
+  as attributes in a flow execution scope automatically.
 * Added support for a "transactional" boolean flow property, that when 'true' triggers automatic creation
   synchronized application transaction tokens that prevent duplicate submits (even with continuations!)
 * Added support for accessing session and application scope variables as properties of a source ExternalEvent.
@@ -59,13 +62,12 @@ Changes in version 1.0 RC1 (12.2.2005)
 * Reworked FlowExecutionManager: it is much easier now to customize flow execution workflow (neccessary for JSF).
   The FlowLocator is now a required dependency, and support for setting a single Flow to execute has been removed.
   FlowController and FlowAction now all require a FlowExecutionManager to be set, for clarity.
-* Reworked and simplified the "config" package
   Note: artifact creation and autowiring support has been removed in favor
   of artifact lookup by id (which is more compelling now with flow-definition scoped artifact support)
-* Collapsed the "support" package into "config", as all support code was used at configuration time and
-  config heavily depended on this package.
 * Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add methods.
 * Changed numberguess sample application to use the new StatefulActionProxy.
+* Reworked and simplified the "config" package.
+* Renamed the "config" package to "builder for clarity.
 * Renamed ViewDescriptor and ViewDescriptorCreator to ViewSelection and ViewSelector, respectively: for clarity and consistency with lexicon.
 * Removed DelegatingAction in favor of StatefulActionProxy and bean invoking actions.
 * Small improvements in MockRequestContext to make it easier to use.
