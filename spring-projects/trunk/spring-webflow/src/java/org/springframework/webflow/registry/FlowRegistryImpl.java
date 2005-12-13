@@ -48,6 +48,12 @@ public class FlowRegistryImpl implements FlowRegistry {
 	 */
 	private FlowRegistry parent;
 
+	/**
+	 * Sets this registry's parent registry. When asked by a client to locate a
+	 * flow definition this registry will query it's parent if it cannot
+	 * fullfill the lookup request.
+	 * @param parent the parent flow registry, may be null
+	 */
 	public void setParent(FlowRegistry parent) {
 		this.parent = parent;
 	}
@@ -100,22 +106,6 @@ public class FlowRegistryImpl implements FlowRegistry {
 		}
 	}
 
-	/**
-	 * Simple value object that holds the key for an indexed flow definition
-	 * holder in this registry. Used to support reindexing on a refresh.
-	 * @author Keith Donald
-	 */
-	private static class Indexed {
-		private String key;
-
-		private FlowHolder holder;
-
-		public Indexed(String key, FlowHolder holder) {
-			this.key = key;
-			this.holder = holder;
-		}
-	}
-
 	public void refresh(String flowId) throws IllegalArgumentException {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
@@ -156,15 +146,34 @@ public class FlowRegistryImpl implements FlowRegistry {
 		return flowHolder;
 	}
 
+	// implementing FlowLocator
+	
 	public Flow getFlow(String id) throws FlowArtifactException {
 		try {
 			return getFlowDefinitionHolder(id).getFlow();
 		}
 		catch (NoSuchFlowDefinitionException e) {
 			if (parent != null) {
+				// try parent
 				return parent.getFlow(id);
 			}
 			throw e;
+		}
+	}
+
+	/**
+	 * Simple value object that holds the key for an indexed flow definition
+	 * holder in this registry. Used to support reindexing on a refresh.
+	 * @author Keith Donald
+	 */
+	private static class Indexed {
+		private String key;
+
+		private FlowHolder holder;
+
+		public Indexed(String key, FlowHolder holder) {
+			this.key = key;
+			this.holder = holder;
 		}
 	}
 

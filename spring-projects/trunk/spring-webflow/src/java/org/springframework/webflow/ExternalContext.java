@@ -28,7 +28,7 @@ import java.util.Map;
  * The design of this interface was inspired by JSF's own ExternalContext
  * abstraction, and thus shares the same name for consistency. If a particular
  * external client type does not support all methods defined by this interface,
- * they can just be implemented as returning an emtpy, immutable map.
+ * they can just be implemented as returning an empty map.
  * 
  * @author Keith Donald
  */
@@ -36,7 +36,8 @@ public interface ExternalContext {
 
 	/**
 	 * Provides access to the parameters associated with the user request that
-	 * led to SWF being called. This map is immutable and cannot be changed.
+	 * led to SWF being called. This map is expected to be immutable and cannot
+	 * be changed.
 	 * @return the immutable request parameter map
 	 */
 	public Map getRequestParameterMap();
@@ -45,7 +46,7 @@ public interface ExternalContext {
 	 * Provides access to the external request attribute map, providing a
 	 * storage for data local to the current user request and accessible to both
 	 * internal and external SWF artifacts.
-	 * @return the request attribute map
+	 * @return the mutable request attribute map
 	 */
 	public Map getRequestMap();
 
@@ -53,7 +54,7 @@ public interface ExternalContext {
 	 * Provides access to the external session map, providing a storage for data
 	 * local to the current user session and accessible to both internal and
 	 * external SWF artifacts.
-	 * @return the session attribute map
+	 * @return the mutable session attribute map
 	 */
 	public Map getSessionMap();
 
@@ -61,7 +62,7 @@ public interface ExternalContext {
 	 * Provides access to the external application map, providing a storage for
 	 * data local to the current user application and accessible to both
 	 * internal and external SWF artifacts.
-	 * @return the application attribute map
+	 * @return the mutable application attribute map
 	 */
 	public Map getApplicationMap();
 }

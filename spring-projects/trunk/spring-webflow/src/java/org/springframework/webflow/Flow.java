@@ -77,9 +77,9 @@ import org.springframework.util.StringUtils;
  * <p>
  * This class, and the rest of the Spring Web Flow (SWF) core, has been designed
  * with minimal dependencies on other libraries, and is usable in a standalone
- * fashion (as well as in the context of other frameworks like Struts, WebWork,
- * Tapestry, or JSF, for example). The core system is fully usable outside an
- * HTTP servlet environment, for example in Portlets, tests, or standalone
+ * fashion (as well as in the context of other frameworks like Spring MVC,
+ * Struts, or JSF, for example). The core system is fully usable outside an HTTP
+ * servlet environment, for example in Portlets, tests, or standalone
  * applications. One of the major architectural benefits of Spring Web Flow is
  * the ability to design reusable, high-level controller modules that may be
  * executed in <i>any</i> environment.
@@ -97,6 +97,8 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.webflow.Transition
  * @see org.springframework.webflow.StateExceptionHandler
  * @see org.springframework.webflow.StateExceptionHandlerSet
+ * @see org.springframework.webflow.mvc.FlowController
+ * @see org.springframework.webflow.portlet.FlowController
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
