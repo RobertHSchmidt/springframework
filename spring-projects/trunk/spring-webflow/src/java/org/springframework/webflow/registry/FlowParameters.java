@@ -1,24 +1,27 @@
 package org.springframework.webflow.registry;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.core.style.ToStringCreator;
+
 /**
- * Simple parameter object that holds information used to construct a flow
- * definition: most notably the flow identifier to assign and any flow
- * properties to assign.
+ * Simple parameter object that holds information used to assist with the
+ * assembly of a flow definition: most notably the flow identifier to assign and
+ * any flow properties to assign.
  * 
  * @author Keith Donald
  */
-public class FlowParameters {
-	
+public class FlowParameters implements Serializable {
+
 	/**
 	 * The flow id.
 	 */
 	private String id;
 
 	/**
-	 * The flow properties. 
+	 * The flow properties.
 	 */
 	private Map properties = new HashMap(6);
 
@@ -68,5 +71,9 @@ public class FlowParameters {
 	 */
 	public void setProperties(Map properties) {
 		this.properties = properties;
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("id", getId()).append("properties", properties).toString();
 	}
 }
