@@ -26,6 +26,11 @@ import org.springframework.binding.AttributeSource;
  * was in when this exception was thrown. Also provides a reference to the
  * Action instance itself and the execution properties that may have affected
  * its execution.
+ * <p>
+ * Note: if the flow execution was in the process of starting the
+ * {@link #getState()} accessor will return null. In this case, the flow
+ * definition that was starting when this exception was thrown can be obtained
+ * by calling {@link #getFlow()}.
  * 
  * @see org.springframework.webflow.Action
  * @see org.springframework.webflow.ActionState
@@ -36,7 +41,7 @@ import org.springframework.binding.AttributeSource;
 public class ActionExecutionException extends StateException {
 
 	/**
-	 * THe flow that was executing when the exception occured.
+	 * The flow that was executing when the exception occured.
 	 */
 	private Flow flow;
 
