@@ -38,8 +38,7 @@ public class TextToBean extends AbstractConverter {
 		return new Class[] { Object.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass)
-			throws Exception {
-		return beanFactory.getBean((String) source);
+	protected Object doConvert(Object source, Class targetClass) throws Exception {
+		return beanFactory.getBean((String)source);
 	}
 }
