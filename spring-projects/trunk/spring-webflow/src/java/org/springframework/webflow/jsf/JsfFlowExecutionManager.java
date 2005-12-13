@@ -67,9 +67,9 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	protected static final String FLOW_ID_PREFIX = "flowId:";
 
 	/**
-	 * Resolves view selection names to JSF view IDs.
+	 * Resolves selected Web Flow view names to JSF view ids.
 	 */
-	private DefaultViewIdResolver viewIdResolver = new DefaultViewIdResolver();
+	private ViewIdResolver viewIdResolver = new DefaultViewIdResolver();
 
 	/**
 	 * Create a new flow execution manager using the specified flow locator for
@@ -81,10 +81,10 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	}
 
 	/**
-	 * Allows the standard view id resolver to be overriden
+	 * Allows the standard view id resolver to be overidden
 	 * @param viewIdResolver the new view id resolver
 	 */
-	public void setViewIdResolver(DefaultViewIdResolver viewIdResolver) {
+	public void setViewIdResolver(ViewIdResolver viewIdResolver) {
 		this.viewIdResolver = viewIdResolver;
 	}
 
@@ -292,7 +292,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		}
 		// create the specified view so that it can be rendered
 		ViewHandler handler = context.getApplication().getViewHandler();
-		UIViewRoot view = handler.createView(context, viewIdResolver.resolveViewName(selectedView.getViewName()));
+		UIViewRoot view = handler.createView(context, viewIdResolver.resolveViewId(selectedView.getViewName()));
 		context.setViewRoot(view);
 	}
 
@@ -379,8 +379,8 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 
 	// standard default view id resolver which uses the web flow view name as
 	// the jsf view id
-	static class DefaultViewIdResolver {
-		public String resolveViewName(String viewName) {
+	public static class DefaultViewIdResolver implements ViewIdResolver {
+		public String resolveViewId(String viewName) {
 			return viewName;
 		}
 	}

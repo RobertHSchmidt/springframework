@@ -18,8 +18,8 @@ package org.springframework.webflow;
 import java.util.Map;
 
 /**
- * Provides access to the state of an external system that has interacted with
- * Spring Web Flow.
+ * A facade that provides access to the state of an external system that has
+ * interacted with Spring Web Flow.
  * <p>
  * This context object provides a single, consistent interface for internal SWF
  * artifacts to use to reason on and manipulate the state of an external actor

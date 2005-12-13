@@ -36,27 +36,29 @@ import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
 
 /**
- * A manager for the executing flows of a an application. This object is
- * responsible for creating new flow executions as requested by clients, as well
- * as signaling events for processing by existing, paused executions (that are
- * waiting to be resumed in response to a user event).
+ * A central facade for the execution of flows within an application. This
+ * object is responsible for creating and starting new flow executions as
+ * requested by clients, as well as signaling events for processing by existing,
+ * paused executions (that are waiting to be resumed in response to a user
+ * event). This object is a facade or entry point into the flow execution
+ * subsystem, and makes the overall subsystem easier to use.
  * <p>
- * The {@link #onEvent(ExternalContext)} method is the central operation and
- * implements the following algorithm:
+ * The {@link #onEvent(ExternalContext)} method is the central facade operation
+ * and implements the following algorithm:
  * <ol>
- * <li>Look for a flow execution id in the event context (in a request
+ * <li>Search for a flow execution id in the external context (in a request
  * parameter named {@link #getFlowExecutionIdParameterName()).</li>
  * <li>If no flow execution id was submitted, create a new flow execution. The
  * top-level flow definition for which an execution is created for is determined
  * by the value of the {@link #getFlowIdParameterName()} request parameter. If
  * this parameter parameter is not present, an exception is thrown.</li>
  * <li>If a flow execution id <em>was</em> submitted, load the previously
- * saved FlowExecution with that id from storage.</li>
+ * saved FlowExecution with that id from storage ({@link #getStorage()}).</li>
  * <li>If a new flow execution was created in the previous steps, start that
  * execution.</li>
  * <li>If an existing flow execution was loaded from storage, extract the value
  * of the event id ({@link #getEventIdParameterName()) and state id ({@link #getStateIdParameterName()})
- * request parameters. Signal the occurence of the event, resuming the flow
+ * request parameters. Signal the occurence of the user event, resuming the flow
  * execution in the requested state.</li>
  * <li>If the flow execution is still active after event processing, save it
  * out to storage. This process generates a unique flow execution id that will
@@ -560,8 +562,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	// event processing
 
 	/**
-	 * Signal the occurence of an external user event. This is the entry point
-	 * into the webflow system for managing all executing flows.
+	 * Signal the occurence of an external user event. This is the central entry
+	 * point into the webflow system for managing all executing flows.
 	 * @param context the context in which the external event occured
 	 * @return the view descriptor of the model and view to render
 	 * @throws FlowExecutionManagementException an exception occured during
@@ -665,9 +667,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 */
 	protected ViewSelection startFlowExecution(FlowExecution flowExecution, ExternalContext context)
 			throws StateException {
-		String stateId = verifySingleStringInputParameter(getStateIdParameterName(), context.getRequestParameterMap()
-				.get(getStateIdParameterName()));
-		return flowExecution.start(stateId, context);
+		return flowExecution.start(extractStateId(context), context);
 	}
 
 	/**
