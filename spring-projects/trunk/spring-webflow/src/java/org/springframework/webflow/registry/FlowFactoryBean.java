@@ -27,10 +27,8 @@ import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
 
 /**
- * Factory bean that acts as a director for assembling flows, delegating to a
- * <code>FlowBuilder</code> builder to construct the Flow. This is the core
- * top level class for assembling a <code>Flow</code> from configuration
- * information.
+ * Factory bean that acts as a holder for assembled flows, delegating to a
+ * <code>FlowBuilder</code> builder to construct the Flow.
  * <p>
  * As an example, a Spring-managed FlowFactoryBean definition might look like
  * this:
