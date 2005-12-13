@@ -11,7 +11,7 @@ package org.springframework.binding.format;
  * synchronize them as neccessary.
  * @author Keith Donald
  */
-public interface FormatterLocator {
+public interface FormatterFactory {
 
 	/**
 	 * Returns a date formatter for the encoded date format

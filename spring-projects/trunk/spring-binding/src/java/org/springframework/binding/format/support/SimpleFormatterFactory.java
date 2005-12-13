@@ -26,9 +26,9 @@ import org.springframework.binding.format.Style;
  * 
  * @author Keith Donald
  */
-public class SimpleFormatterLocator extends AbstractFormatterLocator {
+public class SimpleFormatterFactory extends AbstractFormatterFactory {
 
-	public SimpleFormatterLocator() {
+	public SimpleFormatterFactory() {
 	}
 
 	public Formatter getDateFormatter(Style style) {

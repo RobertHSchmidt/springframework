@@ -18,8 +18,8 @@ package org.springframework.binding.convert.support;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.springframework.binding.format.FormatterLocator;
-import org.springframework.binding.format.support.SimpleFormatterLocator;
+import org.springframework.binding.format.FormatterFactory;
+import org.springframework.binding.format.support.SimpleFormatterFactory;
 
 /**
  * Converts textual representations of numbers to a <code>Number</code>
@@ -29,10 +29,10 @@ import org.springframework.binding.format.support.SimpleFormatterLocator;
 public class TextToNumber extends AbstractFormattingConverter {
 
 	public TextToNumber() {
-		super(new SimpleFormatterLocator());
+		super(new SimpleFormatterFactory());
 	}
 	
-	public TextToNumber(FormatterLocator locator) {
+	public TextToNumber(FormatterFactory locator) {
 		super(locator);
 	}
 
@@ -46,6 +46,6 @@ public class TextToNumber extends AbstractFormattingConverter {
 	}
 
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
-		return getFormatterLocator().getNumberFormatter(targetClass).parseValue((String)source, targetClass);
+		return getFormatterFactory().getNumberFormatter(targetClass).parseValue((String)source, targetClass);
 	}
 }

@@ -29,7 +29,7 @@ import org.springframework.binding.thread.support.DefaultThreadLocalContext;
  * FormatterLocator that caches Formatters in thread-local storage.
  * @author Keith Donald
  */
-public class ThreadLocalFormatterLocator extends AbstractFormatterLocator {
+public class ThreadLocalFormatterFactory extends AbstractFormatterFactory {
 
 	private static final String DEFAULT_DATE_FORMATTER_KEY = "dateFormatter";
 
@@ -39,11 +39,11 @@ public class ThreadLocalFormatterLocator extends AbstractFormatterLocator {
 
 	private DefaultThreadLocalContext formatterStorage = new DefaultThreadLocalContext();
 
-	public ThreadLocalFormatterLocator() {
+	public ThreadLocalFormatterFactory() {
 
 	}
 
-	public ThreadLocalFormatterLocator(ThreadCleanupBroadcaster broadcaster) {
+	public ThreadLocalFormatterFactory(ThreadCleanupBroadcaster broadcaster) {
 		setCleanupBroadcaster(broadcaster);
 	}
 
@@ -101,17 +101,14 @@ public class ThreadLocalFormatterLocator extends AbstractFormatterLocator {
 	}
 
 	public Formatter getCurrencyFormatter() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public Formatter getDateFormatter(String encodedFormat) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public Formatter getPercentFormatter() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 }

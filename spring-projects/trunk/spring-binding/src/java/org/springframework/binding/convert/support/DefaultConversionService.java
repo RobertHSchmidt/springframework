@@ -27,7 +27,7 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.ConversionServiceAware;
 import org.springframework.binding.convert.Converter;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.format.support.SimpleFormatterLocator;
+import org.springframework.binding.format.support.SimpleFormatterFactory;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.binding.method.TextToMethodKey;
 import org.springframework.binding.support.Assert;
@@ -74,12 +74,13 @@ public class DefaultConversionService implements ConversionService {
 
 	private void addDefaultConverters() {
 		addConverter(new TextToClass());
-		addConverter(new TextToNumber(new SimpleFormatterLocator()));
+		addConverter(new TextToNumber(new SimpleFormatterFactory()));
 		addConverter(new TextToBoolean());
 		addConverter(new TextToMapping(this));
 		addConverter(new TextToExpression());
 		addConverter(new TextToExpressions());
 		addConverter(new TextToMethodKey());
+		addConverter(new TextToLabeledEnum(new SimpleFormatterFactory()));
 		addDefaultAlias(String.class);
 		addDefaultAlias(Short.class);
 		addDefaultAlias(Integer.class);

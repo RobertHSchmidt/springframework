@@ -15,7 +15,7 @@
  */
 package org.springframework.binding.convert.support;
 
-import org.springframework.binding.format.FormatterLocator;
+import org.springframework.binding.format.FormatterFactory;
 import org.springframework.core.enums.LabeledEnum;
 
 /**
@@ -27,16 +27,16 @@ public class TextToLabeledEnum extends AbstractFormattingConverter {
 
 	private Class[] labeledEnumClasses;
 
-	public TextToLabeledEnum(FormatterLocator formatterLocator) {
-		super(formatterLocator);
+	public TextToLabeledEnum(FormatterFactory formatterFactory) {
+		super(formatterFactory);
 	}
 
-	public TextToLabeledEnum(Class labeledEnumClasses, FormatterLocator formatterLocator) {
-		this(new Class[] { labeledEnumClasses }, formatterLocator);
+	public TextToLabeledEnum(Class labeledEnumClasses, FormatterFactory formatterFactory) {
+		this(new Class[] { labeledEnumClasses }, formatterFactory);
 	}
 
-	public TextToLabeledEnum(Class[] labeledEnumClasses, FormatterLocator formatterLocator) {
-		super(formatterLocator);
+	public TextToLabeledEnum(Class[] labeledEnumClasses, FormatterFactory formatterFactory) {
+		super(formatterFactory);
 		this.labeledEnumClasses = labeledEnumClasses;
 	}
 
@@ -53,6 +53,6 @@ public class TextToLabeledEnum extends AbstractFormattingConverter {
 	}
 
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
-		return getFormatterLocator().getLabeledEnumFormatter().parseValue((String)source, targetClass);
+		return getFormatterFactory().getLabeledEnumFormatter().parseValue((String)source, targetClass);
 	}
 }

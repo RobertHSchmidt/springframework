@@ -15,7 +15,7 @@
  */
 package org.springframework.binding.convert.support;
 
-import org.springframework.binding.format.FormatterLocator;
+import org.springframework.binding.format.FormatterFactory;
 
 /**
  * A converter that delegates to a formatter to perform the conversion.
@@ -24,17 +24,17 @@ import org.springframework.binding.format.FormatterLocator;
  * @author Keith Donald
  */
 public abstract class AbstractFormattingConverter extends AbstractConverter {
-	private FormatterLocator formatterLocator;
+	private FormatterFactory formatterFactory;
 
-	protected AbstractFormattingConverter(FormatterLocator formatterLocator) {
-		setFormatterLocator(formatterLocator);
+	protected AbstractFormattingConverter(FormatterFactory formatterFactory) {
+		setFormatterFactory(formatterFactory);
 	}
 
-	protected FormatterLocator getFormatterLocator() {
-		return this.formatterLocator;
+	protected FormatterFactory getFormatterFactory() {
+		return this.formatterFactory;
 	}
 
-	public void setFormatterLocator(FormatterLocator formatterSource) {
-		this.formatterLocator = formatterSource;
+	public void setFormatterFactory(FormatterFactory formatterSource) {
+		this.formatterFactory = formatterSource;
 	}
 }

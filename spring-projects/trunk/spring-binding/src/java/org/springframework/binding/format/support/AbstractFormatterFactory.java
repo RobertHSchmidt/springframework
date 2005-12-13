@@ -18,7 +18,7 @@ package org.springframework.binding.format.support;
 import java.util.Locale;
 
 import org.springframework.binding.format.Formatter;
-import org.springframework.binding.format.FormatterLocator;
+import org.springframework.binding.format.FormatterFactory;
 import org.springframework.binding.format.Style;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.SimpleLocaleContext;
@@ -29,7 +29,7 @@ import org.springframework.core.enums.StaticLabeledEnumResolver;
  * FormatterLocator that caches Formatters in thread-local storage.
  * @author Keith Donald
  */
-public abstract class AbstractFormatterLocator implements FormatterLocator {
+public abstract class AbstractFormatterFactory implements FormatterFactory {
 
 	private LocaleContext localeContext = new SimpleLocaleContext(Locale.getDefault());
 

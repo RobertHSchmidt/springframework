@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
  */
 public class LabeledEnumFormatter extends AbstractFormatter {
 
-	private LabeledEnumResolver resolver = new StaticLabeledEnumResolver();
+	private LabeledEnumResolver resolver = StaticLabeledEnumResolver.instance();
 
 	public LabeledEnumFormatter() {
 		super();
@@ -58,7 +58,7 @@ public class LabeledEnumFormatter extends AbstractFormatter {
 	}
 
 	protected Object doParseValue(String formattedString, Class targetClass) throws IllegalArgumentException {
-		LabeledEnum labeledEnum = this.resolver.getLabeledEnumByLabel(targetClass, formattedString);
+		LabeledEnum labeledEnum = resolver.getLabeledEnumByLabel(targetClass, formattedString);
 		if (!isAllowEmpty()) {
 			Assert.notNull(labeledEnum, "The label '" + formattedString + "' did not map to a valid enum instance for type "
 					+ targetClass);
