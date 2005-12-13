@@ -21,27 +21,29 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * A transition takes a flow from one state to another when executed. A
- * transition is associated with exactly one source
- * <code>TransitionableState</code>.
+ * A transition takes a flow execution from one state to another when executed.
+ * A transition is associated with exactly one source
+ * {@link TransitionableState}. A transition may become elgible for execution
+ * on the occurence of {@link Event} from within its source state.
  * <p>
- * This class provides a simple implementation of a Transition that offers the
- * following functionality:
- * <ul>
- * <li>Determining the eligibility of this transition is handled by a
- * <code>TransitionCriteria</code> object called the "matching criteria". If
- * the matching criteria returns true this transition is marked eligible for
- * execution.</li>
- * <li>Determing if an eligible transition should be allowed to execute is
- * handled by a <code>TransitionCriteria</code> object called the "execution
- * criteria". If the execution criteria test fails, this transition will <i>roll
- * back</i>, reentering its source state. If the execution criteria test
- * succeeds, the transition executes, continuing to the target state.</li>
- * <li>The target state of this transition is typically specified at
- * configuration time using the target state id. If the target state needs to be
- * calculated in a dynamic fashion at runtime, set a custom
- * <code>TargetStateResolver</code></li>
- * </ul>
+ * When an event occurs within this transition's source
+ * <code>TransitionableState</code>, the determination of the eligibility of
+ * this transition is made by a <code>TransitionCriteria</code> object called
+ * the <i>matching criteria</i>. If the matching criteria returns
+ * <code>true</code>, this transition is marked eligible for execution for
+ * that event.
+ * <p>
+ * Determination as to whether an eligible transition should be allowed to
+ * execute is made by a <code>TransitionCriteria</code> object called the
+ * <i>execution criteria</i>. If the execution criteria test fails, this
+ * transition will <i>roll back</i> and reenter its source state. If the
+ * execution criteria test succeeds, this transition will execute and take the
+ * flow to the transition's target state.
+ * <p>
+ * The target state of this transition is typically specified at configuration
+ * time using the target state id. If the target state of this transition needs
+ * to be calculated in a dynamic fashion at runtime, set a custom
+ * <code>TargetStateResolver</code>
  * 
  * @see TransitionableState
  * @see TransitionCriteria
@@ -64,7 +66,7 @@ public class Transition extends AnnotatedObject {
 
 	/**
 	 * The criteria that determine whether or not this transition matches as
-	 * elligible for execution.
+	 * eligible for execution when an event occurs in the sourceState.
 	 */
 	private TransitionCriteria matchingCriteria = WildcardTransitionCriteria.INSTANCE;
 

@@ -24,7 +24,7 @@ import java.util.List;
 import org.springframework.core.style.ToStringCreator;
 
 /**
- * An ordered, typed list of actions, mainly for use internally by artifacts
+ * An ordered, typed list of actions mainly for use internally by flow artifacts
  * that can execute groups of actions.
  * 
  * @see Flow#getStartActionList()

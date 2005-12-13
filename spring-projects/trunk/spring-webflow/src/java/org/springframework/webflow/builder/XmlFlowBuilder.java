@@ -81,8 +81,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -91,12 +91,12 @@ import org.xml.sax.SAXException;
  * for more information on the XML flow definition format.
  * <p>
  * This builder will setup a flow-local bean factory for the flow being
- * constructed. That flow-local bean factory will be populated with the XML bean
- * definition file referenced using the "import" element. The flow-local bean
- * factory will use the bean factory defing this flow builder as a parent. As
- * such, the flow can access artifacts in either its flow-local bean factory, or
- * in the parent bean factory hierarchy, e.g. the bean factory of the
- * dispatcher.
+ * constructed. That flow-local bean factory will be populated with XML bean
+ * definitions contained in files referenced using the "import" element. The
+ * flow-local bean factory will use the bean factory defing this flow builder as
+ * a parent. As such, the flow can access artifacts in either its flow-local
+ * bean factory or in the parent bean factory hierarchy, e.g. the bean factory
+ * of the dispatcher.
  * <p>
  * <b>Exposed configuration properties: </b> <br>
  * <table border="1">
@@ -207,8 +207,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String IMPORT_ELEMENT = "import";
 
 	private static final String RESOURCE_ATTRIBUTE = "resource";
-
-	private static final String INLINE_FLOW_MAP_PROPERTY = XmlFlowBuilder.class + ".inlineFlowRegistry";
 
 	/**
 	 * The resource from which the document element being parsed was read. Used
@@ -941,7 +939,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	public void dispose() {
 		destroyFlowArtifactRegistry(getFlow());
-		getFlow().removeAttribute(INLINE_FLOW_MAP_PROPERTY);
 		document = null;
 	}
 

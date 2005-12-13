@@ -91,7 +91,7 @@ public class StateExceptionHandlerSet {
 	}
 
 	/**
-	 * Returns an iterator that allows iteration over the set of exception
+	 * Returns an iterator that allows iteration over the set of state exception
 	 * handlers in this set.
 	 * @return the StateExceptionHandler iterator
 	 */
