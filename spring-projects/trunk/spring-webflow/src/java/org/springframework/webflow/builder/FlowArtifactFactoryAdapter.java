@@ -16,6 +16,7 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.Transition.TargetStateResolver;
+import org.springframework.webflow.action.LocalBeanInvokingAction;
 
 /**
  * Base implementation of a flow artifact factory that implements a minimal set
@@ -95,4 +96,22 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	public ResourceLoader getResourceLoader() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Resource lookup not supported by this artifact factory");
 	}
+
+	/**
+	 * Helper method to the given service object into an action. If the given
+	 * service object implements the <code>Action</code> interface, it is
+	 * returned as is, otherwise it is wrapped in an action that can invoke a
+	 * method on the service bean.
+	 * @param artifact the service bean
+	 * @return the action
+	 */
+	protected Action toAction(Object artifact) {
+		if (artifact instanceof Action) {
+			return (Action)artifact;
+		}
+		else {
+			return new LocalBeanInvokingAction(artifact);
+		}
+	}
+	
 }

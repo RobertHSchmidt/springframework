@@ -78,7 +78,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * being built.
 	 */
 	protected FlowArtifactFactory getFlowArtifactFactory() {
-		return this.flowArtifactFactory;
+		return flowArtifactFactory;
 	}
 
 	public Object getObject() throws Exception {
