@@ -44,23 +44,18 @@
 <!ELEMENT start-actions ( action+ )>
 
 <!--
-	A property associated with an another element (flow, action, state, transition, etc).
-	Properties are simple strings or typed attributes that allow you to annotate an element.
-	For example:
-	- an element's 'caption' property might serve a GUI tooltip or logging statement
-	- an Action's 'validatorMethod' property might specify a target method to invoke on a validator
-	- a Flow's 'transactional' property might indicate the flow should exhibit transactionl characteristics
+	A flow variable definition.  Flow variables are automatically created in "flow scope" 
+	when an execution of this flow starts.
 -->
 <!ELEMENT var EMPTY>
 
 <!--
-	The name of the flow-scoped variable.
+	This variable's name.
 -->
 <!ATTLIST var name CDATA #REQUIRED>
 
 <!--
-	The type of the variable; to facilitate from-string type conversion. This type
-	string may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer').
+	This variable's type.  The type may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer').
 -->
 <!ATTLIST var type CDATA #IMPLIED>
 
@@ -153,9 +148,35 @@
 
 	For example:
         method="processOrder(${flowScope.order})"	
-	
 -->
 <!ATTLIST action method CDATA #IMPLIED>
+
+<!--
+	The name of the attribute that will expose the return value of the target action method.
+	Used in conjunction with the 'method' and 'resultScope' attributes.
+	Only applicable when this action invokes an arbitrary bean (POJO).
+
+	For example:
+        method="processOrder(${flowScope.order})" resultName="orderConfirmation"
+        
+    ... exposes the 'processOrder(Order)' method return value in request scope 
+    under the attribute name 'orderConfirmation'.
+-->
+<!ATTLIST action resultName CDATA #IMPLIED>
+
+<!--
+	The scope of the attribute that will expose the return value of the target action method.
+	Used in conjunction with the 'resultName' attribute.  Defaults to value 'request' if
+	not specified, which states that the action method return value should be
+	placed in request scope.
+
+	For example:
+        method="suggestItineraries(${flowScope.trip})" resultName="itineraries" resultScope="flow"
+
+    ... exposes the 'suggestItineraries(Order)' method return value in flow scope 
+    under the attribute name 'itineraries'.        
+-->
+<!ATTLIST action resultScope (request | flow) CDATA #IMPLIED>
 
 <!--
 	Defines a transition from one state to another.
@@ -240,7 +261,7 @@
 
 <!--
 	Defines a decision state, a state that evaluates one or more expressions to	decide which
-	state to go to next.
+	state to go to next.  Intended to be used purely as a 'navigation' or 'routing' state.
 	
 	A decision state is a transitionable state. A decision state transition is triggered by an
 	boolean expression evaluating true against the flow execution request context.
