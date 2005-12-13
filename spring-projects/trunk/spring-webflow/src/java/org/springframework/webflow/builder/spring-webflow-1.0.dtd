@@ -166,9 +166,7 @@
 
 <!--
 	The scope of the attribute that will expose the return value of the target action method.
-	Used in conjunction with the 'resultName' attribute.  Defaults to value 'request' if
-	not specified, which states that the action method return value should be
-	placed in request scope.
+	Used in conjunction with the 'resultName' attribute.
 
 	For example:
         method="suggestItineraries(${flowScope.trip})" resultName="itineraries" resultScope="flow"
