@@ -1119,7 +1119,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 					return top().context.getBean(id);
 				}
 			} catch (BeansException e) {
-				throw new FlowArtifactException(type, id, e);
+				throw new FlowArtifactException(id, type, e);
 			}
 		}
 	}

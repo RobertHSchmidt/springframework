@@ -29,37 +29,35 @@ import org.springframework.webflow.action.LocalBeanInvokingAction;
 public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 
 	public Flow getSubflow(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(Flow.class, id,
-				"Subflow lookup is not supported by this artifact factory");
+		throw new FlowArtifactException(id, Flow.class, "Subflow lookup is not supported by this artifact factory");
 	}
 
 	public Action getAction(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(Action.class, id,
-				"Action lookup is not supported by this artifact factory");
+		throw new FlowArtifactException(id, Action.class, "Action lookup is not supported by this artifact factory");
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(FlowAttributeMapper.class, id,
+		throw new FlowArtifactException(id, FlowAttributeMapper.class,
 				"Attribute mapper lookup is not supported by this artifact factory");
 	}
 
 	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(TransitionCriteria.class, id,
+		throw new FlowArtifactException(id, TransitionCriteria.class,
 				"Transition criteria lookup is not supported by this artifact factory");
 	}
 
 	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(ViewSelector.class, id,
+		throw new FlowArtifactException(id, ViewSelector.class,
 				"View selector lookup is not supported by this artifact factory");
 	}
 
 	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(StateExceptionHandler.class, id,
+		throw new FlowArtifactException(id, StateExceptionHandler.class,
 				"State exception handler lookup is not supported by this artifact factory");
 	}
 
 	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(Transition.TargetStateResolver.class, id,
+		throw new FlowArtifactException(id, Transition.TargetStateResolver.class,
 				"Transition target state resolver lookup is not supported by this artifact factory");
 	}
 
@@ -113,5 +111,5 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 			return new LocalBeanInvokingAction(artifact);
 		}
 	}
-	
+
 }

@@ -58,7 +58,7 @@ public class FlowExecutionImplTests extends TestCase {
 				if (flow.getId().equals(flowId)) {
 					return flow;
 				}
-				throw new FlowArtifactException(Flow.class, flowId);
+				throw new FlowArtifactException(flowId, Flow.class);
 			}
 		};
 		flowExecution = new FlowExecutionImpl(flow);

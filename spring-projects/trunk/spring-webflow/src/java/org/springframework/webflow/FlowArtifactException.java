@@ -38,57 +38,64 @@ import org.springframework.util.StringUtils;
 public class FlowArtifactException extends NestedRuntimeException {
 
 	/**
-	 * The type of artifact that could not be retrieved.
-	 */
-	private Class artifactType;
-
-	/**
 	 * The id of the artifact that could not be retrieved.
 	 */
 	private String artifactId;
 
 	/**
-	 * Create a new flow artifact exception.
-	 * @param artifactType the expected service type
-	 * @param artifactId the id of the service that cannot be found
+	 * The type of artifact that could not be retrieved.
 	 */
-	public FlowArtifactException(Class artifactType, String artifactId) {
-		this(artifactType, artifactId, null, null);
-	}
+	private Class artifactType;
 
 	/**
 	 * Create a new flow artifact exception.
-	 * @param artifactType the expected artifact type
 	 * @param artifactId the id of the artifact
+	 * @param artifactType the expected artifact type
+	 */
+	public FlowArtifactException(String artifactId, Class artifactType) {
+		this(artifactId, artifactType, null, null);
+	}
+	
+	/**
+	 * Create a new flow artifact exception.
+	 * @param artifactId the id of the artifact
+	 * @param artifactType the expected artifact type
 	 * @param cause the underlying cause of this exception
 	 */
-	public FlowArtifactException(Class artifactType, String artifactId, Throwable cause) {
-		this(artifactType, artifactId, null, cause);
+	public FlowArtifactException(String artifactId, Class artifactType, Throwable cause) {
+		this(artifactId, artifactType, null, cause);
 	}
 
 	/**
 	 * Create a new flow artifact exception.
-	 * @param artifactType the expected artifact type
 	 * @param artifactId the id of the artifact
+	 * @param artifactType the expected artifact type
 	 * @param message descriptive message
 	 */
-	public FlowArtifactException(Class artifactType, String artifactId, String message) {
-		this(artifactType, artifactId, message, null);
+	public FlowArtifactException(String artifactId, Class artifactType, String message) {
+		this(artifactId, artifactType, message, null);
 	}
 
 	/**
 	 * Create a new flow artifact lookup exception.
-	 * @param artifactType the expected artifact type
 	 * @param artifactId the id of the artifact
+	 * @param artifactType the expected artifact type
 	 * @param message descriptive message
 	 * @param cause the underlying cause of this exception
 	 */
-	public FlowArtifactException(Class artifactType, String artifactId, String message, Throwable cause) {
+	public FlowArtifactException(String artifactId, Class artifactType, String message, Throwable cause) {
 		super((StringUtils.hasText(message) ? message : "Unable to obtain a " + ClassUtils.getShortName(artifactType)
 				+ " flow artifact with id '" + artifactId + "': make sure there is a valid [" + artifactType
 				+ "] exported with this id"), cause);
 		this.artifactType = artifactType;
 		this.artifactId = artifactId;
+	}
+
+	/**
+	 * Returns the id of the service that cannot be found.
+	 */
+	public String getArtifactId() {
+		return artifactId;
 	}
 
 	/**
@@ -98,10 +105,4 @@ public class FlowArtifactException extends NestedRuntimeException {
 		return artifactType;
 	}
 
-	/**
-	 * Returns the id of the service that cannot be found.
-	 */
-	public String getArtifactId() {
-		return artifactId;
-	}
 }

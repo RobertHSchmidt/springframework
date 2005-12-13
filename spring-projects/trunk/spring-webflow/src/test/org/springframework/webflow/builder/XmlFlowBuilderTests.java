@@ -163,7 +163,7 @@ public class XmlFlowBuilderTests extends TestCase {
 			if ("action1".equals(id) || "action2".equals(id)) {
 				return new TestAction();
 			}
-			throw new FlowArtifactException(Action.class, id);
+			throw new FlowArtifactException(id, Action.class);
 		}
 
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
@@ -177,7 +177,7 @@ public class XmlFlowBuilderTests extends TestCase {
 					}
 				};
 			}
-			throw new FlowArtifactException(FlowAttributeMapper.class, id);
+			throw new FlowArtifactException(id, FlowAttributeMapper.class);
 		}
 	};
 

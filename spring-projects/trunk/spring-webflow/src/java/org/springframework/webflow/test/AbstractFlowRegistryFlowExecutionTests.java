@@ -43,14 +43,14 @@ public abstract class AbstractFlowRegistryFlowExecutionTests extends AbstractFlo
 	/**
 	 * Returns the flow artifact factory.
 	 */
-	public static FlowArtifactFactory getFlowArtifactFactory() {
+	protected static FlowArtifactFactory getFlowArtifactFactory() {
 		return flowArtifactFactory;
 	}
 
 	/**
 	 * Returns the flow registry.
 	 */
-	public static FlowRegistry getFlowRegistry() {
+	protected static FlowRegistry getFlowRegistry() {
 		return flowRegistry;
 	}
 

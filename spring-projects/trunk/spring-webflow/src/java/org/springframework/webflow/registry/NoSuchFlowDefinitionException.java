@@ -34,21 +34,21 @@ public class NoSuchFlowDefinitionException extends FlowArtifactException {
 
 	/**
 	 * Creates an exception indicating a flow definition could not be found.
-	 * @param flowId the flow Id.
+	 * @param id the flow Id.
 	 * @param cause the root cause
 	 */
-	public NoSuchFlowDefinitionException(String flowId, Throwable cause) {
-		super(Flow.class, flowId, "No such flow definition with id '" + flowId + "' found", cause);
+	public NoSuchFlowDefinitionException(String id, Throwable cause) {
+		super(id, Flow.class, "No such flow definition with id '" + id + "' found", cause);
 	}
 
 	/**
 	 * Creates an exception indicating a flow definition could not be found.
-	 * @param flowId the flow Id
+	 * @param id the flow Id
 	 * @param message a custom message
 	 * @param cause the root cause
 	 */
-	public NoSuchFlowDefinitionException(String flowId, String message, Throwable cause) {
-		super(Flow.class, flowId, message, cause);
+	public NoSuchFlowDefinitionException(String id, String message, Throwable cause) {
+		super(id, Flow.class, message, cause);
 	}
 
 }

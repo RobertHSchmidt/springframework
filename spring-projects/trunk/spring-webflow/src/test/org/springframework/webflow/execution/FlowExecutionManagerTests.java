@@ -163,7 +163,7 @@ public class FlowExecutionManagerTests extends TestCase {
 				return simpleFlow;
 			}
 			else {
-				throw new FlowArtifactException(Flow.class, id);
+				throw new FlowArtifactException(id, Flow.class);
 			}
 		}
 	}

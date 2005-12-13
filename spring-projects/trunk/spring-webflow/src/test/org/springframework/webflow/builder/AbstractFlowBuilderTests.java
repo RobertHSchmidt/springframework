@@ -59,7 +59,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 					return builder.getResult();
 				}
 				else {
-					throw new FlowArtifactException(Flow.class, id);
+					throw new FlowArtifactException(id, Flow.class);
 				}
 			}
 
@@ -72,7 +72,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 					return new PersonIdMapper();
 				}
 				else {
-					throw new FlowArtifactException(FlowAttributeMapper.class, id);
+					throw new FlowArtifactException(id, FlowAttributeMapper.class);
 				}
 			}
 		});

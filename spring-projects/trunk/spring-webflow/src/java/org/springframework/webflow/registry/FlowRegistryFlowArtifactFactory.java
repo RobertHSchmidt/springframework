@@ -15,9 +15,8 @@
  */
 package org.springframework.webflow.registry;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
@@ -111,11 +110,8 @@ public class FlowRegistryFlowArtifactFactory extends FlowArtifactFactoryAdapter 
 				return beanFactory.getBean(id);
 			}
 		}
-		catch (NoSuchBeanDefinitionException e) {
-			throw new FlowArtifactException(artifactType, id, e);
-		}
-		catch (BeanNotOfRequiredTypeException e) {
-			throw new FlowArtifactException(artifactType, id, e);
+		catch (BeansException e) {
+			throw new FlowArtifactException(id, artifactType, e);
 		}
 	}
 
