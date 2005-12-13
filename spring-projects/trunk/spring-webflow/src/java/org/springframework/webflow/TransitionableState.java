@@ -97,7 +97,7 @@ public abstract class TransitionableState extends State {
 	 * Returns the list of transitions owned by this state.
 	 */
 	public Transition[] getTransitions() {
-		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
+		return (Transition[])transitions.toArray(new Transition[0]);
 	}
 
 	/**

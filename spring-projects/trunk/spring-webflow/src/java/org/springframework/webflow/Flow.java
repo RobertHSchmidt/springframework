@@ -244,7 +244,7 @@ public class Flow extends AnnotatedObject {
 	 * Returns the list of states in this flow.
 	 */
 	public State[] getStates() {
-		return (State[])states.toArray(new State[states.size()]);
+		return (State[])states.toArray(new State[0]);
 	}
 
 	/**

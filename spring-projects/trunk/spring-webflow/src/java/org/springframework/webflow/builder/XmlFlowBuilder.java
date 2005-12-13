@@ -787,7 +787,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		for (int i = 0; i < transitionElements.size(); i++) {
 			transitions.add(parseTransition(sourceState, (Element)transitionElements.get(i)));
 		}
-		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
+		return (Transition[])transitions.toArray(new Transition[0]);
 	}
 
 	/**
@@ -816,7 +816,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		while (it.hasNext()) {
 			transitions.addAll(Arrays.asList(parseIf((Element)it.next())));
 		}
-		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
+		return (Transition[])transitions.toArray(new Transition[0]);
 	}
 
 	/**
