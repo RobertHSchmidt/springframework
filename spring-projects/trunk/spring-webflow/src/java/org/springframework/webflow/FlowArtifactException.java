@@ -84,9 +84,9 @@ public class FlowArtifactException extends NestedRuntimeException {
 	 * @param cause the underlying cause of this exception
 	 */
 	public FlowArtifactException(Class artifactType, String artifactId, String message, Throwable cause) {
-		super((StringUtils.hasText(message) ? message : "Unable to lookup flow artifact of type '"
-				+ ClassUtils.getShortName(artifactType) + "' with id '" + artifactId
-				+ "'; make sure there is at least one [" + artifactType + "] exported with this id"), cause);
+		super((StringUtils.hasText(message) ? message : "Unable to obtain a " + ClassUtils.getShortName(artifactType)
+				+ " flow artifact with id '" + artifactId + "': make sure there is a valid [" + artifactType
+				+ "] exported with this id"), cause);
 		this.artifactType = artifactType;
 		this.artifactId = artifactId;
 	}

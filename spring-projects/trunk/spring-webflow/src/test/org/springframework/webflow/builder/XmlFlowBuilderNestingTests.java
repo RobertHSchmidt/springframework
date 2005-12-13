@@ -24,6 +24,7 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
@@ -31,6 +32,8 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.registry.FlowRegistryFlowArtifactFactory;
+import org.springframework.webflow.registry.FlowRegistryImpl;
 
 /**
  * Test case for XML flow builder, testing flow nesting.
@@ -51,7 +54,10 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 		ClassPathXmlApplicationContext parentContext = new ClassPathXmlApplicationContext(
 				"/org/springframework/webflow/builder/testFlow2ParentContext.xml");
 		this.parentBeanFactory = parentContext.getBeanFactory();
-		this.flow = (Flow)parentContext.getBean("testFlow2");
+		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow2.xml", getClass()));
+		builder.setFlowArtifactFactory(new FlowRegistryFlowArtifactFactory(new FlowRegistryImpl(), parentBeanFactory));
+		new FlowAssembler("testFlow2", builder).assembleFlow();
+		this.flow = builder.getResult();
 		this.testService = (TestService)parentContext.getBean("testService");
 	}
 
@@ -67,10 +73,7 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 		assertSame(testService, action1.getTestService());
 		assertSame(action1, testFlow2BeanFactory.getBean("action1"));
 		assertSame(parentBeanFactory, ((HierarchicalBeanFactory)testFlow2BeanFactory).getParentBeanFactory());
-		assertEquals(3, BeanFactoryUtils.countBeansIncludingAncestors(((ListableBeanFactory)testFlow2BeanFactory))); // action1,
-																														// subFlow1
-																														// and
-																														// subFlow1.builder
+		assertEquals(2, BeanFactoryUtils.countBeansIncludingAncestors(((ListableBeanFactory)testFlow2BeanFactory)));
 
 		Flow subFlow1 = ((SubflowState)flow.getState("subFlowState1")).getSubflow();
 		assertNotSame(flow, subFlow1);
@@ -93,12 +96,12 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 		assertNotNull(testFlow2SubFlow1BeanFactory);
 		assertSame(testService, subAction1.getTestService());
 		assertNull(subAction1.getTestAction()); // autowire by name should have
-												// failed
+		// failed
 		assertSame(action1, subAction1.getAction1());
 		assertSame(subAction1, testFlow2SubFlow1BeanFactory.getBean("subAction1"));
 		assertSame(testFlow2BeanFactory, ((HierarchicalBeanFactory)testFlow2SubFlow1BeanFactory).getParentBeanFactory());
 		assertEquals(1, ((ListableBeanFactory)testFlow2SubFlow1BeanFactory).getBeanDefinitionCount()); // only
-																										// subAction1
+		// subAction1
 	}
 
 	public static class TestService {

@@ -30,6 +30,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.convert.ConversionExecutor;
@@ -1040,8 +1041,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		public Action getAction(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (top().context.containsBean(id)) {
-					return toAction(top().context.getBean(id));
+				if (containsBean(id)) {
+					return toAction(getBean(id, Action.class, false));
 				}
 			}
 			return getFlowArtifactFactory().getAction(id);
@@ -1049,8 +1050,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (top().context.containsBean(id)) {
-					return (FlowAttributeMapper)top().context.getBean(id);
+				if (containsBean(id)) {
+					return (FlowAttributeMapper)getBean(id, FlowAttributeMapper.class, true);
 				}
 			}
 			return getFlowArtifactFactory().getAttributeMapper(id);
@@ -1058,8 +1059,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (top().context.containsBean(id)) {
-					return (StateExceptionHandler)top().context.getBean(id);
+				if (containsBean(id)) {
+					return (StateExceptionHandler)getBean(id, StateExceptionHandler.class, true);
 				}
 			}
 			return getFlowArtifactFactory().getExceptionHandler(id);
@@ -1067,8 +1068,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (top().context.containsBean(id)) {
-					return (TransitionCriteria)top().context.getBean(id);
+				if (containsBean(id)) {
+					return (TransitionCriteria)getBean(id, TransitionCriteria.class, true);
 				}
 			}
 			return getFlowArtifactFactory().getTransitionCriteria(id);
@@ -1076,8 +1077,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		public ViewSelector getViewSelector(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (top().context.containsBean(id)) {
-					return (ViewSelector)top().context.getBean(id);
+				if (containsBean(id)) {
+					return (ViewSelector)getBean(id, ViewSelector.class, true);
 				}
 			}
 			return getFlowArtifactFactory().getViewSelector(id);
@@ -1085,8 +1086,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (top().context.containsBean(id)) {
-					return (TargetStateResolver)top().context.getBean(id);
+				if (containsBean(id)) {
+					return (TargetStateResolver)getBean(id, TargetStateResolver.class, true);
 				}
 			}
 			return getFlowArtifactFactory().getTargetStateResolver(id);
@@ -1104,6 +1105,22 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		public Transition createTransition(TransitionableState sourceState, Map properties)
 				throws FlowArtifactException {
 			return getFlowArtifactFactory().createTransition(sourceState, properties);
+		}
+		
+		protected boolean containsBean(String id) {
+			return top().context.containsBean(id);
+		}
+		
+		protected Object getBean(String id, Class type, boolean enforceTypeCheck) {
+			try {
+				if (enforceTypeCheck) {
+					return top().context.getBean(id, type);
+				} else {
+					return top().context.getBean(id);
+				}
+			} catch (BeansException e) {
+				throw new FlowArtifactException(type, id, e);
+			}
 		}
 	}
 
