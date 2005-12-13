@@ -863,7 +863,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 				selectedView.addObject(getFlowExecutionIdParameterName(), flowExecutionId);
 			}
 			else {
-				exposeFlowAttributes(selectedView.getModel(), flowExecutionId, flowExecutionContext);
+				exposeFlowExecutionAttributes(selectedView.getModel(), flowExecutionId, flowExecutionContext);
 			}
 		}
 		if (logger.isDebugEnabled()) {
@@ -879,7 +879,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param flowExecutionId the flow execution id
 	 * @param flowExecutionContext the flow execution context
 	 */
-	protected void exposeFlowAttributes(Map model, Serializable flowExecutionId,
+	protected void exposeFlowExecutionAttributes(Map model, Serializable flowExecutionId,
 			FlowExecutionContext flowExecutionContext) {
 		// make the entire flow execution context available in the model
 		model.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);

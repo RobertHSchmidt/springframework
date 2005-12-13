@@ -235,7 +235,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			Assert.notNull(flowExecutionId,
 					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
 			Map model = new HashMap();
-			exposeFlowAttributes(model, flowExecutionId, flowExecution);
+			exposeFlowExecutionAttributes(model, flowExecutionId, flowExecution);
 			// this is pretty unclean
 			Serializable transactionId = (Serializable)context.getExternalContext().getRequestParameterMap().get(
 					AbstractTokenTransactionSynchronizer.TRANSACTION_TOKEN_PARAMETER_NAME);
@@ -259,19 +259,19 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
 		if (flowExecution != null && flowExecution.isActive() && !FlowExecutionHolder.isFlowExecutionSaved()) {
 			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
-			Assert.notNull(flowExecutionId,
-					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
+			Assert
+					.notNull(flowExecutionId,
+							"The flow execution storage id must have been pre-generated to complete a two-phase save to storage");
 			getStorage().saveWithGeneratedId(flowExecutionId, flowExecution, FlowExecutionHolder.getExternalContext());
 			FlowExecutionHolder.setFlowExecutionSaved(true);
 			flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Saved flow execution out to storage with previously generated id: '" + flowExecutionId
+				logger.debug("Saved flow execution out to storage with previously generated id '" + flowExecutionId
 						+ "'");
 			}
-
-			Map contextualInfo = new HashMap();
-			exposeFlowAttributes(contextualInfo, flowExecutionId, flowExecution);
-			putInto(context.getExternalContext().getRequestMap(), contextualInfo);
+			Map model = new HashMap();
+			exposeFlowExecutionAttributes(model, flowExecutionId, flowExecution);
+			putInto(context.getExternalContext().getRequestMap(), model);
 		}
 	}
 
@@ -285,9 +285,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @param selectedView <code>ViewSelection</code> for the view to render
 	 */
 	public void renderView(FacesContext context, String fromAction, String outcome, ViewSelection selectedView) {
-
-		Map viewModel = selectedView.getModel();
-		putInto(context.getExternalContext().getRequestMap(), viewModel);
+		putInto(context.getExternalContext().getRequestMap(), selectedView.getModel());
 		// stay on the same view if requested
 		if (selectedView.getViewName() == null) {
 			return;
@@ -328,9 +326,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @return the event id
 	 */
 	protected String extractEventId(ExternalContext context) throws IllegalArgumentException {
-
 		JsfExternalContext jsfContext = (JsfExternalContext)context;
-
 		String eventId = jsfContext.getOutcome();
 		Assert.hasText(eventId, "No eventId could be obtained: make sure the client provides "
 				+ "the event id in the form of a JSF static action; "
@@ -388,5 +384,4 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			return viewName;
 		}
 	}
-
 }

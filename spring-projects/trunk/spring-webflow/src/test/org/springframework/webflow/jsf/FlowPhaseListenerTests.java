@@ -62,8 +62,8 @@ public class FlowPhaseListenerTests extends TestCase {
 	}
 
 	public void testBeforePhase() {
-		tested.beforePhase(null);
-		// expected nothing to happen
+		PhaseEvent event = new PhaseEvent(mockFacesContext, PhaseId.RENDER_RESPONSE, lifecycle);
+		tested.beforePhase(event);
 	}
 
 	public void testAfterPhaseNullEvent() {
@@ -92,10 +92,8 @@ public class FlowPhaseListenerTests extends TestCase {
 
 	public void testAfterPhaseRenderResponse() {
 		PhaseEvent event = new PhaseEvent(mockFacesContext, PhaseId.RENDER_RESPONSE, lifecycle);
-
 		// perform test
 		tested.afterPhase(event);
-
 		assertTrue("save not called", executionManager.saved);
 	}
 
@@ -108,7 +106,7 @@ public class FlowPhaseListenerTests extends TestCase {
 			super(locator);
 		}
 
-		public void saveFlowExecutionIfNecessary() {
+		public void saveFlowExecutionIfNecessary(FacesContext context) {
 			saved = true;
 		}
 

@@ -33,6 +33,7 @@ import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.ViewState;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListenerList;
 import org.springframework.webflow.execution.FlowExecutionManager;
@@ -279,15 +280,19 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 
 		Serializable expectedFlowExecutionId = new Serializable() {
 		};
+		flowExecutionControl.expectAndReturn(flowExecutionMock.isActive(), true);
+		State state = new ViewState(new Flow("Some Flow"), "state");
+		flowExecutionControl.expectAndReturn(flowExecutionMock.getCurrentState(), state);
+
 		FlowExecutionHolder.setFlowExecution(expectedFlowExecutionId, flowExecutionMock, null, false);
 		flowExecutionStorageMock.saveWithGeneratedId(expectedFlowExecutionId, flowExecutionMock, null);
 		flowExecutionControl.expectAndReturn(flowExecutionMock.getListeners(), new FlowExecutionListenerList());
 		flowExecutionStorageControl.replay();
 		flowExecutionControl.replay();
-		
+
 		HashMap requestMap = new HashMap();
 		mockExternalContext.setRequestMap(requestMap);
-		
+
 		// perform test
 		tested.saveFlowExecutionIfNecessary(mockFacesContext);
 
