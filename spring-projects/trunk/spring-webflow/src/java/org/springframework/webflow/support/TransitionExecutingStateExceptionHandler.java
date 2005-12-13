@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 
 import org.springframework.core.JdkVersion;
 import org.springframework.core.NestedRuntimeException;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
@@ -140,5 +141,9 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 				return null;
 			}
 		}
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("exceptionStateMap", exceptionStateMap).toString();
 	}
 }
