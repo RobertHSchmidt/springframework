@@ -82,8 +82,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *          &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *          &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -151,7 +151,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String RESULT_SCOPE_ATTRIBUTE = "resultScope";
 
-	private static final String NONE_VALUE = "none";
+	private static final String DEFAULT_VALUE = "default";
 
 	private static final String VIEW_STATE_ELEMENT = "view-state";
 
@@ -700,7 +700,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			action.setResultName(element.getAttribute(RESULT_NAME_ATTRIBUTE));
 		}
 		if (element.hasAttribute(RESULT_SCOPE_ATTRIBUTE)
-				&& !element.getAttribute(RESULT_SCOPE_ATTRIBUTE).equals(NONE_VALUE)) {
+				&& !element.getAttribute(RESULT_SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
 			ScopeType scopeType = (ScopeType)fromStringTo(ScopeType.class).execute(
 					element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
 			action.setResultScope(scopeType);

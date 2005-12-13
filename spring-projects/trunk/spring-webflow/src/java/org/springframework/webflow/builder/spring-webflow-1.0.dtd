@@ -176,7 +176,7 @@
     ... exposes the 'suggestItineraries(Order)' method return value in flow scope 
     under the attribute name 'itineraries'.        
 -->
-<!ATTLIST action resultScope (request | flow | none) "none">
+<!ATTLIST action resultScope (request | flow | default) "default">
 
 <!--
 	Defines a transition from one state to another.

@@ -21,7 +21,7 @@
 	</action-state>
 
 	<action-state id="actionState2">
-		<action bean="action1" method="actionMethod"/>
+		<action bean="action1" method="actionMethod" resultName="result" resultScope="request"/>
 		<transition on="success" to="viewState1"/>
 	</action-state>
 

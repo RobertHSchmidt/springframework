@@ -33,6 +33,7 @@ import org.springframework.binding.method.TextToMethodKey;
 import org.springframework.binding.support.Assert;
 import org.springframework.binding.support.Mapping;
 import org.springframework.binding.support.TextToMapping;
+import org.springframework.core.enums.LabeledEnum;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
@@ -94,6 +95,7 @@ public class DefaultConversionService implements ConversionService {
 		addDefaultAlias(Mapping.class);
 		addDefaultAlias(Class.class);
 		addDefaultAlias(Expression.class);
+		addAlias("labeledEnum", LabeledEnum.class);
 		addAlias("expressionString", Expression[].class);
 		addAlias("method", MethodKey.class);
 	}
