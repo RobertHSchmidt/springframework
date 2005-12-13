@@ -46,16 +46,16 @@ import org.springframework.webflow.builder.XmlFlowBuilder;
  * </p>
  * 
  * <pre>
- *     BeanFactory beanFactory = ...
- *     FlowRegistryImpl registry = new FlowRegistryImpl();
- *     FlowArtifactFactory flowArtifactFactory =
- *         new FlowRegistryFlowArtifactFactory(registry, beanFactory);
- *     File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- *     Resource[] locations = new Resource[] {
- *         new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
- *         new FileSystemResource(new File(parent, &quot;flow2.xml&quot;))
- *     };
- *     new XmlFlowRegistrar(locations).registerFlows(locations, flowArtifactFactory);
+ *       BeanFactory beanFactory = ...
+ *       FlowRegistryImpl registry = new FlowRegistryImpl();
+ *       FlowArtifactFactory flowArtifactFactory =
+ *           new FlowRegistryFlowArtifactFactory(registry, beanFactory);
+ *       File parent = new File(&quot;src/webapp/WEB-INF&quot;);
+ *       Resource[] locations = new Resource[] {
+ *           new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
+ *           new FileSystemResource(new File(parent, &quot;flow2.xml&quot;))
+ *       };
+ *       new XmlFlowRegistrar(locations).registerFlows(locations, flowArtifactFactory);
  * </pre>
  * 
  * @author Keith Donald
@@ -185,7 +185,7 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 
 	/**
 	 * Template method that calculates if the given file resource is actually a
-	 * flow definition resource.
+	 * flow definition resource. Subclasses may override.
 	 * @param file the file
 	 * @return true if yes, false otherwise
 	 */
@@ -215,8 +215,10 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 	}
 
 	/**
-	 * Calculates the <code>flowId</code> to assign to the Flow definition to
-	 * be built from the specified resource location.
+	 * Template method that calculates the <code>flowId</code> to assign to
+	 * the Flow definition to be built from the specified resource location.
+	 * This implementation simply strips off the .xml suffix. Subclasses may
+	 * override.
 	 * @param location ther resource
 	 * @return the flow id
 	 */
@@ -225,7 +227,7 @@ public class XmlFlowRegistrar extends FlowRegistrarSupport {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("flowLocations", flowLocations).append(
-				"flowDirectoryLocations", flowDirectoryLocations).toString();
+		return new ToStringCreator(this).append("flowLocations", flowLocations).append("flowDirectoryLocations",
+				flowDirectoryLocations).toString();
 	}
 }
