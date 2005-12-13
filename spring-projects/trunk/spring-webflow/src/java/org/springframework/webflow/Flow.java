@@ -58,9 +58,9 @@ import org.springframework.util.StringUtils;
  * executed, move a Flow to another state, defining the supported <i>paths</i>
  * through the flow. A state transition is triggered by the occurence of an
  * event. An event is something that happens externally the flow should respond
- * to, for example, a user input event ("submit"), or an action execution result
- * event ("success"). When an event occurs in a state of a Flow, that event
- * drives a state transition that decides what to do next.
+ * to, for example a user input event like ("submit") or an action execution
+ * result event like ("success"). When an event occurs in a state of a Flow,
+ * that event drives a state transition that decides what to do next.
  * <p>
  * Each Flow has exactly one start state. A start state is simply a marker
  * noting the state executions of this Flow definition should start in. The
@@ -76,25 +76,27 @@ import org.springframework.util.StringUtils;
  * may also be directly subclassed.
  * <p>
  * This class, and the rest of the Spring Web Flow (SWF) core, has been designed
- * with minimal dependencies on other parts of Spring, and is usable in a
- * standalone fashion (as well as in the context of other frameworks like
- * Struts, WebWork, Tapestry, or JSF, for example). The core system is fully
- * usable outside an HTTP servlet environment, for example in Portlets, tests,
- * or standalone applications. One of the major architectural benefits of Spring
- * Web Flow is the ability to design reusable, high-level controller modules
- * that may be executed in <b>any</b> environment.
+ * with minimal dependencies on other libraries, and is usable in a standalone
+ * fashion (as well as in the context of other frameworks like Struts, WebWork,
+ * Tapestry, or JSF, for example). The core system is fully usable outside an
+ * HTTP servlet environment, for example in Portlets, tests, or standalone
+ * applications. One of the major architectural benefits of Spring Web Flow is
+ * the ability to design reusable, high-level controller modules that may be
+ * executed in <i>any</i> environment.
  * <p>
  * Note: flows are singleton definition objects so they should be thread-safe!
  * 
  * @see org.springframework.webflow.State
  * @see org.springframework.webflow.TransitionableState
  * @see org.springframework.webflow.ActionState
+ * @see org.springframework.webflow.ActionList
  * @see org.springframework.webflow.ViewState
  * @see org.springframework.webflow.SubflowState
  * @see org.springframework.webflow.EndState
  * @see org.springframework.webflow.DecisionState
  * @see org.springframework.webflow.Transition
  * @see org.springframework.webflow.StateExceptionHandler
+ * @see org.springframework.webflow.StateExceptionHandlerSet
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -113,7 +115,8 @@ public class Flow extends AnnotatedObject {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * The flow identifier uniquely identifying this flow among all other flows.
+	 * An assigned flow identifier uniquely identifying this flow among all
+	 * other flows.
 	 */
 	private String id;
 
@@ -124,6 +127,10 @@ public class Flow extends AnnotatedObject {
 
 	/**
 	 * The list of actions to execute when this flow starts.
+	 * <p>
+	 * Start actions should execute with care as during startup a flow session
+	 * has not yet fully initialized and some properties like its "currentState"
+	 * have not yet been set.
 	 */
 	private ActionList startActionList = new ActionList();
 
@@ -228,7 +235,7 @@ public class Flow extends AnnotatedObject {
 	 * @return the state count
 	 */
 	public int getStateCount() {
-		return this.states.size();
+		return states.size();
 	}
 
 	/**
@@ -497,7 +504,7 @@ public class Flow extends AnnotatedObject {
 	 * @return the list of inline flows
 	 */
 	public Flow[] getInlineFlows() {
-		return (Flow[])inlineFlows.toArray(new Flow[inlineFlows.size()]);
+		return (Flow[])inlineFlows.toArray(new Flow[0]);
 	}
 
 	/**
@@ -621,7 +628,7 @@ public class Flow extends AnnotatedObject {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("id", id).append("startState", startState)
-				.append("states", this.states).append("exceptionHandlerSet", exceptionHandlerSet).toString();
+		return new ToStringCreator(this).append("id", id).append("startState", startState).append("states", states)
+				.append("exceptionHandlerSet", exceptionHandlerSet).toString();
 	}
 }
