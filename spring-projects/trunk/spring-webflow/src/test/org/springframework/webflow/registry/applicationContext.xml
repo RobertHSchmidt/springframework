@@ -13,6 +13,24 @@
 				<value>classpath:org/springframework/webflow/config/registry/flow2.xml</value>
 			</list>
 		</property>
+		<property name="flowDefinitions">
+			<list>
+				<bean class="org.springframework.webflow.registry.ExternalizedFlowDefinition">
+					<constructor-arg value="flow3"/>
+					<constructor-arg value="classpath:org/springframework/webflow/config/registry/flow1.xml"/>
+				</bean>
+				<bean class="org.springframework.webflow.registry.ExternalizedFlowDefinition">
+					<constructor-arg value="flow4"/>
+					<constructor-arg value="classpath:org/springframework/webflow/config/registry/flow2.xml"/>
+					<constructor-arg>
+						<map>
+							<entry key="testName" value="testValue"/>
+						</map>
+					</constructor-arg>
+				</bean>
+			</list>
+		</property>
+
 	</bean>
 	
 </beans>
