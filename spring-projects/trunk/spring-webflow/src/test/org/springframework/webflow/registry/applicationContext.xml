@@ -35,7 +35,7 @@
 					<constructor-arg value="classpath:org/springframework/webflow/registry/flow2.xml"/>
 					<constructor-arg>
 						<map>
-							<entry key="testName" value="testValue"/>
+							<entry key="testPropertyName" value="testPropertyValue"/>
 						</map>
 					</constructor-arg>
 				</bean>
