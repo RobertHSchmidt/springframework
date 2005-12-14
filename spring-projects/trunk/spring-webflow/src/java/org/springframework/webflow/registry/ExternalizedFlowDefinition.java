@@ -47,7 +47,7 @@ public class ExternalizedFlowDefinition extends FlowArtifactParameters {
 	 * @param id the flow id to be assigned
 	 * @param location the flow resource location.
 	 */
-	public ExternalizedFlowDefinition(String id, Map properties, Resource location) {
+	public ExternalizedFlowDefinition(String id, Resource location, Map properties) {
 		super(id, properties);
 		this.location = location;
 	}
