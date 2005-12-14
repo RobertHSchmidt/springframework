@@ -92,7 +92,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(ac);
 		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
 		FlowRegistry registry = (FlowRegistry)ac.getBean("flowRegistry2");
-		assertEquals("Wrong registry definition count", 6, registry.getFlowCount());
+		assertEquals("Wrong registry definition count", 8, registry.getFlowCount());
 	}
 
 	public static class MyFlowRegistrar extends FlowRegistrarSupport {
