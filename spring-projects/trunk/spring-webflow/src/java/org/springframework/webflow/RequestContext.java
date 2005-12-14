@@ -26,8 +26,7 @@ import org.springframework.binding.AttributeSource;
  * system by an external actor to manipulate exactly one flow execution.
  * <p>
  * A new instance of this object is created when one of the operations on a
- * <code>FlowExecution</code> facade is invoked, either
- * ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
+ * <code>FlowExecution</code> facade is invoked, either ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
  * to activate a newly created flow execution, or
  * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(Event)})
  * to signal an event in the current state of a resumed flow execution.
@@ -75,13 +74,22 @@ public interface RequestContext {
 
 	/**
 	 * Returns the external client context that originated (or triggered) this
-	 * request. This context may contain parameters provided as input by the
-	 * client. In addition, this context may be downcastable to a specific context
-	 * type for a specific client environment, such as a ServletExternalContext
-	 * for servlets or a PortletExternalContext for portlets. Such downcasting
-	 * will give you full access to a native HttpServletRequest, for example.
-	 * That said, for portability reasons you should avoid coupling your flow
-	 * artifacts to a specific deployment where possible.
+	 * request. Also known as a "user context".
+	 * <p>
+	 * Acting as a facade, the returned context object provides a single point
+	 * of access to the calling client's environment. It provides normalized
+	 * access to attributes of the client environment without tying you to
+	 * specific constructs within that environment.
+	 * <p>
+	 * In addition, this context may be downcastable to a specific context type
+	 * for a specific client environment, such as a
+	 * {@link org.springframework.webflow.execution.servlet.ServletExternalContext}
+	 * for servlets or a
+	 * {@link org.springframework.webflow.execution.servlet.PortletExternalContext}
+	 * for portlets. Such downcasting will give you full access to a native
+	 * HttpServletRequest, for example. With that said, for portability reasons
+	 * you should avoid coupling your flow artifacts to a specific deployment
+	 * environment where possible.
 	 * @return the originating external context, the one that triggered the
 	 * current execution request
 	 */
