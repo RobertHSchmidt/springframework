@@ -9,7 +9,6 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.FlowArtifactFactory;
@@ -71,10 +70,12 @@ public class FlowRegistryPopulationTests extends TestCase {
 		XmlFlowRegistrar registrar = new XmlFlowRegistrar();
 		registrar.addFlowLocation(new FileSystemResource(new File(parent, "flow1.xml")));
 		registrar.addFlowLocation(new FileSystemResource(new File(parent, "flow2.xml")));
+		registrar.addFlowDefinition(new ExternalizedFlowDefinition("flow3", new FileSystemResource(new File(parent,
+				"flow2.xml"))));
 		registrar.registerFlows(registry, flowArtifactFactory);
-		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());
+		assertEquals("Wrong registry definition count", 3, registry.getFlowCount());
 		registry.refresh();
-		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());
+		assertEquals("Wrong registry definition count", 3, registry.getFlowCount());
 	}
 
 	public void testFlowRegistryFactoryBean() throws Exception {
@@ -97,8 +98,10 @@ public class FlowRegistryPopulationTests extends TestCase {
 	public static class MyFlowRegistrar extends FlowRegistrarSupport {
 		public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
 			File parent = new File("src/test/org/springframework/webflow/registry");
-			registerXmlFlow("flow1", new FileSystemResource(new File(parent, "flow1.xml")), flowArtifactFactory, registry);
-			registerXmlFlow("flow2", new FileSystemResource(new File(parent, "flow2.xml")), flowArtifactFactory, registry);
+			registerXmlFlow("flow1", new FileSystemResource(new File(parent, "flow1.xml")), flowArtifactFactory,
+					registry);
+			registerXmlFlow("flow2", new FileSystemResource(new File(parent, "flow2.xml")), flowArtifactFactory,
+					registry);
 			registerFlow("flow3", new SimpleFlowBuilder(), registry);
 		}
 	}
