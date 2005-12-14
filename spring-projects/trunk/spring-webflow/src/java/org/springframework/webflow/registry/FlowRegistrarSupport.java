@@ -15,12 +15,16 @@
  */
 package org.springframework.webflow.registry;
 
+import java.io.File;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowArtifactParameters;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
+import org.springframework.webflow.builder.XmlFlowBuilder;
 
 /**
  * An abstract support class that provides some assistance implementing Flow
@@ -36,7 +40,7 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 
 	/**
 	 * Register the flow built by the builder in the registry.
-	 * @param flowId the flow identifier to be assigned (should be unique to
+	 * @param flowId the flow identifier to be assigned (should be unique to all
 	 * flows in the registry)
 	 * @param flowBuilder the flow builder to use to construct the flow
 	 * @param registry the flow registry to register the flow in
@@ -48,12 +52,26 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	/**
 	 * Register the flow built by the builder in the registry with the
 	 * properties provided.
-	 * @param flowParameters the flow definition parameters
+	 * @param flowParameters the flow definition parameters to be assigned
+	 * (allows for more control over what properties get assigned)
 	 * @param flowBuilder the flow builder to use to construct the flow
 	 * @param registry the flow registry to register the flow in
 	 */
 	protected void registerFlow(FlowArtifactParameters flowParameters, FlowBuilder flowBuilder, FlowRegistry registry) {
 		registry.registerFlow(createFlowHolder(new FlowAssembler(flowParameters, flowBuilder)));
+	}
+
+	/**
+	 * Register the flow built from the provided XML File in the registry.
+	 * @param flowId the flow identifier to be assigned (should be unique to
+	 * all flows in the registry)
+	 * @param xmlFile the file path to the XML-based flow definition resource
+	 * @param flowArtifactFactory the flow artifact factory
+	 * @param registry the flow registry to register the flow in
+	 */
+	protected void registerXmlFlow(String flowId, File xmlFile, FlowArtifactFactory flowArtifactFactory,
+			FlowRegistry registry) {
+		registerFlow(flowId, new XmlFlowBuilder(new FileSystemResource(xmlFile), flowArtifactFactory), registry);
 	}
 
 	/**

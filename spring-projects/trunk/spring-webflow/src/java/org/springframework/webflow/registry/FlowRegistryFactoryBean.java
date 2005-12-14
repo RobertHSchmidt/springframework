@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.registry;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,13 +31,13 @@ import java.util.List;
  * Usage example:
  * 
  * <pre>
- *     &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.FlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;flowRegistrars&quot;&gt;
- *             &lt;list&gt;
- *                 &lt;bean class=&quot;example.MyFlowRegistrar&quot;/&gt;
- *             &lt;/list&gt;
- *         &lt;/property&gt;
- *     &lt;/bean&gt;
+ *         &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.FlowRegistryFactoryBean&quot;&gt;
+ *             &lt;property name=&quot;flowRegistrars&quot;&gt;
+ *                 &lt;list&gt;
+ *                     &lt;bean class=&quot;example.MyFlowRegistrar&quot;/&gt;
+ *                 &lt;/list&gt;
+ *             &lt;/property&gt;
+ *         &lt;/bean&gt;
  * </pre>
  * 
  * @author Keith Donald
@@ -60,6 +61,16 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 	 */
 	public FlowRegistryFactoryBean(List flowRegistrars) {
 		setFlowRegistrars(flowRegistrars);
+	}
+
+	/**
+	 * Sets the list of flow registrars to contain only the single flow
+	 * registrar provided. Convenience setter for when registry population is
+	 * driven by a single registrar.
+	 * @param flowRegistrar the flow registrar
+	 */
+	public void setFlowRegistrar(FlowRegistrar flowRegistrar) {
+		flowRegistrars = Collections.singletonList(flowRegistrar);
 	}
 
 	/**

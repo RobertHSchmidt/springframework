@@ -21,15 +21,15 @@ import org.springframework.webflow.builder.FlowBuilderException;
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
-		FlowArtifactFactory artifactLocator = new FlowArtifactFactoryAdapter();
-		FlowBuilder builder1 = new AbstractFlowBuilder(artifactLocator) {
+		FlowArtifactFactory factory = new FlowArtifactFactoryAdapter();
+		FlowBuilder builder1 = new AbstractFlowBuilder(factory) {
 			public void buildStates() throws FlowBuilderException {
 				addEndState("end");
 			}
 		};
 		new FlowAssembler("flow1", builder1).assembleFlow();
 
-		FlowBuilder builder2 = new AbstractFlowBuilder(artifactLocator) {
+		FlowBuilder builder2 = new AbstractFlowBuilder(factory) {
 			public void buildStates() throws FlowBuilderException {
 				addEndState("end");
 			}
@@ -67,14 +67,21 @@ public class FlowRegistryPopulationTests extends TestCase {
 		FlowArtifactFactory flowArtifactFactory = new FlowRegistryFlowArtifactFactory(registry,
 				new DefaultListableBeanFactory());
 		File parent = new File("src/test/org/springframework/webflow/registry");
-		Resource[] locations = new Resource[] {
-			new FileSystemResource(new File(parent, "flow1.xml")),
-			new FileSystemResource(new File(parent, "flow2.xml"))
-		};
+		Resource[] locations = new Resource[] { new FileSystemResource(new File(parent, "flow1.xml")),
+				new FileSystemResource(new File(parent, "flow2.xml")) };
 		new XmlFlowRegistrar(locations).registerFlows(registry, flowArtifactFactory);
 		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());
 		registry.refresh();
 		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());
+	}
+
+	public void testFlowRegistryFactoryBean() throws Exception {
+		GenericApplicationContext beanFactory = new GenericApplicationContext();
+		FlowRegistryFactoryBean factoryBean = new FlowRegistryFactoryBean();
+		factoryBean.setFlowRegistrar(new MyFlowRegistrar());
+		factoryBean.setBeanFactory(beanFactory);
+		FlowRegistry registry = (FlowRegistry)factoryBean.getObject();
+		assertEquals("Wrong registry definition count", 3, registry.getFlowCount());
 	}
 
 	public void testXmlFlowRegistryFactoryBean() {
@@ -84,4 +91,20 @@ public class FlowRegistryPopulationTests extends TestCase {
 		FlowRegistry registry = (FlowRegistry)ac.getBean("flowRegistry");
 		assertEquals("Wrong registry definition count", 4, registry.getFlowCount());
 	}
+
+	public static class MyFlowRegistrar extends FlowRegistrarSupport {
+		public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
+			File parent = new File("src/test/org/springframework/webflow/registry");
+			registerXmlFlow("flow1", new File(parent, "flow1.xml"), flowArtifactFactory, registry);
+			registerXmlFlow("flow2", new File(parent, "flow2.xml"), flowArtifactFactory, registry);
+			registerFlow("flow3", new SimpleFlowBuilder(), registry);
+		}
+	}
+	
+	public static class SimpleFlowBuilder extends AbstractFlowBuilder {
+		public void buildStates() {
+			addEndState("end");
+		}
+	}
+
 }
