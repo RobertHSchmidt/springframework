@@ -70,7 +70,7 @@ public abstract class TransitionableState extends State {
 	 */
 	public void addTransition(Transition transition) {
 		transition.setSourceState(this);
-		this.transitions.add(transition);
+		transitions.add(transition);
 	}
 
 	/**

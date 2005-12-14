@@ -169,14 +169,14 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Typically called as part of return, for example:
 	 * 
 	 * <pre>
-	 *      protected Event doExecute(RequestContext context) {
-	 *        // do some work
-	 *        if (some condition) {
-	 *          return result(&quot;success&quot;);
-	 *        } else {
-	 *          return result(&quot;error&quot;);
-	 *        }
-	 *      }
+	 *     protected Event doExecute(RequestContext context) {
+	 *         // do some work
+	 *         if (some condition) {
+	 *             return result(&quot;success&quot;);
+	 *         } else {
+	 *             return result(&quot;error&quot;);
+	 *         }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
@@ -194,16 +194,16 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * example:
 	 * 
 	 * <pre>
-	 *      protected Event doExecute(RequestContext context) {
-	 *        // do some work
-	 *        Map resultParameters = new HashMap();
-	 *        resultParameters.put(&quot;parameterName&quot;, &quot;parameterValue&quot;);
-	 *        if (some condition) {
-	 *          return result(&quot;success&quot;, resultParameters);
-	 *        } else {
-	 *          return result(&quot;error&quot;, resultParameters);
-	 *        }
-	 *      }
+	 *     protected Event doExecute(RequestContext context) {
+	 *         // do some work
+	 *         Map resultParameters = new HashMap();
+	 *         resultParameters.put(&quot;parameterName&quot;, &quot;parameterValue&quot;);
+	 *         if (some condition) {
+	 *             return result(&quot;success&quot;, resultParameters);
+	 *         } else {
+	 *             return result(&quot;error&quot;, resultParameters);
+	 *         }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
@@ -218,27 +218,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
 	 * Returns a result event for this action with the specified identifier and
-	 * a single parameter. Typically called as part of return, for example:
-	 * 
-	 * <pre>
-	 * public Event makeSelection(RequestContext context) throws Exception {
-	 * 	try {
-	 * 		String selection = (String)context.getSourceEvent().getParameter(&quot;selection&quot;);
-	 * 		fireSelectionMade(selection);
-	 * 		return success();
-	 * 	}
-	 * 	catch (NoSuchBinException e) {
-	 * 		return result(&quot;noSuchBin&quot;, &quot;exception&quot;, e);
-	 * 	}
-	 * 	catch (BinEmptyException e) {
-	 * 		return result(&quot;binEmpty&quot;, &quot;exception&quot;, e);
-	 * 	}
-	 * 	catch (NotEnoughFundsException e) {
-	 * 		return result(&quot;notEnoughFunds&quot;, &quot;exception&quot;, e);
-	 * 	}
-	 * }
-	 * </pre>
-	 * 
+	 * a single parameter.
 	 * @param eventId the result id
 	 * @param parameterName the parameter name
 	 * @param parameterValue the parameter value

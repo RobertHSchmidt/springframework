@@ -25,9 +25,6 @@ import org.springframework.webflow.RequestContext;
  */
 public interface BeanStatePersister {
 	
-	//TODO should these methods return the bean?
-	//also: make re-wiring and state persistence the responsability of this bean
-
 	/**
 	 * Save the beans state out to flow scope.
 	 * @param bean the bean
