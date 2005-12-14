@@ -80,7 +80,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 		FlowRegistryFactoryBean factoryBean = new FlowRegistryFactoryBean();
 		factoryBean.setFlowRegistrar(new MyFlowRegistrar());
 		factoryBean.setBeanFactory(beanFactory);
-		FlowRegistry registry = (FlowRegistry)factoryBean.getObject();
+		FlowRegistry registry = factoryBean.populateFlowRegistry();
 		assertEquals("Wrong registry definition count", 3, registry.getFlowCount());
 	}
 
@@ -88,7 +88,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 		GenericApplicationContext ac = new GenericApplicationContext();
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(ac);
 		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
-		FlowRegistry registry = (FlowRegistry)ac.getBean("flowRegistry");
+		FlowRegistry registry = (FlowRegistry)ac.getBean("flowRegistry2");
 		assertEquals("Wrong registry definition count", 4, registry.getFlowCount());
 	}
 

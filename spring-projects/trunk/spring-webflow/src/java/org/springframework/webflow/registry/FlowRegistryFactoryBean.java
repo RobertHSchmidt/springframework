@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.registry;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -31,13 +32,13 @@ import java.util.List;
  * Usage example:
  * 
  * <pre>
- *         &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.FlowRegistryFactoryBean&quot;&gt;
- *             &lt;property name=&quot;flowRegistrars&quot;&gt;
- *                 &lt;list&gt;
- *                     &lt;bean class=&quot;example.MyFlowRegistrar&quot;/&gt;
- *                 &lt;/list&gt;
- *             &lt;/property&gt;
- *         &lt;/bean&gt;
+ *     &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.FlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;flowRegistrars&quot;&gt;
+ *             &lt;list&gt;
+ *                 &lt;bean class=&quot;example.MyFlowRegistrar&quot;/&gt;
+ *             &lt;/list&gt;
+ *         &lt;/property&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
  * @author Keith Donald
@@ -56,10 +57,10 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 	}
 
 	/**
-	 * Creates a xml flow registry factory bean, for programmatic usage only.
-	 * @param beanFactory the bean factory to use for locating flow artifacts.
+	 * Creates a flow registry factory bean, for programmatic usage.
+	 * @param flowRegistrars the flowRegistrars to use
 	 */
-	public FlowRegistryFactoryBean(List flowRegistrars) {
+	public FlowRegistryFactoryBean(FlowRegistrar[] flowRegistrars) {
 		setFlowRegistrars(flowRegistrars);
 	}
 
@@ -84,8 +85,8 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 	 * Sets the list of flow registrars that will register flow definitions.
 	 * @param flowRegistrars the flow registrars
 	 */
-	public void setFlowRegistrars(List flowRegistrars) {
-		this.flowRegistrars = flowRegistrars;
+	public void setFlowRegistrars(FlowRegistrar[] flowRegistrars) {
+		this.flowRegistrars = Arrays.asList(flowRegistrars);
 	}
 
 	protected void doPopulate(FlowRegistry registry) {

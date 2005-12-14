@@ -6,7 +6,13 @@
 
 <beans>
 
-	<bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
+	<bean id="flowRegistry1" class="org.springframework.webflow.registry.FlowRegistryFactoryBean">
+		<property name="flowRegistrar">
+			<bean class="org.springframework.webflow.registry.FlowRegistryPopulationTests$MyFlowRegistrar"/>
+		</property>
+	</bean>
+
+	<bean id="flowRegistry2" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
 		<property name="flowLocations">
 			<list>
 				<value>classpath:org/springframework/webflow/config/registry/flow1.xml</value>

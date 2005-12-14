@@ -40,7 +40,7 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * Register the flow built by the builder in the registry.
+	 * Helper method to register the flow built by the builder in the registry.
 	 * @param flowId the flow identifier to be assigned (should be unique to all
 	 * flows in the registry)
 	 * @param flowBuilder the flow builder to use to construct the flow
@@ -51,10 +51,10 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	}
 
 	/**
-	 * Register the flow built by the builder in the registry with the
-	 * properties provided.
+	 * Helper method to register the flow built by the builder in the registry
+	 * with the properties provided.
 	 * @param flowParameters the flow definition parameters to be assigned
-	 * (allows for more control over what flow properties get assigned)
+	 * (allows full control over what flow properties get assigned)
 	 * @param flowBuilder the flow builder to use to construct the flow
 	 * @param registry the flow registry to register the flow in
 	 */
@@ -63,11 +63,14 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	}
 
 	/**
-	 * Register the flow built from the provided XML File in the registry.
+	 * Helper method to register the flow built from the XML File in the
+	 * registry.
 	 * @param flowId the flow identifier to be assigned (should be unique to all
 	 * flows in the registry)
 	 * @param xmlFile the file path to the XML-based flow definition resource
-	 * @param flowArtifactFactory the flow artifact factory
+	 * @param flowArtifactFactory the flow artifact factory that the builder
+	 * will use to wire in externally managed flow artifacts during the build
+	 * process
 	 * @param registry the flow registry to register the flow in
 	 */
 	protected void registerXmlFlow(String flowId, File xmlFile, FlowArtifactFactory flowArtifactFactory,
@@ -77,11 +80,14 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	}
 
 	/**
-	 * Register the flow built from the provided XML File in the registry.
+	 * Helper method to register the flow built from the XML File in the
+	 * registry.
 	 * @param flowParameters the flow definition parameters to be assigned
-	 * (allows for more control over what flow properties get assigned)
+	 * (allows full control over what flow properties get assigned)
 	 * @param xmlFile the file path to the XML-based flow definition resource
-	 * @param flowArtifactFactory the flow artifact factory
+	 * @param flowArtifactFactory the flow artifact factory that the builder
+	 * will use to wire in externally managed flow artifacts during the build
+	 * process
 	 * @param registry the flow registry to register the flow in
 	 */
 	protected void registerXmlFlow(FlowArtifactParameters flowParameters, File xmlFile,
