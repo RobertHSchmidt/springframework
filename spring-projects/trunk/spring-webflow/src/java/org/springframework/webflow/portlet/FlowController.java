@@ -70,7 +70,7 @@ import org.springframework.webflow.execution.portlet.PortletExternalContext;
  *                      
  *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
  *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;definitionLocations&quot;&gt;
+ *         &lt;property name=&quot;flowLocations&quot;&gt;
  *             &lt;list&gt;
  *                 &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
  *                 &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
