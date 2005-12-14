@@ -9,13 +9,11 @@ with Flow definitions using a FlowRegistrar as follows:
 <pre>
     BeanFactory beanFactory = ...
     FlowRegistryImpl registry = new FlowRegistryImpl();
-    Resource[] locations = new Resource[] {
-       new FileSystemResource("WEB-INF/flowA.xml"),
-       new FileSystemResource("WEB-INF/flowB.xml")
-    };
     FlowArtifactFactory flowArtifactFactory = new FlowRegistryFlowArtifactFactory(registry, beanFactory);
-    XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowArtifactFactory, locations);
-    registrar.registerFlowDefinitions(registry);
+    XmlFlowRegistrar registrar = new XmlFlowRegistrar();
+    registrar.addFlowLocation(new FileSystemResource("WEB-INF/flowA.xml");
+	registrar.addFlowLocation(new FileSystemResource("WEB-INF/flowB.xml");
+    registrar.registerFlowDefinitions(registry, flowArtifactFactory);
 </pre>
 </p>
 </body>

@@ -1,11 +1,10 @@
 <html>
 <body>
 <p>
-Contains interfaces and classes for building and assembling web flows.
+Contains interfaces and classes for building and assembling flows.
 </p>
-
 <p>
-You construct a web flow using a {@link org.springframework.webflow.builder.FlowBuilder}.
+You construct a Flow using a {@link org.springframework.webflow.builder.FlowBuilder}.
 This package defines the following flow builder implementations:
 <ul>
 <li>
@@ -19,14 +18,19 @@ builder that reads an XML file containing a web flow definition and
 constructs the flow accordingly.
 </li>
 </ul>
-During flow construction, a flow builder will need to locate a number of
-<i>artifacts</i> required by the flow definition in the Spring bean factory:
-actions, other flows, attribute mappers and so on.
+During flow construction, a flow builder may need to access externally
+managed <i>flow artifacts</i> referenced by the flow definition.
+The @{link org.springframework.webflow.builder.FlowArtifactFactory} fulfills 
+this need, acting as a facade or gateway to an external registry of
+flow artifacts (such as a Spring Bean Factory).
 </p>
 <p>
-To direct flow construction, you use the
+To direct flow construction, use the
 {@link org.springframework.webflow.builder.FlowAssembler}.
-This is based on the class GoF builder design pattern.
+This package is based on the classic GoF Builder design pattern.
+</p>
+<p>
+This package depends on the webflow, webflow.support, and webflow.action packages.
 </p>
 </body>
 </html>

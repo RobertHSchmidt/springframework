@@ -41,5 +41,4 @@ public class FlowScopeTokenTransactionSynchronizer extends AbstractTokenTransact
 	public void clearToken(RequestContext context) {
 		context.getFlowScope().removeAttribute(getTransactionTokenAttributeName());
 	}
-
 }
