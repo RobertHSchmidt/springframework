@@ -25,7 +25,7 @@ import org.springframework.webflow.ScopeType;
 
 /**
  * Base class for actions that delegate to methods on abritrary beans. Acts as
- * an adapter that adapts a JavaBean method to the SWF Action contract.
+ * an adapter that adapts an Object's method to the SWF Action contract.
  * <p>
  * The method to invoke is determined by the value of the
  * {@link org.springframework.webflow.AnnotatedAction#METHOD_PROPERTY} action
