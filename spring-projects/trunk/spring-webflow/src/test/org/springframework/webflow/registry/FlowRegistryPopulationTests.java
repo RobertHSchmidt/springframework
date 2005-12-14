@@ -17,6 +17,7 @@ import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.builder.FlowBuilderException;
+import org.springframework.webflow.builder.SimpleFlowBuilder;
 
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {
@@ -98,12 +99,6 @@ public class FlowRegistryPopulationTests extends TestCase {
 			registerXmlFlow("flow1", new FileSystemResource(new File(parent, "flow1.xml")), flowArtifactFactory, registry);
 			registerXmlFlow("flow2", new FileSystemResource(new File(parent, "flow2.xml")), flowArtifactFactory, registry);
 			registerFlow("flow3", new SimpleFlowBuilder(), registry);
-		}
-	}
-	
-	public static class SimpleFlowBuilder extends AbstractFlowBuilder {
-		public void buildStates() {
-			addEndState("end");
 		}
 	}
 
