@@ -16,15 +16,16 @@
 package org.springframework.webflow.builder;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
 
 /**
- * Simple parameter object that holds information used to assist with the
- * construction of a flow artifact such as a Flow or a State definition. Used
- * only during flow construction/configuration time.
+ * A simple, immutable parameter object that holds information used to assist
+ * with the construction of a flow artifact such as a Flow or a State
+ * definition. Used only during flow construction/configuration time.
  * 
  * @author Keith Donald
  */
@@ -38,16 +39,7 @@ public class FlowArtifactParameters implements Serializable {
 	/**
 	 * The flow artifact properties.
 	 */
-	private Map properties;
-
-	/**
-	 * Default constructor for bean-style usage.
-	 * @see #setId(String)
-	 * @see #setProperties(Map)
-	 */
-	public FlowArtifactParameters() {
-		this.properties = new HashMap();
-	}
+	private Map properties = Collections.EMPTY_MAP;
 
 	/**
 	 * Creates a parameters value object containing the specified id and an
@@ -55,8 +47,7 @@ public class FlowArtifactParameters implements Serializable {
 	 * @param id the flow Id
 	 */
 	public FlowArtifactParameters(String id) {
-		setId(id);
-		this.properties = new HashMap();
+		this.id = id;
 	}
 
 	/**
@@ -65,8 +56,10 @@ public class FlowArtifactParameters implements Serializable {
 	 * @param id the flow Id
 	 */
 	public FlowArtifactParameters(String id, Map properties) {
-		setId(id);
-		setProperties(properties);
+		this.id = id;
+		if (properties != null) {
+			this.properties = Collections.unmodifiableMap(properties);
+		}
 	}
 
 	/**
@@ -77,14 +70,6 @@ public class FlowArtifactParameters implements Serializable {
 	}
 
 	/**
-	 * Sets the id parameter.
-	 * @param id the id parameter.
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	/**
 	 * Returns the properties map.
 	 */
 	public Map getProperties() {
@@ -92,35 +77,21 @@ public class FlowArtifactParameters implements Serializable {
 	}
 
 	/**
-	 * Sets the properties map.
-	 * @param properties the properties map
+	 * Creates a copy of this flow artifact parameter object that also includes
+	 * properties defined in the provided map. This method first adds the
+	 * provided properties to the copy, and then applies the properties of this
+	 * (original) object in 'override' fashion.
+	 * @param properties the properties to apply and then override
+	 * @return the artifact parameters
 	 */
-	public void setProperties(Map properties) {
-		this.properties = properties;
-	}
-
-	/**
-	 * Puts properties in the provided map.
-	 * @param properties the property map
-	 */
-	public void addProperties(Map properties) {
+	public FlowArtifactParameters applyAndOverride(Map properties) {
 		if (properties != null) {
-			this.properties.putAll(properties);
+			Map copyProperties = new HashMap(properties);
+			copyProperties.putAll(getProperties());
+			return new FlowArtifactParameters(getId(), copyProperties);
+		} else {
+			return new FlowArtifactParameters(getId(), getProperties());
 		}
-	}
-
-	/**
-	 * Returns the property with the specified name.
-	 */
-	public Object getProperty(String name) {
-		return properties.get(name);
-	}
-
-	/**
-	 * Sets the property to the provided value.
-	 */
-	public void setProperty(String name, Object value) {
-		properties.put(name, value);
 	}
 
 	public String toString() {

@@ -81,8 +81,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *         &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *         &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -402,8 +402,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected Flow parseFlow(FlowArtifactParameters flowParameters, Element flowElement) {
 		Assert.state(FLOW_ELEMENT.equals(flowElement.getTagName()), "This is not the '" + FLOW_ELEMENT + "' element");
 		initLocalFlowArtifactFactoryRegistry(flowElement);
-		flowParameters.addProperties(parseProperties(flowElement));
-		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(flowParameters);
+		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(
+				flowParameters.applyAndOverride(parseProperties(flowElement)));
 		parseAndAddFlowVariables(flowElement, flow);
 		parseAndAddFlowActions(flowElement, flow);
 		return flow;
@@ -617,7 +617,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected FlowArtifactParameters parseParameters(Element element) {
 		return new FlowArtifactParameters(element.getAttribute(ID_ATTRIBUTE), parseProperties(element));
 	}
-	
+
 	/**
 	 * Parse given decision state definition and add a corresponding state to
 	 * the flow.
@@ -1082,7 +1082,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return top().flow;
 		}
 
-		public State createState(Flow flow, Class stateType, FlowArtifactParameters parameters) throws FlowArtifactException {
+		public State createState(Flow flow, Class stateType, FlowArtifactParameters parameters)
+				throws FlowArtifactException {
 			return getFlowArtifactFactory().createState(flow, stateType, parameters);
 		}
 

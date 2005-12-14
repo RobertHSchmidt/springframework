@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.registry;
 
+import java.util.Map;
+
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.builder.FlowArtifactParameters;
 
@@ -31,12 +33,13 @@ public class ExternalizedFlowDefinition extends FlowArtifactParameters {
 	private Resource location;
 
 	/**
-	 * Default constructor for bean-style usage.
-	 * @see FlowArtifactParameters#FlowParameters()
-	 * @see #setLocation(Resource)
+	 * Creates a new externalized flow definition.
+	 * @param id the flow id to be assigned
+	 * @param location the flow resource location.
 	 */
-	public ExternalizedFlowDefinition() {
-
+	public ExternalizedFlowDefinition(String id, Resource location) {
+		super(id);
+		this.location = location;
 	}
 
 	/**
@@ -44,9 +47,9 @@ public class ExternalizedFlowDefinition extends FlowArtifactParameters {
 	 * @param id the flow id to be assigned
 	 * @param location the flow resource location.
 	 */
-	public ExternalizedFlowDefinition(String id, Resource location) {
-		super(id);
-		setLocation(location);
+	public ExternalizedFlowDefinition(String id, Map properties, Resource location) {
+		super(id, properties);
+		this.location = location;
 	}
 
 	/**
@@ -54,13 +57,5 @@ public class ExternalizedFlowDefinition extends FlowArtifactParameters {
 	 */
 	public Resource getLocation() {
 		return location;
-	}
-
-	/**
-	 * Sets the externalized flow resource location.
-	 * @param location the location
-	 */
-	public void setLocation(Resource location) {
-		this.location = location;
 	}
 }
