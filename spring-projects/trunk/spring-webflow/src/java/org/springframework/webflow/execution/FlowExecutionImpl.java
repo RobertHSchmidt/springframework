@@ -192,8 +192,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	public String getCaption() {
-		return "FlowExecution:rootFlow=" + (getRootFlow() != null ? getRootFlow().getId() : rootFlowId) + ", key="
-				+ getKey();
+		return "FlowExecution:flow=[" + (getRootFlow() != null ? getRootFlow().getId() : rootFlowId) + "], key=["
+				+ getKey() + "]";
 	}
 
 	public long getCreationTimestamp() {

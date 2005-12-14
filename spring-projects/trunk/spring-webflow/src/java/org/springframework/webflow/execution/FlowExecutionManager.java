@@ -311,9 +311,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 			}
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("Loaded " + listenersToAttach.size() + " of possible " + listenerMap.size()
-					+ " listeners to this execution request for flow: '" + flow.getId()
-					+ "', the listeners to attach are: " + StylerUtils.style(listenersToAttach));
+			logger.debug("Loaded [" + listenersToAttach.size() + "] of possible " + listenerMap.size()
+					+ " listeners to this execution request for flow '" + flow.getId()
+					+ "', the listeners to attach are " + StylerUtils.style(listenersToAttach));
 		}
 		return (FlowExecutionListener[])listenersToAttach.toArray(new FlowExecutionListener[listenersToAttach.size()]);
 	}
@@ -419,7 +419,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 */
 	public void addListenerCriteria(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Adding flow execution listener: " + listener + " with criteria: " + criteria);
+			logger.debug("Adding flow execution listener " + listener + " with criteria " + criteria);
 		}
 		List criteriaList = (List)this.listenerMap.get(listener);
 		criteriaList.add(criteria);
@@ -583,7 +583,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		}
 		catch (StateException e) {
 			throw new FlowExecutionManagementException(flowExecutionId, flowExecution,
-					"Unhandled state exception occured in flow execution", e);
+					"Unhandled state exception occured in flow execution " + flowExecution.getCaption(), e);
 		}
 		finally {
 			flowExecutionId = manageStorage(flowExecutionId, flowExecution, context);
