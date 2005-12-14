@@ -178,7 +178,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 			return getFlow().getRequiredState((String)getProperty(START_STATE_PROPERTY));
 		}
 		else {
-			// default start state of flow will be used
+			// the default start state of the flow will be used
 			return null;
 		}
 	}

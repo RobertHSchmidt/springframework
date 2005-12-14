@@ -24,7 +24,7 @@ import org.springframework.util.Assert;
  * A transition takes a flow execution from one state to another when executed.
  * A transition is associated with exactly one source
  * {@link TransitionableState}. A transition may become elgible for execution
- * on the occurence of {@link Event} from within its source state.
+ * on the occurence of {@link Event} from within the transition's source state.
  * <p>
  * When an event occurs within this transition's source
  * <code>TransitionableState</code>, the determination of the eligibility of

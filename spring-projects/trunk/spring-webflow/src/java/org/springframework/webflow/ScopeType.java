@@ -26,8 +26,8 @@ import org.springframework.core.enums.StaticLabeledEnum;
 public abstract class ScopeType extends StaticLabeledEnum {
 
 	/**
-	 * Constant indicating request scope. Data in request scope lives for the life of 
-	 * a request submitted to a flow execution for processing.
+	 * Constant indicating request scope. Data in request scope lives for the
+	 * life of a request submitted to a flow execution for processing.
 	 */
 	public static final ScopeType REQUEST = new ScopeType(0, "request") {
 		public Scope getScope(RequestContext context) {
@@ -57,5 +57,11 @@ public abstract class ScopeType extends StaticLabeledEnum {
 		return ScopeType.class;
 	}
 
-	public abstract Scope getScope(RequestContext context);	
+	/**
+	 * Returns the <code>Scope</code> associated with this scope type for an
+	 * executing flow execution request.
+	 * @param context a flow execution request context
+	 * @return the scope
+	 */
+	public abstract Scope getScope(RequestContext context);
 }
