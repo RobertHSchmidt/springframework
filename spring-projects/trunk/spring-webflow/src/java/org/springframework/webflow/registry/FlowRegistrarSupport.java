@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.registry;
 
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.builder.FlowArtifactFactory;
