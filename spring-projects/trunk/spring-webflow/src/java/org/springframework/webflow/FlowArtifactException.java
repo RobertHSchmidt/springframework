@@ -20,10 +20,11 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * A flow artifact exception is thrown when a service artifact required by the
- * webflow system cannot be obtained (like a flow, state, action, etc), either
- * at flow configuration time or at runtime. Can be used directly, but you are
- * encouraged to create a specific subclass for a particular use case.
+ * A flow artifact exception is thrown when a artifact (such as a flow, state,
+ * action, etc) required by the webflow system cannot be obtained, either at
+ * flow configuration time or at runtime. Can be used directly, but you are
+ * encouraged to create a specific subclass to describe a specific kind of
+ * failure scenario.
  * <p>
  * Flow artifact exceptions indicate unrecoverable problems with the flow
  * definition, e.g. a required state of a flow cannot be found. They're not used
@@ -55,7 +56,7 @@ public class FlowArtifactException extends NestedRuntimeException {
 	public FlowArtifactException(String artifactId, Class artifactType) {
 		this(artifactId, artifactType, null, null);
 	}
-	
+
 	/**
 	 * Create a new flow artifact exception.
 	 * @param artifactId the id of the artifact

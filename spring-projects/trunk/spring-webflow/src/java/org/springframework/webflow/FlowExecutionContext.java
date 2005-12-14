@@ -47,25 +47,31 @@ public interface FlowExecutionContext extends FlowExecutionStatistics {
 	public Flow getRootFlow();
 
 	/**
-	 * Returns the definition for the flow that is currently executing.
+	 * Returns the definition of the flow that is currently executing.
 	 * @return the flow definition for the active session
-	 * @throws IllegalStateException when this flow is no longer actively
+	 * @throws IllegalStateException if this flow execution has not been started
+	 * at all, or if this execution has ended and is no longer actively
 	 * executing
 	 */
 	public Flow getActiveFlow() throws IllegalStateException;
 
 	/**
-	 * Returns the current state of the executing flow.
-	 * @return the current state
-	 * @throws IllegalStateException when this flow is no longer actively
+	 * Returns the current state of the executing flow. May return
+	 * <code>null</code> if this flow execution is in the process of starting
+	 * and has not yet entered its start state.
+	 * @return the current state, or <code>null</code> if in the process of
+	 * starting.
+	 * @throws IllegalStateException if this flow execution has not been started
+	 * at all, or if this execution has ended and is no longer actively
 	 * executing
 	 */
 	public State getCurrentState() throws IllegalStateException;
 
 	/**
-	 * Returns the active flow session.
+	 * Returns the active flow session of this flow execution.
 	 * @return the active flow session
-	 * @throws IllegalStateException when this flow is no longer actively
+	 * @throws IllegalStateException if this flow execution has not been started
+	 * at all, or if this execution has ended and is no longer actively
 	 * executing
 	 */
 	public FlowSession getActiveSession() throws IllegalStateException;
