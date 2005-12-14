@@ -78,20 +78,6 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	private Set flowDefinitions = new HashSet();
 
 	/**
-	 * Creates an XML flow registrar.
-	 */
-	public ExternalizedFlowRegistrar() {
-	}
-
-	/**
-	 * Creates an XML flow registrar.
-	 * @param definitionLocations the XML flow definition resource locations
-	 */
-	public ExternalizedFlowRegistrar(Resource[] definitionLocations) {
-		setFlowLocations(definitionLocations);
-	}
-
-	/**
 	 * Sets the locations (file paths) pointing to externalized flow
 	 * definitions.
 	 * <p>

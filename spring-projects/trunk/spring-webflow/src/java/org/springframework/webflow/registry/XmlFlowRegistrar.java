@@ -43,12 +43,11 @@ import org.springframework.webflow.builder.XmlFlowBuilder;
  *    FlowRegistryImpl registry = new FlowRegistryImpl();
  *    FlowArtifactFactory flowArtifactFactory =
  *        new FlowRegistryFlowArtifactFactory(registry, beanFactory);
+ *    XmlFlowRegistrar registrar = new XmlFlowRegistrar();
  *    File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- *    Resource[] locations = new Resource[] {
- *        new FileSystemResource(new File(parent, &quot;flow1.xml&quot;)),
- *        new FileSystemResource(new File(parent, &quot;flow2.xml&quot;))
- *    };
- *    new XmlFlowRegistrar(locations).registerFlows(locations, flowArtifactFactory);
+ *    registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
+ *    registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
+ *    registrar.registerFlows(locations, flowArtifactFactory);
  * </pre>
  * 
  * @author Keith Donald
@@ -59,20 +58,6 @@ public class XmlFlowRegistrar extends ExternalizedFlowRegistrar {
 	 * The xml file suffix constant.
 	 */
 	private static final String XML_SUFFIX = ".xml";
-
-	/**
-	 * Creates an XML flow registrar.
-	 */
-	public XmlFlowRegistrar() {
-	}
-
-	/**
-	 * Creates an XML flow registrar.
-	 * @param flowLocations the XML flow definition resource locations
-	 */
-	public XmlFlowRegistrar(Resource[] flowLocations) {
-		super(flowLocations);
-	}
 
 	protected boolean isFlowDefinition(File file) {
 		return file.getName().endsWith(XML_SUFFIX);
