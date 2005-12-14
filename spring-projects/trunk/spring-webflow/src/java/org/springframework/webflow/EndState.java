@@ -120,8 +120,9 @@ public class EndState extends State {
 			ViewSelection selectedView;
 			if (isMarker()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning a [null] ending view selection--"
-							+ "assuming a response has already been written or the parent flow will care for view selection");
+					logger
+							.debug("Returning a [null] ending view selection--"
+									+ "assuming a response has already been written or the parent flow will care for view selection");
 				}
 				selectedView = null;
 			}
@@ -151,7 +152,7 @@ public class EndState extends State {
 	 * this if necessary.
 	 */
 	protected Event subflowResult(RequestContext context) {
-		// treat this end state id as a transitional event in the resuming state
+		// treat this end state id as an event in the resuming state
 		return new Event(this, getId(), resultParameters(context));
 	}
 

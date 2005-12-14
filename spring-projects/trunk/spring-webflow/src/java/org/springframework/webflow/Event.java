@@ -168,7 +168,7 @@ public class Event extends EventObject implements AttributeSource {
 		}
 	}
 
-	// implementing AttributeAccessor
+	// implementing AttributeSource
 
 	public boolean containsAttribute(String attributeName) {
 		return getParameters().containsKey(attributeName);

@@ -21,7 +21,6 @@ import org.springframework.binding.method.MethodKey;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.action.MultiAction;
 
 /**
  * An action proxy/decorator that stores arbitrary properties about a target
@@ -30,8 +29,8 @@ import org.springframework.webflow.action.MultiAction;
  * <code>TransitionCriteria</code> definition, or in a test environment.
  * <p>
  * An annotated action is an action that wraps another action (referred to as
- * the <i>target action), setting up target action's execution properties before
- * invoking execute.
+ * the <i>target action), setting up the target action's execution properties before
+ * invoking {@link Action#execute}
  * 
  * @author Keith Donald
  */
@@ -54,8 +53,9 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * The action execution method property ("method").
 	 * <p>
 	 * The method property is the name of a specific method on a
-	 * <code>{@link MultiAction}</code> to execute, or the name of a specific
-	 * method on a arbitrary POJO (plain old java.lang.Object.
+	 * <code>{@link org.springframework.webflow.action.MultiAction}</code> to
+	 * execute, or the name of a specific method on a arbitrary POJO (plain old
+	 * java.lang.Object).
 	 * <p>
 	 * {@see ActionState} for more information.
 	 */

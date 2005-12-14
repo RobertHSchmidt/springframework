@@ -104,5 +104,4 @@ public class FlowArtifactException extends NestedRuntimeException {
 	public Class getArtifactType() {
 		return artifactType;
 	}
-
 }
