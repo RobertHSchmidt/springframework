@@ -51,7 +51,8 @@ public class FlowAssembler {
 	private FlowBuilder flowBuilder;
 
 	/**
-	 * Create a new flow assembler using the specified builder strategy.
+	 * Create a new flow assembler that will direct Flow assembly using the
+	 * specified builder strategy.
 	 * @param flowId the assigned flow id
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
@@ -60,7 +61,8 @@ public class FlowAssembler {
 	}
 
 	/**
-	 * Create a new flow assembler using the specified builder strategy.
+	 * Create a new flow assembler that will direct Flow assembly using the
+	 * specified builder strategy.
 	 * @param flowId the assigned flow id
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */

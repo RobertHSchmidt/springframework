@@ -89,14 +89,14 @@ public class FlowRegistryPopulationTests extends TestCase {
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(ac);
 		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
 		FlowRegistry registry = (FlowRegistry)ac.getBean("flowRegistry2");
-		assertEquals("Wrong registry definition count", 4, registry.getFlowCount());
+		assertEquals("Wrong registry definition count", 6, registry.getFlowCount());
 	}
 
 	public static class MyFlowRegistrar extends FlowRegistrarSupport {
 		public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
 			File parent = new File("src/test/org/springframework/webflow/registry");
-			registerXmlFlow("flow1", new File(parent, "flow1.xml"), flowArtifactFactory, registry);
-			registerXmlFlow("flow2", new File(parent, "flow2.xml"), flowArtifactFactory, registry);
+			registerXmlFlow("flow1", new FileSystemResource(new File(parent, "flow1.xml")), flowArtifactFactory, registry);
+			registerXmlFlow("flow2", new FileSystemResource(new File(parent, "flow2.xml")), flowArtifactFactory, registry);
 			registerFlow("flow3", new SimpleFlowBuilder(), registry);
 		}
 	}

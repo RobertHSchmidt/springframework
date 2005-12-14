@@ -15,11 +15,9 @@
  */
 package org.springframework.webflow.registry;
 
-import java.io.File;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowArtifactParameters;
 import org.springframework.webflow.builder.FlowAssembler;
@@ -67,16 +65,15 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * registry.
 	 * @param flowId the flow identifier to be assigned (should be unique to all
 	 * flows in the registry)
-	 * @param xmlFile the file path to the XML-based flow definition resource
+	 * @param location the location of the XML-based flow definition resource
 	 * @param flowArtifactFactory the flow artifact factory that the builder
 	 * will use to wire in externally managed flow artifacts during the build
 	 * process
 	 * @param registry the flow registry to register the flow in
 	 */
-	protected void registerXmlFlow(String flowId, File xmlFile, FlowArtifactFactory flowArtifactFactory,
+	protected void registerXmlFlow(String flowId, Resource location, FlowArtifactFactory flowArtifactFactory,
 			FlowRegistry registry) {
-		registerFlow(new FlowArtifactParameters(flowId), new XmlFlowBuilder(new FileSystemResource(xmlFile),
-				flowArtifactFactory), registry);
+		registerFlow(new FlowArtifactParameters(flowId), new XmlFlowBuilder(location, flowArtifactFactory), registry);
 	}
 
 	/**
@@ -84,15 +81,15 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * registry.
 	 * @param flowParameters the flow definition parameters to be assigned
 	 * (allows full control over what flow properties get assigned)
-	 * @param xmlFile the file path to the XML-based flow definition resource
+	 * @param location the location of the XML-based flow definition resource
 	 * @param flowArtifactFactory the flow artifact factory that the builder
 	 * will use to wire in externally managed flow artifacts during the build
 	 * process
 	 * @param registry the flow registry to register the flow in
 	 */
-	protected void registerXmlFlow(FlowArtifactParameters flowParameters, File xmlFile,
+	protected void registerXmlFlow(FlowArtifactParameters flowParameters, Resource location,
 			FlowArtifactFactory flowArtifactFactory, FlowRegistry registry) {
-		registerFlow(flowParameters, new XmlFlowBuilder(new FileSystemResource(xmlFile), flowArtifactFactory), registry);
+		registerFlow(flowParameters, new XmlFlowBuilder(location, flowArtifactFactory), registry);
 	}
 
 	/**
