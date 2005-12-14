@@ -31,9 +31,9 @@ import org.springframework.core.io.Resource;
  * this factory bean.
  * <p>
  * This class is also <code>BeanFactoryAware</code> and when used with Spring
- * will automatically create a configured {@link FlowRegistryFlowArtifactFactory}
- * for loading Flow artifacts like Actions from the Spring bean factory during
- * the Flow registration process.
+ * will automatically create a configured
+ * {@link FlowRegistryFlowArtifactFactory} for loading Flow artifacts like
+ * Actions from the Spring bean factory during the Flow registration process.
  * <p>
  * This class is also <code>ResourceLoaderAware</code>; when an instance is
  * created by a Spring BeanFactory the factory will automatically configure the
@@ -60,7 +60,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	/**
 	 * The flow registrar that will perform the definition registrations.
 	 */
-	private XmlFlowRegistrar flowRegistrar = new XmlFlowRegistrar();
+	private ExternalizedFlowRegistrar flowRegistrar = createFlowRegistrar();
 
 	/**
 	 * Creates a xml flow registry factory bean.
@@ -77,9 +77,18 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	}
 
 	/**
-	 * Returns the configured Xml flow registrar.
+	 * Factory method that returns a new externalized flow registrar. Subclasses
+	 * may override.
+	 * @return the flow registrar to use
 	 */
-	protected XmlFlowRegistrar getXmlFlowRegistrar() {
+	protected ExternalizedFlowRegistrar createFlowRegistrar() {
+		return new XmlFlowRegistrar();
+	}
+
+	/**
+	 * Returns the configured externalized flow registrar.
+	 */
+	protected ExternalizedFlowRegistrar getFlowRegistrar() {
 		return flowRegistrar;
 	}
 
@@ -87,11 +96,11 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * Sets the locations (file paths) pointing to XML-based flow definitions.
 	 * <p>
 	 * Flows registered from this set will be automatically assigned an id based
-	 * on the filename of the XML flow resource. 
+	 * on the filename of the XML flow resource.
 	 * @param locations the resource locations
 	 */
 	public void setFlowLocations(Resource[] locations) {
-		getXmlFlowRegistrar().setFlowLocations(locations);
+		getFlowRegistrar().setFlowLocations(locations);
 	}
 
 	/**
@@ -99,25 +108,26 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * definitions.
 	 * <p>
 	 * Flows registered from this set will be automatically assigned an id based
-	 * on the filename of the XML flow resource. 
+	 * on the filename of the XML flow resource.
 	 * @param locations the directory locations
 	 */
 	public void setFlowDirectoryLocations(Resource[] locations) {
-		getXmlFlowRegistrar().setFlowDirectoryLocations(locations);
+		getFlowRegistrar().setFlowDirectoryLocations(locations);
 	}
 
 	/**
-	 * Sets the formal set of externalized XML flow definitions to be registered.
+	 * Sets the formal set of externalized XML flow definitions to be
+	 * registered.
 	 * <p>
 	 * Use this method when you want full control over the assigned flow id and
 	 * the set of properties applied to the externalized flow resource.
 	 * @param flowDefinitions the externalized flow definition specification
 	 */
 	public void setFlowDefinitions(ExternalizedFlowDefinition[] flowDefinitions) {
-		getXmlFlowRegistrar().setFlowDefinitions(flowDefinitions);
+		getFlowRegistrar().setFlowDefinitions(flowDefinitions);
 	}
-	
+
 	protected void doPopulate(FlowRegistry registry) {
-		getXmlFlowRegistrar().registerFlows(registry, getFlowArtifactFactory());
+		getFlowRegistrar().registerFlows(registry, getFlowArtifactFactory());
 	}
 }
