@@ -583,7 +583,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		}
 		catch (StateException e) {
 			throw new FlowExecutionManagementException(flowExecutionId, flowExecution,
-					"Unhandled state exception occured in flow execution " + flowExecution.getCaption(), e);
+					"Unhandled state exception occured in " + flowExecution.getCaption(), e);
 		}
 		finally {
 			flowExecutionId = manageStorage(flowExecutionId, flowExecution, context);
