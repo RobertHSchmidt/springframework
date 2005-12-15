@@ -16,8 +16,7 @@
 package org.springframework.binding.support;
 
 import org.springframework.binding.convert.ConversionService;
-import org.springframework.binding.convert.support.AbstractConverter;
-import org.springframework.util.Assert;
+import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.util.StringUtils;
 
 /**
@@ -25,25 +24,14 @@ import org.springframework.util.StringUtils;
  * a valid instance.
  * @author Keith Donald
  */
-public class TextToMapping extends AbstractConverter {
-
-	private ConversionService conversionService;
-
-	public TextToMapping(ConversionService conversionService) {
-		setConversionService(conversionService);
-	}
+public class TextToMapping extends ConversionServiceAwareConverter {
 
 	/**
-	 * Set the type conversion service
-	 * @param conversionService the service
+	 * Creates a text to mapping converter.
+	 * @param conversionService the conversion service.
 	 */
-	public void setConversionService(ConversionService conversionService) {
-		Assert.notNull(conversionService, "The conversionService property is required");
-		this.conversionService = conversionService;
-	}
-
-	protected ConversionService getConversionService() {
-		return this.conversionService;
+	public TextToMapping(ConversionService conversionService) {
+		super(conversionService);
 	}
 
 	public Class[] getSourceClasses() {
@@ -56,48 +44,45 @@ public class TextToMapping extends AbstractConverter {
 
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
 		// format:
-		// <sourceAttributeExpression>[,class][->targetAttributeExpression[,class]]
+		// <sourceExpression>[,class][->targetPropertyExpression[,class]]
 		String[] sourceTarget = StringUtils.delimitedListToStringArray((String)source, "->");
 		if (sourceTarget.length == 1) {
 			// just target mapping info is specified
 			String[] targetMappingInfo = StringUtils.commaDelimitedListToStringArray(sourceTarget[0]);
-			String sourceAttribute = targetMappingInfo[0];
-			String targetAttribute = targetMappingInfo[0];
-			Class targetAttributeClass = null;
+			String sourceExpression = targetMappingInfo[0];
+			String targetPropertyExpression = targetMappingInfo[0];
+			Class targetValueType = null;
 			if (targetMappingInfo.length == 2) {
-				targetAttributeClass = (Class)getConversionService().getConversionExecutor(String.class, Class.class)
-						.execute(targetMappingInfo[1]);
+				targetValueType = (Class)fromStringTo(Class.class).execute(targetMappingInfo[1]);
 			}
-			if (targetAttributeClass != null) {
-				return new Mapping(sourceAttribute, targetAttribute, getConversionService().getConversionExecutor(
-						String.class, targetAttributeClass));
+			if (targetValueType != null) {
+				return new Mapping(sourceExpression, targetPropertyExpression, getConversionService()
+						.getConversionExecutor(String.class, targetValueType));
 			}
 			else {
-				return new Mapping(sourceAttribute, targetAttribute);
+				return new Mapping(sourceExpression, targetPropertyExpression);
 			}
 		}
 		else {
 			// source and target mapping info is specified
 			String[] sourceMappingInfo = StringUtils.commaDelimitedListToStringArray(sourceTarget[0]);
-			String sourceAttribute = sourceMappingInfo[0];
-			Class sourceAttributeClass = String.class;
+			String sourceExpression = sourceMappingInfo[0];
+			Class sourceValueType = String.class;
 			if (sourceMappingInfo.length == 2) {
-				sourceAttributeClass = (Class)getConversionService().getConversionExecutor(String.class, Class.class)
-						.execute(sourceMappingInfo[1]);
+				sourceValueType = (Class)fromStringTo(Class.class).execute(sourceMappingInfo[1]);
 			}
 			String[] targetMappingInfo = StringUtils.commaDelimitedListToStringArray(sourceTarget[1]);
-			String targetAttribute = targetMappingInfo[0];
-			Class targetAttributeClass = String.class;
+			String targetPropertyExpression = targetMappingInfo[0];
+			Class targetValueType = String.class;
 			if (targetMappingInfo.length == 2) {
-				targetAttributeClass = (Class)getConversionService().getConversionExecutor(String.class, Class.class)
-						.execute(targetMappingInfo[1]);
+				targetValueType = (Class)fromStringTo(Class.class).execute(targetMappingInfo[1]);
 			}
-			if (!sourceAttributeClass.equals(targetAttributeClass)) {
-				return new Mapping(sourceAttribute, targetAttribute, getConversionService().getConversionExecutor(
-						sourceAttributeClass, targetAttributeClass));
+			if (!sourceValueType.equals(targetValueType)) {
+				return new Mapping(sourceExpression, targetPropertyExpression, getConversionService()
+						.getConversionExecutor(sourceValueType, targetValueType));
 			}
 			else {
-				return new Mapping(sourceAttribute, targetAttribute);
+				return new Mapping(sourceExpression, targetPropertyExpression);
 			}
 		}
 	}

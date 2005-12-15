@@ -21,8 +21,7 @@ public class EmptyAttributeSource implements AttributeSource {
 
 	public static final AttributeSource INSTANCE = new EmptyAttributeSource();
 
-	public EmptyAttributeSource() {
-
+	private EmptyAttributeSource() {
 	}
 
 	public boolean containsAttribute(String attributeName) {

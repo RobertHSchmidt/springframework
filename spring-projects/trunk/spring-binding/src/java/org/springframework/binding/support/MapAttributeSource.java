@@ -29,6 +29,9 @@ import org.springframework.util.Assert;
  */
 public class MapAttributeSource extends AttributeSourceSupport implements Serializable {
 
+	/**
+	 * The map.
+	 */
 	private Map map;
 
 	/**

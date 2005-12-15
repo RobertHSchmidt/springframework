@@ -15,8 +15,6 @@
  */
 package org.springframework.binding.convert.support;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.ConversionServiceAware;
@@ -30,18 +28,16 @@ import org.springframework.binding.expression.Expression;
  */
 public abstract class ConversionServiceAwareConverter extends AbstractConverter implements ConversionServiceAware {
 
-	protected static final String CLASS_PREFIX = "class:";
-
 	/**
 	 * The conversion service this converter is aware of.
 	 */
 	private ConversionService conversionService;
 
-	public ConversionServiceAwareConverter() {
+	protected ConversionServiceAwareConverter() {
 
 	}
 
-	public ConversionServiceAwareConverter(ConversionService conversionService) {
+	protected ConversionServiceAwareConverter(ConversionService conversionService) {
 		setConversionService(conversionService);
 	}
 
@@ -86,19 +82,6 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 	 */
 	protected ConversionExecutor converterFor(Class sourceClass, Class targetClass) {
 		return getConversionService().getConversionExecutor(sourceClass, targetClass);
-	}
-
-	/**
-	 * Helper that parses given encoded class (which may start with "class:")
-	 * and instantiates the identified class using the default constructor.
-	 * @param encodedClass the encoded class reference, starting with "class:"
-	 * @return an instantiated objected of the identified class
-	 * @throws ConversionException when the class cannot be found or cannot be
-	 * instantiated
-	 */
-	protected Object newInstance(String encodedClass) throws ConversionException {
-		Class clazz = (Class)fromStringTo(Class.class).execute(encodedClass);
-		return BeanUtils.instantiateClass(clazz);
 	}
 
 	/**

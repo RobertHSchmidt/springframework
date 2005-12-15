@@ -17,9 +17,6 @@ package org.springframework.binding.support;
 
 import java.util.Collection;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.binding.AttributeSource;
 import org.springframework.util.ObjectUtils;
 
@@ -95,23 +92,5 @@ public class Assert extends org.springframework.util.Assert {
 		attributeInstanceOf(attributes, attributeName, Collection.class);
 		Assert.isTrue((((Collection)attributes.getAttribute(attributeName)).size() == size),
 				"The collection attribute '" + attributeName + "' must have " + size + " elements");
-	}
-
-	/**
-	 * Assert that a bean attribute in the attributes map has a property with
-	 * the provided property value.
-	 * @param attributes the attributes map
-	 * @param attributeName the attribute name (of a javabean)
-	 * @param propertyName the bean property name
-	 * @param propertyValue the expected property value
-	 */
-	public static void attributePropertyEquals(AttributeSource attributes, String attributeName, String propertyName,
-			Object propertyValue) {
-		attributePresent(attributes, attributeName);
-		Object value = attributes.getAttribute(attributeName);
-		org.springframework.util.Assert.isTrue(!BeanUtils.isSimpleProperty(value.getClass()),
-				"Attribute value must be a bean");
-		BeanWrapper wrapper = new BeanWrapperImpl(value);
-		valueEquals(wrapper.getPropertyValue(propertyName), propertyValue);
 	}
 }

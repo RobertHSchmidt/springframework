@@ -27,80 +27,127 @@ import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.core.style.ToStringCreator;
 
 /**
- * A single mapping definition, encapulating the information neccessary to map a
- * single attribute from a source attributes map to a target map.
+ * A single mapping definition, encapulating the information neccessary to map
+ * the result of evaluating an expression on a source object to a property on a
+ * target object, optionally applying a type conversion during the mapping
+ * process.
  * @author Keith Donald
  */
 public class Mapping implements Serializable {
+
 	protected static final Log logger = LogFactory.getLog(Mapping.class);
 
-	private Expression sourceAttribute;
+	/**
+	 * The source expression to evaluate against a source object to map from.
+	 */
+	private Expression sourceExpression;
 
-	private PropertyExpression targetAttribute;
+	/**
+	 * The target property expression to set on a target object to map to.
+	 */
+	private PropertyExpression targetPropertyExpression;
 
-	private ConversionExecutor valueConverter;
+	/**
+	 * A type converter to apply during the mapping process.
+	 */
+	private ConversionExecutor typeConverter;
 
-	public Mapping(String sourceTargetAttributeExpressionString) {
-		this(ExpressionFactory.parseExpression(sourceTargetAttributeExpressionString), ExpressionFactory
-				.parsePropertyExpression(sourceTargetAttributeExpressionString));
+	/**
+	 * Creates a new mapping.
+	 * @param sourceAndTargetExpressionString
+	 */
+	public Mapping(String sourceAndTargetExpressionString) {
+		this(ExpressionFactory.parseExpression(sourceAndTargetExpressionString), ExpressionFactory
+				.parsePropertyExpression(sourceAndTargetExpressionString));
 	}
 
-	public Mapping(String sourceTargetAttributeExpressionString, ConversionExecutor valueConverter) {
-		this(ExpressionFactory.parseExpression(sourceTargetAttributeExpressionString), ExpressionFactory
-				.parsePropertyExpression(sourceTargetAttributeExpressionString), valueConverter);
+	/**
+	 * Creates a new mapping.
+	 * @param sourceTargetExpressionString
+	 * @param typeConverter
+	 */
+	public Mapping(String sourceTargetExpressionString, ConversionExecutor typeConverter) {
+		this(ExpressionFactory.parseExpression(sourceTargetExpressionString), ExpressionFactory
+				.parsePropertyExpression(sourceTargetExpressionString), typeConverter);
 	}
 
-	public Mapping(String sourceAttributeExpressionString, String targetAttributeExpressionString) {
-		this(ExpressionFactory.parseExpression(sourceAttributeExpressionString), ExpressionFactory
-				.parsePropertyExpression(targetAttributeExpressionString));
+	/**
+	 * Creates a new mapping.
+	 * @param sourceExpressionString
+	 * @param targetExpressionString
+	 */
+	public Mapping(String sourceExpressionString, String targetExpressionString) {
+		this(ExpressionFactory.parseExpression(sourceExpressionString), ExpressionFactory
+				.parsePropertyExpression(targetExpressionString));
 	}
 
-	public Mapping(String sourceAttributeExpressionString, String targetAttributeExpressionString,
-			ConversionExecutor valueConverter) {
-		this(ExpressionFactory.parseExpression(sourceAttributeExpressionString), ExpressionFactory
-				.parsePropertyExpression(targetAttributeExpressionString), valueConverter);
+	/**
+	 * Creates a new mapping.
+	 * @param sourceExpressionString
+	 * @param targetExpressionString
+	 * @param typeConverter
+	 */
+	public Mapping(String sourceExpressionString, String targetExpressionString, ConversionExecutor typeConverter) {
+		this(ExpressionFactory.parseExpression(sourceExpressionString), ExpressionFactory
+				.parsePropertyExpression(targetExpressionString), typeConverter);
 	}
 
-	public Mapping(PropertyExpression sourceTargetAttribute) {
-		this.sourceAttribute = sourceTargetAttribute;
-		this.targetAttribute = sourceTargetAttribute;
+	/**
+	 * Creates a new mapping.
+	 * @param sourceAndTargetExpression
+	 */
+	public Mapping(PropertyExpression sourceAndTargetExpression) {
+		this.sourceExpression = sourceAndTargetExpression;
+		this.targetPropertyExpression = sourceAndTargetExpression;
 	}
 
-	public Mapping(Expression sourceAttribute, PropertyExpression targetAttribute) {
-		this.sourceAttribute = sourceAttribute;
-		this.targetAttribute = targetAttribute;
+	/**
+	 * Creates a new mapping.
+	 * @param sourceExpression
+	 * @param targetPropertyExpression
+	 */
+	public Mapping(Expression sourceExpression, PropertyExpression targetPropertyExpression) {
+		this.sourceExpression = sourceExpression;
+		this.targetPropertyExpression = targetPropertyExpression;
 	}
 
-	public Mapping(Expression sourceAttribute, PropertyExpression targetAttribute, ConversionExecutor valueConverter) {
-		this.sourceAttribute = sourceAttribute;
-		this.targetAttribute = targetAttribute;
-		this.valueConverter = valueConverter;
+	/**
+	 * Creates a new mapping.
+	 * @param sourceExpression
+	 * @param targetPropertyExpression
+	 * @param typeConverter
+	 */
+	public Mapping(Expression sourceExpression, PropertyExpression targetPropertyExpression,
+			ConversionExecutor typeConverter) {
+		this.sourceExpression = sourceExpression;
+		this.targetPropertyExpression = targetPropertyExpression;
+		this.typeConverter = typeConverter;
 	}
 
 	/**
 	 * Map the <code>sourceAttribute</code> in to the
 	 * <code>targetAttribute</code> target map, performing type conversion if
 	 * necessary.
-	 * @param source The source
-	 * @param target The target
+	 * @param source The source data structure
+	 * @param target The target data structure
 	 */
 	public void map(Object source, Object target, Map mappingContext) {
 		// get source value
-		Object sourceValue = sourceAttribute.evaluateAgainst(source, mappingContext);
+		Object sourceValue = sourceExpression.evaluateAgainst(source, mappingContext);
 		Object targetValue = sourceValue;
-		if (valueConverter != null) {
-			targetValue = valueConverter.execute(sourceValue);
+		if (typeConverter != null) {
+			targetValue = typeConverter.execute(sourceValue);
 		}
 		// set target value
 		if (logger.isDebugEnabled()) {
-			logger.debug("Mapping source attribute '" + sourceAttribute + "' with value: " + sourceValue
-					+ " to target attribute '" + targetAttribute + "' with value: " + targetValue);
+			logger.debug("Mapping'" + sourceExpression + "' value " + sourceValue + " to target '"
+					+ targetPropertyExpression + "', setting target value to " + targetValue);
 		}
-		targetAttribute.setValue(target, targetValue, mappingContext);
+		targetPropertyExpression.setValue(target, targetValue, mappingContext);
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append(sourceAttribute + "->" + targetAttribute).append(
-				"valueConversionExecutor", valueConverter).toString();
+		return new ToStringCreator(this).append(sourceExpression + " -> " + targetPropertyExpression).append(
+				"typeConverter", typeConverter).toString();
 	}
 }

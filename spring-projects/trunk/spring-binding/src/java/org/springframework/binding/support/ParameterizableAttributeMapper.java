@@ -61,17 +61,15 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class ParameterizableAttributeMapper implements AttributeMapper, Serializable {
 
+	/**
+	 * The set of mappings to apply.
+	 */
 	private Collection mappings = Collections.EMPTY_SET;
 
+	/**
+	 * Creates a new attribute mapper with initially no mappings set.
+	 */
 	public ParameterizableAttributeMapper() {
-	}
-
-	public ParameterizableAttributeMapper(Mapping mapping) {
-		setMappings(new Mapping[] { mapping });
-	}
-
-	public ParameterizableAttributeMapper(Collection mappings) {
-		setMappingsCollection(mappings);
 	}
 
 	/**
@@ -115,7 +113,7 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	 * @param mappingsMap The mappings map
 	 */
 	public void setMappingsMap(Map mappingsMap) {
-		this.mappings = CollectionFactory.createLinkedSetIfPossible(mappings.size());
+		mappings = CollectionFactory.createLinkedSetIfPossible(mappings.size());
 		addMapMappings(this.mappings, mappingsMap);
 	}
 
@@ -162,10 +160,10 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	/**
 	 * Add a mapping for the source and target attribute expressions.
 	 * @param sourceExpression the source expression
-	 * @param targetExpression the target expression
+	 * @param targetPropertyExpression the target expression
 	 */
-	public void addMapping(String sourceExpression, String targetExpression) {
-		addMapping(new Mapping(sourceExpression, targetExpression));
+	public void addMapping(String sourceExpression, String targetPropertyExpression) {
+		addMapping(new Mapping(sourceExpression, targetPropertyExpression));
 	}
 
 	/**
@@ -181,7 +179,7 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	 */
 	public void map(Object source, Object target, Map context) {
 		if (mappings != null) {
-			Iterator it = this.mappings.iterator();
+			Iterator it = mappings.iterator();
 			while (it.hasNext()) {
 				Mapping mapping = (Mapping)it.next();
 				mapping.map(source, target, context);
