@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
@@ -79,7 +78,7 @@ public class ExpiredFlowCleanupFilterTests extends TestCase {
 		mockSession.setAttribute("SomeFlowExecution", flowExecutionMock);
 
 		flowExecutionControl.expectAndReturn(flowExecutionMock.getLastRequestTimestamp(), 0);
-		flowExecutionControl.expectAndReturn(flowExecutionMock.getRootFlow(), new Flow("dummy"));
+		flowExecutionControl.expectAndReturn(flowExecutionMock.getCaption(), "dummy");
 		replay();
 
 		// perform test
