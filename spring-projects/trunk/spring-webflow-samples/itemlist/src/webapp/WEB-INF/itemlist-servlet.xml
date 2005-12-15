@@ -37,5 +37,10 @@
 	<bean id="createItemAction" class="org.springframework.webflow.samples.itemlist.NewItemAction"/>
 	
 	<bean id="addItemAction" class="org.springframework.webflow.samples.itemlist.AddItemAction"/>
+
+	<bean id="mapItemAction" class="org.springframework.webflow.action.AttributeMapperAction">
+		<property name="sourceExpression" value="externalContext.requestParameterMap.data"/>
+		<property name="targetExpression" value="flowScope.item"/>
+	</bean>
 			
 </beans>

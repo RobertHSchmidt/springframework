@@ -26,8 +26,8 @@ public class EvaluationException extends NestedRuntimeException {
 	private EvaluationAttempt evaluationAttempt;
 
 	public EvaluationException(EvaluationAttempt evaluationAttempt, Throwable cause) {
-		super("Expression evaluation attempt " + evaluationAttempt
-				+ " failed - make sure the expression is evaluatable on " + "the the provided target object", cause);
+		super("Expression " + evaluationAttempt
+				+ " failed - make sure the expression is evaluatable on the target object", cause);
 		this.evaluationAttempt = evaluationAttempt;
 	}
 

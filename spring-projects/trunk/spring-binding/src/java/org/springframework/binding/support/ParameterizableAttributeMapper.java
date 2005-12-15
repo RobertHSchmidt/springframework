@@ -18,9 +18,9 @@ package org.springframework.binding.support;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.binding.AttributeMapper;
 import org.springframework.core.CollectionFactory;
@@ -64,12 +64,30 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	/**
 	 * The set of mappings to apply.
 	 */
-	private Collection mappings = Collections.EMPTY_SET;
+	private Set mappings;
 
 	/**
-	 * Creates a new attribute mapper with initially no mappings set.
+	 * Creates a new attribute mapper.
 	 */
 	public ParameterizableAttributeMapper() {
+		mappings = CollectionFactory.createLinkedSetIfPossible(6);
+	}
+
+	/**
+	 * Creates a new attribute mapper.
+	 * @param mapping the mapping
+	 */
+	public ParameterizableAttributeMapper(Mapping mapping) {
+		this(new Mapping[] { mapping });
+	}
+
+	/**
+	 * Creates a new attribute mapper.
+	 * @param mappings the mappings
+	 */
+	public ParameterizableAttributeMapper(Mapping[] mappings) {
+		this.mappings = CollectionFactory.createLinkedSetIfPossible(mappings.length);
+		this.mappings.addAll(Arrays.asList(mappings));
 	}
 
 	/**
@@ -122,6 +140,9 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	 * mappings map.
 	 */
 	private void addCollectionMappings(Collection mappings, Collection mappingsList) {
+		if (mappingsList == null) {
+			return;
+		}
 		Iterator it = mappingsList.iterator();
 		while (it.hasNext()) {
 			Object element = it.next();
@@ -151,19 +172,19 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	/**
 	 * Add a mapping where the source and target attribute expressions are the
 	 * same.
-	 * @param expression the attribute expression to map
+	 * @param sourceAndTargetExpressionString the attribute expression to map
 	 */
-	public void addMapping(String expression) {
-		addMapping(expression, expression);
+	public void addMapping(String sourceAndTargetExpressionString) {
+		addMapping(sourceAndTargetExpressionString, sourceAndTargetExpressionString);
 	}
 
 	/**
 	 * Add a mapping for the source and target attribute expressions.
-	 * @param sourceExpression the source expression
-	 * @param targetPropertyExpression the target expression
+	 * @param sourceExpressionString the source expression
+	 * @param targetPropertyExpressionString the target expression
 	 */
-	public void addMapping(String sourceExpression, String targetPropertyExpression) {
-		addMapping(new Mapping(sourceExpression, targetPropertyExpression));
+	public void addMapping(String sourceExpressionString, String targetPropertyExpressionString) {
+		addMapping(new Mapping(sourceExpressionString, targetPropertyExpressionString));
 	}
 
 	/**
@@ -171,7 +192,26 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	 * @param mapping the mapping to add.
 	 */
 	public void addMapping(Mapping mapping) {
-		this.mappings.add(mapping);
+		mappings.add(mapping);
+	}
+
+	/**
+	 * Add a set of mappings.
+	 * @param the mappings
+	 */
+	public void addMappings(Mapping[] mappings) {
+		if (mappings == null) {
+			return;
+		}
+		this.mappings.addAll(Arrays.asList(mappings));
+	}
+
+	/**
+	 * Add a set of mappings.
+	 * @param the mappings
+	 */
+	public void addMappingsCollection(Collection mappings) {
+		addCollectionMappings(this.mappings, mappings);
 	}
 
 	/**
