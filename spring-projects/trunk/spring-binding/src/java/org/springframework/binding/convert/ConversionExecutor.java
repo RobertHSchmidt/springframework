@@ -20,12 +20,21 @@ import java.io.Serializable;
 /**
  * A command object that is parameterized with the information neccessary to
  * perform a conversion of a source input to a target output.
+ * <p>
+ * Specifically, encapsulates knowledge about how to convert source objects to a
+ * specific target type using a specific converter.
  * @author Keith Donald
  */
 public class ConversionExecutor implements Serializable {
 
+	/**
+	 * The converter that will perform the conversion.
+	 */
 	private Converter converter;
 
+	/**
+	 * The target value type this executor will attempt to convert to.
+	 */
 	private Class targetClass;
 
 	/**
@@ -43,6 +52,6 @@ public class ConversionExecutor implements Serializable {
 	 * @param source the source object to convert
 	 */
 	public Object execute(Object source) throws ConversionException {
-		return this.converter.convert(source, this.targetClass);
+		return converter.convert(source, targetClass);
 	}
 }

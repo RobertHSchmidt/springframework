@@ -54,6 +54,15 @@ public abstract class AbstractConverter implements Converter {
 		}
 	}
 
+	/**
+	 * Template method subclasses should override to actually perform the type
+	 * conversion.
+	 * @param source the source to convert from
+	 * @param targetClass the target type to convert to
+	 * @return the converted source value
+	 * @throws Exception an exception occured, will be wrapped in a conversion
+	 * exception if necessary
+	 */
 	protected abstract Object doConvert(Object source, Class targetClass) throws Exception;
 
 }
