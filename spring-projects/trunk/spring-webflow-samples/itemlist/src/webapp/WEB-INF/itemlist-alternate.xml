@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
+
+<flow start-state="displayItemlist">
+
+	<view-state id="displayItemlist" view="itemlist">
+		<transition on="add" to="editItem"/>
+	</view-state>
+
+	<subflow-state id="editItem" flow="item">
+		<attribute-mapper>
+			<output name="item" collection="list"/>
+		</attribute-mapper>
+		<transition on="finish" to="displayItemlist"/>
+	</subflow-state>
+	
+	<inline-flow id="item">
+		<flow start-state="displayItem">
+			<view-state id="displayItem" view="item">
+				<transition on="submit" to="addItem"/>
+			</view-state>		
+
+			<action-state id="addItem">
+				<action bean="addItemAction"/>
+				<transition on="*" to="finish"/>
+			</action-state>
+			
+			<end-state id="finish"/>
+		</flow>
+	</inline-flow>
+	
+</flow>

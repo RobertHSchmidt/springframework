@@ -17,6 +17,7 @@
 				<input type="hidden" name="_transactionId" value="${transactionId}">
 				<!-- Tell webflow what executing flow we're participating in -->
 				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"/>
+				<!-- Tell webflow what state to signal the event in -->
 				<input type="hidden" name="_stateId" value="displayItem"/>
 				<!-- Tell webflow what event happened -->
 				<input type="submit" name="_eventId_submit" value="Submit">

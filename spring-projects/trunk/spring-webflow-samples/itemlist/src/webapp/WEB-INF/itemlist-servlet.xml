@@ -11,11 +11,21 @@
 	-->
 	<bean name="/app.htm" class="org.springframework.webflow.mvc.FlowController">
 		<constructor-arg ref="flowLocator"/>
+		<!--
+			Set cacheSeconds to a small, non 0, value so you hit 'back' and experiment with
+			duplicate submit prevention.
+		-->
+		<property name="cacheSeconds" value="5"/>		
 	</bean>
 
 	<!-- Creates the registry of flow definitions for this application -->
 	<bean id="flowLocator" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
-		<property name="flowLocations" value="/WEB-INF/itemlist.xml"/>
+		<property name="flowLocations">
+			<list>
+				<value>/WEB-INF/itemlist.xml</value>
+				<value>/WEB-INF/itemlist-alternate.xml</value>
+			</list>		
+		</property>
 	</bean>
 	
 	<!-- Resolves flow view names to .jsp templates -->
