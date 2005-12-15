@@ -12,7 +12,7 @@
 	<bean name="/app.htm" class="org.springframework.webflow.mvc.FlowController">
 		<constructor-arg ref="flowLocator"/>
 		<!--
-			Set cacheSeconds to a small, non 0, value so you hit 'back' and experiment with
+			Set cacheSeconds to a small, non zero value so you hit 'back' and experiment with
 			duplicate submit prevention.
 		-->
 		<property name="cacheSeconds" value="5"/>		
