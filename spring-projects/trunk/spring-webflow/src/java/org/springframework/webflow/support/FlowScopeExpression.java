@@ -20,9 +20,10 @@ import java.util.Map;
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionFactory;
-import org.springframework.binding.support.Assert;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.Scope;
+import org.springframework.webflow.ScopeType;
 
 /**
  * Expression evaluator that evaluates an expression in flow scope.
@@ -30,16 +31,16 @@ import org.springframework.webflow.RequestContext;
  * @author Keith Donald
  */
 public class FlowScopeExpression implements Expression {
-	
+
 	/**
 	 * The expression to evaluate.
 	 */
 	private Expression expression;
 
 	/**
-	 * Create a new expression evaluator that executes given expression
-	 * 'in flow scope'. The expression will be parsed using the default
-	 * expression parser.
+	 * Create a new expression evaluator that executes given expression 'in flow
+	 * scope'. The expression will be parsed using the default expression
+	 * parser.
 	 * @param expressionString the expression string
 	 */
 	public FlowScopeExpression(String expressionString) {
@@ -47,34 +48,38 @@ public class FlowScopeExpression implements Expression {
 	}
 
 	/**
-	 * Create a new expression evaluator that executes given expression
-	 * 'in flow scope'.
+	 * Create a new expression evaluator that executes given expression 'in flow
+	 * scope'.
 	 * @param expression the nested evaluator to execute
 	 */
 	public FlowScopeExpression(Expression expression) {
 		this.expression = expression;
 	}
-	
+
 	/**
 	 * Returns the expression that will be evaluated in 'flow scope'.
 	 */
 	protected Expression getExpression() {
 		return expression;
 	}
-	
+
 	public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
-		return expression.evaluateAgainst(requestContext(target).getFlowScope(), context);
+		if (target instanceof RequestContext) {
+			return expression.evaluateAgainst(((RequestContext)target).getFlowScope(), context);
+		}
+		else if (target instanceof Scope) {
+			Scope scope = (Scope)target;
+			if (scope.getScopeType() != ScopeType.FLOW) {
+				throw new IllegalArgumentException("The Scope provided as input must be of ScopeType.FLOW");
+			}
+			return expression.evaluateAgainst(scope, context);
+		}
+		else {
+			throw new IllegalArgumentException(
+					"Only supports evaluation against a RequestScope or Scope instance of ScopeType.FLOW");
+		}
 	}
-	
-	/**
-	 * Returns (casts) given target as a request context.
-	 */
-	protected RequestContext requestContext(Object target) {
-		Assert.isInstanceOf(RequestContext.class, target,
-			"In the web flow system all source (from) mapping expressions must be evaluated against the request context: ");
-		return (RequestContext)target;
-	}
-	
+
 	public String toString() {
 		return new ToStringCreator(this).append("expression", expression).toString();
 	}

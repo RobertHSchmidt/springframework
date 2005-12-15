@@ -34,6 +34,7 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.expression.ExpressionFactory;
+import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.binding.support.Mapping;
@@ -63,6 +64,7 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.Transition.TargetStateResolver;
 import org.springframework.webflow.action.FlowVariableCreatingAction;
+import org.springframework.webflow.support.CollectionAddingPropertyExpression;
 import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.FlowVariable;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
@@ -177,6 +179,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String OUTPUT_ELEMENT = "output";
 
 	private static final String AS_ATTRIBUTE = "as";
+
+	private static final String COLLECTION_ATTRIBUTE = "collection";
 
 	private static final String END_STATE_ELEMENT = "end-state";
 
@@ -844,13 +848,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				List inputElements = DomUtils.getChildElementsByTagName(mapperElement, INPUT_ELEMENT);
 				List inputMappings = new ArrayList(inputElements.size());
 				for (Iterator it = inputElements.iterator(); it.hasNext();) {
-					parseAndAddMapping((Element)it.next(), inputMappings);
+					parseAndAddMapping((Element)it.next(), inputMappings, true);
 				}
 				attributeMapper.setInputMappings(inputMappings);
 				List outputElements = DomUtils.getChildElementsByTagName(mapperElement, OUTPUT_ELEMENT);
 				List outputMappings = new ArrayList(outputElements.size());
 				for (Iterator it = outputElements.iterator(); it.hasNext();) {
-					parseAndAddMapping((Element)it.next(), outputMappings);
+					parseAndAddMapping((Element)it.next(), outputMappings, false);
 				}
 				attributeMapper.setOutputMappings(outputMappings);
 				return attributeMapper;
@@ -862,39 +866,79 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Parse a single inline attribute mapping definition and add it to given
 	 * list.
 	 */
-	protected void parseAndAddMapping(Element element, List mappings) {
+	protected void parseAndAddMapping(Element element, List mappings, boolean inputMapping) {
 		String name = element.getAttribute(NAME_ATTRIBUTE);
 		String value = element.getAttribute(VALUE_ATTRIBUTE);
 		String as = element.getAttribute(AS_ATTRIBUTE);
 		String from = element.getAttribute(FROM_ATTRIBUTE);
 		String to = element.getAttribute(TO_ATTRIBUTE);
-		ConversionExecutor valueConverter = null;
+		String collection = element.getAttribute(COLLECTION_ATTRIBUTE);
+		String mappingType = inputMapping ? "input" : "output";
+		ConversionExecutor typeConverter = null;
 		if (StringUtils.hasText(from)) {
 			if (StringUtils.hasText(to)) {
-				valueConverter = getConversionService().getConversionExecutor(
+				typeConverter = getConversionService().getConversionExecutor(
 						getConversionService().getClassByAlias(from), getConversionService().getClassByAlias(to));
 			}
+			else {
+				throw new IllegalArgumentException("Use of the 'from' attribute requires use of the 'to' attribute");
+			}
+		}
+		else {
+			Assert.isTrue(!StringUtils.hasText(to), "Use of the 'to' attribute requires use of the 'from' attribute");
 		}
 		if (StringUtils.hasText(name)) {
-			// "name" allows you to specify the name of an attribute to map
+			// "name" allows you to directly specify a name of an attribute in
+			// flow scope
+			Assert.isTrue(!StringUtils.hasText(value),
+					"The 'name' attribute cannot be used with the 'value' attribute -- use one or the other");
 			if (StringUtils.hasText(as)) {
+				if (!inputMapping) {
+					Assert.isTrue(!StringUtils.hasText(collection),
+							"The 'collection' attribute cannot be used with the 'as' attribute - use one or the other");
+				}
 				mappings.add(new Mapping(new FlowScopeExpression(name), ExpressionFactory.parsePropertyExpression(as),
-						valueConverter));
+						typeConverter));
 			}
 			else {
-				mappings.add(new Mapping(new FlowScopeExpression(name),
-						ExpressionFactory.parsePropertyExpression(name), valueConverter));
+				if (!inputMapping && StringUtils.hasText(collection)) {
+					PropertyExpression collectionExpression = new CollectionAddingPropertyExpression(
+							new FlowScopeExpression(collection));
+					mappings.add(new Mapping(new FlowScopeExpression(name), collectionExpression, typeConverter));
+				}
+				else {
+					mappings.add(new Mapping(new FlowScopeExpression(name), ExpressionFactory
+							.parsePropertyExpression(name), typeConverter));
+				}
 			}
 		}
 		else if (StringUtils.hasText(value)) {
 			// "value" allows you to specify the value that should get mapped
-			// using an expression
-			Assert.hasText(as, "The 'as' attribute is required with the 'value' attribute");
-			mappings.add(new Mapping(ExpressionFactory.parseExpression(value), ExpressionFactory
-					.parsePropertyExpression(as), valueConverter));
+			// using an expression against the request context
+			if (inputMapping) {
+				Assert.hasText(as, "The 'as' attribute is required with the 'value' attribute");
+				mappings.add(new Mapping(ExpressionFactory.parseExpression(value), ExpressionFactory
+						.parsePropertyExpression(as), typeConverter));
+
+			}
+			else {
+				if (StringUtils.hasText(as)) {
+					mappings.add(new Mapping(ExpressionFactory.parseExpression(value), ExpressionFactory
+							.parsePropertyExpression(as), typeConverter));
+				}
+				else {
+					Assert
+							.hasText(collection,
+									"Either the 'as' attribute or the 'collection' attribute is required with the 'name' attribute");
+					PropertyExpression collectionExpression = new CollectionAddingPropertyExpression(
+							new FlowScopeExpression(collection));
+					mappings.add(new Mapping(new FlowScopeExpression(name), collectionExpression, typeConverter));
+				}
+			}
 		}
 		else {
-			throw new FlowBuilderException(this, "Name or value is required in a mapping definition: " + element);
+			throw new FlowBuilderException(this, "Use of the 'name' or 'value' attribute is required in " + mappingType
+					+ " mapping definition " + element);
 		}
 	}
 

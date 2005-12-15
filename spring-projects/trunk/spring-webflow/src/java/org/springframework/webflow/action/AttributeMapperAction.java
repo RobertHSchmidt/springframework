@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.action;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -29,12 +28,13 @@ import org.springframework.webflow.RequestContext;
 
 /**
  * Action that executes an attribute mapper to map information in the request
- * context. Both the source and the target of the mapping will be the request context.
- * This allows for maximum flexibility when defining mappings, typically using
- * expressions (e.g. "${flowScope.someAttribute}").
+ * context. Both the source and the target of the mapping will be the request
+ * context. This allows for maximum flexibility when defining mappings,
+ * typically using expressions (e.g. "${flowScope.someAttribute}").
  * <p>
  * This action always returns the
- * {@link org.springframework.webflow.action.AbstractAction#success() success} event.
+ * {@link org.springframework.webflow.action.AbstractAction#success() success}
+ * event.
  * <p>
  * <b>Exposed configuration properties:</b> <br>
  * <table border="1">
@@ -69,9 +69,8 @@ import org.springframework.webflow.RequestContext;
  * <td>valueConverter</td>
  * <td><i>null</i></td>
  * <td>Set a value converter to use during the mapping. This is optional and
- * will only be used if you do not explicitly set the mapper or mapping
- * to use, but instead used the "sourceExpression" and "targetExpression"
- * properties.</td>
+ * will only be used if you do not explicitly set the mapper or mapping to use,
+ * but instead used the "sourceExpression" and "targetExpression" properties.</td>
  * </tr>
  * </table>
  * 
@@ -82,17 +81,17 @@ import org.springframework.webflow.RequestContext;
  * @author Erwin Vervaet
  */
 public class AttributeMapperAction extends AbstractAction {
-	
+
 	/**
 	 * The source value expression.
 	 */
 	private String sourceExpression;
-	
+
 	/**
 	 * The target property expression.
 	 */
 	private String targetExpression;
-	
+
 	/**
 	 * A type converter to apply to the source value.
 	 */
@@ -138,7 +137,7 @@ public class AttributeMapperAction extends AbstractAction {
 	 * @param mappings the mappings
 	 */
 	public void setMappings(Mapping[] mappings) {
-		setAttributeMapper(new ParameterizableAttributeMapper(Arrays.asList(mappings)));
+		setAttributeMapper(new ParameterizableAttributeMapper(mappings));
 	}
 
 	/**
@@ -148,7 +147,7 @@ public class AttributeMapperAction extends AbstractAction {
 	public void setAttributeMapper(AttributeMapper mapper) {
 		this.attributeMapper = mapper;
 	}
-	
+
 	/**
 	 * Set the expression which obtains the source attribute to map. If you use
 	 * this, you also need to specify the "targetExpression".
@@ -167,19 +166,19 @@ public class AttributeMapperAction extends AbstractAction {
 
 	/**
 	 * Set a value converter to use during the mapping. This is optional and
-	 * will only be used if you do not explicitly set the mapper or mapping
-	 * to use, but instead used the "sourceExpression" and "targetExpression"
+	 * will only be used if you do not explicitly set the mapper or mapping to
+	 * use, but instead used the "sourceExpression" and "targetExpression"
 	 * properties.
 	 */
 	public void setValueConverter(ConversionExecutor valueConverter) {
 		this.valueConverter = valueConverter;
 	}
-	
+
 	protected void initAction() {
 		if (attributeMapper == null) {
 			if (StringUtils.hasText(sourceExpression) && StringUtils.hasText(targetExpression)) {
-				setAttributeMapper(new ParameterizableAttributeMapper(
-						new Mapping(sourceExpression, targetExpression, valueConverter)));
+				setAttributeMapper(new ParameterizableAttributeMapper(new Mapping(sourceExpression, targetExpression,
+						valueConverter)));
 			}
 		}
 	}
@@ -187,15 +186,15 @@ public class AttributeMapperAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		if (attributeMapper != null) {
 			// map from the request context to the request context
-			this.attributeMapper.map(context, context, getMappingContext(context));
+			attributeMapper.map(context, context, getMappingContext(context));
 		}
 		return success();
 	}
-	
+
 	/**
 	 * Returns a map containing extra data available during attribute mapping.
-	 * The default implementation just returns an empty map. Subclasses
-	 * can override this if necessary.
+	 * The default implementation just returns an empty map. Subclasses can
+	 * override this if necessary.
 	 */
 	protected Map getMappingContext(RequestContext context) {
 		return Collections.EMPTY_MAP;

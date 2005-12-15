@@ -349,7 +349,7 @@
 	If the 'as' attribute is specified, the mapped attribute will be assigned that name 
 	in the subflow.
 	
-	Use this or the value attribute, not both.
+	Use this or the 'value' attribute, not both.
 -->
 <!ATTLIST input name CDATA #IMPLIED>
 
@@ -360,7 +360,7 @@
 	Note: you must specify the 'as' attribute to assign the expression value an attribute name 
 	in the subflow.
 	
-	Use this or the name attribute, not both.
+	Use this or the 'name' attribute, not both.
 -->
 <!ATTLIST input value CDATA #IMPLIED>
 
@@ -401,7 +401,7 @@
 	If the 'as' attribute is specified, the mapped attribute will be assigned that name
 	in this flow.
 	
-	Use this or the value attribute, not both.
+	Use this or the 'value' attribute, not both.
 -->
 <!ATTLIST output name CDATA #IMPLIED>
 
@@ -412,7 +412,7 @@
 	Note: you must specify the 'as' attribute to assign the expression value an attribute name 
 	in this flow.
 	
-	Use this or the name attribute, not both.
+	Use this or the 'name' attribute, not both.
 -->
 <!ATTLIST output value CDATA #IMPLIED>
 
@@ -425,6 +425,16 @@
 	assign a name to the value returned by the expression for storage in this flow.
 -->
 <!ATTLIST output as CDATA #IMPLIED>
+
+<!--
+	The name of a collection in flow scope to output this attribute to.  The name can 
+	refer to any attribute in flow scope, so long as its type is of java.util.Collection.  
+	The mapped element from the ending subflow will be added to the collection of 
+	the resuming parent flow.
+	
+	Use this or the 'as' attribute, not both.
+-->
+<!ATTLIST output collection CDATA #IMPLIED>
 
 <!--
 	The type of the attribute to map from the subflow; used with the "to" attribute to perform

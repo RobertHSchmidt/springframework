@@ -141,41 +141,41 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 
 	/**
 	 * Sets the name of an input attribute in flow scope to map to the subflow.
-	 * @param attributeName the attributeName
+	 * @param inputAttribute the attributeName
 	 */
-	public void setInputAttribute(String attributeName) {
-		setInputMappings(Collections.singletonList(attributeName));
+	public void setInputAttribute(String inputAttribute) {
+		setInputMappings(Collections.singletonList(inputAttribute));
 	}
 
 	/**
 	 * Sets the name of input attributes in flow scope to map to the subflow.
-	 * @param attributeNames the attribute names
+	 * @param inputAttributes the attribute names
 	 */
-	public void setInputAttributes(String[] attributeNames) {
-		setInputMappings(Arrays.asList(attributeNames));
+	public void setInputAttributes(String[] inputAttributes) {
+		setInputMappings(Arrays.asList(inputAttributes));
 	}
 
 	/**
 	 * Set the input mapping to use when mapping properties in the request
 	 * context to the sub flow scope. This is a convenience method for setting a
 	 * single mapping.
-	 * @param mapping the mapping object
+	 * @param inputMapping the mapping object
 	 */
-	public void setInputMapping(Mapping mapping) {
-		setInputMappings(Collections.singletonList(mapping));
+	public void setInputMapping(Mapping inputMapping) {
+		setInputMappings(Collections.singletonList(inputMapping));
 	}
 
 	/**
 	 * Set the mappings that will be executed when mapping model data to the sub
 	 * flow. This method is provided as a configuration convenience.
-	 * @param inputMappings the input mappings
+	 * @param inputMappingsMap the input mappings
 	 * @see #setInputMappings(Collection) with a Collection containing one item
 	 * which is a Map. Each map entry must be a String key naming the attribute
 	 * in the parent flow, and a String value naming the attribute in the child
 	 * flow.
 	 */
-	public void setInputMappingsMap(Map inputMappings) {
-		setInputMappings(Collections.singletonList(inputMappings));
+	public void setInputMappingsMap(Map inputMappingsMap) {
+		setInputMappings(Collections.singletonList(inputMappingsMap));
 	}
 
 	/**
@@ -191,44 +191,46 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * @param inputMappings the input mappings
 	 */
 	public void setInputMappings(Collection inputMappings) {
-		setInputMapper(new FlowScopeAwareParameterizableAttributeMapper(inputMappings));
+		ParameterizableAttributeMapper mapper = new FlowScopeAwareParameterizableAttributeMapper();
+		mapper.addMappingsCollection(inputMappings);
+		setInputMapper(mapper);
 	}
 
 	/**
 	 * Set the AttributesMapper strategy responsible for mapping starting
 	 * subflow input attributes from a suspending parent flow.
-	 * @param mapper the mapper
+	 * @param inputMapper the mapper
 	 */
-	public void setInputMapper(AttributeMapper mapper) {
-		this.inputMapper = mapper;
+	public void setInputMapper(AttributeMapper inputMapper) {
+		this.inputMapper = inputMapper;
 	}
 
 	/**
 	 * Sets the name of an output attribute in flow scope to map up to the
 	 * parent flow.
-	 * @param attributeName the attributeName
+	 * @param outputAttribute the attributeName
 	 */
-	public void setOutputAttribute(String attributeName) {
-		setOutputMappings(Collections.singletonList(attributeName));
+	public void setOutputAttribute(String outputAttribute) {
+		setOutputMappings(Collections.singletonList(outputAttribute));
 	}
 
 	/**
 	 * Sets the name of output attributes in flow scope to map to the parent
 	 * flow.
-	 * @param attributeNames the attribute names
+	 * @param outputAttributes the attribute names
 	 */
-	public void setOutputAttributes(String[] attributeNames) {
-		setOutputMappings(Arrays.asList(attributeNames));
+	public void setOutputAttributes(String[] outputAttributes) {
+		setOutputMappings(Arrays.asList(outputAttributes));
 	}
 
 	/**
 	 * Set the output mapping to use when mapping properties in sub flow back to
 	 * a resuming parent flow. This is a convenience method for setting a single
 	 * mapping.
-	 * @param mapping the mapping object
+	 * @param outputMapping the mapping object
 	 */
-	public void setOutputMapping(Mapping mapping) {
-		setOutputMappings(Collections.singletonList(mapping));
+	public void setOutputMapping(Mapping outputMapping) {
+		setOutputMappings(Collections.singletonList(outputMapping));
 	}
 
 	/**
@@ -257,23 +259,25 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * @param outputMappings the output mappings
 	 */
 	public void setOutputMappings(Collection outputMappings) {
-		setOutputMapper(new FlowScopeAwareParameterizableAttributeMapper(outputMappings));
+		ParameterizableAttributeMapper mapper = new FlowScopeAwareParameterizableAttributeMapper();
+		mapper.addMappingsCollection(outputMappings);
+		setOutputMapper(mapper);
 	}
 
 	/**
 	 * Set the AttributesMapper strategy responsible for mapping ending subflow
 	 * output attributes to a resuming parent flow as output.
-	 * @param mapper the mapper
+	 * @param outputMapper the mapper
 	 */
-	public void setOutputMapper(AttributeMapper mapper) {
-		this.outputMapper = mapper;
+	public void setOutputMapper(AttributeMapper outputMapper) {
+		this.outputMapper = outputMapper;
 	}
 
 	public Map createSubflowInput(RequestContext context) {
-		if (this.inputMapper != null) {
+		if (inputMapper != null) {
 			Map input = new HashMap();
 			// map from request context to input map
-			this.inputMapper.map(context, input, getMappingContext(context));
+			inputMapper.map(context, input, getMappingContext(context));
 			return input;
 		}
 		else {
@@ -283,9 +287,9 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	}
 
 	public void mapSubflowOutput(RequestContext context) {
-		if (this.outputMapper != null) {
+		if (outputMapper != null) {
 			// map from request context to parent flow scope
-			this.outputMapper.map(context, context.getFlowExecutionContext().getActiveSession().getParent().getScope(),
+			outputMapper.map(context, context.getFlowExecutionContext().getActiveSession().getParent().getScope(),
 					getMappingContext(context));
 		}
 	}
@@ -323,24 +327,16 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 			super();
 		}
 
-		/**
-		 * Create a new flow scope aware attribute mapper wrapping given
-		 * collection of mappings.
-		 * @param mappings the mappings to make "flow scope aware"
-		 */
-		public FlowScopeAwareParameterizableAttributeMapper(Collection mappings) {
-			super(mappings);
-		}
-
-		public void addMapping(String sourceExpression, String targetExpression) {
-			if (ExpressionFactory.isParseableExpression(sourceExpression)) {
+		public void addMapping(String sourceExpressionString, String targetPropertyExpressionString) {
+			if (ExpressionFactory.isParseableExpression(sourceExpressionString)) {
 				// use expression "as is"
-				addMapping(new Mapping(sourceExpression, targetExpression));
+				addMapping(new Mapping(sourceExpressionString, targetPropertyExpressionString));
 			}
 			else {
 				// use flow scope aware mapping for "from" expression
-				addMapping(new Mapping(new FlowScopeExpression(ExpressionFactory.parseExpression(sourceExpression)),
-						ExpressionFactory.parsePropertyExpression(targetExpression)));
+				addMapping(new Mapping(new FlowScopeExpression(ExpressionFactory
+						.parseExpression(sourceExpressionString)), ExpressionFactory
+						.parsePropertyExpression(targetPropertyExpressionString)));
 			}
 		}
 	}
