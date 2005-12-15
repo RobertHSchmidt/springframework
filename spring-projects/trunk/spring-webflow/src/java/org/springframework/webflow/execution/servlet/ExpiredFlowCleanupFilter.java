@@ -40,18 +40,18 @@ import org.springframework.webflow.execution.FlowExecution;
  * of your web application. Here's an example:
  * 
  * <pre>
- *  &lt;!DOCTYPE web-app PUBLIC &quot;-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN&quot;
- *  	&quot;http://java.sun.com/dtd/web-app_2_3.dtd&quot;&gt;
- *  &lt;web-app&gt;
- *  	&lt;filter&gt;
- *  		&lt;filter-name&gt;flowCleanup&lt;/filter-name&gt;
- *  		&lt;filter-class&gt;org.springframework.webflow.execution.servlet.ExpiredFlowCleanupFilter&lt;/filter-class&gt;
- *  	&lt;/filter&gt;
- *  	&lt;filter-mapping&gt;
- *  		&lt;filter-name&gt;flowCleanup&lt;/filter-name&gt;
- *  		&lt;url-pattern&gt;/*&lt;/url-pattern&gt;
- *  	&lt;/filter-mapping&gt;
- *  	...
+ *   &lt;!DOCTYPE web-app PUBLIC &quot;-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN&quot;
+ *   	&quot;http://java.sun.com/dtd/web-app_2_3.dtd&quot;&gt;
+ *   &lt;web-app&gt;
+ *   	&lt;filter&gt;
+ *   		&lt;filter-name&gt;flowCleanup&lt;/filter-name&gt;
+ *   		&lt;filter-class&gt;org.springframework.webflow.execution.servlet.ExpiredFlowCleanupFilter&lt;/filter-class&gt;
+ *   	&lt;/filter&gt;
+ *   	&lt;filter-mapping&gt;
+ *   		&lt;filter-name&gt;flowCleanup&lt;/filter-name&gt;
+ *   		&lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+ *   	&lt;/filter-mapping&gt;
+ *   	...
  * </pre>
  * 
  * <p>
@@ -69,8 +69,7 @@ import org.springframework.webflow.execution.FlowExecution;
  * execution is inactive for more than this period of time it will expire and be
  * removed from the HTTP session.</td>
  * </tr>
- * </table>
- * These parameters can be configured using <tt>init-param</tt>
+ * </table> These parameters can be configured using <tt>init-param</tt>
  * values in the deployment descriptor.
  * 
  * @author Erwin Vervaet
@@ -130,9 +129,8 @@ public class ExpiredFlowCleanupFilter extends OncePerRequestFilter {
 				FlowExecution flowExecution = (FlowExecution)attributeValue;
 				if (hasExpired(request, flowExecution)) {
 					if (logger.isInfoEnabled()) {
-						logger.info("Flow execution '" + attributeName
-								+ "' for flow: '" + flowExecution.getRootFlow().getId()
-								+ "' has expired and will be removed from the HTTP session: '" + session.getId() + "'");
+						logger.info(flowExecution.getCaption()
+								+ " has expired and will be removed from the HTTP session '" + session.getId() + "'");
 					}
 					attributeNamesToRemove.add(attributeName);
 				}
@@ -152,7 +150,7 @@ public class ExpiredFlowCleanupFilter extends OncePerRequestFilter {
 	 * logic, e.g. to keep flow executions alive in certain situations.
 	 * @param request current HTTP request
 	 * @param flowExecution the web flow execution that needs to be checked for
-	 *        expiry
+	 * expiry
 	 */
 	protected boolean hasExpired(HttpServletRequest request, FlowExecution flowExecution) {
 		return (System.currentTimeMillis() - flowExecution.getLastRequestTimestamp()) > (getTimeout() * 60000);
