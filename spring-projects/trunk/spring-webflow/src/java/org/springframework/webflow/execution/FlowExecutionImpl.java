@@ -293,7 +293,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Starting this execution in state " + stateId);
+			logger.debug("Starting this execution in state '" + stateId + "'");
 		}
 		FlowExecutionControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
