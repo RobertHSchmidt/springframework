@@ -79,11 +79,4 @@ public interface FormatterFactory {
 	 */
 	public Formatter getCurrencyFormatter();
 
-	/**
-	 * Returns the labelede num formatter for the specified value class.
-	 * @param labeledEnumClass The value class
-	 * @return the formatter
-	 */
-	public Formatter getLabeledEnumFormatter();
-
 }

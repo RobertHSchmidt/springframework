@@ -28,7 +28,7 @@ import org.springframework.binding.expression.ParserException;
  * @author Keith
  */
 public class OgnlExpressionParser extends AbstractExpressionParser {
-	public Expression parseExpression(String expressionString, Map context) throws ParserException {
+	public Expression parseExpression(String expressionString, Map parseContext) throws ParserException {
 		try {
 			return new OgnlExpression(Ognl.parseExpression(cutExpression(expressionString)));
 		}

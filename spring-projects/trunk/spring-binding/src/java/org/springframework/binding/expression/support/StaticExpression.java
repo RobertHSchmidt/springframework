@@ -59,7 +59,7 @@ public class StaticExpression implements Expression {
 		return ObjectUtils.nullSafeEquals(value, other.value);
 	}
 
-	public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
+	public Object evaluateAgainst(Object target, Map evaluationContext) throws EvaluationException {
 		return value;
 	}
 

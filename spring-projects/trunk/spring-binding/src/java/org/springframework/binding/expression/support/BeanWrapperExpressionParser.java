@@ -25,7 +25,7 @@ import org.springframework.binding.expression.ParserException;
  * @author Keith
  */
 public class BeanWrapperExpressionParser extends AbstractExpressionParser {
-	public Expression parseExpression(String expressionString, Map context) throws ParserException {
+	public Expression parseExpression(String expressionString, Map parseContext) throws ParserException {
 		return new BeanWrapperExpression(cutExpression(expressionString));
 	}
 }

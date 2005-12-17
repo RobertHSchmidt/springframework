@@ -29,9 +29,9 @@ public interface Expression {
 	 * Evaluate the expression encapsulated by this evaluator against the
 	 * provided target object, returning the result of the evaluation.
 	 * @param target The expression target object
-	 * @param context The expression evaluation context
+	 * @param evaluationContext The expression evaluation context
 	 * @return the evaluation result
 	 * @throws EvaluationException an exception occured during evaluation.
 	 */
-	public Object evaluateAgainst(Object target, Map context) throws EvaluationException;
+	public Object evaluateAgainst(Object target, Map evaluationContext) throws EvaluationException;
 }

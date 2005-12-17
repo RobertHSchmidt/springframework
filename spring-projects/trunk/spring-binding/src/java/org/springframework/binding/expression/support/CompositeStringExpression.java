@@ -18,10 +18,10 @@ public class CompositeStringExpression implements Expression {
 		this.expressions = expressions;
 	}
 
-	public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
+	public Object evaluateAgainst(Object target, Map evaluationContext) throws EvaluationException {
 		StringBuffer buffer = new StringBuffer(128);
 		for (int i = 0; i < expressions.length; i++) {
-			buffer.append(expressions[i].evaluateAgainst(target, context));
+			buffer.append(expressions[i].evaluateAgainst(target, evaluationContext));
 		}
 		return buffer.toString();
 	}

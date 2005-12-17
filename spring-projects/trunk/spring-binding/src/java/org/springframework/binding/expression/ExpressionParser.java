@@ -39,7 +39,7 @@ public interface ExpressionParser {
 	 * @return the evaluator for the parsed expression
 	 * @throws ParserException an exception occured during parsing
 	 */
-	public Expression parseExpression(String expressionString, Map context) throws ParserException;
+	public Expression parseExpression(String expressionString, Map parseContext) throws ParserException;
 
 	/**
 	 * Parse the provided expression string, returning an array of evaluatable
@@ -49,6 +49,6 @@ public interface ExpressionParser {
 	 * @return the evaluator for the parsed expression
 	 * @throws ParserException an exception occured during parsing
 	 */
-	public Expression[] parseExpressions(String expressionString, Map context) throws ParserException;
+	public Expression[] parseExpressions(String expressionString, Map parseContext) throws ParserException;
 
 }

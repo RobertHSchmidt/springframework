@@ -28,12 +28,11 @@ import org.springframework.binding.convert.ConversionServiceAware;
 import org.springframework.binding.convert.Converter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.format.support.SimpleFormatterFactory;
+import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.binding.method.TextToMethodKey;
-import org.springframework.binding.support.Assert;
-import org.springframework.binding.support.Mapping;
-import org.springframework.binding.support.TextToMapping;
 import org.springframework.core.enums.LabeledEnum;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
@@ -77,11 +76,10 @@ public class DefaultConversionService implements ConversionService {
 		addConverter(new TextToClass());
 		addConverter(new TextToNumber(new SimpleFormatterFactory()));
 		addConverter(new TextToBoolean());
-		addConverter(new TextToMapping(this));
 		addConverter(new TextToExpression());
 		addConverter(new TextToExpressions());
 		addConverter(new TextToMethodKey());
-		addConverter(new TextToLabeledEnum(new SimpleFormatterFactory()));
+		addConverter(new TextToLabeledEnum());
 		addDefaultAlias(String.class);
 		addDefaultAlias(Short.class);
 		addDefaultAlias(Integer.class);

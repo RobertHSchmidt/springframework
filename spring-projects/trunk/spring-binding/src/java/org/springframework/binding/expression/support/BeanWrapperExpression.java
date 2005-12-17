@@ -38,22 +38,22 @@ public class BeanWrapperExpression implements PropertyExpression {
 		return expression.equals(other.expression);
 	}
 
-	public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
+	public Object evaluateAgainst(Object target, Map evaluationContext) throws EvaluationException {
 		try {
 			return new BeanWrapperImpl(target).getPropertyValue(expression);
 		}
 		catch (BeansException e) {
-			throw new EvaluationException(new EvaluationAttempt(this, target, context), e);
+			throw new EvaluationException(new EvaluationAttempt(this, target, evaluationContext), e);
 		}
 	}
 
-	public void setValue(Object target, Object value, Map context) throws EvaluationException {
+	public void setValue(Object target, Object value, Map setContext) throws EvaluationException {
 		try {
 			Assert.notNull(target, "The target object to evaluate is required");
 			new BeanWrapperImpl(target).setPropertyValue(expression, value);
 		}
 		catch (BeansException e) {
-			throw new EvaluationException(new EvaluationAttempt(this, target, context), e);
+			throw new EvaluationException(new EvaluationAttempt(this, target, setContext), e);
 		}
 	}
 

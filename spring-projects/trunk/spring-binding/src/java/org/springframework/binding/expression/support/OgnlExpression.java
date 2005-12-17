@@ -39,29 +39,29 @@ class OgnlExpression implements PropertyExpression {
 		return expression.equals(other.expression);
 	}
 
-	public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
+	public Object evaluateAgainst(Object target, Map evaluationContext) throws EvaluationException {
 		try {
 			Assert.notNull(target, "The target object to evaluate is required");
-			if (context == null) {
-				context = Collections.EMPTY_MAP;
+			if (evaluationContext == null) {
+				evaluationContext = Collections.EMPTY_MAP;
 			}
-			return Ognl.getValue(expression, context, target);
+			return Ognl.getValue(expression, evaluationContext, target);
 		}
 		catch (OgnlException e) {
-			throw new EvaluationException(new EvaluationAttempt(this, target, context), e);
+			throw new EvaluationException(new EvaluationAttempt(this, target, evaluationContext), e);
 		}
 	}
 
-	public void setValue(Object target, Object value, Map context) {
+	public void setValue(Object target, Object value, Map setContext) {
 		try {
 			Assert.notNull(target, "The target object is required");
-			if (context == null) {
-				context = Collections.EMPTY_MAP;
+			if (setContext == null) {
+				setContext = Collections.EMPTY_MAP;
 			}
-			Ognl.setValue(expression, context, target, value);
+			Ognl.setValue(expression, setContext, target, value);
 		}
 		catch (OgnlException e) {
-			throw new EvaluationException(new SetPropertyAttempt(this, target, value, context), e);
+			throw new EvaluationException(new SetPropertyAttempt(this, target, value, setContext), e);
 		}
 	}
 

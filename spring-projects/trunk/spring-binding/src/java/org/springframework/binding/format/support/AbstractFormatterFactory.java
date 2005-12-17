@@ -78,8 +78,4 @@ public abstract class AbstractFormatterFactory implements FormatterFactory {
 	public Formatter getTimeFormatter() {
 		return getTimeFormatter(getDefaultTimeStyle());
 	}
-
-	public Formatter getLabeledEnumFormatter() {
-		return new LabeledEnumFormatter(labeledEnumResolver);
-	}
 }

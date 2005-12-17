@@ -78,7 +78,7 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	 * string. @param expressionString the expression string @return the parsed
 	 * expressions @throws ParserException when the expressions cannot be parsed
 	 */
-	public Expression[] parseExpressions(String expressionString, Map context) throws ParserException {
+	public Expression[] parseExpressions(String expressionString, Map parseContext) throws ParserException {
 		List expressions = new LinkedList();
 		if (StringUtils.hasText(expressionString)) {
 			int startIdx = 0;
@@ -93,7 +93,7 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 					int exprEndIdx = expressionString.indexOf(getExpressionSuffix(), exprStartIdx);
 					if (exprEndIdx >= exprStartIdx) {
 						expressions.add(parseExpression(expressionString.substring(exprStartIdx, exprEndIdx + 1),
-								context));
+								parseContext));
 						startIdx = exprEndIdx + 1;
 					}
 					else {

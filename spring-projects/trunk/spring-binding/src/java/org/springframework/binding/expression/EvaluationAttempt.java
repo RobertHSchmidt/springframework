@@ -25,19 +25,19 @@ public class EvaluationAttempt implements Serializable {
 	/**
 	 * The evaluation context.
 	 */
-	private Map context;
+	private Map evaluationContext;
 
 	/**
 	 * Create an evaluation attempt.
 	 * 
 	 * @param expression
 	 * @param target
-	 * @param context
+	 * @param evaluationContext
 	 */
-	public EvaluationAttempt(Expression expression, Object target, Map context) {
+	public EvaluationAttempt(Expression expression, Object target, Map evaluationContext) {
 		this.expression = expression;
 		this.target = target;
-		this.context = context;
+		this.evaluationContext = evaluationContext;
 	}
 
 	public Expression getExpression() {
@@ -48,8 +48,8 @@ public class EvaluationAttempt implements Serializable {
 		return target;
 	}
 
-	public Map getContext() {
-		return context;
+	public Map getEvaluationContext() {
+		return evaluationContext;
 	}
 
 	public String toString() {
@@ -57,6 +57,6 @@ public class EvaluationAttempt implements Serializable {
 	}
 
 	protected ToStringCreator createToString(ToStringCreator creator) {
-		return creator.append("expression", expression).append("target", target).append("context", context);
+		return creator.append("expression", expression).append("target", target).append("context", evaluationContext);
 	}
 }

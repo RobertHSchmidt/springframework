@@ -14,7 +14,7 @@ public interface PropertyExpression extends Expression {
 	 * value provided.
 	 * @param target the target object
 	 * @param value the value
-	 * @param context the evaluation and setter context
+	 * @param setContext the evaluation and setter context
 	 */
-	public void setValue(Object target, Object value, Map context) throws EvaluationException;
+	public void setValue(Object target, Object value, Map setContext) throws EvaluationException;
 }

@@ -16,14 +16,11 @@
 package org.springframework.binding.convert.support;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import junit.framework.TestCase;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
-import org.springframework.binding.format.support.SimpleFormatterFactory;
-import org.springframework.binding.support.Mapping;
 import org.springframework.core.enums.ShortCodedLabeledEnum;
 
 /**
@@ -32,7 +29,7 @@ import org.springframework.core.enums.ShortCodedLabeledEnum;
  * @author Keith Donald
  */
 public class DefaultConversionServiceTests extends TestCase {
-	
+
 	public void testNoConvertersRegistered() {
 		DefaultConversionService service = new DefaultConversionService(false);
 		try {
@@ -63,7 +60,6 @@ public class DefaultConversionServiceTests extends TestCase {
 
 	public void testLabeledEnumConversionNoSuchEnum() {
 		DefaultConversionService service = new DefaultConversionService();
-		service.addConverter(new TextToLabeledEnum(MyEnum.class, new SimpleFormatterFactory()));
 		ConversionExecutor executor = service.getConversionExecutor(String.class, MyEnum.class);
 		try {
 			executor.execute("My Invalid Label");
@@ -75,51 +71,9 @@ public class DefaultConversionServiceTests extends TestCase {
 
 	public void testValidLabeledEnumConversion() {
 		DefaultConversionService service = new DefaultConversionService();
-		service.addConverter(new TextToLabeledEnum(MyEnum.class, new SimpleFormatterFactory()));
 		ConversionExecutor executor = service.getConversionExecutor(String.class, MyEnum.class);
 		MyEnum myEnum = (MyEnum)executor.execute("My Label 1");
 		assertEquals(MyEnum.ONE, myEnum);
-	}
-
-	public void testValidMappingConversion() {
-		DefaultConversionService service = new DefaultConversionService();
-		ConversionExecutor executor = service.getConversionExecutor(String.class, Mapping.class);
-		Mapping mapping = (Mapping)executor.execute("id");
-		Map source = new HashMap(1);
-		source.put("id", "5");	
-		Map target = new HashMap(1);
-		mapping = (Mapping)executor.execute("id,java.lang.Long");
-		mapping.map(source, target, null);
-		assertEquals(new Long(5), target.get("id"));
-		
-		source = new HashMap(1);
-		source.put("id", "5");
-		target = new HashMap(1);
-		mapping = (Mapping)executor.execute("id->id");
-		mapping.map(source, target, null);
-		assertEquals("5", target.get("id"));
-
-		source = new HashMap(1);
-		source.put("id", "5");
-		target = new HashMap(1);
-		mapping = (Mapping)executor.execute("id->colleagueId,java.lang.Long");
-		mapping.map(source, target, null);
-		assertEquals(new Long(5), target.get("colleagueId"));
-
-		source = new HashMap(1);
-		source.put("id", "5");
-		target = new HashMap(1);
-		mapping = (Mapping)executor.execute("id,java.lang.String->colleagueId");
-		mapping.map(source, target, null);
-		assertEquals("5", target.get("colleagueId"));
-
-		source = new HashMap(1);
-		source.put("id", "5");
-		target = new HashMap(1);
-		mapping = (Mapping)executor.execute("id,java.lang.String->colleagueId,java.lang.Long");
-		mapping.map(source, target, null);
-		assertEquals(new Long(5), target.get("colleagueId"));
-
 	}
 
 	public static class MyEnum extends ShortCodedLabeledEnum {

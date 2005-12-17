@@ -3,7 +3,7 @@ package org.springframework.binding.expression;
 import java.util.Collections;
 
 import org.springframework.binding.expression.support.ExpressionParserUtils;
-import org.springframework.binding.support.Assert;
+import org.springframework.util.Assert;
 
 /**
  * A static factory for producing configured expression evaluators.

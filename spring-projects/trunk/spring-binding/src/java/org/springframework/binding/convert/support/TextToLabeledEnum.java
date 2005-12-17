@@ -15,7 +15,7 @@
  */
 package org.springframework.binding.convert.support;
 
-import org.springframework.binding.format.FormatterFactory;
+import org.springframework.binding.format.support.LabeledEnumFormatter;
 import org.springframework.core.enums.LabeledEnum;
 
 /**
@@ -23,37 +23,19 @@ import org.springframework.core.enums.LabeledEnum;
  * instances to a specific instance of <code>LabeledEnum</code>
  * @author Keith Donald
  */
-public class TextToLabeledEnum extends AbstractFormattingConverter {
+public class TextToLabeledEnum extends AbstractConverter {
 
-	private Class[] labeledEnumClasses;
-
-	public TextToLabeledEnum(FormatterFactory formatterFactory) {
-		super(formatterFactory);
-	}
-
-	public TextToLabeledEnum(Class labeledEnumClasses, FormatterFactory formatterFactory) {
-		this(new Class[] { labeledEnumClasses }, formatterFactory);
-	}
-
-	public TextToLabeledEnum(Class[] labeledEnumClasses, FormatterFactory formatterFactory) {
-		super(formatterFactory);
-		this.labeledEnumClasses = labeledEnumClasses;
-	}
+	private LabeledEnumFormatter labeledEnumFormatter = new LabeledEnumFormatter();
 
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class };
 	}
 
 	public Class[] getTargetClasses() {
-		if (labeledEnumClasses == null) {
-			return new Class[] { LabeledEnum.class };
-		}
-		else {
-			return labeledEnumClasses;
-		}
+		return new Class[] { LabeledEnum.class };
 	}
 
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
-		return getFormatterFactory().getLabeledEnumFormatter().parseValue((String)source, targetClass);
+		return labeledEnumFormatter.parseValue((String)source, targetClass);
 	}
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.binding;
+package org.springframework.binding.mapping;
 
 import java.util.Map;
 
@@ -31,7 +31,7 @@ public interface AttributeMapper {
 	 * Map data from one map to another map.
 	 * @param source The accessor to the source map
 	 * @param target The setter to the target map
-	 * @param context the mapping context
+	 * @param mappingContext the mapping context
 	 */
-	public void map(Object source, Object target, Map context);
+	public void map(Object source, Object target, Map mappingContext);
 }
