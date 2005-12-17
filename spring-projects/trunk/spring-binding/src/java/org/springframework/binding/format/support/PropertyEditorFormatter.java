@@ -23,11 +23,11 @@ import org.springframework.util.Assert;
  * Adapts a property editor to the type converter interface.
  * @author Keith Donald
  */
-public class PropertyEditorFormatterAdapter extends AbstractFormatter {
+public class PropertyEditorFormatter extends AbstractFormatter {
 
 	private PropertyEditor propertyEditor;
 
-	public PropertyEditorFormatterAdapter(PropertyEditor propertyEditor) {
+	public PropertyEditorFormatter(PropertyEditor propertyEditor) {
 		super();
 		Assert.notNull(propertyEditor, "Property editor is required");
 		this.propertyEditor = propertyEditor;
