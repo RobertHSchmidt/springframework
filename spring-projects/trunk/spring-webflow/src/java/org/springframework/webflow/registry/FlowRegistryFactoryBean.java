@@ -75,13 +75,6 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 	}
 
 	/**
-	 * Returns the list of flow registrars that will register flow definitions.
-	 */
-	public List getFlowRegistrars() {
-		return flowRegistrars;
-	}
-
-	/**
 	 * Sets the list of flow registrars that will register flow definitions.
 	 * @param flowRegistrars the flow registrars
 	 */
