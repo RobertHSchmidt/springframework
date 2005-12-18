@@ -172,7 +172,7 @@ public abstract class AnnotatedObject {
 	}
 
 	/**
-	 * Puts the additional properties describing this object.
+	 * Adds (puts) additional properties describing this object.
 	 */
 	public void addProperties(Map properties) {
 		if (properties != null) {
