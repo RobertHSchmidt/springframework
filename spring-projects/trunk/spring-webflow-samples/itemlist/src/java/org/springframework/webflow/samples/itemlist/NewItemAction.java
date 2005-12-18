@@ -21,8 +21,6 @@ import org.springframework.webflow.action.AbstractAction;
 
 public class NewItemAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
-		// begin transactional processing
-		context.beginTransaction();
 		return success();
 	}
 }

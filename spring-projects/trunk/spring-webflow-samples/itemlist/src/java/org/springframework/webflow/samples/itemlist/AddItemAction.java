@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 package org.springframework.webflow.samples.itemlist;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.webflow.Event;
@@ -23,22 +21,14 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
 
 public class AddItemAction extends AbstractAction {
-
 	protected Event doExecute(RequestContext context) throws Exception {
-		// check to ensure the incoming request is within the active transaction
-		// note that we're also ending the transaction using end==true
-		if (!context.inTransaction(true)) {
-			// the transaction was not valid so cannot continue normal
-			// processing
-			return result("txError");
-		}
-		List list = (List)context.getFlowScope().getOrCreateAttribute("list", ArrayList.class);
+		List list = (List)context.getFlowScope().getAttribute("list", List.class);
 		String data = (String)context.getExternalContext().getRequestParameterMap().get("data");
 		if (data != null && data.length() > 0) {
 			list.add(data);
 		}
-		// add a bit of artificial think time
 		try {
+			// add a bit of artificial think time
 			Thread.sleep(2000);
 		}
 		catch (InterruptedException e) {
