@@ -40,8 +40,6 @@
 
 	<end-state id="error" view="error"/>
 	
-	<exception-handler on="org.springframework.webflow.RequestNotInTransactionException" to="error"/>
-
 	<import resource="sellitem-beans.xml"/>
 	
 </flow>

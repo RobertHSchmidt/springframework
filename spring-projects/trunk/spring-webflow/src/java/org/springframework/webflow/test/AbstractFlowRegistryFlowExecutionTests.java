@@ -64,12 +64,9 @@ public abstract class AbstractFlowRegistryFlowExecutionTests extends AbstractFlo
 
 	/**
 	 * Returns the <code>id</code> of the flow this execution test should
-	 * test. By default, returns the first entry in the flow registry.
-	 * Subclasses may override.
+	 * test. Subclasses must override.
 	 */
-	protected String flowId() {
-		return getFlowRegistry().getFlowIds()[0];
-	}
+	protected abstract String flowId();
 
 	protected void onSetUpInTransactionalFlowTest() {
 		if (flowRegistry == null) {
@@ -80,19 +77,24 @@ public abstract class AbstractFlowRegistryFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
-	 * Initialize the flow registry.
+	 * Initialize the flow registry to support this test.
 	 */
 	protected void initFlowRegistry() {
 		flowRegistry = new FlowRegistryImpl();
 	}
 
 	/**
-	 * Initialize the flow artifact factory.
+	 * Initialize the flow artifact factory to support this test.
 	 */
 	protected void initFlowArtifactFactory() {
 		flowArtifactFactory = new FlowRegistryFlowArtifactFactory(flowRegistry, applicationContext);
 	}
 
+	/**
+	 * Performs flow registry population, registering the flow to be tested as
+	 * well as any subflows. Implementations will typically delegate to a
+	 * FlowRegistrar. Subclasses must override.
+	 */
 	protected abstract void populateFlowRegistry();
 
 }
