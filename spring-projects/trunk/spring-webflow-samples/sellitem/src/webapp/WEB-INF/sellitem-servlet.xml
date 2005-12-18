@@ -17,10 +17,7 @@
 		<property name="cacheSeconds" value="5"/>
 	</bean>
 
-	<!--
-		Launches new flow executions and resumes existing executions.
-		Note how you can just change the "storage" strategy without any impact on the views!
-	-->	
+	<!-- Launches new flow executions and resumes existing executions. -->	
 	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
 		<constructor-arg ref="flowLocator"/>
 		<property name="listener">
@@ -28,9 +25,6 @@
 		</property>
 		<property name="storage">
 			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage"/>
-		</property>
-		<property name="transactionSynchronizer">
-			<bean class="org.springframework.webflow.execution.DataStoreTokenTransactionSynchronizer"/>
 		</property>
 	</bean>
 

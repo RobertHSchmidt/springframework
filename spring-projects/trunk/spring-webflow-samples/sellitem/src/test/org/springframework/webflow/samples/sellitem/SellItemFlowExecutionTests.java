@@ -6,13 +6,15 @@ import java.util.Map;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 
 public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
+	protected String flowId() {
+		return "sellitem";
+	}
+	
 	@Override
 	protected Resource getFlowLocation() {
 		File flowDir = new File("src/webapp/WEB-INF");
@@ -22,12 +24,6 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	@Override
 	protected String[] getConfigLocations() {
 		return new String[] { "classpath:org/springframework/webflow/samples/sellitem/applicationContext.xml" };
-	}
-
-	@Override
-	protected void onFlowExecutionStarting(FlowExecution flowExecution) {
-		// turn off transactionality for test run
-		getFlow().setProperty(Flow.TRANSACTIONAL_PROPERTY, false);
 	}
 
 	public void testStartFlow() {
