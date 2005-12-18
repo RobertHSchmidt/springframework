@@ -238,7 +238,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	public ViewSelection start(String stateId, ExternalContext externalContext) throws StateException {
 		Assert.state(!isActive(),
-				"This flow is already executing -- you cannot call 'start(stateId, externalContxt)' more than once");
+				"This flow is already executing -- you cannot call 'start(stateId, externalContext)' more than once");
 		if (!StringUtils.hasText(stateId)) {
 			stateId = getRootFlow().getStartState().getId();
 		}

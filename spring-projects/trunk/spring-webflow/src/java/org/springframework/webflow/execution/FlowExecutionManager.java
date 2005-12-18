@@ -96,18 +96,11 @@ import org.springframework.webflow.ViewSelection;
  * <td>None</td>
  * <td>Listeners for observing the lifecycle of managed flow executions</td>
  * </tr>
- * <tr>
- * <td>transactionSynchronizer</td>
- * <td>Flow scoped, token-based strategy</td>
- * <td>Strategy for demaracting application transactions within a flow
- * execution</td>
- * </tr>
  * </table>
  * </p>
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.execution.FlowExecutionStorage
  * @see org.springframework.webflow.execution.FlowExecutionListener
- * @see org.springframework.webflow.execution.TransactionSynchronizer
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -247,7 +240,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @see #setListenerMap(Map)
 	 * @see #setListeners(Collection)
 	 * @see #setListenersCriteria(Collection, FlowExecutionListenerCriteria)
-	 * @see #setTransactionSynchronizer(TransactionSynchronizer)
 	 */
 	public FlowExecutionManager(FlowLocator flowLocator) {
 		setFlowLocator(flowLocator);
