@@ -23,8 +23,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
@@ -140,7 +138,7 @@ public class Scope implements Map, Serializable {
 		Object value = getAttribute(attributeName);
 		if (value == null) {
 			throw new IllegalStateException("Required attribute '" + attributeName + "' is not present in " + this
-					+ "; attributes present are = " + StylerUtils.style(getAttributeMap()));
+					+ "; attributes present are " + StylerUtils.style(getAttributeMap()));
 		}
 		return value;
 	}
@@ -162,42 +160,19 @@ public class Scope implements Map, Serializable {
 	}
 
 	/**
-	 * Gets the value of the specified <code>attributeName</code>, if such an
-	 * attribute exists in this scope. If the attribute does not exist, a new
-	 * instance will be created of the type <code>attributeClass</code>,
-	 * which will be set in this scope and returned.
-	 * @param attributeName the attribute name
-	 * @param attributeClass the attribute class
-	 * @return the value
-	 * @throws IllegalStateException when the attribute is not of the required
-	 * type
-	 * @throws BeansException if the attribute could not be created
-	 */
-	public Object getOrCreateAttribute(String attributeName, Class attributeClass) throws IllegalStateException,
-			BeansException {
-		if (!containsAttribute(attributeName)) {
-			setAttribute(attributeName, BeanUtils.instantiateClass(attributeClass));
-		}
-		return getAttribute(attributeName, attributeClass);
-	}
-
-	/**
-	 * Assert that the attribute is contained in this scope.
-	 * @param attributeName the attribute
-	 * @throws IllegalStateException the assertion failed; the attribute is not
-	 * present
-	 */
-	public void assertAttributePresent(String attributeName) throws IllegalStateException {
-		getRequiredAttribute(attributeName);
-	}
-
-	/**
 	 * Returns the contents of this scope as an unmodifiable map.
 	 */
 	public Map getAttributeMap() {
 		return Collections.unmodifiableMap(this.attributes);
 	}
 
+	/**
+	 * Sets the attribute to the value provided in this scope.
+	 * @param attributeName the attribute name
+	 * @param attributeValue the attribute value
+	 * @return the previous attribute value, or <code>null</code> if there was
+	 * no previous value set
+	 */
 	public Object setAttribute(String attributeName, Object attributeValue) {
 		return attributes.put(attributeName, attributeValue);
 	}
