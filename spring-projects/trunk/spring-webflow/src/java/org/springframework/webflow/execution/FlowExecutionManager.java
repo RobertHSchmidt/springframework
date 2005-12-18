@@ -649,7 +649,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	/**
 	 * Load an existing FlowExecution based on data in the specified source
 	 * event.
-	 * 
 	 * @param flowExecutionId the unique id of the flow execution
 	 * @param context the context in which the external user event occured
 	 * @throws FlowExecutionStorageException an exception occured loading the
@@ -671,7 +670,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 
 	/**
 	 * Signal the occurence of the specified event on an existing flow
-	 * 
 	 * @param flowExecution the existing flow
 	 * @param context the context in which the external user event occured
 	 * @return the raw or unprepared view descriptor of the model and view to

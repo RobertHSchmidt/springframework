@@ -34,18 +34,9 @@ import org.springframework.webflow.ExternalContext;
  * create copies (clones) of a flow execution to enable <i>free browsing</i> in
  * a flow. These strategies are not compatible with the default application
  * transaction implementation.
- * <p>
- * Usually this is not a problem since free browing is not really compatible
- * with any kind of transactional semantics. However, if required, you can
- * always plug in another transaction synchronizer, e.g. one that stores a
- * transaction token in an external data store such as a database or shared
- * session variable, no longer requiring a single flow execution per application
- * transaction (see
- * {@link org.springframework.webflow.execution.DataStoreTokenTransactionSynchronizer})
  * 
  * @see org.springframework.webflow.execution.FlowExecutionManager
  * @see org.springframework.webflow.execution.FlowExecution
- * @see org.springframework.webflow.execution.TransactionSynchronizer
  * 
  * @author Erwin Vervaet
  * @author Keith Donald

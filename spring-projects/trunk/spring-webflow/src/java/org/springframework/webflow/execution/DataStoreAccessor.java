@@ -30,10 +30,6 @@ import org.springframework.webflow.ExternalContext;
  * {@link org.springframework.webflow.execution.DataStoreFlowExecutionStorage}
  * storage implementation to make the underlying storage strategy of an flow
  * execution pluggable.
- * <p>
- * Used by
- * {@link org.springframework.webflow.execution.DataStoreTokenTransactionSynchronizer}
- * to make the underlying storage strategy of an transaction token pluggable.
  * 
  * @see org.springframework.binding.AttributeSource
  * @see org.springframework.binding.MutableAttributeSource
