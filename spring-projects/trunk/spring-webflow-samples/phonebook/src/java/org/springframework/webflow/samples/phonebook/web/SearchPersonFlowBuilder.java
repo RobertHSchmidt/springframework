@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.samples.phonebook.web;
 
-import org.springframework.binding.support.Mapping;
+import org.springframework.binding.mapping.Mapping;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.Transition;
@@ -58,7 +58,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 		Action searchFormAction = createSearchFormAction();
 		ViewState displayCriteria = addViewState(DISPLAY_CRITERIA, "searchCriteria", on("search", EXECUTE_SEARCH,
 				beforeExecute(method("bindAndValidate", searchFormAction))));
-		displayCriteria.setEntryAction(method("setupForm", searchFormAction));
+		displayCriteria.addEntryAction(method("setupForm", searchFormAction));
 
 		// execute query
 		addActionState(EXECUTE_SEARCH, method("search(${flowScope.searchCriteria})", action("phonebook")),

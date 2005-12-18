@@ -4,8 +4,6 @@
 
 <flow start-state="enterPriceAndItemCount">
 
-	<property name="transactional" value="true" type="boolean"/>
-	
 	<view-state id="enterPriceAndItemCount" view="/priceAndItemCountForm">
 		<entry-actions>
 			<action bean="sellItemAction" method="setupForm"/>
@@ -35,9 +33,5 @@
 	</action-state>
 	
 	<end-state id="showCostOverview" view="/costOverview"/>
-
-	<end-state id="error" view="error"/>
-	
-	<exception-handler on="org.springframework.webflow.RequestNotInTransactionException" to="error"/>
 
 </flow>

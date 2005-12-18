@@ -14,26 +14,26 @@
 		</tr>
 		<tr>
 			<td><b>First Name</b></td>
-			<td>${getDetails.result.firstName}</td>
+			<td>${person.firstName}</td>
 		</tr>
 		<tr>
 			<td><b>Last Name</b></td>
-			<td>${getDetails.result.lastName}</td>
+			<td>${person.lastName}</td>
 		</tr>
 		<tr>
 			<td><b>User Id</B></td>
-			<td>${getDetails.result.userId}</td>
+			<td>${person.userId}</td>
 		</tr>
 		<tr>
 			<td><b>Phone</b></td>
-			<td>${getDetails.result.phone}</td>
+			<td>${person.phone}</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<br>
 				<b>Colleagues:</b>
 				<br>
-				<c:forEach var="colleague" items="${getDetails.result.colleagues}">
+				<c:forEach var="colleague" items="${person.colleagues}">
 					<a href="
                         <portlet:renderURL>
 			                <portlet:param name="_flowExecutionId" value="${flowExecutionId}" />

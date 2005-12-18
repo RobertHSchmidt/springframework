@@ -25,8 +25,8 @@ import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 
 public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
-	public SearchFlowExecutionTests() {
-		setAutowireMode(AUTOWIRE_BY_NAME);
+	protected String flowId() {
+		return "search";
 	}
 	
 	protected Resource getFlowLocation() {
@@ -50,7 +50,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		parameters.put("lastName", "Donald");
 		ViewSelection view = signalEvent("search", parameters);
 		assertCurrentStateEquals("displayResults");
-		assertModelAttributeCollectionSize(1, "executeSearch.result", view);
+		assertModelAttributeCollectionSize(1, "results", view);
 	}
 
 	public void testCriteriaView_Submit_Error() {

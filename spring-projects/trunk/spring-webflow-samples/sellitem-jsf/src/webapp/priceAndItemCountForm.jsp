@@ -43,7 +43,6 @@
 			<tr>
 				<td colspan="2" class="buttonBar">
 					<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"/>
-					<input type="hidden" name="_transactionId" value="${transactionId}">
 					<h:commandButton type="submit" value="Next" action="submit" immediate="false" /></td>
 			</tr>
 		</h:form>

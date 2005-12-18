@@ -19,7 +19,7 @@
 		- appropriate _flowExecutionId and _eventId.
 	-->
 	<bean id="flowController" class="org.springframework.webflow.portlet.FlowController">
-		<constructor-arg ref="flowLocator" />
+		<constructor-arg ref="flowExecutionManager" />
 	</bean>
 
 	<!-- ResourceViewResolver -->

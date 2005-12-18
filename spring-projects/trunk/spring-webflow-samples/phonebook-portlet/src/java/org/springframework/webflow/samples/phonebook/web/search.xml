@@ -14,7 +14,7 @@
 	</view-state>
 
 	<action-state id="executeSearch">
-		<action bean="phonebook" method="search(${flowScope.searchCriteria})"/>
+		<action bean="phonebook" method="search(${flowScope.searchCriteria})" resultName="results"/>
 		<transition on="success" to="displayResults"/>
 	</action-state>	
 	
@@ -33,7 +33,7 @@
 	<inline-flow id="detail">
 		<flow start-state="getDetails">
 			<action-state id="getDetails">
-				<action bean="phonebook" method="getPerson(${flowScope.id})"/>
+				<action bean="phonebook" method="getPerson(${flowScope.id})" resultName="person"/>
 				<transition on="success" to="displayDetails"/>
 			</action-state>
 

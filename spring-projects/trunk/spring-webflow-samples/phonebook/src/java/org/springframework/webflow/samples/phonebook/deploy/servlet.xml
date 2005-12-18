@@ -14,13 +14,6 @@
 		<property name="cacheSeconds" value="5"/>
 	</bean>
 
-	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
-		<constructor-arg ref="flowLocator"/>
-		<property name="storage">
-			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage"/>
-		</property>
-	</bean>
-	
 	<!-- Resolves flow view names to .jsp templates -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>

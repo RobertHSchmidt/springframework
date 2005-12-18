@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.samples.phonebook.web;
 
-import org.springframework.binding.support.Mapping;
+import org.springframework.binding.mapping.Mapping;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.FlowArtifactFactory;
