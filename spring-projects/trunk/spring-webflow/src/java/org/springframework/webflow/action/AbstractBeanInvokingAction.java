@@ -78,7 +78,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
 		getStatePersister().restoreState(bean, context);
-		MethodKey methodKey = (MethodKey)context.getProperties().getAttribute(AnnotatedAction.METHOD_PROPERTY);
+		MethodKey methodKey = (MethodKey)context.getProperties().get(AnnotatedAction.METHOD_PROPERTY);
 		if (methodKey == null) {
 			throw new IllegalStateException("The method to invoke was not provided: please set the '"
 					+ AnnotatedAction.METHOD_PROPERTY + "' property");
@@ -99,7 +99,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	protected void processMethodReturnValue(Object returnValue, RequestContext context) {
 		String resultName = (String)getActionProperty(context, AnnotatedAction.RESULT_NAME_PROPERTY, null);
 		if (resultName != null) {
-			ScopeType scopeType = (ScopeType)getActionProperty(context, AnnotatedAction.RESULT_SCOPE_PROPERTY, ScopeType.REQUEST);
+			ScopeType scopeType = (ScopeType)getActionProperty(context, AnnotatedAction.RESULT_SCOPE_PROPERTY,
+					ScopeType.REQUEST);
 			scopeType.getScope(context).setAttribute(resultName, returnValue);
 		}
 	}

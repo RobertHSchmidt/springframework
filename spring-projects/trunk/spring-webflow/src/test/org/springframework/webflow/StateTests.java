@@ -20,8 +20,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.MutableAttributeSource;
-import org.springframework.binding.support.Mapping;
+import org.springframework.binding.mapping.Mapping;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AttributeMapperAction;
 import org.springframework.webflow.execution.FlowExecution;
@@ -217,7 +216,7 @@ public class StateTests extends TestCase {
 		}
 
 		public void mapSubflowOutput(RequestContext context) {
-			MutableAttributeSource parentAttributes = (MutableAttributeSource)context.getFlowExecutionContext()
+			Scope parentAttributes = context.getFlowExecutionContext()
 					.getActiveSession().getParent().getScope();
 			parentAttributes.setAttribute("parentOutputAttribute", context.getFlowScope().getAttribute(
 					"childInputAttribute"));

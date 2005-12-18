@@ -24,10 +24,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.AttributeMapper;
 import org.springframework.binding.expression.ExpressionFactory;
-import org.springframework.binding.support.Mapping;
-import org.springframework.binding.support.ParameterizableAttributeMapper;
+import org.springframework.binding.mapping.AttributeMapper;
+import org.springframework.binding.mapping.Mapping;
+import org.springframework.binding.mapping.ParameterizableAttributeMapper;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;

@@ -22,9 +22,9 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.AttributeMapper;
+import org.springframework.binding.mapping.AttributeMapper;
+import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.method.MethodKey;
-import org.springframework.binding.support.Mapping;
 import org.springframework.core.CollectionFactory;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -231,7 +231,6 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 	
 	public void testExpressionMapping() {
 		Map mappingsMap = new HashMap();
-		mappingsMap.put("${flowExecutionContext.key}", "key");
 		mappingsMap.put("${requestScope.a}", "b");
 		mappingsMap.put("${flowScope.x}", "y");
 		mapper.setInputMappingsMap(mappingsMap);
@@ -241,8 +240,7 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 		context.getRequestScope().setAttribute("a", "aValue");
 		context.getFlowScope().setAttribute("x", "xValue");
 		Map input = mapper.createSubflowInput(context);
-		assertEquals(3, input.size());
-		assertEquals(context.getFlowExecutionContext().getKey(), input.get("key"));
+		assertEquals(2, input.size());
 		assertEquals("aValue", input.get("b"));
 		assertEquals("xValue", input.get("y"));
 		
@@ -252,8 +250,7 @@ public class ParameterizableFlowAttributeMapperTests extends TestCase {
 		context.getFlowScope().setAttribute("a", "aValue");
 		context.getFlowScope().setAttribute("x", "xValue");
 		mapper.mapSubflowOutput(context);
-		assertEquals(3, parentSession.getScope().size());
-		assertEquals(context.getFlowExecutionContext().getKey(), parentSession.getScope().get("key"));
+		assertEquals(2, parentSession.getScope().size());
 		assertEquals("aValue", parentSession.getScope().get("b"));
 		assertEquals("xValue", parentSession.getScope().get("y"));
 	}

@@ -8,8 +8,6 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.binding.MutableAttributeSource;
-import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.ExternalContext;
@@ -22,13 +20,9 @@ import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionManagerTests extends TestCase {
 	public static class MapDataStoreAccessor implements DataStoreAccessor {
-		private MapAttributeSource source = new MapAttributeSource();
+		private Map source = new HashMap();
 
-		private Map getMap() {
-			return source.getAttributeMap();
-		}
-
-		public MutableAttributeSource getDataStore(ExternalContext context) {
+		public Map getDataStore(ExternalContext context) {
 			return source;
 		}
 	}
@@ -81,7 +75,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		assertEquals("Wrong view name", "confirm", view.getViewName());
 		assertTrue("Should have been a redirect", view.isRedirect());
 		assertNull("Flow has ended", view.getModel().get(FlowExecutionManager.FLOW_EXECUTION_ID_ATTRIBUTE));
-		assertEquals("Should have been removed", 0, map.getMap().size());
+		assertEquals("Should have been removed", 0, map.source.size());
 	}
 
 	public void testParticipateInExistingFlowExecutionNoSuchFlowExecution() {
@@ -151,7 +145,6 @@ public class FlowExecutionManagerTests extends TestCase {
 		FlowExecutionManager manager = (FlowExecutionManager)ac.getBean("flowExecutionManager");
 		assertEquals("Wrong number of listeners", 1, manager.getListenerMap().size());
 		assertTrue(manager.getStorage() instanceof ContinuationDataStoreFlowExecutionStorage);
-		assertTrue(manager.getTransactionSynchronizer() instanceof DataStoreTokenTransactionSynchronizer);
 		assertTrue(manager.getFlowLocator() instanceof SimpleFlowLocator);
 	}
 

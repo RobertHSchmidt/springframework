@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.MutableAttributeSource;
 import org.springframework.core.style.StylerUtils;
 
 /**
@@ -32,7 +31,7 @@ import org.springframework.core.style.StylerUtils;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public abstract class AnnotatedObject implements MutableAttributeSource {
+public abstract class AnnotatedObject {
 
 	/**
 	 * Logger, for use in subclasses.
@@ -57,26 +56,6 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	 * in this map may be arbitrary.
 	 */
 	private Map properties = new HashMap(6);
-
-	/**
-	 * Returns the additional properties describing this object in an
-	 * unmodifiable map.
-	 */
-	public Map getProperties() {
-		return Collections.unmodifiableMap(properties);
-	}
-
-	/**
-	 * Set the additional properties describing this object.
-	 */
-	public void setProperties(Map properties) {
-		if (properties != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Setting properties to " + StylerUtils.style(properties));
-			}
-			this.properties = new HashMap(properties);
-		}
-	}
 
 	/**
 	 * Returns the value of given property, or <code>null</code> if not found.
@@ -183,22 +162,25 @@ public abstract class AnnotatedObject implements MutableAttributeSource {
 	public void setDescription(String description) {
 		setProperty(DESCRIPTION_PROPERTY, description);
 	}
-
-	// implementing MutableAttributeSource
-
-	public boolean containsAttribute(String attributeName) {
-		return containsProperty(attributeName);
+	
+	/**
+	 * Returns the additional properties describing this object in an
+	 * unmodifiable map.
+	 */
+	public Map getProperties() {
+		return Collections.unmodifiableMap(properties);
 	}
 
-	public Object getAttribute(String attributeName) {
-		return getProperty(attributeName);
+	/**
+	 * Puts the additional properties describing this object.
+	 */
+	public void addProperties(Map properties) {
+		if (properties != null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Adding properties " + StylerUtils.style(properties));
+			}
+			this.properties.putAll(properties);
+		}
 	}
 
-	public Object setAttribute(String attributeName, Object attributeValue) {
-		return setProperty(attributeName, attributeValue);
-	}
-
-	public Object removeAttribute(String attributeName) {
-		return properties.remove(attributeName);
-	}
 }

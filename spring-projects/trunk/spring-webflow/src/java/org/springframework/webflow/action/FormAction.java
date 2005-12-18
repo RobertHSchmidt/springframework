@@ -703,7 +703,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	protected void doValidate(RequestContext context, DataBinder binder) throws Exception {
 		Assert.notNull(validator, "The validator must not be null when attempting validation -- programmer error");
-		String validatorMethod = (String)context.getProperties().getAttribute(VALIDATOR_METHOD_PROPERTY);
+		String validatorMethod = (String)context.getProperties().get(VALIDATOR_METHOD_PROPERTY);
 		if (StringUtils.hasText(validatorMethod)) {
 			invokeValidatorMethod(validatorMethod, binder.getTarget(), binder.getErrors());
 		}
@@ -947,7 +947,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	protected boolean validationEnabled(RequestContext context) {
 		if (requireValidatorMethod) {
-			return context.getProperties().containsAttribute(VALIDATOR_METHOD_PROPERTY);
+			return context.getProperties().containsKey(VALIDATOR_METHOD_PROPERTY);
 		}
 		else {
 			return true;

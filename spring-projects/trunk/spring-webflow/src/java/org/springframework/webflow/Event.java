@@ -20,7 +20,6 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.binding.AttributeSource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
@@ -43,7 +42,7 @@ import org.springframework.util.Assert;
  * @author Erwin Vervaet
  * @author Colin Sampaleanu
  */
-public class Event extends EventObject implements AttributeSource {
+public class Event extends EventObject {
 
 	/**
 	 * The event identifier.
@@ -95,8 +94,8 @@ public class Event extends EventObject implements AttributeSource {
 	/**
 	 * Set the event identifier and make sure it is not null.
 	 * @param id the event identifier
-	 * @throws IllegalArgumentException when the provided id is null or an
-	 * empty string
+	 * @throws IllegalArgumentException when the provided id is null or an empty
+	 * string
 	 */
 	protected void setRequiredId(String id) throws IllegalArgumentException {
 		Assert.hasText(id, "The event id is required: please set this event's id to a non-blank string identifier");
@@ -166,16 +165,6 @@ public class Event extends EventObject implements AttributeSource {
 			}
 			this.parameters.putAll(parameters);
 		}
-	}
-
-	// implementing AttributeSource
-
-	public boolean containsAttribute(String attributeName) {
-		return getParameters().containsKey(attributeName);
-	}
-
-	public Object getAttribute(String attributeName) {
-		return getParameter(attributeName);
 	}
 
 	public String toString() {

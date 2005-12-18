@@ -1,7 +1,7 @@
 package org.springframework.webflow.execution;
 
-import org.springframework.binding.MutableAttributeSource;
-import org.springframework.binding.support.MapAttributeSource;
+import java.util.Map;
+
 import org.springframework.webflow.ExternalContext;
 
 /**
@@ -9,7 +9,7 @@ import org.springframework.webflow.ExternalContext;
  * @author Keith Donald
  */
 public class SessionDataStoreAccessor implements DataStoreAccessor {
-	public MutableAttributeSource getDataStore(ExternalContext context) {
-		return new MapAttributeSource(context.getSessionMap());
+	public Map getDataStore(ExternalContext context) {
+		return context.getSessionMap();
 	}
 }

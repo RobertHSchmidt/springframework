@@ -64,7 +64,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	public Flow createFlow(FlowArtifactParameters flowParameters) throws FlowArtifactException {
 		Flow flow = (Flow)newInstance(Flow.class);
 		flow.setId(flowParameters.getId());
-		flow.setProperties(flowParameters.getProperties());
+		flow.addProperties(flowParameters.getProperties());
 		return flow;
 	}
 
@@ -73,14 +73,14 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 		State state = (State)newInstance(stateType);
 		state.setId(stateParameters.getId());
 		state.setFlow(flow);
-		state.setProperties(stateParameters.getProperties());
+		state.addProperties(stateParameters.getProperties());
 		return state;
 	}
 
 	public Transition createTransition(TransitionableState sourceState, Map properties) throws FlowArtifactException {
 		Transition transition = (Transition)newInstance(Transition.class);
 		transition.setSourceState(sourceState);
-		transition.setProperties(properties);
+		transition.addProperties(properties);
 		return transition;
 	}
 

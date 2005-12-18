@@ -19,7 +19,6 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
@@ -77,11 +76,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	private static final Log logger = LogFactory.getLog(FlowExecutionImpl.class);
 
 	/**
-	 * Key uniquely identifying this flow execution.
-	 */
-	private Serializable key;
-
-	/**
 	 * The time at which this object was created.
 	 */
 	private long creationTimestamp;
@@ -125,11 +119,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	private transient FlowExecutionListenerList listenerList = new FlowExecutionListenerList();
 
 	/**
-	 * The application transaction synchronization strategy to use.
-	 */
-	private transient TransactionSynchronizer transactionSynchronizer;
-
-	/**
 	 * Default constructor required for externalizable serialization. Should NOT
 	 * be called programmatically.
 	 */
@@ -143,8 +132,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param rootFlow the root flow of this flow execution
 	 */
 	public FlowExecutionImpl(Flow rootFlow) {
-		this(new RandomGuidKeyGenerator().generate(), rootFlow, new FlowExecutionListener[0],
-				new FlowScopeTokenTransactionSynchronizer());
+		this(rootFlow, new FlowExecutionListener[0]);
 	}
 
 	/**
@@ -156,44 +144,20 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param transactionSynchronizer the application transaction
 	 * synchronization strategy to use
 	 */
-	public FlowExecutionImpl(Serializable key, Flow rootFlow, FlowExecutionListener[] listeners,
-			TransactionSynchronizer transactionSynchronizer) {
-		Assert.notNull(key, "The unique key identifying this flow execution is required");
+	public FlowExecutionImpl(Flow rootFlow, FlowExecutionListener[] listeners) {
 		Assert.notNull(rootFlow, "The root flow definition is required");
-		Assert.notNull(transactionSynchronizer, "The transaction synchronizer is required");
-		this.key = key;
 		this.rootFlow = rootFlow;
 		getListeners().add(listeners);
-		this.transactionSynchronizer = transactionSynchronizer;
 		creationTimestamp = System.currentTimeMillis();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Created new execution of flow '" + rootFlow.getId() + "' with key '" + key + "'");
+			logger.debug("Created new execution of flow '" + rootFlow.getId() + "'");
 		}
-	}
-
-	/**
-	 * Returns the transaction synchronizer in use.
-	 */
-	public TransactionSynchronizer getTransactionSynchronizer() {
-		return transactionSynchronizer;
-	}
-
-	/**
-	 * Set the transaction synchronization strategy to use.
-	 */
-	protected void setTransactionSynchronizer(TransactionSynchronizer transactionSynchronizer) {
-		this.transactionSynchronizer = transactionSynchronizer;
 	}
 
 	// implementing FlowExecutionStatistics
 
-	public Serializable getKey() {
-		return key;
-	}
-
 	public String getCaption() {
-		return "FlowExecution:flow=[" + (getRootFlow() != null ? getRootFlow().getId() : rootFlowId) + "], key=["
-				+ getKey() + "]";
+		return "FlowExecution:flow=[" + (getRootFlow() != null ? getRootFlow().getId() : rootFlowId) + "]";
 	}
 
 	public long getCreationTimestamp() {
@@ -257,19 +221,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	public FlowSession getActiveSession() {
 		return getActiveSessionInternal();
-	}
-
-	public boolean equals(Object o) {
-		if (!(o instanceof FlowExecutionImpl)) {
-			return false;
-		}
-		FlowExecutionImpl other = (FlowExecutionImpl)o;
-		// two executions ("conversations") are equal if their keys are equal
-		return getKey().equals(other.getKey());
-	}
-
-	public int hashCode() {
-		return getKey().hashCode();
 	}
 
 	/**
@@ -377,9 +328,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param context the state request context
 	 */
 	protected void resume(FlowExecutionControlContext context) {
-		if (context.getFlowExecutionContext().getActiveFlow().isTransactional()) {
-			context.assertInTransaction(false);
-		}
 		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 		getListeners().fireResumed(context);
 	}
@@ -514,7 +462,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				logger.debug("[Ended] - this execution '" + getKey() + "' is now inactive");
+				logger.debug("[Ended] - this execution is now inactive");
 			}
 		}
 		return endingSession;
@@ -524,7 +472,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	// storage)
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		key = (Serializable)in.readObject();
 		creationTimestamp = in.readLong();
 		rootFlowId = (String)in.readObject();
 		lastEventId = (String)in.readObject();
@@ -533,7 +480,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeObject(key);
 		out.writeLong(creationTimestamp);
 		if (this.getRootFlow() != null) {
 			// avoid bogus NullPointerExceptions
@@ -547,11 +493,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		out.writeObject(executingFlowSessions);
 	}
 
-	public synchronized void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader,
-			TransactionSynchronizer transactionSynchronizer) {
+	public synchronized void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader) {
 		// implementation note: we cannot integrate this code into the
 		// {@link readExternal(ObjectInput)} method since we need the flow
-		// locator, listener list and tx synchronizer!
+		// locator and listener list
 		if (isHydrated()) {
 			// nothing to do, we're already hydrated
 			return;
@@ -576,7 +521,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		listenerList = new FlowExecutionListenerList();
 		listenerList.add(listenerLoader.getListeners(rootFlow));
-		this.transactionSynchronizer = transactionSynchronizer;
 		if (logger.isDebugEnabled()) {
 			logger.debug("Rehydrated");
 		}
@@ -619,10 +563,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		else {
 			if (isHydrated()) {
-				return new ToStringCreator(this).append("key", getKey()).append("activeFlow",
-						getActiveSession().getFlow().getId()).append("currentState", getCurrentState().getId()).append(
-						"rootFlow", getRootFlow().getId()).append("executingFlowSessions", executingFlowSessions)
-						.toString();
+				return new ToStringCreator(this).append("activeFlow", getActiveSession().getFlow().getId()).append(
+						"currentState", getCurrentState().getId()).append("rootFlow", getRootFlow().getId()).append(
+						"executingFlowSessions", executingFlowSessions).toString();
 			}
 			else {
 				return "[Unhydrated " + getCaption() + "]";

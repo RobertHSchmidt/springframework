@@ -16,9 +16,6 @@
 		<property name="listener">
 			<bean class="org.springframework.webflow.execution.FlowExecutionManagerTests$SimpleFlowExecutionListener"/>
 		</property>
-		<property name="transactionSynchronizer">
-			<bean class="org.springframework.webflow.execution.DataStoreTokenTransactionSynchronizer"/>
-		</property>
 	</bean>
 
 </beans>

@@ -16,10 +16,10 @@
 package org.springframework.webflow.execution;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.MutableAttributeSource;
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 
@@ -97,7 +97,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 * data store.
 	 */
 	protected FlowExecution getFlowExecution(Serializable id, ExternalContext context) throws FlowExecutionStorageException {
-		return (FlowExecution)getDataStore(context).getAttribute(attributeName(id));
+		return (FlowExecution)getDataStore(context).get(attributeName(id));
 	}
 
 	public Serializable save(Serializable id, FlowExecution flowExecution, ExternalContext context)
@@ -135,7 +135,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 */
 	protected void setFlowExecution(Serializable id, FlowExecution flowExecution, ExternalContext context)
 			throws FlowExecutionStorageException {
-		getDataStore(context).setAttribute(attributeName(id), flowExecution);
+		getDataStore(context).put(attributeName(id), flowExecution);
 	}
 
 	public boolean supportsTwoPhaseSave() {
@@ -163,7 +163,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 * Remove identified attribute value from the data store.
 	 */
 	protected void removeFlowExecution(Serializable id, ExternalContext context) throws FlowExecutionStorageException {
-		getDataStore(context).removeAttribute(attributeName(id));
+		getDataStore(context).remove(attributeName(id));
 	}
 
 	// subclassing hooks
@@ -182,7 +182,7 @@ public class DataStoreFlowExecutionStorage implements FlowExecutionStorage {
 	 * @param sourceEvent the event
 	 * @return the data store
 	 */
-	protected MutableAttributeSource getDataStore(ExternalContext context) {
+	protected Map getDataStore(ExternalContext context) {
 		return dataStoreAccessor.getDataStore(context);
 	}
 }

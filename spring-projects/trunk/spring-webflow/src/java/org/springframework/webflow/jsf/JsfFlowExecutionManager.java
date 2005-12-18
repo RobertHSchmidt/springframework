@@ -31,7 +31,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.execution.AbstractTokenTransactionSynchronizer;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.FlowLocator;
@@ -236,12 +235,6 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
 			Map model = new HashMap();
 			exposeFlowExecutionAttributes(model, flowExecutionId, flowExecution);
-			// this is pretty unclean
-			Serializable transactionId = (Serializable)context.getExternalContext().getRequestParameterMap().get(
-					AbstractTokenTransactionSynchronizer.TRANSACTION_TOKEN_PARAMETER_NAME);
-			if (transactionId != null) {
-				model.put(AbstractTokenTransactionSynchronizer.TRANSACTION_TOKEN_ATTRIBUTE_NAME, transactionId);
-			}
 			putInto(context.getExternalContext().getRequestMap(), model);
 		}
 	}

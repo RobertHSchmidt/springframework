@@ -204,13 +204,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	private KeyGenerator keyGenerator = new RandomGuidKeyGenerator();
 
 	/**
-	 * The strategy for demarcating a logical application transaction within an
-	 * executing flow. Defaults to a token-based strategy, where the transaction
-	 * token is managed in flow scope.
-	 */
-	private TransactionSynchronizer transactionSynchronizer = new FlowScopeTokenTransactionSynchronizer();
-
-	/**
 	 * Identifies a flow definition to launch a new execution for, defaults to
 	 * ("_flowId").
 	 */
@@ -356,7 +349,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 */
 	public void setListenersCriteria(Collection listeners, FlowExecutionListenerCriteria criteria) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Setting listeners: " + listeners + " with criteria: " + criteria);
+			logger.debug("Setting listeners " + listeners + " with criteria " + criteria);
 		}
 		for (Iterator it = listeners.iterator(); it.hasNext();) {
 			FlowExecutionListener listener = (FlowExecutionListener)it.next();
@@ -458,22 +451,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Return the application transaction synchronization strategy to use. This
-	 * defaults to a <i>synchronizer token</i> based transaction management
-	 * system, as implemented by {@link FlowScopeTokenTransactionSynchronizer}.
-	 */
-	protected TransactionSynchronizer getTransactionSynchronizer() {
-		return transactionSynchronizer;
-	}
-
-	/**
-	 * Set the application transaction synchronization strategy to use.
-	 */
-	public void setTransactionSynchronizer(TransactionSynchronizer transactionSynchronizer) {
-		this.transactionSynchronizer = transactionSynchronizer;
-	}
-
-	/**
 	 * Returns the FlowExecution key generation strategy.
 	 */
 	protected KeyGenerator getKeyGenerator() {
@@ -562,15 +539,15 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	// event processing
 
 	/**
-	 * Signal the occurence of an external user event. This is the central entry
-	 * point into the webflow system for managing all executing flows.
+	 * Signal the occurrence of an external user event. This is the central
+	 * entry point into the webflow system for managing all executing flows.
 	 * @param context the context in which the external event occured
 	 * @return the view descriptor of the model and view to render
 	 * @throws FlowExecutionManagementException an exception occured during
 	 * event processing
 	 */
 	public ViewSelection onEvent(ExternalContext context) throws FlowExecutionManagementException {
-		Serializable flowExecutionId = getFlowExecutionId(context);
+		Serializable flowExecutionId = extractFlowExecutionId(context);
 		FlowExecution flowExecution = getFlowExecution(flowExecutionId, context);
 		ViewSelection selectedView;
 		try {
@@ -613,7 +590,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param context the context in which the external user event occured
 	 * @return the obtained id or <code>null</code> if not found
 	 */
-	public Serializable getFlowExecutionId(ExternalContext context) {
+	public Serializable extractFlowExecutionId(ExternalContext context) {
 		return verifySingleStringInputParameter(getFlowExecutionIdParameterName(), context.getRequestParameterMap()
 				.get(getFlowExecutionIdParameterName()));
 	}
@@ -626,8 +603,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @return the created flow execution
 	 */
 	protected FlowExecution createFlowExecution(Flow flow) {
-		FlowExecution flowExecution = new FlowExecutionImpl(getKeyGenerator().generate(), flow, getListeners(flow),
-				getTransactionSynchronizer());
+		FlowExecution flowExecution = new FlowExecutionImpl(flow, getListeners(flow));
 		flowExecution.getListeners().fireCreated(flowExecution);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new flow execution for flow definition '" + flow.getId() + "'");
@@ -685,10 +661,10 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		// information about it
 		FlowExecution flowExecution = getStorage().load(flowExecutionId, context);
 		// rehydrate the execution if neccessary (if it had been serialized out)
-		flowExecution.rehydrate(getFlowLocator(), this, getTransactionSynchronizer());
+		flowExecution.rehydrate(getFlowLocator(), this);
 		flowExecution.getListeners().fireLoaded(flowExecution, flowExecutionId);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Loaded existing flow execution from storage with id: '" + flowExecutionId + "'");
+			logger.debug("Loaded existing flow execution from storage with id '" + flowExecutionId + "'");
 		}
 		return flowExecution;
 	}
@@ -771,7 +747,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		flowExecutionId = getStorage().save(flowExecutionId, flowExecution, context);
 		flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Saved flow execution out to storage with id: '" + flowExecutionId + "'");
+			logger.debug("Saved flow execution out to storage with id '" + flowExecutionId + "'");
 		}
 		return flowExecutionId;
 	}
@@ -913,7 +889,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 				}
 				else {
 					throw new IllegalArgumentException("Parameter '" + parameterName
-							+ " should have been a single string value but was: '" + parameterValue + "' of class: + "
+							+ " should have been a single string value but was '" + parameterValue + "' of class + "
 							+ parameterValue.getClass());
 				}
 			}

@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.binding.AttributeSource;
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -45,7 +44,7 @@ import org.springframework.core.style.ToStringCreator;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ViewSelection implements AttributeSource, Serializable {
+public class ViewSelection implements Serializable {
 
 	/**
 	 * The name of the view (or page) to render.
@@ -181,16 +180,6 @@ public class ViewSelection implements AttributeSource, Serializable {
 	 */
 	public boolean isEmpty() {
 		return (this.viewName == null && this.model == null);
-	}
-
-	// attribute source implementation
-
-	public boolean containsAttribute(String attributeName) {
-		return model.containsKey(attributeName);
-	}
-
-	public Object getAttribute(String attributeName) {
-		return model.get(attributeName);
 	}
 
 	public String toString() {

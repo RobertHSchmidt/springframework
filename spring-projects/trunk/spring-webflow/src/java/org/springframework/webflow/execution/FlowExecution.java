@@ -112,11 +112,8 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @param flowLocator the flow locator
 	 * @param listenerLoader the flow execution listener loader to use to obtain
 	 * all listeners that apply
-	 * @param transactionSynchronizer application transaction synchronization
-	 * strategy to use
 	 */
-	public void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader,
-			TransactionSynchronizer transactionSynchronizer);
+	public void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader);
 
 	/**
 	 * Return a list of listeners monitoring the lifecycle of this flow

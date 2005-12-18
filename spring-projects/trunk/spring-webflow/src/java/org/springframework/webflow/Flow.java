@@ -107,11 +107,6 @@ import org.springframework.util.StringUtils;
 public class Flow extends AnnotatedObject {
 
 	/**
-	 * Name of the property used to indicate if this flow is transactional.
-	 */
-	public static final String TRANSACTIONAL_PROPERTY = "transactional";
-
-	/**
 	 * Logger, for use in subclasses.
 	 */
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -185,21 +180,6 @@ public class Flow extends AnnotatedObject {
 	public void setId(String id) {
 		Assert.hasText(id, "This flow must have a unique, non-blank identifier");
 		this.id = id;
-	}
-
-	/**
-	 * Is this flow annotated as transactional?
-	 * @return true if yes, false otherwise
-	 */
-	public boolean isTransactional() {
-		return getBooleanProperty(TRANSACTIONAL_PROPERTY, false);
-	}
-
-	/**
-	 * Set whether or not this flow is transactional.
-	 */
-	public void setTransactional(boolean transactional) {
-		setProperty(TRANSACTIONAL_PROPERTY, Boolean.valueOf(transactional));
 	}
 
 	/**
@@ -578,9 +558,6 @@ public class Flow extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 */
 	public ViewSelection start(State startState, FlowExecutionControlContext context) {
-		if (isTransactional()) {
-			context.beginTransaction();
-		}
 		if (startState == null) {
 			startState = getStartState();
 		}
@@ -612,9 +589,6 @@ public class Flow extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 */
 	public void end(FlowExecutionControlContext context) {
-		if (isTransactional()) {
-			context.endTransaction();
-		}
 		endActionList.execute(context);
 	}
 

@@ -15,12 +15,14 @@
  */
 package org.springframework.webflow.action;
 
-import org.springframework.binding.AttributeSource;
+import java.util.Map;
+
 import org.springframework.binding.method.MethodKey;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker;
+
 
 /**
  * Action implementation that bundles two or more action execution methods into
@@ -174,10 +176,10 @@ public class MultiAction extends AbstractAction {
 	 */
 	public static class DefaultActionMethodResolver implements ActionMethodResolver {
 		public MethodKey getMethodKey(RequestContext context) {
-			AttributeSource properties = context.getProperties();
-			if (properties.containsAttribute(AnnotatedAction.METHOD_PROPERTY)) {
+			Map properties = context.getProperties();
+			if (properties.containsKey(AnnotatedAction.METHOD_PROPERTY)) {
 				// use specified execute method name
-				return (MethodKey)properties.getAttribute(AnnotatedAction.METHOD_PROPERTY);
+				return (MethodKey)properties.get(AnnotatedAction.METHOD_PROPERTY);
 			}
 			else {
 				// use current state name as method name

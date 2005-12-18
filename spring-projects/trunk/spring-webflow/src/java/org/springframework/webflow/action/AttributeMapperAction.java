@@ -18,10 +18,10 @@ package org.springframework.webflow.action;
 import java.util.Collections;
 import java.util.Map;
 
-import org.springframework.binding.AttributeMapper;
 import org.springframework.binding.convert.ConversionExecutor;
-import org.springframework.binding.support.Mapping;
-import org.springframework.binding.support.ParameterizableAttributeMapper;
+import org.springframework.binding.mapping.AttributeMapper;
+import org.springframework.binding.mapping.Mapping;
+import org.springframework.binding.mapping.ParameterizableAttributeMapper;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;

@@ -41,31 +41,31 @@ import org.springframework.webflow.execution.portlet.PortletExternalContext;
  * @author Erwin Vervaet
  */
 public class SetPortletModeAction extends AbstractAction {
-	
+
 	private static final Constants PORTLET_MODE_CONSTANTS = new Constants(PortletMode.class);
-	
+
 	/**
 	 * The portlet mode to set can be specified in an action state action
 	 * property with this name.
 	 */
 	public static final String PORTLET_MODE_PROPERTY = "portletMode";
-	
+
 	private PortletMode portletMode = PortletMode.VIEW;
-	
+
 	/**
 	 * Returns the mode that will be set in the response.
 	 */
 	public PortletMode getPortletMode() {
 		return portletMode;
 	}
-	
+
 	/**
 	 * Sets the mode that will be set in the response.
 	 */
 	public void setPortletMode(PortletMode mode) {
 		this.portletMode = mode;
 	}
-	
+
 	/**
 	 * Convenience setter to set the mode as a string.
 	 * @param encodedMode mode as a string, e.g. "HELP", "VIEW" or "EDIT"
@@ -76,22 +76,21 @@ public class SetPortletModeAction extends AbstractAction {
 
 	/**
 	 * Sets the PortletMode.
-	 * @param context the action execution context, for accessing and setting data
-	 *        in "flow scope" or "request scope"
+	 * @param context the action execution context, for accessing and setting
+	 * data in "flow scope" or "request scope"
 	 * @return the action result event
-	 * @throws Exception an <b>unrecoverable </b> exception occured, either checked or
-	 *         unchecked
+	 * @throws Exception an <b>unrecoverable </b> exception occured, either
+	 * checked or unchecked
 	 */
 	protected Event doExecute(RequestContext context) throws Exception {
 		Assert.isInstanceOf(PortletExternalContext.class, context.getExternalContext(), "'"
-				+ ClassUtils.getShortName(this.getClass())
-				+ "' can only work with 'PortletExternalContext'");
+				+ ClassUtils.getShortName(this.getClass()) + "' can only work with 'PortletExternalContext'");
 		PortletExternalContext portletContext = (PortletExternalContext)context.getExternalContext();
 		if (portletContext.getResponse() instanceof ActionResponse) {
 			PortletMode mode = getPortletMode();
-			if (context.getProperties().containsAttribute(PORTLET_MODE_PROPERTY)) {
-				mode = (PortletMode)PORTLET_MODE_CONSTANTS.asObject(
-						(String)context.getProperties().getAttribute(PORTLET_MODE_PROPERTY));
+			if (context.getProperties().containsKey(PORTLET_MODE_PROPERTY)) {
+				mode = (PortletMode)PORTLET_MODE_CONSTANTS.asObject((String)context.getProperties().get(
+						PORTLET_MODE_PROPERTY));
 			}
 			((ActionResponse)portletContext.getResponse()).setPortletMode(mode);
 			return success();
@@ -100,10 +99,9 @@ public class SetPortletModeAction extends AbstractAction {
 			// portlet mode and the window state can be changed through
 			// ActionResponse only, if this is not the case, it means that this
 			// action has been invoked directly in a RenderRequest
-			throw new ActionExecutionException(
-					context.getFlowExecutionContext().getCurrentState(), this, context.getProperties(),
-					"This SetPortletModeAction can only work with 'ActionResponse' " +
-					"-- make sure you are not invoking it in a RenderRequest", null);
+			throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), this, context
+					.getProperties(), "This SetPortletModeAction can only work with 'ActionResponse' "
+					+ "-- make sure you are not invoking it in a RenderRequest", null);
 		}
 	}
 }

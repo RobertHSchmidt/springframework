@@ -135,7 +135,6 @@ public class FlowTests extends TestCase {
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		flow.start(null, context);
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
-		assertTrue("Transaction active but should not be", !context.inTransaction(false));
 	}
 
 	public void testStartInCustomStartState() {
@@ -150,41 +149,6 @@ public class FlowTests extends TestCase {
 		context.setCurrentState(flow.getRequiredState("myState2"));
 		flow.start(customStartState, context);
 		assertTrue("Should have ended", !context.isActive());
-	}
-
-	public void testStartTransactional() {
-		flow.setProperty("transactional", new Boolean(true));
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
-		flow.start(null, context);
-		assertTrue("Transaction not active but should be", context.inTransaction(false));
-	}
-
-	public void testResumeTransactional() {
-		flow = new Flow("myFlow");
-		ViewState state1 = new ViewState(flow, "myState1");
-		state1.setViewSelector(new SimpleViewSelector("myView"));
-		state1.addTransition(new Transition("myState2"));
-
-		ViewState state2 = new ViewState(flow, "myState2");
-		state2.setViewSelector(new SimpleViewSelector("myView2"));
-		state2.addTransition(new Transition("myState3"));
-
-		EndState state3 = new EndState(flow, "myState3");
-		state3.setViewSelector(new SimpleViewSelector("myView3"));
-
-		flow.setProperty("transactional", new Boolean(true));
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
-		flow.start(null, context);
-		flow.onEvent(new Event(this, "submit"), context);
-		assertTrue("Transaction not active but should be", context.inTransaction(false));
-	}
-
-	public void testEnd() {
-		flow.setProperty("transactional", new Boolean(true));
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
-		flow.start(null, context);
-		flow.end(context);
-		assertTrue("Transaction active but should not be", !context.inTransaction(false));
 	}
 
 	public void testHandleStateException() {

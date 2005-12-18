@@ -329,7 +329,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		ViewState state = new ViewState(getFlow(), stateId);
 		state.setViewSelector(viewSelector);
 		state.addTransitions(transitions);
-		state.setProperties(properties);
+		state.addProperties(properties);
 		return state;
 	}
 
@@ -435,7 +435,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		ActionState state = new ActionState(getFlow(), stateId);
 		state.addTransitions(transitions);
 		state.getActionList().addAll(actions);
-		state.setProperties(properties);
+		state.addProperties(properties);
 		return state;
 	}
 
@@ -608,7 +608,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		SubflowState state = new SubflowState(getFlow(), stateId, subFlow);
 		state.addTransitions(transitions);
 		state.setAttributeMapper(attributeMapper);
-		state.setProperties(properties);
+		state.addProperties(properties);
 		return state;
 	}
 
@@ -707,7 +707,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 			throws IllegalArgumentException {
 		DecisionState state = new DecisionState(getFlow(), stateId);
 		state.addTransitions(transitions);
-		state.setProperties(properties);
+		state.addProperties(properties);
 		return state;
 	}
 
@@ -774,7 +774,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 			throws IllegalArgumentException {
 		EndState state = new EndState(getFlow(), stateId);
 		state.setViewSelector(viewSelector);
-		state.setProperties(properties);
+		state.addProperties(properties);
 		return state;
 	}
 
@@ -803,7 +803,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected Transition on(TransitionCriteria criteria, String stateId, Map properties) {
 		Transition transition = new Transition(criteria, stateId);
-		transition.setProperties(properties);
+		transition.addProperties(properties);
 		return transition;
 	}
 

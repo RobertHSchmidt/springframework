@@ -93,7 +93,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 */
 	public AnnotatedAction(Action targetAction, Map properties) {
 		setTargetAction(targetAction);
-		setProperties(properties);
+		addProperties(properties);
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 
 	public Event execute(RequestContext context) throws Exception {
 		try {
-			context.setProperties(this);
+			context.setProperties(getProperties());
 			Event result = getTargetAction().execute(context);
 			return postProcessResult(result);
 		}

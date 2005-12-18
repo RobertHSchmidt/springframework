@@ -15,7 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.binding.MutableAttributeSource;
+import java.util.Map;
+
 import org.springframework.webflow.ExternalContext;
 
 /**
@@ -49,5 +50,5 @@ public interface DataStoreAccessor {
 	 * assistance in locating the datastore.
 	 * @return the mutable attribute source providing access to the data store
 	 */
-	public MutableAttributeSource getDataStore(ExternalContext context);
+	public Map getDataStore(ExternalContext context);
 }

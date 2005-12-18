@@ -18,7 +18,7 @@ package org.springframework.webflow.action;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.binding.support.Assert;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Event;
@@ -163,8 +163,8 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * @return the bean id
 	 */
 	protected String getActionId(RequestContext context) {
-		if (context.getProperties().containsAttribute(ACTION_ID_PROPERTY)) {
-			return (String)context.getProperties().getAttribute(ACTION_ID_PROPERTY);
+		if (context.getProperties().containsKey(ACTION_ID_PROPERTY)) {
+			return (String)context.getProperties().get(ACTION_ID_PROPERTY);
 		}
 		else {
 			return getActionId();

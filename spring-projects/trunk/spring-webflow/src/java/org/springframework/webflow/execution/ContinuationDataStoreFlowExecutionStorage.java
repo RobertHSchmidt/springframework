@@ -74,11 +74,12 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 	protected FlowExecution getFlowExecution(Serializable id, ExternalContext context)
 			throws FlowExecutionStorageException {
 		try {
-			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getDataStore(context).getAttribute(
+			FlowExecutionContinuation continuation = (FlowExecutionContinuation)getDataStore(context).get(
 					attributeName(id));
 			if (continuation != null) {
 				return continuation.readFlowExecution();
-			} else {
+			}
+			else {
 				return null;
 			}
 		}
@@ -101,8 +102,7 @@ public class ContinuationDataStoreFlowExecutionStorage extends DataStoreFlowExec
 	protected void setFlowExecution(Serializable id, FlowExecution flowExecution, ExternalContext context)
 			throws FlowExecutionStorageException {
 		try {
-			getDataStore(context).setAttribute(attributeName(id),
-					new FlowExecutionContinuation(flowExecution, compress));
+			getDataStore(context).put(attributeName(id), new FlowExecutionContinuation(flowExecution, compress));
 		}
 		catch (NotSerializableException e) {
 			throw new FlowExecutionSerializationException(this, id, flowExecution,

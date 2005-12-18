@@ -19,9 +19,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.binding.AttributeSource;
-import org.springframework.binding.MutableAttributeSource;
-import org.springframework.binding.support.MapAttributeSource;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
@@ -67,7 +64,7 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 
 	private Transition lastTransition;
 
-	private AttributeSource properties = new MapAttributeSource();
+	private Map properties = new HashMap();
 
 	private boolean inTransaction;
 
@@ -153,21 +150,21 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 		this.lastTransition = lastTransition;
 	}
 
-	public AttributeSource getProperties() {
+	public Map getProperties() {
 		return properties;
 	}
 
-	public void setProperties(AttributeSource properties) {
+	public void setProperties(Map properties) {
 		this.properties = properties;
 	}
 
 	/**
 	 * Set an execution property.
-	 * @param attributeName the attribute name
-	 * @param attributeValue the attribute value
+	 * @param propertyName the attribute name
+	 * @param propertyValue the attribute value
 	 */
-	public void setProperty(String attributeName, Object attributeValue) {
-		((MutableAttributeSource)this.properties).setAttribute(attributeName, attributeValue);
+	public void setProperty(String propertyName, Object propertyValue) {
+		properties.put(propertyName, propertyValue);
 	}
 
 	public Map getModel() {
@@ -176,26 +173,6 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 		model.putAll(getFlowScope().getAttributeMap());
 		model.putAll(getRequestScope().getAttributeMap());
 		return model;
-	}
-
-	public boolean inTransaction(boolean end) {
-		boolean result = this.inTransaction;
-		if (end) {
-			endTransaction();
-		}
-		return result;
-	}
-
-	public void assertInTransaction(boolean end) throws IllegalStateException {
-		Assert.state(inTransaction(end), "Not in application transaction but is expected to be");
-	}
-
-	public void beginTransaction() {
-		inTransaction = true;
-	}
-
-	public void endTransaction() {
-		inTransaction = false;
 	}
 
 	// implementing FlowExecutionContext

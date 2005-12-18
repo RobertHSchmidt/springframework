@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.binding.MutableAttributeSource;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
@@ -47,7 +46,7 @@ import org.springframework.util.Assert;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class Scope implements MutableAttributeSource, Map, Serializable {
+public class Scope implements Map, Serializable {
 
 	/**
 	 * Serialization id.

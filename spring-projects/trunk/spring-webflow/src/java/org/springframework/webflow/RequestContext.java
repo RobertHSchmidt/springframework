@@ -17,8 +17,6 @@ package org.springframework.webflow;
 
 import java.util.Map;
 
-import org.springframework.binding.AttributeSource;
-
 /**
  * Central interface that allows clients to access contextual information about
  * an ongoing flow execution within the context of a single client request. The
@@ -118,18 +116,6 @@ public interface RequestContext {
 	public Scope getFlowScope();
 
 	/**
-	 * Returns the last result event for the State with the specified id. A
-	 * state result event is the event that drove a transition out of a state to
-	 * a new state. If the state provided was never entered for this request,
-	 * <code>null</code> is returned.
-	 * <p>
-	 * This method allows consistent access to state result event parameters.
-	 * @param stateId the state id
-	 * @return the state result event, possibly <code>null</code>
-	 */
-	public Event getLastResultEvent(String stateId);
-
-	/**
 	 * Returns the last event signaled during this request. The event may or may
 	 * not have caused a state transition to happen.
 	 * @return the last signaled event
@@ -148,13 +134,13 @@ public interface RequestContext {
 	 * request.
 	 * @return the execution properties, or empty if not set
 	 */
-	public AttributeSource getProperties();
+	public Map getProperties();
 
 	/**
 	 * Update contextual execution properties for given request context.
 	 * @param properties the execution properties
 	 */
-	public void setProperties(AttributeSource properties);
+	public void setProperties(Map properties);
 
 	/**
 	 * Returns the data model for this context, suitable for exposing to clients
@@ -163,36 +149,4 @@ public interface RequestContext {
 	 * @return the model that can be exposed to a client
 	 */
 	public Map getModel();
-
-	// application transaction demarcation
-
-	/**
-	 * Is the caller participating in the application transaction currently
-	 * active in the flow execution?
-	 * @param end indicates whether or not the transaction should end after
-	 * checking its status
-	 * @return true if it is participating in the active transaction, false
-	 * otherwise
-	 */
-	public boolean inTransaction(boolean end);
-
-	/**
-	 * Assert that there is an active application transaction in the flow
-	 * execution and that the caller is participating in it.
-	 * @param end indicates whether or not the transaction should end after
-	 * checking its status
-	 * @throws IllegalStateException there is no active transaction in the flow
-	 * execution, or the caller is not participating in it
-	 */
-	public void assertInTransaction(boolean end) throws RequestNotInTransactionException;
-
-	/**
-	 * Start a new transaction in the flow execution.
-	 */
-	public void beginTransaction();
-
-	/**
-	 * End the active transaction in the flow execution.
-	 */
-	public void endTransaction();
 }

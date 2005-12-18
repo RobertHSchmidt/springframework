@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,13 +32,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.binding.MutableAttributeSource;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.method.MethodKey;
-import org.springframework.binding.support.MapAttributeSource;
-import org.springframework.binding.support.Mapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
@@ -83,8 +82,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -694,7 +693,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 					element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
 			action.setResultScope(scopeType);
 		}
-		parseAndSetProperties(element, action);
+		action.addProperties(parseProperties(element));
 		return action;
 	}
 
@@ -711,27 +710,19 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * associated value the value.
 	 */
 	protected Map parseProperties(Element element) {
-		MapAttributeSource properties = new MapAttributeSource();
-		parseAndSetProperties(element, properties);
-		return properties.getAttributeMap();
-	}
-
-	/**
-	 * Parse all properties defined as nested elements of given element and add
-	 * them to given set of properties.
-	 */
-	protected void parseAndSetProperties(Element element, MutableAttributeSource properties) {
+		Map properties = new HashMap();
 		List propertyElements = DomUtils.getChildElementsByTagName(element, PROPERTY_ELEMENT);
 		for (int i = 0; i < propertyElements.size(); i++) {
 			parseAndSetProperty((Element)propertyElements.get(i), properties);
 		}
+		return properties;
 	}
 
 	/**
 	 * Parse a property definition from given element and add the property to
 	 * given set.
 	 */
-	protected void parseAndSetProperty(Element element, MutableAttributeSource properties) {
+	protected void parseAndSetProperty(Element element, Map properties) {
 		String name = element.getAttribute(NAME_ATTRIBUTE);
 		String value = null;
 		if (element.hasAttribute(VALUE_ATTRIBUTE)) {
@@ -742,7 +733,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Assert.state(valueElements.size() == 1, "A property value should be specified for property '" + name + "'");
 			value = DomUtils.getTextValue((Element)valueElements.get(0));
 		}
-		properties.setAttribute(name, convertPropertyValue(element, value));
+		properties.put(name, convertPropertyValue(element, value));
 	}
 
 	/**

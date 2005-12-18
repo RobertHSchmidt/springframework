@@ -17,15 +17,10 @@ package org.springframework.webflow.execution;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.AttributeSource;
-import org.springframework.binding.support.EmptyAttributeSource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.DecisionState;
@@ -77,11 +72,6 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	private Event lastEvent;
 
 	/**
-	 * The list of state result events that have occured in this context.
-	 */
-	private List resultEvents = new LinkedList();
-
-	/**
 	 * The last transition that executed in this context.
 	 */
 	private Transition lastTransition;
@@ -89,7 +79,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	/**
 	 * Holder for contextual execution properties.
 	 */
-	private AttributeSource executionProperties = EmptyAttributeSource.INSTANCE;
+	private Map executionProperties = Collections.EMPTY_MAP;
 
 	/**
 	 * The request scope data map.
@@ -113,17 +103,6 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return externalContext;
 	}
 
-	public Event getLastResultEvent(String stateId) {
-		Iterator it = resultEvents.iterator();
-		while (it.hasNext()) {
-			StateResultEvent event = (StateResultEvent)it.next();
-			if (event.getStateId().equals(stateId)) {
-				return event.getEvent();
-			}
-		}
-		return null;
-	}
-
 	public Event getLastEvent() {
 		return lastEvent;
 	}
@@ -144,44 +123,25 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return lastTransition;
 	}
 
-	public AttributeSource getProperties() {
+	public Map getProperties() {
 		return executionProperties;
 	}
 
-	public void setProperties(AttributeSource properties) {
+	public void setProperties(Map properties) {
 		if (properties != null) {
 			executionProperties = properties;
 		}
 		else {
-			executionProperties = EmptyAttributeSource.INSTANCE;
+			executionProperties = Collections.EMPTY_MAP;
 		}
 	}
 
 	public Map getModel() {
-		// merge flow, request, and state result event parameters
-		Map stateResultParameters = getStateResultParameterMaps();
-		Map model = new HashMap(getFlowScope().size() + getRequestScope().size() + stateResultParameters.size() + 1);
+		// merge flow and request scope
+		Map model = new HashMap(getFlowScope().size() + getRequestScope().size());
 		model.putAll(getFlowScope().getAttributeMap());
 		model.putAll(getRequestScope().getAttributeMap());
-		model.putAll(stateResultParameters);
-		model.putAll(flowExecution.getTransactionSynchronizer().getModel(this));
 		return model;
-	}
-
-	public boolean inTransaction(boolean end) {
-		return flowExecution.getTransactionSynchronizer().inTransaction(this, end);
-	}
-
-	public void assertInTransaction(boolean end) throws IllegalStateException {
-		flowExecution.getTransactionSynchronizer().assertInTransaction(this, end);
-	}
-
-	public void beginTransaction() {
-		flowExecution.getTransactionSynchronizer().beginTransaction(this);
-	}
-
-	public void endTransaction() {
-		flowExecution.getTransactionSynchronizer().endTransaction(this);
 	}
 
 	// implementing FlowExecutionControlContext
@@ -192,7 +152,6 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	}
 
 	public void setLastTransition(Transition lastTransition) {
-		this.resultEvents.add(new StateResultEvent(lastTransition.getSourceState().getId(), getLastEvent()));
 		this.lastTransition = lastTransition;
 	}
 
@@ -285,87 +244,9 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return getFlowExecutionContext().getCurrentState();
 	}
 
-	private Map getStateResultParameterMaps() {
-		if (resultEvents.size() == 0) {
-			return Collections.EMPTY_MAP;
-		}
-		Map parameters = new HashMap(this.resultEvents.size());
-		Iterator it = this.resultEvents.iterator();
-		while (it.hasNext()) {
-			StateResultEvent event = (StateResultEvent)it.next();
-			parameters.put(event.getStateId(), event.getParameters());
-		}
-		return parameters;
-	}
-
-	/**
-	 * A parameter object storing the result event for exactly one state that
-	 * was entered and transitioned out of in this state context.
-	 * 
-	 * @author Keith Donald
-	 */
-	private static class StateResultEvent implements AttributeSource {
-
-		/**
-		 * The id of the state that transitioned.
-		 */
-		private String stateId;
-
-		/**
-		 * The event that caused the transition.
-		 */
-		private Event event;
-
-		/**
-		 * Create a new state result event.
-		 * @param stateId the state id
-		 * @param event the event
-		 */
-		public StateResultEvent(String stateId, Event event) {
-			Assert.hasText(stateId, "The stateId is required");
-			this.stateId = stateId;
-			this.event = event;
-		}
-
-		public boolean containsAttribute(String attributeName) {
-			return event.containsAttribute(attributeName);
-		}
-
-		public Object getAttribute(String attributeName) {
-			return event.getAttribute(attributeName);
-		}
-
-		/**
-		 * Returns the id of the state that was transitioned out of.
-		 */
-		public String getStateId() {
-			return stateId;
-		}
-
-		public Map getParameters() {
-			if (event != null) {
-				return event.getParameters();
-			}
-			else {
-				return Collections.EMPTY_MAP;
-			}
-		}
-
-		/**
-		 * Returns the event that triggered the state transition.
-		 */
-		public Event getEvent() {
-			return event;
-		}
-
-		public String toString() {
-			return new ToStringCreator(this).append("stateId", stateId).append("event", event).toString();
-		}
-	}
-
 	public String toString() {
 		return new ToStringCreator(this).append("externalContext", externalContext)
-				.append("resultEvents", resultEvents).append("requestScope", requestScope).append(
-						"executionProperties", executionProperties).append("flowExecution", flowExecution).toString();
+				.append("requestScope", requestScope).append("executionProperties", executionProperties).append(
+						"flowExecution", flowExecution).toString();
 	}
 }
