@@ -12,7 +12,7 @@
 		<action bean="mastermindGame"/>
 		<transition on="invalidInput" to="enterGuess"/>
 		<transition on="retry" to="enterGuess"/>
-		<transition on="success" to="showAnswer"/>
+		<transition on="correct" to="showAnswer"/>
 	</action-state>
 	
 	<end-state id="showAnswer" view="mastermind.showAnswer"/>

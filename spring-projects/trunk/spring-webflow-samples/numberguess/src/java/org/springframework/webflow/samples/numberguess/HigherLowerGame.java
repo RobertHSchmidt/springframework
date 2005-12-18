@@ -84,7 +84,7 @@ public class HigherLowerGame extends MultiAction implements Serializable {
 				Calendar now = Calendar.getInstance();
 				long durationMilliseconds = now.getTime().getTime() - start.getTime().getTime();
 				durationSeconds = durationMilliseconds / 1000;
-				return success();
+				return result("correct");
 			}
 		}
 	}
