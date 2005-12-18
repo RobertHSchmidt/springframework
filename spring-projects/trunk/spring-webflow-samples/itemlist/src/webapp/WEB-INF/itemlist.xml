@@ -3,6 +3,7 @@
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
 <flow start-state="displayItemlist">
+	<var name="list" type="java.util.ArrayList"/>
 
 	<view-state id="displayItemlist" view="itemlist">
 		<transition on="add" to="createItem"/>

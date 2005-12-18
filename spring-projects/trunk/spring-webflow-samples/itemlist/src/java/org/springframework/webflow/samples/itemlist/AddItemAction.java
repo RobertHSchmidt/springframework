@@ -22,7 +22,7 @@ import org.springframework.webflow.action.AbstractAction;
 
 public class AddItemAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
-		List list = (List)context.getFlowScope().getAttribute("list", List.class);
+		List list = (List)context.getFlowScope().getRequiredAttribute("list", List.class);
 		String data = (String)context.getExternalContext().getRequestParameterMap().get("data");
 		if (data != null && data.length() > 0) {
 			list.add(data);
