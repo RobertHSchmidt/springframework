@@ -21,7 +21,8 @@ public class Parameter implements Serializable {
 	private Class type;
 
 	/**
-	 * The name of the parameter, e.g "accountNumber".
+	 * The name of the parameter as an evaluatable expression, e.g
+	 * "accountNumber".
 	 */
 	private Expression name;
 
