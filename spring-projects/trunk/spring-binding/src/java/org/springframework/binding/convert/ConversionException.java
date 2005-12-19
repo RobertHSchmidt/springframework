@@ -34,6 +34,7 @@ public class ConversionException extends NestedRuntimeException {
 	private Class targetClass;
 
 	/**
+	 * Creates a new conversion exception.
 	 * @param value
 	 * @param targetClass
 	 */
@@ -45,6 +46,7 @@ public class ConversionException extends NestedRuntimeException {
 	}
 
 	/**
+	 * Creates a new conversion exception.
 	 * @param value
 	 * @param targetClass
 	 * @param cause
@@ -57,6 +59,7 @@ public class ConversionException extends NestedRuntimeException {
 	}
 
 	/**
+	 * Creates a new conversion exception.
 	 * @param value
 	 * @param targetClass
 	 * @param cause

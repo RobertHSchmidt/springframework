@@ -30,17 +30,6 @@ import org.springframework.core.enums.ShortCodedLabeledEnum;
  */
 public class DefaultConversionServiceTests extends TestCase {
 
-	public void testNoConvertersRegistered() {
-		DefaultConversionService service = new DefaultConversionService(false);
-		try {
-			service.getConversionExecutor(String.class, Integer.class);
-			fail("Should have thrown an ise");
-		}
-		catch (IllegalStateException e) {
-
-		}
-	}
-
 	public void testTargetClassNotSupported() {
 		DefaultConversionService service = new DefaultConversionService();
 		try {

@@ -29,7 +29,8 @@ import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.Converter;
 
 /**
- * Default, local implementation of a conversion service.
+ * Default, local implementation of a conversion service deployable within a
+ * Spring bean factory.
  * <p>
  * Acts as bean factory post processor, registering property editor adapters for
  * each supported conversion with a <code>java.lang.String sourceClass</code>.
@@ -40,6 +41,9 @@ import org.springframework.binding.convert.Converter;
 public class BeanFactoryAwareConversionService extends DefaultConversionService implements InitializingBean,
 		BeanFactoryAware, BeanFactoryPostProcessor {
 
+	/**
+	 * The Spring Bean Factory.
+	 */
 	private BeanFactory beanFactory;
 
 	public BeanFactoryAwareConversionService() {

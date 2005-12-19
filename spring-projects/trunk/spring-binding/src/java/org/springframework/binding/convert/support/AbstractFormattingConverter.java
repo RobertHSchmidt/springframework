@@ -19,19 +19,27 @@ import org.springframework.binding.format.FormatterFactory;
 
 /**
  * A converter that delegates to a formatter to perform the conversion.
- * Formatters are typically not thread safe, so we use a FormatterLocator that
- * is expected to provide us with synchronized instances as neccessary.
+ * Formatters are typically not thread safe, so we use a FormatterFactory that
+ * is expected to provide us with thread-safe instances as necessary.
  * @author Keith Donald
  */
 public abstract class AbstractFormattingConverter extends AbstractConverter {
+
+	/**
+	 * The formatter factory.
+	 */
 	private FormatterFactory formatterFactory;
 
+	/**
+	 * Creates a new converter that delegates to a formatter.
+	 * @param formatterFactory
+	 */
 	protected AbstractFormattingConverter(FormatterFactory formatterFactory) {
 		setFormatterFactory(formatterFactory);
 	}
 
 	protected FormatterFactory getFormatterFactory() {
-		return this.formatterFactory;
+		return formatterFactory;
 	}
 
 	public void setFormatterFactory(FormatterFactory formatterSource) {

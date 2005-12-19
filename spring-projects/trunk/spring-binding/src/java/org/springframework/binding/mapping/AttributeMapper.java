@@ -28,9 +28,9 @@ import java.util.Map;
 public interface AttributeMapper {
 
 	/**
-	 * Map data from one map to another map.
-	 * @param source The accessor to the source map
-	 * @param target The setter to the target map
+	 * Map data from a source object to a target object.
+	 * @param source The source
+	 * @param target The target
 	 * @param mappingContext the mapping context
 	 */
 	public void map(Object source, Object target, Map mappingContext);

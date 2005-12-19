@@ -32,8 +32,8 @@ public class TextToNumber extends AbstractFormattingConverter {
 		super(new SimpleFormatterFactory());
 	}
 
-	public TextToNumber(FormatterFactory locator) {
-		super(locator);
+	public TextToNumber(FormatterFactory formatterFactory) {
+		super(formatterFactory);
 	}
 
 	public Class[] getSourceClasses() {

@@ -43,24 +43,31 @@ import org.springframework.util.StringUtils;
  */
 public class DefaultConversionService implements ConversionService {
 
+	/**
+	 * An indexed map of converters. Each entry key is a source class that can
+	 * be converted from, and each entry value is a map of target classes that
+	 * can be convertered to, ultimately mapping to a specific converter that
+	 * can perform the source->target conversion.
+	 */
 	private Map sourceClassConverters = new HashMap();
 
+	/**
+	 * A map of string aliases to convertible classes. Allows lookup of
+	 * converters by alias.
+	 */
 	private Map aliasMap = new HashMap();
 
+	/**
+	 * An optional parent conversion service.
+	 */
 	private ConversionService parent;
 
+	/**
+	 * Creates a new default conversion service, installing the default
+	 * converters.
+	 */
 	public DefaultConversionService() {
-		this(true);
-	}
-
-	public DefaultConversionService(boolean registerDefaultConverters) {
-		if (registerDefaultConverters) {
-			addDefaultConverters();
-		}
-	}
-
-	public DefaultConversionService(ConversionService parent) {
-		setParent(parent);
+		addDefaultConverters();
 	}
 
 	public void setParent(ConversionService parent) {
@@ -98,12 +105,6 @@ public class DefaultConversionService implements ConversionService {
 		addAlias("method", MethodKey.class);
 	}
 
-	public void addConverters(Converter[] converters) {
-		for (int i = 0; i < converters.length; i++) {
-			addConverter(converters[i]);
-		}
-	}
-
 	public void addConverter(Converter converter) {
 		Class[] sourceClasses = converter.getSourceClasses();
 		Class[] targetClasses = converter.getTargetClasses();
@@ -127,6 +128,12 @@ public class DefaultConversionService implements ConversionService {
 	public void addConverter(Converter converter, String alias) {
 		aliasMap.put(alias, converter);
 		addConverter(converter);
+	}
+	
+	public void addConverters(Converter[] converters) {
+		for (int i = 0; i < converters.length; i++) {
+			addConverter(converters[i]);
+		}
 	}
 
 	public void addAlias(String alias, Class targetType) {

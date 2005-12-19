@@ -19,7 +19,7 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.Converter;
 
 /**
- * Base class for converters -- provided as a convenience to implementors.
+ * Base class for converters provided as a convenience to implementors.
  * 
  * @author Keith Donald
  */
