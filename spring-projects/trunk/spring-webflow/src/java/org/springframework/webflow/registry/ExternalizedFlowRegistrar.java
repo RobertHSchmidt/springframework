@@ -16,16 +16,13 @@
 package org.springframework.webflow.registry;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.Assert;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilder;
 
@@ -39,17 +36,17 @@ import org.springframework.webflow.builder.FlowBuilder;
  * knowledge about a particular kind of definition format by implementing the
  * abstract template methods in this class.
  * <p>
- * By default, when configuring the <code>flowLocations</code> or
- * <code>flowDirectoryLocations</code> properties, flow definition registered
- * by this registrar will be assigned a registry identifier equal to the
- * filename of the underlying definition resource, minus the filename extension.
- * For example, a XML-based flow definition defined in the file "flow1.xml" will
- * be identified as "flow1" when registered in a registry.
+ * By default, when configuring the <code>flowLocations</code> property, flow
+ * definition registered by this registrar will be assigned a registry
+ * identifier equal to the filename of the underlying definition resource, minus
+ * the filename extension. For example, a XML-based flow definition defined in
+ * the file "flow1.xml" will be identified as "flow1" when registered in a
+ * registry.
  * <p>
  * For full control over the assignment of flow identifiers and flow properties,
  * configure formal
  * {@link org.springframework.webflow.registry.ExternalizedFlowDefinition}
- * instances.
+ * instances using the <code>flowDefinitions</code> property.
  * 
  * @see org.springframework.webflow.registry.ExternalizedFlowDefinition
  * @see org.springframework.webflow.registry.FlowRegistry
@@ -64,12 +61,6 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * File locations of externalized flow definition resources to load.
 	 */
 	private Set flowLocations = new HashSet();
-
-	/**
-	 * Directory locations containing externalized flow definition resources to
-	 * load.
-	 */
-	private Set flowDirectoryLocations = new HashSet(3);
 
 	/**
 	 * A set of formal externalized flow definitions to load.
@@ -88,20 +79,6 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 */
 	public void setFlowLocations(Resource[] flowLocations) {
 		this.flowLocations = new HashSet(Arrays.asList(flowLocations));
-	}
-
-	/**
-	 * Sets the locations pointing to directories containing externalized flow
-	 * definitions.
-	 * <p>
-	 * Flows registered from this set will be automatically assigned an id based
-	 * on the filename of the flow resource.
-	 * @param flowDirectoryLocations the flow directory locations
-	 * @see #getFlowId(Resource)
-	 * @see #isFlowDefinition(File)
-	 */
-	public void setFlowDirectoryLocations(Resource[] flowDirectoryLocations) {
-		this.flowDirectoryLocations = new HashSet(Arrays.asList(flowDirectoryLocations));
 	}
 
 	/**
@@ -172,7 +149,6 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 
 	public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
 		processFlowLocations(registry, flowArtifactFactory);
-		processDirectoryLocations(registry, flowArtifactFactory);
 		processFlowDefinitions(registry, flowArtifactFactory);
 	}
 
@@ -189,25 +165,6 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	}
 
 	/**
-	 * Register the Flow definitions at the configured directory locations,
-	 * automatically adding flow definitions in any subdirectories.
-	 * @param registry the registry
-	 * @param flowArtifactFactory the flow artifactFactory
-	 */
-	protected void processDirectoryLocations(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
-		Iterator it = flowDirectoryLocations.iterator();
-		while (it.hasNext()) {
-			Resource resource = (Resource)it.next();
-			try {
-				addDirectory(resource.getFile(), registry, flowArtifactFactory);
-			}
-			catch (IOException e) {
-				logger.warn("Unable to add directory resource " + resource + ", skipping", e);
-			}
-		}
-	}
-
-	/**
 	 * Register the Flow definitions at the configured file locations
 	 * @param registry the registry
 	 * @param flowArtifactFactory the flow artifactFactory
@@ -219,36 +176,6 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 			FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowArtifactFactory);
 			registerFlow(definition, builder, registry);
 		}
-	}
-
-	/**
-	 * Adds the flow definitions in the provided directory to the registry.
-	 * @param directory the directory containing flow definitions
-	 * @param registry the flow registry
-	 * @param flowArtifactFactory the flow artifact factory
-	 */
-	protected void addDirectory(File directory, FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
-		Assert.isTrue(directory.isDirectory(), "The file must be a directory, programmer error");
-		File[] files = directory.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			File file = files[i];
-			if (file.isDirectory()) {
-				addDirectory(file, registry, flowArtifactFactory);
-			}
-			else if (isFlowDefinition(file)) {
-				addFile(file, registry, flowArtifactFactory);
-			}
-		}
-	}
-
-	/**
-	 * Adds the flow definitions in the provided file to the registry.
-	 * @param file the file containing a flow definition
-	 * @param registry the flow registry
-	 * @param flowArtifactFactory the flow artifact factory
-	 */
-	protected void addFile(File file, FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
-		registerFlow(new FileSystemResource(file), registry, flowArtifactFactory);
 	}
 
 	/**
@@ -291,7 +218,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	protected abstract FlowBuilder createFlowBuilder(Resource location, FlowArtifactFactory flowArtifactFactory);
 
 	public String toString() {
-		return new ToStringCreator(this).append("flowLocations", flowLocations).append("flowDirectoryLocations",
-				flowDirectoryLocations).append("flowDefinitions", flowDefinitions).toString();
+		return new ToStringCreator(this).append("flowLocations", flowLocations).append("flowDefinitions",
+				flowDefinitions).toString();
 	}
 }

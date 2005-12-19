@@ -27,8 +27,8 @@ import org.springframework.core.io.Resource;
  * By default, a configured flow definition will be assigned a registry
  * identifier equal to the filename of the underlying definition resource, minus
  * the filename extension. For example, a XML-based flow definition defined in
- * the file <code>flow1.xml</code> will be identified as <code>flow1</code> in
- * the registry created by this factory bean.
+ * the file <code>flow1.xml</code> will be identified as <code>flow1</code>
+ * in the registry created by this factory bean.
  * <p>
  * This class is also <code>BeanFactoryAware</code> and when used with Spring
  * will automatically create a configured
@@ -93,12 +93,19 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	}
 
 	/**
-	 * Sets the locations (file paths) pointing to XML-based flow definitions.
-	 * ANT-atyle resource patterns/wildcards are also supported.  For example:
-	 * <pre>
-     *     /WEB-INF/flows/*-flow.xml 
-	 * </pre>
+	 * Sets the locations (resource file paths) pointing to XML-based flow
+	 * definitions.
 	 * <p>
+	 * When configuring as a spring bean definition, ANT-style
+	 * resource patterns/wildcards are also supported, taking advantage of
+	 * Spring's built in ResourceArrayPropertyEditor machinery.
+	 * <p>
+	 * For example:
+	 * <pre>
+	 *     &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+	 *         &lt;property name=&quot;flowLocations&quot;&gt; value="/WEB-INF/flows/*-flow.xml"/> 
+	 *     &lt;/bean&gt;
+	 * </pre>
 	 * Flows registered from this set will be automatically assigned an id based
 	 * on the filename of the matched XML resource.
 	 * @param locations the resource locations
