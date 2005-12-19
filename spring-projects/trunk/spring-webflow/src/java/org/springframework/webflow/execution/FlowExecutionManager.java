@@ -127,12 +127,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	public static final String EVENT_ID_PARAMETER = "_eventId";
 
 	/**
-	 * Clients can send the state in an event parameter with this name
-	 * ("_stateId").
-	 */
-	public static final String STATE_ID_PARAMETER = "_stateId";
-
-	/**
 	 * The default delimiter used when a parameter value is sent as part of the
 	 * name of an event parameter (e.g. "_eventId_submit").
 	 */
@@ -213,12 +207,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * to ("_eventId_submit").
 	 */
 	private String eventIdParameterName = EVENT_ID_PARAMETER;
-
-	/**
-	 * Identifies the state that an external event occured in for an existing
-	 * flow execution, defaults to ("_stateId").
-	 */
-	private String stateIdParameterName = STATE_ID_PARAMETER;
 
 	/**
 	 * The embedded parameter name/value delimiter value, used to parse a
@@ -406,7 +394,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Adding flow execution listener " + listener + " with criteria " + criteria);
 		}
-		List criteriaList = (List)this.listenerMap.get(listener);
+		List criteriaList = (List)listenerMap.get(listener);
 		criteriaList.add(criteria);
 	}
 
@@ -424,7 +412,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param listener the listener
 	 */
 	public void removeListener(FlowExecutionListener listener) {
-		this.listenerMap.remove(listener);
+		listenerMap.remove(listener);
 	}
 
 	/**
@@ -497,21 +485,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 */
 	public void setEventIdParameterName(String eventIdParameterName) {
 		this.eventIdParameterName = eventIdParameterName;
-	}
-
-	/**
-	 * Returns the name of the request parameter that stores the event state
-	 * identifier.
-	 */
-	public String getStateIdParameterName() {
-		return stateIdParameterName;
-	}
-
-	/**
-	 * Sets the state id parameter name.
-	 */
-	public void setStateIdParameterName(String stateIdParameterName) {
-		this.stateIdParameterName = stateIdParameterName;
 	}
 
 	/**
@@ -664,7 +637,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param context the context in which the external user event occured
 	 * @return the raw or unprepared view descriptor of the model and view to
 	 * render
-	 * @throwsStateException an exception occured during event processing
+	 * @throws StateException an exception occured during event processing
 	 */
 	protected ViewSelection signalEventIn(FlowExecution flowExecution, ExternalContext context) throws StateException {
 		return flowExecution.signalEvent(extractEventId(context), context);
@@ -699,26 +672,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 					+ getEventIdParameterName() + "' parameter must be set to a valid event");
 		}
 		return eventId;
-	}
-
-	/**
-	 * Obtain the id of the state in which this event occured from the parameter
-	 * map.
-	 * <p>
-	 * This is a multi-step process consisting of:
-	 * <ol>
-	 * <li>Try the {@link #getStateIdParameterName()} parameter first, if it is
-	 * present, return its value as the eventId.
-	 * <li>Try a parameter search looking for parameters of the format:
-	 * {@link #getStateIdParameterName()}_value. If a match is found, return
-	 * the value as the stateId.
-	 * </ol>
-	 * @param context the context in which the external user event occured
-	 * @return the state id, or null if not found
-	 */
-	protected String extractStateId(ExternalContext context) {
-		Object parameter = findParameter(getStateIdParameterName(), context.getRequestParameterMap());
-		return verifySingleStringInputParameter(getStateIdParameterName(), parameter);
 	}
 
 	/**
