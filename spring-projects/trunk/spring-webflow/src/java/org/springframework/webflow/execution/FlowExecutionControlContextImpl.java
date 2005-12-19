@@ -191,13 +191,6 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return selectedView;
 	}
 
-	protected ViewSelection handleNewStateRequest(TransitionableState newState, Event event) {
-		// @TODO add support for navigation state
-		throw new IllegalArgumentException("Only a [NavigationState] instance can be invoked externally; "
-				+ "however the requested state was '" + newState.getId()
-				+ "' and requesting to enter this state from clients is not allowed");
-	}
-
 	public FlowSession endActiveFlowSession() throws IllegalStateException {
 		flowExecution.getListeners().fireSessionEnding(this);
 		if (logger.isDebugEnabled()) {

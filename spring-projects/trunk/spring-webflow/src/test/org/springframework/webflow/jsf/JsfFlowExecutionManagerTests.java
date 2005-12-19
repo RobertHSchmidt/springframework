@@ -126,7 +126,7 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 			}
 		};
 
-		flowExecutionControl.expectAndReturn(flowExecutionMock.start(null, jsfContext), new ViewSelection("SomeView"));
+		flowExecutionControl.expectAndReturn(flowExecutionMock.start(jsfContext), new ViewSelection("SomeView"));
 		flowExecutionControl.expectAndReturn(flowExecutionMock.isActive(), true);
 		flowExecutionControl.replay();
 

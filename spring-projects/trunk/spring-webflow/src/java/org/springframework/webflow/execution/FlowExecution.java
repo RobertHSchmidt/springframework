@@ -16,7 +16,6 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
@@ -77,9 +76,6 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * Start this flow execution, transitioning it to the root flow's start
 	 * state and returning the starting model and view selection. Typically
 	 * called by a flow execution manager, but also from test code.
-	 * @param stateId the state this flow execution should start in - may be
-	 * <code>null</code> and if null the start state will default to
-	 * {@link Flow#getStartState()}
 	 * @return the starting view selection, which requests that the calling
 	 * client render a view with configured model data (so the user may
 	 * participate in this flow execution)
@@ -87,7 +83,7 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * flow execution during request processing
 	 * @see FlowExecutionContext#getRootFlow()
 	 */
-	public ViewSelection start(String stateId, ExternalContext externalContext) throws StateException;
+	public ViewSelection start(ExternalContext externalContext) throws StateException;
 
 	/**
 	 * Signal an occurence of the specified event in the state of this executing
@@ -102,8 +98,7 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @throws StateException if an exception was thrown within a state of the
 	 * resumed flow execution during event processing
 	 */
-	public ViewSelection signalEvent(String eventId, String stateId, ExternalContext externalContext)
-			throws StateException;
+	public ViewSelection signalEvent(String eventId, ExternalContext externalContext) throws StateException;
 
 	/**
 	 * Rehydrate this flow execution after deserialization. This is called after

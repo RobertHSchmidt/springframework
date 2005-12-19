@@ -15,9 +15,14 @@
  */
 package org.springframework.webflow.action;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodKey;
+import org.springframework.core.JdkVersion;
+import org.springframework.core.enums.LabeledEnum;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -118,9 +123,40 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 			if (returnValue instanceof Boolean) {
 				return yesOrNo(((Boolean)returnValue).booleanValue());
 			}
-			else {
-				return success(resultParameterName, returnValue);
+			else if (returnValue != null) {
+				if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_15) {
+					try {
+						Class enumClass = Class.forName("java.lang.Enum");
+						if (enumClass.equals(returnValue.getClass())) {
+							return jdk5EnumResult(enumClass, returnValue);
+						}
+					}
+					catch (ClassNotFoundException e) {
+						throw new RuntimeException("Should not happen on JDK 1.5");
+					}
+				} else if (returnValue instanceof LabeledEnum) {
+					String resultId = String.valueOf(((LabeledEnum)returnValue).getCode());
+					return result(resultId, RESULT_PARAMETER, returnValue);
+				}
 			}
+			return success(resultParameterName, returnValue);
+		}
+	}
+	
+	protected Event jdk5EnumResult(Class enumClass, Object returnEnumValue) {
+		try {
+			Method nameMethod = enumClass.getMethod("name", null);
+			String resultId = (String)nameMethod.invoke(returnEnumValue, null);
+			return result(resultId, RESULT_PARAMETER, returnEnumValue);
+		}
+		catch (NoSuchMethodException e) {
+			throw new RuntimeException("Should not happen on JDK 1.5");
+		}
+		catch (InvocationTargetException e) {
+			throw new RuntimeException("Should not happen on JDK 1.5");
+		}
+		catch (IllegalAccessException e) {
+			throw new RuntimeException("Should not happen on JDK 1.5");
 		}
 	}
 

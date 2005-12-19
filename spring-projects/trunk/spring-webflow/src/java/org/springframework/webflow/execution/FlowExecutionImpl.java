@@ -27,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
@@ -37,7 +36,6 @@ import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
-import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
 
 /**
@@ -236,22 +234,15 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// methods implementing FlowExecution
 
-	public ViewSelection start(String stateId, ExternalContext externalContext) throws StateException {
+	public ViewSelection start(ExternalContext externalContext) throws StateException {
 		Assert.state(!isActive(),
-				"This flow is already executing -- you cannot call 'start(stateId, externalContext)' more than once");
-		if (!StringUtils.hasText(stateId)) {
-			stateId = getRootFlow().getStartState().getId();
-		}
+				"This flow is already executing -- you cannot call 'start(ExternalContext)' more than once");
 		updateLastRequestTimestamp();
-		if (logger.isDebugEnabled()) {
-			logger.debug("Starting this execution in state '" + stateId + "'");
-		}
 		FlowExecutionControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
-				State startState = getRootFlow().getRequiredState(stateId);
-				ViewSelection selectedView = context.start(getRootFlow(), startState, null);
+				ViewSelection selectedView = context.start(getRootFlow(), getRootFlow().getStartState(), null);
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -286,32 +277,19 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		throw exception;
 	}
 
-	public synchronized ViewSelection signalEvent(String eventId, String stateId, ExternalContext externalContext)
+	public synchronized ViewSelection signalEvent(String eventId, ExternalContext externalContext)
 			throws StateException {
 		assertActive();
 		updateLastRequestTimestamp();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Resuming this execution on user event '" + eventId + "'");
 		}
-		FlowExecutionControlContextImpl context = createControlContext(externalContext);
+		FlowExecutionControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
 				resume(context);
-				ViewSelection selectedView;
-				Event event = new Event(externalContext, eventId);
-				if (!StringUtils.hasText(stateId)) {
-					selectedView = context.signalEvent(event);
-				}
-				else {
-					if (!stateId.equals(getCurrentState().getId())) {
-						TransitionableState state = getActiveFlow().getRequiredTransitionableState(stateId);
-						selectedView = context.handleNewStateRequest(state, event);
-					}
-					else {
-						selectedView = context.signalEvent(event);
-					}
-				}
+				ViewSelection selectedView = context.signalEvent(new Event(externalContext, eventId));
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -368,7 +346,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * class. Subclasses can override this to use a custom class.
 	 * @param sourceEvent the event at the origin of this request
 	 */
-	protected FlowExecutionControlContextImpl createControlContext(ExternalContext externalContext) {
+	protected FlowExecutionControlContext createControlContext(ExternalContext externalContext) {
 		return new FlowExecutionControlContextImpl(this, externalContext);
 	}
 

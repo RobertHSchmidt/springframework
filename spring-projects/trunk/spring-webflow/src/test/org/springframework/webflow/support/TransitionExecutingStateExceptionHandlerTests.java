@@ -43,7 +43,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		handler.add(MyCustomException.class, state2);
 		flow.addExceptionHandler(handler);
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
-		execution.start(null, new MockExternalContext());
+		execution.start(new MockExternalContext());
 		assertTrue("Should have ended", !execution.isActive());
 	}
 
@@ -61,7 +61,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		handler.add(MyCustomException.class, state2);
 		state1.addExceptionHandler(handler);
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
-		execution.start(null, new MockExternalContext());
+		execution.start(new MockExternalContext());
 		assertTrue("Should have ended", !execution.isActive());
 	}
 
@@ -75,7 +75,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		state1.addTransition(new Transition("end"));
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		try {
-			execution.start(null, new MockExternalContext());
+			execution.start(new MockExternalContext());
 			fail("Should have rethrown");
 		}
 		catch (StateException e) {

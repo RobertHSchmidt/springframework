@@ -635,7 +635,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 */
 	protected ViewSelection startFlowExecution(FlowExecution flowExecution, ExternalContext context)
 			throws StateException {
-		return flowExecution.start(extractStateId(context), context);
+		return flowExecution.start(context);
 	}
 
 	/**
@@ -669,7 +669,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @throwsStateException an exception occured during event processing
 	 */
 	protected ViewSelection signalEventIn(FlowExecution flowExecution, ExternalContext context) throws StateException {
-		return flowExecution.signalEvent(extractEventId(context), extractStateId(context), context);
+		return flowExecution.signalEvent(extractEventId(context), context);
 	}
 
 	/**

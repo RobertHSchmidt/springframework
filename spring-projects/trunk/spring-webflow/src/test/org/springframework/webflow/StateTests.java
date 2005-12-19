@@ -43,7 +43,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("success"), "finish"));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(null, new MockExternalContext());
+		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertNull(view);
 		assertEquals("success", flowExecution.getLastEventId());
 		assertEquals(1, ((ExecutionCounterAction)state.getActionList().get(0)).getExecutionCount());
@@ -59,7 +59,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("success"), "finish"));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(null, new MockExternalContext());
+		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertNull(view);
 		assertEquals("success", flowExecution.getLastEventId());
 		Action[] actions = state.getActionList().toArray();
@@ -80,7 +80,7 @@ public class StateTests extends TestCase {
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		try {
-			flowExecution.start(null, new MockExternalContext());
+			flowExecution.start(new MockExternalContext());
 			fail("Should not have matched to another state transition");
 		}
 		catch (NoMatchingTransitionException e) {
@@ -102,7 +102,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("action4.success"), "finish"));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(null, new MockExternalContext());
+		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertNull(view);
 		assertEquals("action4.success", flowExecution.getLastEventId());
 		Action[] actions = state.getActionList().toArray();
@@ -122,7 +122,7 @@ public class StateTests extends TestCase {
 		new EndState(flow, "finish");
 		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(null, new MockExternalContext());
+		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getCurrentState().getId());
 		assertNotNull(view);
 		assertEquals("myViewName", view.getViewName());
@@ -136,7 +136,7 @@ public class StateTests extends TestCase {
 		new EndState(flow, "finish");
 		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(null, new MockExternalContext());
+		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getCurrentState().getId());
 		assertNull(view);
 	}
@@ -156,11 +156,11 @@ public class StateTests extends TestCase {
 		state3.setViewSelector(view("myParentFlowEndingViewName"));
 
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(null, new MockExternalContext());
+		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getCurrentState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
-		view = flowExecution.signalEvent("submit", null, new MockExternalContext());
+		view = flowExecution.signalEvent("submit", new MockExternalContext());
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
 		assertTrue(!flowExecution.isActive());
 	}
@@ -189,12 +189,12 @@ public class StateTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		Map input = new HashMap();
 		input.put("parentInputAttribute", "attributeValue");
-		ViewSelection view = flowExecution.start(null, new MockExternalContext(input));
+		ViewSelection view = flowExecution.start(new MockExternalContext(input));
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getCurrentState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
 		assertEquals("attributeValue", flowExecution.getActiveSession().getScope().getAttribute("childInputAttribute"));
-		view = flowExecution.signalEvent("submit", null, new MockExternalContext());
+		view = flowExecution.signalEvent("submit", new MockExternalContext());
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
 		assertTrue(!flowExecution.isActive());
 		assertEquals("attributeValue", view.getModel().get("parentOutputAttribute"));

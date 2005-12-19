@@ -104,7 +104,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * entered)
 	 */
 	protected ViewSelection startFlow() {
-		return startFlow(null, new MockExternalContext(Collections.EMPTY_MAP));
+		return startFlow(new MockExternalContext(Collections.EMPTY_MAP));
 	}
 
 	/**
@@ -115,19 +115,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * entered)
 	 */
 	protected ViewSelection startFlow(Map parameters) {
-		return startFlow(null, new MockExternalContext(parameters));
-	}
-
-	/**
-	 * Start a new flow execution for the flow definition that is being tested.
-	 * @param stateId the state to start the flow execution in
-	 * @param input request parameters needed by the flow execution to start
-	 * @return the view selection made as a result of starting the flow
-	 * (returned when the first interactive state (a view state or end state) is
-	 * entered)
-	 */
-	protected ViewSelection startFlow(String stateId, Map parameters) {
-		return startFlow(stateId, new MockExternalContext(parameters));
+		return startFlow(new MockExternalContext(parameters));
 	}
 
 	/**
@@ -140,30 +128,16 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * entered)
 	 */
 	protected ViewSelection startFlow(ExternalContext context) {
-		return startFlow(null, context);
-	}
-
-	/**
-	 * Start a new flow execution for the flow definition that is being tested.
-	 * @param stateId the state to start the flow execution in
-	 * @param context the external context providing information about the
-	 * caller's environment, used by the flow execution during the start
-	 * operation
-	 * @return the view selection made as a result of starting the flow
-	 * (returned when the first interactive state (a view state or end state) is
-	 * entered)
-	 */
-	protected ViewSelection startFlow(String stateId, ExternalContext context) {
 		this.flowExecution = new FlowExecutionImpl(getFlow());
 		onFlowExecutionStarting(flowExecution);
-		return this.flowExecution.start(stateId, context);
+		return this.flowExecution.start(context);
 	}
 
 	/**
 	 * Get the singleton flow definition whose execution is being tested.
 	 * @return the singleton flow definition to test
-	 * @throws FlowArtifactException if the flow identified by flowId()
-	 * could not be resolved (if <code>this.flow</code> was null)
+	 * @throws FlowArtifactException if the flow identified by flowId() could
+	 * not be resolved (if <code>this.flow</code> was null)
 	 */
 	protected abstract Flow getFlow() throws FlowArtifactException;
 
@@ -176,50 +150,28 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
-	 * Signal an occurence of an event in the state of the flow execution being
-	 * tested.
+	 * Signal an occurence of an event in the current state of the flow
+	 * execution being tested.
 	 * @param eventId the event that occured
 	 */
 	protected ViewSelection signalEvent(String eventId) {
-		return this.flowExecution.signalEvent(eventId, null, new MockExternalContext());
+		return flowExecution.signalEvent(eventId, new MockExternalContext());
 	}
-	
+
 	/**
-	 * Signal an occurence of an event in the state of the flow execution being
-	 * tested.
+	 * Signal an occurence of an event in the current state of the flow
+	 * execution being tested.
 	 * @param eventId the event that occured
-	 * @param input request parameters needed by the flow execution to complete event processing
+	 * @param input request parameters needed by the flow execution to complete
+	 * event processing
 	 */
 	protected ViewSelection signalEvent(String eventId, Map parameters) {
-		return this.flowExecution.signalEvent(eventId, null, new MockExternalContext(parameters));
+		return flowExecution.signalEvent(eventId, new MockExternalContext(parameters));
 	}
 
 	/**
-	 * Signal an occurence of an event in the state of the flow execution being
-	 * tested.
-	 * @param eventId the event that occured
-	 * @param stateId the state the event occured in
-	 * @param input request parameters needed by the flow execution to complete event processing
-	 */
-	protected ViewSelection signalEvent(String eventId, String stateId, Map parameters) {
-		return this.flowExecution.signalEvent(eventId, stateId, new MockExternalContext(parameters));
-	}
-
-	/**
-	 * Signal an occurence of an event in the state of the flow execution being
-	 * tested.
-	 * @param eventId the event that occured
-	 * @param context the external context providing information about the
-	 * caller's environment, used by the flow execution during the start
-	 * operation
-	 */
-	protected ViewSelection signalEvent(String eventId, ExternalContext context) {
-		return this.flowExecution.signalEvent(eventId, null, context);
-	}
-
-	/**
-	 * Signal an occurence of an event in the state of the flow execution being
-	 * tested.
+	 * Signal an occurence of an event in the current state of the flow
+	 * execution being tested.
 	 * <p>
 	 * Note: signaling an event will cause state transitions to occur in a chain
 	 * UNTIL control is returned to the caller. Control is returned once a
@@ -253,7 +205,6 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * {@link org.springframework.webflow.execution.FlowExecutionListenerAdapter}
 	 * and only override what you need.
 	 * @param eventId the event that occured
-	 * @param stateId the state the event occured in
 	 * @param context the external context providing information about the
 	 * caller's environment, used by the flow execution during the start
 	 * operation
@@ -261,8 +212,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * returned to the client (occurs when the flow enters a view state, or an
 	 * end state)
 	 */
-	protected ViewSelection signalEvent(String eventId, String stateId, MockExternalContext context) {
-		return this.flowExecution.signalEvent(eventId, stateId, context);
+	protected ViewSelection signalEvent(String eventId, MockExternalContext context) {
+		return flowExecution.signalEvent(eventId, context);
 	}
 
 	/**

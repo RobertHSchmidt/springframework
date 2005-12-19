@@ -118,7 +118,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		String flowId = getRequiredFlowId(outcome);
 		ExternalContext jsfContext = createExternalContext(context, fromAction, outcome);
 		FlowExecution flowExecution = createFlowExecution(getFlowLocator().getFlow(flowId));
-		ViewSelection selectedView = flowExecution.start(extractStateId(jsfContext), jsfContext);
+		ViewSelection selectedView = flowExecution.start(jsfContext);
 		Serializable flowExecutionId = manageStorage(null, flowExecution, jsfContext);
 		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 	}
