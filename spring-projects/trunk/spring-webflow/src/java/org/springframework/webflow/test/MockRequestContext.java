@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.test;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,8 +48,6 @@ import org.springframework.webflow.Transition;
  * @author Erwin Vervaet
  */
 public class MockRequestContext implements RequestContext, FlowExecutionContext {
-
-	private String key = "Mock Flow Execution";
 
 	private Flow rootFlow;
 
@@ -168,12 +165,6 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 		return model;
 	}
 
-	// implementing FlowExecutionContext
-
-	public Serializable getKey() {
-		return key;
-	}
-
 	public String getCaption() {
 		return getActiveFlow().getId();
 	}
@@ -228,12 +219,12 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 
 	/**
 	 * Set the current state of this request context.
-	 * @param state the current state to set
+	 * @param currentState the current state to set
 	 */
-	public void setCurrentState(State state) {
-		Assert.state(state.getFlow() == getActiveSession().getFlow(),
+	public void setCurrentState(State currentState) {
+		Assert.state(currentState.getFlow() == getActiveSession().getFlow(),
 				"The current state to set must be a state in the active flow");
-		this.activeSession.setCurrentState(state);
+		activeSession.setCurrentState(currentState);
 	}
 
 	public FlowSession getActiveSession() throws IllegalStateException {
@@ -247,12 +238,12 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 	 * Set the active flow session of this request context. If the "rootFlow" is
 	 * null when this method is called it will automaically be set to the flow
 	 * associated with the provided session.
-	 * @param session the active flow session to set
+	 * @param activeSession the active flow session to set
 	 */
-	public void setActiveSession(MockFlowSession session) {
-		this.activeSession = session;
-		if (this.rootFlow == null) {
-			this.rootFlow = session.getFlow();
+	public void setActiveSession(MockFlowSession activeSession) {
+		this.activeSession = activeSession;
+		if (rootFlow == null) {
+			rootFlow = activeSession.getFlow();
 		}
 	}
 }
