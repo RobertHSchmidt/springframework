@@ -643,7 +643,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Adds a decision state to the flow built by this builder with the
 	 * specified id.
-	 * 
 	 * @param stateId the state id
 	 * @param matchingCriteria the criteria that determines what boolean
 	 * true/fase decision to make
@@ -660,7 +659,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Adds a decision state to the flow built by this builder with the
 	 * specified id.
-	 * 
 	 * @param stateId the state id
 	 * @param matchingCriteria the criteria that determines what boolean
 	 * true/fase decision to make
@@ -681,7 +679,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Adds a decision state to the flow built by this builder with the
 	 * specified id.
-	 * 
 	 * @param stateId the state id
 	 * @param transitions the state's supported transitions, evaluated in the
 	 * specified order until a match is found
@@ -695,7 +692,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Adds a decision state to the flow built by this builder with the
 	 * specified id.
-	 * 
 	 * @param stateId the state id
 	 * @param transitions the state's supported transitions, evaluated in the
 	 * specified order until a match is found

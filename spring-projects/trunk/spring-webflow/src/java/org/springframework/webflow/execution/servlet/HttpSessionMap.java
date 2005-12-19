@@ -69,6 +69,6 @@ public class HttpSessionMap extends StringKeyedAttributeMapAdapter {
 
 	protected Enumeration getAttributeNames() {
 		HttpSession session = getSession();
-		return (session == null) ? new EmptyEnumeration() : session.getAttributeNames();
+		return (session == null) ? EmptyEnumeration.INSTANCE : session.getAttributeNames();
 	}
 }

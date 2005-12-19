@@ -115,7 +115,7 @@ public abstract class StringKeyedAttributeMapAdapter implements Map {
 	 * @param key the key to lookup
 	 * @return the associated value, or null if none
 	 */
-	abstract protected Object getAttribute(String key);
+	protected abstract Object getAttribute(String key);
 
 	/**
 	 * Hook method that needs to be implemented by concrete subclasses.
@@ -124,21 +124,21 @@ public abstract class StringKeyedAttributeMapAdapter implements Map {
 	 * @param key the key to associate the value with
 	 * @param value the value to associate with the key
 	 */
-	abstract protected void setAttribute(String key, Object value);
+	protected abstract void setAttribute(String key, Object value);
 
 	/**
 	 * Hook method that needs to be implemented by concrete subclasses.
 	 * Removes a key and its associated value from the map.
 	 * @param key the key to remove
 	 */
-	abstract protected void removeAttribute(String key);
+	protected abstract void removeAttribute(String key);
 
 	/**
 	 * Hook method that needs to be implemented by concrete subclasses.
 	 * Returns an enumeration listing all keys known to the map.
 	 * @return the key enumeration
 	 */
-	abstract protected Enumeration getAttributeNames();
+	protected abstract Enumeration getAttributeNames();
 	
 	// internal helper classes
 

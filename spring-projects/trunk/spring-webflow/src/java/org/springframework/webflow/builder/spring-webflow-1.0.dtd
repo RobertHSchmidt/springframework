@@ -172,7 +172,9 @@
         method="suggestItineraries(${flowScope.trip})" resultName="itineraries" resultScope="flow"
 
     ... exposes the 'suggestItineraries(Order)' method return value in flow scope 
-    under the attribute name 'itineraries'.        
+    under the attribute name 'itineraries'.
+    
+    The default value if not specified is request scope.     
 -->
 <!ATTLIST action resultScope (request | flow | default) "default">
 

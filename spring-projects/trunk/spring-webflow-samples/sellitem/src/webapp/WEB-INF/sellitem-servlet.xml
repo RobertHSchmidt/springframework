@@ -37,7 +37,7 @@
 	<bean id="mbeanExporter" class="org.springframework.jmx.export.MBeanExporter">
 		<property name="beans">
 			<map>
-				<entry key="spring-webflow:name=flowRegistry" value-ref="flowLocator"/>
+				<entry key="spring-webflow:name=flowRegistry" value-ref="flowRegistry"/>
 			</map>
 		</property>
 		<property name="assembler">

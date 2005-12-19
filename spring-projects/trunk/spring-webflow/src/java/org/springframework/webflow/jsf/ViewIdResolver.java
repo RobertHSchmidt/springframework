@@ -28,5 +28,5 @@ public interface ViewIdResolver {
 	 * @param viewName name of the view to resolve
 	 * @return the corresponding JSF view id
 	 */
-	String resolveViewId(String viewName);
+	public String resolveViewId(String viewName);
 }

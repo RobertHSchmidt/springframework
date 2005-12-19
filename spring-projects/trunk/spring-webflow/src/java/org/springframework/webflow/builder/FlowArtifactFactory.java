@@ -112,7 +112,7 @@ public interface FlowArtifactFactory {
 	public Transition createTransition(TransitionableState sourceState, Map properties) throws FlowArtifactException;
 
 	/**
-	 * Returns a generic bean (service) registry, for accessing arbitrary beans.
+	 * Returns a generic bean (service) registry for accessing arbitrary beans.
 	 * @return the generic service registry
 	 * @throws UnsupportedOperationException when not supported by this factory
 	 */

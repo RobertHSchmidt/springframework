@@ -66,8 +66,6 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 
 	private Map properties = new HashMap();
 
-	private boolean inTransaction;
-
 	private long creationTimestamp = System.currentTimeMillis();
 
 	private long lastRequestTimestamp = System.currentTimeMillis();

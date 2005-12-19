@@ -68,6 +68,6 @@ public class PortletSessionMap extends StringKeyedAttributeMapAdapter {
 
 	protected Enumeration getAttributeNames() {
 		PortletSession session = getSession();
-		return (session == null) ? new EmptyEnumeration() : session.getAttributeNames();
+		return (session == null) ? EmptyEnumeration.INSTANCE : session.getAttributeNames();
 	}
 }
