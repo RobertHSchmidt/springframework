@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
@@ -38,7 +37,6 @@ import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.ViewState;
 
 /**
  * Default flow execution control context implementation used internally by the
@@ -194,39 +192,10 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	}
 
 	protected ViewSelection handleNewStateRequest(TransitionableState newState, Event event) {
-		if (newState instanceof DecisionState) {
-			return transitionTo((DecisionState)newState, event);
-		}
-		else if (newState instanceof ViewState) {
-			return transitionFrom((ViewState)newState, event);
-		}
-		else {
-			throw new IllegalArgumentException(
-					"Only [ViewState] or [DecisionState] instances can be invoked externally; "
-							+ "however the requested state was " + newState);
-		}
-	}
-
-	protected ViewSelection transitionTo(DecisionState navigationState, Event event) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Transitioning to navigation decision state '" + getCurrentState().getId() + "' on event '"
-					+ event.getId() + "' that occured in flow " + getFlowExecutionContext().getActiveFlow().getId()
-					+ "'");
-		}
-		setLastEvent(event);
-		flowExecution.getListeners().fireEventSignaled(this, navigationState);
-		return new Transition((TransitionableState)getCurrentState(), navigationState).execute(this);
-	}
-
-	protected ViewSelection transitionFrom(ViewState previousViewState, Event event) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Transitioning from previous view state '" + getCurrentState().getId() + "' on event '"
-					+ event.getId() + "' that occured in flow " + getFlowExecutionContext().getActiveFlow().getId()
-					+ "'");
-		}
-		setLastEvent(event);
-		flowExecution.getListeners().fireEventSignaled(this, previousViewState);
-		return previousViewState.getRequiredTransition(this).execute(this);
+		// @TODO add support for navigation state
+		throw new IllegalArgumentException("Only a [NavigationState] instance can be invoked externally; "
+				+ "however the requested state was " + newState
+				+ " and requesting to enter this state from clients is not allowed");
 	}
 
 	public FlowSession endActiveFlowSession() throws IllegalStateException {
