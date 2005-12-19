@@ -25,6 +25,11 @@ import org.springframework.core.NestedRuntimeException;
 public class EvaluationException extends NestedRuntimeException {
 	private EvaluationAttempt evaluationAttempt;
 
+	/**
+	 * Creates a new evaluation exception.
+	 * @param evaluationAttempt
+	 * @param cause
+	 */
 	public EvaluationException(EvaluationAttempt evaluationAttempt, Throwable cause) {
 		super("Expression " + evaluationAttempt
 				+ " failed - make sure the expression is evaluatable on the target object", cause);
