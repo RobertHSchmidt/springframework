@@ -43,8 +43,8 @@ Package org.springframework.webflow.execution
 * Reworked FlowExecutionManager: it is much easier now to customize flow execution workflow (necessary for JSF).
   The FlowLocator is now a required dependency, and support for setting a single Flow to execute has been removed.
 * Refactored out DataSourceAccessor strategy interface from FlowExecutionStorage implementations.
-* Removed TransactionSynchronizer abstraction, which is obsoleted by building such a capability into the FlowExecutionStorage
-  implementations directly.
+* Removed TransactionSynchronizer abstraction, which has been obsoleted since such a capability is being built
+  into the FlowExecutionStorage implementations directly.
 * Removed support for invoking flows in arbitrary states other than the current state for security reasons.
   Support for a single, externally referenceable navigation state per flow is under consideration.
 
