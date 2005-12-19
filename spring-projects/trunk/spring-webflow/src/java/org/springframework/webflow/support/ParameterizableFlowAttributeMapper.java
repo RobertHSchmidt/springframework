@@ -298,7 +298,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * Returns a map of contextual data available during mapping.
 	 */
 	protected Map getMappingContext(RequestContext context) {
-		return new HashMap();
+		return Collections.EMPTY_MAP;
 	}
 
 	public String toString() {

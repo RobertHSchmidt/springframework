@@ -51,20 +51,6 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 	private List flowRegistrars;
 
 	/**
-	 * Creates a xml flow registry factory bean.
-	 */
-	public FlowRegistryFactoryBean() {
-	}
-
-	/**
-	 * Creates a flow registry factory bean, for programmatic usage.
-	 * @param flowRegistrars the flowRegistrars to use
-	 */
-	public FlowRegistryFactoryBean(FlowRegistrar[] flowRegistrars) {
-		setFlowRegistrars(flowRegistrars);
-	}
-
-	/**
 	 * Sets the list of flow registrars to contain only the single flow
 	 * registrar provided. Convenience setter for when registry population is
 	 * driven by a single registrar.

@@ -43,12 +43,12 @@ public abstract class AbstractFormatterFactory implements FormatterFactory {
 		this.localeContext = localeContext;
 	}
 
-	public void setDefaultDateStyle(Style style) {
-		this.defaultDateStyle = style;
+	public void setDefaultDateStyle(Style defaultDateStyle) {
+		this.defaultDateStyle = defaultDateStyle;
 	}
 
-	public void setDefaultTimeStyle(Style style) {
-		this.defaultTimeStyle = style;
+	public void setDefaultTimeStyle(Style defaultTimeStyle) {
+		this.defaultTimeStyle = defaultTimeStyle;
 	}
 
 	public void setLabeledEnumResolver(LabeledEnumResolver labeledEnumResolver) {
@@ -64,7 +64,7 @@ public abstract class AbstractFormatterFactory implements FormatterFactory {
 	}
 
 	protected Locale getLocale() {
-		return this.localeContext.getLocale();
+		return localeContext.getLocale();
 	}
 
 	public Formatter getDateFormatter() {

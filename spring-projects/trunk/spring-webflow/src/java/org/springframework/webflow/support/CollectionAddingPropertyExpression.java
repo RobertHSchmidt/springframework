@@ -33,7 +33,7 @@ public class CollectionAddingPropertyExpression implements PropertyExpression {
 		Collection collection = (Collection)evaluateAgainst(target, context);
 		if (collection == null) {
 			throw new EvaluationException(new SetPropertyAttempt(collectionExpression, target, value, context),
-					new IllegalArgumentException("The collection evaluated to a [null] reference"));
+					new IllegalArgumentException("The collection expression evaluated to a [null] reference"));
 		}
 		collection.add(value);
 	}

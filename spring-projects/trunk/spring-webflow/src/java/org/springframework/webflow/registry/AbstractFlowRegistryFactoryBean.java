@@ -44,13 +44,6 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	private FlowRegistryFlowArtifactFactory flowArtifactFactory;
 
 	/**
-	 * Creates a flow registry factory bean.
-	 */
-	protected AbstractFlowRegistryFactoryBean() {
-
-	}
-
-	/**
 	 * Sets the parent registry of the registry constructed by this factory
 	 * bean.
 	 * @param parent the parent flow definition registry
