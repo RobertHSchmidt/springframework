@@ -44,7 +44,7 @@ import org.springframework.webflow.Flow;
  * Flow builders are used by the
  * {@link org.springframework.webflow.builder.FlowAssembler}, which acts as an
  * assembler (director). Flow Builders may be reused, however, exercise caution
- * when doing this as these objects are not thread safe. Also, for each use, be
+ * when doing this as these objects are not thread safe. Also, for each use be
  * sure to call init, buildStates, buildExceptionHandlers, buildPostProcess,
  * getResult, and dispose completely in that order.
  * <p>
@@ -62,11 +62,6 @@ public interface FlowBuilder {
 	/**
 	 * Initialize this builder and return a handle to the flow under
 	 * construction.
-	 * <p>
-	 * Note: the returned <code>Flow</code> handle is needed to avoid infinite
-	 * loops in the build process. The returned flow object is still under
-	 * construction and not yet ready for use. The only property that is
-	 * guaranteed to be filled is the id of the flow.
 	 * @param flowParameters flow parameters to be assigned to the flow being
 	 * built
 	 * @throws FlowBuilderException an exception occured building the flow
