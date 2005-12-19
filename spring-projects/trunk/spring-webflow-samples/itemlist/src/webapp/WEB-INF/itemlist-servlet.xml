@@ -10,7 +10,7 @@
 	      e.g. /app.htm?_flowId=itemlist
 	-->
 	<bean name="/app.htm" class="org.springframework.webflow.mvc.FlowController">
-		<constructor-arg ref="flowLocator"/>
+		<constructor-arg ref="flowRegistry"/>
 		<!--
 			Set cacheSeconds to a small, non zero value so you hit 'back' and experiment with
 			duplicate submit prevention.
@@ -19,7 +19,7 @@
 	</bean>
 
 	<!-- Creates the registry of flow definitions for this application -->
-	<bean id="flowLocator" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
+	<bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
 		<property name="flowLocations">
 			<list>
 				<value>/WEB-INF/itemlist.xml</value>

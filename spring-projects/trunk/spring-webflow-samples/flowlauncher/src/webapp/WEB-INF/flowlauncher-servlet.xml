@@ -19,14 +19,14 @@
 		This manager attaches a custom flow execution listener.
 	-->	
 	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
-		<constructor-arg ref="flowLocator"/>
+		<constructor-arg ref="flowRegistry"/>
 		<property name="listener">
 			<bean class="org.springframework.webflow.samples.flowlauncher.SampleFlowExecutionListener"/>
 		</property>
 	</bean>
 	
 	<!-- Creates the registry of flow definitions for this application -->
-	<bean id="flowLocator" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
+	<bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
 		<property name="flowLocations">
 			<list>
 				<value>/WEB-INF/sampleA.xml</value>
