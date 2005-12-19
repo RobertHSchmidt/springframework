@@ -166,7 +166,8 @@
 
 <!--
 	The scope of the attribute that will expose the return value of the target action method.
-	Used in conjunction with the 'resultName' attribute.
+	Used in conjunction with the 'resultName' attribute, and only applicable when this action
+	invokes a method on a bean (POJO) that returns a value.
 
 	For example:
         method="suggestItineraries(${flowScope.trip})" resultName="itineraries" resultScope="flow"
