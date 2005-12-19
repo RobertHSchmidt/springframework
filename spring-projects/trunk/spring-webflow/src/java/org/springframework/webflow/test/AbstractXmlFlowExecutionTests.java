@@ -5,8 +5,9 @@ import org.springframework.webflow.registry.XmlFlowRegistrar;
 
 /**
  * Base class for flow integration tests that verify a XML flow definition
- * executes as expected. Sample usage:
- * 
+ * executes as expected.
+ * <p>
+ * Example usage:
  * <pre>
  *  public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
  * 
@@ -34,7 +35,7 @@ import org.springframework.webflow.registry.XmlFlowRegistrar;
  *          parameters.put(&quot;firstName&quot;, &quot;Keith&quot;);
  *          parameters.put(&quot;lastName&quot;, &quot;Donald&quot;);
  *          ViewSelection view = signalEvent(&quot;search&quot;, parameters);
- *          assertCurrentStateEquals(&quot;displayResults&quot;);
+ *          assertCurrentStateEquals(&quot;displaySearchResults&quot;);
  *          assertModelAttributeCollectionSize(1, &quot;results&quot;, view);
  *      }
  *  }
