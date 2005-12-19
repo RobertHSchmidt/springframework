@@ -72,7 +72,7 @@ public interface RequestContext {
 
 	/**
 	 * Returns the external client context that originated (or triggered) this
-	 * request. Also known as a "user context".
+	 * request. Also known as the "user context".
 	 * <p>
 	 * Acting as a facade, the returned context object provides a single point
 	 * of access to the calling client's environment. It provides normalized
@@ -87,7 +87,7 @@ public interface RequestContext {
 	 * for portlets. Such downcasting will give you full access to a native
 	 * HttpServletRequest, for example. With that said, for portability reasons
 	 * you should avoid coupling your flow artifacts to a specific deployment
-	 * environment where possible.
+	 * environment when possible.
 	 * @return the originating external context, the one that triggered the
 	 * current execution request
 	 */
@@ -101,16 +101,16 @@ public interface RequestContext {
 
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in
-	 * request scope. Request scoped attributes exist for the duration of this
-	 * request.
+	 * request scope. <b>Request scoped attributes exist for the duration of
+	 * this request only.</b>
 	 * @return the request scope
 	 */
 	public Scope getRequestScope();
 
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in
-	 * flow scope. Flow scoped attributes exist for the life of the executing
-	 * flow.
+	 * flow scope. <b>Flow scoped attributes exist for the life of the executing
+	 * flow.</b>
 	 * @return the flow scope
 	 */
 	public Scope getFlowScope();
@@ -123,30 +123,33 @@ public interface RequestContext {
 	public Event getLastEvent();
 
 	/**
-	 * Returns the last state transition executed in this request.
-	 * @return the last transition, or <code>null</code> if none has occured
-	 * yet
+	 * Returns the last state transition that executed in this request.
+	 * @return the last transition, or <code>null</code> if no transition has
+	 * occured yet
 	 */
 	public Transition getLastTransition();
 
 	/**
-	 * Returns a holder for arbitrary execution properties set for the current
-	 * request.
-	 * @return the execution properties, or empty if not set
+	 * Returns a context map for accessing arbitrary properties about the state
+	 * of the current request. Properties provisioned within this map are often
+	 * used by {@link Action} implementations to influence their behavior.
+	 * @return the current properties of this request, or empty if not set
 	 */
 	public Map getProperties();
 
 	/**
-	 * Update contextual execution properties for given request context.
-	 * @param properties the execution properties
+	 * Update the set of contextual properties describing the state of this
+	 * request.
+	 * @param properties the properties
 	 */
 	public void setProperties(Map properties);
 
 	/**
 	 * Returns the data model for this context, suitable for exposing to clients
 	 * (mostly web views). Typically the model will contain the union of the
-	 * data available in request scope, flow scope and state result events.
-	 * @return the model that can be exposed to a client
+	 * data available in request scope and flow scope.
+	 * @return the model that can be exposed to a client view for rendering
+	 * purposes
 	 */
 	public Map getModel();
 }
