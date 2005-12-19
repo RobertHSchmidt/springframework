@@ -36,7 +36,8 @@ Package org.springframework.webflow.execution
 * Added paused, resumed, and sessionEnding FlowExecutionListener callbacks.
 * Added a KeyGenerator strategy, providing a plugin point for custom FlowExecution key generation strategies.
 * Introduced ExternalContext implementations for Servlet, Portlet, JSF, and Struts environments.
-  This adds support for accessing request parameter, request, session, and application variables from within SWF.
+  This adds support for accessing request parameter, request, session, and application variables from within SWF 
+  in a consistent manner (regardless of the environment in which SWF is used).
 * Reworked the flow execution package, decoupling the Event abstraction from the notion of an ExternalContext.
 * Reworked FlowExecution interface, making central start and signalEvent operations more explicit.
 * Reworked FlowExecutionManager: it is much easier now to customize flow execution workflow (necessary for JSF).
