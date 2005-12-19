@@ -13,17 +13,7 @@
 	</bean>
 
 	<bean id="flowRegistry2" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
-		<property name="flowLocations">
-			<list>
-				<value>classpath:org/springframework/webflow/registry/flow1.xml</value>
-				<value>classpath:org/springframework/webflow/registry/flow2.xml</value>
-			</list>
-		</property>
-		<property name="flowDirectoryLocations">
-			<list>
-				<value>classpath:org/springframework/webflow/registry/flows</value>
-			</list>
-		</property>
+		<property name="flowLocations" value="classpath*:org/springframework/webflow/registry/**/flow*.xml"/>
 		<property name="flowDefinitions">
 			<list>
 				<bean class="org.springframework.webflow.registry.ExternalizedFlowDefinition">

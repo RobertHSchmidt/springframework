@@ -102,8 +102,14 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * <p>
 	 * For example:
 	 * <pre>
-	 *     &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
 	 *         &lt;property name=&quot;flowLocations&quot;&gt; value="/WEB-INF/flows/*-flow.xml"/> 
+	 *     &lt;/bean&gt;
+	 * </pre>
+	 * Another example:
+	 * <pre>
+	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+	 *         &lt;property name=&quot;flowLocations&quot;&gt; value="classpath*:/example/flows/*-flow.xml"/> 
 	 *     &lt;/bean&gt;
 	 * </pre>
 	 * Flows registered from this set will be automatically assigned an id based
