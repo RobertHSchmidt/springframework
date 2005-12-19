@@ -554,9 +554,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 			throw new FlowExecutionManagementException(flowExecutionId, flowExecution,
 					"Unhandled state exception occured in " + flowExecution.getCaption(), e);
 		}
-		finally {
-			flowExecutionId = manageStorage(flowExecutionId, flowExecution, context);
-		}
+		flowExecutionId = manageStorage(flowExecutionId, flowExecution, context);
 		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
 	}
 
