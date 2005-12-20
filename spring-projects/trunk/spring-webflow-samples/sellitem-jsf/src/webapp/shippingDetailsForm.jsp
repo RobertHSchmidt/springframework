@@ -8,22 +8,22 @@
 	<hr>
 	<table>
 	<tr class="readOnly">
-		<td>Price:</td><td><h:outputText value="#{flow.sale.price}"/></td>
+		<td>Price:</td><td><h:outputText value="#{flowScope.sale.price}"/></td>
 	</tr>
 	<tr class="readOnly">
-		<td>Item count:</td><td><h:outputText value="#{flow.sale.itemCount}"/></td>
+		<td>Item count:</td><td><h:outputText value="#{flowScope.sale.itemCount}"/></td>
 	</tr>
 	<tr class="readOnly">
-		<td>Category:</td><td><h:outputText value="#{flow.sale.category}"/></td>
+		<td>Category:</td><td><h:outputText value="#{flowScope.sale.category}"/></td>
 	<tr class="readOnly">
-		<td>Shipping:</td><td><h:outputText value="#{flow.sale.shipping}"/></td>
+		<td>Shipping:</td><td><h:outputText value="#{flowScope.sale.shipping}"/></td>
 	</tr>
 	
 	<h:form id="shippingForm">
 		<tr>
 			<td>Shipping type:</td>
 			<td>
-				<h:selectOneMenu value="#{flow.sale.shippingType}">
+				<h:selectOneMenu value="#{flowScope.sale.shippingType}">
 					<f:selectItem itemLabel="Standard (10 extra cost)" itemValue="S"/>
 					<f:selectItem itemLabel="Express (20 extra cost)" itemValue="E"/>
 				</h:selectOneMenu>

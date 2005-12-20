@@ -21,7 +21,7 @@
 		<h:form id="priceAndItemCountForm">
 			<tr>
 				<td>Price:</td>
-				<td><h:inputText id="price" value="#{flow.sale.price}"
+				<td><h:inputText id="price" value="#{flowScope.sale.price}"
 					required="true">
 					  <f:validateDoubleRange minimum="0.01"/>
 					</h:inputText>
@@ -31,7 +31,7 @@
 			</tr>
 			<tr>
 				<td>Item count:</td>
-				<td><h:inputText id="itemCount" value="#{flow.sale.itemCount}"
+				<td><h:inputText id="itemCount" value="#{flowScope.sale.itemCount}"
 					required="true">
 
 					  <f:validateLongRange minimum="1"/>
