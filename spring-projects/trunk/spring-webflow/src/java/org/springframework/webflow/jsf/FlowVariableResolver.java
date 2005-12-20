@@ -26,16 +26,16 @@ import org.springframework.webflow.execution.FlowExecution;
 
 /**
  * Custom variable resolver that resolves to a thread-bound FlowExecution object
- * for binding expressions prefixed with {@link #FLOW_VARIABLE_NAME} (e.g.
- * flow.myBean.myProperty)
+ * for binding expressions prefixed with {@link #FLOW_SCOPE_VARIABLE} (e.g.
+ * flowScope.myBean.myProperty)
  * @author Colin Sampaleanu
  */
 public class FlowVariableResolver extends VariableResolver {
 
 	/**
-	 * Name of the exposed flow scope variable: "flow".
+	 * Name of the exposed flow scope variable ("flowScope").
 	 */
-	public static final String FLOW_VARIABLE_NAME = "flow";
+	public static final String FLOW_SCOPE_VARIABLE = "flowScope";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -67,14 +67,14 @@ public class FlowVariableResolver extends VariableResolver {
 	 * original VariableResolver.
 	 */
 	public Object resolveVariable(FacesContext context, String name) throws EvaluationException {
-		if (!FLOW_VARIABLE_NAME.equals(name)) {
-			return this.resolverDelegate.resolveVariable(context, name);
+		if (!FLOW_SCOPE_VARIABLE.equals(name)) {
+			return resolverDelegate.resolveVariable(context, name);
 		}
 		else {
 			FlowExecution execution = FlowExecutionHolder.getFlowExecution();
 			if (execution == null)
 				throw new EvaluationException(
-						"'flow' variable prefix specified, but a FlowExecution is not bound to current thread context as it should be");
+						"'flowScope' variable prefix specified, but a FlowExecution is not bound to current thread context as it should be");
 			return execution;
 		}
 	}
