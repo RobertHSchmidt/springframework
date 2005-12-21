@@ -60,6 +60,27 @@
 		<transition on="end" to="endState1"/>
 	</subflow-state>
  	
+ 	<decision-state id="decisionState1">
+ 		<if test="${flowScope.attribute4 != null}" then="decisionState2" else="endState1"/>
+ 	</decision-state>
+
+ 	<decision-state id="decisionState2">
+		<transition on="${flowScope.attribute4 != null}" to="decisionState3"/>
+		<transition on="${flowScope.attribute4 == null}" to="endState1"/>
+ 	</decision-state>
+
+ 	<decision-state id="decisionState3">
+ 		<action bean="pojoAction" method="booleanMethod"/>
+		<transition on="yes" to="decisionState4"/>
+		<transition on="no" to="endState2"/>
+ 	</decision-state>
+
+ 	<decision-state id="decisionState4">
+ 		<action bean="pojoAction" method="enumMethod"/>
+		<transition on="created" to="endState1"/>
+		<transition on="starting" to="endState2"/>
+ 	</decision-state>
+ 	 	 	 	
 	<end-state id="endState1" view="endView1"/>
 	
 	<end-state id="endState2"/>

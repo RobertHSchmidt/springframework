@@ -20,6 +20,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.core.enums.LabeledEnum;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
@@ -28,10 +29,12 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.support.SimpleViewSelector;
@@ -54,7 +57,7 @@ public class XmlFlowBuilderTests extends TestCase {
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
 				new TestFlowArtifactLocator());
-		new FlowAssembler("testFlow", builder).assembleFlow();
+		new FlowAssembler("testFlow1", builder).assembleFlow();
 		flow = builder.getResult();
 		context = new MockRequestContext();
 	}
@@ -65,9 +68,9 @@ public class XmlFlowBuilderTests extends TestCase {
 
 	public void testBuildResult() {
 		assertNotNull(flow);
-		assertEquals("testFlow", flow.getId());
+		assertEquals("testFlow1", flow.getId());
 		assertEquals("actionState1", flow.getStartState().getId());
-		assertEquals(9, flow.getStateIds().length);
+		assertEquals(13, flow.getStateIds().length);
 
 		assertEquals(1, flow.getExceptionHandlerSet().size());
 		assertTrue(flow.getExceptionHandlerSet().toArray()[0] instanceof TransitionExecutingStateExceptionHandler);
@@ -163,6 +166,9 @@ public class XmlFlowBuilderTests extends TestCase {
 			if ("action1".equals(id) || "action2".equals(id)) {
 				return new TestAction();
 			}
+			if ("pojoAction".equals(id)) {
+				return new LocalBeanInvokingAction(new TestPojo());
+			}
 			throw new FlowArtifactException(id, Action.class);
 		}
 
@@ -193,6 +199,15 @@ public class XmlFlowBuilderTests extends TestCase {
 		}
 	}
 
+	public static class TestPojo {
+		public boolean booleanMethod() {
+			return true;
+		}
+		
+		public LabeledEnum enumMethod() {
+			return FlowSessionStatus.CREATED;
+		}
+	}
 	public static class TestFlowAttributeMapper implements FlowAttributeMapper {
 		public Map createSubflowInput(RequestContext context) {
 			return new HashMap();
