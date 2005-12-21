@@ -31,7 +31,7 @@
 	exception handlers, view selectors, transition criteria, etc). A flow may nest one or more other 
 	flows in-line to use as subflows, referred to as 'inline flows'.
 -->
-<!ELEMENT flow ( property*, start-actions*, var*, ( action-state | view-state | decision-state | subflow-state | end-state )+, end-actions*, exception-handler*, import*, inline-flow* )>
+<!ELEMENT flow ( property*, start-actions?, var*, ( action-state | view-state | decision-state | subflow-state | end-state )+, end-actions?, exception-handler*, import*, inline-flow* )>
 
 <!--
 	The the start state of this flow; the start state is the point where flow execution will begin.
@@ -108,9 +108,9 @@
 <!ATTLIST action-state id ID #REQUIRED>
 
 <!--
-	Defines a single action to be executed. An action is a command that executes
+	Defines a single action to be executed. An action is a command object that executes
 	arbitrary behavior. An action may be annotated with properties. These properties can be
-	used to effect the action's execution.
+	used to affect the action's execution.
 -->
 <!ELEMENT action ( property* )>
 
@@ -261,13 +261,60 @@
 <!ELEMENT exit-actions ( action+ )>
 
 <!--
-	Defines a decision state, a state that evaluates one or more expressions to	decide which
-	state to go to next.  Intended to be used purely as a 'navigation' or 'routing' state.
+	Defines a decision state, a state that evaluates one or more expressions or method 
+	return values to decide which state to enter next.  Intended to be used purely as an
+	idempotent 'navigation' or 'routing' state and is not intended to execute non-idempotent
+	(or mutating) behavior.
 	
-	A decision state is a transitionable state. A decision state transition is triggered by an
-	boolean expression evaluating true against the flow execution request context.
+	A decision state is a transitionable state. A decision state transition can be triggered 
+	in two possible ways:
+	
+	1. By evaluating a boolean expression against the flow execution request context.  To 
+	define expressions, use the 'if' or 'transition' elements.
+	
+	2. By evaluating the result of a single action invoked when this state is entered. 
+	To define an action, use the 'action' element.  The referenced action bean may implement 
+	the Action interface or may be a method on a JavaBean (POJO) that returns a value.
+	In the latter case, a string-form of the method return value will be used as
+	the criteria for a state transition.
+	
+	Examples:
+
+	A simple boolean expression test, using the convenient 'if' element:
+	
+	    <decision-state id="requiresShipping">
+		    <if test="${flowScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
+    	</decision-state>
+
+	The same boolean expression test, using the 'transition' element as an alternative:
+		
+	    <decision-state id="requiresShipping">
+		    <transition on="${flowScope.sale.shipping}" then="enterShippingDetails"/>
+    		<transition on="${!flowScope.saleShipping}" then="processSale"/>
+	    </decision-state>
+
+	Use of the 'action' element to invoke a method that returns a boolean, combined with use of
+	transition elements to evaluate the string-form of the boolean result:
+	
+	    <decision-state id="requiresShipping">
+		    <action bean="shippingService" method="isShippingRequired"/>
+    		<transition on="yes" to="enterShippingDetails"/>
+     		<transition on="no" to="processSale"/>
+    	</decision-state>	
+
+	Use of the 'action' element to invoke a method that returns a value object, combined with
+	use of transition elements to evaluate the string-form of the result:
+	
+	    <decision-state id="handleShippingMethod">
+		    <action bean="shippingService" method="getShippingMethod(${flowScope.sale})"/>
+    		<transition on="Normal" to="enterNormalShipping"/>
+	    	<transition on="Priority" to="enterPriorityShipping"/>
+    	</decision-state>
+	
+	Do not combine use of the 'if' element with use of the 'transition' element or 'action' 
+	element.  Use one strategy or the other.
 -->
-<!ELEMENT decision-state ( property*, entry-actions?, if+, exit-actions?, exception-handler* )>
+<!ELEMENT decision-state ( property*, entry-actions?, if*, action?, transition*, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this decision state; must be unique to this flow.
@@ -275,29 +322,36 @@
 <!ATTLIST decision-state id ID #REQUIRED>
 
 <!--
-	A transition specification that defines a criteria expression and a state to
-	transition to if that expression is true. Optionally, this element may also define
-	an 'else' attribute to note the state to transition to if the expression is false.
+	A transition specification that defines a boolean expression to evaluate when this state
+	is entered and a state to transition to if that	expression evaluates to true.
+	Optionally, this element may also define an 'else' attribute to define a state to
+	transition to if the expression evaluates to false.
+
 	The form is:
-	    <if test="${criteria}" then="<trueStateId>" else="<falseStateId>"/>
+	    <if test="${criteria}" then="trueStateId" else="falseStateId"/>
+	    
+	Use this element or the transition element when defining a decision state, not both.
+	Do not use this element with the decision-state 'action' element.
 -->
 <!ELEMENT if EMPTY>
 
 <!--
-	The transition criteria expression to be tested. This should be an ${expression} that
-	evaluates against this flow's request context. For example:
+	The transition criteria expression to be tested. This should be a boolean
+    ${expression} that evaluates against this flow's request context.
+    
+    For example:
 	    <if test="${flowScope.sale.shipping} then="enterShippingDetails"/>
 	    <if test="${lastEvent.id == 'search'} then="bindSearchParameters"/>
 -->
 <!ATTLIST if test CDATA #REQUIRED>
 
 <!--
-	The state to transition to if the criteria expression is true.
+	The state to transition to if the boolean expression is true.
 -->
 <!ATTLIST if then IDREF #REQUIRED>
 
 <!--
-	The state to transition to if the criteria expression is false (optional).
+	The state to transition to if the boolean expression is false (optional).
 -->
 <!ATTLIST if else IDREF #IMPLIED>
 
