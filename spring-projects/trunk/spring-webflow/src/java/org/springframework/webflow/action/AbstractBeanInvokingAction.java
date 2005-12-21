@@ -92,7 +92,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * to method arguments as neccessary.
 	 */
 	public void setConversionService(ConversionService conversionService) {
-		this.methodInvoker.setConversionService(conversionService);
+		methodInvoker.setConversionService(conversionService);
 	}
 
 	/**
