@@ -112,7 +112,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 		}
 		Object returnValue = getMethodInvoker().invoke(methodKey, bean, context);
 		processMethodReturnValue(returnValue, context);
-		Event resultEvent = toEvent(context, returnValue);
+		Event resultEvent = toEvent(returnValue, context);
 		getStatePersister().saveState(bean, context);
 		return resultEvent;
 	}
@@ -143,12 +143,12 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * Template method that converts the return value of bean method invokation
 	 * into a web flow event. Subclasses can override this if needed.
 	 */
-	protected Event toEvent(RequestContext context, Object returnValue) {
+	protected Event toEvent(Object returnValue, RequestContext context) {
 		if (returnValue instanceof Event) {
 			return (Event)returnValue;
 		}
 		if (context.getFlowExecutionContext().getCurrentState() instanceof DecisionState) {
-			return adaptDecisionStateReturnValue(context, returnValue);
+			return toDecisionStateEvent(returnValue, context);
 		}
 		else {
 			// simply return success, saving the return value as an event
@@ -166,7 +166,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * @param returnValue the return value
 	 * @return the decision event
 	 */
-	protected Event adaptDecisionStateReturnValue(RequestContext context, Object returnValue) {
+	protected Event toDecisionStateEvent(Object returnValue, RequestContext context) {
 		if (returnValue == null) {
 			return result(NULL_EVENT_ID, RESULT_PARAMETER, null);
 		}
