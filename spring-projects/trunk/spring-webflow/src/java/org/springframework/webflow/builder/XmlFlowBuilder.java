@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -82,8 +83,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *         &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *         &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -628,7 +629,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected DecisionState parseDecisionState(Flow flow, Element element) {
 		DecisionState state = (DecisionState)getLocalFlowArtifactFactory().createState(flow, DecisionState.class,
 				parseParameters(element));
-		state.addTransitions(parseIfs(element));
+		state.addTransitions(parseIfs(state, element));
+		state.addTransitions(parseTransitions(state, element));
+		List actionElements = DomUtils.getChildElementsByTagName(element, ACTION_ELEMENT);
+		if (!actionElements.isEmpty()) {
+			Element actionElement = (Element)actionElements.get(0);
+			state.setAction(parseAnnotatedAction(actionElement));
+		}
 		return state;
 	}
 
@@ -789,12 +796,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Find all "if" definitions in given state definition and return a list of
 	 * corresponding Transition objects.
 	 */
-	protected Transition[] parseIfs(Element element) {
+	protected Transition[] parseIfs(TransitionableState sourceState, Element element) {
 		List transitions = new LinkedList();
 		List transitionElements = DomUtils.getChildElementsByTagName(element, IF_ELEMENT);
 		Iterator it = transitionElements.iterator();
 		while (it.hasNext()) {
-			transitions.addAll(Arrays.asList(parseIf((Element)it.next())));
+			transitions.addAll(Arrays.asList(parseIf(sourceState, (Element)it.next())));
 		}
 		return (Transition[])transitions.toArray(new Transition[0]);
 	}
@@ -803,14 +810,18 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Parse an "if" transition definition and return a corresponding Transition
 	 * object.
 	 */
-	protected Transition[] parseIf(Element element) {
+	protected Transition[] parseIf(TransitionableState sourceState, Element element) {
 		TransitionCriteria criteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(TEST_ATTRIBUTE));
-		String trueStateId = element.getAttribute(THEN_ATTRIBUTE);
-		Transition thenTransition = new Transition(criteria, trueStateId);
-		String falseStateId = element.getAttribute(ELSE_ATTRIBUTE);
-		if (StringUtils.hasText(falseStateId)) {
-			Transition elseTransition = new Transition(falseStateId);
+		Transition thenTransition = getLocalFlowArtifactFactory().createTransition(sourceState, Collections.EMPTY_MAP);
+		thenTransition.setMatchingCriteria(criteria);
+		thenTransition.setTargetStateResolver(new Transition.StaticTargetStateResolver(element
+				.getAttribute(THEN_ATTRIBUTE)));
+		if (StringUtils.hasText(element.getAttribute(ELSE_ATTRIBUTE))) {
+			Transition elseTransition = getLocalFlowArtifactFactory().createTransition(sourceState,
+					Collections.EMPTY_MAP);
+			thenTransition.setTargetStateResolver(new Transition.StaticTargetStateResolver(element
+					.getAttribute(ELSE_ATTRIBUTE)));
 			return new Transition[] { thenTransition, elseTransition };
 		}
 		else {

@@ -37,7 +37,7 @@ public interface FlowArtifactFactory {
 	 * Retrieve the action to be executed within a flow with the provided id.
 	 * @param id the id
 	 * @return the action
-	 * @throws FlowArtifactException when no such mapper is found
+	 * @throws FlowArtifactException when no such action is found
 	 */
 	public Action getAction(String id) throws FlowArtifactException;
 
@@ -64,7 +64,7 @@ public interface FlowArtifactFactory {
 	 * the provided id.
 	 * @param id the id
 	 * @return the view selector
-	 * @throws FlowArtifactException when no such creator is found
+	 * @throws FlowArtifactException when no such selector is found
 	 */
 	public ViewSelector getViewSelector(String id) throws FlowArtifactException;
 
@@ -81,7 +81,7 @@ public interface FlowArtifactFactory {
 	 * Retrieve the transition target state resolver with the specified id.
 	 * @param id the id
 	 * @return the target state resolver
-	 * @throws FlowArtifactException when no such handler is found
+	 * @throws FlowArtifactException when no such resolver is found
 	 */
 	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException;
 

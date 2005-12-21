@@ -18,7 +18,8 @@ package org.springframework.webflow;
 /**
  * A simple decision state that when entered will execute the first transition
  * whose matching criteria evaluates to <code>true</code> in the context of
- * the current request.
+ * the current request. May also specific a indempotent action to execute before
+ * making a state transition decision.
  * <p>
  * A decision state is a convenient, simple way to encapsulate reusable state
  * transition logic in one place.
@@ -28,8 +29,9 @@ package org.springframework.webflow;
 public class DecisionState extends TransitionableState {
 
 	/**
-	 * An optional action whose result will be used as the criteria for the
-	 * decision made in this state.
+	 * An optional action whose result can be used as the criteria for the
+	 * decision made in this state. This action should be idempotent and not
+	 * execute 'mutating' or non-idempotent behavior.
 	 */
 	private Action action;
 
@@ -53,7 +55,7 @@ public class DecisionState extends TransitionableState {
 	}
 
 	/**
-	 * Returns the action whose result will be used as the criteria for the
+	 * Returns the action whose result can be used as the criteria for the
 	 * decision made in this state.
 	 */
 	public Action getAction() {
@@ -61,8 +63,9 @@ public class DecisionState extends TransitionableState {
 	}
 
 	/**
-	 * Sets the action whose result will be used as the criteria for the
-	 * decision made in this state.
+	 * Sets the action whose result can be used as the criteria for the decision
+	 * made in this state. This action should be idempotent and not execute
+	 * 'mutating' or non-idempotent behavior.
 	 */
 	public void setAction(Action action) {
 		this.action = action;

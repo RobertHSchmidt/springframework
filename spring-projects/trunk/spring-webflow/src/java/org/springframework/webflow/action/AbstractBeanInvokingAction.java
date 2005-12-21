@@ -21,9 +21,9 @@ import java.lang.reflect.Method;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodKey;
-import org.springframework.core.JdkVersion;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.webflow.AnnotatedAction;
+import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ScopeType;
@@ -40,6 +40,28 @@ import org.springframework.webflow.ScopeType;
  * @author Keith Donald
  */
 public abstract class AbstractBeanInvokingAction extends AbstractAction {
+
+	private static final String NULL_EVENT_ID = "null";
+
+	private static final String JAVA_LANG_ENUM_CLASSNAME = "java.lang.Enum";
+
+	private static Class java5EnumClass;
+
+	private static Method java5EnumNameMethod;
+
+	static {
+		try {
+			java5EnumClass = Class.forName(JAVA_LANG_ENUM_CLASSNAME);
+			try {
+				java5EnumNameMethod = java5EnumClass.getMethod("name", null);
+			}
+			catch (NoSuchMethodException e) {
+				throw new RuntimeException("Should not happen on JDK 1.5");
+			}
+		}
+		catch (ClassNotFoundException ex) {
+		}
+	}
 
 	/**
 	 * The method invoker that performs the action-to-bean method binding.
@@ -85,7 +107,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 		getStatePersister().restoreState(bean, context);
 		MethodKey methodKey = (MethodKey)context.getProperties().get(AnnotatedAction.METHOD_PROPERTY);
 		if (methodKey == null) {
-			throw new IllegalStateException("The method to invoke was not provided: please set the '"
+			throw new IllegalStateException("The method to invoke was not provided, please set the '"
 					+ AnnotatedAction.METHOD_PROPERTY + "' property");
 		}
 		Object returnValue = getMethodInvoker().invoke(methodKey, bean, context);
@@ -101,6 +123,13 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 */
 	protected abstract Object getBean(RequestContext context);
 
+	/**
+	 * Template method for post processing the invoked method's return value.
+	 * This implementation exposes the return value as an attribute in a
+	 * configured scope, if necessary. Subclasses may override.
+	 * @param returnValue the return value
+	 * @param context the request context
+	 */
 	protected void processMethodReturnValue(Object returnValue, RequestContext context) {
 		String resultName = (String)getActionProperty(context, AnnotatedAction.RESULT_NAME_PROPERTY, null);
 		if (resultName != null) {
@@ -111,46 +140,55 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * Hook method that converts the return value of bean method invokation into
-	 * a web flow event. Subclasses can override this if needed.
+	 * Template method that converts the return value of bean method invokation
+	 * into a web flow event. Subclasses can override this if needed.
 	 */
 	protected Event toEvent(RequestContext context, Object returnValue) {
 		if (returnValue instanceof Event) {
 			return (Event)returnValue;
 		}
+		if (context.getFlowExecutionContext().getCurrentState() instanceof DecisionState) {
+			return adaptDecisionStateReturnValue(context, returnValue);
+		}
 		else {
+			// simply return success, saving the return value as an event
+			// parameter
 			String resultParameterName = (String)getActionProperty(context, RESULT_PARAMETER, RESULT_PARAMETER);
-			if (returnValue instanceof Boolean) {
-				return yesOrNo(((Boolean)returnValue).booleanValue());
-			}
-			else if (returnValue != null) {
-				if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_15) {
-					try {
-						Class enumClass = Class.forName("java.lang.Enum");
-						if (enumClass.equals(returnValue.getClass())) {
-							return jdk5EnumResult(enumClass, returnValue);
-						}
-					}
-					catch (ClassNotFoundException e) {
-						throw new RuntimeException("Should not happen on JDK 1.5");
-					}
-				} else if (returnValue instanceof LabeledEnum) {
-					String resultId = String.valueOf(((LabeledEnum)returnValue).getCode());
-					return result(resultId, RESULT_PARAMETER, returnValue);
-				}
-			}
 			return success(resultParameterName, returnValue);
 		}
 	}
-	
-	protected Event jdk5EnumResult(Class enumClass, Object returnEnumValue) {
-		try {
-			Method nameMethod = enumClass.getMethod("name", null);
-			String resultId = (String)nameMethod.invoke(returnEnumValue, null);
-			return result(resultId, RESULT_PARAMETER, returnEnumValue);
+
+	/**
+	 * Called when this action is invoked by a decision state - adapts the
+	 * invoked method's return value to an event identifier the decision state
+	 * can respond to.
+	 * @param context the request context
+	 * @param returnValue the return value
+	 * @return the decision event
+	 */
+	protected Event adaptDecisionStateReturnValue(RequestContext context, Object returnValue) {
+		if (returnValue == null) {
+			return result(NULL_EVENT_ID, RESULT_PARAMETER, null);
 		}
-		catch (NoSuchMethodException e) {
-			throw new RuntimeException("Should not happen on JDK 1.5");
+		if (returnValue instanceof Boolean) {
+			return yesOrNo(((Boolean)returnValue).booleanValue());
+		}
+		else {
+			if (java5EnumClass.equals(returnValue.getClass())) {
+				return jdk5EnumResult(returnValue);
+			}
+			else if (returnValue instanceof LabeledEnum) {
+				String resultId = String.valueOf(((LabeledEnum)returnValue).getCode());
+				return result(resultId, RESULT_PARAMETER, returnValue);
+			}
+		}
+		return result(String.valueOf(returnValue), RESULT_PARAMETER, returnValue);
+	}
+
+	protected Event jdk5EnumResult(Object returnEnumValue) {
+		try {
+			String resultEventId = (String)java5EnumNameMethod.invoke(returnEnumValue, null);
+			return result(resultEventId, RESULT_PARAMETER, returnEnumValue);
 		}
 		catch (InvocationTargetException e) {
 			throw new RuntimeException("Should not happen on JDK 1.5");
