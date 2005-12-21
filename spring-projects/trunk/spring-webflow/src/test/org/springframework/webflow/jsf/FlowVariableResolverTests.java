@@ -35,33 +35,33 @@ public class FlowVariableResolverTests extends TestCase {
 
 	public void testResolver() {
 
-		FlowVariableResolver resolver = new FlowVariableResolver(
-				new OriginalVariableResolver());
+		FlowVariableResolver resolver = new FlowVariableResolver(new OriginalVariableResolver());
 
 		assertEquals("val1", resolver.resolveVariable(null, "var1"));
-		
+
 		try {
-			resolver.resolveVariable(null, "flow");
+			resolver.resolveVariable(null, "flowScope");
 			fail("resolver can not work with no FlowExecution in thread local");
-		} catch (EvaluationException e) { 
+		}
+		catch (EvaluationException e) {
 			// expected
 		}
-		
+
 		MockControl flowExControl = MockControl.createControl(FlowExecution.class);
 		Serializable flowExecutionId = "myId";
-		FlowExecution flowEx = (FlowExecution) flowExControl.getMock();
+		FlowExecution flowEx = (FlowExecution)flowExControl.getMock();
 		FlowExecutionHolder.setFlowExecution(flowExecutionId, flowEx, null, false);
-		assertEquals(flowEx, resolver.resolveVariable(null, "flow"));
-		
+		assertEquals(flowEx, resolver.resolveVariable(null, "flowScope"));
+
 		FlowExecutionHolder.clearFlowExecution();
 	}
 
 	private static class OriginalVariableResolver extends VariableResolver {
 
-		public Object resolveVariable(FacesContext facesContext, String name)
-				throws EvaluationException {
-			if ("var1".equals(name))
+		public Object resolveVariable(FacesContext facesContext, String name) throws EvaluationException {
+			if ("var1".equals(name)) {
 				return "val1";
+			}
 			return null;
 		}
 	}
