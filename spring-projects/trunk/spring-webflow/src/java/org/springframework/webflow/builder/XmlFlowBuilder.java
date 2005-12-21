@@ -83,8 +83,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *         &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *         &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -934,7 +934,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 									"Either the 'as' attribute or the 'collection' attribute is required with the 'name' attribute");
 					PropertyExpression collectionExpression = new CollectionAddingPropertyExpression(
 							new FlowScopeExpression(collection));
-					mappings.add(new Mapping(new FlowScopeExpression(name), collectionExpression, typeConverter));
+					mappings.add(new Mapping(ExpressionFactory.parseExpression(value), collectionExpression,
+							typeConverter));
 				}
 			}
 		}

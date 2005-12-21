@@ -4,6 +4,8 @@
 
 <flow start-state="actionState1">
 	<property name="propInteger" value="12345" type="integer"/>
+
+	<var name="items" type="java.util.ArrayList"/>
 	
 	<action-state id="actionState1">
 		<property name="propBoolean" value="true" type="boolean"/>
@@ -21,10 +23,16 @@
 	</action-state>
 
 	<action-state id="actionState2">
-		<action bean="action1" method="actionMethod" resultName="result" resultScope="flow"/>
-		<transition on="success" to="viewState1"/>
+		<action bean="multiAction" method="actionMethod"/>
+		<transition on="success" to="actionState3"/>
+		<exception-handler on="org.springframework.webflow.builder.MyCustomException" to="actionState3"/>
 	</action-state>
 
+	<action-state id="actionState3">
+		<action bean="pojoAction" method="enumMethod" resultName="result"/>
+		<transition on="success" to="viewState1"/>
+	</action-state>
+	
 	<view-state id="viewState1" view="view1">
 		<transition on="event1" to="subFlowState1"/>
 	</view-state>
@@ -38,7 +46,7 @@
 
 	<subflow-state id="subFlowState1" flow="subFlow1">
 		<attribute-mapper bean="attributeMapper1"/>
-		<transition on="event1" to="endState1"/>
+		<transition on="event1" to="spawnInlineFlow"/>
 		<exit-actions>
 			<action bean="action2"/>
 		</exit-actions>
@@ -52,21 +60,22 @@
 			<output name="attribute2"/>
 			<output name="attribute1" as="attribute3"/>
 			<output value="${flowScope.attribute4}" as="attribute1"/>
+			<output value="${flowScope.attribute4}" collection="items"/>
 		</attribute-mapper>
-		<transition on="event2" to="endState2"/>
+		<transition on="event2" to="decisionState1"/>
 	</subflow-state>
 	
-	<subflow-state id="spawnInnerFlow" flow="inline-flow">
+	<subflow-state id="spawnInlineFlow" flow="inline-flow">
 		<transition on="end" to="endState1"/>
 	</subflow-state>
  	
  	<decision-state id="decisionState1">
- 		<if test="${flowScope.attribute4 != null}" then="decisionState2" else="endState1"/>
+ 		<if test="${flowScope.attribute1 != null}" then="decisionState2" else="endState1"/>
  	</decision-state>
 
  	<decision-state id="decisionState2">
-		<transition on="${flowScope.attribute4 != null}" to="decisionState3"/>
-		<transition on="${flowScope.attribute4 == null}" to="endState1"/>
+		<transition on="${flowScope.attribute1 != null}" to="decisionState3"/>
+		<transition on="${flowScope.attribute1 == null}" to="endState1"/>
  	</decision-state>
 
  	<decision-state id="decisionState3">

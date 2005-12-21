@@ -70,7 +70,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(flow);
 		assertEquals("testFlow1", flow.getId());
 		assertEquals("actionState1", flow.getStartState().getId());
-		assertEquals(13, flow.getStateIds().length);
+		assertEquals(14, flow.getStateIds().length);
 
 		assertEquals(1, flow.getExceptionHandlerSet().size());
 		assertTrue(flow.getExceptionHandlerSet().toArray()[0] instanceof TransitionExecutingStateExceptionHandler);
@@ -123,7 +123,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		context.setLastEvent(createEvent("event1"));
 		assertTrue(subFlowState1.hasTransitionFor(context));
 		transition = subFlowState1.getRequiredTransition(context);
-		assertEquals("endState1", transition.getTargetStateId());
+		assertEquals("spawnInlineFlow", transition.getTargetStateId());
 
 		SubflowState subFlowState2 = (SubflowState)flow.getState("subFlowState2");
 		assertNotNull(subFlowState2);
@@ -134,7 +134,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		context.setLastEvent(createEvent("event2"));
 		assertTrue(subFlowState2.hasTransitionFor(context));
 		transition = subFlowState2.getRequiredTransition(context);
-		assertEquals("endState2", transition.getTargetStateId());
+		assertEquals("decisionState1", transition.getTargetStateId());
 
 		EndState endState1 = (EndState)flow.getState("endState1");
 		assertNotNull(endState1);
@@ -165,6 +165,9 @@ public class XmlFlowBuilderTests extends TestCase {
 		public Action getAction(String id) throws FlowArtifactException {
 			if ("action1".equals(id) || "action2".equals(id)) {
 				return new TestAction();
+			}
+			if ("multiAction".equals(id)) {
+				return new TestMultiAction();
 			}
 			if ("pojoAction".equals(id)) {
 				return new LocalBeanInvokingAction(new TestPojo());
