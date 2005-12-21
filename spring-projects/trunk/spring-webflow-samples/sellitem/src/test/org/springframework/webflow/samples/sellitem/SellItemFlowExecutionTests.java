@@ -11,6 +11,7 @@ import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 
 public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
+	@Override
 	protected String flowId() {
 		return "sellitem";
 	}
