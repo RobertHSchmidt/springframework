@@ -120,7 +120,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals("subFlow1", subFlowState1.getSubflow().getId());
 		assertNotNull(subFlowState1.getAttributeMapper());
 		assertEquals(1, subFlowState1.getTransitions().length);
-		context.setLastEvent(createEvent("event1"));
+		context.setLastEvent(createEvent("finish"));
 		assertTrue(subFlowState1.hasTransitionFor(context));
 		transition = subFlowState1.getRequiredTransition(context);
 		assertEquals("spawnInlineFlow", transition.getTargetStateId());
@@ -131,7 +131,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals("subFlow2", subFlowState2.getSubflow().getId());
 		assertNotNull(subFlowState2.getAttributeMapper());
 		assertEquals(1, subFlowState2.getTransitions().length);
-		context.setLastEvent(createEvent("event2"));
+		context.setLastEvent(createEvent("finish"));
 		assertTrue(subFlowState2.hasTransitionFor(context));
 		transition = subFlowState2.getRequiredTransition(context);
 		assertEquals("decisionState1", transition.getTargetStateId());

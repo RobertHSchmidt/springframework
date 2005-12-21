@@ -46,7 +46,7 @@
 
 	<subflow-state id="subFlowState1" flow="subFlow1">
 		<attribute-mapper bean="attributeMapper1"/>
-		<transition on="event1" to="spawnInlineFlow"/>
+		<transition on="finish" to="spawnInlineFlow"/>
 		<exit-actions>
 			<action bean="action2"/>
 		</exit-actions>
@@ -62,7 +62,7 @@
 			<output value="${flowScope.attribute4}" as="attribute1"/>
 			<output value="${flowScope.attribute4}" collection="items"/>
 		</attribute-mapper>
-		<transition on="event2" to="decisionState1"/>
+		<transition on="finish" to="decisionState1"/>
 	</subflow-state>
 	
 	<subflow-state id="spawnInlineFlow" flow="inline-flow">
