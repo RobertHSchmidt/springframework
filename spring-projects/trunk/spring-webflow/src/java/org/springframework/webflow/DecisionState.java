@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-
 /**
  * A simple decision state that when entered will execute the first transition
  * whose matching criteria evaluates to <code>true</code> in the context of
@@ -27,7 +26,13 @@ package org.springframework.webflow;
  * @author Keith Donald
  */
 public class DecisionState extends TransitionableState {
-	
+
+	/**
+	 * An optional action whose result will be used as the criteria for the
+	 * decision made in this state.
+	 */
+	private Action action;
+
 	/**
 	 * Default constructor for bean style usage.
 	 * @see TransitionableState#TransitionableState()
@@ -48,10 +53,27 @@ public class DecisionState extends TransitionableState {
 	}
 
 	/**
+	 * Returns the action whose result will be used as the criteria for the
+	 * decision made in this state.
+	 */
+	public Action getAction() {
+		return action;
+	}
+
+	/**
+	 * Sets the action whose result will be used as the criteria for the
+	 * decision made in this state.
+	 */
+	public void setAction(Action action) {
+		this.action = action;
+	}
+
+	/**
 	 * Specialization of State's <code>doEnter</code> template method that
 	 * executes behaviour specific to this state type in polymorphic fashion.
 	 * <p>
-	 * Simply looks up the first transition that matches the state of the
+	 * Invokes the decision action and responds to its result event if set. Else
+	 * simply looks up the first transition that matches the state of the
 	 * context and executes it.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
@@ -60,6 +82,12 @@ public class DecisionState extends TransitionableState {
 	 * @throws StateException if an exception occurs in this state
 	 */
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
+		if (action != null) {
+			Event event = new ActionExecutor(action).execute(context);
+			if (event != null) {
+				return context.signalEvent(event);
+			}
+		}
 		return getRequiredTransition(context).execute(context);
 	}
 }
