@@ -15,9 +15,14 @@
  */
 package org.springframework.webflow;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
@@ -50,10 +55,16 @@ import org.springframework.util.Assert;
 public class EndState extends State {
 
 	/**
-	 * An optional view selector that will select a view to render if this end
+	 * The optional view selector that will select a view to render if this end
 	 * state terminates an executing root flow.
 	 */
 	private ViewSelector viewSelector;
+
+	/**
+	 * The set of output attributes that will be returned to the parent flow
+	 * when this end state terminates a subflow.
+	 */
+	private Set outputAttributeNames = CollectionFactory.createLinkedSetIfPossible(3);
 
 	/**
 	 * Default constructor for bean style usage.
@@ -101,6 +112,38 @@ public class EndState extends State {
 	}
 
 	/**
+	 * Record the name of an attribute to expose as output when this end state
+	 * is used to end this flow when acting as a subflow.
+	 * @param attributeName the attribute name
+	 * @return true if the collection of output attributes was modified
+	 */
+	public boolean addOutputAttributeName(String attributeName) {
+		return outputAttributeNames.add(attributeName);
+	}
+
+	/**
+	 * Record the names of attributes to expose as output when this end state is
+	 * used to end this flow when acting as a subflow.
+	 * @param attributeNames the attribute names
+	 * @return true if the collection of output attributes was modified
+	 */
+	public boolean addOutputAttributeNames(String[] attributeNames) {
+		if (attributeNames == null) {
+			return false;
+		}
+		return outputAttributeNames.addAll(Arrays.asList(attributeNames));
+	}
+
+	/**
+	 * Returns the names of attributes to expose as output when this end state
+	 * is entered and used to terminate a subflow.
+	 * @return the output attribute names
+	 */
+	public String[] getOutputAttributeNames() {
+		return (String[])outputAttributeNames.toArray(new String[0]);
+	}
+
+	/**
 	 * Specialization of State's <code>doEnter</code> template method that
 	 * executes behaviour specific to this state type in polymorphic fashion.
 	 * <p>
@@ -137,34 +180,35 @@ public class EndState extends State {
 		}
 		else {
 			// there is a parent flow that will resume
-			FlowSession parentSession = context.getFlowExecutionContext().getActiveSession().getParent();
+			FlowSession subflowSession = context.endActiveFlowSession();
+			FlowSession parentSession = context.getFlowExecutionContext().getActiveSession();
 			Assert.isInstanceOf(FlowAttributeMapper.class, parentSession.getCurrentState(),
-					"State in resuming flow is not an attribute mapper: ");
+					"Current state of resuming flow is not a flow attribute mapper: ");
 			FlowAttributeMapper resumingState = (FlowAttributeMapper)parentSession.getCurrentState();
-			resumingState.mapSubflowOutput(context);
-			context.endActiveFlowSession();
-			return context.signalEvent(subflowResult(context));
+			Map subflowOutput = createOutput(subflowSession.getScope());
+			resumingState.mapSubflowOutput(subflowOutput, context);
+			return context.signalEvent(new Event(this, getId(), subflowOutput));
 		}
-	}
-
-	/**
-	 * Hook method to create the subflow result event. Subclasses can override
-	 * this if necessary.
-	 */
-	protected Event subflowResult(RequestContext context) {
-		// treat this end state id as an event in the resuming state
-		return new Event(this, getId(), resultParameters(context));
 	}
 
 	/**
 	 * Returns the subflow result event parameter map. Default implementation
 	 * returns an empty map. Subclasses may override.
 	 */
-	private Map resultParameters(RequestContext context) {
-		return Collections.EMPTY_MAP;
+	protected Map createOutput(Scope subflowScope) {
+		if (outputAttributeNames.isEmpty()) {
+			return Collections.EMPTY_MAP;
+		}
+		Map output = new HashMap(outputAttributeNames.size());
+		Iterator it = outputAttributeNames.iterator();
+		while (it.hasNext()) {
+			String attributeName = (String)it.next();
+			output.put(attributeName, subflowScope.getAttribute(attributeName));
+		}
+		return output;
 	}
 
 	protected void createToString(ToStringCreator creator) {
-		creator.append("viewSelector", viewSelector);
+		creator.append("viewSelector", viewSelector).append("outputAttributeNames", outputAttributeNames);
 	}
 }

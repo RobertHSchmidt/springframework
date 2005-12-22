@@ -174,11 +174,12 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 			return yesOrNo(((Boolean)returnValue).booleanValue());
 		}
 		else {
-			if (java5EnumClass.equals(returnValue.getClass())) {
+			// handle special event adaption for enum return values
+			if (java5EnumClass != null && java5EnumClass.equals(returnValue.getClass())) {
 				return jdk5EnumResult(returnValue);
 			}
 			else if (returnValue instanceof LabeledEnum) {
-				String resultId = String.valueOf(((LabeledEnum)returnValue).getCode());
+				String resultId = ((LabeledEnum)returnValue).getLabel();
 				return result(resultId, RESULT_PARAMETER, returnValue);
 			}
 		}

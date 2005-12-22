@@ -63,6 +63,22 @@ public class DecisionState extends TransitionableState {
 	}
 
 	/**
+	 * Return the action as an annotated action, exposing access to action
+	 * properties for provisioning its use in this state.
+	 */
+	public AnnotatedAction getAnnotatedAction() {
+		if (action == null) {
+			return null;
+		}
+		if (action instanceof AnnotatedAction) {
+			return (AnnotatedAction)action;
+		}
+		else {
+			return new AnnotatedAction(action);
+		}
+	}
+
+	/**
 	 * Sets the action whose result can be used as the criteria for the decision
 	 * made in this state. This action should be idempotent and not execute
 	 * 'mutating' or non-idempotent behavior.

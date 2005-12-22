@@ -35,7 +35,9 @@ public class CollectionAddingPropertyExpression implements PropertyExpression {
 			throw new EvaluationException(new SetPropertyAttempt(collectionExpression, target, value, context),
 					new IllegalArgumentException("The collection expression evaluated to a [null] reference"));
 		}
-		collection.add(value);
+		if (value != null) {
+			collection.add(value);
+		}
 	}
 
 	public Object evaluateAgainst(Object target, Map context) throws EvaluationException {

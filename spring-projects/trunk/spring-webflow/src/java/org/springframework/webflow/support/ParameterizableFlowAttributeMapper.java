@@ -137,7 +137,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	/**
 	 * The mapper that maps attributes out from an ending subflow.
 	 */
-	private AttributeMapper outputMapper = new FlowScopeAwareParameterizableAttributeMapper();
+	private AttributeMapper outputMapper = new ParameterizableAttributeMapper();
 
 	/**
 	 * Sets the name of an input attribute in flow scope to map to the subflow.
@@ -194,6 +194,13 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 		ParameterizableAttributeMapper mapper = new FlowScopeAwareParameterizableAttributeMapper();
 		mapper.addMappingsCollection(inputMappings);
 		setInputMapper(mapper);
+	}
+
+	/**
+	 * Returns the input mapper.
+	 */
+	public AttributeMapper getInputMapper() {
+		return inputMapper;
 	}
 
 	/**
@@ -259,9 +266,16 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * @param outputMappings the output mappings
 	 */
 	public void setOutputMappings(Collection outputMappings) {
-		ParameterizableAttributeMapper mapper = new FlowScopeAwareParameterizableAttributeMapper();
+		ParameterizableAttributeMapper mapper = new ParameterizableAttributeMapper();
 		mapper.addMappingsCollection(outputMappings);
 		setOutputMapper(mapper);
+	}
+
+	/**
+	 * Returns the output mapper.
+	 */
+	public AttributeMapper getOutputMapper() {
+		return outputMapper;
 	}
 
 	/**
@@ -286,10 +300,10 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 		}
 	}
 
-	public void mapSubflowOutput(RequestContext context) {
-		if (outputMapper != null) {
+	public void mapSubflowOutput(Map subflowOutput, RequestContext context) {
+		if (outputMapper != null && subflowOutput != null) {
 			// map from request context to parent flow scope
-			outputMapper.map(context, context.getFlowExecutionContext().getActiveSession().getParent().getScope(),
+			outputMapper.map(subflowOutput, context.getFlowExecutionContext().getActiveSession().getScope(),
 					getMappingContext(context));
 		}
 	}
@@ -318,7 +332,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * @author Keith Donald
 	 * @author Erwin Vervaet
 	 */
-	public static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
+	private static class FlowScopeAwareParameterizableAttributeMapper extends ParameterizableAttributeMapper {
 
 		/**
 		 * Create a new flow scope aware attribute mapper.

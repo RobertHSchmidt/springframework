@@ -17,7 +17,6 @@ package org.springframework.webflow;
 
 import java.util.Map;
 
-
 /**
  * Thrown if an unhandled exception occurs when an action is executed. Typically
  * wraps another exception noting the root cause failure, which may be checked
@@ -58,7 +57,8 @@ public class ActionExecutionException extends StateException {
 	private Map executionProperties;
 
 	/**
-	 * Create a new action execution exception.
+	 * Create a new action execution exception that occured while a flow
+	 * execution was starting and before the start state was entered.
 	 * @param flow the flow
 	 * @param action the action that generated an unrecoverable exception
 	 * @param cause the underlying cause
@@ -66,10 +66,12 @@ public class ActionExecutionException extends StateException {
 	public ActionExecutionException(Flow flow, Action action, Map executionProperties, Throwable cause) {
 		this(null, action, executionProperties, "Exception thrown executing start " + action + " of flow '"
 				+ flow.getId() + "'", cause);
+		this.flow = flow;
 	}
 
 	/**
-	 * Create a new action execution exception.
+	 * Create a new action execution exception that occured in a state of a flow
+	 * execution.
 	 * @param state the active state
 	 * @param action the action that generated an unrecoverable exception
 	 * @param executionProperties action execution properties
@@ -81,15 +83,15 @@ public class ActionExecutionException extends StateException {
 	}
 
 	/**
-	 * Create a new action execution exception.
+	 * Create a new action execution exception that occured in the state of a
+	 * flow execution.
 	 * @param state the active state
 	 * @param action the action that generated an unrecoverable exception
 	 * @param executionProperties action execution properties
 	 * @param message a descriptive message
 	 * @param cause the underlying cause
 	 */
-	public ActionExecutionException(State state, Action action, Map executionProperties, String message,
-			Throwable cause) {
+	public ActionExecutionException(State state, Action action, Map executionProperties, String message, Throwable cause) {
 		super(state, message, cause);
 		this.action = action;
 		this.executionProperties = executionProperties;

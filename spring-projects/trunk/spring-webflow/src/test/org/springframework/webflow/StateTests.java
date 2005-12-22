@@ -170,7 +170,8 @@ public class StateTests extends TestCase {
 		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
 		state1.setViewSelector(view("mySubFlowViewName"));
 		state1.addTransition(new Transition(on("submit"), "finish"));
-		new EndState(subFlow, "finish");
+		EndState state2 = new EndState(subFlow, "finish");
+		state2.addOutputAttributeName("childInputAttribute");
 
 		Flow flow = new Flow("myFlow");
 		ActionState mapperState = new ActionState(flow, "mapperState");
@@ -215,11 +216,9 @@ public class StateTests extends TestCase {
 			return inputMap;
 		}
 
-		public void mapSubflowOutput(RequestContext context) {
-			Scope parentAttributes = context.getFlowExecutionContext()
-					.getActiveSession().getParent().getScope();
-			parentAttributes.setAttribute("parentOutputAttribute", context.getFlowScope().getAttribute(
-					"childInputAttribute"));
+		public void mapSubflowOutput(Map subflowOutput, RequestContext context) {
+			Scope parentAttributes = context.getFlowExecutionContext().getActiveSession().getScope();
+			parentAttributes.setAttribute("parentOutputAttribute", subflowOutput.get("childInputAttribute"));
 		}
 	}
 

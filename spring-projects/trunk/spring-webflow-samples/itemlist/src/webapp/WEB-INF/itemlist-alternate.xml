@@ -11,7 +11,7 @@
 
 	<subflow-state id="addItem" flow="item">
 		<attribute-mapper>
-			<output name="item" collection="list"/>
+			<output-mapping name="item" collection="list"/>
 		</attribute-mapper>
 		<transition on="finish" to="displayItemlist"/>
 	</subflow-state>
@@ -27,7 +27,9 @@
 				<transition on="success" to="finish"/>
 			</action-state>
 			
-			<end-state id="finish"/>
+			<end-state id="finish">
+				<output-attribute name="item"/>
+			</end-state>
 		</flow>
 	</inline-flow>
 	

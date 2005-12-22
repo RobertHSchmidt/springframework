@@ -149,7 +149,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 			return inputMap;
 		}
 
-		public void mapSubflowOutput(RequestContext context) {
+		public void mapSubflowOutput(Map subflowOutput, RequestContext context) {
 		}
 	}
 

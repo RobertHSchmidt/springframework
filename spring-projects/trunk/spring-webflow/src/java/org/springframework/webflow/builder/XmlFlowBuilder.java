@@ -174,15 +174,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String ATTRIBUTE_MAPPER_ELEMENT = "attribute-mapper";
 
-	private static final String INPUT_ELEMENT = "input";
+	private static final String INPUT_MAPPING_ELEMENT = "input-mapping";
 
-	private static final String OUTPUT_ELEMENT = "output";
+	private static final String OUTPUT_MAPPING_ELEMENT = "output-mapping";
 
 	private static final String AS_ATTRIBUTE = "as";
 
 	private static final String COLLECTION_ATTRIBUTE = "collection";
 
 	private static final String END_STATE_ELEMENT = "end-state";
+
+	private static final String OUTPUT_ATTRIBUTE_ELEMENT = "output-attribute";
 
 	private static final String TRANSITION_ELEMENT = "transition";
 
@@ -663,6 +665,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE)));
 		}
+		List outputAttributeElements = DomUtils.getChildElementsByTagName(element, OUTPUT_ATTRIBUTE_ELEMENT);
+		Iterator it = outputAttributeElements.iterator();
+		while (it.hasNext()) {
+			Element outputElement = (Element)it.next();
+			state.addOutputAttributeName(outputElement.getAttribute(NAME_ATTRIBUTE));
+		}
 		return state;
 	}
 
@@ -820,7 +828,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		if (StringUtils.hasText(element.getAttribute(ELSE_ATTRIBUTE))) {
 			Transition elseTransition = getLocalFlowArtifactFactory().createTransition(sourceState,
 					Collections.EMPTY_MAP);
-			thenTransition.setTargetStateResolver(new Transition.StaticTargetStateResolver(element
+			elseTransition.setTargetStateResolver(new Transition.StaticTargetStateResolver(element
 					.getAttribute(ELSE_ATTRIBUTE)));
 			return new Transition[] { thenTransition, elseTransition };
 		}
@@ -847,16 +855,16 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			else {
 				// inline definition of a mapping
 				ParameterizableFlowAttributeMapper attributeMapper = new ParameterizableFlowAttributeMapper();
-				List inputElements = DomUtils.getChildElementsByTagName(mapperElement, INPUT_ELEMENT);
+				List inputElements = DomUtils.getChildElementsByTagName(mapperElement, INPUT_MAPPING_ELEMENT);
 				List inputMappings = new ArrayList(inputElements.size());
 				for (Iterator it = inputElements.iterator(); it.hasNext();) {
-					parseAndAddMapping((Element)it.next(), inputMappings, true);
+					parseAndAddInputMapping((Element)it.next(), inputMappings);
 				}
 				attributeMapper.setInputMappings(inputMappings);
-				List outputElements = DomUtils.getChildElementsByTagName(mapperElement, OUTPUT_ELEMENT);
+				List outputElements = DomUtils.getChildElementsByTagName(mapperElement, OUTPUT_MAPPING_ELEMENT);
 				List outputMappings = new ArrayList(outputElements.size());
 				for (Iterator it = outputElements.iterator(); it.hasNext();) {
-					parseAndAddMapping((Element)it.next(), outputMappings, false);
+					parseAndAddOutputMapping((Element)it.next(), outputMappings);
 				}
 				attributeMapper.setOutputMappings(outputMappings);
 				return attributeMapper;
@@ -865,22 +873,73 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	/**
-	 * Parse a single inline attribute mapping definition and add it to given
-	 * list.
+	 * Parse a single inline input attribute mapping definition and add it to
+	 * given list.
 	 */
-	protected void parseAndAddMapping(Element element, List mappings, boolean inputMapping) {
+	protected void parseAndAddInputMapping(Element element, List inputMappings) {
 		String name = element.getAttribute(NAME_ATTRIBUTE);
 		String value = element.getAttribute(VALUE_ATTRIBUTE);
 		String as = element.getAttribute(AS_ATTRIBUTE);
+		ConversionExecutor typeConverter = parseTypeConverter(element);
+		if (StringUtils.hasText(name)) {
+			Assert.isTrue(!StringUtils.hasText(value),
+					"The 'name' attribute cannot be used with the 'value' attribute -- use one or the other");
+			if (StringUtils.hasText(as)) {
+				inputMappings.add(new Mapping(new FlowScopeExpression(name), ExpressionFactory
+						.parsePropertyExpression(as), typeConverter));
+			}
+			else {
+				inputMappings.add(new Mapping(new FlowScopeExpression(name), ExpressionFactory
+						.parsePropertyExpression(name), typeConverter));
+			}
+		}
+		else if (StringUtils.hasText(value)) {
+			// "value" allows you to specify the value that should get mapped
+			// using an expression against the request context
+			Assert.hasText(as, "The 'as' attribute is required with the 'value' attribute");
+			inputMappings.add(new Mapping(ExpressionFactory.parseExpression(value), ExpressionFactory
+					.parsePropertyExpression(as), typeConverter));
+		}
+		else {
+			throw new FlowBuilderException(this,
+					"Use of the 'name' or 'value' attribute is required in input mapping definition " + element);
+		}
+	}
+
+	/**
+	 * Parse a single inline output attribute mapping definition and add it to
+	 * given list.
+	 */
+	protected void parseAndAddOutputMapping(Element element, List outputMappings) {
+		String name = element.getAttribute(NAME_ATTRIBUTE);
+		String as = element.getAttribute(AS_ATTRIBUTE);
+		String collection = element.getAttribute(COLLECTION_ATTRIBUTE);
+		ConversionExecutor typeConverter = parseTypeConverter(element);
+		if (StringUtils.hasText(as)) {
+			outputMappings.add(new Mapping(ExpressionFactory.parseExpression(name), ExpressionFactory
+					.parsePropertyExpression(as), typeConverter));
+		}
+		else {
+			if (StringUtils.hasText(collection)) {
+				PropertyExpression collectionExpression = new CollectionAddingPropertyExpression(
+						new FlowScopeExpression(collection));
+				outputMappings.add(new Mapping(ExpressionFactory.parseExpression(name), collectionExpression,
+						typeConverter));
+			}
+			else {
+				outputMappings.add(new Mapping(ExpressionFactory.parseExpression(name), ExpressionFactory
+						.parsePropertyExpression(name), typeConverter));
+			}
+		}
+	}
+
+	protected ConversionExecutor parseTypeConverter(Element element) {
 		String from = element.getAttribute(FROM_ATTRIBUTE);
 		String to = element.getAttribute(TO_ATTRIBUTE);
-		String collection = element.getAttribute(COLLECTION_ATTRIBUTE);
-		String mappingType = inputMapping ? "input" : "output";
-		ConversionExecutor typeConverter = null;
 		if (StringUtils.hasText(from)) {
 			if (StringUtils.hasText(to)) {
-				typeConverter = getConversionService().getConversionExecutor(
-						getConversionService().getClassByAlias(from), getConversionService().getClassByAlias(to));
+				return getConversionService().getConversionExecutor(getConversionService().getClassByAlias(from),
+						getConversionService().getClassByAlias(to));
 			}
 			else {
 				throw new IllegalArgumentException("Use of the 'from' attribute requires use of the 'to' attribute");
@@ -889,60 +948,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		else {
 			Assert.isTrue(!StringUtils.hasText(to), "Use of the 'to' attribute requires use of the 'from' attribute");
 		}
-		if (StringUtils.hasText(name)) {
-			// "name" allows you to directly specify a name of an attribute in
-			// flow scope
-			Assert.isTrue(!StringUtils.hasText(value),
-					"The 'name' attribute cannot be used with the 'value' attribute -- use one or the other");
-			if (StringUtils.hasText(as)) {
-				if (!inputMapping) {
-					Assert.isTrue(!StringUtils.hasText(collection),
-							"The 'collection' attribute cannot be used with the 'as' attribute - use one or the other");
-				}
-				mappings.add(new Mapping(new FlowScopeExpression(name), ExpressionFactory.parsePropertyExpression(as),
-						typeConverter));
-			}
-			else {
-				if (!inputMapping && StringUtils.hasText(collection)) {
-					PropertyExpression collectionExpression = new CollectionAddingPropertyExpression(
-							new FlowScopeExpression(collection));
-					mappings.add(new Mapping(new FlowScopeExpression(name), collectionExpression, typeConverter));
-				}
-				else {
-					mappings.add(new Mapping(new FlowScopeExpression(name), ExpressionFactory
-							.parsePropertyExpression(name), typeConverter));
-				}
-			}
-		}
-		else if (StringUtils.hasText(value)) {
-			// "value" allows you to specify the value that should get mapped
-			// using an expression against the request context
-			if (inputMapping) {
-				Assert.hasText(as, "The 'as' attribute is required with the 'value' attribute");
-				mappings.add(new Mapping(ExpressionFactory.parseExpression(value), ExpressionFactory
-						.parsePropertyExpression(as), typeConverter));
+		return null;
 
-			}
-			else {
-				if (StringUtils.hasText(as)) {
-					mappings.add(new Mapping(ExpressionFactory.parseExpression(value), ExpressionFactory
-							.parsePropertyExpression(as), typeConverter));
-				}
-				else {
-					Assert
-							.hasText(collection,
-									"Either the 'as' attribute or the 'collection' attribute is required with the 'name' attribute");
-					PropertyExpression collectionExpression = new CollectionAddingPropertyExpression(
-							new FlowScopeExpression(collection));
-					mappings.add(new Mapping(ExpressionFactory.parseExpression(value), collectionExpression,
-							typeConverter));
-				}
-			}
-		}
-		else {
-			throw new FlowBuilderException(this, "Use of the 'name' or 'value' attribute is required in " + mappingType
-					+ " mapping definition " + element);
-		}
 	}
 
 	public void buildExceptionHandlers() throws FlowBuilderException {
@@ -978,8 +985,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected StateExceptionHandler parseDefaultExceptionHandler(Element element) {
 		TransitionExecutingStateExceptionHandler defaultHandler = new TransitionExecutingStateExceptionHandler();
 		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(ON_ATTRIBUTE));
-		State state = getFlow().getState(element.getAttribute(TO_ATTRIBUTE));
-		defaultHandler.add(exceptionClass, state);
+		defaultHandler.add(exceptionClass, element.getAttribute(TO_ATTRIBUTE));
 		return defaultHandler;
 	}
 

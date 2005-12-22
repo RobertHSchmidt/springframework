@@ -15,8 +15,12 @@
  */
 package org.springframework.webflow.execution;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
@@ -32,8 +36,11 @@ import org.springframework.webflow.StateTests.ExecutionCounterAction;
 import org.springframework.webflow.StateTests.InputOutputMapper;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
+import org.springframework.webflow.builder.FlowArtifactParameters;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilderException;
+import org.springframework.webflow.builder.XmlFlowBuilder;
+import org.springframework.webflow.builder.XmlFlowBuilderTests;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.test.MockExternalContext;
@@ -66,7 +73,7 @@ public class FlowExecutionTests extends TestCase {
 		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
 		subflowState.setAttributeMapper(new InputOutputMapper());
 		subflowState.addTransition(new Transition(on("finish"), "finish"));
-		
+
 		new EndState(flow, "finish");
 
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
@@ -149,6 +156,36 @@ public class FlowExecutionTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(parentFlow);
 		flowExecution.start(new MockExternalContext());
 		assertFalse(flowExecution.isActive());
+	}
+
+	public void testExtensiveFlowNavigationScenario1() {
+		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
+				new XmlFlowBuilderTests.TestFlowArtifactFactory());
+		FlowAssembler assembler = new FlowAssembler("testFlow1", builder);
+		assembler.assembleFlow();
+		FlowExecution execution = new FlowExecutionImpl(builder.getResult());
+		MockExternalContext context = new MockExternalContext();
+		execution.start(context);
+		assertEquals("viewState1", execution.getCurrentState().getId());
+		assertNotNull(execution.getActiveSession().getScope().getAttribute("items"));
+		execution.signalEvent("event1", context);
+		assertTrue(!execution.isActive());
+	}
+
+	public void testExtensiveFlowNavigationScenario2() {
+		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
+				new XmlFlowBuilderTests.TestFlowArtifactFactory());
+		Map props = new HashMap();
+		props.put("scenario2", Boolean.TRUE);
+		FlowAssembler assembler = new FlowAssembler(new FlowArtifactParameters("testFlow1", props), builder);
+		assembler.assembleFlow();
+		FlowExecution execution = new FlowExecutionImpl(builder.getResult());
+		MockExternalContext context = new MockExternalContext();
+		execution.start(context);
+		assertEquals("viewState2", execution.getCurrentState().getId());
+		assertNotNull(execution.getActiveSession().getScope().getAttribute("items"));
+		execution.signalEvent("event2", context);
+		assertTrue(!execution.isActive());
 	}
 
 	public static TransitionCriteria on(String event) {

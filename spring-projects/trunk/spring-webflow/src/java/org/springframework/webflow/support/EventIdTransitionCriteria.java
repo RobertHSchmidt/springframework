@@ -46,7 +46,7 @@ public class EventIdTransitionCriteria implements TransitionCriteria, Serializab
 	}
 
 	public boolean test(RequestContext context) {
-		return eventId.equals(context.getLastEvent().getId());
+		return eventId.equalsIgnoreCase(context.getLastEvent().getId());
 	}
 
 	public String toString() {

@@ -152,8 +152,8 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testHandleStateException() {
-		flow.addExceptionHandler(new TransitionExecutingStateExceptionHandler().add(MyCustomException.class, flow
-				.getRequiredState("myState2")));
+		flow.addExceptionHandler(new TransitionExecutingStateExceptionHandler()
+				.add(MyCustomException.class, "myState2"));
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
 		ViewSelection selectedView = flow.handleException(e, context);

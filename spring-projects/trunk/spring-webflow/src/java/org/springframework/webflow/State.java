@@ -231,8 +231,10 @@ public abstract class State extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
+	 * @throws the exception, if it was not handled
 	 */
-	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context) {
+	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
+			throws StateException {
 		return getExceptionHandlerSet().handleException(exception, context);
 	}
 

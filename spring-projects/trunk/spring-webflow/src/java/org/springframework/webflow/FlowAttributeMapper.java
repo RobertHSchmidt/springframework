@@ -22,52 +22,60 @@ import java.util.Map;
  * <p>
  * An attribute mapper may map attributes of a parent flow down to a child flow
  * as <i>input</i> when the child is spawned as a subflow. In addition, a
- * mapper may map attributes of a child flow scope back up to a resuming parent
- * flow, as <i>output</i> when the child session ends and control is returned
- * to the parent flow.
+ * mapper may map output attributes of a subflow into a resuming parent flow, as
+ * <i>output</i> when the child session ends and control is returned to the
+ * parent flow.
  * <p>
  * For example, say you have the following parent flow session:
  * <p>
+ * 
  * <pre>
- *      Parent Flow Session
- *      -------------------
- *      : flow = myFlow
- *      : flow scope = [map:attr1=value1, attr2=value2, attr3=value3]
+ * Parent Flow Session
+ * -------------------
+ * : flow = myFlow
+ * : flowScope = [map:attribute1=value1, attribute2=value2, attribute3=value3]
  * </pre>
+ * 
  * <p>
  * For the "Parent Flow Session" above, there are 3 attributes in flow scope
- * ("attr1", "attr2" and "attr3", respectively). Any of these three attributes
- * may be mapped as input down to child subflows when those subflows are
- * spawned. An implementation of this interface performs the actual mapping,
- * encapsulating knowledge of <i>which</i> attributes should be mapped, and
- * <i>how</i> they will be mapped (for example, will the same attribute names
- * be used between flows or not?).
+ * ("attribute1", "attribute2" and "attribute3", respectively). Any of these
+ * three attributes may be mapped as input down to child subflows when those
+ * subflows are spawned. An implementation of this interface performs the actual
+ * mapping, encapsulating knowledge of <i>which</i> attributes should be
+ * mapped, and <i>how</i> they will be mapped (for example, will the same
+ * attribute names be used between flows or not?).
  * <p>
  * For example:
  * <p>
+ * 
  * <pre>
- *      Flow Attribute Mapper
- *      ---------------------
- *      : inputMappings = [map:attr1-&gt;attr1, attr3-&gt;localAttr1]
- *      : outputMappings = [map:localAttr1-&gt;attr3]
+ * Flow Attribute Mapper Configuration
+ * -----------------------------------
+ * : inputMappings = [map:attribute1-&gt;attribute1, attribute3-&gt;attribute4]
+ * : outputMappings = [map:attribute4-&gt;attribute3]
  * </pre>
+ * 
  * <p>
  * The above example "Flow Attribute Mapper" specifies
  * <code>inputMappings</code> that define which parent attributes to map as
  * input to the child. In this case, two attributes in the parent are mapped,
- * "attr1" and "attr3". "attr1" is mapped with the name "attr1" (given the same
- * name in both flows), while "attr3" is mapped to "localAttr1", given a
- * different name that is local to the child flow.
+ * "attribute1" and "attribute3". "attribute1" is mapped with the name
+ * "attribute1" (given the same name in both flows), while "attribute3" is
+ * mapped to "attribute4", given a different name that is local to the child
+ * flow.
  * <p>
  * Likewise, when a child flow ends, the <code>outputMappings</code> define
- * which attributes to map as output up to the parent. In this case the
- * attribute "localAttr1" will be mapped up to the parent as "attr3", updating
- * the value of "attr3" in the parent's flow scope.
+ * which output attributes to map into the parent. In this case the attribute
+ * "attribute4" will be mapped up to the parent as "attribute3", updating the
+ * value of "attribute3" in the parent's flow scope. Note: only output
+ * attributes exposed by the end state of the ending subflow are eligible for
+ * mapping.
  * <p>
  * Note: because FlowAttributeMappers are singletons, take care not to store
- * and/or modify caller-specific state in a unsafe manner. The FlowAttributeMapper
- * methods run in an independently executing thread on each invocation, so make
- * sure you deal only with local data or internal, thread-safe services.
+ * and/or modify caller-specific state in a unsafe manner. The
+ * FlowAttributeMapper methods run in an independently executing thread on each
+ * invocation, so make sure you deal only with local data or internal,
+ * thread-safe services.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -75,25 +83,27 @@ import java.util.Map;
 public interface FlowAttributeMapper {
 
 	/**
-	 * Create a map of attributes that should be passed as input to a spawning
-	 * child flow.
+	 * Create a map of attributes that should be passed as <i>input</i> to a
+	 * spawning child flow.
 	 * <p>
 	 * Attributes set in the <code>Map</code> returned by this method will be
 	 * added to flow scope of the child subflow session when the session is
 	 * spawned and activated.
-	 * @param context the current request execution context, which gives access to the
-	 *        parent flow scope, the request scope, any event parameter, etc.
+	 * @param context the current request execution context, which gives access
+	 * to the parent flow scope, the request scope, any event parameter, etc.
 	 * @return a map of attributes (name=value pairs) to pass as input to the
-	 *         spawning subflow
+	 * spawning subflow
 	 */
 	public Map createSubflowInput(RequestContext context);
 
 	/**
-	 * Map relavent attributes of an ending subflow session back up to a
-	 * resuming parent flow session. This maps the <i>output</i> of the child
-	 * as new input to the resuming parent.
-	 * @param context the current request execution context, which gives access to the
-	 *        ending subflow scope and resuming parent flow scope
+	 * Map output attributes of an ended subflow to a resuming parent flow
+	 * session. This maps the <i>output</i> of the child as new input to the
+	 * resuming parent.
+	 * @param subflowResultEvent the event returned by the ended subflow,
+	 * exposing returned attributes as event parameters
+	 * @param context the current request execution context, which gives access
+	 * to the parent flow scope
 	 */
-	public void mapSubflowOutput(RequestContext context);
+	public void mapSubflowOutput(Map subflowOutput, RequestContext context);
 }

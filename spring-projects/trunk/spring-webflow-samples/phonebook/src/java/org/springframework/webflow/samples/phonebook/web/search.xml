@@ -25,7 +25,7 @@
 
 	<subflow-state id="browseDetails" flow="detail">
 		<attribute-mapper>
-			<input value="${externalContext.requestParameterMap.id}" as="id" from="string" to="long"/>
+			<input-mapping value="${externalContext.requestParameterMap.id}" as="id" from="string" to="long"/>
 		</attribute-mapper>
 		<transition on="finish" to="executeSearch"/>
 	</subflow-state>
@@ -44,7 +44,7 @@
 
 			<subflow-state id="browseColleagueDetails" flow="detail">
 				<attribute-mapper>
-					<input value="${externalContext.requestParameterMap.id}" as="id" from="string" to="long"/>
+					<input-mapping value="${externalContext.requestParameterMap.id}" as="id" from="string" to="long"/>
 				</attribute-mapper>
 				<transition on="finish" to="getDetails"/>
 			</subflow-state>

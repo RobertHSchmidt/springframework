@@ -126,6 +126,7 @@ public class StateExceptionHandlerSet {
 	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
+	 * @throws the exception, if it was not handled
 	 */
 	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
 			throws StateException {
@@ -133,13 +134,10 @@ public class StateExceptionHandlerSet {
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();
 			if (handler.handles(exception)) {
-				ViewSelection selectedView = handler.handle(exception, context);
-				if (selectedView != null) {
-					return selectedView;
-				}
+				return handler.handle(exception, context);
 			}
 		}
-		return null;
+		throw exception;
 	}
 
 	public String toString() {

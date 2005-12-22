@@ -52,7 +52,7 @@ public class NoMatchingTransitionException extends StateException {
 	 * @param cause the underlying cause
 	 */
 	public NoMatchingTransitionException(TransitionableState state, Event event, Throwable cause) {
-		super(state, "No transition found on occurence of event '" + event + "' in state '" + state.getId()
+		super(state, "No transition found on occurence of event '" + event.getId() + "' in state '" + state.getId()
 				+ "' of flow '" + state.getFlow().getId() + "' -- valid transitional criteria are "
 				+ StylerUtils.style(state.getTransitionCriterias())
 				+ " -- likely programmer error, check the set of TransitionCriteria for this state", cause);

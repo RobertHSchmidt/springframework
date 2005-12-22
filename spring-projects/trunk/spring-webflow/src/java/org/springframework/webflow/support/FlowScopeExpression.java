@@ -76,7 +76,7 @@ public class FlowScopeExpression implements Expression {
 		}
 		else {
 			throw new IllegalArgumentException(
-					"Only supports evaluation against a RequestScope or Scope instance of ScopeType.FLOW");
+					"Only supports evaluation against a [RequestScope] or [Scope] instance of [ScopeType.FLOW], but was a [" + target.getClass() + "]");
 		}
 	}
 

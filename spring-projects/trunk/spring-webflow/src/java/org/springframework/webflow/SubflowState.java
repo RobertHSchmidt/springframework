@@ -152,13 +152,13 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 		}
 	}
 
-	public void mapSubflowOutput(RequestContext context) {
+	public void mapSubflowOutput(Map subflowOutput, RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Messaging the configured attribute mapper to map subflow attributes back up to the "
-						+ "resuming flow -- It will have access to attributes passed up by the completed subflow");
+				logger.debug("Messaging the configured attribute mapper to map subflow result attributes to the "
+						+ "resuming parent flow -- It will have access to attributes passed up by the completed subflow");
 			}
-			this.attributeMapper.mapSubflowOutput(context);
+			attributeMapper.mapSubflowOutput(subflowOutput, context);
 		}
 		else {
 			if (logger.isDebugEnabled()) {

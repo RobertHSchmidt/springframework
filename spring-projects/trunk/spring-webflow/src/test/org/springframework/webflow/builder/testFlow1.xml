@@ -5,6 +5,8 @@
 <flow start-state="actionState1">
 	<property name="propInteger" value="12345" type="integer"/>
 
+	<var name="attribute1" type="org.springframework.webflow.TestBean"/>
+	<var name="attribute3" type="org.springframework.webflow.TestBean"/>
 	<var name="items" type="java.util.ArrayList"/>
 	
 	<action-state id="actionState1">
@@ -30,7 +32,7 @@
 
 	<action-state id="actionState3">
 		<action bean="pojoAction" method="enumMethod" resultName="result"/>
-		<transition on="success" to="viewState1"/>
+		<transition on="success" to="viewState2"/>
 	</action-state>
 	
 	<view-state id="viewState1" view="view1">
@@ -54,13 +56,13 @@
 
 	<subflow-state id="subFlowState2" flow="subFlow2">
 		<attribute-mapper>
-			<input name="attribute1"/>
-			<input name="attribute3" as="attribute2"/>
-			<input value="${flowScope.attribute1}" as="attribute4"/>
-			<output name="attribute2"/>
-			<output name="attribute1" as="attribute3"/>
-			<output value="${flowScope.attribute4}" as="attribute1"/>
-			<output value="${flowScope.attribute4}" collection="items"/>
+			<input-mapping name="attribute1"/>
+			<input-mapping name="attribute3" as="attribute2"/>
+			<input-mapping value="${flowScope.attribute1}" as="attribute4"/>
+			<output-mapping name="attribute2"/>
+			<output-mapping name="attribute1" as="attribute3"/>
+			<output-mapping name="attribute4" as="attribute1"/>
+			<output-mapping name="attribute4" collection="items"/>
 		</attribute-mapper>
 		<transition on="finish" to="decisionState1"/>
 	</subflow-state>
@@ -98,8 +100,10 @@
 
 	<inline-flow id="inline-flow">
 		<flow start-state="end">
-			<end-state id="end"/>
+			<end-state id="end">
+				<output-attribute name="foo"/>
+			</end-state>
 		</flow>
 	</inline-flow>
 	
-</flow> 
+</flow>  

@@ -37,7 +37,7 @@ import org.springframework.core.NestedRuntimeException;
 public class StateException extends NestedRuntimeException {
 	
 	/**
-	 * The state where the exception occured. 
+	 * The state where the exception occured.
 	 */
 	private State state;
 
@@ -67,5 +67,15 @@ public class StateException extends NestedRuntimeException {
 	 */
 	public State getState() {
 		return state;
+	}	
+
+	/**
+	 * Returns the flow that was executing when this exception occured.
+	 */
+	public Flow getFlow() {
+		if (state == null) {
+			throw new IllegalStateException("The state is null, cannot access the flow");
+		}
+		return state.getFlow();
 	}
 }

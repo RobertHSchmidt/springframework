@@ -20,10 +20,13 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.mapping.ParameterizableAttributeMapper;
+import org.springframework.binding.method.MethodKey;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
+import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
@@ -34,9 +37,11 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.action.FlowVariableCreatingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
+import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockRequestContext;
@@ -56,7 +61,7 @@ public class XmlFlowBuilderTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
-				new TestFlowArtifactLocator());
+				new TestFlowArtifactFactory());
 		new FlowAssembler("testFlow1", builder).assembleFlow();
 		flow = builder.getResult();
 		context = new MockRequestContext();
@@ -72,6 +77,8 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals("actionState1", flow.getStartState().getId());
 		assertEquals(14, flow.getStateIds().length);
 
+		assertEquals(1, flow.getStartActionList().size());
+		assertTrue(flow.getStartActionList().get(0) instanceof FlowVariableCreatingAction);
 		assertEquals(1, flow.getExceptionHandlerSet().size());
 		assertTrue(flow.getExceptionHandlerSet().toArray()[0] instanceof TransitionExecutingStateExceptionHandler);
 
@@ -93,6 +100,9 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals("viewState2", transition.getTargetStateId());
 		assertEquals("prop1Value", actionState1.getActionList().getAnnotated(0).getProperties().get("prop1"));
 		assertEquals("prop2Value", actionState1.getActionList().getAnnotated(0).getProperties().get("prop2"));
+
+		ActionState actionState2 = (ActionState)flow.getState("actionState2");
+		assertEquals(1, actionState2.getExceptionHandlerSet().size());
 
 		ViewState viewState1 = (ViewState)flow.getState("viewState1");
 		assertNotNull(viewState1);
@@ -136,6 +146,35 @@ public class XmlFlowBuilderTests extends TestCase {
 		transition = subFlowState2.getRequiredTransition(context);
 		assertEquals("decisionState1", transition.getTargetStateId());
 
+		ParameterizableFlowAttributeMapper mapper = (ParameterizableFlowAttributeMapper)subFlowState2
+				.getAttributeMapper();
+		assertEquals(3, ((ParameterizableAttributeMapper)mapper.getInputMapper()).getMappings().length);
+		assertEquals(4, ((ParameterizableAttributeMapper)mapper.getOutputMapper()).getMappings().length);
+
+		DecisionState decisionState1 = (DecisionState)flow.getState("decisionState1");
+		assertTrue(decisionState1.getTransitions().length == 2);
+		assertNotNull(decisionState1);
+		assertNull(decisionState1.getAction());
+
+		DecisionState decisionState2 = (DecisionState)flow.getState("decisionState2");
+		assertTrue(decisionState2.getTransitions().length == 2);
+		assertNotNull(decisionState2);
+		assertNull(decisionState2.getAction());
+
+		DecisionState decisionState3 = (DecisionState)flow.getState("decisionState3");
+		assertTrue(decisionState3.getTransitions().length == 2);
+		assertNotNull(decisionState3);
+		assertNotNull(decisionState3.getAction());
+		assertEquals(new MethodKey("booleanMethod"), decisionState3.getAnnotatedAction().getProperty("method"));
+		assertTrue(decisionState3.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
+
+		DecisionState decisionState4 = (DecisionState)flow.getState("decisionState4");
+		assertTrue(decisionState4.getTransitions().length == 2);
+		assertNotNull(decisionState4);
+		assertNotNull(decisionState4.getAction());
+		assertEquals(new MethodKey("enumMethod"), decisionState4.getAnnotatedAction().getProperty("method"));
+		assertTrue(decisionState4.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
+
 		EndState endState1 = (EndState)flow.getState("endState1");
 		assertNotNull(endState1);
 		assertFalse(endState1.isMarker());
@@ -145,6 +184,13 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(endState2);
 		assertTrue(endState2.isMarker());
 		assertNull(endState2.getViewSelector());
+
+		Flow inlineFlow = flow.getInlineFlow("inline-flow");
+		assertNotNull(inlineFlow);
+		EndState endState3 = (EndState)inlineFlow.getState("end");
+		assertNotNull(endState3);
+		assertEquals(1, endState3.getOutputAttributeNames().length);
+		assertEquals("foo", endState3.getOutputAttributeNames()[0]);
 	}
 
 	/**
@@ -153,11 +199,13 @@ public class XmlFlowBuilderTests extends TestCase {
 	 * 
 	 * @author Erwin Vervaet
 	 */
-	public static class TestFlowArtifactLocator extends FlowArtifactFactoryAdapter {
+	public static class TestFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 
 		public Flow getSubflow(String id) throws FlowArtifactException {
 			if ("subFlow1".equals(id) || "subFlow2".equals(id)) {
-				return new Flow(id);
+				Flow flow = new Flow(id);
+				new EndState(flow, "finish");
+				return flow;
 			}
 			throw new NoSuchFlowDefinitionException(id);
 		}
@@ -182,7 +230,7 @@ public class XmlFlowBuilderTests extends TestCase {
 						return new HashMap();
 					}
 
-					public void mapSubflowOutput(RequestContext context) {
+					public void mapSubflowOutput(Map subflowOutput, RequestContext context) {
 					}
 				};
 			}
@@ -192,6 +240,9 @@ public class XmlFlowBuilderTests extends TestCase {
 
 	public static class TestAction implements Action {
 		public Event execute(RequestContext context) throws Exception {
+			if (context.getFlowExecutionContext().getRootFlow().containsProperty("scenario2")) {
+				return new Event(this, "event2");
+			}
 			return new Event(this, "event1");
 		}
 	}
@@ -206,17 +257,18 @@ public class XmlFlowBuilderTests extends TestCase {
 		public boolean booleanMethod() {
 			return true;
 		}
-		
+
 		public LabeledEnum enumMethod() {
 			return FlowSessionStatus.CREATED;
 		}
 	}
+
 	public static class TestFlowAttributeMapper implements FlowAttributeMapper {
 		public Map createSubflowInput(RequestContext context) {
 			return new HashMap();
 		}
 
-		public void mapSubflowOutput(RequestContext context) {
+		public void mapSubflowOutput(Map subflowOutput, RequestContext context) {
 		}
 	}
 

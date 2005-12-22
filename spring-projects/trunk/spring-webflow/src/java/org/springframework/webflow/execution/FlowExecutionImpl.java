@@ -266,15 +266,34 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 */
 	protected ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
 			throws StateException {
-		ViewSelection selectedView = exception.getState().handleException(exception, context);
-		if (selectedView != null) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Attempting to handle exception [" + exception + "]");
+		}
+		// the state could be null if the flow was attempting a start operation
+		if (exception.getState() != null) {
+			try {
+				ViewSelection selectedView = exception.getState().handleException(exception, context);
+				if (logger.isDebugEnabled()) {
+					logger.debug("State '" + exception.getState().getId() + "' handled exception");
+				}
+				return selectedView;
+			}
+			catch (StateException e) {
+			}
+		}
+		try {
+			ViewSelection selectedView = exception.getFlow().handleException(exception, context);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Flow '" + exception.getFlow().getId() + "' handled exception");
+			}
 			return selectedView;
 		}
-		selectedView = exception.getState().getFlow().handleException(exception, context);
-		if (selectedView != null) {
-			return selectedView;
+		catch (StateException e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Rethrowing unhandled state exception");
+			}
+			throw exception;
 		}
-		throw exception;
 	}
 
 	public synchronized ViewSelection signalEvent(String eventId, ExternalContext externalContext)

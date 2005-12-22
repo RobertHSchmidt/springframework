@@ -23,7 +23,9 @@ import java.util.Map.Entry;
 import org.springframework.core.JdkVersion;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.webflow.FlowExecutionControlContext;
+import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.StateExceptionHandler;
@@ -58,8 +60,10 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	 * @return this handler, to allow for adding multiple mappings in a single
 	 * statement
 	 */
-	public TransitionExecutingStateExceptionHandler add(Class exceptionClass, State targetState) {
-		exceptionStateMap.put(exceptionClass, targetState);
+	public TransitionExecutingStateExceptionHandler add(Class exceptionClass, String targetStateId) {
+		Assert.notNull(exceptionClass, "The exception class is required");
+		Assert.hasText(targetStateId, "The target state id is required");
+		exceptionStateMap.put(exceptionClass, targetStateId);
 		return this;
 	}
 
@@ -70,12 +74,12 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	public void addAll(Map mappings) {
 		for (Iterator entries = mappings.entrySet().iterator(); entries.hasNext();) {
 			Entry entry = (Entry)entries.next();
-			add((Class)entry.getKey(), (State)entry.getValue());
+			add((Class)entry.getKey(), (String)entry.getValue());
 		}
 	}
 
 	public boolean handles(StateException e) {
-		return getTargetState(e) != null;
+		return getTargetStateId(e) != null;
 	}
 
 	public ViewSelection handle(StateException e, FlowExecutionControlContext context) {
@@ -84,40 +88,49 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 			throw new IllegalStateException("The source state '" + sourceState.getId()
 					+ "' to transition from must be transitionable!");
 		}
-		return new Transition((TransitionableState)sourceState, getTargetState(e)).execute(context);
+		return new Transition((TransitionableState)sourceState, getTargetState(e, context)).execute(context);
 	}
 
 	// helpers
 
 	/**
-	 * Find the mapped target state for given exception. Returns null if no
-	 * mapping can be found for given exception. Will try all exceptions in the
-	 * exception cause chain.
+	 * Find the mapped target state for given exception. Returns
+	 * <code>null</code> if no mapping can be found for given exception. Will
+	 * try all exceptions in the exception cause chain.
 	 */
-	protected State getTargetState(StateException e) {
+	protected State getTargetState(StateException e, RequestContext context) {
+		return context.getFlowExecutionContext().getActiveFlow().getRequiredState(getTargetStateId(e));
+	}
+
+	/**
+	 * Find the mapped target state ID for given exception. Returns
+	 * <code>null</code> if no mapping can be found for given exception. Will
+	 * try all exceptions in the exception cause chain.
+	 */
+	protected String getTargetStateId(StateException e) {
 		if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_13) {
-			return getTargetState13(e);
+			return getTargetStateId13(e);
 		}
 		else {
-			return getTargetState14(e);
+			return getTargetStateId14(e);
 		}
 	}
 
 	/**
 	 * Internal getTargetState implementation for use with JDK 1.3.
 	 */
-	private State getTargetState13(NestedRuntimeException e) {
+	private String getTargetStateId13(NestedRuntimeException e) {
 		if (exceptionStateMap.containsKey(e.getClass())) {
-			return (State)exceptionStateMap.get(e.getClass());
+			return (String)exceptionStateMap.get(e.getClass());
 		}
 		else {
 			Throwable t = e.getCause();
 			if (t != null && t instanceof NestedRuntimeException) {
-				return getTargetState13((NestedRuntimeException)t);
+				return getTargetStateId13((NestedRuntimeException)t);
 			}
 			else {
 				if (exceptionStateMap.containsKey(t.getClass())) {
-					return (State)exceptionStateMap.get(t.getClass());
+					return (String)exceptionStateMap.get(t.getClass());
 				}
 				else {
 					return null;
@@ -129,13 +142,13 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	/**
 	 * Internal getTargetState implementation for use with JDK 1.4 or later.
 	 */
-	private State getTargetState14(Throwable t) {
+	private String getTargetStateId14(Throwable t) {
 		if (exceptionStateMap.containsKey(t.getClass())) {
-			return (State)exceptionStateMap.get(t.getClass());
+			return (String)exceptionStateMap.get(t.getClass());
 		}
 		else {
 			if (t.getCause() != null) {
-				return getTargetState14(t.getCause());
+				return getTargetStateId14(t.getCause());
 			}
 			else {
 				return null;

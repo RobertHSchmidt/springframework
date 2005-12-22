@@ -49,7 +49,7 @@ public class FlowExecutionImplTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
-				new XmlFlowBuilderTests.TestFlowArtifactLocator());
+				new XmlFlowBuilderTests.TestFlowArtifactFactory());
 		FlowAssembler assembler = new FlowAssembler("testFlow", builder);
 		assembler.assembleFlow();
 		final Flow flow = builder.getResult();
