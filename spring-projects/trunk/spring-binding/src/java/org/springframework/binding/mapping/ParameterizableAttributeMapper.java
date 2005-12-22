@@ -214,6 +214,14 @@ public class ParameterizableAttributeMapper implements AttributeMapper, Serializ
 	}
 
 	/**
+	 * Returns this mapper's list of mappings.
+	 * @return the list of mappings
+	 */
+	public Mapping[] getMappings() {
+		return (Mapping[])mappings.toArray(new Mapping[0]);
+	}
+
+	/**
 	 * Map data from one map to another map using specified mappings.
 	 */
 	public void map(Object source, Object target, Map context) {
