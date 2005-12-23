@@ -52,6 +52,7 @@ public class GuardedAction extends AbstractAction {
 	public GuardedAction(Action action, TransitionCriteria executionCriteria) {
 		Assert.notNull(action, "The action is required");
 		Assert.notNull(executionCriteria, "The guarding execution criteria is required");
+		this.action = action;
 		this.executionCriteria = executionCriteria;
 	}
 
