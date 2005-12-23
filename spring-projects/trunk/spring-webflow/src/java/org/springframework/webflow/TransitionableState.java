@@ -42,7 +42,7 @@ public abstract class TransitionableState extends State {
 	 * An actions to execute when exiting this state.
 	 */
 	private ActionList exitActionList = new ActionList();
-	
+
 	/**
 	 * Default constructor for bean style usage
 	 * @see State#State()
@@ -169,7 +169,16 @@ public abstract class TransitionableState extends State {
 	public ActionList getExitActionList() {
 		return exitActionList;
 	}
-	
+
+	/**
+	 * Inform this state definition that an event was signaled in it.
+	 * @param context the flow execution control context
+	 * @return the selected view
+	 */
+	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
+		return getRequiredTransition(context).execute(context);
+	}
+
 	/**
 	 * Re-enter this state. This is typically called when a transition out of
 	 * this state is selected, but transition execution rolls back and as a

@@ -39,7 +39,7 @@ import org.springframework.util.Assert;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class SubflowState extends TransitionableState implements FlowAttributeMapper {
+public class SubflowState extends TransitionableState {
 
 	/**
 	 * Name of the property used to indicate the start state in which to start
@@ -96,7 +96,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * Returns the subflow spawned by this state.
 	 */
 	public Flow getSubflow() {
-		return this.subflow;
+		return subflow;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 	 * model, or null if no mapping is needed.
 	 */
 	public FlowAttributeMapper getAttributeMapper() {
-		return this.attributeMapper;
+		return attributeMapper;
 	}
 
 	/**
@@ -134,7 +134,8 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 		return context.start(getSubflow(), getSubflowStartState(context), createSubflowInput(context));
 	}
 
-	public Map createSubflowInput(RequestContext context) {
+	
+	private Map createSubflowInput(RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Messaging the configured attribute mapper to map attributes "
@@ -152,7 +153,12 @@ public class SubflowState extends TransitionableState implements FlowAttributeMa
 		}
 	}
 
-	public void mapSubflowOutput(Map subflowOutput, RequestContext context) {
+	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
+		mapSubflowOutput(event.getParameters(), context);
+		return super.onEvent(event, context);
+	}
+
+	private void mapSubflowOutput(Map subflowOutput, RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Messaging the configured attribute mapper to map subflow result attributes to the "

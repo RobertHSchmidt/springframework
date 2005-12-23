@@ -572,7 +572,7 @@ public class Flow extends AnnotatedObject {
 	 * @return the selected view
 	 */
 	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
-		return getCurrentTransitionableState(context).getRequiredTransition(context).execute(context);
+		return getCurrentTransitionableState(context).onEvent(event, context);
 	}
 
 	private TransitionableState getCurrentTransitionableState(FlowExecutionControlContext context) {

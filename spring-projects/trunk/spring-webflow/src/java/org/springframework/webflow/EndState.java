@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.Assert;
 
 /**
  * Terminates an active flow session when entered. If the terminated session is
@@ -114,24 +113,24 @@ public class EndState extends State {
 	/**
 	 * Record the name of an attribute to expose as output when this end state
 	 * is used to end this flow when acting as a subflow.
-	 * @param attributeName the attribute name
+	 * @param outputAttributeName the attribute name
 	 * @return true if the collection of output attributes was modified
 	 */
-	public boolean addOutputAttributeName(String attributeName) {
-		return outputAttributeNames.add(attributeName);
+	public boolean addOutputAttributeName(String outputAttributeName) {
+		return outputAttributeNames.add(outputAttributeName);
 	}
 
 	/**
 	 * Record the names of attributes to expose as output when this end state is
 	 * used to end this flow when acting as a subflow.
-	 * @param attributeNames the attribute names
+	 * @param outputAttributeNames the attribute names
 	 * @return true if the collection of output attributes was modified
 	 */
-	public boolean addOutputAttributeNames(String[] attributeNames) {
-		if (attributeNames == null) {
+	public boolean addOutputAttributeNames(String[] outputAttributeNames) {
+		if (outputAttributeNames == null) {
 			return false;
 		}
-		return outputAttributeNames.addAll(Arrays.asList(attributeNames));
+		return this.outputAttributeNames.addAll(Arrays.asList(outputAttributeNames));
 	}
 
 	/**
@@ -181,12 +180,7 @@ public class EndState extends State {
 		else {
 			// there is a parent flow that will resume
 			FlowSession subflowSession = context.endActiveFlowSession();
-			FlowSession parentSession = context.getFlowExecutionContext().getActiveSession();
-			Assert.isInstanceOf(FlowAttributeMapper.class, parentSession.getCurrentState(),
-					"Current state of resuming flow is not a flow attribute mapper: ");
-			FlowAttributeMapper resumingState = (FlowAttributeMapper)parentSession.getCurrentState();
 			Map subflowOutput = createOutput(subflowSession.getScope());
-			resumingState.mapSubflowOutput(subflowOutput, context);
 			return context.signalEvent(new Event(this, getId(), subflowOutput));
 		}
 	}
