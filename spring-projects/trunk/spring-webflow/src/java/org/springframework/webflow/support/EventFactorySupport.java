@@ -136,14 +136,14 @@ public class EventFactorySupport {
 	 * Typically called as part of return, for example:
 	 * 
 	 * <pre>
-	 *         protected Event doExecute(RequestContext context) {
-	 *             // do some work
-	 *             if (some condition) {
-	 *                 return result(&quot;success&quot;);
-	 *             } else {
-	 *                 return result(&quot;error&quot;);
-	 *             }
+	 *     protected Event doExecute(RequestContext context) {
+	 *         // do some work
+	 *         if (some condition) {
+	 *             return result(&quot;success&quot;);
+	 *         } else {
+	 *             return result(&quot;error&quot;);
 	 *         }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
@@ -161,16 +161,16 @@ public class EventFactorySupport {
 	 * example:
 	 * 
 	 * <pre>
-	 *         protected Event doExecute(RequestContext context) {
-	 *             // do some work
-	 *             Map resultParameters = new HashMap();
-	 *             resultParameters.put(&quot;parameterName&quot;, &quot;parameterValue&quot;);
-	 *             if (some condition) {
-	 *                 return result(&quot;success&quot;, resultParameters);
-	 *             } else {
-	 *                 return result(&quot;error&quot;, resultParameters);
-	 *             }
+	 *     protected Event doExecute(RequestContext context) {
+	 *         // do some work
+	 *         Map resultParameters = new HashMap();
+	 *         resultParameters.put(&quot;parameterName&quot;, &quot;parameterValue&quot;);
+	 *         if (some condition) {
+	 *             return result(&quot;success&quot;, resultParameters);
+	 *         } else {
+	 *             return result(&quot;error&quot;, resultParameters);
 	 *         }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
