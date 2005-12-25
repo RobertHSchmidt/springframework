@@ -88,6 +88,7 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	/**
 	 * Set the name of the target bean to invoke. The bean will be looked up in
 	 * the bean factory on action execution.
+	 * 
 	 * @param targetBeanName the target bean name
 	 */
 	public void setTargetBeanName(String targetBeanName) {
@@ -99,7 +100,7 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	protected BeanFactory getBeanFactory() {
 		return beanFactory;
 	}
-	
+
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
 	}

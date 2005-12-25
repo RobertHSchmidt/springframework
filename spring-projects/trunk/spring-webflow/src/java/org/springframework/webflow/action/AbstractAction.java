@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.action;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanInitializationException;
@@ -25,6 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.support.EventFactorySupport;
 
 /**
  * Base action implementation that provides a number of helper methods generally
@@ -37,37 +35,7 @@ import org.springframework.webflow.RequestContext;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public abstract class AbstractAction implements Action, InitializingBean {
-
-	/**
-	 * The default 'success' result event identifier ("success").
-	 */
-	public static final String SUCCESS_EVENT_ID = "success";
-
-	/**
-	 * The default 'error' result event identifier ("error").
-	 */
-	public static final String ERROR_EVENT_ID = "error";
-
-	/**
-	 * The default 'yes' result event identifier ("yes").
-	 */
-	public static final String YES_EVENT_ID = "yes";
-
-	/**
-	 * The default 'no' result event identifier ("no").
-	 */
-	public static final String NO_EVENT_ID = "no";
-
-	/**
-	 * The error event 'exception' parameter name ("exception").
-	 */
-	public static final String EXCEPTION_PARAMETER = "exception";
-
-	/**
-	 * The success event 'result' parameter name ("result").
-	 */
-	public static final String RESULT_PARAMETER = "result";
+public abstract class AbstractAction extends EventFactorySupport implements Action, InitializingBean {
 
 	/**
 	 * Logger, usable in subclasses.
@@ -88,146 +56,6 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * custom initialization logic.
 	 */
 	protected void initAction() throws Exception {
-	}
-
-	// factory methods for creating common events
-
-	/**
-	 * Returns an "error" result event.
-	 */
-	protected Event error() {
-		return result(ERROR_EVENT_ID);
-	}
-
-	/**
-	 * Returns an "error" result event caused by the provided exception.
-	 * @param e the exception that caused the error event, to be sent as an
-	 * event parameter under the name {@link AbstractAction#EXCEPTION_PARAMETER}
-	 */
-	protected Event error(Exception e) {
-		return result(ERROR_EVENT_ID, EXCEPTION_PARAMETER, e);
-	}
-
-	/**
-	 * Returns a "success" result event.
-	 */
-	protected Event success() {
-		return result(SUCCESS_EVENT_ID);
-	}
-
-	/**
-	 * Returns a "success" result event with the provided result object as a
-	 * parameter. The result object is identified by the parameter name
-	 * {@link AbstractAction#RESULT_PARAMETER}.
-	 * @param result the action success result;
-	 */
-	protected Event success(Object result) {
-		return result(SUCCESS_EVENT_ID, RESULT_PARAMETER, result);
-	}
-
-	/**
-	 * Returns a "success" result event with the provided result object as a
-	 * parameter.
-	 * @param resultParameterName the name of the result paramter in the created
-	 * event
-	 * @param result the action success result
-	 */
-	protected Event success(String resultParameterName, Object result) {
-		return result(SUCCESS_EVENT_ID, resultParameterName, result);
-	}
-
-	/**
-	 * Returns a "yes" result event.
-	 */
-	protected Event yes() {
-		return result(YES_EVENT_ID);
-	}
-
-	/**
-	 * Returns a "no" result event.
-	 */
-	protected Event no() {
-		return result(NO_EVENT_ID);
-	}
-
-	/**
-	 * Returns yes() if the boolean result is true, no() if false.
-	 * @param booleanResult the boolean
-	 * @return yes or no
-	 */
-	protected Event yesOrNo(boolean booleanResult) {
-		if (booleanResult) {
-			return yes();
-		}
-		else {
-			return no();
-		}
-	}
-
-	/**
-	 * Returns a result event for this action with the specified identifier.
-	 * Typically called as part of return, for example:
-	 * 
-	 * <pre>
-	 *     protected Event doExecute(RequestContext context) {
-	 *         // do some work
-	 *         if (some condition) {
-	 *             return result(&quot;success&quot;);
-	 *         } else {
-	 *             return result(&quot;error&quot;);
-	 *         }
-	 *     }
-	 * </pre>
-	 * 
-	 * Consider calling the error() or success() factory methods for returning
-	 * common results.
-	 * @param eventId the result event identifier
-	 * @return the action result event
-	 */
-	protected Event result(String eventId) {
-		return new Event(this, eventId);
-	}
-
-	/**
-	 * Returns a result event for this action with the specified identifier and
-	 * the specified set of parameters. Typically called as part of return, for
-	 * example:
-	 * 
-	 * <pre>
-	 *     protected Event doExecute(RequestContext context) {
-	 *         // do some work
-	 *         Map resultParameters = new HashMap();
-	 *         resultParameters.put(&quot;parameterName&quot;, &quot;parameterValue&quot;);
-	 *         if (some condition) {
-	 *             return result(&quot;success&quot;, resultParameters);
-	 *         } else {
-	 *             return result(&quot;error&quot;, resultParameters);
-	 *         }
-	 *     }
-	 * </pre>
-	 * 
-	 * Consider calling the error() or success() factory methods for returning
-	 * common results.
-	 * @param eventId the result event identifier
-	 * @param parameters the event parameters
-	 * @return the action result event
-	 */
-	protected Event result(String eventId, Map parameters) {
-		return new Event(this, eventId, parameters);
-	}
-
-	/**
-	 * Returns a result event for this action with the specified identifier and
-	 * a single parameter.
-	 * @param eventId the result id
-	 * @param parameterName the parameter name
-	 * @param parameterValue the parameter value
-	 * @return the action result event
-	 */
-	protected Event result(String eventId, String parameterName, Object parameterValue) {
-		HashMap parameters = new HashMap(1);
-		parameters.put(parameterName, parameterValue);
-		return new Event(this, eventId, parameters);
 	}
 
 	/**
