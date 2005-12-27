@@ -201,7 +201,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 				// just generate the flow execution id, an actual save will be
 				// done after response rendering
 				// see {@link #saveFlowExecutionIfNecessary()}
-				flowExecutionId = getStorage().generateId(null);
+				flowExecutionId = getStorage().generateId(null, context);
 				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, context, false);
 			}
 			else {

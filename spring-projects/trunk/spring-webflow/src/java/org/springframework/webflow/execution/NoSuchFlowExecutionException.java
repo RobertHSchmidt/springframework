@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.execution;
 
-import java.io.Serializable;
 
 /**
  * Thrown when no flow execution exists by the specified
@@ -31,8 +30,8 @@ public class NoSuchFlowExecutionException extends FlowExecutionStorageException 
 	 * Create a new flow execution lookup exception.
 	 * @param flowExecutionId id of the flow execution that cannot be found
 	 */
-	public NoSuchFlowExecutionException(FlowExecutionStorage storageStrategy, Serializable flowExecutionId) {
-		this(storageStrategy, flowExecutionId, null);
+	public NoSuchFlowExecutionException(FlowExecutionKey key) {
+		this(key, null);
 	}
 
 	/**
@@ -40,9 +39,8 @@ public class NoSuchFlowExecutionException extends FlowExecutionStorageException 
 	 * @param flowExecutionId id of the flow execution that cannot be found
 	 * @param cause the underlying cause of this exception
 	 */
-	public NoSuchFlowExecutionException(FlowExecutionStorage storageStrategy, Serializable flowExecutionId,
-			Throwable cause) {
-		super(storageStrategy, flowExecutionId, null, "No executing flow could be found with id '" + flowExecutionId
+	public NoSuchFlowExecutionException(FlowExecutionKey key, Throwable cause) {
+		super(key, null, "No flow execution could be found with key '" + key
 				+ "' -- perhaps the flow has ended or expired? "
 				+ "This could happen if your users are relying on browser history "
 				+ "(typically via the back button) that reference ended flows.", cause);

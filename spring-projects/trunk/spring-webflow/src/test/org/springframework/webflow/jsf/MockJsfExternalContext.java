@@ -31,6 +31,11 @@ import java.util.Set;
 import javax.faces.context.ExternalContext;
 
 public class MockJsfExternalContext extends ExternalContext {
+
+	private Map applicationMap = new HashMap();
+
+	private Map sessionMap = new HashMap();
+
 	private Map requestMap = new HashMap();
 
 	private Map requestParameterMap = Collections.EMPTY_MAP;
@@ -51,7 +56,7 @@ public class MockJsfExternalContext extends ExternalContext {
 	}
 
 	public Map getApplicationMap() {
-		return new HashMap();
+		return applicationMap;
 	}
 
 	public String getAuthType() {
@@ -163,7 +168,7 @@ public class MockJsfExternalContext extends ExternalContext {
 	}
 
 	public Map getSessionMap() {
-		return null;
+		return sessionMap;
 	}
 
 	public Principal getUserPrincipal() {

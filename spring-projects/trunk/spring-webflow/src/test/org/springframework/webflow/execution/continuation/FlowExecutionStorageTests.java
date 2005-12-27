@@ -1,4 +1,4 @@
-package org.springframework.webflow.execution;
+package org.springframework.webflow.execution.continuation;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -6,6 +6,8 @@ import java.io.Serializable;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.SimpleFlow;
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionImpl;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionStorageTests extends TestCase {

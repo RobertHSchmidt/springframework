@@ -12,9 +12,6 @@
 		<property name="listener">
 			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
 		</property>
-		<property name="storage">
-			<bean class="org.springframework.webflow.execution.DataStoreFlowExecutionStorage"/>
-		</property>
 	</bean>
 	
 	<!-- Creates the registry of flow definitions for this application -->

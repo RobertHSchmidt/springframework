@@ -22,7 +22,7 @@ package org.springframework.webflow;
  * governing FlowExecution and its current State. This object also acts
  * as the "flow scope" data model. Data in "flow scope" lives for the life
  * of this object, and is cleaned up automatically when this object is
- * destroyed. Destruction happens when this session reaches an end state.
+ * destroyed. Destruction happens when this session enters an end state.
  * <p>
  * This object is fully managed by a FlowExecution within a stack-based 
  * data structure, where each session in the stack is a spawned 
@@ -42,7 +42,7 @@ package org.springframework.webflow;
  * <p>
  * When control returns to the client for user think time, the status is updated
  * to {@link FlowSessionStatus#PAUSED}. The flow is no longer actively 
- * processing: it's stored off somewhere waiting on the user to do something.
+ * processing: it's stored off somewhere waiting on the user to participate.
  * <p>
  * If a flow session is pushed down in the stack because a subflow is spawned, its 
  * status becomes {@link FlowSessionStatus#SUSPENDED} until the subflow returns (ends) 

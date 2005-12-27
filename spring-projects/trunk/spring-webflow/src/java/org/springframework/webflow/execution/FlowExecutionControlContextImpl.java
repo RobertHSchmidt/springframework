@@ -35,7 +35,6 @@ import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
 
 /**

@@ -1,6 +1,9 @@
-package org.springframework.webflow.execution;
+package org.springframework.webflow.execution.continuation;
 
 import java.io.Serializable;
+
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionStorageException;
 
 /**
  * Root exception hierarchy for exceptions that occur during FlowExecution
@@ -8,7 +11,7 @@ import java.io.Serializable;
  * @author Keith Donald
  */
 public class FlowExecutionSerializationException extends FlowExecutionStorageException {
-	
+
 	/**
 	 * Creates a new serialization exception.
 	 * 
@@ -18,8 +21,8 @@ public class FlowExecutionSerializationException extends FlowExecutionStorageExc
 	 * @param message a descriptive message
 	 * @param cause
 	 */
-	public FlowExecutionSerializationException(FlowExecutionStorage storageStrategy, Serializable storageId,
-			FlowExecution flowExecution, String message, Throwable cause) {
-		super(storageStrategy, storageId, flowExecution, message, cause);
+	public FlowExecutionSerializationException(Serializable storageId, FlowExecution flowExecution, String message,
+			Throwable cause) {
+		super(storageId, flowExecution, message, cause);
 	}
 }

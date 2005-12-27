@@ -172,7 +172,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * require user input and loading resuming executions that will process user
 	 * events.
 	 */
-	private FlowExecutionStorage storage = new DataStoreFlowExecutionStorage();
+	private FlowExecutionStorage storage = new RepositoryFlowExecutionStorage();
 
 	/**
 	 * A map of flow execution listeners to a list of flow execution listener
@@ -184,11 +184,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 			return new LinkedList();
 		}
 	};
-
-	/**
-	 * The Flow Execution key generation strategy.
-	 */
-	private KeyGenerator keyGenerator = new RandomGuidKeyGenerator();
 
 	/**
 	 * Identifies a flow definition to launch a new execution for, defaults to
@@ -428,20 +423,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 				removeListener(listener);
 			}
 		}
-	}
-
-	/**
-	 * Returns the FlowExecution key generation strategy.
-	 */
-	protected KeyGenerator getKeyGenerator() {
-		return keyGenerator;
-	}
-
-	/**
-	 * Sets the FlowExecution key generation strategy.
-	 */
-	public void setKeyGenerator(KeyGenerator keyGenerator) {
-		this.keyGenerator = keyGenerator;
 	}
 
 	/**

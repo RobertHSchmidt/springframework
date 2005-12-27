@@ -8,8 +8,8 @@ import org.springframework.webflow.ExternalContext;
  * A data source accessor that accesses the external context session map.
  * @author Keith Donald
  */
-public class SessionDataStoreAccessor implements DataStoreAccessor {
-	public Map getDataStore(ExternalContext context) {
+public class SessionMapAccessor implements MapAccessor {
+	public Map getMap(ExternalContext context) {
 		return context.getSessionMap();
 	}
 }

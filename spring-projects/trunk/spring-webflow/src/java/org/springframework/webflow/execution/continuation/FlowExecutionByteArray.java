@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution;
+package org.springframework.webflow.execution.continuation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,6 +25,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.springframework.util.FileCopyUtils;
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionStorageException;
 
 /**
  * Helper class that aides in handling a flow execution as if it was a
@@ -36,7 +38,9 @@ import org.springframework.util.FileCopyUtils;
  * 
  * @author Erwin Vervaet
  */
-public class FlowExecutionContinuation implements Serializable {
+public class FlowExecutionByteArray implements Serializable {
+
+	private static final long serialVersionUID = -6346556580752644469L;
 
 	/**
 	 * The serialized continuation (flow execution snapshot).
@@ -55,7 +59,7 @@ public class FlowExecutionContinuation implements Serializable {
 	 * @param compressed indicates whether or not given data is compressed
 	 * (using GZIP compression)
 	 */
-	public FlowExecutionContinuation(byte[] data, boolean compressed) {
+	public FlowExecutionByteArray(byte[] data, boolean compressed) {
 		this.data = data;
 		this.compressed = compressed;
 	}
@@ -68,7 +72,7 @@ public class FlowExecutionContinuation implements Serializable {
 	 * @param compress indicates whether or not the flow execution continuation
 	 * should compress its state
 	 */
-	public FlowExecutionContinuation(FlowExecution flowExecution, boolean compress) throws IOException {
+	public FlowExecutionByteArray(FlowExecution flowExecution, boolean compress) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(baos);
 		oos.writeObject(flowExecution);

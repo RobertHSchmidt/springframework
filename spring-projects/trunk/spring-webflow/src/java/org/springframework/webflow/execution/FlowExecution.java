@@ -33,9 +33,9 @@ import org.springframework.webflow.ViewSelection;
  * <code>FlowExecutionManager</code>. The manager then creates an instance of
  * an object implementing this interface, initializing it with the requested
  * Flow definition which becomes the execution's "root", or top-level flow.
- * After creation, the {@link #start(ExternalContext)} operation is
- * called, which causes the execution to activate a new session for its root
- * flow definition. That session is then pushed onto a stack and its definition
+ * After creation, the {@link #start(ExternalContext)} operation is called,
+ * which causes the execution to activate a new session for its root flow
+ * definition. That session is then pushed onto a stack and its definition
  * becomes the "active flow". A local, internal
  * {@link org.springframework.webflow.FlowExecutionControlContext} object (which
  * extends ({@link org.springframework.webflow.RequestContext}) is then
@@ -51,14 +51,14 @@ import org.springframework.webflow.ViewSelection;
  * <p>
  * Subsequent requests from the client to manipuate this flow execution trigger
  * restoration and rehydration of this object, followed by an invocation of the
- * {@link #signalEvent(String, ExternalContext)} operation. The
- * signalEvent operation tells this state machine what action the user took from
- * within the context of the current state; for example, the user may have
- * pressed pressed the "submit" button, or pressed "cancel". After the user
- * event is processed, control again goes back to the caller and if this
- * execution is still active, it is saved out to storage. This continues until a
- * client event causes this flow execution to end (by the root flow reaching an
- * EndState). At that time, this object is removed from storage and discarded.
+ * {@link #signalEvent(String, ExternalContext)} operation. The signalEvent
+ * operation tells this state machine what action the user took from within the
+ * context of the current state; for example, the user may have pressed pressed
+ * the "submit" button, or pressed "cancel". After the user event is processed,
+ * control again goes back to the caller and if this execution is still active,
+ * it is saved out to storage. This continues until a client event causes this
+ * flow execution to end (by the root flow reaching an EndState). At that time,
+ * this object is removed from storage and discarded.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionManager
  * @see org.springframework.webflow.execution.FlowExecutionStorage
@@ -86,11 +86,10 @@ public interface FlowExecution extends FlowExecutionContext {
 	public ViewSelection start(ExternalContext externalContext) throws StateException;
 
 	/**
-	 * Signal an occurence of the specified event in the state of this executing
-	 * flow. The event will be processed in full and control will be returned
-	 * once event processing is complete.
-	 * @param eventId the event that occured
-	 * @param stateId the id of the state the event occured in
+	 * Signal an occurence of the specified user event in the current state of
+	 * this executing flow. The event will be processed in full and control will
+	 * be returned once event processing is complete.
+	 * @param eventId the identifier of the user event that occured
 	 * @param externalContext the context in which the event occured
 	 * @return the next view selection to display for this flow execution, which
 	 * requests that the calling client render a view with configured model data
@@ -102,7 +101,7 @@ public interface FlowExecution extends FlowExecutionContext {
 
 	/**
 	 * Rehydrate this flow execution after deserialization. This is called after
-	 * the flow execution has been restored from storaged but before the
+	 * the flow execution has been restored from storage but before the
 	 * signalEvent method is called.
 	 * @param flowLocator the flow locator
 	 * @param listenerLoader the flow execution listener loader to use to obtain

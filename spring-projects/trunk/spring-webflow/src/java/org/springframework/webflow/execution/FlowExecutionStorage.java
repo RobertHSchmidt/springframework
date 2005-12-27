@@ -102,7 +102,7 @@ public interface FlowExecutionStorage {
 	 * @throws FlowExecutionStorageException when there is a problem accessing
 	 * the flow execution storage
 	 */
-	public Serializable generateId(Serializable previousId) throws UnsupportedOperationException,
+	public Serializable generateId(Serializable previousId, ExternalContext context) throws UnsupportedOperationException,
 			FlowExecutionStorageException;
 
 	/**

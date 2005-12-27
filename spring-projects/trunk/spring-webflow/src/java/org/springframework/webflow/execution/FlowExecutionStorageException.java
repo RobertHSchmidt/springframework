@@ -26,11 +26,6 @@ import java.io.Serializable;
 public class FlowExecutionStorageException extends FlowExecutionManagementException {
 
 	/**
-	 * The storage strategy.
-	 */
-	private transient FlowExecutionStorage storageStrategy;
-
-	/**
 	 * Create a new flow execution storage exception.
 	 * @param storage the storage strategy involved
 	 * @param storageId the unique id of the flow execution (optional)
@@ -38,11 +33,9 @@ public class FlowExecutionStorageException extends FlowExecutionManagementExcept
 	 * @param message a descriptive message
 	 * @param cause the underlying cause of this exception
 	 */
-	public FlowExecutionStorageException(FlowExecutionStorage storageStrategy, Serializable storageId,
-			FlowExecution flowExecution, String message, Throwable cause) {
+	public FlowExecutionStorageException(Serializable storageId, FlowExecution flowExecution, String message,
+			Throwable cause) {
 		super(storageId, flowExecution, message, cause);
-		this.storageStrategy = storageStrategy;
-
 	}
 
 	/**
@@ -51,13 +44,5 @@ public class FlowExecutionStorageException extends FlowExecutionManagementExcept
 	 */
 	public Serializable getStorageId() {
 		return getFlowExecutionId();
-	}
-
-	/**
-	 * Returns the storage strategy that was used.
-	 * @return the storage strategy
-	 */
-	public FlowExecutionStorage getStorageStrategy() {
-		return storageStrategy;
 	}
 }

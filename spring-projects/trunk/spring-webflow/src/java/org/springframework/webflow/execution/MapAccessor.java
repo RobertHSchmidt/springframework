@@ -27,24 +27,21 @@ import org.springframework.webflow.ExternalContext;
  * that when invoked pull attributes from an externally managed source.
  * <p>
  * Used by
- * {@link org.springframework.webflow.execution.DataStoreFlowExecutionStorage}
+ * {@link org.springframework.webflow.execution.RepositoryFlowExecutionStorage}
  * storage implementation to make the underlying storage strategy of an flow
  * execution pluggable.
- * 
- * @see org.springframework.binding.AttributeSource
- * @see org.springframework.binding.MutableAttributeSource
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface DataStoreAccessor {
+public interface MapAccessor {
 
 	/**
-	 * Returns a mutable attribute accessor providing access to an underlying
-	 * data store.
+	 * Returns a mutable attribute map providing access to an underlying data
+	 * store.
 	 * @param context an external user context object which may provide
 	 * assistance in locating the datastore.
 	 * @return the mutable attribute source providing access to the data store
 	 */
-	public Map getDataStore(ExternalContext context);
+	public Map getMap(ExternalContext context);
 }

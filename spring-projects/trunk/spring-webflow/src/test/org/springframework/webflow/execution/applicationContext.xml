@@ -11,7 +11,7 @@
 			<bean class="org.springframework.webflow.execution.FlowExecutionManagerTests$SimpleFlowLocator"/>
 		</constructor-arg>
 		<property name="storage">
-			<bean class="org.springframework.webflow.execution.ContinuationDataStoreFlowExecutionStorage"/>
+			<bean class="org.springframework.webflow.execution.RepositoryFlowExecutionStorage"/>
 		</property>
 		<property name="listener">
 			<bean class="org.springframework.webflow.execution.FlowExecutionManagerTests$SimpleFlowExecutionListener"/>

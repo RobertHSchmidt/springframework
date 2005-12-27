@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution;
+package org.springframework.webflow.execution.continuation;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -22,6 +22,10 @@ import java.io.Serializable;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionStorage;
+import org.springframework.webflow.execution.FlowExecutionStorageException;
+import org.springframework.webflow.execution.NoSuchFlowExecutionException;
 
 /**
  * Flow execution storage implementation that will store a flow execution as a
@@ -82,11 +86,11 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 			return decode(id);
 		}
 		catch (IOException e) {
-			throw new FlowExecutionSerializationException(this, id, null,
+			throw new FlowExecutionSerializationException(id, null,
 					"IOException thrown decoding flow execution -- this should not happen!", e);
 		}
 		catch (ClassNotFoundException e) {
-			throw new FlowExecutionSerializationException(this, id, null,
+			throw new FlowExecutionSerializationException(id, null,
 					"ClassNotFoundException thrown decoding flow execution -- "
 							+ "This should not happen! Make sure there are no classloader issues."
 							+ "For example, perhaps the Web Flow system is being loaded by a classloader "
@@ -100,11 +104,11 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 			return encode(flowExecution);
 		}
 		catch (NotSerializableException e) {
-			throw new FlowExecutionSerializationException(this, null, flowExecution,
+			throw new FlowExecutionSerializationException(null, flowExecution,
 					"Could not encode flow execution--make sure all objects stored in flow scope are serializable!", e);
 		}
 		catch (IOException e) {
-			throw new FlowExecutionSerializationException(this, null, flowExecution,
+			throw new FlowExecutionSerializationException(null, flowExecution,
 					"IOException thrown encoding flow execution -- this should not happen!", e);
 		}
 	}
@@ -124,7 +128,7 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 	 */
 	protected FlowExecution decode(Serializable data) throws IOException, ClassNotFoundException {
 		Assert.notNull(data, "The flow execution data to decode cannot be null");
-		return new FlowExecutionContinuation(Base64.decodeBase64(String.valueOf(data).getBytes()), isCompress())
+		return new FlowExecutionByteArray(Base64.decodeBase64(String.valueOf(data).getBytes()), isCompress())
 				.readFlowExecution();
 	}
 
@@ -138,7 +142,7 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 	 * @return the encoded representation
 	 */
 	protected Serializable encode(FlowExecution flowExecution) throws IOException {
-		byte[] data = new FlowExecutionContinuation(flowExecution, isCompress()).getData(false);
+		byte[] data = new FlowExecutionByteArray(flowExecution, isCompress()).getData(false);
 		return new String(Base64.encodeBase64(data));
 	}
 
@@ -148,7 +152,7 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 		return false;
 	}
 
-	public Serializable generateId(Serializable oldId) throws UnsupportedOperationException {
+	public Serializable generateId(Serializable previousId, ExternalContext context) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("This storage strategy does not support pre-generation of storage IDs");
 	}
 

@@ -1,8 +1,7 @@
-package org.springframework.webflow.execution;
+package org.springframework.webflow.util;
 
 import java.io.Serializable;
 
-import org.springframework.webflow.util.RandomGuid;
 
 /**
  * A key generator that uses the RandomGuid support class. The default
@@ -10,7 +9,7 @@ import org.springframework.webflow.util.RandomGuid;
  * 
  * @author Keith Donald
  */
-public class RandomGuidKeyGenerator implements KeyGenerator {
+public class RandomGuidKeyGenerator implements KeyGenerator, Serializable {
 
 	/**
 	 * Should the random GUID generated be secure?

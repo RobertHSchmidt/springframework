@@ -40,6 +40,7 @@ import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.FlowExecutionStorage;
 import org.springframework.webflow.execution.FlowExecutionStorageException;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.test.MockExternalContext;
 
 /**
  * Unit test for the JsfFlowExecutionManager class.
@@ -220,8 +221,9 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 			}
 		};
 
+		MockExternalContext context = new MockExternalContext();
 		flowExecutionStorageControl.expectAndReturn(flowExecutionStorageMock.supportsTwoPhaseSave(), true);
-		flowExecutionStorageControl.expectAndReturn(flowExecutionStorageMock.generateId(null), new Serializable() {
+		flowExecutionStorageControl.expectAndReturn(flowExecutionStorageMock.generateId(null, context), new Serializable() {
 		});
 
 		flowExecutionControl.expectAndReturn(flowExecutionMock.isActive(), true);
@@ -231,7 +233,7 @@ public class JsfFlowExecutionManagerTests extends TestCase {
 
 		// perform test
 		Serializable flowExecutionId = tested.manageStorage(new Serializable() {
-		}, flowExecutionMock, null);
+		}, flowExecutionMock, context);
 
 		flowExecutionStorageControl.verify();
 		flowExecutionControl.verify();

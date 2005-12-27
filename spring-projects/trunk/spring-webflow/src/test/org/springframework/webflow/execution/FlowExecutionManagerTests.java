@@ -19,10 +19,10 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionManagerTests extends TestCase {
-	public static class MapDataStoreAccessor implements DataStoreAccessor {
+	public static class LocalMapAccessor implements MapAccessor {
 		private Map source = new HashMap();
 
-		public Map getDataStore(ExternalContext context) {
+		public Map getMap(ExternalContext context) {
 			return source;
 		}
 	}
@@ -35,9 +35,17 @@ public class FlowExecutionManagerTests extends TestCase {
 		}
 	}
 
+	private FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
+
+	private LocalMapAccessor mapAccessor = new LocalMapAccessor();
+
+	public void setUp() {
+		RepositoryFlowExecutionStorage storage = new RepositoryFlowExecutionStorage();
+		storage.setRepositoryMapAccessor(mapAccessor);
+		manager.setStorage(storage);
+	}
+
 	public void testLaunchNewFlow() {
-		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
-		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
 		Map input = new HashMap(1);
 		input.put(manager.getFlowIdParameterName(), "simpleFlow");
 		ViewSelection view = manager.onEvent(new MockExternalContext(input));
@@ -49,8 +57,6 @@ public class FlowExecutionManagerTests extends TestCase {
 	}
 
 	public void testLaunchNewFlowNoSuchFlowDefinition() {
-		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
-		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
 		Map input = new HashMap(1);
 		input.put(manager.getFlowIdParameterName(), "nonexistantFlow");
 		try {
@@ -62,9 +68,6 @@ public class FlowExecutionManagerTests extends TestCase {
 	}
 
 	public void testParticipateInExistingFlowExecution() {
-		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
-		MapDataStoreAccessor map = new MapDataStoreAccessor();
-		manager.setStorage(new DataStoreFlowExecutionStorage(map));
 		Map input = new HashMap(2);
 		input.put(manager.getFlowIdParameterName(), "simpleFlow");
 		ViewSelection view = manager.onEvent(new MockExternalContext(input));
@@ -75,16 +78,13 @@ public class FlowExecutionManagerTests extends TestCase {
 		assertEquals("Wrong view name", "confirm", view.getViewName());
 		assertTrue("Should have been a redirect", view.isRedirect());
 		assertNull("Flow has ended", view.getModel().get(FlowExecutionManager.FLOW_EXECUTION_ID_ATTRIBUTE));
-		assertEquals("Should have been removed", 0, map.source.size());
 	}
 
 	public void testParticipateInExistingFlowExecutionNoSuchFlowExecution() {
-		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
-		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
 		Map input = new HashMap(2);
 		input.put(manager.getFlowIdParameterName(), "simpleFlow");
 		manager.onEvent(new MockExternalContext(input));
-		input.put(FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER, "not correct");
+		input.put(FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER, "_snot_ccorrect");
 		try {
 			manager.onEvent(new MockExternalContext(input));
 			fail("should have thrown no such flow execution exception");
@@ -95,8 +95,6 @@ public class FlowExecutionManagerTests extends TestCase {
 	}
 
 	public void testFlowExecutionListener() {
-		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
-		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
 		SimpleFlowExecutionListener listener = new SimpleFlowExecutionListener();
 		manager.addListener(listener);
 		Map input = new HashMap(1);
@@ -106,8 +104,6 @@ public class FlowExecutionManagerTests extends TestCase {
 	}
 
 	public void testFlowExecutionListenerMap() {
-		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
-		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
 		SimpleFlowExecutionListener listener1 = new SimpleFlowExecutionListener();
 		SimpleFlowExecutionListener listener2 = new SimpleFlowExecutionListener();
 		SimpleFlowExecutionListener listener3 = new SimpleFlowExecutionListener();
@@ -128,8 +124,6 @@ public class FlowExecutionManagerTests extends TestCase {
 	}
 
 	public void testFlowExecutionListenerDoesNotApply() {
-		FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
-		manager.setStorage(new DataStoreFlowExecutionStorage(new MapDataStoreAccessor()));
 		SimpleFlowExecutionListener listener = new SimpleFlowExecutionListener();
 		manager.addListenerCriteria(listener, FlowExecutionListenerCriteriaFactory.flow("not this one"));
 		Map input = new HashMap(1);
@@ -144,7 +138,6 @@ public class FlowExecutionManagerTests extends TestCase {
 		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
 		FlowExecutionManager manager = (FlowExecutionManager)ac.getBean("flowExecutionManager");
 		assertEquals("Wrong number of listeners", 1, manager.getListenerMap().size());
-		assertTrue(manager.getStorage() instanceof ContinuationDataStoreFlowExecutionStorage);
 		assertTrue(manager.getFlowLocator() instanceof SimpleFlowLocator);
 	}
 

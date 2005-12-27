@@ -1,0 +1,44 @@
+<html>
+<body>
+<p>
+Provides classes and interfaces supporting the execution of flows.
+</p>
+<p>
+The central concept defined by this package is the
+{@link org.springframework.webflow.execution.FlowExecution}, representing
+a single instance of an executing flow (also known as a "dialog" or "web conversation").
+</p>
+<p>
+The following classes and interfaces are of particular interest to the user of
+the web flow system:
+<ul>
+<li>
+{@link org.springframework.webflow.execution.FlowExecutionManager} - A facade 
+clients (e.g. controllers) can use as an entry-point into Spring Web Flow for launching 
+and executing flows.
+</li>
+<li>
+{@link org.springframework.webflow.execution.FlowExecutionStorage} - A storage
+strategy interface used by the flow execution manager to store the state of an
+ongoing flow execution.
+</li>
+<li>
+{@link org.springframework.webflow.execution.TransactionSynchronizer} - A strategy
+interface used by the flow execution to manage application transactions. The
+implementation is configurable at the level of the flow execution manager.
+</li>
+<li>
+{@link org.springframework.webflow.execution.FlowExecutionListener} - The listener
+interface to be implemented by objects that are interested in flow execution
+lifecycle events. The class
+{@link org.springframework.webflow.execution.FlowExecutionListenerAdapter}
+provides an adapter to ease subclassing. 
+</li>
+</ul>
+</p>
+<p>
+This package depends on the webflow root package.  Usage of ClientContinuationFlowExecutionStorage 
+requires commons-codec.
+</p>
+</body>
+</html>
