@@ -36,33 +36,6 @@ public interface FlowExecutionStatistics {
 	public String getCaption();
 
 	/**
-	 * Returns the time at which this flow started executing, represented as the
-	 * number of milliseconds since January 1, 1970, 00:00:00 GMT.
-	 * @return the creation timestamp
-	 */
-	public long getCreationTimestamp();
-
-	/**
-	 * Returns the time in milliseconds this flow execution has been active.
-	 * @return the flow execution up time
-	 */
-	public long getUptime();
-
-	/**
-	 * Returns the timestamp noting when the last request to manipulate this
-	 * executing flow was received, represented as the number of milliseconds
-	 * since January 1, 1970, 00:00:00 GMT.
-	 * @return the timestamp of the last client request
-	 */
-	public long getLastRequestTimestamp();
-
-	/**
-	 * Returns the id of the last event that occured in this executing flow.
-	 * @return the last event id
-	 */
-	public String getLastEventId();
-
-	/**
 	 * Is the flow execution active?
 	 * @return true if active, false if flow execution has terminated
 	 */

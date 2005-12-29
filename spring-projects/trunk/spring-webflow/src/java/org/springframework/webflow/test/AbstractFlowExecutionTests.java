@@ -268,17 +268,6 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
-	 * Assert that the last supported event that occured in the flow execution
-	 * equals the provided event.
-	 * @param expectedEventId the expected event
-	 */
-	protected void assertLastEventEquals(String expectedEventId) {
-		assertEquals("The last event '" + getFlowExecutionContext().getLastEventId()
-				+ "' does not equal the expected event '" + expectedEventId + "'", expectedEventId,
-				getFlowExecutionContext().getLastEventId());
-	}
-
-	/**
 	 * Assert that the view name equals the provided value.
 	 * @param expectedViewName the expected name
 	 * @param selectedView the selected view with a model attribute map to

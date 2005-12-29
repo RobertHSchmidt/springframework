@@ -2,11 +2,18 @@ package org.springframework.webflow.execution.continuation;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
+import java.io.Serializable;
 
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionKey;
+import org.springframework.webflow.execution.FlowExecutionContinuationKey;
 
-public class SerializingFlowExecutionContinuationFactory implements FlowExecutionContinuationFactory {
+/**
+ * A factory that creates new instances of flow execution continuations based on
+ * standard java serialization.
+ * 
+ * @author Keith Donald
+ */
+public class SerializedFlowExecutionContinuationFactory implements FlowExecutionContinuationFactory, Serializable {
 
 	/**
 	 * Flag to turn on/off continuation compression.
@@ -27,10 +34,10 @@ public class SerializingFlowExecutionContinuationFactory implements FlowExecutio
 		this.compress = compress;
 	}
 
-	public FlowExecutionContinuation createContinuation(FlowExecutionKey key, FlowExecution flowExecution) {
+	public FlowExecutionContinuation createContinuation(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
 		try {
-			return new SerializingFlowExecutionContinuation(key.getContinuationId(), new FlowExecutionByteArray(flowExecution,
-					getCompress()));
+			return new SerializedFlowExecutionContinuation(key.getContinuationId(), new FlowExecutionByteArray(
+					flowExecution, getCompress()));
 		}
 		catch (NotSerializableException e) {
 			throw new FlowExecutionSerializationException(null, flowExecution,

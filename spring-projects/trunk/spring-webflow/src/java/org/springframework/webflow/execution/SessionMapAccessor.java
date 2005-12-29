@@ -5,7 +5,7 @@ import java.util.Map;
 import org.springframework.webflow.ExternalContext;
 
 /**
- * A data source accessor that accesses the external context session map.
+ * A map accessor that accesses the external context session map.
  * @author Keith Donald
  */
 public class SessionMapAccessor implements MapAccessor {

@@ -26,12 +26,11 @@ import java.util.zip.GZIPOutputStream;
 
 import org.springframework.util.FileCopyUtils;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionStorageException;
 
 /**
- * Helper class that aides in handling a flow execution as if it was a
- * continuation. Mainly intended for use in FlowExecutionStorage implementations
- * that store flow executions as if they were continuations.
+ * Helper class that represents a serialized FlowExecution. Mainly intended for
+ * use in FlowExecutionStorage implementations that store flow execution
+ * continuations in their serialized forms.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.execution.FlowExecutionStorage
@@ -43,68 +42,53 @@ public class FlowExecutionByteArray implements Serializable {
 	private static final long serialVersionUID = -6346556580752644469L;
 
 	/**
-	 * The serialized continuation (flow execution snapshot).
+	 * The serialized flow execution.
 	 */
 	private byte[] data;
 
 	/**
-	 * Whether or not this continuation is compressed.
+	 * Whether or not this flow execution array is compressed.
 	 */
 	private boolean compressed;
 
-	/**
-	 * Create a new flow execution continuation using given data, which should
-	 * be a serialized representation of a <code>FlowExecution</code> object.
-	 * @param data serialized flow execution data
-	 * @param compressed indicates whether or not given data is compressed
-	 * (using GZIP compression)
-	 */
 	public FlowExecutionByteArray(byte[] data, boolean compressed) {
 		this.data = data;
 		this.compressed = compressed;
 	}
 
-	/**
-	 * Create a new flow execution continuation for given flow execution.
-	 * @param flowExecution the flow execution to wrap
-	 * @throws FlowExecutionStorageException when the flow execution cannot be
-	 * serialized
-	 * @param compress indicates whether or not the flow execution continuation
-	 * should compress its state
-	 */
 	public FlowExecutionByteArray(FlowExecution flowExecution, boolean compress) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(384);
 		ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(flowExecution);
-		oos.flush();
-		if (compress) {
-			this.data = compress(baos.toByteArray());
+		try {
+			oos.writeObject(flowExecution);
+			oos.flush();
+			if (compress) {
+				this.data = compress(baos.toByteArray());
+			}
+			else {
+				this.data = baos.toByteArray();
+			}
 		}
-		else {
-			this.data = baos.toByteArray();
+		finally {
+			oos.close();
 		}
 		this.compressed = compress;
 	}
 
-	/**
-	 * Returns a clone of the flow execution wrapped by this object.
-	 * @throws FlowExecutionStorageException when the flow execution cannot be
-	 * restored
-	 */
-	public FlowExecution readFlowExecution() throws IOException, ClassNotFoundException {
-		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(getData(true)));
-		return (FlowExecution)ois.readObject();
+	public boolean isCompressed() {
+		return compressed;
 	}
 
-	/**
-	 * Returns the binary representation of the flow execution continuation.
-	 * This is actually a serialized version of the continuation.
-	 * @param decompress indicates whether or not the data should be
-	 * decompressed (when it's compressed) before returning it
-	 * @return the serialized flow execution data
-	 * @throws FlowExecutionStorageException when the flow execution data cannot
-	 * be obtained
-	 */
+	public FlowExecution deserializeFlowExecution() throws IOException, ClassNotFoundException {
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(getData(true)));
+		try {
+			return (FlowExecution)ois.readObject();
+		}
+		finally {
+			ois.close();
+		}
+	}
+
 	public byte[] getData(boolean decompress) throws IOException {
 		if (isCompressed() && decompress) {
 			return decompress(data);
@@ -112,13 +96,6 @@ public class FlowExecutionByteArray implements Serializable {
 		else {
 			return data;
 		}
-	}
-
-	/**
-	 * Returns whether or not this flow execution continuation is compressed.
-	 */
-	public boolean isCompressed() {
-		return compressed;
 	}
 
 	/**

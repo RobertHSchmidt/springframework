@@ -15,20 +15,24 @@
  */
 package org.springframework.webflow.execution.continuation;
 
-import org.springframework.webflow.execution.MapAccessor;
 import org.springframework.webflow.execution.RepositoryFlowExecutionStorage;
 
 /**
- * Flow execution storage implementation that stores the flow execution in an
- * externally managed data store. The actual interface to the data store is
- * pluggable by using a {@link MapAccessor}.
+ * A subclass of
+ * {@link RepositoryFlowExecutionStorage} that simply uses a
+ * {@link ContinuationFlowExecutionRepository continuation-based flow execution repository factory}
+ * by default.
+ * <p>
+ * This is a convenience implementation that makes it easy to use a server-side
+ * continuation-based flow execution storage strategy with a
+ * {@link org.springframework.webflow.execution.FlowExecutionManager}.
  * 
- * @see org.springframework.webflow.execution.MapAccessor
+ * @see ContinuationFlowExecutionRepositoryFactory
  * 
- * @author Erwin Vervaet
+ * @author Keith Donald
  */
-public class ContinuationFlowExecutionStorage extends RepositoryFlowExecutionStorage {
-	public ContinuationFlowExecutionStorage() {
+public class ContinuationRepositoryFlowExecutionStorage extends RepositoryFlowExecutionStorage {
+	public ContinuationRepositoryFlowExecutionStorage() {
 		setRepositoryFactory(new ContinuationFlowExecutionRepositoryFactory());
 	}
 }

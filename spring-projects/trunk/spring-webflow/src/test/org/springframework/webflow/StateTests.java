@@ -45,7 +45,6 @@ public class StateTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertNull(view);
-		assertEquals("success", flowExecution.getLastEventId());
 		assertEquals(1, ((ExecutionCounterAction)state.getActionList().get(0)).getExecutionCount());
 	}
 
@@ -61,7 +60,6 @@ public class StateTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertNull(view);
-		assertEquals("success", flowExecution.getLastEventId());
 		Action[] actions = state.getActionList().toArray();
 		for (int i = 0; i < actions.length; i++) {
 			ExecutionCounterAction action = (ExecutionCounterAction)actions[i];
@@ -104,7 +102,7 @@ public class StateTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertNull(view);
-		assertEquals("action4.success", flowExecution.getLastEventId());
+		assertTrue(!flowExecution.isActive());
 		Action[] actions = state.getActionList().toArray();
 		for (int i = 0; i < actions.length; i++) {
 			AnnotatedAction action = (AnnotatedAction)actions[i];

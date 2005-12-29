@@ -48,12 +48,10 @@ import org.springframework.webflow.State;
 public class FlowSessionImpl implements FlowSession, Externalizable {
 
 	/**
-	 * The serialization id.
+	 * The serialization version id.
 	 */
 	private static final long serialVersionUID = 7389855930603173417L;
 
-	// static logger because FlowSessionImpl objects can be serialized and
-	// then restored
 	private static final Log logger = LogFactory.getLog(FlowSessionImpl.class);
 
 	/**

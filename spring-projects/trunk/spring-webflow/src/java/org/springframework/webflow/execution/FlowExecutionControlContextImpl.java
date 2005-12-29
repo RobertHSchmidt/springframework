@@ -145,7 +145,6 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 
 	public void setLastEvent(Event lastEvent) {
 		this.lastEvent = lastEvent;
-		flowExecution.setLastEvent(lastEvent);
 	}
 
 	public void setLastTransition(Transition lastTransition) {

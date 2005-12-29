@@ -18,14 +18,22 @@ package org.springframework.webflow.execution.continuation;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.Serializable;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.binding.format.Formatter;
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.FlowExecutionContinuationnKeyFormatter;
 import org.springframework.webflow.execution.FlowExecutionStorage;
 import org.springframework.webflow.execution.FlowExecutionStorageException;
-import org.springframework.webflow.execution.NoSuchFlowExecutionException;
+import org.springframework.webflow.execution.MapAccessor;
+import org.springframework.webflow.execution.NoSuchConversationException;
+import org.springframework.webflow.execution.SessionMapAccessor;
+import org.springframework.webflow.util.UidGenerator;
+import org.springframework.webflow.util.RandomGuidUidGenerator;
 
 /**
  * Flow execution storage implementation that will store a flow execution as a
@@ -61,60 +69,116 @@ import org.springframework.webflow.execution.NoSuchFlowExecutionException;
  */
 public class ClientContinuationFlowExecutionStorage implements FlowExecutionStorage {
 
-	/**
-	 * Flag to turn on/off continuation compression.
-	 */
-	private boolean compress = false;
+	protected static final String CONVERSATION_ATTRIBUTE_PREFIX = ClientContinuationFlowExecutionStorage.class
+			.getName()
+			+ ".conversation.";
 
-	/**
-	 * Returns whether or not continuations should be compressed.
-	 */
-	public boolean isCompress() {
+	private MapAccessor conversationMapAccessor = new SessionMapAccessor();
+
+	private Formatter keyFormatter = new FlowExecutionContinuationnKeyFormatter();
+
+	private UidGenerator uidGenerator = new RandomGuidUidGenerator();
+
+	private boolean compress;
+
+	public MapAccessor getConversationMapAccessor() {
+		return conversationMapAccessor;
+	}
+
+	public void setConversationMapAccessor(MapAccessor mapAccessor) {
+		this.conversationMapAccessor = mapAccessor;
+	}
+
+	public Formatter getKeyFormatter() {
+		return keyFormatter;
+	}
+
+	public void setKeyFormatter(Formatter keyFormatter) {
+		this.keyFormatter = keyFormatter;
+	}
+
+	public UidGenerator getUidGenerator() {
+		return uidGenerator;
+	}
+
+	public void setUidGenerator(UidGenerator keyGenerator) {
+		this.uidGenerator = keyGenerator;
+	}
+
+	public boolean getCompress() {
 		return compress;
 	}
 
-	/**
-	 * Set whether or not continuations should be compressed.
-	 */
 	public void setCompress(boolean compress) {
 		this.compress = compress;
 	}
 
-	public FlowExecution load(Serializable id, ExternalContext context) throws NoSuchFlowExecutionException,
-			FlowExecutionStorageException {
+	public FlowExecution load(Serializable id, ExternalContext context) throws FlowExecutionStorageException {
 		try {
-			return decode(id);
+			FlowExecutionContinuationKey key = parseKey(id);
+			assertConversationActive(key.getConversationId(), context);
+			return decode(key.getContinuationId());
 		}
 		catch (IOException e) {
 			throw new FlowExecutionSerializationException(id, null,
-					"IOException thrown decoding flow execution -- this should not happen!", e);
+					"IOException thrown decoding the flow execution -- this should not happen!", e);
 		}
 		catch (ClassNotFoundException e) {
 			throw new FlowExecutionSerializationException(id, null,
-					"ClassNotFoundException thrown decoding flow execution -- "
+					"ClassNotFoundException thrown decoding the flow execution -- "
 							+ "This should not happen! Make sure there are no classloader issues."
 							+ "For example, perhaps the Web Flow system is being loaded by a classloader "
 							+ "that is a parent of the classloader loading application classes?", e);
 		}
 	}
 
-	public Serializable save(Serializable id, FlowExecution flowExecution, ExternalContext context)
-			throws FlowExecutionStorageException {
-		try {
-			return encode(flowExecution);
-		}
-		catch (NotSerializableException e) {
-			throw new FlowExecutionSerializationException(null, flowExecution,
-					"Could not encode flow execution--make sure all objects stored in flow scope are serializable!", e);
-		}
-		catch (IOException e) {
-			throw new FlowExecutionSerializationException(null, flowExecution,
-					"IOException thrown encoding flow execution -- this should not happen!", e);
+	private void assertConversationActive(Serializable conversationId, ExternalContext context) {
+		if (getConversationKeyMap(context).get(CONVERSATION_ATTRIBUTE_PREFIX + conversationId) == null) {
+			throw new NoSuchConversationException(conversationId);
 		}
 	}
 
+	public Serializable save(Serializable id, FlowExecution flowExecution, ExternalContext context)
+			throws FlowExecutionStorageException {
+		Serializable conversationId = getConversationId(id);
+		Serializable encodedFlowExecution;
+		try {
+			encodedFlowExecution = encode(flowExecution);
+		}
+		catch (NotSerializableException e) {
+			throw new FlowExecutionSerializationException(null, flowExecution,
+					"Could not encode flow execution; make sure all objects in flowScope are serializable", e);
+		}
+		catch (IOException e) {
+			throw new FlowExecutionSerializationException(null, flowExecution,
+					"IOException thrown encoding flow execution -- this should not happen", e);
+		}
+		if (id == null) {
+			getConversationKeyMap(context).put(CONVERSATION_ATTRIBUTE_PREFIX + conversationId, Boolean.TRUE);
+		}
+		FlowExecutionContinuationKey key = new FlowExecutionContinuationKey(conversationId, encodedFlowExecution);
+		return keyFormatter.formatValue(key);
+	}
+
 	public void remove(Serializable id, ExternalContext context) throws FlowExecutionStorageException {
-		// nothing to do here
+		getConversationKeyMap(context).remove(CONVERSATION_ATTRIBUTE_PREFIX + parseKey(id).getConversationId());
+	}
+
+	private FlowExecutionContinuationKey parseKey(Serializable id) {
+		return (FlowExecutionContinuationKey)keyFormatter.parseValue((String)id, FlowExecutionContinuationKey.class);
+	}
+
+	private Map getConversationKeyMap(ExternalContext context) {
+		return conversationMapAccessor.getMap(context);
+	}
+
+	private Serializable getConversationId(Serializable id) {
+		if (id == null) {
+			return uidGenerator.generateId();
+		}
+		else {
+			return parseKey(id).getConversationId();
+		}
 	}
 
 	/**
@@ -128,8 +192,8 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 	 */
 	protected FlowExecution decode(Serializable data) throws IOException, ClassNotFoundException {
 		Assert.notNull(data, "The flow execution data to decode cannot be null");
-		return new FlowExecutionByteArray(Base64.decodeBase64(String.valueOf(data).getBytes()), isCompress())
-				.readFlowExecution();
+		byte[] bytes = Base64.decodeBase64(String.valueOf(data).getBytes());
+		return new FlowExecutionByteArray(bytes, getCompress()).deserializeFlowExecution();
 	}
 
 	/**
@@ -142,8 +206,8 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 	 * @return the encoded representation
 	 */
 	protected Serializable encode(FlowExecution flowExecution) throws IOException {
-		byte[] data = new FlowExecutionByteArray(flowExecution, isCompress()).getData(false);
-		return new String(Base64.encodeBase64(data));
+		FlowExecutionByteArray byteArray = new FlowExecutionByteArray(flowExecution, getCompress());
+		return new String(Base64.encodeBase64(byteArray.getData(false)));
 	}
 
 	/* not supported */
@@ -152,7 +216,8 @@ public class ClientContinuationFlowExecutionStorage implements FlowExecutionStor
 		return false;
 	}
 
-	public Serializable generateId(Serializable previousId, ExternalContext context) throws UnsupportedOperationException {
+	public Serializable generateId(Serializable previousId, ExternalContext context)
+			throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("This storage strategy does not support pre-generation of storage IDs");
 	}
 

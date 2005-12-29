@@ -70,7 +70,7 @@ public class FlowExecutionImplTests extends TestCase {
 		ObjectOutputStream oout = new ObjectOutputStream(bout);
 		oout.writeObject(flowExecution);
 		oout.flush();
-
+		
 		// deserialize the flowExecution
 		ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 		ObjectInputStream oin = new ObjectInputStream(bin);
@@ -96,8 +96,6 @@ public class FlowExecutionImplTests extends TestCase {
 					.getFlow().getId());
 			assertSame(flowExecution.getRootFlow(), restoredFlowExecution.getRootFlow());
 		}
-		assertEquals(flowExecution.getLastEventId(), restoredFlowExecution.getLastEventId());
-		assertEquals(flowExecution.getLastRequestTimestamp(), restoredFlowExecution.getLastRequestTimestamp());
 		assertEquals(flowExecution.getListeners().size(), restoredFlowExecution.getListeners().size());
 	}
 

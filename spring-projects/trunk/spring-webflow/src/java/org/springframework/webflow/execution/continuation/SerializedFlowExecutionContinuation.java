@@ -6,13 +6,20 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
 
-public class SerializingFlowExecutionContinuation extends AbstractFlowExecutionContinuation {
-	
+/**
+ * A continuation implementation that is based on standard java serialization.
+ * @author Keith Donald
+ */
+public class SerializedFlowExecutionContinuation extends AbstractFlowExecutionContinuation {
+
 	private static final long serialVersionUID = 1026250005686020025L;
 
+	/**
+	 * The serialized flow execution byte array.
+	 */
 	private FlowExecutionByteArray byteArray;
 
-	public SerializingFlowExecutionContinuation(Serializable id, FlowExecutionByteArray byteArray) {
+	public SerializedFlowExecutionContinuation(Serializable id, FlowExecutionByteArray byteArray) {
 		super(id);
 		Assert.notNull(byteArray, "The flow execution byte array is required");
 		this.byteArray = byteArray;
@@ -20,7 +27,7 @@ public class SerializingFlowExecutionContinuation extends AbstractFlowExecutionC
 
 	public FlowExecution getFlowExecution() {
 		try {
-			return byteArray.readFlowExecution();
+			return byteArray.deserializeFlowExecution();
 		}
 		catch (IOException e) {
 			throw new FlowExecutionSerializationException(getId(), null,

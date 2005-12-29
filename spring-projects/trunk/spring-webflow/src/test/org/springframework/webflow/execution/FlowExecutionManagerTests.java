@@ -10,7 +10,6 @@ import junit.framework.TestCase;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.RequestContext;
@@ -19,14 +18,6 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionManagerTests extends TestCase {
-	public static class LocalMapAccessor implements MapAccessor {
-		private Map source = new HashMap();
-
-		public Map getMap(ExternalContext context) {
-			return source;
-		}
-	}
-
 	public static class SimpleFlowExecutionListener extends FlowExecutionListenerAdapter {
 		private boolean invoked;
 
@@ -89,7 +80,7 @@ public class FlowExecutionManagerTests extends TestCase {
 			manager.onEvent(new MockExternalContext(input));
 			fail("should have thrown no such flow execution exception");
 		}
-		catch (NoSuchFlowExecutionException e) {
+		catch (NoSuchConversationException e) {
 			// expected
 		}
 	}
