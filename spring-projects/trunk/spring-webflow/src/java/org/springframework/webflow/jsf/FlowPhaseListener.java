@@ -62,7 +62,7 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 		else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
 			// save the flow execution out to storage after response rendering
-			// if neccessary
+			// if necessary
 			getExecutionManager(context).saveFlowExecutionIfNecessary(context);
 			FlowExecutionHolder.clearFlowExecution();
 		}

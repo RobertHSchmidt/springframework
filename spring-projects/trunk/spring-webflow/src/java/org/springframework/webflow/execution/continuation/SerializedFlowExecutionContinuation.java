@@ -1,8 +1,11 @@
 package org.springframework.webflow.execution.continuation;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
 
@@ -30,15 +33,48 @@ public class SerializedFlowExecutionContinuation extends AbstractFlowExecutionCo
 			return byteArray.deserializeFlowExecution();
 		}
 		catch (IOException e) {
-			throw new FlowExecutionSerializationException(getId(), null,
-					"IOException thrown decoding flow execution -- this should not happen!", e);
+			throw new FlowExecutionDeserializationException(
+					getId(),
+					"IOException thrown deserializing the flow execution stored in this continuation -- this should not happen!",
+					e);
 		}
 		catch (ClassNotFoundException e) {
-			throw new FlowExecutionSerializationException(getId(), null,
-					"ClassNotFoundException thrown decoding flow execution -- "
+			throw new FlowExecutionDeserializationException(getId(),
+					"ClassNotFoundException thrown deserializing the flow execution stored in this continuation -- "
 							+ "This should not happen! Make sure there are no classloader issues."
 							+ "For example, perhaps the Web Flow system is being loaded by a classloader "
 							+ "that is a parent of the classloader loading application classes?", e);
+		}
+	}
+
+	public byte[] toByteArray() {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(byteArray.getData().length + 128);
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			try {
+				oos.writeObject(this);
+				oos.flush();
+			}
+			finally {
+				oos.close();
+			}
+			return baos.toByteArray();
+		}
+		catch (IOException e) {
+			throw new IllegalStateException();
+		}
+	}
+
+	protected static class FlowExecutionDeserializationException extends NestedRuntimeException {
+		private Serializable continuationId;
+
+		public FlowExecutionDeserializationException(Serializable continuationId, String message, Throwable cause) {
+			super(message, cause);
+			this.continuationId = continuationId;
+		}
+
+		public Serializable getContinuationId() {
+			return continuationId;
 		}
 	}
 }

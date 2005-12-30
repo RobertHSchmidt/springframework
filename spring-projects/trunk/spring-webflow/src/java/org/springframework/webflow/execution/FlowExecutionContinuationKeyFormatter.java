@@ -18,7 +18,7 @@ import org.springframework.util.Assert;
  * </code>
  * @author Keith Donald
  */
-public class FlowExecutionContinuationnKeyFormatter implements Formatter {
+public class FlowExecutionContinuationKeyFormatter implements Formatter {
 
 	/**
 	 * The conversation id prefix delimiter ("_s");
@@ -31,6 +31,7 @@ public class FlowExecutionContinuationnKeyFormatter implements Formatter {
 	private static final String CONTINUATION_ID_PREFIX = "_c";
 
 	public String formatValue(Object continuationKey) throws IllegalArgumentException {
+		Assert.notNull(continuationKey, "The continuation key is required");
 		FlowExecutionContinuationKey key = (FlowExecutionContinuationKey)continuationKey;
 		return CONVERSATION_ID_PREFIX + key.getConversationId() + CONTINUATION_ID_PREFIX + key.getContinuationId();
 	}

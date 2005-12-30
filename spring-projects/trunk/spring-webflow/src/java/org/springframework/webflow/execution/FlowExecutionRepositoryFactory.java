@@ -1,17 +1,19 @@
 package org.springframework.webflow.execution;
 
+import org.springframework.webflow.ExternalContext;
+
 /**
- * An abstract factory that encapsulates the construction and configuration of a
- * flow execution repository. An explicit factory is used as a repositry
- * implementation can be a feature-rich object with many tweakable settings.
+ * An abstract factory for obtaining a reference to a flow execution repository
+ * that may be managed in an external data structure.
  * @author Keith Donald
  */
 public interface FlowExecutionRepositoryFactory {
 
 	/**
-	 * Creates a new flow execution repository. The instance returned is always
-	 * a prototype, a new instance is expeted to be created on each invocation.
-	 * @return the fully constructed flow execution repository
+	 * Lookup the repository given the external context.
+	 * @param context the external context, which may be used to access the
+	 * repository from an externally managed in-memory map
+	 * @return the retrived flow execution repository
 	 */
-	public FlowExecutionRepository createRepository();
+	public FlowExecutionRepository getRepository(ExternalContext context);
 }

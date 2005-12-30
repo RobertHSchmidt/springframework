@@ -16,11 +16,10 @@
 
 package org.springframework.webflow.jsf;
 
-import java.io.Serializable;
-
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionContinuationKey;
 
 /**
  * Simple holder class that associates a FlowExecution instance with the current
@@ -40,7 +39,7 @@ public abstract class FlowExecutionHolder {
 	 * Return the FlowExecution id associated with the current thread, if any.
 	 * @return the current FlowExecution id, or <code>null</code> if none
 	 */
-	public static Serializable getFlowExecutionId() {
+	public static FlowExecutionContinuationKey getContinuationKey() {
 		return getContext().flowExecutionId;
 	}
 
@@ -50,21 +49,6 @@ public abstract class FlowExecutionHolder {
 	 */
 	public static FlowExecution getFlowExecution() {
 		return getContext().flowExecution;
-	}
-
-	/**
-	 * Provides access to an external JSF context.
-	 */
-	public static ExternalContext getExternalContext() {
-		return getContext().context;
-	}
-
-	/**
-	 * Return a boolean indicating whether or not the current flow execution has
-	 * already been saved and is thus unmodifiable.
-	 */
-	public static boolean isFlowExecutionSaved() {
-		return getContext().flowExecutionSaved;
 	}
 
 	/**
@@ -86,19 +70,12 @@ public abstract class FlowExecutionHolder {
 	 * has already been saved to storage or is still live reset the thread-bound
 	 * context
 	 */
-	public static void setFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution,
-			ExternalContext context, boolean flowExecutionSaved) {
+	public static void setFlowExecution(FlowExecutionContinuationKey flowExecutionId, FlowExecution flowExecution) {
 		if (flowExecutionId != null) {
 			Assert.notNull(flowExecution, "It is illegal to store a flow execution with a null flow execution id");
 		}
 		getContext().flowExecutionId = flowExecutionId;
 		getContext().flowExecution = flowExecution;
-		getContext().context = context;
-		getContext().flowExecutionSaved = flowExecutionSaved;
-	}
-
-	public static void setFlowExecutionSaved(boolean state) {
-		getContext().flowExecutionSaved = state;
 	}
 
 	private static Context getContext() {
@@ -111,12 +88,8 @@ public abstract class FlowExecutionHolder {
 	}
 
 	private static class Context {
-		public Serializable flowExecutionId;
+		public FlowExecutionContinuationKey flowExecutionId;
 
 		public FlowExecution flowExecution;
-
-		public ExternalContext context;
-
-		public boolean flowExecutionSaved;
 	}
 }

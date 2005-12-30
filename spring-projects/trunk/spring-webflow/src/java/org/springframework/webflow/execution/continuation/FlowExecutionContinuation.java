@@ -25,4 +25,10 @@ public interface FlowExecutionContinuation extends Serializable {
 	 * @return the flow execution
 	 */
 	public FlowExecution getFlowExecution();
+	
+	/**
+	 * Convert this continuation to a byte array.
+	 * @return the continuation as a byte array
+	 */
+	public byte[] toByteArray();
 }

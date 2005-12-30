@@ -20,21 +20,20 @@ import java.util.Map;
 import org.springframework.webflow.ExternalContext;
 
 /**
- * Strategy interface for objects that can provide an interface to an externally
- * managed data map.
+ * Strategy interface for objects that can lookup an externally managed data
+ * map.
  * <p>
  * Objects implementing this interface act as factories for attribute sources
  * that when invoked pull attributes from an externally managed source.
  * <p>
  * Used by
- * {@link org.springframework.webflow.execution.RepositoryFlowExecutionStorage}
- * storage implementation to make the underlying storage strategy of an flow
- * execution repository pluggable.
+ * {@link org.springframework.webflow.execution.ExternalMapFlowExecutionRepositoryFactory}
+ * to make the underlying storage map of an flow execution repository pluggable.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface MapAccessor {
+public interface ExternalMapLocator {
 
 	/**
 	 * Returns a mutable attribute map providing access to an underlying data

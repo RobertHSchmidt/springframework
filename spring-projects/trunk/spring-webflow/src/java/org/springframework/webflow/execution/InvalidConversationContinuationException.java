@@ -15,20 +15,29 @@
  */
 package org.springframework.webflow.execution;
 
-public class InvalidConversationContinuationException extends FlowExecutionStorageException {
+/**
+ * Thrown if the conversation continuation with the key provided has been
+ * invalidated. This might occur if the continuation expired or was otherwise
+ * invalidated, but a client view still references it.
+ * 
+ * @author Keith Donald
+ * @author Erwin Vervaet
+ */
+public class InvalidConversationContinuationException extends FlowExecutionRepositoryException {
 
-	public InvalidConversationContinuationException(FlowExecutionContinuationKey key) {
-		this(key, null);
-	}
+	/**
+	 * The conversation continuation key.
+	 */
+	private FlowExecutionContinuationKey continuationKey;
 
-	public InvalidConversationContinuationException(FlowExecutionContinuationKey key, Throwable cause) {
-		super(key, null, "The continuation id '" + key.getContinuationId() + "' associated with conversation '"
+	public InvalidConversationContinuationException(FlowExecutionRepository repository, FlowExecutionContinuationKey key) {
+		super(repository, "The continuation id '" + key.getContinuationId() + "' associated with conversation '"
 				+ key.getConversationId()
 				+ "' is invalid.  This could happen if your users are relying on browser history "
-				+ "(typically via the back button) that reference obsoleted or expired continuations.", cause);
+				+ "(typically via the back button) that reference obsoleted or expired continuations.");
 	}
-	
-	public FlowExecutionContinuationKey getFlowExecutionKey() {
-		return (FlowExecutionContinuationKey)getStorageId();
+
+	public FlowExecutionContinuationKey getContinuationKey() {
+		return continuationKey;
 	}
 }

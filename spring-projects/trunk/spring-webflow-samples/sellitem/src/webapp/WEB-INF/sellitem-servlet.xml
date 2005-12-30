@@ -20,8 +20,8 @@
 	<!-- Launches new flow executions and resumes existing executions. -->	
 	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
 		<constructor-arg ref="flowRegistry"/>
-		<property name="storage">
-			<bean class="org.springframework.webflow.execution.continuation.ContinuationRepositoryFlowExecutionStorage"/>
+		<property name="repositoryFactory">
+			<bean class="org.springframework.webflow.execution.continuation.ClientContinuationFlowExecutionRepositoryFactory"/>
 		</property>
 		<property name="listener">
 			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>

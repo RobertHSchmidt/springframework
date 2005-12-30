@@ -18,32 +18,33 @@ package org.springframework.webflow.execution;
 import java.io.Serializable;
 
 /**
- * Thrown when no flow execution exists by the specified
- * <code>flowExecutionId</code>. This might occur if the flow execution timed
- * out, but a client view still references it.
+ * Thrown when no logical conversation exists with the specified
+ * <code>conversationId</code>. This might occur if the conversation ended,
+ * expired, or was otherwise invalidated, but a client view still references it.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class NoSuchConversationException extends FlowExecutionStorageException {
+public class NoSuchConversationException extends FlowExecutionRepositoryException {
+
+	/**
+	 * The unique conversation identifier.
+	 */
+	private Serializable conversationId;
 
 	/**
 	 * Create a new flow execution lookup exception.
 	 * @param flowExecutionId id of the flow execution that cannot be found
 	 */
-	public NoSuchConversationException(Serializable conversationId) {
-		this(conversationId, null);
-	}
-
-	/**
-	 * Create a new flow execution lookup exception.
-	 * @param flowExecutionId id of the flow execution that cannot be found
-	 * @param cause the underlying cause of this exception
-	 */
-	public NoSuchConversationException(Serializable conversationId, Throwable cause) {
-		super(conversationId, null, "No conversation could be found with id '" + conversationId
+	public NoSuchConversationException(FlowExecutionRepository repository, Serializable conversationId) {
+		super(repository, "No conversation could be found with id '" + conversationId
 				+ "' -- perhaps this executing flow has ended or expired? "
 				+ "This could happen if your users are relying on browser history "
-				+ "(typically via the back button) that reference ended flows.", cause);
+				+ "(typically via the back button) that reference ended flows.");
+		this.conversationId = conversationId;
+	}
+
+	public Serializable getConversationId() {
+		return conversationId;
 	}
 }

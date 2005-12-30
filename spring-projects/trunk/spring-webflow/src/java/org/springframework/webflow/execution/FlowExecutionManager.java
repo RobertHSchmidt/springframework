@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.execution;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -25,6 +24,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.binding.format.Formatter;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
@@ -172,7 +172,13 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * require user input and loading resuming executions that will process user
 	 * events.
 	 */
-	private FlowExecutionStorage storage = new RepositoryFlowExecutionStorage();
+	private FlowExecutionRepositoryFactory repositoryFactory = new ExternalMapFlowExecutionRepositoryFactory();
+
+	/**
+	 * The formatter that will parse encoded _flowExecutionId strings into
+	 * {@link FlowExecutionContinuationKey} objects.
+	 */
+	private Formatter continuationKeyFormatter = new FlowExecutionContinuationKeyFormatter();
 
 	/**
 	 * A map of flow execution listeners to a list of flow execution listener
@@ -230,7 +236,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 
 	/**
 	 * Returns the flow locator to use for lookup of flows specified using the
-	 * "_flowId" event parameter.
+	 * {@link #FLOW_ID_PARAMETER} event parameter.
 	 */
 	protected FlowLocator getFlowLocator() {
 		return flowLocator;
@@ -238,25 +244,24 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 
 	/**
 	 * Set the flow locator to use for lookup of flows specified using the
-	 * "_flowId" event parameter.
+	 * {@link #FLOW_ID_PARAMETER} parameter.
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
 		this.flowLocator = flowLocator;
 	}
 
 	/**
-	 * Returns the storage strategy used by the flow execution manager.
+	 * Set the storage strategy used by the flow execution manager.
 	 */
-	protected FlowExecutionStorage getStorage() {
-		return storage;
+	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryLocator) {
+		this.repositoryFactory = repositoryLocator;
 	}
 
 	/**
-	 * Set the storage strategy used by the flow execution manager.
+	 * Returns the storage strategy used by the flow execution manager.
 	 */
-	public void setStorage(FlowExecutionStorage storage) {
-		Assert.notNull(storage, "The flow execution storage strategy is required");
-		this.storage = storage;
+	protected FlowExecutionRepository getRepository(ExternalContext context) {
+		return repositoryFactory.getRepository(context);
 	}
 
 	/**
@@ -417,12 +422,28 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 */
 	public void removeListenerCriteria(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
 		if (containsListener(listener)) {
-			List criteriaList = (List)this.listenerMap.get(listener);
+			List criteriaList = (List)listenerMap.get(listener);
 			criteriaList.remove(criteria);
 			if (criteriaList.isEmpty()) {
 				removeListener(listener);
 			}
 		}
+	}
+
+	/**
+	 * Returns the continuation key formatting strategy.
+	 * @return the continuation key formatter
+	 */
+	public Formatter getContinuationKeyFormatter() {
+		return continuationKeyFormatter;
+	}
+
+	/**
+	 * Sets the flow execution continuation key formatting strategy.
+	 * @param continuationKeyFormatter the continuation key formatter
+	 */
+	public void setContinuationKeyFormatter(Formatter continuationKeyFormatter) {
+		this.continuationKeyFormatter = continuationKeyFormatter;
 	}
 
 	/**
@@ -482,6 +503,21 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		this.parameterDelimiter = parameterDelimiter;
 	}
 
+	/**
+	 * Returns the marker value indicating that the event id parameter was not
+	 * set properly in the event because of a view configuration error
+	 * ("@NOT_SET@").
+	 * <p>
+	 * This is useful when a view relies on an dynamic means to set the eventId
+	 * event parameter, for example, using javascript. This approach assumes the
+	 * "not set" marker value will be a static default (a kind of fallback,
+	 * submitted if the eventId does not get set to the proper dynamic value
+	 * onClick, for example, if javascript was disabled).
+	 */
+	public String getNotSetEventIdParameterMarker() {
+		return NOT_SET_EVENT_ID;
+	}
+
 	// event processing
 
 	/**
@@ -492,24 +528,19 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @throws FlowExecutionManagementException an exception occured during
 	 * event processing
 	 */
-	public ViewSelection onEvent(ExternalContext context) throws FlowExecutionManagementException {
-		Serializable flowExecutionId = extractFlowExecutionId(context);
-		FlowExecution flowExecution = getFlowExecution(flowExecutionId, context);
+	public ViewSelection onEvent(ExternalContext context) {
+		FlowExecutionContinuationKey continuationKey = parseContinuationKey(context);
+		FlowExecutionRepository repository = getRepository(context);
+		FlowExecution flowExecution = getFlowExecution(repository, continuationKey, context);
 		ViewSelection selectedView;
-		try {
-			if (!flowExecution.isActive()) {
-				selectedView = startFlowExecution(flowExecution, context);
-			}
-			else {
-				selectedView = signalEventIn(flowExecution, context);
-			}
+		if (!flowExecution.isActive()) {
+			selectedView = startFlowExecution(flowExecution, context);
 		}
-		catch (StateException e) {
-			throw new FlowExecutionManagementException(flowExecutionId, flowExecution,
-					"Unhandled state exception occured in " + flowExecution.getCaption(), e);
+		else {
+			selectedView = signalEventIn(flowExecution, context);
 		}
-		flowExecutionId = manageStorage(flowExecutionId, flowExecution, context);
-		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
+		continuationKey = manageStorage(repository, continuationKey, flowExecution);
+		return prepareSelectedView(selectedView, continuationKey, flowExecution);
 	}
 
 	/**
@@ -520,13 +551,23 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param context the context in which the external user event occured
 	 * @return the flow execution
 	 */
-	protected FlowExecution getFlowExecution(Serializable flowExecutionId, ExternalContext context) {
-		if (flowExecutionId == null) {
+	protected FlowExecution getFlowExecution(FlowExecutionRepository repository,
+			FlowExecutionContinuationKey continuationKey, ExternalContext context) {
+		if (continuationKey == null) {
 			return createFlowExecution(getFlow(context));
 		}
 		else {
-			return loadFlowExecution(flowExecutionId, context);
+			return loadFlowExecution(repository, continuationKey);
 		}
+	}
+
+	protected FlowExecutionContinuationKey parseContinuationKey(ExternalContext context) {
+		String id = extractFlowExecutionId(context);
+		if (!StringUtils.hasText(id)) {
+			return null;
+		}
+		return (FlowExecutionContinuationKey)continuationKeyFormatter
+				.parseValue(id, FlowExecutionContinuationKey.class);
 	}
 
 	/**
@@ -534,7 +575,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param context the context in which the external user event occured
 	 * @return the obtained id or <code>null</code> if not found
 	 */
-	public Serializable extractFlowExecutionId(ExternalContext context) {
+	protected String extractFlowExecutionId(ExternalContext context) {
 		return verifySingleStringInputParameter(getFlowExecutionIdParameterName(), context.getRequestParameterMap()
 				.get(getFlowExecutionIdParameterName()));
 	}
@@ -565,8 +606,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @return the flow definition to launch
 	 */
 	protected Flow getFlow(ExternalContext context) {
-		String flowId = verifySingleStringInputParameter(getFlowIdParameterName(), context.getRequestParameterMap()
-				.get(getFlowIdParameterName()));
+		String flowId = extractFlowId(context);
 		if (StringUtils.hasText(flowId)) {
 			return getFlowLocator().getFlow(flowId);
 		}
@@ -575,6 +615,17 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 					+ getFlowIdParameterName() + "' parameter, yet no such parameter was provided in this event."
 					+ " Parameters provided were " + StylerUtils.style(context.getRequestParameterMap()));
 		}
+	}
+
+	/**
+	 * Obtain a unique flow execution id from given event.
+	 * @param context the context in which the external user event occured
+	 * @return the obtained id or <code>null</code> if not found
+	 */
+	protected String extractFlowId(ExternalContext context) {
+		return verifySingleStringInputParameter(getFlowIdParameterName(), context.getRequestParameterMap().get(
+				getFlowIdParameterName()));
+
 	}
 
 	/**
@@ -598,16 +649,16 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @throws FlowExecutionStorageException an exception occured loading the
 	 * execution from storage
 	 */
-	public FlowExecution loadFlowExecution(Serializable flowExecutionId, ExternalContext context)
-			throws FlowExecutionStorageException {
+	public FlowExecution loadFlowExecution(FlowExecutionRepository repository,
+			FlowExecutionContinuationKey continuationKey) {
 		// client is participating in an existing flow execution, retrieve
 		// information about it
-		FlowExecution flowExecution = getStorage().load(flowExecutionId, context);
+		FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
 		// rehydrate the execution if neccessary (if it had been serialized out)
 		flowExecution.rehydrate(getFlowLocator(), this);
-		flowExecution.getListeners().fireLoaded(flowExecution, flowExecutionId);
+		flowExecution.getListeners().fireLoaded(flowExecution, continuationKey);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Loaded existing flow execution from storage with id '" + flowExecutionId + "'");
+			logger.debug("Loaded existing flow execution from repository with id '" + continuationKey + "'");
 		}
 		return flowExecution;
 	}
@@ -664,14 +715,13 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @throws FlowExecutionStorageException an exception occured saving the
 	 * execution to storage
 	 */
-	public Serializable saveFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution,
-			ExternalContext context) throws FlowExecutionStorageException {
-		flowExecutionId = getStorage().save(flowExecutionId, flowExecution, context);
-		flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
+	protected void saveFlowExecution(FlowExecutionRepository repository, FlowExecutionContinuationKey continuationKey,
+			FlowExecution flowExecution) {
+		repository.putFlowExecution(continuationKey, flowExecution);
+		flowExecution.getListeners().fireSaved(flowExecution, continuationKey);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Saved flow execution out to storage with id '" + flowExecutionId + "'");
+			logger.debug("Saved flow execution out to storage with id '" + continuationKey + "'");
 		}
-		return flowExecutionId;
 	}
 
 	/**
@@ -682,30 +732,15 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @throws FlowExecutionStorageException an exception occured removing the
 	 * execution from storage
 	 */
-	protected void removeFlowExecution(Serializable flowExecutionId, FlowExecution flowExecution,
-			ExternalContext context) throws FlowExecutionStorageException {
+	protected void removeFlowExecution(FlowExecutionRepository repository,
+			FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution) {
 		// event processing resulted in a previously saved flow execution
 		// ending, cleanup
-		getStorage().remove(flowExecutionId, context);
-		flowExecution.getListeners().fireRemoved(flowExecution, flowExecutionId);
+		repository.invalidateConversation(continuationKey.getConversationId());
+		flowExecution.getListeners().fireRemoved(flowExecution, continuationKey);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Removed flow execution from storage with id: '" + flowExecutionId + "'");
+			logger.debug("Removed flow execution from storage with id '" + continuationKey + "'");
 		}
-	}
-
-	/**
-	 * Returns the marker value indicating that the event id parameter was not
-	 * set properly in the event because of a view configuration error
-	 * ("@NOT_SET@").
-	 * <p>
-	 * This is useful when a view relies on an dynamic means to set the eventId
-	 * event parameter, for example, using javascript. This approach assumes the
-	 * "not set" marker value will be a static default (a kind of fallback,
-	 * submitted if the eventId does not get set to the proper dynamic value
-	 * onClick, for example, if javascript was disabled).
-	 */
-	public String getNotSetEventIdParameterMarker() {
-		return NOT_SET_EVENT_ID;
 	}
 
 	/**
@@ -723,19 +758,29 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @throws FlowExecutionStorageException an exception occured managing flow
 	 * execution storage
 	 */
-	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution,
-			ExternalContext context) throws FlowExecutionStorageException {
+	protected FlowExecutionContinuationKey manageStorage(FlowExecutionRepository repository,
+			FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution) {
 		if (flowExecution.isActive()) {
-			// save the flow execution for future use
-			flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, context);
+			continuationKey = generateContinuationKey(repository, flowExecution, continuationKey);
+			saveFlowExecution(repository, continuationKey, flowExecution);
 		}
 		else {
-			if (flowExecutionId != null) {
-				removeFlowExecution(flowExecutionId, flowExecution, context);
-				flowExecutionId = null;
+			if (continuationKey != null) {
+				removeFlowExecution(repository, continuationKey, flowExecution);
+				continuationKey = null;
 			}
 		}
-		return flowExecutionId;
+		return continuationKey;
+	}
+
+	protected FlowExecutionContinuationKey generateContinuationKey(FlowExecutionRepository repository,
+			FlowExecution flowExecution, FlowExecutionContinuationKey previousKey) {
+		if (previousKey == null) {
+			return repository.generateContinuationKey(flowExecution);
+		}
+		else {
+			return repository.generateContinuationKey(flowExecution, previousKey.getConversationId());
+		}
 	}
 
 	/**
@@ -754,20 +799,25 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * flow execution
 	 * @return the prepped view selection
 	 */
-	protected ViewSelection prepareSelectedView(ViewSelection selectedView, Serializable flowExecutionId,
-			FlowExecutionContext flowExecutionContext) {
+	protected ViewSelection prepareSelectedView(ViewSelection selectedView,
+			FlowExecutionContinuationKey continuationKey, FlowExecutionContext flowExecutionContext) {
 		if (flowExecutionContext.isActive() && selectedView != null) {
+			String id = formatContinuationKey(continuationKey);
 			if (selectedView.isRedirect()) {
-				selectedView.addObject(getFlowExecutionIdParameterName(), flowExecutionId);
+				selectedView.addObject(getFlowExecutionIdParameterName(), id);
 			}
 			else {
-				exposeFlowExecutionAttributes(selectedView.getModel(), flowExecutionId, flowExecutionContext);
+				exposeFlowExecutionAttributes(selectedView.getModel(), id, flowExecutionContext);
 			}
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Returning selected view to client " + selectedView);
 		}
 		return selectedView;
+	}
+
+	protected String formatContinuationKey(FlowExecutionContinuationKey key) {
+		return continuationKeyFormatter.formatValue(key);
 	}
 
 	/**
@@ -777,7 +827,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param flowExecutionId the flow execution id
 	 * @param flowExecutionContext the flow execution context
 	 */
-	protected void exposeFlowExecutionAttributes(Map model, Serializable flowExecutionId,
+	protected void exposeFlowExecutionAttributes(Map model, String flowExecutionId,
 			FlowExecutionContext flowExecutionContext) {
 		// make the entire flow execution context available in the model
 		model.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);

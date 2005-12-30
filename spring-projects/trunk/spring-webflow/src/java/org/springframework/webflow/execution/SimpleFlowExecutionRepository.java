@@ -24,7 +24,7 @@ import org.springframework.webflow.util.UidGenerator;
  * </ul>
  * @author Keith Donald
  */
-public class MapFlowExecutionRepository implements FlowExecutionRepository, Serializable {
+public class SimpleFlowExecutionRepository implements FlowExecutionRepository, Serializable {
 
 	private static final long serialVersionUID = -8138465280185005691L;
 
@@ -55,25 +55,25 @@ public class MapFlowExecutionRepository implements FlowExecutionRepository, Seri
 		this.uidGenerator = keyGenerator;
 	}
 
-	public FlowExecutionContinuationKey generateContinuationKey() {
+	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution) {
 		return new FlowExecutionContinuationKey(uidGenerator.generateId(), uidGenerator.generateId());
 	}
 
-	public FlowExecutionContinuationKey generateContinuationKey(Serializable conversationId) {
+	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution, Serializable conversationId) {
 		return new FlowExecutionContinuationKey(conversationId, uidGenerator.generateId());
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
 		FlowExecutionEntry entry = (FlowExecutionEntry)flowExecutionEntries.get(key.getConversationId());
 		if (entry == null) {
-			throw new NoSuchConversationException(key.getConversationId());
+			throw new NoSuchConversationException(this, key.getConversationId());
 		}
 		else {
 			// assert that the provided continuationId matches the entry's
 			// continuationId
 			// if they do not match, access to the conversation is not allowed.
 			if (!key.getContinuationId().equals(entry.getId())) {
-				throw new InvalidConversationContinuationException(key);
+				throw new InvalidConversationContinuationException(this, key);
 			}
 			return entry.getFlowExecution();
 		}

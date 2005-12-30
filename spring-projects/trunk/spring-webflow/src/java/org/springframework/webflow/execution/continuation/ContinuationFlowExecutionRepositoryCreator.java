@@ -1,7 +1,7 @@
 package org.springframework.webflow.execution.continuation;
 
 import org.springframework.webflow.execution.FlowExecutionRepository;
-import org.springframework.webflow.execution.FlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.FlowExecutionRepositoryCreator;
 import org.springframework.webflow.util.UidGenerator;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.webflow.util.UidGenerator;
  * 
  * @author Keith Donald
  */
-public class ContinuationFlowExecutionRepositoryFactory implements FlowExecutionRepositoryFactory {
+public class ContinuationFlowExecutionRepositoryCreator implements FlowExecutionRepositoryCreator {
 
 	/**
 	 * The flow execution continuation factory to use.

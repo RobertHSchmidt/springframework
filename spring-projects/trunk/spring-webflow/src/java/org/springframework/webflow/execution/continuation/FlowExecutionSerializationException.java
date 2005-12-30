@@ -2,15 +2,19 @@ package org.springframework.webflow.execution.continuation;
 
 import java.io.Serializable;
 
+import org.springframework.core.NestedRuntimeException;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionStorageException;
 
 /**
  * Root exception hierarchy for exceptions that occur during FlowExecution
  * serialization into storage.
  * @author Keith Donald
  */
-public class FlowExecutionSerializationException extends FlowExecutionStorageException {
+public class FlowExecutionSerializationException extends NestedRuntimeException {
+
+	private Serializable continuationId;
+
+	private FlowExecution flowExecution;
 
 	/**
 	 * Creates a new serialization exception.
@@ -21,8 +25,16 @@ public class FlowExecutionSerializationException extends FlowExecutionStorageExc
 	 * @param message a descriptive message
 	 * @param cause
 	 */
-	public FlowExecutionSerializationException(Serializable storageId, FlowExecution flowExecution, String message,
-			Throwable cause) {
-		super(storageId, flowExecution, message, cause);
+	public FlowExecutionSerializationException(Serializable continuationId, FlowExecution flowExecution,
+			String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public Serializable getContinuationId() {
+		return continuationId;
+	}
+
+	public FlowExecution getFlowExecution() {
+		return flowExecution;
 	}
 }

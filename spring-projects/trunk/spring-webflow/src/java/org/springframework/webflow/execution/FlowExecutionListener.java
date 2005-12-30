@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.execution;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.springframework.webflow.FlowExecutionContext;
@@ -140,7 +139,7 @@ public interface FlowExecutionListener {
 	 * @param context the flow execution that was saved
 	 * @param id the unique id of the flow execution in the storage medium
 	 */
-	public void saved(FlowExecutionContext context, Serializable id);
+	public void saved(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey);
 
 	/**
 	 * Called after an existing flow execution is loaded and rehydrated from
@@ -148,12 +147,12 @@ public interface FlowExecutionListener {
 	 * @param context the flow execution that was loaded
 	 * @param id the unique id of the flow execution in the storage medium
 	 */
-	public void loaded(FlowExecutionContext context, Serializable id);
+	public void loaded(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey);
 
 	/**
 	 * Called after an ended flow execution is removed from storage.
 	 * @param context the flow execution that was removed
 	 * @param id the unique id of the flow execution in the storage medium
 	 */
-	public void removed(FlowExecutionContext context, Serializable id);
+	public void removed(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey);
 }

@@ -28,12 +28,12 @@ public class FlowExecutionManagerTests extends TestCase {
 
 	private FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
 
-	private LocalMapAccessor mapAccessor = new LocalMapAccessor();
+	private LocalMapLocator mapLocator = new LocalMapLocator();
 
 	public void setUp() {
-		RepositoryFlowExecutionStorage storage = new RepositoryFlowExecutionStorage();
-		storage.setRepositoryMapAccessor(mapAccessor);
-		manager.setStorage(storage);
+		ExternalMapFlowExecutionRepositoryFactory repositoryLocator = new ExternalMapFlowExecutionRepositoryFactory();
+		repositoryLocator.setExternalMapLocator(mapLocator);
+		manager.setRepositoryFactory(repositoryLocator);
 	}
 
 	public void testLaunchNewFlow() {

@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.springframework.webflow.ExternalContext;
 
-public class LocalMapAccessor implements MapAccessor {
+public class LocalMapLocator implements ExternalMapLocator {
 	public Map source = new HashMap();
 
 	public Map getMap(ExternalContext context) {

@@ -81,11 +81,11 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 		this.maxContinuations = maxContinuations;
 	}
 
-	public FlowExecutionContinuationKey generateContinuationKey() {
+	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution) {
 		return new FlowExecutionContinuationKey(uidGenerator.generateId(), uidGenerator.generateId());
 	}
 
-	public FlowExecutionContinuationKey generateContinuationKey(Serializable conversationId) {
+	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution, Serializable conversationId) {
 		return new FlowExecutionContinuationKey(conversationId, uidGenerator.generateId());
 	}
 
@@ -113,11 +113,11 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 			throws NoSuchConversationException {
 		Conversation conversation = getConversation(key.getConversationId());
 		if (conversation == null) {
-			throw new NoSuchConversationException(key.getConversationId());
+			throw new NoSuchConversationException(this, key.getConversationId());
 		}
 		FlowExecutionContinuation continuation = conversation.getContinuation(key.getContinuationId());
 		if (continuation == null) {
-			throw new InvalidConversationContinuationException(key);
+			throw new InvalidConversationContinuationException(this, key);
 		}
 		return continuation;
 	}

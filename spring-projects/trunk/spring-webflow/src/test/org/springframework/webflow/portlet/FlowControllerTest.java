@@ -24,7 +24,6 @@ import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.execution.FlowExecutionManagementException;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.FlowLocator;
 
@@ -44,7 +43,7 @@ public class FlowControllerTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		flowLocatorControl = MockControl.createControl(FlowLocator.class);
-		flowLocatorMock = (FlowLocator) flowLocatorControl.getMock();
+		flowLocatorMock = (FlowLocator)flowLocatorControl.getMock();
 		tested = new FlowController(flowLocatorMock);
 	}
 
@@ -71,7 +70,7 @@ public class FlowControllerTest extends TestCase {
 		mockActionRequest.setSession(mockPortletSession);
 
 		FlowExecutionManager flowExecutionManager = new FlowExecutionManager(flowLocatorMock) {
-			public ViewSelection onEvent(ExternalContext context) throws FlowExecutionManagementException {
+			public ViewSelection onEvent(ExternalContext context) {
 				return viewSelection;
 			}
 		};
@@ -93,7 +92,7 @@ public class FlowControllerTest extends TestCase {
 		mockRenderRequest.setSession(mockPortletSession);
 
 		FlowExecutionManager flowExecutionManager = new FlowExecutionManager(flowLocatorMock) {
-			public ViewSelection onEvent(ExternalContext context) throws FlowExecutionManagementException {
+			public ViewSelection onEvent(ExternalContext context) {
 				return viewSelection;
 			}
 		};
@@ -115,7 +114,7 @@ public class FlowControllerTest extends TestCase {
 		mockRenderRequest.setSession(mockPortletSession);
 
 		FlowExecutionManager flowExecutionManager = new FlowExecutionManager(flowLocatorMock) {
-			public ViewSelection onEvent(ExternalContext context) throws FlowExecutionManagementException {
+			public ViewSelection onEvent(ExternalContext context) {
 				return viewSelection;
 			}
 		};

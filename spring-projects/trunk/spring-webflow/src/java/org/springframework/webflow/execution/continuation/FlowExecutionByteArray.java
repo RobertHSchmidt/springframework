@@ -89,6 +89,10 @@ public class FlowExecutionByteArray implements Serializable {
 		}
 	}
 
+	public byte[] getData() {
+		return data;
+	}
+	
 	public byte[] getData(boolean decompress) throws IOException {
 		if (isCompressed() && decompress) {
 			return decompress(data);
@@ -104,9 +108,13 @@ public class FlowExecutionByteArray implements Serializable {
 	private byte[] compress(byte[] dataToCompress) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		GZIPOutputStream gzipos = new GZIPOutputStream(baos);
-		gzipos.write(dataToCompress);
-		gzipos.flush();
-		gzipos.close();
+		try {
+			gzipos.write(dataToCompress);
+			gzipos.flush();
+		}
+		finally {
+			gzipos.close();
+		}
 		return baos.toByteArray();
 	}
 
@@ -116,8 +124,11 @@ public class FlowExecutionByteArray implements Serializable {
 	private byte[] decompress(byte[] dataToDecompress) throws IOException {
 		GZIPInputStream gzipin = new GZIPInputStream(new ByteArrayInputStream(dataToDecompress));
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		FileCopyUtils.copy(gzipin, baos);
-		gzipin.close();
+		try {
+			FileCopyUtils.copy(gzipin, baos);
+		} finally {
+			gzipin.close();
+		}
 		return baos.toByteArray();
 	}
 }

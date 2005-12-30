@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.execution;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -311,9 +310,9 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was loaded from
 	 * storage.
 	 */
-	public void fireLoaded(FlowExecutionContext context, Serializable id) {
+	public void fireLoaded(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey) {
 		for (Iterator it = iterator(); it.hasNext();) {
-			((FlowExecutionListener)it.next()).loaded(context, id);
+			((FlowExecutionListener)it.next()).loaded(context, continuationKey);
 		}
 	}
 
@@ -321,9 +320,9 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was saved to
 	 * storage.
 	 */
-	public void fireSaved(FlowExecutionContext context, Serializable id) {
+	public void fireSaved(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey) {
 		for (Iterator it = iterator(); it.hasNext();) {
-			((FlowExecutionListener)it.next()).saved(context, id);
+			((FlowExecutionListener)it.next()).saved(context, continuationKey);
 		}
 	}
 
@@ -331,9 +330,9 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that a flow execution was removed from
 	 * storage.
 	 */
-	public void fireRemoved(FlowExecutionContext context, Serializable id) {
+	public void fireRemoved(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey) {
 		for (Iterator it = iterator(); it.hasNext();) {
-			((FlowExecutionListener)it.next()).removed(context, id);
+			((FlowExecutionListener)it.next()).removed(context, continuationKey);
 		}
 	}
 }

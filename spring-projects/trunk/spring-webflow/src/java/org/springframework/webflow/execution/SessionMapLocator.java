@@ -8,7 +8,7 @@ import org.springframework.webflow.ExternalContext;
  * A map accessor that accesses the external context session map.
  * @author Keith Donald
  */
-public class SessionMapAccessor implements MapAccessor {
+public class SessionMapLocator implements ExternalMapLocator {
 	public Map getMap(ExternalContext context) {
 		return context.getSessionMap();
 	}

@@ -5,7 +5,6 @@ import java.io.NotSerializableException;
 import java.io.Serializable;
 
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionContinuationKey;
 
 /**
  * A factory that creates new instances of flow execution continuations based on
@@ -34,18 +33,19 @@ public class SerializedFlowExecutionContinuationFactory implements FlowExecution
 		this.compress = compress;
 	}
 
-	public FlowExecutionContinuation createContinuation(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
+	public FlowExecutionContinuation createContinuation(Serializable continuationId, FlowExecution flowExecution) {
 		try {
-			return new SerializedFlowExecutionContinuation(key.getContinuationId(), new FlowExecutionByteArray(
-					flowExecution, getCompress()));
+			return new SerializedFlowExecutionContinuation(continuationId, new FlowExecutionByteArray(flowExecution,
+					getCompress()));
 		}
 		catch (NotSerializableException e) {
-			throw new FlowExecutionSerializationException(null, flowExecution,
-					"Could not encode flow execution--make sure all objects stored in flow scope are serializable!", e);
+			throw new FlowExecutionSerializationException(continuationId, flowExecution,
+					"Could not serialize flow execution--make sure all objects stored in flow scope are serializable!",
+					e);
 		}
 		catch (IOException e) {
-			throw new FlowExecutionSerializationException(null, flowExecution,
-					"IOException thrown encoding flow execution -- this should not happen!", e);
+			throw new FlowExecutionSerializationException(continuationId, flowExecution,
+					"IOException thrown serializing flow execution -- this should not happen!", e);
 		}
 	}
 }

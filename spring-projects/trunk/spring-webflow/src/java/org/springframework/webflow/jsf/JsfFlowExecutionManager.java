@@ -16,7 +16,6 @@
 
 package org.springframework.webflow.jsf;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,7 +31,9 @@ import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.FlowExecutionRepository;
 import org.springframework.webflow.execution.FlowLocator;
 
 /**
@@ -108,19 +109,20 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * Create a new flow execution for the current request. Proceed until a
 	 * <code>ViewSelection</code> is returned describing the next view that
 	 * should be rendered.
-	 * @param context <code>FacesContext</code> for the current request
+	 * @param facesContext <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
 	 * @param outcome The logical outcome returned by the specified action
 	 * @return the selected starting view
 	 */
-	public ViewSelection launchFlowExecution(FacesContext context, String fromAction, String outcome) {
+	public ViewSelection launchFlowExecution(FacesContext facesContext, String fromAction, String outcome) {
 		String flowId = getRequiredFlowId(outcome);
-		ExternalContext jsfContext = createExternalContext(context, fromAction, outcome);
+		ExternalContext context = createExternalContext(facesContext, fromAction, outcome);
 		FlowExecution flowExecution = createFlowExecution(getFlowLocator().getFlow(flowId));
-		ViewSelection selectedView = flowExecution.start(jsfContext);
-		Serializable flowExecutionId = manageStorage(null, flowExecution, jsfContext);
-		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
+		ViewSelection selectedView = flowExecution.start(context);
+		FlowExecutionRepository repository = getRepository(context);
+		FlowExecutionContinuationKey continuationKey = manageStorage(repository, null, flowExecution);
+		return prepareSelectedView(selectedView, continuationKey, flowExecution);
 	}
 
 	protected ExternalContext createExternalContext(FacesContext context, String fromAction, String outcome) {
@@ -154,7 +156,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * @param outcome The logical outcome returned by the specified action
 	 */
 	public boolean isFlowExecutionParticipationRequest(FacesContext context, String fromAction, String outcome) {
-		boolean executionBound = FlowExecutionHolder.getFlowExecution() == null ? false : true;
+		boolean executionBound = FlowExecutionHolder.getFlowExecution() != null ? true : false;
 		boolean flowExecutionIdPresent = context.getExternalContext().getRequestParameterMap().containsKey(
 				FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER);
 		// assert an invariant, just to be safe
@@ -172,19 +174,20 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * <p>
 	 * Proceed until a <code>ViewSelection</code> is returned describing the
 	 * next view that should be rendered.
-	 * @param context <code>FacesContext</code> for the current request
+	 * @param facesContext <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
 	 * @param outcome The logical outcome returned by the specified action
 	 * @return the selected next (or ending) view
 	 */
-	public ViewSelection resumeFlowExecution(FacesContext context, String fromAction, String outcome) {
-		Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
+	public ViewSelection resumeFlowExecution(FacesContext facesContext, String fromAction, String outcome) {
+		FlowExecutionContinuationKey continuationKey = FlowExecutionHolder.getContinuationKey();
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-		ExternalContext jsfContext = createExternalContext(context, fromAction, outcome);
-		ViewSelection selectedView = signalEventIn(flowExecution, jsfContext);
-		flowExecutionId = manageStorage(flowExecutionId, flowExecution, jsfContext);
-		return prepareSelectedView(selectedView, flowExecutionId, flowExecution);
+		ExternalContext context = createExternalContext(facesContext, fromAction, outcome);
+		ViewSelection selectedView = signalEventIn(flowExecution, context);
+		FlowExecutionRepository repository = getRepository(context);
+		continuationKey = manageStorage(repository, continuationKey, flowExecution);
+		return prepareSelectedView(selectedView, continuationKey, flowExecution);
 	}
 
 	/*
@@ -194,30 +197,20 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * org.springframework.webflow.execution.FlowExecution,
 	 * org.springframework.webflow.ExternalContext)
 	 */
-	protected Serializable manageStorage(Serializable flowExecutionId, FlowExecution flowExecution,
-			ExternalContext context) {
+	protected FlowExecutionContinuationKey manageStorage(FlowExecutionRepository repository,
+			FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution) {
 		if (flowExecution.isActive()) {
-			if (getStorage().supportsTwoPhaseSave()) {
-				// just generate the flow execution id, an actual save will be
-				// done after response rendering
-				// see {@link #saveFlowExecutionIfNecessary()}
-				flowExecutionId = getStorage().generateId(null, context);
-				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, context, false);
-			}
-			else {
-				// two-phase save not supported, save out in one step
-				flowExecutionId = saveFlowExecution(flowExecutionId, flowExecution, context);
-				FlowExecutionHolder.setFlowExecution(flowExecutionId, flowExecution, context, true);
-			}
+			continuationKey = generateContinuationKey(repository, flowExecution, continuationKey);
+			FlowExecutionHolder.setFlowExecution(continuationKey, flowExecution);
 		}
 		else {
-			if (flowExecutionId != null) {
-				removeFlowExecution(flowExecutionId, flowExecution, context);
-				flowExecutionId = null;
+			if (continuationKey != null) {
+				removeFlowExecution(repository, continuationKey, flowExecution);
+				continuationKey = null;
 			}
 			FlowExecutionHolder.clearFlowExecution();
 		}
-		return flowExecutionId;
+		return continuationKey;
 	}
 
 	/**
@@ -225,17 +218,17 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * already be there in the case of normal view generation, when we are going
 	 * back to the same view as before due to validation errors, the flow will
 	 * not have run at all, so will not have generated a view
-	 * @param context
+	 * @param facesContext
 	 */
-	public void exposeFlowAttributes(FacesContext context) {
+	public void exposeFlowAttributes(FacesContext facesContext) {
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
 		if (flowExecution != null && flowExecution.isActive()) {
-			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
-			Assert.notNull(flowExecutionId,
+			FlowExecutionContinuationKey continuationKey = FlowExecutionHolder.getContinuationKey();
+			Assert.notNull(continuationKey,
 					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
 			Map model = new HashMap();
-			exposeFlowExecutionAttributes(model, flowExecutionId, flowExecution);
-			putInto(context.getExternalContext().getRequestMap(), model);
+			exposeFlowExecutionAttributes(model, formatContinuationKey(continuationKey), flowExecution);
+			putInto(facesContext.getExternalContext().getRequestMap(), model);
 		}
 	}
 
@@ -250,20 +243,18 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 */
 	public void saveFlowExecutionIfNecessary(FacesContext context) {
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
-		if (flowExecution != null && flowExecution.isActive() && !FlowExecutionHolder.isFlowExecutionSaved()) {
-			Serializable flowExecutionId = FlowExecutionHolder.getFlowExecutionId();
+		if (flowExecution != null && flowExecution.isActive()) {
+			FlowExecutionContinuationKey continuationKey = FlowExecutionHolder.getContinuationKey();
 			Assert
-					.notNull(flowExecutionId,
+					.notNull(continuationKey,
 							"The flow execution storage id must have been pre-generated to complete a two-phase save to storage");
-			getStorage().saveWithGeneratedId(flowExecutionId, flowExecution, FlowExecutionHolder.getExternalContext());
-			FlowExecutionHolder.setFlowExecutionSaved(true);
-			flowExecution.getListeners().fireSaved(flowExecution, flowExecutionId);
+			flowExecution.getListeners().fireSaved(flowExecution, continuationKey);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Saved flow execution out to storage with previously generated id '" + flowExecutionId
+				logger.debug("Saved flow execution out to storage with previously generated id '" + continuationKey
 						+ "'");
 			}
 			Map model = new HashMap();
-			exposeFlowExecutionAttributes(model, flowExecutionId, flowExecution);
+			exposeFlowExecutionAttributes(model, formatContinuationKey(continuationKey), flowExecution);
 			putInto(context.getExternalContext().getRequestMap(), model);
 		}
 	}
@@ -298,14 +289,13 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * The flow execution (if any) is also loaded into the FlowExecutionHolder.
 	 * @param context <code>FacesContext</code> for the current request
 	 */
-	public void restoreFlowExecution(FacesContext context) {
-		Map parameters = context.getExternalContext().getRequestParameterMap();
-		if (parameters.containsKey(getFlowExecutionIdParameterName())) {
-			Serializable id = (Serializable)parameters.get(getFlowExecutionIdParameterName());
-			// note the event will be replaced during navigation
-			JsfExternalContext jsfContext = new JsfExternalContext(context);
-			FlowExecution flowExecution = loadFlowExecution(id, jsfContext);
-			FlowExecutionHolder.setFlowExecution(id, flowExecution, jsfContext, false);
+	public void restoreFlowExecution(FacesContext facesContext) {
+		JsfExternalContext context = new JsfExternalContext(facesContext);
+		FlowExecutionContinuationKey continuationKey = parseContinuationKey(context);
+		if (continuationKey != null) {
+			FlowExecutionRepository repository = getRepository(context);
+			FlowExecution flowExecution = loadFlowExecution(repository, continuationKey);
+			FlowExecutionHolder.setFlowExecution(continuationKey, flowExecution);
 		}
 	}
 

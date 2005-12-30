@@ -27,7 +27,8 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionStorageException a problem occured generating the
 	 * key
 	 */
-	public FlowExecutionContinuationKey generateContinuationKey() throws FlowExecutionStorageException;
+	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution)
+			throws FlowExecutionRepositoryException;
 
 	/**
 	 * Generate a unique flow execution continuation key to be used as an index
@@ -38,8 +39,8 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionStorageException a problem occured generating the
 	 * key
 	 */
-	public FlowExecutionContinuationKey generateContinuationKey(Serializable conversationId)
-			throws FlowExecutionStorageException;
+	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution, Serializable conversationId)
+			throws FlowExecutionRepositoryException;
 
 	/**
 	 * Return the <code>FlowExecution</code> indexed by the provided
@@ -50,7 +51,7 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionStorageException if no flow execution was indexed
 	 * with the key provided
 	 */
-	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) throws FlowExecutionStorageException;
+	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Place the provided <code>FlowExecution</code> in this repository,
@@ -66,7 +67,7 @@ public interface FlowExecutionRepository {
 	 * stored
 	 */
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution)
-			throws FlowExecutionStorageException;
+			throws FlowExecutionRepositoryException;
 
 	/**
 	 * Invalidate the executing conversation with the specified id. This method
@@ -78,5 +79,5 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionStorageException the conversation could not be
 	 * invalidated
 	 */
-	public void invalidateConversation(Serializable conversationId) throws FlowExecutionStorageException;
+	public void invalidateConversation(Serializable conversationId) throws FlowExecutionRepositoryException;
 }

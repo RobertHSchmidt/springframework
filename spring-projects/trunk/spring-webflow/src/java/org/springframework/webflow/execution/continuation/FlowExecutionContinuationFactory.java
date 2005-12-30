@@ -1,7 +1,8 @@
 package org.springframework.webflow.execution.continuation;
 
+import java.io.Serializable;
+
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionContinuationKey;
 
 /**
  * A factory for creating different FlowExecution implementations.
@@ -15,5 +16,5 @@ public interface FlowExecutionContinuationFactory {
 	 * @param flowExecution the flow execution
 	 * @return the continuation
 	 */
-	public FlowExecutionContinuation createContinuation(FlowExecutionContinuationKey key, FlowExecution flowExecution);
+	public FlowExecutionContinuation createContinuation(Serializable continuationId, FlowExecution flowExecution);
 }
