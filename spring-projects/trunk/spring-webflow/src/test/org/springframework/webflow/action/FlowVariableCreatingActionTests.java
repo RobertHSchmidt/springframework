@@ -52,10 +52,4 @@ public class FlowVariableCreatingActionTests extends TestCase {
 		FlowVariable[] actualVariables = localTested.getVariables();
 		assertEquals(1, actualVariables.length);
 	}
-
-	public void testToString() {
-		String s = tested.toString();
-		assertTrue("array", s.contains("variables = array<FlowVariable>"));
-		assertTrue("values", s.contains("name = 'Some variable', type = Object"));
-	}
 }
