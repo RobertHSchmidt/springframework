@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -177,15 +176,6 @@ public class FlowExecutionListenerList {
 	// methods to fire events to all listeners
 
 	/**
-	 * Notify all interested listeners that a flow execution was created.
-	 */
-	public void fireCreated(FlowExecutionContext context) {
-		for (Iterator it = iterator(); it.hasNext();) {
-			((FlowExecutionListener)it.next()).created(context);
-		}
-	}
-
-	/**
 	 * Notify all interested listeners that a request was submitted to the flow
 	 * execution.
 	 */
@@ -303,36 +293,6 @@ public class FlowExecutionListenerList {
 	public void fireSessionEnded(RequestContext context, FlowSession endedSession) {
 		for (Iterator it = iterator(); it.hasNext();) {
 			((FlowExecutionListener)it.next()).sessionEnded(context, endedSession);
-		}
-	}
-
-	/**
-	 * Notify all interested listeners that a flow execution was loaded from
-	 * storage.
-	 */
-	public void fireLoaded(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey) {
-		for (Iterator it = iterator(); it.hasNext();) {
-			((FlowExecutionListener)it.next()).loaded(context, continuationKey);
-		}
-	}
-
-	/**
-	 * Notify all interested listeners that a flow execution was saved to
-	 * storage.
-	 */
-	public void fireSaved(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey) {
-		for (Iterator it = iterator(); it.hasNext();) {
-			((FlowExecutionListener)it.next()).saved(context, continuationKey);
-		}
-	}
-
-	/**
-	 * Notify all interested listeners that a flow execution was removed from
-	 * storage.
-	 */
-	public void fireRemoved(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey) {
-		for (Iterator it = iterator(); it.hasNext();) {
-			((FlowExecutionListener)it.next()).removed(context, continuationKey);
 		}
 	}
 }

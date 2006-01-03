@@ -17,7 +17,6 @@ package org.springframework.webflow.execution;
 
 import java.util.Map;
 
-import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -37,13 +36,6 @@ import org.springframework.webflow.ViewSelection;
  * @author Erwin Vervaet
  */
 public interface FlowExecutionListener {
-
-	/**
-	 * Called after a new flow execution is created but before it is started or
-	 * any requests have been submitted.
-	 * @param context the flow execution context
-	 */
-	public void created(FlowExecutionContext context);
 
 	/**
 	 * Called when any client request is submitted to manipulate this flow
@@ -133,26 +125,4 @@ public interface FlowExecutionListener {
 	 * @param endedSession ending flow session
 	 */
 	public void sessionEnded(RequestContext context, FlowSession endedSession);
-
-	/**
-	 * Called after a new or resumed flow execution is saved to storage.
-	 * @param context the flow execution that was saved
-	 * @param id the unique id of the flow execution in the storage medium
-	 */
-	public void saved(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey);
-
-	/**
-	 * Called after an existing flow execution is loaded and rehydrated from
-	 * storage.
-	 * @param context the flow execution that was loaded
-	 * @param id the unique id of the flow execution in the storage medium
-	 */
-	public void loaded(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey);
-
-	/**
-	 * Called after an ended flow execution is removed from storage.
-	 * @param context the flow execution that was removed
-	 * @param id the unique id of the flow execution in the storage medium
-	 */
-	public void removed(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey);
 }

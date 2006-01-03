@@ -589,7 +589,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 */
 	protected FlowExecution createFlowExecution(Flow flow) {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow, getListeners(flow));
-		flowExecution.getListeners().fireCreated(flowExecution);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new flow execution for flow definition '" + flow.getId() + "'");
 		}
@@ -656,7 +655,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
 		// rehydrate the execution if neccessary (if it had been serialized out)
 		flowExecution.rehydrate(getFlowLocator(), this);
-		flowExecution.getListeners().fireLoaded(flowExecution, continuationKey);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Loaded existing flow execution from repository with id '" + continuationKey + "'");
 		}
@@ -718,7 +716,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	protected void saveFlowExecution(FlowExecutionRepository repository, FlowExecutionContinuationKey continuationKey,
 			FlowExecution flowExecution) {
 		repository.putFlowExecution(continuationKey, flowExecution);
-		flowExecution.getListeners().fireSaved(flowExecution, continuationKey);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Saved flow execution out to storage with id '" + continuationKey + "'");
 		}
@@ -737,7 +734,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		// event processing resulted in a previously saved flow execution
 		// ending, cleanup
 		repository.invalidateConversation(continuationKey.getConversationId());
-		flowExecution.getListeners().fireRemoved(flowExecution, continuationKey);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removed flow execution from storage with id '" + continuationKey + "'");
 		}

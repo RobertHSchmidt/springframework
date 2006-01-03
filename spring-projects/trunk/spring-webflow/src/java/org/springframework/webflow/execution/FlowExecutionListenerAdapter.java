@@ -17,7 +17,6 @@ package org.springframework.webflow.execution;
 
 import java.util.Map;
 
-import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -33,9 +32,6 @@ import org.springframework.webflow.ViewSelection;
  * @author Keith Donald
  */
 public abstract class FlowExecutionListenerAdapter implements FlowExecutionListener {
-
-	public void created(FlowExecutionContext context) {
-	}
 
 	public void requestSubmitted(RequestContext context) {
 	}
@@ -68,14 +64,5 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	}
 
 	public void sessionEnded(RequestContext context, FlowSession endedSession) {
-	}
-
-	public void saved(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey) {
-	}
-
-	public void loaded(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey) {
-	}
-
-	public void removed(FlowExecutionContext context, FlowExecutionContinuationKey continuationKey) {
 	}
 }

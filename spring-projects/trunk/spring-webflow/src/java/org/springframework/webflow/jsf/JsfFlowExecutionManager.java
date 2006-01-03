@@ -248,7 +248,6 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			Assert
 					.notNull(continuationKey,
 							"The flow execution storage id must have been pre-generated to complete a two-phase save to storage");
-			flowExecution.getListeners().fireSaved(flowExecution, continuationKey);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Saved flow execution out to storage with previously generated id '" + continuationKey
 						+ "'");
