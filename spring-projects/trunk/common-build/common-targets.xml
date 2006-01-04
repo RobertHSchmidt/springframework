@@ -349,7 +349,8 @@
   <target name="resolve.post" />
 
   <!-- retrieve: retrieve dependencies -->
-  <target name="retrieve" depends="resolve, retrieve.pre, retrieve.main, retrieve.post" />
+  <target name="retrieve" depends="resolve, retrieve.pre, retrieve.main, retrieve.post"
+          description="Retrieve all declared dependencies into the lib dir" />
   <target name="retrieve.pre" />
   <target name="retrieve.main">
     <!-- when we retrieve with revision numbers in jar names, we really have to kill the
