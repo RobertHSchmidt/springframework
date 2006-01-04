@@ -33,8 +33,6 @@ public abstract class AbstractFlowExecutionContinuation implements FlowExecution
 		return id;
 	}
 
-	public abstract FlowExecution getFlowExecution();
-
 	public boolean equals(Object o) {
 		if (!(o instanceof AbstractFlowExecutionContinuation)) {
 			return false;
@@ -45,6 +43,10 @@ public abstract class AbstractFlowExecutionContinuation implements FlowExecution
 	public int hashCode() {
 		return id.hashCode();
 	}
+
+	public abstract FlowExecution getFlowExecution();
+	
+	public abstract byte[] toByteArray();
 
 	public String toString() {
 		return new ToStringCreator(this).append("id", id).toString();
