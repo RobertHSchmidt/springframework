@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.struts;
 
-import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -31,6 +31,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionManager;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.FlowExecutionManager.ConditionalFlowExecutionListenerHolder;
 import org.springframework.webflow.struts.FlowAction.StrutsExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -108,21 +109,21 @@ public class FlowActionTests extends TestCase {
 	public void testOnInitValidFlowExecutionManager() {
 		tested.setFlowExecutionManager(nullViewSelectionFlowExecutionManager);
 
-		Map listenerMap = tested.getFlowExecutionManager().getListenerMap();
-		assertTrue("should be empty before test", listenerMap.isEmpty());
+		Set listenerSet = tested.getFlowExecutionManager().getListenerSet();
+		assertTrue("should be empty before test", listenerSet.isEmpty());
 
 		// perform test
 		tested.onInit();
 
-		listenerMap = tested.getFlowExecutionManager().getListenerMap();
-		assertEquals("listeners,", 1, listenerMap.size());
+		listenerSet = tested.getFlowExecutionManager().getListenerSet();
+		assertEquals("listeners,", 1, listenerSet.size());
 
 		// might as well test the ActionFormAdapter, while we have it available
 		SpringBindingActionForm bindingActionForm = new SpringBindingActionForm();
 		StrutsExternalContext externalContext = new StrutsExternalContext(validForwardActionMapping, bindingActionForm, mockRequest, null);
 		MockRequestContext mockRequestContext = new MockRequestContext(externalContext);
 		// FlowAction.ActionFormAdapter is private, but we know its interface
-		FlowExecutionListener listener = (FlowExecutionListener)listenerMap.keySet().iterator().next();
+		FlowExecutionListener listener = ((ConditionalFlowExecutionListenerHolder)listenerSet.iterator().next()).getListener();
 		listener.requestProcessed(mockRequestContext);
 	}
 

@@ -21,13 +21,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.format.Formatter;
+import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
-import org.springframework.util.CachingMapDecorator;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
@@ -181,15 +182,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	private Formatter continuationKeyFormatter = new FlowExecutionContinuationKeyFormatter();
 
 	/**
-	 * A map of flow execution listeners to a list of flow execution listener
+	 * A set of flow execution listeners to a list of flow execution listener
 	 * criteria objects. The criteria list determines the conditions in which a
 	 * single flow execution listener applies.
 	 */
-	private CachingMapDecorator listenerMap = new CachingMapDecorator() {
-		protected Object create(Object key) {
-			return new LinkedList();
-		}
-	};
+	private Set listenerSet = CollectionFactory.createLinkedSetIfPossible(6);
 
 	/**
 	 * Identifies a flow definition to launch a new execution for, defaults to
@@ -273,18 +270,14 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	public FlowExecutionListener[] getListeners(Flow flow) {
 		Assert.notNull(flow, "The Flow to load listeners for cannot be null");
 		List listenersToAttach = new LinkedList();
-		for (Iterator entryIt = listenerMap.entrySet().iterator(); entryIt.hasNext();) {
-			Map.Entry entry = (Map.Entry)entryIt.next();
-			for (Iterator criteriaIt = ((List)entry.getValue()).iterator(); criteriaIt.hasNext();) {
-				FlowExecutionListenerCriteria criteria = (FlowExecutionListenerCriteria)criteriaIt.next();
-				if (criteria.appliesTo(flow)) {
-					listenersToAttach.add((FlowExecutionListener)entry.getKey());
-					break;
-				}
+		for (Iterator it = listenerSet.iterator(); it.hasNext();) {
+			ConditionalFlowExecutionListenerHolder listenerHolder = (ConditionalFlowExecutionListenerHolder)it.next();
+			if (listenerHolder.listenerAppliesTo(flow)) {
+				listenersToAttach.add(listenerHolder.getListener());
 			}
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("Loaded [" + listenersToAttach.size() + "] of possible " + listenerMap.size()
+			logger.debug("Loaded [" + listenersToAttach.size() + "] of possible " + listenerSet.size()
 					+ " listeners to this execution request for flow '" + flow.getId()
 					+ "', the listeners to attach are " + StylerUtils.style(listenersToAttach));
 		}
@@ -295,8 +288,8 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * Returns a unmodifiable map of the configured flow execution listeners and
 	 * the criteria in which those listeners apply.
 	 */
-	public Map getListenerMap() {
-		return Collections.unmodifiableMap(listenerMap);
+	public Set getListenerSet() {
+		return Collections.unmodifiableSet(listenerSet);
 	}
 
 	/**
@@ -394,8 +387,23 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Adding flow execution listener " + listener + " with criteria " + criteria);
 		}
-		List criteriaList = (List)listenerMap.get(listener);
-		criteriaList.add(criteria);
+		ConditionalFlowExecutionListenerHolder conditional = getHolder(listener);
+		if (conditional == null) {
+			conditional = new ConditionalFlowExecutionListenerHolder(listener);
+			listenerSet.add(conditional);
+		}
+		conditional.add(criteria);
+	}
+
+	protected ConditionalFlowExecutionListenerHolder getHolder(FlowExecutionListener listener) {
+		Iterator it = listenerSet.iterator();
+		while (it.hasNext()) {
+			ConditionalFlowExecutionListenerHolder next = (ConditionalFlowExecutionListenerHolder)it.next();
+			if (next.getListener().equals(listener)) {
+				return next;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -404,7 +412,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @return true if yes, false otherwise
 	 */
 	public boolean containsListener(FlowExecutionListener listener) {
-		return listenerMap.containsKey(listener);
+		return listenerSet.contains(listener);
 	}
 
 	/**
@@ -412,7 +420,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param listener the listener
 	 */
 	public void removeListener(FlowExecutionListener listener) {
-		listenerMap.remove(listener);
+		listenerSet.remove(listener);
 	}
 
 	/**
@@ -422,9 +430,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 */
 	public void removeListenerCriteria(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
 		if (containsListener(listener)) {
-			List criteriaList = (List)listenerMap.get(listener);
-			criteriaList.remove(criteria);
-			if (criteriaList.isEmpty()) {
+			ConditionalFlowExecutionListenerHolder listenerHolder = getHolder(listener);
+			listenerHolder.remove(criteria);
+			if (listenerHolder.isCriteriaSetEmpty()) {
 				removeListener(listener);
 			}
 		}
@@ -916,4 +924,52 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		// we couldn't find the parameter value
 		return null;
 	}
+	
+	public static final class ConditionalFlowExecutionListenerHolder {
+		private FlowExecutionListener listener;
+
+		private Set criteriaSet = CollectionFactory.createLinkedSetIfPossible(3);
+
+		public ConditionalFlowExecutionListenerHolder(FlowExecutionListener listener) {
+			this.listener = listener;
+		}
+
+		public FlowExecutionListener getListener() {
+			return listener;
+		}
+
+		public void add(FlowExecutionListenerCriteria criteria) {
+			criteriaSet.add(criteria);
+		}
+
+		public void remove(FlowExecutionListenerCriteria criteria) {
+			criteriaSet.remove(criteria);
+		}
+
+		public boolean isCriteriaSetEmpty() {
+			return criteriaSet.isEmpty();
+		}
+
+		public boolean equals(Object o) {
+			if (!(o instanceof ConditionalFlowExecutionListenerHolder)) {
+				return false;
+			}
+			return listener.equals(((ConditionalFlowExecutionListenerHolder)o).listener);
+		}
+
+		public int hashCode() {
+			return listener.hashCode();
+		}
+
+		public boolean listenerAppliesTo(Flow flow) {
+			Iterator it = criteriaSet.iterator();
+			while (it.hasNext()) {
+				FlowExecutionListenerCriteria criteria = (FlowExecutionListenerCriteria)it.next();
+				if (criteria.appliesTo(flow)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}	
 }

@@ -128,7 +128,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(ac);
 		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
 		FlowExecutionManager manager = (FlowExecutionManager)ac.getBean("flowExecutionManager");
-		assertEquals("Wrong number of listeners", 1, manager.getListenerMap().size());
+		assertEquals("Wrong number of listeners", 1, manager.getListenerSet().size());
 		assertTrue(manager.getFlowLocator() instanceof SimpleFlowLocator);
 	}
 
