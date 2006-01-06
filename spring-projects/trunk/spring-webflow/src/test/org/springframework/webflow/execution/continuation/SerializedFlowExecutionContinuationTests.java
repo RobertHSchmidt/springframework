@@ -42,17 +42,9 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 	private SerializedFlowExecutionContinuation tested;
 
 	protected void setUp() throws Exception {
-		super.setUp();
-
 		MockFlowExecution mockFlowExecution = new MockFlowExecution();
 		flowExecutionByteArray = new FlowExecutionByteArray(mockFlowExecution, false);
 		tested = new SerializedFlowExecutionContinuation("some id", flowExecutionByteArray);
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		flowExecutionByteArray = null;
-		tested = null;
 	}
 
 	public void testGetFlowExecution() {
@@ -79,11 +71,6 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 	public void testEqualsObject() {
 		boolean result = tested.equals(tested);
 		assertTrue(result);
-	}
-
-	public void testToString() {
-		String result = tested.toString();
-		assertTrue(result.contains("some id"));
 	}
 
 	/**
