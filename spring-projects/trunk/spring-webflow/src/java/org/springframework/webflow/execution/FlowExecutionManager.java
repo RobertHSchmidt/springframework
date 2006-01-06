@@ -533,8 +533,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * entry point into the webflow system for managing all executing flows.
 	 * @param context the context in which the external event occured
 	 * @return the view descriptor of the model and view to render
-	 * @throws FlowExecutionManagementException an exception occured during
-	 * event processing
 	 */
 	public ViewSelection onEvent(ExternalContext context) {
 		FlowExecutionContinuationKey continuationKey = parseContinuationKey(context);
@@ -653,8 +651,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * event.
 	 * @param flowExecutionId the unique id of the flow execution
 	 * @param context the context in which the external user event occured
-	 * @throws FlowExecutionStorageException an exception occured loading the
-	 * execution from storage
 	 */
 	public FlowExecution loadFlowExecution(FlowExecutionRepository repository,
 			FlowExecutionContinuationKey continuationKey) {
@@ -718,8 +714,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param flowExecution the execution
 	 * @param context the context in which the external user event occured
 	 * @return the new storage id (may be different)
-	 * @throws FlowExecutionStorageException an exception occured saving the
-	 * execution to storage
 	 */
 	protected void saveFlowExecution(FlowExecutionRepository repository, FlowExecutionContinuationKey continuationKey,
 			FlowExecution flowExecution) {
@@ -734,8 +728,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param flowExecutionId the storage id
 	 * @param flowExecution the execution
 	 * @param context the context in which the external user event occured
-	 * @throws FlowExecutionStorageException an exception occured removing the
-	 * execution from storage
 	 */
 	protected void removeFlowExecution(FlowExecutionRepository repository,
 			FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution) {
@@ -759,8 +751,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @return the id the managed FlowExecution is stored under (may be
 	 * different if a new id was assigned, will be null if the flow execution
 	 * was removed)
-	 * @throws FlowExecutionStorageException an exception occured managing flow
-	 * execution storage
 	 */
 	protected FlowExecutionContinuationKey manageStorage(FlowExecutionRepository repository,
 			FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution) {
