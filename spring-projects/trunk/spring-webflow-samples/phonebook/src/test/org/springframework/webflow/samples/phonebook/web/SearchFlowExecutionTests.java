@@ -18,19 +18,19 @@ package org.springframework.webflow.samples.phonebook.web;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
+import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.registry.FlowRegistry;
+import org.springframework.webflow.test.AbstractManagedFlowExecutionTests;
 
-public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
+public class SearchFlowExecutionTests extends AbstractManagedFlowExecutionTests {
 
-	protected String flowId() {
+	protected String getFlowId() {
 		return "search";
 	}
 	
-	protected Resource getFlowLocation() {
-		return new ClassPathResource("search.xml", getClass());
+	protected void populateFlowRegistry(FlowRegistry flowRegistry, FlowArtifactFactory flowArtifactFactory) {
+		new PhonebookFlowRegistrar().registerFlows(flowRegistry, flowArtifactFactory);
 	}
 
 	protected String[] getConfigLocations() {
