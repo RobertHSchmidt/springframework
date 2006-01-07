@@ -72,10 +72,12 @@ public class FlowRegistryImpl implements FlowRegistry {
 	}
 
 	public boolean containsFlow(String id) {
+		Assert.hasText(id, "The flow id is required");
 		return flowDefinitions.get(id) != null;
 	}
 
 	public void removeFlowDefinition(String id) {
+		Assert.hasText(id, "The flow id is required");
 		flowDefinitions.remove(id);
 	}
 
@@ -135,6 +137,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 	}
 
 	private void index(FlowHolder holder) {
+		Assert.hasText(holder.getId(), "The flow holder to index must return a non-blank flow id");
 		flowDefinitions.put(holder.getId(), holder);
 	}
 
@@ -149,6 +152,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 	// implementing FlowLocator
 	
 	public Flow getFlow(String id) throws FlowArtifactException {
+		Assert.hasText(id, "The flow id is required");
 		try {
 			return getFlowDefinitionHolder(id).getFlow();
 		}

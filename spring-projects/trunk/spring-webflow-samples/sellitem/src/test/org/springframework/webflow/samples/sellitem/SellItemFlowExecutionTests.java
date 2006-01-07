@@ -7,19 +7,16 @@ import java.util.Map;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 
 public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	@Override
-	protected String flowId() {
-		return "sellitem";
-	}
-	
-	@Override
-	protected Resource getFlowLocation() {
+	protected ExternalizedFlowDefinition getFlowDefinition() {
 		File flowDir = new File("src/webapp/WEB-INF");
-		return new FileSystemResource(new File(flowDir, "sellitem.xml"));
+		Resource resource = new FileSystemResource(new File(flowDir, "sellitem.xml"));
+		return new ExternalizedFlowDefinition("search", resource);
 	}
 
 	@Override

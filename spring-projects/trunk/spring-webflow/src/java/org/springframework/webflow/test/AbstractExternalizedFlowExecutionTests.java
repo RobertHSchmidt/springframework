@@ -31,7 +31,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractMan
 	/**
 	 * Simply tracks the <code>id</code> of the flow definition to test.
 	 */
-	private String flowId;
+	private static String flowId;
 	
 	protected void populateFlowRegistry(FlowRegistry flowRegistry, FlowArtifactFactory flowArtifactFactory) {
 		ExternalizedFlowRegistrar registrar = createFlowRegistrar();

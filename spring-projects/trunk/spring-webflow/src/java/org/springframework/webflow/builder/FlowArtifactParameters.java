@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 
 /**
  * A simple, immutable parameter object that holds information used to assist
@@ -39,7 +40,7 @@ public class FlowArtifactParameters implements Serializable {
 	/**
 	 * The flow artifact properties.
 	 */
-	private Map properties = Collections.EMPTY_MAP;
+	private Map properties;
 
 	/**
 	 * Creates a parameters value object containing the specified id and an
@@ -47,7 +48,7 @@ public class FlowArtifactParameters implements Serializable {
 	 * @param id the flow Id
 	 */
 	public FlowArtifactParameters(String id) {
-		this.id = id;
+		this(id, null);
 	}
 
 	/**
@@ -56,9 +57,12 @@ public class FlowArtifactParameters implements Serializable {
 	 * @param id the flow Id
 	 */
 	public FlowArtifactParameters(String id, Map properties) {
+		Assert.hasText(id, "The id parameter is required");
 		this.id = id;
 		if (properties != null) {
 			this.properties = Collections.unmodifiableMap(properties);
+		} else {
+			this.properties = Collections.EMPTY_MAP;
 		}
 	}
 
