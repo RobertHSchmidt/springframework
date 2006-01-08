@@ -22,19 +22,19 @@ import junit.framework.TestCase;
 import org.springframework.mock.web.portlet.MockPortletRequest;
 
 /**
- * Unit test for the PortletSessionMap class.
+ * Unit test for the PortletRequestMap class.
  * 
  * @author Ulrik Sandberg
  */
-public class PortletSessionMapTest extends TestCase {
+public class PortletRequestMapTests extends TestCase {
 
-	private PortletSessionMap tested;
+	private PortletRequestMap tested;
 	private MockPortletRequest mockPortletRequest;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		mockPortletRequest = new MockPortletRequest();
-		tested = new PortletSessionMap(mockPortletRequest);
+		tested = new PortletRequestMap(mockPortletRequest);
 	}
 
 	protected void tearDown() throws Exception {
@@ -44,54 +44,33 @@ public class PortletSessionMapTest extends TestCase {
 	}
 
 	public void testGetAttribute() {
-		mockPortletRequest.getPortletSession().setAttribute("Some key", "Some value");
+		mockPortletRequest.setAttribute("Some key", "Some value");
 		// perform test
 		Object result = tested.getAttribute("Some key");
 		assertEquals("Some value", result);
 	}
 
-	public void testGetAttributeNullSession() {
-		mockPortletRequest.setSession(null);
-		// perform test
-		Object result = tested.getAttribute("Some key");
-		assertNull("No value expected", result);
-	}
-
 	public void testSetAttribute() {
 		// perform test
 		tested.setAttribute("Some key", "Some value");
-		assertEquals("Some value", mockPortletRequest.getPortletSession().getAttribute("Some key"));
+		assertEquals("Some value", mockPortletRequest.getAttribute("Some key"));
 	}
 
 	public void testRemoveAttribute() {
-		mockPortletRequest.getPortletSession().setAttribute("Some key", "Some value");
+		mockPortletRequest.setAttribute("Some key", "Some value");
 		// perform test
 		tested.removeAttribute("Some key");
-		assertNull(mockPortletRequest.getPortletSession().getAttribute("Some key"));
-	}
-
-	public void testRemoveAttributeNullSession() {
-		mockPortletRequest.setSession(null);
-		// perform test
-		tested.removeAttribute("Some key");
-		assertNull(mockPortletRequest.getPortletSession().getAttribute("Some key"));
+		assertNull(mockPortletRequest.getAttribute("Some key"));
 	}
 
 	public void testGetAttributeNames() {
-		mockPortletRequest.getPortletSession().setAttribute("Some key", "Some value");
+		mockPortletRequest.setAttribute("Some key", "Some value");
+		mockPortletRequest.removeAttribute("javax.servlet.context.tempdir");
 		// perform test
 		Enumeration names = tested.getAttributeNames();
 		assertNotNull("Null result unexpected", names);
 		assertTrue("More elements", names.hasMoreElements());
 		String name = (String) names.nextElement();
 		assertEquals("Some key", name);
-	}
-
-	public void testGetAttributeNamesNullSession() {
-		mockPortletRequest.setSession(null);
-		// perform test
-		Enumeration names = tested.getAttributeNames();
-		assertNotNull("Null result unexpected", names);
-		assertFalse("No elements expected", names.hasMoreElements());
 	}
 }

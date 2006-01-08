@@ -19,65 +19,58 @@ import java.util.Enumeration;
 
 import junit.framework.TestCase;
 
-import org.springframework.mock.web.portlet.MockPortletRequest;
+import org.springframework.mock.web.portlet.MockPortletContext;
 
 /**
- * Unit test for the PortletRequestParameterMap class.
+ * Unit test for the PortletContextMap class.
  * 
  * @author Ulrik Sandberg
  */
-public class PortletRequestParameterMapTest extends TestCase {
+public class PortletContextMapTests extends TestCase {
 
-	private PortletRequestParameterMap tested;
-	private MockPortletRequest mockPortletRequest;
+	private PortletContextMap tested;
+	private MockPortletContext mockPortletContext;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		mockPortletRequest = new MockPortletRequest();
-		tested = new PortletRequestParameterMap(mockPortletRequest);
+		mockPortletContext = new MockPortletContext();
+		tested = new PortletContextMap(mockPortletContext);
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		mockPortletRequest = null;
+		mockPortletContext = null;
 		tested = null;
 	}
 
 	public void testGetAttribute() {
-		mockPortletRequest.setParameter("Some param", "Some value");
+		mockPortletContext.setAttribute("Some key", "Some value");
 		// perform test
-		Object result = tested.getAttribute("Some param");
+		Object result = tested.getAttribute("Some key");
 		assertEquals("Some value", result);
 	}
 
 	public void testSetAttribute() {
 		// perform test
-		try {
-			tested.setAttribute("Some key", "Some value");
-			fail("UnsupportedOperationException expected");
-		} catch (UnsupportedOperationException expected) {
-			// expected
-		}
+		tested.setAttribute("Some key", "Some value");
+		assertEquals("Some value", mockPortletContext.getAttribute("Some key"));
 	}
 
 	public void testRemoveAttribute() {
-		mockPortletRequest.setParameter("Some param", "Some value");
+		mockPortletContext.setAttribute("Some key", "Some value");
 		// perform test
-		try {
-			tested.removeAttribute("Some param");
-			fail("UnsupportedOperationException expected");
-		} catch (UnsupportedOperationException expected) {
-			// expected
-		}
+		tested.removeAttribute("Some key");
+		assertNull(mockPortletContext.getAttribute("Some key"));
 	}
 
 	public void testGetAttributeNames() {
-		mockPortletRequest.setParameter("Some param", "Some value");
+		mockPortletContext.setAttribute("Some key", "Some value");
+		mockPortletContext.removeAttribute("javax.servlet.context.tempdir");
 		// perform test
 		Enumeration names = tested.getAttributeNames();
 		assertNotNull("Null result unexpected", names);
 		assertTrue("More elements", names.hasMoreElements());
 		String name = (String) names.nextElement();
-		assertEquals("Some param", name);
+		assertEquals("Some key", name);
 	}
 }

@@ -32,7 +32,7 @@ import org.springframework.webflow.execution.FlowLocator;
  * 
  * @author Ulrik Sandberg
  */
-public class FlowControllerTest extends TestCase {
+public class FlowControllerTests extends TestCase {
 
 	private MockControl flowLocatorControl;
 
