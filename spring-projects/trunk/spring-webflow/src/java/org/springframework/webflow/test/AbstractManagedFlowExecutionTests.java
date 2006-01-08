@@ -33,7 +33,45 @@ import org.springframework.webflow.registry.FlowRegistryImpl;
  * matches the id returned by {@link #getFlowId()}, selecting the flow whose
  * execution is to be tested by this test (other registered flows would be
  * subflows spawned by that flow during test execution).
+ * <p>
+ * Example usage in a subclass demonstrating use of a custom FlowRegistrar to
+ * populate the test's flow registry:
+ * <p>
+ * <pre>
+ * public class SearchFlowExecutionTests extends AbstractManagedFlowExecutionTests {
  * 
+ *     // the registry id of the flow execution to test
+ *     protected String getFlowId() {
+ *         return "search";
+ *     }
+ *     
+ *     // populate the registry using a custom registrar
+ *     protected void populateFlowRegistry(FlowRegistry flowRegistry, FlowArtifactFactory flowArtifactFactory) {
+ *         new PhonebookFlowRegistrar().registerFlows(flowRegistry, flowArtifactFactory);
+ *     }
+ *     
+ *     protected String[] getConfigLocations() {
+ *         return new String[] {
+ *             "classpath:org/springframework/webflow/samples/phonebook/deploy/service-layer.xml",
+ *             "classpath:org/springframework/webflow/samples/phonebook/deploy/web-layer.xml"
+ *         };
+ *     }
+ *
+ *     public void testStartFlow() {
+ *         startFlow();
+ *         assertCurrentStateEquals("displayCriteria");
+ *     }
+ *     
+ *     ...
+ * }
+ * 
+ * public static class PhonebookFlowRegistrar extends FlowRegistrarSupport {
+ *     public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
+ *         registerFlow("search", new SearchPersonFlowBuilder(flowArtifactFactory), registry);
+ *         registerFlow("detail", new PersonDetailFlowBuilder(flowArtifactFactory), registry);
+ *     }
+ * }
+ * </pre>
  * @author Keith Donald
  */
 public abstract class AbstractManagedFlowExecutionTests extends AbstractFlowExecutionTests {
