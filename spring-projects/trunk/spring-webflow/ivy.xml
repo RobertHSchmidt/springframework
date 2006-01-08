@@ -24,7 +24,7 @@
 	<dependency	org="springframework" name="spring-core" rev="1.2.6"/>
 	<dependency	org="springframework" name="spring-context"	rev="1.2.6"/>
 	<dependency	org="springframework" name="spring-web"	rev="1.2.6"/>
-	<dependency	org="springframework" name="spring-mock" rev="1.2.6"/>
+	<dependency	org="springframework" name="spring-mock" rev="2.0-m1"/>
 	<dependency	org="springframework" name="spring-binding"	rev="latest.integration"/>
 	<dependency	org="junit"	name="junit" rev="3.8.1"/>
 
