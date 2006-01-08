@@ -64,6 +64,7 @@ public class FlowPhaseListenerTests extends TestCase {
 	public void testBeforePhase() {
 		PhaseEvent event = new PhaseEvent(mockFacesContext, PhaseId.RENDER_RESPONSE, lifecycle);
 		tested.beforePhase(event);
+		assertTrue("exposeFlowAttributes not called", executionManager.exposed);
 	}
 
 	public void testAfterPhaseNullEvent() {
@@ -98,9 +99,11 @@ public class FlowPhaseListenerTests extends TestCase {
 	}
 
 	private static class MyFlowExecutionManager extends JsfFlowExecutionManager {
-		boolean restored;
+		private boolean restored;
 
-		boolean saved;
+		private boolean saved;
+
+		private boolean exposed;
 
 		private MyFlowExecutionManager(FlowLocator locator) {
 			super(locator);
@@ -112,6 +115,14 @@ public class FlowPhaseListenerTests extends TestCase {
 
 		public void restoreFlowExecution(FacesContext context) {
 			restored = true;
+		}
+
+		// Overridden to avoid calling
+		// JsfFlowExecutionManager.exposeFlowAttributes,
+		// since it contains code that depends on a ThreadLocal
+		// FlowExecutionHolder.
+		public void exposeFlowAttributes(FacesContext facesContext) {
+			exposed = true;
 		}
 	}
 
