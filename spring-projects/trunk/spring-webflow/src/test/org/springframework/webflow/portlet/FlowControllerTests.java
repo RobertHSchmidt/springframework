@@ -21,7 +21,7 @@ import org.easymock.MockControl;
 import org.springframework.mock.web.portlet.MockActionRequest;
 import org.springframework.mock.web.portlet.MockPortletSession;
 import org.springframework.mock.web.portlet.MockRenderRequest;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.portlet.ModelAndView;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecutionManager;

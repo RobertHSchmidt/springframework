@@ -23,7 +23,7 @@ import javax.portlet.RenderResponse;
 import org.springframework.util.Assert;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
@@ -147,14 +147,6 @@ public class FlowController extends AbstractController {
 		this.flowExecutionManager = manager;
 	}
 
-	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
-		ExternalContext context = new PortletExternalContext(request, response);
-		// delegate to the flow execution manager to process the request
-		ViewSelection selectedView = getFlowExecutionManager().onEvent(context);
-		// expose selected view in session for access during render phase
-		request.getPortletSession().setAttribute(VIEW_SELECTION_ATTRIBUTE_NAME, selectedView);
-	}
-
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
 		try {
 			ViewSelection selectedView = (ViewSelection)request.getPortletSession().getAttribute(
@@ -169,6 +161,14 @@ public class FlowController extends AbstractController {
 		finally {
 			request.getPortletSession().removeAttribute(VIEW_SELECTION_ATTRIBUTE_NAME);
 		}
+	}
+
+	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
+		ExternalContext context = new PortletExternalContext(request, response);
+		// delegate to the flow execution manager to process the request
+		ViewSelection selectedView = getFlowExecutionManager().onEvent(context);
+		// expose selected view in session for access during render phase
+		request.getPortletSession().setAttribute(VIEW_SELECTION_ATTRIBUTE_NAME, selectedView);
 	}
 
 	/**
