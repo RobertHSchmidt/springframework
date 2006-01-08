@@ -24,9 +24,9 @@ import java.util.Map;
  * system by an external actor to manipulate exactly one flow execution.
  * <p>
  * A new instance of this object is created when one of the operations on a
- * <code>FlowExecution</code> facade is invoked, either ({@link org.springframework.webflow.execution.FlowExecution#start(Event)}
+ * <code>FlowExecution</code> facade is invoked, either ({@link org.springframework.webflow.execution.FlowExecution#start(ExternalContext))}
  * to activate a newly created flow execution, or
- * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(Event)})
+ * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(String, ExternalContext))})
  * to signal an event in the current state of a resumed flow execution.
  * <p>
  * Once created this context object is passed around throughout request

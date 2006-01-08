@@ -22,7 +22,7 @@ import org.springframework.webflow.ViewSelection;
 
 /**
  * A <i>client instance</i> of an executing top-level flow, representing a
- * single instance of a web conversation.
+ * single instance of a web conversation <i>at a specific point in time</i>.
  * <p>
  * This is the central facade interface for managing one runtime execution of a
  * Flow. Implementations of this interface are the finite state machine that is

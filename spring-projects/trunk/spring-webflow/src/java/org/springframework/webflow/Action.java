@@ -56,7 +56,7 @@ package org.springframework.webflow;
  * internal, thread-safe services.
  * <p>
  * Note: an Action is not a controller like a Spring MVC controller or a Struts
- * action is a controller. <b>Web flow actions are <i>commands</i></b>. Such
+ * action is a controller. <b>Flow actions are <i>commands</i></b>. Such
  * commands do not select views, they execute arbitrary command logic and then
  * return an logical command execution result. The flow that invokes an Action
  * is responsible for responding to the execution result to decide what to do
