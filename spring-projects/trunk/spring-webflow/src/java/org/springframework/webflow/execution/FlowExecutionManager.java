@@ -54,16 +54,15 @@ import org.springframework.webflow.ViewSelection;
  * by the value of the {@link #getFlowIdParameterName()} request parameter. If
  * this parameter parameter is not present, an exception is thrown.</li>
  * <li>If a flow execution id <em>was</em> submitted, load the previously
- * saved FlowExecution with that id from storage ({@link #getStorage()}).</li>
+ * saved FlowExecution with that id from a repository ({@link #getRepository(ExternalContext)}).</li>
  * <li>If a new flow execution was created in the previous steps, start that
  * execution.</li>
- * <li>If an existing flow execution was loaded from storage, extract the value
- * of the event id ({@link #getEventIdParameterName()) and state id ({@link #getStateIdParameterName()})
- * request parameters. Signal the occurence of the user event, resuming the flow
- * execution in the requested state.</li>
+ * <li>If an existing flow execution was loaded from a repository, extract the
+ * value of the event id ({@link #getEventIdParameterName()). Signal the occurence of the user event, resuming the flow
+ * execution in the current state.</li>
  * <li>If the flow execution is still active after event processing, save it
- * out to storage. This process generates a unique flow execution id that will
- * be exposed to the caller for identifying the same FlowExecution
+ * out to the repository. This process generates a unique flow execution id that
+ * will be exposed to the caller for identifying the same FlowExecution
  * (conversation) on subsequent requests. The caller will also be given access
  * to the flow execution context and any data placed in request or flow scope.</li>
  * </ol>
@@ -88,19 +87,19 @@ import org.springframework.webflow.ViewSelection;
  * this manager</td>
  * </tr>
  * <tr>
- * <td>storage</td>
- * <td>A server-side session data store storage strategy</td>
- * <td>Strategy for saving and loading managed flow executions</td>
+ * <td>repositoryFactory</td>
+ * <td>A server-side, stateful-session-based repository factory</td>
+ * <td>The strategy for accessing managed flow execution repositories</td>
  * </tr>
  * <tr>
  * <td>listeners</td>
  * <td>None</td>
- * <td>Listeners for observing the lifecycle of managed flow executions</td>
+ * <td>The listeners to observe the lifecycle of managed flow executions</td>
  * </tr>
  * </table>
  * </p>
  * @see org.springframework.webflow.execution.FlowExecution
- * @see org.springframework.webflow.execution.FlowExecutionStorage
+ * @see org.springframework.webflow.execution.FlowExecutionRepositoryFactory
  * @see org.springframework.webflow.execution.FlowExecutionListener
  * 
  * @author Erwin Vervaet
@@ -169,9 +168,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	private FlowLocator flowLocator;
 
 	/**
-	 * The flow execution storage strategy, for saving paused executions that
-	 * require user input and loading resuming executions that will process user
-	 * events.
+	 * The flow execution repository factoring, for obtaining repository
+	 * instances to save paused executions that require user input and load
+	 * resuming executions that will process user events.
 	 */
 	private FlowExecutionRepositoryFactory repositoryFactory = new ExternalMapFlowExecutionRepositoryFactory();
 
@@ -219,7 +218,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param flowLocator the flow locator to use
 	 * 
 	 * @see #setFlowLocator(FlowLocator)
-	 * @see #setStorage(FlowExecutionStorage)
+	 * @see #setRepositoryFactory(FlowExecutionRepositoryFactory)
 	 * @see #setListener(FlowExecutionListener)
 	 * @see #setListenerCriteria(FlowExecutionListener,
 	 * FlowExecutionListenerCriteria)
@@ -248,14 +247,14 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Set the storage strategy used by the flow execution manager.
+	 * Set the repository factory used by the flow execution manager.
 	 */
 	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryLocator) {
 		this.repositoryFactory = repositoryLocator;
 	}
 
 	/**
-	 * Returns the storage strategy used by the flow execution manager.
+	 * Returns the repository instance to be used by the flow execution manager.
 	 */
 	protected FlowExecutionRepository getRepository(ExternalContext context) {
 		return repositoryFactory.getRepository(context);
@@ -553,7 +552,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * Creates or loads the flow execution to manipulate based on the value of
 	 * <code>flowExecutionId</code>.
 	 * 
-	 * @param flowExecutionId the flow execution storage identifier
+	 * @param continuationKey the assigned repository continuation key
 	 * @param context the context in which the external user event occured
 	 * @return the flow execution
 	 */
@@ -709,25 +708,24 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	}
 
 	/**
-	 * Save the flow execution to storage.
-	 * @param flowExecutionId the previous storage id (if previously saved)
+	 * Save the flow execution to the repository.
+	 * @param repository the repository
+	 * @param continuationKey the assigned repository continuation key
 	 * @param flowExecution the execution
-	 * @param context the context in which the external user event occured
-	 * @return the new storage id (may be different)
 	 */
 	protected void saveFlowExecution(FlowExecutionRepository repository, FlowExecutionContinuationKey continuationKey,
 			FlowExecution flowExecution) {
 		repository.putFlowExecution(continuationKey, flowExecution);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Saved flow execution out to storage with id '" + continuationKey + "'");
+			logger.debug("Saved flow execution out to the repository with id '" + continuationKey + "'");
 		}
 	}
 
 	/**
-	 * Remove the flow execution from storage
-	 * @param flowExecutionId the storage id
+	 * Remove the flow execution from the repository.
+	 * @param repository the repository
+	 * @param continuationKey the assigned repository continuation key
 	 * @param flowExecution the execution
-	 * @param context the context in which the external user event occured
 	 */
 	protected void removeFlowExecution(FlowExecutionRepository repository,
 			FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution) {
@@ -735,22 +733,17 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		// ending, cleanup
 		repository.invalidateConversation(continuationKey.getConversationId());
 		if (logger.isDebugEnabled()) {
-			logger.debug("Removed flow execution from storage with id '" + continuationKey + "'");
+			logger.debug("Removed flow execution from the repository with id '" + continuationKey + "'");
 		}
 	}
 
 	/**
-	 * Handles updating FlowExecutionStorage as neccessary for the manipulated
-	 * FlowExecution. Saves the FlowExecution out to storage if the execution is
-	 * still active. Removes the FlowExecution from storage if it is no longer
-	 * active.
-	 * @param flowExecutionId the previous execution id (may be null if a new
-	 * flow execution was launched)
-	 * @param flowExecution the manipulated flow execution (state machine)
-	 * @param context the context in which the external user event occured
-	 * @return the id the managed FlowExecution is stored under (may be
-	 * different if a new id was assigned, will be null if the flow execution
-	 * was removed)
+	 * Handles updating repository as neccessary for the manipulated
+	 * FlowExecution. Saves the FlowExecution out to if the execution is still
+	 * active. Removes the FlowExecution if it is no longer active.
+	 * @param repository the repository
+	 * @param continuationKey the assigned repository continuation key
+	 * @param flowExecution the execution
 	 */
 	protected FlowExecutionContinuationKey manageStorage(FlowExecutionRepository repository,
 			FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution) {
@@ -788,6 +781,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * {@link #FLOW_EXECUTION_ID_ATTRIBUTE} and
 	 * {@link #CURRENT_STATE_ID_ATTRIBUTE}.
 	 * @param selectedView the view selection to be prepared
+	 * @param continuationKey the assigned repository continuation key
 	 * @param flowExecutionId the unique id of the flow execution
 	 * @param flowExecutionContext the flow context providing info about the
 	 * flow execution
@@ -914,7 +908,12 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		// we couldn't find the parameter value
 		return null;
 	}
-	
+
+	/**
+	 * A holder that holds a listener plus a set of criteria defining the flows
+	 * in which that listener applies.
+	 * @author Keith Donald
+	 */
 	public static final class ConditionalFlowExecutionListenerHolder {
 		private FlowExecutionListener listener;
 
@@ -961,5 +960,5 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 			}
 			return false;
 		}
-	}	
+	}
 }
