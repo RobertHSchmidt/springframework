@@ -45,8 +45,8 @@ public class ClientContinuationFlowExecutionRepository implements FlowExecutionR
 		return uidGenerator;
 	}
 
-	public void setUidGenerator(UidGenerator keyGenerator) {
-		this.uidGenerator = keyGenerator;
+	public void setUidGenerator(UidGenerator uidGenerator) {
+		this.uidGenerator = uidGenerator;
 	}
 
 	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution) {

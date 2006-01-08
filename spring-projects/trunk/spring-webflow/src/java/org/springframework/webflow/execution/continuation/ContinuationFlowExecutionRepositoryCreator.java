@@ -33,8 +33,8 @@ public class ContinuationFlowExecutionRepositoryCreator implements FlowExecution
 		this.continuationFactory = continuationFactory;
 	}
 
-	public void setUidGenerator(UidGenerator keyGenerator) {
-		this.uidGenerator = keyGenerator;
+	public void setUidGenerator(UidGenerator uidGenerator) {
+		this.uidGenerator = uidGenerator;
 	}
 
 	public void setMaxContinuations(int maxContinuations) {

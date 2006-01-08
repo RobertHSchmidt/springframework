@@ -69,8 +69,8 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 		return uidGenerator;
 	}
 
-	public void setUidGenerator(UidGenerator keyGenerator) {
-		this.uidGenerator = keyGenerator;
+	public void setUidGenerator(UidGenerator uidGenerator) {
+		this.uidGenerator = uidGenerator;
 	}
 
 	public int getMaxContinuations() {
