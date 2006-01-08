@@ -17,7 +17,6 @@
 package org.springframework.webflow.jsf;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionContinuationKey;
 
@@ -40,7 +39,7 @@ public abstract class FlowExecutionHolder {
 	 * @return the current FlowExecution id, or <code>null</code> if none
 	 */
 	public static FlowExecutionContinuationKey getContinuationKey() {
-		return getContext().flowExecutionId;
+		return getContext().continuationKey;
 	}
 
 	/**
@@ -62,7 +61,7 @@ public abstract class FlowExecutionHolder {
 	/**
 	 * Associate the given FlowExecution with the current thread. It is not
 	 * legal to store a flow execution id, but no flow execution
-	 * @param flowExecutionId the current FlowExecution id, or <code>null</code>
+	 * @param continuationKey the current FlowExecution id, or <code>null</code>
 	 * to reset the thread-bound context
 	 * @param flowExecution the current FlowExecution, or <code>null</code> to
 	 * @param sourceEvent the source event which triggered the current execution
@@ -70,11 +69,11 @@ public abstract class FlowExecutionHolder {
 	 * has already been saved to storage or is still live reset the thread-bound
 	 * context
 	 */
-	public static void setFlowExecution(FlowExecutionContinuationKey flowExecutionId, FlowExecution flowExecution) {
-		if (flowExecutionId != null) {
-			Assert.notNull(flowExecution, "It is illegal to store a flow execution with a null flow execution id");
+	public static void setFlowExecution(FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution) {
+		if (continuationKey != null) {
+			Assert.notNull(flowExecution, "It is illegal to store a flow execution with a [null] continuationk ey");
 		}
-		getContext().flowExecutionId = flowExecutionId;
+		getContext().continuationKey = continuationKey;
 		getContext().flowExecution = flowExecution;
 	}
 
@@ -88,7 +87,7 @@ public abstract class FlowExecutionHolder {
 	}
 
 	private static class Context {
-		public FlowExecutionContinuationKey flowExecutionId;
+		public FlowExecutionContinuationKey continuationKey;
 
 		public FlowExecution flowExecution;
 	}
