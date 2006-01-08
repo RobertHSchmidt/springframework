@@ -21,7 +21,7 @@
 	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
 		<constructor-arg ref="flowRegistry"/>
 		<property name="repositoryFactory">
-			<bean class="org.springframework.webflow.execution.continuation.ClientContinuationFlowExecutionRepositoryFactory"/>
+			<bean class="org.springframework.webflow.execution.continuation.ContinuationFlowExecutionRepositoryFactory"/>
 		</property>
 		<property name="listener">
 			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
