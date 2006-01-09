@@ -191,8 +191,9 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	}
 
 	/*
-	 * Overrides the default manageStorage implementation to set the FlowExecutionHolder 
-	 * context for other JSF-SWF aware constructs, such as the {@link FlowPhaseListener}.
+	 * Overrides the default manageStorage implementation to set the
+	 * FlowExecutionHolder context for other JSF-SWF aware constructs, such as
+	 * the {@link FlowPhaseListener}.
 	 * @see org.springframework.webflow.execution.FlowExecutionManager#manageStorage(java.io.Serializable,
 	 * org.springframework.webflow.execution.FlowExecution,
 	 * org.springframework.webflow.ExternalContext)
@@ -226,7 +227,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		if (flowExecution != null && flowExecution.isActive()) {
 			FlowExecutionContinuationKey continuationKey = FlowExecutionHolder.getContinuationKey();
 			Assert.notNull(continuationKey,
-					"Flow execution storage id must have been pre-generated to complete two-phase save to storage");
+					"A continuation key must have been pre-generated to complete two-phase save to repository");
 			Map model = new HashMap();
 			exposeFlowExecutionAttributes(model, formatContinuationKey(continuationKey), flowExecution);
 			putInto(facesContext.getExternalContext().getRequestMap(), model);
@@ -246,12 +247,11 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 		FlowExecution flowExecution = FlowExecutionHolder.getFlowExecution();
 		if (flowExecution != null && flowExecution.isActive()) {
 			FlowExecutionContinuationKey continuationKey = FlowExecutionHolder.getContinuationKey();
-			Assert
-					.notNull(continuationKey,
-							"The flow execution storage id must have been pre-generated to complete a two-phase save to storage");
+			Assert.notNull(continuationKey,
+					"A continuation key must have been pre-generated to complete two-phase save to repository");
 			if (logger.isDebugEnabled()) {
-				logger.debug("Saved flow execution out to storage with previously generated id '" + continuationKey
-						+ "'");
+				logger.debug("Saved flow execution to repository with previously generated continuation key '"
+						+ continuationKey + "'");
 			}
 			Map model = new HashMap();
 			exposeFlowExecutionAttributes(model, formatContinuationKey(continuationKey), flowExecution);
