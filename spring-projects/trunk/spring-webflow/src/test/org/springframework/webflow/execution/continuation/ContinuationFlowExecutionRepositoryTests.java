@@ -63,7 +63,7 @@ public class ContinuationFlowExecutionRepositoryTests extends TestCase {
 
 	public void testPutFlowExecution() {
 		flowExecutionContinuationFactoryControl.expectAndReturn(flowExecutionContinuationFactoryMock
-				.createContinuation(key, flowExecutionMock), flowExecutionContinuationMock);
+				.createContinuation("some continuation id", flowExecutionMock), flowExecutionContinuationMock);
 		flowExecutionContinuationControl.expectAndReturn(flowExecutionContinuationMock.getId(), "some continuation id");
 		flowExecutionContinuationControl.expectAndReturn(flowExecutionContinuationMock.getFlowExecution(),
 				flowExecutionMock);
@@ -81,9 +81,9 @@ public class ContinuationFlowExecutionRepositoryTests extends TestCase {
 		FlowExecutionContinuationKey key2 = new FlowExecutionContinuationKey("some conversation id",
 				"another continuation id");
 		flowExecutionContinuationFactoryControl.expectAndReturn(flowExecutionContinuationFactoryMock
-				.createContinuation(key, flowExecutionMock), flowExecutionContinuationMock);
+				.createContinuation("some continuation id", flowExecutionMock), flowExecutionContinuationMock);
 		flowExecutionContinuationFactoryControl.expectAndReturn(flowExecutionContinuationFactoryMock
-				.createContinuation(key2, flowExecutionMock), flowExecutionContinuationMock);
+				.createContinuation("another continuation id", flowExecutionMock), flowExecutionContinuationMock);
 		flowExecutionContinuationControl.expectAndReturn(flowExecutionContinuationMock.getId(), "some continuation id");
 		flowExecutionContinuationControl.expectAndReturn(flowExecutionContinuationMock.getId(),
 				"another continuation id");
@@ -104,7 +104,7 @@ public class ContinuationFlowExecutionRepositoryTests extends TestCase {
 
 	public void testInvalidateConversation() {
 		flowExecutionContinuationFactoryControl.expectAndReturn(flowExecutionContinuationFactoryMock
-				.createContinuation(key, flowExecutionMock), flowExecutionContinuationMock);
+				.createContinuation("some continuation id", flowExecutionMock), flowExecutionContinuationMock);
 
 		replay();
 
@@ -127,7 +127,7 @@ public class ContinuationFlowExecutionRepositoryTests extends TestCase {
 		FlowExecutionContinuationKey invalidKey = new FlowExecutionContinuationKey("some conversation id",
 				"wrong continuation id");
 		flowExecutionContinuationFactoryControl.expectAndReturn(flowExecutionContinuationFactoryMock
-				.createContinuation(key, flowExecutionMock), flowExecutionContinuationMock);
+				.createContinuation("some continuation id", flowExecutionMock), flowExecutionContinuationMock);
 		flowExecutionContinuationControl.expectAndReturn(flowExecutionContinuationMock.getId(), "some continuation id");
 
 		replay();

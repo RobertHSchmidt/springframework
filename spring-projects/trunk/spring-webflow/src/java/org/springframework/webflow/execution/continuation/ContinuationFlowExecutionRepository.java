@@ -106,7 +106,7 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 		Conversation conversation = getConversation(conversationId);
 		if (conversation == null) {
 			conversation = createConversation();
-			conversations.put(conversation, conversation);
+			conversations.put(conversationId, conversation);
 		}
 		return conversation;
 	}
