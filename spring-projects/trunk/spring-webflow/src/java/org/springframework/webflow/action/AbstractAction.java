@@ -91,19 +91,20 @@ public abstract class AbstractAction extends EventFactorySupport implements Acti
 		if (result == null) {
 			result = doExecute(context);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Action '" + getClass().getName() + "' completed execution; result event is " + result);
-			}
-			doPostExecute(context);
-			if (logger.isInfoEnabled()) {
-				if (result == null) {
-					logger.info("Retured action event is [null]; that's ok so long as another action associated "
-							+ "with the currently executing flow state returns a valid event");
+				if (result != null) {
+					logger.debug("Action '" + getClass().getName() + "' completed execution; result is '"
+							+ result.getId() + "'");
+				}
+				else {
+					logger.debug("Action '" + getClass().getName() + "' completed execution; "
+							+ "returned result is [null]");
 				}
 			}
+			doPostExecute(context);
 		}
 		else {
 			if (logger.isInfoEnabled()) {
-				logger.info("Action execution disallowed; event is " + result);
+				logger.info("Action execution disallowed; pre-execute result is '" + result.getId() + "'");
 			}
 		}
 		return result;
