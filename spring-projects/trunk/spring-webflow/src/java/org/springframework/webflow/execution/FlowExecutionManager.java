@@ -534,6 +534,9 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @return the view descriptor of the model and view to render
 	 */
 	public ViewSelection onEvent(ExternalContext context) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Event signaled in " + context);
+		}
 		FlowExecutionContinuationKey continuationKey = parseContinuationKey(context);
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecution flowExecution = getFlowExecution(repository, continuationKey, context);
