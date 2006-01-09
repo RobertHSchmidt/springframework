@@ -76,7 +76,7 @@ public class FlowExecutionTests extends TestCase {
 
 		new EndState(flow, "finish");
 
-		FlowExecution flowExecution = new FlowExecutionImpl(flow);
+		FlowExecutionImpl flowExecution = new FlowExecutionImpl(flow);
 		MockFlowExecutionListener flowExecutionListener = new MockFlowExecutionListener();
 		flowExecution.getListeners().add(flowExecutionListener);
 		flowExecution.start(new MockExternalContext());

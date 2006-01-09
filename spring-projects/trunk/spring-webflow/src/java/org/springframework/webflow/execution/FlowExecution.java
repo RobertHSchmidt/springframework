@@ -108,11 +108,4 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * all listeners that apply
 	 */
 	public void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader);
-
-	/**
-	 * Return a list of listeners monitoring the lifecycle of this flow
-	 * execution.
-	 * @return the flow execution listeners
-	 */
-	public FlowExecutionListenerList getListeners();
 }
