@@ -94,19 +94,32 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 	}
 
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
-		Conversation conversation = (Conversation)conversations.get(key.getConversationId());
-		if (conversation != null) {
-			conversation.addContinuation(continuationFactory.createContinuation(key, flowExecution));
-		}
-		else {
-			conversation = new Conversation(maxContinuations);
-			conversation.addContinuation(continuationFactory.createContinuation(key, flowExecution));
-			conversations.put(key.getConversationId(), conversation);
-		}
+		Conversation conversation = (Conversation)getOrCreateConversation(key.getConversationId());
+		conversation.addContinuation(continuationFactory.createContinuation(key.getContinuationId(), flowExecution));
 	}
 
 	public void invalidateConversation(Serializable conversationId) {
 		conversations.remove(conversationId);
+	}
+
+	private Conversation getOrCreateConversation(Serializable conversationId) {
+		Conversation conversation = getConversation(conversationId);
+		if (conversation == null) {
+			conversation = createConversation();
+			conversations.put(conversation, conversation);
+		}
+		return conversation;
+	}
+
+	/**
+	 * Factory method that returns a new conversation. Subclasses may override.
+	 */
+	protected Conversation createConversation() {
+		return new Conversation(maxContinuations);
+	}
+
+	private Conversation getConversation(Serializable conversationId) {
+		return (Conversation)conversations.get(conversationId);
 	}
 
 	private FlowExecutionContinuation getConversationContinuation(FlowExecutionContinuationKey key)
@@ -120,9 +133,5 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 			throw new InvalidConversationContinuationException(this, key);
 		}
 		return continuation;
-	}
-
-	private Conversation getConversation(Serializable conversationId) {
-		return (Conversation)conversations.get(conversationId);
 	}
 }

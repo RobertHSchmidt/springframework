@@ -73,7 +73,13 @@ public class SimpleFlowExecutionRepository implements FlowExecutionRepository, S
 			// continuationId
 			// if they do not match, access to the conversation is not allowed.
 			if (!key.getContinuationId().equals(entry.getId())) {
-				throw new InvalidConversationContinuationException(this, key);
+				throw new InvalidConversationContinuationException(this, key, "The continuation id '"
+						+ key.getContinuationId() + "' associated with conversation '" + key.getConversationId()
+						+ "' is invalid.  This will happen when accessing browser history "
+						+ "(typically via the back button) that references a previously used continuation id, "
+						+ "as this simple repository implementation does not support multiple continuations."
+						+ "Consider using another repository implementation or "
+						+ "restrict use of the browser back button.");
 			}
 			return entry.getFlowExecution();
 		}
