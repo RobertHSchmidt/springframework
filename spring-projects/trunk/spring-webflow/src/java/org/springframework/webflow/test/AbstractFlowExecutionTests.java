@@ -62,10 +62,7 @@ import org.springframework.webflow.execution.FlowExecutionImpl;
  * typically end-to-end integration tests that involve a transactional resource
  * such a database, this class subclasses Spring's
  * AbstractTransactionalSpringContextTests to take advantage of its automatic
- * transaction management and rollback capabilites. If you do not need those
- * capabilities, you must call <code>setDependencyCheck(false)</code> in your
- * test's constructor to turn off dependency checking for the transaction
- * manager property.
+ * transaction management and rollback capabilites.
  * 
  * @author Keith Donald
  */
