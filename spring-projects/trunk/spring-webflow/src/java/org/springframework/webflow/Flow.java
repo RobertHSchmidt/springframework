@@ -18,8 +18,6 @@ package org.springframework.webflow;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
@@ -105,11 +103,6 @@ import org.springframework.util.StringUtils;
  * @author Colin Sampaleanu
  */
 public class Flow extends AnnotatedObject {
-
-	/**
-	 * Logger, for use in subclasses.
-	 */
-	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * An assigned flow identifier uniquely identifying this flow among all
@@ -272,9 +265,6 @@ public class Flow extends AnnotatedObject {
 	public void setStartState(State state) throws NoSuchFlowStateException {
 		if (!containsStateInstance(state)) {
 			throw new NoSuchFlowStateException(this, state.getId());
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Setting start state for flow '" + getId() + "' to '" + state.getId() + "'");
 		}
 		this.startState = state;
 	}

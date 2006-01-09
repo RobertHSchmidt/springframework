@@ -19,10 +19,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.core.style.StylerUtils;
-
 /**
  * Superclass of all objects in the web flow system that support annotation
  * using arbitrary properties. Mainly used to ensure consistent configuration of
@@ -32,11 +28,6 @@ import org.springframework.core.style.StylerUtils;
  * @author Keith Donald
  */
 public abstract class AnnotatedObject {
-
-	/**
-	 * Logger, for use in subclasses.
-	 */
-	private final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * The caption (property name ("caption"). A caption is also known as a
@@ -71,9 +62,6 @@ public abstract class AnnotatedObject {
 	 * @return previous value associated with specified name
 	 */
 	public Object setProperty(String name, Object value) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Setting property '" + name + "' to " + value);
-		}
 		return properties.put(name, value);
 	}
 
@@ -176,11 +164,7 @@ public abstract class AnnotatedObject {
 	 */
 	public void addProperties(Map properties) {
 		if (properties != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Adding properties " + StylerUtils.style(properties));
-			}
 			this.properties.putAll(properties);
 		}
 	}
-
 }
