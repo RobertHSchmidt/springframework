@@ -2,12 +2,12 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 M1 (21.12.2005)
+Changes in version 1.0 M1 (11.1.2006)
 ------------------------------------
 
 Overall
 * Introduced the reference manual.
-* Added unit tests, with total test coverage is nearing 70%.
+* Added unit tests, with total test coverage above 70%.
 * Added extensive JavaDoc enhancements.
 
 Package org.springframework.webflow
@@ -19,6 +19,8 @@ Package org.springframework.webflow
 * Renamed ViewDescriptor and ViewDescriptorCreator to ViewSelection and ViewSelector, respectively, for clarity and consistency with lexicon.
 
 Package org.springframework.webflow.builder
+* Added support for "inline-flows", local flow definitions fully nested within another flow definition.
+* Added support for locally flow scoped artifacts, importable as bean definitions using the "import" element.
 * Added support for action "resultName" and "resultScope" properties, for exposing POJO method return values
   as attributes in a flow execution scope automatically.  See 'action' element in XML DTD.
 * Added support for automatic creation of flow variables during flow startup, see 'var' element in XML DTD.
@@ -28,25 +30,33 @@ Package org.springframework.webflow.builder
 * Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add methods.
 * Reworked FlowBuilder, externalizing flow id assignment from the builder itself (assignment is now a responsibility of the director).
 * Renamed the "config" package to "builder" for clarity.
-* Removed flow artifact creation and autowiring support in favor of artifact lookup by id (which is more compelling now with flow-definition scoped artifact support)
+* Removed flow artifact creation and autowiring support in favor of artifact lookup by id (which is more compelling now with flow-definition scoped artifact support).
 
 Package org.springframework.webflow.execution
-* Added a FlowExecutionManagement exception hierarchy, for reporting unhandled exceptions that occur during the management
-  of a flow execution.
 * Added paused, resumed, and sessionEnding FlowExecutionListener callbacks.
-* Added a KeyGenerator strategy, providing a plugin point for custom FlowExecution key generation strategies.
+* Added UidGenerator strategy, providing a plugin point for generating unique keys.
+* Introduced FlowExecutionRepository subsystem, for tracking ongoing conversations between browsers and 
+  the Spring Web Flow system.  This subsystem obsoletes both the FlowExecutionStorage and TransactionSynchronizer
+  infrastructure, as it provides the capabilities of both in a single system.
+* Added explicit support for continuation-based repositories (aka 'continuation servers'),
+  including a built-in capability to limit the max number of continuations allowed per conversation
+  as well as automatically invalidate all  ontinuations associated with a conversation that has ended.
+  Explicit support for continuation expiry and additional continuation invalidation strategies is under consideration.
 * Introduced ExternalContext implementations for Servlet, Portlet, JSF, and Struts environments.
-  This adds support for accessing request parameter, request, session, and application variables from within SWF 
-  in a consistent manner (regardless of the environment in which SWF is used).
+  This adds support for accessing request, session, and application variables from within SWF 
+  in a consistent manner (regardless of the environment in which SWF is called).
 * Reworked the flow execution package, decoupling the Event abstraction from the notion of an ExternalContext.
-* Reworked FlowExecution interface, making central start and signalEvent operations more explicit.
-* Reworked FlowExecutionManager: it is much easier now to customize flow execution workflow (necessary for JSF).
+* Reworked the FlowExecution interface, making central start and signalEvent operations more explicit.  It is also now 
+  impossible for external actors to signal an event in another state other than the current state.
+* Reworked FlowExecutionManager; it is much easier now to customize flow execution workflow (necessary for JSF).
   The FlowLocator is now a required dependency, and support for setting a single Flow to execute has been removed.
-* Refactored out DataSourceAccessor strategy interface from FlowExecutionStorage implementations.
+* Removed FlowExecutionStorage infrastructure, replaced by an enhanced FlowExecutionRepository subsystem.
 * Removed TransactionSynchronizer abstraction, which has been obsoleted since such a capability is being built
-  into the FlowExecutionStorage implementations directly.
+  into the FlowExecutionRepository implementations directly.
 * Removed support for invoking flows in arbitrary states other than the current state for security reasons.
   Support for a single, externally referenceable navigation state per flow is under consideration.
+* Removed ExpiredFlowCleanupFilter, as a more powerful expiry capability built into the
+  FlowExecutionRepository subsystem is under consideration.
 
 Package org.springframework.webflow.registry
 * Added the FlowRegistry subsystem in webflow.registry, for registering groups of refreshable Flow definitions.
@@ -68,8 +78,6 @@ Package org.springframework.webflow.action
   See the Phonebook sample app for an example.
 * Added BeanFactoryBeanInvokingAction, an action that can invoke any instance method on any bean managed by the Spring bean factory.
 * Added LocalBeanInvokingAction, an action that can invoke any instance method on any bean.
-* Added support for "inline-flows", local flow definitions fully nested within another flow definition.
-* Added support for locally flow scoped artifacts, importable as bean definitions using the "import" element.
 * Added "CompositeEvent" support for composite actions that may generate multiple action result events.
 * Added "requireValidatorMethod" property to FormAction, useful for supporting piecemeal validation as part of a wizard flow.
 * Added ActionUtils utility class, useful when implementing actions.
