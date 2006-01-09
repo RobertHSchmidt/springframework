@@ -18,14 +18,8 @@ clients (e.g. controllers) can use as an entry-point into Spring Web Flow for la
 and executing flows.
 </li>
 <li>
-{@link org.springframework.webflow.execution.FlowExecutionStorage} - A storage
-strategy interface used by the flow execution manager to store the state of an
-ongoing flow execution.
-</li>
-<li>
-{@link org.springframework.webflow.execution.TransactionSynchronizer} - A strategy
-interface used by the flow execution to manage application transactions. The
-implementation is configurable at the level of the flow execution manager.
+{@link org.springframework.webflow.execution.FlowExecutionRepository} - A repository interface
+used by the flow execution manager to store the state of an ongoing flow execution.
 </li>
 <li>
 {@link org.springframework.webflow.execution.FlowExecutionListener} - The listener
@@ -37,8 +31,7 @@ provides an adapter to ease subclassing.
 </ul>
 </p>
 <p>
-This package depends on the webflow root package.  Usage of ClientContinuationFlowExecutionStorage 
-requires commons-codec.
+This package depends on the webflow root package.
 </p>
 </body>
 </html>

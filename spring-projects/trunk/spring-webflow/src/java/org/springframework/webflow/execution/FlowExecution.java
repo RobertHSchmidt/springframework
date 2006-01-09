@@ -61,7 +61,7 @@ import org.springframework.webflow.ViewSelection;
  * this object is removed from storage and discarded.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionManager
- * @see org.springframework.webflow.execution.FlowExecutionStorage
+ * @see org.springframework.webflow.execution.FlowExecutionRepository
  * @see org.springframework.webflow.Flow
  * @see org.springframework.webflow.State
  * @see org.springframework.webflow.FlowSession

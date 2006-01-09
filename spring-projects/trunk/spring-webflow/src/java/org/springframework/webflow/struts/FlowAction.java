@@ -102,7 +102,6 @@ import org.springframework.webflow.execution.servlet.ServletExternalContext;
  * <code>ActionForm</code> classes found in traditional Struts-based apps.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionManager
- * @see org.springframework.webflow.struts.StrutsEvent
  * @see org.springframework.web.struts.SpringBindingActionForm
  * 
  * @author Keith Donald
@@ -222,6 +221,12 @@ public class FlowAction extends ActionSupport {
 		}
 	}
 
+	/**
+	 * Provides consistent access to a Struts environment from within Spring Web
+	 * Flow.
+	 * 
+	 * @author Keith Donald
+	 */
 	public static class StrutsExternalContext extends ServletExternalContext {
 
 		private ActionMapping actionMapping;
