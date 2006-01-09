@@ -15,7 +15,7 @@ public class SingletonFlowExecutionRepositoryFactory implements FlowExecutionRep
 		this.repository = repository;
 	}
 
-	public synchronized FlowExecutionRepository getRepository(ExternalContext context) {
+	public FlowExecutionRepository getRepository(ExternalContext context) {
 		return repository;
 	}
 }
