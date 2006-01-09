@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.Scope;
-import org.springframework.webflow.ScopeType;
 
 /**
  * Represents an active, ongoing conversation between a user and the Spring Web
@@ -16,11 +14,6 @@ import org.springframework.webflow.ScopeType;
 public class Conversation implements Serializable {
 
 	private static final long serialVersionUID = 3532014613434083365L;
-
-	/**
-	 * A map for data stored in 'conversational scope'.
-	 */
-	private Scope scope = new Scope(ScopeType.FLOW);
 
 	/**
 	 * A stack of conversation continuations. Each continuation represents a
@@ -37,10 +30,6 @@ public class Conversation implements Serializable {
 	public Conversation(int maxContinuations) {
 		Assert.isTrue(maxContinuations > 0, "'maxContinuations' must be greater than 0");
 		this.maxContinuations = maxContinuations;
-	}
-
-	public Scope getScope() {
-		return scope;
 	}
 
 	public FlowExecutionContinuation getContinuation(Serializable id) {
