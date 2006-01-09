@@ -16,6 +16,7 @@
 package org.springframework.webflow.execution.portlet;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -24,8 +25,8 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
 
 /**
- * Provides contextual information about a HTTP portlet environment that 
- * has interacted with SWF.
+ * Provides contextual information about a HTTP portlet environment that has
+ * interacted with SWF.
  * 
  * @author Keith Donald
  */
@@ -82,6 +83,7 @@ public class PortletExternalContext implements ExternalContext {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
-	}	
+		return new ToStringCreator(this).append("requestParameterMap", new TreeMap(getRequestParameterMap()))
+				.toString();
+	}
 }

@@ -16,6 +16,7 @@
 package org.springframework.webflow.execution.servlet;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,6 +84,6 @@ public class ServletExternalContext implements ExternalContext {
 	}
 	
 	public String toString() {
-		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
+		return new ToStringCreator(this).append("requestParameterMap", new TreeMap(getRequestParameterMap())).toString();
 	}
 }
