@@ -1,4 +1,4 @@
-SPRING WEB FLOW 1.0 M1 (December 2005)
+SPRING WEB FLOW 1.0 M1 (January 2006)
 -------------------------------
 http://www.springframework.org
 http://opensource.atlassian.com/confluence/spring/display/WEBFLOW/Home
@@ -13,7 +13,7 @@ reusable in different situations. The system is ideal for web applications that 
 the user through controlled navigations that drive business processes.  These processes
 typically span HTTP requests and may be dynamic in nature.
 
-SWF exists at a higher-level of abstraction, building on existing frameworks like
+SWF exists at a higher-level of abstraction, integrating with existing frameworks like
 Struts, Spring MVC, and JSF, capturing your application's page flow explicity in a
 declarative fashion.  SWF is a very a powerful framework based on a finite-state
 machine for the definition, execution, and management of a web conversation.
