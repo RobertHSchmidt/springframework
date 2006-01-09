@@ -20,9 +20,6 @@ import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * JSF phase listener that is responsible for loading the current flow execution
  * to a threadlocal, so that components may bind to it as needed.
@@ -33,11 +30,6 @@ import org.apache.commons.logging.LogFactory;
  * @author Colin Sampaleanu
  */
 public class FlowPhaseListener implements PhaseListener {
-
-	/**
-	 * Logger, usable by subclasses.
-	 */
-	protected final Log logger = LogFactory.getLog(FlowPhaseListener.class);
 
 	/**
 	 * The {@link JsfFlowExecutionManager} instance to use, lazily instantiated

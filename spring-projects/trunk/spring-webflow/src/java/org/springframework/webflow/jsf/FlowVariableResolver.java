@@ -20,8 +20,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.el.EvaluationException;
 import javax.faces.el.VariableResolver;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
@@ -36,8 +34,6 @@ public class FlowVariableResolver extends VariableResolver {
 	 * Name of the exposed flow scope variable ("flowScope").
 	 */
 	public static final String FLOW_SCOPE_VARIABLE = "flowScope";
-
-	protected final Log logger = LogFactory.getLog(getClass());
 
 	private VariableResolver resolverDelegate;
 

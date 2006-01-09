@@ -18,8 +18,6 @@ package org.springframework.webflow.jsf;
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.ViewSelection;
 
 /**
@@ -34,20 +32,21 @@ import org.springframework.webflow.ViewSelection;
  * <code>NavigationHandler</code> implementation and return.</li>
  * <li>If the specified logical outcome <strong>is</strong> of the form
  * <em>flowId:xxx</em>, look up the corresponding
- * {@link org.springframework.webflow.Flow} definition with that id and begin
- * flow execution in the starting state. Record state information to indicate
- * that this flow is in progress.</li>
+ * {@link org.springframework.webflow.Flow} definition with that id and launch a
+ * new flow execution in the starting state. Record state information to
+ * indicate that this flow is in progress.</li>
  * </ul>
  * </li>
  * <li>If a flow execution <strong>is</strong> currently in progress:
  * <ul>
- * <li>Load the reference to the current in-progress flow execution.</li>
+ * <li>Load the reference to the current in-progress flow execution using the
+ * submitted <em>_flowExecutionId</em>.</li>
  * <li>Resume the flow execution by signaling what action (event) the user took
- * in the resuming state.
+ * in the current state.
  * <li>Wait for state event processing to complete, which happens when a
  * <code>ViewSelection</code> is returned selecting the next view to be
  * rendered.</li>
- * <li>Cause navigation to render the requested view</li>
+ * <li>Cause navigation to render the requested view.</li>
  * </ul>
  * </li>
  * </ul>
@@ -59,21 +58,16 @@ import org.springframework.webflow.ViewSelection;
 public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
-	 * The <code>Log</code> instance for this class.
+	 * The {@link JsfFlowExecutionManager} instance to use, lazily instantiated
+	 * upon first use.
 	 */
-	private final Log log = LogFactory.getLog(getClass());
+	private JsfFlowExecutionManager flowExecutionManager;
 
 	/**
 	 * The standard <code>NavigationHandler</code> implementation that we are
 	 * wrapping.
 	 */
 	private NavigationHandler handlerDelegate;
-
-	/**
-	 * The {@link JsfFlowExecutionManager} instance to use, lazily instantiated
-	 * upon first use.
-	 */
-	private JsfFlowExecutionManager flowExecutionManager;
 
 	/**
 	 * Create a new {@link FlowNavigationHandler}, wrapping the specified
@@ -93,10 +87,6 @@ public class FlowNavigationHandler extends NavigationHandler {
 	 * @param outcome The logical outcome returned by the specified action
 	 */
 	public void handleNavigation(FacesContext context, String fromAction, String outcome) {
-		if (log.isDebugEnabled()) {
-			log.debug("handleNavigation(viewId=" + context.getViewRoot().getViewId() + ", fromAction=" + fromAction
-					+ ", outcome=" + outcome + ")");
-		}
 		if (getExecutionManager(context).isFlowLaunchRequest(context, fromAction, outcome)) {
 			ViewSelection nextView = getExecutionManager(context).launchFlowExecution(context, fromAction, outcome);
 			getExecutionManager(context).renderView(context, fromAction, outcome, nextView);

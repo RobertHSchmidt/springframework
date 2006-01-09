@@ -22,8 +22,6 @@ import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.PropertyResolver;
 import javax.faces.el.ReferenceSyntaxException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
@@ -40,11 +38,6 @@ import org.springframework.webflow.execution.FlowExecution;
  * @author Colin Sampaleanu
  */
 public class FlowPropertyResolver extends PropertyResolver {
-
-	/**
-	 * Logger.
-	 */
-	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * Default property resolver.
