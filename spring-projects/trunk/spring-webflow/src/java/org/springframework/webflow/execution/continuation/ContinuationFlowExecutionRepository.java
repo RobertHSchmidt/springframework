@@ -123,7 +123,7 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 	}
 
 	private FlowExecutionContinuation getConversationContinuation(FlowExecutionContinuationKey key)
-			throws NoSuchConversationException {
+			throws NoSuchConversationException, InvalidConversationContinuationException {
 		Conversation conversation = getConversation(key.getConversationId());
 		if (conversation == null) {
 			throw new NoSuchConversationException(this, key.getConversationId());
