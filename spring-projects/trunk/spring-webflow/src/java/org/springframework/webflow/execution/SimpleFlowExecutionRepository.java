@@ -51,8 +51,8 @@ public class SimpleFlowExecutionRepository implements FlowExecutionRepository, S
 	 * Sets the uid generation strategy used to generate unique conversation and
 	 * continuation identifiers.
 	 */
-	public void setUidGenerator(UidGenerator keyGenerator) {
-		this.uidGenerator = keyGenerator;
+	public void setUidGenerator(UidGenerator uidGenerator) {
+		this.uidGenerator = uidGenerator;
 	}
 
 	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution) {
