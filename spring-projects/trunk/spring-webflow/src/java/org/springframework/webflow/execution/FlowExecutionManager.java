@@ -632,7 +632,6 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	protected String extractFlowId(ExternalContext context) {
 		return verifySingleStringInputParameter(getFlowIdParameterName(), context.getRequestParameterMap().get(
 				getFlowIdParameterName()));
-
 	}
 
 	/**
@@ -720,7 +719,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 			FlowExecution flowExecution) {
 		repository.putFlowExecution(continuationKey, flowExecution);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Saved flow execution out to the repository with id '" + continuationKey + "'");
+			logger.debug("Saved flow execution out to repository with id '" + continuationKey + "'");
 		}
 	}
 
@@ -736,7 +735,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		// ending, cleanup
 		repository.invalidateConversation(continuationKey.getConversationId());
 		if (logger.isDebugEnabled()) {
-			logger.debug("Removed flow execution from the repository with id '" + continuationKey + "'");
+			logger.debug("Removed flow execution from repository with id '" + continuationKey + "'");
 		}
 	}
 
