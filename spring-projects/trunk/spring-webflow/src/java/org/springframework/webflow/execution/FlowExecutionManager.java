@@ -760,6 +760,16 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		return continuationKey;
 	}
 
+	/**
+	 * Generate a new continuation key for persisting the flow execution in the
+	 * specified repository.
+	 * @param repository the repository that will generate the key
+	 * @param flowExecution the flow execution representing an active
+	 * conversation at a specific point in time (now)
+	 * @param previousKey the key identifying the conversation's last-referenced
+	 * continuation
+	 * @return the newly generated flow execution id.
+	 */
 	protected FlowExecutionContinuationKey generateContinuationKey(FlowExecutionRepository repository,
 			FlowExecution flowExecution, FlowExecutionContinuationKey previousKey) {
 		if (previousKey == null) {
@@ -804,6 +814,11 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 		return selectedView;
 	}
 
+	/**
+	 * Convert the continuation key to encoded string form.
+	 * @param key the continuation key
+	 * @return the string-encoded key
+	 */
 	protected String formatContinuationKey(FlowExecutionContinuationKey key) {
 		return continuationKeyFormatter.formatValue(key);
 	}
@@ -834,7 +849,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @param parameterValue the parameter value
 	 * @return the string value
 	 */
-	public static String verifySingleStringInputParameter(String parameterName, Object parameterValue) {
+	private static String verifySingleStringInputParameter(String parameterName, Object parameterValue) {
 		String str = null;
 		if (parameterValue != null) {
 			try {
@@ -884,7 +899,7 @@ public class FlowExecutionManager implements FlowExecutionListenerLoader {
 	 * @return the value of the parameter, or <code>null</code> if the
 	 * parameter does not exist in given request
 	 */
-	protected Object findParameter(String logicalParameterName, Map parameters) {
+	private Object findParameter(String logicalParameterName, Map parameters) {
 		// first try to get it as a normal name=value parameter
 		Object value = parameters.get(logicalParameterName);
 		if (value != null) {
