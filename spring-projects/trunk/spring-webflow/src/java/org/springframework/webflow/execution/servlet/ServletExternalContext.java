@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
 
 /**
@@ -79,5 +80,9 @@ public class ServletExternalContext implements ExternalContext {
 	 */
 	public HttpServletResponse getResponse() {
 		return response;
+	}
+	
+	public String toString() {
+		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
 	}
 }

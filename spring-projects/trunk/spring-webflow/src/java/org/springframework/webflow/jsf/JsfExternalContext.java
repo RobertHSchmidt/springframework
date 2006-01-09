@@ -19,11 +19,12 @@ import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
 
 /**
- * Provides contextual information about a JSF environment that 
- * has interacted with SWF.
+ * Provides contextual information about a JSF environment that has interacted
+ * with SWF.
  * 
  * @author Keith Donald
  */
@@ -33,14 +34,14 @@ public class JsfExternalContext implements ExternalContext {
 	 * The JSF Faces context.
 	 */
 	private FacesContext facesContext;
-	
+
 	/**
-	 * The id of the action or "command button" that fired. 
+	 * The id of the action or "command button" that fired.
 	 */
 	private String actionId;
-	
+
 	/**
-	 * The action outcome. 
+	 * The action outcome.
 	 */
 	private String outcome;
 
@@ -99,5 +100,10 @@ public class JsfExternalContext implements ExternalContext {
 	 */
 	public String getOutcome() {
 		return outcome;
-	}	
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("actionId", actionId).append("outcome", outcome).append("facesContext",
+				facesContext).toString();
+	}
 }

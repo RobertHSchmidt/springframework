@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
 
 /**
@@ -79,5 +80,8 @@ public class PortletExternalContext implements ExternalContext {
 	public PortletResponse getResponse() {
 		return response;
 	}
-	
+
+	public String toString() {
+		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
+	}	
 }
