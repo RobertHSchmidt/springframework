@@ -191,8 +191,8 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	}
 
 	/*
-	 * Overrides the default manageStorage implementation to provide support for
-	 * two-phase FlowExecution saves.
+	 * Overrides the default manageStorage implementation to set the FlowExecutionHolder 
+	 * context for other JSF-SWF aware constructs, such as the {@link FlowPhaseListener}.
 	 * @see org.springframework.webflow.execution.FlowExecutionManager#manageStorage(java.io.Serializable,
 	 * org.springframework.webflow.execution.FlowExecution,
 	 * org.springframework.webflow.ExternalContext)
@@ -201,6 +201,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 			FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution) {
 		if (flowExecution.isActive()) {
 			continuationKey = generateContinuationKey(repository, flowExecution, continuationKey);
+			saveFlowExecution(repository, continuationKey, flowExecution);
 			FlowExecutionHolder.setFlowExecution(continuationKey, flowExecution);
 		}
 		else {
