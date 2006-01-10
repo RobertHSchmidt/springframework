@@ -52,7 +52,14 @@ public class HttpRequestParameterMap extends StringKeyedAttributeMapAdapter {
 				return data;
 			}
 		}
-		return request.getParameter(key);
+		String[] parameters = request.getParameterValues(key);
+		if (parameters == null) {
+			return null;
+		} else if (parameters.length == 1) {
+			return parameters[0];
+		} else {
+			return parameters;
+		}
 	}
 
 	protected void setAttribute(String key, Object value) {
