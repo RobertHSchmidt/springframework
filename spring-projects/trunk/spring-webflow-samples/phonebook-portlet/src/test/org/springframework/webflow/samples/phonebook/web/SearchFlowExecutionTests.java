@@ -19,18 +19,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 
 public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
-	protected String flowId() {
-		return "search";
-	}
-	
-	protected Resource getFlowLocation() {
-		return new ClassPathResource("search.xml", getClass());
+	protected ExternalizedFlowDefinition getFlowDefinition() {
+		return new ExternalizedFlowDefinition("search", new ClassPathResource("search.xml", getClass()));
 	}
 
 	protected String[] getConfigLocations() {
