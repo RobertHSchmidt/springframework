@@ -44,7 +44,8 @@ public class ExternalMapFlowExecutionRepositoryFactory extends AbstractFlowExecu
 		this.externalMapLocator = externalMapLocator;
 	}
 
-	public synchronized FlowExecutionRepository getRepository(ExternalContext context) {
+	// TODO - mutex support
+	public FlowExecutionRepository getRepository(ExternalContext context) {
 		Map repositoryMap = externalMapLocator.getMap(context);
 		Object repositoryKey = getRepositoryKey();
 		FlowExecutionRepository repository = (FlowExecutionRepository)repositoryMap.get(repositoryKey);
