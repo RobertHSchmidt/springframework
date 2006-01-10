@@ -17,7 +17,8 @@ public class Conversation implements Serializable {
 
 	/**
 	 * A stack of conversation continuations. Each continuation represents a
-	 * snapshot of the conversation at a point in time relative to the user.
+	 * restorable snapshot of this conversation at a point in time relevant to
+	 * the user.
 	 */
 	private LinkedList continuations = new LinkedList();
 
@@ -27,11 +28,25 @@ public class Conversation implements Serializable {
 	 */
 	private int maxContinuations;
 
+	/**
+	 * Creates a new object representing a logical conversation between a
+	 * browser and Spring Web Flow. The new conversation initially has no
+	 * continuations associated with it, call
+	 * @{link {@link #addContinuation(FlowExecutionContinuation)} to add them.
+	 * @param maxContinuations the maximum number of continuations allowed for
+	 * this conversation.
+	 */
 	public Conversation(int maxContinuations) {
 		Assert.isTrue(maxContinuations > 0, "'maxContinuations' must be greater than 0");
 		this.maxContinuations = maxContinuations;
 	}
 
+	/**
+	 * Returns the conversation continuation with the provided <code>id</code>,
+	 * or <code>null</code> if no such continuation exists with that id.
+	 * @param id the continuation id
+	 * @return the continuation
+	 */
 	public FlowExecutionContinuation getContinuation(Serializable id) {
 		ListIterator it = continuations.listIterator(continuations.size());
 		while (it.hasPrevious()) {
@@ -43,6 +58,12 @@ public class Conversation implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Adds the continuation to this repository. May result in the oldest
+	 * continuation stored in this repository being invalidated if the
+	 * {@link #maxContinuations} property is exceeded.
+	 * @param continuation
+	 */
 	public void addContinuation(FlowExecutionContinuation continuation) {
 		continuations.add(continuation);
 		if (continuations.size() > maxContinuations) {
@@ -50,6 +71,9 @@ public class Conversation implements Serializable {
 		}
 	}
 
+	/**
+	 * Returns the count of continuations in this repository.
+	 */
 	public int getContinuationCount() {
 		return continuations.size();
 	}

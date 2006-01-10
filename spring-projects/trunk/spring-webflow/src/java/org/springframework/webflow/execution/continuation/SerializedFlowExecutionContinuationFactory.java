@@ -40,7 +40,7 @@ public class SerializedFlowExecutionContinuationFactory implements FlowExecution
 		}
 		catch (NotSerializableException e) {
 			throw new FlowExecutionSerializationException(continuationId, flowExecution,
-					"Could not serialize flow execution--make sure all objects stored in flow scope are serializable!",
+					"Could not serialize flow execution; make sure all objects stored in flow scope are serializable",
 					e);
 		}
 		catch (IOException e) {
