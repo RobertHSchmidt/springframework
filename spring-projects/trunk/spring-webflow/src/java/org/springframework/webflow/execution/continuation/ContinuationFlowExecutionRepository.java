@@ -25,8 +25,8 @@ import org.springframework.webflow.util.UidGenerator;
  * between a client and the Spring Web Flow system. Each
  * <code>Conversation</code> maintains a stack of "continuations", where each
  * continuation represents the state of a conversation at a point in time
- * relative to the user. These continuations allow users to go back in their
- * browser and continue a conversation from a previous point.
+ * relevant to the user. These continuations can be restored to support users
+ * going back in their browser to continue a conversation from a previous point.
  * </ul>
  * @author Keith Donald
  */
@@ -57,26 +57,50 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 	 */
 	private int maxContinuations = 25;
 
+	/**
+	 * Returns the continuation factory that encapsulates the construction of
+	 * continuations stored in this repository.
+	 */
 	public FlowExecutionContinuationFactory getContinuationFactory() {
 		return continuationFactory;
 	}
 
+	/**
+	 * Sets the continuation factory that encapsulates the construction of
+	 * continuations stored in this repository.
+	 */
 	public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
 		this.continuationFactory = continuationFactory;
 	}
 
+	/**
+	 * Returns the uid generator that generates unique identifiers for entries
+	 * placed into this repository.
+	 */
 	public UidGenerator getUidGenerator() {
 		return uidGenerator;
 	}
 
+	/**
+	 * Sets the uid generator that generates unique identifiers for entries
+	 * placed into this repository.
+	 */
 	public void setUidGenerator(UidGenerator uidGenerator) {
 		this.uidGenerator = uidGenerator;
 	}
 
+	/**
+	 * Returns the maximum number of continuations allowed per conversation in
+	 * this repository.
+	 */
 	public int getMaxContinuations() {
 		return maxContinuations;
 	}
 
+	/**
+	 * Sets the maximum number of continuations allowed per conversation in this
+	 * repository.
+	 */
 	public void setMaxContinuations(int maxContinuations) {
 		this.maxContinuations = maxContinuations;
 	}
