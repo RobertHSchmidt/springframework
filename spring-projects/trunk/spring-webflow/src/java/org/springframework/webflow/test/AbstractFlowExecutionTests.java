@@ -28,7 +28,7 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionImpl;
+import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 
 /**
  * Base class for integration tests that verify a flow executes as expected.

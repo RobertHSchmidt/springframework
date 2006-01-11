@@ -31,6 +31,30 @@ import org.springframework.webflow.Flow;
 public class FlowExecutionListenerCriteriaFactory {
 
 	/**
+	 * Returns a wild card criteria that matches all flows.
+	 */
+	public static FlowExecutionListenerCriteria allFlows() {
+		return new WildcardFlowExecutionListenerCriteria();
+	}
+
+	/**
+	 * Returns a criteria that just matches a flow with the specified id.
+	 * @param flowId the flow id to match
+	 */
+	public static FlowExecutionListenerCriteria flow(String flowId) {
+		return new FlowIdFlowExecutionListenerCriteria(flowId);
+	}
+
+	/**
+	 * Returns a criteria that just matches a flow if it is identified by one of
+	 * the specified ids.
+	 * @param flowIds the flow id to match
+	 */
+	public static FlowExecutionListenerCriteria flows(String[] flowIds) {
+		return new FlowIdFlowExecutionListenerCriteria(flowIds);
+	}
+
+	/**
 	 * A flow execution listener criteria implementation that matches for all
 	 * flows.
 	 */
@@ -93,29 +117,5 @@ public class FlowExecutionListenerCriteriaFactory {
 		public String toString() {
 			return new ToStringCreator(this).append("flowIds", StylerUtils.style(flowIds)).toString();
 		}
-	}
-
-	/**
-	 * Returns a wild card criteria that matches all flows.
-	 */
-	public static FlowExecutionListenerCriteria allFlows() {
-		return new WildcardFlowExecutionListenerCriteria();
-	}
-
-	/**
-	 * Returns a criteria that just matches a flow with the specified id.
-	 * @param flowId the flow id to match
-	 */
-	public static FlowExecutionListenerCriteria flow(String flowId) {
-		return new FlowIdFlowExecutionListenerCriteria(flowId);
-	}
-
-	/**
-	 * Returns a criteria that just matches a flow if it is identified by one of
-	 * the specified ids.
-	 * @param flowIds the flow id to match
-	 */
-	public static FlowExecutionListenerCriteria flows(String[] flowIds) {
-		return new FlowIdFlowExecutionListenerCriteria(flowIds);
 	}
 }

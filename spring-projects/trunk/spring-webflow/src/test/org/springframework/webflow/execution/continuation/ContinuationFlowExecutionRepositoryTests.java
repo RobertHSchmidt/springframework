@@ -4,9 +4,12 @@ import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionContinuationKey;
-import org.springframework.webflow.execution.InvalidConversationContinuationException;
-import org.springframework.webflow.execution.NoSuchConversationException;
+import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.InvalidConversationContinuationException;
+import org.springframework.webflow.execution.repository.NoSuchConversationException;
+import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuation;
+import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuationFactory;
 
 /**
  * Unit tests for the ContinuationFlowExecutionRepository class.

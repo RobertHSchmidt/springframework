@@ -31,14 +31,14 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.action.FormObjectAccessor;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory;
-import org.springframework.webflow.execution.FlowExecutionManager;
-import org.springframework.webflow.execution.FlowExecutionManagerImpl;
-import org.springframework.webflow.execution.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.support.FlowExecutionManagerParameterExtractor;
-import org.springframework.webflow.execution.support.ParameterizedFlowControllerHelper;
+import org.springframework.webflow.execution.manager.FlowExecutionManager;
+import org.springframework.webflow.execution.manager.FlowExecutionManagerImpl;
+import org.springframework.webflow.execution.manager.support.FlowExecutionManagerParameterExtractor;
+import org.springframework.webflow.execution.manager.support.ParameterizedFlowControllerHelper;
 
 /**
  * Point of integration between Struts and Spring Web Flow: a Struts Action that
@@ -106,7 +106,7 @@ import org.springframework.webflow.execution.support.ParameterizedFlowController
  * binding and validation that addresses the proliferation of
  * <code>ActionForm</code> classes found in traditional Struts-based apps.
  * 
- * @see org.springframework.webflow.execution.FlowExecutionManager
+ * @see org.springframework.webflow.execution.manager.FlowExecutionManager
  * @see org.springframework.web.struts.SpringBindingActionForm
  * 
  * @author Keith Donald

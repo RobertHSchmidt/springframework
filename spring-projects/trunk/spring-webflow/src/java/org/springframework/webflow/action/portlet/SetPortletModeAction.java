@@ -25,7 +25,7 @@ import org.springframework.webflow.ActionExecutionException;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.execution.portlet.PortletExternalContext;
+import org.springframework.webflow.context.portlet.PortletExternalContext;
 
 /**
  * Action implementation that changes a PortletResponse mode.

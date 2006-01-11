@@ -18,7 +18,7 @@ package org.springframework.webflow.jsf;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 
 /**
  * Simple holder class that associates a FlowExecution instance with the current

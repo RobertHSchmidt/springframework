@@ -15,6 +15,9 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SimpleFlow;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.manager.FlowExecutionManagerImpl;
+import org.springframework.webflow.execution.repository.ExternalMapFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.NoSuchConversationException;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionManagerTests extends TestCase {
@@ -41,8 +44,8 @@ public class FlowExecutionManagerTests extends TestCase {
 		input.put(manager.getFlowIdParameterName(), "simpleFlow");
 		ViewSelection view = manager.handleFlowRequest(new MockExternalContext(input));
 		assertNotNull(view.getModel().get(FlowExecutionManagerImpl.FLOW_EXECUTION_ID_ATTRIBUTE));
-		assertNotNull(view.getModel().get(FlowExecutionManager.CURRENFlowExecutionManagerImpl));
-		assertEquals(view.getModel().get(FlowExecutionManager.CURRENFlowExecutionManagerImpl), "view");
+		assertNotNull(view.getModel().get(org.springframework.webflow.execution.manager.CURRENFlowExecutionManagerImpl));
+		assertEquals(view.getModel().get(org.springframework.webflow.execution.manager.CURRENFlowExecutionManagerImpl), "view");
 		assertNotNull(view.getModel().get(FlowExecutionManagerImpl.FLOW_EXECUTION_CONTEXT_ATTRIBUTE));
 		assertEquals("Wrong view name", "view", view.getViewName());
 	}
@@ -75,7 +78,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		Map input = new HashMap(2);
 		input.put(manager.getFlowIdParameterName(), "simpleFlow");
 		manager.handleFlowRequest(new MockExternalContext(input));
-		input.put(FlowExecutionManager.FLOW_EXFlowExecutionManagerImpl, "_snot_ccorrect");
+		input.put(org.springframework.webflow.execution.manager.FLOW_EXFlowExecutionManagerImpl, "_snot_ccorrect");
 		try {
 			manager.handleFlowRequest(new MockExternalContext(input));
 			fail("should have thrown no such flow execution exception");

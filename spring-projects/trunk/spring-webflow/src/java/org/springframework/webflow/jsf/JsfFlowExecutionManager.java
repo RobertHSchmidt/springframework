@@ -31,14 +31,14 @@ import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionContinuationKey;
-import org.springframework.webflow.execution.FlowExecutionManagerImpl;
-import org.springframework.webflow.execution.FlowExecutionRepository;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.manager.FlowExecutionManagerImpl;
+import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 
 /**
  * A JSF-specific subclass of
- * {@link org.springframework.webflow.execution.FlowExecutionManagerImpl} which is
+ * {@link org.springframework.webflow.execution.manager.FlowExecutionManagerImpl} which is
  * delegated to by Web Flow's
  * {@link org.springframework.webflow.jsf.FlowNavigationHandler} and
  * {@link org.springframework.webflow.jsf.FlowPhaseListener}. The latter
@@ -149,7 +149,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManagerImpl {
 	 * algorithm used to makes this determination matches the determination that
 	 * will be made by the <code>FlowExecutionManager</code> that is being
 	 * used. The default implementation looks for a request parameter named by
-	 * {@link org.springframework.webflow.execution.FlowExecutionManagerImpl}.
+	 * {@link org.springframework.webflow.execution.manager.FlowExecutionManagerImpl}.
 	 * @param context <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.context.servlet.HttpServletContextMap;
 
 /**
  * Test case for the HttpServletContextMap class.

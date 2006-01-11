@@ -25,7 +25,7 @@ import org.springframework.mock.web.portlet.MockRenderResponse;
 import org.springframework.webflow.ActionExecutionException;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.execution.portlet.PortletExternalContext;
+import org.springframework.webflow.context.portlet.PortletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

@@ -25,7 +25,7 @@ import org.springframework.webflow.Flow;
  * 
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.execution.FlowExecutionListener
- * @see org.springframework.webflow.execution.FlowExecutionManagerImpl
+ * @see org.springframework.webflow.execution.manager.FlowExecutionManagerImpl
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

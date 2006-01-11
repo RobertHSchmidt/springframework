@@ -25,12 +25,12 @@ import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.execution.FlowExecutionManager;
-import org.springframework.webflow.execution.FlowExecutionManagerImpl;
+import org.springframework.webflow.context.portlet.PortletExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.portlet.PortletExternalContext;
-import org.springframework.webflow.execution.support.FlowExecutionManagerParameterExtractor;
-import org.springframework.webflow.execution.support.ParameterizedFlowControllerHelper;
+import org.springframework.webflow.execution.manager.FlowExecutionManager;
+import org.springframework.webflow.execution.manager.FlowExecutionManagerImpl;
+import org.springframework.webflow.execution.manager.support.FlowExecutionManagerParameterExtractor;
+import org.springframework.webflow.execution.manager.support.ParameterizedFlowControllerHelper;
 
 /**
  * Point of integration between Spring Portlet MVC and Spring Web Flow: a
@@ -106,7 +106,7 @@ public class FlowController extends AbstractController {
 
 	/**
 	 * Creates a new FlowController that initially relies on a default
-	 * {@link org.springframework.webflow.execution.FlowExecutionManagerImpl}
+	 * {@link org.springframework.webflow.execution.manager.FlowExecutionManagerImpl}
 	 * implementation that uses the provided flow locator to access flow
 	 * definitions at runtime.
 	 */

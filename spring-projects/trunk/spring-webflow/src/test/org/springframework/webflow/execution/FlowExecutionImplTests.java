@@ -32,12 +32,13 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.XmlFlowBuilder;
 import org.springframework.webflow.builder.XmlFlowBuilderTests;
+import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
  * Test case for FlowExecutionStack.
  * 
- * @see org.springframework.webflow.execution.FlowExecutionImpl
+ * @see org.springframework.webflow.execution.impl.FlowExecutionImpl
  * 
  * @author Erwin Vervaet
  */

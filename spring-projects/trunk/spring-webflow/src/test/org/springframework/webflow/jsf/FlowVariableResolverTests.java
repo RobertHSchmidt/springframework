@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 
 /**
  * Unit tests for the FlowVariableResolver class.

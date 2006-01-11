@@ -81,9 +81,9 @@ public interface RequestContext {
 	 * <p>
 	 * In addition, this context may be downcastable to a specific context type
 	 * for a specific client environment, such as a
-	 * {@link org.springframework.webflow.execution.servlet.ServletExternalContext}
+	 * {@link org.springframework.webflow.context.servlet.ServletExternalContext}
 	 * for servlets or a
-	 * {@link org.springframework.webflow.execution.servlet.PortletExternalContext}
+	 * {@link org.springframework.webflow.context.servlet.PortletExternalContext}
 	 * for portlets. Such downcasting will give you full access to a native
 	 * HttpServletRequest, for example. With that said, for portability reasons
 	 * you should avoid coupling your flow artifacts to a specific deployment
