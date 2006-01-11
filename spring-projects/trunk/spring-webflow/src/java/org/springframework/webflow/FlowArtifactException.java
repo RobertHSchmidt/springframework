@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
@@ -36,7 +35,7 @@ import org.springframework.util.StringUtils;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowArtifactException extends NestedRuntimeException {
+public class FlowArtifactException extends FlowException {
 
 	/**
 	 * The id of the artifact that could not be retrieved.

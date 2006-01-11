@@ -1,8 +1,8 @@
 package org.springframework.webflow.execution;
 
-import org.springframework.core.NestedRuntimeException;
+import org.springframework.webflow.FlowException;
 
-public abstract class FlowExecutionRepositoryException extends NestedRuntimeException {
+public abstract class FlowExecutionRepositoryException extends FlowException {
 	private transient FlowExecutionRepository repository;
 
 	public FlowExecutionRepositoryException(FlowExecutionRepository repository, String message) {

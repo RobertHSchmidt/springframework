@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.core.NestedRuntimeException;
 
 /**
  * Core base class for exceptions that occur in a flow state. Provides a
@@ -34,7 +33,7 @@ import org.springframework.core.NestedRuntimeException;
  * 
  * @author Keith Donald
  */
-public class StateException extends NestedRuntimeException {
+public class StateException extends FlowException {
 	
 	/**
 	 * The state where the exception occured.
