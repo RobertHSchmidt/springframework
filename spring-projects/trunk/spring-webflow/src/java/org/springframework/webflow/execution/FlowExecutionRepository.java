@@ -35,7 +35,7 @@ public interface FlowExecutionRepository {
 	 * into a new flow execution continuation to be associated with an existing
 	 * user conversation managed in this repository. The returned key consists
 	 * of the provided conversationId provided and a new, unique continuationId.
-	 * @return the continuation ket
+	 * @return the continuation key
 	 * @throws FlowExecutionStorageException a problem occured generating the
 	 * key
 	 */
@@ -46,12 +46,13 @@ public interface FlowExecutionRepository {
 	 * Return the <code>FlowExecution</code> indexed by the provided
 	 * continuation key. This flow execution represents the state of a user
 	 * conversation at a point in time relavent to the user.
-	 * @param key the continuation key
+	 * @param continuationKey the continuation key
 	 * @return the flow execution
 	 * @throws FlowExecutionStorageException if no flow execution was indexed
 	 * with the key provided
 	 */
-	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) throws FlowExecutionRepositoryException;
+	public FlowExecution getFlowExecution(FlowExecutionContinuationKey continuationKey)
+			throws FlowExecutionRepositoryException;
 
 	/**
 	 * Place the provided <code>FlowExecution</code> in this repository,
@@ -61,12 +62,12 @@ public interface FlowExecutionRepository {
 	 * conversation will be created and tracked. If this flow execution
 	 * represents a change in the state of an existing, still-ongoing
 	 * conversation, a continuation will be created and tracked.
-	 * @param key the key
+	 * @param continuationKey the continuation key
 	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionStorageException the flow execution could not be
 	 * stored
 	 */
-	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution)
+	public void putFlowExecution(FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution)
 			throws FlowExecutionRepositoryException;
 
 	/**

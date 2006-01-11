@@ -29,9 +29,9 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecutionListener;
-import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.FlowExecutionManagerImpl;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.FlowExecutionManager.ConditionalFlowExecutionListenerHolder;
+import org.springframework.webflow.execution.FlowExecutionManagerImpl.ConditionalFlowExecutionListenerHolder;
 import org.springframework.webflow.struts.FlowAction.StrutsExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -47,9 +47,9 @@ public class FlowActionTests extends TestCase {
 
 	private ActionForm actionForm;
 
-	private FlowExecutionManager validViewSelectionFlowExecutionManager;
+	private FlowExecutionManagerImpl validViewSelectionFlowExecutionManager;
 
-	private FlowExecutionManager nullViewSelectionFlowExecutionManager;
+	private FlowExecutionManagerImpl nullViewSelectionFlowExecutionManager;
 
 	private ActionMapping nullForwardActionMapping;
 
@@ -68,12 +68,12 @@ public class FlowActionTests extends TestCase {
 			}
 		};
 		viewSelection = new ViewSelection("SomeView", "SomeKey", "SomeValue");
-		validViewSelectionFlowExecutionManager = new FlowExecutionManager(flowLocator) {
+		validViewSelectionFlowExecutionManager = new FlowExecutionManagerImpl(flowLocator) {
 			public ViewSelection onEvent(ExternalContext context) {
 				return viewSelection;
 			}
 		};
-		nullViewSelectionFlowExecutionManager = new FlowExecutionManager(flowLocator) {
+		nullViewSelectionFlowExecutionManager = new FlowExecutionManagerImpl(flowLocator) {
 			public ViewSelection onEvent(ExternalContext context) {
 				return null;
 			}

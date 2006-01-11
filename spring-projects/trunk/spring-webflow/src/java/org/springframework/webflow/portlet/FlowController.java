@@ -20,16 +20,17 @@ import javax.portlet.ActionResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
-import org.springframework.util.Assert;
+import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
-import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
-import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.FlowExecutionManagerImpl;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.portlet.PortletExternalContext;
+import org.springframework.webflow.execution.support.FlowExecutionManagerParameterExtractor;
+import org.springframework.webflow.execution.support.ParameterizedFlowControllerHelper;
 
 /**
  * Point of integration between Spring Portlet MVC and Spring Web Flow: a
@@ -44,11 +45,11 @@ import org.springframework.webflow.execution.portlet.PortletExternalContext;
  * application. Specifically:
  * <ul>
  * <li>To have this controller launch a new flow execution (conversation), have
- * the client send a {@link FlowExecutionManager#getFlowIdParameterName()}
+ * the client send a {@link FlowExecutionManagerParameterExtractor#getFlowIdParameterName()}
  * request parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
- * {@link FlowExecutionManager#getFlowExecutionIdParameterName()} request
+ * {@link FlowExecutionManagerParameterExtractor#getFlowExecutionIdParameterName()} request
  * parameter identifying the conversation to participate in.
  * </ul>
  * <p>
@@ -67,7 +68,7 @@ import org.springframework.webflow.execution.portlet.PortletExternalContext;
  *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.portlet.FlowController&quot;&gt;
  *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
  *     &lt;/bean&gt;
- *                      
+ *                           
  *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
  *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
  *         &lt;property name=&quot;flowLocations&quot;&gt;
@@ -99,14 +100,19 @@ public class FlowController extends AbstractController {
 	private FlowExecutionManager flowExecutionManager;
 
 	/**
+	 * Delegate for extract flow execution manager parameters.
+	 */
+	private FlowExecutionManagerParameterExtractor parameterExtractor;
+
+	/**
 	 * Creates a new FlowController that initially relies on a default
-	 * {@link org.springframework.webflow.execution.FlowExecutionManager}
+	 * {@link org.springframework.webflow.execution.FlowExecutionManagerImpl}
 	 * implementation that uses the provided flow locator to access flow
 	 * definitions at runtime.
 	 */
 	public FlowController(FlowLocator flowLocator) {
 		initDefaults();
-		setFlowExecutionManager(new FlowExecutionManager(flowLocator));
+		setFlowExecutionManager(new FlowExecutionManagerImpl(flowLocator));
 	}
 
 	/**
@@ -134,17 +140,33 @@ public class FlowController extends AbstractController {
 	 * Returns the flow execution manager used by this controller.
 	 * @return the HTTP flow execution manager
 	 */
-	protected FlowExecutionManager getFlowExecutionManager() {
+	public FlowExecutionManager getFlowExecutionManager() {
 		return flowExecutionManager;
 	}
 
 	/**
 	 * Configures the flow execution manager implementation to use.
-	 * @param manager the flow execution manager
+	 * @param flowExecutionManager the flow execution manager
 	 */
-	public void setFlowExecutionManager(FlowExecutionManager manager) {
-		Assert.notNull(manager, "The flow execution manager to dispatch requests to is required");
-		this.flowExecutionManager = manager;
+	public void setFlowExecutionManager(FlowExecutionManager flowExecutionManager) {
+		this.flowExecutionManager = flowExecutionManager;
+	}
+
+	/**
+	 * Returns the flow execution manager parameter extractor used by this
+	 * controller.
+	 * @return the parameter extractor
+	 */
+	public FlowExecutionManagerParameterExtractor getParameterExtractor() {
+		return parameterExtractor;
+	}
+
+	/**
+	 * Sets the flow execution manager parameter extractor to use.
+	 * @param parameterExtractor the parameter extractor
+	 */
+	public void setParameterExtractor(FlowExecutionManagerParameterExtractor parameterExtractor) {
+		this.parameterExtractor = parameterExtractor;
 	}
 
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
@@ -152,8 +174,7 @@ public class FlowController extends AbstractController {
 			ViewSelection selectedView = (ViewSelection)request.getPortletSession().getAttribute(
 					VIEW_SELECTION_ATTRIBUTE_NAME);
 			if (selectedView == null) {
-				ExternalContext context = new PortletExternalContext(request, response);
-				selectedView = getFlowExecutionManager().onEvent(context);
+				selectedView = createControllerHelper().handleFlowRequest(new PortletExternalContext(request, response));
 			}
 			// convert view to a renderable portlet mvc "model and view"
 			return toModelAndView(selectedView);
@@ -164,11 +185,20 @@ public class FlowController extends AbstractController {
 	}
 
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
-		ExternalContext context = new PortletExternalContext(request, response);
 		// delegate to the flow execution manager to process the request
-		ViewSelection selectedView = getFlowExecutionManager().onEvent(context);
+		ViewSelection selectedView = createControllerHelper().handleFlowRequest(
+				new PortletExternalContext(request, response));
 		// expose selected view in session for access during render phase
 		request.getPortletSession().setAttribute(VIEW_SELECTION_ATTRIBUTE_NAME, selectedView);
+	}
+
+	/**
+	 * Factory method that creates a new helper for processing a request into
+	 * this flow controller.
+	 * @return the controller helper
+	 */
+	protected ParameterizedFlowControllerHelper createControllerHelper() {
+		return new ParameterizedFlowControllerHelper(getFlowExecutionManager(), getParameterExtractor());
 	}
 
 	/**

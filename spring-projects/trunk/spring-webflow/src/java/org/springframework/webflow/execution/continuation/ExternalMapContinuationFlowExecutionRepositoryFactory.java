@@ -10,7 +10,7 @@ import org.springframework.webflow.execution.ExternalMapFlowExecutionRepositoryF
  * <p>
  * This is a convenience implementation that makes it easy to use a server-side
  * continuation-based flow execution storage strategy with a
- * {@link org.springframework.webflow.execution.FlowExecutionManager}.
+ * {@link org.springframework.webflow.execution.FlowExecutionManagerImpl}.
  * 
  * @see ContinuationFlowExecutionRepositoryCreator
  * 

@@ -32,13 +32,13 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionContinuationKey;
-import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.FlowExecutionManagerImpl;
 import org.springframework.webflow.execution.FlowExecutionRepository;
 import org.springframework.webflow.execution.FlowLocator;
 
 /**
  * A JSF-specific subclass of
- * {@link org.springframework.webflow.execution.FlowExecutionManager} which is
+ * {@link org.springframework.webflow.execution.FlowExecutionManagerImpl} which is
  * delegated to by Web Flow's
  * {@link org.springframework.webflow.jsf.FlowNavigationHandler} and
  * {@link org.springframework.webflow.jsf.FlowPhaseListener}. The latter
@@ -51,7 +51,7 @@ import org.springframework.webflow.execution.FlowLocator;
  * @author Craig McClanahan
  * @author Keith Donald
  */
-public class JsfFlowExecutionManager extends FlowExecutionManager {
+public class JsfFlowExecutionManager extends FlowExecutionManagerImpl {
 
 	/**
 	 * Bean name under which we will find the configured instance of the
@@ -149,7 +149,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	 * algorithm used to makes this determination matches the determination that
 	 * will be made by the <code>FlowExecutionManager</code> that is being
 	 * used. The default implementation looks for a request parameter named by
-	 * {@link org.springframework.webflow.execution.FlowExecutionManager}.
+	 * {@link org.springframework.webflow.execution.FlowExecutionManagerImpl}.
 	 * @param context <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
@@ -158,7 +158,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManager {
 	public boolean isFlowExecutionParticipationRequest(FacesContext context, String fromAction, String outcome) {
 		boolean executionBound = FlowExecutionHolder.getFlowExecution() != null ? true : false;
 		boolean flowExecutionIdPresent = context.getExternalContext().getRequestParameterMap().containsKey(
-				FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER);
+				FlowExecutionManager.FLOW_EXFlowExecutionManagerImpl);
 		// assert an invariant, just to be safe
 		Assert.isTrue(executionBound == flowExecutionIdPresent,
 				"The flow execution bound to the current thread context must match "

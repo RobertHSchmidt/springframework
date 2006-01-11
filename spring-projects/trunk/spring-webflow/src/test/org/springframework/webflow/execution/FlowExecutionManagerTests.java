@@ -26,7 +26,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		}
 	}
 
-	private FlowExecutionManager manager = new FlowExecutionManager(new SimpleFlowLocator());
+	private FlowExecutionManagerImpl manager = new FlowExecutionManagerImpl(new SimpleFlowLocator());
 
 	private LocalMapLocator mapLocator = new LocalMapLocator();
 
@@ -39,11 +39,11 @@ public class FlowExecutionManagerTests extends TestCase {
 	public void testLaunchNewFlow() {
 		Map input = new HashMap(1);
 		input.put(manager.getFlowIdParameterName(), "simpleFlow");
-		ViewSelection view = manager.onEvent(new MockExternalContext(input));
-		assertNotNull(view.getModel().get(FlowExecutionManager.FLOW_EXECUTION_ID_ATTRIBUTE));
-		assertNotNull(view.getModel().get(FlowExecutionManager.CURRENT_STATE_ID_ATTRIBUTE));
-		assertEquals(view.getModel().get(FlowExecutionManager.CURRENT_STATE_ID_ATTRIBUTE), "view");
-		assertNotNull(view.getModel().get(FlowExecutionManager.FLOW_EXECUTION_CONTEXT_ATTRIBUTE));
+		ViewSelection view = manager.handleFlowRequest(new MockExternalContext(input));
+		assertNotNull(view.getModel().get(FlowExecutionManagerImpl.FLOW_EXECUTION_ID_ATTRIBUTE));
+		assertNotNull(view.getModel().get(FlowExecutionManager.CURRENFlowExecutionManagerImpl));
+		assertEquals(view.getModel().get(FlowExecutionManager.CURRENFlowExecutionManagerImpl), "view");
+		assertNotNull(view.getModel().get(FlowExecutionManagerImpl.FLOW_EXECUTION_CONTEXT_ATTRIBUTE));
 		assertEquals("Wrong view name", "view", view.getViewName());
 	}
 
@@ -51,7 +51,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		Map input = new HashMap(1);
 		input.put(manager.getFlowIdParameterName(), "nonexistantFlow");
 		try {
-			manager.onEvent(new MockExternalContext(input));
+			manager.handleFlowRequest(new MockExternalContext(input));
 			fail("Should have thrown no such flow exception");
 		}
 		catch (FlowArtifactException e) {
@@ -61,23 +61,23 @@ public class FlowExecutionManagerTests extends TestCase {
 	public void testParticipateInExistingFlowExecution() {
 		Map input = new HashMap(2);
 		input.put(manager.getFlowIdParameterName(), "simpleFlow");
-		ViewSelection view = manager.onEvent(new MockExternalContext(input));
+		ViewSelection view = manager.handleFlowRequest(new MockExternalContext(input));
 		input.put(manager.getFlowExecutionIdParameterName(), view.getModel().get(
-				FlowExecutionManager.FLOW_EXECUTION_ID_ATTRIBUTE));
+				FlowExecutionManagerImpl.FLOW_EXECUTION_ID_ATTRIBUTE));
 		input.put(manager.getEventIdParameterName(), "submit");
-		view = manager.onEvent(new MockExternalContext(input));
+		view = manager.handleFlowRequest(new MockExternalContext(input));
 		assertEquals("Wrong view name", "confirm", view.getViewName());
 		assertTrue("Should have been a redirect", view.isRedirect());
-		assertNull("Flow has ended", view.getModel().get(FlowExecutionManager.FLOW_EXECUTION_ID_ATTRIBUTE));
+		assertNull("Flow has ended", view.getModel().get(FlowExecutionManagerImpl.FLOW_EXECUTION_ID_ATTRIBUTE));
 	}
 
 	public void testParticipateInExistingFlowExecutionNoSuchFlowExecution() {
 		Map input = new HashMap(2);
 		input.put(manager.getFlowIdParameterName(), "simpleFlow");
-		manager.onEvent(new MockExternalContext(input));
-		input.put(FlowExecutionManager.FLOW_EXECUTION_ID_PARAMETER, "_snot_ccorrect");
+		manager.handleFlowRequest(new MockExternalContext(input));
+		input.put(FlowExecutionManager.FLOW_EXFlowExecutionManagerImpl, "_snot_ccorrect");
 		try {
-			manager.onEvent(new MockExternalContext(input));
+			manager.handleFlowRequest(new MockExternalContext(input));
 			fail("should have thrown no such flow execution exception");
 		}
 		catch (NoSuchConversationException e) {
@@ -89,8 +89,8 @@ public class FlowExecutionManagerTests extends TestCase {
 		SimpleFlowExecutionListener listener = new SimpleFlowExecutionListener();
 		manager.addListener(listener);
 		Map input = new HashMap(1);
-		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		manager.onEvent(new MockExternalContext(input));
+		input.put(FlowExecutionManagFlowExecutionManagerImpl, "simpleFlow");
+		manager.handleFlowRequest(new MockExternalContext(input));
 		assertTrue("Listener not invoked", listener.invoked);
 	}
 
@@ -107,8 +107,8 @@ public class FlowExecutionManagerTests extends TestCase {
 		listenerMap.put(listeners, FlowExecutionListenerCriteriaFactory.flow("not this one!"));
 		manager.setListenerMap(listenerMap);
 		Map input = new HashMap(1);
-		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		manager.onEvent(new MockExternalContext(input));
+		input.put(FlowExecutionManagFlowExecutionManagerImpl, "simpleFlow");
+		manager.handleFlowRequest(new MockExternalContext(input));
 		assertTrue("Listener not invoked", listener1.invoked);
 		assertFalse("Listener invoked", listener2.invoked);
 		assertFalse("Listener invoked", listener3.invoked);
@@ -116,10 +116,10 @@ public class FlowExecutionManagerTests extends TestCase {
 
 	public void testFlowExecutionListenerDoesNotApply() {
 		SimpleFlowExecutionListener listener = new SimpleFlowExecutionListener();
-		manager.addListenerCriteria(listener, FlowExecutionListenerCriteriaFactory.flow("not this one"));
+		manager.addListener(listener, FlowExecutionListenerCriteriaFactory.flow("not this one"));
 		Map input = new HashMap(1);
-		input.put(FlowExecutionManager.FLOW_ID_PARAMETER, "simpleFlow");
-		manager.onEvent(new MockExternalContext(input));
+		input.put(FlowExecutionManagFlowExecutionManagerImpl, "simpleFlow");
+		manager.handleFlowRequest(new MockExternalContext(input));
 		assertFalse("Listener invoked", listener.invoked);
 	}
 
@@ -127,7 +127,7 @@ public class FlowExecutionManagerTests extends TestCase {
 		GenericApplicationContext ac = new GenericApplicationContext();
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(ac);
 		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
-		FlowExecutionManager manager = (FlowExecutionManager)ac.getBean("flowExecutionManager");
+		FlowExecutionManagerImpl manager = (FlowExecutionManagerImpl)ac.getBean("flowExecutionManager");
 		assertEquals("Wrong number of listeners", 1, manager.getListenerSet().size());
 		assertTrue(manager.getFlowLocator() instanceof SimpleFlowLocator);
 	}

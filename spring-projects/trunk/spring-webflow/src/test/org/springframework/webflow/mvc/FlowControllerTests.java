@@ -25,7 +25,7 @@ import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.FlowExecutionManagerImpl;
 import org.springframework.webflow.execution.FlowLocator;
 
 /**
@@ -70,7 +70,7 @@ public class FlowControllerTests extends TestCase {
 
 	public void testInitDefaultsNullFlowExecutionManager() {
 		try {
-			new FlowController((FlowExecutionManager)null);
+			new FlowController((FlowExecutionManagerImpl)null);
 			fail("IllegalArgumentException expected");
 		}
 		catch (IllegalArgumentException expected) {

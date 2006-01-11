@@ -60,7 +60,7 @@ import org.springframework.webflow.ViewSelection;
  * flow execution to end (by the root flow reaching an EndState). At that time,
  * this object is removed from storage and discarded.
  * 
- * @see org.springframework.webflow.execution.FlowExecutionManager
+ * @see org.springframework.webflow.execution.FlowExecutionManagerImpl
  * @see org.springframework.webflow.execution.FlowExecutionRepository
  * @see org.springframework.webflow.Flow
  * @see org.springframework.webflow.State
@@ -76,6 +76,7 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * Start this flow execution, transitioning it to the root flow's start
 	 * state and returning the starting model and view selection. Typically
 	 * called by a flow execution manager, but also from test code.
+	 * @param context the context in which the event occured
 	 * @return the starting view selection, which requests that the calling
 	 * client render a view with configured model data (so the user may
 	 * participate in this flow execution)
@@ -83,21 +84,21 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * flow execution during request processing
 	 * @see FlowExecutionContext#getRootFlow()
 	 */
-	public ViewSelection start(ExternalContext externalContext) throws StateException;
+	public ViewSelection start(ExternalContext context) throws StateException;
 
 	/**
 	 * Signal an occurence of the specified user event in the current state of
 	 * this executing flow. The event will be processed in full and control will
 	 * be returned once event processing is complete.
 	 * @param eventId the identifier of the user event that occured
-	 * @param externalContext the context in which the event occured
+	 * @param context the context in which the event occured
 	 * @return the next view selection to display for this flow execution, which
 	 * requests that the calling client render a view with configured model data
 	 * (so the user may participate in this flow execution)
 	 * @throws StateException if an exception was thrown within a state of the
 	 * resumed flow execution during event processing
 	 */
-	public ViewSelection signalEvent(String eventId, ExternalContext externalContext) throws StateException;
+	public ViewSelection signalEvent(String eventId, ExternalContext context) throws StateException;
 
 	/**
 	 * Rehydrate this flow execution after deserialization. This is called after

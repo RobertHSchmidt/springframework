@@ -32,8 +32,13 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
+import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
+import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory;
 import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.FlowExecutionManagerImpl;
 import org.springframework.webflow.execution.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.support.FlowExecutionManagerParameterExtractor;
+import org.springframework.webflow.execution.support.ParameterizedFlowControllerHelper;
 
 /**
  * Point of integration between Struts and Spring Web Flow: a Struts Action that
@@ -47,11 +52,11 @@ import org.springframework.webflow.execution.servlet.ServletExternalContext;
  * processed.
  * <p>
  * <li>To have this controller launch a new flow execution (conversation), have
- * the client send a {@link FlowExecutionManager#getFlowIdParameterName()}
+ * the client send a {@link FlowExecutionManagerParameterExtractor#getFlowIdParameterName()}
  * request parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
- * {@link FlowExecutionManager#getFlowExecutionIdParameterName()} request
+ * {@link FlowExecutionManagerParameterExtractor#getFlowExecutionIdParameterName()} request
  * parameter identifying the conversation to participate in.
  * <p>
  * On each request received by this action, a {@link StrutsExternalContext}
@@ -116,16 +121,27 @@ public class FlowAction extends ActionSupport {
 	public static final String FLOW_EXECUTION_MANAGER_BEAN_NAME = "flowExecutionManager";
 
 	/**
+	 * The flow execution manager parameter extractor will be retreived from the application context
+	 * using this bean name if no extractor is explicitly set.
+	 */
+	public static final String PARAMETER_EXTRACTOR_BEAN_NAME = "flowExecutionManagerParameterExtractor";
+
+	/**
 	 * The manager responsible for launching and signaling struts-originating
 	 * events in flow executions.
 	 */
 	private FlowExecutionManager flowExecutionManager;
 
 	/**
+	 * Delegate for extract flow execution manager parameters.
+	 */
+	private FlowExecutionManagerParameterExtractor parameterExtractor;
+
+	/**
 	 * Returns the flow execution manager used by this controller.
 	 * @return the flow execution manager
 	 */
-	protected FlowExecutionManager getFlowExecutionManager() {
+	public FlowExecutionManager getFlowExecutionManager() {
 		return flowExecutionManager;
 	}
 
@@ -136,21 +152,51 @@ public class FlowAction extends ActionSupport {
 		this.flowExecutionManager = flowExecutionManager;
 	}
 
+	/**
+	 * Returns the flow execution manager parameter extractor used by this
+	 * controller.
+	 * @return the parameter extractor
+	 */
+	public FlowExecutionManagerParameterExtractor getParameterExtractor() {
+		return parameterExtractor;
+	}
+
+	/**
+	 * Sets the flow execution manager parameter extractor to use.
+	 * @param parameterExtractor the parameter extractor
+	 */
+	public void setParameterExtractor(FlowExecutionManagerParameterExtractor parameterExtractor) {
+		this.parameterExtractor = parameterExtractor;
+	}
+	
 	protected void onInit() {
 		if (getFlowExecutionManager() == null) {
 			setFlowExecutionManager((FlowExecutionManager)getWebApplicationContext().getBean(
 					FLOW_EXECUTION_MANAGER_BEAN_NAME, FlowExecutionManager.class));
 		}
-		getFlowExecutionManager().addListener(new ActionFormAdapter());
+		if (getParameterExtractor() == null) {
+			setParameterExtractor((FlowExecutionManagerParameterExtractor)getWebApplicationContext().getBean(
+					PARAMETER_EXTRACTOR_BEAN_NAME, FlowExecutionManagerParameterExtractor.class));
+		}
+		getFlowExecutionManager().addListener(new ActionFormAdapter(), FlowExecutionListenerCriteriaFactory.allFlows());
 	}
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		ExternalContext context = new StrutsExternalContext(mapping, form, request, response);
-		ViewSelection viewDescriptor = getFlowExecutionManager().onEvent(context);
-		return toActionForward(viewDescriptor, mapping, request);
+		ViewSelection selectedView = createControllerHelper().handleFlowRequest(context);
+		return toActionForward(selectedView, mapping, request);
 	}
 
+	/**
+	 * Factory method that creates a new helper for processing a request into
+	 * this flow controller.
+	 * @return the controller helper
+	 */
+	protected ParameterizedFlowControllerHelper createControllerHelper() {
+		return new ParameterizedFlowControllerHelper(getFlowExecutionManager(), getParameterExtractor());
+	}
+	
 	/**
 	 * Return a Struts ActionForward given a ViewSelection. Adds all attributes
 	 * from the ViewSelection as request attributes.

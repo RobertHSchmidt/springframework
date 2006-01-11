@@ -24,7 +24,7 @@ import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.execution.FlowExecutionManager;
+import org.springframework.webflow.execution.FlowExecutionManagerImpl;
 import org.springframework.webflow.execution.FlowLocator;
 
 /**
@@ -55,7 +55,7 @@ public class FlowControllerTests extends TestCase {
 	}
 
 	public void testInit() throws Exception {
-		FlowExecutionManager flowExecutionManager = new FlowExecutionManager(flowLocatorMock);
+		FlowExecutionManagerImpl flowExecutionManager = new FlowExecutionManagerImpl(flowLocatorMock);
 		FlowController localTested = new FlowController(flowExecutionManager);
 		assertEquals("Cache,", 0, localTested.getCacheSeconds());
 	}
@@ -69,7 +69,7 @@ public class FlowControllerTests extends TestCase {
 		MockActionRequest mockActionRequest = new MockActionRequest();
 		mockActionRequest.setSession(mockPortletSession);
 
-		FlowExecutionManager flowExecutionManager = new FlowExecutionManager(flowLocatorMock) {
+		FlowExecutionManagerImpl flowExecutionManager = new FlowExecutionManagerImpl(flowLocatorMock) {
 			public ViewSelection onEvent(ExternalContext context) {
 				return viewSelection;
 			}
@@ -91,7 +91,7 @@ public class FlowControllerTests extends TestCase {
 		MockRenderRequest mockRenderRequest = new MockRenderRequest();
 		mockRenderRequest.setSession(mockPortletSession);
 
-		FlowExecutionManager flowExecutionManager = new FlowExecutionManager(flowLocatorMock) {
+		FlowExecutionManagerImpl flowExecutionManager = new FlowExecutionManagerImpl(flowLocatorMock) {
 			public ViewSelection onEvent(ExternalContext context) {
 				return viewSelection;
 			}
@@ -113,7 +113,7 @@ public class FlowControllerTests extends TestCase {
 		MockRenderRequest mockRenderRequest = new MockRenderRequest();
 		mockRenderRequest.setSession(mockPortletSession);
 
-		FlowExecutionManager flowExecutionManager = new FlowExecutionManager(flowLocatorMock) {
+		FlowExecutionManagerImpl flowExecutionManager = new FlowExecutionManagerImpl(flowLocatorMock) {
 			public ViewSelection onEvent(ExternalContext context) {
 				return viewSelection;
 			}
