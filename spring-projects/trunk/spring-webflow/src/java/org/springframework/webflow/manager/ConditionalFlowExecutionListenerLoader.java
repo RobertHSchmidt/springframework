@@ -37,11 +37,12 @@ import org.springframework.webflow.execution.TextToFlowExecutionListenerCriteria
 
 /**
  * Default implementation of a listener loader that stores listeners in a
- * set-based data structure.
+ * set-based data structure and allows for specificaiton of which listeners
+ * should apply to which flow definitions.
  * 
  * @author Keith Donald
  */
-public class DefaultFlowExecutionListenerLoader implements FlowExecutionListenerLoader {
+public class ConditionalFlowExecutionListenerLoader implements FlowExecutionListenerLoader {
 
 	/**
 	 * Logger, usable by subclasses.
@@ -87,8 +88,8 @@ public class DefaultFlowExecutionListenerLoader implements FlowExecutionListener
 	}
 
 	/**
-	 * Set the flow execution listener that will be notified of managed flow
-	 * executions.
+	 * Set the flow execution listener that will be notified of <i>all</i>
+	 * managed flow executions.
 	 */
 	public void setListener(FlowExecutionListener listener) {
 		setListeners(Collections.singleton(listener));
@@ -96,15 +97,15 @@ public class DefaultFlowExecutionListenerLoader implements FlowExecutionListener
 
 	/**
 	 * Set the flow execution listener that will be notified of managed flow
-	 * executions for the flows that match given criteria.
+	 * executions for the flows that match the given criteria.
 	 */
 	public void setListenerCriteria(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
 		setListenersCriteria(Collections.singleton(listener), criteria);
 	}
 
 	/**
-	 * Sets the flow execution listeners that will be notified of managed flow
-	 * executions.
+	 * Sets the flow execution listeners that will be notified of <i>all</i>
+	 * managed flow executions.
 	 */
 	public void setListeners(Collection listeners) {
 		setListenersCriteria(listeners, FlowExecutionListenerCriteriaFactory.allFlows());
@@ -112,7 +113,7 @@ public class DefaultFlowExecutionListenerLoader implements FlowExecutionListener
 
 	/**
 	 * Sets the flow execution listeners that will be notified of managed flow
-	 * executions for flows that match given criteria.
+	 * executions for flows that match the given criteria.
 	 */
 	public void setListenersCriteria(Collection listeners, FlowExecutionListenerCriteria criteria) {
 		if (logger.isDebugEnabled()) {
