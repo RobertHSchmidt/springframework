@@ -129,7 +129,7 @@ public class FlowAction extends ActionSupport {
 	/**
 	 * Delegate for extract flow execution manager parameters.
 	 */
-	private FlowExecutionManagerParameterExtractor parameterExtractor;
+	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowExecutionManagerParameterExtractor();
 
 	/**
 	 * Returns the flow execution manager used by this controller.
@@ -167,10 +167,6 @@ public class FlowAction extends ActionSupport {
 		if (getFlowExecutionManager() == null) {
 			setFlowExecutionManager((FlowExecutionManager)getWebApplicationContext().getBean(
 					FLOW_EXECUTION_MANAGER_BEAN_NAME, FlowExecutionManager.class));
-		}
-		if (getParameterExtractor() == null) {
-			setParameterExtractor((FlowExecutionManagerParameterExtractor)getWebApplicationContext().getBean(
-					PARAMETER_EXTRACTOR_BEAN_NAME, FlowExecutionManagerParameterExtractor.class));
 		}
 	}
 
