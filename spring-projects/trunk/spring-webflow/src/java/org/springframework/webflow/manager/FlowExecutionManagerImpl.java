@@ -16,19 +16,11 @@
 package org.springframework.webflow.manager;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.format.Formatter;
-import org.springframework.core.CollectionFactory;
-import org.springframework.core.style.StylerUtils;
-import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowException;
@@ -37,10 +29,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
-import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory;
-import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.TextToFlowExecutionListenerCriteria;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.repository.ExternalMapFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
@@ -56,8 +45,8 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
  * event). This object is a facade or entry point into the flow execution
  * subsystem, and makes the overall subsystem easier to use.
  * <p>
- * The {@link #handleFlowRequest(ExternalContext)} method is the central facade operation
- * and implements the following algorithm:
+ * The {@link #handleFlowRequest(ExternalContext)} method is the central facade
+ * operation and implements the following algorithm:
  * <ol>
  * <li>Search for a flow execution id in the external context (in a request
  * parameter named {@link #getFlowExecutionIdParameterName()).</li>
@@ -118,7 +107,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
  * @author Keith Donald
  * @author Colin Sampaleanu
  */
-public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecutionListenerLoader {
+public class FlowExecutionManagerImpl implements FlowExecutionManager {
 
 	/**
 	 * The flow context itself will be exposed to the view in a model attribute
@@ -162,7 +151,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	 * criteria objects. The criteria list determines the conditions in which a
 	 * single flow execution listener applies.
 	 */
-	private Set listenerSet = CollectionFactory.createLinkedSetIfPossible(6);
+	private DefaultFlowExecutionListenerLoader listenerLoader = new DefaultFlowExecutionListenerLoader();
 
 	/**
 	 * Create a new flow execution manager using the specified flow locator for
@@ -213,42 +202,11 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	}
 
 	/**
-	 * Returns the array of flow execution listeners for specified flow.
-	 * @param flow the flow definition associated with the execution to be
-	 * listened to
-	 * @return the flow execution listeners
-	 */
-	public FlowExecutionListener[] getListeners(Flow flow) {
-		Assert.notNull(flow, "The Flow to load listeners for cannot be null");
-		List listenersToAttach = new LinkedList();
-		for (Iterator it = listenerSet.iterator(); it.hasNext();) {
-			ConditionalFlowExecutionListenerHolder listenerHolder = (ConditionalFlowExecutionListenerHolder)it.next();
-			if (listenerHolder.listenerAppliesTo(flow)) {
-				listenersToAttach.add(listenerHolder.getListener());
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Loaded [" + listenersToAttach.size() + "] of possible " + listenerSet.size()
-					+ " listeners to this execution request for flow '" + flow.getId()
-					+ "', the listeners to attach are " + StylerUtils.style(listenersToAttach));
-		}
-		return (FlowExecutionListener[])listenersToAttach.toArray(new FlowExecutionListener[listenersToAttach.size()]);
-	}
-
-	/**
-	 * Returns a unmodifiable map of the configured flow execution listeners and
-	 * the criteria in which those listeners apply.
-	 */
-	public Set getListenerSet() {
-		return Collections.unmodifiableSet(listenerSet);
-	}
-
-	/**
 	 * Set the flow execution listener that will be notified of managed flow
 	 * executions.
 	 */
 	public void setListener(FlowExecutionListener listener) {
-		setListeners(Collections.singleton(listener));
+		listenerLoader.setListener(listener);
 	}
 
 	/**
@@ -256,7 +214,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	 * executions for the flows that match given criteria.
 	 */
 	public void setListenerCriteria(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
-		setListenersCriteria(Collections.singleton(listener), criteria);
+		listenerLoader.setListenerCriteria(listener, criteria);
 	}
 
 	/**
@@ -264,7 +222,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	 * executions.
 	 */
 	public void setListeners(Collection listeners) {
-		setListenersCriteria(listeners, FlowExecutionListenerCriteriaFactory.allFlows());
+		listenerLoader.setListeners(listeners);
 	}
 
 	/**
@@ -272,16 +230,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	 * executions for flows that match given criteria.
 	 */
 	public void setListenersCriteria(Collection listeners, FlowExecutionListenerCriteria criteria) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Setting listeners " + listeners + " with criteria " + criteria);
-		}
-		for (Iterator it = listeners.iterator(); it.hasNext();) {
-			FlowExecutionListener listener = (FlowExecutionListener)it.next();
-			if (containsListener(listener)) {
-				removeListener(listener);
-			}
-			addListener(listener, criteria);
-		}
+		listenerLoader.setListenersCriteria(listeners, criteria);
 	}
 
 	/**
@@ -292,32 +241,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	 * references to <code>FlowExecutionListenerCriteria</code> objects.
 	 */
 	public void setListenerMap(Map listenerCriteriaMap) {
-		Iterator it = listenerCriteriaMap.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry)it.next();
-			FlowExecutionListenerCriteria criteria;
-			if (entry.getValue() instanceof FlowExecutionListenerCriteria) {
-				criteria = (FlowExecutionListenerCriteria)entry.getValue();
-			}
-			else {
-				criteria = convertEncodedListenerCriteria((String)entry.getValue());
-			}
-			if (entry.getKey() instanceof Collection) {
-				setListenersCriteria((Collection)entry.getKey(), criteria);
-			}
-			else {
-				setListenerCriteria((FlowExecutionListener)entry.getKey(), criteria);
-			}
-		}
-	}
-
-	/**
-	 * Helper that converts from text to a FlowExecutionListenerCriteria
-	 * @param encodedCriteria the encoded text
-	 * @return the criteria
-	 */
-	protected FlowExecutionListenerCriteria convertEncodedListenerCriteria(String encodedCriteria) {
-		return new TextToFlowExecutionListenerCriteria().convert(encodedCriteria);
+		listenerLoader.setListenerMap(listenerCriteriaMap);
 	}
 
 	/**
@@ -325,7 +249,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	 * @param listener the listener to add
 	 */
 	public void addListener(FlowExecutionListener listener) {
-		addListener(listener, FlowExecutionListenerCriteriaFactory.allFlows());
+		listenerLoader.addListener(listener);
 	}
 
 	/**
@@ -335,29 +259,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	 * @param criteria the listener criteria
 	 */
 	public void addListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Adding flow execution listener " + listener + " with criteria " + criteria);
-		}
-		ConditionalFlowExecutionListenerHolder conditional = getHolder(listener);
-		if (conditional == null) {
-			conditional = new ConditionalFlowExecutionListenerHolder(listener);
-			listenerSet.add(conditional);
-		}
-		if (criteria == null) {
-			criteria = FlowExecutionListenerCriteriaFactory.allFlows();
-		}
-		conditional.add(criteria);
-	}
-
-	protected ConditionalFlowExecutionListenerHolder getHolder(FlowExecutionListener listener) {
-		Iterator it = listenerSet.iterator();
-		while (it.hasNext()) {
-			ConditionalFlowExecutionListenerHolder next = (ConditionalFlowExecutionListenerHolder)it.next();
-			if (next.getListener().equals(listener)) {
-				return next;
-			}
-		}
-		return null;
+		listenerLoader.addListener(listener, criteria);
 	}
 
 	/**
@@ -366,7 +268,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	 * @return true if yes, false otherwise
 	 */
 	public boolean containsListener(FlowExecutionListener listener) {
-		return listenerSet.contains(listener);
+		return listenerLoader.containsListener(listener);
 	}
 
 	/**
@@ -374,7 +276,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	 * @param listener the listener
 	 */
 	public void removeListener(FlowExecutionListener listener) {
-		listenerSet.remove(listener);
+		listenerLoader.removeListener(listener);
 	}
 
 	/**
@@ -382,20 +284,19 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	 * @param listener the listener
 	 * @param criteria the criteria
 	 */
-	public void removeListenerCriteria(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
-		if (containsListener(listener)) {
-			ConditionalFlowExecutionListenerHolder listenerHolder = getHolder(listener);
-			listenerHolder.remove(criteria);
-			if (listenerHolder.isCriteriaSetEmpty()) {
-				removeListener(listener);
-			}
-		}
+	public void removeListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
+		listenerLoader.removeListenerCriteria(listener, criteria);
+	}
+
+	/**
+	 * Returns the listener loader.
+	 */
+	protected DefaultFlowExecutionListenerLoader getListenerLoader() {
+		return listenerLoader;
 	}
 
 	/**
 	 * Returns the continuation key formatting strategy.
-	 * 
-	 * @return the continuation key formatter
 	 */
 	public Formatter getContinuationKeyFormatter() {
 		return continuationKeyFormatter;
@@ -432,14 +333,15 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 	 * @return the created flow execution
 	 */
 	protected FlowExecution createFlowExecution(Flow flow) {
-		FlowExecution flowExecution = new FlowExecutionImpl(flow, getListeners(flow));
+		FlowExecution flowExecution = new FlowExecutionImpl(flow, listenerLoader.getListeners(flow));
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new flow execution for flow definition '" + flow.getId() + "'");
 		}
 		return flowExecution;
 	}
-	
-	public ViewSelection signalEvent(String eventId, String flowExecutionId, ExternalContext context) throws FlowException {
+
+	public ViewSelection signalEvent(String eventId, String flowExecutionId, ExternalContext context)
+			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionContinuationKey continuationKey = parseContinuationKey(flowExecutionId);
 		FlowExecution flowExecution = loadFlowExecution(repository, continuationKey);
@@ -448,12 +350,13 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 			continuationKey = repository.generateContinuationKey(flowExecution, continuationKey.getConversationId());
 			repository.putFlowExecution(continuationKey, flowExecution);
 			return prepareSelectedView(selectedView, continuationKey, flowExecution);
-		} else {
+		}
+		else {
 			repository.invalidateConversation(continuationKey.getConversationId());
 			return selectedView;
 		}
 	}
-	
+
 	/**
 	 * Load an existing FlowExecution based on data in the specified source
 	 * event.
@@ -466,13 +369,18 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 		// information about it
 		FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
 		// rehydrate the execution if neccessary (if it had been serialized out)
-		flowExecution.rehydrate(getFlowLocator(), this);
+		flowExecution.rehydrate(getFlowLocator(), getListenerLoader());
 		if (logger.isDebugEnabled()) {
 			logger.debug("Loaded existing flow execution from repository with id '" + continuationKey + "'");
 		}
 		return flowExecution;
 	}
 
+	/**
+	 * Helper to parse a flow execution continuation key from its string-encoding.
+	 * @param flowExecutionId the string encoded key
+	 * @return the parsed key
+	 */
 	protected FlowExecutionContinuationKey parseContinuationKey(String flowExecutionId) {
 		return (FlowExecutionContinuationKey)continuationKeyFormatter.parseValue(flowExecutionId,
 				FlowExecutionContinuationKey.class);
@@ -534,58 +442,5 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager, FlowExecu
 		// make the unique flow execution id and current state id
 		// available in the model as convenience to views
 		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
-	}
-
-	/**
-	 * A holder that holds a listener plus a set of criteria defining the flows
-	 * in which that listener applies.
-	 * @author Keith Donald
-	 */
-	public static final class ConditionalFlowExecutionListenerHolder {
-		private FlowExecutionListener listener;
-
-		private Set criteriaSet = CollectionFactory.createLinkedSetIfPossible(3);
-
-		public ConditionalFlowExecutionListenerHolder(FlowExecutionListener listener) {
-			this.listener = listener;
-		}
-
-		public FlowExecutionListener getListener() {
-			return listener;
-		}
-
-		public void add(FlowExecutionListenerCriteria criteria) {
-			criteriaSet.add(criteria);
-		}
-
-		public void remove(FlowExecutionListenerCriteria criteria) {
-			criteriaSet.remove(criteria);
-		}
-
-		public boolean isCriteriaSetEmpty() {
-			return criteriaSet.isEmpty();
-		}
-
-		public boolean equals(Object o) {
-			if (!(o instanceof ConditionalFlowExecutionListenerHolder)) {
-				return false;
-			}
-			return listener.equals(((ConditionalFlowExecutionListenerHolder)o).listener);
-		}
-
-		public int hashCode() {
-			return listener.hashCode();
-		}
-
-		public boolean listenerAppliesTo(Flow flow) {
-			Iterator it = criteriaSet.iterator();
-			while (it.hasNext()) {
-				FlowExecutionListenerCriteria criteria = (FlowExecutionListenerCriteria)it.next();
-				if (criteria.appliesTo(flow)) {
-					return true;
-				}
-			}
-			return false;
-		}
 	}
 }
