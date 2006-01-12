@@ -15,10 +15,23 @@
  */
 package org.springframework.webflow.manager.jsf;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.faces.application.NavigationHandler;
+import javax.faces.application.ViewHandler;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
 
 /**
  * An implementation of a JSF <code>NavigationHandler</code> that provides
@@ -58,10 +71,32 @@ import org.springframework.webflow.ViewSelection;
 public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
-	 * The {@link JsfFlowExecutionManager} instance to use, lazily instantiated
-	 * upon first use.
+	 * Logger, usable by subclasses.
 	 */
-	private JsfFlowExecutionManager flowExecutionManager;
+	protected final Log logger = LogFactory.getLog(getClass());
+
+	/**
+	 * Prefix on a logical outcome value that identifies a logical outcome as
+	 * the identifier for a web flow that should be entered.
+	 */
+	protected static final String FLOW_ID_PREFIX = "flowId:";
+
+	/**
+	 * The flow locator strategy for retrieving a flow definition using a flow
+	 * id provided by the client. Defaults to a bean factory based lookup
+	 * strategy.
+	 */
+	private FlowLocator flowLocator;
+
+	/**
+	 * A helper for extracting parameters needed by this flow navigation handler.
+	 */
+	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowExecutionManagerParameterExtractor();
+
+	/**
+	 * Resolves selected Web Flow view names to JSF view ids.
+	 */
+	private ViewIdResolver viewIdResolver = new DefaultViewIdResolver();
 
 	/**
 	 * The standard <code>NavigationHandler</code> implementation that we are
@@ -86,32 +121,128 @@ public class FlowNavigationHandler extends NavigationHandler {
 	 * retrieve the specified outcome (if any)
 	 * @param outcome The logical outcome returned by the specified action
 	 */
-	public void handleNavigation(FacesContext context, String fromAction, String outcome) {
-		if (getExecutionManager(context).isFlowLaunchRequest(context, fromAction, outcome)) {
-			ViewSelection nextView = getExecutionManager(context).launchFlowExecution(context, fromAction, outcome);
-			getExecutionManager(context).renderView(context, fromAction, outcome, nextView);
+	public void handleNavigation(FacesContext facesContext, String fromAction, String outcome) {
+		JsfExternalContext context = new JsfExternalContext(facesContext, fromAction, outcome);
+		FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
+		if (holder != null) {
+			// a flow execution has already been restored, signal an event in it
+			FlowExecution flowExecution = holder.getFlowExecution();
+			String eventId = parameterExtractor.extractEventId(context);
+			ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
+			renderView(selectedView, facesContext);
 		}
-		else if (getExecutionManager(context).isFlowExecutionParticipationRequest(context, fromAction, outcome)) {
-			ViewSelection nextView = getExecutionManager(context).resumeFlowExecution(context, fromAction, outcome);
-			getExecutionManager(context).renderView(context, fromAction, outcome, nextView);
+		else if (isFlowExecutionLaunchRequest(facesContext, fromAction, outcome)) {
+			// a request to launch a new flow execution has been initiated,
+			// start it
+			String flowId = parameterExtractor.extractFlowId(context);
+			FlowExecution flowExecution = createFlowExecution(getFlowLocator(facesContext).getFlow(flowId));
+			ViewSelection selectedView = flowExecution.start(context);
+			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecution), facesContext);
+			renderView(selectedView, facesContext);
 		}
 		else {
-			handlerDelegate.handleNavigation(context, fromAction, outcome);
+			// neither has happened, delegate to the standard navigation handler
+			handlerDelegate.handleNavigation(facesContext, fromAction, outcome);
 		}
 	}
 
 	/**
-	 * Return the {@link JsfFlowExecutionManager} instance we will use to make
-	 * navigation handler decisions. The instance to use is returned by
-	 * delegating to
-	 * {@link JsfFlowExecutionManager#getFlowExecutionManager(FacesContext)},
-	 * but the value is cached, and subsequent requests return the same value.
+	 * Return <code>true</code> if the current request is asking for the
+	 * creation of a new flow. The default implementation examines the logical
+	 * outcome to see if it starts with the prefix specified by
+	 * {@link #FLOW_ID_PREFIX}.
 	 * @param context <code>FacesContext</code> for the current request
+	 * @param fromAction The action binding expression that was evaluated to
+	 * retrieve the specified outcome (if any)
+	 * @param outcome The logical outcome returned by the specified action
 	 */
-	protected JsfFlowExecutionManager getExecutionManager(FacesContext context) {
-		if (flowExecutionManager == null) {
-			flowExecutionManager = (JsfFlowExecutionManager.getFlowExecutionManager(context));
+	public boolean isFlowExecutionLaunchRequest(FacesContext context, String fromAction, String outcome) {
+		if (outcome == null) {
+			return false;
 		}
-		return flowExecutionManager;
+		return outcome.startsWith(FLOW_ID_PREFIX);
+	}
+
+	/**
+	 * Create a new flow execution for given flow. Subclasses could redefine
+	 * this if they wish to use a specialized FlowExecution implementation
+	 * class.
+	 * @param flow the flow
+	 * @return the created flow execution
+	 */
+	protected FlowExecution createFlowExecution(Flow flow) {
+		FlowExecution flowExecution = new FlowExecutionImpl(flow, getListeners(flow));
+		if (logger.isDebugEnabled()) {
+			logger.debug("Created a new flow execution for flow definition '" + flow.getId() + "'");
+		}
+		return flowExecution;
+	}
+
+	protected FlowLocator getFlowLocator(FacesContext context) {
+		// TODO
+		return flowLocator;
+	}
+
+	/**
+	 * Returns the array of flow execution listeners for specified flow.
+	 * @param flow the flow definition associated with the execution to be
+	 * listened to
+	 * @return the flow execution listeners
+	 */
+	public FlowExecutionListener[] getListeners(Flow flow) {
+		// TODO
+		return new FlowExecutionListener[0];
+	}
+
+	/**
+	 * Render the view specified by this <code>ViewSelection</code>, after
+	 * exposing any model data it includes.
+	 * @param facesContext <code>FacesContext</code> for the current request
+	 * @param fromAction The action binding expression that was evaluated to
+	 * retrieve the specified outcome (if any)
+	 * @param outcome The logical outcome returned by the specified action
+	 * @param selectedView <code>ViewSelection</code> for the view to render
+	 */
+	public void renderView(ViewSelection selectedView, FacesContext facesContext) {
+		putInto(facesContext.getExternalContext().getRequestMap(), selectedView.getModel());
+		// stay on the same view if requested
+		if (selectedView.getViewName() == null) {
+			return;
+		}
+		// create the specified view so that it can be rendered
+		ViewHandler handler = facesContext.getApplication().getViewHandler();
+		UIViewRoot view = handler.createView(facesContext, viewIdResolver.resolveViewId(selectedView.getViewName()));
+		facesContext.setViewRoot(view);
+	}
+
+	/**
+	 * Utility method needed needed only because we can not rely on JSF
+	 * RequestMap supporting Map's putAll method. Tries putAll, falls back to
+	 * individual adds
+	 * @param targetMap the target map to add the model data to
+	 * @param map the model data to add to the target map
+	 */
+	private void putInto(Map targetMap, Map model) {
+		// Expose model data specified in the descriptor
+		try {
+			targetMap.putAll(model);
+		}
+		catch (UnsupportedOperationException e) {
+			// work around nasty MyFaces bug where it's RequestMap doesn't
+			// support putAll remove after it's fixed in MyFaces
+			Iterator it = model.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry entry = (Map.Entry)it.next();
+				targetMap.put(entry.getKey(), entry.getValue());
+			}
+		}
+	}
+
+	// standard default view id resolver which uses the web flow view name as
+	// the jsf view id
+	public static class DefaultViewIdResolver implements ViewIdResolver {
+		public String resolveViewId(String viewName) {
+			return viewName;
+		}
 	}
 }

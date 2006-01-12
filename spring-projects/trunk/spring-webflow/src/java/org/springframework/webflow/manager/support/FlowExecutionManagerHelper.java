@@ -2,6 +2,7 @@ package org.springframework.webflow.manager.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
@@ -72,7 +73,7 @@ public class FlowExecutionManagerHelper {
 			logger.debug("Event signaled in " + context);
 		}
 		String flowExecutionId = parameterExtractor.extractFlowExecutionId(context);
-		if (flowExecutionId == null) {
+		if (StringUtils.hasText(flowExecutionId)) {
 			return flowExecutionManager.launch(parameterExtractor.extractFlowId(context), context);
 		}
 		else {

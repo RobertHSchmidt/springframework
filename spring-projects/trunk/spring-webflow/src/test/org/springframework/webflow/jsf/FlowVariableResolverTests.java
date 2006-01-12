@@ -78,7 +78,7 @@ public class FlowVariableResolverTests extends TestCase {
 		FlowExecution flowExecutionMock = (FlowExecution)flowExecutionControl.getMock();
 		FlowExecutionContinuationKey key = new FlowExecutionContinuationKey("some conversation id",
 				"some continuation id");
-		FlowExecutionHolder.setFlowExecution(key, flowExecutionMock);
+		FlowExecutionHolder.setFlowExecutionHolder(key, flowExecutionMock);
 		flowExecutionControl.replay();
 
 		Object result = tested.resolveVariable(context, "flowScope");

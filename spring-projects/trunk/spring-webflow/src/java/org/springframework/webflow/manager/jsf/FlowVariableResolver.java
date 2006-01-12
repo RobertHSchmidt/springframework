@@ -67,7 +67,8 @@ public class FlowVariableResolver extends VariableResolver {
 			return resolverDelegate.resolveVariable(context, name);
 		}
 		else {
-			FlowExecution execution = FlowExecutionHolder.getFlowExecution();
+			// TODO
+			FlowExecution execution = null;
 			if (execution == null)
 				throw new EvaluationException(
 						"'flowScope' variable prefix specified, but a FlowExecution is not bound to current thread context as it should be");
