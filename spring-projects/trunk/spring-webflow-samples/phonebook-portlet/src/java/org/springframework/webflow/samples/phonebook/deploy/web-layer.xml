@@ -3,7 +3,7 @@
 
 <beans>
 
-	<!-- Launches new flow executions and resumes existing executions. -->	
+	<!-- Launches new flow executions and resumes existing executions -->	
 	<bean id="flowExecutionManager" class="org.springframework.webflow.manager.FlowExecutionManagerImpl">
 		<constructor-arg ref="flowRegistry"/>
 		<property name="repositoryFactory">
@@ -11,7 +11,7 @@
 		</property>
 	</bean>
 	
-	<!-- Creates the registry of flow definitions for this application. -->
+	<!-- Creates the registry of flow definitions for this application -->
 	<bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
 		<property name="flowLocations">
 			<list>
