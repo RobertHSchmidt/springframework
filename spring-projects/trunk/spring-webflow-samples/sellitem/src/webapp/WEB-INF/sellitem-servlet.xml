@@ -8,7 +8,7 @@
 		exposed at the /pos.htm URL.  The id of a flow to launch should be passed
 		in using the "_flowId" request parameter: e.g. /pos.htm?_flowId=sellItem
 	-->
-	<bean name="/pos.htm" class="org.springframework.webflow.mvc.FlowController">
+	<bean name="/pos.htm" class="org.springframework.webflow.manager.mvc.FlowController">
 		<constructor-arg ref="flowExecutionManager"/>
 		<!--
 			Set cacheSeconds to a small, non 0, value so you can do ctrl-N to open an new
@@ -18,13 +18,17 @@
 	</bean>
 
 	<!-- Launches new flow executions and resumes existing executions. -->	
-	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
+	<bean id="flowExecutionManager" class="org.springframework.webflow.manager.FlowExecutionManagerImpl">
 		<constructor-arg ref="flowRegistry"/>
 		<property name="repositoryFactory">
-			<bean class="org.springframework.webflow.execution.continuation.ExternalMapContinuationFlowExecutionRepositoryFactory"/>
+			<bean class="org.springframework.webflow.execution.repository.continuation.ExternalMapContinuationFlowExecutionRepositoryFactory"/>
 		</property>
-		<property name="listener">
-			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
+		<property name="listenerLoader">
+			<bean class="org.springframework.webflow.manager.ConditionalFlowExecutionListenerLoader">
+		        <property name="listener">
+			        <bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
+    		    </property>
+			</bean>
 		</property>
 	</bean>
 

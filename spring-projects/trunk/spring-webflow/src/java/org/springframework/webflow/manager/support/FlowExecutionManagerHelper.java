@@ -2,6 +2,7 @@ package org.springframework.webflow.manager.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
@@ -75,6 +76,8 @@ public class FlowExecutionManagerHelper {
 	 */
 	public FlowExecutionManagerHelper(FlowExecutionManager flowExecutionManager,
 			FlowExecutionManagerParameterExtractor parameterExtractor) {
+		Assert.notNull(flowExecutionManager, "The flow execution manager is required");
+		Assert.notNull(parameterExtractor, "The parameter extractor is required");
 		this.flowExecutionManager = flowExecutionManager;
 		this.parameterExtractor = parameterExtractor;
 	}
@@ -104,11 +107,11 @@ public class FlowExecutionManagerHelper {
 		}
 		String flowExecutionId = parameterExtractor.extractFlowExecutionId(context);
 		if (StringUtils.hasText(flowExecutionId)) {
-			return flowExecutionManager.launch(parameterExtractor.extractFlowId(context), context);
-		}
-		else {
 			return flowExecutionManager.signalEvent(parameterExtractor.extractEventId(context), flowExecutionId,
 					context);
+		}
+		else {
+			return flowExecutionManager.launch(parameterExtractor.extractFlowId(context), context);
 		}
 	}
 }
