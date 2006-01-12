@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.manager.portlet;
+package org.springframework.webflow.manager.mvc;
 
 import junit.framework.TestCase;
 
@@ -31,7 +31,7 @@ import org.springframework.webflow.manager.mvc.PortletFlowController;
  * 
  * @author Ulrik Sandberg
  */
-public class FlowControllerTests extends TestCase {
+public class PortletFlowControllerTests extends TestCase {
 
 	private MockControl flowExecutionManagerControl;
 
