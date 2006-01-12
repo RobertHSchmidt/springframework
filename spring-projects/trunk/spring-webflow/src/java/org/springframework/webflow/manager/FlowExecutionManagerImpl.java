@@ -90,7 +90,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
  * <td>The strategy for accessing managed flow execution repositories</td>
  * </tr>
  * <tr>
- * <td>listeners</td>
+ * <td>listenerLoader</td>
  * <td>None</td>
  * <td>The listeners to observe the lifecycle of managed flow executions</td>
  * </tr>

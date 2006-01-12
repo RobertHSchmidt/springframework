@@ -6,7 +6,9 @@ import org.springframework.webflow.ViewSelection;
 
 /**
  * The central facade entry-point into the Spring Web Flow system. This inteface
- * defines the system boundary.
+ * defines a coarse-grained system boundary suitable for invocation by most
+ * clients.
+ * 
  * @author Keith Donald
  */
 public interface FlowExecutionManager {
