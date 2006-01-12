@@ -73,6 +73,10 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  */
 public class FlowNavigationHandler extends NavigationHandler {
 
+	/**
+	 * The service name of the default {@link FlowLocator} implementation
+	 * exported in the Spring Web Application Context.
+	 */
 	private static final String FLOW_LOCATOR_BEAN_NAME = "flowLocator";
 
 	/**
@@ -272,7 +276,8 @@ public class FlowNavigationHandler extends NavigationHandler {
 	}
 
 	/**
-	 * Lookup the flow locator service.
+	 * Lookup the flow locator service by querying the application context for a
+	 * bean with name {@link #FLOW_LOCATOR_BEAN_NAME}.
 	 * @param context the faces context
 	 * @return the flow locator
 	 */
