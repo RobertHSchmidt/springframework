@@ -9,7 +9,7 @@
 	  the "_flowId" request parameter:
 	      e.g. /flowController.htm?_flowId=sampleA
 	-->
-	<bean name="/flowController.htm" class="org.springframework.webflow.mvc.FlowController">
+	<bean name="/flowController.htm" class="org.springframework.webflow.manager.mvc.FlowController">
 		<constructor-arg ref="flowExecutionManager"/>
 		<property name="cacheSeconds" value="5"/>
 	</bean>
