@@ -36,6 +36,9 @@ import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.TextToFlowExecutionListenerCriteria;
 
 /**
+ * Default implementation of a listener loader that stores listeners in a
+ * set-based data structure.
+ * 
  * @author Keith Donald
  */
 public class DefaultFlowExecutionListenerLoader implements FlowExecutionListenerLoader {
