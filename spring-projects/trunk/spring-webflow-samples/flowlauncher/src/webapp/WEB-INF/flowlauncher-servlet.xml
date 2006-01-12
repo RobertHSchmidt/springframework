@@ -18,7 +18,7 @@
 		Launches new flow executions and resumes existing executions.
 		This manager attaches a custom flow execution listener.
 	-->	
-	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
+	<bean id="flowExecutionManager" class="org.springframework.webflow.manager.FlowExecutionManagerImpl">
 		<constructor-arg ref="flowRegistry"/>
 		<property name="listenerLoader">
 			<bean class="org.springframework.webflow.manager.ConditionalFlowExecutionListenerLoader">
