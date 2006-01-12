@@ -22,11 +22,8 @@ import org.springframework.mock.web.portlet.MockActionRequest;
 import org.springframework.mock.web.portlet.MockPortletSession;
 import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.web.portlet.ModelAndView;
-import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.manager.FlowExecutionManagerImpl;
-import org.springframework.webflow.manager.portlet.FlowController;
+import org.springframework.webflow.manager.FlowExecutionManager;
 
 /**
  * Unit test for the FlowController class.
@@ -35,29 +32,21 @@ import org.springframework.webflow.manager.portlet.FlowController;
  */
 public class FlowControllerTests extends TestCase {
 
-	private MockControl flowLocatorControl;
+	private MockControl flowExecutionManagerControl;
 
-	private FlowLocator flowLocatorMock;
+	private FlowExecutionManager flowExecutionManagerMock;
 
 	private FlowController tested;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		flowLocatorControl = MockControl.createControl(FlowLocator.class);
-		flowLocatorMock = (FlowLocator)flowLocatorControl.getMock();
-		tested = new FlowController(flowLocatorMock);
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		flowLocatorControl = null;
-		flowLocatorMock = null;
-		tested = null;
+		flowExecutionManagerControl = MockControl.createControl(FlowExecutionManager.class);
+		flowExecutionManagerMock = (FlowExecutionManager)flowExecutionManagerControl.getMock();
+		tested = new FlowController(flowExecutionManagerMock);
 	}
 
 	public void testInit() throws Exception {
-		FlowExecutionManagerImpl flowExecutionManager = new FlowExecutionManagerImpl(flowLocatorMock);
-		FlowController localTested = new FlowController(flowExecutionManager);
+		FlowController localTested = new FlowController(flowExecutionManagerMock);
 		assertEquals("Cache,", 0, localTested.getCacheSeconds());
 	}
 
@@ -69,13 +58,6 @@ public class FlowControllerTests extends TestCase {
 
 		MockActionRequest mockActionRequest = new MockActionRequest();
 		mockActionRequest.setSession(mockPortletSession);
-
-		FlowExecutionManagerImpl flowExecutionManager = new FlowExecutionManagerImpl(flowLocatorMock) {
-			public ViewSelection onEvent(ExternalContext context) {
-				return viewSelection;
-			}
-		};
-		tested.setFlowExecutionManager(flowExecutionManager);
 
 		// perform test
 		tested.handleActionRequestInternal(mockActionRequest, null);
@@ -92,13 +74,6 @@ public class FlowControllerTests extends TestCase {
 		MockRenderRequest mockRenderRequest = new MockRenderRequest();
 		mockRenderRequest.setSession(mockPortletSession);
 
-		FlowExecutionManagerImpl flowExecutionManager = new FlowExecutionManagerImpl(flowLocatorMock) {
-			public ViewSelection onEvent(ExternalContext context) {
-				return viewSelection;
-			}
-		};
-		tested.setFlowExecutionManager(flowExecutionManager);
-
 		// perform test
 		ModelAndView result = tested.handleRenderRequestInternal(mockRenderRequest, null);
 
@@ -113,13 +88,6 @@ public class FlowControllerTests extends TestCase {
 
 		MockRenderRequest mockRenderRequest = new MockRenderRequest();
 		mockRenderRequest.setSession(mockPortletSession);
-
-		FlowExecutionManagerImpl flowExecutionManager = new FlowExecutionManagerImpl(flowLocatorMock) {
-			public ViewSelection onEvent(ExternalContext context) {
-				return viewSelection;
-			}
-		};
-		tested.setFlowExecutionManager(flowExecutionManager);
 
 		// perform test
 		ModelAndView result = tested.handleRenderRequestInternal(mockRenderRequest, null);
@@ -161,10 +129,8 @@ public class FlowControllerTests extends TestCase {
 	}
 
 	public void testToModelAndViewWithNull() {
-
 		// perform test
 		ModelAndView result = tested.toModelAndView(null);
-
 		assertNull("Null view should give null result", result);
 	}
 }

@@ -39,11 +39,6 @@ import javax.faces.render.RenderKit;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.manager.jsf.FlowNavigationHandler;
-import org.springframework.webflow.manager.jsf.JsfFlowExecutionManager;
-
 /**
  * Test case for the FlowNavigationHandler class.
  * 
@@ -51,6 +46,8 @@ import org.springframework.webflow.manager.jsf.JsfFlowExecutionManager;
  */
 public class FlowNavigationHandlerTests extends TestCase {
 
+	private FlowNavigationHandler tested;
+	
 	private FacesContext facesContext;
 
 	private MyNavigationHandler navigationHandler;
@@ -61,95 +58,22 @@ public class FlowNavigationHandlerTests extends TestCase {
 		facesContext = new MyFacesContext();
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		navigationHandler = null;
-		facesContext = null;
-	}
-
 	public void testHandleNavigationNoFlowLaunchNoFlowExecutionParticipation() {
-		final JsfFlowExecutionManager executionManager = new JsfFlowExecutionManager(null);
-		FlowNavigationHandler tested = new FlowNavigationHandler(navigationHandler) {
-			protected JsfFlowExecutionManager getExecutionManager(FacesContext context) {
-				return executionManager;
-			}
-		};
 		// perform test
 		tested.handleNavigation(facesContext, "FromAction", "OutCome");
 		assertTrue("delegate not called", navigationHandler.handled);
 	}
 
 	public void testHandleNavigationFlowLaunch() {
-		final FlowLaunchExecutionManager executionManager = new FlowLaunchExecutionManager(null);
-		FlowNavigationHandler tested = new FlowNavigationHandler(navigationHandler) {
-			protected JsfFlowExecutionManager getExecutionManager(FacesContext context) {
-				return executionManager;
-			}
-		};
-
 		// perform test
 		tested.handleNavigation(facesContext, "FromAction", "OutCome");
-
 		assertFalse("delegate called", navigationHandler.handled);
-		assertTrue("view not rendered", executionManager.rendered);
 	}
 
 	public void testHandleNavigationFlowExecutionParticipation() {
-		final FlowExecutionParticipationExecutionManager executionManager = new FlowExecutionParticipationExecutionManager(
-				null);
-		FlowNavigationHandler tested = new FlowNavigationHandler(navigationHandler) {
-			protected JsfFlowExecutionManager getExecutionManager(FacesContext context) {
-				return executionManager;
-			}
-		};
 		// perform test
 		tested.handleNavigation(facesContext, "FromAction", "OutCome");
 		assertFalse("delegate called", navigationHandler.handled);
-		assertTrue("view not rendered", executionManager.rendered);
-	}
-
-	private static class FlowLaunchExecutionManager extends JsfFlowExecutionManager {
-		boolean rendered;
-
-		private FlowLaunchExecutionManager(FlowLocator locator) {
-			super(locator);
-		}
-
-		public boolean isFlowLaunchRequest(FacesContext context, String fromAction, String outcome) {
-			return true;
-		}
-
-		public ViewSelection launchFlowExecution(FacesContext context, String fromAction, String outcome) {
-			return new ViewSelection("SomeView");
-		}
-
-		public void renderView(FacesContext context, String fromAction, String outcome, ViewSelection viewDescriptor) {
-			rendered = true;
-		}
-	}
-
-	private static class FlowExecutionParticipationExecutionManager extends JsfFlowExecutionManager {
-		boolean rendered;
-
-		private FlowExecutionParticipationExecutionManager(FlowLocator locator) {
-			super(locator);
-		}
-
-		public boolean isFlowLaunchRequest(FacesContext context, String fromAction, String outcome) {
-			return false;
-		}
-
-		public boolean isFlowExecutionParticipationRequest(FacesContext context, String fromAction, String outcome) {
-			return true;
-		}
-
-		public ViewSelection resumeFlowExecution(FacesContext context, String fromAction, String outcome) {
-			return new ViewSelection("SomeView");
-		}
-
-		public void renderView(FacesContext context, String fromAction, String outcome, ViewSelection viewDescriptor) {
-			rendered = true;
-		}
 	}
 
 	private static class MyNavigationHandler extends NavigationHandler {

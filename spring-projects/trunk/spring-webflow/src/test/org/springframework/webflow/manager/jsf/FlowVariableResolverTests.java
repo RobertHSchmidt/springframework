@@ -47,13 +47,6 @@ public class FlowVariableResolverTests extends TestCase {
 		tested = new FlowVariableResolver(resolver);
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		context = null;
-		resolver = null;
-		tested = null;
-	}
-
 	public void testResolveVariableNotFlowScope() {
 		Object result = tested.resolveVariable(context, "some name");
 		assertTrue("not resolved using delegate", resolver.resolvedUsingDelegate);
@@ -78,7 +71,8 @@ public class FlowVariableResolverTests extends TestCase {
 		FlowExecution flowExecutionMock = (FlowExecution)flowExecutionControl.getMock();
 		FlowExecutionContinuationKey key = new FlowExecutionContinuationKey("some conversation id",
 				"some continuation id");
-		FlowExecutionHolder.setFlowExecutionHolder(key, flowExecutionMock);
+		FlowExecutionHolder holder = new FlowExecutionHolder(key, flowExecutionMock);
+		FlowExecutionHolderUtils.setFlowExecutionHolder(holder, context);
 		flowExecutionControl.replay();
 
 		Object result = tested.resolveVariable(context, "flowScope");

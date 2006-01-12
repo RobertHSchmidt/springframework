@@ -24,10 +24,6 @@ import javax.faces.lifecycle.Lifecycle;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.manager.jsf.FlowPhaseListener;
-import org.springframework.webflow.manager.jsf.JsfFlowExecutionManager;
-
 /**
  * Unit test for the FlowPhaseListener class.
  * 
@@ -37,8 +33,6 @@ public class FlowPhaseListenerTests extends TestCase {
 
 	private FlowPhaseListener tested;
 
-	private MyFlowExecutionManager executionManager;
-
 	private MockFacesContext mockFacesContext;
 
 	private MyLifecycle lifecycle;
@@ -47,26 +41,11 @@ public class FlowPhaseListenerTests extends TestCase {
 		super.setUp();
 		mockFacesContext = new MockFacesContext();
 		lifecycle = new MyLifecycle();
-		executionManager = new MyFlowExecutionManager(null);
-		tested = new FlowPhaseListener() {
-			protected JsfFlowExecutionManager getExecutionManager(FacesContext context) {
-				return executionManager;
-			}
-		};
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		mockFacesContext = null;
-		lifecycle = null;
-		executionManager = null;
-		tested = null;
 	}
 
 	public void testBeforePhase() {
 		PhaseEvent event = new PhaseEvent(mockFacesContext, PhaseId.RENDER_RESPONSE, lifecycle);
 		tested.beforePhase(event);
-		assertTrue("exposeFlowAttributes not called", executionManager.exposed);
 	}
 
 	public void testAfterPhaseNullEvent() {
@@ -90,42 +69,12 @@ public class FlowPhaseListenerTests extends TestCase {
 		// perform test
 		tested.afterPhase(event);
 
-		assertTrue("restore not called", executionManager.restored);
 	}
 
 	public void testAfterPhaseRenderResponse() {
 		PhaseEvent event = new PhaseEvent(mockFacesContext, PhaseId.RENDER_RESPONSE, lifecycle);
 		// perform test
 		tested.afterPhase(event);
-		assertTrue("save not called", executionManager.saved);
-	}
-
-	private static class MyFlowExecutionManager extends JsfFlowExecutionManager {
-		private boolean restored;
-
-		private boolean saved;
-
-		private boolean exposed;
-
-		private MyFlowExecutionManager(FlowLocator locator) {
-			super(locator);
-		}
-
-		public void saveFlowExecutionIfNecessary(FacesContext context) {
-			saved = true;
-		}
-
-		public void restoreFlowExecution(FacesContext context) {
-			restored = true;
-		}
-
-		// Overridden to avoid calling
-		// JsfFlowExecutionManager.exposeFlowAttributes,
-		// since it contains code that depends on a ThreadLocal
-		// FlowExecutionHolder.
-		public void exposeFlowAttributes(FacesContext facesContext) {
-			exposed = true;
-		}
 	}
 
 	private static class MyLifecycle extends Lifecycle {
