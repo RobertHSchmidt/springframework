@@ -26,7 +26,9 @@ import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
+import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.manager.FlowExecutionManager;
+import org.springframework.webflow.manager.FlowExecutionManagerImpl;
 import org.springframework.webflow.manager.support.FlowExecutionManagerHelper;
 import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
 
@@ -113,6 +115,18 @@ public class FlowController extends AbstractController {
 		setFlowExecutionManager(flowExecutionManager);
 	}
 
+	/**
+	 * Convenience constructor that creates a new FlowController that initially
+	 * relies on a default
+	 * {@link org.springframework.webflow.manager.FlowExecutionManagerImpl}
+	 * implementation that uses the provided flow locator to access flow
+	 * definitions at runtime.
+	 */
+	public FlowController(FlowLocator flowLocator) {
+		initDefaults();
+		setFlowExecutionManager(new FlowExecutionManagerImpl(flowLocator));
+	}
+	
 	/**
 	 * Set default properties for this controller. * The "cacheSeconds" property
 	 * is by default set to 0 (so by default there is no HTTP header caching for
