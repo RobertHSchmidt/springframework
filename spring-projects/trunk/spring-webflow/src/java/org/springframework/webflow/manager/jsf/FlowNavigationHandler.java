@@ -29,10 +29,10 @@ import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.manager.EmptyFlowExecutionListenerLoader;
 import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
 
 /**
@@ -279,15 +279,6 @@ public class FlowNavigationHandler extends NavigationHandler {
 	public static class DefaultViewIdResolver implements ViewIdResolver {
 		public String resolveViewId(String viewName) {
 			return viewName;
-		}
-	}
-
-	public static class EmptyFlowExecutionListenerLoader implements FlowExecutionListenerLoader {
-
-		private static final FlowExecutionListener[] EMPTY_LISTENER_ARRAY = new FlowExecutionListener[0];
-
-		public FlowExecutionListener[] getListeners(Flow flow) {
-			return EMPTY_LISTENER_ARRAY;
 		}
 	}
 }

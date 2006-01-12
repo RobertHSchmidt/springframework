@@ -3,8 +3,6 @@ package org.springframework.webflow.manager;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.execution.FlowExecutionListener;
-import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
 
 /**
  * The central facade entry-point into the Spring Web Flow system. This inteface
@@ -12,19 +10,6 @@ import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
  * @author Keith Donald
  */
 public interface FlowExecutionManager {
-
-	/**
-	 * Adds a flow execution listener to this manager.
-	 * @param listener the listener
-	 * @param criteria the listener criteria
-	 */
-	public void addListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria);
-
-	/**
-	 * Removes an attached flow execution listener from this manager.
-	 * @param listener the listener
-	 */
-	public void removeListener(FlowExecutionListener listener);
 
 	/**
 	 * Launch a new execution of the flow provided in the context of the current
@@ -56,5 +41,4 @@ public interface FlowExecutionManager {
 	 */
 	public ViewSelection signalEvent(String eventId, String flowExecutionId, ExternalContext context)
 			throws FlowException;
-
 }

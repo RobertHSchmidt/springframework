@@ -15,9 +15,7 @@
  */
 package org.springframework.webflow.manager;
 
-import java.util.Collection;
 import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.format.Formatter;
@@ -27,8 +25,7 @@ import org.springframework.webflow.FlowException;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionListener;
-import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
+import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.repository.ExternalMapFlowExecutionRepositoryFactory;
@@ -151,7 +148,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	 * criteria objects. The criteria list determines the conditions in which a
 	 * single flow execution listener applies.
 	 */
-	private DefaultFlowExecutionListenerLoader listenerLoader = new DefaultFlowExecutionListenerLoader();
+	private FlowExecutionListenerLoader listenerLoader = new EmptyFlowExecutionListenerLoader();
 
 	/**
 	 * Create a new flow execution manager using the specified flow locator for
@@ -160,12 +157,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	 * 
 	 * @see #setFlowLocator(FlowLocator)
 	 * @see #setRepositoryFactory(FlowExecutionRepositoryFactory)
-	 * @see #setListener(FlowExecutionListener)
-	 * @see #setListenerCriteria(FlowExecutionListener,
-	 * FlowExecutionListenerCriteria)
-	 * @see #setListenerMap(Map)
-	 * @see #setListeners(Collection)
-	 * @see #setListenersCriteria(Collection, FlowExecutionListenerCriteria)
+	 * @see #setListenerLoader(FlowExecutionListenerLoader)
 	 */
 	public FlowExecutionManagerImpl(FlowLocator flowLocator) {
 		setFlowLocator(flowLocator);
@@ -202,97 +194,19 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	}
 
 	/**
-	 * Set the flow execution listener that will be notified of managed flow
-	 * executions.
+	 * Returns the listener loader instance to be used by the flow execution
+	 * manager.
 	 */
-	public void setListener(FlowExecutionListener listener) {
-		listenerLoader.setListener(listener);
-	}
-
-	/**
-	 * Set the flow execution listener that will be notified of managed flow
-	 * executions for the flows that match given criteria.
-	 */
-	public void setListenerCriteria(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
-		listenerLoader.setListenerCriteria(listener, criteria);
-	}
-
-	/**
-	 * Sets the flow execution listeners that will be notified of managed flow
-	 * executions.
-	 */
-	public void setListeners(Collection listeners) {
-		listenerLoader.setListeners(listeners);
-	}
-
-	/**
-	 * Sets the flow execution listeners that will be notified of managed flow
-	 * executions for flows that match given criteria.
-	 */
-	public void setListenersCriteria(Collection listeners, FlowExecutionListenerCriteria criteria) {
-		listenerLoader.setListenersCriteria(listeners, criteria);
-	}
-
-	/**
-	 * Sets the flow execution listeners that will be notified of managed flow
-	 * executions. The map keys may be individual flow execution listener
-	 * instances or collections of execution listener instances. The map values
-	 * can either be string encoded flow execution listener criteria or direct
-	 * references to <code>FlowExecutionListenerCriteria</code> objects.
-	 */
-	public void setListenerMap(Map listenerCriteriaMap) {
-		listenerLoader.setListenerMap(listenerCriteriaMap);
-	}
-
-	/**
-	 * Add a listener that will listen to executions for all flows.
-	 * @param listener the listener to add
-	 */
-	public void addListener(FlowExecutionListener listener) {
-		listenerLoader.addListener(listener);
-	}
-
-	/**
-	 * Add a listener that will listen to executions to flows matching the
-	 * specified criteria.
-	 * @param listener the listener
-	 * @param criteria the listener criteria
-	 */
-	public void addListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
-		listenerLoader.addListener(listener, criteria);
-	}
-
-	/**
-	 * Is the listener contained by this Flow execution manager?
-	 * @param listener the listener
-	 * @return true if yes, false otherwise
-	 */
-	public boolean containsListener(FlowExecutionListener listener) {
-		return listenerLoader.containsListener(listener);
-	}
-
-	/**
-	 * Remove the flow execution listener from the listener list.
-	 * @param listener the listener
-	 */
-	public void removeListener(FlowExecutionListener listener) {
-		listenerLoader.removeListener(listener);
-	}
-
-	/**
-	 * Remove the criteria for the specified listener.
-	 * @param listener the listener
-	 * @param criteria the criteria
-	 */
-	public void removeListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
-		listenerLoader.removeListenerCriteria(listener, criteria);
-	}
-
-	/**
-	 * Returns the listener loader.
-	 */
-	protected DefaultFlowExecutionListenerLoader getListenerLoader() {
+	public FlowExecutionListenerLoader getListenerLoader() {
 		return listenerLoader;
+	}
+
+	/**
+	 * Sets the listener loader instance to be used by the flow execution
+	 * manager.
+	 */
+	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
+		this.listenerLoader = listenerLoader;
 	}
 
 	/**
@@ -377,7 +291,8 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	}
 
 	/**
-	 * Helper to parse a flow execution continuation key from its string-encoding.
+	 * Helper to parse a flow execution continuation key from its
+	 * string-encoding.
 	 * @param flowExecutionId the string encoded key
 	 * @return the parsed key
 	 */

@@ -176,7 +176,8 @@ public class FlowAction extends ActionSupport {
 			setParameterExtractor((FlowExecutionManagerParameterExtractor)getWebApplicationContext().getBean(
 					PARAMETER_EXTRACTOR_BEAN_NAME, FlowExecutionManagerParameterExtractor.class));
 		}
-		getFlowExecutionManager().addListener(new ActionFormAdapter(), FlowExecutionListenerCriteriaFactory.allFlows());
+		// TODO
+		//getFlowExecutionManager().addListener(new ActionFormAdapter(), FlowExecutionListenerCriteriaFactory.allFlows());
 	}
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
