@@ -25,10 +25,12 @@ import javax.faces.context.FacesContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
@@ -70,6 +72,8 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  */
 public class FlowNavigationHandler extends NavigationHandler {
 
+	private static final String FLOW_LOCATOR_BEAN_NAME = "flowLocator";
+
 	/**
 	 * Logger, usable by subclasses.
 	 */
@@ -89,7 +93,14 @@ public class FlowNavigationHandler extends NavigationHandler {
 	private FlowLocator flowLocator;
 
 	/**
-	 * A helper for extracting parameters needed by this flow navigation handler.
+	 * The strategy for loading flow execution listeners that should monitor
+	 * active flow executions.
+	 */
+	private FlowExecutionListenerLoader listenerLoader = new EmptyFlowExecutionListenerLoader();
+
+	/**
+	 * A helper for extracting parameters needed by this flow navigation
+	 * handler.
 	 */
 	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowExecutionManagerParameterExtractor();
 
@@ -114,6 +125,38 @@ public class FlowNavigationHandler extends NavigationHandler {
 		this.handlerDelegate = handlerDelegate;
 	}
 
+	public FlowLocator getFlowLocator() {
+		return flowLocator;
+	}
+
+	public void setFlowLocator(FlowLocator flowLocator) {
+		this.flowLocator = flowLocator;
+	}
+
+	public FlowExecutionListenerLoader getListenerLoader() {
+		return listenerLoader;
+	}
+
+	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
+		this.listenerLoader = listenerLoader;
+	}
+
+	public FlowExecutionManagerParameterExtractor getParameterExtractor() {
+		return parameterExtractor;
+	}
+
+	public void setParameterExtractor(FlowExecutionManagerParameterExtractor parameterExtractor) {
+		this.parameterExtractor = parameterExtractor;
+	}
+
+	public ViewIdResolver getViewIdResolver() {
+		return viewIdResolver;
+	}
+
+	public void setViewIdResolver(ViewIdResolver viewIdResolver) {
+		this.viewIdResolver = viewIdResolver;
+	}
+
 	/**
 	 * Handle the navigation request implied by the specified parameters.
 	 * @param context <code>FacesContext</code> for the current request
@@ -135,7 +178,8 @@ public class FlowNavigationHandler extends NavigationHandler {
 			// a request to launch a new flow execution has been initiated,
 			// start it
 			String flowId = parameterExtractor.extractFlowId(context);
-			FlowExecution flowExecution = createFlowExecution(getFlowLocator(facesContext).getFlow(flowId));
+			Flow flow = getFlowLocator(facesContext).getFlow(flowId);
+			FlowExecution flowExecution = createFlowExecution(flow, facesContext);
 			ViewSelection selectedView = flowExecution.start(context);
 			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecution), facesContext);
 			renderView(selectedView, facesContext);
@@ -170,8 +214,8 @@ public class FlowNavigationHandler extends NavigationHandler {
 	 * @param flow the flow
 	 * @return the created flow execution
 	 */
-	protected FlowExecution createFlowExecution(Flow flow) {
-		FlowExecution flowExecution = new FlowExecutionImpl(flow, getListeners(flow));
+	protected FlowExecution createFlowExecution(Flow flow, FacesContext context) {
+		FlowExecution flowExecution = new FlowExecutionImpl(flow, listenerLoader.getListeners(flow));
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new flow execution for flow definition '" + flow.getId() + "'");
 		}
@@ -179,19 +223,11 @@ public class FlowNavigationHandler extends NavigationHandler {
 	}
 
 	protected FlowLocator getFlowLocator(FacesContext context) {
-		// TODO
+		if (flowLocator == null) {
+			flowLocator = (FlowLocator)FacesContextUtils.getRequiredWebApplicationContext(context).getBean(
+					FLOW_LOCATOR_BEAN_NAME);
+		}
 		return flowLocator;
-	}
-
-	/**
-	 * Returns the array of flow execution listeners for specified flow.
-	 * @param flow the flow definition associated with the execution to be
-	 * listened to
-	 * @return the flow execution listeners
-	 */
-	public FlowExecutionListener[] getListeners(Flow flow) {
-		// TODO
-		return new FlowExecutionListener[0];
 	}
 
 	/**
@@ -243,6 +279,15 @@ public class FlowNavigationHandler extends NavigationHandler {
 	public static class DefaultViewIdResolver implements ViewIdResolver {
 		public String resolveViewId(String viewName) {
 			return viewName;
+		}
+	}
+
+	public static class EmptyFlowExecutionListenerLoader implements FlowExecutionListenerLoader {
+
+		private static final FlowExecutionListener[] EMPTY_LISTENER_ARRAY = new FlowExecutionListener[0];
+
+		public FlowExecutionListener[] getListeners(Flow flow) {
+			return EMPTY_LISTENER_ARRAY;
 		}
 	}
 }

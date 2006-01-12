@@ -24,6 +24,7 @@ import javax.faces.event.PhaseListener;
 
 import org.springframework.binding.format.Formatter;
 import org.springframework.util.StringUtils;
+import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.ExternalMapFlowExecutionRepositoryFactory;
@@ -58,9 +59,33 @@ public class FlowPhaseListener implements PhaseListener {
 
 	private Formatter continuationKeyFormatter = new FlowExecutionContinuationKeyFormatter();
 
+	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowExecutionManagerParameterExtractor();
+
 	private FlowExecutionRepositoryFactory repositoryFactory = new ExternalMapFlowExecutionRepositoryFactory();
 
-	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowExecutionManagerParameterExtractor();
+	public Formatter getContinuationKeyFormatter() {
+		return continuationKeyFormatter;
+	}
+
+	public void setContinuationKeyFormatter(Formatter continuationKeyFormatter) {
+		this.continuationKeyFormatter = continuationKeyFormatter;
+	}
+
+	public FlowExecutionManagerParameterExtractor getParameterExtractor() {
+		return parameterExtractor;
+	}
+
+	public void setParameterExtractor(FlowExecutionManagerParameterExtractor parameterExtractor) {
+		this.parameterExtractor = parameterExtractor;
+	}
+
+	public FlowExecutionRepositoryFactory getRepositoryFactory() {
+		return repositoryFactory;
+	}
+
+	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryFactory) {
+		this.repositoryFactory = repositoryFactory;
+	}
 
 	public void beforePhase(PhaseEvent event) {
 		if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
