@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.mvc;
+package org.springframework.webflow.manager.portlet;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
-import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.mvc.AbstractController;
+import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.manager.FlowExecutionManager;
-import org.springframework.webflow.execution.manager.FlowExecutionManagerImpl;
-import org.springframework.webflow.execution.manager.support.FlowExecutionManagerParameterExtractor;
-import org.springframework.webflow.execution.manager.support.ParameterizedFlowControllerHelper;
+import org.springframework.webflow.context.portlet.PortletExternalContext;
+import org.springframework.webflow.manager.FlowExecutionManager;
+import org.springframework.webflow.manager.support.FlowExecutionManagerHelper;
+import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
 
 /**
- * Point of integration between Spring MVC and Spring Web Flow: a
- * {@link Controller} that routes incoming requests to one or more managed flow
- * executions.
+ * Point of integration between Spring Portlet MVC and Spring Web Flow: a
+ * {@link Controller} that routes incoming portlet requests to one or more
+ * managed flow executions.
  * <p>
  * Requests into the web flow system are handled by a
  * {@link FlowExecutionManager}, which this class delegates to. Consult the
@@ -43,13 +43,12 @@ import org.springframework.webflow.execution.manager.support.ParameterizedFlowCo
  * application. Specifically:
  * <ul>
  * <li>To have this controller launch a new flow execution (conversation), have
- * the client send a
- * {@link FlowExecutionManagerParameterExtractor#getFlowIdParameterName()}
+ * the client send a {@link FlowExecutionManagerParameterExtractor#getFlowIdParameterName()}
  * request parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
- * {@link FlowExecutionManagerParameterExtractor#getFlowExecutionIdParameterName()}
- * request parameter identifying the conversation to participate in.
+ * {@link FlowExecutionManagerParameterExtractor#getFlowExecutionIdParameterName()} request
+ * parameter identifying the conversation to participate in.
  * </ul>
  * <p>
  * See the flowLauncher sample application for an example of this controller
@@ -58,31 +57,39 @@ import org.springframework.webflow.execution.manager.support.ParameterizedFlowCo
  * Usage example:
  * 
  * <pre>
- *        &lt;!--
- *            Exposes flows for execution at a single request URL.
- *            The id of a flow to launch should be passed in by clients using
- *            the &quot;_flowId&quot; request parameter:
- *            e.g. /app.htm?_flowId=flow1
- *        --&gt;
- *        &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.mvc.FlowController&quot;&gt;
- *            &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *        &lt;/bean&gt;
- *                          
- *        &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *        &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *            &lt;property name=&quot;flowLocations&quot;&gt;
- *                &lt;list&gt;
- *                    &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *                    &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *                &lt;/list&gt;
- *            &lt;/property&gt;
- *        &lt;/bean&gt;
+ *     &lt;!--
+ *         Exposes flows for execution at a single request URL.
+ *         The id of a flow to launch should be passed in by clients using
+ *         the &quot;_flowId&quot; request parameter:
+ *             e.g. /app.htm?_flowId=flow1
+ *     --&gt;
+ *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.portlet.FlowController&quot;&gt;
+ *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *     &lt;/bean&gt;
+ *                           
+ *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;flowLocations&quot;&gt;
+ *             &lt;list&gt;
+ *                 &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                 &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *             &lt;/list&gt;
+ *         &lt;/property&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
+ * @author J.Enrique Ruiz
+ * @author César Ordiñana
  * @author Erwin Vervaet
  * @author Keith Donald
  */
 public class FlowController extends AbstractController {
+
+	/**
+	 * The attribute name of the last <code>ViewSelection</code> made by this
+	 * controller for one user's <code>PortletSession</code>
+	 */
+	private static final String VIEW_SELECTION_ATTRIBUTE_NAME = FlowController.class + ".viewSelection";
 
 	/**
 	 * Delegate for managing flow executions (launching new executions, and
@@ -94,17 +101,6 @@ public class FlowController extends AbstractController {
 	 * Delegate for extract flow execution manager parameters.
 	 */
 	private FlowExecutionManagerParameterExtractor parameterExtractor;
-
-	/**
-	 * Creates a new FlowController that initially relies on a default
-	 * {@link org.springframework.webflow.execution.manager.FlowExecutionManagerImpl}
-	 * implementation that uses the provided flow locator to access flow
-	 * definitions at runtime.
-	 */
-	public FlowController(FlowLocator flowLocator) {
-		initDefaults();
-		setFlowExecutionManager(new FlowExecutionManagerImpl(flowLocator));
-	}
 
 	/**
 	 * Create a new FlowController that delegates to the configured execution
@@ -129,14 +125,14 @@ public class FlowController extends AbstractController {
 
 	/**
 	 * Returns the flow execution manager used by this controller.
-	 * @return the flow execution manager
+	 * @return the HTTP flow execution manager
 	 */
 	public FlowExecutionManager getFlowExecutionManager() {
 		return flowExecutionManager;
 	}
 
 	/**
-	 * Sets the flow execution manager to use.
+	 * Configures the flow execution manager implementation to use.
 	 * @param flowExecutionManager the flow execution manager
 	 */
 	public void setFlowExecutionManager(FlowExecutionManager flowExecutionManager) {
@@ -160,11 +156,27 @@ public class FlowController extends AbstractController {
 		this.parameterExtractor = parameterExtractor;
 	}
 
-	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
+		try {
+			ViewSelection selectedView = (ViewSelection)request.getPortletSession().getAttribute(
+					VIEW_SELECTION_ATTRIBUTE_NAME);
+			if (selectedView == null) {
+				selectedView = createControllerHelper().handleFlowRequest(new PortletExternalContext(request, response));
+			}
+			// convert view to a renderable portlet mvc "model and view"
+			return toModelAndView(selectedView);
+		}
+		finally {
+			request.getPortletSession().removeAttribute(VIEW_SELECTION_ATTRIBUTE_NAME);
+		}
+	}
+
+	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
+		// delegate to the flow execution manager to process the request
 		ViewSelection selectedView = createControllerHelper().handleFlowRequest(
-				new ServletExternalContext(request, response));
-		return toModelAndView(selectedView);
+				new PortletExternalContext(request, response));
+		// expose selected view in session for access during render phase
+		request.getPortletSession().setAttribute(VIEW_SELECTION_ATTRIBUTE_NAME, selectedView);
 	}
 
 	/**
@@ -172,8 +184,8 @@ public class FlowController extends AbstractController {
 	 * this flow controller.
 	 * @return the controller helper
 	 */
-	protected ParameterizedFlowControllerHelper createControllerHelper() {
-		return new ParameterizedFlowControllerHelper(getFlowExecutionManager(), getParameterExtractor());
+	protected FlowExecutionManagerHelper createControllerHelper() {
+		return new FlowExecutionManagerHelper(getFlowExecutionManager(), getParameterExtractor());
 	}
 
 	/**

@@ -25,6 +25,8 @@ import javax.faces.lifecycle.Lifecycle;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.manager.jsf.FlowPhaseListener;
+import org.springframework.webflow.manager.jsf.JsfFlowExecutionManager;
 
 /**
  * Unit test for the FlowPhaseListener class.

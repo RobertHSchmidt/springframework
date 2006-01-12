@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.jsf;
+package org.springframework.webflow.manager.jsf;
 
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;

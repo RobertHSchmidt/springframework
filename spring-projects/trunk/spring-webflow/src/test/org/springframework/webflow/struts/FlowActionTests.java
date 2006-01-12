@@ -30,9 +30,10 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.manager.FlowExecutionManagerImpl;
-import org.springframework.webflow.execution.manager.FlowExecutionManagerImpl.ConditionalFlowExecutionListenerHolder;
-import org.springframework.webflow.struts.FlowAction.StrutsExternalContext;
+import org.springframework.webflow.manager.FlowExecutionManagerImpl;
+import org.springframework.webflow.manager.FlowExecutionManagerImpl.ConditionalFlowExecutionListenerHolder;
+import org.springframework.webflow.manager.struts.FlowAction;
+import org.springframework.webflow.manager.struts.FlowAction.StrutsExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

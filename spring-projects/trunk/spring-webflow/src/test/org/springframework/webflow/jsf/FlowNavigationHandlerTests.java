@@ -41,6 +41,8 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.manager.jsf.FlowNavigationHandler;
+import org.springframework.webflow.manager.jsf.JsfFlowExecutionManager;
 
 /**
  * Test case for the FlowNavigationHandler class.

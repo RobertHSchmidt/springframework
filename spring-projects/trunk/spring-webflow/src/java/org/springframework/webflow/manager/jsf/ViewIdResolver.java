@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.webflow.jsf;
+package org.springframework.webflow.manager.jsf;
 
 /**
  * Interface to be implemented by objects that can map Web Flow view names

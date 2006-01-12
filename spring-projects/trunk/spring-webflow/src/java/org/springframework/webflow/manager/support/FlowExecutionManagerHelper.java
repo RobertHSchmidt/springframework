@@ -1,11 +1,11 @@
-package org.springframework.webflow.execution.manager.support;
+package org.springframework.webflow.manager.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.execution.manager.FlowExecutionManager;
+import org.springframework.webflow.manager.FlowExecutionManager;
 
 /**
  * An immutable helper for flow controllers to use launch and resume flow
@@ -13,12 +13,12 @@ import org.springframework.webflow.execution.manager.FlowExecutionManager;
  * 
  * @author Keith Donald
  */
-public class ParameterizedFlowControllerHelper {
+public class FlowExecutionManagerHelper {
 
 	/**
 	 * Logger.
 	 */
-	private static final Log logger = LogFactory.getLog(ParameterizedFlowControllerHelper.class);
+	private static final Log logger = LogFactory.getLog(FlowExecutionManagerHelper.class);
 
 	/**
 	 * The flow execution manager this helper will coordinate with.
@@ -34,7 +34,7 @@ public class ParameterizedFlowControllerHelper {
 	 * Creates a new flow controller helper.
 	 * @param flowExecutionManager the flow execution manager to delegate to.
 	 */
-	public ParameterizedFlowControllerHelper(FlowExecutionManager flowExecutionManager) {
+	public FlowExecutionManagerHelper(FlowExecutionManager flowExecutionManager) {
 		this(flowExecutionManager, new FlowExecutionManagerParameterExtractor());
 	}
 
@@ -42,7 +42,7 @@ public class ParameterizedFlowControllerHelper {
 	 * Creates a new flow controller helper.
 	 * @param flowExecutionManager the flow execution manager to delegate to.
 	 */
-	public ParameterizedFlowControllerHelper(FlowExecutionManager flowExecutionManager,
+	public FlowExecutionManagerHelper(FlowExecutionManager flowExecutionManager,
 			FlowExecutionManagerParameterExtractor parameterExtractor) {
 		this.flowExecutionManager = flowExecutionManager;
 		this.parameterExtractor = parameterExtractor;

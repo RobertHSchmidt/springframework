@@ -25,7 +25,8 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.manager.FlowExecutionManagerImpl;
+import org.springframework.webflow.manager.FlowExecutionManagerImpl;
+import org.springframework.webflow.manager.portlet.FlowController;
 
 /**
  * Unit test for the FlowController class.

@@ -60,7 +60,7 @@ import org.springframework.webflow.ViewSelection;
  * flow execution to end (by the root flow reaching an EndState). At that time,
  * this object is removed from storage and discarded.
  * 
- * @see org.springframework.webflow.execution.manager.FlowExecutionManagerImpl
+ * @see org.springframework.webflow.manager.FlowExecutionManagerImpl
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
  * @see org.springframework.webflow.Flow
  * @see org.springframework.webflow.State

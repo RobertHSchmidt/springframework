@@ -1,4 +1,4 @@
-package org.springframework.webflow.execution.manager.support;
+package org.springframework.webflow.manager.support;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.execution.manager.FlowExecutionManager;
+import org.springframework.webflow.manager.FlowExecutionManager;
 
 /**
  * A helper for flow controllers to use launch and resume flow executions using

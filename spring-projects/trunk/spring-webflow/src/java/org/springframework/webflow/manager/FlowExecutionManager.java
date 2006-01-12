@@ -1,4 +1,4 @@
-package org.springframework.webflow.execution.manager;
+package org.springframework.webflow.manager;
 
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;

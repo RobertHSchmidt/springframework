@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.webflow.jsf;
+package org.springframework.webflow.manager.jsf;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;

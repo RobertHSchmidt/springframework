@@ -14,7 +14,7 @@
  * the License.
  */
 
-package org.springframework.webflow.jsf;
+package org.springframework.webflow.manager.jsf;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,16 +32,16 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.manager.FlowExecutionManagerImpl;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.manager.FlowExecutionManagerImpl;
 
 /**
  * A JSF-specific subclass of
- * {@link org.springframework.webflow.execution.manager.FlowExecutionManagerImpl} which is
+ * {@link org.springframework.webflow.manager.FlowExecutionManagerImpl} which is
  * delegated to by Web Flow's
- * {@link org.springframework.webflow.jsf.FlowNavigationHandler} and
- * {@link org.springframework.webflow.jsf.FlowPhaseListener}. The latter
+ * {@link org.springframework.webflow.manager.jsf.FlowNavigationHandler} and
+ * {@link org.springframework.webflow.manager.jsf.FlowPhaseListener}. The latter
  * classes will expect to find a configured instance of this class in the web
  * application context accessible through
  * {@link FacesContextUtils#getWebApplicationContext(javax.faces.context.FacesContext)}
@@ -149,7 +149,7 @@ public class JsfFlowExecutionManager extends FlowExecutionManagerImpl {
 	 * algorithm used to makes this determination matches the determination that
 	 * will be made by the <code>FlowExecutionManager</code> that is being
 	 * used. The default implementation looks for a request parameter named by
-	 * {@link org.springframework.webflow.execution.manager.FlowExecutionManagerImpl}.
+	 * {@link org.springframework.webflow.manager.FlowExecutionManagerImpl}.
 	 * @param context <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)

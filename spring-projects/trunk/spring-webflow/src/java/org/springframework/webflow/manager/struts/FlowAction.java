@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.struts;
+package org.springframework.webflow.manager.struts;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -33,12 +33,10 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
-import org.springframework.webflow.execution.FlowExecutionListenerCriteria;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory;
-import org.springframework.webflow.execution.manager.FlowExecutionManager;
-import org.springframework.webflow.execution.manager.FlowExecutionManagerImpl;
-import org.springframework.webflow.execution.manager.support.FlowExecutionManagerParameterExtractor;
-import org.springframework.webflow.execution.manager.support.ParameterizedFlowControllerHelper;
+import org.springframework.webflow.manager.FlowExecutionManager;
+import org.springframework.webflow.manager.support.FlowExecutionManagerHelper;
+import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
 
 /**
  * Point of integration between Struts and Spring Web Flow: a Struts Action that
@@ -106,7 +104,7 @@ import org.springframework.webflow.execution.manager.support.ParameterizedFlowCo
  * binding and validation that addresses the proliferation of
  * <code>ActionForm</code> classes found in traditional Struts-based apps.
  * 
- * @see org.springframework.webflow.execution.manager.FlowExecutionManager
+ * @see org.springframework.webflow.manager.FlowExecutionManager
  * @see org.springframework.web.struts.SpringBindingActionForm
  * 
  * @author Keith Donald
@@ -193,8 +191,8 @@ public class FlowAction extends ActionSupport {
 	 * this flow controller.
 	 * @return the controller helper
 	 */
-	protected ParameterizedFlowControllerHelper createControllerHelper() {
-		return new ParameterizedFlowControllerHelper(getFlowExecutionManager(), getParameterExtractor());
+	protected FlowExecutionManagerHelper createControllerHelper() {
+		return new FlowExecutionManagerHelper(getFlowExecutionManager(), getParameterExtractor());
 	}
 	
 	/**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.webflow.jsf;
+package org.springframework.webflow.manager.jsf;
 
 import javax.faces.context.FacesContext;
 import javax.faces.el.EvaluationException;
