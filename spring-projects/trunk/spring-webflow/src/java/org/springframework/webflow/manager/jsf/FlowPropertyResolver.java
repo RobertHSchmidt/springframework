@@ -39,7 +39,7 @@ import org.springframework.webflow.execution.FlowExecution;
 public class FlowPropertyResolver extends PropertyResolver {
 
 	/**
-	 * Default property resolver.
+	 * The standard property resolver to delegate to if this one doesn't apply.
 	 */
 	private final PropertyResolver resolverDelegate;
 

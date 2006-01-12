@@ -164,37 +164,42 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	}
 
 	/**
-	 * Returns the flow locator to use for lookup of flows specified using the
-	 * {@link #FLOW_ID_PARAMETER} event parameter.
+	 * Returns the flow locator to use for lookup of flow definitions to execute.
 	 */
 	protected FlowLocator getFlowLocator() {
 		return flowLocator;
 	}
 
 	/**
-	 * Set the flow locator to use for lookup of flows specified using the
-	 * {@link #FLOW_ID_PARAMETER} parameter.
+	 * Set the flow locator to use for lookup of flow definitions to execute.
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
 		this.flowLocator = flowLocator;
 	}
 
 	/**
-	 * Set the repository factory used by the flow execution manager.
+	 * Returns the repository factory used by this flow execution manager.
+	 */
+	public FlowExecutionRepositoryFactory getRepositoryFactory() {
+		return repositoryFactory;
+	}
+
+	/**
+	 * Set the repository factory used by this flow execution manager.
 	 */
 	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryLocator) {
 		this.repositoryFactory = repositoryLocator;
 	}
 
 	/**
-	 * Returns the repository instance to be used by the flow execution manager.
+	 * Returns the repository instance to be used by this flow execution manager.
 	 */
 	protected FlowExecutionRepository getRepository(ExternalContext context) {
 		return repositoryFactory.getRepository(context);
 	}
 
 	/**
-	 * Returns the listener loader instance to be used by the flow execution
+	 * Returns the listener loader instance to be used by this flow execution
 	 * manager.
 	 */
 	public FlowExecutionListenerLoader getListenerLoader() {
@@ -202,7 +207,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	}
 
 	/**
-	 * Sets the listener loader instance to be used by the flow execution
+	 * Sets the listener loader instance to be used by this flow execution
 	 * manager.
 	 */
 	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {

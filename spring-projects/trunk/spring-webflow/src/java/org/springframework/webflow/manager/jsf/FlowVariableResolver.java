@@ -32,6 +32,9 @@ public class FlowVariableResolver extends VariableResolver {
 	 */
 	public static final String FLOW_SCOPE_VARIABLE = "flowScope";
 
+	/**
+	 * The standard variable resolver to delegate to if this one doesn't apply.
+	 */
 	private VariableResolver resolverDelegate;
 
 	/**

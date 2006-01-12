@@ -24,6 +24,7 @@ import javax.faces.event.PhaseListener;
 
 import org.springframework.binding.format.Formatter;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.ExternalMapFlowExecutionRepositoryFactory;
@@ -56,34 +57,58 @@ public class FlowPhaseListener implements PhaseListener {
 	 */
 	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
 
+	/**
+	 * The formatter that will parse encoded _flowExecutionId strings into
+	 * {@link FlowExecutionContinuationKey} objects.
+	 */
 	private Formatter continuationKeyFormatter = new FlowExecutionContinuationKeyFormatter();
 
+	/**
+	 * A helper for extracting parameters needed by this flow execution manager.
+	 */
 	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowExecutionManagerParameterExtractor();
 
+	/**
+	 * The flow execution repository factoring, for obtaining repository
+	 * instances to save paused executions that require user input and load
+	 * resuming executions that will process user events.
+	 */
 	private FlowExecutionRepositoryFactory repositoryFactory = new ExternalMapFlowExecutionRepositoryFactory();
 
+	/**
+	 * Returns the continuation key formatting strategy.
+	 */
 	public Formatter getContinuationKeyFormatter() {
 		return continuationKeyFormatter;
 	}
 
+	/**
+	 * Sets the flow execution continuation key formatting strategy.
+	 * @param continuationKeyFormatter the continuation key formatter
+	 */
 	public void setContinuationKeyFormatter(Formatter continuationKeyFormatter) {
 		this.continuationKeyFormatter = continuationKeyFormatter;
 	}
 
-	public FlowExecutionManagerParameterExtractor getParameterExtractor() {
-		return parameterExtractor;
-	}
-
-	public void setParameterExtractor(FlowExecutionManagerParameterExtractor parameterExtractor) {
-		this.parameterExtractor = parameterExtractor;
-	}
-
+	/**
+	 * Returns the repository factory used by this phase listener.
+	 */
 	public FlowExecutionRepositoryFactory getRepositoryFactory() {
 		return repositoryFactory;
 	}
 
+	/**
+	 * Set the repository factory used by this phase listener.
+	 */
 	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryFactory) {
 		this.repositoryFactory = repositoryFactory;
+	}
+
+	/**
+	 * Returns the repository instance to be used by this phase listener.
+	 */
+	protected FlowExecutionRepository getRepository(ExternalContext context) {
+		return repositoryFactory.getRepository(context);
 	}
 
 	public void beforePhase(PhaseEvent event) {
@@ -97,7 +122,7 @@ public class FlowPhaseListener implements PhaseListener {
 					// rendering response
 					FlowExecutionContinuationKey continuationKey = holder.getContinuationKey();
 					JsfExternalContext context = new JsfExternalContext(facesContext);
-					FlowExecutionRepository repository = repositoryFactory.getRepository(context);
+					FlowExecutionRepository repository = getRepository(context);
 					continuationKey = repository.generateContinuationKey(flowExecution, continuationKey
 							.getConversationId());
 					holder.setContinuationKey(continuationKey);
@@ -120,7 +145,7 @@ public class FlowPhaseListener implements PhaseListener {
 			String flowExecutionId = parameterExtractor.extractFlowExecutionId(context);
 			if (StringUtils.hasText(flowExecutionId)) {
 				FlowExecutionContinuationKey continuationKey = parseContinuationKey(flowExecutionId);
-				FlowExecutionRepository repository = repositoryFactory.getRepository(context);
+				FlowExecutionRepository repository = getRepository(context);
 				FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
 				FlowExecutionHolderUtils.setFlowExecutionHolder(
 						new FlowExecutionHolder(continuationKey, flowExecution), facesContext);
@@ -135,7 +160,7 @@ public class FlowPhaseListener implements PhaseListener {
 				FlowExecution flowExecution = holder.getFlowExecution();
 				if (flowExecution.isActive()) {
 					JsfExternalContext context = new JsfExternalContext(facesContext);
-					FlowExecutionRepository repository = repositoryFactory.getRepository(context);
+					FlowExecutionRepository repository = getRepository(context);
 					repository.putFlowExecution(holder.getContinuationKey(), flowExecution);
 				}
 			}
