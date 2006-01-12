@@ -20,8 +20,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.el.EvaluationException;
 import javax.faces.el.VariableResolver;
 
-import org.springframework.webflow.execution.FlowExecution;
-
 /**
  * Custom variable resolver that resolves to a thread-bound FlowExecution object
  * for binding expressions prefixed with {@link #FLOW_SCOPE_VARIABLE} (e.g.
@@ -45,10 +43,10 @@ public class FlowVariableResolver extends VariableResolver {
 	 * the constructor of a configured resolver, provided that there is a
 	 * corresponding constructor argument.
 	 * 
-	 * @param originalVariableResolver the original VariableResolver
+	 * @param resolverDelegate the original VariableResolver
 	 */
-	public FlowVariableResolver(VariableResolver originalVariableResolver) {
-		this.resolverDelegate = originalVariableResolver;
+	public FlowVariableResolver(VariableResolver resolverDelegate) {
+		this.resolverDelegate = resolverDelegate;
 	}
 
 	/**
@@ -67,12 +65,11 @@ public class FlowVariableResolver extends VariableResolver {
 			return resolverDelegate.resolveVariable(context, name);
 		}
 		else {
-			// TODO
-			FlowExecution execution = null;
-			if (execution == null)
+			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(context);
+			if (holder == null)
 				throw new EvaluationException(
 						"'flowScope' variable prefix specified, but a FlowExecution is not bound to current thread context as it should be");
-			return execution;
+			return holder;
 		}
 	}
 }

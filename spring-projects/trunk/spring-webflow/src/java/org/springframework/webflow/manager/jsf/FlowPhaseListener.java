@@ -90,7 +90,7 @@ public class FlowPhaseListener implements PhaseListener {
 	public void afterPhase(PhaseEvent event) {
 		if (event.getPhaseId() == PhaseId.RESTORE_VIEW) {
 			// restore flow execution if necessary so it will be available to
-			// variable/property resolvers
+			// variable/property resolvers and the flow navigation handler
 			FacesContext facesContext = event.getFacesContext();
 			JsfExternalContext context = new JsfExternalContext(facesContext);
 			String flowExecutionId = parameterExtractor.extractFlowExecutionId(context);
