@@ -17,11 +17,26 @@ package org.springframework.webflow.manager.jsf;
 
 import javax.faces.context.FacesContext;
 
+/**
+ * A static utility class for accessing the current flow execution holder.
+ * @author Keith Donald
+ */
 public class FlowExecutionHolderUtils {
+	
+	/**
+	 * Returns the current flow execution holder for the given faces context.
+	 * @param context faces context
+	 * @return the flow execution holder, or <code>null</code> if none set.
+	 */
 	public static FlowExecutionHolder getFlowExecutionHolder(FacesContext context) {
 		return (FlowExecutionHolder)context.getExternalContext().getRequestMap().get(getFlowExecutionHolderKey());
 	}
 
+	/**
+	 * Sets the current flow execution holder for the given faces context.
+	 * @param holder the flow execution holder
+	 * @param context faces context
+	 */
 	public static void setFlowExecutionHolder(FlowExecutionHolder holder, FacesContext context) {
 		context.getExternalContext().getRequestMap().put(getFlowExecutionHolderKey(), holder);
 	}
