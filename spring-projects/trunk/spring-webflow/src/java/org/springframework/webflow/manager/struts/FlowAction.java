@@ -25,15 +25,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.web.struts.ActionSupport;
-import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.action.FormObjectAccessor;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
-import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory;
 import org.springframework.webflow.manager.FlowExecutionManager;
 import org.springframework.webflow.manager.support.FlowExecutionManagerHelper;
 import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
@@ -50,12 +44,13 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * processed.
  * <p>
  * <li>To have this controller launch a new flow execution (conversation), have
- * the client send a {@link FlowExecutionManagerParameterExtractor#getFlowIdParameterName()}
+ * the client send a
+ * {@link FlowExecutionManagerParameterExtractor#getFlowIdParameterName()}
  * request parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
- * {@link FlowExecutionManagerParameterExtractor#getFlowExecutionIdParameterName()} request
- * parameter identifying the conversation to participate in.
+ * {@link FlowExecutionManagerParameterExtractor#getFlowExecutionIdParameterName()}
+ * request parameter identifying the conversation to participate in.
  * <p>
  * On each request received by this action, a {@link StrutsExternalContext}
  * object is created as input to the web flow system. This external source event
@@ -74,10 +69,10 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * FlowAction:
  * 
  * <pre>
- *     &lt;action path=&quot;/userRegistration&quot;
- *         type=&quot;org.springframework.webflow.struts.FlowAction&quot;
- *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *     &lt;/action&gt;
+ *      &lt;action path=&quot;/userRegistration&quot;
+ *          type=&quot;org.springframework.webflow.struts.FlowAction&quot;
+ *          name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *      &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -119,8 +114,9 @@ public class FlowAction extends ActionSupport {
 	public static final String FLOW_EXECUTION_MANAGER_BEAN_NAME = "flowExecutionManager";
 
 	/**
-	 * The flow execution manager parameter extractor will be retreived from the application context
-	 * using this bean name if no extractor is explicitly set.
+	 * The flow execution manager parameter extractor will be retreived from the
+	 * application context using this bean name if no extractor is explicitly
+	 * set.
 	 */
 	public static final String PARAMETER_EXTRACTOR_BEAN_NAME = "flowExecutionManagerParameterExtractor";
 
@@ -166,7 +162,7 @@ public class FlowAction extends ActionSupport {
 	public void setParameterExtractor(FlowExecutionManagerParameterExtractor parameterExtractor) {
 		this.parameterExtractor = parameterExtractor;
 	}
-	
+
 	protected void onInit() {
 		if (getFlowExecutionManager() == null) {
 			setFlowExecutionManager((FlowExecutionManager)getWebApplicationContext().getBean(
@@ -176,8 +172,6 @@ public class FlowAction extends ActionSupport {
 			setParameterExtractor((FlowExecutionManagerParameterExtractor)getWebApplicationContext().getBean(
 					PARAMETER_EXTRACTOR_BEAN_NAME, FlowExecutionManagerParameterExtractor.class));
 		}
-		// TODO
-		//getFlowExecutionManager().addListener(new ActionFormAdapter(), FlowExecutionListenerCriteriaFactory.allFlows());
 	}
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -195,7 +189,7 @@ public class FlowAction extends ActionSupport {
 	protected FlowExecutionManagerHelper createControllerHelper() {
 		return new FlowExecutionManagerHelper(getFlowExecutionManager(), getParameterExtractor());
 	}
-	
+
 	/**
 	 * Return a Struts ActionForward given a ViewSelection. Adds all attributes
 	 * from the ViewSelection as request attributes.
@@ -247,50 +241,5 @@ public class FlowAction extends ActionSupport {
 			}
 		}
 		return path.toString();
-	}
-
-	/**
-	 * Creates a flow execution listener that takes a Spring Errors instance
-	 * supporting POJO-based data binding in request scope under a well-defined
-	 * name and adapts it to the Struts ActionForm model.
-	 */
-	protected static class ActionFormAdapter extends FlowExecutionListenerAdapter {
-		public void requestProcessed(RequestContext context) {
-			if (context.getFlowExecutionContext().isActive()) {
-				StrutsExternalContext strutsContext = (StrutsExternalContext)context.getExternalContext();
-				if (strutsContext.getActionForm() instanceof SpringBindingActionForm) {
-					SpringBindingActionForm bindingForm = (SpringBindingActionForm)strutsContext.getActionForm();
-					bindingForm.expose(new FormObjectAccessor(context).getFormErrors(), strutsContext.getRequest());
-				}
-			}
-		}
-	}
-
-	/**
-	 * Provides consistent access to a Struts environment from within Spring Web
-	 * Flow.
-	 * 
-	 * @author Keith Donald
-	 */
-	public static class StrutsExternalContext extends ServletExternalContext {
-
-		private ActionMapping actionMapping;
-
-		private ActionForm actionForm;
-
-		public StrutsExternalContext(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-				HttpServletResponse response) {
-			super(request, response);
-			this.actionMapping = mapping;
-			this.actionForm = form;
-		}
-
-		public ActionForm getActionForm() {
-			return actionForm;
-		}
-
-		public ActionMapping getActionMapping() {
-			return actionMapping;
-		}
 	}
 }
