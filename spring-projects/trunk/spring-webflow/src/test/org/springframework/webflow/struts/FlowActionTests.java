@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.manager.FlowExecutionManagerImpl;
 import org.springframework.webflow.manager.FlowExecutionManagerImpl.ConditionalFlowExecutionListenerHolder;
 import org.springframework.webflow.manager.struts.FlowAction;
-import org.springframework.webflow.manager.struts.FlowAction.StrutsExternalContext;
+import org.springframework.webflow.manager.struts.StrutsExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
