@@ -54,11 +54,11 @@ public class ServletExternalContext implements ExternalContext {
 	}
 	
 	public Map getRequestParameterMap() {
-		return new HttpRequestParameterMap(request);
+		return new HttpServletRequestParameterMap(request);
 	}
 
 	public Map getRequestMap() {
-		return new HttpRequestMap(request);
+		return new HttpServletRequestMap(request);
 	}
 
 	public Map getSessionMap() {

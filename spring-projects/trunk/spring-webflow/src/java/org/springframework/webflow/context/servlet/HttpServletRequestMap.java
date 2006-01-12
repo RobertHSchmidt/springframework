@@ -27,7 +27,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
  * 
  * @author Keith Donald
  */
-public class HttpRequestMap extends StringKeyedAttributeMapAdapter {
+public class HttpServletRequestMap extends StringKeyedAttributeMapAdapter {
 
 	/**
 	 * The wrapped http request.
@@ -37,7 +37,7 @@ public class HttpRequestMap extends StringKeyedAttributeMapAdapter {
 	/**
 	 * Create a new map wrapping the attributes of given request.
 	 */
-	public HttpRequestMap(HttpServletRequest request) {
+	public HttpServletRequestMap(HttpServletRequest request) {
 		this.request = request;
 	}
 

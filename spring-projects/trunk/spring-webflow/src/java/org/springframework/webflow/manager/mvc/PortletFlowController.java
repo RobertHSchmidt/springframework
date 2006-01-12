@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.manager.portlet;
+package org.springframework.webflow.manager.mvc;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -85,13 +85,13 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class FlowController extends AbstractController {
+public class PortletFlowController extends AbstractController {
 
 	/**
 	 * The attribute name of the last <code>ViewSelection</code> made by this
 	 * controller for one user's <code>PortletSession</code>
 	 */
-	private static final String VIEW_SELECTION_ATTRIBUTE_NAME = FlowController.class + ".viewSelection";
+	private static final String VIEW_SELECTION_ATTRIBUTE_NAME = PortletFlowController.class + ".viewSelection";
 
 	/**
 	 * Delegate for managing flow executions (launching new executions, and
@@ -110,7 +110,7 @@ public class FlowController extends AbstractController {
 	 * @param flowExecutionManager the manager to launch and resume flow
 	 * executions brokered by this web controller.
 	 */
-	public FlowController(FlowExecutionManager flowExecutionManager) {
+	public PortletFlowController(FlowExecutionManager flowExecutionManager) {
 		initDefaults();
 		setFlowExecutionManager(flowExecutionManager);
 	}
@@ -122,7 +122,7 @@ public class FlowController extends AbstractController {
 	 * implementation that uses the provided flow locator to access flow
 	 * definitions at runtime.
 	 */
-	public FlowController(FlowLocator flowLocator) {
+	public PortletFlowController(FlowLocator flowLocator) {
 		initDefaults();
 		setFlowExecutionManager(new FlowExecutionManagerImpl(flowLocator));
 	}

@@ -24,6 +24,7 @@ import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.manager.FlowExecutionManager;
+import org.springframework.webflow.manager.mvc.PortletFlowController;
 
 /**
  * Unit test for the FlowController class.
@@ -36,24 +37,24 @@ public class FlowControllerTests extends TestCase {
 
 	private FlowExecutionManager flowExecutionManagerMock;
 
-	private FlowController tested;
+	private PortletFlowController tested;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		flowExecutionManagerControl = MockControl.createControl(FlowExecutionManager.class);
 		flowExecutionManagerMock = (FlowExecutionManager)flowExecutionManagerControl.getMock();
-		tested = new FlowController(flowExecutionManagerMock);
+		tested = new PortletFlowController(flowExecutionManagerMock);
 	}
 
 	public void testInit() throws Exception {
-		FlowController localTested = new FlowController(flowExecutionManagerMock);
+		PortletFlowController localTested = new PortletFlowController(flowExecutionManagerMock);
 		assertEquals("Cache,", 0, localTested.getCacheSeconds());
 	}
 
 	public void testHandleActionRequestInternal() throws Exception {
 		final ViewSelection viewSelection = new ViewSelection("Some view");
 		MockPortletSession mockPortletSession = new MockPortletSession();
-		String attributeKey = FlowController.class + ".viewSelection";
+		String attributeKey = PortletFlowController.class + ".viewSelection";
 		mockPortletSession.setAttribute(attributeKey, viewSelection);
 
 		MockActionRequest mockActionRequest = new MockActionRequest();
@@ -68,7 +69,7 @@ public class FlowControllerTests extends TestCase {
 	public void testHandleRenderRequestInternal() throws Exception {
 		final ViewSelection viewSelection = new ViewSelection("Some view");
 		MockPortletSession mockPortletSession = new MockPortletSession();
-		String attributeKey = FlowController.class + ".viewSelection";
+		String attributeKey = PortletFlowController.class + ".viewSelection";
 		mockPortletSession.setAttribute(attributeKey, viewSelection);
 
 		MockRenderRequest mockRenderRequest = new MockRenderRequest();
