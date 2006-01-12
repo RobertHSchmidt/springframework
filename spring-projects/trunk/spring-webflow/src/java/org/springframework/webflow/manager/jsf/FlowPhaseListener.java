@@ -24,7 +24,6 @@ import javax.faces.event.PhaseListener;
 
 import org.springframework.binding.format.Formatter;
 import org.springframework.util.StringUtils;
-import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.ExternalMapFlowExecutionRepositoryFactory;

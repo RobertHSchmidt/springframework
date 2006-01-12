@@ -17,13 +17,13 @@
 package org.springframework.webflow.manager.jsf;
 
 /**
- * Interface to be implemented by objects that can map Web Flow view names
- * to JSF view identifiers.
+ * Interface to be implemented by objects that can map Web Flow view names to
+ * JSF view identifiers.
  * @author Colin Sampaleanu
- */ 
+ */
 public interface ViewIdResolver {
-		
-	/** 
+
+	/**
 	 * Resolve the given Web Flow view name to a JSF view id.
 	 * @param viewName name of the view to resolve
 	 * @return the corresponding JSF view id
