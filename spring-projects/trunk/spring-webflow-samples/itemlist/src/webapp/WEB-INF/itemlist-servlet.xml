@@ -9,7 +9,7 @@
 	  the "_flowId" request parameter:
 	      e.g. /app.htm?_flowId=itemlist
 	-->
-	<bean name="/app.htm" class="org.springframework.webflow.mvc.FlowController">
+	<bean name="/app.htm" class="org.springframework.webflow.manager.mvc.FlowController">
 		<constructor-arg ref="flowRegistry"/>
 		<!--
 			Set cacheSeconds to a small, non zero value so you hit 'back' and experiment with

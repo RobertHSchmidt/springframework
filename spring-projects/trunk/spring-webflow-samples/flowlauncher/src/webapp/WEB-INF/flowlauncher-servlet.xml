@@ -20,8 +20,12 @@
 	-->	
 	<bean id="flowExecutionManager" class="org.springframework.webflow.execution.FlowExecutionManager">
 		<constructor-arg ref="flowRegistry"/>
-		<property name="listener">
-			<bean class="org.springframework.webflow.samples.flowlauncher.SampleFlowExecutionListener"/>
+		<property name="listenerLoader">
+			<bean class="org.springframework.webflow.manager.ConditionalFlowExecutionListenerLoader">
+		        <property name="listener">
+					<bean class="org.springframework.webflow.samples.flowlauncher.SampleFlowExecutionListener"/>
+    		    </property>
+			</bean>
 		</property>
 	</bean>
 	

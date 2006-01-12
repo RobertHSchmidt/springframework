@@ -9,7 +9,7 @@
 	  the "_flowId" request parameter:
 	      e.g. /admin.htm?_flowId=fileupload
 	-->
-	<bean name="/admin.htm" class="org.springframework.webflow.mvc.FlowController">
+	<bean name="/admin.htm" class="org.springframework.webflow.manager.mvc.FlowController">
 		<constructor-arg ref="flowRegistry"/>
 	</bean>
 
