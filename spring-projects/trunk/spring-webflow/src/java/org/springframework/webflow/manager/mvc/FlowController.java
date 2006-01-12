@@ -24,9 +24,7 @@ import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.manager.FlowExecutionManager;
-import org.springframework.webflow.manager.FlowExecutionManagerImpl;
 import org.springframework.webflow.manager.support.FlowExecutionManagerHelper;
 import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
 
@@ -58,25 +56,25 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * Usage example:
  * 
  * <pre>
- *        &lt;!--
- *            Exposes flows for execution at a single request URL.
- *            The id of a flow to launch should be passed in by clients using
- *            the &quot;_flowId&quot; request parameter:
- *            e.g. /app.htm?_flowId=flow1
- *        --&gt;
- *        &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.mvc.FlowController&quot;&gt;
- *            &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *        &lt;/bean&gt;
+ *     &lt;!--
+ *         Exposes flows for execution at a single request URL.
+ *         The id of a flow to launch should be passed in by clients using
+ *         the &quot;_flowId&quot; request parameter:
+ *         e.g. /app.htm?_flowId=flow1
+ *     --&gt;
+ *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.mvc.FlowController&quot;&gt;
+ *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *     &lt;/bean&gt;
  *                          
- *        &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *        &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *            &lt;property name=&quot;flowLocations&quot;&gt;
- *                &lt;list&gt;
- *                    &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *                    &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *                &lt;/list&gt;
- *            &lt;/property&gt;
- *        &lt;/bean&gt;
+ *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;flowLocations&quot;&gt;
+ *             &lt;list&gt;
+ *                 &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                 &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *             &lt;/list&gt;
+ *         &lt;/property&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
  * @author Erwin Vervaet
@@ -94,17 +92,6 @@ public class FlowController extends AbstractController {
 	 * Delegate for extract flow execution manager parameters.
 	 */
 	private FlowExecutionManagerParameterExtractor parameterExtractor;
-
-	/**
-	 * Creates a new FlowController that initially relies on a default
-	 * {@link org.springframework.webflow.manager.FlowExecutionManagerImpl}
-	 * implementation that uses the provided flow locator to access flow
-	 * definitions at runtime.
-	 */
-	public FlowController(FlowLocator flowLocator) {
-		initDefaults();
-		setFlowExecutionManager(new FlowExecutionManagerImpl(flowLocator));
-	}
 
 	/**
 	 * Create a new FlowController that delegates to the configured execution
