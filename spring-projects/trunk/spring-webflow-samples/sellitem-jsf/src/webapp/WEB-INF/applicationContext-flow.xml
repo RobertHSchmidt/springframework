@@ -6,16 +6,8 @@
 
 <beans>
 
-	<!-- Launches new flow executions in a JSF environment. -->	
-	<bean id="flowExecutionManager" class="org.springframework.webflow.jsf.JsfFlowExecutionManager">
-		<constructor-arg ref="flowRegistry"/>
-		<property name="listener">
-			<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
-		</property>
-	</bean>
-	
 	<!-- Creates the registry of flow definitions for this application -->
-	<bean name="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
+	<bean name="flowLocator" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
 		<property name="flowLocations" value="/WEB-INF/sellitem.xml"/>
 	</bean>
 	
