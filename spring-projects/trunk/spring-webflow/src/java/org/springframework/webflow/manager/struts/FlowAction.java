@@ -24,12 +24,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.struts.ActionSupport;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.manager.FlowExecutionManager;
+import org.springframework.webflow.manager.FlowExecutionManagerImpl;
 import org.springframework.webflow.manager.support.FlowExecutionManagerHelper;
 import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
 
@@ -71,10 +74,10 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * FlowAction:
  * 
  * <pre>
- *     &lt;action path=&quot;/userRegistration&quot;
- *         type=&quot;org.springframework.webflow.manager.struts.FlowAction&quot;
- *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *     &lt;/action&gt;
+ *          &lt;action path=&quot;/userRegistration&quot;
+ *              type=&quot;org.springframework.webflow.manager.struts.FlowAction&quot;
+ *              name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *          &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -117,6 +120,19 @@ public class FlowAction extends ActionSupport {
 	protected static final String FLOW_EXECUTION_MANAGER_BEAN_NAME = "flowExecutionManager";
 
 	/**
+	 * The flow locator will be retreived from the application context using
+	 * this bean name if no manager and locator is explicitly set.
+	 */
+	protected static final String FLOW_LOCATOR_BEAN_NAME = "flowLocator";
+
+	/**
+	 * A reference to a flow locator responsible for loading flows to be
+	 * executed. Used when a flow execution manager is not explicitly
+	 * configured.
+	 */
+	private FlowLocator flowLocator;
+
+	/**
 	 * The manager responsible for launching and signaling struts-originating
 	 * events in flow executions.
 	 */
@@ -126,6 +142,21 @@ public class FlowAction extends ActionSupport {
 	 * Delegate for extract flow execution manager parameters.
 	 */
 	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowExecutionManagerParameterExtractor();
+
+	/**
+	 * Returns the flow locator to use for lookup of flow definitions to
+	 * execute.
+	 */
+	protected FlowLocator getFlowLocator() {
+		return flowLocator;
+	}
+
+	/**
+	 * Set the flow locator to use for lookup of flow definitions to execute.
+	 */
+	public void setFlowLocator(FlowLocator flowLocator) {
+		this.flowLocator = flowLocator;
+	}
 
 	/**
 	 * Returns the flow execution manager used by this controller.
@@ -161,8 +192,20 @@ public class FlowAction extends ActionSupport {
 
 	protected void onInit() {
 		if (getFlowExecutionManager() == null) {
-			setFlowExecutionManager((FlowExecutionManager)getWebApplicationContext().getBean(
-					FLOW_EXECUTION_MANAGER_BEAN_NAME, FlowExecutionManager.class));
+			WebApplicationContext context = getWebApplicationContext();
+			if (context.containsBean(FLOW_EXECUTION_MANAGER_BEAN_NAME)) {
+				setFlowExecutionManager((FlowExecutionManager)getWebApplicationContext().getBean(
+						FLOW_EXECUTION_MANAGER_BEAN_NAME, FlowExecutionManager.class));
+			}
+			else {
+				if (getFlowLocator() == null) {
+					setFlowLocator((FlowLocator)getWebApplicationContext().getBean(FLOW_LOCATOR_BEAN_NAME,
+							FlowLocator.class));
+				}
+				FlowExecutionManagerImpl manager = new FlowExecutionManagerImpl(getFlowLocator());
+				manager.setListenerLoader(new StrutsFlowExecutionListenerLoader());
+				setFlowExecutionManager(manager);
+			}
 		}
 	}
 
