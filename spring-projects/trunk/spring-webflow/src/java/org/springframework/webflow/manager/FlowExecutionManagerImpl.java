@@ -29,42 +29,43 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKeyFormatter;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
 
 /**
- * A central facade for the execution of flows within an application. This
- * object is responsible for creating and starting new flow executions as
- * requested by clients, as well as signaling events for processing by existing,
- * paused executions (that are waiting to be resumed in response to a user
- * event). This object is a facade or entry point into the flow execution
- * subsystem, and makes the overall subsystem easier to use.
+ * The default implementation of the central facade for the execution of flows
+ * within an application. This object is responsible for creating and starting
+ * new flow executions as requested by clients, as well as signaling events for
+ * processing by existing, paused executions (that are waiting to be resumed in
+ * response to a user event). This object is a facade or entry point into the
+ * flow execution subsystem, and makes the overall system easier to use.
  * <p>
- * <b>Typical FlowExecutionManager configurable properties</b><br>
+ * <b>Commonly used configurable properties</b><br>
  * <table border="1">
  * <tr>
  * <td><b>name</b></td>
- * <td><b>default</b></td>
  * <td><b>description</b></td>
+ * <td><b>default</b></td>
  * </tr>
  * <tr>
  * <td>flowLocator (required)</td>
- * <td>None</td>
- * <td>The locator that will load Flow definitions as needed for execution by
+ * <td>The locator that will load flow definitions as needed for execution by
  * this manager</td>
+ * <td>None</td>
  * </tr>
  * <tr>
  * <td>repositoryFactory</td>
- * <td>A server-side, stateful-session-based repository factory</td>
  * <td>The strategy for accessing managed flow execution repositories</td>
+ * <td>A server-side, stateful session-based repository factory</td>
  * </tr>
  * <tr>
  * <td>listenerLoader</td>
- * <td>None</td>
- * <td>The listeners to observe the lifecycle of managed flow executions</td>
+ * <td>The listeners that should be loaded to observe the lifecycle of managed
+ * flow executions</td>
+ * <td>An empty listener loader</td>
  * </tr>
  * </table>
  * </p>
@@ -79,14 +80,14 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
 public class FlowExecutionManagerImpl implements FlowExecutionManager {
 
 	/**
-	 * The flow context itself will be exposed to the view in a model attribute
-	 * with this name ("flowExecutionContext").
+	 * The flow execution context itself will be exposed to the view in a model
+	 * attribute with this name ("flowExecutionContext").
 	 */
 	public static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
 
 	/**
-	 * The id of the flow execution will be exposed to the view in a model
-	 * attribute with this name ("flowExecutionId").
+	 * The string-encoded id of the flow execution will be exposed to the view
+	 * in a model attribute with this name ("flowExecutionId").
 	 */
 	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
 
@@ -106,6 +107,9 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	 * The flow execution repository factoring, for obtaining repository
 	 * instances to save paused executions that require user input and load
 	 * resuming executions that will process user events.
+	 * <p>
+	 * The default value is the {@link SharedMapFlowExecutionRepositoryFactory}
+	 * repository factory that creates repositories within the user session map.
 	 */
 	private FlowExecutionRepositoryFactory repositoryFactory = new SharedMapFlowExecutionRepositoryFactory();
 
@@ -136,7 +140,8 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	}
 
 	/**
-	 * Returns the flow locator to use for lookup of flow definitions to execute.
+	 * Returns the flow locator to use for lookup of flow definitions to
+	 * execute.
 	 */
 	protected FlowLocator getFlowLocator() {
 		return flowLocator;
@@ -150,37 +155,36 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	}
 
 	/**
-	 * Returns the repository factory used by this flow execution manager.
+	 * Returns the repository factory in use by this flow execution manager.
 	 */
 	public FlowExecutionRepositoryFactory getRepositoryFactory() {
 		return repositoryFactory;
 	}
 
 	/**
-	 * Set the repository factory used by this flow execution manager.
+	 * Set the repository factory in use this flow execution manager.
 	 */
 	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryLocator) {
 		this.repositoryFactory = repositoryLocator;
 	}
 
 	/**
-	 * Returns the repository instance to be used by this flow execution manager.
+	 * Returns the repository retrieved by the configured
+	 * {@link FlowExecutionRepositoryFactory}.
 	 */
 	protected FlowExecutionRepository getRepository(ExternalContext context) {
 		return repositoryFactory.getRepository(context);
 	}
 
 	/**
-	 * Returns the listener loader instance to be used by this flow execution
-	 * manager.
+	 * Returns the listener loader in use by this flow execution manager.
 	 */
 	public FlowExecutionListenerLoader getListenerLoader() {
 		return listenerLoader;
 	}
 
 	/**
-	 * Sets the listener loader instance to be used by this flow execution
-	 * manager.
+	 * Sets the listener loader in use by this flow execution manager.
 	 */
 	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
 		this.listenerLoader = listenerLoader;
@@ -220,7 +224,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	 * Create a new flow execution for given flow. Subclasses could redefine
 	 * this if they wish to use a specialized FlowExecution implementation
 	 * class.
-	 * @param flow the flow
+	 * @param flow the flow definition
 	 * @return the created flow execution
 	 */
 	protected FlowExecution createFlowExecution(Flow flow) {
@@ -268,8 +272,8 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	}
 
 	/**
-	 * Helper to parse a flow execution continuation key from its
-	 * string-encoding.
+	 * Helper to parse a flow execution continuation key from its string-encoded
+	 * representation.
 	 * @param flowExecutionId the string encoded key
 	 * @return the parsed key
 	 */
@@ -334,5 +338,5 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 		// make the unique flow execution id and current state id
 		// available in the model as convenience to views
 		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
-	}	
+	}
 }

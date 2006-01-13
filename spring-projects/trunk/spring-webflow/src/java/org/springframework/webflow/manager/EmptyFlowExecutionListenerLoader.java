@@ -19,8 +19,16 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 
+/**
+ * A flow execution listener loader that simply returns an empty listener array
+ * on each invocation.
+ * @author Keith Donald
+ */
 public class EmptyFlowExecutionListenerLoader implements FlowExecutionListenerLoader {
 
+	/**
+	 * Canonical instance of a empty flow execution listener array.
+	 */
 	private static final FlowExecutionListener[] EMPTY_LISTENER_ARRAY = new FlowExecutionListener[0];
 
 	public FlowExecutionListener[] getListeners(Flow flow) {

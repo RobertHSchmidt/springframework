@@ -20,9 +20,13 @@ import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 
 /**
- * The central facade entry-point into the Spring Web Flow system. This inteface
- * defines a coarse-grained system boundary suitable for invocation by most
- * clients.
+ * The central facade or entry-point into the Spring Web Flow system. This
+ * inteface defines a coarse-grained system boundary suitable for invocation by
+ * most clients.
+ * <p>
+ * Implemetations of this interface abstract away much of the the internal
+ * complexity of the webflow execution subsystem, which consists of launching
+ * and resuming managed flow executions from repositories.
  * 
  * @author Keith Donald
  */
