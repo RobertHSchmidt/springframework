@@ -26,7 +26,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
 
 /**
- * Provides contextual information about a HTTP portlet environment that has
+ * Provides contextual information about a portlet environment that has
  * interacted with SWF.
  * 
  * @author Keith Donald
