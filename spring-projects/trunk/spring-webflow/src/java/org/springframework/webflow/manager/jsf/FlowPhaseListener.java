@@ -123,8 +123,17 @@ public class FlowPhaseListener implements PhaseListener {
 					FlowExecutionContinuationKey continuationKey = holder.getContinuationKey();
 					JsfExternalContext context = new JsfExternalContext(facesContext);
 					FlowExecutionRepository repository = getRepository(context);
-					continuationKey = repository.generateContinuationKey(flowExecution, continuationKey
-							.getConversationId());
+					if (continuationKey == null) {
+						// it is an entirely new conversation, generate a new
+						// conversation and continuation id
+						continuationKey = repository.generateContinuationKey(flowExecution);
+					}
+					else {
+						// it is an existing conversaiton, generate a new
+						// continuation id
+						continuationKey = repository.generateContinuationKey(flowExecution, continuationKey
+								.getConversationId());
+					}
 					holder.setContinuationKey(continuationKey);
 					String flowExecutionId = continuationKeyFormatter.formatValue(continuationKey);
 					Map requestMap = facesContext.getExternalContext().getRequestMap();
