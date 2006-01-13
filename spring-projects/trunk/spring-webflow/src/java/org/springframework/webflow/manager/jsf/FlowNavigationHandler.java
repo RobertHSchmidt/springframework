@@ -39,30 +39,31 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
 /**
  * An implementation of a JSF <code>NavigationHandler</code> that provides
  * integration with Spring Web Flow. It delegates handling to the standard
- * implementation when there is no current flow.
+ * NavigationHandler implementation when there a navigation request does not
+ * pertain to a flow execution.
+ * <p>
+ * Specifically, the following navigation handler algorithm is implemented:
  * <ul>
  * <li>If a flow execution is <strong>not</strong> currently in progress:
  * <ul>
- * <li>If the specified logical outcome is <strong>not</strong> of the form
- * <em>flowId:xxx</em>, delegate to the standard
- * <code>NavigationHandler</code> implementation and return.</li>
  * <li>If the specified logical outcome <strong>is</strong> of the form
  * <em>flowId:xxx</em>, look up the corresponding
  * {@link org.springframework.webflow.Flow} definition with that id and launch a
- * new flow execution in the starting state. Record state information to
- * indicate that this flow is in progress.</li>
+ * new flow execution in the starting state. Expose information to indicate that
+ * this flow is in progress and render the starting {@link ViewSelection}.</li>
+ * <li>If the specified logical outcome is <strong>not</strong> of the form
+ * <em>flowId:xxx</em>, simply delegate to the standard
+ * <code>NavigationHandler</code> implementation and return.</li>
  * </ul>
  * </li>
  * <li>If a flow execution <strong>is</strong> currently in progress:
  * <ul>
  * <li>Load the reference to the current in-progress flow execution using the
- * submitted <em>_flowExecutionId</em>.</li>
- * <li>Resume the flow execution by signaling what action (event) the user took
- * in the current state.
- * <li>Wait for state event processing to complete, which happens when a
- * <code>ViewSelection</code> is returned selecting the next view to be
- * rendered.</li>
- * <li>Cause navigation to render the requested view.</li>
+ * submitted <em>_flowExecutionId</em> parameter.</li>
+ * <li>Resume the flow execution by signaling what action outcome (aka event)
+ * the user took in the current state.
+ * <li>Once state event processing to complete, render the
+ * <code>ViewSelection</code> returned.</li>
  * </ul>
  * </li>
  * </ul>

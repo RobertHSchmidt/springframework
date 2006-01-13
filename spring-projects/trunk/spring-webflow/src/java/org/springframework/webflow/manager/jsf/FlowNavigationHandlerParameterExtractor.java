@@ -3,16 +3,23 @@ package org.springframework.webflow.manager.jsf;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
 
+/**
+ * A extension of {@link FlowExecutionManagerParameterExtractor} that is aware
+ * of JSF outcomes that communicate requests to launch flow executions and
+ * signal event in existing flow executions.
+ * 
+ * @author Keith Donald
+ */
 public class FlowNavigationHandlerParameterExtractor extends FlowExecutionManagerParameterExtractor {
 
 	/**
-	 * Prefix on a logical outcome value that identifies a logical outcome as
-	 * the identifier for a web flow that should be entered.
+	 * The prefix on a logical outcome value that identifies a logical outcome as
+	 * the identifier for a new flow execution that should be launched.
 	 */
 	protected static final String FLOW_ID_PREFIX = "flowId:";
 
 	/*
-	 * Overriden to return the eventId from the actionId
+	 * Overriden to return the eventId from the action outcome string.
 	 * @see org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor#extractEventId(org.springframework.webflow.ExternalContext)
 	 */
 	public String extractEventId(ExternalContext context) throws IllegalArgumentException {
