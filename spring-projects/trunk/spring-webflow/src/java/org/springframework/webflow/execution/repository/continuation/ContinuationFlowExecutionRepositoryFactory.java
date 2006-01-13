@@ -16,8 +16,8 @@ import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRe
  * 
  * @author Keith Donald
  */
-public class SharedMapContinuationFlowExecutionRepositoryFactory extends SharedMapFlowExecutionRepositoryFactory {
-	public SharedMapContinuationFlowExecutionRepositoryFactory() {
+public class ContinuationFlowExecutionRepositoryFactory extends SharedMapFlowExecutionRepositoryFactory {
+	public ContinuationFlowExecutionRepositoryFactory() {
 		setRepositoryCreator(new ContinuationFlowExecutionRepositoryCreator());
 	}
 }

@@ -18,7 +18,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.FlowExecutionListenerCriteriaFactory;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.ExternalMapFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.LocalMapLocator;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
 import org.springframework.webflow.test.MockExternalContext;
@@ -37,8 +37,8 @@ public class FlowExecutionManageImplTests extends TestCase {
 	private LocalMapLocator mapLocator = new LocalMapLocator();
 
 	public void setUp() {
-		ExternalMapFlowExecutionRepositoryFactory repositoryLocator = new ExternalMapFlowExecutionRepositoryFactory();
-		repositoryLocator.setExternalMapLocator(mapLocator);
+		SharedMapFlowExecutionRepositoryFactory repositoryLocator = new SharedMapFlowExecutionRepositoryFactory();
+		repositoryLocator.setSharedMapLocator(mapLocator);
 		manager.setRepositoryFactory(repositoryLocator);
 	}
 

@@ -4,15 +4,15 @@
 package org.springframework.webflow.execution.repository;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.execution.repository.ExternalMapLocator;
+import org.springframework.webflow.ExternalContext.SharedMap;
+import org.springframework.webflow.context.SharedMapDecorator;
 
-public class LocalMapLocator implements ExternalMapLocator {
-	public Map source = new HashMap();
+public class LocalMapLocator implements SharedMapLocator {
+	public SharedMap source = new SharedMapDecorator(new HashMap());
 
-	public Map getMap(ExternalContext context) {
+	public SharedMap getMap(ExternalContext context) {
 		return source;
 	}
 }

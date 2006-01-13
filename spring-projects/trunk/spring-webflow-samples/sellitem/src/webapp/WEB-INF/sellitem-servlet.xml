@@ -21,7 +21,7 @@
 	<bean id="flowExecutionManager" class="org.springframework.webflow.manager.FlowExecutionManagerImpl">
 		<constructor-arg ref="flowRegistry"/>
 		<property name="repositoryFactory">
-			<bean class="org.springframework.webflow.execution.repository.continuation.ExternalMapContinuationFlowExecutionRepositoryFactory"/>
+			<bean class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepositoryFactory"/>
 		</property>
 		<property name="listenerLoader">
 			<bean class="org.springframework.webflow.manager.ConditionalFlowExecutionListenerLoader">
