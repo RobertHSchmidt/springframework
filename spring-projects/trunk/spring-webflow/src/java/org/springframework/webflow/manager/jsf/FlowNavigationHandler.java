@@ -101,7 +101,7 @@ public class FlowNavigationHandler extends NavigationHandler {
 	 * A helper for extracting parameters needed by this flow navigation
 	 * handler.
 	 */
-	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowExecutionManagerParameterExtractor();
+	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowNavigationHandlerParameterExtractor();
 
 	/**
 	 * Resolves selected Web Flow view names to JSF view ids.
