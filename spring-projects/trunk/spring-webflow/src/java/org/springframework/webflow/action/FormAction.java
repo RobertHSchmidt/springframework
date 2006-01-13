@@ -18,8 +18,6 @@ package org.springframework.webflow.action;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.binding.format.InvalidFormatException;
-import org.springframework.binding.format.support.LabeledEnumFormatter;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -372,17 +370,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	}
 
 	/**
-	 * Convenience setter that performs a string to ScopeType conversion for
-	 * you.
-	 * @param encodedScopeType the encoded scope type string, either "flow" or
-	 * "request" (for flow scope and request scope, respectively)
-	 * @throws InvalidFormatException the encoded value was invalid
-	 */
-	public void setFormObjectScopeAsString(String encodedScopeType) throws InvalidFormatException {
-		this.formObjectScope = (ScopeType)new LabeledEnumFormatter().parseValue(encodedScopeType, ScopeType.class);
-	}
-
-	/**
 	 * Get the scope in which the Errors object will be placed. Can be either
 	 * flow scope ore request scope. Defaults to request scope.
 	 */
@@ -396,17 +383,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	public void setFormErrorsScope(ScopeType errorsScope) {
 		this.formErrorsScope = errorsScope;
-	}
-
-	/**
-	 * Convenience setter that performs a string to ScopeType conversion for
-	 * you.
-	 * @param encodedScopeType the encoded scope type string, either "flow" or
-	 * "request" (for flow scope and request scope, respectively)
-	 * @throws InvalidFormatException the encoded value was invalid
-	 */
-	public void setFormErrorsScopeAsString(String encodedScopeType) throws InvalidFormatException {
-		this.formErrorsScope = (ScopeType)new LabeledEnumFormatter().parseValue(encodedScopeType, ScopeType.class);
 	}
 
 	/**

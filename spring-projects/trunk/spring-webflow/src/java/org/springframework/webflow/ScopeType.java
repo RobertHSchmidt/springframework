@@ -29,7 +29,7 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	 * Constant indicating request scope. Data in request scope lives for the
 	 * life of a request submitted to a flow execution for processing.
 	 */
-	public static final ScopeType REQUEST = new ScopeType(0, "request") {
+	public static final ScopeType REQUEST = new ScopeType(0, "Request") {
 		public Scope getScope(RequestContext context) {
 			return context.getRequestScope();
 		}
@@ -40,7 +40,7 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	 * artifacts of a flow (actions, view, states, etc.) and lives for the life
 	 * of the executing flow.
 	 */
-	public static final ScopeType FLOW = new ScopeType(1, "flow") {
+	public static final ScopeType FLOW = new ScopeType(1, "Flow") {
 		public Scope getScope(RequestContext context) {
 			return context.getFlowScope();
 		}
