@@ -53,8 +53,8 @@ public class PortletExternalContext implements ExternalContext {
 	 * @param request the portlet request
 	 * @param response the portlet response
 	 */
-	public PortletExternalContext(PortletContext portletContext, PortletRequest request, PortletResponse response) {
-		this.context = portletContext;
+	public PortletExternalContext(PortletContext context, PortletRequest request, PortletResponse response) {
+		this.context = context;
 		this.request = request;
 		this.response = response;
 	}
