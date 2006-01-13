@@ -35,19 +35,11 @@ import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRe
 import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
 
 /**
- * JSF phase listener that is responsible for managing {@link FlowExecution}
- * objects representing active user conversations, so that other JSF artifacts
- * that execute in different phases of the JSF lifecycle may access it.
+ * JSF phase listener that is responsible for managing a {@link FlowExecution}
+ * object representing an active user conversation so that other JSF artifacts
+ * that execute in different phases of the JSF lifecycle may have access to it.
  * <p>
  * This phase listener implements the following algorithm:
- * <ul>
- * <li>On RESTORE_VIEW, restore the
- * @{link FlowExecution} the user is participating in if a call to
- * {@link FlowExecutionManagerParameterExtractor#extractFlowExecutionId(ExternalContext))
- * returns a submitted flow execution identifier.
- * <li>Place the restored flow execution in a holder that other JSF artifacts
- * may access during the request lifecycle.
- * </ul>
  * <ul>
  * <li>On RESTORE_VIEW, restore the
  * @{link FlowExecution} the user is participating in if a call to
@@ -56,13 +48,13 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * execution in a holder that other JSF artifacts such as VariableResolvers,
  * PropertyResolvers, and NavigationHandlers may access during the request
  * lifecycle.
- * <li>On BEFORE_RENDER_RESPONSE, if a flow execution was restored in
- * RESTORE_VIEW generate a new key for identifying the updated execution within
- * a the selected {@link FlowExecutionRepository}. Expose managed flow
+ * <li>On BEFORE_RENDER_RESPONSE, if a flow execution was restored in the
+ * RESTORE_VIEW phase generate a new key for identifying the updated execution
+ * within a the selected {@link FlowExecutionRepository}. Expose managed flow
  * execution attributes to the views before rendering.
- * <li>On AFTER_RENDER_RESPONSE, if a flow execution was restored in
- * RESTORE_VIEW <em>save</em> the updated execution in the repository using
- * the new key generated in the BEFORE_RENDER_RESPONSE phase.
+ * <li>On AFTER_RENDER_RESPONSE, if a flow execution was restored in the
+ * RESTORE_VIEW phase <em>save</em> the updated execution to the repository
+ * using the new key generated in the BEFORE_RENDER_RESPONSE phase.
  * </ul>
  * @author Colin Sampaleanu
  * @author Keith Donald

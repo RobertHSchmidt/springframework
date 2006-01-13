@@ -29,7 +29,7 @@ public class FlowNavigationHandlerParameterExtractor extends FlowExecutionManage
 
 	/*
 	 * Overriden to return the flowId from a JSF outcome in format
-	 * "flowId:${flowId}"/>
+	 * "flowId:${flowId}"
 	 * @see org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor#extractFlowId(org.springframework.webflow.ExternalContext)
 	 */
 	public String extractFlowId(ExternalContext context) {

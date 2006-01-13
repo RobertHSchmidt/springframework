@@ -39,7 +39,7 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
 /**
  * An implementation of a JSF <code>NavigationHandler</code> that provides
  * integration with Spring Web Flow. It delegates handling to the standard
- * NavigationHandler implementation when there a navigation request does not
+ * NavigationHandler implementation when a navigation request does not
  * pertain to a flow execution.
  * <p>
  * Specifically, the following navigation handler algorithm is implemented:
