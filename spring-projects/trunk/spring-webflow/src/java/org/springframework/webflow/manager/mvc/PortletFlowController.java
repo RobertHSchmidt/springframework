@@ -45,12 +45,13 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * application. Specifically:
  * <ul>
  * <li>To have this controller launch a new flow execution (conversation), have
- * the client send a {@link FlowExecutionManagerParameterExtractor#getFlowIdParameterName()}
+ * the client send a
+ * {@link FlowExecutionManagerParameterExtractor#getFlowIdParameterName()}
  * request parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
- * {@link FlowExecutionManagerParameterExtractor#getFlowExecutionIdParameterName()} request
- * parameter identifying the conversation to participate in.
+ * {@link FlowExecutionManagerParameterExtractor#getFlowExecutionIdParameterName()}
+ * request parameter identifying the conversation to participate in.
  * </ul>
  * <p>
  * See the flowLauncher sample application for an example of this controller
@@ -59,31 +60,32 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * Usage example:
  * 
  * <pre>
- *     &lt;!--
- *         Exposes flows for execution at a single request URL.
- *         The id of a flow to launch should be passed in by clients using
- *         the &quot;_flowId&quot; request parameter:
- *             e.g. /app.htm?_flowId=flow1
- *     --&gt;
- *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.manager.mvc.PortletFlowController&quot;&gt;
- *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *     &lt;/bean&gt;
- *                           
- *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;flowLocations&quot;&gt;
- *             &lt;list&gt;
- *                 &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *                 &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *             &lt;/list&gt;
- *         &lt;/property&gt;
- *     &lt;/bean&gt;
+ *      &lt;!--
+ *          Exposes flows for execution at a single request URL.
+ *          The id of a flow to launch should be passed in by clients using
+ *          the &quot;_flowId&quot; request parameter:
+ *              e.g. /app.htm?_flowId=flow1
+ *      --&gt;
+ *      &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.manager.mvc.PortletFlowController&quot;&gt;
+ *          &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *      &lt;/bean&gt;
+ *                            
+ *      &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *      &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *          &lt;property name=&quot;flowLocations&quot;&gt;
+ *              &lt;list&gt;
+ *                  &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                  &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *              &lt;/list&gt;
+ *          &lt;/property&gt;
+ *      &lt;/bean&gt;
  * </pre>
  * 
- * It is also possible to customize the {@link FlowExecutionManagerParameterExtractor} strategy to allow
- * for different types of controller parameterization, for example perhaps in conjunction with a
- * REST-based request mapper.
- *  
+ * It is also possible to customize the
+ * {@link FlowExecutionManagerParameterExtractor} strategy to allow for
+ * different types of controller parameterization, for example perhaps in
+ * conjunction with a REST-based request mapper.
+ * 
  * @author J.Enrique Ruiz
  * @author César Ordiñana
  * @author Erwin Vervaet
@@ -130,7 +132,7 @@ public class PortletFlowController extends AbstractController {
 		initDefaults();
 		setFlowExecutionManager(new FlowExecutionManagerImpl(flowLocator));
 	}
-	
+
 	/**
 	 * Set default properties for this controller. * The "cacheSeconds" property
 	 * is by default set to 0 (so by default there is no HTTP header caching for
@@ -179,7 +181,8 @@ public class PortletFlowController extends AbstractController {
 			ViewSelection selectedView = (ViewSelection)request.getPortletSession().getAttribute(
 					VIEW_SELECTION_ATTRIBUTE_NAME);
 			if (selectedView == null) {
-				selectedView = createControllerHelper().handleFlowRequest(new PortletExternalContext(request, response));
+				selectedView = createControllerHelper().handleFlowRequest(
+						new PortletExternalContext(getPortletContext(), request, response));
 			}
 			// convert view to a renderable portlet mvc "model and view"
 			return toModelAndView(selectedView);
@@ -192,7 +195,7 @@ public class PortletFlowController extends AbstractController {
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
 		// delegate to the flow execution manager to process the request
 		ViewSelection selectedView = createControllerHelper().handleFlowRequest(
-				new PortletExternalContext(request, response));
+				new PortletExternalContext(getPortletContext(), request, response));
 		// expose selected view in session for access during render phase
 		request.getPortletSession().setAttribute(VIEW_SELECTION_ATTRIBUTE_NAME, selectedView);
 	}

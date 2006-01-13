@@ -54,7 +54,7 @@ public class FormActionBindingTests extends TestCase {
 		request.setMethod("POST");
 		request.addParameter("prop", "A");
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockRequestContext context = new MockRequestContext(new ServletExternalContext(request, response));
+		MockRequestContext context = new MockRequestContext(new ServletExternalContext(null, request, response));
 		context.setProperty("method", new MethodKey("bindAndValidate"));
 
 		// use a FormAction to do the binding

@@ -171,7 +171,7 @@ public class FlowController extends AbstractController {
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		ViewSelection selectedView = createControllerHelper().handleFlowRequest(
-				new ServletExternalContext(request, response));
+				new ServletExternalContext(getServletContext(), request, response));
 		return toModelAndView(selectedView);
 	}
 

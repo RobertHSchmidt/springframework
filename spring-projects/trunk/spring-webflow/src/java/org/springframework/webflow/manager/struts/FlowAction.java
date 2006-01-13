@@ -168,7 +168,7 @@ public class FlowAction extends ActionSupport {
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		ExternalContext context = new StrutsExternalContext(mapping, form, request, response);
+		ExternalContext context = new StrutsExternalContext(mapping, form, getServletContext(), request, response);
 		ViewSelection selectedView = createControllerHelper().handleFlowRequest(context);
 		return toActionForward(selectedView, mapping, request);
 	}

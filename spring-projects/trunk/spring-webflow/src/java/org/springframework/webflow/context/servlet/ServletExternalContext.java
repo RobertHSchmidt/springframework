@@ -18,6 +18,7 @@ package org.springframework.webflow.context.servlet;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,34 +26,41 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
 
 /**
- * Provides contextual information about an HTTP Servlet environment that 
- * has interacted with SWF.
+ * Provides contextual information about an HTTP Servlet environment that has
+ * interacted with SWF.
  * 
  * @author Keith Donald
  */
 public class ServletExternalContext implements ExternalContext {
 
 	/**
+	 * The context.
+	 */
+	private ServletContext context;
+
+	/**
 	 * The request.
 	 */
 	private HttpServletRequest request;
-	
+
 	/**
 	 * The response.
 	 */
 	private HttpServletResponse response;
-	
+
 	/**
-	 * Create a new external context wrapping given servlet HTTP request
-	 * and response.
+	 * Create a new external context wrapping given servlet HTTP request and
+	 * response.
 	 * @param request the HTTP request
 	 * @param response the HTTP response
 	 */
-	public ServletExternalContext(HttpServletRequest request, HttpServletResponse response) {
+	public ServletExternalContext(ServletContext context, HttpServletRequest request,
+			HttpServletResponse response) {
+		this.context = context;
 		this.request = request;
 		this.response = response;
 	}
-	
+
 	public Map getRequestParameterMap() {
 		return new HttpServletRequestParameterMap(request);
 	}
@@ -66,7 +74,14 @@ public class ServletExternalContext implements ExternalContext {
 	}
 
 	public SharedMap getApplicationMap() {
-		return new HttpServletContextMap(request.getSession().getServletContext());
+		return new HttpServletContextMap(context);
+	}
+
+	/**
+	 * Return the wrapped HTTP servlet context.
+	 */
+	public ServletContext getContext() {
+		return context;
 	}
 
 	/**
@@ -75,15 +90,16 @@ public class ServletExternalContext implements ExternalContext {
 	public HttpServletRequest getRequest() {
 		return request;
 	}
-	
+
 	/**
 	 * Return the wrapped HTTP servlet response.
 	 */
 	public HttpServletResponse getResponse() {
 		return response;
 	}
-	
+
 	public String toString() {
-		return new ToStringCreator(this).append("requestParameterMap", new TreeMap(getRequestParameterMap())).toString();
+		return new ToStringCreator(this).append("requestParameterMap", new TreeMap(getRequestParameterMap()))
+				.toString();
 	}
 }

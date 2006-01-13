@@ -18,6 +18,7 @@ package org.springframework.webflow.context.portlet;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.portlet.PortletContext;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
@@ -31,6 +32,11 @@ import org.springframework.webflow.ExternalContext;
  * @author Keith Donald
  */
 public class PortletExternalContext implements ExternalContext {
+
+	/**
+	 * The context.
+	 */
+	private PortletContext context;
 
 	/**
 	 * The request.
@@ -47,7 +53,8 @@ public class PortletExternalContext implements ExternalContext {
 	 * @param request the portlet request
 	 * @param response the portlet response
 	 */
-	public PortletExternalContext(PortletRequest request, PortletResponse response) {
+	public PortletExternalContext(PortletContext portletContext, PortletRequest request, PortletResponse response) {
+		this.context = portletContext;
 		this.request = request;
 		this.response = response;
 	}
@@ -65,7 +72,14 @@ public class PortletExternalContext implements ExternalContext {
 	}
 
 	public SharedMap getApplicationMap() {
-		return new PortletContextMap(request.getPortletSession().getPortletContext());
+		return new PortletContextMap(context);
+	}
+
+	/**
+	 * Returns the wrapped portlet context.
+	 */
+	public PortletContext getContext() {
+		return context;
 	}
 
 	/**

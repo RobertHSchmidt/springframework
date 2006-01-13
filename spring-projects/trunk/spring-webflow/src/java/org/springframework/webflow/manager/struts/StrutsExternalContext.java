@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.manager.struts;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -47,9 +48,9 @@ public class StrutsExternalContext extends ServletExternalContext {
 	 * @param request the request
 	 * @param response the response
 	 */
-	public StrutsExternalContext(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) {
-		super(request, response);
+	public StrutsExternalContext(ActionMapping mapping, ActionForm form, ServletContext context,
+			HttpServletRequest request, HttpServletResponse response) {
+		super(context, request, response);
 		this.actionMapping = mapping;
 		this.actionForm = form;
 	}

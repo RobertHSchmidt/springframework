@@ -27,21 +27,45 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKeyFormatter;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
 import org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor;
 
 /**
- * JSF phase listener that is responsible for loading the current flow execution
- * to a threadlocal, so that components may bind to it as needed.
- * 
- * Note: this class currently uses a {@link JsfFlowExecutionManager} for
- * convenience.
- * 
+ * JSF phase listener that is responsible for managing {@link FlowExecution}
+ * objects representing active user conversations, so that other JSF artifacts
+ * that execute in different phases of the JSF lifecycle may access it.
+ * <p>
+ * This phase listener implements the following algorithm:
+ * <ul>
+ * <li>On RESTORE_VIEW, restore the
+ * @{link FlowExecution} the user is participating in if a call to
+ * {@link FlowExecutionManagerParameterExtractor#extractFlowExecutionId(ExternalContext))
+ * returns a submitted flow execution identifier.
+ * <li>Place the restored flow execution in a holder that other JSF artifacts
+ * may access during the request lifecycle.
+ * </ul>
+ * <ul>
+ * <li>On RESTORE_VIEW, restore the
+ * @{link FlowExecution} the user is participating in if a call to
+ * {@link FlowExecutionManagerParameterExtractor#extractFlowExecutionId(ExternalContext))
+ * returns a submitted flow execution identifier. Place the restored flow
+ * execution in a holder that other JSF artifacts such as VariableResolvers,
+ * PropertyResolvers, and NavigationHandlers may access during the request
+ * lifecycle.
+ * <li>On BEFORE_RENDER_RESPONSE, if a flow execution was restored in
+ * RESTORE_VIEW generate a new key for identifying the updated execution within
+ * a the selected {@link FlowExecutionRepository}. Expose managed flow
+ * execution attributes to the views before rendering.
+ * <li>On AFTER_RENDER_RESPONSE, if a flow execution was restored in
+ * RESTORE_VIEW <em>save</em> the updated execution in the repository using
+ * the new key generated in the BEFORE_RENDER_RESPONSE phase.
+ * </ul>
  * @author Colin Sampaleanu
+ * @author Keith Donald
  */
 public class FlowPhaseListener implements PhaseListener {
 
