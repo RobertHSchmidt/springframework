@@ -21,9 +21,13 @@ import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 
 /**
- * Creates a flow execution listener that takes a Spring Errors instance
- * supporting POJO-based data binding in request scope under a well-defined
- * name and adapts it to the Struts ActionForm model.
+ * A flow execution listener required for a Struts environment that uses a
+ * {@link SpringBindingActionForm}.
+ * <p>
+ * After flow execution request processing, this implementation takes a Spring
+ * {@link org.springframework.validation.Errors} instance describing the result
+ * of a POJO-based data binding operation and adapts it to the Struts ActionForm
+ * model using the special <code>SpringBindingActionForm</code>.
  */
 public class ActionFormAdapter extends FlowExecutionListenerAdapter {
 	public void requestProcessed(RequestContext context) {
