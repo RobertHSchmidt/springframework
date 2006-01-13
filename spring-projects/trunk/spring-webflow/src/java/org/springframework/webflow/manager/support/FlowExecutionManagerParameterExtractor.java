@@ -9,34 +9,40 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.manager.FlowExecutionManager;
 
 /**
- * A helper for flow controllers to use launch and resume flow executions using
- * a {@link FlowExecutionManager}.
+ * A strategy for extracting parameters needed by a {@link FlowExecutionManager}
+ * to launch and resume flow executions. Parameters are extracted from a
+ * {@link ExternalContext}, an abstraction representing a request into Spring
+ * Web Flow from an external system.
  * 
  * @author Keith Donald
  */
 public class FlowExecutionManagerParameterExtractor {
 
 	/**
-	 * Clients can send the id (name) of the flow to be started using an event
-	 * parameter with this name ("_flowId").
+	 * By default, clients can send the id (name) of the flow to be started
+	 * using an event parameter with this name ("_flowId").
 	 */
 	public static final String FLOW_ID_PARAMETER = "_flowId";
 
 	/**
-	 * Clients can send the flow execution id using an event parameter with this
-	 * name ("_flowExecutionId").
+	 * By default, clients can send the flow execution id using an event
+	 * parameter with this name ("_flowExecutionId").
 	 */
 	public static final String FLOW_EXECUTION_ID_PARAMETER = "_flowExecutionId";
 
 	/**
-	 * Clients can send the event to be signaled in an event parameter with this
-	 * name ("_eventId").
+	 * By default, clients can send the event to be signaled in an event
+	 * parameter with this name ("_eventId").
 	 */
 	public static final String EVENT_ID_PARAMETER = "_eventId";
 
 	/**
-	 * The default delimiter used when a parameter value is sent as part of the
-	 * name of an event parameter (e.g. "_eventId_submit").
+	 * The default delimiter used when a parameter value is encoed as part of
+	 * the name of an event parameter (e.g. "_eventId_submit").
+	 * <p>
+	 * This form is typically used to support multiple HTML buttons on a form
+	 * without resorting to Javascript to communicate the event that corresponds
+	 * to a button.
 	 */
 	public static final String PARAMETER_VALUE_DELIMITER = "_";
 
@@ -81,6 +87,9 @@ public class FlowExecutionManagerParameterExtractor {
 		this.flowIdParameterName = flowIdParameterName;
 	}
 
+	/**
+	 * Returns the flow execution id parameter name.
+	 */
 	public String getFlowExecutionIdParameterName() {
 		return flowExecutionIdParameterName;
 	}
@@ -92,6 +101,9 @@ public class FlowExecutionManagerParameterExtractor {
 		this.flowExecutionIdParameterName = flowExecutionIdParameterName;
 	}
 
+	/**
+	 * Returns the event id parameter name.
+	 */
 	public String getEventIdParameterName() {
 		return eventIdParameterName;
 	}
@@ -133,7 +145,7 @@ public class FlowExecutionManagerParameterExtractor {
 	}
 
 	/**
-	 * Obtain a unique flow execution id from given event.
+	 * Extract the flow id from the external context.
 	 * @param context the context in which the external user event occured
 	 * @return the obtained id or <code>null</code> if not found
 	 */
@@ -143,7 +155,7 @@ public class FlowExecutionManagerParameterExtractor {
 	}
 
 	/**
-	 * Obtain a unique flow execution id from given event.
+	 * Extract the flow execution id from the external context.
 	 * @param context the context in which the external user event occured
 	 * @return the obtained id or <code>null</code> if not found
 	 */
@@ -153,15 +165,16 @@ public class FlowExecutionManagerParameterExtractor {
 	}
 
 	/**
-	 * Obtain this event's id from the parameter map.
+	 * Extract the flow execution event id from the external context.
 	 * <p>
-	 * This is a multi-step process consisting of:
+	 * By default, this is a multi-step process consisting of:
 	 * <ol>
 	 * <li>Try the {@link #getEventIdParameterName()} parameter first, if it is
 	 * present, return its value as the eventId.
 	 * <li>Try a parameter search looking for parameters of the format:
 	 * {@link #getEventIdParameterName()}_value. If a match is found, return
-	 * the value as the eventId.
+	 * the value as the eventId (to support multiple HTML buttons per form
+	 * without Javascript).
 	 * </ol>
 	 * @param context the context in which the external user event occured
 	 * @param request the http servlet request
