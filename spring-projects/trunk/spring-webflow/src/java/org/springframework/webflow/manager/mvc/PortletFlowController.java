@@ -65,7 +65,7 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  *         the &quot;_flowId&quot; request parameter:
  *             e.g. /app.htm?_flowId=flow1
  *     --&gt;
- *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.portlet.FlowController&quot;&gt;
+ *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.manager.mvc.PortletFlowController&quot;&gt;
  *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
  *     &lt;/bean&gt;
  *                           
@@ -80,6 +80,10 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  *     &lt;/bean&gt;
  * </pre>
  * 
+ * It is also possible to customize the {@link FlowExecutionManagerParameterExtractor} strategy to allow
+ * for different types of controller parameterization, for example perhaps in conjunction with a
+ * REST-based request mapper.
+ *  
  * @author J.Enrique Ruiz
  * @author César Ordiñana
  * @author Erwin Vervaet
@@ -195,7 +199,8 @@ public class PortletFlowController extends AbstractController {
 
 	/**
 	 * Factory method that creates a new helper for processing a request into
-	 * this flow controller.
+	 * this flow controller. The controller is a basic template encapsulating
+	 * reusable flow execution request handling workflow.
 	 * @return the controller helper
 	 */
 	protected FlowExecutionManagerHelper createControllerHelper() {
