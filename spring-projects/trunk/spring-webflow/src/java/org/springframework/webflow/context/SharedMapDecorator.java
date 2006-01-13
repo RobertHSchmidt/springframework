@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext.SharedMap;
 
 /**
@@ -72,7 +73,7 @@ public class SharedMapDecorator implements SharedMap {
 	}
 
 	public void putAll(Map map) {
-		map.putAll(map);
+		this.map.putAll(map);
 	}
 
 	public Object remove(Object key) {
@@ -89,5 +90,9 @@ public class SharedMapDecorator implements SharedMap {
 
 	public Object getMutex() {
 		return map;
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("map", map).append("mutex", getMutex()).toString();
 	}
 }
