@@ -19,7 +19,7 @@ public class FlowNavigationHandlerParameterExtractor extends FlowExecutionManage
 	protected static final String FLOW_ID_PREFIX = "flowId:";
 
 	/*
-	 * Overriden to return the eventId from the action outcome string.
+	 * Overidden to return the eventId from the action outcome string.
 	 * @see org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor#extractEventId(org.springframework.webflow.ExternalContext)
 	 */
 	public String extractEventId(ExternalContext context) throws IllegalArgumentException {
@@ -28,8 +28,8 @@ public class FlowNavigationHandlerParameterExtractor extends FlowExecutionManage
 	}
 
 	/*
-	 * Overriden to return the flowId from a JSF outcome in format
-	 * "flowId:${flowId}"
+	 * Overidden to return the flowId from a JSF outcome in format
+	 * <code>flowId:${flowId}</code>
 	 * @see org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor#extractFlowId(org.springframework.webflow.ExternalContext)
 	 */
 	public String extractFlowId(ExternalContext context) {
