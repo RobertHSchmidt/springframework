@@ -74,10 +74,10 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * FlowAction:
  * 
  * <pre>
- *          &lt;action path=&quot;/userRegistration&quot;
- *              type=&quot;org.springframework.webflow.manager.struts.FlowAction&quot;
- *              name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *          &lt;/action&gt;
+ *     &lt;action path=&quot;/userRegistration&quot;
+ *         type=&quot;org.springframework.webflow.manager.struts.FlowAction&quot;
+ *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *     &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
