@@ -23,16 +23,16 @@ import org.springframework.webflow.execution.repository.FlowExecutionContinuatio
 
 /**
  * A holder storing a reference to a flow execution and the key of that flow
- * execution if it is managed in a repository.
+ * execution if it has been (or is about to be) managed in a repository.
  * @author Keith Donald
  */
 public class FlowExecutionHolder implements Serializable {
 
 	/**
 	 * The flow execution continuation key (may be null if the flow execution
-	 * has not yet been stored in a repository). May change as well, as a flow
-	 * execution can be given a new key to capture its state at another point in
-	 * time.
+	 * has not yet been generated a repository key). May change as well over the
+	 * life of this object, as a flow execution can be given a new key to
+	 * capture its state at another point in time.
 	 */
 	private FlowExecutionContinuationKey continuationKey;
 

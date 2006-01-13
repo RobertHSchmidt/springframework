@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.web.struts.ActionSupport;
+import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
@@ -39,12 +40,13 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * Action may signal events in any existing/restored FlowExecutions.
  * <p>
  * Requests are managed by and delegated to a {@link FlowExecutionManager},
- * allowing reuse of common front flow controller logic in other environments.
- * Consult the JavaDoc of that class for more information on how requests are
+ * which this class delegates to using a {@link FlowExecutionManagerHelper}
+ * (allowing reuse of common front flow controller logic in other environments).
+ * Consult the JavaDoc of those classes for more information on how requests are
  * processed.
  * <p>
- * <li>To have this controller launch a new flow execution (conversation), have
- * the client send a
+ * <li>By default, to have this controller launch a new flow execution
+ * (conversation), have the client send a
  * {@link FlowExecutionManagerParameterExtractor#getFlowIdParameterName()}
  * request parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
@@ -57,22 +59,22 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * provides access to the action form, action mapping, and other struts-specific
  * constructs.
  * <p>
- * This class also is aware of the <code>SpringBindingActionForm</code>
- * adapter, which adapts Spring's data binding infrastructure (based on POJO
- * binding, a standard Errors interface, and property editor type conversion) to
- * the Struts action form model. This option gives backend web-tier developers
- * full support for POJO-based binding with minimal hassel, while still
- * providing consistency to view developers who already have a lot of experience
- * with Struts for markup and request dispatching.
+ * This class also is aware of the {@link SpringBindingActionForm} adapter,
+ * which adapts Spring's data binding infrastructure (based on POJO binding, a
+ * standard Errors interface, and property editor type conversion) to the Struts
+ * action form model. This option gives backend web-tier developers full support
+ * for POJO-based binding with minimal hassel, while still providing consistency
+ * to view developers who already have a lot of experience with Struts for
+ * markup and request dispatching.
  * <p>
  * Below is an example <code>struts-config.xml</code> configuration for a
  * FlowAction:
  * 
  * <pre>
- *      &lt;action path=&quot;/userRegistration&quot;
- *          type=&quot;org.springframework.webflow.struts.FlowAction&quot;
- *          name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *      &lt;/action&gt;
+ *     &lt;action path=&quot;/userRegistration&quot;
+ *         type=&quot;org.springframework.webflow.manager.struts.FlowAction&quot;
+ *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *     &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -82,7 +84,7 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * Spring binding action form instance is set in request scope, acting as an
  * adapter enabling POJO-based binding and validation with Spring.
  * <p>
- * Other notes regarding Struts web-flow integration:
+ * Other notes regarding Struts/Spring Web Flow integration:
  * <ul>
  * <li>Logical view names returned when <code>ViewStates</code> and
  * <code>EndStates</code> are entered are mapped to physical view templates
@@ -100,6 +102,7 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * <code>ActionForm</code> classes found in traditional Struts-based apps.
  * 
  * @see org.springframework.webflow.manager.FlowExecutionManager
+ * @see org.springframework.webflow.manager.support.FlowExecutionManagerHelper
  * @see org.springframework.web.struts.SpringBindingActionForm
  * 
  * @author Keith Donald
@@ -111,14 +114,7 @@ public class FlowAction extends ActionSupport {
 	 * The flow execution manager will be retreived from the application context
 	 * using this bean name if no manager is explicitly set.
 	 */
-	public static final String FLOW_EXECUTION_MANAGER_BEAN_NAME = "flowExecutionManager";
-
-	/**
-	 * The flow execution manager parameter extractor will be retreived from the
-	 * application context using this bean name if no extractor is explicitly
-	 * set.
-	 */
-	public static final String PARAMETER_EXTRACTOR_BEAN_NAME = "flowExecutionManagerParameterExtractor";
+	protected static final String FLOW_EXECUTION_MANAGER_BEAN_NAME = "flowExecutionManager";
 
 	/**
 	 * The manager responsible for launching and signaling struts-originating

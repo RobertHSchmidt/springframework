@@ -15,14 +15,21 @@
  */
 package org.springframework.webflow.manager.jsf;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 /**
  * A static utility class for accessing the current flow execution holder.
+ * <p>
+ * By default, the current flow execution holder is stored associated with the
+ * current thread in the {@link FacesContext}'s
+ * {@link ExternalContext#getRequestMap()}.
+ * 
  * @author Keith Donald
+ * @author Craig McClanahan
  */
 public class FlowExecutionHolderUtils {
-	
+
 	/**
 	 * Returns the current flow execution holder for the given faces context.
 	 * @param context faces context

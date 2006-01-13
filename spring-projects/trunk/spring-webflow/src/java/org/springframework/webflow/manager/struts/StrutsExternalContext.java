@@ -23,17 +23,30 @@ import org.apache.struts.action.ActionMapping;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 
 /**
- * Provides consistent access to a Struts environment from within Spring Web
- * Flow.
+ * Provides consistent access to a Struts environment from within the Spring Web
+ * Flow system. Represents the context of a request into SWF from Struts.
  * 
  * @author Keith Donald
  */
 public class StrutsExternalContext extends ServletExternalContext {
 
+	/**
+	 * The Struts action mapping associated with this request.
+	 */
 	private ActionMapping actionMapping;
 
+	/**
+	 * The Struts action form associated with this request.
+	 */
 	private ActionForm actionForm;
 
+	/**
+	 * Creates a new Struts external context.
+	 * @param mapping the action mapping
+	 * @param form the action form
+	 * @param request the request
+	 * @param response the response
+	 */
 	public StrutsExternalContext(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) {
 		super(request, response);
@@ -41,10 +54,16 @@ public class StrutsExternalContext extends ServletExternalContext {
 		this.actionForm = form;
 	}
 
+	/**
+	 * Returns the action form.
+	 */
 	public ActionForm getActionForm() {
 		return actionForm;
 	}
 
+	/**
+	 * Returns the action mapping.
+	 */
 	public ActionMapping getActionMapping() {
 		return actionMapping;
 	}
