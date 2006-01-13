@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
+import org.springframework.webflow.ExternalContext.SharedMap;
 import org.springframework.webflow.util.EmptyEnumeration;
 import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 
@@ -28,7 +29,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
  * 
  * @author Keith Donald
  */
-public class PortletSessionMap extends StringKeyedAttributeMapAdapter {
+public class PortletSessionMap extends StringKeyedAttributeMapAdapter implements SharedMap {
 
 	/**
 	 * The wrapped portlet request, providing access to the session.
@@ -69,5 +70,9 @@ public class PortletSessionMap extends StringKeyedAttributeMapAdapter {
 	protected Enumeration getAttributeNames() {
 		PortletSession session = getSession();
 		return (session == null) ? EmptyEnumeration.INSTANCE : session.getAttributeNames();
+	}
+	
+	public Object getMutex() {
+		return getSession();
 	}
 }

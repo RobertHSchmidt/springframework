@@ -56,7 +56,7 @@ public interface ExternalContext {
 	 * external SWF artifacts.
 	 * @return the mutable session attribute map
 	 */
-	public Map getSessionMap();
+	public SharedMap getSessionMap();
 
 	/**
 	 * Provides access to the external application map, providing a storage for
@@ -64,5 +64,32 @@ public interface ExternalContext {
 	 * internal and external SWF artifacts.
 	 * @return the mutable application attribute map
 	 */
-	public Map getApplicationMap();
+	public SharedMap getApplicationMap();
+
+	/**
+	 * A simple subinterface of {@link Map} that exposes a mutex that
+	 * application code can synchronize on.
+	 * <p>
+	 * Expected to be implemented by Maps that are backed by shared objects that
+	 * require synchronization between multiple threads. An example would be the
+	 * HTTP session map.
+	 * 
+	 * @author Keith Donald
+	 */
+	public interface SharedMap extends Map {
+
+		/**
+		 * Returns the shared mutex that may be synchronized on using a
+		 * synchronized block. Example usage:
+		 * 
+		 * <pre>
+		 * synchronized (sharedMap.getMutex()) {
+		 * 	// do synchronized work
+		 * }
+		 * </pre>
+		 * 
+		 * @return the mutex
+		 */
+		public Object getMutex();
+	}
 }

@@ -19,6 +19,7 @@ import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
 
+import org.springframework.webflow.ExternalContext.SharedMap;
 import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 
 /**
@@ -27,7 +28,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
  * 
  * @author Keith Donald
  */
-public class HttpServletContextMap extends StringKeyedAttributeMapAdapter {
+public class HttpServletContextMap extends StringKeyedAttributeMapAdapter implements SharedMap {
 
 	/**
 	 * The wrapped servlet context.
@@ -57,4 +58,7 @@ public class HttpServletContextMap extends StringKeyedAttributeMapAdapter {
 		return context.getAttributeNames();
 	}
 
+	public Object getMutex() {
+		return context;
+	}
 }

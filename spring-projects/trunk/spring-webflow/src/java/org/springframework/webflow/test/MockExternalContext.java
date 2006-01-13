@@ -1,11 +1,28 @@
+/*
+ * Copyright 2002-2006 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package org.springframework.webflow.test;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.context.SharedMapDecorator;
 
 /**
  * Mock implementation of the <code>ExternalContext</code> interface.
@@ -17,30 +34,32 @@ public class MockExternalContext implements ExternalContext {
 	private Map requestParameterMap = Collections.EMPTY_MAP;
 
 	private Map requestMap = new TreeMap();
-	
+
 	private Map sessionMap = new TreeMap();
-	
+
 	private Map applicationMap = new TreeMap();
-	
+
 	/**
 	 * Creates a mock external context with an empty request parameter map.
 	 */
 	public MockExternalContext() {
-		
+
 	}
-	
+
 	/**
-	 * Creates a mock external context with a single parameter in the request parameter map.
+	 * Creates a mock external context with a single parameter in the request
+	 * parameter map.
 	 * @param singleRequestParameterName the parameter name
 	 * @param singleRequestParameterValue the parameter value
-	 */	
+	 */
 	public MockExternalContext(String singleRequestParameterName, Object singleRequestParameterValue) {
 		this.requestParameterMap = new HashMap(1);
 		this.requestParameterMap.put(singleRequestParameterName, singleRequestParameterValue);
 	}
-	
+
 	/**
-	 * Creates a mock external context with the specified parameters in the request parameter map.
+	 * Creates a mock external context with the specified parameters in the
+	 * request parameter map.
 	 * @param requestParameterMap the request parameter map
 	 */
 	public MockExternalContext(Map requestParameterMap) {
@@ -55,11 +74,29 @@ public class MockExternalContext implements ExternalContext {
 		return requestMap;
 	}
 
-	public Map getSessionMap() {
-		return sessionMap;
+	public SharedMap getSessionMap() {
+		return new MockMutexMapDecorator(sessionMap);
 	}
 
-	public Map getApplicationMap() {
-		return applicationMap;
+	public SharedMap getApplicationMap() {
+		return new MockMutexMapDecorator(applicationMap);
+	}
+
+	private static class MockMutexMapDecorator extends SharedMapDecorator {
+		private Mutex mutex = new Mutex();
+
+		public MockMutexMapDecorator(Map map) {
+			super(map);
+		}
+
+		public Object getMutex() {
+			return mutex;
+		}
+	}
+
+	/**
+	 * A simple mock mutex.
+	 */
+	private static class Mutex implements Serializable {
 	}
 }

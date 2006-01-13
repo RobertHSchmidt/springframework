@@ -16,6 +16,7 @@
 package org.springframework.webflow.manager;
 
 import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.format.Formatter;
@@ -28,7 +29,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.execution.repository.ExternalMapFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKeyFormatter;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -106,7 +107,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	 * instances to save paused executions that require user input and load
 	 * resuming executions that will process user events.
 	 */
-	private FlowExecutionRepositoryFactory repositoryFactory = new ExternalMapFlowExecutionRepositoryFactory();
+	private FlowExecutionRepositoryFactory repositoryFactory = new SharedMapFlowExecutionRepositoryFactory();
 
 	/**
 	 * The formatter that will parse encoded _flowExecutionId strings into

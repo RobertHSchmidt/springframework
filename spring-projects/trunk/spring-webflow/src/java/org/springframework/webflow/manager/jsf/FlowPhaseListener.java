@@ -27,7 +27,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.ExternalMapFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKeyFormatter;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -73,7 +73,7 @@ public class FlowPhaseListener implements PhaseListener {
 	 * instances to save paused executions that require user input and load
 	 * resuming executions that will process user events.
 	 */
-	private FlowExecutionRepositoryFactory repositoryFactory = new ExternalMapFlowExecutionRepositoryFactory();
+	private FlowExecutionRepositoryFactory repositoryFactory = new SharedMapFlowExecutionRepositoryFactory();
 
 	/**
 	 * Returns the continuation key formatting strategy.

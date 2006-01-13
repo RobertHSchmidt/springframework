@@ -60,11 +60,11 @@ public class PortletExternalContext implements ExternalContext {
 		return new PortletRequestMap(request);
 	}
 
-	public Map getSessionMap() {
+	public SharedMap getSessionMap() {
 		return new PortletSessionMap(request);
 	}
 
-	public Map getApplicationMap() {
+	public SharedMap getApplicationMap() {
 		return new PortletContextMap(request.getPortletSession().getPortletContext());
 	}
 

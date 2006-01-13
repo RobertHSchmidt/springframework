@@ -1,15 +1,14 @@
 package org.springframework.webflow.execution.repository;
 
-import java.util.Map;
-
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.ExternalContext.SharedMap;
 
 /**
  * A repository locator that accesses flow execution repositories from an
  * externally managed data map.
  * <p>
  * The map access strategy is configurable by setting the
- * {@link #setExternalMapLocator(ExternalMapLocator) externalMapLocator}
+ * {@link #setSharedMapLocator(SharedMapLocator) externalMapLocator}
  * property. By default the {@link SessionMapLocator} is used, which pulls in
  * the {@link ExternalContext#getSessionMap()}, a map backed by a user's HTTP
  * session in a Servlet environment and a Portlet Session in a Portlet
@@ -24,7 +23,7 @@ import org.springframework.webflow.ExternalContext;
  * 
  * @author Keith Donald
  */
-public class ExternalMapFlowExecutionRepositoryFactory extends AbstractFlowExecutionRepositoryFactory {
+public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecutionRepositoryFactory {
 
 	/**
 	 * The map locator that returns a <code>java.util.Map</code> that allows
@@ -34,28 +33,38 @@ public class ExternalMapFlowExecutionRepositoryFactory extends AbstractFlowExecu
 	 * The default is the {@link SessionMapLocator} which returns a map backed
 	 * by the {@link ExternalContext#getSessionMap}.
 	 */
-	private ExternalMapLocator externalMapLocator = new SessionMapLocator();
+	private SharedMapLocator sharedMapLocator = new SessionMapLocator();
 
-	public ExternalMapLocator getExternalMapLocator() {
-		return externalMapLocator;
+	/**
+	 * Returns the external map locator.
+	 */
+	public SharedMapLocator getSharedMapLocator() {
+		return sharedMapLocator;
 	}
 
-	public void setExternalMapLocator(ExternalMapLocator externalMapLocator) {
-		this.externalMapLocator = externalMapLocator;
+	/**
+	 * Sets the external map locator.
+	 */
+	public void setSharedMapLocator(SharedMapLocator sharedMapLocator) {
+		this.sharedMapLocator = sharedMapLocator;
 	}
 
-	// TODO - mutex support
 	public FlowExecutionRepository getRepository(ExternalContext context) {
-		Map repositoryMap = externalMapLocator.getMap(context);
-		Object repositoryKey = getRepositoryKey();
-		FlowExecutionRepository repository = (FlowExecutionRepository)repositoryMap.get(repositoryKey);
-		if (repository == null) {
-			repository = createFlowExecutionRepository();
-			repositoryMap.put(repositoryKey, repository);
+		SharedMap repositoryMap = sharedMapLocator.getMap(context);
+		synchronized (repositoryMap.getMutex()) {
+			Object repositoryKey = getRepositoryKey();
+			FlowExecutionRepository repository = (FlowExecutionRepository)repositoryMap.get(repositoryKey);
+			if (repository == null) {
+				repository = createFlowExecutionRepository();
+				repositoryMap.put(repositoryKey, repository);
+			}
+			return repository;
 		}
-		return repository;
 	}
 
+	/**
+	 * Returns the repository attribute key.
+	 */
 	protected Object getRepositoryKey() {
 		return FlowExecutionRepository.class.getName();
 	}

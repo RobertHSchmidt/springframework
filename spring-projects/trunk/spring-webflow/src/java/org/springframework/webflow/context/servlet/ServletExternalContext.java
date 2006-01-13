@@ -61,11 +61,11 @@ public class ServletExternalContext implements ExternalContext {
 		return new HttpServletRequestMap(request);
 	}
 
-	public Map getSessionMap() {
+	public SharedMap getSessionMap() {
 		return new HttpSessionMap(request);
 	}
 
-	public Map getApplicationMap() {
+	public SharedMap getApplicationMap() {
 		return new HttpServletContextMap(request.getSession().getServletContext());
 	}
 

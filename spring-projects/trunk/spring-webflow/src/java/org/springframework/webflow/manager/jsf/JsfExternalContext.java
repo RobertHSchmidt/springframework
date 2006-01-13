@@ -21,6 +21,7 @@ import javax.faces.context.FacesContext;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.context.SharedMapDecorator;
 
 /**
  * Provides contextual information about a JSF environment that has interacted
@@ -73,12 +74,20 @@ public class JsfExternalContext implements ExternalContext {
 		return facesContext.getExternalContext().getRequestMap();
 	}
 
-	public Map getSessionMap() {
-		return facesContext.getExternalContext().getSessionMap();
+	public SharedMap getSessionMap() {
+		return new SharedMapDecorator(facesContext.getExternalContext().getSessionMap()) {
+			public Object getMutex() {
+				return facesContext.getExternalContext().getSession(false);
+			}
+		};
 	}
 
-	public Map getApplicationMap() {
-		return facesContext.getExternalContext().getApplicationMap();
+	public SharedMap getApplicationMap() {
+		return new SharedMapDecorator(facesContext.getExternalContext().getApplicationMap()) {
+			public Object getMutex() {
+				return facesContext.getExternalContext().getContext();
+			}
+		};
 	}
 
 	/**

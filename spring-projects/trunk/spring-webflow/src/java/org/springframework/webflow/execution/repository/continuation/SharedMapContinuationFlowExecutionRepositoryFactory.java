@@ -1,9 +1,9 @@
 package org.springframework.webflow.execution.repository.continuation;
 
-import org.springframework.webflow.execution.repository.ExternalMapFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
 
 /**
- * A subclass of {@link ExternalMapFlowExecutionRepositoryFactory} that simply
+ * A subclass of {@link SharedMapFlowExecutionRepositoryFactory} that simply
  * uses a
  * {@link ContinuationFlowExecutionRepositoryCreator continuation-based flow execution repository factory}
  * by default.
@@ -16,8 +16,8 @@ import org.springframework.webflow.execution.repository.ExternalMapFlowExecution
  * 
  * @author Keith Donald
  */
-public class ExternalMapContinuationFlowExecutionRepositoryFactory extends ExternalMapFlowExecutionRepositoryFactory {
-	public ExternalMapContinuationFlowExecutionRepositoryFactory() {
+public class SharedMapContinuationFlowExecutionRepositoryFactory extends SharedMapFlowExecutionRepositoryFactory {
+	public SharedMapContinuationFlowExecutionRepositoryFactory() {
 		setRepositoryCreator(new ContinuationFlowExecutionRepositoryCreator());
 	}
 }
