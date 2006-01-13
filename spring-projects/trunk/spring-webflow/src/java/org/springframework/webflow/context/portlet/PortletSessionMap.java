@@ -25,7 +25,8 @@ import org.springframework.webflow.util.EmptyEnumeration;
 import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 
 /**
- * Map backed by the Portlet session, for accessing session scoped attributes.
+ * Map backed by the Portlet session, for accessing session scoped attributes in
+ * a Portlet environment.
  * 
  * @author Keith Donald
  */
@@ -44,8 +45,8 @@ public class PortletSessionMap extends StringKeyedAttributeMapAdapter implements
 	}
 
 	/**
-	 * Return the portlet session associated with the wrapped request,
-	 * or null if no such session exits.
+	 * Return the portlet session associated with the wrapped request, or null
+	 * if no such session exits.
 	 */
 	private PortletSession getSession() {
 		return request.getPortletSession(false);
@@ -71,7 +72,7 @@ public class PortletSessionMap extends StringKeyedAttributeMapAdapter implements
 		PortletSession session = getSession();
 		return (session == null) ? EmptyEnumeration.INSTANCE : session.getAttributeNames();
 	}
-	
+
 	public Object getMutex() {
 		return getSession();
 	}
