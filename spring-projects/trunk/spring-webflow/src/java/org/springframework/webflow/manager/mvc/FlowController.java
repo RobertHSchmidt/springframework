@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
@@ -36,8 +37,9 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * executions.
  * <p>
  * Requests into the web flow system are handled by a
- * {@link FlowExecutionManager}, which this class delegates to. Consult the
- * JavaDoc of that class for more information on how requests are processed.
+ * {@link FlowExecutionManager}, which this class delegates to using a
+ * {@link FlowExecutionManagerHelper}. Consult the JavaDoc of that class for
+ * more information on how requests are processed.
  * <p>
  * Note: a single FlowController may manage executing all flows of your
  * application. Specifically:
@@ -58,26 +60,30 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * Usage example:
  * 
  * <pre>
- *      &lt;!--
- *          Exposes flows for execution at a single request URL.
- *          The id of a flow to launch should be passed in by clients using
- *          the &quot;_flowId&quot; request parameter:
- *          e.g. /app.htm?_flowId=flow1
- *      --&gt;
- *      &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.mvc.FlowController&quot;&gt;
- *          &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *      &lt;/bean&gt;
- *                           
- *      &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *      &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *          &lt;property name=&quot;flowLocations&quot;&gt;
- *              &lt;list&gt;
- *                  &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *                  &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *              &lt;/list&gt;
- *          &lt;/property&gt;
- *      &lt;/bean&gt;
+ *     &lt;!--
+ *         Exposes flows for execution at a single request URL.
+ *         The id of a flow to launch should be passed in by clients using
+ *         the &quot;_flowId&quot; request parameter:
+ *         e.g. /app.htm?_flowId=flow1
+ *     --&gt;
+ *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.manager.mvc.FlowController&quot;&gt;
+ *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *     &lt;/bean&gt;
+ *                            
+ *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;flowLocations&quot;&gt;
+ *             &lt;list&gt;
+ *                 &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                 &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *             &lt;/list&gt;
+ *         &lt;/property&gt;
+ *     &lt;/bean&gt;
  * </pre>
+ * 
+ * It is also possible to customize the {@link FlowExecutionManagerParameterExtractor} strategy to allow
+ * for different types of controller parameterization, for example perhaps in conjunction with a
+ * REST-based request mapper.
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -91,7 +97,8 @@ public class FlowController extends AbstractController {
 	private FlowExecutionManager flowExecutionManager;
 
 	/**
-	 * Delegate for extract flow execution manager parameters.
+	 * Delegate for extracting flow execution manager parameters from a request
+	 * made by a {@link ExternalContext}.
 	 */
 	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowExecutionManagerParameterExtractor();
 
@@ -170,7 +177,8 @@ public class FlowController extends AbstractController {
 
 	/**
 	 * Factory method that creates a new helper for processing a request into
-	 * this flow controller.
+	 * this flow controller.  The controller is a basic template encapsulating
+	 * reusable flow execution request handling workflow.
 	 * @return the controller helper
 	 */
 	protected FlowExecutionManagerHelper createControllerHelper() {

@@ -50,9 +50,10 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * A set of flow execution listeners to a list of flow execution listener
-	 * criteria objects. The criteria list determines the conditions in which a
-	 * single flow execution listener applies.
+	 * A set of flow execution listeners containing
+	 * @{link {@link ConditionalFlowExecutionListenerHolder} objects. The list
+	 * determines the conditions in which a single flow execution listener
+	 * applies.
 	 */
 	private Set listenerSet = CollectionFactory.createLinkedSetIfPossible(6);
 
@@ -60,7 +61,7 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	 * Returns the array of flow execution listeners for specified flow.
 	 * @param flow the flow definition associated with the execution to be
 	 * listened to
-	 * @return the flow execution listeners
+	 * @return the flow execution listeners that apply
 	 */
 	public FlowExecutionListener[] getListeners(Flow flow) {
 		Assert.notNull(flow, "The Flow to load listeners for cannot be null");
@@ -193,6 +194,11 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 		conditional.add(criteria);
 	}
 
+	/**
+	 * Lookup the listener criteria holder for the listener provided.
+	 * @param listener the listener
+	 * @return the holder
+	 */
 	protected ConditionalFlowExecutionListenerHolder getHolder(FlowExecutionListener listener) {
 		Iterator it = listenerSet.iterator();
 		while (it.hasNext()) {
@@ -241,9 +247,16 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	 * in which that listener applies.
 	 * @author Keith Donald
 	 */
-	public static final class ConditionalFlowExecutionListenerHolder {
+	private static final class ConditionalFlowExecutionListenerHolder {
+
+		/**
+		 * The held listener
+		 */
 		private FlowExecutionListener listener;
 
+		/**
+		 * The listener criteria set.
+		 */
 		private Set criteriaSet = CollectionFactory.createLinkedSetIfPossible(3);
 
 		public ConditionalFlowExecutionListenerHolder(FlowExecutionListener listener) {
@@ -277,6 +290,12 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 			return listener.hashCode();
 		}
 
+		/**
+		 * Determines if the listener held by this holder applies to the
+		 * specified flow definition.
+		 * @param flow the flow
+		 * @return true if yes, false otherwise.
+		 */
 		public boolean listenerAppliesTo(Flow flow) {
 			Iterator it = criteriaSet.iterator();
 			while (it.hasNext()) {
