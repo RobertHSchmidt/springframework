@@ -24,7 +24,7 @@
 	<bean id="searchFormAction" class="org.springframework.webflow.action.FormAction">
 		<property name="formObjectName" value="searchCriteria"/>
 		<property name="formObjectClass" value="org.springframework.webflow.samples.phonebook.domain.SearchCriteria"/>
-		<property name="formObjectScopeAsString" value="flow"/>
+		<property name="formObjectScope" value="FLOW"/>
 		<property name="validator">
 			<bean class="org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValidator"/>
 		</property>
