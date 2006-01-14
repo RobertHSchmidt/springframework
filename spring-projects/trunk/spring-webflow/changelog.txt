@@ -2,7 +2,7 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 M1 (11.1.2006)
+Changes in version 1.0 RC1 (18.1.2006)
 ------------------------------------
 
 Overall
@@ -92,11 +92,10 @@ Package org.springframework.webflow.action
   "public void ${validatorMethod}(${formObjectClass} obj, Errors errors)".
 * Removed DelegatingAction in favor of StatefulActionProxy and bean invoking actions.
 
-Package org.springframework.webflow.jsf
-* Introduced JSF integration, see the "jsf" package.
-
-Package org.springframework.webflow.portlet
-* Reinstated the Spring Portlet MVC integration, see the "portlet" package.
+Package org.springframework.webflow.manager
+* Introduced the webflow.manager package, the highest-layer subsystem of SWF for driving the execution of flows.
+* Introduced JSF manager integration, see the "jsf" package.
+* Reinstated the Spring Portlet MVC manager integration, see the "portlet" package.
   Note: the portlet MVC support requires Spring 2.0 M1.
 
 Package org.springframework.webflow.test
