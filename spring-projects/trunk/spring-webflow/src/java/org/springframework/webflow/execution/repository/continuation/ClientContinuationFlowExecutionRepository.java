@@ -16,6 +16,22 @@ import org.springframework.webflow.util.UidGenerator;
 
 /**
  * A flow execution repository implementation that uses no server-side state.
+ * <p>
+ * Specifically, instead of putting {@link FlowExecution} objects in a
+ * server-side store, this repository <i>encodes</i> them directly into the
+ * <code>continuationId</code> of a generated
+ * {@link FlowExecutionContinuationKey}. When asked to load a flow execution by
+ * its key, this repository decodes the serialized <code>continuationId</code>,
+ * restoring the {@link FlowExecution} object at the state it was when it was
+ * encoded.
+ * <p>
+ * Note: currently this repository implementation does not support
+ * <i>conversation invalidation after completion</i>, which enables automatic
+ * prevention of duplicate submission after a conversation is completed (note
+ * the {@link #invalidateConversation(Serializable)} method is a NoOp). Support
+ * for this requires tracking active <code>conversationIds</code> using some
+ * centralized storage medium like a database table. This implementation will be
+ * likely enhanced in future releases to provide this capability.
  * 
  * @author Keith Donald
  */
@@ -33,18 +49,32 @@ public class ClientContinuationFlowExecutionRepository implements FlowExecutionR
 	 */
 	private UidGenerator uidGenerator = new RandomGuidUidGenerator();
 
+	/**
+	 * Returns the continuation factory.
+	 */
 	public FlowExecutionContinuationFactory getContinuationFactory() {
 		return continuationFactory;
 	}
 
+	/**
+	 * Sets the continuation factory.
+	 */
 	public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
 		this.continuationFactory = continuationFactory;
 	}
 
+	/**
+	 * Returns the uid generator that generates unique identifiers for this
+	 * repository.
+	 */
 	public UidGenerator getUidGenerator() {
 		return uidGenerator;
 	}
 
+	/**
+	 * Sets the uid generator that generates unique identifiers for this
+	 * repository.
+	 */
 	public void setUidGenerator(UidGenerator uidGenerator) {
 		this.uidGenerator = uidGenerator;
 	}
@@ -63,11 +93,12 @@ public class ClientContinuationFlowExecutionRepository implements FlowExecutionR
 	}
 
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
-		
+		// nothing to do!
 	}
 
 	public void invalidateConversation(Serializable conversationId) {
-
+		// FUTURE - support for accessing a database-backed conversation table
+		// for conversation invalidation.
 	}
 
 	/**
