@@ -29,6 +29,11 @@ import org.springframework.webflow.ViewSelection;
  * An 'observer' that is very aspect like, allowing you to insert 'cross
  * cutting' behavior at well-defined points within one or more flow execution
  * lifecycles.
+ * <p>
+ * For example, one custom listener my apply security checks at the flow
+ * execution level. Another listener may track flow execution navigation history
+ * to support bread crumbs. Another may perform auditing, or setup and tear down
+ * connections to a transactional resource.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
  * 

@@ -30,13 +30,14 @@ import org.springframework.webflow.ViewSelection;
  * <p>
  * Typically, when a browser wants to launch a new execution of a Flow at
  * runtime, it passes in the id of the Flow definition to launch to a governing
- * <code>FlowExecutionManager</code>. The manager then creates an instance of
- * an object implementing this interface, initializing it with the requested
- * Flow definition which becomes the execution's "root", or top-level flow.
- * After creation, the {@link #start(ExternalContext)} operation is called,
- * which causes the execution to activate a new session for its root flow
- * definition. That session is then pushed onto a stack and its definition
- * becomes the "active flow". A local, internal
+ * {@link org.springframework.webflow.manager.FlowExecutionManager}. The
+ * manager then creates an instance of an object implementing this interface,
+ * initializing it with the requested Flow definition which becomes the
+ * execution's "root", or top-level flow. After creation, the
+ * {@link #start(ExternalContext)} operation is called, which causes the
+ * execution to activate a new session for its root flow definition. That
+ * session is then pushed onto a stack and its definition becomes the "active
+ * flow". A local, internal
  * {@link org.springframework.webflow.FlowExecutionControlContext} object (which
  * extends ({@link org.springframework.webflow.RequestContext}) is then
  * created and the Flow's start {@link org.springframework.webflow.State} is
@@ -44,10 +45,12 @@ import org.springframework.webflow.ViewSelection;
  * <p>
  * In a distributed environment such as HTTP, after a call into this object has
  * completed and control returns to the caller (manager), this execution object
- * (if still active) is typically saved out to some form of storage before the
- * server request ends. For example it might be saved out to the HttpSession, a
+ * (if still active) is typically saved out to a repository before the server
+ * request ends. For example it might be saved out to the HttpSession, a
  * Database, or a client-side hidden form field for later restoration and
- * manipulation.
+ * manipulation. This is the responsibility of the
+ * {@link org.springframework.webflow.execution.repository.FlowExecutionRepository}
+ * subsystem.
  * <p>
  * Subsequent requests from the client to manipuate this flow execution trigger
  * restoration and rehydration of this object, followed by an invocation of the
@@ -58,9 +61,9 @@ import org.springframework.webflow.ViewSelection;
  * control again goes back to the caller and if this execution is still active,
  * it is saved out to storage. This continues until a client event causes this
  * flow execution to end (by the root flow reaching an EndState). At that time,
- * this object is removed from storage and discarded.
+ * this object is removed from the repository and discarded.
  * 
- * @see org.springframework.webflow.manager.FlowExecutionManagerImpl
+ * @see org.springframework.webflow.manager.FlowExecutionManager
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
  * @see org.springframework.webflow.Flow
  * @see org.springframework.webflow.State

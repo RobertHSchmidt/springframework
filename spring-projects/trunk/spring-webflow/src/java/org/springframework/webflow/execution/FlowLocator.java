@@ -22,7 +22,7 @@ import org.springframework.webflow.FlowArtifactException;
  * A runtime service locator interface for retrieving flow definitions by id.
  * <p>
  * Flow locators are needed at by flow execution managers at runtime to retrieve
- * fully-configured Flow definitions to support launching a new flow executions.
+ * fully-configured Flow definitions to support launching new flow executions.
  * </ul>
  * 
  * @author Keith Donald

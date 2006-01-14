@@ -19,7 +19,9 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 
 /**
- * Exception thrown to veto the entering of a state in a web flow.
+ * Exception thrown to veto the entering of a state of a flow. Typically thrown
+ * by {@link FlowExecutionListener} objects that apply security or other runtime
+ * constraint checks to flow executions.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

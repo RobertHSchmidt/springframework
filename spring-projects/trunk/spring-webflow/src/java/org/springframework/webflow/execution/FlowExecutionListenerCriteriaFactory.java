@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 
 /**
- * Static factory for producing common flow execution listener criteria.
+ * Static factory for creating commonly used flow execution listener criteria.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionListenerCriteria
  * 
@@ -81,7 +81,7 @@ public class FlowExecutionListenerCriteriaFactory {
 	public static class FlowIdFlowExecutionListenerCriteria implements FlowExecutionListenerCriteria {
 
 		/**
-		 * The flow ids that apply for this criteria. 
+		 * The flow ids that apply for this criteria.
 		 */
 		private String[] flowIds;
 
