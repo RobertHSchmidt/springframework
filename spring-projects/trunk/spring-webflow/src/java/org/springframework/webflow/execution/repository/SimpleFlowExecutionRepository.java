@@ -20,9 +20,26 @@ import org.springframework.webflow.util.UidGenerator;
  * repository.
  * <li>Each entry value is a {@link FlowExecutionEntry} object, consisting of a
  * {@link FlowExecution} representing the state and behavior of a conversation
- * and a <code>continuationId</code> acting as a token required for accessing
+ * plus a <code>continuationId</code> acting as a token required for accessing
  * that conversation.
  * </ul>
+ * <p>
+ * It is important to note use of this repository <b>does not</b> allow for
+ * duplicate submission in conjunction with browser navigational buttons (such
+ * as the back button). Specifically, if you attempt to "go back" and resubmit,
+ * the continuation id stored on the page in your browser history will <b>not</b>
+ * match the continuation id of the {@link FlowExecutionEntry} object and access
+ * to the conversation will be disallowed. This is because the
+ * <code>continuationId</code> changes on each request to consistently prevent
+ * the possibility of duplicate submission.
+ * <p>
+ * This repository is specifically designed to be 'simple': incurring minimal
+ * resources and overhead, as only one {@link FlowExecution} is stored <i>per
+ * user conversation</i>. This repository implementation should only be used
+ * when you do not have to support browser navigational button use, e.g. you
+ * lock down the browser and require that all navigational events to be routed
+ * explicitly through Spring Web Flow.
+ * 
  * @author Keith Donald
  */
 public class SimpleFlowExecutionRepository implements FlowExecutionRepository, Serializable {
