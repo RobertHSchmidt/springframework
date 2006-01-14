@@ -17,6 +17,10 @@ import org.springframework.webflow.execution.repository.SingletonFlowExecutionRe
  * @author Keith Donald
  */
 public class ClientContinuationFlowExecutionRepositoryFactory extends SingletonFlowExecutionRepositoryFactory {
+
+	/**
+	 * Creates a new client continuation flow execution repository factory.
+	 */
 	public ClientContinuationFlowExecutionRepositoryFactory() {
 		super(new ClientContinuationFlowExecutionRepository());
 	}

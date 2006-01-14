@@ -9,6 +9,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionContinuatio
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.InvalidConversationContinuationException;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
+import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepository;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
@@ -21,13 +22,37 @@ import org.springframework.webflow.util.UidGenerator;
  * <li>Each map entry key is an assigned conversationId, uniquely identifying
  * an ongoing conversation between a client and the Spring Web Flow system.
  * <li>Each map entry value is a {@link Conversation} object, providing the
- * details about an ongoing logical conversation or "application transaction"
+ * details about an ongoing logical conversation or <i>application transaction</i>
  * between a client and the Spring Web Flow system. Each
- * <code>Conversation</code> maintains a stack of "continuations", where each
- * continuation represents the state of a conversation at a point in time
- * relevant to the user. These continuations can be restored to support users
- * going back in their browser to continue a conversation from a previous point.
+ * <code>Conversation</code> maintains a stack of
+ * {@link FlowExecutionContinuation} objects, where each continuation represents
+ * the state of the conversation at a point in time relevant to the user <i>that
+ * can be restored and continued</i>. These continuations can be restored to
+ * support users going back in their browser to continue a conversation from a
+ * previous point.
  * </ul>
+ * <p>
+ * It is important to note use of this repository <b>does</b> allow for
+ * duplicate submission in conjunction with browser navigational buttons (such
+ * as the back button). Specifically, if you attempt to "go back" and resubmit,
+ * the continuation id stored on the page in your browser history will match the
+ * continuation id of the {@link FlowExecutionContinuation} object and access to
+ * the conversation will allowed.
+ * <p>
+ * This repository implementation also provides support for <i>conversation
+ * invalidation after completion</i>, where once a logical {@link Conversation}
+ * completes (by one of its FlowExecution's reaching an end state), the entire
+ * conversation (including all continuations) is invalidated. This prevents the
+ * possibility of duplicate submission after completion.
+ * <p>
+ * This repository is more elaborate than the
+ * {@link SimpleFlowExecutionRepository}, offering more power (by enabling
+ * multiple continuations to exist per conversatino), but incurring more
+ * overhead. This repository implementation should be considered when you do
+ * have to support browser navigational button use, e.g. you cannot lock down
+ * the browser and require that all navigational events to be routed explicitly
+ * through Spring Web Flow.
+ * 
  * @author Keith Donald
  */
 public class ContinuationFlowExecutionRepository implements FlowExecutionRepository, Serializable {
