@@ -28,7 +28,7 @@ import java.io.Serializable;
 public class NoSuchConversationException extends FlowExecutionRepositoryException {
 
 	/**
-	 * The unique conversation identifier.
+	 * The unique conversation identifier that was invalid.
 	 */
 	private Serializable conversationId;
 
@@ -44,6 +44,9 @@ public class NoSuchConversationException extends FlowExecutionRepositoryExceptio
 		this.conversationId = conversationId;
 	}
 
+	/**
+	 * Returns the conversation id that was invalid.
+	 */
 	public Serializable getConversationId() {
 		return conversationId;
 	}

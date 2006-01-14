@@ -39,7 +39,7 @@ public interface SharedMapLocator {
 	 * store.
 	 * @param context an external user context object which may provide
 	 * assistance in locating the datastore.
-	 * @return the mutable attribute source providing access to the data store
+	 * @return the shared, mutable attribute source providing access to the data store
 	 */
 	public SharedMap getMap(ExternalContext context);
 }

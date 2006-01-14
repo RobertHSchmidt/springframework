@@ -4,22 +4,23 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ExternalContext.SharedMap;
 
 /**
- * A repository locator that accesses flow execution repositories from an
- * externally managed data map.
+ * A repository factory that accesses flow execution repositories from a shared,
+ * externally managed map.
  * <p>
  * The map access strategy is configurable by setting the
- * {@link #setSharedMapLocator(SharedMapLocator) externalMapLocator}
- * property. By default the {@link SessionMapLocator} is used, which pulls in
- * the {@link ExternalContext#getSessionMap()}, a map backed by a user's HTTP
- * session in a Servlet environment and a Portlet Session in a Portlet
+ * {@link #setSharedMapLocator(SharedMapLocator) sharedMapLocator} property. By
+ * default the {@link SessionMapLocator} is used, which pulls in the
+ * {@link ExternalContext#getSessionMap()}, a shared map backed by a user's
+ * HTTP session in a Servlet environment and a Portlet Session in a Portlet
  * environment.
  * <p>
  * When a repository lookup request is initiated, if a
  * {@link FlowExecutionRepository} is not present in the retrieved external map,
  * one will be created by having this object delegate to the configured
  * {@link FlowExecutionRepositoryCreator}. The newly created repository will
- * then be placed in the external map where it can be accessed at a later point
- * in time.
+ * then be placed in the shared map where it can be accessed at a later point in
+ * time. Synchronization will occur on the mutex of the {@link SharedMap} to
+ * ensure thread safety.
  * 
  * @author Keith Donald
  */
@@ -36,14 +37,14 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 	private SharedMapLocator sharedMapLocator = new SessionMapLocator();
 
 	/**
-	 * Returns the external map locator.
+	 * Returns the shared, external map locator.
 	 */
 	public SharedMapLocator getSharedMapLocator() {
 		return sharedMapLocator;
 	}
 
 	/**
-	 * Sets the external map locator.
+	 * Sets the shared, external map locator.
 	 */
 	public void setSharedMapLocator(SharedMapLocator sharedMapLocator) {
 		this.sharedMapLocator = sharedMapLocator;
@@ -51,6 +52,7 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 
 	public FlowExecutionRepository getRepository(ExternalContext context) {
 		SharedMap repositoryMap = sharedMapLocator.getMap(context);
+		// synchronize on the shared map's mutex for thread safety
 		synchronized (repositoryMap.getMutex()) {
 			Object repositoryKey = getRepositoryKey();
 			FlowExecutionRepository repository = (FlowExecutionRepository)repositoryMap.get(repositoryKey);

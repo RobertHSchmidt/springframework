@@ -11,8 +11,8 @@ import org.springframework.util.Assert;
  * <p>
  * This key consists of two parts:
  * <ol>
- * <li>A conversationId, which identifies a logical "conversation" or
- * "application transaction" within the Spring Web Flow system. This key is used
+ * <li>A conversationId, which identifies a logical <i>conversation</i> or
+ * <i>application transaction</i> within the Spring Web Flow system. This key is used
  * as an index into a single <i>logical</i> executing flow, identifying a user
  * interaction that is currently in process and has not yet completed.
  * <li>A continuationId, which serves as a identifier to a specific snapshot or

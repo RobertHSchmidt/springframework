@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.execution.repository;
 
-
 /**
  * Thrown if the conversation continuation with the key provided has been
  * invalidated. This might occur if the continuation expired or was otherwise
@@ -27,7 +26,7 @@ package org.springframework.webflow.execution.repository;
 public class InvalidConversationContinuationException extends FlowExecutionRepositoryException {
 
 	/**
-	 * The conversation continuation key.
+	 * The conversation continuation key that was invalid.
 	 */
 	private FlowExecutionContinuationKey continuationKey;
 
