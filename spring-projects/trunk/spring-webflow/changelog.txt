@@ -75,8 +75,6 @@ Package org.springframework.webflow.execution
 * Reworked the flow execution package, decoupling the Event abstraction from the notion of an ExternalContext.
 * Reworked the FlowExecution interface, making central start and signalEvent operations more explicit.  It is also now 
   impossible for external actors to signal an event in another state other than the current state.
-* Reworked FlowExecutionManager; it is much easier now to customize flow execution workflow (necessary for JSF).
-  The FlowLocator is now a required dependency, and support for setting a single Flow to execute has been removed.
 * Removed FlowExecutionStorage infrastructure, replaced by an enhanced FlowExecutionRepository subsystem.
 * Removed TransactionSynchronizer abstraction, which has been obsoleted since such a capability is being built
   into the FlowExecutionRepository implementations directly.
@@ -87,6 +85,9 @@ Package org.springframework.webflow.execution
 
 Package org.springframework.webflow.manager
 * Introduced the webflow.manager package, the highest-layer subsystem of SWF for driving the execution of flows.
+* Reworked FlowExecutionManager; it is now a central facade interface defining the SWF system boundary for typical clients.
+  FlowExecutionManagerImpl is the default implementation; its FlowLocator is now a required dependency,
+  and support for setting a single Flow to execute has been removed.
 * Introduced JSF manager integration, see the "jsf" package.
 * Reinstated the Spring Portlet MVC manager integration, see the "portlet" package.
   Note: the portlet MVC support requires Spring 2.0 M1.
