@@ -28,12 +28,12 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * Helper class that represents a serialized FlowExecution. Mainly intended for
- * use in FlowExecutionStorage implementations that store flow execution
+ * Helper class that stores a serialized FlowExecution. Mainly intended for use
+ * in flow execution repository implementations that store flow execution
  * continuations in their serialized forms.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
- * @see org.springframework.webflow.execution.FlowExecutionStorage
+ * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
  * 
  * @author Erwin Vervaet
  */
@@ -51,11 +51,22 @@ public class FlowExecutionByteArray implements Serializable {
 	 */
 	private boolean compressed;
 
+	/**
+	 * Creates a new FlowExecutionByteArray directly from a byte[] structure.
+	 * @param data the array of bytes representing a serialized flow execution
+	 * @param compressed whether or not the byte array was compressed
+	 */
 	public FlowExecutionByteArray(byte[] data, boolean compressed) {
 		this.data = data;
 		this.compressed = compressed;
 	}
 
+	/**
+	 * Creates a new FlowExecutionByteArray from the provided FlowExecution.
+	 * @param flowExecution the flow execution to serialize into bytes
+	 * @param compress whether or not to apply compression after serialization
+	 * @throws IOException if there was a serialization problem
+	 */
 	public FlowExecutionByteArray(FlowExecution flowExecution, boolean compress) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(384);
 		ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -75,10 +86,19 @@ public class FlowExecutionByteArray implements Serializable {
 		this.compressed = compress;
 	}
 
+	/**
+	 * Returns whether or not this byte array is compressed.
+	 */
 	public boolean isCompressed() {
 		return compressed;
 	}
 
+	/**
+	 * Restore the flow execution from this byte array.
+	 * @return the deserialized flow execution
+	 * @throws IOException if there was a deserialization problem
+	 * @throws ClassNotFoundException if there was a deserialization problem
+	 */
 	public FlowExecution deserializeFlowExecution() throws IOException, ClassNotFoundException {
 		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(getData(true)));
 		try {
@@ -89,10 +109,20 @@ public class FlowExecutionByteArray implements Serializable {
 		}
 	}
 
+	/**
+	 * Return the flow execution in its raw byte[] form. Will return the
+	 * compressed form if compressed.
+	 */
 	public byte[] getData() {
 		return data;
 	}
-	
+
+	/**
+	 * Return the flow execution in its raw byte[] form. Will decompress if requested.
+	 * @param decompress whether or not to decompress the byte[] array before returning
+	 * @return the byte array
+	 * @throws IOException a problem occured with decompression
+	 */
 	public byte[] getData(boolean decompress) throws IOException {
 		if (isCompressed() && decompress) {
 			return decompress(data);
@@ -126,7 +156,8 @@ public class FlowExecutionByteArray implements Serializable {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			FileCopyUtils.copy(gzipin, baos);
-		} finally {
+		}
+		finally {
 			gzipin.close();
 		}
 		return baos.toByteArray();

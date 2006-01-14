@@ -6,7 +6,8 @@ import org.springframework.webflow.execution.FlowExecution;
 
 /**
  * A contract for a flow execution continuation, which represents a snapshot of
- * a user conversation at a point in time relavent to the user.
+ * a user conversation at a point in time relevant to the user <i>that can be
+ * restored and continued</i>.
  * 
  * @author Keith Donald
  */
@@ -25,7 +26,7 @@ public interface FlowExecutionContinuation extends Serializable {
 	 * @return the flow execution
 	 */
 	public FlowExecution getFlowExecution();
-	
+
 	/**
 	 * Convert this continuation to a encodable byte array.
 	 * @return the continuation as a byte array

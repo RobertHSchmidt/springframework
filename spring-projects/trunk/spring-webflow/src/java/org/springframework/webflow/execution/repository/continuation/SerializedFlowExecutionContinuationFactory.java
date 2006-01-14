@@ -20,14 +20,14 @@ public class SerializedFlowExecutionContinuationFactory implements FlowExecution
 	private boolean compress = false;
 
 	/**
-	 * Returns whether or not continuations should be compressed.
+	 * Returns whether or not the continuations should be compressed.
 	 */
 	public boolean getCompress() {
 		return compress;
 	}
 
 	/**
-	 * Set whether or not continuations should be compressed.
+	 * Set whether or not the continuations should be compressed.
 	 */
 	public void setCompress(boolean compress) {
 		this.compress = compress;

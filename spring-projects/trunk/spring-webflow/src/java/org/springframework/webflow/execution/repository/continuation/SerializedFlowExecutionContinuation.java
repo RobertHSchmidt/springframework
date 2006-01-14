@@ -11,6 +11,7 @@ import org.springframework.webflow.execution.FlowExecution;
 
 /**
  * A continuation implementation that is based on standard java serialization.
+ * 
  * @author Keith Donald
  */
 public class SerializedFlowExecutionContinuation extends AbstractFlowExecutionContinuation {
@@ -22,6 +23,12 @@ public class SerializedFlowExecutionContinuation extends AbstractFlowExecutionCo
 	 */
 	private FlowExecutionByteArray byteArray;
 
+	/**
+	 * Creates a new serialized flow execution continuation.
+	 * @param id the continuation id
+	 * @param byteArray the serialized byte array representing a snapshot of a
+	 * @{link org.springframework.webflow.execution.FlowExecution}.
+	 */
 	public SerializedFlowExecutionContinuation(Serializable id, FlowExecutionByteArray byteArray) {
 		super(id);
 		Assert.notNull(byteArray, "The flow execution byte array is required");

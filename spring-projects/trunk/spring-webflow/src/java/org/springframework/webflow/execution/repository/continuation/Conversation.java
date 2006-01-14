@@ -66,6 +66,7 @@ public class Conversation implements Serializable {
 	 */
 	public void addContinuation(FlowExecutionContinuation continuation) {
 		continuations.add(continuation);
+		// remove the first continuation if them maximium number of continuations has been reached
 		if (continuations.size() > maxContinuations) {
 			continuations.removeFirst();
 		}
