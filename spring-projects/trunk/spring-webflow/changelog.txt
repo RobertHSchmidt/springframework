@@ -18,56 +18,6 @@ Package org.springframework.webflow
   one or more StateExeceptionHandler objects, for responding to exceptions that occur within a state but are not handled by that state.
 * Renamed ViewDescriptor and ViewDescriptorCreator to ViewSelection and ViewSelector, respectively, for clarity and consistency with lexicon.
 
-Package org.springframework.webflow.builder
-* Added support for "inline-flows", local flow definitions fully nested within another flow definition.
-* Added support for locally flow scoped artifacts, importable as bean definitions using the "import" element.
-* Added support for action "resultName" and "resultScope" properties, for exposing POJO method return values
-  as attributes in a flow execution scope automatically.  See 'action' element in XML DTD.
-* Added support for automatic creation of flow variables during flow startup, see 'var' element in XML DTD.
-* Added support for mapping subflow output attributes into parent flow collections.  See 'output' element in XML DTD.
-* Added AbstractFlowBuilder addDecisionState(...) methods for completeness.
-* Introduced the FlowArtifactFactory, for accessing externally managed flow artifacts during the flow building process.
-* Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add methods.
-* Reworked FlowBuilder, externalizing flow id assignment from the builder itself (assignment is now a responsibility of the director).
-* Renamed the "config" package to "builder" for clarity.
-* Removed flow artifact creation and autowiring support in favor of artifact lookup by id (which is more compelling now with flow-definition scoped artifact support).
-
-Package org.springframework.webflow.execution
-* Added paused, resumed, and sessionEnding FlowExecutionListener callbacks.
-* Added UidGenerator strategy, providing a plugin point for generating unique keys.
-* Introduced FlowExecutionRepository subsystem, for tracking ongoing conversations between browsers and 
-  the Spring Web Flow system.  This subsystem obsoletes both the FlowExecutionStorage and TransactionSynchronizer
-  infrastructure, as it provides the capabilities of both in a single system.
-* Added explicit support for continuation-based repositories (aka 'continuation servers'),
-  including a built-in capability to limit the max number of continuations allowed per conversation
-  as well as automatically invalidate all  ontinuations associated with a conversation that has ended.
-  Explicit support for continuation expiry and additional continuation invalidation strategies is under consideration.
-* Introduced ExternalContext implementations for Servlet, Portlet, JSF, and Struts environments.
-  This adds support for accessing request, session, and application variables from within SWF 
-  in a consistent manner (regardless of the environment in which SWF is called).
-* Reworked the flow execution package, decoupling the Event abstraction from the notion of an ExternalContext.
-* Reworked the FlowExecution interface, making central start and signalEvent operations more explicit.  It is also now 
-  impossible for external actors to signal an event in another state other than the current state.
-* Reworked FlowExecutionManager; it is much easier now to customize flow execution workflow (necessary for JSF).
-  The FlowLocator is now a required dependency, and support for setting a single Flow to execute has been removed.
-* Removed FlowExecutionStorage infrastructure, replaced by an enhanced FlowExecutionRepository subsystem.
-* Removed TransactionSynchronizer abstraction, which has been obsoleted since such a capability is being built
-  into the FlowExecutionRepository implementations directly.
-* Removed support for invoking flows in arbitrary states other than the current state for security reasons.
-  Support for a single, externally referenceable navigation state per flow is under consideration.
-* Removed ExpiredFlowCleanupFilter, as a more powerful expiry capability built into the
-  FlowExecutionRepository subsystem is under consideration.
-
-Package org.springframework.webflow.registry
-* Added the FlowRegistry subsystem in webflow.registry, for registering groups of refreshable Flow definitions.
-  With this addition, XML flow definitions may now be refreshed from their registries at runtime by using a
-  JMX client like Sun's jConsole that ships standard with JDK 1.5.
-* Added a refreshable FlowRegistryImpl, for managing a reloadable registry of flow definitions, 
-  typically populated by an XmlFlowRegistrar or custom FlowRegistrar.  See XmlFlowRegistryFactoryBean
-  as a convenient mechanism for populating a FlowRegistry using a standard Spring bean definition.
-* Added RefreshableFlowHolder, capable of automatically detecting changes on externalized flow 
-  definitions and refreshing those definitions without requiring a container restart.
-
 Package org.springframework.webflow.action
 * Added support for invoking strongly typed methods on arbitrary beans (POJOs) as a SWF Action.
   SWF is now capable of invoking an abitrary java.lang.Object method
@@ -92,12 +42,65 @@ Package org.springframework.webflow.action
   "public void ${validatorMethod}(${formObjectClass} obj, Errors errors)".
 * Removed DelegatingAction in favor of StatefulActionProxy and bean invoking actions.
 
+Package org.springframework.webflow.builder
+* Added support for "inline-flows", local flow definitions fully nested within another flow definition.
+* Added support for locally flow scoped artifacts, importable as bean definitions using the "import" element.
+* Added support for action "resultName" and "resultScope" properties, for exposing POJO method return values
+  as attributes in a flow execution scope automatically.  See 'action' element in XML DTD.
+* Added support for automatic creation of flow variables during flow startup, see 'var' element in XML DTD.
+* Added support for mapping subflow output attributes into parent flow collections.  See 'output' element in XML DTD.
+* Added AbstractFlowBuilder addDecisionState(...) methods for completeness.
+* Introduced the FlowArtifactFactory, for accessing externally managed flow artifacts during the flow building process.
+* Changed AbstractFlowBuilder addSubflowState(...) methods to return the added SubflowState, consistent with other add methods.
+* Reworked FlowBuilder, externalizing flow id assignment from the builder itself (assignment is now a responsibility of the director).
+* Renamed the "config" package to "builder" for clarity.
+* Removed flow artifact creation and autowiring support in favor of artifact lookup by id (which is more compelling now with flow-definition scoped artifact support).
+
+Package org.springframework.webflow.context
+* Introduced webflow.context package for housing common ExternalContext implementations.
+* Introduced ExternalContext implementations for HTTP Servlet and JSR 168 Portlet environments.
+  This adds support for accessing request, session, and application variables from within SWF 
+  in a consistent manner (regardless of the environment in which SWF is called).
+
+Package org.springframework.webflow.execution
+* Added paused, resumed, and sessionEnding FlowExecutionListener callbacks.
+* Added UidGenerator strategy, providing a plugin point for generating unique keys.
+* Introduced FlowExecutionRepository subsystem, for tracking ongoing conversations between browsers and 
+  the Spring Web Flow system.  This subsystem obsoletes both the FlowExecutionStorage and TransactionSynchronizer
+  infrastructure, as it provides the capabilities of both in a single system.
+* Added explicit support for continuation-based repositories (aka 'continuation servers'),
+  including a built-in capability to limit the max number of continuations allowed per conversation
+  as well as automatically invalidate all continuations associated with a conversation that has ended.
+  Explicit support for continuation expiry and additional continuation invalidation strategies is under consideration.
+* Reworked the flow execution package, decoupling the Event abstraction from the notion of an ExternalContext.
+* Reworked the FlowExecution interface, making central start and signalEvent operations more explicit.  It is also now 
+  impossible for external actors to signal an event in another state other than the current state.
+* Reworked FlowExecutionManager; it is much easier now to customize flow execution workflow (necessary for JSF).
+  The FlowLocator is now a required dependency, and support for setting a single Flow to execute has been removed.
+* Removed FlowExecutionStorage infrastructure, replaced by an enhanced FlowExecutionRepository subsystem.
+* Removed TransactionSynchronizer abstraction, which has been obsoleted since such a capability is being built
+  into the FlowExecutionRepository implementations directly.
+* Removed support for invoking flows in arbitrary states other than the current state for security reasons.
+  Support for a single, externally referenceable navigation state per flow is under consideration.
+* Removed ExpiredFlowCleanupFilter, as a more powerful expiry capability built into the
+  FlowExecutionRepository subsystem is under consideration.
+
 Package org.springframework.webflow.manager
 * Introduced the webflow.manager package, the highest-layer subsystem of SWF for driving the execution of flows.
 * Introduced JSF manager integration, see the "jsf" package.
 * Reinstated the Spring Portlet MVC manager integration, see the "portlet" package.
   Note: the portlet MVC support requires Spring 2.0 M1.
 
+Package org.springframework.webflow.registry
+* Added the FlowRegistry subsystem in webflow.registry, for registering groups of refreshable Flow definitions.
+  With this addition, XML flow definitions may now be refreshed from their registries at runtime by using a
+  JMX client like Sun's jConsole that ships standard with JDK 1.5.
+* Added a refreshable FlowRegistryImpl, for managing a reloadable registry of flow definitions, 
+  typically populated by an XmlFlowRegistrar or custom FlowRegistrar.  See XmlFlowRegistryFactoryBean
+  as a convenient mechanism for populating a FlowRegistry using a standard Spring bean definition.
+* Added RefreshableFlowHolder, capable of automatically detecting changes on externalized flow 
+  definitions and refreshing those definitions without requiring a container restart.
+  
 Package org.springframework.webflow.test
 * Improved FlowExecution test support with AbstractFlowExecutionTests.
 * Added convenient AbstractXmlFlowExecutionTests, for easy testing of xml-based flow definitions.
