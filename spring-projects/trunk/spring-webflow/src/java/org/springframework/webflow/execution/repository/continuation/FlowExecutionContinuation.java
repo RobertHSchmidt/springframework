@@ -21,13 +21,13 @@ public interface FlowExecutionContinuation extends Serializable {
 
 	/**
 	 * Restores the flow execution representing the state of a conversation at a
-	 * point in time relavent to the user.
+	 * point in time relevant to the user.
 	 * @return the flow execution
 	 */
 	public FlowExecution getFlowExecution();
 	
 	/**
-	 * Convert this continuation to a byte array.
+	 * Convert this continuation to a encodable byte array.
 	 * @return the continuation as a byte array
 	 */
 	public byte[] toByteArray();
