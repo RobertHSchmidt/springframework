@@ -84,7 +84,6 @@ public class Transition extends AnnotatedObject {
 
 	/**
 	 * Default constructor for bean style usage.
-	 * @see #setTargetStateId(String)
 	 * @see #setMatchingCriteria(TransitionCriteria)
 	 * @see #setExecutionCriteria(TransitionCriteria)
 	 * @see #setTargetStateResolver(TargetStateResolver)

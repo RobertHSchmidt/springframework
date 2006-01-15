@@ -72,7 +72,6 @@ public class SubflowState extends TransitionableState {
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
 	 * @param subflow the subflow to spawn
-	 * @param transitions the transitions of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 * @see TransitionableState#TransitionableState(Flow, String)

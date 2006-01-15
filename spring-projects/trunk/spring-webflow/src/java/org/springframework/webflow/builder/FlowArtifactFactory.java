@@ -87,8 +87,7 @@ public interface FlowArtifactFactory {
 
 	/**
 	 * Create a new flow definition with the specified id.
-	 * @param id the id
-	 * @param properties the flow properties
+	 * @param flowParameters the flow parameters
 	 * @return the flow definition
 	 */
 	public Flow createFlow(FlowArtifactParameters flowParameters) throws FlowArtifactException;
@@ -98,7 +97,7 @@ public interface FlowArtifactFactory {
 	 * @param flow the state's owning flow
 	 * @param id the id
 	 * @param stateType the state type
-	 * @param properties the properties
+	 * @param stateParameters the parameters
 	 * @return the state
 	 */
 	public State createState(Flow flow, Class stateType, FlowArtifactParameters stateParameters) throws FlowArtifactException;
@@ -106,7 +105,7 @@ public interface FlowArtifactFactory {
 	/**
 	 * Create a new state transition with the specified id.
 	 * @param sourceState the source state of the transition
-	 * @param id the id
+	 * @param properties transition properties
 	 * @return the transition
 	 */
 	public Transition createTransition(TransitionableState sourceState, Map properties) throws FlowArtifactException;

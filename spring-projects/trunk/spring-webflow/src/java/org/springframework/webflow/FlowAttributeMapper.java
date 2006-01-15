@@ -30,10 +30,10 @@ import java.util.Map;
  * <p>
  * 
  * <pre>
- * Parent Flow Session
- * -------------------
- * : flow = myFlow
- * : flowScope = [map:attribute1=value1, attribute2=value2, attribute3=value3]
+ *  Parent Flow Session
+ *  -------------------
+ *  : flow = myFlow
+ *  : flowScope = [map:attribute1=value1, attribute2=value2, attribute3=value3]
  * </pre>
  * 
  * <p>
@@ -49,10 +49,10 @@ import java.util.Map;
  * <p>
  * 
  * <pre>
- * Flow Attribute Mapper Configuration
- * -----------------------------------
- * : inputMappings = [map:attribute1-&gt;attribute1, attribute3-&gt;attribute4]
- * : outputMappings = [map:attribute4-&gt;attribute3]
+ *  Flow Attribute Mapper Configuration
+ *  -----------------------------------
+ *  : inputMappings = [map:attribute1-&gt;attribute1, attribute3-&gt;attribute4]
+ *  : outputMappings = [map:attribute4-&gt;attribute3]
  * </pre>
  * 
  * <p>
@@ -100,8 +100,7 @@ public interface FlowAttributeMapper {
 	 * Map output attributes of an ended subflow to a resuming parent flow
 	 * session. This maps the <i>output</i> of the child as new input to the
 	 * resuming parent.
-	 * @param subflowResultEvent the event returned by the ended subflow,
-	 * exposing returned attributes as event parameters
+	 * @param subflowOutput the output attributes exposed by the ended subflow
 	 * @param context the current request execution context, which gives access
 	 * to the parent flow scope
 	 */

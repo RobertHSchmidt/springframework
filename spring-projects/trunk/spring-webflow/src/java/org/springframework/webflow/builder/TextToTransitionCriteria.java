@@ -38,10 +38,10 @@ import org.springframework.webflow.support.EventIdTransitionCriteria;
  * everything ({@link org.springframework.webflow.WildcardTransitionCriteria})
  * </li>
  * <li>"eventId" - will result in a TransitionCriteria object that matches
- * given event id ({@link org.springframework.webflow.builder.EventIdTransitionCriteria})
+ * given event id ({@link org.springframework.webflow.support.EventIdTransitionCriteria})
  * </li>
  * <li>"${...}" - will result in a TransitionCriteria object that evaluates
- * given condition, expressed as an expression ({@link org.springframework.webflow.builder.BooleanExpressionTransitionCriteria})
+ * given condition, expressed as an expression ({@link org.springframework.webflow.support.BooleanExpressionTransitionCriteria})
  * </li>
  * <li>"bean:&lt;id&gt;" - will result in usage of a custom TransitionCriteria
  * bean implementation.</li>

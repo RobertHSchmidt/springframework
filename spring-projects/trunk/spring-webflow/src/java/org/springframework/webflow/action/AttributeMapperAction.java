@@ -74,7 +74,7 @@ import org.springframework.webflow.RequestContext;
  * </tr>
  * </table>
  * 
- * @see org.springframework.binding.AttributeMapper
+ * @see org.springframework.binding.mapper.AttributeMapper
  * @see org.springframework.webflow.RequestContext
  * 
  * @author Keith Donald

@@ -27,8 +27,8 @@ import org.springframework.core.style.ToStringCreator;
  * A typed set of state exception handlers, mainly for use internally by
  * artifacts that can apply state exception handling logic.
  * 
- * @see Flow#getExceptionHandlerList()
- * @see State#getExceptionHandlerList()
+ * @see Flow#getExceptionHandlerSet()
+ * @see State#getExceptionHandlerSet()
  * 
  * @author Keith Donald
  */
@@ -41,7 +41,7 @@ public class StateExceptionHandlerSet {
 
 	/**
 	 * Add a state exception handler to this list.
-	 * @param exception handler the exception handler to add
+	 * @param exceptionHandler the exception handler to add
 	 * @return true if this list's contents changed as a result of the add
 	 * operation
 	 */
@@ -51,7 +51,7 @@ public class StateExceptionHandlerSet {
 
 	/**
 	 * Add a collection of state exception handler instances to this list.
-	 * @param exception handlers the exception handlers to add
+	 * @param exceptionHandlers the exception handlers to add
 	 * @return true if this list's contents changed as a result of the add
 	 * operation
 	 */
@@ -64,7 +64,7 @@ public class StateExceptionHandlerSet {
 
 	/**
 	 * Tests if this state exception handler is in this list.
-	 * @param exception handler the exception handler
+	 * @param exceptionHandler the exception handler
 	 * @return true if the state exception handler is contained in this list,
 	 * false otherwise
 	 */
@@ -74,7 +74,7 @@ public class StateExceptionHandlerSet {
 
 	/**
 	 * Remove the exception handler instance from this list.
-	 * @param exception handler the exception handler to add
+	 * @param exceptionHandler the exception handler to add
 	 * @return true if this list's contents changed as a result of the remove
 	 * operation
 	 */

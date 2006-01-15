@@ -24,9 +24,9 @@ import java.util.Map;
  * system by an external actor to manipulate exactly one flow execution.
  * <p>
  * A new instance of this object is created when one of the operations on a
- * <code>FlowExecution</code> facade is invoked, either ({@link org.springframework.webflow.execution.FlowExecution#start(ExternalContext))}
+ * <code>FlowExecution</code> facade is invoked, either ({@link org.springframework.webflow.execution.FlowExecution#start(ExternalContext)}
  * to activate a newly created flow execution, or
- * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(String, ExternalContext))})
+ * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(String, ExternalContext)})
  * to signal an event in the current state of a resumed flow execution.
  * <p>
  * Once created this context object is passed around throughout request
@@ -83,7 +83,7 @@ public interface RequestContext {
 	 * for a specific client environment, such as a
 	 * {@link org.springframework.webflow.context.servlet.ServletExternalContext}
 	 * for servlets or a
-	 * {@link org.springframework.webflow.context.servlet.PortletExternalContext}
+	 * {@link org.springframework.webflow.context.portlet.PortletExternalContext}
 	 * for portlets. Such downcasting will give you full access to a native
 	 * HttpServletRequest, for example. With that said, for portability reasons
 	 * you should avoid coupling your flow artifacts to a specific deployment

@@ -45,7 +45,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * event, and is typically used to allow the flow to respond to a specific
 	 * action's outcome within a larger action execution chain.
 	 * <p>
-	 * {@see ActionState} for more information.
+	 * @see ActionState
 	 */
 	public static final String NAME_PROPERTY = "name";
 
@@ -57,7 +57,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * execute, or the name of a specific method on a arbitrary POJO (plain old
 	 * java.lang.Object).
 	 * <p>
-	 * {@see ActionState} for more information.
+	 * @see ActionState
 	 */
 	public static final String METHOD_PROPERTY = "method";
 

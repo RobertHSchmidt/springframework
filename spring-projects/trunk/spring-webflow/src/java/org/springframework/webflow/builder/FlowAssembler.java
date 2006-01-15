@@ -63,7 +63,7 @@ public class FlowAssembler {
 	/**
 	 * Create a new flow assembler that will direct Flow assembly using the
 	 * specified builder strategy.
-	 * @param flowId the assigned flow id
+	 * @param flowParameters the assigned flow parameters
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
 	public FlowAssembler(FlowArtifactParameters flowParameters, FlowBuilder flowBuilder) {

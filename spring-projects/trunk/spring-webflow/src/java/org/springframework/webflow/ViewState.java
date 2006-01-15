@@ -56,8 +56,6 @@ public class ViewState extends TransitionableState {
 	 * Create a new view state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @param viewSelector the factory used to produce the view to render
-	 * @param transitions the transitions of this state
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 */
