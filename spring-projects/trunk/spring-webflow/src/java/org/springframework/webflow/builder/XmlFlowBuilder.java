@@ -83,8 +83,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *        &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *        &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -1078,14 +1078,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getSubflow(id);
 		}
 
-		public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
+		public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (containsBean(actionParameters.getId())) {
-					return toAction(getBean(actionParameters.getId(), Action.class, false), actionParameters
-							.getProperties());
+				if (containsBean(parameters.getId())) {
+					return toAction(getBean(parameters.getId(), Action.class, false), parameters.getProperties());
 				}
 			}
-			return getFlowArtifactFactory().getAction(actionParameters);
+			return getFlowArtifactFactory().getAction(parameters);
 		}
 
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
@@ -1133,8 +1132,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getTargetStateResolver(id);
 		}
 
-		public Flow createFlow(FlowArtifactParameters flowParameters) throws FlowArtifactException {
-			top().flow = getFlowArtifactFactory().createFlow(flowParameters);
+		public Flow createFlow(FlowArtifactParameters parameters) throws FlowArtifactException {
+			top().flow = getFlowArtifactFactory().createFlow(parameters);
 			return top().flow;
 		}
 

@@ -35,10 +35,10 @@ public interface FlowArtifactFactory {
 
 	/**
 	 * Retrieve the action to be executed within a flow with the provided id.
-	 * @param actionParameters the action parameters
+	 * @param parameters the assigned action parameters
 	 * @throws FlowArtifactException when no such action is found
 	 */
-	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException;
+	public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException;
 
 	/**
 	 * Retrieve the flow attribute mapper to be used in a subflow state with the
@@ -86,24 +86,24 @@ public interface FlowArtifactFactory {
 
 	/**
 	 * Create a new flow definition with the specified id.
-	 * @param flowParameters the flow parameters
+	 * @param parameters the assigned flow parameters
 	 * @return the flow definition
 	 */
-	public Flow createFlow(FlowArtifactParameters flowParameters) throws FlowArtifactException;
+	public Flow createFlow(FlowArtifactParameters parameters) throws FlowArtifactException;
 
 	/**
 	 * Create a new state definition with the specified id.
 	 * @param flow the state's owning flow
 	 * @param stateType the state type
-	 * @param stateParameters the parameters
+	 * @param parameters the assigned state parameters
 	 * @return the state
 	 */
-	public State createState(Flow flow, Class stateType, FlowArtifactParameters stateParameters) throws FlowArtifactException;
+	public State createState(Flow flow, Class stateType, FlowArtifactParameters parameters) throws FlowArtifactException;
 
 	/**
 	 * Create a new state transition with the specified id.
 	 * @param sourceState the source state of the transition
-	 * @param properties transition properties
+	 * @param properties the assigned transition properties
 	 * @return the transition
 	 */
 	public Transition createTransition(TransitionableState sourceState, Map properties) throws FlowArtifactException;

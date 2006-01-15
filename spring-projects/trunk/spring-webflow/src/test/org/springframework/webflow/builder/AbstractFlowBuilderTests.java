@@ -63,7 +63,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 				}
 			}
 
-			public Action getAction(String actionId) throws FlowArtifactException {
+			public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
 				return new NoOpAction();
 			}
 

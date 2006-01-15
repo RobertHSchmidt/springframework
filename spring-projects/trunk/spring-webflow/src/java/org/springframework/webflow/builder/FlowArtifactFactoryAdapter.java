@@ -32,8 +32,8 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 		throw new FlowArtifactException(id, Flow.class, "Subflow lookup is not supported by this artifact factory");
 	}
 
-	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
-		throw new FlowArtifactException(actionParameters.getId(), Action.class, "Action lookup is not supported by this artifact factory");
+	public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
+		throw new FlowArtifactException(parameters.getId(), Action.class, "Action lookup is not supported by this artifact factory");
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
@@ -61,19 +61,19 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 				"Transition target state resolver lookup is not supported by this artifact factory");
 	}
 
-	public Flow createFlow(FlowArtifactParameters flowParameters) throws FlowArtifactException {
+	public Flow createFlow(FlowArtifactParameters parameters) throws FlowArtifactException {
 		Flow flow = (Flow)newInstance(Flow.class);
-		flow.setId(flowParameters.getId());
-		flow.addProperties(flowParameters.getProperties());
+		flow.setId(parameters.getId());
+		flow.addProperties(parameters.getProperties());
 		return flow;
 	}
 
-	public State createState(Flow flow, Class stateType, FlowArtifactParameters stateParameters)
+	public State createState(Flow flow, Class stateType, FlowArtifactParameters parameters)
 			throws FlowArtifactException {
 		State state = (State)newInstance(stateType);
-		state.setId(stateParameters.getId());
+		state.setId(parameters.getId());
 		state.setFlow(flow);
-		state.addProperties(stateParameters.getProperties());
+		state.addProperties(parameters.getProperties());
 		return state;
 	}
 
@@ -112,5 +112,4 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 			return new LocalBeanInvokingAction(artifact);
 		}
 	}
-
 }
