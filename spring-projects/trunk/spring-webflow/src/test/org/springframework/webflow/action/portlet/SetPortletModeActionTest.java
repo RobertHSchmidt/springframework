@@ -103,41 +103,4 @@ public class SetPortletModeActionTest extends TestCase {
 			// expected
 		}
 	}
-
-	public void testSetPortletModeAsString() {
-		assertEquals("Before change,", PortletMode.VIEW, tested.getPortletMode());
-
-		// perform test
-		tested.setPortletModeAsString("EDIT");
-
-		assertEquals("After change,", PortletMode.EDIT, tested.getPortletMode());
-	}
-
-	public void testSetPortletModeAsStringInvalid() {
-		assertEquals("Before,", PortletMode.VIEW, tested.getPortletMode());
-
-		// perform test
-		try {
-			tested.setPortletModeAsString("NONSENSE");
-			fail("ConstantException expected");
-		} catch (ConstantException expected) {
-			// expected
-		}
-
-		assertEquals("Should not have changed,", PortletMode.VIEW, tested.getPortletMode());
-	}
-
-	public void testSetPortletModeAsStringNull() {
-		assertEquals("Before,", PortletMode.VIEW, tested.getPortletMode());
-
-		// perform test
-		try {
-			tested.setPortletModeAsString(null);
-			fail("NullPointerException expected");
-		} catch (NullPointerException expected) {
-			// expected
-		}
-
-		assertEquals("Should not have changed,", PortletMode.VIEW, tested.getPortletMode());
-	}
 }

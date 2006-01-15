@@ -30,7 +30,7 @@ import org.springframework.webflow.context.portlet.PortletExternalContext;
 /**
  * Action implementation that changes a PortletResponse mode.
  * <p>
- * This class is usefull when you want to change the current PortletMode before
+ * This class is usefullwhen you want to change the current PortletMode before
  * entering a specific state, e.g. it can be the first state in a subflow.
  * <p>
  * Note: if you can, change the PortletMode using Portlet URLs (PortletURL class
@@ -64,14 +64,6 @@ public class SetPortletModeAction extends AbstractAction {
 	 */
 	public void setPortletMode(PortletMode mode) {
 		this.portletMode = mode;
-	}
-
-	/**
-	 * Convenience setter to set the mode as a string.
-	 * @param encodedMode mode as a string, e.g. "HELP", "VIEW" or "EDIT"
-	 */
-	public void setPortletModeAsString(String encodedMode) {
-		setPortletMode((PortletMode)PORTLET_MODE_CONSTANTS.asObject(encodedMode));
 	}
 
 	/**
