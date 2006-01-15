@@ -27,7 +27,7 @@ import org.springframework.webflow.registry.FlowRegistryImpl;
  * flow definition source from a {@link FlowRegistry}.
  * <p>
  * Subclasses should override
- * {@link #populateFlowRegistry(FlowRegistry, FlowArtifactFactory) to  load the
+ * {@link #populateFlowRegistry(FlowRegistry, FlowArtifactFactory)} to  load the
  * registry with flow definitions necessary to support this test. Exactly one of
  * those flow definitions must be registered with an <code>id</code> that
  * matches the id returned by {@link #getFlowId()}, selecting the flow whose
