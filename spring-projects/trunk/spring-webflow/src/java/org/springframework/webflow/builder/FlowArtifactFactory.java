@@ -95,7 +95,6 @@ public interface FlowArtifactFactory {
 	/**
 	 * Create a new state definition with the specified id.
 	 * @param flow the state's owning flow
-	 * @param id the id
 	 * @param stateType the state type
 	 * @param stateParameters the parameters
 	 * @return the state

@@ -34,7 +34,8 @@ public class NoSuchConversationException extends FlowExecutionRepositoryExceptio
 
 	/**
 	 * Create a new flow execution lookup exception.
-	 * @param flowExecutionId id of the flow execution that cannot be found
+	 * @param repository the repository
+	 * @param conversationId the conversation id
 	 */
 	public NoSuchConversationException(FlowExecutionRepository repository, Serializable conversationId) {
 		super(repository, "No conversation could be found with id '" + conversationId

@@ -85,8 +85,8 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 
 	/**
 	 * Create a new request context.
-	 * @param sourceEvent the event at the origin of this request
 	 * @param flowExecution the owning flow execution
+	 * @param externalContext the external context that originated the flow execution request
 	 */
 	public FlowExecutionControlContextImpl(FlowExecutionImpl flowExecution, ExternalContext externalContext) {
 		Assert.notNull(flowExecution, "The owning flow execution is required");

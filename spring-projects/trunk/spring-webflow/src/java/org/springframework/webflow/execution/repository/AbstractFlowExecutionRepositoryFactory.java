@@ -32,7 +32,7 @@ public abstract class AbstractFlowExecutionRepositoryFactory implements FlowExec
 
 	/**
 	 * Factory method that returns a new instance of a FlowExecutionRepository.
-	 * This implementation simply delegates to the {@link repositoryCreator}
+	 * This implementation simply delegates to the configured repository creator
 	 * strategy for repository creation.
 	 * @return the flow execution repository
 	 */

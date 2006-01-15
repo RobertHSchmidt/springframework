@@ -254,7 +254,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Create a new XML flow builder parsing the document at the specified
 	 * location.
 	 * @param location the location of the xml-based flow definition resource
-	 * @param artifactFactory the bean factory defining this flow builder
 	 */
 	public XmlFlowBuilder(Resource location) {
 		super();

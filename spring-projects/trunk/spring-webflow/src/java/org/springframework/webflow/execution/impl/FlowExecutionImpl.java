@@ -120,12 +120,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	/**
 	 * Create a new flow execution executing the provided flow.
-	 * @param key the key uniquely identifying this flow execution.
 	 * @param rootFlow the root flow of this flow execution
 	 * @param listeners the listeners interested in flow execution lifecycle
 	 * events
-	 * @param transactionSynchronizer the application transaction
-	 * synchronization strategy to use
 	 */
 	public FlowExecutionImpl(Flow rootFlow, FlowExecutionListener[] listeners) {
 		Assert.notNull(rootFlow, "The root flow definition is required");
@@ -313,7 +310,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * <p>
 	 * The default implementation uses the <code>FlowControlContextImpl</code>
 	 * class. Subclasses can override this to use a custom class.
-	 * @param sourceEvent the event at the origin of this request
+	 * @param externalContext the external context
 	 */
 	protected FlowExecutionControlContext createControlContext(ExternalContext externalContext) {
 		return new FlowExecutionControlContextImpl(this, externalContext);

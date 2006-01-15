@@ -63,18 +63,19 @@ import org.springframework.webflow.RequestContext;
  * <td>targetExpression</td>
  * <td><i>null</i></td>
  * <td>Set the expression used to set the target attribute during the mapping.
- * If you use this, you also need to specify the "sourceExpression".</td>
+ * If you use this, you also need to specify the <code>sourceExpression</code>.</td>
  * </tr>
  * <tr>
  * <td>valueConverter</td>
  * <td><i>null</i></td>
  * <td>Set a value converter to use during the mapping. This is optional and
  * will only be used if you do not explicitly set the mapper or mapping to use,
- * but instead used the "sourceExpression" and "targetExpression" properties.</td>
+ * but instead used the <code>sourceExpression</code> and
+ * <code>targetExpression</code> properties.</td>
  * </tr>
  * </table>
  * 
- * @see org.springframework.binding.mapper.AttributeMapper
+ * @see org.springframework.binding.mapping.AttributeMapper
  * @see org.springframework.webflow.RequestContext
  * 
  * @author Keith Donald
