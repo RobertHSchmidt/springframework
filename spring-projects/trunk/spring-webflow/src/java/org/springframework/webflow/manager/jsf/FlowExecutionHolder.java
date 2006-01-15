@@ -53,7 +53,7 @@ public class FlowExecutionHolder implements Serializable {
 
 	/**
 	 * Creates a new flow execution holder.
-	 * @param flowExecution the continuation key
+	 * @param continuationKey the continuation key
 	 * @param flowExecution the flow execution to hold
 	 */
 	public FlowExecutionHolder(FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution) {

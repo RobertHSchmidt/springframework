@@ -177,7 +177,6 @@ public class FlowExecutionManagerParameterExtractor {
 	 * without Javascript).
 	 * </ol>
 	 * @param context the context in which the external user event occured
-	 * @param request the http servlet request
 	 * @return the event id
 	 */
 	public String extractEventId(ExternalContext context) throws IllegalArgumentException {

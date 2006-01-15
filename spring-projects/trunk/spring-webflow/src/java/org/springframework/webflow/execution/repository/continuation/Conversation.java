@@ -32,7 +32,7 @@ public class Conversation implements Serializable {
 	 * Creates a new object representing a logical conversation between a
 	 * browser and Spring Web Flow. The new conversation initially has no
 	 * continuations associated with it, call
-	 * @{link {@link #addContinuation(FlowExecutionContinuation)} to add them.
+	 * {@link #addContinuation(FlowExecutionContinuation)} to add them.
 	 * @param maxContinuations the maximum number of continuations allowed for
 	 * this conversation.
 	 */

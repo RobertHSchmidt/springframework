@@ -255,8 +255,8 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	/**
 	 * Load an existing FlowExecution based on data in the specified source
 	 * event.
+	 * @param repository the repository to load from
 	 * @param continuationKey the unique id of the flow execution
-	 * @param context the context in which the external user event occured
 	 */
 	public FlowExecution loadFlowExecution(FlowExecutionRepository repository,
 			FlowExecutionContinuationKey continuationKey) {
@@ -293,7 +293,6 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	 * {@link #FLOW_EXECUTION_ID_ATTRIBUTE}.
 	 * @param selectedView the view selection to be prepared
 	 * @param continuationKey the assigned repository continuation key
-	 * @param continuationKey the unique id of the flow execution
 	 * @param flowExecutionContext the flow context providing info about the
 	 * flow execution
 	 * @return the prepped view selection

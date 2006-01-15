@@ -186,7 +186,7 @@ public class FlowNavigationHandler extends NavigationHandler {
 
 	/**
 	 * Handle the navigation request implied by the specified parameters.
-	 * @param context <code>FacesContext</code> for the current request
+	 * @param facesContext <code>FacesContext</code> for the current request
 	 * @param fromAction The action binding expression that was evaluated to
 	 * retrieve the specified outcome (if any)
 	 * @param outcome The logical outcome returned by the specified action
@@ -236,11 +236,8 @@ public class FlowNavigationHandler extends NavigationHandler {
 	/**
 	 * Render the view specified by this <code>ViewSelection</code>, after
 	 * exposing any model data it includes.
-	 * @param facesContext <code>FacesContext</code> for the current request
-	 * @param fromAction The action binding expression that was evaluated to
-	 * retrieve the specified outcome (if any)
-	 * @param outcome The logical outcome returned by the specified action
 	 * @param selectedView <code>ViewSelection</code> for the view to render
+	 * @param facesContext <code>FacesContext</code> for the current request
 	 */
 	public void renderView(ViewSelection selectedView, FacesContext facesContext) {
 		putInto(facesContext.getExternalContext().getRequestMap(), selectedView.getModel());

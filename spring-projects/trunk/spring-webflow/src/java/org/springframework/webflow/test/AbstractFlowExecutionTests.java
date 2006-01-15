@@ -106,7 +106,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
-	 * @param input request parameters needed by the flow execution to start
+	 * @param parameters request parameters needed by the flow execution to start
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
@@ -159,7 +159,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * Signal an occurence of an event in the current state of the flow
 	 * execution being tested.
 	 * @param eventId the event that occured
-	 * @param input request parameters needed by the flow execution to complete
+	 * @param parameters request parameters needed by the flow execution to complete
 	 * event processing
 	 */
 	protected ViewSelection signalEvent(String eventId, Map parameters) {

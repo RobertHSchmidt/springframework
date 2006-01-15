@@ -36,7 +36,6 @@ import org.springframework.webflow.registry.FlowRegistryImpl;
  * <p>
  * Example usage in a subclass demonstrating use of a custom FlowRegistrar to
  * populate the test's flow registry:
- * <p>
  * <pre>
  * public class SearchFlowExecutionTests extends AbstractManagedFlowExecutionTests {
  * 
@@ -72,6 +71,7 @@ import org.springframework.webflow.registry.FlowRegistryImpl;
  *     }
  * }
  * </pre>
+ * 
  * @author Keith Donald
  */
 public abstract class AbstractManagedFlowExecutionTests extends AbstractFlowExecutionTests {

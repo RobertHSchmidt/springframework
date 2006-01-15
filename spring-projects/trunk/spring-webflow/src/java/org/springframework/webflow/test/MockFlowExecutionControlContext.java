@@ -47,7 +47,6 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 	/**
 	 * Create a new stub state context.
 	 * @param session the active flow session
-	 * @param sourceEvent the event originating this request context
 	 */
 	public MockFlowExecutionControlContext(MockFlowSession session) {
 		this(session, new MockExternalContext());
@@ -56,7 +55,6 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 	/**
 	 * Create a new stub state context.
 	 * @param session the active flow session
-	 * @param sourceEvent the event originating this request context
 	 */
 	public MockFlowExecutionControlContext(MockFlowSession session, ExternalContext externalContext) {
 		super(session, externalContext);

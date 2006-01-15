@@ -55,7 +55,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	/**
 	 * Adds a exception->state mapping to this handler.
 	 * @param exceptionClass the type of exception to map
-	 * @param targetState the state to transition to if the specified type of
+	 * @param targetStateId the id of the state to transition to if the specified type of
 	 * exception is handled
 	 * @return this handler, to allow for adding multiple mappings in a single
 	 * statement
