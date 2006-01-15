@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2005-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
-import org.springframework.webflow.manager.jsf.FlowExecutionHolder;
-import org.springframework.webflow.manager.jsf.FlowVariableResolver;
 
 /**
  * Unit tests for the FlowVariableResolver class.
@@ -36,26 +34,30 @@ public class FlowVariableResolverTests extends TestCase {
 
 	private FlowVariableResolver tested;
 
-	private TestableVariableResolver resolver;
+	private TestableVariableResolver variableResolver;
 
-	private MockFacesContext context;
+	private MockFacesContext mockFacesContext;
 
+	private MockJsfExternalContext mockJsfExternalContext;
+	
 	protected void setUp() throws Exception {
 		super.setUp();
-		context = new MockFacesContext();
-		resolver = new TestableVariableResolver();
-		tested = new FlowVariableResolver(resolver);
+		mockFacesContext = new MockFacesContext();
+		mockJsfExternalContext = new MockJsfExternalContext();
+		mockFacesContext.setExternalContext(mockJsfExternalContext);
+		variableResolver = new TestableVariableResolver();
+		tested = new FlowVariableResolver(variableResolver);
 	}
 
 	public void testResolveVariableNotFlowScope() {
-		Object result = tested.resolveVariable(context, "some name");
-		assertTrue("not resolved using delegate", resolver.resolvedUsingDelegate);
-		assertSame(resolver.expected, result);
+		Object result = tested.resolveVariable(mockFacesContext, "some name");
+		assertTrue("not resolved using delegate", variableResolver.resolvedUsingDelegate);
+		assertSame(variableResolver.expected, result);
 	}
 
 	public void testResolveVariableFlowScopeWithNoThreadLocal() {
 		try {
-			tested.resolveVariable(context, "flowScope");
+			tested.resolveVariable(mockFacesContext, "flowScope");
 			fail("EvaluationException expected");
 		}
 		catch (EvaluationException expected) {
@@ -63,7 +65,7 @@ public class FlowVariableResolverTests extends TestCase {
 					"'flowScope' variable prefix specified, but a FlowExecution is not bound to current thread context as it should be",
 					expected.getMessage());
 		}
-		assertFalse("resolved using delegate", resolver.resolvedUsingDelegate);
+		assertFalse("resolved using delegate", variableResolver.resolvedUsingDelegate);
 	}
 
 	public void testResolveVariableFlowScopeWithThreadLocal() {
@@ -72,13 +74,13 @@ public class FlowVariableResolverTests extends TestCase {
 		FlowExecutionContinuationKey key = new FlowExecutionContinuationKey("some conversation id",
 				"some continuation id");
 		FlowExecutionHolder holder = new FlowExecutionHolder(key, flowExecutionMock);
-		FlowExecutionHolderUtils.setFlowExecutionHolder(holder, context);
+		FlowExecutionHolderUtils.setFlowExecutionHolder(holder, mockFacesContext);
 		flowExecutionControl.replay();
 
-		Object result = tested.resolveVariable(context, "flowScope");
+		Object result = tested.resolveVariable(mockFacesContext, "flowScope");
 
 		flowExecutionControl.verify();
-		assertFalse("resolved using delegate", resolver.resolvedUsingDelegate);
+		assertFalse("resolved using delegate", variableResolver.resolvedUsingDelegate);
 		assertSame(flowExecutionMock, result);
 	}
 
