@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2004 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package org.springframework.webflow.manager.mvc;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.manager.FlowExecutionManager;
 
 /**
@@ -33,38 +33,77 @@ public class FlowControllerTests extends TestCase {
 
 	private FlowExecutionManager flowExecutionManagerMock;
 
-	private FlowController tested;
+	private MockControl flowLocatorControl;
 
-	private MockHttpServletRequest mockRequest;
+	private FlowLocator flowLocatorMock;
+
+	private FlowController tested;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		flowExecutionManagerControl = MockControl.createControl(FlowExecutionManager.class);
-		flowExecutionManagerMock = (FlowExecutionManager)flowExecutionManagerControl.getMock();
-		tested = new FlowController(flowExecutionManagerMock);	}
+		flowExecutionManagerMock = (FlowExecutionManager) flowExecutionManagerControl.getMock();
 
-	public void testInitDefaults() {
-		assertEquals("cacheSeconds", 0, tested.getCacheSeconds());
+		flowLocatorControl = MockControl.createControl(FlowLocator.class);
+		flowLocatorMock = (FlowLocator) flowLocatorControl.getMock();
+
+		tested = new FlowController(flowExecutionManagerMock);
 	}
 
-	public void testInitDefaultsNullFlowLocator() {
-		assertEquals("cacheSeconds", 0, tested.getCacheSeconds());
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		flowExecutionManagerControl = null;
+		flowExecutionManagerMock = null;
+		flowLocatorControl = null;
+		flowLocatorMock = null;
+		tested = null;
 	}
 
-	public void testHandleRequestInternal() throws Exception {
-		ModelAndView result = tested.handleRequestInternal(mockRequest, null);
+	protected void replay() {
+		flowExecutionManagerControl.replay();
+		flowLocatorControl.replay();
+	}
+
+	protected void verify() {
+		flowExecutionManagerControl.verify();
+		flowLocatorControl.verify();
+	}
+
+	public void testInitDefaultsFromFlowExecutionManagerConstructor() {
+		replay();
+		int result = tested.getCacheSeconds();
+		verify();
+		assertEquals("cacheSeconds", 0, result);
+	}
+
+	public void testInitDefaultsFromFlowLocatorConstructor() {
+		tested = new FlowController(flowLocatorMock);
+		replay();
+		int result = tested.getCacheSeconds();
+		verify();
+		assertEquals("cacheSeconds", 0, result);
+	}
+
+	public void testToModelAndView() throws Exception {
+		replay();
+		ModelAndView result = tested.toModelAndView(new ViewSelection("SomeView"));
+		verify();
 		assertEquals("SomeView", result.getViewName());
 	}
 
-	public void testHandleRequestInternalWithNullView() throws Exception {
-		ModelAndView result = tested.handleRequestInternal(mockRequest, null);
+	public void testToModelAndViewWithNullView() throws Exception {
+		replay();
+		ModelAndView result = tested.toModelAndView(null);
+		verify();
 		assertNull("view should be null", result);
 	}
 
-	public void testHandleRequestInternalWithRedirectView() throws Exception {
-		final ViewSelection viewSelection = new ViewSelection("SomeView");
+	public void testToModelAndViewWithRedirectView() throws Exception {
+		ViewSelection viewSelection = new ViewSelection("SomeView");
 		viewSelection.setRedirect(true);
-		ModelAndView result = tested.handleRequestInternal(mockRequest, null);
+		replay();
+		ModelAndView result = tested.toModelAndView(viewSelection);
+		verify();
 		assertEquals("redirect:SomeView", result.getViewName());
 	}
 }

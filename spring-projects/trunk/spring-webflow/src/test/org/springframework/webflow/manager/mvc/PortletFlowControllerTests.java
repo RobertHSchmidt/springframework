@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2004 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,12 @@ package org.springframework.webflow.manager.mvc;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.springframework.mock.web.portlet.MockActionRequest;
 import org.springframework.mock.web.portlet.MockPortletSession;
 import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.manager.FlowExecutionManager;
-import org.springframework.webflow.manager.mvc.PortletFlowController;
 
 /**
  * Unit test for the FlowController class.
@@ -37,33 +36,55 @@ public class PortletFlowControllerTests extends TestCase {
 
 	private FlowExecutionManager flowExecutionManagerMock;
 
+	private MockControl flowLocatorControl;
+
+	private FlowLocator flowLocatorMock;
+
 	private PortletFlowController tested;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		flowExecutionManagerControl = MockControl.createControl(FlowExecutionManager.class);
-		flowExecutionManagerMock = (FlowExecutionManager)flowExecutionManagerControl.getMock();
+		flowExecutionManagerMock = (FlowExecutionManager) flowExecutionManagerControl.getMock();
+
+		flowLocatorControl = MockControl.createControl(FlowLocator.class);
+		flowLocatorMock = (FlowLocator) flowLocatorControl.getMock();
+
 		tested = new PortletFlowController(flowExecutionManagerMock);
 	}
 
-	public void testInit() throws Exception {
-		PortletFlowController localTested = new PortletFlowController(flowExecutionManagerMock);
-		assertEquals("Cache,", 0, localTested.getCacheSeconds());
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		flowExecutionManagerControl = null;
+		flowExecutionManagerMock = null;
+		flowLocatorControl = null;
+		flowLocatorMock = null;
+		tested = null;
 	}
 
-	public void testHandleActionRequestInternal() throws Exception {
-		final ViewSelection viewSelection = new ViewSelection("Some view");
-		MockPortletSession mockPortletSession = new MockPortletSession();
-		String attributeKey = PortletFlowController.class + ".viewSelection";
-		mockPortletSession.setAttribute(attributeKey, viewSelection);
+	protected void replay() {
+		flowExecutionManagerControl.replay();
+		flowLocatorControl.replay();
+	}
 
-		MockActionRequest mockActionRequest = new MockActionRequest();
-		mockActionRequest.setSession(mockPortletSession);
+	protected void verify() {
+		flowExecutionManagerControl.verify();
+		flowLocatorControl.verify();
+	}
 
-		// perform test
-		tested.handleActionRequestInternal(mockActionRequest, null);
+	public void testInitDefaultsFromFlowExecutionManagerConstructor() throws Exception {
+		replay();
+		int result = tested.getCacheSeconds();
+		verify();
+		assertEquals("Cache,", 0, result);
+	}
 
-		assertNotNull("No view in session", mockPortletSession.getAttribute(attributeKey));
+	public void testInitDefaultsFromFlowLocatorConstructor() throws Exception {
+		tested = new PortletFlowController(flowLocatorMock);
+		replay();
+		int result = tested.getCacheSeconds();
+		verify();
+		assertEquals("Cache,", 0, result);
 	}
 
 	public void testHandleRenderRequestInternal() throws Exception {
@@ -74,45 +95,37 @@ public class PortletFlowControllerTests extends TestCase {
 
 		MockRenderRequest mockRenderRequest = new MockRenderRequest();
 		mockRenderRequest.setSession(mockPortletSession);
-
+		replay();
+		
 		// perform test
 		ModelAndView result = tested.handleRenderRequestInternal(mockRenderRequest, null);
 
+		verify();
 		assertNotNull("Null result unexpected", result);
 		assertEquals("Some view", result.getViewName());
 		assertNull("Should have cleaned session", mockPortletSession.getAttribute(attributeKey));
 	}
 
-	public void testHandleRenderRequestInternalNullSelectedView() throws Exception {
-		final ViewSelection viewSelection = new ViewSelection("Some view");
-		MockPortletSession mockPortletSession = new MockPortletSession();
-
-		MockRenderRequest mockRenderRequest = new MockRenderRequest();
-		mockRenderRequest.setSession(mockPortletSession);
-
-		// perform test
-		ModelAndView result = tested.handleRenderRequestInternal(mockRenderRequest, null);
-
-		assertNotNull("Null result unexpected", result);
-		assertEquals("Some view", result.getViewName());
-	}
-
 	public void testToModelAndViewWithView() {
 		ViewSelection viewSelection = new ViewSelection("Some view");
+		replay();
 
 		// perform test
 		ModelAndView result = tested.toModelAndView(viewSelection);
 
+		verify();
 		assertNotNull("Null result unexpected", result);
 		assertEquals("Some view", result.getViewName());
 	}
 
 	public void testToModelAndViewWithViewAndModel() {
 		ViewSelection viewSelection = new ViewSelection("Some view", "Some name", "Some value");
-
+		replay();
+		
 		// perform test
 		ModelAndView result = tested.toModelAndView(viewSelection);
 
+		verify();
 		assertNotNull("Null result unexpected", result);
 		assertEquals("Some view", result.getViewName());
 		assertTrue("Model does not contain expected value", result.getModel().containsKey("Some name"));
@@ -121,17 +134,23 @@ public class PortletFlowControllerTests extends TestCase {
 	public void testToModelAndViewWithRedirectView() {
 		ViewSelection viewSelection = new ViewSelection("Some view");
 		viewSelection.setRedirect(true);
+		replay();
 
 		// perform test
 		ModelAndView result = tested.toModelAndView(viewSelection);
 
+		verify();
 		assertNotNull("Null result unexpected", result);
 		assertEquals("redirect:Some view", result.getViewName());
 	}
 
 	public void testToModelAndViewWithNull() {
+		replay();
+
 		// perform test
 		ModelAndView result = tested.toModelAndView(null);
+		
+		verify();
 		assertNull("Null view should give null result", result);
 	}
 }
