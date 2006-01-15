@@ -2,7 +2,6 @@ package org.springframework.webflow.execution.repository.continuation;
 
 import java.io.Serializable;
 
-import org.springframework.core.NestedRuntimeException;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
@@ -33,7 +32,7 @@ public class FlowExecutionSerializationException extends FlowExecutionRepository
 	 */
 	public FlowExecutionSerializationException(Serializable continuationId, FlowExecution flowExecution,
 			String message, Throwable cause) {
-		super(null, message, cause);
+		super(message, cause);
 	}
 
 	/**

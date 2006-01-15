@@ -8,14 +8,15 @@ import org.springframework.webflow.FlowException;
  * @author Keith Donald
  */
 public abstract class FlowExecutionRepositoryException extends FlowException {
-	
+
 	/**
-	 * The repository that threw this exception. 
+	 * The repository that threw this exception.
 	 */
 	private transient FlowExecutionRepository repository;
 
 	/**
-	 * Creates a new flow execution repository exception.
+	 * Creates a new flow execution repository exception explicitly noting the
+	 * repository that had the problem.
 	 * @param repository the repository that had a problem
 	 * @param message the message
 	 */
@@ -25,7 +26,8 @@ public abstract class FlowExecutionRepositoryException extends FlowException {
 	}
 
 	/**
-	 * Creates a new flow execution repository exception.
+	 * Creates a new flow execution repository exception explicitly noting the
+	 * repository that had the problem.
 	 * @param repository the repository that had a problem
 	 * @param message the message
 	 * @param cause the root cause of the problem
@@ -33,6 +35,15 @@ public abstract class FlowExecutionRepositoryException extends FlowException {
 	public FlowExecutionRepositoryException(FlowExecutionRepository repository, String message, Throwable cause) {
 		super(message, cause);
 		this.repository = repository;
+	}
+
+	/**
+	 * Creates a new flow execution repository exception.
+	 * @param message the message
+	 * @param cause the root cause of the problem
+	 */
+	public FlowExecutionRepositoryException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
 	/**
