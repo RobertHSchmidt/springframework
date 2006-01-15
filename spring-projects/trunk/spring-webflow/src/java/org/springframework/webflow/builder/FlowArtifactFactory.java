@@ -34,7 +34,7 @@ public interface FlowArtifactFactory {
 	public Flow getSubflow(String id) throws FlowArtifactException;
 
 	/**
-	 * Retrieve the action to be executed within a flow with the provided id.
+	 * Retrieve the action to be executed within a flow with the assigned parameters.
 	 * @param parameters the assigned action parameters
 	 * @throws FlowArtifactException when no such action is found
 	 */
@@ -85,14 +85,14 @@ public interface FlowArtifactFactory {
 	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException;
 
 	/**
-	 * Create a new flow definition with the specified id.
+	 * Create a new flow definition with the assigned parameters.
 	 * @param parameters the assigned flow parameters
 	 * @return the flow definition
 	 */
 	public Flow createFlow(FlowArtifactParameters parameters) throws FlowArtifactException;
 
 	/**
-	 * Create a new state definition with the specified id.
+	 * Create a new state definition with the assigned parameters.
 	 * @param flow the state's owning flow
 	 * @param stateType the state type
 	 * @param parameters the assigned state parameters
@@ -101,7 +101,7 @@ public interface FlowArtifactFactory {
 	public State createState(Flow flow, Class stateType, FlowArtifactParameters parameters) throws FlowArtifactException;
 
 	/**
-	 * Create a new state transition with the specified id.
+	 * Create a new state transition with the assigned properties.
 	 * @param sourceState the source state of the transition
 	 * @param properties the assigned transition properties
 	 * @return the transition
