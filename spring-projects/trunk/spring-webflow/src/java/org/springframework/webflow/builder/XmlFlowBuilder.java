@@ -83,8 +83,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -690,7 +690,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Parse an annotated action definition and return the corresponding object.
 	 */
 	protected AnnotatedAction parseAnnotatedAction(Element element) {
-		AnnotatedAction action = new AnnotatedAction((Action)parseAction(element));
+		AnnotatedAction action = new AnnotatedAction();
 		if (element.hasAttribute(NAME_ATTRIBUTE)) {
 			action.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
@@ -708,14 +708,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			action.setResultScope(scopeType);
 		}
 		action.addProperties(parseProperties(element));
+		action.setTargetAction(parseAction(element, action.getProperties()));
 		return action;
 	}
 
 	/**
 	 * Parse an action definition and return the corresponding object.
 	 */
-	protected Action parseAction(Element element) throws FlowBuilderException {
-		return getLocalFlowArtifactFactory().getAction(element.getAttribute(BEAN_ATTRIBUTE));
+	protected Action parseAction(Element element, Map properties) {
+		String actionId = element.getAttribute(BEAN_ATTRIBUTE);
+		FlowArtifactParameters actionParameters = new FlowArtifactParameters(actionId, properties);
+		return getLocalFlowArtifactFactory().getAction(actionParameters);
 	}
 
 	/**
@@ -1075,13 +1078,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getSubflow(id);
 		}
 
-		public Action getAction(String id) throws FlowArtifactException {
+		public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
-				if (containsBean(id)) {
-					return toAction(getBean(id, Action.class, false));
+				if (containsBean(actionParameters.getId())) {
+					return toAction(getBean(actionParameters.getId(), Action.class, false), actionParameters
+							.getProperties());
 				}
 			}
-			return getFlowArtifactFactory().getAction(id);
+			return getFlowArtifactFactory().getAction(actionParameters);
 		}
 
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {

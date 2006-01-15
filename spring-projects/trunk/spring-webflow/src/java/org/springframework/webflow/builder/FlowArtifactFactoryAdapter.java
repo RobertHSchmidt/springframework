@@ -32,8 +32,8 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 		throw new FlowArtifactException(id, Flow.class, "Subflow lookup is not supported by this artifact factory");
 	}
 
-	public Action getAction(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, Action.class, "Action lookup is not supported by this artifact factory");
+	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
+		throw new FlowArtifactException(actionParameters.getId(), Action.class, "Action lookup is not supported by this artifact factory");
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
@@ -104,7 +104,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	 * @param artifact the service bean
 	 * @return the action
 	 */
-	protected Action toAction(Object artifact) {
+	protected Action toAction(Object artifact, Map properties) {
 		if (artifact instanceof Action) {
 			return (Action)artifact;
 		}

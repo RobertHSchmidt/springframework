@@ -30,6 +30,7 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.Transition.TargetStateResolver;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.builder.FlowArtifactParameters;
 
 /**
  * A flow artifact locator that obtains subflow definitions from a explict
@@ -77,8 +78,8 @@ public class FlowRegistryFlowArtifactFactory extends FlowArtifactFactoryAdapter 
 		return subflowRegistry.getFlow(id);
 	}
 
-	public Action getAction(String id) throws FlowArtifactException {
-		return toAction(getBean(id, Action.class, false));
+	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
+		return toAction(getBean(actionParameters.getId(), Action.class, false), actionParameters.getProperties());
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {

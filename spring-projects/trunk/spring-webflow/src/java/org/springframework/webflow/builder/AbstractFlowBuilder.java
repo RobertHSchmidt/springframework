@@ -448,7 +448,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
 	protected Action action(String id) throws FlowArtifactException {
-		return getFlowArtifactFactory().getAction(id);
+		return getFlowArtifactFactory().getAction(new FlowArtifactParameters(id));
 	}
 
 	/**

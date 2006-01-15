@@ -210,7 +210,8 @@ public class XmlFlowBuilderTests extends TestCase {
 			throw new NoSuchFlowDefinitionException(id);
 		}
 
-		public Action getAction(String id) throws FlowArtifactException {
+		public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
+			String id = actionParameters.getId();
 			if ("action1".equals(id) || "action2".equals(id)) {
 				return new TestAction();
 			}

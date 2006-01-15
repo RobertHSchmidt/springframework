@@ -78,6 +78,20 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	private Action targetAction;
 
 	/**
+	 * Creates a new annotated action for bean style usage.
+	 * @see #setTargetAction(Action)
+	 * @see #setCaption(String)
+	 * @see #setDescription(String)
+	 * @see #setName(String)
+	 * @see #setMethod(MethodKey)
+	 * @see #setResultName(String)
+	 * @see #setResultScope(ScopeType)
+	 */
+	public AnnotatedAction() {
+		
+	}
+	
+	/**
 	 * Creates a new annotated action object for the specified action. No
 	 * contextual properties are provided.
 	 * @param targetAction the action
@@ -107,8 +121,8 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	/**
 	 * Set the target action wrapped by this decorator.
 	 */
-	private void setTargetAction(Action targetAction) {
-		Assert.notNull(targetAction, "The target Action instance is required");
+	public void setTargetAction(Action targetAction) {
+		Assert.notNull(targetAction, "The targetAction is required");
 		this.targetAction = targetAction;
 	}
 

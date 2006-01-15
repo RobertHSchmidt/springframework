@@ -35,11 +35,10 @@ public interface FlowArtifactFactory {
 
 	/**
 	 * Retrieve the action to be executed within a flow with the provided id.
-	 * @param id the id
-	 * @return the action
+	 * @param actionParameters the action parameters
 	 * @throws FlowArtifactException when no such action is found
 	 */
-	public Action getAction(String id) throws FlowArtifactException;
+	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException;
 
 	/**
 	 * Retrieve the flow attribute mapper to be used in a subflow state with the
