@@ -78,11 +78,11 @@ This package has several sub packages:
 that address common controller concerns.
 </li>
 <li>
-{@link org.springframework.webflow.config config} - Contains interfaces and classes for
+{@link org.springframework.webflow.builder builder} - Contains interfaces and classes for
 building and assembling web flows at configuration time.
 </li>
 <li>
-{@link org.springframework.webflow.config.registry config.registry} - This package contains
+{@link org.springframework.webflow.registry registry} - This package contains
 interfaces and classes for working with flow definition registries.
 </li>
 <li>
@@ -90,20 +90,16 @@ interfaces and classes for working with flow definition registries.
 flows.
 </li>
 <li>
-{@link org.springframework.webflow.jsf jsf} - Integration of the Spring Web Flow system
+{@link org.springframework.webflow.manager.jsf jsf} - Integration of the Spring Web Flow system
 with JavaServer Faces (JSF).
 </li>
 <li>
-{@link org.springframework.webflow.mvc mvc} - Integration of the Spring Web Flow system with
-the Spring Servlet MVC framework.
+{@link org.springframework.webflow.manager.mvc mvc} - Integration of the Spring Web Flow system with
+the Spring Servlet and Portlet MVC framework.
 </li>
 <li>
-{@link org.springframework.webflow.struts struts} - Integration of the Spring Web Flow
+{@link org.springframework.webflow.manager.struts struts} - Integration of the Spring Web Flow
 system with Struts 1.x.
-</li>
-<li>
-{@link org.springframework.webflow.portlet portlet} - Integration of the Spring Web Flow
-system with Spring Portlet MVC (JSR168)
 </li>
 <li>
 {@link org.springframework.webflow.test test} - Contains classes that assist in testing flow 
