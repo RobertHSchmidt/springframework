@@ -59,14 +59,95 @@
 			implementing your view resources (JSP, Velocity templates, et cetera).</emphasis>
 		</para>
 	</sect1>
-<!-- 	<sect1>
+	<sect1>
 		<title>Designing the flow</title>
 		<para>
-			The search and master/detail flow for the Phonebook application allows a user
-			to:
-			
-			<numberedlist spacing="compact">
-				<listitem>
-					<para>Search for a 
--->
+			As we've said, we're going to implement a simple phonebook application that
+			will allow a user to search for a specific person's information, view that
+			information and edit it.
+		</para>
+		<sect2>
+			<title>A small narrative</title>
+			<para>
+				Let's start with a small narrative that completely lays out our flow.
+			</para>
+			<para>
+				<orderedlist spacing="compact">
+					<listitem>
+						<para>View a <emphasis>search page</emphasis> where the user
+						can enter the criteria he or she wishes to use for locating
+						people.</para>
+					</listitem>
+					<listitem>
+						<para>From the <emphasis>search page</emphasis> a 
+						<emphasis role="bold">submit</emphasis> button
+						triggers the process of transferring the criteria to the server,
+						<emphasis role="string">binding</emphasis> those criteria to a form backing object and
+						<emphasis role="bold">validating</emphasis> the criteria.  For a validation
+						<emphasis role="bold">error</emphasis> the user will be redirected
+						back to the search page.
+						If however validation succeeds, the actual search will be <emphasis role="bold">executed</emphasis>.
+						After the search has completed the user will be able to
+						<emphasis role="bold">view</emphasis> the list of people that have been
+						found (on the <emphasis>results page</emphasis>).</para>
+					</listitem>
+					<listitem>
+						<para>From the <emphasis>results page</emphasis> the user can <emphasis role="bold">select</emphasis>
+						one of the people that have been found based on the search criteria and
+						<emphasis role="bold">view</emphasis> their details on the <emphasis>details page</emphasis>. Details in this
+						case are things like the person's name, contact information and people
+						the person works with (colleagues).</para>
+					</listitem>
+					<listitem>
+						<para>From the <emphasis>details page</emphasis> the user will be able to
+						<emphasis role="bold">select</emphasis> a colleague and <emphasis role="bold">view</emphasis> their respective information on another
+						<emphasis>details page</emphasis></para>
+					</listitem>
+				</orderedlist>
+			</para>
+			<para>
+				<emphasis>Note: some of the text in the description above is printed in bold.
+				These (usually) verbs translate directly to the events that will be signaled or
+				the actions that will have to be executed in the flow. Later on, we'll explain
+				in more details what these events and actions really mean.</emphasis>
+			</para>
+		</sect2>
+		<sect2>
+			<title>Graphical representation of our flow</title>
+			<para>
+				After we've written down our flow, we can also storyboard it a bit.
+				The storyboard helps us identifying possible bottlenecks in the flow
+				and see if it's complete.	
+			</para>
+			<para>
+				<mediaobject>
+					<imageobject role="fo">
+						<imagedata fileref="images/phonebook-storyboard.jpg" format="JPEG" align="center"/>
+					</imageobject>
+					<imageobject role="html">
+						<imagedata fileref="images/phonebook-storyboard.jpg" format="JPEG" align="center"/>
+					</imageobject>
+					<caption>
+						<para>The storyboard-version of our flow</para>
+					</caption>
+				</mediaobject>
+			</para>
+			<para>
+				Another way to put it, is a state diagram. The following diagram depicts our flow
+				in somewhat more detail.
+			</para>
+			<mediaobject>
+				<imageobject role="fo">
+					<imagedata fileref="images/phonebook-statediagram.jpg" format="JPG" align="center"/>
+				</imageobject>
+				<imageobject role="html">
+					<imagedata fileref="images/phonebookstatediagram.jpg" format="JPG" align="center"/>
+				</imageobject>
+				<caption>
+					<para>State diagram of the phonebook flow
+					</para>
+				</caption>
+			</mediaobject>
+		</sect2>
+	</sect1>
 </chapter>
