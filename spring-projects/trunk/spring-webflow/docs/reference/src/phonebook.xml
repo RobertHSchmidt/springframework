@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="phonebook">
+	<title>Phonebook - a typical Spring Web Flow application</title>
+	<sect1>
+		<title>Introduction</title>
+		<para>
+			This chapter explains some of the basic concepts of Spring Web Flow
+			to you, using the Phonebook sample application distributed with the
+			Spring Web Flow release. The phonebook application incorporates
+			one of the most often found flows in web applications; i.e. the
+			<emphasis>search + master/detail flow</emphasis>. In the next couple of
+			sections, we will explain how to build that flow using Spring Web Flow.
+			Let's first discuss a good process for building flows into your
+			web application:
+		</para>
+		<para>
+			<orderedlist spacing="compact">
+				<listitem>
+					<para>The first step in the process of adding a flow to your
+					application is to actually <emphasis>design</emphasis> the flow.
+					Storyboarding the flow helps here with simple sketches (and/or)
+					a state diagram</para>
+				</listitem>
+				<listitem>
+					<para>The next step is to <emphasis>create the configuration for
+					the Flow</emphasis>. The configuration should reflect the flow you've
+					previously drawn on paper for example.</para>
+				</listitem>
+				<listitem>
+					<para>After you've created the configuration for the flow, it's time
+					to <emphasis>test the execution</emphasis> of the flow. This can be done using implementations
+					of actions that haven't been fully completed yet.</para>
+				</listitem>
+				<listitem>
+					<para>After you've ensured the flow executes correctly, you can
+					implement the logic encapsulated in your flow by <emphasis>completing the
+					action classes</emphasis> you've added to your flow configuration.
+					In other words: the Action classes are <emphasis>the</emphasis> place
+					where you can implement logic and somewhat resembles Spring MVC controllers
+					(in fact, they can be Spring MVC controllers or action-like artifacts
+					from any other MVC framework).</para>
+				</listitem>
+				<listitem>
+					<para>The last thing you need to do before you can deploy your flow is
+					to <emphasis>implement the views</emphasis> for your flow. The views
+					are the individual pages presented to the user. So remember:
+					the views are the places where users are allowed to interact with the flow.</para>
+				</listitem>
+				<listitem>
+					<para>Deploy the flow for in-container testing. Of course there is
+					nothing out-of-the-ordinary here, it's just deploying your WAR file for
+					example to a servlet container or application server.</para>
+				</listitem>
+			</orderedlist>
+		</para>
+		<para>
+			<emphasis>Note that of course, some of these steps can happen in parallel; coding
+			of artifacts such as Action classes can perfectly be done right along with
+			implementing your view resources (JSP, Velocity templates, et cetera).</emphasis>
+		</para>
+	</sect1>
+<!-- 	<sect1>
+		<title>Designing the flow</title>
+		<para>
+			The search and master/detail flow for the Phonebook application allows a user
+			to:
+			
+			<numberedlist spacing="compact">
+				<listitem>
+					<para>Search for a 
+-->
+</chapter>

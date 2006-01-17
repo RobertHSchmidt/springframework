@@ -3,6 +3,7 @@
                       "../lib/docbook-dtd/docbookx.dtd"
 [
 <!ENTITY overview SYSTEM "overview.xml">
+<!ENTITY phonebook SYSTEM "phonebook.xml">
 ]>
 
 
@@ -37,5 +38,6 @@
 	<toc />
 
 	&overview;
+	&phonebook;
 
 </book>
