@@ -142,7 +142,7 @@
 						<imagedata fileref="images/phonebook-statediagram.jpg" format="JPG" align="center"/>
 					</imageobject>
 					<imageobject role="html">
-						<imagedata fileref="images/phonebookstatediagram.jpg" format="JPG" align="center"/>
+						<imagedata fileref="images/phonebook-statediagram.jpg" format="JPG" align="center"/>
 					</imageobject>
 					<caption>
 						<para>State diagram of the phonebook flow
