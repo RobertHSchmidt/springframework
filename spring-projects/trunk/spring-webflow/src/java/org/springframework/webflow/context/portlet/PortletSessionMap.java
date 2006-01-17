@@ -74,6 +74,6 @@ public class PortletSessionMap extends StringKeyedAttributeMapAdapter implements
 	}
 
 	public Object getMutex() {
-		return getSession();
+		return request.getPortletSession(true);
 	}
 }

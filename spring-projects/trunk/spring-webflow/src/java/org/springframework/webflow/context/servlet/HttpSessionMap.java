@@ -45,8 +45,8 @@ public class HttpSessionMap extends StringKeyedAttributeMapAdapter implements Sh
 	}
 
 	/**
-	 * Internal helper to get the HTTP session associated with
-	 * the wrapped request, or null if there is no such session.
+	 * Internal helper to get the HTTP session associated with the wrapped
+	 * request, or null if there is no such session.
 	 */
 	private HttpSession getSession() {
 		return request.getSession(false);
@@ -72,8 +72,8 @@ public class HttpSessionMap extends StringKeyedAttributeMapAdapter implements Sh
 		HttpSession session = getSession();
 		return (session == null) ? EmptyEnumeration.INSTANCE : session.getAttributeNames();
 	}
-	
+
 	public Object getMutex() {
-		return getSession();
+		return request.getSession(true);
 	}
 }
