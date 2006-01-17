@@ -136,18 +136,90 @@
 				Another way to put it, is a state diagram. The following diagram depicts our flow
 				in somewhat more detail.
 			</para>
-			<mediaobject>
-				<imageobject role="fo">
-					<imagedata fileref="images/phonebook-statediagram.jpg" format="JPG" align="center"/>
-				</imageobject>
-				<imageobject role="html">
-					<imagedata fileref="images/phonebookstatediagram.jpg" format="JPG" align="center"/>
-				</imageobject>
-				<caption>
-					<para>State diagram of the phonebook flow
-					</para>
-				</caption>
-			</mediaobject>
+			<para>
+				<mediaobject>
+					<imageobject role="fo">
+						<imagedata fileref="images/phonebook-statediagram.jpg" format="JPG" align="center"/>
+					</imageobject>
+					<imageobject role="html">
+						<imagedata fileref="images/phonebookstatediagram.jpg" format="JPG" align="center"/>
+					</imageobject>
+					<caption>
+						<para>State diagram of the phonebook flow
+						</para>
+					</caption>
+				</mediaobject>
+			</para>
+			<para>
+				The state diagram above provides the most detailed glimpse into the design of the Flow: from it, you see all the states of the flow, what actions occur at what state, and the transitions between states.
+			</para>
+		</sect2>
+		<sect2>
+			<title>Web flow: a state machine</title>
+			<para>
+				You'll see shortly that a flow implementation maps very elegantly from such a diagram. Indeed, if you understand the picture above, you understand Spring Web Flow. Specifically:
+			</para>
+			<para>
+				<itemizedlist spacing="compact">
+					<listitem>
+						<para>Flow definitions have one or more <emphasis>states</emphasis>, 
+						one of which is marked the <emphasis>start-state</emphasis>.</para>
+					</listitem>
+					<listitem>
+						<para>Each <emphasis>state</emphasis>, when entered, executes some kind of <emphasis>action</emphasis>.
+						What action is executed varies based on the state's type and is executed 
+						in polymorphic fashion. For example, a <emphasis>view state</emphasis> renders a view resource.
+						An <emphasis>action state</emphasis> executes a controller Actions. <emphasis>sub-flow state</emphasis> spawn sub flows
+						(so flows are reusable). <emphasis>End states</emphasis>
+						terminate an active execution of a flow (later on called a <literal>FlowExecution</literal>).</para>
+					</listitem>
+					<listitem>
+						<para>Each <emphasis>state</emphasis> has one or more <emphasis>transitions</emphasis>. A <emphasis>transition</emphasis> 
+						is a path from one state to another. A transition executes on the signaling of an event.</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				In general, when a user enters the flow (typically by clicking a link
+				leading him to the flow or by opening op his or her browser with a particular
+				URL) a new flow is started, specifically for this user. This is what we call
+				the <literal>FlowExecution</literal>. The flow (obviously) starts in the start state. 
+				There are two state types. The first (and this is what our flow starts with) is
+				the <emphasis role="bold">view state</emphasis>. The view state allows users to interact
+				with the flow. Typically a view state is a web page with for example a form.
+				Nothing happens, until the user indicates he wants to move forward in the flow
+				(by filling out a form and clicking the submit button for example).
+				Clicking the submit button signals an event. The event (received by the server)
+				will be translated to a transition of the flow to a different state
+				(of course predefined in the flow). In other words, the <literal>FlowExecution</literal>
+				(remember: this is the execution of the flow for this specific user) has
+				gotten a new active state.
+				The second state is an <emphasis role="bold">action state</emphasis>. Whereas
+				view states allow for user interaction, action states don't. They execute
+				actions on the server, for example the binding of the form data to a
+				form backing object, or the execution of a search query.
+			</para>
+			<para>
+				<emphasis>Remember: both action states and view states can signal events, 
+				causing a transition to happen.</emphasis>
+			</para>
+			<para>
+				When applying this to the phonebook application, we end up with the following:
+				The user starts the flow with the <literal>View Search Criteria</literal> state.
+				This will render the search page, with a form and a submit button. When the 
+				user signals the <literal>submit</literal> event in the <literal>View Search Criteria</literal>
+				state (by clicking the submit button), he will trigger a transition to the 
+				<literal>Execute Query</literal> state (which, as we'll see actually 
+				comprises a couple of different steps all with the different possible outcomes).
+				The <literal>Execute Query</literal> state is an action state. When the
+				<literal>Execute Query</literal> state completes successfully (binding and validation
+				both complete without errors and the querying has been executed) another event
+				is signaled, causing the <literal>FlowExecution</literal> to move to the next
+				state, in this case the <literal>View Results</literal> state.
+				This process of <emphasis>event -&gt; state transition -&gt; new state</emphasis>
+				(either action or view) continues until an <emphasis>end state</emphasis>
+				has been reached and the FlowExecution terminates.
+			</para>
 		</sect2>
 	</sect1>
 </chapter>
