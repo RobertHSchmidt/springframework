@@ -101,7 +101,7 @@
 					<listitem>
 						<para>From the <emphasis>details page</emphasis> the user will be able to
 						<emphasis role="bold">select</emphasis> a colleague and <emphasis role="bold">view</emphasis> their respective information on another
-						<emphasis>details page</emphasis></para>
+						<emphasis>details page</emphasis> and after that go back to the previously selected person.</para>
 					</listitem>
 				</orderedlist>
 			</para>
@@ -145,7 +145,7 @@
 						<imagedata fileref="images/phonebook-statediagram.jpg" format="JPG" align="center"/>
 					</imageobject>
 					<caption>
-						<para>State diagram of the phonebook flow
+						<para>State diagram of the phonebook flow (maybe update state diagram)
 						</para>
 					</caption>
 				</mediaobject>
@@ -184,7 +184,9 @@
 				leading him to the flow or by opening op his or her browser with a particular
 				URL) a new flow is started, specifically for this user. This is what we call
 				the <literal>FlowExecution</literal>. The flow (obviously) starts in the start state. 
-				There are two state types. The first (and this is what our flow starts with) is
+			</para>
+			<para>
+				There are several state types. The first (and this is what our flow starts with) is
 				the <emphasis role="bold">view state</emphasis>. The view state allows users to interact
 				with the flow. Typically a view state is a web page with for example a form.
 				Nothing happens, until the user indicates he wants to move forward in the flow
@@ -194,13 +196,19 @@
 				(of course predefined in the flow). In other words, the <literal>FlowExecution</literal>
 				(remember: this is the execution of the flow for this specific user) has
 				gotten a new active state.
+			</para>
+			<para>
 				The second state is an <emphasis role="bold">action state</emphasis>. Whereas
 				view states allow for user interaction, action states don't. They execute
 				actions on the server, for example the binding of the form data to a
 				form backing object, or the execution of a search query.
 			</para>
 			<para>
-				<emphasis>Remember: both action states and view states can signal events, 
+				Apart from those, there are several other state types which will describe
+				in more detail in other chapters of this reference manual.
+			</para>
+			<para>
+				<emphasis>Remember: both all state and view states can signal events, 
 				causing a transition to happen.</emphasis>
 			</para>
 			<para>
@@ -222,4 +230,213 @@
 			</para>
 		</sect2>
 	</sect1>
+	<sect1>
+		<title>Configuring the flow implementation using Java or XML</title>
+		<para>
+			So now we've got the design for the flow fleshed out we can start creating
+			the configuration for our flow. One thing we didn't yet explain is <emphasis>sub flows</emphasis>.
+			When a user views a person details and clicks on a colleague name, what he's actually
+			doing is entering the same state the flow has been in before, but now for a different
+			person (retrieve users details, view user details). Because this process can be
+			repeated over and over again, we are going to model this is a sub flow.
+			A sub flow is a reusable flow that can be spawned from a parent flow.
+		</para>
+		<para>
+			So what we need is a top-level search flow and a person detail flow that we're going
+			to embed in our top-level search flow.
+		</para>
+		<para>
+			Configuring flows can be done in both Java and XML. You can use whatever you prefer
+			and we're going to show you both ways in a minute. For more information by the way
+			about the different ways to configure your flows using flow builders, refer to other parts of the reference manual, where 
+			the so-called <literal>XmlFlowBuilder</literal> and the <literal>AbstractFlowBuilder</literal>
+			are explained in more detail.
+		</para>
+		<sect2>
+			<title>Configuring the flow in XML</title>
+			<para>
+				Let's first configure the phonebook flow in XML. Spring Web Flow features 
+				a dedicated XML format entirely developed to express web flows in.
+				The file we're creating is called <literal>search.xml</literal> meaning
+				our flow will later on be identified as <emphasis role="bold">search</emphasis>.
+				First, we'll have to mention the DOCTYPE and start with identifying the
+				start state of the flow. Remember: this is the initial state a flow will
+				be in after it's been started.
+			</para>
+			<para>
+<programlisting><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
+
+<flow start-state="displayCriteria">
+
+  <!-- our flow goes here -->
+
+</flow>]]></programlisting>
+			</para>
+			<para>
+				After we've defined the start state (<literal>displayCriteria</literal> in this case),
+				we need to start adding other states. These states can be in any arbitrary order.
+				In other words: the order in the XML file does not reflect the actual order
+				or states in the view since the state are identified by a unique <literal>id</literal>.
+				Of course it's handy however to keep them well-organized.
+				The first state we're going to create is the start state. As we've seen in our
+				state diagram, it's a view state and it's called <literal>displayCriteria</literal>.
+				While defining the view state, we need to assign it an id. In this case,
+				we're also assigning it a view identifier which in this specific case is
+				resolved by a Spring MVC <literal>ViewResolver</literal>.
+				The skeleton for our state is ready.
+			</para>
+			<para>
+<programlisting><![CDATA[  <view-state id="displayCriteria" view="searchCriteria">
+
+    <!-- the remainder of the state definition goes here -->
+
+  </view-state>]]></programlisting>
+			</para>
+			<para>
+				The next thing we need to do is identify actions assotiated to the state and
+				transition that will allow the flow to transition to a different state.
+				Each state can have action assigned to it that will execute just before the
+				state is entered in, as well as exit actions, executed right before the flow
+				transitions to another state. In this specific example, we're only using an
+				entry action. The entry action is used set up the form the user will use
+				to enter his search criteria in. More specifically, it calls a method on a 
+				action object specifically designed for form operations that will
+				set up the form backing object (i.e. the object the search criteria will
+				be bound to later on).
+			</para>
+			<para>
+				The action object by the way is identified by the <literal>bean</literal>
+				attribute. This attribute reflects a <emphasis>Spring IoC bean identifier</emphasis>,
+				meaning that this bean is a normal Spring-managed bean, defined elsewhere.
+				When using Spring Web Flow you don't necessarily have to work with Spring IoC,
+				but in this example we do. In other words, the bean identified by the 
+				<literal>searchFormAction</literal> is a bean defined in a Spring ApplicationContext.
+			</para>
+			<para>
+<programlisting><![CDATA[  <entry-actions>
+    <action bean="searchFormAction" method="setupForm"/>
+  </entry-actions>]]></programlisting>
+			</para>
+			<para>
+				The last thing we need to do in order to get our first state working is
+				to add one or more transitions that allow the flow to transition to a different
+				state. The only thing a user can do in this case really, is submit the form.
+				So we add a transition that will fire when the <literal>search</literal> event
+				is being signaled by the user (we'll see later on how to actually signal events
+				to flows). When a different event is signaled, an exception will be raised.
+				In this case, if the <literal>search</literal> event is signaled, the flow
+				will transition to the <literal>executeSearch</literal> state 
+				<emphasis>if and only if</emphasis> the embedded action succeeds
+				(more on how Web Flow decides whether or not to actually execute transitions
+				can be found in other chapters of this reference manual).
+				So in this case, if the <literal>bindAndValidate</literal> method succeeds
+				(meaning binding to the form object and validation of the form object succeeds)
+				the transition will take place. In all other cases the transition
+				<emphasis>won't</emphasis> take place and the flow will stick in its current
+				state (causing the view to be re-rendered).
+			</para>
+			<para>
+<programlisting><![CDATA[    <transition on="search" to="executeSearch">
+      <action bean="searchFormAction" method="bindAndValidate"/>
+    </transition>]]></programlisting>
+    		</para>
+    		<para>
+    			The first state is done. We've gone through the entire process of creating
+    			a state, assigning it with an <literal>id</literal>, associating an
+    			entry action and a transition, along with an criteria for the transition to
+    			happen (or not). The next thing we need to do is provide the next state in the
+    			flow. The previous state allowed for a user to enter some criteria and submit them.
+    			Binding and validation will occur and depending on the result of this process
+    			(successful or unsuccessful) the transition will be executed. Let's not
+    			bother with the actual process of binding and validation for now. This is something
+    			we'll explain later. Just imagine it automagically happens.
+    		</para>
+			<para>
+				Together with the view, the view state will result in the following screen
+				being available (with the screen showing a validation error in this case,
+				indicating the user hasn't entered any criteria).
+			</para>
+			<para>
+				<mediaobject>
+					<imageobject role="fo">
+						<imagedata fileref="images/phonebook-screen-1.jpg" format="JPEG" align="center"/>
+					</imageobject>
+					<imageobject role="html">
+						<imagedata fileref="images/phonebook-screen-1.jpg" format="JPEG" align="center"/>
+					</imageobject>
+					<caption>
+						<para>Validation errors while entering criteria</para>
+					</caption>
+				</mediaobject>
+			</para>
+    		<para>
+    			After validation has succeeded, the next state in in our flow is the execution
+    			of the search, based on the search criteria the user has passed in. We can
+    			derive this from the <literal>to</literal>-attribute of the transition associated
+    			to the first state we've jotted down.
+    			Execution
+    			of logic on the server, comprised a separate step is implementing using an
+    			<emphasis>action state</emphasis>. An action state is not very different from
+    			a view state; the difference being that an action state does not have a view
+    			associated with it. Instead it has a nested action that will execute. In other
+    			words, where the view state interacts with the user, the action executes logic
+    			on the server. In the phonebook example, the action state executes the actual
+    			search, based on criteria the user has given.
+    		</para>
+			<para><programlisting><![CDATA[  <action-state id="executeSearch">
+
+    <!-- actions go here -->
+
+  </action-state>]]></programlisting>
+			</para>
+			<para>
+				The action is again identified by a Spring bean identifier, hence defined in 
+				a Spring ApplicationContext.
+			</para>
+			<para><programlisting><![CDATA[    <action bean="phonebook" method="search({flowScope.searchCriteria})" resultName="results"/>]]></programlisting></para>
+			<para>
+				The actual action in this case is the calling of a
+				method called <literal>search</literal> with one parameter. This parameter is
+				the form object, which will talk about later when implementing the
+				Java classes needed for the phonebook application. All you need to know right now
+				is the signature of the method:
+			</para>
+			<para>
+				<programlisting><![CDATA[public List search(SearchCriteria c);]]></programlisting>
+			</para>
+			<para>
+				The result of the method is automatically bound in the context of the flow,
+				meaning that views rendered after this state will have access to it
+				(if for example the application uses JSP, you can access the List returned by
+				the <literal>search</literal> by using EL: <literal>${results}</literal>).
+			</para>
+			<para>
+				If the execution of the <literal>search</literal> method is successful
+				(in other words: no exception has been raised), the flow transitions to the
+				next state. Why? Because together with the action (inside the action-state)
+				we're also mentioning a transition that says for everybody event called
+				<literal>success</literal> we should go to the <literal>displayResults</literal>
+				state.
+			</para>
+			<para>
+				<programlisting><![CDATA[    <transition on="success" to="displayResults"/>]]></programlisting>
+			</para>
+			<para>
+				As we've said, the next state is the <literal>displayResults</literal> state.
+				This is another view state, with this time, the <literal>searchresults</literal>
+				view resource associated to it, as well as a different transition to the next state.
+				Remember that transitions are signaled by events and since this is a view state,
+				the user will interact with the system. By signaling a <literal>select</literal>
+				event, the flow will transition to the next state (browsing user details).
+			</para>
+			<para>
+				<programlisting><![CDATA[  <view-state id="displayResults" view="searchResults">
+    <transition on="newSearch" to="displayCriteria"/>
+    <transition on="select" to="browseDetails"/>
+  </view-state>]]></programlisting>
+			</para>
+    	</sect2>
+    </sect1>
 </chapter>
