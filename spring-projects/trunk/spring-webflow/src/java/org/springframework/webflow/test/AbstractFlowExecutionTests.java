@@ -106,7 +106,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 
 	/**
 	 * Start a new flow execution for the flow definition that is being tested.
-	 * @param parameters request parameters needed by the flow execution to start
+	 * @param parameters request parameters needed by the flow execution to
+	 * start
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
@@ -125,9 +126,18 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * entered)
 	 */
 	protected ViewSelection startFlow(ExternalContext context) {
-		this.flowExecution = new FlowExecutionImpl(getFlow());
-		onFlowExecutionStarting(flowExecution);
+		this.flowExecution = createFlowExecution();
 		return this.flowExecution.start(context);
+	}
+
+	/**
+	 * Create the flow execution tested by this test. Subclasses may override to
+	 * customize the execution implementation, for example, to attach custom
+	 * listeners.
+	 * @return the flow execution for this test
+	 */
+	protected FlowExecution createFlowExecution() {
+		return new FlowExecutionImpl(getFlow());
 	}
 
 	/**
@@ -137,14 +147,6 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * not be resolved (if <code>this.flow</code> was null)
 	 */
 	protected abstract Flow getFlow() throws FlowArtifactException;
-
-	/**
-	 * Hook method where you can do additional setup of a flow execution before
-	 * it is started, like register an execution listener.
-	 * @param flowExecution the flow execution
-	 */
-	protected void onFlowExecutionStarting(FlowExecution flowExecution) {
-	}
 
 	/**
 	 * Signal an occurence of an event in the current state of the flow
@@ -159,8 +161,8 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * Signal an occurence of an event in the current state of the flow
 	 * execution being tested.
 	 * @param eventId the event that occured
-	 * @param parameters request parameters needed by the flow execution to complete
-	 * event processing
+	 * @param parameters request parameters needed by the flow execution to
+	 * complete event processing
 	 */
 	protected ViewSelection signalEvent(String eventId, Map parameters) {
 		return flowExecution.signalEvent(eventId, new MockExternalContext(parameters));
