@@ -23,7 +23,8 @@ import java.util.Map;
  * <p>
  * This context object provides a single, consistent interface for internal SWF
  * artifacts to use to reason on and manipulate the state of an external actor
- * calling into SWF to execute flows.
+ * calling into SWF to execute flows. It represents the context about a single,
+ * <i>external</i> request to manipulate a flow execution.
  * <p>
  * The design of this interface was inspired by JSF's own ExternalContext
  * abstraction, and thus shares the same name for consistency. If a particular
@@ -80,7 +81,9 @@ public interface ExternalContext {
 
 		/**
 		 * Returns the shared mutex that may be synchronized on using a
-		 * synchronized block. Example usage:
+		 * synchronized block. The returned mutex is guaranteed to be non-null.
+		 * 
+		 * Example usage:
 		 * 
 		 * <pre>
 		 * synchronized (sharedMap.getMutex()) {

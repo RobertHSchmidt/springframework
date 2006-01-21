@@ -12,7 +12,7 @@
 		shopping, she is freely browsing available products, adding her 
 		favorites to her cart while skipping over others.  This is a good
 		"free browsing" use case.  However, when the user decides to
-		checkout, a controlled workflow begins: the checkout process.  
+		checkout, a controlled workflow begins--the checkout process.  
 		Such a process represents a single user conversation that takes
 		place over a series of steps, and navigation from step-to-step
 		is controlled.  The entire process represents an discrete
@@ -69,7 +69,7 @@
 	<sect1 id="introduction-packaging">
 		<title>Packaging Overview</title>
 		<para>
-			Spring Web Flow has been architected as a self-contained <emphasis>flow engine</emphasis>
+			Spring Web Flow has been architected as a self-contained <emphasis>page flow engine</emphasis>
 			with few required dependencies on third-party APIs.  All dependencies are 
 			carefully managed.
 		</para>
@@ -78,30 +78,35 @@
 		</para>
 		<itemizedlist spacing="compact">
         	<listitem>
+         		<para>spring-webflow (the framework)</para>
+	        </listitem>
+        	<listitem>
          		<para>spring-core (miscellaneous utility classes used internally by the framework)</para>
 	        </listitem>
         	<listitem>
-         		<para>spring-binding (the Spring data binding framework)</para>
+         		<para>spring-binding (the Spring data binding framework, used internally)</para>
 	        </listitem>
         	<listitem>
-         		<para>commons-logging (a simple logging facade)</para>
+         		<para>commons-logging (a simple logging facade, used internally)</para>
 	        </listitem>
 		</itemizedlist>
 		<para>
 			Most users will embed SWF as a component within a larger web application development
 			framework, as SWF is a focused <emphasis>controller technology</emphasis> that expects a
-			calling system to care for request dispatch and response rendering.  In this case, those users
+			calling system to care for request mapping and response rendering.  In this case, those users
 			will depend on a thin integration piece for their environment.  For example, those executing
 			flows within a Servlet might use the Spring MVC integration to care for dispatching
 			requests to SWF and rendering responses for SWF view selections.
 		</para>
 		<para>			
-			It is generally important to note that, like Spring, SWF is a 
+			It is important to note that Spring Web Flow, like Spring, is a 
 			<emphasis>layered</emphasis> framework, packaged in a manner that allows 
 			teams to use the parts they need and nothing else.  For example, one team 
 			might use Spring Web Flow in a Servlet environment with Spring MVC, and thus require
 			the Spring MVC integration.  Another team might use SWF in a Portlet environment,
-			and thus require the Portlet integration.  Another team might mix and match.
+			and thus require the Portlet MVC integration.  Another team might mix and match.
+			A major benefit of SWF is it allows you to define reusable, self-contained controller 
+			modules that can execute in <emphasis>any</emphasis> environment.
 		</para>
 	</sect1>
 	<sect1 id="introduction-package-structure">
@@ -112,7 +117,7 @@
 		</para>
 		<para>
 			The <emphasis>webflow</emphasis> package contains the
-			central abstractions of the framework.  These abstractions
+			central foundational abstractions of the framework.  These abstractions
 			consist of definition artifacts such as Flow, State,
 			and Action that define the core "domain language" for
 			expressing flows.
@@ -122,48 +127,6 @@
           	<para>Dependencies: spring-core, spring-binding, commons-logging</para>
           </listitem>
 		</itemizedlist>          
-		<para>
-			The <emphasis>support</emphasis> package contains general-purpose 
-			implementations of core artifacts.  These implementations are mainly
-			used internally by the other packages of the framework but are
-			also usable directly by developers.
-		</para>
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>Dependencies: webflow</para>
-          </listitem>
-		</itemizedlist>          
-		<para>
-			The <emphasis>builder</emphasis> package contains abstractions
-			used at configuration-time for building and assembling Flows.
-		</para>
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>Dependencies: webflow, webflow.support</para>
-          </listitem>
-		</itemizedlist>		
-		<para>
-			The <emphasis>execution</emphasis> package contains runtime-only 
-			abstractions for executing Flows and managing flow executions.
-			This is also where the implementation of the SWF finite-state
-			machine resides.
-		</para>
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>Dependencies: webflow, servlet API (optional), portlet API (optional)</para>
-          </listitem>
-		</itemizedlist>		
-		<para>
-			The <emphasis>registry</emphasis> package contains abstractions
-			used for managing registries of flow definitions.
-		</para>
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>
-                Dependencies: webflow, webflow.builder, webflow.execution, spring-beans (optional) 
-          	</para>
-          </listitem>
-		</itemizedlist>		
 		<para>
 			The <emphasis>action</emphasis> package contains implementations
 			of the core "Action" abstraction for executing arbitrary
@@ -175,44 +138,70 @@
           </listitem>
 		</itemizedlist>
 		<para>
-			The <emphasis>mvc</emphasis> package contains the Spring MVC 
-			integration support.
+			The <emphasis>builder</emphasis> package contains abstractions
+			used at configuration-time for building and assembling Flows, in Java or
+			from externalized resources such as XML files.
+		</para>
+		<itemizedlist spacing="compact">
+          <listitem>
+          	<para>Dependencies: webflow, webflow.support</para>
+          </listitem>
+		</itemizedlist>		
+		<para>
+			The <emphasis>execution</emphasis> package contains runtime 
+			abstractions for executing Flows and managing flow executions.
+			This is where the implementation of the Spring Web Flow's
+			finite-state machine resides.  This is also where the repository
+			subsystem resides, for storing active flow executions 
+			beyond a single request into the server.  This subsystem
+			forms the basis for Spring Web Flow's <emphasis>continuation server</emphasis>.
+		</para>
+		<itemizedlist spacing="compact">
+          <listitem>
+          	<para>Dependencies: webflow, webflow.util, commons-codec (optional)</para>
+          </listitem>
+		</itemizedlist>
+		<para>
+			The <emphasis>manager</emphasis> is the highest-level package in the framework.  
+			It contains implementations of "flow execution managers" that <emphasis>drive</emphasis>
+			the execution of flows.  This is where the facade for external systems that 
+			call into the Spring Web Flow system resides.  This is also where integration layers for
+			Spring MVC (Servlet and Portlet), Struts, and Java Server Faces (JSF) reside.
 		</para>		
 		<itemizedlist spacing="compact">
           <listitem>
-          	<para>Dependencies: webflow.execution, servlet API, spring-webmvc</para>
+          	<para>
+          	    Dependencies: webflow.execution, spring-webmvc (optional), spring-portlet (optional),
+          	    Struts (optional), Java Server Faces (optional).
+          	</para>
           </listitem>
 		</itemizedlist>		
 		<para>
-			The <emphasis>struts</emphasis> package contains the Struts 
-			integration support.
+			The <emphasis>registry</emphasis> package contains the subsystem for
+			managing registries of flow definitions that are eligible for execution.
 		</para>
 		<itemizedlist spacing="compact">
           <listitem>
-          	<para>Dependencies: webflow.execution, servlet API, struts</para>
+          	<para>
+                Dependencies: webflow, webflow.builder, webflow.execution, spring-beans (optional) 
+          	</para>
           </listitem>
-		</itemizedlist>		
+		</itemizedlist>
 		<para>
-			The <emphasis>jsf</emphasis> package contains the JSF 
-			integration support.
+			The <emphasis>support</emphasis> package contains general-purpose 
+			implementations of the core definitional artifacts.  These implementations are mainly
+			used internally by the other packages of the framework but are
+			also usable directly by developers.
 		</para>
 		<itemizedlist spacing="compact">
           <listitem>
-          	<para>Dependencies: webflow.execution, JSF API</para>
+          	<para>Dependencies: webflow</para>
           </listitem>
-		</itemizedlist>		
-		<para>
-			The <emphasis>portlet</emphasis> package contains the Spring
-			Portlet MVC integration support.
-		</para>
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>Dependencies: webflow.execution, portlet API, spring-portletmvc</para>
-          </listitem>
-		</itemizedlist>		
+		</itemizedlist>          
 		<para>
 			The <emphasis>test</emphasis> package contains support for
-			testing Flow Executions out-of-container.
+			testing Flow Executions out-of-container, as well as unit testing artifacts such
+			as Actions in isolation.
 		</para>
 		<itemizedlist spacing="compact">
           <listitem>
@@ -220,16 +209,22 @@
           </listitem>
 		</itemizedlist>
 		<para>
-			A package dependency noted as <emphasis>optional</emphasis> means that
+			A package dependency noted as (optional) means that the
 			dependency is needed to compile the package but is optionally needed at runtime
-			(depending on your use of the package).  For example, use of SWF in a Servlet
-			environment entails use of the execution.servlet package and requires the
-			servlet APIs to be in the classpath, but not the Portlet APIs.
+			(depending on your use of the package).  For example, use of Spring Web Flow 
+			in a Servlet environment entails use of the context.servlet package and requires the
+			Servlet API to be in the classpath, but not the Portlet API.
 		</para>
 		<para>
 			For the exact list of dependencies, as well as supported product usage configurations, 
-			see the SWF ivy file located within the SWF	distribution
-			at: <literal>spring-webflow/ivy.xml</literal>
+			see the SWF ivy dependency manager descriptor located within the SWF distribution
+			at <literal>spring-webflow/ivy.xml</literal>
+		</para>
+	</sect1>
+	<sect1 id="introduction-spring">
+		<title>Supported Spring Versions</title>
+		<para>
+			Spring Web Flow 1.0 is supported on Spring 1.2.7 or >.
 		</para>
 	</sect1>
 </chapter>
