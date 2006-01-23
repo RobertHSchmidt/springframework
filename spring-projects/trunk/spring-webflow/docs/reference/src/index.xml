@@ -3,6 +3,7 @@
                       "../lib/docbook-dtd/docbookx.dtd"
 [
 <!ENTITY overview SYSTEM "overview.xml">
+<!ENTITY flow-definition SYSTEM "flow-definition.xml">
 <!ENTITY phonebook SYSTEM "phonebook.xml">
 ]>
 
@@ -42,6 +43,7 @@
 	<toc />
 
 	&overview;
+	&flow-definition;
 	&phonebook;
 
 </book>

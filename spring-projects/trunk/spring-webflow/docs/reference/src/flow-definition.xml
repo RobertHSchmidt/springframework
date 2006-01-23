@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="flow-definition">
+	<title>Flow definition</title>
+	<sect1 id="flow-intro">
+		<title>Introduction</title>
+		<para>
+			Spring Web Flow allows developers to build reusable, self-contained controller modules
+			called flows.  A flow is a blueprint for a user conversation (or dialog)
+			that drives the execution of application code to complete a business goal.
+		</para>
+		<para>
+			Flows are defined declaratively using a rich domain-specific language (DSL) 
+			tailored to the problem domain of page flow.  Currently, Java-based and XML-based
+			forms of this language are provided.
+		</para>
+		<para>
+			This chapter documents Spring Web Flow's core flow definition language.  You'll
+			learn the core domain constructs of the system and how those constructs are
+			representable in an externalized XML form.
+		</para>
+    </sect1>
+    <sect1 id="flow">
+    	<title>Flow</title>
+    	<para>
+    		A flow is defined by a single instance of <literal>org.springframework.webflow.Flow</literal>.
+    		This is the central domain artifact representing the definition of a conversation.
+		</para>
+		<para>
+    		A flow consists of a set of one or more states, where each state defines a step in
+    		the flow that when entered executes a behavior.  What behavior is executed is 
+    		a function of the state's type.  The outcome of a state's execution is used by
+    		the flow to drive a state transition.
+    	</para>
+    	<para>
+			Of it's set of states a flow has exactly one <literal>startState</literal>,
+			that defines the starting point of the flow.
+			Each flow has one or more end states that define the possible flow outcomes.
+    	</para>
+    	<para>
+    		The properties of a <literal>org.springframework.webflow.Flow</literal> are summarized 
+    		below:
+    	</para>
+        <table frame="all">
+            <title>Flow properties</title>
+            <tgroup cols="2">
+                <colspec colname="c1" colwidth="2*" />
+                <colspec colname="c2" colwidth="4*" />
+                <thead>
+                    <row>
+                        <entry>Property name</entry>
+                        <entry>Description</entry>
+                        <entry>Cardinality</entry>
+                        <entry>Default value</entry>
+                    </row>
+               </thead>
+               <tbody>
+                   <row>
+                       <entry>states</entry>
+                       <entry>The steps of the flow.</entry>
+				       <entry>
+				           <emphasis>1..*, at least one end state</emphasis>
+				       </entry>
+                   </row>
+                   <row>
+                       <entry>startState</entry>
+                       <entry>The starting point of the flow.</entry>
+				       <entry>
+				           <emphasis>1</emphasis>
+				       </entry>
+                   </row>
+                   <row>
+                       <entry>startActions</entry>
+                       <entry>Actions to execute each time an execution of this flow is started.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+                   </row>
+                   <row>
+                       <entry>endActions</entry>
+                       <entry>Actions to execute each time an execution of this flow ends.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+                   </row>
+               </tbody>
+          </tgroup>
+        </table>
+        <sect2 id="flow-xml">
+        	<title>A flow can be defined in XML:</title>
+       	    <programlisting>
+    &lt;flow start-state="startingPoint"/&gt;
+        &lt;start-actions&gt;
+            ...
+        &lt;/start-actions&gt;
+        
+        &lt;-- state definitions go here --&gt;
+        
+        &lt;end-actions&gt;
+            ...
+        &lt;/end-actions&gt;
+    &lt;/flow&gt;
+         	</programlisting>
+        </sect2>
+        <sect2 id="flow-java">
+           <title>A flow can be defined in Java code using the API directly:</title>
+           <programlisting>
+    Flow flow = new Flow();
+    flow.addState(...);
+    flow.setStartState("startingPoint");
+    flow.addStartAction(...);
+    flow.addEndAction(...);
+          </programlisting>
+        </sect2>
+    </sect1>
+    <sect1 id="states">
+    	<title>Core State Types</title>
+    	<para>
+    		Spring Web Flow has five (5) built-in core state types, all contained within the 
+    		<literal>org.springframework.webflow</literal> package.  These states execute common 
+    		controller behaviors including:
+    		<orderedlist>
+    			<listitem>allowing the user to participate in a flow (ViewState)</listitem>
+    			<listitem>executing business application code (ActionState)</listitem>
+    			<listitem>making a flow routing decision (DecisionState)</listitem>
+    			<listitem>spawning another flow as a subflow (SubflowState)</listitem>
+    			<listitem>terminating a flow (EndState)</listitem>
+    		</orderedlist>
+    	</para>
+    	<sect2 id="viewstate">
+    		<title>ViewState</title>
+    	</sect2>
+    	<sect2 id="actionstate">
+    		<title>ActionState</title>
+    	</sect2>
+    	<sect2 id="decisionstate">
+    		<title>DecisionState</title>
+    	</sect2>
+    	<sect2 id="subflowstate">
+    		<title>SubflowState</title>
+    	</sect2>
+    	<sect2 id="endstate">
+    		<title>EndState</title>
+    	</sect2>
+    </sect1>
+</chapter>
