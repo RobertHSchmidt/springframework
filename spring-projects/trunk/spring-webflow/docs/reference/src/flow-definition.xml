@@ -27,12 +27,12 @@
 		</para>
 		<para>
     		A flow consists of a set of one or more states, where each state defines a step in
-    		the flow that when entered executes a behavior.  What behavior is executed is 
-    		a function of the state's type.  The outcome of a state's execution is used by
-    		the flow to drive a state transition.
+    		the flow that, when entered, executes a behavior.  What behavior is executed is 
+    		a function of the state's type and configuration.  The outcome of a state's
+    		execution is used by the flow to drive a state transition.
     	</para>
     	<para>
-			Of it's set of states a flow has exactly one <literal>startState</literal>,
+			Of it's set of states a flow has exactly one <literal>startState</literal> 
 			that defines the starting point of the flow.
 			Each flow has one or more end states that define the possible flow outcomes.
     	</para>
@@ -70,17 +70,19 @@
                    </row>
                    <row>
                        <entry>startActions</entry>
-                       <entry>Actions to execute each time an execution of this flow is started.</entry>
+                       <entry>The list of actions to execute each time an execution of this flow is started.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
+				       <entry>Empty</entry>
                    </row>
                    <row>
                        <entry>endActions</entry>
-                       <entry>Actions to execute each time an execution of this flow ends.</entry>
+                       <entry>The list of actions to execute each time an execution of this flow ends.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
+				       <entry>Empty</entry>
                    </row>
                </tbody>
           </tgroup>
@@ -128,18 +130,33 @@
     	</para>
     	<sect2 id="viewstate">
     		<title>ViewState</title>
+    		<para>
+    			When entered, a view state allows the user to participate in a flow.
+    		</para>
     	</sect2>
     	<sect2 id="actionstate">
     		<title>ActionState</title>
+    		<para>
+    			When entered, an action state executes business application code.
+    		</para>
     	</sect2>
     	<sect2 id="decisionstate">
     		<title>DecisionState</title>
+    		<para>
+    			When entered, a decision state makes a flow routing decision.
+    		</para>
     	</sect2>
     	<sect2 id="subflowstate">
     		<title>SubflowState</title>
+    		<para>
+    			When entered, a subflow state spawns another flow as a subflow.
+    		</para>
     	</sect2>
     	<sect2 id="endstate">
     		<title>EndState</title>
+    		<para>
+    			When entered, an end state terminates a flow.
+    		</para>
     	</sect2>
     </sect1>
 </chapter>
