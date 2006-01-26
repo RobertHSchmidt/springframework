@@ -162,7 +162,7 @@
           </listitem>
 		</itemizedlist>
 		<para>
-			The <emphasis>manager</emphasis> is the highest-level package in the framework.  
+			The <emphasis>manager</emphasis> package is the highest-level package in the framework.  
 			It contains implementations of "flow execution managers" that <emphasis>drive</emphasis>
 			the execution of flows.  This is where the facade for external systems that 
 			call into the Spring Web Flow system resides.  This is also where integration layers for

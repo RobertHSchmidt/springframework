@@ -32,9 +32,9 @@
     		execution is used by the flow to drive a state transition.
     	</para>
     	<para>
-			Of it's set of states a flow has exactly one <literal>startState</literal> 
-			that defines the starting point of the flow.
-			Each flow has one or more end states that define the possible flow outcomes.
+			Exactly one of a flow's states is the <literal>startState</literal> 
+			that defines the starting point of the flow.  One or more end states
+			define the ending points of a flow.
     	</para>
     	<para>
     		The properties of a <literal>org.springframework.webflow.Flow</literal> are summarized 
@@ -54,6 +54,13 @@
                     </row>
                </thead>
                <tbody>
+                   <row>
+                       <entry>id</entry>
+                       <entry>The identifier of the flow, typically unique to all other flows of the application.</entry>
+				       <entry>
+				           <emphasis>1</emphasis>
+				       </entry>
+                   </row>               
                    <row>
                        <entry>states</entry>
                        <entry>The steps of the flow.</entry>
@@ -84,6 +91,22 @@
 				       </entry>
 				       <entry>Empty</entry>
                    </row>
+                   <row>
+                       <entry>exceptionHandlers</entry>
+                       <entry>An ordered set of handlers to be applied when an exception is thrown within a state of this flow.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+				       <entry>Empty</entry>
+                   </row>
+                   <row>
+                       <entry>inlineFlows</entry>
+                       <entry>A set of inner Flows that will be called as subflows; these Flows are locally scoped to the outer Flow.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+				       <entry>Empty</entry>
+                   </row>
                </tbody>
           </tgroup>
         </table>
@@ -95,29 +118,132 @@
             ...
         &lt;/start-actions&gt;
         
-        &lt;-- state definitions go here --&gt;
+        &lt;-- your state definitions go here --&gt;
         
         &lt;end-actions&gt;
             ...
         &lt;/end-actions&gt;
+
+        &lt;exception-handler .../&gt;
+
+        &lt;inline-flow&gt;
+            ...
+        &lt;/inline-flow&gt;
     &lt;/flow&gt;
          	</programlisting>
         </sect2>
         <sect2 id="flow-java">
            <title>A flow can be defined in Java code using the API directly:</title>
            <programlisting>
-    Flow flow = new Flow();
+    Flow flow = new Flow("id");
     flow.addState(...);
     flow.setStartState("startingPoint");
     flow.addStartAction(...);
     flow.addEndAction(...);
+    flow.addExceptionHandler(...);
+    flow.addInlineFlow(...);
           </programlisting>
         </sect2>
     </sect1>
-    <sect1 id="states">
-    	<title>Core State Types</title>
+    <sect1 id="state">
+    	<title>State</title>
     	<para>
-    		Spring Web Flow has five (5) built-in core state types, all contained within the 
+    	    The base class for all Flow state types is <literal>org.springframework.webflow.State</literal>.
+    	    This abstract class defines common properties applicable to all state types, which include:
+    	</para>
+    	<table>
+            <title>State properties</title>
+            <tgroup cols="2">
+                <colspec colname="c1" colwidth="2*" />
+                <colspec colname="c2" colwidth="4*" />
+                <thead>
+                    <row>
+                        <entry>Property name</entry>
+                        <entry>Description</entry>
+                        <entry>Cardinality</entry>
+                        <entry>Default value</entry>
+                    </row>
+               </thead>
+               <tbody>
+                   <row>
+                       <entry>id</entry>
+                       <entry>The id of the state, unique to its containing Flow.</entry>
+				       <entry>
+				           <emphasis>1</emphasis>
+				       </entry>
+                   </row>
+                   <row>
+                       <entry>flow</entry>
+                       <entry>The containing Flow.</entry>
+				       <entry>
+				           <emphasis>1</emphasis>
+				       </entry>
+                   </row>
+                   <row>
+                       <entry>entryActions</entry>
+                       <entry>The list of actions to execute each time this state is entered.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+				       <entry>Empty</entry>
+                   </row>
+                   <row>
+                       <entry>exceptionHandlers</entry>
+                       <entry>An ordered set of handlers to be applied when an exception is thrown within this state.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+				       <entry>Empty</entry>
+                   </row>
+               </tbody>
+          </tgroup>
+        </table>
+    </sect1>
+    <sect1 id="transitionable-state">
+    	<title>Transitionable State</title>
+    	<para>
+    	    A central subclass of State is <literal>org.springframework.webflow.TransitionableState</literal>.
+    	    This abstract class defines common properties applicable to all state types
+    	    <emphasis>that execute transitions to other states</emphasis>.
+    	    These properties include:
+    	</para>
+    	<table>
+            <title>TransitionableState properties</title>
+            <tgroup cols="2">
+                <colspec colname="c1" colwidth="2*" />
+                <colspec colname="c2" colwidth="4*" />
+                <thead>
+                    <row>
+                        <entry>Property name</entry>
+                        <entry>Description</entry>
+                        <entry>Cardinality</entry>
+                        <entry>Default value</entry>
+                    </row>
+               </thead>
+               <tbody>
+                   <row>
+                       <entry>transitions</entry>
+                       <entry>The eligible transitions out of this state.</entry>
+				       <entry>
+				           <emphasis>1..*</emphasis>
+				       </entry>
+                   </row>
+                   <row>
+                       <entry>exitActions</entry>
+                       <entry>The list of actions to execute each time this state is exited.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+				       <entry>Empty</entry>
+                   </row>
+               </tbody>
+          </tgroup>
+        </table> 	
+    </sect1>
+    <sect1 id="core-states">
+    	<title>Concrete State Types</title>
+    	<para>
+    		Spring Web Flow has five (5) built-in concrete state types, all contained within the 
     		<literal>org.springframework.webflow</literal> package.  These states execute common 
     		controller behaviors including:
     		<orderedlist>
@@ -128,6 +254,22 @@
     			<listitem>terminating a flow (EndState)</listitem>
     		</orderedlist>
     	</para>
+    	<para>
+    		Each of these state types, with the exception of EndState, is transitionable.
+    		This hierarchy is illustrated below:
+    	</para>
+		<mediaobject>
+			<imageobject role="fo">
+				<imagedata fileref="images/state-classdiagram.jpg" format="JPEG" align="center"/>
+			</imageobject>
+			<imageobject role="html">
+				<imagedata fileref="images/state-classdiagram.jpg" format="JPEG" align="center"/>
+			</imageobject>
+			<caption>
+				<para>State class diagram</para>
+			</caption>
+		</mediaobject>
+
     	<sect2 id="viewstate">
     		<title>ViewState</title>
     		<para>
