@@ -57,7 +57,7 @@
 		</para>
 		<para>
 			Spring Web Flow exists at a higher level of abstraction, integrating
-			as a self-contained <emphasis>flow engine</emphasis> within
+			as a self-contained <emphasis>page flow engine</emphasis> within
 			base frameworks	such as Struts, Spring MVC, Portlet MVC, and JSF.
 			SWF	provides you the capability to capture your
 			application's page flow	explicity in a declarative, 

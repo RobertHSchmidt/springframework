@@ -29,7 +29,7 @@
     		A flow consists of a set of one or more states, where each state defines a step in
     		the flow that, when entered, executes a behavior.  What behavior is executed is 
     		a function of the state's type and configuration.  The outcome of a state's
-    		execution is used by the flow to drive a state transition.
+    		execution, called an event, is used by the flow to drive a state transition.
     	</para>
     	<para>
 			Exactly one of a flow's states is the <literal>startState</literal> 
@@ -110,8 +110,12 @@
                </tbody>
           </tgroup>
         </table>
+        <para>
+            Below is a high level example of how these Flow properties can be configured in XML form
+            or directly in Java code.
+        </para>
         <sect2 id="flow-xml">
-        	<title>A flow can be defined in XML:</title>
+        	<title>XML-based Flow template</title>
        	    <programlisting>
     &lt;flow start-state="startingPoint"/&gt;
         &lt;start-actions&gt;
@@ -133,7 +137,7 @@
          	</programlisting>
         </sect2>
         <sect2 id="flow-java">
-           <title>A flow can be defined in Java code using the API directly:</title>
+           <title>Java Flow API example</title>
            <programlisting>
     Flow flow = new Flow("id");
     flow.addState(...);
@@ -148,6 +152,7 @@
     <sect1 id="state">
     	<title>State</title>
     	<para>
+    	    A State defines the behavior for a step of the flow.
     	    The base class for all Flow state types is <literal>org.springframework.webflow.State</literal>.
     	    This abstract class defines common properties applicable to all state types, which include:
     	</para>
@@ -203,9 +208,8 @@
     	<title>Transitionable State</title>
     	<para>
     	    A central subclass of State is <literal>org.springframework.webflow.TransitionableState</literal>.
-    	    This abstract class defines common properties applicable to all state types
-    	    <emphasis>that execute transitions to other states</emphasis>.
-    	    These properties include:
+    	    This abstract class defines common properties applicable to all state types that execute
+    	    transitions to other states.  These properties include:
     	</para>
     	<table>
             <title>TransitionableState properties</title>
@@ -223,7 +227,7 @@
                <tbody>
                    <row>
                        <entry>transitions</entry>
-                       <entry>The eligible transitions out of this state.</entry>
+                       <entry>The eligible paths out of this state.</entry>
 				       <entry>
 				           <emphasis>1..*</emphasis>
 				       </entry>
@@ -273,7 +277,22 @@
     	<sect2 id="viewstate">
     		<title>ViewState</title>
     		<para>
-    			When entered, a view state allows the user to participate in a flow.
+    			When entered, a view state allows the user (or other external client) to participate
+    			in a flow.  This participation process goes as follows:
+    			<orderedlist>
+    				<listitem>
+    					The entered view state makes a <literal>org.springframework.webflow.ViewSelection</literal>.
+    				</listitem>
+    				<listitem>
+    					The flow execution 'pauses' in this state, and control is returned to the calling 
+    					system.
+    				</listitem>
+    				<listitem>
+    				    The calling system uses the returned <literal>ViewSelection</literal> to present some form of
+    				    user interface that allows the user to submit back the input the
+    				    flow needs to resume and continue on from the 'paused' point.
+    				</listitem>
+    			</orderedlist>
     		</para>
     	</sect2>
     	<sect2 id="actionstate">
