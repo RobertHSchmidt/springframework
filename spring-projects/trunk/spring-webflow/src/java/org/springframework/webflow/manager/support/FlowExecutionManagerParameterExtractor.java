@@ -58,6 +58,13 @@ public class FlowExecutionManagerParameterExtractor {
 	private String flowIdParameterName = FLOW_ID_PARAMETER;
 
 	/**
+	 * The default flowId value that will be returned if no flowId parameter
+	 * value can be extracted during {@link #extractFlowId(ExternalContext)}
+	 * operation.
+	 */
+	private String defaultFlowId;
+
+	/**
 	 * Identifies an existing flow execution to participate in, defaults to
 	 * ("_flowExecutionId").
 	 */
@@ -76,6 +83,9 @@ public class FlowExecutionManagerParameterExtractor {
 	 */
 	private String parameterDelimiter = PARAMETER_VALUE_DELIMITER;
 
+	/**
+	 * Returns the flow id parameter name.
+	 */
 	public String getFlowIdParameterName() {
 		return flowIdParameterName;
 	}
@@ -85,6 +95,24 @@ public class FlowExecutionManagerParameterExtractor {
 	 */
 	public void setFlowIdParameterName(String flowIdParameterName) {
 		this.flowIdParameterName = flowIdParameterName;
+	}
+
+	/**
+	 * Returns the default flowId parameter value.
+	 */
+	public String getDefaultFlowId() {
+		return defaultFlowId;
+	}
+
+	/**
+	 * Sets the default flowId parameter value.
+	 * <p>
+	 * This value will be used if no flowId parameter value can be extracted
+	 * from the request during {@link #extractFlowId(ExternalContext)}
+	 * operation.
+	 */
+	public void setDefaultFlowId(String defaultFlowId) {
+		this.defaultFlowId = defaultFlowId;
 	}
 
 	/**
@@ -150,8 +178,9 @@ public class FlowExecutionManagerParameterExtractor {
 	 * @return the obtained id or <code>null</code> if not found
 	 */
 	public String extractFlowId(ExternalContext context) {
-		return verifySingleStringInputParameter(getFlowIdParameterName(), getParameterMap(context).get(
+		String flowId = verifySingleStringInputParameter(getFlowIdParameterName(), getParameterMap(context).get(
 				getFlowIdParameterName()));
+		return (flowId != null ? flowId : defaultFlowId);
 	}
 
 	/**
