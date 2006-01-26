@@ -86,7 +86,8 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	/**
 	 * Create a new request context.
 	 * @param flowExecution the owning flow execution
-	 * @param externalContext the external context that originated the flow execution request
+	 * @param externalContext the external context that originated the flow
+	 * execution request
 	 */
 	public FlowExecutionControlContextImpl(FlowExecutionImpl flowExecution, ExternalContext externalContext) {
 		Assert.notNull(flowExecution, "The owning flow execution is required");
@@ -189,14 +190,14 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return selectedView;
 	}
 
-	public FlowSession endActiveFlowSession() throws IllegalStateException {
-		flowExecution.getListeners().fireSessionEnding(this);
+	public FlowSession endActiveFlowSession(Map sessionOutput) throws IllegalStateException {
+		flowExecution.getListeners().fireSessionEnding(this, sessionOutput);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Ending active session " + getFlowExecutionContext().getActiveSession());
 		}
-		flowExecution.getActiveFlow().end(this);
+		flowExecution.getActiveFlow().end(this, sessionOutput);
 		FlowSession endedSession = flowExecution.endActiveFlowSession();
-		flowExecution.getListeners().fireSessionEnded(this, endedSession);
+		flowExecution.getListeners().fireSessionEnded(this, endedSession, Collections.unmodifiableMap(sessionOutput));
 		return endedSession;
 	}
 

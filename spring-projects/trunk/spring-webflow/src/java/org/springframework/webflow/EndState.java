@@ -157,7 +157,8 @@ public class EndState extends State {
 	 * @throws StateException if an exception occurs in this state
 	 */
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
-		if (context.getFlowExecutionContext().getActiveSession().isRoot()) {
+		FlowSession activeSession = context.getFlowExecutionContext().getActiveSession();
+		if (activeSession.isRoot()) {
 			// entire flow execution is ending, return ending view if applicable
 			ViewSelection selectedView;
 			if (isMarker()) {
@@ -174,14 +175,14 @@ public class EndState extends State {
 					logger.debug("Returning ending view selection " + selectedView);
 				}
 			}
-			context.endActiveFlowSession();
+			context.endActiveFlowSession(createOutput(activeSession.getScope()));
 			return selectedView;
 		}
 		else {
-			// there is a parent flow that will resume
-			FlowSession subflowSession = context.endActiveFlowSession();
-			Map subflowOutput = createOutput(subflowSession.getScope());
-			return context.signalEvent(new Event(this, getId(), subflowOutput));
+			// there is a parent flow that will resume (this flow is a subflow)
+			Map sessionOutput = createOutput(activeSession.getScope());
+			context.endActiveFlowSession(sessionOutput);
+			return context.signalEvent(new Event(this, getId(), sessionOutput));
 		}
 	}
 

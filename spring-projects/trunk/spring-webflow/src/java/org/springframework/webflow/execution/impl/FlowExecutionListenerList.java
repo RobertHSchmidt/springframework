@@ -282,18 +282,18 @@ public class FlowExecutionListenerList {
 	 * Notify all interested listeners that the active flow execution session is
 	 * ending.
 	 */
-	public void fireSessionEnding(RequestContext context) {
+	public void fireSessionEnding(RequestContext context, Map sessionOutput) {
 		for (Iterator it = iterator(); it.hasNext();) {
-			((FlowExecutionListener)it.next()).sessionEnding(context);
+			((FlowExecutionListener)it.next()).sessionEnding(context, sessionOutput);
 		}
 	}
 
 	/**
 	 * Notify all interested listeners that a flow execution session has ended.
 	 */
-	public void fireSessionEnded(RequestContext context, FlowSession endedSession) {
+	public void fireSessionEnded(RequestContext context, FlowSession endedSession, Map sessionOutput) {
 		for (Iterator it = iterator(); it.hasNext();) {
-			((FlowExecutionListener)it.next()).sessionEnded(context, endedSession);
+			((FlowExecutionListener)it.next()).sessionEnded(context, endedSession, sessionOutput);
 		}
 	}
 }

@@ -16,6 +16,7 @@
 package org.springframework.webflow;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.core.CollectionFactory;
@@ -111,6 +112,11 @@ public class Flow extends AnnotatedObject {
 	private String id;
 
 	/**
+	 * The set of state definitions for this flow.
+	 */
+	private Set states = CollectionFactory.createLinkedSetIfPossible(6);
+
+	/**
 	 * The default start state for this flow.
 	 */
 	private State startState;
@@ -123,12 +129,7 @@ public class Flow extends AnnotatedObject {
 	 * have not yet been set.
 	 */
 	private ActionList startActionList = new ActionList();
-
-	/**
-	 * The set of state definitions for this flow.
-	 */
-	private Set states = CollectionFactory.createLinkedSetIfPossible(6);
-
+	
 	/**
 	 * The list of exception handlers for this flow.
 	 */
@@ -577,8 +578,10 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Inform this flow definition that a execution session of itself has ended.
 	 * @param context the flow execution control context
+	 * @param sessionOutput initial output produced by the session that is
+	 * eligible for modification by this method.
 	 */
-	public void end(FlowExecutionControlContext context) {
+	public void end(FlowExecutionControlContext context, Map sessionOutput) {
 		endActionList.execute(context);
 	}
 

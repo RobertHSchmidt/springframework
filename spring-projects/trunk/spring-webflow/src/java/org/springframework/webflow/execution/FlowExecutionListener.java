@@ -120,14 +120,19 @@ public interface FlowExecutionListener {
 	/**
 	 * Called when the active flow execution session has been asked to end.
 	 * @param context the source of the event
+	 * @param sessionOutput initial, modifiable output produced by the active
+	 * session. The map may be modified by this listener to affect the output
+	 * returned.
 	 */
-	public void sessionEnding(RequestContext context);
+	public void sessionEnding(RequestContext context, Map sessionOutput);
 
 	/**
 	 * Called when a flow execution session ends. If the ended session was the
-	 * root session of the flow execution, the entire flow execute also ends.
+	 * root session of the flow execution, the entire flow execution also ends.
 	 * @param context the source of the event
 	 * @param endedSession ending flow session
+	 * @param sessionOutput final, unmodifiable output returned by the ended
+	 * session that is eligible for mapping by this listener
 	 */
-	public void sessionEnded(RequestContext context, FlowSession endedSession);
+	public void sessionEnded(RequestContext context, FlowSession endedSession, Map sessionOutput);
 }

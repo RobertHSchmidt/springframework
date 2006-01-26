@@ -60,9 +60,9 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void paused(RequestContext context, ViewSelection selectedView) {
 	}
 
-	public void sessionEnding(RequestContext context) {
+	public void sessionEnding(RequestContext context, Map sessionOutput) {
 	}
 
-	public void sessionEnded(RequestContext context, FlowSession endedSession) {
+	public void sessionEnded(RequestContext context, FlowSession endedSession, Map sessionOutput) {
 	}
 }
