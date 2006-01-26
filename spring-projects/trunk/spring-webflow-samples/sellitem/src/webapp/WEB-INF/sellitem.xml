@@ -6,10 +6,10 @@
 
 	<view-state id="enterPriceAndItemCount" view="priceAndItemCountForm">
 		<entry-actions>
-			<action bean="sellItemAction" method="setupForm"/>
+			<action bean="formAction" method="setupForm"/>
 		</entry-actions>
 		<transition on="submit" to="enterCategory">
-			<action bean="sellItemAction" method="bindAndValidate">
+			<action bean="formAction" method="bindAndValidate">
 				<property name="validatorMethod" value="validatePriceAndItemCount"/>
 			</action>
 		</transition>
@@ -17,7 +17,7 @@
 
 	<view-state id="enterCategory" view="categoryForm">
 		<transition on="submit" to="requiresShipping">
-			<action bean="sellItemAction" method="bindAndValidate"/>
+			<action bean="formAction" method="bindAndValidate"/>
 		</transition>
 	</view-state>
 
@@ -27,7 +27,7 @@
 
 	<view-state id="enterShippingDetails" view="shippingDetailsForm">
 		<transition on="submit" to="processSale">
-			<action bean="sellItemAction" method="bindAndValidate"/>
+			<action bean="formAction" method="bindAndValidate"/>
 		</transition>
 	</view-state>
 

@@ -5,11 +5,8 @@
 <flow start-state="enterPriceAndItemCount">
 
 	<view-state id="enterPriceAndItemCount" view="/priceAndItemCountForm">
-		<entry-actions>
-			<action bean="sellItemAction" method="setupForm"/>
-		</entry-actions>
 		<transition on="submit" to="enterCategory">
-			<action bean="sellItemAction" method="validate">
+			<action bean="sellItemFormAction" method="validate">
 				<property name="validatorMethod" value="validatePriceAndItemCount"/>
 			</action>
 		</transition>

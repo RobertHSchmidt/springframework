@@ -34,7 +34,7 @@
 			<td>Is shipping required?:</td>
 			<td>
 				<spring:bind path="shipping"> 
-					<INPUT type="hidden" name="_${status.expression}"  value="visible" /> 
+					<INPUT type="hidden" name="_${status.expression}"  value="marker" /> 
 					<INPUT type="checkbox" name="${status.expression}" value="true" <c:if test="${status.value}">checked</c:if>> 
 				</spring:bind>
 			</td>

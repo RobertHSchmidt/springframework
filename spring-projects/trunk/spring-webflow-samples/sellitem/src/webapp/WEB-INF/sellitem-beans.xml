@@ -6,14 +6,14 @@
 
 <beans>
 
-	<bean id="sellItemAction" class="org.springframework.webflow.action.FormAction">
+	<bean id="formAction" class="org.springframework.webflow.action.FormAction">
 		<property name="formObjectName" value="sale"/>
 		<property name="formObjectClass" value="org.springframework.webflow.samples.sellitem.Sale"/>
 		<property name="formObjectScope" value="FLOW"/>
 		<property name="validator">
 			<bean class="org.springframework.webflow.samples.sellitem.SaleValidator"/>
 		</property>
-		<property name="requireValidatorMethod" value="true"/>
+		<property name="validateUsingValidatorMethod" value="true"/>
 	</bean>
 	
 </beans>
