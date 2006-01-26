@@ -16,6 +16,7 @@
 package org.springframework.webflow.samples.phonebook.web;
 
 import org.springframework.binding.mapping.Mapping;
+import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.FlowArtifactFactory;
@@ -45,18 +46,18 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
-		addActionState(GET_DETAILS, method("getPerson(${flowScope.id})", action("phonebook")), on(success(),
-				DISPLAY_DETAILS));
+		AnnotatedAction detailsAction = method("getPerson(${flowScope.id})", action("phonebook"));
+		detailsAction.setResultName("person");
+		addActionState(GET_DETAILS, detailsAction, transition(on(success()), to(DISPLAY_DETAILS)));
 
 		// view the person details
-		addViewState(DISPLAY_DETAILS, "details", new Transition[] { on(back(), "finish"),
-				on(select(), BROWSE_COLLEAGUE_DETAILS) });
+		addViewState(DISPLAY_DETAILS, "details", new Transition[] { transition(on(back()), to("finish")),
+				transition(on(select()), to(BROWSE_COLLEAGUE_DETAILS)) });
 
 		// view details for selected collegue
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("externalContext.requestParameterMap.id", "id", fromStringTo(Long.class)));
-		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detail"), idMapper,
-				new Transition[] { on(finish(), GET_DETAILS) });
+		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detail"), idMapper, transition(on(finish()), to(GET_DETAILS)));
 
 		// end
 		addEndState("finish");
