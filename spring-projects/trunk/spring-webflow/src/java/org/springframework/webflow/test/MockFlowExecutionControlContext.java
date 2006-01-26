@@ -69,9 +69,9 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 		return getActiveFlow().onEvent(event, this);
 	}
 
-	public FlowSession endActiveFlowSession() throws IllegalStateException {
+	public FlowSession endActiveFlowSession(Map sessionOutput) throws IllegalStateException {
 		FlowSession endingSession = getActiveSession();
-		endingSession.getFlow().end(this);
+		endingSession.getFlow().end(this, sessionOutput);
 		setActiveSession(null);
 		return endingSession;
 	}

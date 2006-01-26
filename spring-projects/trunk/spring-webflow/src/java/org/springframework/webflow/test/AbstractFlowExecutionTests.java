@@ -16,7 +16,6 @@
 package org.springframework.webflow.test;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.binding.expression.ExpressionFactory;
@@ -28,27 +27,27 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 
 /**
  * Base class for integration tests that verify a flow executes as expected.
  * Flow execution tests captured by subclasses should test that a flow responds
  * to all supported transition criteria correctly, transitioning to the correct
- * states and producing the appropriate results on the occurence of possible
- * "external" (user) events.
+ * states and producing the expected results on the occurence of possible
+ * external (user) events.
  * <p>
  * More specifically, a typical flow execution test case will test:
  * <ul>
- * <li>That the flow execution starts as expected given a source event with
- * potential input request parameters (see the {@link #startFlow(Map)}
- * variants).
- * <li>That given the set of supported transition criteria for a given state,
- * that the state executes the appropriate transition when an event is signaled
- * (with potential input request parameters, see the
- * {@link #signalEvent(String, Map)} variants). A test case should be coded for
- * each logical event that can occur, where an event drives a possible path
- * through the flow. The goal should be to exercise all possible paths of the
- * flow.
+ * <li>That the flow execution starts as expected given a request from an
+ * external context containing potential input request parameters (see the
+ * {@link #startFlow(Map)} variants).
+ * <li>That given the set of supported transition criteria for a state, that
+ * the state executes the appropriate transition when an event is signaled (with
+ * potential input request parameters, see the {@link #signalEvent(String, Map)}
+ * variants). A test case should be coded for each logical event that can occur,
+ * where an event drives a possible path through the flow. The goal should be to
+ * exercise all possible paths of the flow.
  * <li>That given a transition that leads to an interactive state type (a view
  * state or an end state), that the view selection returned to the client
  * matches what was expected and the current state of the flow matches what is
@@ -88,61 +87,97 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	}
 
 	/**
-	 * Hook method subclasses can implement to do additional setup. Called after
-	 * the transition has been activated and the flow locator has been set.
+	 * Hook method subclasses can implement to do additional test setup.
 	 */
 	protected void onSetUpInTransactionalFlowTest() {
 	}
 
 	/**
-	 * Start a new flow execution for the flow definition that is being tested.
+	 * Start the flow execution that will be tested.
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
 	protected ViewSelection startFlow() {
-		return startFlow(new MockExternalContext(Collections.EMPTY_MAP));
+		return startFlow(new MockExternalContext(), null);
 	}
 
 	/**
-	 * Start a new flow execution for the flow definition that is being tested.
-	 * @param parameters request parameters needed by the flow execution to
-	 * start
+	 * Start the flow execution that will be tested. Pass in the populated
+	 * request parameter map for access during execution startup.
+	 * @param requestParameterMap request parameters needed by the flow
+	 * execution to complete startup
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
-	protected ViewSelection startFlow(Map parameters) {
-		return startFlow(new MockExternalContext(parameters));
+	protected ViewSelection startFlow(Map requestParameterMap) {
+		return startFlow(new MockExternalContext(requestParameterMap), null);
 	}
 
 	/**
-	 * Start a new flow execution for the flow definition that is being tested.
+	 * Start the flow execution that will be tested.
+	 * @param listener a single listener to attach to the flow execution for
+	 * this test scenario.
+	 * @return the view selection made as a result of starting the flow
+	 * (returned when the first interactive state (a view state or end state) is
+	 * entered)
+	 */
+	protected ViewSelection startFlow(FlowExecutionListener listener) {
+		return startFlow(new MockExternalContext(), new FlowExecutionListener[] { listener });
+	}
+
+	/**
+	 * Start the flow execution that will be tested. Pass in the populated
+	 * request parameter map for access during execution startup.
+	 * @param requestParameterMap request parameters needed by the flow
+	 * execution to complete startup
+	 * @param listener a single listener to attach to the flow execution for
+	 * this test scenario.
+	 * @return the view selection made as a result of starting the flow
+	 * (returned when the first interactive state (a view state or end state) is
+	 * entered)
+	 */
+	protected ViewSelection startFlow(Map requestParameterMap, FlowExecutionListener listener) {
+		return startFlow(new MockExternalContext(), new FlowExecutionListener[] { listener });
+	}
+
+	/**
+	 * Start the flow execution that will be tested.
+	 * <p>
+	 * This is the most flexible of the start methods. It allows you to specify
+	 * an external context that allows the flow execution being tested access to
+	 * the calling environment for this request. It also allows you to specify
+	 * an array of listeners that should observe the lifecycle of the flow
+	 * execution being tested (and make test assertions during that lifecycle).
 	 * @param context the external context providing information about the
 	 * caller's environment, used by the flow execution during the start
 	 * operation
+	 * @param listeners an array of listeners to attach to the flow execution
+	 * for this test scenario (may be null).
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
-	protected ViewSelection startFlow(ExternalContext context) {
-		this.flowExecution = createFlowExecution();
-		return this.flowExecution.start(context);
+	protected ViewSelection startFlow(ExternalContext context, FlowExecutionListener[] listeners) {
+		flowExecution = createFlowExecution(listeners);
+		return flowExecution.start(context);
 	}
 
 	/**
 	 * Create the flow execution tested by this test. Subclasses may override to
-	 * customize the execution implementation, for example, to attach custom
+	 * customize the execution implementation, for example, to attach additional
 	 * listeners.
 	 * @return the flow execution for this test
 	 */
-	protected FlowExecution createFlowExecution() {
-		return new FlowExecutionImpl(getFlow());
+	protected FlowExecution createFlowExecution(FlowExecutionListener[] listeners) {
+		return new FlowExecutionImpl(getFlow(), listeners);
 	}
 
 	/**
-	 * Get the singleton flow definition whose execution is being tested.
-	 * @return the singleton flow definition to test
+	 * Retrieve the flow definition whose execution is to be tested by this
+	 * test.
+	 * @return the definition of the flow whose execution will be tested
 	 * @throws FlowArtifactException if the flow identified by flowId() could
 	 * not be resolved (if <code>this.flow</code> was null)
 	 */
@@ -161,11 +196,11 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * Signal an occurence of an event in the current state of the flow
 	 * execution being tested.
 	 * @param eventId the event that occured
-	 * @param parameters request parameters needed by the flow execution to
-	 * complete event processing
+	 * @param requestParameterMap request parameters needed by the flow
+	 * execution to complete event processing
 	 */
-	protected ViewSelection signalEvent(String eventId, Map parameters) {
-		return flowExecution.signalEvent(eventId, new MockExternalContext(parameters));
+	protected ViewSelection signalEvent(String eventId, Map requestParameterMap) {
+		return flowExecution.signalEvent(eventId, new MockExternalContext(requestParameterMap));
 	}
 
 	/**
@@ -173,7 +208,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * execution being tested.
 	 * <p>
 	 * Note: signaling an event will cause state transitions to occur in a chain
-	 * UNTIL control is returned to the caller. Control is returned once a
+	 * until control is returned to the caller. Control is returned once a
 	 * "interactive" state type is entered: either a view state when the flow is
 	 * paused or an end state when the flow terminates. Action states are
 	 * executed without returning control, as their result always triggers
@@ -186,23 +221,21 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * just when the view state triggers return of control back to the client),
 	 * you have a few options:
 	 * <p>
-	 * First, you may implement a standalone unit test for your
-	 * <code>Action</code> implementation. There you can verify that the
-	 * action executes its core logic and responds to any exceptions it must
-	 * handle. When you do this, you may mock or stub out services the Action
-	 * implementation needs that are expensive to initialize. You can also
-	 * verify there that the action puts everything in the flow or request scope
-	 * it was supposed to (to meet its contract with the view it is prepping for
-	 * display, if it's a view setup action).
+	 * First, you may implement standalone unit tests for your
+	 * {@link org.springframework.webflow.Action} implementations. There you can
+	 * verify that an Action executes its logic properly in isolation. When you
+	 * do this, you may mock or stub out services the Action implementation
+	 * needs that are expensive to initialize. You can also verify there that
+	 * the action puts everything in the flow or request scope it was expected
+	 * to (to meet its contract with the view it is prepping for display, for
+	 * example).
 	 * <p>
-	 * Second, you can attach a FlowExecutionListener to the ongoing flow
-	 * execution at any time within your test code, which receives callbacks on
-	 * each state transition (among other points). To add a listener, call
-	 * <code>getFlowExecution().getListenerList().add(myListener)</code>,
-	 * where myListener is a class that implements the FlowExecutionListener
-	 * interface. It is recommended you extend
+	 * Second, you can attach one or more FlowExecutionListeners to the flow
+	 * execution at start time within your test code, which will allow you to
+	 * receive a callback on each state transition (among other points). It is
+	 * recommended you extend
 	 * {@link org.springframework.webflow.execution.FlowExecutionListenerAdapter}
-	 * and only override what you need.
+	 * and only override the callback methods you are interested in.
 	 * @param eventId the event that occured
 	 * @param context the external context providing information about the
 	 * caller's environment, used by the flow execution during the start
@@ -211,7 +244,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * returned to the client (occurs when the flow enters a view state, or an
 	 * end state)
 	 */
-	protected ViewSelection signalEvent(String eventId, MockExternalContext context) {
+	protected ViewSelection signalEvent(String eventId, ExternalContext context) {
 		return flowExecution.signalEvent(eventId, context);
 	}
 

@@ -53,8 +53,8 @@ public class MockExternalContext implements ExternalContext {
 	 * @param singleRequestParameterValue the parameter value
 	 */
 	public MockExternalContext(String singleRequestParameterName, Object singleRequestParameterValue) {
-		this.requestParameterMap = new HashMap(1);
-		this.requestParameterMap.put(singleRequestParameterName, singleRequestParameterValue);
+		requestParameterMap = new HashMap(1);
+		requestParameterMap.put(singleRequestParameterName, singleRequestParameterValue);
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class MockExternalContext implements ExternalContext {
 	 * @param requestParameterMap the request parameter map
 	 */
 	public MockExternalContext(Map requestParameterMap) {
-		this.requestParameterMap = requestParameterMap;
+		this.requestParameterMap = Collections.unmodifiableMap(requestParameterMap);
 	}
 
 	public Map getRequestParameterMap() {
@@ -75,17 +75,17 @@ public class MockExternalContext implements ExternalContext {
 	}
 
 	public SharedMap getSessionMap() {
-		return new MockMutexMapDecorator(sessionMap);
+		return new MockSharedMapDecorator(sessionMap);
 	}
 
 	public SharedMap getApplicationMap() {
-		return new MockMutexMapDecorator(applicationMap);
+		return new MockSharedMapDecorator(applicationMap);
 	}
 
-	private static class MockMutexMapDecorator extends SharedMapDecorator {
+	private static class MockSharedMapDecorator extends SharedMapDecorator {
 		private Mutex mutex = new Mutex();
 
-		public MockMutexMapDecorator(Map map) {
+		public MockSharedMapDecorator(Map map) {
 			super(map);
 		}
 
