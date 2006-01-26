@@ -2,7 +2,7 @@
 
 <!--
 	Spring Web Flow 1.0 DTD
-	Authors: Erwin Vervaet, Keith Donald
+	Authors: Keith Donald, Erwin Vervaet
 	
 	This DTD defines the Spring Web Flow (SWF) XML syntax.
 	
@@ -10,10 +10,10 @@
     A Flow definition is a blueprint for an executable, single-user process
 	(or conversation).
 	
-	A flow is composed of one or more states (or steps). Each state executes 
-	behavior when entered. What behavior is executed is a function of the
-	state's type. Core state types include view states, action states,
-	subflow states, decision states, and end states.
+	A flow is composed of one or more states that form the steps of the flow.
+	Each state executes behavior when entered. What behavior is executed is a
+	function of the state's type. Core state types include view states,
+	action states, subflow states, decision states, and end states.
     
     Each flow definition must specify exactly one start state and at least one end state.
     Events that occur in transitionable states drive state transitions.
@@ -25,11 +25,20 @@
 -->
 
 <!--
-	Defines exactly one flow definition. A flow is composed of one or more states. A flow may be
-    annotated with properties and may be configured to handle state exceptions. A flow may import
-    one or more bean definition resources defining custom flow artifacts (such as actions, 
-	exception handlers, view selectors, transition criteria, etc). A flow may nest one or more other 
-	flows in-line to use as subflows, referred to as 'inline flows'.
+	Defines exactly one flow definition.
+	
+	A flow is composed of one or more states that define the steps of the flow.
+	It may be annotated with properties that define custom characteristics that
+	can be used to affect flow execution.
+	
+	A flow may also be configured to respond to exceptions thrown by its states.
+	
+	It may import one or more local bean definition files defining custom
+	flow artifacts (such as actions, exception handlers, view selectors,
+	transition criteria, etc).
+	
+	Finally, a flow may nest one or more other flows within this document to
+	use as subflows, referred to as 'inline flows'.
 -->
 <!ELEMENT flow ( property*, start-actions?, var*, ( action-state | view-state | decision-state | subflow-state | end-state )+, end-actions?, exception-handler*, import*, inline-flow* )>
 
@@ -39,7 +48,7 @@
 <!ATTLIST flow start-state IDREF #REQUIRED>
 
 <!--
-	Defines flow startup logic to be executed. This logic will always execute when this flow is started.
+	Defines flow startup logic to execute. This logic will always execute when this flow is started.
 -->
 <!ELEMENT start-actions ( action+ )>
 
@@ -50,22 +59,18 @@
 <!ELEMENT var EMPTY>
 
 <!--
-	This variable's name.
+	This flow variable's name.
 -->
 <!ATTLIST var name CDATA #REQUIRED>
 
 <!--
-	This variable's type.  The type may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer').
+	This flow variable's type.  The type may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer').
 -->
 <!ATTLIST var type CDATA #IMPLIED>
 
 <!--
-	The value of the property; a short-cut alternative to an explicit child 'value' element.
--->
-<!ATTLIST property value CDATA #IMPLIED>
-
-<!--
-	A property associated with an another element (flow, action, state, transition, etc).
+	A property about this element.
+	
 	Properties are simple strings or typed attributes that allow you to annotate an element.
 	For example:
 	- an element's 'caption' property might serve a GUI tooltip or logging statement
@@ -75,7 +80,7 @@
 <!ELEMENT property ( value? )>
 
 <!--
-	The name of the property.
+	The name of this property.
 -->
 <!ATTLIST property name CDATA #REQUIRED>
 
@@ -86,19 +91,20 @@
 <!ATTLIST property type CDATA #IMPLIED>
 
 <!--
-	The value of the property; a short-cut alternative to an explicit child 'value' element.
+	The value of this property; a short-cut alternative to an explicit child 'value' element.
 -->
 <!ATTLIST property value CDATA #IMPLIED>
 
 <!--
-	The value of the property.
+	The value of this property.
 -->
 <!ELEMENT value ( #PCDATA )>
 
 <!--
-	Defines an action state, a state where one or more Actions (command objects) are executed.
-	An action state is a transitionable state. An action state transition is triggered by an
-	action result event.
+	Defines an action state, a state where one or more actions are executed.
+	This state type is typically used to invoke application code, often business services.
+	An action state is a transitionable state.  A transition out of this state 
+	is driven by the result of action execution (e.g. success, error).
 -->
 <!ELEMENT action-state ( property*, entry-actions?, action+, transition+, exit-actions?, exception-handler* )>
 
@@ -109,70 +115,89 @@
 
 <!--
 	Defines a single action to be executed. An action is a command object that executes
-	arbitrary behavior. An action may be annotated with properties. These properties can be
-	used to affect the action's execution.
+	arbitrary behavior.
+	
+	The action referenced by this element must implement the org.springframework.webflow.Action 
+	interface.  If the referenced action is a POJO that does not implement the Action interface
+	directly, Spring Web Flow will automatically adapt a method on that POJO to the Action contract.
+	See this element's 'method' attribute for more information.
+	
+	An action may be annotated with properties that can be used to affect the action's execution.
 -->
 <!ELEMENT action ( property* )>
 
 <!--
-	The logical identifier of the action implementation to execute, typically an the id of a bean
-	in the Spring bean factory. This is similar to the <ref bean="myBean"/>
-	notation of the Spring beans DTD.
+	The identifier of the action implementation to execute, typically the id of a bean
+	registered in a Spring BeanFactory.
+	
+	If the referenced bean implements the org.springframework.webflow.Action interface
+	directly, it is retrieved from the factory and used as is.  If the referenced bean is
+	a POJO that does not implement this interface, the method on the POJO referenced by the
+	'method' attribute is adapted to the Action interface automatically.  See the
+	'method' attribute for more information.
+	
+	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
 <!ATTLIST action bean CDATA #IMPLIED>
 
 <!--
 	An optional name qualifier for this action. When specified this action will
 	qualify execution result event ids by this name. For example, if this action is
-	named "processOrder" and signals a "success" result event after execution, the
-	fully qualified result event the flow can respond to would be "processOrder.success".
+	named "placeOrder" and signals a "success" result event after execution, the
+	fully qualified result event the flow can respond to would be "placeOrder.success".
 	
 	An action with a name is often referred to as a "named action".
 -->
 <!ATTLIST action name CDATA #IMPLIED>
 
 <!--
-	The name of the target method to invoke to execute this action, allowing for
-	action method binding.
+	The name of the target method to invoke to execute this action.  The value
+	of this attribute is a method binding expression that evaluates to a method 
+	on the referenced action bean.
 	
-	If this action extends MultiAction, the method's signature must
-	be of the form: 'public Event <method>(RequestContext) throws Exception'.
+	If this action bean extends org.springframework.webflow.action.MultiAction,
+	the expression is simply a static method name.
 
     For example:
-        method="setupForm"
-        	
-	If this action is an abritrary bean (POJO), the method's signature can 
+        <action bean="formAction" method="setupForm"/>
+    
+    The actual signature of this method must be of the form:
+	    public Event <method>(RequestContext) throws Exception { ... }
+	    
+	If this action is an abritrary bean (POJO), the expression can 
 	match any public method on the bean's implementation. In this case the
-	method format is as follows: <method>(${arg 1}, ..., ${arg n}) where any 
-	${argument expression}s are evaluated against this flow's RequestContext.
+	expression format is as follows: <method>(${arg 1}, ..., ${arg n}) where any 
+	${arg n} expressions are evaluated against the flow execution
+	org.springframework.webflow.RequestContext.
 
 	For example:
-        method="processOrder(${flowScope.order})"	
+        <action bean="orderClerk" method="placeOrder(${flowScope.order})"/>
 -->
 <!ATTLIST action method CDATA #IMPLIED>
 
 <!--
 	The name of the attribute that will expose the return value of the target action method.
 	Used in conjunction with the 'method' and 'resultScope' attributes.
-	Only applicable when this action invokes a method on a bean (POJO) that returns a value.
+	Only directly applicable when this action invokes a method on a bean (POJO)
+	that returns a value.
 
 	For example:
-        method="processOrder(${flowScope.order})" resultName="orderConfirmation"
+        <action bean="orderClerk" method="placeOrder(${flowScope.order})" resultName="orderConfirmation"/>
         
-    ... exposes the 'processOrder(Order)' method return value in request scope 
+    ... exposes the 'placeOrder(Order)' method return value in request scope 
     under the attribute name 'orderConfirmation'.
 -->
 <!ATTLIST action resultName CDATA #IMPLIED>
 
 <!--
 	The scope of the attribute that will expose the return value of the target action method.
-	Used in conjunction with the 'resultName' attribute, and only applicable when this action
-	invokes a method on a bean (POJO) that returns a value.
+	Used in conjunction with the 'resultName' attribute, and only directly applicable
+	when this action invokes a method on a bean (POJO) that returns a value.
 
 	For example:
-        method="suggestItineraries(${flowScope.trip})" resultName="itineraries" resultScope="flow"
+        <action bean="bookingAgent" method="suggestItineraries(${flowScope.trip})" resultName="itineraries" resultScope="flow"/>
 
-    ... exposes the 'suggestItineraries(Order)' method return value in flow scope 
+    ... exposes the 'suggestItineraries(Trip)' method return value in flow scope 
     under the attribute name 'itineraries'.
     
     The default value if not specified is request scope.     
@@ -194,12 +219,12 @@
 	should execute.
 	
 	The most basic value is a static event id. For example:
-  	    on="success"
+  	    <transition on="submit" to="state"/>
 	
 	Sophisticated transitional expressions are also supported. For example:
-	    on="${#result == 'submit' && flowScope.attribute == 'foo'}"
+	    <transition on="${#result == 'submit' && flowScope.attribute == 'foo'}" to="state"/>
 	
-	The exact interpretation of the attribute value depends on the TextToTransitionCriteria
+	The exact interpretation of this attribute value depends on the TextToTransitionCriteria
 	converter that is installed.
 -->
 <!ATTLIST transition on CDATA #REQUIRED>
@@ -210,8 +235,9 @@
 <!ATTLIST transition to IDREF #REQUIRED>
 
 <!--
-	Defines a view state, a state where a view will be selected for rendering and control will be 
-	returned to the user.
+	Defines a view state, a state where a view will be selected for rendering, the 
+	executing flow will be 'paused', and control will be returned to the user.
+	A view state allows the user to participate in the flow.
 
 	A view state is a transitionable state. A view state transition is triggered by a
 	user input event.
@@ -227,7 +253,7 @@
 	The name of the view to render when this view state is entered.
 	
 	This value may be a static view name or even a direct pointer to a view template. For example:
-	    "priceForm", or "/WEB-INF/jsp/priceForm.jsp"
+	    "priceForm" or "/WEB-INF/jsp/priceForm.jsp"
 	
 	This value may also be qualified with a prefix to denote a specific (possibly custom)
 	ViewSelector strategy. Specifically:
@@ -356,10 +382,12 @@
 <!ATTLIST if else IDREF #IMPLIED>
 
 <!--
-	Defines a subflow state, a state that spawns a subflow when entered.
+	Defines a subflow state, a state that spawns another flow as a subflow when entered.  When the
+	subflow ends, this state is expected to respond to its result.
 
-	A subflow state is a transitionable state. A subflow state transition is triggered by a 
-	subflow result event, typically by reasoning on the id of the subflow end state that was reached.
+	A subflow state is a transitionable state.  A state transition is triggered by a
+	subflow result event, which describes the logical subflow outcome that occurred.  Typically the 
+	criteria for this transition is the id of the subflow end state that was entered.
 	
 	While the subflow is active, this flow is suspended waiting for the subflow to complete execution.
 	When the subflow completes execution by reaching an end state, this state is expected 
@@ -496,10 +524,11 @@
 	A end state is not transitionable, there are no transitions out of an end state.
 	When an end-state is entered, a instance of this flow is terminated.
 	
-	When an end state is entered, if the executing	flow is a "root flow" the entire execution
-	(conversation) is terminated. If the executing flow is a "subflow" the subflow session ends
-	and the parent session resumes. To resume, the parent session responds to the result of
-	the subflow, typically by reasoning on the id of the end state that was reached.
+	When an end state is entered, if the executingflow is a "root" or top-level flow
+	the entire execution (conversation) is terminated. If the executing flow is a subflow
+	the subflow session ends and the parent session resumes. To resume, the parent session
+	responds to the result of the subflow, typically by reasoning on the id of the end
+	state that was reached.
 -->
 <!ELEMENT end-state ( property*, entry-actions?, output-attribute*, exception-handler* )>
 
