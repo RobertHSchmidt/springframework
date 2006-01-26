@@ -35,7 +35,7 @@
 	<dependency org="springframework" name="spring-portlet" rev="2.0-m1" conf="buildtime,portlet->default"/>
 
 	<!-- struts	only dependencies -->
-	<dependency	org="apache" name="struts" rev="1.2.7" conf="buildtime,struts->default"/>
+	<dependency	org="apache" name="struts" rev="1.2.8" conf="buildtime,struts->default"/>
 	<dependency	org="apache" name="commons-lang" rev="2.1" conf="struts->default"/>
 
     <!-- JSF-only dependencies -->

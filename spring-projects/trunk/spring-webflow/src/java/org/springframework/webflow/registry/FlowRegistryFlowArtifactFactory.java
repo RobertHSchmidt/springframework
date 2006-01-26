@@ -24,10 +24,9 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.StateExceptionHandler;
-import org.springframework.webflow.Transition;
+import org.springframework.webflow.TransitionTargetStateResolver;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.Transition.TargetStateResolver;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
 import org.springframework.webflow.builder.FlowArtifactParameters;
@@ -94,8 +93,8 @@ public class FlowRegistryFlowArtifactFactory extends FlowArtifactFactoryAdapter 
 		return (ViewSelector)getBean(id, ViewSelector.class, true);
 	}
 
-	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
-		return (TargetStateResolver)getBean(id, Transition.TargetStateResolver.class, true);
+	public TransitionTargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
+		return (TransitionTargetStateResolver)getBean(id, TransitionTargetStateResolver.class, true);
 	}
 
 	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {

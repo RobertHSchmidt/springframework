@@ -29,6 +29,7 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.TransitionTargetStateResolver;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
@@ -44,6 +45,7 @@ import org.springframework.webflow.builder.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.SimpleViewSelector;
+import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -58,22 +60,22 @@ public class FlowExecutionTests extends TestCase {
 		Flow subFlow = new Flow("mySubFlow");
 		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
 		state1.setViewSelector(view("mySubFlowViewName"));
-		state1.addTransition(new Transition(on("submit"), "finish"));
+		state1.addTransition(new Transition(on("submit"), to("finish")));
 		new EndState(subFlow, "finish");
 
 		Flow flow = new Flow("myFlow");
 
 		ActionState actionState = new ActionState(flow, "actionState");
 		actionState.addAction(new ExecutionCounterAction());
-		actionState.addTransition(new Transition(on("success"), "viewState"));
+		actionState.addTransition(new Transition(on("success"), to("viewState")));
 
 		ViewState viewState = new ViewState(flow, "viewState");
 		viewState.setViewSelector(view("myView"));
-		viewState.addTransition(new Transition(on("submit"), "subFlowState"));
+		viewState.addTransition(new Transition(on("submit"), to("subFlowState")));
 
 		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
 		subflowState.setAttributeMapper(new InputOutputMapper());
-		subflowState.addTransition(new Transition(on("finish"), "finish"));
+		subflowState.addTransition(new Transition(on("finish"), to("finish")));
 
 		new EndState(flow, "finish");
 
@@ -97,8 +99,8 @@ public class FlowExecutionTests extends TestCase {
 	public void testLoopInFlow() throws Exception {
 		AbstractFlowBuilder builder = new AbstractFlowBuilder() {
 			public void buildStates() throws FlowBuilderException {
-				addViewState("viewState", "viewName", new Transition[] { on(submit(), "viewState"),
-						on(finish(), "endState") });
+				addViewState("viewState", "viewName", new Transition[] { transition(on(submit()), to("viewState")),
+						transition(on(finish()), to("endState")) });
 				addEndState("endState");
 			}
 		};
@@ -132,7 +134,9 @@ public class FlowExecutionTests extends TestCase {
 						}
 						return error();
 					}
-				}, new Transition[] { on(success(), finish()), on(error(), "stopTest") });
+				},
+						new Transition[] { transition(on(success()), to(finish())),
+								transition(on(error()), to("stopTest")) });
 				addEndState(finish());
 				addEndState("stopTest");
 			}
@@ -145,9 +149,9 @@ public class FlowExecutionTests extends TestCase {
 					protected Event doExecute(RequestContext context) throws Exception {
 						return success();
 					}
-				}, on(success(), "startSubFlow"));
-				addSubflowState("startSubFlow", childFlow, new Transition[] { on(finish(), "startSubFlow"),
-						on("stopTest", "stopTest") });
+				}, transition(on(success()), to("startSubFlow")));
+				addSubflowState("startSubFlow", childFlow, new Transition[] {
+						transition(on(finish()), to("startSubFlow")), transition(on("stopTest"), to("stopTest")) });
 				addEndState("stopTest");
 			}
 		};
@@ -193,6 +197,10 @@ public class FlowExecutionTests extends TestCase {
 		return new EventIdTransitionCriteria(event);
 	}
 
+	public static TransitionTargetStateResolver to(String stateId) {
+		return new StaticTransitionTargetStateResolver(stateId);
+	}
+	
 	public static ViewSelector view(String viewName) {
 		return new SimpleViewSelector(viewName);
 	}

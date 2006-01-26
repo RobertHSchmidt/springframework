@@ -107,10 +107,10 @@ public class AbstractFlowBuilderTests extends TestCase {
 
 	public class TestMasterFlowBuilderLookupById extends AbstractFlowBuilder {
 		public void buildStates() {
-			addActionState("getPersonList", action("noOpAction"), on(success(), "viewPersonList"));
-			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
-			addSubflowState(PERSON_DETAILS, flow("person.Detail"), attributeMapper("id.attributeMapper"),
-					onAnyEvent("getPersonList"));
+			addActionState("getPersonList", action("noOpAction"), transition(on(success()), to("viewPersonList")));
+			addViewState("viewPersonList", "person.list.view", transition(on(submit()), to("person.Detail")));
+			addSubflowState(PERSON_DETAILS, flow("person.Detail"), attributeMapper("id.attributeMapper"), transition(
+					on("*"), to("getPersonList")));
 			addEndState("finish");
 		}
 	}
@@ -135,9 +135,9 @@ public class AbstractFlowBuilderTests extends TestCase {
 		}
 
 		public void buildStates() {
-			addActionState("getPersonList", noOpAction, on(success(), "viewPersonList"));
-			addViewState("viewPersonList", "person.list.view", on(submit(), "person.Detail"));
-			addSubflowState(PERSON_DETAILS, subFlow, personIdMapper, onAnyEvent("getPersonList"));
+			addActionState("getPersonList", noOpAction, transition(on(success()), to("viewPersonList")));
+			addViewState("viewPersonList", "person.list.view", transition(on(submit()), to("person.Detail")));
+			addSubflowState(PERSON_DETAILS, subFlow, personIdMapper, transition(on("*"), to("getPersonList")));
 			addEndState("finish");
 		}
 	}
@@ -155,10 +155,10 @@ public class AbstractFlowBuilderTests extends TestCase {
 
 	public static class TestDetailFlowBuilderLookupById extends AbstractFlowBuilder {
 		public void buildStates() {
-			addActionState("getDetails", action("noOpAction"), on(success(), "viewDetails"));
-			addViewState("viewDetails", "person.Detail.view", on(submit(), "bindAndValidateDetails"));
+			addActionState("getDetails", action("noOpAction"), transition(on(success()), to("viewDetails")));
+			addViewState("viewDetails", "person.Detail.view", transition(on(submit()), to("bindAndValidateDetails")));
 			addActionState("bindAndValidateDetails", action("noOpAction"), new Transition[] {
-					on(error(), "viewDetails"), on(success(), "finish") });
+					transition(on(error()), to("viewDetails")), transition(on(success()), to("finish")) });
 			addEndState("finish");
 		}
 	}
@@ -172,10 +172,10 @@ public class AbstractFlowBuilderTests extends TestCase {
 		}
 
 		public void buildStates() {
-			addActionState("getDetails", noOpAction, on(success(), "viewDetails"));
-			addViewState("viewDetails", "person.Detail.view", on(submit(), "bindAndValidateDetails"));
-			addActionState("bindAndValidateDetails", noOpAction, new Transition[] { on(error(), "viewDetails"),
-					on(success(), "finish") });
+			addActionState("getDetails", noOpAction, transition(on(success()), to("viewDetails")));
+			addViewState("viewDetails", "person.Detail.view", transition(on(submit()), to("bindAndValidateDetails")));
+			addActionState("bindAndValidateDetails", noOpAction, new Transition[] {
+					transition(on(error()), to("viewDetails")), transition(on(success()), to("finish")) });
 			addEndState("finish");
 		}
 	};

@@ -10,11 +10,11 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
+import org.springframework.webflow.TransitionTargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.Transition.TargetStateResolver;
 
 /**
  * A support interface used by FlowBuilders at configuration time to retrieve
@@ -82,7 +82,7 @@ public interface FlowArtifactFactory {
 	 * @return the target state resolver
 	 * @throws FlowArtifactException when no such resolver is found
 	 */
-	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException;
+	public TransitionTargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException;
 
 	/**
 	 * Create a new flow definition with the assigned parameters.

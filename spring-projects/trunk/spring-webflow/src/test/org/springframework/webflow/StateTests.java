@@ -27,6 +27,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.SimpleViewSelector;
+import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -40,7 +41,7 @@ public class StateTests extends TestCase {
 		Flow flow = new Flow("myFlow");
 		ActionState state = new ActionState(flow, "actionState");
 		state.addAction(new ExecutionCounterAction());
-		state.addTransition(new Transition(on("success"), "finish"));
+		state.addTransition(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
@@ -55,7 +56,7 @@ public class StateTests extends TestCase {
 		state.addAction(new ExecutionCounterAction(null));
 		state.addAction(new ExecutionCounterAction(""));
 		state.addAction(new ExecutionCounterAction("success"));
-		state.addTransition(new Transition(on("success"), "finish"));
+		state.addTransition(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
@@ -74,7 +75,7 @@ public class StateTests extends TestCase {
 		state.addAction(new ExecutionCounterAction(null));
 		state.addAction(new ExecutionCounterAction(""));
 		state.addAction(new ExecutionCounterAction("yet another not mapped result"));
-		state.addTransition(new Transition(on("success"), "finish"));
+		state.addTransition(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		try {
@@ -97,7 +98,7 @@ public class StateTests extends TestCase {
 		AnnotatedAction action4 = new AnnotatedAction(new ExecutionCounterAction("success"));
 		action4.setName("action4");
 		state.addAction(action4);
-		state.addTransition(new Transition(on("action4.success"), "finish"));
+		state.addTransition(new Transition(on("action4.success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
@@ -114,11 +115,10 @@ public class StateTests extends TestCase {
 		Flow flow = new Flow("myFlow");
 		ViewState state = new ViewState(flow, "viewState");
 		state.setViewSelector(view("myViewName"));
-		state.addTransition(new Transition(on("submit"), "finish"));
+		state.addTransition(new Transition(on("submit"), to("finish")));
 		assertTrue(state.isTransitionable());
 		assertTrue(!state.isMarker());
 		new EndState(flow, "finish");
-		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getCurrentState().getId());
@@ -129,10 +129,9 @@ public class StateTests extends TestCase {
 	public void testViewStateMarker() {
 		Flow flow = new Flow("myFlow");
 		ViewState state = new ViewState(flow, "viewState");
-		state.addTransition(new Transition(on("submit"), "finish"));
+		state.addTransition(new Transition(on("submit"), to("finish")));
 		assertTrue(state.isMarker());
 		new EndState(flow, "finish");
-		flow.resolveStateTransitionsTargetStates();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getCurrentState().getId());
@@ -143,12 +142,12 @@ public class StateTests extends TestCase {
 		Flow subFlow = new Flow("mySubFlow");
 		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
 		state1.setViewSelector(view("mySubFlowViewName"));
-		state1.addTransition(new Transition(on("submit"), "finish"));
+		state1.addTransition(new Transition(on("submit"), to("finish")));
 		new EndState(subFlow, "finish");
 
 		Flow flow = new Flow("myFlow");
 		SubflowState state2 = new SubflowState(flow, "subFlowState", subFlow);
-		state2.addTransition(new Transition(on("finish"), "finish"));
+		state2.addTransition(new Transition(on("finish"), to("finish")));
 
 		EndState state3 = new EndState(flow, "finish");
 		state3.setViewSelector(view("myParentFlowEndingViewName"));
@@ -167,7 +166,7 @@ public class StateTests extends TestCase {
 		Flow subFlow = new Flow("mySubFlow");
 		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
 		state1.setViewSelector(view("mySubFlowViewName"));
-		state1.addTransition(new Transition(on("submit"), "finish"));
+		state1.addTransition(new Transition(on("submit"), to("finish")));
 		EndState state2 = new EndState(subFlow, "finish");
 		state2.addOutputAttributeName("childInputAttribute");
 
@@ -176,11 +175,11 @@ public class StateTests extends TestCase {
 		Action mapperAction = new AttributeMapperAction(new Mapping(
 				"externalContext.requestParameterMap.parentInputAttribute", "flowScope.parentInputAttribute"));
 		mapperState.addAction(mapperAction);
-		mapperState.addTransition(new Transition(on("success"), "subFlowState"));
+		mapperState.addTransition(new Transition(on("success"), to("subFlowState")));
 
 		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
 		subflowState.setAttributeMapper(new InputOutputMapper());
-		subflowState.addTransition(new Transition(on("finish"), "finish"));
+		subflowState.addTransition(new Transition(on("finish"), to("finish")));
 
 		EndState endState = new EndState(flow, "finish");
 		endState.setViewSelector(view("myParentFlowEndingViewName"));
@@ -201,6 +200,10 @@ public class StateTests extends TestCase {
 
 	public static TransitionCriteria on(String event) {
 		return new EventIdTransitionCriteria(event);
+	}
+
+	public static TransitionTargetStateResolver to(String stateId) {
+		return new StaticTransitionTargetStateResolver(stateId);
 	}
 
 	public static ViewSelector view(String viewName) {

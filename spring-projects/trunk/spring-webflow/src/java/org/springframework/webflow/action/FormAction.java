@@ -300,7 +300,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * property is set before this action is executed. Useful for piecemeal
 	 * validation as part of a wizard.
 	 */
-	private boolean requireValidatorMethod;
+	private boolean validateUsingValidatorMethod;
 
 	/**
 	 * Creates a initially unconfigured FormAction instance relying on default
@@ -421,7 +421,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * execution of the {@link #setupForm(RequestContext)} action method.
 	 * @return bind on setup form
 	 */
-	public boolean isBindOnSetupForm() {
+	public boolean getBindOnSetupForm() {
 		return this.bindOnSetupForm;
 	}
 
@@ -437,7 +437,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * Return if the validator should also be invoked on execution of the
 	 * {@link #bindAndValidate(RequestContext)} method. Defaults to true.
 	 */
-	public boolean isValidateOnBinding() {
+	public boolean getValidateOnBinding() {
 		return validateOnBinding;
 	}
 
@@ -453,16 +453,16 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * Returns if the validator should only be invoked if the
 	 * {@link #VALIDATOR_METHOD_PROPERTY} request context property is set.
 	 */
-	public boolean getRequireValidatorMethod() {
-		return requireValidatorMethod;
+	public boolean getValidateUsingValidatorMethod() {
+		return validateUsingValidatorMethod;
 	}
 
 	/**
 	 * Set if the validator should only be invoked if the
 	 * {@link #VALIDATOR_METHOD_PROPERTY} request context property is set.
 	 */
-	public void setRequireValidatorMethod(boolean requireValidatorMethod) {
-		this.requireValidatorMethod = requireValidatorMethod;
+	public void setValidateUsingValidatorMethod(boolean validateUsingValidatorMethod) {
+		this.validateUsingValidatorMethod = validateUsingValidatorMethod;
 	}
 
 	/**
@@ -530,7 +530,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 		DataBinder binder = createBinder(context, formObject);
 		doBind(context, binder);
 		setFormErrors(context, binder.getErrors());
-		if (getValidator() != null && isValidateOnBinding() && validationEnabled(context)) {
+		if (getValidator() != null && getValidateOnBinding() && validationEnabled(context)) {
 			doValidate(context, binder);
 		}
 		else {
@@ -872,10 +872,10 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	/**
 	 * Returns true if event parameters should be bound to the form object
 	 * during the {@link #setupForm(RequestContext)} action. The default
-	 * implementation just calls {@link #isBindOnSetupForm()}.
+	 * implementation just calls {@link #getBindOnSetupForm()}.
 	 */
 	protected boolean setupBindingEnabled(RequestContext context) {
-		return isBindOnSetupForm();
+		return getBindOnSetupForm();
 	}
 
 	/**
@@ -892,7 +892,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * @return whether or not validation is enabled
 	 */
 	protected boolean validationEnabled(RequestContext context) {
-		if (getRequireValidatorMethod()) {
+		if (getValidateUsingValidatorMethod()) {
 			return context.getProperties().containsKey(VALIDATOR_METHOD_PROPERTY);
 		}
 		else {

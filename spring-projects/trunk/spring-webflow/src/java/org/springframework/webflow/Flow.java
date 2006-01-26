@@ -527,22 +527,6 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Utility method that iterates over this Flow's list of state Transition
-	 * objects and resolves their target states. Designed to be called after
-	 * Flow construction and all states have been added as a 'second pass' to
-	 * allow for transition target state resolution.
-	 */
-	public void resolveStateTransitionsTargetStates() {
-		Iterator it = statesIterator();
-		while (it.hasNext()) {
-			State state = (State)it.next();
-			if (state.isTransitionable()) {
-				((TransitionableState)state).resolveTransitionsTargetStates();
-			}
-		}
-	}
-
-	/**
 	 * Start a new execution of this flow in the specified state.
 	 * @param startState the start state to use -- when <code>null</code>,
 	 * the default start state of the flow will be used

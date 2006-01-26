@@ -29,7 +29,7 @@ Package org.springframework.webflow.action
 * Added BeanFactoryBeanInvokingAction, an action that can invoke any instance method on any bean managed by the Spring bean factory.
 * Added LocalBeanInvokingAction, an action that can invoke any instance method on any bean.
 * Added "CompositeEvent" support for composite actions that may generate multiple action result events.
-* Added "requireValidatorMethod" property to FormAction, useful for supporting piecemeal validation as part of a wizard flow.
+* Added "validateUsingValidatorMethod" property to FormAction, useful for supporting piecemeal validation as part of a wizard flow.
 * Added ActionUtils utility class, useful when implementing actions.
 * Added a convenience constructor to the Event class that takes a single parameter name/value. Mainly for use in unit tests.
 * Added a convenience constructor to the FormAction class that takes the formObjectClass name.

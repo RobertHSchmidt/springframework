@@ -7,6 +7,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
+import org.springframework.webflow.TransitionTargetStateResolver;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.builder.MyCustomException;
@@ -22,7 +23,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};
-		state1.addTransition(new Transition("end"));
+		state1.addTransition(new Transition(to("end")));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		handler.add(MyCustomException.class, "state1");
 		StateException e = new StateException(state1, "Oops", new MyCustomException());
@@ -36,7 +37,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};
-		state1.addTransition(new Transition("end"));
+		state1.addTransition(new Transition(to("end")));
 		EndState state2 = new EndState(flow, "end");
 		state2.setViewSelector(new SimpleViewSelector("view"));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
@@ -54,7 +55,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};
-		state1.addTransition(new Transition("end"));
+		state1.addTransition(new Transition(to("end")));
 		EndState state2 = new EndState(flow, "end");
 		state2.setViewSelector(new SimpleViewSelector("view"));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
@@ -72,7 +73,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};
-		state1.addTransition(new Transition("end"));
+		state1.addTransition(new Transition(to("end")));
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		try {
 			execution.start(new MockExternalContext());
@@ -81,5 +82,9 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		catch (StateException e) {
 			// expected
 		}
+	}
+	
+	public static TransitionTargetStateResolver to(String stateId) {
+		return new StaticTransitionTargetStateResolver(stateId);
 	}
 }

@@ -168,7 +168,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	}
 
 	public void buildPostProcess() {
-		getFlow().resolveStateTransitionsTargetStates();
+		
 	}
 
 	public void dispose() {

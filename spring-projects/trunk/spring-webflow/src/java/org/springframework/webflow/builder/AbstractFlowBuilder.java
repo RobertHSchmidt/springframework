@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.builder;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.binding.method.MethodKey;
@@ -30,6 +29,7 @@ import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.TransitionTargetStateResolver;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.support.ActionTransitionCriteria;
@@ -45,23 +45,22 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- *     public void buildStates() {
- *         // get customer information
- *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
- *             on(success(), &quot;displayDetails&quot;));
- *         // view customer information               
- *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *             on(submit(), &quot;bindAndValidate&quot;);
- *         // bind and validate customer information updates 
- *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
- *             new Transition[] {
- *                 on(error(), &quot;displayDetails&quot;),
- *                 on(success(), &quot;finish&quot;)
- *             });
- *         // finish
- *         addEndState(&quot;finish&quot;);
- *     }
- * }
+ * public void buildStates() {
+ *                      // get customer information
+ *                      addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
+ *                          on(success(), &quot;displayDetails&quot;));
+ *                      // view customer information               
+ *                      addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *                          on(submit(), &quot;bindAndValidate&quot;);
+ *                      // bind and validate customer information updates 
+ *                      addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
+ *                          new Transition[] {
+ *                              on(error(), &quot;displayDetails&quot;),
+ *                              on(success(), &quot;finish&quot;)
+ *                          });
+ *                      // finish
+ *                      addEndState(&quot;finish&quot;);
+ *                  }}
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
@@ -246,7 +245,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected ViewState addViewState(String stateId, String viewName, Transition transition)
 			throws IllegalArgumentException {
-		return addViewState(stateId, view(viewName), new Transition[] { transition }, null);
+		return addViewState(stateId, viewSelector(viewName), new Transition[] { transition }, null);
 	}
 
 	/**
@@ -265,7 +264,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected ViewState addViewState(String stateId, String viewName, Transition[] transitions)
 			throws IllegalArgumentException {
-		return addViewState(stateId, view(viewName), transitions, null);
+		return addViewState(stateId, viewSelector(viewName), transitions, null);
 	}
 
 	/**
@@ -285,7 +284,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected ViewState addViewState(String stateId, String viewName, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
-		return addViewState(stateId, view(viewName), transitions, properties);
+		return addViewState(stateId, viewSelector(viewName), transitions, properties);
 	}
 
 	/**
@@ -338,7 +337,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param viewName the view name (might be encoded)
 	 * @return the corresponding view selector
 	 */
-	protected ViewSelector view(String viewName) {
+	protected ViewSelector viewSelector(String viewName) {
 		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName);
 	}
 
@@ -452,73 +451,16 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Request that the action with the specified id be executed when the action
-	 * state being built is entered. Simply looks the action up by name and
-	 * returns it.
-	 * @param id the action id
-	 * @return the action
-	 * @throws FlowArtifactException the action could not be resolved
-	 */
-	protected AnnotatedAction annotatedAction(String id, Map properties) throws FlowArtifactException {
-		return new AnnotatedAction(action(id), properties);
-	}
-
-	/**
-	 * Creates an annotated action suitable for adding to exactly one action
-	 * state, wrapping the specified target action, with no properties
-	 * configured initially.
-	 * @param action the action
-	 * @return the annotated action
-	 */
-	protected AnnotatedAction annotate(Action action) {
-		return new AnnotatedAction(action);
-	}
-
-	/**
-	 * Creates an annotated action suitable for adding to exactly one action
-	 * state, wrapping the specified target action and annotating it with the
-	 * specified properties.
-	 * @param action the action
-	 * @param properties the action state properties
-	 * @return the annotated action
-	 */
-	protected AnnotatedAction annotate(Action action, Map properties) {
-		return new AnnotatedAction(action, properties);
-	}
-
-	/**
-	 * Creates an named action suitable for adding to exactly one action state.
-	 * @param name the action name
-	 * @param action the action
-	 * @return the annotated action
-	 */
-	protected AnnotatedAction name(Action action, String name) {
-		Map properties = new HashMap(1);
-		properties.put(AnnotatedAction.NAME_PROPERTY, name);
-		AnnotatedAction stateAction = new AnnotatedAction(action, properties);
-		return stateAction;
-	}
-
-	/**
 	 * Creates an annotated action with a single property that indicates which
 	 * method should be invoked on the target action when the state is entered.
-	 * @param methodName the method name to invoke on the action</code>
+	 * @param encodedMethodKey the method name to invoke on the action</code>
 	 * @return the annotated action
 	 */
-	protected AnnotatedAction method(String methodName, Action action) {
-		return method((MethodKey)fromStringTo(MethodKey.class).execute(methodName), action);
-	}
-
-	/**
-	 * Creates an annotated action with a single property that indicates which
-	 * method should be invoked on the target action when the state is entered.
-	 * @param methodKey A key identifying the the method to invoke on the action</code>
-	 * @return the annotated action
-	 */
-	protected AnnotatedAction method(MethodKey methodKey, Action action) {
-		Map properties = new HashMap(1);
-		properties.put(AnnotatedAction.METHOD_PROPERTY, methodKey);
-		return new AnnotatedAction(action, properties);
+	protected AnnotatedAction method(String encodedMethodKey, Action action) {
+		MethodKey method = (MethodKey)fromStringTo(MethodKey.class).execute(encodedMethodKey);
+		AnnotatedAction annotatedAction = new AnnotatedAction(action);
+		annotatedAction.setMethod(method);
+		return annotatedAction;
 	}
 
 	/**
@@ -616,14 +558,14 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Request that the attribute mapper with the specified name be used to map
 	 * attributes between a parent flow and a spawning subflow when the subflow
 	 * state being constructed is entered.
-	 * @param attributeMapperId the id of the attribute mapper that will map
-	 * attributes between the flow built by this builder and the subflow
+	 * @param id the id of the attribute mapper that will map attributes between
+	 * the flow built by this builder and the subflow
 	 * @return the attribute mapper
 	 * @throws FlowArtifactException no FlowAttributeMapper implementation was
 	 * exported with the specified id
 	 */
-	protected FlowAttributeMapper attributeMapper(String attributeMapperId) throws FlowArtifactException {
-		return getFlowArtifactFactory().getAttributeMapper(attributeMapperId);
+	protected FlowAttributeMapper attributeMapper(String id) throws FlowArtifactException {
+		return getFlowArtifactFactory().getAttributeMapper(id);
 	}
 
 	/**
@@ -631,13 +573,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * as a subflow when the subflow state being built is entered. Simply
 	 * resolves the subflow definition by id and returns it; throwing a
 	 * fail-fast exception if it does not exist.
-	 * @param flowId the flow definition id
+	 * @param id the flow definition id
 	 * @return the flow to be used as a subflow, this should be passed to a
 	 * addSubflowState call
 	 * @throws FlowArtifactException when the flow cannot be resolved
 	 */
-	protected Flow flow(String flowId) throws FlowArtifactException {
-		return getFlowArtifactFactory().getSubflow(flowId);
+	protected Flow flow(String id) throws FlowArtifactException {
+		return getFlowArtifactFactory().getSubflow(id);
 	}
 
 	/**
@@ -671,8 +613,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected DecisionState addDecisionState(String stateId, TransitionCriteria matchingCriteria, String ifTrueStateId,
 			String ifFalseStateId, Map properties) throws IllegalArgumentException {
 		Transition[] transitions = new Transition[2];
-		transitions[0] = new Transition(matchingCriteria, ifTrueStateId);
-		transitions[1] = new Transition(ifFalseStateId);
+		transitions[0] = new Transition(to(ifTrueStateId));
+		transitions[0].setMatchingCriteria(matchingCriteria);
+		transitions[1] = new Transition(to(ifFalseStateId));
 		return addDecisionState(stateId, transitions, properties);
 	}
 
@@ -727,7 +670,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
 	protected EndState addEndState(String stateId, String viewName) throws IllegalArgumentException {
-		return addEndState(stateId, view(viewName), null);
+		return addEndState(stateId, viewSelector(viewName), null);
 	}
 
 	/**
@@ -740,7 +683,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
 	protected EndState addEndState(String stateId, String viewName, Map properties) throws IllegalArgumentException {
-		return addEndState(stateId, view(viewName), properties);
+		return addEndState(stateId, viewSelector(viewName), properties);
 	}
 
 	/**
@@ -775,162 +718,76 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Creates a transition stating:
-	 * <tt>On the occurence of an event that matches the criteria defined by
-	 * ${criteria}, transition to state ${stateId}.
-	 * </tt>
-	 * @param criteria the transition criteria
-	 * @param stateId the target state Id
-	 * @return the transition (event matching criteria->stateId)
+	 * Creates a transition criteria that is used to match a Transition. The
+	 * criteria is based on the provided expression string.
+	 * @param transitionCriteriaExpression the transition criteria expression,
+	 * typically simply a static event identifier (e.g. "submit")
+	 * @return the transition criteria
 	 */
-	protected Transition on(TransitionCriteria criteria, String stateId) {
-		return new Transition(criteria, stateId);
+	protected TransitionCriteria on(String transitionCriteriaExpression) {
+		return (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(transitionCriteriaExpression);
+	}
+
+	/**
+	 * Creates a transition target state resolver that is used to take a
+	 * Transition to its target state during execution.
+	 * @param targetStateExpression the target state expression, typically
+	 * simply the targetStateId
+	 * @return the target state resolver
+	 */
+	protected TransitionTargetStateResolver to(String targetStateExpression) {
+		return (TransitionTargetStateResolver)fromStringTo(TransitionTargetStateResolver.class).execute(
+				targetStateExpression);
 	}
 
 	/**
 	 * Creates a transition stating:
-	 * <tt>On the occurence of an event that matches the criteria defined by
-	 * ${criteria}, transition to state ${stateId}.
+	 * <tt>On the occurrence of an event that matches the criteria defined by
+	 * ${criteria}, transition to the state resolved by ${targetStateResolver}.
 	 * </tt>
 	 * @param criteria the transition criteria
-	 * @param stateId the state Id
-	 * @param properties additional properties about the transition
+	 * @param targetStateResolver the resolver of the target state of the
+	 * transition
 	 * @return the transition (event matching criteria->stateId)
 	 */
-	protected Transition on(TransitionCriteria criteria, String stateId, Map properties) {
-		Transition transition = new Transition(criteria, stateId);
-		transition.addProperties(properties);
+	protected Transition transition(TransitionCriteria criteria, TransitionTargetStateResolver targetStateResolver) {
+		Transition transition = new Transition(targetStateResolver);
+		transition.setMatchingCriteria(criteria);
 		return transition;
 	}
 
 	/**
 	 * Creates a transition stating:
-	 * <tt>On the occurence of an event that matches the criteria defined by
-	 * ${criteria}, transition to state ${stateId} if the ${executionCriteria}
+	 * <tt>On the occurrence of an event that matches the criteria defined by
+	 * ${criteria}, transition to the state resolved by ${targetStateResolver} if the ${executionCriteria}
 	 * holds true.
 	 * </tt>
 	 * @param criteria the transition criteria
-	 * @param stateId the state Id
+	 * @param targetStateResolver the resolver of the target state of the
+	 * transition
 	 * @param executionCriteria criteria that decide whether or not the
 	 * transition can complete execution
 	 * @return the transition (event matching criteria->stateId)
 	 */
-	protected Transition on(TransitionCriteria criteria, String stateId, TransitionCriteria executionCriteria) {
-		Transition transition = on(criteria, stateId);
+	protected Transition transition(TransitionCriteria criteria, TransitionTargetStateResolver targetStateResolver,
+			TransitionCriteria executionCriteria) {
+		Transition transition = transition(criteria, targetStateResolver);
 		transition.setExecutionCriteria(executionCriteria);
 		return transition;
 	}
 
 	/**
-	 * Creates a transition stating:
-	 * <tt>On the occurence of an event that matches the criteria defined by
-	 * ${criteria}, transition to state ${stateId} if the ${executionCriteria}
-	 * holds true.
-	 * </tt>
-	 * @param criteria the transition criteria
-	 * @param stateId the state Id
-	 * @param properties additional properties about the transition
-	 * @return the transition (event matching criteria->stateId)
-	 */
-	protected Transition on(TransitionCriteria criteria, String stateId, TransitionCriteria executionCriteria,
-			Map properties) {
-		Transition transition = on(criteria, stateId, properties);
-		transition.setExecutionCriteria(executionCriteria);
-		return transition;
-	}
-
-	/**
-	 * Creates a transition stating:
-	 * <tt>On the occurence of event ${eventId}, transition to state
-	 * ${stateId}.
-	 * </tt>
-	 * @param eventId the event id
-	 * @param stateId the state Id
-	 * @return the transition (eventId->stateId)
-	 */
-	protected Transition on(String eventId, String stateId) {
-		TransitionCriteria criteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(eventId);
-		return on(criteria, stateId);
-	}
-
-	/**
-	 * Creates a transition stating:
-	 * <tt>On the occurence of event ${eventId}, transition to state
-	 * ${stateId}.
-	 * </tt>
-	 * @param eventId the event id
-	 * @param stateId the target state Id
-	 * @param properties additional properties about the transition
-	 * @return the transition (eventId->stateId)
-	 */
-	protected Transition on(String eventId, String stateId, Map properties) {
-		TransitionCriteria criteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(eventId);
-		return on(criteria, stateId, properties);
-	}
-
-	/**
-	 * Creates a transition stating:
-	 * <tt>On the occurence of the specified event, transition to state ${stateId} if and only
-	 * the ${executionCriteria} is met.
-	 * </tt>
-	 * @param eventId the event id
-	 * @param stateId the target state Id
-	 * @param executionCriteria the executionCriteria
-	 * @return the transition (eventId+executionCriteria->stateId)
-	 */
-	protected Transition on(String eventId, String stateId, TransitionCriteria executionCriteria) {
-		TransitionCriteria criteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(eventId);
-		return on(criteria, stateId, executionCriteria);
-	}
-
-	/**
-	 * Creates a transition stating:
-	 * <tt>On the occurence of the specified event, transition to state ${stateId} if and only
-	 * the ${executionCriteria} is met.
-	 * </tt>
-	 * @param eventId the event id
-	 * @param stateId the target state Id
-	 * @param executionCriteria the executionCriteria
-	 * @param properties additional properties about the transition
-	 * @return the transition (eventId+executionCriteria->stateId)
-	 */
-	protected Transition on(String eventId, String stateId, TransitionCriteria executionCriteria, Map properties) {
-		TransitionCriteria criteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(eventId);
-		return on(criteria, stateId, executionCriteria, properties);
-	}
-
-	/**
-	 * Creates a transition stating:
-	 * <tt>On the occurence of any event (*), transition to state ${stateId}.
-	 * </tt>
-	 * @param stateId the target state id
-	 * @return the transition (*->stateId)
-	 */
-	protected Transition onAnyEvent(String stateId) {
-		return new Transition(stateId);
-	}
-
-	/**
-	 * Produces a <code>TransitionCriteria</code> that will execute the
+	 * Creates a <code>TransitionCriteria</code> that will execute the
 	 * specified action when the Transition is executed but before the
 	 * transition's target state is entered.
+	 * <p>
+	 * This criteria will only allow the Transition to complete execution if the
+	 * Action completes successfully.
 	 * @param action the action to execute after a transition is matched but
 	 * before it transitions to its target state
 	 * @return the transition execution criteria
 	 */
-	protected TransitionCriteria beforeExecute(Action action) {
-		return new ActionTransitionCriteria(action);
-	}
-
-	/**
-	 * Produces a <code>TransitionCriteria</code> that will execute the
-	 * specified action when the Transition is executed but before the
-	 * transition's target state is entered.
-	 * @param action annotated action to execute after a transition is matched
-	 * but before it transitions to its target state
-	 * @return the transition execution criteria
-	 */
-	protected TransitionCriteria beforeExecute(AnnotatedAction action) {
+	protected TransitionCriteria ifSuccessful(Action action) {
 		return new ActionTransitionCriteria(action);
 	}
 
@@ -1025,21 +882,20 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Join given prefix and suffix into a single string separated by a
-	 * delimiter.
-	 * @param prefix the prefix
-	 * @param suffix the suffix
-	 * @return the qualified string
+	 * Creates the <code>yes</code> event id. "Yes" indicates a true result
+	 * was returned.
+	 * @return the event id
 	 */
-	protected String join(String prefix, String suffix) {
-		return prefix + getQualifierDelimiter() + suffix;
+	protected String yes() {
+		return "yes";
 	}
 
 	/**
-	 * Returns the delimiter used to seperate identifier parts. E.g. flow id and
-	 * state id ("customer.Detail.view"). Defaults to a dot (".").
+	 * Creates the <code>no</code> event id. "False" indicates a false result
+	 * was returned.
+	 * @return the event id
 	 */
-	protected String getQualifierDelimiter() {
-		return ".";
+	protected String no() {
+		return "no";
 	}
 }

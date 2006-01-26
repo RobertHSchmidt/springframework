@@ -204,19 +204,6 @@ public abstract class TransitionableState extends State {
 		exitActionList.execute(context);
 	}
 
-	/**
-	 * Utility method that iterates over this State's list of Transition objects
-	 * and resolves their target states. Designed to be called after Flow
-	 * construction and all states have been added as a 'second pass' to allow
-	 * for transition target state resolution.
-	 */
-	protected void resolveTransitionsTargetStates() {
-		Iterator it = transitionsIterator();
-		while (it.hasNext()) {
-			((Transition)it.next()).resolveTargetStateIfApplicable();
-		}
-	}
-
 	protected void createToString(ToStringCreator creator) {
 		creator.append("transitions", transitions).append("exitActionList", exitActionList);
 	}

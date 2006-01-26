@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.builder.MyCustomException;
 import org.springframework.webflow.support.SimpleViewSelector;
+import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockFlowExecutionControlContext;
 import org.springframework.webflow.test.MockFlowSession;
@@ -36,7 +37,7 @@ public class FlowTests extends TestCase {
 		flow = new Flow("myFlow");
 		ViewState state1 = new ViewState(flow, "myState1");
 		state1.setViewSelector(new SimpleViewSelector("myView"));
-		state1.addTransition(new Transition("myState2"));
+		state1.addTransition(new Transition(to("myState2")));
 		EndState state2 = new EndState(flow, "myState2");
 		state2.setViewSelector(new SimpleViewSelector("myView2"));
 		return flow;
@@ -141,9 +142,9 @@ public class FlowTests extends TestCase {
 		flow = new Flow("myFlow");
 		ViewState state1 = new ViewState(flow, "myState1");
 		state1.setViewSelector(new SimpleViewSelector("myView"));
-		state1.addTransition(new Transition("myState2"));
+		state1.addTransition(new Transition(to("myState2")));
 		SubflowState state2 = new SubflowState(flow, "myState2", flow);
-		state2.addTransition(new Transition("myState3"));
+		state2.addTransition(new Transition(to("myState3")));
 		State customStartState = new EndState(flow, "myState3");
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
 		context.setCurrentState(flow.getRequiredState("myState2"));
@@ -170,5 +171,9 @@ public class FlowTests extends TestCase {
 		catch (StateException ex) {
 			// expected
 		}
+	}
+	
+	public static TransitionTargetStateResolver to(String stateId) {
+		return new StaticTransitionTargetStateResolver(stateId);
 	}
 }
