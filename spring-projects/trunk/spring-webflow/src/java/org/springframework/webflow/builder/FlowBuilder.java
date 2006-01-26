@@ -29,7 +29,7 @@ import org.springframework.webflow.Flow;
  * handlers of the flow and add them to the flow definition.
  * <li> Call {@link #buildPostProcess} to do any build post processing, for
  * example, making a second pass through the fully configured Flow to resolve
- * artifacts.
+ * any artifacts.
  * <li> Call {@link #getResult} to return the fully-built {@link Flow}
  * definition.
  * <li> Dispose this builder, releasing any resources allocated during the
