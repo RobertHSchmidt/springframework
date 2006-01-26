@@ -24,6 +24,7 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.validation.DataBinder;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.action.FormAction;
 
 public class BirthDateFormAction extends FormAction {
@@ -31,16 +32,16 @@ public class BirthDateFormAction extends FormAction {
 	// standard European format
 	private static final String BIRTH_DATE_PATTERN = "dd-MM-yyyy";
 
-	private static final String BIRTHDATE_FORM_OBJECT_NAME = "birthDate";
-
 	private static final String AGE_NAME = "age";
 
 	public BirthDateFormAction() {
 		// tell the superclass about the form object and validator we want to
 		// use you could also do this in the application context XML ofcourse
-		setFormObjectName(BIRTHDATE_FORM_OBJECT_NAME);
+		setFormObjectName("birthDate");
 		setFormObjectClass(BirthDate.class);
+		setFormObjectScope(ScopeType.FLOW);
 		setValidator(new BirthDateValidator());
+		setRequireValidatorMethod(true);
 	}
 
 	protected void initBinder(RequestContext context, DataBinder binder) {
@@ -54,9 +55,9 @@ public class BirthDateFormAction extends FormAction {
 	 */
 	public Event calculateAge(RequestContext context) throws Exception {
 		// pull the date from the model
-		BirthDate birthDate = (BirthDate)context.getRequestScope().get(BIRTHDATE_FORM_OBJECT_NAME);
+		BirthDate birthDate = (BirthDate)getFormObject(context);
 
-		// calculate the age (quick & dirty, probably has bugs :-)
+		// calculate the age (quick & dirty)
 		// in a real application you would delegate to the business layer for
 		// this kind of logic
 		Calendar calBirthDate = new GregorianCalendar();

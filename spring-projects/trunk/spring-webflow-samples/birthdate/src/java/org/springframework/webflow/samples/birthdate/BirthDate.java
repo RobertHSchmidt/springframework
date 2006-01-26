@@ -24,6 +24,10 @@ public class BirthDate implements Serializable {
 
 	private Date date;
 
+	private boolean sendCard;
+	
+	private String emailAddress;
+	
 	public String getName() {
 		return name;
 	}
@@ -40,4 +44,19 @@ public class BirthDate implements Serializable {
 		this.date = date;
 	}
 
+	public boolean isSendCard() {
+		return sendCard;
+	}
+
+	public void setSendCard(boolean sendCard) {
+		this.sendCard = sendCard;
+	}
+
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
+	}
 }

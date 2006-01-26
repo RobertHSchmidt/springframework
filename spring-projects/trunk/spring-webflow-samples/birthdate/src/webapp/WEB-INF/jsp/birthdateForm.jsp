@@ -23,9 +23,8 @@
 	</tr>
 	<tr>
 		<td colspan="2" class="buttonBar">
-			<html:image src="images/webflow-logo.jpg" property="_eventId_submit" value="Calculate Age"/>
+			<html:image src="images/submit.jpg" property="_eventId_submit" value="Next"/>
 			<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
-			<input type="hidden" name="_eventId" value="submit">
 		</td>
 	</tr>
 	</html:form>
