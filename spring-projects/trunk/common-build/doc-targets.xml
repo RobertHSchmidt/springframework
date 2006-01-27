@@ -67,6 +67,7 @@
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
+			<arg value="-d"/>
 			<arg value="${docs.ref.target.dir}/pdf/docbook_fop.tmp" />
 			<arg value="${docs.ref.target.dir}/pdf/${ant.project.name}-reference.pdf" />
 		</java>
