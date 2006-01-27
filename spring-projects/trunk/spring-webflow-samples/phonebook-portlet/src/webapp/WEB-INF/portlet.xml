@@ -21,7 +21,7 @@
     </init-param>
 
     <init-param>
-      <name>viewRendererServlet</name>
+      <name>viewRendererUrl</name>
       <value>/WEB-INF/servlet/view</value>
     </init-param>
 

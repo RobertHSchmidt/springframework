@@ -108,7 +108,7 @@ public class PortletFlowController extends AbstractController {
 	/**
 	 * Delegate for extract flow execution manager parameters.
 	 */
-	private FlowExecutionManagerParameterExtractor parameterExtractor;
+	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowExecutionManagerParameterExtractor();
 
 	/**
 	 * Create a new FlowController that delegates to the configured execution
