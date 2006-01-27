@@ -479,7 +479,7 @@
     	    	    two possible user input events (submit and cancel) in different ways:
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="displaySearchForm"/&gt;
+    &lt;flow start-state="displaySearchForm"&gt;
         &lt;view-state id="displaySearchForm" view="searchForm"&gt;
             &lt;transition on="submit" to="processFormSubmission"/&gt;
             &lt;transition on="cancel" to="processCancellation"/&gt;
