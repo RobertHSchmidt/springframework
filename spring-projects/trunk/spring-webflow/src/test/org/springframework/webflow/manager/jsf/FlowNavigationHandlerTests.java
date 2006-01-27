@@ -58,10 +58,11 @@ public class FlowNavigationHandlerTests extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		flowExecutionControl = MockControl.createControl(FlowExecution.class);
-		flowExecutionMock = (FlowExecution) flowExecutionControl.getMock();
+		flowExecutionMock = (FlowExecution)flowExecutionControl.getMock();
+		flowExecutionControl.setDefaultMatcher(new JsfExternalContextMatcher());
 
 		flowLocatorControl = MockControl.createControl(FlowLocator.class);
-		flowLocatorMock = (FlowLocator) flowLocatorControl.getMock();
+		flowLocatorMock = (FlowLocator)flowLocatorControl.getMock();
 
 		viewSelection = new ViewSelection("SomeView");
 		navigationHandler = new MyNavigationHandler();
@@ -117,8 +118,9 @@ public class FlowNavigationHandlerTests extends TestCase {
 
 	public void testHandleNavigationHasHolder() {
 		mockJsfExternalContext.getRequestMap().put(FlowExecutionHolder.class.getName(), flowExecutionHolder);
-		flowExecutionControl.expectAndReturn(flowExecutionMock.signalEvent("OutCome", new JsfExternalContext(mockFacesContext,
-				"FromAction", "OutCome")), viewSelection);
+		flowExecutionMock.rehydrate(tested.getFlowLocator(), tested.getListenerLoader());
+		flowExecutionControl.expectAndReturn(flowExecutionMock.signalEvent("OutCome", new JsfExternalContext(
+				mockFacesContext, "FromAction", "OutCome")), viewSelection);
 		replay();
 
 		// perform test
@@ -131,8 +133,8 @@ public class FlowNavigationHandlerTests extends TestCase {
 
 	public void testHandleNavigationHasNoHolder() {
 		flowLocatorControl.expectAndReturn(flowLocatorMock.getFlow("OutCome"), null);
-		flowExecutionControl.expectAndReturn(flowExecutionMock.start(new JsfExternalContext(mockFacesContext, "FromAction",
-				"flowId:OutCome")), viewSelection);
+		flowExecutionControl.expectAndReturn(flowExecutionMock.start(new JsfExternalContext(mockFacesContext,
+				"FromAction", "flowId:OutCome")), viewSelection);
 		replay();
 
 		// perform test
