@@ -211,7 +211,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <td>Indicates if the validator should be invoked after binding. </td>
  * </tr>
  * <tr>
- * <td>requireValidatorMethod</td>
+ * <td>validateUsingValidatorMethod</td>
  * <td>false</td>
  * <td>Indicates if the validator should be invoked ONLY if the
  * {@link #VALIDATOR_METHOD_PROPERTY} context property is set before this action
