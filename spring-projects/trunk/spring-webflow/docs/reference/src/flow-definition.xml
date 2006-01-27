@@ -125,7 +125,7 @@
         <sect2 id="flow-xml">
         	<title>XML-based Flow template</title>
        	    <programlisting>
-    &lt;flow start-state="startingPoint"/&gt;
+    &lt;flow start-state="startingPoint"&gt;
         &lt;property .../&gt;
         
         &lt;start-actions&gt;
@@ -269,7 +269,7 @@
         <sect2 id="flow-xml">
         	<title>XML-based State template</title>
        	    <programlisting>
-    &lt;flow start-state="stateId"/&gt;
+    &lt;flow start-state="stateId"&gt;
         &lt;some-state id="stateId"&gt;
             &lt;property .../&gt;
             
