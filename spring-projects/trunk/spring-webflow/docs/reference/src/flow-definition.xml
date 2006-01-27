@@ -60,7 +60,15 @@
 				       <entry>
 				           <emphasis>1</emphasis>
 				       </entry>
-                   </row>               
+                   </row>         
+                   <row>
+                       <entry>properties</entry>
+                       <entry>Additional, custom properties about the flow.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+				       <entry>None</entry>
+                   </row>
                    <row>
                        <entry>states</entry>
                        <entry>The steps of the flow.</entry>
@@ -118,6 +126,8 @@
         	<title>XML-based Flow template</title>
        	    <programlisting>
     &lt;flow start-state="startingPoint"/&gt;
+        &lt;property .../&gt;
+        
         &lt;start-actions&gt;
             ...
         &lt;/start-actions&gt;
@@ -140,6 +150,7 @@
            <title>Java Flow API example</title>
            <programlisting>
     Flow flow = new Flow("id");
+    flow.setProperty(..., ...);
     flow.addState(...);
     flow.setStartState("startingPoint");
     flow.addStartAction(...);
@@ -183,6 +194,14 @@
 				       <entry>
 				           <emphasis>1</emphasis>
 				       </entry>
+                   </row>
+                   <row>
+                       <entry>properties</entry>
+                       <entry>Additional, custom properties about the state.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+				       <entry>None</entry>
                    </row>
                    <row>
                        <entry>entryActions</entry>
@@ -242,7 +261,42 @@
                    </row>
                </tbody>
           </tgroup>
-        </table> 	
+        </table>
+        <para>
+            Below is an exmple of how these common TransitionableState properties can be configured in XML form
+            or directly in Java code.
+        </para>
+        <sect2 id="flow-xml">
+        	<title>XML-based State template</title>
+       	    <programlisting>
+    &lt;flow start-state="stateId"/&gt;
+        &lt;some-state id="stateId"&gt;
+            &lt;property .../&gt;
+            
+            &lt;entry-actions&gt;
+                ...
+            &lt;/entry-actions&gt;
+
+            &lt;transition .../&gt;
+            
+            &lt;exit-actions&gt;
+    	        ...
+            &lt;/exit-actions&gt;
+        &lt;/some-state&gt;
+    &lt;/flow&gt;
+         	</programlisting>
+        </sect2>
+        <sect2 id="flow-java">
+           <title>Java State API example</title>
+           <programlisting>
+    Flow flow = new Flow("id");
+    TransitionableState state = new SomeConcreteStateType(flow, "stateId");
+    state.setProperty(..., ...);
+    state.addEntryAction(...);
+    state.addTransition(...);
+    state.addExitAction(...);
+          </programlisting>
+        </sect2>
     </sect1>
     <sect1 id="core-states">
     	<title>Concrete State Types</title>
@@ -426,14 +480,12 @@
     	    	</para>
     	    	<programlisting>
     &lt;flow start-state="displaySearchForm"/&gt;
-    
         &lt;view-state id="displaySearchForm" view="searchForm"&gt;
             &lt;transition on="submit" to="processFormSubmission"/&gt;
             &lt;transition on="cancel" to="processCancellation"/&gt;
         &lt;/view-state&gt;
         
         ...
-        
     &lt;/flow&gt;
     			</programlisting>
 			</sect3>    		
@@ -445,7 +497,6 @@
     	    	</para>
     	    	<programlisting>
     public class SearchFlowBuilder extends AbstractFlowBuilder {
-    
     	public void buildStates() {
     	    addViewState("displaySearchForm", "searchForm",
     	        new Transition[] {
@@ -455,7 +506,6 @@
     	    );
             ...    	          
         }
-        
     }	
     			</programlisting>
 			</sect3>    		
