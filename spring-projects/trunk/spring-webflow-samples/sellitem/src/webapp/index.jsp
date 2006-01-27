@@ -29,8 +29,9 @@
 						how browser navigation buttons are used.
 					</LI>
 					<LI>
-					    Using synchronized transactionIds to prevent duplicate submits 
-					    of the same sale while also taking advantage of continuations
+					    Using "conversation invalidation after completion" to prevent duplicate submits 
+					    of the same sale while taking advantage of continuations to allow back button 
+					    usage while the application transaction is in process.
 					</LI>
 					<LI>
 						Multi actions to group several action execution methods together on
@@ -40,7 +41,7 @@
 						Using <A href="http://www.ognl.org/">OGNL</A> based conditional expressions.
 					</LI>
 					<LI>
-						Collecting statistics on flows using the JMX protocol (via a standard JMX client
+						Exporting the flow registry as a JMX MBean (for access via a standard JMX client
 						like JConsole).
 					</LI>
 					<LI>
