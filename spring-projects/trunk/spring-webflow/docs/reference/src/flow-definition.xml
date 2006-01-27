@@ -529,7 +529,8 @@
     	<sect2 id="actionstate">
     		<title>ActionState</title>
     		<para>
-    			When entered, an action state executes business application code.  This is process goes as follows:
+    			When entered, an action state executes business application code, then responds to the result of that 
+    			execution by deciding where in the flow to go next.  This process is as follows:
     			<orderedlist>
     				<listitem>
     					The entered action state executes an ordered list of one or more <literal>org.springframework.webflow.Action</literal> 
@@ -555,7 +556,7 @@
     			    As outlined, the <literal>ActionState</literal> is the central state type for invoking one 
     			    or more actions and responding to their result to drive a state transition.  There are
     			    also other points within the lifecycle of a flow where an Action can be executed.
-    			    At all of these points these actions implement the central
+    			    At all of these points the only requiremenet is that these actions implement the central
     			    <literal>org.springframework.webflow.Action</literal> interface.
 	    		</para>
 	    		<table>
