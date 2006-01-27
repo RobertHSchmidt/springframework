@@ -502,8 +502,8 @@
     	public void buildStates() {
     	    addViewState("displaySearchForm", "searchForm",
     	        new Transition[] {
-    	            transition(on("submit"), to("processFormSubmission"),
-    	            transition(on("cancel"), to("processFormCancellation")
+    	            transition(on("submit"), to("processFormSubmission")),
+    	            transition(on("cancel"), to("processFormCancellation"))
     	        }
     	    );
             ...    	          
