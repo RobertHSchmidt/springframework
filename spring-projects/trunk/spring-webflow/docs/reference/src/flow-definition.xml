@@ -313,11 +313,11 @@
     		<literal>org.springframework.webflow</literal> package.  These states execute common 
     		controller behaviors including:
     		<orderedlist>
-    			<listitem>allowing the user to participate in a flow (ViewState)</listitem>
-    			<listitem>executing business application code (ActionState)</listitem>
-    			<listitem>making a flow routing decision (DecisionState)</listitem>
-    			<listitem>spawning another flow as a subflow (SubflowState)</listitem>
-    			<listitem>terminating a flow (EndState)</listitem>
+    			<listitem><para>allowing the user to participate in a flow (ViewState)</para></listitem>
+    			<listitem><para>executing business application code (ActionState)</para></listitem>
+    			<listitem><para>making a flow routing decision (DecisionState)</para></listitem>
+    			<listitem><para>spawning another flow as a subflow (SubflowState)</para></listitem>
+    			<listitem><para>terminating a flow (EndState)</para></listitem>
     		</orderedlist>
     	</para>
     	<para>
@@ -342,21 +342,29 @@
     			in a flow.  This participation process goes as follows:
     			<orderedlist>
     				<listitem>
-    					The entered view state makes a <literal>org.springframework.webflow.ViewSelection</literal> 
-    					that selects a <emphasis>logical</emphasis> response to issue with the data necessary 
-    					to issue it.
+    					<para>
+	    					The entered view state makes a <literal>org.springframework.webflow.ViewSelection</literal> 
+	   	 					that selects a <emphasis>logical</emphasis> response to issue with the data necessary 
+   		 					to issue it.
+   		 				</para>
     				</listitem>
     				<listitem>
-    					The flow execution 'pauses' in this state, and control is returned to the calling 
-    					system.
+    					<para>
+	    					The flow execution 'pauses' in this state, and control is returned to the calling 
+    						system.
+    					</para>
     				</listitem>
     				<listitem>
-    				    The calling system uses the returned <literal>ViewSelection</literal> to present a
-    				    interface (or other response) to the user.
+    					<para>
+	    				    The calling system uses the returned <literal>ViewSelection</literal> to present a
+    					    interface (or other response) to the user.
+    					</para>
     				</listitem>
     				<listitem>
-    				    After some 'think time', the user submits an input event to resume the flow execution 
-    				    from the 'paused' point.
+    					<para>
+	    				    After some 'think time', the user submits an input event to resume the flow execution 
+    					    from the 'paused' point.
+    					</para>
     				</listitem>
     			</orderedlist>
     		</para>
@@ -543,15 +551,19 @@
     			execution by deciding where in the flow to go next.  This process is as follows:
     			<orderedlist>
     				<listitem>
-    					The entered action state executes an ordered list of one or more <literal>org.springframework.webflow.Action</literal> 
-    					instances.  This <literal>Action</literal> interface is the central abstraction that 
-    					encapsulates the execution of a logical unit of application code.
+    					<para>
+	    					The entered action state executes an ordered list of one or more <literal>org.springframework.webflow.Action</literal> 
+    						instances.  This <literal>Action</literal> interface is the central abstraction that 
+    						encapsulates the execution of a logical unit of application code.
+    					</para>
     				</listitem>
     				<listitem>
-    					The state determines if the outcome of the first action's execution matches a 
-    					transition.  If there is a match, the state transition is executed.  If there is no match, 
-    					the next action in the list is executed.  This process continues until a transition is 
-    					matched or the list of actions is exhausted.
+    					<para>
+	    					The state determines if the outcome of the first action's execution matches a 
+   		 					transition.  If there is a match, the state transition is executed.  If there is no match, 
+    						the next action in the list is executed.  This process continues until a transition is 
+    						matched or the list of actions is exhausted.
+    					</para>
     				</listitem>
     			</orderedlist>
     		</para>

@@ -115,99 +115,121 @@
 			This section provides an overview of the logical package structure of the SWF codebase.
 			The dependencies for each package are clearly noted.
 		</para>
-		<para>
-			The <emphasis>webflow</emphasis> package contains the
-			central foundational abstractions of the framework.  These abstractions
-			consist of definition artifacts such as Flow, State,
-			and Action that define the core "domain language" for
-			expressing flows.
-		</para>
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>Dependencies: spring-core, spring-binding, commons-logging</para>
-          </listitem>
-		</itemizedlist>          
-		<para>
-			The <emphasis>action</emphasis> package contains implementations
-			of the core "Action" abstraction for executing arbitrary
-			command logic within a Flow.
-		</para>		
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>Dependencies: webflow, spring-beans (optional), spring-context (optional)</para>
-          </listitem>
-		</itemizedlist>
-		<para>
-			The <emphasis>builder</emphasis> package contains abstractions
-			used at configuration-time for building and assembling Flows, in Java or
-			from externalized resources such as XML files.
-		</para>
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>Dependencies: webflow, webflow.support</para>
-          </listitem>
-		</itemizedlist>		
-		<para>
-			The <emphasis>execution</emphasis> package contains runtime 
-			abstractions for executing Flows and managing flow executions.
-			This is where the implementation of the Spring Web Flow's
-			finite-state machine resides.  This is also where the repository
-			subsystem resides, for storing active flow executions 
-			beyond a single request into the server.  This subsystem
-			forms the basis for Spring Web Flow's <emphasis>continuation server</emphasis>.
-		</para>
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>Dependencies: webflow, webflow.util, commons-codec (optional)</para>
-          </listitem>
-		</itemizedlist>
-		<para>
-			The <emphasis>manager</emphasis> package is the highest-level package in the framework.  
-			It contains implementations of "flow execution managers" that <emphasis>drive</emphasis>
-			the execution of flows.  This is where the facade for external systems that 
-			call into the Spring Web Flow system resides.  This is also where integration layers for
-			Spring MVC (Servlet and Portlet), Struts, and Java Server Faces (JSF) reside.
-		</para>		
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>
-          	    Dependencies: webflow.execution, spring-webmvc (optional), spring-portlet (optional),
+		<sect2 id="webflow">
+			<title>org.springframework.webflow</title>
+			<para>
+				The <emphasis>webflow</emphasis> package contains the
+				central foundational abstractions of the framework.  These abstractions
+				consist of definition artifacts such as Flow, State,
+				and Action that define the core "domain language" for
+				expressing flows.
+			</para>
+			<itemizedlist spacing="compact">
+   			    <listitem>
+   		    	   	<para>Dependencies: spring-core, spring-binding, commons-logging</para>
+				</listitem>
+			</itemizedlist>
+		</sect2>
+		<sect2 id="webflow.action">
+			<title>org.springframework.webflow.action</title>
+			<para>
+				The <emphasis>action</emphasis> package contains implementations
+				of the core "Action" abstraction for executing arbitrary
+				command logic within a Flow.
+			</para>		
+			<itemizedlist spacing="compact">
+        		<listitem>
+		          	<para>Dependencies: webflow, spring-beans (optional), spring-context (optional)</para>
+          		</listitem>
+			</itemizedlist>
+		</sect2>
+		<sect2 id="webflow.builder">
+			<title>org.springframework.webflow.builder</title>
+			<para>
+				The <emphasis>builder</emphasis> package contains abstractions
+				used at configuration-time for building and assembling Flows, in Java or
+				from externalized resources such as XML files.
+			</para>
+			<itemizedlist spacing="compact">
+    		    <listitem>
+          			<para>Dependencies: webflow, webflow.support</para>
+				</listitem>
+			</itemizedlist>
+		</sect2>
+		<sect2 id="webflow.execution">
+			<title>org.springframework.webflow.execution</title>
+			<para>
+				The <emphasis>execution</emphasis> package contains runtime 
+				abstractions for executing Flows and managing flow executions.
+				This is where the implementation of the Spring Web Flow's
+				finite-state machine resides.  This is also where the repository
+				subsystem resides, for storing active flow executions 
+				beyond a single request into the server.  This subsystem
+				forms the basis for Spring Web Flow's <emphasis>continuation server</emphasis>.
+			</para>
+			<itemizedlist spacing="compact">
+        		<listitem>
+		          	<para>Dependencies: webflow, webflow.util, commons-codec (optional)</para>
+    	   		</listitem>
+			</itemizedlist>
+		</sect2>
+		<sect2 id="webflow.manager">
+			<title>org.springframework.webflow.manager</title>
+			<para>
+				The <emphasis>manager</emphasis> package is the highest-level package in the framework.  
+				It contains implementations of "flow execution managers" that <emphasis>drive</emphasis>
+				the execution of flows.  This is where the facade for external systems that 
+				call into the Spring Web Flow system resides.  This is also where integration layers for
+				Spring MVC (Servlet and Portlet), Struts, and Java Server Faces (JSF) reside.
+			</para>		
+			<itemizedlist spacing="compact">
+        		<listitem>
+		          	<para>
+        		  	    Dependencies: webflow.execution, spring-webmvc (optional), spring-portlet (optional),
           	    Struts (optional), Java Server Faces (optional).
-          	</para>
-          </listitem>
-		</itemizedlist>		
-		<para>
-			The <emphasis>registry</emphasis> package contains the subsystem for
-			managing registries of flow definitions that are eligible for execution.
-		</para>
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>
-                Dependencies: webflow, webflow.builder, webflow.execution, spring-beans (optional) 
-          	</para>
-          </listitem>
-		</itemizedlist>
-		<para>
-			The <emphasis>support</emphasis> package contains general-purpose 
-			implementations of the core definitional artifacts.  These implementations are mainly
-			used internally by the other packages of the framework but are
-			also usable directly by developers.
-		</para>
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>Dependencies: webflow</para>
-          </listitem>
-		</itemizedlist>          
-		<para>
-			The <emphasis>test</emphasis> package contains support for
-			testing Flow Executions out-of-container, as well as unit testing artifacts such
-			as Actions in isolation.
-		</para>
-		<itemizedlist spacing="compact">
-          <listitem>
-          	<para>Dependencies: webflow.execution, junit, spring-mock</para>
-          </listitem>
-		</itemizedlist>
+		          	</para>
+        		</listitem>
+			</itemizedlist>
+		</sect2>
+		<sect2 id="webflow.registry">
+			<title>org.springframework.webflow.registry</title>
+			<para>
+				The <emphasis>registry</emphasis> package contains the subsystem for
+				managing registries of flow definitions that are eligible for execution.
+			</para>
+			<itemizedlist spacing="compact">
+		        <listitem>
+        		  	<para>Dependencies: webflow, webflow.builder, webflow.execution, spring-beans (optional)</para>
+	        	</listitem>
+			</itemizedlist>
+		</sect2>
+		<sect2 id="webflow.support">
+			<title>org.springframework.webflow.support</title>
+			<para>
+				The <emphasis>support</emphasis> package contains general-purpose 
+				implementations of the core definitional artifacts.  These implementations are mainly
+				used internally by the other packages of the framework but are
+				also usable directly by developers.
+			</para>
+			<itemizedlist spacing="compact">
+    	    	<listitem>
+		          	<para>Dependencies: webflow</para>
+	        	</listitem>
+			</itemizedlist>
+		</sect2>
+		<sect2 id="webflow.test">
+			<title>org.springframework.webflow.test</title>
+			<para>
+				The <emphasis>test</emphasis> package contains support for
+				testing Flow Executions out-of-container, as well as unit testing artifacts such
+				as Actions in isolation.
+			</para>
+			<itemizedlist spacing="compact">
+         		<listitem>
+		          	<para>Dependencies: webflow.execution, junit, spring-mock</para>
+        		</listitem>
+			</itemizedlist>
+		</sect2>
 		<para>
 			A package dependency noted as (optional) means that the
 			dependency is needed to compile the package but is optionally needed at runtime
