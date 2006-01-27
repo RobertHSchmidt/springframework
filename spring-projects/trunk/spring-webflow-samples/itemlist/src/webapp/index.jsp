@@ -19,19 +19,19 @@
 				This Spring web flow sample application illustrates 3 features:
 				<UL>
 					<LI>
-						Double submit prevention using the application transaction
-						capabilities offered by the TransactionSynchronizer class:
-						refreshing or back button use will not allow you to resubmit data.
+						Double submit prevention: refreshing or back button use will not allow you to resubmit data.
 					</LI>
 					<LI>
-						Flow expiry and cleanup using the ExpiredFlowCleanupFilter:
-						after 1 minute of idle time, a web flow will expire and
+						Flow expiry and cleanup: after 1 minute of idle time, a flow will expire and
 						will no longer be available for request processing.
+					</LI>
+					<LI>
+						Use of an inline-flow, including the ability to map subflow output attributes
+						directly into collection attributes in parent flow scope.
 					</LI>
 					<LI>
 						Event pattern matching, for matching eventId expressions to transitions.
 					</LI>
-
 				</UL>
 			</P>
 		</DIV>

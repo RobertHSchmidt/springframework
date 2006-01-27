@@ -2,7 +2,7 @@
 
 <div id="content">
 	<div id="insert"><img src="images/webflow-logo.jpg"/></div>
-	<h2>The Four Digit Number Guess Game</h2>
+	<h2>Mastermind</h2>
 	<h3>Guess a four digit number!</h3>
 	<hr>
 	<p>Note: each guess must be 4 unique digits!</p>
