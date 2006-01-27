@@ -4,11 +4,11 @@
  * birthdate - demonstrates Struts integration and the MultiAction
  * fileupload - demonstrates multipart file upload with webflow
  * flowlauncher - demonstrates the different ways to launch flows from web pages
- * itemlist - demonstrates application transaction tokens and expired flow cleanup
+ * itemlist - demonstrates application transactions and inline flows
  * numberguess - demonstrates how to play a game with spring web flow
  * phonebook - central sample demonstrating most webflow features
  * phonebook-portlet - the phonebook sample in a portlet environment (notice how the flow definitions do not change)
- * sellitem - demonstrates a wizard with conditional transitions, continuations, and jmx-enabled statistics
+ * sellitem - demonstrates a wizard with conditional transitions and continuations
  * sellitem-jsf - the sellitem sample in a jsf environment (notice how the flow definition does not change)
  */
 
