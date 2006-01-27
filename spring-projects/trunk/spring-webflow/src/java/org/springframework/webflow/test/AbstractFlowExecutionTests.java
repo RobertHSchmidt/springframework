@@ -139,7 +139,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * entered)
 	 */
 	protected ViewSelection startFlow(Map requestParameterMap, FlowExecutionListener listener) {
-		return startFlow(new MockExternalContext(), new FlowExecutionListener[] { listener });
+		return startFlow(new MockExternalContext(requestParameterMap), new FlowExecutionListener[] { listener });
 	}
 
 	/**
