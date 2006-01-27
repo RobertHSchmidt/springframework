@@ -434,7 +434,7 @@
     	    <sect3 id="viewSelector">
     			<title>ViewSelector</title>
 	    		<para>
-    				The strategy that is responsible for making a <literal>ViewSelection</literal> when an <literal>ViewState</literal> is entered
+    				The creational strategy that is responsible for making a <literal>ViewSelection</literal> when an <literal>ViewState</literal> is entered
     				is <literal>org.springframework.webflow.ViewSelector</literal>.  This provides a plugin-point for customizing <emphasis>how</emphasis>
     				the <literal>viewName</literal> is calculated and how the <literal>modelMap</literal> is prepared.
     			</para>
