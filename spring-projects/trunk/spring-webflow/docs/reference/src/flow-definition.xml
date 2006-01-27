@@ -282,6 +282,8 @@
             &lt;exit-actions&gt;
     	        ...
             &lt;/exit-actions&gt;
+
+            &lt;exception-handler ../&gt;
         &lt;/some-state&gt;
     &lt;/flow&gt;
          	</programlisting>
