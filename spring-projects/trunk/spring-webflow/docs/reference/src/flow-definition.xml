@@ -67,7 +67,7 @@
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
-				       <entry>Empty</entry>
+				       <entry>None</entry>
                    </row>
                    <row>
                        <entry>states</entry>
@@ -201,7 +201,7 @@
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
-				       <entry>Empty</entry>
+				       <entry>None</entry>
                    </row>
                    <row>
                        <entry>entryActions</entry>
