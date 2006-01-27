@@ -17,6 +17,7 @@ package org.springframework.webflow.samples.phonebook.web;
 
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.webflow.Action;
+import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
@@ -56,22 +57,23 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
 		Action searchFormAction = createSearchFormAction();
-		ViewState displayCriteria = addViewState(DISPLAY_CRITERIA, "searchCriteria", on("search", EXECUTE_SEARCH,
-				beforeExecute(method("bindAndValidate", searchFormAction))));
+		ViewState displayCriteria = addViewState(DISPLAY_CRITERIA, "searchCriteria", transition(on("search"),
+				to(EXECUTE_SEARCH), ifSuccessful(method("bindAndValidate", searchFormAction))));
 		displayCriteria.addEntryAction(method("setupForm", searchFormAction));
 
 		// execute query
-		addActionState(EXECUTE_SEARCH, method("search(${flowScope.searchCriteria})", action("phonebook")),
-				new Transition[] { on(success(), DISPLAY_RESULTS) });
+		AnnotatedAction searchAction = method("search(${flowScope.searchCriteria})", action("phonebook"));
+		searchAction.setResultName("results");
+		addActionState(EXECUTE_SEARCH, searchAction, transition(on(success()), to(DISPLAY_RESULTS)));
 
 		// view results
-		addViewState(DISPLAY_RESULTS, "searchResults", new Transition[] { on("newSearch", DISPLAY_CRITERIA),
-				on(select(), BROWSE_DETAILS) });
+		addViewState(DISPLAY_RESULTS, "searchResults", new Transition[] {
+				transition(on("newSearch"), to(DISPLAY_CRITERIA)), transition(on(select()), to(BROWSE_DETAILS)) });
 
 		// view details for selected user id
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("externalContext.requestParameterMap.id", "id", fromStringTo(Long.class)));
-		addSubflowState(BROWSE_DETAILS, flow("detail"), idMapper, new Transition[] { on(finish(), EXECUTE_SEARCH), });
+		addSubflowState(BROWSE_DETAILS, flow("detail"), idMapper, transition(on(finish()), to(EXECUTE_SEARCH)));
 
 		// end - an error occured
 		addEndState(error(), "error");
