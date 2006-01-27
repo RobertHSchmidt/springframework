@@ -713,11 +713,11 @@
 					<para>ActionState class diagram</para>
 				</caption>
 			</mediaobject>
-    	    <sect3 id="actionStateXml">
-    	    	<title>ActionState XML - action execution</title>
+    	    <sect3 id="actionStateXml-simple">
+    	    	<title>ActionState XML - simple action execution</title>
     	    	<para>
-    	    	    The following example shows a <literal>action-state</literal> definition in XML that 
-					executes a single action when entered and responds to its result:
+    	    	    The following example constructs an <literal>ActionState</literal> definition from
+    	    	    XML that executes a single action when entered and then responds to its result:
     	    	<programlisting>
     &lt;flow start-state="displaySearchCriteria"&gt;
         ...
@@ -728,7 +728,7 @@
         ...
     &lt;/flow&gt;
     			</programlisting>
-    			    That state definition reads <emphasis>when the <literal>executeSearch</literal>
+    			    This state definition reads <emphasis>when the <literal>executeSearch</literal>
     			    state is entered, execute the <literal>searchAction</literal>.  On successful execution,
     			    transition to the <literal>displayResults</literal> state.</emphasis>
     			</para>
@@ -774,10 +774,10 @@
     			</programlisting>
     			</para>
 			</sect3>    		
-    	    <sect3 id="actionStateJava">
-    	    	<title>ActionState API - action execution</title>
+    	    <sect3 id="actionStateJava-simple">
+    	    	<title>ActionState API - simple action execution</title>
     	    	<para>
-    	    	    The following example shows the equivalent action state definition using 
+    	    	    The following example constructs the equivalent action state definition using 
     	    	    the FlowBuilder API:
     	    	</para>
     	    	<programlisting>
@@ -785,6 +785,128 @@
     	public void buildStates() {
     	    ...
     	    addActionState("executeSearch", action("searchAction"),
+    	        transition(on("success"), to("displayResults")));
+            ...    	          
+        }
+    }	
+    			</programlisting>
+			</sect3> 		
+    	    <sect3 id="actionStateXml-multiActionMethod">
+    	    	<title>ActionState XML - action method execution</title>
+    	    	<para>
+    	    	    The next example constructs an <literal>ActionState</literal> definition from XML that 
+					executes a single <emphasis>action method</emphasis> on a <literal>org.springframework.webflow.MultiAction</literal>
+					and then responds to its result:
+    	    	<programlisting>
+    &lt;flow start-state="displaySearchCriteria"&gt;
+        ...
+        &lt;action-state id="executeSearch"&gt;
+            &lt;action bean="searchFlowAction" method="executeSearch"/&gt;
+            &lt;transition on="success" to="displayResults"/&gt;
+        &lt;/action-state&gt;
+        ...
+    &lt;/flow&gt;
+    			</programlisting>
+    			    This state definition reads <emphasis>when the <literal>executeSearch</literal>
+    			    state is entered, execute the <literal>executeSearch</literal> method on the
+    			    <literal>searchFlowAction</literal>.  On successful execution,
+    			    transition to the <literal>displayResults</literal> state.</emphasis>
+    			</para>
+    			<para>
+    			    A <literal>SearchFlowAction</literal> implementation containing multiple action methods 
+    			    might look like this:
+    			<programlisting>
+    public class SearchFlowAction extends MultiAction {
+        private SearchService searchService;
+        
+        public SearchAction(SearchService) {
+            this.searchService = searchService;
+        }
+        
+        public Event someOtherActionMethod(RequestContext context) {
+            return success();
+        }
+        
+    	public Event executeSearch(RequestContext context) {
+    	
+    	    // lookup the search criteria in "flow scope"
+    	    SearchCriteria criteria =
+    	        (SearchCriteria)context.getFlowScope().getAttribute("criteria");
+    	        
+    	    // execute the search
+    	    Collection results = searchService.executeSearch(criteria);
+    	    
+    	    // set the results in "request scope"
+    	    context.getRequestScope().setAttribute("results", results);
+    	    
+    	    // return "success"
+    	    return success();
+        }
+    }	
+    			</programlisting>
+    			</para>
+			</sect3>    		
+    	    <sect3 id="actionStateJava-multiActionMethod">
+    	    	<title>ActionState API - action method execution</title>
+    	    	<para>
+    	    	    The following example constructs the equivalent action state definition using 
+    	    	    the FlowBuilder API:
+    	    	</para>
+    	    	<programlisting>
+    public class SearchFlowBuilder extends AbstractFlowBuilder {
+    	public void buildStates() {
+    	    ...
+    	    addActionState("executeSearch", method("executeSearch", action("searchAction")),
+    	        transition(on("success"), to("displayResults")));
+            ...    	          
+        }
+    }	
+    			</programlisting>
+			</sect3>    		
+    	    <sect3 id="actionStateXml-pojoActionMethod">
+    	    	<title>ActionState XML - POJO action method execution</title>
+    	    	<para>
+    	    	    The next example constructs a <literal>ActionState</literal> definition from XML that 
+					executes a single <emphasis>action method</emphasis> on your PlainOldJavaObject (POJO)
+					and then responds to the result:
+    	    	<programlisting>
+    &lt;flow start-state="displaySearchCriteria"&gt;
+        ...
+        &lt;action-state id="executeSearch"&gt;
+            &lt;action bean="searchService" method="executeSearch(${flowScope.criteria})"
+                       resultName="results"/&gt;
+            &lt;transition on="success" to="displayResults"/&gt;
+        &lt;/action-state&gt;
+        ...
+    &lt;/flow&gt;
+    			</programlisting>
+    			    This state definition reads <emphasis>when the <literal>executeSearch</literal>
+    			    state is entered, execute the <literal>executeSearch</literal> method on the
+    			    <literal>searchService</literal> passing it the <literal>criteria</literal> object
+    			    in <literal>flowScope</literal>.  On successful execution, expose the method 
+    			    return value in request scope under the name <literal>results</literal> 
+    			    and transition to the <literal>displayResults</literal> state.</emphasis>
+    			</para>
+    			<para>
+    			    With this approach, you would not write a custom <literal>Action</literal> implementation.
+    			    Spring Web Flow automatically adapts the method on your application object to the 
+    			    <literal>Action</literal> interface for you and cares for exposing any return value.
+    			</para>
+			</sect3>    		
+    	    <sect3 id="actionStateJava-pojoActionMethod">
+    	    	<title>ActionState API - POJO action method execution</title>
+    	    	<para>
+    	    	    The following example constructs the equivalent action state definition using 
+    	    	    the FlowBuilder API:
+    	    	</para>
+    	    	<programlisting>
+    public class SearchFlowBuilder extends AbstractFlowBuilder {
+    	public void buildStates() {
+    	    ...
+    	    AnnotatedAction searchAction =
+    	        method("executeSearch(${flowScope.criteria})", action("searchAction"));
+            searchAction.setResultName("results");
+    	    addActionState("executeSearch", searchAction,
     	        transition(on("success"), to("displayResults")));
             ...    	          
         }
