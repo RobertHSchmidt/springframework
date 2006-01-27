@@ -37,11 +37,6 @@ public class StaticTransitionTargetStateResolver implements TransitionTargetStat
 	private String targetStateId;
 
 	/**
-	 * The resolved target state to transition to.
-	 */
-	private State targetState;
-
-	/**
 	 * Creates a new static target state resolver that always returns the same
 	 * target state.
 	 * @param targetStateId the id of the target state (will be resolved once
@@ -53,17 +48,6 @@ public class StaticTransitionTargetStateResolver implements TransitionTargetStat
 	}
 
 	/**
-	 * Creates a new static target state resolver that always returns the same
-	 * target state.
-	 * @param targetState the target state
-	 */
-	public StaticTransitionTargetStateResolver(State targetState) {
-		Assert.notNull(targetState, "The target state is required");
-		this.targetState = targetState;
-		targetStateId = targetState.getId();
-	}
-
-	/**
 	 * Returns the id of the target state resolved by this resolver.
 	 */
 	public String getTargetStateId() {
@@ -71,21 +55,10 @@ public class StaticTransitionTargetStateResolver implements TransitionTargetStat
 	}
 
 	public State resolveTargetState(Transition transition, RequestContext context) {
-		if (targetState == null) {
-			resolveAndSetTargetState(transition);
-		}
-		return targetState;
-	}
-
-	/**
-	 * Resolve the target state of given transtion and set it in <i>this</i>
-	 * object.
-	 */
-	public void resolveAndSetTargetState(Transition transition) {
-		targetState = transition.getSourceState().getFlow().getRequiredState(targetStateId);
+		return transition.getSourceState().getFlow().getRequiredState(targetStateId);
 	}
 
 	public String toString() {
-		return "[targetState = '" + (targetState == null ? targetStateId : targetState.getId()) + "']";
+		return "[targetStateId = '" + targetStateId + "']";
 	}
 }
