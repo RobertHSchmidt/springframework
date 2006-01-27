@@ -329,7 +329,6 @@
 				<para>State class diagram</para>
 			</caption>
 		</mediaobject>
-
     	<sect2 id="viewstate">
     		<title>ViewState</title>
     		<para>
@@ -458,7 +457,7 @@
               					<entry>SimpleViewSelector</entry>
 								<entry>
 									Returns a ViewSelection with a static viewName and modelMap containing the union of 
-									the attributes in flow scope and request scope.
+									the attributes in flow scope and request scope.  The default implementation.
 								</entry>
 	        	   	        </row>
             				<row>
@@ -473,6 +472,21 @@
 		       		</tgroup>
     		    </table> 	
     		</sect3>
+    		<para>
+    			The class diagram below shows the ViewState and the associated types used to carry
+    			out the view selection process:
+    		</para>
+			<mediaobject>
+				<imageobject role="fo">
+					<imagedata fileref="images/viewstate-classdiagram.jpg" format="JPEG" align="center"/>
+				</imageobject>
+				<imageobject role="html">
+					<imagedata fileref="images/viewstate-classdiagram.jpg" format="JPEG" align="center"/>
+				</imageobject>
+				<caption>
+					<para>ViewState class diagram</para>
+				</caption>
+			</mediaobject>
     	    <sect3 id="viewStateXml">
     	    	<title>ViewState XML - simple view selection</title>
     	    	<para>
