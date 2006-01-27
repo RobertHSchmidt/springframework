@@ -713,6 +713,84 @@
 					<para>ActionState class diagram</para>
 				</caption>
 			</mediaobject>
+    	    <sect3 id="actionStateXml">
+    	    	<title>ActionState XML - action execution</title>
+    	    	<para>
+    	    	    The following example shows a <literal>action-state</literal> definition in XML that 
+					executes a single action when entered and responds to its result:
+    	    	<programlisting>
+    &lt;flow start-state="displaySearchCriteria"&gt;
+        ...
+        &lt;action-state id="executeSearch"&gt;
+            &lt;action bean="searchAction"/&gt;
+            &lt;transition on="success" to="displayResults"/&gt;
+        &lt;/action-state&gt;
+        ...
+    &lt;/flow&gt;
+    			</programlisting>
+    			    That state definition reads <emphasis>when the <literal>executeSearch</literal>
+    			    state is entered, execute the <literal>searchAction</literal>.  On successful execution,
+    			    transition to the <literal>displayResults</literal> state.</emphasis>
+    			</para>
+    			<para>
+    			    The association between the <literal>searchAction</literal> id and an 
+    			    <literal>Action</literal> implementation is made by the XmlFlowBuilder at 
+    			    Flow configuration time by a service registry, typically a
+    			    Spring BeanFactory.  For example:
+    	    	<programlisting>
+    &lt;beans&gt;
+        &lt;bean id="searchAction" class="example.webflow.SearchAction"/&gt;
+    &lt;/beans&gt;
+    			</programlisting>
+    			    ... associates the <literal>searchAction</literal> with a single instance of 
+    			    <literal>example.webflow.SearchAction</literal>.
+    			</para>
+    			<para>
+    			    A simple <literal>SearchAction</literal> implementation might look like this:
+    			<programlisting>
+    public class SearchAction implements Action {
+        private SearchService searchService;
+        
+        public SearchAction(SearchService) {
+            this.searchService = searchService;
+        }
+        
+    	public Event execute(RequestContext context) {
+    	
+    	    // lookup the search criteria in "flow scope"
+    	    SearchCriteria criteria =
+    	        (SearchCriteria)context.getFlowScope().getAttribute("criteria");
+    	        
+    	    // execute the search
+    	    Collection results = searchService.executeSearch(criteria);
+    	    
+    	    // set the results in "request scope"
+    	    context.getRequestScope().setAttribute("results", results);
+    	    
+    	    // return "success"
+    	    return new Event(this, "success");
+        }
+    }	
+    			</programlisting>
+    			</para>
+			</sect3>    		
+    	    <sect3 id="actionStateJava">
+    	    	<title>ActionState API - action execution</title>
+    	    	<para>
+    	    	    The following example shows the equivalent action state definition using 
+    	    	    the FlowBuilder API:
+    	    	</para>
+    	    	<programlisting>
+    public class SearchFlowBuilder extends AbstractFlowBuilder {
+    	public void buildStates() {
+    	    ...
+    	    addActionState("executeSearch", action("searchAction"),
+    	        transition(on("success"), to("displayResults")));
+            ...    	          
+        }
+    }	
+    			</programlisting>
+			</sect3>    		
     	</sect2>
     	<sect2 id="decisionState">
     		<title>DecisionState</title>
