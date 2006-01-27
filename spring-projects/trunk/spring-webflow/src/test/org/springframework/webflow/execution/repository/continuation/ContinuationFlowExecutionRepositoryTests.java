@@ -7,9 +7,6 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.InvalidConversationContinuationException;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
-import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
-import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuation;
-import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuationFactory;
 
 /**
  * Unit tests for the ContinuationFlowExecutionRepository class.

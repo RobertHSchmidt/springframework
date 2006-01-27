@@ -19,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
 
 /**
  * A transition takes a flow execution from one state to another when executed.
@@ -206,21 +205,6 @@ public class Transition extends AnnotatedObject {
 	 */
 	public void setTargetStateResolver(TransitionTargetStateResolver targetStateResolver) {
 		this.targetStateResolver = targetStateResolver;
-	}
-
-	/**
-	 * Returns the id of the target state of this transition if possible.
-	 * @throws UnsupportedOperationException if the target state id is not known
-	 * ahead of time because it is calculated dynamically at runtime
-	 */
-	public String getTargetStateId() throws UnsupportedOperationException {
-		if (getTargetStateResolver() instanceof StaticTransitionTargetStateResolver) {
-			return ((StaticTransitionTargetStateResolver)getTargetStateResolver()).getTargetStateId();
-		}
-		else {
-			throw new UnsupportedOperationException(
-					"This transition's target state is not known, it is calculated dynamically at runtime");
-		}
 	}
 
 	/**

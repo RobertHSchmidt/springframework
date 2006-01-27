@@ -1,9 +1,6 @@
 package org.springframework.webflow.execution.repository;
 
 
-import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
-import org.springframework.webflow.execution.repository.FlowExecutionContinuationKeyFormatter;
-
 import junit.framework.TestCase;
 
 public class FlowExecutionContinuationKeyFormatterTests extends TestCase {

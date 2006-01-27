@@ -29,8 +29,6 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.impl.FlowExecutionListenerList;
-import org.springframework.webflow.execution.repository.continuation.FlowExecutionByteArray;
-import org.springframework.webflow.execution.repository.continuation.SerializedFlowExecutionContinuation;
 
 /**
  * Unit tests for the SerializedFlowExecutionContinuation class.

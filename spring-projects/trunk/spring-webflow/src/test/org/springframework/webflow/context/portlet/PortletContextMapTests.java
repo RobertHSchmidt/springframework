@@ -20,7 +20,6 @@ import java.util.Enumeration;
 import junit.framework.TestCase;
 
 import org.springframework.mock.web.portlet.MockPortletContext;
-import org.springframework.webflow.context.portlet.PortletContextMap;
 
 /**
  * Unit test for the PortletContextMap class.

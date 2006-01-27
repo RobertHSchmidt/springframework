@@ -10,9 +10,9 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
-import org.springframework.webflow.TransitionTargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.TransitionTargetStateResolver;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
 

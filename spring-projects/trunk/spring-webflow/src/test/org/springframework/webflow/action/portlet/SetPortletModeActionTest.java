@@ -19,7 +19,6 @@ import javax.portlet.PortletMode;
 
 import junit.framework.TestCase;
 
-import org.springframework.core.ConstantException;
 import org.springframework.mock.web.portlet.MockActionResponse;
 import org.springframework.mock.web.portlet.MockRenderResponse;
 import org.springframework.webflow.ActionExecutionException;

@@ -24,9 +24,6 @@ import junit.framework.TestCase;
 import org.apache.commons.codec.binary.Base64;
 import org.easymock.MockControl;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
-import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuation;
-import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuationFactory;
 
 /**
  * Unit tests for the ClientContinuationFlowExecutionRepository class.
