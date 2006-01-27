@@ -197,8 +197,8 @@ public class FlowNavigationHandler extends NavigationHandler {
 		if (holder != null) {
 			// a flow execution has already been restored, signal an event in it
 			FlowExecution flowExecution = holder.getFlowExecution();
-			String eventId = parameterExtractor.extractEventId(context);
 			flowExecution.rehydrate(getFlowLocator(), getListenerLoader());
+			String eventId = parameterExtractor.extractEventId(context);
 			ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
 			renderView(selectedView, facesContext);
 		}

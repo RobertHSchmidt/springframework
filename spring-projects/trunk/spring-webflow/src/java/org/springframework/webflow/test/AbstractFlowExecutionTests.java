@@ -343,8 +343,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * assert against
 	 */
 	public void assertModelAttributeNotNull(String attributeName, ViewSelection selectedView) {
-		assertNotNull("The model attribute '" + attributeName
-				+ "' is [null] but should be NOT null, model contents are: "
+		assertNotNull("The model attribute '" + attributeName + "' is null but should not be; model contents are "
 				+ StylerUtils.style(selectedView.getModel()), evaluateModelAttributeExpression(attributeName,
 				selectedView.getModel()));
 	}
@@ -357,7 +356,7 @@ public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSp
 	 * assert against
 	 */
 	public void assertModelAttributeNull(String attributeName, ViewSelection selectedView) {
-		assertNull("The model attribute '" + attributeName + "' is NOT null but should be [null], model contents are:"
+		assertNull("The model attribute '" + attributeName + "' is not null but should be; model contents are "
 				+ StylerUtils.style(selectedView.getModel()), evaluateModelAttributeExpression(attributeName,
 				selectedView.getModel()));
 	}
