@@ -888,9 +888,10 @@
     			    and transition to the <literal>displayResults</literal> state.</emphasis>
     			</para>
     			<para>
-    			    With this approach, you would not write a custom <literal>Action</literal> implementation.
-    			    Spring Web Flow automatically adapts the method on your application object to the 
-    			    <literal>Action</literal> interface for you and cares for exposing any return value.
+    			    With this approach, you do not write a custom <literal>Action</literal> implementation.
+    			    Spring Web Flow automatically adapts the method on your existing application object
+    			    to the <literal>Action</literal> interface and cares for exposing any return value 
+    			    in the correct scope.
     			</para>
 			</sect3>    		
     	    <sect3 id="actionStateJava-pojoActionMethod">
