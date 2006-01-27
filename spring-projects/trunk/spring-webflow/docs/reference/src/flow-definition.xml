@@ -735,7 +735,7 @@
     			<para>
     			    The association between the <literal>searchAction</literal> id and an 
     			    <literal>Action</literal> implementation is made by the XmlFlowBuilder at 
-    			    Flow configuration time by a service registry, typically a
+    			    Flow configuration time using a service registry, typically a
     			    Spring BeanFactory.  For example:
     	    	<programlisting>
     &lt;beans&gt;
@@ -755,22 +755,22 @@
             this.searchService = searchService;
         }
         
-    	public Event execute(RequestContext context) {
+        public Event execute(RequestContext context) {
     	
-    	    // lookup the search criteria in "flow scope"
-    	    SearchCriteria criteria =
-    	        (SearchCriteria)context.getFlowScope().getAttribute("criteria");
+            // lookup the search criteria in "flow scope"
+            SearchCriteria criteria =
+                (SearchCriteria)context.getFlowScope().getAttribute("criteria");
     	        
-    	    // execute the search
-    	    Collection results = searchService.executeSearch(criteria);
+            // execute the search
+            Collection results = searchService.executeSearch(criteria);
     	    
-    	    // set the results in "request scope"
-    	    context.getRequestScope().setAttribute("results", results);
+            // set the results in "request scope"
+            context.getRequestScope().setAttribute("results", results);
     	    
-    	    // return "success"
-    	    return new Event(this, "success");
+            // return "success"
+            return new Event(this, "success");
         }
-    }	
+    }
     			</programlisting>
     			</para>
 			</sect3>    		
@@ -827,20 +827,19 @@
             return success();
         }
         
-    	public Event executeSearch(RequestContext context) {
-    	
-    	    // lookup the search criteria in "flow scope"
-    	    SearchCriteria criteria =
-    	        (SearchCriteria)context.getFlowScope().getAttribute("criteria");
+        public Event executeSearch(RequestContext context) {
+            // lookup the search criteria in "flow scope"
+            SearchCriteria criteria =
+                (SearchCriteria)context.getFlowScope().getAttribute("criteria");
     	        
-    	    // execute the search
-    	    Collection results = searchService.executeSearch(criteria);
+            // execute the search
+            Collection results = searchService.executeSearch(criteria);
     	    
-    	    // set the results in "request scope"
-    	    context.getRequestScope().setAttribute("results", results);
+            // set the results in "request scope"
+            context.getRequestScope().setAttribute("results", results);
     	    
-    	    // return "success"
-    	    return success();
+            // return "success"
+            return success();
         }
     }	
     			</programlisting>
