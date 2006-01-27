@@ -548,7 +548,7 @@
     		<para>
     		    Spring Web Flow gives you full control over implementing your own actions and configuring when they should be invoked 
     		    within the lifecycle of a flow.  The system can also <emphasis>automatically</emphasis> adapt methods on
-    		    your existing objects (POJOs) to the <literal>Action</literal> interface.
+    		    your existing application objects (POJOs) to the <literal>Action</literal> interface.
     		</para>
     		<sect3>
     			<title>Action invocation</title>
@@ -595,10 +595,102 @@
 									Each time a transitionable state exits.
 								</entry>
 	        	   	        </row>
+            				<row>
+              					<entry>on flow end</entry>
+								<entry>
+									Each time an execution of a flow terminates.
+								</entry>
+	        	   	        </row>
 	            		</tbody>
 		       		</tgroup>
     		    </table> 	
     		</sect3>
+    		<sect3>
+    			<title>Action properties</title>
+    			<para>
+    			    An <literal>Action</literal> may be annotated with properties by wrapping the Action 
+    			    in a decorator, an instance of <literal>org.springframework.webflow.AnnotatedAction</literal>.
+    			    These properties may provide descriptive characteristics, or may be used to affect
+    			    the action's execution in a specific usage context.
+	    		</para>
+    			<para>
+    			    Support for setting several common properties are provided for convenience.  These 
+    			    include:
+	    		</para>
+	    		<table>
+    	   			<title>Common Action properties</title>
+        		    <tgroup cols="2">
+		           	    <colspec colname="c1" colwidth="2*" />
+        				<colspec colname="c2" colwidth="4*" />
+	        	        <thead>
+       		    	        <row>
+               			        <entry>Property name</entry>
+               					<entry>Description</entry>
+               			    </row>
+						</thead>
+					  	<tbody>
+            				<row>
+              					<entry>caption</entry>
+								<entry>
+									A short description about the action, suitable for display as a tooltip.
+								</entry>
+	        	   	        </row>
+            				<row>
+              					<entry>description</entry>
+								<entry>
+									A long description about the action, suitable for display in a text box.
+								</entry>
+	        	   	        </row>
+            				<row>
+              					<entry>name</entry>
+								<entry>
+									The name of the action, used to qualify the action's result event.
+									For example, an Action named <literal>placeOrder</literal> that returns <literal>success</literal>
+									would be assigned a result event identified by <literal>placeOrder.success</literal>.
+									This allows you to distinguish logical execution outcomes by action, useful when 
+									invoking multiple actions as part of a chain.
+								</entry>
+	        	   	        </row>
+            				<row>
+              					<entry>method</entry>
+								<entry>
+									The name of the target method on the Action instance to invoke to carry out execution.
+									This facilitates multiple <emphasis>action methods</emphasis> per Action instance.
+								</entry>
+	        	   	        </row>
+            				<row>
+              					<entry>resultName</entry>
+								<entry>
+									If the target method is an arbitrary public method that returns a value, this is the name of the attribute
+									the value should be indexed under.
+								</entry>
+	        	   	        </row>
+            				<row>
+              					<entry>resultScope</entry>
+								<entry>
+									If the resultName property is specified, this is the scope the result attribute should be indexed in.
+									For example, "request" or "flow" scope.
+								</entry>
+	        	   	        </row>
+	            		</tbody>
+		       		</tgroup>
+    		    </table> 	
+			</sect3>    		
+    		<para>
+    			The class diagram below shows the ActionState and the associated types used to carry
+    			out the action execution process:
+    		</para>
+			<mediaobject>
+				<imageobject role="fo">
+					<imagedata fileref="images/actionstate-classdiagram.jpg" format="JPEG" align="center"/>
+				</imageobject>
+				<imageobject role="html">
+					<imagedata fileref="images/actionstate-classdiagram.jpg" format="JPEG" align="center"/>
+				</imageobject>
+				<caption>
+					<para>ActionState class diagram</para>
+				</caption>
+			</mediaobject>
     	</sect2>
     	<sect2 id="decisionstate">
     		<title>DecisionState</title>
