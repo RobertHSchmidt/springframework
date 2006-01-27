@@ -16,7 +16,7 @@
 			</P>
 			
 			<P>
-				This Spring web flow sample application illustrates 3 features:
+				This Spring web flow sample application illustrates several features:
 				<UL>
 					<LI>
 						Double submit prevention: refreshing or back button use will not allow you to resubmit data.
