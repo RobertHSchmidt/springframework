@@ -5,7 +5,7 @@ import org.springframework.webflow.manager.ConditionalFlowExecutionListenerLoade
 
 /**
  * Simple extension of {@link ConditionalFlowExecutionListenerLoader} that adds
- * a {@link ActionFormAdapter} listener that applies to all flows.
+ * a {@link SpringBindingActionFormConfigurer} listener that applies to all flows.
  * <p>
  * Note: this adapter is required when using Struts and Spring Web Flow together with
  * Spring's {@link SpringBindingActionForm} to take advantage of Spring's
@@ -16,9 +16,9 @@ import org.springframework.webflow.manager.ConditionalFlowExecutionListenerLoade
 public class StrutsFlowExecutionListenerLoader extends ConditionalFlowExecutionListenerLoader {
 	
 	/**
-	 * Creates a new struts listener loader that simply attaches a {@link ActionFormAdapter}.
+	 * Creates a new struts listener loader that simply attaches a {@link SpringBindingActionFormConfigurer}.
 	 */
 	public StrutsFlowExecutionListenerLoader() {
-		addListener(new ActionFormAdapter());
+		addListener(new SpringBindingActionFormConfigurer());
 	}
 }
