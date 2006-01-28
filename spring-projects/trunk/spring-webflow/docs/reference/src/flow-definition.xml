@@ -751,12 +751,11 @@
     public class SearchAction implements Action {
         private SearchService searchService;
         
-        public SearchAction(SearchService) {
+        public SearchAction(SearchService searchService) {
             this.searchService = searchService;
         }
         
         public Event execute(RequestContext context) {
-    	
             // lookup the search criteria in "flow scope"
             SearchCriteria criteria =
                 (SearchCriteria)context.getFlowScope().getAttribute("criteria");
@@ -783,9 +782,9 @@
     	    	<programlisting>
     public class SearchFlowBuilder extends AbstractFlowBuilder {
     	public void buildStates() {
-    	    ...
-    	    addActionState("executeSearch", action("searchAction"),
-    	        transition(on("success"), to("displayResults")));
+            ...
+            addActionState("executeSearch", action("searchAction"),
+                transition(on("success"), to("displayResults")));
             ...    	          
         }
     }	
@@ -819,12 +818,8 @@
     public class SearchFlowAction extends MultiAction {
         private SearchService searchService;
         
-        public SearchAction(SearchService) {
+        public SearchAction(SearchService searchService) {
             this.searchService = searchService;
-        }
-        
-        public Event someOtherActionMethod(RequestContext context) {
-            return success();
         }
         
         public Event executeSearch(RequestContext context) {
@@ -841,8 +836,33 @@
             // return "success"
             return success();
         }
+
+        public Event someOtherRelatedActionMethod(RequestContext context) {
+            return success();
+        }
+
+        public Event yetAnotherRelatedActionMethod(RequestContext context) {
+            return success();
+        }
     }	
     			</programlisting>
+    				As you can see, this allows you to define one to many action methods per Action class. 
+    				With this approach, there are two requirements:
+    				<orderedlist>
+ 						<listitem>
+ 							<para>
+ 								Your Action class must extend from <literal>org.springframework.webflow.MultiAction</literal>, or 
+ 								another class that extends from <literal>MultiAction</literal>.  The multi action cares 
+    							for the action method dispatch that is based on the value of the <literal>method</literal>
+    							property.
+ 							</para>
+ 						</listitem>
+ 						<listitem>
+ 							<para>
+			    				Each action method must conform to the signature illustrated above: <literal>public Event ${method}(RequestContext) { ... }	</literal>
+ 							</para>
+ 						</listitem>   				
+    				</orderedlist> 
     			</para>
 			</sect3>    		
     	    <sect3 id="actionStateJava-multiActionMethod">
@@ -854,9 +874,9 @@
     	    	<programlisting>
     public class SearchFlowBuilder extends AbstractFlowBuilder {
     	public void buildStates() {
-    	    ...
-    	    addActionState("executeSearch", method("executeSearch", action("searchAction")),
-    	        transition(on("success"), to("displayResults")));
+            ...
+            addActionState("executeSearch", method("executeSearch", action("searchAction")),
+                transition(on("success"), to("displayResults")));
             ...    	          
         }
     }	
@@ -866,8 +886,7 @@
     	    	<title>ActionState XML - POJO action method execution</title>
     	    	<para>
     	    	    The next example constructs a <literal>ActionState</literal> definition from XML that 
-					executes a single <emphasis>action method</emphasis> on your PlainOldJavaObject (POJO)
-					and then responds to the result:
+					executes a single method on your PlainOldJavaObject (POJO) and then responds to the result:
     	    	<programlisting>
     &lt;flow start-state="displaySearchCriteria"&gt;
         ...
@@ -881,16 +900,34 @@
     			</programlisting>
     			    This state definition reads "<emphasis>when the <literal>executeSearch</literal>
     			    state is entered, execute the <literal>executeSearch</literal> method on the
-    			    <literal>searchService</literal> passing it the <literal>criteria</literal> object
+    			    <literal>searchService</literal> passing it the object indexed by name <literal>criteria</literal>
     			    in <literal>flowScope</literal>.  On successful execution, expose the method 
     			    return value in request scope under the name <literal>results</literal> 
     			    and transition to the <literal>displayResults</literal> state</emphasis>."
     			</para>
     			<para>
-    			    With this approach, you do not write a custom <literal>Action</literal> implementation.
-    			    Spring Web Flow automatically adapts the method on your existing application object
-    			    to the <literal>Action</literal> interface and cares for exposing any return value 
-    			    in the correct scope.
+    				In this example, the referenced bean <literal>searchService</literal> would be
+    				<emphasis>your application object</emphasis>, typically a transactional
+    				business service.  Such a service implementation must have defined the
+    				the <literal>Collection executeSearch(SearchCriteria)</literal> method, 
+    				typically by implementing a service interface:
+    			</para>
+    			<programlisting>
+    public interface SearchService {
+        public Collection executeSearch(SearchCriteria criteria);
+    }	
+    			</programlisting>
+    			<para>
+    			    With this approach there are no requirements on the signature of the methods that carry out 
+    			    action execution, nor is there any requirement to extend from a Web Flow specific base class.
+    			    Basically, you are not required to write a custom <literal>Action</literal> implementation at all--you 
+    			    simply instruct Spring Web Flow to call your business methods directly.  The need
+    			    the for custom "glue code" to bind your web-tier to your middle-tier is eliminated.
+    			</para>
+    			<para>
+    			    Spring Web Flow achieves this by automatically adapting the method on your existing
+    			    application object to the <literal>Action</literal> interface and caring for
+    			    exposing any return value in the correct scope.
     			</para>
 			</sect3>    		
     	    <sect3 id="actionStateJava-pojoActionMethod">
