@@ -21,19 +21,21 @@ import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 
 /**
- * A flow execution listener required for a Struts environment that uses a
+ * A flow execution listener required for a Struts environment that uses the
  * {@link SpringBindingActionForm}.
  * <p>
- * After flow execution request processing, this implementation takes a Spring
- * {@link org.springframework.validation.Errors} instance describing the result
- * of a POJO-based data binding operation and adapts it to the Struts ActionForm
- * model using the special <code>SpringBindingActionForm</code>.
+ * After flow execution request processing this implementation takes the current
+ * Spring {@link org.springframework.validation.Errors} instance describing the
+ * result of a POJO-based "form object" data binding operation and adapts it to
+ * the Struts ActionForm model using the special
+ * @{link SpringBindingActionForm}.
  */
-public class ActionFormAdapter extends FlowExecutionListenerAdapter {
+public class SpringBindingActionFormConfigurer extends FlowExecutionListenerAdapter {
 	public void requestProcessed(RequestContext context) {
 		if (context.getFlowExecutionContext().isActive()) {
 			StrutsExternalContext strutsContext = (StrutsExternalContext)context.getExternalContext();
 			if (strutsContext.getActionForm() instanceof SpringBindingActionForm) {
+				// configure the special spring-binding action form
 				SpringBindingActionForm bindingForm = (SpringBindingActionForm)strutsContext.getActionForm();
 				bindingForm.expose(new FormObjectAccessor(context).getFormErrors(), strutsContext.getRequest());
 			}
