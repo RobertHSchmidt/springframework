@@ -173,14 +173,16 @@ public class FlowExecutionManagerParameterExtractor {
 	}
 
 	/**
-	 * Extract the flow id from the external context.
-	 * @param context the context in which the external user event occured
+	 * Extracts the flow id from the external context. If not found, the
+	 * <code>defaultFlowId</code> will be returned instead.
+	 * @see #getDefaultFlowId()
+	 * @param context the context in which the external user event occurred
 	 * @return the obtained id or <code>null</code> if not found
 	 */
 	public String extractFlowId(ExternalContext context) {
 		String flowId = verifySingleStringInputParameter(getFlowIdParameterName(), getParameterMap(context).get(
 				getFlowIdParameterName()));
-		return (flowId != null ? flowId : defaultFlowId);
+		return (flowId != null ? flowId : getDefaultFlowId());
 	}
 
 	/**
@@ -301,7 +303,7 @@ public class FlowExecutionManagerParameterExtractor {
 			return value;
 		}
 		// if no value yet, try to get it as a name_value=xyz parameter
-		String prefix = logicalParameterName + parameterDelimiter;
+		String prefix = logicalParameterName + getParameterDelimiter();
 		Iterator paramNames = parameters.keySet().iterator();
 		while (paramNames.hasNext()) {
 			String paramName = (String)paramNames.next();
