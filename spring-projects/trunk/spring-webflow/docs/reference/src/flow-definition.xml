@@ -578,7 +578,7 @@
     			    As outlined, the <literal>ActionState</literal> is the central state type for invoking one 
     			    or more actions and responding to their result to drive a state transition.  There are
     			    also other points within the lifecycle of a flow where an Action can be executed.
-    			    At all of these points the only requiremenet is that these actions implement the central
+    			    At all of these points the only requirement is that these actions implement the central
     			    <literal>org.springframework.webflow.Action</literal> interface.
 	    		</para>
 	    		<table>
@@ -903,11 +903,11 @@
     public class SearchFlowBuilder extends AbstractFlowBuilder {
     	public void buildStates() {
     	    ...
-    	    AnnotatedAction searchAction =
-    	        method("executeSearch(${flowScope.criteria})", action("searchAction"));
+            AnnotatedAction searchAction =
+                method("executeSearch(${flowScope.criteria})", action("searchAction"));
             searchAction.setResultName("results");
-    	    addActionState("executeSearch", searchAction,
-    	        transition(on("success"), to("displayResults")));
+            addActionState("executeSearch", searchAction,
+                transition(on("success"), to("displayResults")));
             ...    	          
         }
     }	
