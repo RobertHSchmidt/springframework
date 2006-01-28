@@ -24,11 +24,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.struts.ActionSupport;
+import org.springframework.web.struts.DelegatingActionProxy;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.manager.FlowExecutionManager;
@@ -74,10 +77,10 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * FlowAction:
  * 
  * <pre>
- *       &lt;action path=&quot;/userRegistration&quot;
- *           type=&quot;org.springframework.webflow.manager.struts.FlowAction&quot;
- *           name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *       &lt;/action&gt;
+ *     &lt;action path=&quot;/userRegistration&quot;
+ *         type=&quot;org.springframework.webflow.manager.struts.FlowAction&quot;
+ *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *     &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -88,6 +91,7 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * adapter enabling POJO-based binding and validation with Spring.
  * <p>
  * Other notes regarding Struts/Spring Web Flow integration:
+ * <p>
  * <ul>
  * <li>Logical view names returned when <code>ViewStates</code> and
  * <code>EndStates</code> are entered are mapped to physical view templates
@@ -97,6 +101,24 @@ import org.springframework.webflow.manager.support.FlowExecutionManagerParameter
  * request scope of the class
  * <code>org.springframework.web.struts.SpringBindingActionForm</code> and use
  * it with your FlowAction.
+ * <li>This class depends on a {@link FlowExecutionManager} instance to be
+ * configured. If you are using Spring's {@link SpringBindingActionForm}, the
+ * manager must have a {@link SpringBindingActionFormConfigurer} listener
+ * attached, which is conveniently done by configuring a
+ * {@link StrutsFlowExecutionListenerLoader}.
+ * <li> If relying on Spring's {@link DelegatingActionProxy} (which is
+ * recommended), a FlowExecutionManager reference can simply be injected using
+ * standard Spring DependencyInjection techniques. If you are not using the
+ * proxy-based approach, this class will attempt a root context lookup on
+ * initialization, first querying for a bean of instance
+ * {@link FlowExecutionManager} named {@link #FLOW_EXECUTION_MANAGER_BEAN_NAME},
+ * then, if not found, querying for a bean of instance {@link FlowLocator} named
+ * {@link #FLOW_LOCATOR_BEAN_NAME}. If the FlowLocator dependency is resolved,
+ * this class will automatically configure a default flow execution manager
+ * implementation suitable for a Struts environment (see
+ * {@link #setDefaultFlowExecutionManager(FlowLocator)}). In addition, you may
+ * choose to simply inject a FlowLocator directly if the FlowExecutionManager
+ * defaults meet your requirements.
  * </ul>
  * <p>
  * The benefits here are substantial: developers now have a powerful web flow
@@ -137,7 +159,8 @@ public class FlowAction extends ActionSupport {
 	private FlowExecutionManagerParameterExtractor parameterExtractor = new FlowExecutionManagerParameterExtractor();
 
 	/**
-	 * Set the flow locator to use for the lookup of flow definitions to execute.
+	 * Set the flow locator to use for the lookup of flow definitions to
+	 * execute.
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
 		setDefaultFlowExecutionManager(flowLocator);
@@ -183,8 +206,21 @@ public class FlowAction extends ActionSupport {
 						FlowExecutionManager.class));
 			}
 			else {
-				FlowLocator flowLocator = (FlowLocator)context.getBean(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class);
-				setDefaultFlowExecutionManager(flowLocator);
+				try {
+					FlowLocator flowLocator = (FlowLocator)context.getBean(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class);
+					setDefaultFlowExecutionManager(flowLocator);
+				}
+				catch (NoSuchBeanDefinitionException e) {
+					String message = "No '"
+							+ FLOW_LOCATOR_BEAN_NAME
+							+ "' or '"
+							+ FLOW_EXECUTION_MANAGER_BEAN_NAME
+							+ "' bean definition could be found; to use Spring Web Flow with Struts you must configure this FlowAction with either a FlowLocator "
+							+ "(exposing a registry of flow definitions) or a custom FlowExecutionManager "
+							+ "(allowing more configuration options, and typically configured with a StrutsFlowExecutionListenerLoader "
+							+ "for use with the SpringBindingActionForm)";
+					throw new FlowArtifactException(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class, message, e);
+				}
 			}
 		}
 	}
