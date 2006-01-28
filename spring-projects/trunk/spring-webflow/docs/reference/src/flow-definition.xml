@@ -548,7 +548,7 @@
     		<title>ActionState</title>
     		<para>
     			When entered, an action state executes business application code, then responds to the result of that 
-    			execution by deciding where in the flow to go next.  This process is as follows:
+    			execution by deciding what state in the flow to enter next.  Specifically:
     			<orderedlist>
     				<listitem>
     					<para>
@@ -560,7 +560,7 @@
     				<listitem>
     					<para>
 	    					The state determines if the outcome of the first action's execution matches a 
-   		 					transition.  If there is a match, the state transition is executed.  If there is no match, 
+   		 					transition.  If there is a match, the transition is executed.  If there is no match, 
     						the next action in the list is executed.  This process continues until a transition is 
     						matched or the list of actions is exhausted.
     					</para>
@@ -570,7 +570,7 @@
     		<para>
     		    Spring Web Flow gives you full control over implementing your own actions and configuring when they should be invoked 
     		    within the lifecycle of a flow.  The system can also <emphasis>automatically</emphasis> adapt methods on
-    		    your existing application objects (POJOs) to the <literal>Action</literal> interface.
+    		    your existing application objects (POJOs) to the <literal>Action</literal> interface in a non-invasive manner.
     		</para>
     		<sect3>
     			<title>Action invocation</title>
@@ -728,9 +728,9 @@
         ...
     &lt;/flow&gt;
     			</programlisting>
-    			    This state definition reads <emphasis>when the <literal>executeSearch</literal>
+    			    This state definition reads "<emphasis>when the <literal>executeSearch</literal>
     			    state is entered, execute the <literal>searchAction</literal>.  On successful execution,
-    			    transition to the <literal>displayResults</literal> state.</emphasis>
+    			    transition to the <literal>displayResults</literal> state</emphasis>."
     			</para>
     			<para>
     			    The association between the <literal>searchAction</literal> id and an 
@@ -807,10 +807,10 @@
         ...
     &lt;/flow&gt;
     			</programlisting>
-    			    This state definition reads <emphasis>when the <literal>executeSearch</literal>
+    			    This state definition reads "<emphasis>when the <literal>executeSearch</literal>
     			    state is entered, execute the <literal>executeSearch</literal> method on the
     			    <literal>searchFlowAction</literal>.  On successful execution,
-    			    transition to the <literal>displayResults</literal> state.</emphasis>
+    			    transition to the <literal>displayResults</literal> state</emphasis>."
     			</para>
     			<para>
     			    A <literal>SearchFlowAction</literal> implementation containing multiple action methods 
@@ -879,12 +879,12 @@
         ...
     &lt;/flow&gt;
     			</programlisting>
-    			    This state definition reads <emphasis>when the <literal>executeSearch</literal>
+    			    This state definition reads "<emphasis>when the <literal>executeSearch</literal>
     			    state is entered, execute the <literal>executeSearch</literal> method on the
     			    <literal>searchService</literal> passing it the <literal>criteria</literal> object
     			    in <literal>flowScope</literal>.  On successful execution, expose the method 
     			    return value in request scope under the name <literal>results</literal> 
-    			    and transition to the <literal>displayResults</literal> state.</emphasis>
+    			    and transition to the <literal>displayResults</literal> state</emphasis>."
     			</para>
     			<para>
     			    With this approach, you do not write a custom <literal>Action</literal> implementation.
