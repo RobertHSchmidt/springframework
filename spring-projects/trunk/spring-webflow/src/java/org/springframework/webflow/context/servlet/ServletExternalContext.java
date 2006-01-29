@@ -61,6 +61,10 @@ public class ServletExternalContext implements ExternalContext {
 		this.response = response;
 	}
 
+	public String getRequestPathInfo() {
+		return request.getPathInfo();
+	}
+
 	public Map getRequestParameterMap() {
 		return new HttpServletRequestParameterMap(request);
 	}

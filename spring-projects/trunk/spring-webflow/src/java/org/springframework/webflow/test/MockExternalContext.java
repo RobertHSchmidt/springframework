@@ -31,6 +31,8 @@ import org.springframework.webflow.context.SharedMapDecorator;
  */
 public class MockExternalContext implements ExternalContext {
 
+	private String requestPathInfo;
+	
 	private Map requestParameterMap = Collections.EMPTY_MAP;
 
 	private Map requestMap = new TreeMap();
@@ -66,6 +68,14 @@ public class MockExternalContext implements ExternalContext {
 		this.requestParameterMap = Collections.unmodifiableMap(requestParameterMap);
 	}
 
+	public String getRequestPathInfo() {
+		return requestPathInfo;
+	}
+	
+	public void setRequestPathInfo(String requestPathInfo) {
+		this.requestPathInfo = requestPathInfo;
+	}
+	
 	public Map getRequestParameterMap() {
 		return requestParameterMap;
 	}

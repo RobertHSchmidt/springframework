@@ -59,6 +59,10 @@ public class PortletExternalContext implements ExternalContext {
 		this.response = response;
 	}
 
+	public String getRequestPathInfo() {
+		return null;
+	}
+
 	public Map getRequestParameterMap() {
 		return new PortletRequestParameterMap(request);
 	}

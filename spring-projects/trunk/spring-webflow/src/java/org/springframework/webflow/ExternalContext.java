@@ -36,6 +36,12 @@ import java.util.Map;
 public interface ExternalContext {
 
 	/**
+	 * Returns the path of this external request.
+	 * @return the request path info
+	 */
+	public String getRequestPathInfo();
+	
+	/**
 	 * Provides access to the parameters associated with the user request that
 	 * led to SWF being called. This map is expected to be immutable and cannot
 	 * be changed.
