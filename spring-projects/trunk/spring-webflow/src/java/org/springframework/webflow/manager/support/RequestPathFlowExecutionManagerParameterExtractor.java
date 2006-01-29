@@ -13,8 +13,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
  * <code>http://${host}/${context}/${servlet}/${flowId}</code>
  * <p>
  * For example, the url
- * <code>http://localhost/springair/reservation/booking</code> would launch
- * the flow <code>booking</code>, assuming a context path of
+ * <code>http://localhost/springair/reservation/booking</code> would launch a
+ * new execution of the <code>booking</code> flow, assuming a context path of
  * <code>/springair</code> and a servlet mapping of
  * <code>/reservation/*</code>.
  * <p>
