@@ -93,12 +93,6 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
 
 	/**
-	 * The string-encoded id of the conversation will be exposed to redirectors
-	 * in a model attribute with this name ("conversationId").
-	 */
-	public static final String CONVERSATION_ID_ATTRIBUTE = "conversationId";
-
-	/**
 	 * Logger, usable by subclasses.
 	 */
 	protected final Log logger = LogFactory.getLog(getClass());
