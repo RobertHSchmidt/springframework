@@ -26,7 +26,7 @@
 	</application>
 
 	<lifecycle>
-		<phase-listener>org.springframework.webflow.manager.jsf.FlowPhaseListener</phase-listener>
+		<phase-listener>org.springframework.webflow.executor.jsf.FlowPhaseListener</phase-listener>
 	</lifecycle>	
 	
 </faces-config>
