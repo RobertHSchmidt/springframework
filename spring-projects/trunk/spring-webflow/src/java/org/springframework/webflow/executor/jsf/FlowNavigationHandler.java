@@ -26,6 +26,7 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
+import org.springframework.web.jsf.DecoratingNavigationHandler;
 import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewSelection;
@@ -39,8 +40,8 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
 /**
  * An implementation of a JSF <code>NavigationHandler</code> that provides
  * integration with Spring Web Flow. It delegates handling to the standard
- * NavigationHandler implementation when a navigation request does not
- * pertain to a flow execution.
+ * NavigationHandler implementation when a navigation request does not pertain
+ * to a flow execution.
  * <p>
  * Specifically, the following navigation handler algorithm is implemented:
  * <ul>
@@ -72,7 +73,7 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * @author Colin Sampaleanu
  * @author Keith Donald
  */
-public class FlowNavigationHandler extends NavigationHandler {
+public class FlowNavigationHandler extends DecoratingNavigationHandler {
 
 	/**
 	 * The service name of the default {@link FlowLocator} implementation
@@ -110,19 +111,13 @@ public class FlowNavigationHandler extends NavigationHandler {
 	private ViewIdResolver viewIdResolver = new DefaultViewIdResolver();
 
 	/**
-	 * The standard <code>NavigationHandler</code> implementation that we are
-	 * wrapping.
-	 */
-	private NavigationHandler handlerDelegate;
-
-	/**
 	 * Create a new {@link FlowNavigationHandler}, wrapping the specified
 	 * standard navigation handler implementation.
-	 * @param handlerDelegate Standard <code>NavigationHandler</code> we are
-	 * wrapping
+	 * @param originalNavigationHandler Standard <code>NavigationHandler</code>
+	 * we are wrapping
 	 */
-	public FlowNavigationHandler(NavigationHandler handlerDelegate) {
-		this.handlerDelegate = handlerDelegate;
+	public FlowNavigationHandler(NavigationHandler originalNavigationHandler) {
+		super(originalNavigationHandler);
 	}
 
 	/**
@@ -184,14 +179,8 @@ public class FlowNavigationHandler extends NavigationHandler {
 		this.viewIdResolver = viewIdResolver;
 	}
 
-	/**
-	 * Handle the navigation request implied by the specified parameters.
-	 * @param facesContext <code>FacesContext</code> for the current request
-	 * @param fromAction The action binding expression that was evaluated to
-	 * retrieve the specified outcome (if any)
-	 * @param outcome The logical outcome returned by the specified action
-	 */
-	public void handleNavigation(FacesContext facesContext, String fromAction, String outcome) {
+	public void handleNavigation(FacesContext facesContext, String fromAction, String outcome,
+			NavigationHandler originalNavigationHandler) {
 		JsfExternalContext context = new JsfExternalContext(facesContext, fromAction, outcome);
 		FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
 		if (holder != null) {
@@ -214,7 +203,7 @@ public class FlowNavigationHandler extends NavigationHandler {
 			}
 			else {
 				// neither has happened, delegate to std navigation handler
-				handlerDelegate.handleNavigation(facesContext, fromAction, outcome);
+				originalNavigationHandler.handleNavigation(facesContext, fromAction, outcome);
 			}
 		}
 	}
