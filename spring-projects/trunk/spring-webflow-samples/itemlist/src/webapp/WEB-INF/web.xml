@@ -26,7 +26,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>@PROJECT_WEBAPP_NAME@</servlet-name>
-		<url-pattern>*.htm</url-pattern>
+		<url-pattern>/app/*</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

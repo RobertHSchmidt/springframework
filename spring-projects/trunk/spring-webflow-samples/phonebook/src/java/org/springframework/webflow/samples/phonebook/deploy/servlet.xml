@@ -9,8 +9,8 @@
 	  the "_flowId" request parameter:
 	      e.g. /phonebook.htm?_flowId=search
 	-->
-	<bean name="/phonebook.htm" class="org.springframework.webflow.manager.mvc.FlowController">
-		<constructor-arg ref="flowExecutionManager"/>
+	<bean name="/phonebook.htm" class="org.springframework.webflow.executor.mvc.FlowController">
+		<constructor-arg ref="flowExecutor"/>
 		<property name="cacheSeconds" value="5"/>
 	</bean>
 

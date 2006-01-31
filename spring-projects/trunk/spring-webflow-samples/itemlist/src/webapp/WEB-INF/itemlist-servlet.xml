@@ -3,19 +3,26 @@
 
 <beans>
 
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="alwaysUseFullPath" value="true"/>
+		<property name="mappings">
+			<value>
+				/app/*=flowController
+			</value>
+		</property>
+	</bean>
+	
 	<!-- 
 	  Exposes web flows for execution at a single request URL.
 	  The id of a flow to launch should be passed in by clients using
 	  the "_flowId" request parameter:
 	      e.g. /app.htm?_flowId=itemlist
 	-->
-	<bean name="/app.htm" class="org.springframework.webflow.manager.mvc.FlowController">
+	<bean id="flowController" class="org.springframework.webflow.executor.mvc.FlowController">
 		<constructor-arg ref="flowRegistry"/>
-		<!--
-			Set cacheSeconds to a small, non zero value so you hit 'back' and experiment with
-			duplicate submit prevention.
-		-->
-		<property name="cacheSeconds" value="5"/>		
+		<property name="parameterExtractor">
+			<bean class="org.springframework.webflow.executor.support.RequestPathFlowExecutorParameterExtractor"/>
+		</property>
 	</bean>
 
 	<!-- Creates the registry of flow definitions for this application -->

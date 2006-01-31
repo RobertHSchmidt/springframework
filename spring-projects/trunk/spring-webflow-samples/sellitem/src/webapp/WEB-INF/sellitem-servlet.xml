@@ -8,8 +8,8 @@
 		exposed at the /pos.htm URL.  The id of a flow to launch should be passed
 		in using the "_flowId" request parameter: e.g. /pos.htm?_flowId=sellItem
 	-->
-	<bean name="/pos.htm" class="org.springframework.webflow.manager.mvc.FlowController">
-		<constructor-arg ref="flowExecutionManager"/>
+	<bean name="/pos.htm" class="org.springframework.webflow.executor.mvc.FlowController">
+		<constructor-arg ref="flowExecutor"/>
 		<!--
 			Set cacheSeconds to a small, non 0, value so you can do ctrl-N to open an new
 			window and experiment with the continuations stuff.
@@ -18,7 +18,7 @@
 	</bean>
 
 	<!-- Launches new flow executions and resumes existing executions. -->	
-	<bean id="flowExecutionManager" class="org.springframework.webflow.manager.FlowExecutionManagerImpl">
+	<bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
 		<constructor-arg ref="flowRegistry"/>
 		<property name="repositoryFactory">
 			<bean class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepositoryFactory"/>

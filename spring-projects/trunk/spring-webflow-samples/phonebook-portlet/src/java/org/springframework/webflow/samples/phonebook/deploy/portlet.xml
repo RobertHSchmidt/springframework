@@ -18,8 +18,8 @@
 		- A view participating in an existing flow execution may simply pass it the
 		- appropriate _flowExecutionId and _eventId.
 	-->
-	<bean id="flowController" class="org.springframework.webflow.manager.mvc.PortletFlowController">
-		<constructor-arg ref="flowExecutionManager" />
+	<bean id="flowController" class="org.springframework.webflow.executor.mvc.PortletFlowController">
+		<constructor-arg ref="flowExecutor" />
 	</bean>
 
 	<!-- ResourceViewResolver -->

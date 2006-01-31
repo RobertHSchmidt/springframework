@@ -3,8 +3,8 @@
 
 <beans>
 
-	<!-- Launches new flow executions and resumes existing executions. -->	
-	<bean id="flowExecutionManager" class="org.springframework.webflow.manager.FlowExecutionManagerImpl">
+	<!-- Launches new flow executions and resumes existing executions. -->
+	<bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
 		<constructor-arg ref="flowRegistry"/>
 		<property name="repositoryFactory">
 			<bean class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepositoryFactory"/>
