@@ -30,7 +30,7 @@ import org.springframework.webflow.ViewSelection;
  * <p>
  * Typically, when a browser wants to launch a new execution of a Flow at
  * runtime, it passes in the id of the Flow definition to launch to a governing
- * {@link org.springframework.webflow.manager.FlowExecutionManager}. The
+ * {@link org.springframework.webflow.executor.FlowExecutor}. The
  * manager then creates an instance of an object implementing this interface,
  * initializing it with the requested Flow definition which becomes the
  * execution's "root", or top-level flow. After creation, the
@@ -63,7 +63,7 @@ import org.springframework.webflow.ViewSelection;
  * flow execution to end (by the root flow reaching an EndState). At that time,
  * this object is removed from the repository and discarded.
  * 
- * @see org.springframework.webflow.manager.FlowExecutionManager
+ * @see org.springframework.webflow.executor.FlowExecutor
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
  * @see org.springframework.webflow.Flow
  * @see org.springframework.webflow.State

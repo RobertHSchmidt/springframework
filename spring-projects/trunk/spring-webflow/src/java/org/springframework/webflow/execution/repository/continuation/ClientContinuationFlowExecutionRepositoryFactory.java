@@ -10,7 +10,7 @@ import org.springframework.webflow.execution.repository.SingletonFlowExecutionRe
  * <p>
  * This is a convenience implementation that makes it easy to use a client-side
  * continuation-based flow execution storage strategy with a
- * {@link org.springframework.webflow.manager.FlowExecutionManagerImpl}.
+ * {@link org.springframework.webflow.executor.FlowExecutorImpl}.
  * 
  * @see ClientContinuationFlowExecutionRepository
  * 

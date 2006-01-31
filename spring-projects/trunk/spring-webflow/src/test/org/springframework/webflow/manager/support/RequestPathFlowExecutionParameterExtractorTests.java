@@ -2,13 +2,14 @@ package org.springframework.webflow.manager.support;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.executor.support.RequestPathFlowExecutorParameterExtractor;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class RequestPathFlowExecutionParameterExtractorTests extends TestCase {
-	private RequestPathFlowExecutionManagerParameterExtractor extractor;
+	private RequestPathFlowExecutorParameterExtractor extractor;
 
 	public void setUp() {
-		extractor = new RequestPathFlowExecutionManagerParameterExtractor();
+		extractor = new RequestPathFlowExecutorParameterExtractor();
 	}
 
 	public void testExtractFlowId() {

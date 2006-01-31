@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.FlowLocator;
  * managed in this registry.
  * 
  * @see org.springframework.webflow.execution.FlowLocator
- * @see org.springframework.webflow.manager.FlowExecutionManagerImpl
+ * @see org.springframework.webflow.executor.FlowExecutorImpl
  * 
  * @author Keith Donald
  */

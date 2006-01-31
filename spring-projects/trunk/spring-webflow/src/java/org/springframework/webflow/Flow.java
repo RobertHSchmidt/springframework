@@ -96,8 +96,8 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.webflow.Transition
  * @see org.springframework.webflow.StateExceptionHandler
  * @see org.springframework.webflow.StateExceptionHandlerSet
- * @see org.springframework.webflow.manager.mvc.FlowController
- * @see org.springframework.webflow.manager.mvc.PortletFlowController
+ * @see org.springframework.webflow.executor.mvc.FlowController
+ * @see org.springframework.webflow.executor.mvc.PortletFlowController
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
