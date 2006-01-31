@@ -111,6 +111,13 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	private ViewIdResolver viewIdResolver = new DefaultViewIdResolver();
 
 	/**
+	 * Create a new {@link FlowNavigationHandler} using the defautl constructor.
+	 */
+	public FlowNavigationHandler() {
+		super();
+	}
+
+	/**
 	 * Create a new {@link FlowNavigationHandler}, wrapping the specified
 	 * standard navigation handler implementation.
 	 * @param originalNavigationHandler Standard <code>NavigationHandler</code>
