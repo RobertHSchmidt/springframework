@@ -19,7 +19,7 @@
 
 	<action-mappings>
 		<action path="/home" forward="index.jsp"/>
-		<action path="/flowAction" name="actionForm" scope="request" type="org.springframework.webflow.manager.struts.FlowAction"/>
+		<action path="/flowAction" name="actionForm" scope="request" type="org.springframework.webflow.executor.struts.FlowAction"/>
 	</action-mappings>
 
 	<message-resources parameter="org.springframework.webflow.samples.birthdate.MessageResources"/>
