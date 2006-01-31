@@ -21,7 +21,7 @@
 	<bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
 		<constructor-arg ref="flowRegistry"/>
 		<property name="listenerLoader">
-			<bean class="org.springframework.webflow.manager.ConditionalFlowExecutionListenerLoader">
+			<bean class="org.springframework.webflow.executor.ConditionalFlowExecutionListenerLoader">
 		        <property name="listener">
 					<bean class="org.springframework.webflow.samples.flowlauncher.SampleFlowExecutionListener"/>
     		    </property>

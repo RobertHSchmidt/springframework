@@ -24,7 +24,7 @@
 			<bean class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepositoryFactory"/>
 		</property>
 		<property name="listenerLoader">
-			<bean class="org.springframework.webflow.manager.ConditionalFlowExecutionListenerLoader">
+			<bean class="org.springframework.webflow.executor.ConditionalFlowExecutionListenerLoader">
 		        <property name="listener">
 			        <bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
     		    </property>
