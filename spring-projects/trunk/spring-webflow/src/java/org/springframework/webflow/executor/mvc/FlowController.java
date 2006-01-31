@@ -96,15 +96,15 @@ public class FlowController extends AbstractController {
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * Delegate for extracting flow execution manager parameters from a request
+	 * Delegate for extracting flow executor parameters from a request
 	 * made by a {@link ExternalContext}.
 	 */
 	private FlowExecutorParameterExtractor parameterExtractor = new FlowExecutorParameterExtractor();
 
 	/**
-	 * Create a new FlowController that delegates to the configured execution
-	 * manager for managing the execution of web flows.
-	 * @param flowExecutor the manager to launch and resume flow executions
+	 * Create a new FlowController that delegates to the configured executor
+	 * for driving the execution of web flows.
+	 * @param flowExecutor the service to launch and resume flow executions
 	 * brokered by this web controller.
 	 */
 	public FlowController(FlowExecutor flowExecutor) {
@@ -135,8 +135,8 @@ public class FlowController extends AbstractController {
 	}
 
 	/**
-	 * Returns the flow execution manager used by this controller.
-	 * @return the flow execution manager
+	 * Returns the flow executor used by this controller.
+	 * @return the flow executor
 	 */
 	public FlowExecutor getFlowExecutor() {
 		return flowExecutor;

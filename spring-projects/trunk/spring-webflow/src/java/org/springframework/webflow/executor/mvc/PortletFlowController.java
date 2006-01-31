@@ -105,14 +105,14 @@ public class PortletFlowController extends AbstractController {
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * Delegate for extract flow execution manager parameters.
+	 * Delegate for extracting flow executor parameters.
 	 */
 	private FlowExecutorParameterExtractor parameterExtractor = new FlowExecutorParameterExtractor();
 
 	/**
-	 * Create a new FlowController that delegates to the configured execution
-	 * manager for managing the execution of web flows.
-	 * @param flowExecutor the manager to launch and resume flow executions
+	 * Create a new PortletFlowController that delegates to the configured executor
+	 * for driving the execution of web flows.
+	 * @param flowExecutor the service to launch and resume flow executions
 	 * brokered by this web controller.
 	 */
 	public PortletFlowController(FlowExecutor flowExecutor) {
@@ -121,7 +121,7 @@ public class PortletFlowController extends AbstractController {
 	}
 
 	/**
-	 * Convenience constructor that creates a new FlowController that initially
+	 * Convenience constructor that creates a new PortletFlowController that initially
 	 * relies on a default
 	 * {@link org.springframework.webflow.executor.FlowExecutorImpl}
 	 * implementation that uses the provided flow locator to access flow
@@ -191,7 +191,7 @@ public class PortletFlowController extends AbstractController {
 	}
 
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
-		// delegate to the flow execution manager to process the request
+		// delegate to the flow executor to process the request
 		ViewSelection selectedView = createControllerHelper().handleFlowRequest(
 				new PortletExternalContext(getPortletContext(), request, response));
 		// expose selected view in session for access during render phase

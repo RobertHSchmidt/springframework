@@ -45,16 +45,15 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * FlowAction may launch any new FlowExecution. In addition, a single Flow
  * Action may signal events in any existing/restored FlowExecutions.
  * <p>
- * Requests are managed by and delegated to a {@link FlowExecutor},
- * which this class delegates to using a {@link FlowExecutorHelper}
- * (allowing reuse of common front flow controller logic in other environments).
- * Consult the JavaDoc of those classes for more information on how requests are
- * processed.
+ * Requests are managed by and delegated to a {@link FlowExecutor}, which this
+ * class delegates to using a {@link FlowExecutorHelper} (allowing reuse of
+ * common front flow controller logic in other environments). Consult the
+ * JavaDoc of those classes for more information on how requests are processed.
  * <p>
  * <li>By default, to have this controller launch a new flow execution
  * (conversation), have the client send a
- * {@link FlowExecutorParameterExtractor#getFlowIdParameterName()}
- * request parameter indicating the flow definition to launch.
+ * {@link FlowExecutorParameterExtractor#getFlowIdParameterName()} request
+ * parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
  * {@link FlowExecutorParameterExtractor#getFlowExecutionIdParameterName()}
@@ -78,7 +77,7 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * 
  * <pre>
  *     &lt;action path=&quot;/userRegistration&quot;
- *         type=&quot;org.springframework.webflow.manager.struts.FlowAction&quot;
+ *         type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
  *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
  *     &lt;/action&gt;
  * </pre>
@@ -101,24 +100,22 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * request scope of the class
  * <code>org.springframework.web.struts.SpringBindingActionForm</code> and use
  * it with your FlowAction.
- * <li>This class depends on a {@link FlowExecutor} instance to be
- * configured. If you are using Spring's {@link SpringBindingActionForm}, the
- * manager must have a {@link SpringBindingActionFormConfigurer} listener
- * attached, which is conveniently done by configuring a
- * {@link StrutsFlowExecutionListenerLoader}.
+ * <li>This class depends on a {@link FlowExecutor} instance to be configured.
+ * If you are using Spring's {@link SpringBindingActionForm}, the executor must
+ * have a {@link SpringBindingActionFormConfigurer} listener attached, which is
+ * conveniently done by configuring a {@link StrutsFlowExecutionListenerLoader}.
  * <li> If relying on Spring's {@link DelegatingActionProxy} (which is
- * recommended), a FlowExecutionManager reference can simply be injected using
- * standard Spring DependencyInjection techniques. If you are not using the
- * proxy-based approach, this class will attempt a root context lookup on
- * initialization, first querying for a bean of instance
- * {@link FlowExecutor} named {@link #FLOW_EXECUTOR_BEAN_NAME},
- * then, if not found, querying for a bean of instance {@link FlowLocator} named
- * {@link #FLOW_LOCATOR_BEAN_NAME}. If the FlowLocator dependency is resolved,
- * this class will automatically configure a default flow execution manager
- * implementation suitable for a Struts environment (see
- * {@link #setDefaultFlowExecutor(FlowLocator)}). In addition, you may
- * choose to simply inject a FlowLocator directly if the FlowExecutionManager
- * defaults meet your requirements.
+ * recommended), a FlowExecutor reference can simply be injected using standard
+ * Spring DependencyInjection techniques. If you are not using the proxy-based
+ * approach, this class will attempt a root context lookup on initialization,
+ * first querying for a bean of instance {@link FlowExecutor} named
+ * {@link #FLOW_EXECUTOR_BEAN_NAME}, then, if not found, querying for a bean of
+ * instance {@link FlowLocator} named {@link #FLOW_LOCATOR_BEAN_NAME}. If the
+ * FlowLocator dependency is resolved, this class will automatically configure a
+ * default flow executor implementation suitable for a Struts environment (see
+ * {@link #setDefaultFlowExecutor(FlowLocator)}). In addition, you may choose
+ * to simply inject a FlowLocator directly if the FlowExecutor defaults meet
+ * your requirements.
  * </ul>
  * <p>
  * The benefits here are substantial: developers now have a powerful web flow
@@ -136,14 +133,14 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
 public class FlowAction extends ActionSupport {
 
 	/**
-	 * The flow execution manager will be retreived from the application context
-	 * using this bean name if no manager is explicitly set.
+	 * The flow executor will be retreived from the application context using
+	 * this bean name if no executor is explicitly set.
 	 */
 	protected static final String FLOW_EXECUTOR_BEAN_NAME = "flowExecutor";
 
 	/**
 	 * The flow locator will be retreived from the application context using
-	 * this bean name if no manager and locator is explicitly set.
+	 * this bean name if no executor and locator is explicitly set.
 	 */
 	protected static final String FLOW_LOCATOR_BEAN_NAME = "flowLocator";
 
@@ -154,7 +151,7 @@ public class FlowAction extends ActionSupport {
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * Delegate for extract flow execution manager parameters.
+	 * Delegate for extract flow executor parameters.
 	 */
 	private FlowExecutorParameterExtractor parameterExtractor = new FlowExecutorParameterExtractor();
 
@@ -167,23 +164,22 @@ public class FlowAction extends ActionSupport {
 	}
 
 	/**
-	 * Returns the flow execution manager used by this controller.
-	 * @return the flow execution manager
+	 * Returns the flow executor used by this controller.
+	 * @return the flow executor
 	 */
 	public FlowExecutor getFlowExecutor() {
 		return flowExecutor;
 	}
 
 	/**
-	 * Configures the flow execution manager implementation to use.
+	 * Configures the flow executor implementation to use.
 	 */
-	public void setFlowExecutor(FlowExecutor flowExecutionManager) {
-		this.flowExecutor = flowExecutionManager;
+	public void setFlowExecutor(FlowExecutor flowExecutor) {
+		this.flowExecutor = flowExecutor;
 	}
 
 	/**
-	 * Returns the flow execution manager parameter extractor used by this
-	 * controller.
+	 * Returns the flow executor parameter extractor used by this controller.
 	 * @return the parameter extractor
 	 */
 	public FlowExecutorParameterExtractor getParameterExtractor() {
@@ -191,7 +187,7 @@ public class FlowAction extends ActionSupport {
 	}
 
 	/**
-	 * Sets the flow execution manager parameter extractor to use.
+	 * Sets the flow executor parameter extractor to use.
 	 * @param parameterExtractor the parameter extractor
 	 */
 	public void setParameterExtractor(FlowExecutorParameterExtractor parameterExtractor) {
@@ -202,8 +198,7 @@ public class FlowAction extends ActionSupport {
 		if (getFlowExecutor() == null) {
 			WebApplicationContext context = getWebApplicationContext();
 			if (context.containsBean(FLOW_EXECUTOR_BEAN_NAME)) {
-				setFlowExecutor((FlowExecutor)context.getBean(FLOW_EXECUTOR_BEAN_NAME,
-						FlowExecutor.class));
+				setFlowExecutor((FlowExecutor)context.getBean(FLOW_EXECUTOR_BEAN_NAME, FlowExecutor.class));
 			}
 			else {
 				try {
@@ -226,8 +221,8 @@ public class FlowAction extends ActionSupport {
 	}
 
 	/**
-	 * Sets the default flow execution manager implementation, which
-	 * automatically installs a StrutsFlowExecutionListenerLoader that applies
+	 * Sets the default flow executor implementation, which automatically
+	 * installs a StrutsFlowExecutionListenerLoader that applies
 	 * SpringBindingActionForm adaption.
 	 * @param flowLocator the flow locator
 	 */
