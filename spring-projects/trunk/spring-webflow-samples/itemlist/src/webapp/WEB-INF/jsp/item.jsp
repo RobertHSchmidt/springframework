@@ -1,11 +1,14 @@
 <%@ include file="includeTop.jsp" %>
 
 <div id="content">
+	<div id="insert"><img src="../images/webflow-logo.jpg"/></div>
+	<h2>Add a new item</h2>
+	<hr>
 	<form action="app.htm" method="post"/>
 	<table>
 		<tr>
 			<td>
-				Item data:
+				Item:
 			</td>
 			<td>
 				<input type="text" name="data">

@@ -12,18 +12,17 @@
 		
 		<DIV align="left">
 			<P>
-				<A href="app.htm?_flowId=itemlist">Item List</A>
+				<A href="app/itemlist">Item List</A>
 			</P>
 			
 			<P>
 				This Spring web flow sample application illustrates several features:
 				<UL>
 					<LI>
-						Double submit prevention: refreshing or back button use will not allow you to resubmit data.
+						Launching flow's using bookmark-friendly, REST-style URLS
 					</LI>
 					<LI>
-						Flow expiry and cleanup: after 1 minute of idle time, a flow will expire and
-						will no longer be available for request processing.
+						Double submit prevention: refreshing or back button use will not allow you to resubmit data.
 					</LI>
 					<LI>
 						Use of an inline-flow, including the ability to map subflow output attributes

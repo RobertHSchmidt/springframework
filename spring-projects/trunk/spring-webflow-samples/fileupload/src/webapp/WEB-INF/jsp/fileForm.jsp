@@ -1,22 +1,32 @@
-<%@ page session="false" %>
+<%@ include file="includeTop.jsp" %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<HTML>
-	<HEAD>
-	</HEAD>
-	<BODY>
-		<DIV align="left">Select File</DIV>
-		<HR>
-		<DIV align="left">
-			<FORM name="submitForm" action="admin.htm" method="post" enctype="multipart/form-data">
-				<INPUT type="hidden" name="_flowExecutionId" value="<%=request.getAttribute("flowExecutionId") %>">
-				<INPUT type="hidden" name="_eventId" value="submit">
-				<INPUT type="file" name="file">
-			</FORM>
-		</DIV>
-		<HR>
-		<DIV align="right">
-			<INPUT type="button" onclick="javascript:document.submitForm.submit()" value="Upload">
-		</DIV>
-	</BODY>
-</HTML>
+<div id="content">
+	<div id="insert">
+		<img src="images/webflow-logo.jpg"/>
+	</div>
+	<h2>Select the file to upload</h2>
+	<hr>
+	<table>
+		<form name="submitForm" method="post" enctype="multipart/form-data">
+		<tr>
+			<td>
+				File:
+			</td>
+			<td>
+				<input type="file" name="file">
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2"> </td>
+		</tr>
+		<tr>
+			<td colspan="2" class="buttonBar">
+				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
+				<input type="submit" class="button" name="_eventId_submit" value="Upload">
+			</td>
+		</tr>
+		</form>
+	</table>
+</div>
+
+<%@ include file="includeBottom.jsp" %>
