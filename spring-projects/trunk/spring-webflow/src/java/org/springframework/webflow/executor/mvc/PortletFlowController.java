@@ -37,17 +37,17 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * {@link Controller} that routes incoming portlet requests to one or more
  * managed flow executions.
  * <p>
- * Requests into the web flow system are handled by a
- * {@link FlowExecutor}, which this class delegates to. Consult the
- * JavaDoc of that class for more information on how requests are processed.
+ * Requests into the web flow system are handled by a {@link FlowExecutor},
+ * which this class delegates to. Consult the JavaDoc of that class for more
+ * information on how requests are processed.
  * <p>
- * Note: a single FlowController may manage executing all flows of your
- * application. Specifically:
+ * Note: a single FlowController may execute all flows of your application.
+ * Specifically:
  * <ul>
  * <li>To have this controller launch a new flow execution (conversation), have
  * the client send a
- * {@link FlowExecutorParameterExtractor#getFlowIdParameterName()}
- * request parameter indicating the flow definition to launch.
+ * {@link FlowExecutorParameterExtractor#getFlowIdParameterName()} request
+ * parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
  * {@link FlowExecutorParameterExtractor#getFlowExecutionIdParameterName()}
@@ -60,31 +60,30 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * Usage example:
  * 
  * <pre>
- *      &lt;!--
- *          Exposes flows for execution at a single request URL.
- *          The id of a flow to launch should be passed in by clients using
- *          the &quot;_flowId&quot; request parameter:
- *              e.g. /app.htm?_flowId=flow1
- *      --&gt;
- *      &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.manager.mvc.PortletFlowController&quot;&gt;
- *          &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *      &lt;/bean&gt;
- *                            
- *      &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *      &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *          &lt;property name=&quot;flowLocations&quot;&gt;
- *              &lt;list&gt;
- *                  &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *                  &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *              &lt;/list&gt;
- *          &lt;/property&gt;
- *      &lt;/bean&gt;
+ *     &lt;!--
+ *         Exposes flows for execution at a single request URL.
+ *         The id of a flow to launch should be passed in by clients using
+ *         the &quot;_flowId&quot; request parameter:
+ *             e.g. /app.htm?_flowId=flow1
+ *     --&gt;
+ *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *     &lt;/bean&gt;
+ *                                
+ *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;flowLocations&quot;&gt;
+ *             &lt;list&gt;
+ *                 &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                 &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *             &lt;/list&gt;
+ *         &lt;/property&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
- * It is also possible to customize the
- * {@link FlowExecutorParameterExtractor} strategy to allow for
- * different types of controller parameterization, for example perhaps in
- * conjunction with a REST-based request mapper.
+ * It is also possible to customize the {@link FlowExecutorParameterExtractor}
+ * strategy to allow for different types of controller parameterization, for
+ * example perhaps in conjunction with a REST-style request mapper.
  * 
  * @author J.Enrique Ruiz
  * @author César Ordiñana
@@ -100,10 +99,10 @@ public class PortletFlowController extends AbstractController {
 	private static final String VIEW_SELECTION_ATTRIBUTE_NAME = PortletFlowController.class + ".viewSelection";
 
 	/**
-	 * Delegate for managing flow executions (launching new executions, and
+	 * Delegate for executing flow executions (launching new executions, and
 	 * resuming existing executions).
 	 */
-	private FlowExecutor flowExecutionManager;
+	private FlowExecutor flowExecutor;
 
 	/**
 	 * Delegate for extract flow execution manager parameters.
@@ -113,12 +112,12 @@ public class PortletFlowController extends AbstractController {
 	/**
 	 * Create a new FlowController that delegates to the configured execution
 	 * manager for managing the execution of web flows.
-	 * @param flowExecutionManager the manager to launch and resume flow
-	 * executions brokered by this web controller.
+	 * @param flowExecutor the manager to launch and resume flow executions
+	 * brokered by this web controller.
 	 */
-	public PortletFlowController(FlowExecutor flowExecutionManager) {
+	public PortletFlowController(FlowExecutor flowExecutor) {
 		initDefaults();
-		setFlowExecutionManager(flowExecutionManager);
+		setFlowExecutor(flowExecutor);
 	}
 
 	/**
@@ -130,7 +129,7 @@ public class PortletFlowController extends AbstractController {
 	 */
 	public PortletFlowController(FlowLocator flowLocator) {
 		initDefaults();
-		setFlowExecutionManager(new FlowExecutorImpl(flowLocator));
+		setFlowExecutor(new FlowExecutorImpl(flowLocator));
 	}
 
 	/**
@@ -144,24 +143,23 @@ public class PortletFlowController extends AbstractController {
 	}
 
 	/**
-	 * Returns the flow execution manager used by this controller.
-	 * @return the HTTP flow execution manager
+	 * Returns the flow executor used by this controller.
+	 * @return the flow executor
 	 */
-	public FlowExecutor getFlowExecutionManager() {
-		return flowExecutionManager;
+	public FlowExecutor getFlowExecutor() {
+		return flowExecutor;
 	}
 
 	/**
-	 * Configures the flow execution manager implementation to use.
-	 * @param flowExecutionManager the flow execution manager
+	 * Configures the flow executor implementation to use.
+	 * @param flowExecutor the flow executor
 	 */
-	public void setFlowExecutionManager(FlowExecutor flowExecutionManager) {
-		this.flowExecutionManager = flowExecutionManager;
+	public void setFlowExecutor(FlowExecutor flowExecutor) {
+		this.flowExecutor = flowExecutor;
 	}
 
 	/**
-	 * Returns the flow execution manager parameter extractor used by this
-	 * controller.
+	 * Returns the flow executor parameter extractor used by this controller.
 	 * @return the parameter extractor
 	 */
 	public FlowExecutorParameterExtractor getParameterExtractor() {
@@ -169,7 +167,7 @@ public class PortletFlowController extends AbstractController {
 	}
 
 	/**
-	 * Sets the flow execution manager parameter extractor to use.
+	 * Sets the flow executor parameter extractor to use.
 	 * @param parameterExtractor the parameter extractor
 	 */
 	public void setParameterExtractor(FlowExecutorParameterExtractor parameterExtractor) {
@@ -207,7 +205,7 @@ public class PortletFlowController extends AbstractController {
 	 * @return the controller helper
 	 */
 	protected FlowExecutorHelper createControllerHelper() {
-		return new FlowExecutorHelper(getFlowExecutionManager(), getParameterExtractor());
+		return new FlowExecutorHelper(getFlowExecutor(), getParameterExtractor());
 	}
 
 	/**

@@ -36,18 +36,17 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * {@link Controller} that routes incoming requests to one or more managed flow
  * executions.
  * <p>
- * Requests into the web flow system are handled by a
- * {@link FlowExecutor}, which this class delegates to using a
- * {@link FlowExecutorHelper}. Consult the JavaDoc of that class for
- * more information on how requests are processed.
+ * Requests into the web flow system are handled by a {@link FlowExecutor},
+ * which this class delegates to using a {@link FlowExecutorHelper}. Consult
+ * the JavaDoc of that class for more information on how requests are processed.
  * <p>
- * Note: a single FlowController may manage executing all flows of your
- * application. Specifically:
+ * Note: a single FlowController may execute all flows of your application.
+ * Specifically:
  * <ul>
  * <li>To have this controller launch a new flow execution (conversation), have
  * the client send a
- * {@link FlowExecutorParameterExtractor#getFlowIdParameterName()}
- * request parameter indicating the flow definition to launch.
+ * {@link FlowExecutorParameterExtractor#getFlowIdParameterName()} request
+ * parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
  * {@link FlowExecutorParameterExtractor#getFlowExecutionIdParameterName()}
@@ -66,10 +65,10 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  *         the &quot;_flowId&quot; request parameter:
  *         e.g. /app.htm?_flowId=flow1
  *     --&gt;
- *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.manager.mvc.FlowController&quot;&gt;
+ *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
  *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
  *     &lt;/bean&gt;
- *                            
+ *                               
  *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
  *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
  *         &lt;property name=&quot;flowLocations&quot;&gt;
@@ -81,9 +80,9 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  *     &lt;/bean&gt;
  * </pre>
  * 
- * It is also possible to customize the {@link FlowExecutorParameterExtractor} strategy to allow
- * for different types of controller parameterization, for example perhaps in conjunction with a
- * REST-based request mapper.
+ * It is also possible to customize the {@link FlowExecutorParameterExtractor}
+ * strategy to allow for different types of controller parameterization, for
+ * example perhaps in conjunction with a REST-style request mapper.
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -94,7 +93,7 @@ public class FlowController extends AbstractController {
 	 * Delegate for managing flow executions (launching new executions, and
 	 * resuming existing executions).
 	 */
-	private FlowExecutor flowExecutionManager;
+	private FlowExecutor flowExecutor;
 
 	/**
 	 * Delegate for extracting flow execution manager parameters from a request
@@ -105,12 +104,12 @@ public class FlowController extends AbstractController {
 	/**
 	 * Create a new FlowController that delegates to the configured execution
 	 * manager for managing the execution of web flows.
-	 * @param flowExecutionManager the manager to launch and resume flow
-	 * executions brokered by this web controller.
+	 * @param flowExecutor the manager to launch and resume flow executions
+	 * brokered by this web controller.
 	 */
-	public FlowController(FlowExecutor flowExecutionManager) {
+	public FlowController(FlowExecutor flowExecutor) {
 		initDefaults();
-		setFlowExecutionManager(flowExecutionManager);
+		setFlowExecutor(flowExecutor);
 	}
 
 	/**
@@ -122,7 +121,7 @@ public class FlowController extends AbstractController {
 	 */
 	public FlowController(FlowLocator flowLocator) {
 		initDefaults();
-		setFlowExecutionManager(new FlowExecutorImpl(flowLocator));
+		setFlowExecutor(new FlowExecutorImpl(flowLocator));
 	}
 
 	/**
@@ -139,21 +138,20 @@ public class FlowController extends AbstractController {
 	 * Returns the flow execution manager used by this controller.
 	 * @return the flow execution manager
 	 */
-	public FlowExecutor getFlowExecutionManager() {
-		return flowExecutionManager;
+	public FlowExecutor getFlowExecutor() {
+		return flowExecutor;
 	}
 
 	/**
-	 * Sets the flow execution manager to use.
-	 * @param flowExecutionManager the flow execution manager
+	 * Sets the flow executor to use.
+	 * @param flowExecutor the flow executor
 	 */
-	public void setFlowExecutionManager(FlowExecutor flowExecutionManager) {
-		this.flowExecutionManager = flowExecutionManager;
+	public void setFlowExecutor(FlowExecutor flowExecutor) {
+		this.flowExecutor = flowExecutor;
 	}
 
 	/**
-	 * Returns the flow execution manager parameter extractor used by this
-	 * controller.
+	 * Returns the flow executor parameter extractor used by this controller.
 	 * @return the parameter extractor
 	 */
 	public FlowExecutorParameterExtractor getParameterExtractor() {
@@ -161,7 +159,7 @@ public class FlowController extends AbstractController {
 	}
 
 	/**
-	 * Sets the flow execution manager parameter extractor to use.
+	 * Sets the flow executor parameter extractor to use.
 	 * @param parameterExtractor the parameter extractor
 	 */
 	public void setParameterExtractor(FlowExecutorParameterExtractor parameterExtractor) {
@@ -177,12 +175,12 @@ public class FlowController extends AbstractController {
 
 	/**
 	 * Factory method that creates a new helper for processing a request into
-	 * this flow controller.  The controller is a basic template encapsulating
+	 * this flow controller. The controller is a basic template encapsulating
 	 * reusable flow execution request handling workflow.
 	 * @return the controller helper
 	 */
 	protected FlowExecutorHelper createControllerHelper() {
-		return new FlowExecutorHelper(getFlowExecutionManager(), getParameterExtractor());
+		return new FlowExecutorHelper(getFlowExecutor(), getParameterExtractor());
 	}
 
 	/**

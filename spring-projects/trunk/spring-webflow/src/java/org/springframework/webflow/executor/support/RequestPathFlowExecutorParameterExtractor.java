@@ -6,8 +6,8 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 
 /**
- * A parameter extractor that extracts necessary flow execution management
- * parameters from the request path.
+ * A parameter extractor that extracts necessary flow executor parameters from
+ * the request path.
  * <p>
  * This allows for REST-style URLs to launch flows in the general format:
  * <code>http://${host}/${context}/${servlet}/${flowId}</code>

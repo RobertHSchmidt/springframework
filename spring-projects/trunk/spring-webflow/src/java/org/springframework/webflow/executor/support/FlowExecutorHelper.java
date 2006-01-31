@@ -40,9 +40,9 @@ public class FlowExecutorHelper {
 	private static final Log logger = LogFactory.getLog(FlowExecutorHelper.class);
 
 	/**
-	 * The flow execution manager this helper will coordinate with.
+	 * The flow execution executor this helper will coordinate with.
 	 */
-	private FlowExecutor flowExecutionManager;
+	private FlowExecutor flowExecutor;
 
 	/**
 	 * A helper for extracting parameters needed by the flowExecutionManager.
@@ -51,29 +51,29 @@ public class FlowExecutorHelper {
 
 	/**
 	 * Creates a new flow controller helper.
-	 * @param flowExecutionManager the flow execution manager to delegate to.
+	 * @param flowExecutor the flow execution manager to delegate to.
 	 */
-	public FlowExecutorHelper(FlowExecutor flowExecutionManager) {
-		this(flowExecutionManager, new FlowExecutorParameterExtractor());
+	public FlowExecutorHelper(FlowExecutor flowExecutor) {
+		this(flowExecutor, new FlowExecutorParameterExtractor());
 	}
 
 	/**
 	 * Creates a new flow controller helper.
-	 * @param flowExecutionManager the flow execution manager to delegate to.
+	 * @param flowExecutor the flow execution manager to delegate to.
 	 */
-	public FlowExecutorHelper(FlowExecutor flowExecutionManager,
+	public FlowExecutorHelper(FlowExecutor flowExecutor,
 			FlowExecutorParameterExtractor parameterExtractor) {
-		Assert.notNull(flowExecutionManager, "The flow execution manager is required");
+		Assert.notNull(flowExecutor, "The flow executor is required");
 		Assert.notNull(parameterExtractor, "The parameter extractor is required");
-		this.flowExecutionManager = flowExecutionManager;
+		this.flowExecutor = flowExecutor;
 		this.parameterExtractor = parameterExtractor;
 	}
 
 	/**
 	 * Returns the flow execution manager.
 	 */
-	public FlowExecutor getFlowExecutionManager() {
-		return flowExecutionManager;
+	public FlowExecutor getFlowExecutor() {
+		return flowExecutor;
 	}
 
 	/**
@@ -94,11 +94,11 @@ public class FlowExecutorHelper {
 		}
 		String flowExecutionId = parameterExtractor.extractFlowExecutionId(context);
 		if (StringUtils.hasText(flowExecutionId)) {
-			return flowExecutionManager.signalEvent(parameterExtractor.extractEventId(context), flowExecutionId,
+			return flowExecutor.signalEvent(parameterExtractor.extractEventId(context), flowExecutionId,
 					context);
 		}
 		else {
-			return flowExecutionManager.launch(parameterExtractor.extractFlowId(context), context);
+			return flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
 		}
 	}
 }

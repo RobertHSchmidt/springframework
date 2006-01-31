@@ -165,8 +165,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 	/**
 	 * Set the repository factory in use this flow execution manager.
 	 */
-	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryLocator) {
-		this.repositoryFactory = repositoryLocator;
+	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryFactory) {
+		this.repositoryFactory = repositoryFactory;
 	}
 
 	/**

@@ -24,7 +24,7 @@ import org.springframework.webflow.ViewSelection;
  * inteface defines a coarse-grained system boundary suitable for invocation by
  * most clients.
  * <p>
- * Implemetations of this interface abstract away much of the the internal
+ * Implementations of this interface abstract away much of the the internal
  * complexity of the webflow execution subsystem, which consists of launching
  * and resuming managed flow executions from repositories.
  * 
