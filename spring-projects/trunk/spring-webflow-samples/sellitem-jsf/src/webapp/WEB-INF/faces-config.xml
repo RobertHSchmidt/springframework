@@ -8,13 +8,13 @@
 	<application>
 		<!-- Navigation handler that delegates to Spring Web Flow -->
 		<navigation-handler>
-			org.springframework.webflow.manager.jsf.FlowNavigationHandler
+			org.springframework.webflow.executor.jsf.FlowNavigationHandler
 		</navigation-handler>
 		<property-resolver>
-			org.springframework.webflow.manager.jsf.FlowPropertyResolver
+			org.springframework.webflow.executor.jsf.FlowPropertyResolver
 		</property-resolver>
 		<variable-resolver>
-			org.springframework.webflow.manager.jsf.FlowVariableResolver
+			org.springframework.webflow.executor.jsf.FlowVariableResolver
 		</variable-resolver>
 		<variable-resolver>
 			org.springframework.web.jsf.DelegatingVariableResolver
