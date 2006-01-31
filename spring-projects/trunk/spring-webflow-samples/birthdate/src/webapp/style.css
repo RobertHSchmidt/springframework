@@ -6,13 +6,13 @@ body {
  
 div#logo {
 	width: 720px;
-	height: 65px;
+	height: 73px;
 	background: #86AEA5;
 }
 
 div#navigation {
 	width: 720px;
-	height: 20px;
+	height: 15px;
 	background: #E2F3B8;
 	text-align: right;
 }
@@ -40,7 +40,7 @@ div#copyright {
 div#copyright p {
 	text-align: center;
 	font-family: Tahoma, sans-serif;  
-	font-size: 10px; 
+	font-size: 75%; 
 	color: div#336633; 
 	margin-left: 5px;
 	font-weight: bold;
@@ -55,5 +55,4 @@ div#copyright p {
 	color: red;
 	font-weight: bold;
 	font-family: Arial, sans-serif;
-	font-size: 90%;
 }

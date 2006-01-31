@@ -1,7 +1,8 @@
 <%@ include file="includeTop.jsp" %>
 
 <div id="content">
-	Your Age
+	<div id="insert"><img src="images/webflow-logo.jpg"/></div>
+	<h2>Your age</h2>
 	<hr>
 	<p>
 		${birthDate.name}, you are now <I>${age}</I> old.

@@ -1,6 +1,8 @@
 <%@ include file="includeTop.jsp" %>
 
 <div id="content">
+	<div id="insert"><img src="images/webflow-logo.jpg"/></div>
+	<h2>Personalized birthday cards</h2>
 	<hr>
 	<html:form action="flowAction" method="post">
 	<table>
