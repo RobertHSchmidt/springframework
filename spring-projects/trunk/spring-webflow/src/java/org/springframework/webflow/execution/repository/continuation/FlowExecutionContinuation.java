@@ -2,34 +2,53 @@ package org.springframework.webflow.execution.repository.continuation;
 
 import java.io.Serializable;
 
+import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * A contract for a flow execution continuation, which represents a snapshot of
- * a user conversation at a point in time relevant to the user <i>that can be
- * restored and continued</i>.
+ * Convenient abstract base class for flow execution continuation
+ * implementations. Simply stores a serializable identifier property uniquely
+ * identifying this continuation in the context of exactly one conversation.
  * 
  * @author Keith Donald
  */
-public interface FlowExecutionContinuation extends Serializable {
+public abstract class FlowExecutionContinuation implements Serializable {
 
 	/**
-	 * Returns the continuation identifier, guaranteed to be unique in the
-	 * context of a logical user conversation.
-	 * @return the continuation id
+	 * The continuation id.
 	 */
-	public Serializable getId();
+	private Serializable id;
 
 	/**
-	 * Restores the flow execution representing the state of a conversation at a
-	 * point in time relevant to the user.
-	 * @return the flow execution
+	 * Creates a new continuation with the id provided.
+	 * @param id the continuation id.
 	 */
-	public FlowExecution getFlowExecution();
+	public FlowExecutionContinuation(Serializable id) {
+		Assert.notNull(id, "The 'id' property is required");
+		this.id = id;
+	}
 
-	/**
-	 * Convert this continuation to a encodable byte array.
-	 * @return the continuation as a byte array
-	 */
-	public byte[] toByteArray();
+	public Serializable getId() {
+		return id;
+	}
+
+	public abstract FlowExecution getFlowExecution();
+
+	public abstract byte[] toByteArray();
+
+	public boolean equals(Object o) {
+		if (!(o instanceof FlowExecutionContinuation)) {
+			return false;
+		}
+		return id.equals(((FlowExecutionContinuation)o).id);
+	}
+
+	public int hashCode() {
+		return id.hashCode();
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("id", id).toString();
+	}
 }

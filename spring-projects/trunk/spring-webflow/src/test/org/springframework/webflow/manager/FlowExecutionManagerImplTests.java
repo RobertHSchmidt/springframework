@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.manager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
@@ -70,7 +73,9 @@ public class FlowExecutionManagerImplTests extends TestCase {
 		flowExecutionContextControl = MockControl.createControl(FlowExecutionContext.class);
 		flowExecutionContextMock = (FlowExecutionContext) flowExecutionContextControl.getMock();
 
-		viewSelection = new ViewSelection("SomeView", "SomeKey", "SomeValue");
+		Map model = new HashMap(1);
+		model.put("SomeKey", "SomeValue");
+		viewSelection = new ViewSelection("SomeView", model, false);
 		flowExecutionContinuationKey = new FlowExecutionContinuationKey("some conversation id", "some continuation id");
 
 		// need to override a few methods that we don't want to test here
@@ -83,9 +88,9 @@ public class FlowExecutionManagerImplTests extends TestCase {
 				return flowExecutionRepositoryMock;
 			}
 
-			protected ViewSelection prepareSelectedView(ViewSelection selectedView, FlowExecutionContinuationKey continuationKey,
+			protected ViewSelection prepareSelectedView(ViewSelection selectedView, FlowExecutionRepository repository, FlowExecutionContinuationKey continuationKey,
 					FlowExecutionContext flowExecutionContext) {
-				return new ViewSelection("PreparedView");
+				return new ViewSelection("PreparedView", null, false);
 			}
 
 			protected FlowExecutionContinuationKey parseContinuationKey(String flowExecutionId) {
@@ -148,9 +153,8 @@ public class FlowExecutionManagerImplTests extends TestCase {
 		flowLocatorControl.expectAndReturn(flowLocatorMock.getFlow("SomeFlow"), null);
 		flowExecutionControl.expectAndReturn(flowExecutionMock.start(null), viewSelection);
 		flowExecutionControl.expectAndReturn(flowExecutionMock.isActive(), true);
-		flowExecutionRepositoryControl.expectAndReturn(flowExecutionRepositoryMock.generateContinuationKey(flowExecutionMock),
-				null);
-		flowExecutionRepositoryMock.putFlowExecution(null, flowExecutionMock);
+		flowExecutionRepositoryControl.expectAndReturn(flowExecutionRepositoryMock.generateContinuationKey(flowExecutionMock), flowExecutionContinuationKey);
+		flowExecutionRepositoryMock.putFlowExecution(flowExecutionContinuationKey, flowExecutionMock);
 		replay();
 
 		// perform test
@@ -194,7 +198,7 @@ public class FlowExecutionManagerImplTests extends TestCase {
 		replay();
 
 		// perform test
-		ViewSelection result = tested.prepareSelectedView(viewSelection, flowExecutionContinuationKey, flowExecutionContextMock);
+		ViewSelection result = tested.prepareSelectedView(viewSelection, null, flowExecutionContinuationKey, flowExecutionContextMock);
 
 		verify();
 		assertEquals("SomeView", result.getViewName());
@@ -210,7 +214,7 @@ public class FlowExecutionManagerImplTests extends TestCase {
 		replay();
 
 		// perform test
-		ViewSelection result = tested.prepareSelectedView(viewSelection, flowExecutionContinuationKey, flowExecutionContextMock);
+		ViewSelection result = tested.prepareSelectedView(viewSelection, null, flowExecutionContinuationKey, flowExecutionContextMock);
 
 		verify();
 		assertEquals("SomeView", result.getViewName());
@@ -221,17 +225,18 @@ public class FlowExecutionManagerImplTests extends TestCase {
 	public void testPrepareSelectedViewRedirect() throws Exception {
 		flowExecutionContextControl.expectAndReturn(flowExecutionContextMock.isActive(), true);
 		tested = new FlowExecutionManagerImpl(flowLocatorMock);
-		viewSelection.setRedirect(true);
+		ViewSelection viewSelection = new ViewSelection("Some Prepared View", null, true);
 		replay();
 
 		// perform test
-		try {
-			tested.prepareSelectedView(viewSelection, flowExecutionContinuationKey, flowExecutionContextMock);
-			fail("UnsupportedOperationException expected");
-		} catch (UnsupportedOperationException expected) {
-			// expected
-		}
+		MockControl control = MockControl.createControl(FlowExecutionRepository.class);
+		FlowExecutionRepository repositoryMock = (FlowExecutionRepository)control.getMock();
+		repositoryMock.setCurrentViewSelection(flowExecutionContinuationKey.getConversationId(), viewSelection);
+		control.replay();
+		
+		tested.prepareSelectedView(viewSelection, repositoryMock, flowExecutionContinuationKey, flowExecutionContextMock);
 
 		verify();
+		control.verify();
 	}
 }

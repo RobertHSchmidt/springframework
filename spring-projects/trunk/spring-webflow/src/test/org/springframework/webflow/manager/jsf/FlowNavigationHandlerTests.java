@@ -64,7 +64,7 @@ public class FlowNavigationHandlerTests extends TestCase {
 		flowLocatorControl = MockControl.createControl(FlowLocator.class);
 		flowLocatorMock = (FlowLocator)flowLocatorControl.getMock();
 
-		viewSelection = new ViewSelection("SomeView");
+		viewSelection = new ViewSelection("SomeView", null, false);
 		navigationHandler = new MyNavigationHandler();
 		mockFacesContext = new MockFacesContext();
 		mockJsfExternalContext = new MockJsfExternalContext();

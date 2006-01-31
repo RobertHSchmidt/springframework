@@ -86,7 +86,7 @@ public class FlowControllerTests extends TestCase {
 
 	public void testToModelAndView() throws Exception {
 		replay();
-		ModelAndView result = tested.toModelAndView(new ViewSelection("SomeView"));
+		ModelAndView result = tested.toModelAndView(new ViewSelection("SomeView", null, false));
 		verify();
 		assertEquals("SomeView", result.getViewName());
 	}
@@ -99,8 +99,7 @@ public class FlowControllerTests extends TestCase {
 	}
 
 	public void testToModelAndViewWithRedirectView() throws Exception {
-		ViewSelection viewSelection = new ViewSelection("SomeView");
-		viewSelection.setRedirect(true);
+		ViewSelection viewSelection = new ViewSelection("SomeView", null, true);
 		replay();
 		ModelAndView result = tested.toModelAndView(viewSelection);
 		verify();

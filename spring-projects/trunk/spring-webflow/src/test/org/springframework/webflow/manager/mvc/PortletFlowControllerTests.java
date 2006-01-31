@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.manager.mvc;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
@@ -88,7 +91,7 @@ public class PortletFlowControllerTests extends TestCase {
 	}
 
 	public void testHandleRenderRequestInternal() throws Exception {
-		final ViewSelection viewSelection = new ViewSelection("Some view");
+		final ViewSelection viewSelection = new ViewSelection("Some view", null, false);
 		MockPortletSession mockPortletSession = new MockPortletSession();
 		String attributeKey = PortletFlowController.class + ".viewSelection";
 		mockPortletSession.setAttribute(attributeKey, viewSelection);
@@ -107,7 +110,7 @@ public class PortletFlowControllerTests extends TestCase {
 	}
 
 	public void testToModelAndViewWithView() {
-		ViewSelection viewSelection = new ViewSelection("Some view");
+		ViewSelection viewSelection = new ViewSelection("Some view", null, false);
 		replay();
 
 		// perform test
@@ -119,7 +122,9 @@ public class PortletFlowControllerTests extends TestCase {
 	}
 
 	public void testToModelAndViewWithViewAndModel() {
-		ViewSelection viewSelection = new ViewSelection("Some view", "Some name", "Some value");
+		Map model = new HashMap();
+		model.put("Some name", "Some value");
+		ViewSelection viewSelection = new ViewSelection("Some view", model, false);
 		replay();
 		
 		// perform test
@@ -132,8 +137,7 @@ public class PortletFlowControllerTests extends TestCase {
 	}
 
 	public void testToModelAndViewWithRedirectView() {
-		ViewSelection viewSelection = new ViewSelection("Some view");
-		viewSelection.setRedirect(true);
+		ViewSelection viewSelection = new ViewSelection("Some view", null, true);
 		replay();
 
 		// perform test

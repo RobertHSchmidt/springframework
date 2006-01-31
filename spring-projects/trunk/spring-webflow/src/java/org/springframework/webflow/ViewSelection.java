@@ -16,15 +16,17 @@
 package org.springframework.webflow;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.ObjectUtils;
 
 /**
- * Value object that provides clients with information about a logical view to
- * render and the dynamic model data neccessary to render it. It is expected
- * that clients map this view selection to a physical view template for
+ * Immutable Value object that provides clients with information about a logical
+ * view to render and the dynamic model data necessary to render it. It is
+ * expected that clients map this view selection to a physical view template for
  * rendering (e.g. a JSP).
  * <p>
  * View selections are returned as a result of entering a {@link ViewState} or
@@ -35,48 +37,43 @@ import org.springframework.core.style.ToStringCreator;
  * present a screen to the user that allows them to interact at that point
  * within the flow.
  * <p>
- * For readers familiar with Spring MVC, this class is very similiar to the
- * <code>ModelAndView</code> construct. This class is provided to prevent a
- * web flow dependency on Spring MVC.
+ * For readers familiar with Spring MVC, this class is similiar in concept to
+ * the <code>ModelAndView</code> construct. This class is provided to prevent
+ * a web flow dependency on Spring MVC.
  * 
  * @see org.springframework.webflow.ViewSelector
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ViewSelection implements Serializable {
+public final class ViewSelection implements Serializable {
 
 	/**
-	 * The name of the view (or page) to render.
+	 * Serialization version uid.
 	 */
-	private String viewName;
+	private static final long serialVersionUID = -7048182063951237313L;
+
+	/**
+	 * Represents a null view selection, indicating a response has already been
+	 * issued.
+	 */
+	public static final ViewSelection NULL_VIEW_SELECTION = new ViewSelection(null, null, false);
+
+	/**
+	 * The name of the view (or page or other response) to render.
+	 */
+	private final String viewName;
 
 	/**
 	 * A map of the data available to the view for rendering.
 	 */
-	private Map model;
+	private final Map model;
 
 	/**
 	 * Indicates whether or not the view should be rendered after a redirect.
 	 */
-	private boolean redirect = false;
-
-	/**
-	 * Default constructor for bean style usage.
-	 */
-	public ViewSelection() {
-	}
-
-	/**
-	 * Convenient constructor when there is no model data to expose. Can also be
-	 * used in conjunction with <code>addObject()</code>.
-	 * @param viewName name of the view to render
-	 * @see #addObject(String, Object)
-	 */
-	public ViewSelection(String viewName) {
-		this.viewName = viewName;
-	}
-
+	private final boolean redirect;
+	
 	/**
 	 * Creates a new view selection given a view name and a model.
 	 * @param viewName name of the view to render
@@ -84,28 +81,15 @@ public class ViewSelection implements Serializable {
 	 * model entries may not be null, but the model Map may be null if there is
 	 * no model data
 	 */
-	public ViewSelection(String viewName, Map model) {
+	public ViewSelection(String viewName, Map model, boolean redirect) {
 		this.viewName = viewName;
-		this.model = model;
-	}
-
-	/**
-	 * Convenient constructor to take a single model object.
-	 * @param viewName name of the view to render
-	 * @param modelName name of the single entry in the model
-	 * @param modelObject the single model object
-	 */
-	public ViewSelection(String viewName, String modelName, Object modelObject) {
-		this.viewName = viewName;
-		addObject(modelName, modelObject);
-	}
-
-	/**
-	 * Set a view name for this ViewSelection. Will override any pre-existing
-	 * view name.
-	 */
-	public void setViewName(String viewName) {
-		this.viewName = viewName;
+		if (model != null) {
+			this.model = new HashMap(model);
+		}
+		else {
+			this.model = Collections.EMPTY_MAP;
+		}
+		this.redirect = redirect;
 	}
 
 	/**
@@ -116,75 +100,42 @@ public class ViewSelection implements Serializable {
 	}
 
 	/**
-	 * Returns whether or not a redirect is necessary when rendering this view.
-	 */
-	public boolean isRedirect() {
-		return this.redirect;
-	}
-
-	/**
-	 * Set whether or not a redirect is necessary when rendering this view.
-	 */
-	public void setRedirect(boolean redirect) {
-		this.redirect = redirect;
-	}
-
-	/**
 	 * Return the model map. Never returns null. To be called by application
 	 * code for modifying the model.
 	 */
 	public Map getModel() {
-		if (this.model == null) {
-			this.model = new HashMap(1);
-		}
-		return this.model;
+		return Collections.unmodifiableMap(model);
 	}
 
 	/**
-	 * Add an object to the model.
-	 * @param modelName name of the object to add to the model
-	 * @param modelObject object to add to the model, may not be null
-	 * @return this ViewSelection, convenient to allow usages like
-	 * <code>return viewSelection.addObject("foo", bar);</code>
+	 * Returns whether or not a redirect is necessary when rendering this view.
 	 */
-	public ViewSelection addObject(String modelName, Object modelObject) {
-		getModel().put(modelName, modelObject);
-		return this;
+	public boolean isRedirect() {
+		return redirect;
 	}
-
-	/**
-	 * Add all entries contained in the provided map to the model.
-	 * @param modelMap a map of modelName->modelObject pairs
-	 * @return this ViewSelection, convenient to allow usages like
-	 * <code>return viewSelection.addObject("foo", bar);</code>
-	 */
-	public ViewSelection addAllObjects(Map modelMap) {
-		getModel().putAll(modelMap);
-		return this;
-	}
-
-	/**
-	 * Clear the state of this view selection. The object will be empty
-	 * afterwards.
-	 * @see #isEmpty()
-	 */
-	public void clear() {
-		this.viewName = null;
-		this.model = null;
-	}
-
+	
 	/**
 	 * Return whether this view selection is empty: whether it does not hold any
 	 * view and does not contain a model.
-	 * @see #clear()
 	 */
-	public boolean isEmpty() {
-		return (this.viewName == null && this.model == null);
+	public boolean isNull() {
+		return (viewName == null && model.isEmpty());
 	}
 
+	public boolean equals(Object o) {
+		if (!(o instanceof ViewSelection)) {
+			return false;
+		}
+		ViewSelection other = (ViewSelection)o;
+		return ObjectUtils.nullSafeEquals(viewName, other.viewName) && model.equals(other.model);
+	}
+	
+	public int hashCode() {
+		return (viewName != null ? viewName.hashCode() : 0) + model.hashCode();
+	}
+	
 	public String toString() {
-		return
-			new ToStringCreator(this).append("viewName", viewName)
-				.append("redirect", redirect).append("model", model).toString();
+		return new ToStringCreator(this).append("viewName", viewName).append("redirect", redirect).append("model",
+				model).toString();
 	}
 }

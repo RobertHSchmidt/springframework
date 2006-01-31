@@ -17,11 +17,12 @@ package org.springframework.webflow.support;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
@@ -59,32 +60,31 @@ public class RedirectViewSelector implements ViewSelector, Serializable {
 	}
 
 	public ViewSelection makeSelection(RequestContext context) {
-		ViewSelection selection = new ViewSelection();
-		selection.setRedirect(true);
 		String fullView = (String)expression.evaluateAgainst(context, getEvaluationContext(context));
 		// the resulting fullView should look something like
 		// "/viewName?param0=value0&param1=value1"
 		// now parse that and build a corresponding view descriptor
-		int idx = fullView.indexOf('?');
-		if (idx != -1) {
-			selection.setViewName(fullView.substring(0, idx));
-			StringTokenizer parameters = new StringTokenizer(fullView.substring(idx + 1), "&");
-			while (parameters.hasMoreTokens()) {
-				String nameAndValue = parameters.nextToken();
-				idx = nameAndValue.indexOf('=');
-				if (idx != -1) {
-					selection.addObject(nameAndValue.substring(0, idx), nameAndValue.substring(idx + 1));
+		int index = fullView.indexOf('?');
+		String viewName;
+		Map model = null;
+		if (index != -1) {
+			viewName = fullView.substring(0, index);
+			String[] parameters = StringUtils.delimitedListToStringArray(fullView.substring(index + 1), "&");
+			model = new HashMap(parameters.length, 1);
+			for (int i = 0; i < parameters.length; i++) {
+				String nameAndValue = parameters[i];
+				index = nameAndValue.indexOf('=');
+				if (index != -1) {
+					model.put(nameAndValue.substring(0, index), nameAndValue.substring(index + 1));
 				}
 				else {
-					selection.addObject(nameAndValue, "");
+					model.put(nameAndValue, "");
 				}
 			}
+		} else {
+			viewName = fullView;
 		}
-		else {
-			// only view name specified (e.g. "/viewName")
-			selection.setViewName(fullView);
-		}
-		return selection;
+		return new ViewSelection(viewName, model, true);
 	}
 
 	/**

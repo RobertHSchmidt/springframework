@@ -8,6 +8,8 @@ import java.io.Serializable;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.Assert;
+import org.springframework.webflow.FlowException;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -93,12 +95,20 @@ public class ClientContinuationFlowExecutionRepository implements FlowExecutionR
 	}
 
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
-		// nothing to do!
+		// nothing to do by default
+	}
+
+	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {
+		// nothing to do by default
+		return null;
+	}
+
+	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException {
+		// nothing to do by default
 	}
 
 	public void invalidateConversation(Serializable conversationId) {
-		// FUTURE - support for accessing a database-backed conversation table
-		// for conversation invalidation.
+		// nothing to do by dfault
 	}
 
 	/**

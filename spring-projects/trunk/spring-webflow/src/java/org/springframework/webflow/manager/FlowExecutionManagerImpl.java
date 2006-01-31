@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.manager;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -90,6 +91,12 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	 * in a model attribute with this name ("flowExecutionId").
 	 */
 	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
+
+	/**
+	 * The string-encoded id of the conversation will be exposed to redirectors
+	 * in a model attribute with this name ("conversationId").
+	 */
+	public static final String CONVERSATION_ID_ATTRIBUTE = "conversationId";
 
 	/**
 	 * Logger, usable by subclasses.
@@ -213,7 +220,7 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 			FlowExecutionRepository repository = getRepository(context);
 			FlowExecutionContinuationKey continuationKey = repository.generateContinuationKey(flowExecution);
 			repository.putFlowExecution(continuationKey, flowExecution);
-			return prepareSelectedView(selectedView, continuationKey, flowExecution);
+			return prepareSelectedView(selectedView, repository, continuationKey, flowExecution);
 		}
 		else {
 			return selectedView;
@@ -244,12 +251,16 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 		if (flowExecution.isActive()) {
 			continuationKey = repository.generateContinuationKey(flowExecution, continuationKey.getConversationId());
 			repository.putFlowExecution(continuationKey, flowExecution);
-			return prepareSelectedView(selectedView, continuationKey, flowExecution);
+			return prepareSelectedView(selectedView, repository, continuationKey, flowExecution);
 		}
 		else {
 			repository.invalidateConversation(continuationKey.getConversationId());
 			return selectedView;
 		}
+	}
+
+	public ViewSelection getCurrentViewSelection(String conversationId, ExternalContext context) throws FlowException {
+		return getRepository(context).getCurrentViewSelection(conversationId);
 	}
 
 	/**
@@ -297,15 +308,27 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	 * flow execution
 	 * @return the prepped view selection
 	 */
-	protected ViewSelection prepareSelectedView(ViewSelection selectedView,
+	protected ViewSelection prepareSelectedView(ViewSelection selectedView, FlowExecutionRepository repository,
 			FlowExecutionContinuationKey continuationKey, FlowExecutionContext flowExecutionContext) {
-		if (flowExecutionContext.isActive() && selectedView != null) {
-			String id = formatContinuationKey(continuationKey);
+		if (flowExecutionContext.isActive()) {
 			if (selectedView.isRedirect()) {
-				throw new UnsupportedOperationException("Redirect from a view state is not yet supported");
+				// it's a redirect from a view state of a active flow execution,
+				// expose conversationId
+				repository.setCurrentViewSelection(continuationKey.getConversationId(), selectedView);
+				selectedView = new ViewSelection(String.valueOf(continuationKey.getConversationId()), null, true);
 			}
 			else {
-				exposeFlowExecutionAttributes(selectedView.getModel(), id, flowExecutionContext);
+				// it's a forward from a view state of a active flow execution,
+				// expose model and context attributes.
+				Map model = new HashMap(selectedView.getModel().size() + 2);
+				// expose all model attributes from the original view selection
+				model.putAll(selectedView.getModel());
+				// make the entire flow execution context available in the model
+				model.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
+				// make the unique flow execution id available in the model as
+				// convenience to views
+				model.put(FLOW_EXECUTION_ID_ATTRIBUTE, formatContinuationKey(continuationKey));
+				selectedView = new ViewSelection(selectedView.getViewName(), model, false);
 			}
 		}
 		if (logger.isDebugEnabled()) {
@@ -332,10 +355,5 @@ public class FlowExecutionManagerImpl implements FlowExecutionManager {
 	 */
 	protected void exposeFlowExecutionAttributes(Map model, String flowExecutionId,
 			FlowExecutionContext flowExecutionContext) {
-		// make the entire flow execution context available in the model
-		model.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
-		// make the unique flow execution id and current state id
-		// available in the model as convenience to views
-		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
 	}
 }

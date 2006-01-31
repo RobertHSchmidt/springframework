@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.FlowException;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
@@ -82,30 +84,41 @@ public class SimpleFlowExecutionRepository implements FlowExecutionRepository, S
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
-		FlowExecutionEntry entry = (FlowExecutionEntry)flowExecutionEntries.get(key.getConversationId());
+		FlowExecutionEntry entry = getFlowExecutionEntry(key.getConversationId());
+		// assert that the provided continuationId matches the entry's
+		// continuationId
+		// if they do not match, access to the conversation is not allowed.
+		if (!key.getContinuationId().equals(entry.getId())) {
+			throw new InvalidConversationContinuationException(this, key, "The continuation id '"
+					+ key.getContinuationId() + "' associated with conversation '" + key.getConversationId()
+					+ "' is invalid.  This will happen when accessing browser history "
+					+ "(typically via the back button) that references a previously used continuation id, "
+					+ "as this simple repository implementation does not support multiple continuations.  "
+					+ "Consider using another repository implementation or "
+					+ "restrict use of the browser back button.");
+		}
+		return entry.getFlowExecution();
+	}
+
+	private FlowExecutionEntry getFlowExecutionEntry(Serializable conversationId) {
+		FlowExecutionEntry entry = (FlowExecutionEntry)flowExecutionEntries.get(conversationId);
 		if (entry == null) {
-			throw new NoSuchConversationException(this, key.getConversationId());
+			throw new NoSuchConversationException(this, conversationId);
 		}
-		else {
-			// assert that the provided continuationId matches the entry's
-			// continuationId
-			// if they do not match, access to the conversation is not allowed.
-			if (!key.getContinuationId().equals(entry.getId())) {
-				throw new InvalidConversationContinuationException(this, key, "The continuation id '"
-						+ key.getContinuationId() + "' associated with conversation '" + key.getConversationId()
-						+ "' is invalid.  This will happen when accessing browser history "
-						+ "(typically via the back button) that references a previously used continuation id, "
-						+ "as this simple repository implementation does not support multiple continuations.  "
-						+ "Consider using another repository implementation or "
-						+ "restrict use of the browser back button.");
-			}
-			return entry.getFlowExecution();
-		}
+		return entry;
 	}
 
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
 		flowExecutionEntries.put(key.getConversationId(),
 				new FlowExecutionEntry(key.getContinuationId(), flowExecution));
+	}
+
+	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {
+		return getFlowExecutionEntry(conversationId).getCurrentViewSelection();
+	}
+
+	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException {
+		getFlowExecutionEntry(conversationId).setCurrentViewSelection(viewSelection);
 	}
 
 	public void invalidateConversation(Serializable conversationId) {
@@ -119,9 +132,21 @@ public class SimpleFlowExecutionRepository implements FlowExecutionRepository, S
 	 * @author Keith Donald
 	 */
 	protected static class FlowExecutionEntry implements Serializable {
+		
+		/**
+		 * The key required to continue the conversation. 
+		 */
 		private Serializable id;
 
+		/**
+		 * The flow execution representing the state of a conversation. 
+		 */
 		private FlowExecution flowExecution;
+
+		/**
+		 * The last (current) view selection made by the conversation. 
+		 */
+		private ViewSelection currentViewSelection;
 
 		public FlowExecutionEntry(Serializable id, FlowExecution flowExecution) {
 			this.id = id;
@@ -134,6 +159,14 @@ public class SimpleFlowExecutionRepository implements FlowExecutionRepository, S
 
 		public FlowExecution getFlowExecution() {
 			return flowExecution;
+		}
+
+		public ViewSelection getCurrentViewSelection() {
+			return currentViewSelection;
+		}
+
+		public void setCurrentViewSelection(ViewSelection viewSelection) {
+			this.currentViewSelection = viewSelection;
 		}
 
 		public String toString() {

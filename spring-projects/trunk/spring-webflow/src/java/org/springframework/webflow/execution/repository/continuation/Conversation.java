@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.ViewSelection;
 
 /**
  * Represents an active, ongoing conversation between a user and the Spring Web
@@ -28,6 +29,11 @@ public class Conversation implements Serializable {
 	 */
 	private int maxContinuations;
 
+	/**
+	 * The last (current) view selection made by the conversation. 
+	 */
+	private ViewSelection currentViewSelection;
+	
 	/**
 	 * Creates a new object representing a logical conversation between a
 	 * browser and Spring Web Flow. The new conversation initially has no
@@ -77,5 +83,19 @@ public class Conversation implements Serializable {
 	 */
 	public int getContinuationCount() {
 		return continuations.size();
+	}
+	
+	/**
+	 * Returns the current view selection.
+	 */
+	public ViewSelection getCurrentViewSelection() {
+		return currentViewSelection;
+	}
+
+	/**
+	 * Sets the current view selection.
+	 */
+	public void setCurrentViewSelection(ViewSelection viewSelection) {
+		this.currentViewSelection = viewSelection;
 	}
 }

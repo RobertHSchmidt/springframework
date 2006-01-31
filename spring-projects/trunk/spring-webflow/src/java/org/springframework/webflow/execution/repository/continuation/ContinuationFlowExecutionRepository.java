@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.webflow.FlowException;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -145,6 +147,14 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
 		Conversation conversation = (Conversation)getOrCreateConversation(key.getConversationId());
 		conversation.addContinuation(continuationFactory.createContinuation(key.getContinuationId(), flowExecution));
+	}
+
+	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {
+		return getConversation(conversationId).getCurrentViewSelection();
+	}
+
+	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException {
+		getConversation(conversationId).setCurrentViewSelection(viewSelection);
 	}
 
 	public void invalidateConversation(Serializable conversationId) {

@@ -14,7 +14,7 @@ import org.springframework.webflow.execution.FlowExecution;
  * 
  * @author Keith Donald
  */
-public class SerializedFlowExecutionContinuation extends AbstractFlowExecutionContinuation {
+public class SerializedFlowExecutionContinuation extends FlowExecutionContinuation {
 
 	private static final long serialVersionUID = 1026250005686020025L;
 

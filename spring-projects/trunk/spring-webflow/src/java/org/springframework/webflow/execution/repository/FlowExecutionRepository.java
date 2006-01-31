@@ -2,6 +2,8 @@ package org.springframework.webflow.execution.repository;
 
 import java.io.Serializable;
 
+import org.springframework.webflow.FlowException;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
@@ -71,6 +73,25 @@ public interface FlowExecutionRepository {
 	 */
 	public void putFlowExecution(FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution)
 			throws FlowExecutionRepositoryException;
+
+	/**
+	 * Returns the current view selection for the specified conversation, or
+	 * <code>null</code> if no such view selection exists.
+	 * @param conversationId the id of an existing conversation
+	 * @return the current view selection
+	 * @throws FlowExecutionRepositoryException if an exception occured
+	 * retrieving the current view selection
+	 */
+	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException;
+
+	/**
+	 * Sets the current view selection for the specified conversation.
+	 * @param conversationId the id of an existing conversation
+	 * @param the view selection, to be set as the current
+	 * @throws FlowExecutionRepositoryException if an exception occured
+	 * retrieving the current view selection
+	 */
+	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException;
 
 	/**
 	 * Invalidate the executing conversation with the specified id. This method

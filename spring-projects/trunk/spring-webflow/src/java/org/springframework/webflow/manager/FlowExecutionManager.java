@@ -62,4 +62,17 @@ public interface FlowExecutionManager {
 	 */
 	public ViewSelection signalEvent(String eventId, String flowExecutionId, ExternalContext context)
 			throws FlowException;
+	
+	/**
+	 * Returns the current view selection for the specified conversation, or
+	 * <code>null</code> if no such view selection exists.
+	 * @param conversationId the id of an existing conversation
+	 * @param context the external context representing the state of a request
+	 * into Spring Web Flow from an external system.
+	 * @return the current view selection
+	 * @throws FlowException if an exception occured retrieving the current view
+	 * selection
+	 */
+	public ViewSelection getCurrentViewSelection(String conversationId, ExternalContext context) throws FlowException;
+
 }

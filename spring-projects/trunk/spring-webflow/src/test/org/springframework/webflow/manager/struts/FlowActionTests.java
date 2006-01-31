@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.manager.struts;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.apache.struts.action.ActionForward;
@@ -43,7 +46,9 @@ public class FlowActionTests extends TestCase {
 
 		mockRequest = new MockHttpServletRequest();
 
-		viewSelection = new ViewSelection("SomeView", "SomeKey", "SomeValue");
+		Map model = new HashMap(1);
+		model.put("SomeKey", "SomeValue");
+		viewSelection = new ViewSelection("SomeView", model, false);
 		validForwardActionMapping = new ActionMapping() {
 			public ActionForward findForward(String name) {
 				return new ActionForward("SomeForward", "/somepath", false);
@@ -87,8 +92,6 @@ public class FlowActionTests extends TestCase {
 	}
 
 	public void testToActionForwardNoRedirectViewSelectionNullForward() throws Exception {
-		viewSelection.setRedirect(false);
-
 		// perform test
 		ActionForward forward = tested.toActionForward(viewSelection, nullForwardActionMapping, mockRequest);
 
@@ -97,7 +100,9 @@ public class FlowActionTests extends TestCase {
 	}
 
 	public void testToActionForwardRedirectViewSelectionNullForward() throws Exception {
-		viewSelection.setRedirect(true);
+		Map model = new HashMap(1);
+		model.put("SomeKey", "SomeValue");
+		viewSelection = new ViewSelection("SomeView", model, true);
 
 		// perform test
 		ActionForward forward = tested.toActionForward(viewSelection, nullForwardActionMapping, mockRequest);
