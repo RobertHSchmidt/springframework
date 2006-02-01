@@ -17,12 +17,12 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 	/**
 	 * The flow execution continuation factory to use.
 	 */
-	private FlowExecutionContinuationFactory continuationFactory;
+	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
 	 * The maximum number of continuations allowed per conversation.
 	 */
-	private int maxContinuations;
+	private int maxContinuations = 25;
 
 	public ContinuationFlowExecutionRepositoryCreator(FlowExecutionRepositoryServices repositoryServices) {
 		super(repositoryServices);
@@ -47,12 +47,8 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 	public FlowExecutionRepository createRepository() {
 		ContinuationFlowExecutionRepository repository = new ContinuationFlowExecutionRepository(
 				getRepositoryServices());
-		if (continuationFactory != null) {
-			repository.setContinuationFactory(continuationFactory);
-		}
-		if (maxContinuations > 0) {
-			repository.setMaxContinuations(maxContinuations);
-		}
+		repository.setContinuationFactory(continuationFactory);
+		repository.setMaxContinuations(maxContinuations);
 		return repository;
 	}
 

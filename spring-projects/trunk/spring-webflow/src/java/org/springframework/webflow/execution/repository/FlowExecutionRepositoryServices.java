@@ -2,19 +2,10 @@ package org.springframework.webflow.execution.repository;
 
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
 import org.springframework.webflow.executor.EmptyFlowExecutionListenerLoader;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
-/**
- * A factory for creating continuation-based flow execution repositories.
- * <p>
- * All properties are optional. If a property is not set, the default value set
- * within {@link ContinuationFlowExecutionRepository} be used.
- * 
- * @author Keith Donald
- */
 public class FlowExecutionRepositoryServices {
 
 	/**
