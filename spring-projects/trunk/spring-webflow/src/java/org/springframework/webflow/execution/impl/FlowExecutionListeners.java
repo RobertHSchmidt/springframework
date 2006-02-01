@@ -41,11 +41,15 @@ public class FlowExecutionListeners {
 	private FlowExecutionListener[] listeners;
 
 	public FlowExecutionListeners() {
-		this.listeners = new FlowExecutionListener[0];
+		this(null);
 	}
 	
 	public FlowExecutionListeners(FlowExecutionListener[] listeners) {
-		this.listeners = listeners;
+		if (listeners != null) {
+			this.listeners = listeners;
+		} else {
+			this.listeners = new FlowExecutionListener[0];
+		}
 	}
 
 	public FlowExecutionListener[] getListeners() {
