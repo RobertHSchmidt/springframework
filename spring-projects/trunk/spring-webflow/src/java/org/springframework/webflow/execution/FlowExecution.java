@@ -30,14 +30,13 @@ import org.springframework.webflow.ViewSelection;
  * <p>
  * Typically, when a browser wants to launch a new execution of a Flow at
  * runtime, it passes in the id of the Flow definition to launch to a governing
- * {@link org.springframework.webflow.executor.FlowExecutor}. The
- * manager then creates an instance of an object implementing this interface,
- * initializing it with the requested Flow definition which becomes the
- * execution's "root", or top-level flow. After creation, the
- * {@link #start(ExternalContext)} operation is called, which causes the
- * execution to activate a new session for its root flow definition. That
- * session is then pushed onto a stack and its definition becomes the "active
- * flow". A local, internal
+ * {@link org.springframework.webflow.executor.FlowExecutor}. This manager then
+ * creates an instance of an object implementing this interface, initializing it
+ * with the requested Flow definition which becomes the execution's "root", or
+ * top-level flow. After creation, the {@link #start(ExternalContext)} operation
+ * is called, which causes the execution to activate a new session for its root
+ * flow definition. That session is then pushed onto a stack and its definition
+ * becomes the <i>active flow</i>. A local, internal
  * {@link org.springframework.webflow.FlowExecutionControlContext} object (which
  * extends ({@link org.springframework.webflow.RequestContext}) is then
  * created and the Flow's start {@link org.springframework.webflow.State} is
@@ -53,7 +52,9 @@ import org.springframework.webflow.ViewSelection;
  * subsystem.
  * <p>
  * Subsequent requests from the client to manipuate this flow execution trigger
- * restoration and rehydration of this object, followed by an invocation of the
+ * restoration and
+ * {@link #rehydrate(FlowLocator, FlowExecutionListenerLoader) rehydration} of
+ * this object, followed by an invocation of the
  * {@link #signalEvent(String, ExternalContext)} operation. The signalEvent
  * operation tells this state machine what action the user took from within the
  * context of the current state; for example, the user may have pressed pressed

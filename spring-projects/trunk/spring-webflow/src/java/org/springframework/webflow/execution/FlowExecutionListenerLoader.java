@@ -18,8 +18,8 @@ package org.springframework.webflow.execution;
 import org.springframework.webflow.Flow;
 
 /**
- * A strategy interface for loading a set of FlowExecutionListener's for a
- * provided flow definition.
+ * A strategy interface for loading the set of FlowExecutionListener's that
+ * should apply to executions of a given flow definition.
  * 
  * @author Keith Donald
  */

@@ -31,9 +31,11 @@ import org.springframework.webflow.ViewSelection;
  * lifecycles.
  * <p>
  * For example, one custom listener my apply security checks at the flow
- * execution level. Another listener may track flow execution navigation history
- * to support bread crumbs. Another may perform auditing, or setup and tear down
- * connections to a transactional resource.
+ * execution level, preventing a flow from starting or a state from entering if
+ * the curent user does not have the necessary permissions. Another listener may
+ * track flow execution navigation history to support bread crumbs. Another may
+ * perform auditing, or setup and tear down connections to a transactional
+ * resource.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
  * 
