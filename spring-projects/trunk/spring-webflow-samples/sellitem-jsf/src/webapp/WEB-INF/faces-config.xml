@@ -8,7 +8,7 @@
 	<application>
 		<!-- Navigation handler that delegates to Spring Web Flow -->
 		<navigation-handler>
-			org.springframework.webflow.executor.jsf.FlowNavigationHandler
+			org.springframework.web.jsf.DelegatingNavigationHandlerProxy
 		</navigation-handler>
 		<property-resolver>
 			org.springframework.webflow.executor.jsf.FlowPropertyResolver
@@ -26,7 +26,7 @@
 	</application>
 
 	<lifecycle>
-		<phase-listener>org.springframework.webflow.executor.jsf.FlowPhaseListener</phase-listener>
-	</lifecycle>	
+		<phase-listener>org.springframework.web.jsf.DelegatingPhaseListenerAdapter</phase-listener>
+	</lifecycle>
 	
 </faces-config>

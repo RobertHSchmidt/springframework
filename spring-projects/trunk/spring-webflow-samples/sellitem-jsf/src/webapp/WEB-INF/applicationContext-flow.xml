@@ -11,9 +11,10 @@
 		<property name="flowLocations" value="/WEB-INF/sellitem.xml"/>
 	</bean>
 	
-	<!-- "Sale" managed bean created by JSF for each 'sellitem' flow execution -->
+	<!-- A "Sale" managed bean created by JSF for each 'sellitem' flow execution -->
 	<bean name="sale" class="org.springframework.webflow.samples.sellitem.Sale" singleton="false"/>
-	
+
+	<!-- A form action for applying custom validation to the Sale managed bean -->
 	<bean id="sellItemFormAction" class="org.springframework.webflow.action.FormAction">
 		<property name="formObjectName" value="sale"/>
 		<property name="formObjectClass" value="org.springframework.webflow.samples.sellitem.Sale"/>
@@ -23,5 +24,23 @@
 		</property>
 		<property name="validateUsingValidatorMethod" value="true"/>
 	</bean>
-	
+
+	<!--
+	  Spring configured flow navigation handler delegate, allowing for custom configuration
+	  using standard dependency injection techniques.
+	  
+	  Note: this definition is optional--you may choose to simply specify your FlowNavigationHandler
+	  in your faces-config.xml if its defaults meet your needs.
+	-->
+	<bean id="jsfNavigationHandler" class="org.springframework.webflow.executor.jsf.FlowNavigationHandler"/>
+
+	<!--
+	  Spring configured flow phase listener delegate, allowing for custom configuration using
+	  standard dependency injection techniques.
+	  
+	  Note: this definition is optional--you may choose to simply specify your FlowPhaseListener
+	  in your faces-config.xml if its defaults meet your needs.
+	-->
+	<bean id="flowPhaseListener" class="org.springframework.webflow.executor.jsf.FlowPhaseListener"/>
+		
 </beans>
