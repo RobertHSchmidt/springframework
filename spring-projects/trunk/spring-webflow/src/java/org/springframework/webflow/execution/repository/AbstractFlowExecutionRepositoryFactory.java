@@ -29,15 +29,5 @@ public abstract class AbstractFlowExecutionRepositoryFactory implements FlowExec
 		return repositoryCreator;
 	}
 
-	/**
-	 * Factory method that returns a new instance of a FlowExecutionRepository.
-	 * This implementation simply delegates to the configured repository creator
-	 * strategy for repository creation.
-	 * @return the flow execution repository
-	 */
-	protected FlowExecutionRepository createFlowExecutionRepository() {
-		return repositoryCreator.createRepository();
-	}
-
 	public abstract FlowExecutionRepository getRepository(ExternalContext context);
 }

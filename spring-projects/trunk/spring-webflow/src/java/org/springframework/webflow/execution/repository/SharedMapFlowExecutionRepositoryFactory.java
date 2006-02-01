@@ -61,8 +61,10 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 			Object repositoryKey = getRepositoryKey();
 			FlowExecutionRepository repository = (FlowExecutionRepository)repositoryMap.get(repositoryKey);
 			if (repository == null) {
-				repository = createFlowExecutionRepository();
+				repository = getRepositoryCreator().createRepository();
 				repositoryMap.put(repositoryKey, repository);
+			} else {
+				getRepositoryCreator().rehydrateRepository(repository);
 			}
 			return repository;
 		}
