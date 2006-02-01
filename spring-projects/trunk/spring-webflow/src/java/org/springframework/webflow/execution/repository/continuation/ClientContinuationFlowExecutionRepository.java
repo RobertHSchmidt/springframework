@@ -11,10 +11,9 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.repository.AbstractFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
-import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.util.RandomGuidUidGenerator;
-import org.springframework.webflow.util.UidGenerator;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
 
 /**
  * A flow execution repository implementation that uses no server-side state.
@@ -37,19 +36,13 @@ import org.springframework.webflow.util.UidGenerator;
  * 
  * @author Keith Donald
  */
-public class ClientContinuationFlowExecutionRepository implements FlowExecutionRepository {
+public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecutionRepository {
 
 	/**
 	 * The continuation factory that will be used to create new continuations to
 	 * be added to active conversations.
 	 */
 	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
-
-	/**
-	 * The uid generation strategy used to generate unique conversation and
-	 * continuation identifiers.
-	 */
-	private UidGenerator uidGenerator = new RandomGuidUidGenerator();
 
 	/**
 	 * Returns the continuation factory.
@@ -65,29 +58,16 @@ public class ClientContinuationFlowExecutionRepository implements FlowExecutionR
 		this.continuationFactory = continuationFactory;
 	}
 
-	/**
-	 * Returns the uid generator that generates unique identifiers for this
-	 * repository.
-	 */
-	public UidGenerator getUidGenerator() {
-		return uidGenerator;
-	}
-
-	/**
-	 * Sets the uid generator that generates unique identifiers for this
-	 * repository.
-	 */
-	public void setUidGenerator(UidGenerator uidGenerator) {
-		this.uidGenerator = uidGenerator;
+	public ClientContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
+		super(repositoryServices);
 	}
 
 	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution) {
-		return new FlowExecutionContinuationKey(uidGenerator.generateId(), encode(uidGenerator.generateId(),
-				flowExecution));
+		return new FlowExecutionContinuationKey(generateId(), encode(generateId(), flowExecution));
 	}
 
 	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution, Serializable conversationId) {
-		return new FlowExecutionContinuationKey(conversationId, encode(uidGenerator.generateId(), flowExecution));
+		return new FlowExecutionContinuationKey(conversationId, encode(generateId(), flowExecution));
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
@@ -95,20 +75,20 @@ public class ClientContinuationFlowExecutionRepository implements FlowExecutionR
 	}
 
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
-		// nothing to do by default
+		// nothing to do by default, subclasses may override
 	}
 
 	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {
-		// nothing to do by default
+		// nothing to do by default, subclasses may override
 		return null;
 	}
 
 	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException {
-		// nothing to do by default
+		// nothing to do by default, subclasses may override
 	}
 
 	public void invalidateConversation(Serializable conversationId) {
-		// nothing to do by dfault
+		// nothing to do by dfault, subclasses may override
 	}
 
 	/**

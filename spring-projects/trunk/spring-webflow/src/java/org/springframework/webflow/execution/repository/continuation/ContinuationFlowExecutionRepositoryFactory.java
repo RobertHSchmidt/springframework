@@ -1,5 +1,7 @@
 package org.springframework.webflow.execution.repository.continuation;
 
+import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.DelegatingFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
 
 /**
@@ -16,12 +18,32 @@ import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRe
  * 
  * @author Keith Donald
  */
-public class ContinuationFlowExecutionRepositoryFactory extends SharedMapFlowExecutionRepositoryFactory {
-	
+public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowExecutionRepositoryFactory {
+
+	public ContinuationFlowExecutionRepositoryFactory(FlowLocator flowLocator) {
+		super(flowLocator);
+		setRepositoryFactory(new SharedMapFlowExecutionRepositoryFactory(
+				new ContinuationFlowExecutionRepositoryCreator(this)));
+	}
+
+	protected ContinuationFlowExecutionRepositoryCreator getRepositoryCreator() {
+		SharedMapFlowExecutionRepositoryFactory factory = (SharedMapFlowExecutionRepositoryFactory)getRepositoryFactory();
+		return (ContinuationFlowExecutionRepositoryCreator)factory.getRepositoryCreator();
+	}
+
 	/**
-	 * Creates a new continuation flow execution repository factory.
+	 * Sets the continuation factory that encapsulates the construction of
+	 * continuations stored in this repository.
 	 */
-	public ContinuationFlowExecutionRepositoryFactory() {
-		setRepositoryCreator(new ContinuationFlowExecutionRepositoryCreator());
+	public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
+		getRepositoryCreator().setContinuationFactory(continuationFactory);
+	}
+
+	/**
+	 * Sets the maximum number of continuations allowed per conversation in this
+	 * repository.
+	 */
+	public void setMaxContinuations(int maxContinuations) {
+		getRepositoryCreator().setMaxContinuations(maxContinuations);
 	}
 }

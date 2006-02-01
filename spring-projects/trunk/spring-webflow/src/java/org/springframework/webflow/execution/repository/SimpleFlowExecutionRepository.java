@@ -8,8 +8,6 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.util.RandomGuidUidGenerator;
-import org.springframework.webflow.util.UidGenerator;
 
 /**
  * A simple flow execution repository implementation that stores single
@@ -44,7 +42,7 @@ import org.springframework.webflow.util.UidGenerator;
  * 
  * @author Keith Donald
  */
-public class SimpleFlowExecutionRepository implements FlowExecutionRepository, Serializable {
+public class SimpleFlowExecutionRepository extends AbstractFlowExecutionRepository implements Serializable {
 
 	private static final long serialVersionUID = -8138465280185005691L;
 
@@ -52,35 +50,9 @@ public class SimpleFlowExecutionRepository implements FlowExecutionRepository, S
 	 * The map of flow execution entries in this repository.
 	 */
 	private Map flowExecutionEntries = new HashMap(128);
-
-	/**
-	 * The uid generation strategy used to generate unique conversation and
-	 * continuation identifiers.
-	 */
-	private UidGenerator uidGenerator = new RandomGuidUidGenerator();
-
-	/**
-	 * Returns the uid generation strategy used to generate unique conversation
-	 * and continuation identifiers.
-	 */
-	public UidGenerator getUidGenerator() {
-		return uidGenerator;
-	}
-
-	/**
-	 * Sets the uid generation strategy used to generate unique conversation and
-	 * continuation identifiers.
-	 */
-	public void setUidGenerator(UidGenerator uidGenerator) {
-		this.uidGenerator = uidGenerator;
-	}
-
-	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution) {
-		return new FlowExecutionContinuationKey(uidGenerator.generateId(), uidGenerator.generateId());
-	}
-
-	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution, Serializable conversationId) {
-		return new FlowExecutionContinuationKey(conversationId, uidGenerator.generateId());
+	
+	public SimpleFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
+		super(repositoryServices);
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
@@ -97,7 +69,7 @@ public class SimpleFlowExecutionRepository implements FlowExecutionRepository, S
 					+ "Consider using another repository implementation or "
 					+ "restrict use of the browser back button.");
 		}
-		return entry.getFlowExecution();
+		return rehydrate(entry.getFlowExecution());
 	}
 
 	private FlowExecutionEntry getFlowExecutionEntry(Serializable conversationId) {
@@ -132,19 +104,19 @@ public class SimpleFlowExecutionRepository implements FlowExecutionRepository, S
 	 * @author Keith Donald
 	 */
 	protected static class FlowExecutionEntry implements Serializable {
-		
+
 		/**
-		 * The key required to continue the conversation. 
+		 * The key required to continue the conversation.
 		 */
 		private Serializable id;
 
 		/**
-		 * The flow execution representing the state of a conversation. 
+		 * The flow execution representing the state of a conversation.
 		 */
 		private FlowExecution flowExecution;
 
 		/**
-		 * The last (current) view selection made by the conversation. 
+		 * The last (current) view selection made by the conversation.
 		 */
 		private ViewSelection currentViewSelection;
 

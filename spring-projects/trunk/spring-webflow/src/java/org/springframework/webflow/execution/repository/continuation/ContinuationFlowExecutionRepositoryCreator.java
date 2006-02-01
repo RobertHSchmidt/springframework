@@ -1,8 +1,8 @@
 package org.springframework.webflow.execution.repository.continuation;
 
+import org.springframework.webflow.execution.repository.AbstractFlowExecutionRepositoryCreator;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryCreator;
-import org.springframework.webflow.util.UidGenerator;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
 
 /**
  * A factory for creating continuation-based flow execution repositories.
@@ -12,7 +12,7 @@ import org.springframework.webflow.util.UidGenerator;
  * 
  * @author Keith Donald
  */
-public class ContinuationFlowExecutionRepositoryCreator implements FlowExecutionRepositoryCreator {
+public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExecutionRepositoryCreator {
 
 	/**
 	 * The flow execution continuation factory to use.
@@ -20,14 +20,13 @@ public class ContinuationFlowExecutionRepositoryCreator implements FlowExecution
 	private FlowExecutionContinuationFactory continuationFactory;
 
 	/**
-	 * The uid generation strategy to use.
-	 */
-	private UidGenerator uidGenerator;
-
-	/**
 	 * The maximum number of continuations allowed per conversation.
 	 */
 	private int maxContinuations;
+
+	public ContinuationFlowExecutionRepositoryCreator(FlowExecutionRepositoryServices repositoryServices) {
+		super(repositoryServices);
+	}
 
 	/**
 	 * Sets the continuation factory that encapsulates the construction of
@@ -35,14 +34,6 @@ public class ContinuationFlowExecutionRepositoryCreator implements FlowExecution
 	 */
 	public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
 		this.continuationFactory = continuationFactory;
-	}
-
-	/**
-	 * Sets the uid generator that generates unique identifiers for entries
-	 * placed into repositories created by this creator.
-	 */
-	public void setUidGenerator(UidGenerator uidGenerator) {
-		this.uidGenerator = uidGenerator;
 	}
 
 	/**
@@ -54,16 +45,21 @@ public class ContinuationFlowExecutionRepositoryCreator implements FlowExecution
 	}
 
 	public FlowExecutionRepository createRepository() {
-		ContinuationFlowExecutionRepository repository = new ContinuationFlowExecutionRepository();
+		ContinuationFlowExecutionRepository repository = new ContinuationFlowExecutionRepository(
+				getRepositoryServices());
 		if (continuationFactory != null) {
 			repository.setContinuationFactory(continuationFactory);
-		}
-		if (uidGenerator != null) {
-			repository.setUidGenerator(uidGenerator);
 		}
 		if (maxContinuations > 0) {
 			repository.setMaxContinuations(maxContinuations);
 		}
 		return repository;
+	}
+
+	public FlowExecutionRepository rehydrateRepository(FlowExecutionRepository repository) {
+		ContinuationFlowExecutionRepository impl = (ContinuationFlowExecutionRepository)repository;
+		impl.setRepositoryServices(getRepositoryServices());
+		impl.setContinuationFactory(continuationFactory);
+		return impl;
 	}
 }

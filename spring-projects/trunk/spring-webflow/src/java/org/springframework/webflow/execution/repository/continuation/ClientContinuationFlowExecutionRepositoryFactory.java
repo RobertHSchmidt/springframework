@@ -1,5 +1,7 @@
 package org.springframework.webflow.execution.repository.continuation;
 
+import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.DelegatingFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.SingletonFlowExecutionRepositoryFactory;
 
 /**
@@ -16,12 +18,10 @@ import org.springframework.webflow.execution.repository.SingletonFlowExecutionRe
  * 
  * @author Keith Donald
  */
-public class ClientContinuationFlowExecutionRepositoryFactory extends SingletonFlowExecutionRepositoryFactory {
-
-	/**
-	 * Creates a new client continuation flow execution repository factory.
-	 */
-	public ClientContinuationFlowExecutionRepositoryFactory() {
-		super(new ClientContinuationFlowExecutionRepository());
+public class ClientContinuationFlowExecutionRepositoryFactory extends DelegatingFlowExecutionRepositoryFactory {
+	public ClientContinuationFlowExecutionRepositoryFactory(FlowLocator flowLocator) {
+		super(flowLocator);
+		setRepositoryFactory(new SingletonFlowExecutionRepositoryFactory(new ClientContinuationFlowExecutionRepository(
+				this)));
 	}
 }

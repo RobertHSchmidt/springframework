@@ -34,6 +34,7 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.support.FlowExecutorHelper;
@@ -206,14 +207,12 @@ public class FlowAction extends ActionSupport {
 					setDefaultFlowExecutor(flowLocator);
 				}
 				catch (NoSuchBeanDefinitionException e) {
-					String message = "No '"
-							+ FLOW_LOCATOR_BEAN_NAME
-							+ "' or '"
-							+ FLOW_EXECUTOR_BEAN_NAME
-							+ "' bean definition could be found; to use Spring Web Flow with Struts you must configure this FlowAction with either a FlowLocator "
+					String message = "No '" + FLOW_LOCATOR_BEAN_NAME + "' or '" + FLOW_EXECUTOR_BEAN_NAME
+							+ "' bean definition could be found; to use Spring Web Flow with Struts you must "
+							+ "configure this FlowAction with either a FlowLocator "
 							+ "(exposing a registry of flow definitions) or a custom FlowExecutor "
-							+ "(allowing more configuration options, and typically configured with a StrutsFlowExecutionListenerLoader "
-							+ "for use with the SpringBindingActionForm)";
+							+ "(allowing more configuration options, and typically configured"
+							+ "with a StrutsFlowExecutionListenerLoader for use with the SpringBindingActionForm)";
 					throw new FlowArtifactException(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class, message, e);
 				}
 			}
@@ -227,9 +226,9 @@ public class FlowAction extends ActionSupport {
 	 * @param flowLocator the flow locator
 	 */
 	protected void setDefaultFlowExecutor(FlowLocator flowLocator) {
-		FlowExecutorImpl executor = new FlowExecutorImpl(flowLocator);
-		executor.setListenerLoader(new StrutsFlowExecutionListenerLoader());
-		setFlowExecutor(executor);
+		SimpleFlowExecutionRepositoryFactory repositoryFactory = new SimpleFlowExecutionRepositoryFactory(flowLocator);
+		repositoryFactory.setListenerLoader(new StrutsFlowExecutionListenerLoader());
+		setFlowExecutor(new FlowExecutorImpl(repositoryFactory));
 	}
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,

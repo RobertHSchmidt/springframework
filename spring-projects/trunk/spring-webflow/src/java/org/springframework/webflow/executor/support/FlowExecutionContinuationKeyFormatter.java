@@ -1,8 +1,9 @@
-package org.springframework.webflow.execution.repository;
+package org.springframework.webflow.executor.support;
 
 import org.springframework.binding.format.Formatter;
 import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.util.Assert;
+import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 
 /**
  * A formatter that converts from a <code>java.lang.String</code>

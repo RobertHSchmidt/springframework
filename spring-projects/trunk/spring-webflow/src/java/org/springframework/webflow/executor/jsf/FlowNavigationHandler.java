@@ -27,14 +27,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.jsf.DecoratingNavigationHandler;
-import org.springframework.web.jsf.FacesContextUtils;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionListenerLoader;
-import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.executor.EmptyFlowExecutionListenerLoader;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
 
 /**
@@ -76,28 +72,16 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
 public class FlowNavigationHandler extends DecoratingNavigationHandler {
 
 	/**
-	 * The service name of the default {@link FlowLocator} implementation
-	 * exported in the Spring Web Application Context.
-	 */
-	private static final String FLOW_LOCATOR_BEAN_NAME = "flowLocator";
-
-	/**
 	 * Logger, usable by subclasses.
 	 */
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * The flow locator strategy for retrieving a flow definition using a flow
-	 * id provided by the client. Defaults to a bean factory based lookup
-	 * strategy.
+	 * The flow execution repository factoring, for obtaining repository
+	 * instances to save paused executions that require user input and load
+	 * resuming executions that will process user events.
 	 */
-	private FlowLocator flowLocator;
-
-	/**
-	 * The strategy for loading flow execution listeners that should monitor
-	 * active flow executions.
-	 */
-	private FlowExecutionListenerLoader listenerLoader = new EmptyFlowExecutionListenerLoader();
+	private FlowExecutionRepositoryFactory repositoryFactory;
 
 	/**
 	 * A helper for extracting parameters needed by this flow navigation
@@ -111,7 +95,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	private ViewIdResolver viewIdResolver = new DefaultViewIdResolver();
 
 	/**
-	 * Create a new {@link FlowNavigationHandler} using the defautl constructor.
+	 * Create a new {@link FlowNavigationHandler} using the default constructor.
 	 */
 	public FlowNavigationHandler() {
 		super();
@@ -128,34 +112,17 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	}
 
 	/**
-	 * Returns the flow locator to use for lookup of flow definitions to
-	 * execute.
+	 * Returns the repository factory used by this navigation handler.
 	 */
-	protected FlowLocator getFlowLocator() {
-		return flowLocator;
+	public FlowExecutionRepositoryFactory getRepositoryFactory() {
+		return repositoryFactory;
 	}
 
 	/**
-	 * Set the flow locator to use for lookup of flow definitions to execute.
+	 * Sets the repository factory used by this navigation handler.
 	 */
-	public void setFlowLocator(FlowLocator flowLocator) {
-		this.flowLocator = flowLocator;
-	}
-
-	/**
-	 * Returns the listener loader instance to be used by this flow execution
-	 * manager.
-	 */
-	public FlowExecutionListenerLoader getListenerLoader() {
-		return listenerLoader;
-	}
-
-	/**
-	 * Sets the listener loader instance to be used by this flow execution
-	 * manager.
-	 */
-	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
-		this.listenerLoader = listenerLoader;
+	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryFactory) {
+		this.repositoryFactory = repositoryFactory;
 	}
 
 	/**
@@ -193,7 +160,6 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 		if (holder != null) {
 			// a flow execution has already been restored, signal an event in it
 			FlowExecution flowExecution = holder.getFlowExecution();
-			flowExecution.rehydrate(getFlowLocator(), getListenerLoader());
 			String eventId = parameterExtractor.extractEventId(context);
 			ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
 			renderView(selectedView, facesContext);
@@ -202,8 +168,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 			String flowId = parameterExtractor.extractFlowId(context);
 			if (StringUtils.hasText(flowId)) {
 				// a flow execution launch has been requested, start it
-				Flow flow = getFlowLocator(facesContext).getFlow(flowId);
-				FlowExecution flowExecution = createFlowExecution(flow, facesContext);
+				FlowExecution flowExecution = getRepository(context).createFlowExecution(flowId);
 				ViewSelection selectedView = flowExecution.start(context);
 				FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecution), facesContext);
 				renderView(selectedView, facesContext);
@@ -216,18 +181,13 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	}
 
 	/**
-	 * Create a new flow execution for given flow. Subclasses could redefine
-	 * this if they wish to use a specialized FlowExecution implementation
-	 * class.
-	 * @param flow the flow
-	 * @return the created flow execution
+	 * Returns the repository instance to be used by this phase listener.
 	 */
-	protected FlowExecution createFlowExecution(Flow flow, FacesContext context) {
-		FlowExecution flowExecution = new FlowExecutionImpl(flow, listenerLoader.getListeners(flow));
-		if (logger.isDebugEnabled()) {
-			logger.debug("Created a new flow execution for flow definition '" + flow.getId() + "'");
+	protected FlowExecutionRepository getRepository(JsfExternalContext context) {
+		if (repositoryFactory == null) {
+			repositoryFactory = FlowFacesUtils.getRepositoryFactory(context.getFacesContext());
 		}
-		return flowExecution;
+		return repositoryFactory.getRepository(context);
 	}
 
 	/**
@@ -268,20 +228,6 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 				targetMap.put(entry.getKey(), entry.getValue());
 			}
 		}
-	}
-
-	/**
-	 * Lookup the flow locator service by querying the application context for a
-	 * bean with name {@link #FLOW_LOCATOR_BEAN_NAME}.
-	 * @param context the faces context
-	 * @return the flow locator
-	 */
-	protected FlowLocator getFlowLocator(FacesContext context) {
-		if (flowLocator == null) {
-			flowLocator = (FlowLocator)FacesContextUtils.getRequiredWebApplicationContext(context).getBean(
-					FLOW_LOCATOR_BEAN_NAME);
-		}
-		return flowLocator;
 	}
 
 	/**

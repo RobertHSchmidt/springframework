@@ -22,19 +22,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.format.Formatter;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
-import org.springframework.webflow.execution.repository.FlowExecutionContinuationKeyFormatter;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepositoryFactory;
+import org.springframework.webflow.executor.support.FlowExecutionContinuationKeyFormatter;
 
 /**
  * The default implementation of the central facade for the execution of flows
@@ -98,21 +95,14 @@ public class FlowExecutorImpl implements FlowExecutor {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * The flow locator strategy for retrieving a flow definition using a flow
-	 * id provided by the client. Defaults to a bean factory based lookup
-	 * strategy.
-	 */
-	private FlowLocator flowLocator;
-
-	/**
 	 * The flow execution repository factoring, for obtaining repository
 	 * instances to save paused executions that require user input and load
 	 * resuming executions that will process user events.
 	 * <p>
-	 * The default value is the {@link SharedMapFlowExecutionRepositoryFactory}
+	 * The default value is the {@link SimpleFlowExecutionRepositoryFactory}
 	 * repository factory that creates repositories within the user session map.
 	 */
-	private FlowExecutionRepositoryFactory repositoryFactory = new SharedMapFlowExecutionRepositoryFactory();
+	private FlowExecutionRepositoryFactory repositoryFactory;
 
 	/**
 	 * The formatter that will parse encoded _flowExecutionId strings into
@@ -120,41 +110,27 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 */
 	private Formatter continuationKeyFormatter = new FlowExecutionContinuationKeyFormatter();
 
-	/**
-	 * A set of flow execution listeners to a list of flow execution listener
-	 * criteria objects. The criteria list determines the conditions in which a
-	 * single flow execution listener applies.
-	 */
-	private FlowExecutionListenerLoader listenerLoader = new EmptyFlowExecutionListenerLoader();
+	public FlowExecutorImpl(FlowExecutionRepositoryFactory repositoryFactory) {
+		setRepositoryFactory(repositoryFactory);
+	}
 
 	/**
 	 * Create a new flow execution manager using the specified flow locator for
 	 * loading Flow definitions.
 	 * @param flowLocator the flow locator to use
-	 * 
 	 * @see #setFlowLocator(FlowLocator)
-	 * @see #setRepositoryFactory(FlowExecutionRepositoryFactory)
-	 * @see #setListenerLoader(FlowExecutionListenerLoader)
 	 */
 	public FlowExecutorImpl(FlowLocator flowLocator) {
 		setFlowLocator(flowLocator);
 	}
 
 	/**
-	 * Returns the flow locator to use for lookup of flow definitions to
-	 * execute.
-	 */
-	protected FlowLocator getFlowLocator() {
-		return flowLocator;
-	}
-
-	/**
 	 * Set the flow locator to use for lookup of flow definitions to execute.
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
-		this.flowLocator = flowLocator;
+		this.repositoryFactory = new SimpleFlowExecutionRepositoryFactory(flowLocator);
 	}
-
+	
 	/**
 	 * Returns the repository factory in use by this flow execution manager.
 	 */
@@ -167,28 +143,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 */
 	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryFactory) {
 		this.repositoryFactory = repositoryFactory;
-	}
-
-	/**
-	 * Returns the repository retrieved by the configured
-	 * {@link FlowExecutionRepositoryFactory}.
-	 */
-	protected FlowExecutionRepository getRepository(ExternalContext context) {
-		return repositoryFactory.getRepository(context);
-	}
-
-	/**
-	 * Returns the listener loader in use by this flow execution manager.
-	 */
-	public FlowExecutionListenerLoader getListenerLoader() {
-		return listenerLoader;
-	}
-
-	/**
-	 * Sets the listener loader in use by this flow execution manager.
-	 */
-	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
-		this.listenerLoader = listenerLoader;
 	}
 
 	/**
@@ -207,11 +161,10 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	public ViewSelection launch(String flowId, ExternalContext context) throws FlowException {
-		Flow flow = getFlowLocator().getFlow(flowId);
-		FlowExecution flowExecution = createFlowExecution(flow);
+		FlowExecutionRepository repository = getRepository(context);
+		FlowExecution flowExecution = repository.createFlowExecution(flowId);
 		ViewSelection selectedView = flowExecution.start(context);
 		if (flowExecution.isActive()) {
-			FlowExecutionRepository repository = getRepository(context);
 			FlowExecutionContinuationKey continuationKey = repository.generateContinuationKey(flowExecution);
 			repository.putFlowExecution(continuationKey, flowExecution);
 			return prepareSelectedView(selectedView, repository, continuationKey, flowExecution);
@@ -221,26 +174,11 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	/**
-	 * Create a new flow execution for given flow. Subclasses could redefine
-	 * this if they wish to use a specialized FlowExecution implementation
-	 * class.
-	 * @param flow the flow definition
-	 * @return the created flow execution
-	 */
-	protected FlowExecution createFlowExecution(Flow flow) {
-		FlowExecution flowExecution = new FlowExecutionImpl(flow, listenerLoader.getListeners(flow));
-		if (logger.isDebugEnabled()) {
-			logger.debug("Created a new flow execution for flow definition '" + flow.getId() + "'");
-		}
-		return flowExecution;
-	}
-
 	public ViewSelection signalEvent(String eventId, String flowExecutionId, ExternalContext context)
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionContinuationKey continuationKey = parseContinuationKey(flowExecutionId);
-		FlowExecution flowExecution = loadFlowExecution(repository, continuationKey);
+		FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
 		ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
 		if (flowExecution.isActive()) {
 			continuationKey = repository.generateContinuationKey(flowExecution, continuationKey.getConversationId());
@@ -258,22 +196,11 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	/**
-	 * Load an existing FlowExecution based on data in the specified source
-	 * event.
-	 * @param repository the repository to load from
-	 * @param continuationKey the unique id of the flow execution
+	 * Returns the repository retrieved by the configured
+	 * {@link FlowExecutionRepositoryFactory}.
 	 */
-	public FlowExecution loadFlowExecution(FlowExecutionRepository repository,
-			FlowExecutionContinuationKey continuationKey) {
-		// client is participating in an existing flow execution, retrieve
-		// information about it
-		FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
-		// rehydrate the execution if neccessary (if it had been serialized out)
-		flowExecution.rehydrate(getFlowLocator(), getListenerLoader());
-		if (logger.isDebugEnabled()) {
-			logger.debug("Loaded existing flow execution from repository with id '" + continuationKey + "'");
-		}
-		return flowExecution;
+	protected FlowExecutionRepository getRepository(ExternalContext context) {
+		return repositoryFactory.getRepository(context);
 	}
 
 	/**
@@ -339,16 +266,5 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 */
 	protected String formatContinuationKey(FlowExecutionContinuationKey key) {
 		return continuationKeyFormatter.formatValue(key);
-	}
-
-	/**
-	 * Stores contextual info in the view model, including the flow execution
-	 * context, flow execution id
-	 * @param model the view model
-	 * @param flowExecutionId the flow execution id
-	 * @param flowExecutionContext the flow execution context
-	 */
-	protected void exposeFlowExecutionAttributes(Map model, String flowExecutionId,
-			FlowExecutionContext flowExecutionContext) {
 	}
 }

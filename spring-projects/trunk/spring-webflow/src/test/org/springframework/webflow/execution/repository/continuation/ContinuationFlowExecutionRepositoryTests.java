@@ -12,7 +12,6 @@ public class ContinuationFlowExecutionRepositoryTests extends TestCase {
 	private ContinuationFlowExecutionRepository tested;
 
 	protected void setUp() throws Exception {
-		tested = new ContinuationFlowExecutionRepository();
 	}
 	
 	public void testPlacehoder() {

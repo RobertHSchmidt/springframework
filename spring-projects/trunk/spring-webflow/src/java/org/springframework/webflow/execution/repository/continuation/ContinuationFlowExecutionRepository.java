@@ -7,13 +7,12 @@ import java.util.Map;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.repository.AbstractFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
-import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
 import org.springframework.webflow.execution.repository.InvalidConversationContinuationException;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
 import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepository;
-import org.springframework.webflow.util.RandomGuidUidGenerator;
-import org.springframework.webflow.util.UidGenerator;
 
 /**
  * A flow execution repository implementation that stores instances of flow
@@ -57,7 +56,7 @@ import org.springframework.webflow.util.UidGenerator;
  * 
  * @author Keith Donald
  */
-public class ContinuationFlowExecutionRepository implements FlowExecutionRepository, Serializable {
+public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRepository implements Serializable {
 
 	private static final long serialVersionUID = -602931852676786766L;
 
@@ -71,18 +70,16 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 	 * The continuation factory that will be used to create new continuations to
 	 * be added to active conversations.
 	 */
-	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
-
-	/**
-	 * The uid generation strategy used to generate unique conversation and
-	 * continuation identifiers.
-	 */
-	private UidGenerator uidGenerator = new RandomGuidUidGenerator();
+	private transient FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
 	 * The maximum number of continuations that can be active per conversation.
 	 */
 	private int maxContinuations = 25;
+	
+	public ContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
+		super(repositoryServices);
+	}
 
 	/**
 	 * Returns the continuation factory that encapsulates the construction of
@@ -101,22 +98,6 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 	}
 
 	/**
-	 * Returns the uid generator that generates unique identifiers for entries
-	 * placed into this repository.
-	 */
-	public UidGenerator getUidGenerator() {
-		return uidGenerator;
-	}
-
-	/**
-	 * Sets the uid generator that generates unique identifiers for entries
-	 * placed into this repository.
-	 */
-	public void setUidGenerator(UidGenerator uidGenerator) {
-		this.uidGenerator = uidGenerator;
-	}
-
-	/**
 	 * Returns the maximum number of continuations allowed per conversation in
 	 * this repository.
 	 */
@@ -132,16 +113,8 @@ public class ContinuationFlowExecutionRepository implements FlowExecutionReposit
 		this.maxContinuations = maxContinuations;
 	}
 
-	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution) {
-		return new FlowExecutionContinuationKey(uidGenerator.generateId(), uidGenerator.generateId());
-	}
-
-	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution, Serializable conversationId) {
-		return new FlowExecutionContinuationKey(conversationId, uidGenerator.generateId());
-	}
-
 	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
-		return getConversationContinuation(key).getFlowExecution();
+		return rehydrate(getConversationContinuation(key).getFlowExecution());
 	}
 
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {

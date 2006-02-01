@@ -12,7 +12,7 @@ import org.springframework.webflow.execution.FlowExecution;
  * 
  * @author Keith Donald
  */
-public class SerializedFlowExecutionContinuationFactory implements FlowExecutionContinuationFactory, Serializable {
+public class SerializedFlowExecutionContinuationFactory implements FlowExecutionContinuationFactory {
 
 	/**
 	 * Flag to turn on/off continuation compression.

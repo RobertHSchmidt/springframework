@@ -1,5 +1,7 @@
 package org.springframework.webflow.execution.repository;
 
+import org.springframework.webflow.ExternalContext;
+
 /**
  * A base class for factories that create and/or locate flow execution
  * repositories that manage the store of one or more flow executions
@@ -14,20 +16,17 @@ public abstract class AbstractFlowExecutionRepositoryFactory implements FlowExec
 	 * for storage in the repositoryMap. The default value is a
 	 * {@link SimpleFlowExecutionRepositoryCreator}.
 	 */
-	private FlowExecutionRepositoryCreator repositoryCreator = new SimpleFlowExecutionRepositoryCreator();
+	private FlowExecutionRepositoryCreator repositoryCreator;
 
+	protected AbstractFlowExecutionRepositoryFactory(FlowExecutionRepositoryCreator repositoryCreator) {
+		this.repositoryCreator = repositoryCreator;
+	}
+	
 	/**
 	 * Returns the repository creation strategy in use.
 	 */
 	public FlowExecutionRepositoryCreator getRepositoryCreator() {
 		return repositoryCreator;
-	}
-
-	/**
-	 * Sets the repository creational strategy in use.
-	 */
-	public void setRepositoryCreator(FlowExecutionRepositoryCreator repositoryFactory) {
-		this.repositoryCreator = repositoryFactory;
 	}
 
 	/**
@@ -40,14 +39,5 @@ public abstract class AbstractFlowExecutionRepositoryFactory implements FlowExec
 		return repositoryCreator.createRepository();
 	}
 
-	/**
-	 * Trivial repository factory that simply returns a new
-	 * {@link SimpleFlowExecutionRepository} on each invocation.
-	 * @author Keith Donald
-	 */
-	public static class SimpleFlowExecutionRepositoryCreator implements FlowExecutionRepositoryCreator {
-		public FlowExecutionRepository createRepository() {
-			return new SimpleFlowExecutionRepository();
-		}
-	}
+	public abstract FlowExecutionRepository getRepository(ExternalContext context);
 }

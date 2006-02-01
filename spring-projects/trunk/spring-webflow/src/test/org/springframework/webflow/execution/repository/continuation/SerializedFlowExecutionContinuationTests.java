@@ -28,7 +28,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.impl.FlowExecutionListenerList;
+import org.springframework.webflow.execution.impl.FlowExecutionListeners;
 
 /**
  * Unit tests for the SerializedFlowExecutionContinuation class.
@@ -90,7 +90,7 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 		public void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader) {
 		}
 
-		public FlowExecutionListenerList getListeners() {
+		public FlowExecutionListeners getListeners() {
 			return null;
 		}
 

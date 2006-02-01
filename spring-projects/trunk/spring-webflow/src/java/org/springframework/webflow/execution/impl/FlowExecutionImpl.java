@@ -94,7 +94,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * A thread-safe listener list, holding listeners monitoring the lifecycle
 	 * of this flow execution.
 	 */
-	private transient FlowExecutionListenerList listenerList = new FlowExecutionListenerList();
+	private transient FlowExecutionListeners listeners;
 
 	/**
 	 * Set only on deserialization so this object can be fully reconstructed.
@@ -127,7 +127,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	public FlowExecutionImpl(Flow rootFlow, FlowExecutionListener[] listeners) {
 		Assert.notNull(rootFlow, "The root flow definition is required");
 		this.rootFlow = rootFlow;
-		getListeners().add(listeners);
+		this.listeners = new FlowExecutionListeners(listeners);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created new execution of flow '" + rootFlow.getId() + "'");
 		}
@@ -299,8 +299,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return selectedView;
 	}
 
-	public FlowExecutionListenerList getListeners() {
-		return listenerList;
+	public FlowExecutionListeners getListeners() {
+		return listeners;
 	}
 
 	// flow session management helpers
@@ -458,9 +458,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			Assert.isTrue(getRootFlow() == getRootSession().getFlow(),
 					"The root flow of the execution should be the same as the flow in the root flow session");
 		}
-		listenerList = new FlowExecutionListenerList();
 		if (listenerLoader != null) {
-			listenerList.add(listenerLoader.getListeners(rootFlow));
+			listeners = new FlowExecutionListeners(listenerLoader.getListeners(rootFlow));
+		} else {
+			listeners = new FlowExecutionListeners();
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Rehydrated");

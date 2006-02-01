@@ -121,7 +121,6 @@ public class FlowNavigationHandlerTests extends TestCase {
 
 	public void testHandleNavigationHasHolder() {
 		mockJsfExternalContext.getRequestMap().put(FlowExecutionHolder.class.getName(), flowExecutionHolder);
-		flowExecutionMock.rehydrate(tested.getFlowLocator(), tested.getListenerLoader());
 		flowExecutionControl.expectAndReturn(flowExecutionMock.signalEvent("OutCome", new JsfExternalContext(
 				mockFacesContext, "FromAction", "OutCome")), viewSelection);
 		replay();

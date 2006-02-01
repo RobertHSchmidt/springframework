@@ -23,6 +23,13 @@ import org.springframework.webflow.execution.FlowExecution;
 public interface FlowExecutionRepository {
 
 	/**
+	 * Create a new flow execution persistable by this repository.
+	 * @param flowId the flow id
+	 * @return the flow execution
+	 */
+	public FlowExecution createFlowExecution(String flowId);
+
+	/**
 	 * Generate a unique flow execution continuation key to be used as an index
 	 * into a new flow execution representing the start of a new user
 	 * conversation in this repository. Both the conversationId and
@@ -104,4 +111,5 @@ public interface FlowExecutionRepository {
 	 * invalidated
 	 */
 	public void invalidateConversation(Serializable conversationId) throws FlowExecutionRepositoryException;
+
 }

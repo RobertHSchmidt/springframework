@@ -36,6 +36,10 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 	 */
 	private SharedMapLocator sharedMapLocator = new SessionMapLocator();
 
+	public SharedMapFlowExecutionRepositoryFactory(FlowExecutionRepositoryCreator repositoryCreator) {
+		super(repositoryCreator);
+	}
+
 	/**
 	 * Returns the shared, external map locator.
 	 */
