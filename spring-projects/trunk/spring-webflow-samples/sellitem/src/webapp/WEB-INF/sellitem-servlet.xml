@@ -22,6 +22,7 @@
 		<constructor-arg ref="repositoryFactory"/>
 	</bean>
 
+	<!-- Creates, saves, and restores managed flow executions -->
 	<bean id="repositoryFactory" class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepositoryFactory">
 		<constructor-arg ref="flowRegistry"/>
 		<property name="listenerLoader">
