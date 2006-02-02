@@ -7,9 +7,9 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * Convenient abstract base class for flow execution continuation
- * implementations. Simply stores a serializable identifier property uniquely
- * identifying this continuation in the context of exactly one conversation.
+ * Convenient base for flow execution continuation implementations. Simply
+ * stores a serializable identifier property uniquely identifying this
+ * continuation in the context of exactly one conversation.
  * 
  * @author Keith Donald
  */

@@ -10,9 +10,8 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * A simple flow execution repository implementation that stores <i>single</i>
- * instances of flow executions representing stateful user conversations in map
- * entries structured in the following manner:
+ * Stores <i>single</i> instances of flow executions representing stateful user
+ * conversations in map entries structured in the following manner:
  * <p>
  * <ul>
  * <li>Each entry key is an assigned conversationId, uniquely identifying an

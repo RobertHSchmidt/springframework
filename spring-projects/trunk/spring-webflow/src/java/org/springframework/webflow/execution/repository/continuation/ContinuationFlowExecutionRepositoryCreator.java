@@ -5,7 +5,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
 
 /**
- * A factory for creating continuation-based flow execution repositories.
+ * Creates continuation-based flow execution repositories.
  * <p>
  * All properties are optional. If a property is not set, the default values
  * will be used.

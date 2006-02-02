@@ -4,9 +4,8 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
 
 /**
- * This is a convenient implementation that encapsulates the assembly of a
- * <i>simple</i> flow execution repository factory and delegates to it at
- * runtime.
+ * Convenient implementation that encapsulates the assembly of a <i>simple</i>
+ * flow execution repository factory and delegates to it at runtime.
  * <ul>
  * Specifically, <i>simple</i> means this delegating repository factory:
  * <ul>

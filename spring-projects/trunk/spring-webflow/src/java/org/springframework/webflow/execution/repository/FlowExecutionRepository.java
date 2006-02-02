@@ -7,9 +7,12 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * A repository for storing managed flow executions. Flow execution repositories
- * are responsible for managing the creation, storage, and restoration of
- * ongoing conversations between clients and the Spring Web Flow system.
+ * Saves and restores managed flow executions representing the state of active
+ * user conversations.
+ * <p>
+ * Flow execution repositories are responsible for managing the creation,
+ * storage, restoration, and invalidation of conversations between clients and
+ * the Spring Web Flow system.
  * <p>
  * When placed in a repository, a {@link FlowExecution} object representing the
  * state of a conversation at a point in time is indexed under a unique

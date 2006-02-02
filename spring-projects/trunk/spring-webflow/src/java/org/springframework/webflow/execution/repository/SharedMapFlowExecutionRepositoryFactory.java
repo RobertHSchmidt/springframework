@@ -4,8 +4,7 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ExternalContext.SharedMap;
 
 /**
- * A repository factory that accesses flow execution repositories from a shared,
- * externally managed map.
+ * Accesses flow execution repositories from a shared, externally managed map.
  * <p>
  * The map access strategy is configurable by setting the
  * {@link #setSharedMapLocator(SharedMapLocator) sharedMapLocator} property. By

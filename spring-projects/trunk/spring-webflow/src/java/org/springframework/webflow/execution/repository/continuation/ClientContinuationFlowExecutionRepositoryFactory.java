@@ -6,7 +6,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryS
 import org.springframework.webflow.execution.repository.SingletonFlowExecutionRepositoryFactory;
 
 /**
- * This is a convenient implementation that encapsulates the assembly of a
+ * A convenient implementation that encapsulates the assembly of a
  * "client" flow execution repository factory and delegates to it at runtme. The
  * delegate factory creates repositories that persist flow executions
  * client-side, requiring no server-side state.

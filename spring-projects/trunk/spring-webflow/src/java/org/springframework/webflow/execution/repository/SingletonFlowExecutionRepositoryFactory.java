@@ -3,8 +3,8 @@ package org.springframework.webflow.execution.repository;
 import org.springframework.webflow.ExternalContext;
 
 /**
- * A repository factory that returns the same (singleton) instance of a
- * {@link FlowExecutionRepository} on each invocation.
+ * Returns the same (singleton) instance of a {@link FlowExecutionRepository} on
+ * each invocation.
  * <p>
  * Designed to be used with {@link FlowExecutionRepository} implementations that
  * are stateless and therefore safely shareable by all threads.

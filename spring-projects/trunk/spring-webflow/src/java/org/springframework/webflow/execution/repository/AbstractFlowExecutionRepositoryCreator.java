@@ -16,7 +16,7 @@
 package org.springframework.webflow.execution.repository;
 
 /**
- * Convenient base class for flow execution repository creational strategies.
+ * A convenient base for flow execution repository creational strategies.
  * Simply exposes a configuration interface for configuring the services needed
  * by repositories created by this creator.
  * 

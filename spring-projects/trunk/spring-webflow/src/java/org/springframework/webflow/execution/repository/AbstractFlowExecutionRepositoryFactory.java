@@ -3,8 +3,8 @@ package org.springframework.webflow.execution.repository;
 import org.springframework.webflow.ExternalContext;
 
 /**
- * A convenient base class for factories that create and/or locate flow
- * execution repositories that manage the storage of one or more flow executions
+ * A convenient base for factories that create or locate flow execution
+ * repositories to manage the storage of one or more flow executions
  * representing stateful user conversations.
  * 
  * @author Keith Donald

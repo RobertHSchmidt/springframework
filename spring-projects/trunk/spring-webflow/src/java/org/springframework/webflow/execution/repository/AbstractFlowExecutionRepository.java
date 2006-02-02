@@ -7,7 +7,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 
 /**
- * Convenient base class for flow execution repository implementations.
+ * A convenient base for flow execution repository implementations.
  * <p>
  * Exposes a configuration interface for setting the set of services common to
  * most repository implementations. Also provides some basic implementation

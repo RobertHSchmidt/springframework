@@ -3,8 +3,8 @@ package org.springframework.webflow.execution.repository;
 import org.springframework.webflow.FlowException;
 
 /**
- * The root class for exceptions thrown by {@link FlowExecutionRepository}
- * objects.
+ * The root of the {@link FlowExecutionRepository} exception hierarchy.
+ * 
  * @author Keith Donald
  */
 public abstract class FlowExecutionRepositoryException extends FlowException {

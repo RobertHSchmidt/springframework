@@ -7,9 +7,9 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryS
 import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
 
 /**
- * This is a convenient implementation that encapsulates the assembly of a
- * server-side continuation-based flow execution repository factory and
- * delegates to it at runtime.
+ * A convenient implementation that encapsulates the assembly of a server-side
+ * continuation-based flow execution repository factory and delegates to it at
+ * runtime.
  * <p>
  * Specifically, this delegating repository factory:
  * <ul>
