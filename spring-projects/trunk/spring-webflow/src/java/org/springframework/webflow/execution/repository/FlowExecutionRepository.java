@@ -7,7 +7,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * Central boundary interface responsible for the saving and restoring of flow
+ * Central interface responsible for the saving and restoring of flow
  * executions, where each flow execution represents a state of an active user
  * conversation.
  * <p>
