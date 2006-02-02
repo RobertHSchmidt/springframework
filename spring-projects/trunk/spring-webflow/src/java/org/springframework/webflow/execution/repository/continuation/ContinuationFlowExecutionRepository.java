@@ -15,6 +15,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.repository.AbstractFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
@@ -155,6 +156,17 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	 */
 	public void setEnableConversationScope(boolean enableConversationScope) {
 		this.enableConversationScope = enableConversationScope;
+	}
+
+	public FlowExecution createFlowExecution(String flowId) {
+		Flow flow = getRepositoryServices().getFlowLocator().getFlow(flowId);
+		FlowExecution flowExecution = new FlowExecutionImpl(flow, getRepositoryServices().getListenerLoader()
+				.getListeners(flow));
+		if (enableConversationScope) {
+			return new ConversationScopeEnabledFlowExecution(flowExecution, null);
+		} else {
+			return flowExecution;
+		}
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
