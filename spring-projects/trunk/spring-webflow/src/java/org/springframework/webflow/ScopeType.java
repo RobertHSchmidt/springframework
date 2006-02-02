@@ -37,12 +37,24 @@ public abstract class ScopeType extends StaticLabeledEnum {
 
 	/**
 	 * Constant indicating flow scope. Data in flow scope is shared by all
-	 * artifacts of a flow (actions, view, states, etc.) and lives for the life
-	 * of the executing flow.
+	 * artifacts of exactly one flow definition (actions, view, states, etc.)
+	 * and lives locally for the life of a executing flow session.
 	 */
 	public static final ScopeType FLOW = new ScopeType(1, "Flow") {
 		public Scope getScope(RequestContext context) {
 			return context.getFlowScope();
+		}
+	};
+
+	/**
+	 * Constant indicating conversation scope. Data in conversation scope is
+	 * shared by all flow sessions associated with a flow execution, and lives
+	 * for the life of the entire flow execution (repersenting a single logical
+	 * conversation).
+	 */
+	public static final ScopeType CONVERSATION = new ScopeType(2, "Conversation") {
+		public Scope getScope(RequestContext context) {
+			return context.getConversationScope();
 		}
 	};
 

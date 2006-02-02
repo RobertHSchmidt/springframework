@@ -115,6 +115,10 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	public Scope getFlowScope() {
 		return flowExecution.getActiveSession().getScope();
 	}
+	
+	public Scope getConversationScope() {
+		return flowExecution.getConversationScope();
+	}
 
 	public Transition getLastTransition() {
 		return lastTransition;

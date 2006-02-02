@@ -109,11 +109,20 @@ public interface RequestContext {
 
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in
-	 * flow scope. <b>Flow scoped attributes exist for the life of the executing
-	 * flow.</b>
+	 * flow scope. <b>Flow scoped attributes exist for the life of the active
+	 * flow session.</b>
 	 * @return the flow scope
+	 * @see FlowExecutionContext#getActiveSession()
 	 */
 	public Scope getFlowScope();
+
+	/**
+	 * Returns a mutable accessor for accessing and/or setting attributes in
+	 * conversation scope. <b>Conversation scoped attributes exist for the life
+	 * of the executing flow and are shared accross all flow sessions.</b>
+	 * @return the conversation scope
+	 */
+	public Scope getConversationScope();
 
 	/**
 	 * Returns the last event signaled during this request. The event may or may
