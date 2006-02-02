@@ -8,10 +8,10 @@ import org.springframework.webflow.execution.FlowLocator;
  * a custom flow execution repository factory delegate. The delegate is invoked
  * at runtime in standard decorator fashion.
  * <p>
- * Also exposes a convenient configuration interface for configuring common
- * {@link FlowExecutionRepositoryServices repository services} directly,
- * allowing clients to customize the behavior of the repositories created by the
- * delegate factory created by this decorator.
+ * Also exposes a convenient configuration interface for clients to configure
+ * common {@link FlowExecutionRepositoryServices repository services} directly,
+ * allowing for easy customization over the behavior of repositories created by the
+ * delegate factory.
  * 
  * @author Keith Donald
  */
