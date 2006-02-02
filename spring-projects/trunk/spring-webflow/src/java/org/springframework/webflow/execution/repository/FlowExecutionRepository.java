@@ -7,8 +7,9 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * Saves and restores managed flow executions representing the state of active
- * user conversations.
+ * Central boundary interface responsible for the saving and restoring of flow
+ * executions, where each flow execution represents a state of an active user
+ * conversation.
  * <p>
  * Flow execution repositories are responsible for managing the creation,
  * storage, restoration, and invalidation of conversations between clients and
@@ -18,9 +19,9 @@ import org.springframework.webflow.execution.FlowExecution;
  * state of a conversation at a point in time is indexed under a unique
  * {@link FlowExecutionContinuationKey}. This key provides enough information
  * to track a single active user conversation with the server, as well as
- * provide an index into one or more snapshots taken at points in time relative
- * to the user during conversation execution. These conversational snapshots are
- * called <i>continuations</i>.
+ * provide an index into one or more restorable conversational snapshots taken
+ * at points in time during conversation execution. These restorable
+ * conversational snapshots are called <i>continuations</i>.
  * 
  * @author Keith Donald
  */
