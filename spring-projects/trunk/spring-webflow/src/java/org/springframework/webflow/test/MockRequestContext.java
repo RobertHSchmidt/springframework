@@ -53,7 +53,7 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 
 	private ExternalContext externalContext;
 
-	private Scope requestScope = new Scope(ScopeType.REQUEST);
+	private Scope requestScope = new Scope();
 
 	private MockFlowSession activeSession;
 

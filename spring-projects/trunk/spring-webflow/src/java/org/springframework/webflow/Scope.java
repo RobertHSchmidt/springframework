@@ -52,40 +52,9 @@ public class Scope implements Map, Serializable {
 	private static final long serialVersionUID = -8075142903027393405L;
 
 	/**
-	 * The scope type; e.g FLOW or REQUEST.
-	 */
-	private ScopeType scopeType;
-
-	/**
 	 * The data holder map.
 	 */
-	private Map attributes;
-
-	/**
-	 * Creates a 'scoped' attribute map.
-	 * @param scopeType the scope type
-	 */
-	public Scope(ScopeType scopeType) {
-		this.attributes = new HashMap();
-		this.scopeType = scopeType;
-	}
-
-	/**
-	 * Creates a 'scoped' attribute map.
-	 * @param size the initial map size
-	 * @param scopeType the scope type
-	 */
-	public Scope(int size, ScopeType scopeType) {
-		this.attributes = new HashMap(size);
-		this.scopeType = scopeType;
-	}
-
-	/**
-	 * Returns this scope's scope type.
-	 */
-	public ScopeType getScopeType() {
-		return scopeType;
-	}
+	private Map attributes = Collections.EMPTY_MAP;
 
 	public boolean containsAttribute(String attributeName) {
 		return attributes.containsKey(attributeName);
@@ -163,7 +132,11 @@ public class Scope implements Map, Serializable {
 	 * Returns the contents of this scope as an unmodifiable map.
 	 */
 	public Map getAttributeMap() {
-		return Collections.unmodifiableMap(this.attributes);
+		if (attributes == Collections.EMPTY_MAP) {
+			return attributes;
+		} else {
+			return Collections.unmodifiableMap(attributes);
+		}
 	}
 
 	/**
@@ -174,9 +147,16 @@ public class Scope implements Map, Serializable {
 	 * no previous value set
 	 */
 	public Object setAttribute(String attributeName, Object attributeValue) {
+		if (attributes == Collections.EMPTY_MAP) {
+			attributes = createAttributeMap();
+		}
 		return attributes.put(attributeName, attributeValue);
 	}
 
+	protected Map createAttributeMap() {
+		return new HashMap();
+	}
+	
 	/**
 	 * Set all given attributes in this scope.
 	 */
@@ -196,6 +176,9 @@ public class Scope implements Map, Serializable {
 	 * <tt>null</tt> if there was no mapping for the name
 	 */
 	public Object removeAttribute(String attributeName) {
+		if (attributes == null) {
+			return null;
+		}
 		return attributes.remove(attributeName);
 	}
 
@@ -206,11 +189,11 @@ public class Scope implements Map, Serializable {
 	}
 
 	public boolean isEmpty() {
-		return attributes.isEmpty();
+		return size() == 0;
 	}
 
 	public boolean containsKey(Object key) {
-		return attributes.containsKey(key);
+		return containsAttribute(String.valueOf(key));
 	}
 
 	public boolean containsValue(Object value) {
@@ -218,19 +201,23 @@ public class Scope implements Map, Serializable {
 	}
 
 	public Object get(Object key) {
-		return attributes.get(key);
+		return getAttribute(String.valueOf(key));
 	}
 
 	public Object put(Object key, Object value) {
-		return attributes.put(key, value);
+		return setAttribute(String.valueOf(key), value);
 	}
 
 	public Object remove(Object key) {
 		return removeAttribute(String.valueOf(key));
 	}
 
-	public void putAll(Map t) {
-		attributes.putAll(t);
+	public void putAll(Map attributes) {
+		if (this.attributes == Collections.EMPTY_MAP) {
+			this.attributes = new HashMap(attributes);
+		} else {
+			this.attributes.putAll(attributes);
+		}
 	}
 
 	public void clear() {
@@ -250,6 +237,6 @@ public class Scope implements Map, Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("scopeType", scopeType).append("attributes", attributes).toString();
+		return new ToStringCreator(this).append("attributes", attributes).toString();
 	}
 }

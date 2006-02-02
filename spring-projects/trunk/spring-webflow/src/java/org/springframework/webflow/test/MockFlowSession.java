@@ -39,7 +39,7 @@ public class MockFlowSession implements FlowSession {
 	
 	private FlowSessionStatus status = FlowSessionStatus.ACTIVE;
 	
-	private Scope scope = new Scope(ScopeType.FLOW);
+	private Scope scope = new Scope();
 	
 	private FlowSession parent;
 	

@@ -83,7 +83,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The session data model ("flow scope").
 	 */
-	private Scope flowScope = new Scope(ScopeType.FLOW);
+	private Scope scope = new Scope();
 
 	/**
 	 * The parent session of this session (may be null if this is a root
@@ -110,7 +110,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 		Assert.notNull(flow, "The flow is required");
 		this.flow = flow;
 		if (input != null) {
-			flowScope.setAttributes(input);
+			scope.setAttributes(input);
 		}
 		this.parent = parent;
 	}
@@ -151,7 +151,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 	}
 
 	public Scope getScope() {
-		return this.flowScope;
+		return scope;
 	}
 
 	public FlowSession getParent() {
@@ -168,7 +168,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 		out.writeObject(flow.getId());
 		out.writeObject(currentState.getId());
 		out.writeObject(status);
-		out.writeObject(flowScope);
+		out.writeObject(scope);
 		out.writeObject(parent);
 	}
 
@@ -176,7 +176,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 		flowId = (String)in.readObject();
 		currentStateId = (String)in.readObject();
 		status = (FlowSessionStatus)in.readObject();
-		flowScope = (Scope)in.readObject();
+		scope = (Scope)in.readObject();
 		parent = (FlowSessionImpl)in.readObject();
 	}
 
@@ -204,7 +204,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 
 	public String toString() {
 		return new ToStringCreator(this).append("flow", flow.getId()).append("currentState",
-				(currentState != null ? currentState.getId() : "[none]")).append("attributesCount", flowScope.size())
-				.append("attributes", flowScope).toString();
+				(currentState != null ? currentState.getId() : "[none]")).append("attributesCount", scope.size())
+				.append("attributes", scope).toString();
 	}
 }

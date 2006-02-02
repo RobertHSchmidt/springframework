@@ -31,7 +31,6 @@ import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.Scope;
-import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
@@ -81,7 +80,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	/**
 	 * The request scope data map.
 	 */
-	private Scope requestScope = new Scope(ScopeType.REQUEST);
+	private Scope requestScope = new Scope();
 
 	/**
 	 * Create a new request context.

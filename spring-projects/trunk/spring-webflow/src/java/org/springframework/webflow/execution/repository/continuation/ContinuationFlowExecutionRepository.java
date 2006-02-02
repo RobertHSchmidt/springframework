@@ -82,6 +82,12 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	private int maxContinuations = 25;
 
 	/**
+	 * Should this repository always use flow execution conversation scope instead of 
+	 * continuation scope?
+	 */
+	private boolean enableConversationScope;
+
+	/**
 	 * Creates a new continuation flow execution repository.
 	 * @param repositoryServices the repository services holder
 	 */
@@ -119,6 +125,14 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	 */
 	public void setMaxContinuations(int maxContinuations) {
 		this.maxContinuations = maxContinuations;
+	}
+
+	public boolean isEnableConversationScope() {
+		return enableConversationScope;
+	}
+
+	public void setEnableConversationScope(boolean enableConversationScope) {
+		this.enableConversationScope = enableConversationScope;
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {

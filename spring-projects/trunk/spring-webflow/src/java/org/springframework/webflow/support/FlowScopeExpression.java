@@ -68,11 +68,7 @@ public class FlowScopeExpression implements Expression {
 			return expression.evaluateAgainst(((RequestContext)target).getFlowScope(), context);
 		}
 		else if (target instanceof Scope) {
-			Scope scope = (Scope)target;
-			if (scope.getScopeType() != ScopeType.FLOW) {
-				throw new IllegalArgumentException("The Scope provided as input must be of ScopeType.FLOW");
-			}
-			return expression.evaluateAgainst(scope, context);
+			return expression.evaluateAgainst(target, context);
 		}
 		else {
 			throw new IllegalArgumentException(
