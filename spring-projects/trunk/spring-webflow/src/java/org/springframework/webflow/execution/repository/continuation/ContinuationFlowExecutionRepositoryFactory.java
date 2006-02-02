@@ -68,4 +68,15 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 	public void setMaxContinuations(int maxContinuations) {
 		getRepositoryCreator().setMaxContinuations(maxContinuations);
 	}
+	
+	/**
+	 * Sets the flag indicating if this repository should turn on support for
+	 * shared <i>conversational scope</i>.
+	 * <p>
+	 * Data stored in this scope is <u>shared</u> by all flow sessions in all
+	 * continuations associated with an active conversation.
+	 */
+	public void setEnableConversationScope(boolean enableConversationScope) {
+		getRepositoryCreator().setEnableConversationScope(enableConversationScope);
+	}
 }
