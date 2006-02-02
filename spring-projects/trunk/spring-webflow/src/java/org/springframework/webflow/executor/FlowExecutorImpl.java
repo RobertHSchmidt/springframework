@@ -35,12 +35,17 @@ import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepos
 import org.springframework.webflow.executor.support.FlowExecutionContinuationKeyFormatter;
 
 /**
- * The default implementation of the central facade for the execution of flows
- * within an application. This object is responsible for creating and starting
- * new flow executions as requested by clients, as well as signaling events for
- * processing by existing, paused executions (that are waiting to be resumed in
- * response to a user event). This object is a facade or entry point into the
- * flow execution subsystem, and makes the overall system easier to use.
+ * The default implementation of the central facade for <i>driving</i> the
+ * execution of flows within an application.
+ * <p>
+ * This object is responsible creating and starting new flow executions as
+ * requested by clients, as well as signaling events for processing by existing,
+ * paused executions (that are waiting to be resumed in response to a user
+ * event).
+ * <p>
+ * This object is a facade or entry point into the Spring Web Flow execution
+ * system, and makes the overall system easier to use. The name <i>executor</i>
+ * was chosen as <i>executors drive executions</i>.
  * <p>
  * <b>Commonly used configurable properties</b><br>
  * <table border="1">
@@ -50,27 +55,30 @@ import org.springframework.webflow.executor.support.FlowExecutionContinuationKey
  * <td><b>default</b></td>
  * </tr>
  * <tr>
- * <td>flowLocator (required)</td>
- * <td>The locator that will load flow definitions as needed for execution by
- * this manager</td>
- * <td>None</td>
- * </tr>
- * <tr>
  * <td>repositoryFactory</td>
- * <td>The strategy for accessing managed flow execution repositories</td>
- * <td>A server-side, stateful session-based repository factory</td>
+ * <td>The strategy for accessing a flow execution repositorie that is used to
+ * create, save, and store managed flow executions driven by this executor.</td>
+ * <td>A {@link SimpleFlowExecutionRepositoryFactory simple}, stateful
+ * server-side session-based repository factory</td>
  * </tr>
  * <tr>
- * <td>listenerLoader</td>
- * <td>The listeners that should be loaded to observe the lifecycle of managed
- * flow executions</td>
- * <td>An empty listener loader</td>
+ * <td>continuationKeyFormatter</td>
+ * <td>The strategy for formatting continuation keys that identified persisted
+ * flow executions represented the state of a conversation at a point in time.</td>
+ * <td>The default {@link FlowExecutionContinuationKeyFormatter}</td>
+ * </tr>
+ * <tr>
+ * <td>alwaysRedirectOnPause</td>
+ * <td>A flag indicating if this executor should <i>always</i> request a
+ * <i>redirect to conversation</i> after pausing an active flow execution.</td>
+ * <td>false</td>
  * </tr>
  * </table>
  * </p>
- * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory
- * @see org.springframework.webflow.execution.FlowExecutionListener
+ * @see org.springframework.webflow.execution.support.FlowExecutionContinuationKeyFormatter
+ * @see org.springframework.webflow.execution.FlowExecution
+ * @see org.springframework.webflow.ViewSelection
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -112,18 +120,29 @@ public class FlowExecutorImpl implements FlowExecutor {
 	private Formatter continuationKeyFormatter = new FlowExecutionContinuationKeyFormatter();
 
 	/**
-	 * Always redirect after pausing an active flow execution so the user can
-	 * participate in the flow?
+	 * A flag indicating if this executor should <i>always</i> request a
+	 * <i>redirect to conversation</i> after pausing an active flow execution.
+	 * <p>
+	 * This allows the user to participate in the current state of the
+	 * conversation using a bookmarkable URL.
 	 */
 	private boolean alwaysRedirectOnPause;
 
+	/**
+	 * Create a new flow executor that uses the repository factory to access a
+	 * repository to create, save, and restore managed flow executions driven by
+	 * this executor.
+	 * @param repositoryFactory the repository factory
+	 */
 	public FlowExecutorImpl(FlowExecutionRepositoryFactory repositoryFactory) {
 		setRepositoryFactory(repositoryFactory);
 	}
 
 	/**
-	 * Create a new flow execution manager using the specified flow locator for
-	 * loading Flow definitions.
+	 * Convenience constructor that configures the default
+	 * {@link FlowExecutionRepositoryFactory} implementation with the provided
+	 * flow locator. This locator is responsible for loading flow definitions as
+	 * needed by the repository to support execution creation.
 	 * @param flowLocator the flow locator to use
 	 * @see #setFlowLocator(FlowLocator)
 	 */
@@ -139,14 +158,15 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	/**
-	 * Returns the repository factory in use by this flow execution manager.
+	 * Returns the repository factory in use by this flow executor.
 	 */
 	public FlowExecutionRepositoryFactory getRepositoryFactory() {
 		return repositoryFactory;
 	}
 
 	/**
-	 * Set the repository factory in use this flow execution manager.
+	 * Set the repository factory to use for accessing a repository to create,
+	 * save, and restore managed flow executions driven by this executor.
 	 */
 	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryFactory) {
 		this.repositoryFactory = repositoryFactory;
@@ -167,10 +187,28 @@ public class FlowExecutorImpl implements FlowExecutor {
 		this.continuationKeyFormatter = continuationKeyFormatter;
 	}
 
+	/**
+	 * Returns the flag indicating if this executor should always request a
+	 * <i>redirect to conversation</i> after pausing an active flow execution.
+	 * <p>
+	 * This allows the user to participate in the current view-state of a
+	 * conversation using a bookmarkable URL.
+	 */
 	public boolean isAlwaysRedirectOnPause() {
 		return alwaysRedirectOnPause;
 	}
 
+	/**
+	 * Sets the flag indicating if this executor should always request a
+	 * <i>redirect to conversation</i> after pausing an active flow execution.
+	 * <p>
+	 * If set to <code>true</code> this executor will always request a
+	 * redirect. If this is set to <code>false</code> this executor will only
+	 * request a redirect if the entered flow view state did so.
+	 * <p>
+	 * This allows the user to participate in the current view-state of a
+	 * conversation using a bookmarkable URL.
+	 */
 	public void setAlwaysRedirectOnPause(boolean alwaysRedirectOnPause) {
 		this.alwaysRedirectOnPause = alwaysRedirectOnPause;
 	}

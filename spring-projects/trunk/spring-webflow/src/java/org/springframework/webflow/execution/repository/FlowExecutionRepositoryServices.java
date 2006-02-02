@@ -9,7 +9,32 @@ import org.springframework.webflow.util.UidGenerator;
 /**
  * A holder for services common to all {@link FlowExecutionRepository}
  * implementations.
- * 
+ * <p>
+ * <b>Configurable properties</b>
+ * <br>
+ * <table border="1">
+ * <tr>
+ * <td><b>name</b></td>
+ * <td><b>description</b></td>
+ * <td><b>default</b></td>
+ * </tr>
+ * <tr>
+ * <td>flowLocator (required)</td>
+ * <td>The locator that will load flow definitions as needed for execution</td>
+ * <td>None</td>
+ * </tr>
+ * <tr>
+ * <td>listenerLoader</td>
+ * <td>The listeners that should be loaded to observe the lifecycle of managed
+ * flow executions</td>
+ * <td>An empty listener loader</td>
+ * </tr> 
+ * <tr>
+ * <td>uidGenerator</td>
+ * <td>The strategy to generate unique repository identifiers managed flow executions.</td>
+ * <td>{@link RandomGuidUidGenerator A random GUID generator}</td>
+ * </tr> 
+ * </table>
  * @author Keith Donald
  */
 public class FlowExecutionRepositoryServices {
