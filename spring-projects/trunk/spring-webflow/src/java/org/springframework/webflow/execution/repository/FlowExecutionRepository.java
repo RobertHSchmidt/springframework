@@ -114,7 +114,7 @@ public interface FlowExecutionRepository {
 	/**
 	 * Sets the current view selection for the specified conversation.
 	 * @param conversationId the id of an existing conversation
-	 * @param the view selection, to be set as the current
+	 * @param viewSelection the view selection, to be set as the current
 	 * @throws FlowExecutionRepositoryException if an exception occured
 	 * retrieving the current view selection
 	 */

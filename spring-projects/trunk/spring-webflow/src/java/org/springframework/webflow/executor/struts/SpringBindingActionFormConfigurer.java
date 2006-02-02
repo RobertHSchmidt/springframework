@@ -27,8 +27,7 @@ import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
  * After flow execution request processing this implementation takes the current
  * Spring {@link org.springframework.validation.Errors} instance describing the
  * result of a POJO-based "form object" data binding operation and adapts it to
- * the Struts ActionForm model using the special
- * @{link SpringBindingActionForm}.
+ * the Struts ActionForm model using the special {@link SpringBindingActionForm}.
  */
 public class SpringBindingActionFormConfigurer extends FlowExecutionListenerAdapter {
 	public void requestProcessed(RequestContext context) {

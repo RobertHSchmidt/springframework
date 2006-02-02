@@ -5,18 +5,18 @@ import org.springframework.webflow.execution.FlowLocator;
 
 /**
  * This is a convenient implementation that encapsulates the assembly of a
- * <i>simple<i/> flow execution repository factory and delegates to it at
+ * <i>simple</i> flow execution repository factory and delegates to it at
  * runtime.
  * <ul>
- * Specifically, <i>simple<i/> means this delegating repository factory:
+ * Specifically, <i>simple</i> means this delegating repository factory:
  * <ul>
  * <li>Sets a {@link SharedMapFlowExecutionRepositoryFactory} to manage flow
  * execution repository implementations statefully in the
  * {@link ExternalContext#getSessionMap()}, typically backed by the HTTP
  * session.
- * <li>Configures it with a {@link SimpleFlowExecutionRepositoryCreator} to
- * create instances of {@link SimpleFlowExecutionRepository} when requested for
- * placement in the shared session map.
+ * <li>Configures it with a simple repository creator to create instances of
+ * {@link SimpleFlowExecutionRepository} when requested for placement in the
+ * shared session map.
  * </ul>
  * This class inherits from {@link FlowExecutionRepositoryServices} to allow for
  * direct configuration of services needed by the repositories created by this

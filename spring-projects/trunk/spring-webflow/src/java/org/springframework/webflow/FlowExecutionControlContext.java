@@ -114,7 +114,7 @@ public interface FlowExecutionControlContext extends RequestContext {
 	 * mapping by a resuming parent flow.
 	 * @return the ended session
 	 * @throws IllegalStateException when the flow execution is not active
-	 * @see Flow#end(FlowExecutionControlContext)
+	 * @see Flow#end(FlowExecutionControlContext, Map)
 	 */
 	public FlowSession endActiveFlowSession(Map sessionOutput) throws IllegalStateException;
 
