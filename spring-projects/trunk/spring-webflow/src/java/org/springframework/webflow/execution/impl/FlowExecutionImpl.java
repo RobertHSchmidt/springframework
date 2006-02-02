@@ -85,6 +85,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	private transient Flow rootFlow;
 
 	/**
+	 * Conversation scope, shared by all flow sessions.
+	 */
+	private Scope conversationScope;
+	
+	/**
 	 * The stack of active, currently executing flow sessions. As subflows are
 	 * spawned, they are pushed onto the stack. As they end, they are popped off
 	 * the stack.
@@ -171,8 +176,13 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return getActiveSessionInternal();
 	}
 
-	public Scope getConversationScope() throws IllegalStateException {
-		throw new UnsupportedOperationException("Not supported by the default flow execution implementation");
+	public Scope getConversationScope() {
+		assertActive();
+		return conversationScope;
+	}
+	
+	public void setConversationScope(Scope conversationScope) {
+		this.conversationScope = conversationScope;
 	}
 
 	/**

@@ -91,15 +91,6 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	private int maxContinuations = 25;
 
 	/**
-	 * The flag indicating if this repository should turn on support for shared
-	 * <i>conversational scope</i>.
-	 * <p>
-	 * Data stored in this scope is shared by all flow sessions in all
-	 * continuations associated with an active conversation.
-	 */
-	private boolean enableConversationScope = true;
-
-	/**
 	 * Creates a new continuation flow execution repository.
 	 * @param repositoryServices the repository services holder
 	 */
@@ -139,55 +130,27 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		this.maxContinuations = maxContinuations;
 	}
 
-	/**
-	 * Returns the flag indicating if this repository has support for shared
-	 * <i>conversational scope</i> enabled.
-	 */
-	public boolean isEnableConversationScope() {
-		return enableConversationScope;
-	}
-
-	/**
-	 * Sets the flag indicating if this repository should turn on support for
-	 * shared <i>conversational scope</i>.
-	 * <p>
-	 * Data stored in this scope is <u>shared</u> by all flow sessions in all
-	 * continuations associated with an active conversation.
-	 */
-	public void setEnableConversationScope(boolean enableConversationScope) {
-		this.enableConversationScope = enableConversationScope;
-	}
-
-	public FlowExecution createFlowExecution(String flowId) {
-		Flow flow = getRepositoryServices().getFlowLocator().getFlow(flowId);
-		FlowExecution flowExecution = new FlowExecutionImpl(flow, getRepositoryServices().getListenerLoader()
-				.getListeners(flow));
-		if (enableConversationScope) {
-			return new ConversationScopeEnabledFlowExecution(flowExecution, null);
-		} else {
-			return flowExecution;
-		}
-	}
-
 	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
 		Conversation conversation = getRequiredConversation(key.getConversationId());
 		FlowExecutionContinuation continuation = getRequiredContinuation(conversation, key);
-		FlowExecution flowExecution = rehydrate(continuation.getFlowExecution());
-		if (enableConversationScope) {
-			return new ConversationScopeEnabledFlowExecution(flowExecution, conversation.getAttributes());
-		}
-		else {
-			return flowExecution;
-		}
+		FlowExecutionImpl impl = (FlowExecutionImpl)rehydrate(continuation.getFlowExecution());
+		impl.setConversationScope(conversation.getScope());
+		return impl;
 	}
 
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
 		Conversation conversation = (Conversation)getOrCreateConversation(key.getConversationId());
-		if (enableConversationScope) {
-			conversation.setAttributes(flowExecution.getConversationScope());
-			flowExecution = ((ConversationScopeEnabledFlowExecution)flowExecution).flowExecution;
-		}
+		conversation.setScope(flowExecution.getConversationScope());
+		removeConversationAttributes(flowExecution);
 		conversation.addContinuation(continuationFactory.createContinuation(key.getContinuationId(), flowExecution));
+	}
+
+	/**
+	 * Set the flow execution conversation attribute map to null as it's been
+	 * saved out separately.
+	 */
+	private void removeConversationAttributes(FlowExecution flowExecution) {
+		((FlowExecutionImpl)flowExecution).setConversationScope(null);
 	}
 
 	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId)
@@ -270,72 +233,5 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	 */
 	protected Conversation createConversation() {
 		return new Conversation(maxContinuations);
-	}
-
-	/**
-	 * A proxy that exposes a conversation scope data structure.
-	 * 
-	 * @author Keith Donald
-	 */
-	private static class ConversationScopeEnabledFlowExecution implements FlowExecution, Serializable {
-
-		/**
-		 * The target flow execution.
-		 */
-		private FlowExecution flowExecution;
-
-		/**
-		 * The conversation scope.
-		 */
-		private Scope conversationScope;
-
-		public ConversationScopeEnabledFlowExecution(FlowExecution flowExecution, Map conversationAttributes) {
-			this.flowExecution = flowExecution;
-			this.conversationScope = new Scope(conversationAttributes);
-		}
-
-		public ViewSelection start(ExternalContext context) throws StateException {
-			return flowExecution.start(context);
-		}
-
-		public ViewSelection signalEvent(String eventId, ExternalContext context) throws StateException {
-			return flowExecution.signalEvent(eventId, context);
-		}
-
-		public void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader) {
-			throw new UnsupportedOperationException("Operation not allowed");
-		}
-
-		public Flow getActiveFlow() throws IllegalStateException {
-			return flowExecution.getActiveFlow();
-		}
-
-		public FlowSession getActiveSession() throws IllegalStateException {
-			return flowExecution.getActiveSession();
-		}
-
-		public Scope getConversationScope() throws IllegalStateException {
-			return conversationScope;
-		}
-
-		public State getCurrentState() throws IllegalStateException {
-			return flowExecution.getCurrentState();
-		}
-
-		public Flow getRootFlow() {
-			return flowExecution.getRootFlow();
-		}
-
-		public String getCaption() {
-			return flowExecution.getCaption();
-		}
-
-		public boolean isActive() {
-			return flowExecution.isActive();
-		}
-
-		public boolean isRootFlowActive() {
-			return flowExecution.isRootFlowActive();
-		}
 	}
 }

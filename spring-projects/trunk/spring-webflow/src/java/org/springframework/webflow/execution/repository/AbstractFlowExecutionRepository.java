@@ -68,7 +68,8 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	}
 
 	protected FlowExecution rehydrate(FlowExecution flowExecution) {
-		flowExecution.rehydrate(repositoryServices.getFlowLocator(), repositoryServices.getListenerLoader());
+		((FlowExecutionImpl)flowExecution).rehydrate(repositoryServices.getFlowLocator(), repositoryServices
+				.getListenerLoader());
 		return flowExecution;
 	}
 

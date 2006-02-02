@@ -103,14 +103,4 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * resumed flow execution during event processing
 	 */
 	public ViewSelection signalEvent(String eventId, ExternalContext context) throws StateException;
-
-	/**
-	 * Rehydrate this flow execution after deserialization. This is called after
-	 * the flow execution has been restored from storage but before the
-	 * signalEvent method is called.
-	 * @param flowLocator the flow locator
-	 * @param listenerLoader the flow execution listener loader to use to obtain
-	 * all listeners that apply
-	 */
-	public void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader);
 }

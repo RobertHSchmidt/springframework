@@ -25,15 +25,6 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 	private int maxContinuations = 25;
 
 	/**
-	 * The flag indicating if this repository should turn on support for shared
-	 * <i>conversational scope</i>.
-	 * <p>
-	 * Data stored in this scope is shared by all flow sessions in all
-	 * continuations associated with an active conversation.
-	 */
-	private boolean enableConversationScope = true;
-	
-	/**
 	 * Creates a new continuation repository creator.
 	 * @param repositoryServices the repository services holder
 	 */
@@ -57,31 +48,11 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 		this.maxContinuations = maxContinuations;
 	}
 
-	/**
-	 * Returns the flag indicating if this repository has support for shared
-	 * <i>conversational scope</i> enabled.
-	 */
-	public boolean isEnableConversationScope() {
-		return enableConversationScope;
-	}
-
-	/**
-	 * Sets the flag indicating if this repository should turn on support for
-	 * shared <i>conversational scope</i>.
-	 * <p>
-	 * Data stored in this scope is <u>shared</u> by all flow sessions in all
-	 * continuations associated with an active conversation.
-	 */
-	public void setEnableConversationScope(boolean enableConversationScope) {
-		this.enableConversationScope = enableConversationScope;
-	}
-	
 	public FlowExecutionRepository createRepository() {
 		ContinuationFlowExecutionRepository repository = new ContinuationFlowExecutionRepository(
 				getRepositoryServices());
 		repository.setContinuationFactory(continuationFactory);
 		repository.setMaxContinuations(maxContinuations);
-		repository.setEnableConversationScope(enableConversationScope);
 		return repository;
 	}
 

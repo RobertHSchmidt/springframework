@@ -1,12 +1,12 @@
 package org.springframework.webflow.execution.repository.continuation;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Map;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.Scope;
 import org.springframework.webflow.ViewSelection;
 
 /**
@@ -39,7 +39,7 @@ public class Conversation implements Serializable {
 	/**
 	 * The attribute map that forms the basis of <i>conversationScope</i>.
 	 */
-	private Map attributes = Collections.EMPTY_MAP;
+	private Scope scope = new Scope();
 
 	/**
 	 * Creates a new object representing a logical conversation between a
@@ -118,15 +118,15 @@ public class Conversation implements Serializable {
 	 * Returns conversation attributes that form the basis of <i>conversation
 	 * scope</i>.
 	 */
-	public Map getAttributes() {
-		return attributes;
+	public Scope getScope() {
+		return scope;
 	}
 
 	/**
 	 * Sets the conversation attributes that form the basis of <i>conversation
 	 * scope</i>.
 	 */
-	public void setAttributes(Map attributes) {
-		this.attributes = attributes;
+	public void setScope(Scope scope) {
+		this.scope = scope;
 	}
 }
