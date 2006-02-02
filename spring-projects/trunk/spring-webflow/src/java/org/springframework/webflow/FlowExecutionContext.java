@@ -76,4 +76,16 @@ public interface FlowExecutionContext extends FlowExecutionStatistics {
 	 * executing
 	 */
 	public FlowSession getActiveSession() throws IllegalStateException;
+
+	/**
+	 * Returns a holder for data placed in <i>conversation scope</i>.  Data in conversation 
+	 * scope is shared by all flow sessions, existing for the duration of the 
+	 * logical conversation associated with this flow execution.
+	 * @return the conversation scope
+	 * @throws IllegalStateException if this flow execution has not been started
+	 * at all, or if this execution has ended and is no longer actively
+	 * executing
+	 */
+	public Scope getConversationScope() throws IllegalStateException;
+
 }

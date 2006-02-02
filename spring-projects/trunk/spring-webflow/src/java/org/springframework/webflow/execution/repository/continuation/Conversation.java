@@ -32,15 +32,15 @@ public class Conversation implements Serializable {
 	private int maxContinuations;
 
 	/**
-	 * The last (current) view selection made by the conversation. 
+	 * The last (current) view selection made by the conversation.
 	 */
 	private ViewSelection currentViewSelection;
-	
+
 	/**
 	 * The attribute map that forms the basis of <i>conversationScope</i>.
 	 */
 	private Map attributes = Collections.EMPTY_MAP;
-	
+
 	/**
 	 * Creates a new object representing a logical conversation between a
 	 * browser and Spring Web Flow. The new conversation initially has no
@@ -79,7 +79,8 @@ public class Conversation implements Serializable {
 	 */
 	public void addContinuation(FlowExecutionContinuation continuation) {
 		continuations.add(continuation);
-		// remove the first continuation if them maximium number of continuations has been reached
+		// remove the first continuation if them maximium number of
+		// continuations has been reached
 		if (continuations.size() > maxContinuations) {
 			continuations.removeFirst();
 		}
@@ -91,14 +92,14 @@ public class Conversation implements Serializable {
 	public int getContinuationCount() {
 		return continuations.size();
 	}
-	
+
 	/**
 	 * Returns the current view selection.
 	 */
 	public FlowExecutionContinuation getCurrentContinuation() {
 		return (FlowExecutionContinuation)continuations.getLast();
 	}
-	
+
 	/**
 	 * Returns the current view selection.
 	 */
@@ -112,18 +113,20 @@ public class Conversation implements Serializable {
 	public void setCurrentViewSelection(ViewSelection viewSelection) {
 		this.currentViewSelection = viewSelection;
 	}
-	
+
 	/**
-	 * Returns conversation attributes that form the basis of <i>conversation scope</i>.
+	 * Returns conversation attributes that form the basis of <i>conversation
+	 * scope</i>.
 	 */
 	public Map getAttributes() {
 		return attributes;
 	}
 
 	/**
-	 * Sets the conversation attributes that form the basis of <i>conversation scope</i>.
+	 * Sets the conversation attributes that form the basis of <i>conversation
+	 * scope</i>.
 	 */
-	public void setAttributes(String attributeName, Object attributeValue) {
-		attributes.put(attributeName, attributeValue);
+	public void setAttributes(Map attributes) {
+		this.attributes = attributes;
 	}
 }

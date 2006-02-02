@@ -4,9 +4,17 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowException;
+import org.springframework.webflow.FlowSession;
+import org.springframework.webflow.Scope;
+import org.springframework.webflow.State;
+import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionListenerLoader;
+import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.AbstractFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
@@ -82,8 +90,11 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	private int maxContinuations = 25;
 
 	/**
-	 * Should this repository always use flow execution conversation scope instead of 
-	 * continuation scope?
+	 * The flag indicating if this repository should turn on support for shared
+	 * <i>conversational scope</i>.
+	 * <p>
+	 * Data stored in this scope is shared by all flow sessions in all
+	 * continuations associated with an active conversation.
 	 */
 	private boolean enableConversationScope;
 
@@ -127,20 +138,43 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		this.maxContinuations = maxContinuations;
 	}
 
+	/**
+	 * Returns the flag indicating if this repository has support for shared
+	 * <i>conversational scope</i> enabled.
+	 */
 	public boolean isEnableConversationScope() {
 		return enableConversationScope;
 	}
 
+	/**
+	 * Sets the flag indicating if this repository should turn on support for
+	 * shared <i>conversational scope</i>.
+	 * <p>
+	 * Data stored in this scope is <u>shared</u> by all flow sessions in all
+	 * continuations associated with an active conversation.
+	 */
 	public void setEnableConversationScope(boolean enableConversationScope) {
 		this.enableConversationScope = enableConversationScope;
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
-		return rehydrate(getConversationContinuation(key).getFlowExecution());
+		Conversation conversation = getRequiredConversation(key.getConversationId());
+		FlowExecutionContinuation continuation = getRequiredContinuation(conversation, key);
+		FlowExecution flowExecution = rehydrate(continuation.getFlowExecution());
+		if (enableConversationScope) {
+			return new ConversationScopeEnabledFlowExecution(flowExecution, conversation.getAttributes());
+		}
+		else {
+			return flowExecution;
+		}
 	}
 
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
 		Conversation conversation = (Conversation)getOrCreateConversation(key.getConversationId());
+		if (enableConversationScope) {
+			conversation.setAttributes(flowExecution.getConversationScope());
+			flowExecution = ((ConversationScopeEnabledFlowExecution)flowExecution).flowExecution;
+		}
 		conversation.addContinuation(continuationFactory.createContinuation(key.getContinuationId(), flowExecution));
 	}
 
@@ -162,6 +196,27 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		conversations.remove(conversationId);
 	}
 
+	private Conversation getConversation(Serializable conversationId) {
+		return (Conversation)conversations.get(conversationId);
+	}
+
+	private Conversation getRequiredConversation(Serializable conversationId) throws NoSuchConversationException {
+		Conversation conversation = getConversation(conversationId);
+		if (conversation == null) {
+			throw new NoSuchConversationException(this, conversationId);
+		}
+		return conversation;
+	}
+
+	private FlowExecutionContinuation getRequiredContinuation(Conversation conversation,
+			FlowExecutionContinuationKey continuationKey) throws InvalidConversationContinuationException {
+		FlowExecutionContinuation continuation = conversation.getContinuation(continuationKey.getContinuationId());
+		if (continuation == null) {
+			throw new InvalidConversationContinuationException(this, continuationKey);
+		}
+		return continuation;
+	}
+
 	private Conversation getOrCreateConversation(Serializable conversationId) {
 		Conversation conversation = getConversation(conversationId);
 		if (conversation == null) {
@@ -178,20 +233,59 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		return new Conversation(maxContinuations);
 	}
 
-	private Conversation getConversation(Serializable conversationId) {
-		return (Conversation)conversations.get(conversationId);
-	}
+	private static class ConversationScopeEnabledFlowExecution implements FlowExecution, Serializable {
 
-	private FlowExecutionContinuation getConversationContinuation(FlowExecutionContinuationKey key)
-			throws NoSuchConversationException, InvalidConversationContinuationException {
-		Conversation conversation = getConversation(key.getConversationId());
-		if (conversation == null) {
-			throw new NoSuchConversationException(this, key.getConversationId());
+		private FlowExecution flowExecution;
+
+		private Scope conversationScope;
+
+		public ConversationScopeEnabledFlowExecution(FlowExecution flowExecution, Map conversationAttributes) {
+			this.flowExecution = flowExecution;
+			this.conversationScope = new Scope(conversationAttributes);
 		}
-		FlowExecutionContinuation continuation = conversation.getContinuation(key.getContinuationId());
-		if (continuation == null) {
-			throw new InvalidConversationContinuationException(this, key);
+
+		public ViewSelection start(ExternalContext context) throws StateException {
+			return flowExecution.start(context);
 		}
-		return continuation;
+
+		public ViewSelection signalEvent(String eventId, ExternalContext context) throws StateException {
+			return flowExecution.signalEvent(eventId, context);
+		}
+
+		public void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader) {
+			throw new UnsupportedOperationException("Operation not allowed");
+		}
+
+		public Flow getActiveFlow() throws IllegalStateException {
+			return flowExecution.getActiveFlow();
+		}
+
+		public FlowSession getActiveSession() throws IllegalStateException {
+			return flowExecution.getActiveSession();
+		}
+
+		public Scope getConversationScope() throws IllegalStateException {
+			return conversationScope;
+		}
+
+		public State getCurrentState() throws IllegalStateException {
+			return flowExecution.getCurrentState();
+		}
+
+		public Flow getRootFlow() {
+			return flowExecution.getRootFlow();
+		}
+
+		public String getCaption() {
+			return flowExecution.getCaption();
+		}
+
+		public boolean isActive() {
+			return flowExecution.isActive();
+		}
+
+		public boolean isRootFlowActive() {
+			return flowExecution.isRootFlowActive();
+		}
 	}
 }

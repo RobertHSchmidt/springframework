@@ -34,6 +34,7 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
+import org.springframework.webflow.Scope;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
@@ -168,6 +169,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	public FlowSession getActiveSession() {
 		return getActiveSessionInternal();
+	}
+
+	public Scope getConversationScope() throws IllegalStateException {
+		throw new UnsupportedOperationException("Not supported by the default flow execution implementation");
 	}
 
 	/**

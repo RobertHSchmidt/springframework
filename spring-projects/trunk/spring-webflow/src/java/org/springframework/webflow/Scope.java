@@ -56,6 +56,28 @@ public class Scope implements Map, Serializable {
 	 */
 	private Map attributes = Collections.EMPTY_MAP;
 
+	/**
+	 * Creates a new scope, initially empty.
+	 */
+	public Scope() {
+		
+	}
+	
+	/**
+	 * Creates a new scope based initially on the attributes provided.
+	 * @param attributes the attribute map
+	 */
+	public Scope(Map attributes) {
+		if (attributes != null) {
+			this.attributes = attributes;
+		}
+	}
+	
+	/**
+	 * Does the attribute with the provided name exist in this scope?
+	 * @param attributeName the attribute name
+	 * @return true if so, false otherwise
+	 */
 	public boolean containsAttribute(String attributeName) {
 		return attributes.containsKey(attributeName);
 	}
@@ -77,6 +99,11 @@ public class Scope implements Map, Serializable {
 		}
 	}
 
+	/**
+	 * Get an attribute value, returning <code>null</code> if not found.
+	 * @param attributeName the attribute name
+	 * @return the value
+	 */
 	public Object getAttribute(String attributeName) {
 		return attributes.get(attributeName);
 	}
@@ -153,6 +180,9 @@ public class Scope implements Map, Serializable {
 		return attributes.put(attributeName, attributeValue);
 	}
 
+	/**
+	 * Factory method to return the default attribute map used by this scope.
+	 */
 	protected Map createAttributeMap() {
 		return new HashMap();
 	}
