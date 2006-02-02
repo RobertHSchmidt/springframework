@@ -9,18 +9,18 @@ import org.springframework.webflow.ExternalContext.SharedMap;
  * <p>
  * The map access strategy is configurable by setting the
  * {@link #setSharedMapLocator(SharedMapLocator) sharedMapLocator} property. By
- * default the {@link SessionMapLocator} is used, which pulls in the
+ * default the {@link SessionMapLocator} is used which pulls in the
  * {@link ExternalContext#getSessionMap()}, a shared map backed by a user's
  * HTTP session in a Servlet environment and a Portlet Session in a Portlet
  * environment.
  * <p>
- * When a repository lookup request is initiated, if a
- * {@link FlowExecutionRepository} is not present in the retrieved external map,
+ * When a repository lookup request is initiated if a
+ * {@link FlowExecutionRepository} is not present in the retrieved shared map,
  * one will be created by having this object delegate to the configured
- * {@link FlowExecutionRepositoryCreator}. The newly created repository will
- * then be placed in the shared map where it can be accessed at a later point in
- * time. Synchronization will occur on the mutex of the {@link SharedMap} to
- * ensure thread safety.
+ * {@link FlowExecutionRepositoryCreator}, a creational strategy. The newly
+ * created repository will then be placed in the shared map where it can be
+ * accessed at a later point in time. Synchronization will occur on the mutex of
+ * the {@link SharedMap} to ensure thread safety.
  * 
  * @author Keith Donald
  */
@@ -36,6 +36,10 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 	 */
 	private SharedMapLocator sharedMapLocator = new SessionMapLocator();
 
+	/**
+	 * Creates a new shared map repository factory.
+	 * @param repositoryCreator the repository creational strategy
+	 */
 	public SharedMapFlowExecutionRepositoryFactory(FlowExecutionRepositoryCreator repositoryCreator) {
 		super(repositoryCreator);
 	}
@@ -63,7 +67,8 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 			if (repository == null) {
 				repository = getRepositoryCreator().createRepository();
 				repositoryMap.put(repositoryKey, repository);
-			} else {
+			}
+			else {
 				getRepositoryCreator().rehydrateRepository(repository);
 			}
 			return repository;
@@ -71,7 +76,7 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 	}
 
 	/**
-	 * Returns the repository attribute key.
+	 * Returns the shared map repository attribute key.
 	 */
 	protected Object getRepositoryKey() {
 		return FlowExecutionRepository.class.getName();

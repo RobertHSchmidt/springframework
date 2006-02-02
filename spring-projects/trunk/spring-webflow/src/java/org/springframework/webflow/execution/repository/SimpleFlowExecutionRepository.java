@@ -10,7 +10,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * A simple flow execution repository implementation that stores single
+ * A simple flow execution repository implementation that stores <i>single</i>
  * instances of flow executions representing stateful user conversations in map
  * entries structured in the following manner:
  * <p>
@@ -19,9 +19,9 @@ import org.springframework.webflow.execution.FlowExecution;
  * ongoing conversation between a client and the Spring Web Flow system in this
  * repository.
  * <li>Each entry value is a {@link FlowExecutionEntry} object, consisting of a
- * {@link FlowExecution} representing the state and behavior of a conversation
- * plus a <code>continuationId</code> acting as a token required for accessing
- * that conversation.
+ * {@link FlowExecution} representing the current state of a conversation plus a
+ * <code>continuationId</code> acting as a token required for accessing that
+ * conversation.
  * </ul>
  * <p>
  * It is important to note use of this repository <b>does not</b> allow for
@@ -50,7 +50,7 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 	 * The map of flow execution entries in this repository.
 	 */
 	private Map flowExecutionEntries = new HashMap(128);
-	
+
 	public SimpleFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
 		super(repositoryServices);
 	}

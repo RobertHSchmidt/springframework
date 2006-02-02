@@ -4,9 +4,10 @@ import org.springframework.webflow.ExternalContext;
 
 /**
  * A repository factory that returns the same (singleton) instance of a
- * {@link FlowExecutionRepository} on each invocation. Designed to be used with
- * {@link FlowExecutionRepository} implementations that are stateless and
- * therefore shareable by all threads.
+ * {@link FlowExecutionRepository} on each invocation.
+ * <p>
+ * Designed to be used with {@link FlowExecutionRepository} implementations that
+ * are stateless and therefore safely shareable by all threads.
  * 
  * @author Keith Donald
  */
