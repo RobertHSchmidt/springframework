@@ -1,8 +1,10 @@
 package org.springframework.webflow.execution.repository.continuation;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.ViewSelection;
@@ -33,6 +35,11 @@ public class Conversation implements Serializable {
 	 * The last (current) view selection made by the conversation. 
 	 */
 	private ViewSelection currentViewSelection;
+	
+	/**
+	 * The attribute map that forms the basis of <i>conversationScope</i>.
+	 */
+	private Map attributes = Collections.EMPTY_MAP;
 	
 	/**
 	 * Creates a new object representing a logical conversation between a
@@ -104,5 +111,19 @@ public class Conversation implements Serializable {
 	 */
 	public void setCurrentViewSelection(ViewSelection viewSelection) {
 		this.currentViewSelection = viewSelection;
+	}
+	
+	/**
+	 * Returns conversation attributes that form the basis of <i>conversation scope</i>.
+	 */
+	public Map getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * Sets the conversation attributes that form the basis of <i>conversation scope</i>.
+	 */
+	public void setAttributes(String attributeName, Object attributeValue) {
+		attributes.put(attributeName, attributeValue);
 	}
 }
