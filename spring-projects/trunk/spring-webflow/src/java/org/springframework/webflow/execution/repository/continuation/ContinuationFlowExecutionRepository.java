@@ -4,17 +4,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowException;
-import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.Scope;
-import org.springframework.webflow.State;
-import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionListenerLoader;
-import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.repository.AbstractFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
@@ -135,13 +127,16 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		FlowExecutionContinuation continuation = getRequiredContinuation(conversation, key);
 		FlowExecutionImpl impl = (FlowExecutionImpl)rehydrate(continuation.getFlowExecution());
 		impl.setConversationScope(conversation.getScope());
+		System.out.println("Got scope: " + impl.getConversationScope());
 		return impl;
 	}
 
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
 		Conversation conversation = (Conversation)getOrCreateConversation(key.getConversationId());
 		conversation.setScope(flowExecution.getConversationScope());
+		System.out.println("Putting scope: " + conversation.getScope());
 		removeConversationAttributes(flowExecution);
+		System.out.println("Putting scope post remove: " + conversation.getScope());
 		conversation.addContinuation(continuationFactory.createContinuation(key.getContinuationId(), flowExecution));
 	}
 

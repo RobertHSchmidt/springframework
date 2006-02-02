@@ -140,6 +140,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	public Map getModel() {
 		// merge flow and request scope
 		Map model = new HashMap(getFlowScope().size() + getRequestScope().size());
+		model.putAll(getConversationScope().getAttributeMap());
 		model.putAll(getFlowScope().getAttributeMap());
 		model.putAll(getRequestScope().getAttributeMap());
 		return model;

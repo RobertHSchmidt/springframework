@@ -87,7 +87,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * Conversation scope, shared by all flow sessions.
 	 */
-	private Scope conversationScope;
+	private Scope conversationScope = new Scope();
 	
 	/**
 	 * The stack of active, currently executing flow sessions. As subflows are

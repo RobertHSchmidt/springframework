@@ -69,7 +69,11 @@ public class FormObjectAccessor {
 		if (formObject != null) {
 			return formObject;
 		}
-		return getFormObject(ScopeType.FLOW);
+		formObject = getFormObject(ScopeType.FLOW);
+		if (formObject != null) {
+			return formObject;
+		}
+		return getFormObject(ScopeType.CONVERSATION);
 	}
 
 	/**
@@ -85,43 +89,43 @@ public class FormObjectAccessor {
 	/**
 	 * Gets the form object from the context, using the specified name.
 	 * @param formObjectName the name of the form object in the context
-	 * @param scope the scope to obtain the form object from
+	 * @param scopeType the scope to obtain the form object from
 	 * @return the form object, or null if not found
 	 */
-	public Object getFormObject(String formObjectName, ScopeType scope) {
-		return getScope(scope).getAttribute(formObjectName);
+	public Object getFormObject(String formObjectName, ScopeType scopeType) {
+		return scopeType.getScope(context).getAttribute(formObjectName);
 	}
 
 	/**
 	 * Gets the form object from the context, using the specified name.
 	 * @param formObjectName the name of the form in the context
 	 * @param formObjectClass the class of the form object, which will be verified
-	 * @param scope the scope to obtain the form object from
+	 * @param scopeType the scope to obtain the form object from
 	 * @return the form object, or null if not found
 	 */
-	public Object getFormObject(String formObjectName, Class formObjectClass, ScopeType scope) {
-		return getScope(scope).getAttribute(formObjectName, formObjectClass);
+	public Object getFormObject(String formObjectName, Class formObjectClass, ScopeType scopeType) {
+		return scopeType.getScope(context).getAttribute(formObjectName, formObjectClass);
 	}
 
 	/**
 	 * Expose given form object using given name in specified scope.
 	 * @param formObject the form object
 	 * @param formObjectName the name of the form object
-	 * @param scope the scope in which to expose the form object
+	 * @param scopeType the scope in which to expose the form object
 	 */
-	public void setFormObject(Object formObject, String formObjectName, ScopeType scope) {
-		getScope(scope).setAttribute(formObjectName, formObject);
-		alias(formObject, scope);
+	public void setFormObject(Object formObject, String formObjectName, ScopeType scopeType) {
+		scopeType.getScope(context).setAttribute(formObjectName, formObject);
+		alias(formObject, scopeType);
 	}
 
 	/**
 	 * Expose given form object using the well known alias
 	 * {@link #FORM_OBJECT_ALIAS} in the specified scope.
 	 * @param formObject the form object
-	 * @param scope the scope in which to expose the form object
+	 * @param scopeType the scope in which to expose the form object
 	 */
-	private void alias(Object formObject, ScopeType scope) {
-		getScope(scope).setAttribute(FORM_OBJECT_ALIAS, formObject);
+	private void alias(Object formObject, ScopeType scopeType) {
+		scopeType.getScope(context).setAttribute(FORM_OBJECT_ALIAS, formObject);
 	}
 
 	/**
@@ -135,17 +139,22 @@ public class FormObjectAccessor {
 		if (errors != null) {
 			return errors;
 		}
-		return getFormErrors(ScopeType.FLOW);
+		errors = getFormErrors(ScopeType.FLOW);
+		if (errors != null) {
+			return errors;
+		}
+		return getFormErrors(ScopeType.CONVERSATION);
+
 	}
 
 	/**
 	 * Gets the form object <code>Errors</code> tracker from the context,
 	 * using the form object name {@link #FORM_OBJECT_ALIAS}.
-	 * @param scope the scope to obtain the errors from
+	 * @param scopeType the scope to obtain the errors from
 	 * @return the form object Errors tracker, or null if not found
 	 */
-	public Errors getFormErrors(ScopeType scope) {
-		return getFormErrors(FORM_OBJECT_ALIAS, scope);
+	public Errors getFormErrors(ScopeType scopeType) {
+		return getFormErrors(FORM_OBJECT_ALIAS, scopeType);
 	}
 
 	/**
@@ -153,38 +162,31 @@ public class FormObjectAccessor {
 	 * using the specified form object name.
 	 * @param formObjectName the name of the Errors object, which will be
 	 *        prefixed with {@link BindException#ERROR_KEY_PREFIX}
-	 * @param scope the scope to obtain the errors from
+	 * @param scopeType the scope to obtain the errors from
 	 * @return the form object errors instance, or null if not found
 	 */
-	public Errors getFormErrors(String formObjectName, ScopeType scope) {
-		return (Errors)getScope(scope).getAttribute(BindException.ERROR_KEY_PREFIX + formObjectName,
+	public Errors getFormErrors(String formObjectName, ScopeType scopeType) {
+		return (Errors)scopeType.getScope(context).getAttribute(BindException.ERROR_KEY_PREFIX + formObjectName,
 				Errors.class);
 	}
 
 	/**
 	 * Expose given errors instance in the specified scope.
 	 * @param errors the errors object
-	 * @param scope the scope to expose the errors in
+	 * @param scopeType the scope to expose the errors in
 	 */
-	public void setFormErrors(Errors errors, ScopeType scope) {
-		getScope(scope).setAttribute(BindException.ERROR_KEY_PREFIX + errors.getObjectName(), errors);
-		alias(errors, scope);
+	public void setFormErrors(Errors errors, ScopeType scopeType) {
+		scopeType.getScope(context).setAttribute(BindException.ERROR_KEY_PREFIX + errors.getObjectName(), errors);
+		alias(errors, scopeType);
 	}
 	
 	/**
 	 * Expose given errors instance using the well known alias
 	 * {@link #FORM_OBJECT_ALIAS} in the specified scope.
 	 * @param errors the errors instance
-	 * @param scope the scope in which to expose the errors instance
+	 * @param scopeType the scope in which to expose the errors instance
 	 */
-	private void alias(Errors errors, ScopeType scope) {
-		getScope(scope).setAttribute(BindException.ERROR_KEY_PREFIX + FORM_OBJECT_ALIAS, errors);
-	}
-
-	/**
-	 * Helper method to get the indicated scope from the flow execution request context.
-	 */
-	private Scope getScope(ScopeType scope) {
-		return scope == ScopeType.FLOW ? this.context.getFlowScope() : this.context.getRequestScope();
+	private void alias(Errors errors, ScopeType scopeType) {
+		scopeType.getScope(context).setAttribute(BindException.ERROR_KEY_PREFIX + FORM_OBJECT_ALIAS, errors);
 	}
 }
