@@ -24,7 +24,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 
 /**
- * Immutable Value object that provides clients with information about a logical
+ * Immutable value object that provides clients with information about a logical
  * view to render and the dynamic model data necessary to render it. It is
  * expected that clients map this view selection to a physical view template for
  * rendering (e.g. a JSP).

@@ -4,7 +4,7 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ExternalContext.SharedMap;
 
 /**
- * A {@link SharedMapLocator} returns the external context session map.
+ * A {@link SharedMapLocator} that returns the external context session map.
  * @author Keith Donald
  */
 public class SessionMapLocator implements SharedMapLocator {

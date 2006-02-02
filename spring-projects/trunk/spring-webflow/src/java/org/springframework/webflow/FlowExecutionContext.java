@@ -17,8 +17,9 @@ package org.springframework.webflow;
 
 /**
  * Provides contextual information about an actively executing flow representing
- * exactly one web conversation. An object implementing this interface is
- * available from the request context (see {@link org.springframework.webflow.RequestContext#getFlowExecutionContext()}).
+ * the current state of exactly one conversation. An object implementing this
+ * interface is available from the request context (see
+ * {@link org.springframework.webflow.RequestContext#getFlowExecutionContext()}).
  * <p>
  * This is an immutable interface for accessing information about exactly one
  * FlowExecution. It extends FlowExecutionStatistics, adding in strongly typed
