@@ -15,11 +15,17 @@
  */
 package org.springframework.webflow.builder;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.support.ExpressionParserUtils;
+import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionTargetStateResolver;
+import org.springframework.webflow.support.StateIdExpressionTransitionTargetStateResolver;
 import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
 
 /**
@@ -63,8 +69,8 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 	 * resovler objects. The given conversion service will be used to do all
 	 * necessary internal conversion (e.g. parsing expression strings).
 	 */
-	public TextToTransitionTargetStateResolver(FlowArtifactFactory artifactLocator) {
-		this.flowArtifactFactory = artifactLocator;
+	public TextToTransitionTargetStateResolver(FlowArtifactFactory flowArtifactFactory) {
+		this.flowArtifactFactory = flowArtifactFactory;
 	}
 
 	public Class[] getSourceClasses() {
@@ -78,7 +84,8 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
 		String encodedCriteria = (String)source;
 		if (expressionParser.isExpression(encodedCriteria)) {
-			throw new UnsupportedOperationException("Expression-based target state resolvers are not yet supported");
+			return new StateIdExpressionTransitionTargetStateResolver(expressionParser.parseExpression(encodedCriteria,
+					Collections.EMPTY_MAP));
 		}
 		else if (encodedCriteria.startsWith(BEAN_PREFIX)) {
 			return flowArtifactFactory.getTargetStateResolver(encodedCriteria.substring(BEAN_PREFIX.length()));

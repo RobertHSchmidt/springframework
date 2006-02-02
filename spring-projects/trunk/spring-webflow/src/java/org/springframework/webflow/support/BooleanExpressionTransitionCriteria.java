@@ -66,7 +66,7 @@ public class BooleanExpressionTransitionCriteria implements TransitionCriteria {
 	 * transition conditions a bit easier.
 	 */
 	protected Map getEvaluationContext(RequestContext context) {
-		Map evalContext = new HashMap();
+		Map evalContext = new HashMap(1, 1);
 		// ${#result == lastEvent.id}
 		if (context.getLastEvent() != null) {
 			evalContext.put(RESULT_ALIAS, context.getLastEvent().getId());
