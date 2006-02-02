@@ -16,7 +16,8 @@ import org.springframework.webflow.execution.repository.FlowExecutionContinuatio
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
 
 /**
- * A flow execution repository implementation that uses no server-side state.
+ * Stores flow execution continuations clientside, requiring no use of
+ * server-side state.
  * <p>
  * Specifically, instead of putting {@link FlowExecution} objects in a
  * server-side store, this repository <i>encodes</i> them directly into the

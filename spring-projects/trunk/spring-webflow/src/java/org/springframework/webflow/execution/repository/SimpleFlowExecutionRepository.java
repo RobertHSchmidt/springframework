@@ -10,8 +10,12 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * Stores <i>single</i> instances of flow executions representing stateful user
- * conversations in map entries structured in the following manner:
+ * Stores <i>exactly one</i> flow execution continuation per conversation,
+ * where each flow execution represents the current state of a active
+ * conversation.
+ * <p>
+ * Conversations are represented as map entries structured in the following
+ * manner:
  * <p>
  * <ul>
  * <li>Each entry key is an assigned conversationId, uniquely identifying an

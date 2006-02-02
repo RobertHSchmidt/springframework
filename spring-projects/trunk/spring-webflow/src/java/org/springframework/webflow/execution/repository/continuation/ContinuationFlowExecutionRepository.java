@@ -15,9 +15,12 @@ import org.springframework.webflow.execution.repository.NoSuchConversationExcept
 import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepository;
 
 /**
- * A flow execution repository implementation that stores instances of flow
- * executions representing stateful user conversations in a map structured in
- * the following manner:
+ * Stores <i>one to many</i> flow execution continuations per conversation,
+ * where each flow execution represents a restorable state of a active
+ * conversation captured at a point in time.
+ * <p>
+ * The set of all active conversations are stored in a map structured in the
+ * following manner:
  * <p>
  * <ul>
  * <li>Each map entry key is an assigned conversationId, uniquely identifying
