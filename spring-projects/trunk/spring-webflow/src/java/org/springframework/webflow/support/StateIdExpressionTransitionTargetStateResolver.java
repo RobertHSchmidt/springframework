@@ -33,6 +33,10 @@ import org.springframework.webflow.TransitionTargetStateResolver;
  */
 public class StateIdExpressionTransitionTargetStateResolver implements TransitionTargetStateResolver {
 
+	/**
+	 * Constant alias that points to the id of the source state of the last
+	 * transition that occured in a web flow execution.
+	 */
 	private static final String LAST_STATE_ALIAS = "lastState";
 
 	/**
