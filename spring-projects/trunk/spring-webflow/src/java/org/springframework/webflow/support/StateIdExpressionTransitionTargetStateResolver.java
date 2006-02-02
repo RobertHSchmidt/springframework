@@ -58,6 +58,10 @@ public class StateIdExpressionTransitionTargetStateResolver implements Transitio
 		return transition.getSourceState().getFlow().getRequiredState(stateId);
 	}
 
+	/**
+	 * Setup a map with a few aliased values to make writing expression based
+	 * transition target state resolution easier.
+	 */
 	protected Map getEvaluationContext(RequestContext context) {
 		Map evalContext = new HashMap(1, 1);
 		// ${#lastState == lastTransition.sourceState.id}
