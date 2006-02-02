@@ -9,7 +9,7 @@
 	<bean id="formAction" class="org.springframework.webflow.action.FormAction">
 		<property name="formObjectName" value="sale"/>
 		<property name="formObjectClass" value="org.springframework.webflow.samples.sellitem.Sale"/>
-		<property name="formObjectScope" value="FLOW"/>
+		<property name="formObjectScope" value="CONVERSATION"/>
 		<property name="validator">
 			<bean class="org.springframework.webflow.samples.sellitem.SaleValidator"/>
 		</property>

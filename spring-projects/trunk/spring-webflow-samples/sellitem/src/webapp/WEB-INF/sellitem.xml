@@ -13,6 +13,7 @@
 				<property name="validatorMethod" value="validatePriceAndItemCount"/>
 			</action>
 		</transition>
+		<transition on="preview" to="showCostOverview"/>
 	</view-state>
 
 	<view-state id="enterCategory" view="categoryForm">
@@ -22,7 +23,7 @@
 	</view-state>
 
 	<decision-state id="requiresShipping">
-		<if test="${flowScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
+		<if test="${conversationScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
 	</decision-state>
 
 	<view-state id="enterShippingDetails" view="shippingDetailsForm">
@@ -32,11 +33,15 @@
 	</view-state>
 
 	<action-state id="processSale">
-		<action bean="saleProcessor" method="process(${flowScope.sale})"/>
-		<transition on="success" to="showCostOverview"/>
+		<action bean="saleProcessor" method="process(${conversationScope.sale})"/>
+		<transition on="success" to="finish"/>
 	</action-state>
 	
-	<end-state id="showCostOverview" view="costOverview"/>
+	<view-state id="showCostOverview" view="costOverview">
+		<transition on="back" to="${lastTransition.sourceState.id}"/>
+	</view-state>
+	
+	<end-state id="finish" view="costOverview"/>
 
 	<end-state id="error" view="error"/>
 	
