@@ -96,7 +96,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	 * Data stored in this scope is shared by all flow sessions in all
 	 * continuations associated with an active conversation.
 	 */
-	private boolean enableConversationScope;
+	private boolean enableConversationScope = true;
 
 	/**
 	 * Creates a new continuation flow execution repository.
@@ -196,10 +196,22 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		conversations.remove(conversationId);
 	}
 
+	/**
+	 * Looks up aconversation by id, returning <code>null</code> if not found.
+	 * @param conversationId the conversation identifier
+	 * @return the conversation
+	 */
 	private Conversation getConversation(Serializable conversationId) {
 		return (Conversation)conversations.get(conversationId);
 	}
 
+	/**
+	 * Looks up a conversation by id, throwing an exception if not found.
+	 * @param conversationId the conversation identifier
+	 * @return the conversation
+	 * @throws NoSuchConversationException no conversation could be found with
+	 * that id
+	 */
 	private Conversation getRequiredConversation(Serializable conversationId) throws NoSuchConversationException {
 		Conversation conversation = getConversation(conversationId);
 		if (conversation == null) {
@@ -208,6 +220,15 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		return conversation;
 	}
 
+	/**
+	 * Looks up a conversation continuation by id, throwing an exception if not
+	 * found.
+	 * @param conversation the conversation
+	 * @param continuationKey the continuation key
+	 * @return the continuation
+	 * @throws InvalidConversationContinuationException no continuation could be
+	 * found under that key
+	 */
 	private FlowExecutionContinuation getRequiredContinuation(Conversation conversation,
 			FlowExecutionContinuationKey continuationKey) throws InvalidConversationContinuationException {
 		FlowExecutionContinuation continuation = conversation.getContinuation(continuationKey.getContinuationId());
@@ -217,6 +238,12 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		return continuation;
 	}
 
+	/**
+	 * Looks up a conversation by id, creating and indexing a new conversation
+	 * if one doesn't exist.
+	 * @param conversationId the conversation id
+	 * @return the conversation
+	 */
 	private Conversation getOrCreateConversation(Serializable conversationId) {
 		Conversation conversation = getConversation(conversationId);
 		if (conversation == null) {
@@ -233,10 +260,21 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		return new Conversation(maxContinuations);
 	}
 
+	/**
+	 * A proxy that exposes a conversation scope data structure.
+	 * 
+	 * @author Keith Donald
+	 */
 	private static class ConversationScopeEnabledFlowExecution implements FlowExecution, Serializable {
 
+		/**
+		 * The target flow execution.
+		 */
 		private FlowExecution flowExecution;
 
+		/**
+		 * The conversation scope.
+		 */
 		private Scope conversationScope;
 
 		public ConversationScopeEnabledFlowExecution(FlowExecution flowExecution, Map conversationAttributes) {
