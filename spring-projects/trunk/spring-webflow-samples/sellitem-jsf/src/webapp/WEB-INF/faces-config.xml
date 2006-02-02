@@ -26,7 +26,7 @@
 	</application>
 
 	<lifecycle>
-		<phase-listener>org.springframework.web.jsf.DelegatingPhaseListenerAdapter</phase-listener>
+		<phase-listener>org.springframework.web.jsf.DelegatingPhaseListenerMulticaster</phase-listener>
 	</lifecycle>
 	
 </faces-config>
