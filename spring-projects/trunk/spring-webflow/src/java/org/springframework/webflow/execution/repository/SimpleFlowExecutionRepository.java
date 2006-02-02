@@ -11,7 +11,7 @@ import org.springframework.webflow.execution.FlowExecution;
 
 /**
  * Stores <i>exactly one</i> flow execution continuation per conversation,
- * where each flow execution represents the current state of a active
+ * where each continuation represents the current state of an active
  * conversation.
  * <p>
  * Conversations are represented as map entries structured in the following

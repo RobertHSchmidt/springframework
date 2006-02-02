@@ -16,7 +16,7 @@ import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepos
 
 /**
  * Stores <i>one to many</i> flow execution continuations per conversation,
- * where each flow execution represents a restorable state of a active
+ * where each continuation represents a restorable state of an active
  * conversation captured at a point in time.
  * <p>
  * The set of all active conversations are stored in a map structured in the
