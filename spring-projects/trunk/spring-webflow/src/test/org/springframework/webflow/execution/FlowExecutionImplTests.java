@@ -81,7 +81,7 @@ public class FlowExecutionImplTests extends TestCase {
 
 		FlowExecutionListenerLoader listenerLoader = new FlowExecutionListenerLoader() {
 			public FlowExecutionListener[] getListeners(Flow flow) {
-				return flowExecution.getListeners().getListeners();
+				return flowExecution.getListeners().getArray();
 			}
 		};
 		// rehydrate the flow execution

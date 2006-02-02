@@ -24,8 +24,8 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecutionListener;
 
 /**
- * A strongly typed listener list class for FlowExecutionListeners. It helps in
- * managing a list of <code>FlowExecutionListener</code>s.
+ * A decorator that aids in publishing events to an array of
+ * <code>FlowExecutionListener</code> objects.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionListener
  * 
@@ -40,26 +40,43 @@ public class FlowExecutionListeners {
 	 */
 	private FlowExecutionListener[] listeners;
 
+	/**
+	 * Create a flow execution listener helper that wraps an empty listener
+	 * array.
+	 */
 	public FlowExecutionListeners() {
 		this(null);
 	}
-	
+
+	/**
+	 * Create a flow execution listener helper that wraps the specified listener
+	 * array.
+	 * @param listeners the listener array
+	 */
 	public FlowExecutionListeners(FlowExecutionListener[] listeners) {
 		if (listeners != null) {
 			this.listeners = listeners;
-		} else {
+		}
+		else {
 			this.listeners = new FlowExecutionListener[0];
 		}
 	}
 
-	public FlowExecutionListener[] getListeners() {
+	/**
+	 * Returns the wrapped listener array.
+	 * @return the listener array
+	 */
+	public FlowExecutionListener[] getArray() {
 		return listeners;
 	}
 
+	/**
+	 * Returns the size of the listener array.
+	 */
 	public int size() {
 		return listeners.length;
 	}
-	
+
 	// methods to fire events to all listeners
 
 	/**

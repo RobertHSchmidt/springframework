@@ -7,20 +7,41 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 
 /**
+ * Convenient base class for flow execution repository implementations.
+ * <p>
+ * Exposes a configuration interface for setting the set of services common to
+ * most repository implementations. Also provides some basic implementation
+ * assistance.
+ * 
  * @author Keith Donald
  */
 public abstract class AbstractFlowExecutionRepository implements FlowExecutionRepository {
 
+	/**
+	 * A holder for the services needed by this repository.
+	 */
 	private transient FlowExecutionRepositoryServices repositoryServices;
 
+	/**
+	 * Creates a new flow execution repository
+	 * @param repositoryServices the common services needed by this repository
+	 * to function.
+	 */
 	public AbstractFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
 		this.repositoryServices = repositoryServices;
 	}
 
+	/**
+	 * Returns the holder for accessing common services needed by this
+	 * repository.
+	 */
 	public FlowExecutionRepositoryServices getRepositoryServices() {
 		return repositoryServices;
 	}
 
+	/**
+	 * Sets the holder for accessing common services needed by this repository.
+	 */
 	public void setRepositoryServices(FlowExecutionRepositoryServices repositoryServices) {
 		this.repositoryServices = repositoryServices;
 	}
@@ -38,12 +59,17 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 		return new FlowExecutionContinuationKey(conversationId, generateId());
 	}
 
-	protected Serializable generateId() {
-		return repositoryServices.getUidGenerator().generateId();
-	}
-
 	protected FlowExecution rehydrate(FlowExecution flowExecution) {
 		flowExecution.rehydrate(repositoryServices.getFlowLocator(), repositoryServices.getListenerLoader());
 		return flowExecution;
-	}	
+	}
+	
+	/**
+	 * Helper to generate a new unique object identifier using the configured
+	 * {@link FlowExecutionRepositoryServices}.
+	 * @return the generated uid
+	 */
+	protected Serializable generateId() {
+		return repositoryServices.getUidGenerator().generateId();
+	}
 }

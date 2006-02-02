@@ -6,6 +6,12 @@ import org.springframework.webflow.executor.EmptyFlowExecutionListenerLoader;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
+/**
+ * A holder for services common to all {@link FlowExecutionRepository}
+ * implementations.
+ * 
+ * @author Keith Donald
+ */
 public class FlowExecutionRepositoryServices {
 
 	/**
@@ -26,6 +32,10 @@ public class FlowExecutionRepositoryServices {
 	 */
 	private UidGenerator uidGenerator = new RandomGuidUidGenerator();
 
+	/**
+	 * Creates a new flow execution repository service holder.
+	 * @param flowLocator the flow locator (required)
+	 */
 	public FlowExecutionRepositoryServices(FlowLocator flowLocator) {
 		setFlowLocator(flowLocator);
 	}
@@ -46,14 +56,14 @@ public class FlowExecutionRepositoryServices {
 	}
 
 	/**
-	 * Returns the listener loader in use by this flow execution manager.
+	 * Returns the flow execution listener loader
 	 */
 	public FlowExecutionListenerLoader getListenerLoader() {
 		return listenerLoader;
 	}
 
 	/**
-	 * Sets the listener loader in use by this flow execution manager.
+	 * Sets the flow execution listener loader
 	 */
 	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
 		this.listenerLoader = listenerLoader;

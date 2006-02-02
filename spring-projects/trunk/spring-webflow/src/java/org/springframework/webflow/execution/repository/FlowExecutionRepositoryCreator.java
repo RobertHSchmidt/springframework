@@ -19,7 +19,8 @@ public interface FlowExecutionRepositoryCreator {
 
 	/**
 	 * Rehydrate this flow execution repository, restoring any transient
-	 * references that may be null as a result of deserialization.
+	 * references that may be null as a result of the repository being
+	 * deserialized. May not apply to all repository implementations.
 	 * @param repository the potentially deserialized repository
 	 * @return the rehydrated repository
 	 */
