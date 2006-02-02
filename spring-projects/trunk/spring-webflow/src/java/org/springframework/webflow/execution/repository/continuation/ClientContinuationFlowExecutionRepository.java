@@ -33,8 +33,22 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryS
  * for this requires tracking active <code>conversationIds</code> using some
  * centralized storage medium like a database table. This implementation will be
  * likely enhanced in future releases to provide this capability.
+ * <p>
+ * Warning: storing state (a flow execution continuation) on the client entails
+ * a certain security risk. This implementation does not provide a secure way of
+ * storing state on the client, so a malicious client could reverse engineer a
+ * continuation and get access to possible sensitive data stored in the flow
+ * execution. If you need more security and still want to store continuations on
+ * the client, subclass this class and override the methods
+ * {@link #encode(Serializable continuationId, FlowExecution flowExecution)} and
+ * {@link #decode(Serializable)}, implementing them with a secure
+ * encoding/decoding algorithm, e.g. based on public/private key encryption.
+ * <p>
+ * This class depends on the Jakarta Commons Codec library to do BASE64
+ * encoding.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecutionRepository {
 
