@@ -23,6 +23,14 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	private transient FlowExecutionRepositoryServices repositoryServices;
 
 	/**
+	 * No-arg constructor to satisfy use with implementations are that
+	 * serializable.
+	 */
+	protected AbstractFlowExecutionRepository() {
+
+	}
+
+	/**
 	 * Creates a new flow execution repository
 	 * @param repositoryServices the common services needed by this repository
 	 * to function.
@@ -63,7 +71,7 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 		flowExecution.rehydrate(repositoryServices.getFlowLocator(), repositoryServices.getListenerLoader());
 		return flowExecution;
 	}
-	
+
 	/**
 	 * Helper to generate a new unique object identifier using the configured
 	 * {@link FlowExecutionRepositoryServices}.

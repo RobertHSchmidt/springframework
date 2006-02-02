@@ -1,31 +1,53 @@
 package org.springframework.webflow.execution.repository.continuation;
 
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.DelegatingFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
 import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
 
 /**
- * A subclass of {@link SharedMapFlowExecutionRepositoryFactory} that simply
- * uses a
- * {@link ContinuationFlowExecutionRepositoryCreator continuation-based flow execution repository factory}
- * by default.
+ * This is a convenient implementation that encapsulates the assembly of a
+ * server-side continuation-based flow execution repository factory and
+ * delegates to it at runtime.
  * <p>
- * This is a convenience implementation that makes it easy to use a server-side
- * continuation-based flow execution storage strategy with a
- * {@link org.springframework.webflow.executor.FlowExecutorImpl}.
+ * Specifically, this delegating repository factory:
+ * <ul>
+ * <li>Sets a {@link SharedMapFlowExecutionRepositoryFactory} to manage flow
+ * execution repository implementations statefully in the
+ * {@link ExternalContext#getSessionMap()}, typically backed by the HTTP
+ * session.
+ * <li>Configures it with a {@link ContinuationFlowExecutionRepositoryCreator}
+ * to create instances of {@link ContinuationFlowExecutionRepository} when
+ * requested for placement in the session map.
+ * </ul>
+ * <p>
+ * This class inherits from {@link FlowExecutionRepositoryServices} to allow for
+ * direct configuration of services needed by the repositories created by this
+ * factory.
  * 
  * @see ContinuationFlowExecutionRepositoryCreator
+ * @see ContinuationFlowExecutionRepository
  * 
  * @author Keith Donald
  */
 public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowExecutionRepositoryFactory {
 
+	/**
+	 * Creates a new simple flow execution repository factory.
+	 * @param flowLocator the locator for loading flow definitions for which
+	 * flow executions are created from
+	 */
 	public ContinuationFlowExecutionRepositoryFactory(FlowLocator flowLocator) {
 		super(flowLocator);
 		setRepositoryFactory(new SharedMapFlowExecutionRepositoryFactory(
 				new ContinuationFlowExecutionRepositoryCreator(this)));
 	}
 
+	/**
+	 * Helper that returns the configured repository creator used by this
+	 * factory.
+	 */
 	protected ContinuationFlowExecutionRepositoryCreator getRepositoryCreator() {
 		SharedMapFlowExecutionRepositoryFactory factory = (SharedMapFlowExecutionRepositoryFactory)getRepositoryFactory();
 		return (ContinuationFlowExecutionRepositoryCreator)factory.getRepositoryCreator();

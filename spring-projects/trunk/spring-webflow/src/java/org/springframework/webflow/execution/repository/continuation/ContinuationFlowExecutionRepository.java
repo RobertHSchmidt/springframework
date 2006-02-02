@@ -76,7 +76,11 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	 * The maximum number of continuations that can be active per conversation.
 	 */
 	private int maxContinuations = 25;
-	
+
+	/**
+	 * Creates a new continuation flow execution repository.
+	 * @param repositoryServices the repository services holder
+	 */
 	public ContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
 		super(repositoryServices);
 	}

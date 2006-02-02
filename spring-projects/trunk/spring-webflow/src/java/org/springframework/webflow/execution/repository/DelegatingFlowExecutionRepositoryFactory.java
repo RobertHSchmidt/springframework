@@ -5,9 +5,10 @@ import org.springframework.webflow.execution.FlowLocator;
 
 /**
  * A common base class for decorators that encapsulate the construction and
- * configuration of a wrapped {@link #repositoryFactory} delegate.
+ * configuration of a wrapped {@link #repositoryFactory} delegate. The delegate
+ * is invoked at runtime in standard decorator fashion.
  * <p>
- * Exposes a convenient configuration interface for configuring common
+ * Also exposes a convenient configuration interface for configuring common
  * {@link FlowExecutionRepositoryServices repository services} directly,
  * allowing clients to customize the behavior of the repositories created by the
  * delegate factory created by this decorator.

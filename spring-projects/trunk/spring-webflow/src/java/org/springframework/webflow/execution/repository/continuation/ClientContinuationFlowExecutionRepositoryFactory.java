@@ -2,23 +2,35 @@ package org.springframework.webflow.execution.repository.continuation;
 
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.DelegatingFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
 import org.springframework.webflow.execution.repository.SingletonFlowExecutionRepositoryFactory;
 
 /**
- * A subclass of {@link SingletonFlowExecutionRepositoryFactory} that simply
- * uses a
- * {@link ClientContinuationFlowExecutionRepository client continuation-based flow execution repository}
- * by default.
+ * This is a convenient implementation that encapsulates the assembly of a
+ * "client" flow execution repository factory and delegates to it at runtme. The
+ * delegate factory creates repositories that persist flow executions
+ * client-side, requiring no server-side state.
  * <p>
- * This is a convenience implementation that makes it easy to use a client-side
- * continuation-based flow execution storage strategy with a
- * {@link org.springframework.webflow.executor.FlowExecutorImpl}.
+ * Internally, sets a {@link SingletonFlowExecutionRepositoryFactory} configured
+ * with a single, stateless
+ * {@link ClientContinuationFlowExecutionRepository client continuation-based flow execution repository}
+ * implementation.
+ * <p>
+ * This class inherits from {@link FlowExecutionRepositoryServices} to allow for
+ * direct configuration of services needed by the repositories created by this
+ * factory.
  * 
  * @see ClientContinuationFlowExecutionRepository
  * 
  * @author Keith Donald
  */
 public class ClientContinuationFlowExecutionRepositoryFactory extends DelegatingFlowExecutionRepositoryFactory {
+
+	/**
+	 * Creates a new client flow execution repository factory.
+	 * @param flowLocator the locator for loading flow definitions for which
+	 * flow executions are created from
+	 */
 	public ClientContinuationFlowExecutionRepositoryFactory(FlowLocator flowLocator) {
 		super(flowLocator);
 		setRepositoryFactory(new SingletonFlowExecutionRepositoryFactory(new ClientContinuationFlowExecutionRepository(

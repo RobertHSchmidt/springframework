@@ -7,8 +7,8 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryS
 /**
  * A factory for creating continuation-based flow execution repositories.
  * <p>
- * All properties are optional. If a property is not set, the default value set
- * within {@link ContinuationFlowExecutionRepository} be used.
+ * All properties are optional. If a property is not set, the default values
+ * will be used.
  * 
  * @author Keith Donald
  */
@@ -24,6 +24,10 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 	 */
 	private int maxContinuations = 25;
 
+	/**
+	 * Creates a new continuation repository creator.
+	 * @param repositoryServices the repository services holder
+	 */
 	public ContinuationFlowExecutionRepositoryCreator(FlowExecutionRepositoryServices repositoryServices) {
 		super(repositoryServices);
 	}
