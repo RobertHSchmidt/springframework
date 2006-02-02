@@ -12,12 +12,12 @@ import org.springframework.util.Assert;
  * This key consists of two parts:
  * <ol>
  * <li>A conversationId, which identifies a logical <i>conversation</i> or
- * <i>application transaction</i> within the Spring Web Flow system. This key is used
- * as an index into a single <i>logical</i> executing flow, identifying a user
- * interaction that is currently in process and has not yet completed.
- * <li>A continuationId, which serves as a identifier to a specific snapshot or
- * state of the logical conversation at a point in time relative to the client.
- * This key is used as a index into a specific instance of a
+ * <i>application transaction</i> within the Spring Web Flow system. This key
+ * is used as an index into a single <i>logical</i> executing flow, identifying
+ * a user interaction that is currently in process and has not yet completed.
+ * <li>A continuationId, which serves as a identifier to a specific, restorable
+ * snapshot or state of a logical conversation at a point in time relative to
+ * the client. This key is used as a index into a specific instance of a
  * <code>FlowExecution</code> created at a point in time that can be restored.
  * </ol>
  * 
