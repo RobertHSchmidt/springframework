@@ -36,6 +36,12 @@ import java.util.Map;
 public interface ExternalContext {
 
 	/**
+	 * Returns the path of the dispatcher that dispatched this request.
+	 * @return the dispatcher path
+	 */
+	public String getDispatcherPath();
+	
+	/**
 	 * Returns the path of this external request.
 	 * @return the request path info
 	 */

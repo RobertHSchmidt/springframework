@@ -61,6 +61,10 @@ public class ServletExternalContext implements ExternalContext {
 		this.response = response;
 	}
 
+	public String getDispatcherPath() {
+		return request.getServletPath();
+	}
+
 	public String getRequestPathInfo() {
 		return request.getPathInfo();
 	}

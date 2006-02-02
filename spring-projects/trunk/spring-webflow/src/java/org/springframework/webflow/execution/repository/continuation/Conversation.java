@@ -88,6 +88,13 @@ public class Conversation implements Serializable {
 	/**
 	 * Returns the current view selection.
 	 */
+	public FlowExecutionContinuation getCurrentContinuation() {
+		return (FlowExecutionContinuation)continuations.getLast();
+	}
+	
+	/**
+	 * Returns the current view selection.
+	 */
 	public ViewSelection getCurrentViewSelection() {
 		return currentViewSelection;
 	}

@@ -26,11 +26,22 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
  * @author Keith Donald
  */
 public class RequestPathFlowExecutorParameterExtractor extends FlowExecutorParameterExtractor {
+	
+	private static final String CONVERSATION_ID_PREFIX = "/_c";
+
+	public String extractConversationId(ExternalContext context) {
+		String requestPathInfo = context.getRequestPathInfo();
+		if (requestPathInfo != null && requestPathInfo.startsWith(CONVERSATION_ID_PREFIX)) {
+			return requestPathInfo.substring(CONVERSATION_ID_PREFIX.length());
+		}
+		return null;
+	}
+
 	public String extractFlowId(ExternalContext context) {
-		String pathInfo = context.getRequestPathInfo();
-		if (!StringUtils.hasText(pathInfo)) {
+		String requestPathInfo = context.getRequestPathInfo();
+		if (!StringUtils.hasText(requestPathInfo)) {
 			return getDefaultFlowId();
 		}
-		return WebUtils.extractFilenameFromUrlPath(pathInfo);
+		return WebUtils.extractFilenameFromUrlPath(requestPathInfo);
 	}
 }

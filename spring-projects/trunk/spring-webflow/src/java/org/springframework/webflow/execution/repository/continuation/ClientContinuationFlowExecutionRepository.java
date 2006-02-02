@@ -13,6 +13,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.AbstractFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
 
 /**
@@ -91,6 +92,11 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
 		// nothing to do by default, subclasses may override
+	}
+	
+	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId) throws FlowExecutionRepositoryException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {

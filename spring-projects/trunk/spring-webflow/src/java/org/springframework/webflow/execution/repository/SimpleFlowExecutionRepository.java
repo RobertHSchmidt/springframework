@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 
@@ -88,11 +87,16 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 				new FlowExecutionEntry(key.getContinuationId(), flowExecution));
 	}
 
-	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {
+	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId)
+			throws FlowExecutionRepositoryException {
+		return new FlowExecutionContinuationKey(conversationId, getFlowExecutionEntry(conversationId).getId());
+	}
+
+	public ViewSelection getCurrentViewSelection(Serializable conversationId) {
 		return getFlowExecutionEntry(conversationId).getCurrentViewSelection();
 	}
 
-	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException {
+	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) {
 		getFlowExecutionEntry(conversationId).setCurrentViewSelection(viewSelection);
 	}
 

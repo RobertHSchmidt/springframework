@@ -98,7 +98,12 @@ public class FlowExecutorHelper {
 					context);
 		}
 		else {
-			return flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
+			String conversationId = parameterExtractor.extractConversationId(context);
+			if (StringUtils.hasText(conversationId)) {
+				return flowExecutor.getCurrentViewSelection(conversationId, context);
+			} else {
+				return flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
+			}
 		}
 	}
 }

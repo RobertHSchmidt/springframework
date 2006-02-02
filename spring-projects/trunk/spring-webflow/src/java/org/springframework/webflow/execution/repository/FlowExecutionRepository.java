@@ -2,7 +2,6 @@ package org.springframework.webflow.execution.repository;
 
 import java.io.Serializable;
 
-import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 
@@ -101,8 +100,19 @@ public interface FlowExecutionRepository {
 			throws FlowExecutionRepositoryException;
 
 	/**
-	 * Returns the current view selection for the specified conversation, or
-	 * <code>null</code> if no such view selection exists.
+	 * Returns the current (or last) continuation key generated for the
+	 * specified conversation.
+	 * @param conversationId the conversation id
+	 * @return the current continuation key
+	 * @throws FlowExecutionRepositoryException if an exception occured
+	 * getting the continuationk ey
+	 */
+	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId)
+			throws FlowExecutionRepositoryException;
+	
+	/**
+	 * Returns the current (or last) view selection made for the specified
+	 * conversation, or <code>null</code> if no such view selection exists.
 	 * <p>
 	 * The "current view selection" is simply a descriptor for the last response
 	 * issued to the actor participating with this conversation. This method
@@ -113,16 +123,18 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionRepositoryException if an exception occured
 	 * retrieving the current view selection
 	 */
-	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException;
+	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowExecutionRepositoryException;
 
 	/**
-	 * Sets the current view selection for the specified conversation.
+	 * Sets the current (or last) view selection made for the specified
+	 * conversation.
 	 * @param conversationId the id of an existing conversation
 	 * @param viewSelection the view selection, to be set as the current
 	 * @throws FlowExecutionRepositoryException if an exception occured
-	 * retrieving the current view selection
+	 * setting the current view selection
 	 */
-	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException;
+	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection)
+			throws FlowExecutionRepositoryException;
 
 	/**
 	 * Invalidate the executing conversation with the specified id. This method

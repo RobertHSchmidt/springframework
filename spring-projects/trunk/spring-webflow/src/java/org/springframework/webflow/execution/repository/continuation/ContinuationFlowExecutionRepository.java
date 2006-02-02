@@ -9,6 +9,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.AbstractFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
 import org.springframework.webflow.execution.repository.InvalidConversationContinuationException;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
@@ -127,6 +128,12 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
 		Conversation conversation = (Conversation)getOrCreateConversation(key.getConversationId());
 		conversation.addContinuation(continuationFactory.createContinuation(key.getContinuationId(), flowExecution));
+	}
+
+	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId)
+			throws FlowExecutionRepositoryException {
+		return new FlowExecutionContinuationKey(conversationId, getConversation(conversationId)
+				.getCurrentContinuation().getId());
 	}
 
 	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {

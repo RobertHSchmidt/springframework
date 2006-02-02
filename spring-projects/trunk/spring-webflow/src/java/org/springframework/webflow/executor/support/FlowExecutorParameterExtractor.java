@@ -5,12 +5,13 @@ import java.util.Map;
 
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
+import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.executor.FlowExecutor;
 
 /**
- * A strategy for extracting parameters needed by a {@link FlowExecutor}
- * to launch and resume flow executions. Parameters are extracted from a
+ * A strategy for extracting parameters needed by a {@link FlowExecutor} to
+ * launch and resume flow executions. Parameters are extracted from a
  * {@link ExternalContext}, an abstraction representing a request into Spring
  * Web Flow from an external system.
  * 
@@ -224,6 +225,10 @@ public class FlowExecutorParameterExtractor {
 					+ getEventIdParameterName() + "' parameter must be set to a valid event");
 		}
 		return eventId;
+	}
+
+	public String extractConversationId(ExternalContext context) {
+		return null;
 	}
 
 	/**
