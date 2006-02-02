@@ -26,7 +26,6 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.Scope;
-import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
 import org.springframework.webflow.Transition;
 
@@ -55,6 +54,8 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 
 	private Scope requestScope = new Scope();
 
+	private Scope conversationScope = new Scope();
+	
 	private MockFlowSession activeSession;
 
 	private Event lastEvent;
@@ -113,6 +114,10 @@ public class MockRequestContext implements RequestContext, FlowExecutionContext 
 
 	public Scope getFlowScope() {
 		return activeSession.getScope();
+	}
+
+	public Scope getConversationScope() {
+		return conversationScope;
 	}
 
 	public Event getLastEvent() {

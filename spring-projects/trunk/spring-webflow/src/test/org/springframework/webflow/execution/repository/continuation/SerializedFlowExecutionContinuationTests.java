@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
+import org.springframework.webflow.Scope;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
@@ -78,6 +79,10 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 	 * serialization from trying to include the test case itself.
 	 */
 	private static class MockFlowExecution implements FlowExecution, Serializable {
+
+		public Scope getConversationScope() throws IllegalStateException {
+			return null;
+		}
 
 		public ViewSelection start(ExternalContext externalContext) throws StateException {
 			return null;
