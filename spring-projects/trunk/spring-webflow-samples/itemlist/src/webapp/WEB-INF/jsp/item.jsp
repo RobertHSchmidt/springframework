@@ -4,7 +4,7 @@
 	<div id="insert"><img src="../images/webflow-logo.jpg"/></div>
 	<h2>Add a new item</h2>
 	<hr>
-	<form action="app.htm" method="post"/>
+	<form action="itemlist" method="post"/>
 	<table>
 		<tr>
 			<td>

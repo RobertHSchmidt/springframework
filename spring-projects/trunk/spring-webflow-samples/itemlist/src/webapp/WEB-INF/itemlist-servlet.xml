@@ -16,13 +16,19 @@
 	  Exposes web flows for execution at a single request URL.
 	  The id of a flow to launch should be passed in by clients using
 	  the "_flowId" request parameter:
-	      e.g. /app.htm?_flowId=itemlist
+	      e.g. /app/itemlist
 	-->
 	<bean id="flowController" class="org.springframework.webflow.executor.mvc.FlowController">
-		<constructor-arg ref="flowRegistry"/>
+		<constructor-arg ref="flowExecutor"/>
 		<property name="parameterExtractor">
 			<bean class="org.springframework.webflow.executor.support.RequestPathFlowExecutorParameterExtractor"/>
 		</property>
+	</bean>
+	
+		<!-- Launches new flow executions and resumes existing executions. -->	
+	<bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
+		<constructor-arg ref="flowRegistry"/>
+		<property name="alwaysRedirectOnPause" value="true"/>
 	</bean>
 
 	<!-- Creates the registry of flow definitions for this application -->
