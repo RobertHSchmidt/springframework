@@ -232,7 +232,7 @@
 <!--
 	The target state of this transition.
 -->
-<!ATTLIST transition to CDATA #REQUIRED>
+<!ATTLIST transition to IDREF #REQUIRED>
 
 <!--
 	Defines a view state, a state where a view will be selected for rendering, the 
