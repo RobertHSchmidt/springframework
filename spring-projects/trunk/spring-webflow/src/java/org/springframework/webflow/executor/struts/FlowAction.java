@@ -77,10 +77,10 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * FlowAction:
  * 
  * <pre>
- *     &lt;action path=&quot;/userRegistration&quot;
- *         type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
- *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *     &lt;/action&gt;
+ *      &lt;action path=&quot;/userRegistration&quot;
+ *          type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
+ *          name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *      &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -253,28 +253,26 @@ public class FlowAction extends ActionSupport {
 	 */
 	protected ActionForward toActionForward(ViewSelection selectedView, ActionMapping mapping,
 			HttpServletRequest request) {
-		if (selectedView != null) {
-			WebUtils.exposeRequestAttributes(request, selectedView.getModel());
-			ActionForward forward = mapping.findForward(selectedView.getViewName());
-			if (forward != null) {
-				// the 1.2.1 copy constructor would ideally be better to use,
-				// but it is not Struts 1.1 compatible
-				forward = new ActionForward(forward.getName(), forward.getPath(), selectedView.isRedirect());
-			}
-			else {
-				if (selectedView.isRedirect()) {
-					forward = new ActionForward(buildRedirectUrlPath(selectedView), true);
-				}
-				else {
-					forward = new ActionForward(selectedView.getViewName(), false);
-				}
-			}
-			forward.freeze();
-			return forward;
-		}
-		else {
+		if (selectedView == ViewSelection.NULL_VIEW_SELECTION) {
 			return null;
 		}
+		WebUtils.exposeRequestAttributes(request, selectedView.getModel());
+		ActionForward forward = mapping.findForward(selectedView.getViewName());
+		if (forward != null) {
+			// the 1.2.1 copy constructor would ideally be better to use,
+			// but it is not Struts 1.1 compatible
+			forward = new ActionForward(forward.getName(), forward.getPath(), selectedView.isRedirect());
+		}
+		else {
+			if (selectedView.isRedirect()) {
+				forward = new ActionForward(buildRedirectUrlPath(selectedView), true);
+			}
+			else {
+				forward = new ActionForward(selectedView.getViewName(), false);
+			}
+		}
+		forward.freeze();
+		return forward;
 	}
 
 	/**

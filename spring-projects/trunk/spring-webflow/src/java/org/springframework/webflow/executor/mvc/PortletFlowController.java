@@ -216,7 +216,7 @@ public class PortletFlowController extends AbstractController {
 	 * @return a new ModelAndView object
 	 */
 	protected ModelAndView toModelAndView(ViewSelection selectedView) {
-		if (selectedView == null) {
+		if (selectedView == ViewSelection.NULL_VIEW_SELECTION) {
 			return null;
 		}
 		String viewName = selectedView.getViewName();
