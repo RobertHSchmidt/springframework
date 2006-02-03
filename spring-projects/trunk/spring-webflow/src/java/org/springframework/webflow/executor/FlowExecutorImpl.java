@@ -244,6 +244,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	public ViewSelection getCurrentViewSelection(String conversationId, ExternalContext context) throws FlowException {
+		System.out.println("Getting current view selection " + conversationId);
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionContinuationKey continuationKey = repository.getCurrentContinuationKey(conversationId);
 		ViewSelection currentViewSelection = repository.getCurrentViewSelection(conversationId);
@@ -295,15 +296,9 @@ public class FlowExecutorImpl implements FlowExecutor {
 				// save view selection to repository as the "current view
 				// selection" and request redirection to the conversation URI
 				repository.setCurrentViewSelection(continuationKey.getConversationId(), selectedView);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Returning redirect view to client " + selectedView);
-				}
 				return createRedirect(continuationKey.getConversationId(), externalContext);
 			}
 			else {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Returning view to client " + selectedView);
-				}
 				return createForward(selectedView, continuationKey, flowExecutionContext);
 			}
 		}
@@ -317,11 +312,18 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	protected ViewSelection createRedirect(Serializable conversationId, ExternalContext context) {
 		String viewName = context.getDispatcherPath() + "/_c" + conversationId;
-		return new ViewSelection(viewName, null, true);
+		ViewSelection selectedView = new ViewSelection(viewName, null, true);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Returning redirect view to client " + selectedView);
+		}
+		return selectedView;
 	}
 
 	protected ViewSelection createForward(ViewSelection selectedView, FlowExecutionContinuationKey continuationKey,
 			FlowExecutionContext flowExecutionContext) {
+		if (selectedView == ViewSelection.NULL_VIEW_SELECTION) {
+			return selectedView;
+		}
 		// it's a forward from a view state of a active flow execution,
 		// expose model and context attributes.
 		Map model = new HashMap(selectedView.getModel().size() + 2);
@@ -332,7 +334,11 @@ public class FlowExecutorImpl implements FlowExecutor {
 		// make the unique flow execution id available in the model as
 		// convenience to views
 		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, formatContinuationKey(continuationKey));
-		return new ViewSelection(selectedView.getViewName(), model, false);
+		selectedView = new ViewSelection(selectedView.getViewName(), model, false);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Returning forward view to client " + selectedView);
+		}
+		return selectedView;
 	}
 
 	/**
