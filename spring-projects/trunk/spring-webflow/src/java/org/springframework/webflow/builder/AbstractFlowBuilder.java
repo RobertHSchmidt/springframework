@@ -327,7 +327,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 			throws IllegalArgumentException {
 		ViewState state = new ViewState(getFlow(), stateId);
 		state.setViewSelector(viewSelector);
-		state.addTransitions(transitions);
+		state.getTransitionSet().addAll(transitions);
 		state.addProperties(properties);
 		return state;
 	}
@@ -432,7 +432,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected ActionState addActionState(String stateId, Action[] actions, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
 		ActionState state = new ActionState(getFlow(), stateId);
-		state.addTransitions(transitions);
+		state.getTransitionSet().addAll(transitions);
 		state.getActionList().addAll(actions);
 		state.addProperties(properties);
 		return state;
@@ -548,7 +548,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected SubflowState addSubflowState(String stateId, Flow subFlow, FlowAttributeMapper attributeMapper,
 			Transition[] transitions, Map properties) {
 		SubflowState state = new SubflowState(getFlow(), stateId, subFlow);
-		state.addTransitions(transitions);
+		state.getTransitionSet().addAll(transitions);
 		state.setAttributeMapper(attributeMapper);
 		state.addProperties(properties);
 		return state;
@@ -645,7 +645,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected DecisionState addDecisionState(String stateId, Transition[] transitions, Map properties)
 			throws IllegalArgumentException {
 		DecisionState state = new DecisionState(getFlow(), stateId);
-		state.addTransitions(transitions);
+		state.getTransitionSet().addAll(transitions);
 		state.addProperties(properties);
 		return state;
 	}

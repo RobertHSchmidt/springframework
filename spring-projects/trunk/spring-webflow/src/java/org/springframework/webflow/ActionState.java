@@ -60,11 +60,11 @@ import org.springframework.core.style.ToStringCreator;
  * the last one in the chain. For example:
  * 
  * <pre>
- *     &lt;action-state id=&quot;setupForm&quot;&gt; 
- *         &lt;action name=&quot;setup&quot; bean=&quot;myAction&quot; method=&quot;setupForm&quot;/&gt; 
- *         &lt;action name=&quot;referenceData&quot; bean=&quot;myAction&quot; method=&quot;setupReferenceData&quot;/&gt; 
- *         &lt;transition on=&quot;referenceData.success&quot; to=&quot;displayForm&quot;/&gt; 
- *     &lt;/action-state&gt;
+ *      &lt;action-state id=&quot;setupForm&quot;&gt; 
+ *          &lt;action name=&quot;setup&quot; bean=&quot;myAction&quot; method=&quot;setupForm&quot;/&gt; 
+ *          &lt;action name=&quot;referenceData&quot; bean=&quot;myAction&quot; method=&quot;setupReferenceData&quot;/&gt; 
+ *          &lt;transition on=&quot;referenceData.success&quot; to=&quot;displayForm&quot;/&gt; 
+ *      &lt;/action-state&gt;
  * </pre>
  * 
  * When the 'setupForm' state above is entered, the 'setup' action will execute,
@@ -153,7 +153,7 @@ public class ActionState extends TransitionableState {
 	 * @see org.springframework.webflow.TransitionableState#getRequiredTransition(org.springframework.webflow.RequestContext)
 	 */
 	public Transition getRequiredTransition(RequestContext context) throws NoMatchingTransitionException {
-		Transition transition = getTransition(context);
+		Transition transition = getTransitionSet().getTransition(context);
 		if (transition == null) {
 			throw new NoMatchingActionResultTransitionException(this, context.getLastEvent());
 		}
@@ -220,7 +220,7 @@ public class ActionState extends TransitionableState {
 							+ "possible flow configuration error? Note: the eventIds signaled were: '"
 							+ StylerUtils.style(eventIds)
 							+ "', while the supported set of transitional criteria for this action state is '"
-							+ StylerUtils.style(getTransitionCriterias()) + "'");
+							+ StylerUtils.style(getTransitionSet().getTransitionCriterias()) + "'");
 		}
 		else {
 			throw new IllegalStateException(

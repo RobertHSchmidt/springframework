@@ -54,7 +54,7 @@ public class NoMatchingTransitionException extends StateException {
 	public NoMatchingTransitionException(TransitionableState state, Event event, Throwable cause) {
 		super(state, "No transition found on occurence of event '" + event.getId() + "' in state '" + state.getId()
 				+ "' of flow '" + state.getFlow().getId() + "' -- valid transitional criteria are "
-				+ StylerUtils.style(state.getTransitionCriterias())
+				+ StylerUtils.style(state.getTransitionSet().getTransitionCriterias())
 				+ " -- likely programmer error, check the set of TransitionCriteria for this state", cause);
 		this.event = event;
 	}

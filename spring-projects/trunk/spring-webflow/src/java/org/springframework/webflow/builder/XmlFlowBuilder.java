@@ -600,7 +600,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		ActionState state = (ActionState)getLocalFlowArtifactFactory().createState(flow, ActionState.class,
 				parseParameters(element));
 		state.getActionList().addAll(parseAnnotatedActions(element));
-		state.addTransitions(parseTransitions(state, element));
+		state.getTransitionSet().addAll(parseTransitions(state, element));
 		return state;
 	}
 
@@ -615,7 +615,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE)));
 		}
-		state.addTransitions(parseTransitions(state, element));
+		state.getTransitionSet().addAll(parseTransitions(state, element));
 		return state;
 	}
 
@@ -630,8 +630,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected DecisionState parseDecisionState(Flow flow, Element element) {
 		DecisionState state = (DecisionState)getLocalFlowArtifactFactory().createState(flow, DecisionState.class,
 				parseParameters(element));
-		state.addTransitions(parseIfs(state, element));
-		state.addTransitions(parseTransitions(state, element));
+		state.getTransitionSet().addAll(parseIfs(state, element));
+		state.getTransitionSet().addAll(parseTransitions(state, element));
 		List actionElements = DomUtils.getChildElementsByTagName(element, ACTION_ELEMENT);
 		if (!actionElements.isEmpty()) {
 			Element actionElement = (Element)actionElements.get(0);
@@ -649,7 +649,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				parseParameters(element));
 		state.setSubflow(getLocalFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE)));
 		state.setAttributeMapper(parseAttributeMapper(element));
-		state.addTransitions(parseTransitions(state, element));
+		state.getTransitionSet().addAll(parseTransitions(state, element));
 		return state;
 	}
 

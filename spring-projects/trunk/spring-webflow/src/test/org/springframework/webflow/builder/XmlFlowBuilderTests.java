@@ -90,13 +90,13 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals(Boolean.TRUE, (Boolean)actionState1.getProperty("propBoolean"));
 		assertEquals("aString", actionState1.getProperty("propString"));
 		assertEquals("action2Name", actionState1.getActionList().getAnnotated(1).getName());
-		assertEquals(3, actionState1.getTransitions().length);
+		assertEquals(3, actionState1.getTransitionSet().size());
 		context.setLastEvent(createEvent("event1"));
-		assertTrue(actionState1.hasTransitionFor(context));
+		assertTrue(actionState1.getTransitionSet().transitionMatches(context));
 		Transition transition = actionState1.getRequiredTransition(context);
 		assertEquals("viewState1", getTargetStateId(transition));
 		context.setLastEvent(createEvent("action2Name.event2"));
-		assertTrue(actionState1.hasTransitionFor(context));
+		assertTrue(actionState1.getTransitionSet().transitionMatches(context));
 		transition = actionState1.getRequiredTransition(context);
 		assertEquals("viewState2",  getTargetStateId(transition));
 		assertEquals("prop1Value", actionState1.getActionList().getAnnotated(0).getProperties().get("prop1"));
@@ -109,9 +109,9 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(viewState1);
 		assertFalse(viewState1.isMarker());
 		assertEquals("view1", ((SimpleViewSelector)viewState1.getViewSelector()).getViewName());
-		assertEquals(1, viewState1.getTransitions().length);
+		assertEquals(1, viewState1.getTransitionSet().size());
 		context.setLastEvent(createEvent("event1"));
-		assertTrue(viewState1.hasTransitionFor(context));
+		assertTrue(viewState1.getTransitionSet().transitionMatches(context));
 		transition = viewState1.getRequiredTransition(context);
 		assertEquals("subFlowState1",  getTargetStateId(transition));
 
@@ -119,9 +119,9 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(viewState2);
 		assertTrue(viewState2.isMarker());
 		assertNull(viewState2.getViewSelector());
-		assertEquals(1, viewState2.getTransitions().length);
+		assertEquals(1, viewState2.getTransitionSet().size());
 		context.setLastEvent(createEvent("event2"));
-		assertTrue(viewState2.hasTransitionFor(context));
+		assertTrue(viewState2.getTransitionSet().transitionMatches(context));
 		transition = viewState2.getRequiredTransition(context);
 		assertEquals("subFlowState2",  getTargetStateId(transition));
 
@@ -130,9 +130,9 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(subFlowState1.getSubflow());
 		assertEquals("subFlow1", subFlowState1.getSubflow().getId());
 		assertNotNull(subFlowState1.getAttributeMapper());
-		assertEquals(1, subFlowState1.getTransitions().length);
+		assertEquals(1, subFlowState1.getTransitionSet().size());
 		context.setLastEvent(createEvent("finish"));
-		assertTrue(subFlowState1.hasTransitionFor(context));
+		assertTrue(subFlowState1.getTransitionSet().transitionMatches(context));
 		transition = subFlowState1.getRequiredTransition(context);
 		assertEquals("spawnInlineFlow",  getTargetStateId(transition));
 
@@ -141,9 +141,9 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(subFlowState2.getSubflow());
 		assertEquals("subFlow2", subFlowState2.getSubflow().getId());
 		assertNotNull(subFlowState2.getAttributeMapper());
-		assertEquals(1, subFlowState2.getTransitions().length);
+		assertEquals(1, subFlowState2.getTransitionSet().size());
 		context.setLastEvent(createEvent("finish"));
-		assertTrue(subFlowState2.hasTransitionFor(context));
+		assertTrue(subFlowState2.getTransitionSet().transitionMatches(context));
 		transition = subFlowState2.getRequiredTransition(context);
 		assertEquals("decisionState1",  getTargetStateId(transition));
 
@@ -153,24 +153,24 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals(4, ((ParameterizableAttributeMapper)mapper.getOutputMapper()).getMappings().length);
 
 		DecisionState decisionState1 = (DecisionState)flow.getState("decisionState1");
-		assertTrue(decisionState1.getTransitions().length == 2);
+		assertTrue(decisionState1.getTransitionSet().size() == 2);
 		assertNotNull(decisionState1);
 		assertNull(decisionState1.getAction());
 
 		DecisionState decisionState2 = (DecisionState)flow.getState("decisionState2");
-		assertTrue(decisionState2.getTransitions().length == 2);
+		assertTrue(decisionState2.getTransitionSet().size() == 2);
 		assertNotNull(decisionState2);
 		assertNull(decisionState2.getAction());
 
 		DecisionState decisionState3 = (DecisionState)flow.getState("decisionState3");
-		assertTrue(decisionState3.getTransitions().length == 2);
+		assertTrue(decisionState3.getTransitionSet().size() == 2);
 		assertNotNull(decisionState3);
 		assertNotNull(decisionState3.getAction());
 		assertEquals(new MethodKey("booleanMethod"), decisionState3.getAnnotatedAction().getProperty("method"));
 		assertTrue(decisionState3.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
 
 		DecisionState decisionState4 = (DecisionState)flow.getState("decisionState4");
-		assertTrue(decisionState4.getTransitions().length == 2);
+		assertTrue(decisionState4.getTransitionSet().size() == 2);
 		assertNotNull(decisionState4);
 		assertNotNull(decisionState4.getAction());
 		assertEquals(new MethodKey("enumMethod"), decisionState4.getAnnotatedAction().getProperty("method"));

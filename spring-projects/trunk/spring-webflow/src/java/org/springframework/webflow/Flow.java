@@ -129,7 +129,7 @@ public class Flow extends AnnotatedObject {
 	 * have not yet been set.
 	 */
 	private ActionList startActionList = new ActionList();
-	
+
 	/**
 	 * The list of exception handlers for this flow.
 	 */
@@ -144,6 +144,11 @@ public class Flow extends AnnotatedObject {
 	 * The list of actions to execute when this flow ends.
 	 */
 	private ActionList endActionList = new ActionList();
+
+	/**
+	 * The set of global transitions that apply to this flow.
+	 */
+	private TransitionSet transitionSet = new TransitionSet();
 
 	/**
 	 * Default constructor for bean style usage.
@@ -527,6 +532,26 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
+	 * Convenience method that adds an transition to this flow's transition set.
+	 * <p>
+	 * Flow transitions are "global" transitions that are eligible for execution if 
+	 * an event does not match a transition at the state-level.
+	 * @param transition the transition to add
+	 */
+	public void addTransition(Transition transition) {
+		getTransitionSet().add(transition);
+	}
+
+	/**
+	 * Returns the set of transitions eligible for execution by this flow if 
+	 * no state-level transition is matched.
+	 * @return the transition set
+	 */
+	public TransitionSet getTransitionSet() {
+		return transitionSet;
+	}
+	
+	/**
 	 * Start a new execution of this flow in the specified state.
 	 * @param startState the start state to use -- when <code>null</code>,
 	 * the default start state of the flow will be used
@@ -545,9 +570,16 @@ public class Flow extends AnnotatedObject {
 	 * state of an active flow execution.
 	 * @param context the flow execution control context
 	 * @return the selected view
+	 * @throws NoMatchingTransitionException when a matching transition cannot
+	 * be found to handle the event
 	 */
-	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
-		return getCurrentTransitionableState(context).onEvent(event, context);
+	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) throws NoMatchingTransitionException {
+		TransitionableState currentState = getCurrentTransitionableState(context);
+		try {
+			return currentState.onEvent(event, context);
+		} catch (NoMatchingTransitionException e) {
+			throw e;
+		}
 	}
 
 	private TransitionableState getCurrentTransitionableState(FlowExecutionControlContext context) {

@@ -15,10 +15,6 @@
  */
 package org.springframework.webflow;
 
-import java.util.Iterator;
-import java.util.Set;
-
-import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -36,7 +32,7 @@ public abstract class TransitionableState extends State {
 	/**
 	 * The set of possible transitions out of this state.
 	 */
-	private Set transitions = CollectionFactory.createLinkedSetIfPossible(6);
+	private TransitionSet transitions = new TransitionSet();
 
 	/**
 	 * An actions to execute when exiting this state.
@@ -73,83 +69,12 @@ public abstract class TransitionableState extends State {
 	}
 
 	/**
-	 * Add given list of transitions to this state.
-	 * @param transitions the transitions to add
+	 * Returns the set of transitions that define the possible paths out of this
+	 * state.
+	 * @return the state transition set
 	 */
-	public void addTransitions(Transition[] transitions) {
-		if (transitions == null) {
-			return;
-		}
-		for (int i = 0; i < transitions.length; i++) {
-			addTransition(transitions[i]);
-		}
-	}
-
-	/**
-	 * Returns an iterator looping over all transitions in this state.
-	 */
-	public Iterator transitionsIterator() {
-		return transitions.iterator();
-	}
-
-	/**
-	 * Returns the list of transitions owned by this state.
-	 */
-	public Transition[] getTransitions() {
-		return (Transition[])transitions.toArray(new Transition[0]);
-	}
-
-	/**
-	 * Returns a list of the supported transitional criteria used to match
-	 * transitions in this state.
-	 * @return the list of transitional criteria
-	 */
-	public TransitionCriteria[] getTransitionCriterias() {
-		TransitionCriteria[] criterias = new TransitionCriteria[transitions.size()];
-		int i = 0;
-		Iterator it = transitionsIterator();
-		while (it.hasNext()) {
-			criterias[i++] = ((Transition)it.next()).getMatchingCriteria();
-		}
-		return criterias;
-	}
-
-	/**
-	 * Returns whether or not this state has a transition that will fire for
-	 * given flow execution request context.
-	 * @param context a flow execution context
-	 */
-	public boolean hasTransitionFor(RequestContext context) {
-		return getTransition(context) != null;
-	}
-
-	/**
-	 * Gets a transition for given flow execution request context.
-	 * @param context a flow execution context
-	 * @return the transition, or null if not found
-	 */
-	public Transition getTransition(RequestContext context) {
-		Iterator it = transitionsIterator();
-		while (it.hasNext()) {
-			Transition transition = (Transition)it.next();
-			if (transition.matches(context)) {
-				return transition;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Get a transition in this state for given flow execution request context.
-	 * Throws and exception when there is no corresponding transition.
-	 * @throws NoMatchingTransitionException when the transition cannot be found
-	 */
-	public Transition getRequiredTransition(RequestContext context) throws NoMatchingTransitionException {
-		Transition transition = getTransition(context);
-		if (transition == null) {
-			throw new NoMatchingTransitionException(this, context.getLastEvent());
-		}
-		return transition;
+	public TransitionSet getTransitionSet() {
+		return transitions;
 	}
 
 	/**
@@ -173,9 +98,25 @@ public abstract class TransitionableState extends State {
 	 * Inform this state definition that an event was signaled in it.
 	 * @param context the flow execution control context
 	 * @return the selected view
+	 * @throws NoMatchingTransitionException when a matching transition cannot
+	 * be found
 	 */
-	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
+	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) throws NoMatchingTransitionException {
 		return getRequiredTransition(context).execute(this, context);
+	}
+
+	/**
+	 * Get a transition in this state for given flow execution request context.
+	 * Throws and exception when there is no corresponding transition.
+	 * @throws NoMatchingTransitionException when a matching transition cannot
+	 * be found
+	 */
+	public Transition getRequiredTransition(RequestContext context) throws NoMatchingTransitionException {
+		Transition transition = getTransitionSet().getTransition(context);
+		if (transition == null) {
+			throw new NoMatchingTransitionException(this, context.getLastEvent());
+		}
+		return transition;
 	}
 
 	/**

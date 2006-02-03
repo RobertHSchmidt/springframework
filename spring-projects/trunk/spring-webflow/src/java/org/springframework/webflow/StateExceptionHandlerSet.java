@@ -40,9 +40,9 @@ public class StateExceptionHandlerSet {
 	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(3);
 
 	/**
-	 * Add a state exception handler to this list.
+	 * Add a state exception handler to this set.
 	 * @param exceptionHandler the exception handler to add
-	 * @return true if this list's contents changed as a result of the add
+	 * @return true if this set's contents changed as a result of the add
 	 * operation
 	 */
 	public boolean add(StateExceptionHandler exceptionHandler) {
@@ -50,9 +50,9 @@ public class StateExceptionHandlerSet {
 	}
 
 	/**
-	 * Add a collection of state exception handler instances to this list.
+	 * Add a collection of state exception handler instances to this set.
 	 * @param exceptionHandlers the exception handlers to add
-	 * @return true if this list's contents changed as a result of the add
+	 * @return true if this set's contents changed as a result of the add
 	 * operation
 	 */
 	public boolean addAll(StateExceptionHandler[] exceptionHandlers) {
@@ -63,9 +63,9 @@ public class StateExceptionHandlerSet {
 	}
 
 	/**
-	 * Tests if this state exception handler is in this list.
+	 * Tests if this state exception handler is in this set.
 	 * @param exceptionHandler the exception handler
-	 * @return true if the state exception handler is contained in this list,
+	 * @return true if the state exception handler is contained in this set,
 	 * false otherwise
 	 */
 	public boolean contains(StateExceptionHandler exceptionHandler) {
@@ -73,9 +73,9 @@ public class StateExceptionHandlerSet {
 	}
 
 	/**
-	 * Remove the exception handler instance from this list.
+	 * Remove the exception handler instance from this set.
 	 * @param exceptionHandler the exception handler to add
-	 * @return true if this list's contents changed as a result of the remove
+	 * @return true if this set's contents changed as a result of the remove
 	 * operation
 	 */
 	public boolean remove(StateExceptionHandler exceptionHandler) {
@@ -83,8 +83,8 @@ public class StateExceptionHandlerSet {
 	}
 
 	/**
-	 * Returns the size of this state exception handler list.
-	 * @return the exception handler list size.
+	 * Returns the size of this state exception handler set.
+	 * @return the exception handler set size.
 	 */
 	public int size() {
 		return exceptionHandlers.size();
