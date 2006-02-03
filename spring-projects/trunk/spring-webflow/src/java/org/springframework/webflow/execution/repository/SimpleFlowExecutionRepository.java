@@ -140,7 +140,7 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		/**
 		 * The last (current) view selection made by the conversation.
 		 */
-		private ViewSelection currentViewSelection;
+		private ViewSelection currentViewSelection = ViewSelection.NULL_VIEW_SELECTION;
 
 		public FlowExecutionEntry(Serializable id, FlowExecution flowExecution) {
 			this.id = id;

@@ -117,7 +117,6 @@ public class StateTests extends TestCase {
 		state.setViewSelector(view("myViewName"));
 		state.addTransition(new Transition(on("submit"), to("finish")));
 		assertTrue(state.isTransitionable());
-		assertTrue(!state.isMarker());
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
@@ -130,12 +129,11 @@ public class StateTests extends TestCase {
 		Flow flow = new Flow("myFlow");
 		ViewState state = new ViewState(flow, "viewState");
 		state.addTransition(new Transition(on("submit"), to("finish")));
-		assertTrue(state.isMarker());
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getCurrentState().getId());
-		assertNull(view);
+		assertEquals(ViewSelection.NULL_VIEW_SELECTION, view);
 	}
 
 	public void testSubFlowState() {

@@ -149,9 +149,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
 		Conversation conversation = (Conversation)getOrCreateConversation(key.getConversationId());
 		conversation.setScope(flowExecution.getConversationScope());
-		System.out.println("Putting scope: " + conversation.getScope());
 		removeConversationAttributes(flowExecution);
-		System.out.println("Putting scope post remove: " + conversation.getScope());
 		conversation.addContinuation(continuationFactory.createContinuation(key.getContinuationId(), flowExecution));
 	}
 

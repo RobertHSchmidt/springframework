@@ -107,7 +107,6 @@ public class XmlFlowBuilderTests extends TestCase {
 
 		ViewState viewState1 = (ViewState)flow.getState("viewState1");
 		assertNotNull(viewState1);
-		assertFalse(viewState1.isMarker());
 		assertEquals("view1", ((SimpleViewSelector)viewState1.getViewSelector()).getViewName());
 		assertEquals(1, viewState1.getTransitionSet().size());
 		context.setLastEvent(createEvent("event1"));
@@ -117,8 +116,6 @@ public class XmlFlowBuilderTests extends TestCase {
 
 		ViewState viewState2 = (ViewState)flow.getState("viewState2");
 		assertNotNull(viewState2);
-		assertTrue(viewState2.isMarker());
-		assertNull(viewState2.getViewSelector());
 		assertEquals(1, viewState2.getTransitionSet().size());
 		context.setLastEvent(createEvent("event2"));
 		assertTrue(viewState2.getTransitionSet().transitionMatches(context));

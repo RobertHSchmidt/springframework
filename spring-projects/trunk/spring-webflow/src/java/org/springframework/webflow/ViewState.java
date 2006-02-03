@@ -16,6 +16,7 @@
 package org.springframework.webflow;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.support.MarkerViewSelector;
 
 /**
  * A view state is a state in which a physical view resource should be rendered
@@ -42,8 +43,8 @@ public class ViewState extends TransitionableState {
 	/**
 	 * The factory for the view selection to return when this state is entered.
 	 */
-	private ViewSelector viewSelector;
-	
+	private ViewSelector viewSelector = MarkerViewSelector.INSTANCE;
+
 	/**
 	 * Default constructor for bean style usage.
 	 * @see TransitionableState#TransitionableState()
@@ -59,41 +60,32 @@ public class ViewState extends TransitionableState {
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 */
-	public ViewState(Flow flow, String id)
-			throws IllegalArgumentException {
+	public ViewState(Flow flow, String id) throws IllegalArgumentException {
 		super(flow, id);
 	}
 
 	/**
-	 * Returns the strategy used to select the view to render in
-	 * this view state.
+	 * Returns the strategy used to select the view to render in this view
+	 * state.
 	 */
 	public ViewSelector getViewSelector() {
 		return viewSelector;
 	}
 
 	/**
-	 * Sets the strategy used to select the view to render in this
-	 * view state.
+	 * Sets the strategy used to select the view to render in this view state.
 	 */
 	public void setViewSelector(ViewSelector viewSelector) {
 		this.viewSelector = viewSelector;
 	}
 
 	/**
-	 * Returns true if this view state has no associated view, false otherwise.
-	 */
-	public boolean isMarker() {
-		return viewSelector == null;
-	}
-	
-	/**
 	 * Specialization of State's <code>doEnter</code> template method that
 	 * executes behaviour specific to this state type in polymorphic fashion.
 	 * <p>
 	 * Returns a view selection pointing callers to a logical view resource to
-	 * be displayed. The view selection also contains a model map needed when the
-	 * view is rendered, for populating dynamic content.
+	 * be displayed. The view selection also contains a model map needed when
+	 * the view is rendered, for populating dynamic content.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
 	 * @return a view selection containing model and view information needed to
@@ -112,23 +104,15 @@ public class ViewState extends TransitionableState {
 	 * render the results of the state execution
 	 */
 	public ViewSelection selectView(FlowExecutionControlContext context) {
-		if (isMarker()) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Returning a [null] view selection");
-			}
-			return null;
+		ViewSelection selection = viewSelector.makeSelection(context);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Made view selection " + selection);
 		}
-		else {
-			ViewSelection selection = viewSelector.makeSelection(context);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Made view selection " + selection);
-			}
-			return selection;
-		}
+		return selection;
 	}
 
 	protected void createToString(ToStringCreator creator) {
-		creator.append("viewSelector", this.viewSelector);
+		creator.append("viewSelector", viewSelector);
 		super.createToString(creator);
 	}
 }
