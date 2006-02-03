@@ -32,9 +32,9 @@
     		execution, called an event, is used by the flow to drive a state transition.
     	</para>
     	<para>
-			Exactly one of a flow's states is the <literal>startState</literal> 
-			that defines the starting point of the flow.  One or more end states
-			define the ending points of a flow.
+		Exactly one of a flow's states is the <literal>startState</literal> 
+		that defines the starting point of the flow. Optionally, a flow can have one or more end states
+		defining the ending points of the flow.
     	</para>
     	<para>
     		The properties of a <literal>org.springframework.webflow.Flow</literal> are summarized 
@@ -75,7 +75,7 @@
                        <entry>states</entry>
                        <entry>The steps of the flow.</entry>
 				       <entry>
-				           <emphasis>1..*, at least one end state</emphasis>
+				           <emphasis>1..*</emphasis>
 				       </entry>
                    </row>
                    <row>
@@ -269,7 +269,7 @@
           </tgroup>
         </table>
         <para>
-            Below is an exmple of how these common TransitionableState properties can be configured in XML form
+            Below is an example of how these common TransitionableState properties can be configured in XML form
             or directly in Java code.
         </para>
         <sect2 id="state-xml">
@@ -344,9 +344,9 @@
     				<listitem>
     					<para>
 	    					The entered view state makes a <literal>org.springframework.webflow.ViewSelection</literal> 
-	   	 					that selects a <emphasis>logical</emphasis> response to issue with the data necessary 
-   		 					to issue it.
-   		 				</para>
+	   	 				that selects a <emphasis>logical</emphasis> response to issue with the data necessary 
+   		 				to issue it.
+   		 			</para>
     				</listitem>
     				<listitem>
     					<para>
@@ -356,7 +356,7 @@
     				</listitem>
     				<listitem>
     					<para>
-	    				    The calling system uses the returned <literal>ViewSelection</literal> to present a
+	    				    The calling system uses the returned <literal>ViewSelection</literal> to present an
     					    interface (or other response) to the user.
     					</para>
     				</listitem>
@@ -483,7 +483,7 @@
 								<entry>
 									Returns a ViewSelection that triggers a browser redirect.  The viewName is the relative URL to 
 									redirect to.  Attributes added to the modelMap become URL query parameters.
-									Mainly used by end states to <emphasis>redirect after flow</emphasis>.
+									Mainly used by end states to <emphasis>redirect after flow completion</emphasis>.
 								</entry>
 	        	   	        </row>
 	            		</tbody>
@@ -794,8 +794,8 @@
     	    	<title>ActionState XML - action method execution</title>
     	    	<para>
     	    	    The next example constructs an <literal>ActionState</literal> definition from XML that 
-					executes a single <emphasis>action method</emphasis> on a <literal>org.springframework.webflow.MultiAction</literal>
-					and then responds to its result:
+			executes a single <emphasis>action method</emphasis> on a <literal>org.springframework.webflow.MultiAction</literal>
+			and then responds to its result:
     	    	<programlisting>
     &lt;flow start-state="displaySearchCriteria"&gt;
         ...
@@ -886,7 +886,7 @@
     	    	<title>ActionState XML - POJO action method execution</title>
     	    	<para>
     	    	    The next example constructs a <literal>ActionState</literal> definition from XML that 
-					executes a single method on your PlainOldJavaObject (POJO) and then responds to the result:
+					executes a single method on your Plain Old Java Object (POJO) and then responds to the result:
     	    	<programlisting>
     &lt;flow start-state="displaySearchCriteria"&gt;
         ...
