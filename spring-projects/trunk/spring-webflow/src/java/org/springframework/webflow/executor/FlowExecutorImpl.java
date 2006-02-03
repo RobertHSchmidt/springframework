@@ -219,11 +219,12 @@ public class FlowExecutorImpl implements FlowExecutor {
 		if (flowExecution.isActive()) {
 			FlowExecutionContinuationKey continuationKey = repository.generateContinuationKey(flowExecution);
 			repository.putFlowExecution(continuationKey, flowExecution);
-			return prepareSelectedView(selectedView, context, repository, continuationKey, flowExecution);
+			selectedView = prepareSelectedView(selectedView, context, repository, continuationKey, flowExecution);
 		}
-		else {
-			return selectedView;
+		if (logger.isDebugEnabled()) {
+			logger.debug("Returning view selection " + selectedView);
 		}
+		return selectedView;
 	}
 
 	public ViewSelection signalEvent(String eventId, String flowExecutionId, ExternalContext context)
@@ -235,20 +236,27 @@ public class FlowExecutorImpl implements FlowExecutor {
 		if (flowExecution.isActive()) {
 			continuationKey = repository.generateContinuationKey(flowExecution, continuationKey.getConversationId());
 			repository.putFlowExecution(continuationKey, flowExecution);
-			return prepareSelectedView(selectedView, context, repository, continuationKey, flowExecution);
+			selectedView = prepareSelectedView(selectedView, context, repository, continuationKey, flowExecution);
 		}
 		else {
 			repository.invalidateConversation(continuationKey.getConversationId());
-			return selectedView;
 		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Returning view selection " + selectedView);
+		}
+		return selectedView;
 	}
 
 	public ViewSelection getCurrentViewSelection(String conversationId, ExternalContext context) throws FlowException {
-		System.out.println("Getting current view selection " + conversationId);
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionContinuationKey continuationKey = repository.getCurrentContinuationKey(conversationId);
 		ViewSelection currentViewSelection = repository.getCurrentViewSelection(conversationId);
-		return createForward(currentViewSelection, continuationKey, repository.getFlowExecution(continuationKey));
+		ViewSelection selectedView = createForward(currentViewSelection, continuationKey, repository
+				.getFlowExecution(continuationKey));
+		if (logger.isDebugEnabled()) {
+			logger.debug("Returning current view selection " + selectedView);
+		}
+		return selectedView;
 	}
 
 	/**
@@ -303,20 +311,13 @@ public class FlowExecutorImpl implements FlowExecutor {
 			}
 		}
 		else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Returning confirmation view to client " + selectedView);
-			}
 			return selectedView;
 		}
 	}
 
 	protected ViewSelection createRedirect(Serializable conversationId, ExternalContext context) {
 		String viewName = context.getDispatcherPath() + "/_c" + conversationId;
-		ViewSelection selectedView = new ViewSelection(viewName, null, true);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Returning redirect view to client " + selectedView);
-		}
-		return selectedView;
+		return new ViewSelection(viewName, null, true);
 	}
 
 	protected ViewSelection createForward(ViewSelection selectedView, FlowExecutionContinuationKey continuationKey,
@@ -334,11 +335,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		// make the unique flow execution id available in the model as
 		// convenience to views
 		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, formatContinuationKey(continuationKey));
-		selectedView = new ViewSelection(selectedView.getViewName(), model, false);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Returning forward view to client " + selectedView);
-		}
-		return selectedView;
+		return new ViewSelection(selectedView.getViewName(), model, false);
 	}
 
 	/**
