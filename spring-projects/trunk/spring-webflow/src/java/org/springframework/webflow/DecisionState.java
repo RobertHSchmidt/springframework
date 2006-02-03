@@ -107,6 +107,6 @@ public class DecisionState extends TransitionableState {
 				return context.signalEvent(event);
 			}
 		}
-		return getRequiredTransition(context).execute(context);
+		return getRequiredTransition(context).execute(this, context);
 	}
 }

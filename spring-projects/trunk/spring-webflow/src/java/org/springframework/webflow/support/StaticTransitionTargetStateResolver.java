@@ -20,6 +20,7 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionTargetStateResolver;
+import org.springframework.webflow.TransitionableState;
 
 /**
  * A transition target state resolver that always resolves to the same target
@@ -54,8 +55,8 @@ public class StaticTransitionTargetStateResolver implements TransitionTargetStat
 		return targetStateId;
 	}
 
-	public State resolveTargetState(Transition transition, RequestContext context) {
-		return transition.getSourceState().getFlow().getRequiredState(targetStateId);
+	public State resolveTargetState(Transition transition, TransitionableState sourceState, RequestContext context) {
+		return sourceState.getFlow().getRequiredState(targetStateId);
 	}
 
 	public String toString() {

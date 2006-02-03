@@ -60,11 +60,6 @@ public class Transition extends AnnotatedObject {
 	protected final Log logger = LogFactory.getLog(Transition.class);
 
 	/**
-	 * The source state that owns this transition.
-	 */
-	private TransitionableState sourceState;
-
-	/**
 	 * The criteria that determine whether or not this transition matches as
 	 * eligible for execution when an event occurs in the sourceState.
 	 */
@@ -118,40 +113,6 @@ public class Transition extends AnnotatedObject {
 	public Transition(TransitionCriteria matchingCriteria, TransitionTargetStateResolver targetStateResolver) {
 		setMatchingCriteria(matchingCriteria);
 		setTargetStateResolver(targetStateResolver);
-	}
-
-	/**
-	 * Create a new transition that always matches and always executes,
-	 * transitioning to the target state calculated by the provided
-	 * targetStateResolver.
-	 * @param sourceState the source state of the transition
-	 * @param targetStateResolver the resolver of the target state of this
-	 * transition
-	 * @see #setMatchingCriteria(TransitionCriteria)
-	 * @see #setExecutionCriteria(TransitionCriteria)
-	 */
-	public Transition(TransitionableState sourceState, TransitionTargetStateResolver targetStateResolver) {
-		setSourceState(sourceState);
-		setTargetStateResolver(targetStateResolver);
-	}
-
-	/**
-	 * Returns the owning source (<i>from</i>) state of this transition.
-	 * @return the source state
-	 */
-	public TransitionableState getSourceState() {
-		return sourceState;
-	}
-
-	/**
-	 * Set the owning source (<i>from</i>) state of this transition.
-	 */
-	public void setSourceState(TransitionableState sourceState) {
-		if (getSourceState() != null && getSourceState() != sourceState) {
-			throw new IllegalStateException("This transition was already added to a different source state");
-		}
-		Assert.notNull(sourceState, "The source state of this transition is required");
-		this.sourceState = sourceState;
 	}
 
 	/**
@@ -233,8 +194,8 @@ public class Transition extends AnnotatedObject {
 	 * context into account.
 	 * @param context the flow execution request context
 	 */
-	protected State getTargetState(RequestContext context) {
-		return getTargetStateResolver().resolveTargetState(this, context);
+	protected State getTargetState(TransitionableState sourceState, RequestContext context) {
+		return getTargetStateResolver().resolveTargetState(this, sourceState, context);
 	}
 
 	/**
@@ -245,21 +206,22 @@ public class Transition extends AnnotatedObject {
 	 * render the results of the transition execution
 	 * @throws StateException when transition execution fails
 	 */
-	public ViewSelection execute(FlowExecutionControlContext context) throws StateException {
+	public ViewSelection execute(TransitionableState sourceState, FlowExecutionControlContext context)
+			throws StateException {
 		ViewSelection selectedView;
 		if (canExecute(context)) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Executing " + this + " out of state '" + getSourceState().getId() + "'");
+				logger.debug("Executing " + this + " out of state '" + sourceState.getId() + "'");
 			}
-			getSourceState().exit(context);
-			State targetState = getTargetState(context);
+			sourceState.exit(context);
+			State targetState = getTargetState(sourceState, context);
 			context.setLastTransition(this);
 			// enter the target state (note: any exceptions are propagated)
 			selectedView = targetState.enter(context);
 		}
 		else {
 			// 'roll back' and re-enter the source state
-			selectedView = getSourceState().reenter(context);
+			selectedView = sourceState.reenter(context);
 		}
 		if (logger.isDebugEnabled()) {
 			if (context.getFlowExecutionContext().isActive()) {
@@ -275,8 +237,8 @@ public class Transition extends AnnotatedObject {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("sourceState", getSourceState().getId()).append("matchingCriteria",
-				getMatchingCriteria()).append("executionCriteria", getExecutionCriteria()).append(
-				"targetStateResolver", getTargetStateResolver()).append("properties", getProperties()).toString();
+		return new ToStringCreator(this).append("matchingCriteria", getMatchingCriteria()).append("executionCriteria",
+				getExecutionCriteria()).append("targetStateResolver", getTargetStateResolver()).append("properties",
+				getProperties()).toString();
 	}
 }

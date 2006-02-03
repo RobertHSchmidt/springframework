@@ -15,17 +15,11 @@
  */
 package org.springframework.webflow.builder;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.support.ExpressionParserUtils;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionTargetStateResolver;
-import org.springframework.webflow.support.StateIdExpressionTransitionTargetStateResolver;
 import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
 
 /**
@@ -84,8 +78,7 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 	protected Object doConvert(Object source, Class targetClass) throws Exception {
 		String encodedCriteria = (String)source;
 		if (expressionParser.isExpression(encodedCriteria)) {
-			return new StateIdExpressionTransitionTargetStateResolver(expressionParser.parseExpression(encodedCriteria,
-					Collections.EMPTY_MAP));
+			throw new UnsupportedOperationException("Target state resolver expressions are not yet supported");
 		}
 		else if (encodedCriteria.startsWith(BEAN_PREFIX)) {
 			return flowArtifactFactory.getTargetStateResolver(encodedCriteria.substring(BEAN_PREFIX.length()));

@@ -69,7 +69,6 @@ public abstract class TransitionableState extends State {
 	 * @param transition the transition to add
 	 */
 	public void addTransition(Transition transition) {
-		transition.setSourceState(this);
 		transitions.add(transition);
 	}
 
@@ -176,7 +175,7 @@ public abstract class TransitionableState extends State {
 	 * @return the selected view
 	 */
 	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
-		return getRequiredTransition(context).execute(context);
+		return getRequiredTransition(context).execute(this, context);
 	}
 
 	/**

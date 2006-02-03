@@ -79,7 +79,6 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 
 	public Transition createTransition(TransitionableState sourceState, Map properties) throws FlowArtifactException {
 		Transition transition = (Transition)newInstance(Transition.class);
-		transition.setSourceState(sourceState);
 		transition.addProperties(properties);
 		return transition;
 	}

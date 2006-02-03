@@ -29,6 +29,7 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.Transition;
+import org.springframework.webflow.TransitionTargetStateResolver;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
 
@@ -87,8 +88,8 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 			throw new IllegalStateException("The source state '" + sourceState.getId()
 					+ "' to transition from must be transitionable!");
 		}
-		return new Transition((TransitionableState)sourceState, new StaticTransitionTargetStateResolver(
-				getTargetStateId(e))).execute(context);
+		TransitionTargetStateResolver targetStateResolver = new StaticTransitionTargetStateResolver(getTargetStateId(e));
+		return new Transition(targetStateResolver).execute((TransitionableState)sourceState, context);
 	}
 
 	// helpers
@@ -115,13 +116,13 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 			return (String)exceptionTargetStateIdMapping.get(e.getClass());
 		}
 		else {
-			Throwable t = e.getCause();
-			if (t != null && t instanceof NestedRuntimeException) {
-				return getTargetStateId13((NestedRuntimeException)t);
+			Throwable throwable = e.getCause();
+			if (throwable != null && throwable instanceof NestedRuntimeException) {
+				return getTargetStateId13((NestedRuntimeException)throwable);
 			}
 			else {
-				if (exceptionTargetStateIdMapping.containsKey(t.getClass())) {
-					return (String)exceptionTargetStateIdMapping.get(t.getClass());
+				if (exceptionTargetStateIdMapping.containsKey(throwable.getClass())) {
+					return (String)exceptionTargetStateIdMapping.get(throwable.getClass());
 				}
 				else {
 					return null;
