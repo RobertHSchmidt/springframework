@@ -13,7 +13,6 @@
 				<property name="validatorMethod" value="validatePriceAndItemCount"/>
 			</action>
 		</transition>
-		<transition on="preview" to="showCostOverview"/>
 	</view-state>
 
 	<view-state id="enterCategory" view="categoryForm">
@@ -38,13 +37,17 @@
 	</action-state>
 	
 	<view-state id="showCostOverview" view="costOverview">
-		<transition on="back" to="${lastTransition.sourceState.id}"/>
+		<transition on="back" to="enterPriceAndItemCount"/>
 	</view-state>
 	
 	<end-state id="finish" view="costOverview"/>
 
 	<end-state id="error" view="error"/>
-	
+
+	<global-transitions>
+		<transition on="preview" to="showCostOverview"/>
+	</global-transitions>
+
 	<import resource="sellitem-beans.xml"/>
 	
 </flow>
