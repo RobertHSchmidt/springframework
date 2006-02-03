@@ -13,7 +13,6 @@ import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionTargetStateResolver;
-import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
 
 /**
@@ -34,7 +33,8 @@ public interface FlowArtifactFactory {
 	public Flow getSubflow(String id) throws FlowArtifactException;
 
 	/**
-	 * Retrieve the action to be executed within a flow with the assigned parameters.
+	 * Retrieve the action to be executed within a flow with the assigned
+	 * parameters.
 	 * @param parameters the assigned action parameters
 	 * @throws FlowArtifactException when no such action is found
 	 */
@@ -98,7 +98,8 @@ public interface FlowArtifactFactory {
 	 * @param parameters the assigned state parameters
 	 * @return the state
 	 */
-	public State createState(Flow flow, Class stateType, FlowArtifactParameters parameters) throws FlowArtifactException;
+	public State createState(Flow flow, Class stateType, FlowArtifactParameters parameters)
+			throws FlowArtifactException;
 
 	/**
 	 * Create a new state transition with the assigned properties.
@@ -106,7 +107,7 @@ public interface FlowArtifactFactory {
 	 * @param properties the assigned transition properties
 	 * @return the transition
 	 */
-	public Transition createTransition(TransitionableState sourceState, Map properties) throws FlowArtifactException;
+	public Transition createTransition(Map properties) throws FlowArtifactException;
 
 	/**
 	 * Returns a generic bean (service) registry for accessing arbitrary beans.

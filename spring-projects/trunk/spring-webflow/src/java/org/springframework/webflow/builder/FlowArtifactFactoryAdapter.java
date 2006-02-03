@@ -14,7 +14,6 @@ import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionTargetStateResolver;
-import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 
@@ -33,7 +32,8 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	}
 
 	public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
-		throw new FlowArtifactException(parameters.getId(), Action.class, "Action lookup is not supported by this artifact factory");
+		throw new FlowArtifactException(parameters.getId(), Action.class,
+				"Action lookup is not supported by this artifact factory");
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
@@ -77,7 +77,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 		return state;
 	}
 
-	public Transition createTransition(TransitionableState sourceState, Map properties) throws FlowArtifactException {
+	public Transition createTransition(Map properties) throws FlowArtifactException {
 		Transition transition = (Transition)newInstance(Transition.class);
 		transition.addProperties(properties);
 		return transition;
