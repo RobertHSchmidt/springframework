@@ -7,7 +7,8 @@
 		where the user is allowed to navigate a web site as they please,
 		and controlled navigations where the user is guided through
 		a series of steps towards completion of a business goal.
-	</para>		
+	</para>
+	<para>		
 		Consider the typical shopping cart application.  While a user is
 		shopping, she is freely browsing available products, adding her 
 		favorites to her cart while skipping over others.  This is a good
@@ -18,6 +19,7 @@
 		is controlled.  The entire process represents an discrete
 		application transaction that must complete exactly once
 		or not at all.
+	</para>
 	<para>
 		Consider some other good examples of "controlled navigations": 
 		applying for a loan, paying your taxes on-line,
@@ -51,8 +53,8 @@
 			a flow guides a single user through the implementation
 			of a business process, and represents a single user
 			<emphasis>conversation</emphasis>.
-			Flows often executes across HTTP requests,
-			have state, exhibits transactional characteristics,
+			Flows often execute across HTTP requests,
+			have state, exhibit transactional characteristics,
 			and may	be dynamic and/or long-running in nature.
 		</para>
 		<para>
@@ -105,8 +107,16 @@
 			might use Spring Web Flow in a Servlet environment with Spring MVC, and thus require
 			the Spring MVC integration.  Another team might use SWF in a Portlet environment,
 			and thus require the Portlet MVC integration.  Another team might mix and match.
-			A major benefit of SWF is it allows you to define reusable, self-contained controller 
+			A major benefit of SWF is that it allows you to define reusable, self-contained controller 
 			modules that can execute in <emphasis>any</emphasis> environment.
+		</para>
+	</sect1>
+	<sect1 id="introduction-architecture">
+		<title>High Level Architecture</title>
+		<para>
+			TODO
+			Give high level overview of internal SWF architecture and layering (mentioned above).
+			Provide nice graphic!
 		</para>
 	</sect1>
 	<sect1 id="introduction-package-structure">
@@ -226,7 +236,7 @@
 			</para>
 			<itemizedlist spacing="compact">
          		<listitem>
-		          	<para>Dependencies: webflow.execution, junit, spring-mock</para>
+		          	<para>Dependencies: webflow, webflow.execution, junit, spring-mock</para>
         		</listitem>
 			</itemizedlist>
 		</sect2>
@@ -246,7 +256,7 @@
 	<sect1 id="introduction-spring">
 		<title>Supported Spring Versions</title>
 		<para>
-			Spring Web Flow 1.0 is supported on Spring 1.2.7 or >.
+			Spring Web Flow 1.0 is supported on Spring 1.2.7 or later.
 		</para>
 	</sect1>
 </chapter>
