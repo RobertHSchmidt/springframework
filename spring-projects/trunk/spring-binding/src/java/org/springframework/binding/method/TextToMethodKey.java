@@ -15,6 +15,8 @@
  */
 package org.springframework.binding.method;
 
+import java.util.Map;
+
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
@@ -63,7 +65,7 @@ public class TextToMethodKey extends ConversionServiceAwareConverter {
 		return new Class[] { MethodKey.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
 		String encodedMethodKey = (String)source;
 		encodedMethodKey = encodedMethodKey.trim();
 		int openParan = encodedMethodKey.indexOf('(');

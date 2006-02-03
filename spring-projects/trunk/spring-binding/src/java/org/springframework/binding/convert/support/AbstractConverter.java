@@ -15,15 +15,19 @@
  */
 package org.springframework.binding.convert.support;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.Converter;
+import org.springframework.binding.util.AttributeMapAccessorSupport;
 
 /**
  * Base class for converters provided as a convenience to implementors.
  * 
  * @author Keith Donald
  */
-public abstract class AbstractConverter implements Converter {
+public abstract class AbstractConverter extends AttributeMapAccessorSupport implements Converter {
 
 	/**
 	 * Convenience convert method that converts the provided source to the first
@@ -36,12 +40,31 @@ public abstract class AbstractConverter implements Converter {
 	 * value
 	 */
 	public Object convert(Object source) throws ConversionException {
-		return convert(source, getTargetClasses()[0]);
+		return convert(source, getTargetClasses()[0], Collections.EMPTY_MAP);
 	}
 
-	public Object convert(Object source, Class targetClass) throws ConversionException {
+	/**
+	 * Convenience convert method that converts the provided source to the first
+	 * target object supported by this converter. Useful when a converter only
+	 * supports conversion to a single target.
+	 * 
+	 * @param source The source to convert
+	 * @param context the conversion context, useful for influencing the
+	 * behavior of the converter.
+	 * @return the converted object
+	 * @throws ConversionException a exception occured converting the source
+	 * value
+	 */
+	public Object convert(Object source, Map context) throws ConversionException {
+		return convert(source, getTargetClasses()[0], context);
+	}
+
+	public Object convert(Object source, Class targetClass, Map context) throws ConversionException {
 		try {
-			return doConvert(source, targetClass);
+			if (context == null) {
+				context = Collections.EMPTY_MAP;
+			}
+			return doConvert(source, targetClass, context);
 		}
 		catch (ConversionException e) {
 			throw e;
@@ -59,10 +82,12 @@ public abstract class AbstractConverter implements Converter {
 	 * conversion.
 	 * @param source the source to convert from
 	 * @param targetClass the target type to convert to
+	 * @param context an optional conversion context that may be used to
+	 * influence the conversion process, guaranteed to be non-null.
 	 * @return the converted source value
 	 * @throws Exception an exception occured, will be wrapped in a conversion
 	 * exception if necessary
 	 */
-	protected abstract Object doConvert(Object source, Class targetClass) throws Exception;
+	protected abstract Object doConvert(Object source, Class targetClass, Map context) throws Exception;
 
 }

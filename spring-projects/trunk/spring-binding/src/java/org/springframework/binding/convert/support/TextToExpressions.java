@@ -16,6 +16,7 @@
 package org.springframework.binding.convert.support;
 
 import java.util.Collections;
+import java.util.Map;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
@@ -59,13 +60,13 @@ public class TextToExpressions extends AbstractConverter {
 		return new Class[] { CompositeStringExpression.class, Expression[].class, PropertyExpression[].class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
 		if (targetClass.equals(CompositeStringExpression.class)) {
 			return new CompositeStringExpression(getExpressionParser().parseExpressions((String)source,
 					Collections.EMPTY_MAP));
 		}
 		else {
-			return getExpressionParser().parseExpressions((String)source, Collections.EMPTY_MAP);
+			return getExpressionParser().parseExpressions((String)source, context);
 		}
 	}
 }

@@ -16,6 +16,8 @@
 package org.springframework.binding.convert;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * A command object that is parameterized with the information neccessary to
@@ -52,6 +54,16 @@ public class ConversionExecutor implements Serializable {
 	 * @param source the source object to convert
 	 */
 	public Object execute(Object source) throws ConversionException {
-		return converter.convert(source, targetClass);
+		return converter.convert(source, targetClass, Collections.EMPTY_MAP);
+	}
+
+	/**
+	 * Execute the conversion for the provided source object.
+	 * @param source the source object to convert
+	 * @param context the conversion context, useful for influencing
+	 * the behavior of the converter.
+	 */
+	public Object execute(Object source, Map context) throws ConversionException {
+		return converter.convert(source, targetClass, context);
 	}
 }

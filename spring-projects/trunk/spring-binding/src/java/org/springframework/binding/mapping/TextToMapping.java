@@ -15,6 +15,8 @@
  */
 package org.springframework.binding.mapping;
 
+import java.util.Map;
+
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.util.StringUtils;
@@ -42,7 +44,7 @@ public class TextToMapping extends ConversionServiceAwareConverter {
 		return new Class[] { Mapping.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
 		// format:
 		// <sourceExpression>[,class][->targetPropertyExpression[,class]]
 		String[] sourceTarget = StringUtils.delimitedListToStringArray((String)source, "->");

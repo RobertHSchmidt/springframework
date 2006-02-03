@@ -15,6 +15,8 @@
  */
 package org.springframework.binding.convert.support;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.BeanFactory;
 
 /**
@@ -38,7 +40,7 @@ public class TextToBean extends AbstractConverter {
 		return new Class[] { Object.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
 		return beanFactory.getBean((String)source);
 	}
 }

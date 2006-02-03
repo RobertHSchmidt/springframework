@@ -258,7 +258,7 @@ public class DefaultConversionService implements ConversionService {
 			this.targetClass = targetClass;
 		}
 
-		protected Object doConvert(Object source, Class targetClass) throws Exception {
+		protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
 			return source;
 		}
 
