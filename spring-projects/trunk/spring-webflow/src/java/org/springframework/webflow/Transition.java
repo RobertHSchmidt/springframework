@@ -21,10 +21,10 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * A transition takes a flow execution from one state to another when executed.
- * A transition is associated with exactly one source
- * {@link TransitionableState}. A transition may become elgible for execution
- * on the occurence of {@link Event} from within the transition's source state.
+ * When executed, a transition takes a flow execution from its current state,
+ * called the <i>source state</i>, to another state, called the </i>target
+ * state</i>. A transition may become eligible for execution on the occurence
+ * of {@link Event} from within a transitionable source state.
  * <p>
  * When an event occurs within this transition's source
  * <code>TransitionableState</code>, the determination of the eligibility of
