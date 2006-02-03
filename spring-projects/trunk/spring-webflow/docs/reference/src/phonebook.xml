@@ -36,7 +36,7 @@
 					implement the logic encapsulated in your flow by <emphasis>completing the
 					action classes</emphasis> you've added to your flow configuration.
 					In other words: the Action classes are <emphasis>the</emphasis> place
-					where you can implement logic and somewhat resembles Spring MVC controllers
+					where you can implement logic and they somewhat resemble Spring MVC controllers
 					(in fact, they can be Spring MVC controllers or action-like artifacts
 					from any other MVC framework).</para>
 				</listitem>
@@ -169,7 +169,7 @@
 						<para>Each <emphasis>state</emphasis>, when entered, executes some kind of <emphasis>action</emphasis>.
 						What action is executed varies based on the state's type and is executed 
 						in polymorphic fashion. For example, a <emphasis>view state</emphasis> renders a view resource.
-						An <emphasis>action state</emphasis> executes a controller Actions. <emphasis>sub-flow state</emphasis> spawn sub flows
+						An <emphasis>action state</emphasis> executes a controller Action. <emphasis>sub-flow states</emphasis> spawn sub flows
 						(so flows are reusable). <emphasis>End states</emphasis>
 						terminate an active execution of a flow (later on called a <literal>FlowExecution</literal>).</para>
 					</listitem>
@@ -181,7 +181,7 @@
 			</para>
 			<para>
 				In general, when a user enters the flow (typically by clicking a link
-				leading him to the flow or by opening op his or her browser with a particular
+				leading him to the flow or by opening up his or her browser with a particular
 				URL) a new flow is started, specifically for this user. This is what we call
 				the <literal>FlowExecution</literal>. The flow (obviously) starts in the start state. 
 			</para>
@@ -204,11 +204,11 @@
 				form backing object, or the execution of a search query.
 			</para>
 			<para>
-				Apart from those, there are several other state types which will describe
+				Apart from those, there are several other state types which we'll describe
 				in more detail in other chapters of this reference manual.
 			</para>
 			<para>
-				<emphasis>Remember: both all state and view states can signal events, 
+				<emphasis>Remember: both action states and view states can signal events, 
 				causing a transition to happen.</emphasis>
 			</para>
 			<para>
@@ -233,12 +233,12 @@
 	<sect1>
 		<title>Configuring the flow implementation using Java or XML</title>
 		<para>
-			So now we've got the design for the flow fleshed out we can start creating
+			So now we've got the design for the flow fleshed out and we can start creating
 			the configuration for our flow. One thing we didn't yet explain is <emphasis>sub flows</emphasis>.
-			When a user views a person details and clicks on a colleague name, what he's actually
+			When a user views a person's details and clicks on a colleague name, what he's actually
 			doing is entering the same state the flow has been in before, but now for a different
 			person (retrieve users details, view user details). Because this process can be
-			repeated over and over again, we are going to model this is a sub flow.
+			repeated over and over again, we are going to model this as a sub flow.
 			A sub flow is a reusable flow that can be spawned from a parent flow.
 		</para>
 		<para>
@@ -247,7 +247,7 @@
 		</para>
 		<para>
 			Configuring flows can be done in both Java and XML. You can use whatever you prefer
-			and we're going to show you both ways in a minute. For more information by the way
+			and we're going to show you both ways in a minute. For more information
 			about the different ways to configure your flows using flow builders, refer to other parts of the reference manual, where 
 			the so-called <literal>XmlFlowBuilder</literal> and the <literal>AbstractFlowBuilder</literal>
 			are explained in more detail.
@@ -278,8 +278,8 @@
 				After we've defined the start state (<literal>displayCriteria</literal> in this case),
 				we need to start adding other states. These states can be in any arbitrary order.
 				In other words: the order in the XML file does not reflect the actual order
-				or states in the view since the state are identified by a unique <literal>id</literal>.
-				Of course it's handy however to keep them well-organized.
+				or states in the flow since the states are identified by a unique <literal>id</literal>.
+				Of course it's handy to keep them well-organized.
 				The first state we're going to create is the start state. As we've seen in our
 				state diagram, it's a view state and it's called <literal>displayCriteria</literal>.
 				While defining the view state, we need to assign it an id. In this case,
@@ -296,9 +296,9 @@
 			</para>
 			<para>
 				The next thing we need to do is identify actions assotiated to the state and
-				transition that will allow the flow to transition to a different state.
-				Each state can have action assigned to it that will execute just before the
-				state is entered in, as well as exit actions, executed right before the flow
+				transitions that will allow the flow to transition to a different state.
+				Each state can have actions assigned to it that will execute just before the
+				state is entered into, as well as exit actions, executed right before the flow
 				transitions to another state. In this specific example, we're only using an
 				entry action. The entry action is used set up the form the user will use
 				to enter his search criteria in. More specifically, it calls a method on a 
@@ -345,7 +345,7 @@
     		<para>
     			The first state is done. We've gone through the entire process of creating
     			a state, assigning it with an <literal>id</literal>, associating an
-    			entry action and a transition, along with an criteria for the transition to
+    			entry action and a transition, along with a criteria for the transition to
     			happen (or not). The next thing we need to do is provide the next state in the
     			flow. The previous state allowed for a user to enter some criteria and submit them.
     			Binding and validation will occur and depending on the result of this process
@@ -372,12 +372,12 @@
 				</mediaobject>
 			</para>
     		<para>
-    			After validation has succeeded, the next state in in our flow is the execution
+    			After validation has succeeded, the next state in our flow is the execution
     			of the search, based on the search criteria the user has passed in. We can
     			derive this from the <literal>to</literal>-attribute of the transition associated
     			to the first state we've jotted down.
     			Execution
-    			of logic on the server, comprised a separate step is implementing using an
+    			of logic on the server, comprised in a separate step, is implemented using an
     			<emphasis>action state</emphasis>. An action state is not very different from
     			a view state; the difference being that an action state does not have a view
     			associated with it. Instead it has a nested action that will execute. In other
@@ -416,7 +416,7 @@
 				If the execution of the <literal>search</literal> method is successful
 				(in other words: no exception has been raised), the flow transitions to the
 				next state. Why? Because together with the action (inside the action-state)
-				we're also mentioning a transition that says for everybody event called
+				we're also mentioning a transition that says for every event called
 				<literal>success</literal> we should go to the <literal>displayResults</literal>
 				state.
 			</para>
@@ -425,7 +425,7 @@
 			</para>
 			<para>
 				As we've said, the next state is the <literal>displayResults</literal> state.
-				This is another view state, with this time, the <literal>searchresults</literal>
+				This is another view state, with this time, the <literal>searchResults</literal>
 				view resource associated to it, as well as a different transition to the next state.
 				Remember that transitions are signaled by events and since this is a view state,
 				the user will interact with the system. By signaling a <literal>select</literal>
