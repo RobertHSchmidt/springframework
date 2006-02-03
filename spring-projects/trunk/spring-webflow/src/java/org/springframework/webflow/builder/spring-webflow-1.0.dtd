@@ -224,6 +224,9 @@
 	Sophisticated transitional expressions are also supported. For example:
 	    <transition on="${#result == 'submit' && flowScope.attribute == 'foo'}" to="state"/>
 	
+	Custom transition criteria implementations can be referenced by id. For example:
+	    <transition on="bean:myCustomCriteria" to="state"/>
+	    
 	The exact interpretation of this attribute value depends on the TextToTransitionCriteria
 	converter that is installed.
 -->
@@ -256,15 +259,11 @@
 	    "priceForm" or "/WEB-INF/jsp/priceForm.jsp"
 	
 	This value may also be qualified with a prefix to denote a specific (possibly custom)
-	ViewSelector strategy. Specifically:
-	
-	Use of the "redirect:" prefix triggers creation of a RedirectViewSelector which will request
-	a redirect to a specific URL. For example:
-	    "redirect:/home.html"
-	
-	Redirect query parameters may also be specified using ${expressions} that evaluate against
-	the request context. For example:
-	    "redirect:/thankyou.htm?confirmationNumber=${flowScope.order.confirmation.id}"
+	ViewSelector strategy.
+
+	Use of the "bean:" prefix references a custom ViewSelector implementation you define,
+	exposed by id in either a flow-local context using the "import" element or in the parent 
+	context.
 	
 	The exact semantics regarding the interpretation of this value are determined by the
 	installed TextToViewSelector converter.
@@ -274,6 +273,14 @@
 	the client. Use a marker view state when another state is expected to generate the response.
 -->
 <!ATTLIST view-state view CDATA #IMPLIED>
+
+<!--
+	Whether or not this view-state should trigger a "conversation URL redirect".  If true, the 
+	ViewSelection made is cached and a redirect request is issued that refers back to it
+	at a specific URL.  This allows for bookmarking and refreshing 
+	the last view selection made by the conversation.
+-->
+<!ATTLIST view-state redirect (true | false | default) "default">
 
 <!--
 	Defines state entry logic to be executed. This logic will always execute when the state is entered.
@@ -547,7 +554,7 @@
 	ViewSelector strategy. Specifically:
 	
 	Use of the "redirect:" prefix triggers creation of a RedirectViewSelector which will request
-	a redirect to a specific URL. For example:
+	a redirect to a specific "after conversation completion" URL. For example:
 	    "redirect:/home.html"
 	
 	Redirect query parameters may also be specified using ${expressions} that evaluate against
