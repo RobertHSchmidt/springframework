@@ -84,8 +84,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -158,6 +158,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String VIEW_STATE_ELEMENT = "view-state";
 
 	private static final String VIEW_ATTRIBUTE = "view";
+
+	private static final String REDIRECT_ATTRIBUTE = "redirect";
 
 	private static final String DECISION_STATE_ELEMENT = "decision-state";
 
@@ -626,9 +628,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected ViewState parseViewState(Flow flow, Element element) {
 		ViewState state = (ViewState)getLocalFlowArtifactFactory().createState(flow, ViewState.class,
 				parseParameters(element));
+		Map context = new HashMap(2, 1);
+		context.put(TextToViewSelector.STATE_CONTEXT_ATTRIBUTE, state);
+		context.put(TextToViewSelector.REDIRECT_CONTEXT_ATTRIBUTE, Boolean.valueOf(element.getAttribute(REDIRECT_ATTRIBUTE)));
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
 			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
-					element.getAttribute(VIEW_ATTRIBUTE)));
+					element.getAttribute(VIEW_ATTRIBUTE), context));
 		}
 		state.getTransitionSet().addAll(parseTransitions(element));
 		return state;
@@ -675,9 +680,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected EndState parseEndState(Flow flow, Element element) {
 		EndState state = (EndState)getLocalFlowArtifactFactory().createState(flow, EndState.class,
 				parseParameters(element));
+		Map context = new HashMap(1, 1);
+		context.put(TextToViewSelector.STATE_CONTEXT_ATTRIBUTE, state);
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
 			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
-					element.getAttribute(VIEW_ATTRIBUTE)));
+					element.getAttribute(VIEW_ATTRIBUTE), context));
 		}
 		List outputAttributeElements = DomUtils.getChildElementsByTagName(element, OUTPUT_ATTRIBUTE_ELEMENT);
 		Iterator it = outputAttributeElements.iterator();

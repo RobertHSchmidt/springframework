@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.builder;
 
+import java.util.Map;
+
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.ExpressionParser;
@@ -75,7 +77,7 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 		return new Class[] { TransitionTargetStateResolver.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
 		String encodedCriteria = (String)source;
 		if (expressionParser.isExpression(encodedCriteria)) {
 			throw new UnsupportedOperationException("Target state resolver expressions are not yet supported");

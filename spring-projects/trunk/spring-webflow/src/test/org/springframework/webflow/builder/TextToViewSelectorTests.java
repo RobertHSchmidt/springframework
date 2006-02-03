@@ -15,10 +15,15 @@
  */
 package org.springframework.webflow.builder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.springframework.binding.convert.support.DefaultConversionService;
+import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
@@ -43,14 +48,16 @@ public class TextToViewSelectorTests extends TestCase {
 	}
 
 	public void testRedirectView() {
+		Flow flow = new Flow("test");
+		EndState endState = new EndState(flow, "id");
+		Map cContext = new HashMap();
+		cContext.put(TextToViewSelector.STATE_CONTEXT_ATTRIBUTE, endState);
 		ViewSelector selector = (ViewSelector)converter
-				.convert("redirect:myView?foo=${flowScope.foo}&bar=${requestScope.oven}");
+				.convert("redirect:myView?foo=${flowScope.foo}&bar=${requestScope.oven}", cContext);
 		RequestContext context = getRequestContext();
 		ViewSelection view = selector.makeSelection(context);
 		assertEquals("myView", view.getViewName());
 		assertEquals(2, view.getModel().size());
-		//Assert.attributeEquals(view, "foo", "bar");
-		//Assert.attributeEquals(view, "bar", "mit");
 	}
 
 	private RequestContext getRequestContext() {

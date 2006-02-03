@@ -18,6 +18,7 @@ package org.springframework.webflow.support;
 import java.io.Serializable;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
@@ -26,6 +27,10 @@ import org.springframework.webflow.ViewSelector;
  * Simple view selector that makes an selection with the same view name each
  * time. This producer will make all model data from both flow and request scope
  * available to the view.
+ * <p>
+ * Also supports setting a <i>requestConversationRedirect</i> flag that will
+ * trigger a redirect to the ViewSelection made by this selector at a
+ * bookmarkable conversation URL.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -38,10 +43,12 @@ public class SimpleViewSelector implements ViewSelector, Serializable {
 	private String viewName;
 
 	/**
-	 * Default constructor for bean style usage.
+	 * A flag indicating if a "redirect to conversation" should be requested.
+	 * <p>
+	 * Setting this to true allows you to redirect while the flow is in progress
+	 * to a stable "conversation URL" that can be safely refreshed.
 	 */
-	public SimpleViewSelector() {
-	}
+	private boolean requestConversationRedirect;
 
 	/**
 	 * Creates a view descriptor creator that will produce view descriptors
@@ -53,24 +60,52 @@ public class SimpleViewSelector implements ViewSelector, Serializable {
 	}
 
 	/**
+	 * Creates a view descriptor creator that will produce view descriptors
+	 * requesting that the specified view is rendered.
+	 * @param viewName the view name
+	 */
+	public SimpleViewSelector(String viewName, boolean requestConversationRedirect) {
+		setViewName(viewName);
+		setRequestConversationRedirect(requestConversationRedirect);
+	}
+
+	/**
 	 * Returns the name of the view that should be rendered.
 	 */
 	public String getViewName() {
-		return this.viewName;
+		return viewName;
 	}
 
 	/**
 	 * Set the name of the view that should be rendered.
 	 */
 	public void setViewName(String viewName) {
+		Assert.hasText(viewName, "The view name is required");
 		this.viewName = viewName;
 	}
 
+	/**
+	 * Returns whether or not this view selection will request a "redirect to
+	 * conversation".
+	 */
+	public boolean isRequestConversationRedirect() {
+		return requestConversationRedirect;
+	}
+
+	/**
+	 * Sets whether or not this view selection will request a "redirect to
+	 * conversation".
+	 */
+	public void setRequestConversationRedirect(boolean requestConversationRedirect) {
+		this.requestConversationRedirect = requestConversationRedirect;
+	}
+
 	public ViewSelection makeSelection(RequestContext context) {
-		return new ViewSelection(getViewName(), context.getModel(), false);
+		return new ViewSelection(getViewName(), context.getModel(), isRequestConversationRedirect());
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("viewName", viewName).toString();
+		return new ToStringCreator(this).append("viewName", viewName).append("requestConversationRedirect",
+				requestConversationRedirect).toString();
 	}
 }

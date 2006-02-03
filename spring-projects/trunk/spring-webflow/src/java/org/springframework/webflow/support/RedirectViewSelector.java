@@ -28,9 +28,17 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
 
 /**
- * View selector that makes selections that trigger a client side redirect. Only
- * parameter values encoded in the view (e.g.
- * "/viewName?param0=value0&param1=value1") are exposed.
+ * Makes view selections requesting a client side redirect to an <i>external</i>
+ * URL outside of the flow.
+ * <p>
+ * This selector is applicable when you wish to request a <i>redirect after
+ * conversation completion</i> as part of entering an EndState. This selector
+ * generally does not make sense to be used with a ViewState. If you seek
+ * "in-flow" redirect behavior use a {@link SimpleViewSelector} instead with the
+ * {@link SimpleViewSelector#isRequestConversationRedirect()} flag set to true.
+ * <p>
+ * Only parameter values encoded in the view (e.g.
+ * "/viewName?param0=value0&param1=value1") are exposed in the model.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -40,7 +48,7 @@ public class RedirectViewSelector implements ViewSelector, Serializable {
 	/**
 	 * The parsed, evaluatable redirect expression.
 	 */
-	private Expression expression;
+	private Expression redirectExpression;
 
 	/**
 	 * Create a new redirecting view descriptor creator that takes given
@@ -49,21 +57,21 @@ public class RedirectViewSelector implements ViewSelector, Serializable {
 	 * "/viewName?param0=value0&param1=value1").
 	 */
 	public RedirectViewSelector(Expression expression) {
-		this.expression = expression;
+		this.redirectExpression = expression;
 	}
 
 	/**
-	 * Returns the expression used by this view descriptor creator.
+	 * Returns the expression used by this view selector.
 	 */
-	protected Expression getExpression() {
-		return expression;
+	protected Expression getRedirectExpression() {
+		return redirectExpression;
 	}
 
 	public ViewSelection makeSelection(RequestContext context) {
-		String fullView = (String)expression.evaluateAgainst(context, getEvaluationContext(context));
+		String fullView = (String)redirectExpression.evaluateAgainst(context, getEvaluationContext(context));
 		// the resulting fullView should look something like
 		// "/viewName?param0=value0&param1=value1"
-		// now parse that and build a corresponding view descriptor
+		// now parse that and build a corresponding view selection
 		int index = fullView.indexOf('?');
 		String viewName;
 		Map model = null;
@@ -81,7 +89,8 @@ public class RedirectViewSelector implements ViewSelector, Serializable {
 					model.put(nameAndValue, "");
 				}
 			}
-		} else {
+		}
+		else {
 			viewName = fullView;
 		}
 		return new ViewSelection(viewName, model, true);
@@ -95,6 +104,6 @@ public class RedirectViewSelector implements ViewSelector, Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("expression", expression).toString();
+		return new ToStringCreator(this).append("redirectExpression", redirectExpression).toString();
 	}
 }

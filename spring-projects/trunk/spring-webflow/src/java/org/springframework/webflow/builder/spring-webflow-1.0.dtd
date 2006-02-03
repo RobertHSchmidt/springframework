@@ -280,7 +280,7 @@
 	at a specific URL.  This allows for bookmarking and refreshing 
 	the last view selection made by the conversation.
 -->
-<!ATTLIST view-state redirect (true | false | default) "default">
+<!ATTLIST view-state redirect (true | false) "false">
 
 <!--
 	Defines state entry logic to be executed. This logic will always execute when the state is entered.

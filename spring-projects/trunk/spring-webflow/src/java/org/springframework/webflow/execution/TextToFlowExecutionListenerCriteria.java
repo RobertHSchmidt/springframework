@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
+import java.util.Map;
+
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.util.StringUtils;
@@ -50,10 +52,10 @@ public class TextToFlowExecutionListenerCriteria extends AbstractConverter {
 	}
 
 	public FlowExecutionListenerCriteria convert(String source) {
-		return (FlowExecutionListenerCriteria)convert(source, FlowExecutionListenerCriteria.class);
+		return (FlowExecutionListenerCriteria)convert(source);
 	}
 
-	protected Object doConvert(Object source, Class targetClass) throws ConversionException {
+	protected Object doConvert(Object source, Class targetClass, Map context) throws ConversionException {
 		String encodedCriteria = (String)source;
 		if (!StringUtils.hasText(encodedCriteria)
 				|| FlowExecutionListenerCriteriaFactory.WildcardFlowExecutionListenerCriteria.WILDCARD_FLOW_ID

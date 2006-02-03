@@ -45,22 +45,27 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- * public void buildStates() {
- *                      // get customer information
- *                      addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;)),
- *                          on(success(), &quot;displayDetails&quot;));
- *                      // view customer information               
- *                      addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *                          on(submit(), &quot;bindAndValidate&quot;);
- *                      // bind and validate customer information updates 
- *                      addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;)),
- *                          new Transition[] {
- *                              on(error(), &quot;displayDetails&quot;),
- *                              on(success(), &quot;finish&quot;)
- *                          });
- *                      // finish
- *                      addEndState(&quot;finish&quot;);
- *                  }}
+ *     public void buildStates() {
+ *     
+ *         // get customer information
+ *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
+ *             on(success(), to(&quot;displayDetails&quot;)));
+ *             
+ *         // view customer information               
+ *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *             on(submit(), to(&quot;bindAndValidate&quot;));
+ *         
+ *         // bind and validate customer information updates 
+ *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
+ *             new Transition[] {
+ *                 on(error(), to(&quot;displayDetails&quot;)),
+ *                 on(success(), to(&quot;finish&quot;))
+ *             });
+ *             
+ *         // finish
+ *         addEndState(&quot;finish&quot;);
+ *     }
+ * }
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a

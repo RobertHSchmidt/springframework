@@ -152,7 +152,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	protected ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
 		return getConversionService().getConversionExecutor(String.class, targetType);
 	}
-
+	
 	/**
 	 * Get the flow (result) built by this builder.
 	 */

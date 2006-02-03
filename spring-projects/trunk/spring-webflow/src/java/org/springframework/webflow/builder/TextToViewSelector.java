@@ -15,13 +15,18 @@
  */
 package org.springframework.webflow.builder;
 
+import java.util.Map;
+
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.CompositeStringExpression;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.EndState;
+import org.springframework.webflow.State;
 import org.springframework.webflow.ViewSelector;
+import org.springframework.webflow.support.MarkerViewSelector;
 import org.springframework.webflow.support.RedirectViewSelector;
 import org.springframework.webflow.support.SimpleViewSelector;
 
@@ -47,6 +52,16 @@ import org.springframework.webflow.support.SimpleViewSelector;
  * @author Erwin Vervaet
  */
 public class TextToViewSelector extends ConversionServiceAwareConverter {
+
+	/**
+	 * The name of the state context attribute; can be used to influence converter behavior.
+	 */
+	public static final String STATE_CONTEXT_ATTRIBUTE = "state";
+
+	/**
+	 * The name of the redirect context attribute; can be used to influence converter behavior.
+	 */
+	public static final String REDIRECT_CONTEXT_ATTRIBUTE = "redirect";
 
 	/**
 	 * Prefix used when the user wants to use a ViewSelector implementation
@@ -81,17 +96,25 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		return new Class[] { ViewSelector.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
 		String encodedView = (String)source;
-		if (StringUtils.hasText(encodedView)) {
-			if (encodedView.startsWith(REDIRECT_PREFIX)) {
-				return createRedirectViewSelector(encodedView.substring(REDIRECT_PREFIX.length()));
-			}
-			else if (encodedView.startsWith(BEAN_PREFIX)) {
-				return flowArtifactFactory.getViewSelector(encodedView.substring(BEAN_PREFIX.length()));
-			}
+		if (!StringUtils.hasText(encodedView)) {
+			return MarkerViewSelector.INSTANCE;
 		}
-		return createSimpleViewSelector(encodedView);
+		if (encodedView.startsWith(BEAN_PREFIX)) {
+			return getCustomViewSelector(encodedView.substring(BEAN_PREFIX.length()));
+		}
+		State state = (State)context.get(STATE_CONTEXT_ATTRIBUTE);
+		if (state instanceof EndState && encodedView.startsWith(REDIRECT_PREFIX)) {
+			return createRedirectViewSelector(encodedView.substring(REDIRECT_PREFIX.length()));
+		}
+		else {
+			return createSimpleViewSelector(encodedView, context);
+		}
+	}
+
+	protected ViewSelector getCustomViewSelector(String id) {
+		return flowArtifactFactory.getViewSelector(id);
 	}
 
 	/**
@@ -101,8 +124,8 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 * @return the simple view selector
 	 * @throws ConversionException when an error occurs
 	 */
-	protected ViewSelector createSimpleViewSelector(String encodedView) throws ConversionException {
-		return new SimpleViewSelector(encodedView);
+	protected ViewSelector createSimpleViewSelector(String encodedView, Map context) throws ConversionException {
+		return new SimpleViewSelector(encodedView, getBooleanAttribute(REDIRECT_CONTEXT_ATTRIBUTE, context, false));
 	}
 
 	/**
