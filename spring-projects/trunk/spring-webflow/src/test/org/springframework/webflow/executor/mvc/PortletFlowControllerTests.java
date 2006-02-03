@@ -148,14 +148,4 @@ public class PortletFlowControllerTests extends TestCase {
 		assertNotNull("Null result unexpected", result);
 		assertEquals("redirect:Some view", result.getViewName());
 	}
-
-	public void testToModelAndViewWithNull() {
-		replay();
-
-		// perform test
-		ModelAndView result = tested.toModelAndView(null);
-		
-		verify();
-		assertNull("Null view should give null result", result);
-	}
 }

@@ -72,13 +72,6 @@ public class FlowActionTests extends TestCase {
 		tested = null;
 	}
 
-	public void testToActionForwardNullViewSelection() throws Exception {
-		// perform test
-		ActionForward forward = tested.toActionForward(null, null, null);
-
-		assertNull(forward);
-	}
-
 	public void testToActionForwardValidViewSelectionValidForward() throws Exception {
 
 		// perform test

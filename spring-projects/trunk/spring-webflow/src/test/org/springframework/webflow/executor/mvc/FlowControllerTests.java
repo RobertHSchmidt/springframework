@@ -92,13 +92,6 @@ public class FlowControllerTests extends TestCase {
 		assertEquals("SomeView", result.getViewName());
 	}
 
-	public void testToModelAndViewWithNullView() throws Exception {
-		replay();
-		ModelAndView result = tested.toModelAndView(null);
-		verify();
-		assertNull("view should be null", result);
-	}
-
 	public void testToModelAndViewWithRedirectView() throws Exception {
 		ViewSelection viewSelection = new ViewSelection("SomeView", null, true);
 		replay();
