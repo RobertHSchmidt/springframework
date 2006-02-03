@@ -6,7 +6,7 @@
 
 <faces-config>
 	<application>
-		<!-- Navigation handler that delegates to Spring Web Flow -->
+		<!-- Navigation handler proxy for a Spring-managed bean that is the Web Flow Navigation Handler -->
 		<navigation-handler>
 			org.springframework.web.jsf.DelegatingNavigationHandlerProxy
 		</navigation-handler>
@@ -26,6 +26,7 @@
 	</application>
 
 	<lifecycle>
+		<!-- Multi-caster that broadcast phase events to all PhaseListeners managed by Spring -->
 		<phase-listener>org.springframework.web.jsf.DelegatingPhaseListenerMulticaster</phase-listener>
 	</lifecycle>
 	
