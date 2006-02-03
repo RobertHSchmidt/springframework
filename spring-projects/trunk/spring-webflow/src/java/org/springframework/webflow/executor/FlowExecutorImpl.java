@@ -32,7 +32,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionContinuatio
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepositoryFactory;
-import org.springframework.webflow.executor.support.FlowExecutionContinuationKeyFormatter;
 
 /**
  * The default implementation of the central facade for <i>driving</i> the

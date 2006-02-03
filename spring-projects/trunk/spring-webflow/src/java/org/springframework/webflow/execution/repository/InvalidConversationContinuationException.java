@@ -52,6 +52,9 @@ public class InvalidConversationContinuationException extends FlowExecutionRepos
 		super(repository, message);
 	}
 
+	/**
+	 * Returns the invalid continuation key.
+	 */
 	public FlowExecutionContinuationKey getContinuationKey() {
 		return continuationKey;
 	}

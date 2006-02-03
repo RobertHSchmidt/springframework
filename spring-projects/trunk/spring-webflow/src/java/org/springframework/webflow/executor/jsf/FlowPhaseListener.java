@@ -32,7 +32,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.executor.support.FlowExecutionContinuationKeyFormatter;
+import org.springframework.webflow.executor.FlowExecutionContinuationKeyFormatter;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
 
 /**

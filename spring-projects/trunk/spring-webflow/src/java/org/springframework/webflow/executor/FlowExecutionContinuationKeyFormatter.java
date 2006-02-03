@@ -1,4 +1,4 @@
-package org.springframework.webflow.executor.support;
+package org.springframework.webflow.executor;
 
 import org.springframework.binding.format.Formatter;
 import org.springframework.binding.format.InvalidFormatException;
