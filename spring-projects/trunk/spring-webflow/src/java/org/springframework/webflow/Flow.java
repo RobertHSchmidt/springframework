@@ -578,7 +578,13 @@ public class Flow extends AnnotatedObject {
 		try {
 			return currentState.onEvent(event, context);
 		} catch (NoMatchingTransitionException e) {
-			throw e;
+			// try the flow level transition set for a match
+			Transition transition = transitionSet.getTransition(context);
+			if (transition != null) {
+				return transition.execute(currentState, context);
+			} else {
+				throw e;
+			}
 		}
 	}
 
