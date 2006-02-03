@@ -25,8 +25,8 @@ package org.springframework.webflow;
 public interface TransitionTargetStateResolver {
 
 	/**
-	 * Resolve the target state of the transition from the specified source
-	 * state in the current request context.
+	 * Resolve the target state of the transition from the source state in the
+	 * current request context.
 	 * @param transition the transition
 	 * @param the source state of the transition
 	 * @param context the current request context
