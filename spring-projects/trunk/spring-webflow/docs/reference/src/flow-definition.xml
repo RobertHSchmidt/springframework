@@ -168,6 +168,7 @@
     flow.addState(...);
     flow.setStartState("startingPoint");
     flow.addStartAction(...);
+    flow.addGlobalTransition(...);
     flow.addEndAction(...);
     flow.addExceptionHandler(...);
     flow.addInlineFlow(...);
@@ -281,7 +282,7 @@
           </tgroup>
         </table>
         <para>
-            Below is an example of how these common TransitionableState properties can be configured in XML form
+            Below is a high-level example of how these common TransitionableState properties can be configured in XML form
             or directly in Java code.
         </para>
         <sect2 id="state-xml">
@@ -407,6 +408,10 @@
            	   </tbody>
           </tgroup>
    	    </table>
+   	    <para>
+            Below is a high-level example of how a Transition can be configured in XML form
+            or directly in Java code.
+   	    </para>
         <sect2 id="transition-xml">
         	<title>Transition XML template</title>
        	    <programlisting>
@@ -415,15 +420,6 @@
         &lt;action ../&gt;
     &lt;/transition&gt;
          	</programlisting>
-         	<para>
-         		Note the above support for an <literal>action</literal> element.  A transition 
-         		may be configured with one or more actions that execute <emphasis>before</emphasis> the transition itself
-         		executes, as part of the <literal>executionCriteria</literal>.  If one or more of these
-         		actions do not complete successfully the transition will <emphasis>not</emphasis> be allowed.
-         		This <emphasis>action transition criteria</emphasis> makes it possible to execute arbitrary logic
-         		after a transition is matched but before it is executed.  This is useful when you want to execute 
-         		event post-processing logic that is specific to the state transition.
-         	</para>
         </sect2>
         <sect2 id="transition-java">
         	<title>Transition Java API template</title>
@@ -433,6 +429,20 @@
     transition.setMatchingCriteria(new EventIdTransitionCriteria("event"));
     transition.setExecutionCriteria(...);
          	</programlisting>
+        </sect2>
+        <sect2 id="transition-actioncriteria">
+        	<title>Action transition criteria</title>
+         	<para>
+         		In the XML example note the support for the <literal>action</literal> element within the <literal>transition</literal> element.
+         	</para>
+         	<para>
+         		A transition may be configured with one or more actions that execute <emphasis>before</emphasis> the transition itself
+         		executes, as part of the <literal>executionCriteria</literal>.  If one or more of these
+         		actions do not complete successfully the transition will <emphasis>not</emphasis> be allowed.
+         		This <emphasis>action transition criteria</emphasis> makes it possible to execute arbitrary logic
+         		after a transition is matched but before it is executed.  This is useful when you want to execute 
+         		event post-processing logic that is specific to the state transition.
+         	</para>
         </sect2>
         <sect2 id="transition-global">
         	<title>Global transitions</title>
