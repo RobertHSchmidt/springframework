@@ -429,7 +429,7 @@
        	    <programlisting>
     Transition transition = new Transition(new StaticTargetStateResolver("targetStateId"));
     transition.setProperty(..., ...);
-    transition.setMatchingCriteria(...);
+    transition.setMatchingCriteria(new EventIdTransitionCriteria("event"));
     transition.setExecutionCriteria(...);
          	</programlisting>
         </sect2>
