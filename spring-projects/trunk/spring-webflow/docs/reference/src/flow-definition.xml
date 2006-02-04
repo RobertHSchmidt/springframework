@@ -422,7 +422,7 @@
          	</programlisting>
         </sect2>
         <sect2 id="transition-java">
-        	<title>Transition Java API template</title>
+        	<title>Transition Java API example</title>
        	    <programlisting>
     Transition transition = new Transition(new StaticTargetStateResolver("targetState"));
     transition.setProperty(..., ...);
