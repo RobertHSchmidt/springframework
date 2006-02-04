@@ -69,7 +69,7 @@
 		</para>
 	</sect1>
 	<sect1 id="introduction-packaging">
-		<title>Packaging Overview</title>
+		<title>Packaging overview</title>
 		<para>
 			Spring Web Flow has been architected as a self-contained <emphasis>page flow engine</emphasis>
 			with few required dependencies on third-party APIs.  All dependencies are 
@@ -112,7 +112,7 @@
 		</para>
 	</sect1>
 	<sect1 id="introduction-architecture">
-		<title>High Level Architecture</title>
+		<title>High level architecture</title>
 		<para>
 			TODO
 			Give high level overview of internal SWF architecture and layering (mentioned above).
@@ -120,7 +120,7 @@
 		</para>
 	</sect1>
 	<sect1 id="introduction-package-structure">
-		<title>Package Structure</title>
+		<title>Package structure</title>
 		<para>
 			This section provides an overview of the logical package structure of the SWF codebase.
 			The dependencies for each package are clearly noted.
@@ -253,10 +253,13 @@
 			at <literal>spring-webflow/ivy.xml</literal>
 		</para>
 	</sect1>
-	<sect1 id="introduction-spring">
-		<title>Supported Spring Versions</title>
+	<sect1 id="introduction-support">
+		<title>Support</title>
 		<para>
 			Spring Web Flow 1.0 is supported on Spring 1.2.7 or later.
+		</para>
+		<para>
+		    The community support forum is located at http://forum.springframework.org.
 		</para>
 	</sect1>
 </chapter>

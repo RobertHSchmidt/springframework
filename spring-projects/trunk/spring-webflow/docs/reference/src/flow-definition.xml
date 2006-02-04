@@ -87,7 +87,7 @@
                    </row>
                    <row>
                        <entry>startActions</entry>
-                       <entry>The list of actions to execute each time an execution of this flow is started.</entry>
+                       <entry>The list of actions to execute each time an execution of the flow is started.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -95,7 +95,7 @@
                    </row>
                    <row>
                        <entry>endActions</entry>
-                       <entry>The list of actions to execute each time an execution of this flow ends.</entry>
+                       <entry>The list of actions to execute each time an execution of the flow ends.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -103,7 +103,7 @@
                    </row>
                    <row>
                        <entry>exceptionHandlers</entry>
-                       <entry>An ordered set of handlers to be applied when an exception is thrown within a state of this flow.</entry>
+                       <entry>An ordered set of handlers to be applied when an exception is thrown within a state of the flow.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -125,7 +125,7 @@
             or directly in Java code.
         </para>
         <sect2 id="flow-xml">
-        	<title>XML-based Flow template</title>
+        	<title>XML-based flow template</title>
        	    <programlisting>
     &lt;flow start-state="startingPoint"&gt;
         &lt;property .../&gt;
@@ -149,7 +149,7 @@
          	</programlisting>
         </sect2>
         <sect2 id="flow-java">
-           <title>Java Flow API example</title>
+           <title>Java flow API example</title>
            <programlisting>
     Flow flow = new Flow("id");
     flow.setProperty(..., ...);
@@ -165,7 +165,7 @@
     <sect1 id="state">
     	<title>State</title>
     	<para>
-    	    A State defines the behavior for a step of the flow.
+    	    A state defines the behavior for a step of a flow.
     	    The base class for all Flow state types is <literal>org.springframework.webflow.State</literal>.
     	    This abstract class defines common properties applicable to all state types, which include:
     	</para>
@@ -209,7 +209,7 @@
                    </row>
                    <row>
                        <entry>entryActions</entry>
-                       <entry>The list of actions to execute each time this state is entered.</entry>
+                       <entry>The list of actions to execute each time the state is entered.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -217,7 +217,7 @@
                    </row>
                    <row>
                        <entry>exceptionHandlers</entry>
-                       <entry>An ordered set of handlers to be applied when an exception is thrown within this state.</entry>
+                       <entry>An ordered set of handlers to be applied when an exception is thrown within the state.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -273,7 +273,7 @@
             or directly in Java code.
         </para>
         <sect2 id="state-xml">
-        	<title>XML-based State template</title>
+        	<title>XML-based state template</title>
        	    <programlisting>
     &lt;flow start-state="stateId"&gt;
         &lt;some-state id="stateId"&gt;
@@ -295,7 +295,7 @@
          	</programlisting>
         </sect2>
         <sect2 id="state-java">
-           <title>Java State API example</title>
+           <title>Java state API example</title>
            <programlisting>
     Flow flow = new Flow("id");
     TransitionableState state = new SomeConcreteStateType(flow, "stateId");
@@ -307,7 +307,7 @@
         </sect2>
     </sect1>
     <sect1 id="core-states">
-    	<title>Concrete State Types</title>
+    	<title>Concrete state types</title>
     	<para>
     		Spring Web Flow has five (5) built-in concrete state types, all contained within the 
     		<literal>org.springframework.webflow</literal> package.  These states execute common 
