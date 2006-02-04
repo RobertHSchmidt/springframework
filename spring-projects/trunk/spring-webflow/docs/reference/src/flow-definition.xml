@@ -1265,7 +1265,7 @@
     				</listitem>
     				<listitem>
     					<para>
-	    					Optionally, executing a single <emphasis>decision action</emphasis> and evaluating its return event to 
+	    					Alternatively, executing a single <emphasis>decision action</emphasis> and evaluating its return event to 
 	    					decide what state to transition to next.  This action should be idempotent; that is, it should not 
 	    					have side effects.  Convenient support for evaluating return values of methods invoked 
 	    					on your application objects (POJOs) is provided.
@@ -1304,12 +1304,154 @@
     			    the flow to invoke that code using an action.
     			</para>
 			</sect3>
+    	    <sect3 id="decisionStateXml-action">
+    	    	<title>DecisionState XML - decision action</title>
+    	    	<para>
+    	    	    The following example constructs an <literal>DecisionState</literal> from
+    	    	    XML that executes a action that forms the basis for the transition decision:
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="shippingRequired"&gt;
+    
+        &lt;decision-state id="shippingRequired"&gt;
+            &lt;action bean="shippingService" method="isShippingRequired"/&gt;
+            &lt;transition on="yes" to="enterShippingDetails"/&gt;
+            &lt;transition on="no" to="placeOrder"/&gt;
+        &lt;/decision-state&gt;
+        ...
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This state definition reads "<emphasis>if the <literal>isShippingRequired</literal> method on the 
+    			    <literal>shippingService</literal> returns true, transition to the <literal>enterShippingDetails</literal>
+    			    state, otherwise transition to the <literal>placeOrder</literal> state</emphasis>."
+    			</para>
+    			<para>
+    			    Note how the boolean return value of the <literal>isShippingRequired</literal> method is
+    			    converted to the event identifiers <literal>yes</literal> or <literal>no</literal>.
+    			</para>
+    			<para>
+    			    This conversion process is handled by the action adapter responsible for adapting the method on your 
+    			    application object to the <literal>org.springframework.webflow.Action</literal> interface.  By default, this
+    			    adapter applies a number of rules for creating a result event from a method return value.
+    			</para>
+    			<para>
+	    			These conversion rules are:
+    			</para>
+		    	<table>
+    		        <title>Default method return value to Event conversion rules</title>
+	        	    <tgroup cols="2">
+   		         	    <colspec colname="c1" colwidth="2*" />
+   		     			<colspec colname="c2" colwidth="4*" />
+	   		    	    <thead>
+       		        	    <row>
+               		    	    <entry>Return type</entry>
+	               				<entry>Event identifier</entry>
+	           				</row>
+			  			</thead>
+					  	<tbody>
+			        	    <row>
+               		    	    <entry>boolean</entry>
+               		    	    <entry>yes or no</entry>
+	           				</row>
+			        	    <row>
+               		    	    <entry>java.lang.Enum</entry>
+               		    	    <entry>this.name()</entry>
+	           				</row>
+	           				<row>
+	           				    <entry>org.springframework.core.enum.LabeledEnum</entry>
+	           				    <entry>this.getLabel()</entry>
+	           				</row>
+	           				<row>
+	           				    <entry>null</entry>
+	           				    <entry>null</entry>
+	           				</row>
+	            	   </tbody>
+					</tgroup>
+    		    </table>
+    			<para>
+    				You may customize these default conversion policies by setting a custom <literal>EventFactory</literal>
+    				instance on the bean invoking action performing the adaption.
+    			</para>
+			</sect3>
+    	    <sect3 id="decisionStateXml-actionenum">
+    	    	<title>DecisionState XML - decision action with enum return value</title>
+    	    	<para>
+    	    	    The following example constructs an <literal>DecisionState</literal> from
+    	    	    XML that executes a action that invokes a method on an application object that 
+    	    	    returns a java.lang.Enum:
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="shippingRequired"&gt;
+    
+        &lt;decision-state id="shippingRequired"&gt;
+            &lt;action bean="shippingService" method="calculateShippingMethod(${flowScope.order})"/&gt;
+            &lt;transition on="BASIC" to="enterBasicShippingDetails"/&gt;
+            &lt;transition on="EXPRESS" to="enterExpressShippingDetails"/&gt;
+            &lt;transition on="NONE" to="placeOrder"/>
+        &lt;/decision-state&gt;
+        ...
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This state definition reads "<emphasis>if the <literal>getShippingMethod</literal> method on the 
+    			    <literal>shippingService</literal> returns <literal>BASIC</literal> for the current order, transition to the <literal>enterBasicShippingDetails</literal>
+    			    state.  If the return value is <literal>EXPRESS</literal> transition to the <literal>enterExpressShippingDetails</literal> state.
+    			    If the return value is <literal>NONE</literal> transition to the <literal>placeOrder</literal> state</emphasis>."
+    			</para>
+			</sect3>
     	</sect2>
     	<sect2 id="subflowState">
     		<title>SubflowState</title>
     		<para>
     			When entered, a subflow state spawns another flow as a subflow.
     		</para>
+    		<para>
+    			Recall that a flow is a reusable, self-contained controller module.  The ability for one flow to <emphasis>call</emphasis> another flow
+    			gives you the ability to compose independent modules together to create complex controller workflows.  Any flow can be used as subflow 
+    			by any other flow, and there is a well-defined contract in play by what it means to be a flow.
+    			Specifically:
+    		</para>
+    		<para>
+    			<orderedlist>
+    				<listitem>
+    					<para>
+    						A Flow is an instance of <literal>org.springframework.webflow.Flow</literal>.
+    					</para>
+    				</listitem>
+    				<listitem>
+    					<para>
+    						A newly launched flow can be passed input attributes which it may choose 
+    						to map into its own local scope.
+    					</para>
+    				</listitem>
+    				<listitem>
+    					<para>
+    						A ending flow can return output attributes.  If the flow was launched as a subflow,
+    						the resuming parent flow may choose to map the output attributes into its own scope.
+    					</para>
+    				</listitem>
+    			</orderedlist>
+    		</para>
+    		<para>
+    		   It is helpful to think of the process of calling a flow as similiar to calling a Java method.  Flows can 
+    		   be passed input arguments and can produce return values just like methods can.  Flows are more powerful because 
+    		   they are potentially long-running, as they can span more than one request into the server.
+    		</para>
+    		<para>
+    		   The SubflowState constructs used in spawning a flow as a subflow is shown graphically below:
+    		</para>
+			<mediaobject>
+				<imageobject role="fo">
+					<imagedata fileref="images/subflowstate-classdiagram.png" format="PNG" align="center"/>
+				</imageobject>
+				<imageobject role="html">
+					<imagedata fileref="images/subflowstate-classdiagram.png" format="PNG" align="center"/>
+				</imageobject>
+				<caption>
+					<para>SubflowState class diagram</para>
+				</caption>
+			</mediaobject>
     	</sect2>
     	<sect2 id="endState">
     		<title>EndState</title>
