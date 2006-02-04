@@ -13,7 +13,7 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.TransitionTargetStateResolver;
+import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 
@@ -56,8 +56,8 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 				"State exception handler lookup is not supported by this artifact factory");
 	}
 
-	public TransitionTargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, TransitionTargetStateResolver.class,
+	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
+		throw new FlowArtifactException(id, TargetStateResolver.class,
 				"Transition target state resolver lookup is not supported by this artifact factory");
 	}
 

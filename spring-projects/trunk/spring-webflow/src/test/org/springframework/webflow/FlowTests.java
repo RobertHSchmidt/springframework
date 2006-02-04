@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.builder.MyCustomException;
 import org.springframework.webflow.support.SimpleViewSelector;
-import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
+import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockFlowExecutionControlContext;
 import org.springframework.webflow.test.MockFlowSession;
@@ -173,7 +173,7 @@ public class FlowTests extends TestCase {
 		}
 	}
 	
-	public static TransitionTargetStateResolver to(String stateId) {
-		return new StaticTransitionTargetStateResolver(stateId);
+	public static TargetStateResolver to(String stateId) {
+		return new StaticTargetStateResolver(stateId);
 	}
 }

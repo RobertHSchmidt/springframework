@@ -29,7 +29,7 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.TransitionTargetStateResolver;
+import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
 
@@ -88,7 +88,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 			throw new IllegalStateException("The source state '" + sourceState.getId()
 					+ "' to transition from must be transitionable!");
 		}
-		TransitionTargetStateResolver targetStateResolver = new StaticTransitionTargetStateResolver(getTargetStateId(e));
+		TargetStateResolver targetStateResolver = new StaticTargetStateResolver(getTargetStateId(e));
 		return new Transition(targetStateResolver).execute((TransitionableState)sourceState, context);
 	}
 

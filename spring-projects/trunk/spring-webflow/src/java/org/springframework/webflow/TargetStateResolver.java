@@ -22,7 +22,7 @@ package org.springframework.webflow;
  * 
  * @author Keith Donald
  */
-public interface TransitionTargetStateResolver {
+public interface TargetStateResolver {
 
 	/**
 	 * Resolve the target state of the transition from the source state in the

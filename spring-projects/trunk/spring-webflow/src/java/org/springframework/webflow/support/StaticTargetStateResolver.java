@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.TransitionTargetStateResolver;
+import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TransitionableState;
 
 /**
@@ -28,7 +28,7 @@ import org.springframework.webflow.TransitionableState;
  * 
  * @author Keith Donald
  */
-public class StaticTransitionTargetStateResolver implements TransitionTargetStateResolver {
+public class StaticTargetStateResolver implements TargetStateResolver {
 
 	/**
 	 * The state id for the target state - used temporarily until the target
@@ -43,7 +43,7 @@ public class StaticTransitionTargetStateResolver implements TransitionTargetStat
 	 * @param targetStateId the id of the target state (will be resolved once
 	 * and cached at runtime)
 	 */
-	public StaticTransitionTargetStateResolver(String targetStateId) {
+	public StaticTargetStateResolver(String targetStateId) {
 		Assert.hasText(targetStateId, "The target state id is required");
 		this.targetStateId = targetStateId;
 	}

@@ -29,7 +29,7 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.TransitionTargetStateResolver;
+import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
@@ -45,7 +45,7 @@ import org.springframework.webflow.builder.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.SimpleViewSelector;
-import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
+import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -196,8 +196,8 @@ public class FlowExecutionTests extends TestCase {
 		return new EventIdTransitionCriteria(event);
 	}
 
-	public static TransitionTargetStateResolver to(String stateId) {
-		return new StaticTransitionTargetStateResolver(stateId);
+	public static TargetStateResolver to(String stateId) {
+		return new StaticTargetStateResolver(stateId);
 	}
 	
 	public static ViewSelector view(String viewName) {

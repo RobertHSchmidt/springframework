@@ -43,11 +43,11 @@ import org.springframework.util.Assert;
  * The target state of this transition is typically specified at configuration
  * time using the target state id. If the target state of this transition needs
  * to be calculated in a dynamic fashion at runtime, set a custom
- * {@link TransitionTargetStateResolver}
+ * {@link TargetStateResolver}
  * 
  * @see TransitionableState
  * @see TransitionCriteria
- * @see TransitionTargetStateResolver
+ * @see TargetStateResolver
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -75,14 +75,14 @@ public class Transition extends AnnotatedObject {
 	 * The resolver responsible for calculating the target state of this
 	 * transition.
 	 */
-	private TransitionTargetStateResolver targetStateResolver;
+	private TargetStateResolver targetStateResolver;
 
 	/**
 	 * Default constructor for bean style usage.
 	 * @see #setSourceState(TransitionableState)
 	 * @see #setMatchingCriteria(TransitionCriteria)
 	 * @see #setExecutionCriteria(TransitionCriteria)
-	 * @see #setTargetStateResolver(TransitionTargetStateResolver)
+	 * @see #setTargetStateResolver(TargetStateResolver)
 	 */
 	public Transition() {
 	}
@@ -97,7 +97,7 @@ public class Transition extends AnnotatedObject {
 	 * @see #setMatchingCriteria(TransitionCriteria)
 	 * @see #setExecutionCriteria(TransitionCriteria)
 	 */
-	public Transition(TransitionTargetStateResolver targetStateResolver) {
+	public Transition(TargetStateResolver targetStateResolver) {
 		setTargetStateResolver(targetStateResolver);
 	}
 
@@ -110,7 +110,7 @@ public class Transition extends AnnotatedObject {
 	 * @see #setSourceState(TransitionableState)
 	 * @see #setExecutionCriteria(TransitionCriteria)
 	 */
-	public Transition(TransitionCriteria matchingCriteria, TransitionTargetStateResolver targetStateResolver) {
+	public Transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver) {
 		setMatchingCriteria(matchingCriteria);
 		setTargetStateResolver(targetStateResolver);
 	}
@@ -155,7 +155,7 @@ public class Transition extends AnnotatedObject {
 	/**
 	 * Returns this transition's target state resolver.
 	 */
-	public TransitionTargetStateResolver getTargetStateResolver() {
+	public TargetStateResolver getTargetStateResolver() {
 		return targetStateResolver;
 	}
 
@@ -164,7 +164,7 @@ public class Transition extends AnnotatedObject {
 	 * transition to when this transition is executed.
 	 * @param targetStateResolver the target state resolver
 	 */
-	public void setTargetStateResolver(TransitionTargetStateResolver targetStateResolver) {
+	public void setTargetStateResolver(TargetStateResolver targetStateResolver) {
 		this.targetStateResolver = targetStateResolver;
 	}
 

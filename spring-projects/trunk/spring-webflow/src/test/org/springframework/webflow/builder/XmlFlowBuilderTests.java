@@ -43,7 +43,7 @@ import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
 import org.springframework.webflow.support.SimpleViewSelector;
-import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
+import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -192,7 +192,7 @@ public class XmlFlowBuilderTests extends TestCase {
 	}
 
 	protected String getTargetStateId(Transition transition) {
-		 return ((StaticTransitionTargetStateResolver)transition.getTargetStateResolver()).getTargetStateId();
+		 return ((StaticTargetStateResolver)transition.getTargetStateResolver()).getTargetStateId();
 	}
 	/**
 	 * Flow service locator for the services needed by the testFlow (defined in

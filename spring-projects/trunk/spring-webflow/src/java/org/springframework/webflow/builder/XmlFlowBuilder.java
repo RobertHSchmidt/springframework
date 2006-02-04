@@ -59,7 +59,7 @@ import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.TransitionTargetStateResolver;
+import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
@@ -68,7 +68,7 @@ import org.springframework.webflow.support.CollectionAddingPropertyExpression;
 import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.FlowVariable;
 import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
-import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
+import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionCriteriaChain;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.w3c.dom.Document;
@@ -818,8 +818,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		transition.setMatchingCriteria((TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(ON_ATTRIBUTE)));
 		transition.setExecutionCriteria(TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element)));
-		transition.setTargetStateResolver((TransitionTargetStateResolver)fromStringTo(
-				TransitionTargetStateResolver.class).execute(element.getAttribute(TO_ATTRIBUTE)));
+		transition.setTargetStateResolver((TargetStateResolver)fromStringTo(
+				TargetStateResolver.class).execute(element.getAttribute(TO_ATTRIBUTE)));
 		return transition;
 	}
 
@@ -846,11 +846,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				element.getAttribute(TEST_ATTRIBUTE));
 		Transition thenTransition = getLocalFlowArtifactFactory().createTransition(Collections.EMPTY_MAP);
 		thenTransition.setMatchingCriteria(criteria);
-		thenTransition.setTargetStateResolver(new StaticTransitionTargetStateResolver(element
+		thenTransition.setTargetStateResolver(new StaticTargetStateResolver(element
 				.getAttribute(THEN_ATTRIBUTE)));
 		if (StringUtils.hasText(element.getAttribute(ELSE_ATTRIBUTE))) {
 			Transition elseTransition = getLocalFlowArtifactFactory().createTransition(Collections.EMPTY_MAP);
-			elseTransition.setTargetStateResolver(new StaticTransitionTargetStateResolver(element
+			elseTransition.setTargetStateResolver(new StaticTargetStateResolver(element
 					.getAttribute(ELSE_ATTRIBUTE)));
 			return new Transition[] { thenTransition, elseTransition };
 		}
@@ -1143,10 +1143,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getViewSelector(id);
 		}
 
-		public TransitionTargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
+		public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (containsBean(id)) {
-					return (TransitionTargetStateResolver)getBean(id, TransitionTargetStateResolver.class, true);
+					return (TargetStateResolver)getBean(id, TargetStateResolver.class, true);
 				}
 			}
 			return getFlowArtifactFactory().getTargetStateResolver(id);

@@ -21,8 +21,8 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.support.ExpressionParserUtils;
-import org.springframework.webflow.TransitionTargetStateResolver;
-import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
+import org.springframework.webflow.TargetStateResolver;
+import org.springframework.webflow.support.StaticTargetStateResolver;
 
 /**
  * Converter that takes an encoded string representation and produces a
@@ -31,7 +31,7 @@ import org.springframework.webflow.support.StaticTransitionTargetStateResolver;
  * This converter supports the following encoded forms:
  * <ul>
  * <li>"stateId" - will result in a TargetStateResolver that always resolves to
- * the same state, an instance of ({@link org.springframework.webflow.support.StaticTransitionTargetStateResolver})
+ * the same state, an instance of ({@link org.springframework.webflow.support.StaticTargetStateResolver})
  * </li>
  * <li>"bean:&lt;id&gt;" - will result in usage of a custom TargetStateResolver
  * bean implementation.</li>
@@ -74,7 +74,7 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 	}
 
 	public Class[] getTargetClasses() {
-		return new Class[] { TransitionTargetStateResolver.class };
+		return new Class[] { TargetStateResolver.class };
 	}
 
 	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
@@ -96,7 +96,7 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 	 * @return the target state resolver
 	 * @throws ConversionException when something goes wrong
 	 */
-	protected TransitionTargetStateResolver createStaticTargetStateResolver(String stateId) throws ConversionException {
-		return new StaticTransitionTargetStateResolver(stateId);
+	protected TargetStateResolver createStaticTargetStateResolver(String stateId) throws ConversionException {
+		return new StaticTargetStateResolver(stateId);
 	}
 }

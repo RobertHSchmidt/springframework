@@ -206,7 +206,7 @@
                    </row>
                    <row>
                        <entry>flow</entry>
-                       <entry>The containing Flow.</entry>
+                       <entry>The owning Flow.</entry>
 				       <entry>
 				           <emphasis>1</emphasis>
 				       </entry>
@@ -244,7 +244,7 @@
     	<para>
     	    A central subclass of State is <literal>org.springframework.webflow.TransitionableState</literal>.
     	    This abstract class defines common properties applicable to all state types that execute
-    	    transitions to other states.  These properties include:
+    	    transitions to other states in response to events.  These properties include:
     	</para>
     	<table>
             <title>TransitionableState properties</title>
@@ -318,6 +318,123 @@
           </programlisting>
         </sect2>
     </sect1>
+    <sect1 id="transition">
+    	<title>Transition</title>
+    	<para>
+    	    A transition takes a flow from one state to another, defining a <emphasis>path</emphasis> through the flow.
+    	</para>
+    	<para>
+    	    Recall that all TransitionableStates have a set of one or more transitions, each defining a 
+    	    path to another state in the flow.  When a transitionable state is entered, it executes a behavior.
+    	    For example, a transitionable state called "Display Form" may display a form to the user.
+    	    The outcome of the state's execution, called an event, is used to drive execution of 
+    	    one of the state's transitions.  For example, the user may press the form submit button which
+    	    signals a <emphasis>submit</emphasis> event that matches the transition to
+    	    the "Process Submit" state.
+    	</para>
+    	<para>
+    		This process is shown graphically below:
+    	</para>
+		<mediaobject>
+			<imageobject role="fo">
+				<imagedata fileref="images/transition-statediagram.jpg" format="JPEG" align="center"/>
+			</imageobject>
+			<imageobject role="html">
+				<imagedata fileref="images/transition-statediagram.jpg" format="JPEG" align="center"/>
+			</imageobject>
+			<caption>
+				<para>State class diagram</para>
+			</caption>
+		</mediaobject>
+		<para>
+			A transition is defined by an instance of <literal>org.springframework.webflow.Transition</literal>.
+			Its properties are summarized below:
+		</para>
+    	<table>
+   	        <title>Transition properties</title>
+       	    <tgroup cols="4">
+           	    <colspec colname="c1" colwidth="2*" />
+       			<colspec colname="c2" colwidth="4*" />
+   	            <colspec colname="c2" colwidth="2*" />
+                <colspec colname="c2" colwidth="2*" />
+                <thead>
+    	            <row>
+           		        <entry>Property name</entry>
+           				<entry>Description</entry>
+                        <entry>Cardinality</entry>
+    	                <entry>Default value</entry>
+       				</row>
+	  			</thead>
+			  	<tbody>
+           			<row>
+           				<entry>properties</entry>
+						<entry>Additional properties describing the transition.</entry>
+					    <entry>
+							<emphasis>1</emphasis>
+						</entry>
+						<entry>Always matches</entry>
+       	           </row>
+          		</tbody>
+			  	<tbody>
+           			<row>
+           				<entry>matchingCriteria</entry>
+						<entry>The strategy that determines if the transition matches on the occurence an event.</entry>
+					    <entry>
+							<emphasis>1</emphasis>
+						</entry>
+						<entry>Always matches</entry>
+       	           </row>
+          		</tbody>
+				<tbody>
+           			<row>
+           				<entry>executionCriteria</entry>
+						<entry>The strategy that determines if the transition, once matched, is allowed to execute..</entry>
+					    <entry>
+							<emphasis>1</emphasis>
+						</entry>
+						<entry>Always allowed</entry>
+       	           </row>
+           	   </tbody>
+				<tbody>
+           			<row>
+           				<entry>targetStateResolver</entry>
+						<entry>The strategy that calculates the target state of the transition.</entry>
+					    <entry>
+							<emphasis>1</emphasis>
+						</entry>
+						<entry></entry>
+       	           </row>
+           	   </tbody>
+          </tgroup>
+   	    </table>
+        <sect2 id="transition-xml">
+        	<title>Transition XML template</title>
+       	    <programlisting>
+    &lt;transition on="event" to="targetStateId"&gt;
+        &lt;property .../&gt;
+        &lt;action ../&gt;
+    &lt;/transition&gt;
+         	</programlisting>
+         	<para>
+         		Note the above support for an <literal>action</literal> element.  A transition 
+         		may be configured with one or more actions that execute <emphasis>before</emphasis> the transition itself
+         		is executed, set as part of the <literal>executionCriteria</literal>.  If one or more of these
+         		actions do not complete successfully the transition will <emphasis>not</emphasis> be allowed.
+         		This <emphasis>action transition criteria</emphasis> makes it possible to execute arbitrary logic
+         		after a transition is matched but before it is executed.
+         	</para>
+        </sect2>
+        <sect2 id="transition-java">
+        	<title>Transition Java API template</title>
+       	    <programlisting>
+    Transition transition = new Transition(new StaticTargetStateResolver("targetStateId"));
+    transition.setProperty(..., ...);
+    transition.setMatchingCriteria(...);
+    transition.setExecutionCriteria(...);
+         	</programlisting>
+        </sect2>
+    </sect1>
+
     <sect1 id="core-states">
     	<title>Concrete state types</title>
     	<para>

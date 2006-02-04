@@ -7,7 +7,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.TransitionTargetStateResolver;
+import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.builder.MyCustomException;
@@ -84,7 +84,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		}
 	}
 	
-	public static TransitionTargetStateResolver to(String stateId) {
-		return new StaticTransitionTargetStateResolver(stateId);
+	public static TargetStateResolver to(String stateId) {
+		return new StaticTargetStateResolver(stateId);
 	}
 }

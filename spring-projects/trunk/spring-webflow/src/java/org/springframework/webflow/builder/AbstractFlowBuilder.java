@@ -29,7 +29,7 @@ import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.TransitionTargetStateResolver;
+import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.support.ActionTransitionCriteria;
@@ -740,8 +740,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * simply the targetStateId
 	 * @return the target state resolver
 	 */
-	protected TransitionTargetStateResolver to(String targetStateExpression) {
-		return (TransitionTargetStateResolver)fromStringTo(TransitionTargetStateResolver.class).execute(
+	protected TargetStateResolver to(String targetStateExpression) {
+		return (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
 				targetStateExpression);
 	}
 
@@ -755,7 +755,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * transition
 	 * @return the transition (event matching criteria->stateId)
 	 */
-	protected Transition transition(TransitionCriteria criteria, TransitionTargetStateResolver targetStateResolver) {
+	protected Transition transition(TransitionCriteria criteria, TargetStateResolver targetStateResolver) {
 		Transition transition = new Transition(targetStateResolver);
 		transition.setMatchingCriteria(criteria);
 		return transition;
@@ -774,7 +774,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * transition can complete execution
 	 * @return the transition (event matching criteria->stateId)
 	 */
-	protected Transition transition(TransitionCriteria criteria, TransitionTargetStateResolver targetStateResolver,
+	protected Transition transition(TransitionCriteria criteria, TargetStateResolver targetStateResolver,
 			TransitionCriteria executionCriteria) {
 		Transition transition = transition(criteria, targetStateResolver);
 		transition.setExecutionCriteria(executionCriteria);
