@@ -116,7 +116,7 @@
 		<para>
 			TODO
 			Give high level overview of internal SWF architecture and layering (mentioned above).
-			Provide nice graphic!
+			Provide visual.
 		</para>
 	</sect1>
 	<sect1 id="introduction-package-structure">
@@ -184,10 +184,10 @@
 			</itemizedlist>
 		</sect2>
 		<sect2 id="webflow.manager">
-			<title>org.springframework.webflow.manager</title>
+			<title>org.springframework.webflow.executor</title>
 			<para>
-				The <emphasis>manager</emphasis> package is the highest-level package in the framework.  
-				It contains implementations of "flow execution managers" that <emphasis>drive</emphasis>
+				The <emphasis>executor</emphasis> package is the highest-level package in the framework.  
+				It contains implementations of "flow executors" that <emphasis>drive</emphasis>
 				the execution of flows.  This is where the facade for external systems that 
 				call into the Spring Web Flow system resides.  This is also where integration layers for
 				Spring MVC (Servlet and Portlet), Struts, and Java Server Faces (JSF) reside.
