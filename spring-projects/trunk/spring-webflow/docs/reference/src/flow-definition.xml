@@ -1216,6 +1216,20 @@
     			    application object to the <literal>Action</literal> interface and caring for
     			    exposing any return value in the correct scope.
     			</para>
+    			<para>
+    			    This is adaption process is shown graphically below:
+    			</para>
+				<mediaobject>
+					<imageobject role="fo">
+						<imagedata fileref="images/actionadapter-classdiagram.png" format="PNG" align="center"/>
+					</imageobject>
+					<imageobject role="html">
+						<imagedata fileref="images/actionadapter-classdiagram.png" format="PNG" align="center"/>
+					</imageobject>
+					<caption>
+						<para>Bean action adaptors</para>
+					</caption>
+				</mediaobject>
 			</sect3>    		
     	    <sect3 id="actionStateJava-pojoActionMethod">
     	    	<title>ActionState API - POJO action method execution</title>
