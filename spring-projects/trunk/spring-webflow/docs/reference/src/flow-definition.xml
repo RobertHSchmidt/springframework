@@ -441,7 +441,8 @@
          		actions do not complete successfully the transition will <emphasis>not</emphasis> be allowed.
          		This <emphasis>action transition criteria</emphasis> makes it possible to execute arbitrary logic
          		after a transition is matched but before it is executed.  This is useful when you want to execute 
-         		event post-processing logic that is specific to the state transition.
+         		event post-processing logic.  A good example is executing data binding and validation behavior 
+         		after a form submit event.
          	</para>
         </sect2>
         <sect2 id="transition-global">
@@ -630,14 +631,14 @@
 				  	<tbody>
             			<row>
               				<entry>viewName</entry>
-							<entry>The <emphasis>logical</emphasis> identifier for a response that should be issued.</entry>
+							<entry>The <emphasis>logical</emphasis> identifier of a response that should be issued.</entry>
 						    <entry>
 								<emphasis>1</emphasis>
 							</entry>
  						</row>
             			<row>
               				<entry>modelMap</entry>
-							<entry>The data that will be presented in the response.</entry>
+							<entry>The data that will be issued in the response.</entry>
 						    <entry>
 								<emphasis>0..*</emphasis>
 							</entry>
@@ -645,7 +646,7 @@
  						</row>
             			<row>
               				<entry>redirect</entry>
-							<entry>Indicates if this ViewSelection should trigger a browser redirect.</entry>
+							<entry>Requests whether a browser redirect should be triggered.</entry>
 						    <entry>
 								<emphasis>1</emphasis>
 							</entry>
@@ -729,7 +730,7 @@
         ...
     &lt;/flow&gt;
     			</programlisting>
-			</sect3>    		
+			</sect3>  		
     	    <sect3 id="viewStateJava">
     	    	<title>ViewState API - simple view selection</title>
     	    	<para>
@@ -749,7 +750,86 @@
         }
     }	
     			</programlisting>
-			</sect3>    		
+			</sect3>
+    	    <sect3 id="viewStateXml-redirect">
+    	    	<title>ViewState XML - conversation redirect</title>
+    	    	<para>
+    	    	    The following example illustrates a <literal>view-state</literal> definition in XML that makes a simple view 
+    	    	    selection when entered, redirecting to the <literal>yourList</literal> view for display.
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="displayList"&gt;
+        &lt;view-state id="displayList" view="yourList" redirect="true"&gt;
+            &lt;transition on="add" to="addListItem"/&gt;
+        &lt;/view-state&gt;
+        
+        ...
+    &lt;/flow&gt;
+    			</programlisting>
+			</sect3>
+			<para>
+			    This is example is called a <emphasis>conversation redirect</emphasis> because the ViewSelection made is cached 
+			    between request as the "current view selection" for the active conversation.  The actual redirect sent is a
+			    conversation URL that renders the current view selection on a request into the server.
+			</para>
+    	    <sect3 id="viewStateJava-redirect">
+    	    	<title>ViewState API - conversation redirect</title>
+    	    	<para>
+    	    	    The following example shows the equivalent view state definition using 
+    	    	    the FlowBuilder API:
+    	    	</para>
+    	    	<programlisting>
+    public class SearchFlowBuilder extends AbstractFlowBuilder {
+    	public void buildStates() {
+    	    addViewState("displayList", new SimpleViewSelector("yourView", true),
+   	            transition(on("add"), to("addListItem"))
+    	    );
+            ...    	          
+        }
+    }	
+    			</programlisting>
+			</sect3>
+    	    <sect3 id="viewStateXml-formState">
+    	    	<title>ViewState XML - form state behavior</title>
+    	    	<para>
+    	    	    The following example illustrates a <literal>view-state</literal> definition in XML that encapsulates 
+    	    	    typical "form state" behavior.
+    	    	</para>
+    	    	<para>
+    	    	    Consider the requirements of typical input forms.  Most forms require <emphasis>pre-render</emphasis> or
+    	    	    <emphasis>setup</emphasis> logic to execute before the form is displayed.  For example, such logic might 
+    	    	    load the <emphasis>backing form object</emphasis> from the database, install formatters for formatting 
+    	    	    form field values, and pull in supporting form data needed to populate drop-down menus.
+    	    	</para>
+    	    	<para>
+    	    	    In addition, most forms require <emphasis>post-back</emphasis> or <emphasis>submission</emphasis> logic 
+    	    	    to execute when the form is submitted.  This logic typically involves binding form input to the
+    	    	    <emphasis>backing form object</emphasis> and performing type conversion and data validation.
+    	    	</para>
+    	    	<para>
+    	    	    This "form state" behavior of form setup, display, and post-back is handled elegantly in Spring Web Flow 
+    	    	    by the capabilities of the <literal>view-state</literal> construct.  See below:
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="displayForm"&gt;
+        &lt;view-state id="displayForm" view="form"&gt;
+            &lt;entry-actions&gt;
+                &lt;action bean="formAction" method="setupForm"/&gt;
+            &lt;/entry-actions&gt;
+            
+            &lt;transition on="submit" to="saveForm"&gt;
+                &lt;action bean="formAction" method="bindAndValidate"/&gt;
+            &lt;/transition&gt;
+        &lt;/view-state&gt;
+        ...
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			   This reads "<emphasis>when the <literal>displayForm</literal> state is entered, execute the <literal>setupForm</literal> method on the 
+    			   <literal>formAction</literal> and render the <literal>form</literal> view.  On <literal>submit</literal> transition to the <literal>saveForm</literal> state if the 
+    			   <literal>bindAndValidate</literal> method on the <literal>formAction</literal> executes successfully.</emphasis>"
+    			</para>
+			</sect3>
     	</sect2>
     	<sect2 id="actionState">
     		<title>ActionState</title>
@@ -780,7 +860,7 @@
     		    your existing application objects (POJOs) to the <literal>Action</literal> interface in a non-invasive manner.
     		</para>
     		<sect3>
-    			<title>Action invocation</title>
+    			<title>Action execution points</title>
     			<para>
     			    As outlined, the <literal>ActionState</literal> is the central state type for invoking one 
     			    or more actions and responding to their result to drive a state transition.  There are
