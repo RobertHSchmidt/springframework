@@ -1059,7 +1059,7 @@
     }
     			</programlisting>
     			</para>
-			</sect3>    		
+			</sect3>		
     	    <sect3 id="actionStateJava-simple">
     	    	<title>ActionState API - simple action execution</title>
     	    	<para>
@@ -1227,7 +1227,7 @@
 						<imagedata fileref="images/actionadapter-classdiagram.png" format="PNG" align="center"/>
 					</imageobject>
 					<caption>
-						<para>Bean action adaptors</para>
+						<para>Bean-&gt;Action adapter</para>
 					</caption>
 				</mediaobject>
 			</sect3>    		
@@ -1255,8 +1255,55 @@
     	<sect2 id="decisionState">
     		<title>DecisionState</title>
     		<para>
-    			When entered, a decision state makes a flow routing decision.
+    			When entered, a decision state makes a flow routing decision.  This process consists of:
+    			<orderedlist>
+    				<listitem>
+    					<para>
+	    					Evaluating one or more boolean expressions against the executing flow to decide 
+	    					what state to transition to next.
+    					</para>
+    				</listitem>
+    				<listitem>
+    					<para>
+	    					Optionally, executing a single <emphasis>decision action</emphasis> and evaluating its return event to 
+	    					decide what state to transition to next.  This action should be idempotent; that is, it should not 
+	    					have side effects.  Convenient support for evaluating return values of methods invoked 
+	    					on your application objects (POJOs) is provided.
+    					</para>
+    				</listitem>
+    			</orderedlist>
     		</para>
+    	    <sect3 id="decisionStateXml-expression">
+    	    	<title>DecisionState XML - expression evaluation</title>
+    	    	<para>
+    	    	    The following example constructs an <literal>DecisionState</literal> from
+    	    	    XML that evalutes a boolean expression to determine what transition 
+    	    	    to execute:
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="shippingRequired"&gt;
+    
+        &lt;decision-state id="shippingRequired"&gt;
+            &lt;if test="${flowScope.order.needsShipping} then="enterShippingDetails" else="placeOrder"/&gt;
+        &lt;/decision-state&gt;
+        ...
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This state definition reads "<emphasis>if the <literal>needsShipping</literal> property on the 
+    			    <literal>order</literal> object in flow scope is true, transition to the <literal>enterShippingDetails</literal>
+    			    state, otherwise transition to the <literal>placeOrder</literal> state</emphasis>."
+    			</para>
+    			<para>
+    			    <emphasis>Caution</emphasis>: flow definitions should <emphasis>not</emphasis> be vehicles for 
+    			    business logic.  In this case the decision made was controller logic, reasoning on a
+    			    pre-calculated value to decide what step of the flow to transition to next.  That is the kind of logic that 
+    			    should be in a flow definition.  In contrast, having the state <emphasis>itself</emphasis> embed 
+    			    the business rule defining how shipping status is calculated is a misuse.
+    			    Instead, push such a calculation into application code where it belongs and <emphasis>instruct</emphasis>
+    			    the flow to invoke that code using an action.
+    			</para>
+			</sect3>
     	</sect2>
     	<sect2 id="subflowState">
     		<title>SubflowState</title>
