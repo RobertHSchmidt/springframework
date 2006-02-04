@@ -119,7 +119,7 @@
                    </row>
                    <row>
                        <entry>inlineFlows</entry>
-                       <entry>A set of inner Flows that will be called as subflows; these Flows are locally scoped to the outer Flow.</entry>
+                       <entry>A set of inner flows that will be called as subflows; these flows are locally scoped to the outer flow.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -325,7 +325,7 @@
     	</para>
     	<para>
     	    Recall that all TransitionableStates have a set of one or more transitions, each defining a 
-    	    path to another state in the flow.  When a transitionable state is entered, it executes a behavior.
+    	    path to another state in the flow (or a recursive path back to the same state).  When a transitionable state is entered, it executes a behavior.
     	    For example, a transitionable state called "Display Form" may display a form to the user.
     	    The outcome of the state's execution, called an event, is used to drive execution of 
     	    one of the state's transitions.  For example, the user may press the form submit button which
@@ -333,7 +333,7 @@
     	    the "Process Submit" state.
     	</para>
     	<para>
-    		This process is shown graphically below:
+    		This event-driven transition execution process is shown graphically below:
     	</para>
 		<mediaobject>
 			<imageobject role="fo">
@@ -343,7 +343,7 @@
 				<imagedata fileref="images/transition-statediagram.jpg" format="JPEG" align="center"/>
 			</imageobject>
 			<caption>
-				<para>State class diagram</para>
+				<para>Transition execution</para>
 			</caption>
 		</mediaobject>
 		<para>
@@ -370,9 +370,9 @@
            				<entry>properties</entry>
 						<entry>Additional properties describing the transition.</entry>
 					    <entry>
-							<emphasis>1</emphasis>
+							<emphasis>0..*</emphasis>
 						</entry>
-						<entry>Always matches</entry>
+						<entry>None</entry>
        	           </row>
           		</tbody>
 			  	<tbody>
@@ -388,7 +388,7 @@
 				<tbody>
            			<row>
            				<entry>executionCriteria</entry>
-						<entry>The strategy that determines if the transition, once matched, is allowed to execute..</entry>
+						<entry>The strategy that determines if the transition, once matched, is allowed to execute.</entry>
 					    <entry>
 							<emphasis>1</emphasis>
 						</entry>
@@ -410,7 +410,7 @@
         <sect2 id="transition-xml">
         	<title>Transition XML template</title>
        	    <programlisting>
-    &lt;transition on="event" to="targetStateId"&gt;
+    &lt;transition on="event" to="targetState"&gt;
         &lt;property .../&gt;
         &lt;action ../&gt;
     &lt;/transition&gt;
@@ -418,23 +418,89 @@
          	<para>
          		Note the above support for an <literal>action</literal> element.  A transition 
          		may be configured with one or more actions that execute <emphasis>before</emphasis> the transition itself
-         		is executed, set as part of the <literal>executionCriteria</literal>.  If one or more of these
+         		executes, as part of the <literal>executionCriteria</literal>.  If one or more of these
          		actions do not complete successfully the transition will <emphasis>not</emphasis> be allowed.
          		This <emphasis>action transition criteria</emphasis> makes it possible to execute arbitrary logic
-         		after a transition is matched but before it is executed.
+         		after a transition is matched but before it is executed.  This is useful when you want to execute 
+         		event post-processing logic that is specific to the state transition.
          	</para>
         </sect2>
         <sect2 id="transition-java">
         	<title>Transition Java API template</title>
        	    <programlisting>
-    Transition transition = new Transition(new StaticTargetStateResolver("targetStateId"));
+    Transition transition = new Transition(new StaticTargetStateResolver("targetState"));
     transition.setProperty(..., ...);
     transition.setMatchingCriteria(new EventIdTransitionCriteria("event"));
     transition.setExecutionCriteria(...);
          	</programlisting>
         </sect2>
-    </sect1>
+        <sect2 id="transition-global">
+        	<title>Global transitions</title>
+        	<para>
+        		As outlined, one or more transitions are added to all TransitionableState types, 
+        		attached at the state-level.  Optionally, transitions may also be added at the
+        		<emphasis>flow-level</emphasis> where they are shared by all states.  These shared
+        		transitions are called <emphasis>global transitions</emphasis>.
+        	</para>
+        	<para>
+        	    When an event is signaled in a transitionable state the state will first try and 
+        	    match one of its own transitions.  If there is no match at the state level the set of
+        	    global transitions will be tested.  If there still no match
+        	    a <literal>NoMatchingTransitionException</literal> will be thrown.
+        	</para>
+        	<para>
+        	    Global transitions are useful in situations where many states of the flow share 
+        	    the same transitional criteria.  For example, consider a navigation menu that displays 
+        	    alongside each view of a flow.  Logic to process navigation menu events is needed 
+        	    by all view states.  This is the problem global transitions are designed to solve.
+        	</para>
+        	<sect3 id="transition-globalXml">
+    	    	<title>Global transitions - XML example</title>
+    	    	<para>
+    	    	    The following example shows transitions defined at the state level, as well as 
+    	    	    global transitions inherited from the flow level.
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="state1"&gt;
+    
+        &lt;some-state id="state1"&gt;
+            &lt;transition on="localEvent1" to="state2"/&gt;
+        &lt;/some-state&gt;
 
+        &lt;some-state id="state2"&gt;
+            &lt;transition on="localEvent1" to="state1"/&gt;
+        &lt;/some-state&gt;
+		        
+        &lt;global-transitions&gt;
+            &lt;transition on="globalEvent1" to="state1"/&gt;
+            &lt;transition on="globalEvent2" to="state2"/&gt;
+        &lt;/global-transitions&gt;
+               
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    In this example <literal>state1</literal> defines one transition and also inherits
+    			    the two others defined within the <literal>global-transitions</literal> element.
+    			    Any other states defined within this flow would also inherit those global 
+    			    transitions.
+    			</para>
+    			<para>
+    			    This example is shown graphically below:
+    			</para>
+				<mediaobject>
+					<imageobject role="fo">
+						<imagedata fileref="images/globaltransitions-statediagram.png" format="PNG" align="center"/>
+					</imageobject>
+					<imageobject role="html">
+						<imagedata fileref="images/globaltransitions-statediagram.png" format="PNG" align="center"/>
+					</imageobject>
+					<caption>
+						<para>Global transitions</para>
+					</caption>
+				</mediaobject>    			
+			</sect3>
+		</sect2>
+    </sect1>
     <sect1 id="core-states">
     	<title>Concrete state types</title>
     	<para>
@@ -473,8 +539,8 @@
     				<listitem>
     					<para>
 	    					The entered view state makes a <literal>org.springframework.webflow.ViewSelection</literal> 
-	   	 				that selects a <emphasis>logical</emphasis> response to issue with the data necessary 
-   		 				to issue it.
+		   	 				that selects a <emphasis>logical</emphasis> response to issue with the data necessary 
+   			 				to issue it.
    		 			</para>
     				</listitem>
     				<listitem>
@@ -583,7 +649,7 @@
 	    		<para>
     				The creational strategy that is responsible for making a <literal>ViewSelection</literal> when an <literal>ViewState</literal> is entered
     				is <literal>org.springframework.webflow.ViewSelector</literal>.  This provides a plugin-point for customizing <emphasis>how</emphasis>
-    				the <literal>viewName</literal> is calculated and how the <literal>modelMap</literal> is prepared.
+    				the <literal>viewName</literal> is calculated, how the <literal>modelMap</literal> is prepared, and whether a redirect should be issued.
     			</para>
     			<para>
     			    Two <literal>ViewSelector</literal> implementations are provided with Spring Web Flow:
@@ -603,16 +669,18 @@
             				<row>
               					<entry>SimpleViewSelector</entry>
 								<entry>
-									Returns a ViewSelection with a static viewName and modelMap containing the union of 
-									the attributes in flow scope and request scope.  The default implementation.
+									Returns a ViewSelection with a static <literal>viewName</literal> and <literal>modelMap</literal> containing the union of 
+									the attributes in flow scope and request scope.  Supports setting a <literal>requestConversationRedirect</literal>
+									flag that triggers a browser redirect to the selected view.  The default implementation.
 								</entry>
 	        	   	        </row>
             				<row>
               					<entry>RedirectViewSelector</entry>
 								<entry>
-									Returns a ViewSelection that triggers a browser redirect.  The viewName is the relative URL to 
-									redirect to.  Attributes added to the modelMap become URL query parameters.
-									Mainly used by end states to <emphasis>redirect after flow completion</emphasis>.
+									Returns a ViewSelection that triggers a browser redirect to an abitrary external URL.
+									The <literal>viewName</literal> is the relative URL to redirect to.  Attributes added to the <literal>modelMap</literal>
+									become URL query parameters.  Mainly used by end states to
+									<emphasis>redirect after flow completion</emphasis>.
 								</entry>
 	        	   	        </row>
 	            		</tbody>
