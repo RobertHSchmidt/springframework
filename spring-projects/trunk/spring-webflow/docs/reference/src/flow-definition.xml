@@ -94,16 +94,16 @@
 				       <entry>Empty</entry>
                    </row>
                    <row>
-                       <entry>endActions</entry>
-                       <entry>The list of actions to execute each time an execution of the flow ends.</entry>
+                       <entry>globalTransitions</entry>
+                       <entry>The set of transitions shared by all states of this flow.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
 				       <entry>Empty</entry>
                    </row>
                    <row>
-                       <entry>globalTransitions</entry>
-                       <entry>A set of transitions shared by all states of this flow.</entry>
+                       <entry>endActions</entry>
+                       <entry>The list of actions to execute each time an execution of the flow ends.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -143,6 +143,10 @@
         &lt;/start-actions&gt;
         
         &lt;-- your state definitions go here --&gt;
+
+        &lt;global-transitions&gt;
+            ...
+        &lt;/global-transitions&gt;
         
         &lt;end-actions&gt;
             ...

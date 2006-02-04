@@ -131,6 +131,16 @@ public class Flow extends AnnotatedObject {
 	private ActionList startActionList = new ActionList();
 
 	/**
+	 * The set of global transitions that are shared by all states of this flow.
+	 */
+	private TransitionSet globalTransitionSet = new TransitionSet();
+
+	/**
+	 * The list of actions to execute when this flow ends.
+	 */
+	private ActionList endActionList = new ActionList();
+
+	/**
 	 * The list of exception handlers for this flow.
 	 */
 	private StateExceptionHandlerSet exceptionHandlerSet = new StateExceptionHandlerSet();
@@ -139,16 +149,6 @@ public class Flow extends AnnotatedObject {
 	 * The list of exception handlers for this flow.
 	 */
 	private Set inlineFlows = CollectionFactory.createLinkedSetIfPossible(3);
-
-	/**
-	 * The list of actions to execute when this flow ends.
-	 */
-	private ActionList endActionList = new ActionList();
-
-	/**
-	 * The set of global transitions that are shared by all states of this flow.
-	 */
-	private TransitionSet globalTransitionSet = new TransitionSet();
 
 	/**
 	 * Default constructor for bean style usage.
