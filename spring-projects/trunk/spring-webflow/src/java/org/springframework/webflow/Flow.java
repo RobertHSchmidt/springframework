@@ -146,9 +146,9 @@ public class Flow extends AnnotatedObject {
 	private ActionList endActionList = new ActionList();
 
 	/**
-	 * The set of global transitions that apply to this flow.
+	 * The set of global transitions that are shared by all states of this flow.
 	 */
-	private TransitionSet transitionSet = new TransitionSet();
+	private TransitionSet globalTransitionSet = new TransitionSet();
 
 	/**
 	 * Default constructor for bean style usage.
@@ -534,21 +534,23 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Convenience method that adds an transition to this flow's transition set.
 	 * <p>
-	 * Flow transitions are "global" transitions that are eligible for execution
-	 * if an event does not match a transition at the state-level.
+	 * Flow transitions are called <i>global transitions</i> as they are shared
+	 * by all states, eligible for execution if an event does not match a
+	 * transition at the state-level.
+	 * @see #onEvent(Event, FlowExecutionControlContext)
 	 * @param transition the transition to add
 	 */
-	public void addTransition(Transition transition) {
-		getTransitionSet().add(transition);
+	public void addGlobalTransition(Transition transition) {
+		getGlobalTransitionSet().add(transition);
 	}
 
 	/**
 	 * Returns the set of transitions eligible for execution by this flow if no
 	 * state-level transition is matched.
-	 * @return the transition set
+	 * @return the global transition set
 	 */
-	public TransitionSet getTransitionSet() {
-		return transitionSet;
+	public TransitionSet getGlobalTransitionSet() {
+		return globalTransitionSet;
 	}
 
 	/**
@@ -580,7 +582,7 @@ public class Flow extends AnnotatedObject {
 		}
 		catch (NoMatchingTransitionException e) {
 			// try the flow level transition set for a match
-			Transition transition = transitionSet.getTransition(context);
+			Transition transition = globalTransitionSet.getTransition(context);
 			if (transition != null) {
 				return transition.execute(currentState, context);
 			}
@@ -626,6 +628,6 @@ public class Flow extends AnnotatedObject {
 		return new ToStringCreator(this).append("id", id).append("states", states).append("startState", startState)
 				.append("startActionList", startActionList).append("inlineFlows", inlineFlows).append(
 						"exceptionHandlerSet", exceptionHandlerSet).append("endActionList", endActionList).append(
-						"transitionSet", transitionSet).toString();
+						"transitionSet", globalTransitionSet).toString();
 	}
 }

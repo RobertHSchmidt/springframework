@@ -512,7 +512,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		List transitionElements = DomUtils.getChildElementsByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
 		if (!transitionElements.isEmpty()) {
 			Element transitionElement = (Element)transitionElements.get(0);
-			flow.getTransitionSet().addAll(parseTransitions(transitionElement));
+			flow.getGlobalTransitionSet().addAll(parseTransitions(transitionElement));
 		}
 	}
 

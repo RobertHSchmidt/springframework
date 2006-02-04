@@ -102,6 +102,14 @@
 				       <entry>Empty</entry>
                    </row>
                    <row>
+                       <entry>globalTransitions</entry>
+                       <entry>A set of transitions shared by all states of this flow.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+				       <entry>Empty</entry>
+                   </row>
+                   <row>
                        <entry>exceptionHandlers</entry>
                        <entry>An ordered set of handlers to be applied when an exception is thrown within a state of the flow.</entry>
 				       <entry>

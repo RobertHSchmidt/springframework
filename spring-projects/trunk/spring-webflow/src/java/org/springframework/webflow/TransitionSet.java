@@ -28,7 +28,7 @@ import org.springframework.core.style.ToStringCreator;
  * apply transition execution logic.
  * 
  * @see TransitionableState#getTransitionSet()
- * @see Flow#getTransitionSet()
+ * @see Flow#getGlobalTransitionSet()
  * 
  * @author Keith Donald
  */
