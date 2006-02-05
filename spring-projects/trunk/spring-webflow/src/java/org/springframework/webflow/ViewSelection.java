@@ -46,7 +46,7 @@ import org.springframework.util.ObjectUtils;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public final class ViewSelection implements Serializable {
+public class ViewSelection implements Serializable {
 
 	/**
 	 * Serialization version uid.
