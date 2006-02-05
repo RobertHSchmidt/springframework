@@ -859,12 +859,42 @@
     		    within the lifecycle of a flow.  The system can also <emphasis>automatically</emphasis> adapt methods on
     		    your existing application objects (POJOs) to the <literal>Action</literal> interface in a non-invasive manner.
     		</para>
+    	    <para>
+    	    	The properties of a <literal>org.springframework.webflow.ActionState</literal> are summarized below:
+    	    </para>
+	    	<table>
+    	        <title>ActionState properties</title>
+        	    <tgroup cols="4">
+            	    <colspec colname="c1" colwidth="2*" />
+        			<colspec colname="c2" colwidth="4*" />
+    	            <colspec colname="c2" colwidth="2*" />
+	                <colspec colname="c2" colwidth="2*" />
+	                <thead>
+       		            <row>
+               		        <entry>Property name</entry>
+               				<entry>Description</entry>
+	                        <entry>Cardinality</entry>
+       		                <entry>Default value</entry>
+           				</row>
+		  			</thead>
+				  	<tbody>
+            			<row>
+              				<entry>actions</entry>
+							<entry>The ordered list of actions to execute when the state is entered.</entry>
+						    <entry>
+								<emphasis>1..*</emphasis>
+							</entry>
+							<entry></entry>
+        	           </row>
+            	   </tbody>
+	          </tgroup>
+    	    </table>
     		<sect3>
     			<title>Action execution points</title>
     			<para>
     			    As outlined, the <literal>ActionState</literal> is the central state type for invoking one 
     			    or more actions and responding to their result to drive a state transition.  There are
-    			    also other points within the lifecycle of a flow where an Action can be executed.
+    			    also other points within the lifecycle of a flow where a chain of actions can be executed.
     			    At all of these points the only requirement is that these actions implement the central
     			    <literal>org.springframework.webflow.Action</literal> interface.
 	    		</para>
@@ -1241,12 +1271,16 @@
     public class SearchFlowBuilder extends AbstractFlowBuilder {
     	public void buildStates() {
     	    ...
+            addActionState("executeSearch", searchAction(),
+                transition(on("success"), to("displayResults")));
+            ...    	          
+        }
+        
+        protected Action searchAction() {
             AnnotatedAction searchAction =
                 method("executeSearch(${flowScope.criteria})", action("searchAction"));
             searchAction.setResultName("results");
-            addActionState("executeSearch", searchAction,
-                transition(on("success"), to("displayResults")));
-            ...    	          
+            return searchAction;
         }
     }	
     			</programlisting>
@@ -1273,6 +1307,39 @@
     				</listitem>
     			</orderedlist>
     		</para>
+    	    <para>
+    	    	The properties of a <literal>org.springframework.webflow.DecisionState</literal> are summarized below:
+    	    </para>
+	    	<table>
+    	        <title>DecisionState properties</title>
+        	    <tgroup cols="4">
+            	    <colspec colname="c1" colwidth="2*" />
+        			<colspec colname="c2" colwidth="4*" />
+    	            <colspec colname="c2" colwidth="2*" />
+	                <colspec colname="c2" colwidth="2*" />
+	                <thead>
+       		            <row>
+               		        <entry>Property name</entry>
+               				<entry>Description</entry>
+	                        <entry>Cardinality</entry>
+       		                <entry>Default value</entry>
+           				</row>
+		  			</thead>
+				  	<tbody>
+            			<row>
+              				<entry>action</entry>
+							<entry>
+								The idempotent action to execute when the state is entered.
+								The action result event is used as the basis for the decision.
+							</entry>
+						    <entry>
+								<emphasis>0..1</emphasis>
+							</entry>
+							<entry>Null</entry>
+        	           </row>
+            	   </tbody>
+	          </tgroup>
+    	    </table>		
     	    <sect3 id="decisionStateXml-expression">
     	    	<title>DecisionState XML - expression evaluation</title>
     	    	<para>
@@ -1438,12 +1505,57 @@
     		   be passed input arguments and can produce return values just like methods can.  Flows are more powerful because 
     		   they are potentially long-running, as they can span more than one request into the server.
     		</para>
+    	    <para>
+    	    	The properties of a <literal>org.springframework.webflow.SubflowState</literal> are summarized below:
+    	    </para>
+	    	<table>
+    	        <title>SubflowState properties</title>
+        	    <tgroup cols="4">
+            	    <colspec colname="c1" colwidth="2*" />
+        			<colspec colname="c2" colwidth="4*" />
+    	            <colspec colname="c2" colwidth="2*" />
+	                <colspec colname="c2" colwidth="2*" />
+	                <thead>
+       		            <row>
+               		        <entry>Property name</entry>
+               				<entry>Description</entry>
+	                        <entry>Cardinality</entry>
+       		                <entry>Default value</entry>
+           				</row>
+		  			</thead>
+				  	<tbody>
+            			<row>
+              				<entry>subflow</entry>
+							<entry>
+								The definition of the flow to be spawned as a subflow.
+							</entry>
+						    <entry>
+								<emphasis>1</emphasis>
+							</entry>
+							<entry></entry>
+        	           </row>
+            	   </tbody>
+				  	<tbody>
+            			<row>
+              				<entry>attributeMapper</entry>
+							<entry>
+								The strategy responsible for mapping input attributes to the subflow and 
+								mapping output attributes from the subflow.
+							</entry>
+						    <entry>
+								<emphasis>0..*</emphasis>
+							</entry>
+							<entry>Null</entry>
+        	           </row>
+            	   </tbody>
+	          </tgroup>
+    	    </table>
     		<para>
     			When a SubflowState is entered, the following behavior occurs:
     			<orderedlist>
     				<listitem>
     					<para>
-    						The state first messages a strategy, an instance of <literal>org.springframework.webflow.FlowAttributeMapper</literal>,
+    						The state first messages its <literal>attributeMapper</literal>, an instance of <literal>org.springframework.webflow.FlowAttributeMapper</literal>,
     						to prepare a <literal>Map</literal> of input attributes to pass to the subflow.
     					</para>
     				</listitem>
@@ -1462,7 +1574,7 @@
     				</listitem>
     				<listitem>
     					<para>
-    						The resumed subflow state messages its <literal>FlowAttributeMapper</literal> to 
+    						The resumed subflow state messages its <literal>attributeMapper</literal> to 
     						map any output attributes returned by the subflow into flow scope, if necessary.
     					</para>
     				</listitem>
@@ -1488,6 +1600,64 @@
 					<para>SubflowState class diagram</para>
 				</caption>
 			</mediaobject>
+    	    <sect3 id="subflowStateXml">
+    	    	<title>SubflowState XML - with input attribute</title>
+    	    	<para>
+    	    	    The following example constructs an <literal>SubflowState</literal> from
+    	    	    XML that spawns a shipping subflow:
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="enterOrderInformation"&gt;
+    
+		...
+		        
+        &lt;subflow-state id="enterShippingDetails" flow="shipping"&lt;
+            &lt;attribute-mapper&gt;
+                &lt;input-attribute value="${flowScope.order.shipping}" name="shipping"/&gt;
+            &lt;/attribute-mapper&gt;
+            &lt;transition on="finish" to="placeOrder"/>
+        &lt;/subflow-state&gt;
+        
+        ...
+        
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This subflow state definition reads "<emphasis>spawn the <literal>shipping</literal> flow 
+    			    and pass it the value of the <literal>shipping</literal> property on the <literal>order</literal>
+    			    object in flow scope as an input attribute with the name <literal>shipping</literal>.
+    			    When the <literal>shipping</literal> flow ends, respond to the <literal>finish</literal> 
+    			    result event by transitioning to the <literal>placeOrder</literal> state</emphasis>."
+    			</para>
+    			<para>
+    				Note how the inner structure and behavior of the shipping flow is fully encapsulated within 
+    				its own flow definition.  A flow calling another flow as a subflow can pass that flow input 
+    				and capture its output, but it cannot see inside it.  Flows are <emphasis>black boxes</emphasis>.
+    				Because any flow can be used as a subflow, it can be reused in other contexts without change.
+    			</para>
+			</sect3>
+    	    <sect3 id="subflowStateJava">
+    	    	<title>SubflowState API - input attributes</title>
+    	    	<para>
+    	    	    The following illustrates the equivalent example using the <literal>FlowBuilder</literal> API:
+    	    	</para>
+    	    	<programlisting>
+    public class OrderFlowBuilder extends AbstractFlowBuilder {
+    	public void buildStates() {
+    	    ...
+            addSubflowState("enterShippingDetails", flow("shipping"), shippingMapper(),
+                transition(on("finish"), to("placeOrder")));
+            ...    	          
+        }
+        
+        protected FlowAttributeMapper shippingMapper() {
+            ParameterizableFlowAttributeMapper mapper = new ParameterizableFlowAttributeMapper();
+    	    mapper.addMapping("${flowScope.order.shipping}", "shipping");
+    	    return mapper;
+    	}
+    }	
+    			</programlisting>
+    		</sect3>
     	</sect2>
     	<sect2 id="endState">
     		<title>EndState</title>
