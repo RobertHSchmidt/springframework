@@ -244,6 +244,77 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
+	 * Returns the attribute in conversation scope. Conversation-scoped
+	 * attributes are shared by all flow sessions.
+	 * @param attributeName the name of the attribute
+	 * @return the attribute value
+	 */
+	protected Object getConversationAttribute(String attributeName) {
+		return getFlowExecutionContext().getConversationScope().getAttribute(attributeName);
+	}
+
+	/**
+	 * Returns the required attribute in conversation scope; asserts the
+	 * attribute is present. Conversation-scoped attributes are shared by all
+	 * flow sessions.
+	 * @param attributeName the name of the attribute
+	 * @return the attribute value
+	 * @throws IllegalStateException if the attribute was not present.
+	 */
+	protected Object getRequiredConversationAttribute(String attributeName) throws IllegalStateException {
+		return getFlowExecutionContext().getConversationScope().getRequiredAttribute(attributeName);
+	}
+
+	/**
+	 * Returns the required attribute in conversation scope; asserts the
+	 * attribute is present and of the required type. Conversation-scoped
+	 * attributes are shared by all flow sessions.
+	 * @param attributeName the name of the attribute
+	 * @return the attribute value
+	 * @throws IllegalStateException if the attribute was not present or not of
+	 * the required type.
+	 */
+	protected Object getRequiredConversationAttribute(String attributeName, Class requiredType)
+			throws IllegalStateException {
+		return getFlowExecutionContext().getConversationScope().getRequiredAttribute(attributeName, requiredType);
+	}
+
+	/**
+	 * Returns the attribute in flow scope. Flow-scoped attributes are local to
+	 * the active flow session.
+	 * @param attributeName the name of the attribute
+	 * @return the attribute value
+	 */
+	protected Object getFlowAttribute(String attributeName) {
+		return getFlowExecutionContext().getActiveSession().getScope().getAttribute(attributeName);
+	}
+
+	/**
+	 * Returns the required attribute in flow scope; asserts the attribute is
+	 * present. Flow-scoped attributes are local to the active flow session.
+	 * @param attributeName the name of the attribute
+	 * @return the attribute value
+	 * @throws IllegalStateException if the attribute was not present.
+	 */
+	protected Object getRequiredFlowAttribute(String attributeName) throws IllegalStateException {
+		return getFlowExecutionContext().getActiveSession().getScope().getRequiredAttribute(attributeName);
+	}
+
+	/**
+	 * Returns the required attribute in flow scope; asserts the attribute is
+	 * present and of the correct type. Flow-scoped attributes are local to the
+	 * active flow session.
+	 * @param attributeName the name of the attribute
+	 * @return the attribute value
+	 * @throws IllegalStateException if the attribute was not present or was of
+	 * the wrong type.
+	 */
+	protected Object getRequiredFlowAttribute(String attributeName, Class requiredType) throws IllegalStateException {
+		return getFlowExecutionContext().getActiveSession().getScope()
+				.getRequiredAttribute(attributeName, requiredType);
+	}
+
+	/**
 	 * Assert that the active flow session is for the flow with the provided id.
 	 * @param expectedActiveFlowId the flow id that should have a session active
 	 * in the tested flow execution

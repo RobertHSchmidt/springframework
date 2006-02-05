@@ -15,11 +15,14 @@
  */
 package org.springframework.webflow.registry;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
+import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
@@ -66,14 +69,24 @@ public class FlowRegistryImpl implements FlowRegistry {
 		return flowDefinitions.size();
 	}
 
-	public void registerFlow(FlowHolder flowHolder) {
-		Assert.notNull(flowHolder, "The flow definition holder to register is required");
-		index(flowHolder);
-	}
-
 	public boolean containsFlow(String id) {
 		Assert.hasText(id, "The flow id is required");
 		return flowDefinitions.get(id) != null;
+	}
+
+	public Collection getFlows() {
+		Set flows = CollectionFactory.createLinkedSetIfPossible(flowDefinitions.size());
+		Iterator it = flowDefinitions.values().iterator();
+		while (it.hasNext()) {
+			FlowHolder holder = (FlowHolder)it.next();
+			flows.add(holder.getFlow());
+		}
+		return flows;
+	}
+	
+	public void registerFlow(FlowHolder flowHolder) {
+		Assert.notNull(flowHolder, "The flow definition holder to register is required");
+		index(flowHolder);
 	}
 
 	public void removeFlowDefinition(String id) {

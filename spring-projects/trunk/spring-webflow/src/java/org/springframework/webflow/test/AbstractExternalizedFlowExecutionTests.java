@@ -15,10 +15,15 @@
  */
 package org.springframework.webflow.test;
 
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.registry.ExternalizedFlowRegistrar;
 import org.springframework.webflow.registry.FlowRegistry;
+import org.springframework.webflow.registry.StaticFlowHolder;
 
 /**
  * Base class for flow integration tests that verify an externalized flow
@@ -32,20 +37,66 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractMan
 	 * Simply tracks the <code>id</code> of the flow definition to test.
 	 */
 	private static String flowId;
+
+	/**
+	 * The cached flows.
+	 */
+	private static Collection cachedFlows;
 	
+	/**
+	 * A flag indicating if this test should cache flow definitions built from
+	 * externalized resources.  Default is <code>true</code>.
+	 */
+	private boolean cacheFlowDefinitions = false;
+
 	protected void populateFlowRegistry(FlowRegistry flowRegistry, FlowArtifactFactory flowArtifactFactory) {
-		ExternalizedFlowRegistrar registrar = createFlowRegistrar();
-		ExternalizedFlowDefinition flowDefinition = getFlowDefinition();
-		flowId = flowDefinition.getId();
-		registrar.addFlowDefinition(flowDefinition);
-		registrar.addFlowDefinitions(getSubflowDefinitions());
-		registrar.registerFlows(getFlowRegistry(), getFlowArtifactFactory());
+		if (isCachePopulated()) {
+			Iterator it = cachedFlows.iterator();
+			while (it.hasNext()) {
+				flowRegistry.registerFlow(new StaticFlowHolder((Flow)it.next()));
+			}
+		}
+		else {
+			ExternalizedFlowRegistrar registrar = createFlowRegistrar();
+			ExternalizedFlowDefinition flowDefinition = getFlowDefinition();
+			flowId = flowDefinition.getId();
+			registrar.addFlowDefinition(flowDefinition);
+			registrar.addFlowDefinitions(getSubflowDefinitions());
+			registrar.registerFlows(getFlowRegistry(), getFlowArtifactFactory());
+			if (isCacheFlowDefinitions()) {
+				// cache externally-built flow definitions for performance
+				cachedFlows = flowRegistry.getFlows();
+			}
+		}
 	}
 
-	protected String getFlowId() {
-		return flowId;
+	/**
+	 * Returns whether this test is caching the flow definitions built from the
+	 * underlying externalized resources.
+	 */
+	public boolean isCacheFlowDefinitions() {
+		return cacheFlowDefinitions;
+	}
+	/**
+	 * Set the flag indicating if this test should cache the flow definitions
+	 * built from the referenced externalized resources.
+	 */
+	public void setCacheFlowDefinitions(boolean cacheFlowDefinitions) {
+		this.cacheFlowDefinitions = cacheFlowDefinitions;
+	}
+
+	/**
+	 * Returns if the cache of flow definitions has been populated; only could return 
+	 * true if caching has been turned on.
+	 */
+	public boolean isCachePopulated() {
+		return isCacheFlowDefinitions() && cachedFlows != null;
 	}
 	
+	protected final String getFlowId() {
+		return flowId;
+	}
+
 	/**
 	 * Factory method that returns the flow registrar that will perform registry
 	 * population of externalized flow definitions. Sublcasses may override.

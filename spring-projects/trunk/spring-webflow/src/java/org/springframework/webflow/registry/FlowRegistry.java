@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.registry;
 
+import java.util.Collection;
+
 import org.springframework.webflow.execution.FlowLocator;
 
 /**
@@ -42,6 +44,12 @@ public interface FlowRegistry extends FlowRegistryMBean, FlowLocator {
 	 */
 	public boolean containsFlow(String id);
 
+	/**
+	 * Return an unmodifiable collection of the flow definitions registered in this registry.
+	 * @return the flow collection
+	 */
+	public Collection getFlows();
+	
 	/**
 	 * Register the flow definition in this registry. Registers a "holder", not
 	 * the Flow definition itself. This allows the actual Flow definition to be

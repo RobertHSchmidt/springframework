@@ -73,24 +73,24 @@ public abstract class AbstractManagedFlowExecutionTests extends AbstractFlowExec
 	/**
 	 * The flow registry.
 	 */
-	private static FlowRegistry flowRegistry;
+	private FlowRegistry flowRegistry;
 
 	/**
 	 * The flow artifact factory.
 	 */
-	private static FlowArtifactFactory flowArtifactFactory;
+	private FlowArtifactFactory flowArtifactFactory;
 
 	/**
 	 * Returns the flow artifact factory.
 	 */
-	protected static FlowArtifactFactory getFlowArtifactFactory() {
+	protected FlowArtifactFactory getFlowArtifactFactory() {
 		return flowArtifactFactory;
 	}
 
 	/**
 	 * Returns the flow registry.
 	 */
-	protected static FlowRegistry getFlowRegistry() {
+	protected FlowRegistry getFlowRegistry() {
 		return flowRegistry;
 	}
 
@@ -109,11 +109,9 @@ public abstract class AbstractManagedFlowExecutionTests extends AbstractFlowExec
 	protected abstract String getFlowId();
 
 	protected void setUp() {
-		if (flowRegistry == null) {
-			flowRegistry = createFlowRegistry();
-			flowArtifactFactory = createFlowArtifactFactory();
-			populateFlowRegistry(flowRegistry, flowArtifactFactory);
-		}
+		flowRegistry = createFlowRegistry();
+		flowArtifactFactory = createFlowArtifactFactory();
+		populateFlowRegistry(flowRegistry, flowArtifactFactory);
 	}
 
 	/**

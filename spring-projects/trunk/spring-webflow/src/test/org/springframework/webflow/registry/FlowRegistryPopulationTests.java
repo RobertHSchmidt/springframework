@@ -43,25 +43,6 @@ public class FlowRegistryPopulationTests extends TestCase {
 		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());
 	}
 
-	public static class StaticFlowHolder implements FlowHolder {
-		private Flow flow;
-
-		public StaticFlowHolder(Flow flow) {
-			this.flow = flow;
-		}
-
-		public Flow getFlow() {
-			return flow;
-		}
-
-		public String getId() {
-			return flow.getId();
-		}
-
-		public void refresh() {
-		}
-	}
-
 	public void testXmlPopulationWithRecursion() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
 		FlowArtifactFactory flowArtifactFactory = new FlowRegistryFlowArtifactFactory(registry,
