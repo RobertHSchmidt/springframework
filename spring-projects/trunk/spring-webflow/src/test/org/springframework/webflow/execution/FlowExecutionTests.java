@@ -111,12 +111,10 @@ public class FlowExecutionTests extends TestCase {
 		assertEquals("viewName", view.getViewName());
 		for (int i = 0; i < 10; i++) {
 			view = flowExecution.signalEvent("submit", new MockExternalContext());
-			assertNotNull(view);
 			assertEquals("viewName", view.getViewName());
 		}
 		assertTrue(flowExecution.isActive());
 		view = flowExecution.signalEvent("finish", new MockExternalContext());
-		assertNull(view);
 		assertFalse(flowExecution.isActive());
 	}
 

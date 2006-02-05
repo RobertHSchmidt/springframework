@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.support.MarkerViewSelector;
 
 /**
  * Terminates an active flow session when entered. If the terminated session is
@@ -57,7 +58,7 @@ public class EndState extends State {
 	 * The optional view selector that will select a view to render if this end
 	 * state terminates an executing root flow.
 	 */
-	private ViewSelector viewSelector;
+	private ViewSelector viewSelector = MarkerViewSelector.INSTANCE;
 
 	/**
 	 * The set of output attributes that will be returned to the parent flow
@@ -99,15 +100,10 @@ public class EndState extends State {
 	 * is entered and terminates a root flow.
 	 */
 	public void setViewSelector(ViewSelector viewSelector) {
+		if (viewSelector == null) {
+			viewSelector = MarkerViewSelector.INSTANCE;
+		}
 		this.viewSelector = viewSelector;
-	}
-
-	/**
-	 * Returns true if this end state has no associated view (a "marker" end
-	 * state), false otherwise.
-	 */
-	public boolean isMarker() {
-		return viewSelector == null;
 	}
 
 	/**
@@ -160,20 +156,9 @@ public class EndState extends State {
 		FlowSession activeSession = context.getFlowExecutionContext().getActiveSession();
 		if (activeSession.isRoot()) {
 			// entire flow execution is ending, return ending view if applicable
-			ViewSelection selectedView;
-			if (isMarker()) {
-				if (logger.isDebugEnabled()) {
-					logger
-							.debug("Returning a [null] ending view selection--"
-									+ "assuming a response has already been written or the parent flow will care for view selection");
-				}
-				selectedView = null;
-			}
-			else {
-				selectedView = viewSelector.makeSelection(context);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Returning ending view selection " + selectedView);
-				}
+			ViewSelection selectedView = viewSelector.makeSelection(context);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Returning ending view selection " + selectedView);
 			}
 			context.endActiveFlowSession(createOutput(activeSession.getScope()));
 			return selectedView;

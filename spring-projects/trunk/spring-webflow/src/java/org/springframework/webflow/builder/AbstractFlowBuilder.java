@@ -27,9 +27,9 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.SubflowState;
+import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.support.ActionTransitionCriteria;
@@ -45,27 +45,26 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- *     public void buildStates() {
- *     
- *         // get customer information
- *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
- *             on(success(), to(&quot;displayDetails&quot;)));
- *             
- *         // view customer information               
- *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *             on(submit(), to(&quot;bindAndValidate&quot;));
- *         
- *         // bind and validate customer information updates 
- *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
- *             new Transition[] {
- *                 on(error(), to(&quot;displayDetails&quot;)),
- *                 on(success(), to(&quot;finish&quot;))
- *             });
- *             
- *         // finish
- *         addEndState(&quot;finish&quot;);
- *     }
- * }
+ * public void buildStates() {
+ *      
+ *          // get customer information
+ *          addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
+ *              on(success(), to(&quot;displayDetails&quot;)));
+ *              
+ *          // view customer information               
+ *          addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *              on(submit(), to(&quot;bindAndValidate&quot;));
+ *          
+ *          // bind and validate customer information updates 
+ *          addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
+ *              new Transition[] {
+ *                  on(error(), to(&quot;displayDetails&quot;)),
+ *                  on(success(), to(&quot;finish&quot;))
+ *              });
+ *              
+ *          // finish
+ *          addEndState(&quot;finish&quot;);
+ *      }}
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
@@ -663,7 +662,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
 	protected EndState addEndState(String stateId) throws IllegalArgumentException {
-		return addEndState(stateId, (ViewSelector)null, (Map)null);
+		return addEndState(stateId, (String)null);
 	}
 
 	/**
@@ -675,7 +674,22 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
 	protected EndState addEndState(String stateId, String viewName) throws IllegalArgumentException {
-		return addEndState(stateId, viewSelector(viewName), null);
+		return addEndState(stateId, viewSelector(viewName), null, null);
+	}
+
+	/**
+	 * Adds an end state with the specified id exposing the specified attributes
+	 * as output. The created end state will be a marker end state with no
+	 * associated view.
+	 * @param stateId the end state id
+	 * @param outputAttributeNames the names of the attributes in flow scope to
+	 * expose as output attributes, making them available for output mapping by
+	 * a calling parent flow
+	 * @return the end state
+	 * @throws IllegalArgumentException the state id is not unique
+	 */
+	protected EndState addEndState(String stateId, String[] outputAttributeNames) throws IllegalArgumentException {
+		return addEndState(stateId, viewSelector(null), outputAttributeNames, null);
 	}
 
 	/**
@@ -683,25 +697,14 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * view when entered as part of a terminating flow execution.
 	 * @param stateId the end state id
 	 * @param viewName the view name
-	 * @param properties additional properties describing the state
+	 * @param outputAttributeNames the names of the attributes in flow scope to
+	 * expose as output attributes, making them available for output mapping by
+	 * a calling parent flow
 	 * @return the end state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected EndState addEndState(String stateId, String viewName, Map properties) throws IllegalArgumentException {
-		return addEndState(stateId, viewSelector(viewName), properties);
-	}
-
-	/**
-	 * Adds an end state with the specified id that will message the specified
-	 * view selector to produce a view to display when entered as part of a root
-	 * flow termination.
-	 * @param stateId the end state id
-	 * @param selector the view selector
-	 * @return the end state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected EndState addEndState(String stateId, ViewSelector selector) throws IllegalArgumentException {
-		return addEndState(stateId, selector, null);
+	protected EndState addEndState(String stateId, String viewName, String[] outputAttributeNames) throws IllegalArgumentException {
+		return addEndState(stateId, viewSelector(viewName), outputAttributeNames, null);
 	}
 
 	/**
@@ -710,14 +713,45 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * flow termination.
 	 * @param stateId the end state id
 	 * @param viewSelector the view selector
+	 * @return the end state
+	 * @throws IllegalArgumentException the state id is not unique
+	 */
+	protected EndState addEndState(String stateId, ViewSelector viewSelector) throws IllegalArgumentException {
+		return addEndState(stateId, viewSelector, null, null);
+	}
+
+	/**
+	 * Adds an end state with the specified id that will display the specified
+	 * view when entered as part of a terminating flow execution.
+	 * @param stateId the end state id
+	 * @param viewSelector the view selector
+	 * @param outputAttributeNames the names of the attributes in flow scope to
+	 * expose as output attributes, making them available for output mapping by
+	 * a calling parent flow
+	 * @return the end state
+	 * @throws IllegalArgumentException the state id is not unique
+	 */
+	protected EndState addEndState(String stateId, ViewSelector viewSelector, String[] outputAttributeNames) throws IllegalArgumentException {
+		return addEndState(stateId, viewSelector, outputAttributeNames, null);
+	}
+	/**
+	 * Adds an end state with the specified id that will message the specified
+	 * view selector to produce a view to display when entered as part of a root
+	 * flow termination.
+	 * @param stateId the end state id
+	 * @param viewSelector the view selector
+	 * @param outputAttributeNames the names of the attributes in flow scope to
+	 * expose as output attributes, making them available for output mapping by
+	 * a calling parent flow
 	 * @param properties additional properties describing the state
 	 * @return the end state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected EndState addEndState(String stateId, ViewSelector viewSelector, Map properties)
-			throws IllegalArgumentException {
+	protected EndState addEndState(String stateId, ViewSelector viewSelector, String[] outputAttributeNames,
+			Map properties) throws IllegalArgumentException {
 		EndState state = new EndState(getFlow(), stateId);
 		state.setViewSelector(viewSelector);
+		state.addOutputAttributeNames(outputAttributeNames);
 		state.addProperties(properties);
 		return state;
 	}
@@ -741,8 +775,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the target state resolver
 	 */
 	protected TargetStateResolver to(String targetStateExpression) {
-		return (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
-				targetStateExpression);
+		return (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(targetStateExpression);
 	}
 
 	/**

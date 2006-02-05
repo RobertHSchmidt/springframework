@@ -44,8 +44,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(new MockExternalContext());
-		assertNull(view);
+		flowExecution.start(new MockExternalContext());
 		assertEquals(1, ((ExecutionCounterAction)state.getActionList().get(0)).getExecutionCount());
 	}
 
@@ -59,8 +58,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(new MockExternalContext());
-		assertNull(view);
+		flowExecution.start(new MockExternalContext());
 		Action[] actions = state.getActionList().toArray();
 		for (int i = 0; i < actions.length; i++) {
 			ExecutionCounterAction action = (ExecutionCounterAction)actions[i];
@@ -101,8 +99,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("action4.success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(new MockExternalContext());
-		assertNull(view);
+		flowExecution.start(new MockExternalContext());
 		assertTrue(!flowExecution.isActive());
 		Action[] actions = state.getActionList().toArray();
 		for (int i = 0; i < actions.length; i++) {

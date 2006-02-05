@@ -1662,8 +1662,162 @@
     	<sect2 id="endState">
     		<title>EndState</title>
     		<para>
-    			When entered, an end state terminates a flow.
+    			When entered, an end state terminates a flow.  A EndState represents exactly one logical 
+    			flow outcome; for example, "finish", or "cancel".
     		</para>
+    		<para>
+    			If the ended flow was acting as a top-level or <emphasis>root flow</emphasis> the
+    			entire flow execution ends and cannot be resumed.  In this case the end state is responsible
+    			for making a <literal>ViewSelection</literal> that is the basis for the ending response (for example, 
+    			a confirmation page, or a redirect request to an external URL).
+    		</para>
+    		<para>
+    			If the ended flow was acting as a subflow, the spawned subflow session ends and
+    			the calling parent flow <emphasis>resumes</emphasis> by responding to the end
+    			result returned.  In this case the responsibility for any <literal>ViewSelection</literal>
+    			falls on the parent flow.
+    		</para>
+    		<para>
+    			Once a flow ends any attributes in flow scope go out of scope immediately
+    			and become eligible for garbage collection.
+    		</para>
+    		<para>
+    			As outlined, an end state entered as part of a root flow messages its <literal>ViewSelector</literal>
+    			to make a ending view selection.  Typically this is a <literal>RedirectViewSelector</literal>, 
+    			allowing for <emphasis>redirect after flow completion</emphasis>.  An end state entered as part of
+    			a subflow is not responsible for a view selection; this responsibility falls on the calling flow.
+    		</para>
+    		<sect3 id="endState-resultevents">
+    			<title>EndState result events</title>
+	    		<para>
+    				When a EndState is entered it terminates a flow and, if used as subflow,
+    				returns a result event the parent flow uses to drive a state transition from the calling subflow 
+    				state.  It is the end state's responsibility to create this result event which 
+    				is the basis for communicating the <emphasis>logical flow outcome</emphasis> to
+    				callers.
+    			</para>
+				<para>
+    				By default, an EndState creates a result event with an identifier that matches the 
+    				identifier of the end-state itself.  For example, an end state with id <literal>finish</literal>
+    				returns a result event with id <literal>finish</literal>.  Also by default, any attributes in
+    				flow scope that have been explicitly marked as <emphasis>output attributes</emphasis>
+    				are returned as result event parameters.
+ 				</para>
+				<para>
+					Spring Web Flow gives you full control over the ending view selection strategy, as
+					well as what flow attributes should be exposed as output on a per EndState basis.
+					These configurable properties are summarized below:
+				</para>
+			</sect3>
+	    	<table>
+    	        <title>EndState properties</title>
+        	    <tgroup cols="4">
+            	    <colspec colname="c1" colwidth="2*" />
+        			<colspec colname="c2" colwidth="4*" />
+    	            <colspec colname="c2" colwidth="2*" />
+	                <colspec colname="c2" colwidth="2*" />
+	                <thead>
+       		            <row>
+               		        <entry>Property name</entry>
+               				<entry>Description</entry>
+	                        <entry>Cardinality</entry>
+       		                <entry>Default value</entry>
+           				</row>
+		  			</thead>
+				  	<tbody>
+            			<row>
+            				<entry>viewSelector</entry>
+							<entry>The strategy that makes the ending view selection when this state is entered and the flow is a root flow.</entry>
+						    <entry>
+								<emphasis>0..1</emphasis>
+					       </entry>
+					       <entry>Null</entry>
+        	           </row>
+            	   </tbody>
+				  	<tbody>
+            			<row>
+              				<entry>outputAttributeNames</entry>
+							<entry>
+								The names of attributes in flow scope that should be exposed as output;
+								thus being made eligible for output mapping by a calling flow.
+							</entry>
+						    <entry>
+								<emphasis>0..*</emphasis>
+							</entry>
+							<entry>None</entry>
+        	           </row>
+            	   </tbody>
+	          </tgroup>
+    	    </table>
+    	    <sect3 id="endStateXml">
+    	    	<title>EndState XML - output attribute</title>
+    	    	<para>
+    	    	    The following example constructs an <literal>EndState</literal> from
+    	    	    XML that terminates a shipping subflow:
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="enterShippingDetails"&gt;
+    
+		...
+		        
+        &lt;end-state id="finish"&lt;
+            &lt;output-attribute name="shipping"/&gt;
+        &lt;/end-state&gt;
+        
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This end state definition reads "<emphasis>terminate the <literal>shipping</literal> flow 
+    			    and expose the <literal>shipping</literal> property in flow scope as an output attribute</emphasis>."
+    			</para>
+    			<para>
+    			    Since this end-state does not make a view selection it is expected this flow will be always used 
+    			    as a subflow.  When this flow ends, the calling parent flow is expected to respond to the 
+    			    <literal>finish</literal> result, and may map the <literal>shipping</literal> attribute into 
+    			    its own scope.
+    			</para>
+			</sect3>
+    	    <sect3 id="endStateJava">
+    	    	<title>EndState API - output attribute</title>
+    	    	<para>
+    	    	    The following illustrates the equivalent example using the <literal>FlowBuilder</literal> API:
+    	    	</para>
+    	    	<programlisting>
+    public class ShippingFlowBuilder extends AbstractFlowBuilder {
+    	public void buildStates() {
+    	    ...
+            addEndState("finish", new String[] { "shipping" } );
+        }
+    }	
+    			</programlisting>
+    		</sect3>
+    	    <sect3 id="endStateXml-redirect">
+    	    	<title>EndState XML - redirect after flow completion</title>
+    	    	<para>
+    	    	    The following example constructs an <literal>EndState</literal> from
+    	    	    XML that terminates a shipping subflow and requests a 
+    	    	    redirect response to an external URL:
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="enterOrderInformation"&gt;
+    
+        ...
+		        
+        &lt;end-state id="finish" view="redirect:/app/order/${flowScope.order.id}"/&gt;
+        
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This end state definition reads "<emphasis>terminate the <literal>order</literal> flow 
+    			    and request a redirect to the URL returned by evaluating the <literal>/app/order/${flowScope.order.id}</literal> 
+    			    expression</emphasis>."
+    			</para>
+    			<para>
+    				This is an example of the familiar <emphasis>redirect after post</emphasis> pattern where 
+    				after transaction completion a redirect is issued allowing the result of the transaction 
+    				to be viewed (in this case using REST-style URLs).
+    			</para>
+			</sect3>
     	</sect2>
     </sect1>
 </chapter>

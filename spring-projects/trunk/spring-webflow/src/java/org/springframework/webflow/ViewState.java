@@ -76,6 +76,9 @@ public class ViewState extends TransitionableState {
 	 * Sets the strategy used to select the view to render in this view state.
 	 */
 	public void setViewSelector(ViewSelector viewSelector) {
+		if (viewSelector == null) {
+			viewSelector = MarkerViewSelector.INSTANCE;
+		}
 		this.viewSelector = viewSelector;
 	}
 

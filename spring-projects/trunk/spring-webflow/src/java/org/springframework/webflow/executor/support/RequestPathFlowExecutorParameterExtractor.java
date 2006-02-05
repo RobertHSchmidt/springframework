@@ -39,6 +39,9 @@ public class RequestPathFlowExecutorParameterExtractor extends FlowExecutorParam
 
 	public String extractFlowId(ExternalContext context) {
 		String requestPathInfo = context.getRequestPathInfo();
+		if (requestPathInfo == null) {
+			requestPathInfo = "";
+		}
 		String extractedFilename = WebUtils.extractFilenameFromUrlPath(requestPathInfo);
 		return StringUtils.hasText(extractedFilename) ? extractedFilename : getDefaultFlowId();
 	}
