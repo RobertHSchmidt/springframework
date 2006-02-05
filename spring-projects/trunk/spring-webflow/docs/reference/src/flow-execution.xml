@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="flow-execution">
+	<title>Flow execution</title>
+	<sect1 id="execution-intro">
+		<title>Introduction</title>
+		<para>
+			Spring Web Flow allows developers to build reusable, self-contained controller modules
+			called flows.  A flow is a blueprint for a user conversation (or dialog)
+			that drives the execution of application code to complete a business goal.
+		</para>
+		<para>
+			Flows are defined declaratively using a rich domain-specific language (DSL) 
+			tailored to the problem domain of page flow.  Currently, Java-based and XML-based
+			forms of this language are provided.
+		</para>
+		<para>
+			This chapter documents Spring Web Flow's flow execution system.  You'll
+			learn the core constructs of the system and how to execute flows within a variety 
+			of environments.
+		</para>
+    </sect1>
+</chapter>

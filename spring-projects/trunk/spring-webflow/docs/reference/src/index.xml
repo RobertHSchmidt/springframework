@@ -4,6 +4,7 @@
 [
 <!ENTITY overview SYSTEM "overview.xml">
 <!ENTITY flow-definition SYSTEM "flow-definition.xml">
+<!ENTITY flow-execution SYSTEM "flow-execution.xml">
 <!ENTITY phonebook SYSTEM "phonebook.xml">
 ]>
 
@@ -44,6 +45,7 @@
 
 	&overview;
 	&flow-definition;
+	&flow-execution;
 	&phonebook;
 
 </book>
