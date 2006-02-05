@@ -33,32 +33,32 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 
 	public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
 		throw new FlowArtifactException(parameters.getId(), Action.class,
-				"Action lookup is not supported by this artifact factory");
+				"Unable to lookup action with id '" + parameters.getId() + "'; action lookup is not supported by this artifact factory");
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 		throw new FlowArtifactException(id, FlowAttributeMapper.class,
-				"Attribute mapper lookup is not supported by this artifact factory");
+				"Unable to lookup attribute mapper with id '" + id + "'; attribute mapper lookup is not supported by this artifact factory");
 	}
 
 	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
 		throw new FlowArtifactException(id, TransitionCriteria.class,
-				"Transition criteria lookup is not supported by this artifact factory");
+				"Unable to lookup transition criteria with id '" + id + "'; transition criteria lookup is not supported by this artifact factory");
 	}
 
 	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
 		throw new FlowArtifactException(id, ViewSelector.class,
-				"View selector lookup is not supported by this artifact factory");
+				"Unable to lookup view selector with id '" + id + "'; view selector lookup is not supported by this artifact factory");
 	}
 
 	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
 		throw new FlowArtifactException(id, StateExceptionHandler.class,
-				"State exception handler lookup is not supported by this artifact factory");
+				"Unable to lookup exception handler with id '" + id + "'; state exception handler lookup is not supported by this artifact factory");
 	}
 
 	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
 		throw new FlowArtifactException(id, TargetStateResolver.class,
-				"Transition target state resolver lookup is not supported by this artifact factory");
+				"Unable to lookup target state resolver with id '" + id + "'; transition target state resolver lookup is not supported by this artifact factory");
 	}
 
 	public Flow createFlow(FlowArtifactParameters parameters) throws FlowArtifactException {

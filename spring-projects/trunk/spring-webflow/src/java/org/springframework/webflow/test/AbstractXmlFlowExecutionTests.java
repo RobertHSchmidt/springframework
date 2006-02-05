@@ -33,10 +33,6 @@ import org.springframework.webflow.registry.XmlFlowRegistrar;
  * 		   return new ExternalizedFlowDefinition("search", resource);
  * 	   }
  * 
- *     protected String[] getConfigLocations() {
- *         return new String[] { &quot;classpath:example/applicationContext.xml };
- *     }
- *     
  *     public void testStartFlow() {
  * 	       startFlow();
  * 		   assertCurrentStateEquals(&quot;displaySearchCriteria&quot;);

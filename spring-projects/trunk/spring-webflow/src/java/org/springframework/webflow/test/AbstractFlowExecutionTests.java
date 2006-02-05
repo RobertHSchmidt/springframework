@@ -18,9 +18,10 @@ package org.springframework.webflow.test;
 import java.util.Collection;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.core.style.StylerUtils;
-import org.springframework.test.AbstractTransactionalSpringContextTests;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
@@ -65,32 +66,13 @@ import org.springframework.webflow.execution.impl.FlowExecutionImpl;
  * 
  * @author Keith Donald
  */
-public abstract class AbstractFlowExecutionTests extends AbstractTransactionalSpringContextTests {
+public abstract class AbstractFlowExecutionTests extends TestCase {
 
 	/**
 	 * The flow execution running the flow when the test is active (runtime
 	 * object).
 	 */
 	private FlowExecution flowExecution;
-
-	/**
-	 * Creates a Flow execution test. This constructor disables dependency
-	 * checking by default, so having Spring autowire dependencies like
-	 * TransactionManager and FlowLocator is optional.
-	 */
-	public AbstractFlowExecutionTests() {
-		setDependencyCheck(false);
-	}
-
-	protected final void onSetUpInTransaction() throws Exception {
-		onSetUpInTransactionalFlowTest();
-	}
-
-	/**
-	 * Hook method subclasses can implement to do additional test setup.
-	 */
-	protected void onSetUpInTransactionalFlowTest() {
-	}
 
 	/**
 	 * Start the flow execution that will be tested.

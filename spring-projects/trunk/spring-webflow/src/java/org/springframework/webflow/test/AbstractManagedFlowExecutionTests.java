@@ -18,8 +18,8 @@ package org.springframework.webflow.test;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
 import org.springframework.webflow.registry.FlowRegistry;
-import org.springframework.webflow.registry.FlowRegistryFlowArtifactFactory;
 import org.springframework.webflow.registry.FlowRegistryImpl;
 
 /**
@@ -27,7 +27,7 @@ import org.springframework.webflow.registry.FlowRegistryImpl;
  * flow definition source from a {@link FlowRegistry}.
  * <p>
  * Subclasses should override
- * {@link #populateFlowRegistry(FlowRegistry, FlowArtifactFactory)} to  load the
+ * {@link #populateFlowRegistry(FlowRegistry, FlowArtifactFactory)} to load the
  * registry with flow definitions necessary to support this test. Exactly one of
  * those flow definitions must be registered with an <code>id</code> that
  * matches the id returned by {@link #getFlowId()}, selecting the flow whose
@@ -36,40 +36,34 @@ import org.springframework.webflow.registry.FlowRegistryImpl;
  * <p>
  * Example usage in a subclass demonstrating use of a custom FlowRegistrar to
  * populate the test's flow registry:
+ * 
  * <pre>
- * public class SearchFlowExecutionTests extends AbstractManagedFlowExecutionTests {
+ *  public class SearchFlowExecutionTests extends AbstractManagedFlowExecutionTests {
+ *  
+ *      // the registry id of the flow execution to test
+ *      protected String getFlowId() {
+ *          return &quot;search&quot;;
+ *      }
+ *      
+ *      // populate the registry using a custom registrar
+ *      protected void populateFlowRegistry(FlowRegistry flowRegistry, FlowArtifactFactory flowArtifactFactory) {
+ *          new PhonebookFlowRegistrar().registerFlows(flowRegistry, flowArtifactFactory);
+ *      }
  * 
- *     // the registry id of the flow execution to test
- *     protected String getFlowId() {
- *         return "search";
- *     }
- *     
- *     // populate the registry using a custom registrar
- *     protected void populateFlowRegistry(FlowRegistry flowRegistry, FlowArtifactFactory flowArtifactFactory) {
- *         new PhonebookFlowRegistrar().registerFlows(flowRegistry, flowArtifactFactory);
- *     }
- *     
- *     protected String[] getConfigLocations() {
- *         return new String[] {
- *             "classpath:org/springframework/webflow/samples/phonebook/deploy/service-layer.xml",
- *             "classpath:org/springframework/webflow/samples/phonebook/deploy/web-layer.xml"
- *         };
- *     }
- *
- *     public void testStartFlow() {
- *         startFlow();
- *         assertCurrentStateEquals("displayCriteria");
- *     }
- *     
- *     ...
- * }
- * 
- * public static class PhonebookFlowRegistrar extends FlowRegistrarSupport {
- *     public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
- *         registerFlow("search", new SearchPersonFlowBuilder(flowArtifactFactory), registry);
- *         registerFlow("detail", new PersonDetailFlowBuilder(flowArtifactFactory), registry);
- *     }
- * }
+ *      public void testStartFlow() {
+ *          startFlow();
+ *          assertCurrentStateEquals(&quot;displayCriteria&quot;);
+ *      }
+ *      
+ *      ...
+ *  }
+ *  
+ *  public static class PhonebookFlowRegistrar extends FlowRegistrarSupport {
+ *      public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
+ *          registerFlow(&quot;search&quot;, new SearchPersonFlowBuilder(flowArtifactFactory), registry);
+ *          registerFlow(&quot;detail&quot;, new PersonDetailFlowBuilder(flowArtifactFactory), registry);
+ *      }
+ *  }
  * </pre>
  * 
  * @author Keith Donald
@@ -114,26 +108,26 @@ public abstract class AbstractManagedFlowExecutionTests extends AbstractFlowExec
 	 */
 	protected abstract String getFlowId();
 
-	protected void onSetUpInTransactionalFlowTest() {
+	protected void setUp() {
 		if (flowRegistry == null) {
-			initFlowRegistry();
-			initFlowArtifactFactory();
+			flowRegistry = createFlowRegistry();
+			flowArtifactFactory = createFlowArtifactFactory();
 			populateFlowRegistry(flowRegistry, flowArtifactFactory);
 		}
 	}
 
 	/**
-	 * Initialize the flow registry to support this test.
+	 * Create the flow registry to support this test.
 	 */
-	protected void initFlowRegistry() {
-		flowRegistry = new FlowRegistryImpl();
+	protected FlowRegistry createFlowRegistry() {
+		return new FlowRegistryImpl();
 	}
 
 	/**
-	 * Initialize the flow artifact factory to support this test.
+	 * Create the flow artifact factory to support this test.
 	 */
-	protected void initFlowArtifactFactory() {
-		flowArtifactFactory = new FlowRegistryFlowArtifactFactory(flowRegistry, applicationContext);
+	protected FlowArtifactFactory createFlowArtifactFactory() {
+		return new FlowArtifactFactoryAdapter();
 	}
 
 	/**
