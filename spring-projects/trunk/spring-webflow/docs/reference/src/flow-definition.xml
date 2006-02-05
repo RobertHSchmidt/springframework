@@ -1809,7 +1809,7 @@
     			</programlisting>
     			<para>
     			    This end state definition reads "<emphasis>terminate the <literal>order</literal> flow 
-    			    and request a redirect to the URL returned by evaluating the <literal>/app/order/${flowScope.order.id}</literal> 
+    			    and request a redirect to the URL returned by evaluating the <literal>/orders/${flowScope.order.id}</literal> 
     			    expression</emphasis>."
     			</para>
     			<para>
