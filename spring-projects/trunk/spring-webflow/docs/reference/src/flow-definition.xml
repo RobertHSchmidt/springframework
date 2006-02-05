@@ -1427,7 +1427,7 @@
     				</listitem>
     				<listitem>
     					<para>
-    						A ending flow can return output attributes.  If the flow was launched as a subflow,
+    						An ending flow can return output attributes.  If the ended flow was launched as a subflow,
     						the resuming parent flow may choose to map the output attributes into its own scope.
     					</para>
     				</listitem>
@@ -1439,7 +1439,43 @@
     		   they are potentially long-running, as they can span more than one request into the server.
     		</para>
     		<para>
-    		   The SubflowState constructs used in spawning a flow as a subflow is shown graphically below:
+    			When a SubflowState is entered, the following behavior occurs:
+    			<orderedlist>
+    				<listitem>
+    					<para>
+    						The state first messages a strategy, an instance of <literal>org.springframework.webflow.FlowAttributeMapper</literal>,
+    						to prepare a <literal>Map</literal> of input attributes to pass to the subflow.
+    					</para>
+    				</listitem>
+    				<listitem>
+    					<para>
+    						The subflow is spawned, passed the input attributes.  When this happens,
+    						the parent flow <emphasis>suspends</emphasis> itself in the subflow state until
+    						the subflow ends.
+    					</para>
+    				</listitem>
+    				<listitem>
+    					<para>
+    						When the subflow ends, a <emphasis>result event</emphasis> is returned describing the flow outcome 
+    						that occurred.  The parent flow <emphasis>resumes</emphasis> back in the subflow state.
+    					</para>
+    				</listitem>
+    				<listitem>
+    					<para>
+    						The resumed subflow state messages its <literal>FlowAttributeMapper</literal> to 
+    						map any output attributes returned by the subflow into flow scope, if necessary.
+    					</para>
+    				</listitem>
+    				<listitem>
+    					<para>
+    						Finally, the resumed subflow state responds to the result event returned by the ended subflow
+    						by matching and executing a state transition.
+    					</para>
+    				</listitem>
+    			</orderedlist>
+    		</para>
+    		<para>
+    		   The constructs used in spawning a flow as a subflow is shown graphically below:
     		</para>
 			<mediaobject>
 				<imageobject role="fo">
