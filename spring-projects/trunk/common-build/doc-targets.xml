@@ -44,6 +44,7 @@
 		<copy todir="${docs.ref.target.dir}/pdf/images">
 			<fileset dir="${docs.ref.src.dir}/images">
 				<include name="*.gif" />
+				<include name="*.png" />
 				<include name="*.svg" />
 				<include name="*.jpg" />
 			</fileset>
@@ -79,6 +80,7 @@
 		<copy todir="${docs.ref.target.dir}/html/images">
 			<fileset dir="${docs.ref.src.dir}/images">
 				<include name="*.gif" />
+				<include name="*.png" />
 				<include name="*.svg" />
 				<include name="*.jpg" />
 			</fileset>
@@ -101,6 +103,7 @@
 		<copy todir="${docs.ref.target.dir}/html_single/images">
 			<fileset dir="${docs.ref.src.dir}/images">
 				<include name="*.gif" />
+				<include name="*.png" />
 				<include name="*.svg" />
 				<include name="*.jpg" />
 			</fileset>
