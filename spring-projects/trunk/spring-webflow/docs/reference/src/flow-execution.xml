@@ -19,9 +19,9 @@
     <sect1 id="execution">
     	<title>FlowExecution</title>
     	<para>
-		    An executing flow, an instance of <emphasis>org.springframework.webflow.execution.FlowExecution</emphasis>,
+		    An executing flow, an instance of <literal>org.springframework.webflow.execution.FlowExecution</literal>,
 		    represents the state of a conversation at a point in time.  Given a flow definition, 
-		    an instance of <emphasis>org.springframework.webflow.Flow</emphasis>, a flow execution
+		    an instance of <literal>org.springframework.webflow.Flow</literal>, a flow execution
 		    can be created.
 		</para>
 		<para>
@@ -32,7 +32,7 @@
 		</para>
 		<para>
 			When a flow execution reaches a <literal>ViewState</literal> it is said to have <emphasis>paused</emphasis>,
-			and waits in that state for user input to be provided so it can continue.  After pausing the 
+			and it waits in that state for user input to be provided so it can continue.  After pausing the 
 			<literal>ViewSelection</literal> returned by the flow execution is typically used to issue a
 			response to the user that provides a vehicle for collecting the required input.
 		</para>
@@ -44,7 +44,7 @@
 			in the resuming <literal>ViewState</literal>.
 		</para>
 		<para>
-			Once a flow execution has resumed after pausing within a view state, it continues executing 
+			Once a flow execution has resumed after pausing by a view state, it continues executing 
 			until it again enters another view state or enters an end state where it terminates.  Once 
 			a flow execution has terminated it cannot be resumed.
 		</para>
