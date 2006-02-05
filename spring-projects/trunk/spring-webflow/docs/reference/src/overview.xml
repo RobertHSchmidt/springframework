@@ -114,10 +114,19 @@
 	<sect1 id="introduction-architecture">
 		<title>High level architecture</title>
 		<para>
-			TODO
-			Give high level overview of internal SWF architecture and layering (mentioned above).
-			Provide visual.
+			A high-level diagram of Spring Web Flow's layered architecture is shown below:
 		</para>
+		<mediaobject>
+			<imageobject role="fo">
+				<imagedata fileref="images/swf-highlevelarchitecture.png" format="PNG" align="center"/>
+			</imageobject>
+			<imageobject role="html">
+				<imagedata fileref="images/swf-highlevelarchitecture.png" format="PNG" align="center"/>
+			</imageobject>
+			<caption>
+				<para>Spring Web Flow</para>
+			</caption>
+		</mediaobject>		
 	</sect1>
 	<sect1 id="introduction-package-structure">
 		<title>Package structure</title>
