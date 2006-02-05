@@ -1803,7 +1803,7 @@
     
         ...
 		        
-        &lt;end-state id="finish" view="redirect:/app/order/${flowScope.order.id}"/&gt;
+        &lt;end-state id="finish" view="redirect:/orders/${flowScope.order.id}"/&gt;
         
     &lt;/flow&gt;
     			</programlisting>
