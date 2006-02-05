@@ -49,4 +49,30 @@
 			a flow execution has terminated it cannot be resumed.
 		</para>
     </sect1>
+    <sect1 id="execution-lifecycle">
+    	<title>Flow execution lifecycle</title>
+    	<para>
+    		As outlined, a flow execution can go through a number of phases throughout its lifecycle; 
+    		for example, <emphasis>created</emphasis>, <emphasis>active</emphasis>, <emphasis>paused</emphasis>, 
+    		<emphasis>ended</emphasis>.
+    	</para>
+    	<para>
+    		Spring Web Flow gives you full control over the ability to observe the lifecycle of an 
+    		executing flow by implementing a <literal>org.springframework.webflow.execution.FlowExecutionListener</literal>.
+    	</para>
+    	<para>
+    		The different phases of a flow execution is shown graphically below:
+    	</para>
+		<mediaobject>
+			<imageobject role="fo">
+				<imagedata fileref="images/flowexecution-statediagram.png" format="PNG" align="center"/>
+			</imageobject>
+			<imageobject role="html">
+				<imagedata fileref="images/flowexecution-statediagram.png" format="PNG" align="center"/>
+			</imageobject>
+			<caption>
+				<para>Flow execution lifecycle</para>
+			</caption>
+		</mediaobject>
+	</sect1>
 </chapter>
