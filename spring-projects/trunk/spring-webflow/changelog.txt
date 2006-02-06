@@ -82,6 +82,8 @@ Package org.springframework.webflow.execution
   expiry, as well as metadata-driven continuation invalidation strategies is under consideration.
 * Added support for tracking and accessing the "current view selection" of a conversation accessible under 
   a bookmarkable conversation URL.
+* Added for conversation locking, allowing exclusive access to a conversation contended for my multiple 
+  concurrent threads.
 * Reworked the flow execution package, decoupling the Event abstraction from the notion of an ExternalContext.
 * Reworked the FlowExecution interface, making central start and signalEvent operations more explicit.  It is also now 
   impossible for external actors to signal an event in another state other than the current state.
