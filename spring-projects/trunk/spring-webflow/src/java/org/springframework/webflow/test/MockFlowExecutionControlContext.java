@@ -18,10 +18,10 @@ package org.springframework.webflow.test;
 import java.util.Map;
 
 import org.springframework.webflow.Event;
-import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
+import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.State;
 import org.springframework.webflow.ViewSelection;
 
@@ -29,12 +29,12 @@ import org.springframework.webflow.ViewSelection;
  * Mock implementation of the <code>FlowControlContext</code> interface to
  * facilitate standalone Flow and State unit tests.
  * <p>
- * NOT intended to be used for anything but standalone unit tests. This
- * is a simple state holder, a <i>stub</i> implementation, at least if you follow <a
+ * NOT intended to be used for anything but standalone unit tests. This is a
+ * simple state holder, a <i>stub</i> implementation, at least if you follow <a
  * href="http://www.martinfowler.com/articles/mocksArentStubs.html">Martin
- * Fowler's</a> reasoning. This class is called <i>Mock</i>FlowControlContext to
- * be consistent with the naming convention in the rest of the Spring framework
- * (e.g. MockHttpServletRequest, ...).
+ * Fowler's</a> reasoning. This class is called <i>Mock</i>FlowControlContext
+ * to be consistent with the naming convention in the rest of the Spring
+ * framework (e.g. MockHttpServletRequest, ...).
  * 
  * @see org.springframework.webflow.RequestContext
  * @see org.springframework.webflow.FlowSession
@@ -43,36 +43,38 @@ import org.springframework.webflow.ViewSelection;
  * @author Keith Donald
  */
 public class MockFlowExecutionControlContext extends MockRequestContext implements FlowExecutionControlContext {
-	
-	/**
-	 * Create a new stub state context.
-	 * @param session the active flow session
-	 */
-	public MockFlowExecutionControlContext(MockFlowSession session) {
-		this(session, new MockExternalContext());
-	}
-	
-	/**
-	 * Create a new stub state context.
-	 * @param session the active flow session
-	 */
-	public MockFlowExecutionControlContext(MockFlowSession session, ExternalContext externalContext) {
-		super(session, externalContext);
+
+	public MockFlowExecutionControlContext(Flow rootFlow) {
+		setFlowExecutionContext(new MockFlowExecutionContext(rootFlow));
 	}
 
 	public ViewSelection start(Flow flow, State startState, Map input) throws IllegalStateException {
-		setActiveSession(new MockFlowSession(flow, input));
-		return flow.start(startState, this);
+		getMockFlowExecutionContext().setActiveSession(new MockFlowSession(flow, input));
+		ViewSelection selectedView = flow.start(startState, this);
+		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.PAUSED);
+		return selectedView;
 	}
-	
+
 	public ViewSelection signalEvent(Event event) {
-		return getActiveFlow().onEvent(event, this);
+		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.ACTIVE);
+		ViewSelection selectedView = getActiveFlow().onEvent(event, this);
+		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.PAUSED);
+		return selectedView;
 	}
 
 	public FlowSession endActiveFlowSession(Map sessionOutput) throws IllegalStateException {
-		FlowSession endingSession = getActiveSession();
+		MockFlowSession endingSession = getMockFlowExecutionContext().getMockActiveSession();
 		endingSession.getFlow().end(this, sessionOutput);
-		setActiveSession(null);
+		endingSession.setStatus(FlowSessionStatus.ENDED);
+		getMockFlowExecutionContext().setActiveSession(null);
 		return endingSession;
+	}
+
+	public void setCurrentState(State state) {
+		getMockFlowExecutionContext().getMockActiveSession().setState(state);
+		State previousState = getCurrentState();
+		if (previousState == null) {
+			getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.ACTIVE);
+		}
 	}
 }

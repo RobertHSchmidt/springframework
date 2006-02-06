@@ -66,14 +66,14 @@ package org.springframework.webflow;
 public interface FlowSession {
 	
 	/**
-	 * Returns the flow associated with this flow session.
+	 * Returns the flow definition associated with this flow session.
 	 */
 	public Flow getFlow();
 
 	/**
-	 * Returns the state that is currently active in this flow session.
+	 * Returns the state of this flow session.
 	 */
-	public State getCurrentState();
+	public State getState();
 	
 	/**
 	 * Returns the current status of this flow session.
@@ -81,7 +81,7 @@ public interface FlowSession {
 	public FlowSessionStatus getStatus();
 
 	/**
-	 * Return the session attributes -- "flow scope".
+	 * Return the session attributes; the basis for "flow scope".
 	 * @return the flow scope attributes
 	 */
 	public Scope getScope();

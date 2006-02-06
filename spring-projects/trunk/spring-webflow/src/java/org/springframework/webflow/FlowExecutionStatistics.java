@@ -40,10 +40,5 @@ public interface FlowExecutionStatistics {
 	 * @return true if active, false if flow execution has terminated
 	 */
 	public boolean isActive();
-
-	/**
-	 * Is the root flow of the flow execution currently active?
-	 * @return true if so, false otherwise
-	 */
-	public boolean isRootFlowActive();
+	
 }

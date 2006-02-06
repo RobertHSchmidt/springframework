@@ -17,14 +17,14 @@ package org.springframework.webflow.test;
 
 import java.util.Map;
 
-import org.springframework.util.Assert;
-import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.Scope;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
+import org.springframework.webflow.ViewSelection;
 
 /**
  * Mock implementation of the <code>FlowSession</code> interface.
@@ -32,37 +32,59 @@ import org.springframework.webflow.State;
  * @author Erwin Vervaet
  */
 public class MockFlowSession implements FlowSession {
-	
+
 	private Flow flow;
-	
+
 	private State state;
-	
-	private FlowSessionStatus status = FlowSessionStatus.ACTIVE;
-	
+
+	private FlowSessionStatus status = FlowSessionStatus.CREATED;
+
 	private Scope scope = new Scope();
-	
+
 	private FlowSession parent;
-	
+
 	public MockFlowSession() {
-		Flow flow = new Flow("mockFlow");
-		new EndState(flow, "end");
-		setFlow(flow);
-		setCurrentState(flow.getStartState());
+		setFlow(new Flow("mockFlow"));
+		State state = new State(flow, "mockState") {
+			protected ViewSelection doEnter(FlowExecutionControlContext context) {
+				return ViewSelection.NULL_VIEW_SELECTION;
+			}
+		};
+		setStatus(FlowSessionStatus.ACTIVE);
+		setState(state);
 	}
 	
 	public MockFlowSession(Flow flow) {
 		setFlow(flow);
-		setCurrentState(flow.getStartState());
 	}
 
 	public MockFlowSession(Flow flow, Map input) {
 		setFlow(flow);
-		setCurrentState(flow.getStartState());
 		scope.putAll(input);
 	}
 
 	public Flow getFlow() {
 		return flow;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public Scope getScope() {
+		return scope;
+	}
+
+	public FlowSessionStatus getStatus() {
+		return status;
+	}
+
+	public FlowSession getParent() {
+		return parent;
+	}
+
+	public boolean isRoot() {
+		return parent == null;
 	}
 
 	/**
@@ -72,49 +94,11 @@ public class MockFlowSession implements FlowSession {
 		this.flow = flow;
 	}
 
-	public FlowSession getParent() {
-		return parent;
-	}
-
-	/**
-	 * Set the parent flow session of this flow session in the ongoing
-	 * flow execution.
-	 */
-	public void setParent(FlowSession parent) {
-		this.parent = parent;
-	}
-
-	public boolean isRoot() {
-		return this.parent == null;
-	}
-	
-	public Scope getScope() {
-		return scope;
-	}
-
-	/**
-	 * Set the scope data maintained by this flow session. This will
-	 * be the flow scope data of the ongoing flow execution. As such, the
-	 * given scope should be of type {@link ScopeType#FLOW}.
-	 */
-	public void setScope(Scope scope) {
-		Assert.notNull(scope, "The flow scope is required");
-		this.scope = scope;
-	}
-
-	public State getCurrentState() {
-		return state;
-	}
-
 	/**
 	 * Set the currently active state.
 	 */
-	public void setCurrentState(State state) {
+	public void setState(State state) {
 		this.state = state;
-	}
-
-	public FlowSessionStatus getStatus() {
-		return status;
 	}
 
 	/**
@@ -122,5 +106,22 @@ public class MockFlowSession implements FlowSession {
 	 */
 	public void setStatus(FlowSessionStatus status) {
 		this.status = status;
-	}	
+	}
+
+	/**
+	 * Set the scope data maintained by this flow session. This will be the flow
+	 * scope data of the ongoing flow execution. As such, the given scope should
+	 * be of type {@link ScopeType#FLOW}.
+	 */
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+
+	/**
+	 * Set the parent flow session of this flow session in the ongoing flow
+	 * execution.
+	 */
+	public void setParent(FlowSession parent) {
+		this.parent = parent;
+	}
 }

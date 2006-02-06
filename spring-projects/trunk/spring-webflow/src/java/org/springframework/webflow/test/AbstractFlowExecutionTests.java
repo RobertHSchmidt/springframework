@@ -250,7 +250,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the attribute value
 	 */
 	protected Object getConversationAttribute(String attributeName) {
-		return getFlowExecutionContext().getConversationScope().getAttribute(attributeName);
+		return getFlowExecutionContext().getScope().getAttribute(attributeName);
 	}
 
 	/**
@@ -262,7 +262,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @throws IllegalStateException if the attribute was not present.
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName) throws IllegalStateException {
-		return getFlowExecutionContext().getConversationScope().getRequiredAttribute(attributeName);
+		return getFlowExecutionContext().getScope().getRequiredAttribute(attributeName);
 	}
 
 	/**
@@ -276,7 +276,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName, Class requiredType)
 			throws IllegalStateException {
-		return getFlowExecutionContext().getConversationScope().getRequiredAttribute(attributeName, requiredType);
+		return getFlowExecutionContext().getScope().getRequiredAttribute(attributeName, requiredType);
 	}
 
 	/**
@@ -347,9 +347,9 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param expectedCurrentStateId the expected current state
 	 */
 	protected void assertCurrentStateEquals(String expectedCurrentStateId) {
-		assertEquals("The current state '" + getFlowExecutionContext().getActiveSession().getCurrentState().getId()
+		assertEquals("The current state '" + getFlowExecutionContext().getActiveSession().getState().getId()
 				+ "' does not equal the expected state '" + expectedCurrentStateId + "'", expectedCurrentStateId,
-				getFlowExecutionContext().getActiveSession().getCurrentState().getId());
+				getFlowExecutionContext().getActiveSession().getState().getId());
 	}
 
 	/**

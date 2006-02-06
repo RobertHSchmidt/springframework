@@ -141,14 +141,14 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		Conversation conversation = getRequiredConversation(key.getConversationId());
 		FlowExecutionContinuation continuation = getRequiredContinuation(conversation, key);
 		FlowExecutionImpl impl = (FlowExecutionImpl)rehydrate(continuation.getFlowExecution());
-		impl.setConversationScope(conversation.getScope());
-		System.out.println("Got scope: " + impl.getConversationScope());
+		impl.setScope(conversation.getScope());
+		System.out.println("Got scope: " + impl.getScope());
 		return impl;
 	}
 
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
 		Conversation conversation = (Conversation)getOrCreateConversation(key.getConversationId());
-		conversation.setScope(flowExecution.getConversationScope());
+		conversation.setScope(flowExecution.getScope());
 		removeConversationAttributes(flowExecution);
 		conversation.addContinuation(continuationFactory.createContinuation(key.getContinuationId(), flowExecution));
 	}
@@ -158,7 +158,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	 * saved out separately.
 	 */
 	private void removeConversationAttributes(FlowExecution flowExecution) {
-		((FlowExecutionImpl)flowExecution).setConversationScope(null);
+		((FlowExecutionImpl)flowExecution).setScope(null);
 	}
 
 	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId)

@@ -226,8 +226,7 @@ public class Transition extends AnnotatedObject {
 		if (logger.isDebugEnabled()) {
 			if (context.getFlowExecutionContext().isActive()) {
 				logger.debug("Completed execution of " + this + ", as a result the new state is '"
-						+ context.getFlowExecutionContext().getCurrentState().getId() + "' in flow '"
-						+ context.getFlowExecutionContext().getActiveFlow().getId() + "'");
+						+ context.getCurrentState().getId() + "' in flow '" + context.getActiveFlow().getId() + "'");
 			}
 			else {
 				logger.debug("Completed execution of " + this + ", as a result the flow execution has ended");

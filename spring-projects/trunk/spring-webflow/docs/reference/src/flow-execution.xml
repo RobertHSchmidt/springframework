@@ -32,19 +32,19 @@
 		</para>
 		<para>
 			When a flow execution reaches a <literal>ViewState</literal> it is said to have <emphasis>paused</emphasis>,
-			and it waits in that state for user input to be provided so it can continue.  After pausing the 
-			<literal>ViewSelection</literal> returned by the flow execution is typically used to issue a
-			response to the user that provides a vehicle for collecting the required input.
+			where it waits in that state for user input to be provided so it can continue.  After pausing the 
+			<literal>ViewSelection</literal> returned is typically used to issue a response to the user
+			that provides a vehicle for collecting the required input.
 		</para>
 		<para>			
 			User input is provided by <emphasis>signaling an event</emphasis> that
-			<emphasis>resumes</emphasis> the flow execution and communicates what user action was taken.
+			<emphasis>resumes</emphasis> the flow execution by communicating what user action was taken.
 			Parameters sent in the signal event request form the basis for user input.  The flow execution 
 			responds to an event in standard fashion by executing a matching state transition
 			in the resuming <literal>ViewState</literal>.
 		</para>
 		<para>
-			Once a flow execution has resumed after pausing by a view state, it continues executing 
+			Once a flow execution has resumed after being paused by a view state, it continues executing 
 			until it again enters another view state or enters an end state where it terminates.  Once 
 			a flow execution has terminated it cannot be resumed.
 		</para>
@@ -129,6 +129,67 @@
 			</mediaobject>
 		</sect2>
 	</sect1>
+	<sect1 id="execution-context">
+		<title>Flow execution context</title>
+		<para>
+			Once created, a flow execution, representing the state of a conversation at a point in time, 
+			maintains contextual state about itself that can be reasoned upon by clients.  In addition,
+			a flow execution exposes two data structures, called scopes, that allow clients to set 
+			arbitrary attributes that are managed by the conversation.
+		</para>
+		<para>
+			The contextual properties associated with a flow execution are summarized below:
+		</para>
+    	<table>
+			<title>Flow Execution properties</title>
+            <tgroup cols="4">
+   	            <colspec colname="c1" colwidth="2*" />
+                <colspec colname="c2" colwidth="4*" />
+                <colspec colname="c2" colwidth="2*" />
+                <colspec colname="c2" colwidth="2*" />
+       	        <thead>
+	                <row>
+           	            <entry>Property name</entry>
+               	        <entry>Description</entry>
+   	          			<entry>Cardinality</entry>
+                        <entry>Default value</entry>
+       	            </row>
+				</thead>
+				<tbody>
+					<row>
+           				<entry>active</entry>
+						<entry>
+							A flag indicating if the flow execution is active.
+							A inactive flow has either ended or has never been started.
+						</entry>
+					    <entry>
+							<emphasis>1</emphasis>
+						</entry>
+					</row>
+					<row>
+   						<entry>rootFlow</entry>
+						<entry>
+							The definition of the flow for which the execution is an instance of.
+							This method may always be safely called.
+						</entry>
+						<entry>
+							<emphasis>1</emphasis>
+						</entry>
+					</row>
+					<row>
+   						<entry>rootFlow</entry>
+						<entry>
+							The definition of the flow for which the execution is an instance of.
+							This method may always be safely called.
+						</entry>
+						<entry>
+							<emphasis>1</emphasis>
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+    </sect1>	
 	<sect1 id="execution-testing">
 		<title>Flow execution testing</title>
 		<para>

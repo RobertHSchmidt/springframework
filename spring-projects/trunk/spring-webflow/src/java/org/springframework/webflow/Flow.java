@@ -593,10 +593,10 @@ public class Flow extends AnnotatedObject {
 	}
 
 	private TransitionableState getCurrentTransitionableState(FlowExecutionControlContext context) {
-		State currentState = context.getFlowExecutionContext().getCurrentState();
+		State currentState = context.getCurrentState();
 		if (!currentState.isTransitionable()) {
 			throw new IllegalStateException("You can only signal events in transitionable states, and state "
-					+ context.getFlowExecutionContext().getCurrentState() + "  is not - programmer error");
+					+ context.getCurrentState() + "  is not - programmer error");
 		}
 		return (TransitionableState)currentState;
 	}

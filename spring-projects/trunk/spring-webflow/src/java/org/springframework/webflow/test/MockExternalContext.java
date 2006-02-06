@@ -35,7 +35,7 @@ public class MockExternalContext implements ExternalContext {
 
 	private String requestPathInfo;
 
-	private Map requestParameterMap = Collections.EMPTY_MAP;
+	private Map requestParameterMap = new TreeMap();
 
 	private Map requestMap = new TreeMap();
 
@@ -70,24 +70,18 @@ public class MockExternalContext implements ExternalContext {
 		this.requestParameterMap = Collections.unmodifiableMap(requestParameterMap);
 	}
 
+	// implementing external context
+	
 	public String getDispatcherPath() {
 		return dispatcherPath;
-	}
-
-	public void setDispatcherPath(String dispatcherPath) {
-		this.dispatcherPath = dispatcherPath;
 	}
 
 	public String getRequestPathInfo() {
 		return requestPathInfo;
 	}
 
-	public void setRequestPathInfo(String requestPathInfo) {
-		this.requestPathInfo = requestPathInfo;
-	}
-
 	public Map getRequestParameterMap() {
-		return requestParameterMap;
+		return Collections.unmodifiableMap(requestParameterMap);
 	}
 
 	public Map getRequestMap() {
@@ -100,6 +94,20 @@ public class MockExternalContext implements ExternalContext {
 
 	public SharedMap getApplicationMap() {
 		return new MockSharedMapDecorator(applicationMap);
+	}
+
+	// helper setters
+	
+	public void setRequestPathInfo(String requestPathInfo) {
+		this.requestPathInfo = requestPathInfo;
+	}
+
+	public void setDispatcherPath(String dispatcherPath) {
+		this.dispatcherPath = dispatcherPath;
+	}
+
+	public void addRequestParameter(Object parameterName, Object parameterValue) {
+		requestParameterMap.put(parameterName, parameterValue);
 	}
 
 	private static class MockSharedMapDecorator extends SharedMapDecorator {

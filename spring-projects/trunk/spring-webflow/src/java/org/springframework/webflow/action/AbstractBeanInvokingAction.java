@@ -183,7 +183,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 			if (resultObject instanceof Event) {
 				return (Event)resultObject;
 			}
-			if (context.getFlowExecutionContext().getCurrentState() instanceof DecisionState) {
+			if (context.getCurrentState() instanceof DecisionState) {
 				return toDecisionStateEvent(resultObject, context);
 			}
 			else {

@@ -266,6 +266,18 @@ public class Scope implements Map, Serializable {
 		return attributes.entrySet();
 	}
 
+	public int hashCode() {
+		return attributes.hashCode();
+	}
+	
+	public boolean equals(Object o) {
+		if (!(o instanceof Scope)) {
+			return false;
+		}
+		Scope other = (Scope)o;
+		return attributes.equals(other.attributes);
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append("attributes", attributes).toString();
 	}

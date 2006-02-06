@@ -117,7 +117,7 @@ public class StateTests extends TestCase {
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
-		assertEquals("viewState", flowExecution.getActiveSession().getCurrentState().getId());
+		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
 		assertNotNull(view);
 		assertEquals("myViewName", view.getViewName());
 	}
@@ -129,7 +129,7 @@ public class StateTests extends TestCase {
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
-		assertEquals("viewState", flowExecution.getActiveSession().getCurrentState().getId());
+		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals(ViewSelection.NULL_VIEW_SELECTION, view);
 	}
 
@@ -150,7 +150,7 @@ public class StateTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
-		assertEquals("subFlowViewState", flowExecution.getActiveSession().getCurrentState().getId());
+		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
 		view = flowExecution.signalEvent("submit", new MockExternalContext());
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
@@ -184,7 +184,7 @@ public class StateTests extends TestCase {
 		input.put("parentInputAttribute", "attributeValue");
 		ViewSelection view = flowExecution.start(new MockExternalContext(input));
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
-		assertEquals("subFlowViewState", flowExecution.getActiveSession().getCurrentState().getId());
+		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
 		assertEquals("attributeValue", flowExecution.getActiveSession().getScope().getAttribute("childInputAttribute"));
 		view = flowExecution.signalEvent("submit", new MockExternalContext());

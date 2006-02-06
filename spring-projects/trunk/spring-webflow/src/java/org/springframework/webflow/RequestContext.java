@@ -71,6 +71,52 @@ import java.util.Map;
 public interface RequestContext {
 
 	/**
+	 * Returns the definition of the flow that is currently executing.
+	 * @return the flow definition for the active session
+	 * @throws IllegalStateException if this flow execution has not been started
+	 * at all, or if this execution has ended and is no longer actively
+	 * executing
+	 */
+	public Flow getActiveFlow() throws IllegalStateException;
+
+	/**
+	 * Returns the current state of the executing flow. May return
+	 * <code>null</code> if this flow execution is in the process of starting
+	 * and has not yet entered its start state.
+	 * @return the current state, or <code>null</code> if in the process of
+	 * starting.
+	 * @throws IllegalStateException if this flow execution has not been started
+	 * at all, or if this execution has ended and is no longer actively
+	 * executing
+	 */
+	public State getCurrentState() throws IllegalStateException;
+	
+	/**
+	 * Returns a mutable accessor for accessing and/or setting attributes in
+	 * request scope. <b>Request scoped attributes exist for the duration of
+	 * this request only.</b>
+	 * @return the request scope
+	 */
+	public Scope getRequestScope();
+
+	/**
+	 * Returns a mutable accessor for accessing and/or setting attributes in
+	 * flow scope. <b>Flow scoped attributes exist for the life of the active
+	 * flow session.</b>
+	 * @return the flow scope
+	 * @see FlowExecutionContext#getActiveSession()
+	 */
+	public Scope getFlowScope();
+
+	/**
+	 * Returns a mutable accessor for accessing and/or setting attributes in
+	 * conversation scope. <b>Conversation scoped attributes exist for the life
+	 * of the executing flow and are shared accross all flow sessions.</b>
+	 * @return the conversation scope
+	 */
+	public Scope getConversationScope();
+
+	/**
 	 * Returns the external client context that originated (or triggered) this
 	 * request. Also known as the "user context".
 	 * <p>
@@ -98,32 +144,7 @@ public interface RequestContext {
 	 * @return the flow execution context
 	 */
 	public FlowExecutionContext getFlowExecutionContext();
-
-	/**
-	 * Returns a mutable accessor for accessing and/or setting attributes in
-	 * request scope. <b>Request scoped attributes exist for the duration of
-	 * this request only.</b>
-	 * @return the request scope
-	 */
-	public Scope getRequestScope();
-
-	/**
-	 * Returns a mutable accessor for accessing and/or setting attributes in
-	 * flow scope. <b>Flow scoped attributes exist for the life of the active
-	 * flow session.</b>
-	 * @return the flow scope
-	 * @see FlowExecutionContext#getActiveSession()
-	 */
-	public Scope getFlowScope();
-
-	/**
-	 * Returns a mutable accessor for accessing and/or setting attributes in
-	 * conversation scope. <b>Conversation scoped attributes exist for the life
-	 * of the executing flow and are shared accross all flow sessions.</b>
-	 * @return the conversation scope
-	 */
-	public Scope getConversationScope();
-
+	
 	/**
 	 * Returns the last event signaled during this request. The event may or may
 	 * not have caused a state transition to happen.

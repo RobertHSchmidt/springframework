@@ -48,26 +48,13 @@ public interface FlowExecutionContext extends FlowExecutionStatistics {
 	public Flow getRootFlow();
 
 	/**
-	 * Returns the definition of the flow that is currently executing.
-	 * @return the flow definition for the active session
-	 * @throws IllegalStateException if this flow execution has not been started
-	 * at all, or if this execution has ended and is no longer actively
-	 * executing
+	 * Returns a holder for data placed in <i>conversation scope</i>.  Data in conversation 
+	 * scope is shared by all flow sessions, existing for the duration of the 
+	 * logical conversation associated with this flow execution.
+	 * @return the conversation scope
 	 */
-	public Flow getActiveFlow() throws IllegalStateException;
-
-	/**
-	 * Returns the current state of the executing flow. May return
-	 * <code>null</code> if this flow execution is in the process of starting
-	 * and has not yet entered its start state.
-	 * @return the current state, or <code>null</code> if in the process of
-	 * starting.
-	 * @throws IllegalStateException if this flow execution has not been started
-	 * at all, or if this execution has ended and is no longer actively
-	 * executing
-	 */
-	public State getCurrentState() throws IllegalStateException;
-
+	public Scope getScope();
+	
 	/**
 	 * Returns the active flow session of this flow execution.
 	 * @return the active flow session
@@ -76,16 +63,4 @@ public interface FlowExecutionContext extends FlowExecutionStatistics {
 	 * executing
 	 */
 	public FlowSession getActiveSession() throws IllegalStateException;
-
-	/**
-	 * Returns a holder for data placed in <i>conversation scope</i>.  Data in conversation 
-	 * scope is shared by all flow sessions, existing for the duration of the 
-	 * logical conversation associated with this flow execution.
-	 * @return the conversation scope
-	 * @throws IllegalStateException if this flow execution has not been started
-	 * at all, or if this execution has ended and is no longer actively
-	 * executing
-	 */
-	public Scope getConversationScope() throws IllegalStateException;
-
 }

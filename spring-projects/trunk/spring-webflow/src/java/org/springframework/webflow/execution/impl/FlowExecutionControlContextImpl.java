@@ -58,6 +58,11 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	private FlowExecutionImpl flowExecution;
 
 	/**
+	 * The request scope data map.
+	 */
+	private Scope requestScope = new Scope();
+
+	/**
 	 * The original event that triggered the creation of this state context.
 	 */
 	private ExternalContext externalContext;
@@ -75,12 +80,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	/**
 	 * Holder for contextual execution properties.
 	 */
-	private Map executionProperties = Collections.EMPTY_MAP;
-
-	/**
-	 * The request scope data map.
-	 */
-	private Scope requestScope = new Scope();
+	private Map properties = Collections.EMPTY_MAP;
 
 	/**
 	 * Create a new request context.
@@ -96,18 +96,14 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 
 	// implementing RequestContext
 
-	public ExternalContext getExternalContext() {
-		return externalContext;
+	public Flow getActiveFlow() {
+		return flowExecution.getActiveSession().getFlow();
 	}
-
-	public Event getLastEvent() {
-		return lastEvent;
+	
+	public State getCurrentState() {
+		return flowExecution.getActiveSession().getState();
 	}
-
-	public FlowExecutionContext getFlowExecutionContext() {
-		return flowExecution;
-	}
-
+	
 	public Scope getRequestScope() {
 		return requestScope;
 	}
@@ -117,7 +113,19 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	}
 	
 	public Scope getConversationScope() {
-		return flowExecution.getConversationScope();
+		return flowExecution.getScope();
+	}
+
+	public FlowExecutionContext getFlowExecutionContext() {
+		return flowExecution;
+	}
+
+	public ExternalContext getExternalContext() {
+		return externalContext;
+	}
+
+	public Event getLastEvent() {
+		return lastEvent;
 	}
 
 	public Transition getLastTransition() {
@@ -125,15 +133,15 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	}
 
 	public Map getProperties() {
-		return executionProperties;
+		return properties;
 	}
 
 	public void setProperties(Map properties) {
 		if (properties != null) {
-			executionProperties = properties;
+			this.properties = properties;
 		}
 		else {
-			executionProperties = Collections.EMPTY_MAP;
+			properties = Collections.EMPTY_MAP;
 		}
 	}
 
@@ -158,7 +166,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 
 	public void setCurrentState(State state) {
 		flowExecution.getListeners().fireStateEntering(this, state);
-		State previousState = flowExecution.getCurrentState();
+		State previousState = getCurrentState();
 		flowExecution.setCurrentState(state);
 		if (previousState == null) {
 			flowExecution.getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
@@ -169,7 +177,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	public ViewSelection start(Flow flow, State startState, Map input) throws StateException {
 		if (input == null) {
 			// create a mutable map so entries can be added by listeners!
-			input = new HashMap(3);
+			input = new HashMap();
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Activating new session for flow '" + flow.getId() + "' in state '"
@@ -186,11 +194,11 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	public ViewSelection signalEvent(Event event) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Signaling event '" + event.getId() + "' in state '" + getCurrentState().getId()
-					+ "' of flow '" + getFlowExecutionContext().getActiveFlow().getId() + "'");
+					+ "' of flow '" + getActiveFlow().getId() + "'");
 		}
 		setLastEvent(event);
 		flowExecution.getListeners().fireEventSignaled(this);
-		ViewSelection selectedView = flowExecution.getActiveFlow().onEvent(event, this);
+		ViewSelection selectedView = getActiveFlow().onEvent(event, this);
 		return selectedView;
 	}
 
@@ -199,19 +207,15 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		if (logger.isDebugEnabled()) {
 			logger.debug("Ending active session " + getFlowExecutionContext().getActiveSession());
 		}
-		flowExecution.getActiveFlow().end(this, sessionOutput);
+		getActiveFlow().end(this, sessionOutput);
 		FlowSession endedSession = flowExecution.endActiveFlowSession();
 		flowExecution.getListeners().fireSessionEnded(this, endedSession, Collections.unmodifiableMap(sessionOutput));
 		return endedSession;
 	}
 
-	protected State getCurrentState() {
-		return getFlowExecutionContext().getCurrentState();
-	}
-
 	public String toString() {
 		return new ToStringCreator(this).append("externalContext", externalContext)
-				.append("requestScope", requestScope).append("executionProperties", executionProperties).append(
+				.append("requestScope", requestScope).append("executionProperties", properties).append(
 						"flowExecution", flowExecution).toString();
 	}
 }

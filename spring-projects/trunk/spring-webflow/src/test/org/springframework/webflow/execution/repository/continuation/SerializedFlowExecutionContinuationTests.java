@@ -80,7 +80,7 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 	 */
 	private static class MockFlowExecution implements FlowExecution, Serializable {
 
-		public Scope getConversationScope() throws IllegalStateException {
+		public Scope getScope() throws IllegalStateException {
 			return null;
 		}
 

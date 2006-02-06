@@ -63,13 +63,11 @@ public class ActionExecutor {
 		try {
 			if (logger.isDebugEnabled()) {
 				if (context.getFlowExecutionContext().getActiveSession().getStatus() == FlowSessionStatus.STARTING) {
-					logger.debug("Executing starting " + action + " for flow '"
-							+ context.getFlowExecutionContext().getActiveFlow().getId() + "'");
+					logger.debug("Executing start " + action + " for flow '" + context.getActiveFlow().getId() + "'");
 				}
 				else {
-					logger.debug("Executing " + action + " in state '"
-							+ context.getFlowExecutionContext().getCurrentState().getId() + "' of flow '"
-							+ context.getFlowExecutionContext().getActiveFlow().getId() + "'");
+					logger.debug("Executing " + action + " in state '" + context.getCurrentState().getId()
+							+ "' of flow '" + context.getActiveFlow().getId() + "'");
 				}
 			}
 			return action.execute(context);
@@ -80,12 +78,10 @@ public class ActionExecutor {
 		catch (Exception e) {
 			// wrap the action as an ActionExecutionException
 			if (context.getFlowExecutionContext().getActiveSession().getStatus() == FlowSessionStatus.STARTING) {
-				throw new ActionExecutionException(context.getFlowExecutionContext().getActiveFlow(), action, context
-						.getProperties(), e);
+				throw new ActionExecutionException(context.getActiveFlow(), action, context.getProperties(), e);
 			}
 			else {
-				throw new ActionExecutionException(context.getFlowExecutionContext().getCurrentState(), action, context
-						.getProperties(), e);
+				throw new ActionExecutionException(context.getCurrentState(), action, context.getProperties(), e);
 			}
 		}
 	}

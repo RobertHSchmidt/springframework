@@ -168,7 +168,7 @@ public class FlowExecutionTests extends TestCase {
 		FlowExecution execution = new FlowExecutionImpl(builder.getResult());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
-		assertEquals("viewState1", execution.getCurrentState().getId());
+		assertEquals("viewState1", execution.getActiveSession().getState().getId());
 		assertNotNull(execution.getActiveSession().getScope().getAttribute("items"));
 		execution.signalEvent("event1", context);
 		assertTrue(!execution.isActive());
@@ -184,7 +184,7 @@ public class FlowExecutionTests extends TestCase {
 		FlowExecution execution = new FlowExecutionImpl(builder.getResult());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
-		assertEquals("viewState2", execution.getCurrentState().getId());
+		assertEquals("viewState2", execution.getActiveSession().getState().getId());
 		assertNotNull(execution.getActiveSession().getScope().getAttribute("items"));
 		execution.signalEvent("event2", context);
 		assertTrue(!execution.isActive());

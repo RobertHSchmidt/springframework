@@ -125,7 +125,7 @@ public class FlowExecutionListeners {
 	 */
 	public void fireEventSignaled(RequestContext context) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].eventSignaled(context, context.getFlowExecutionContext().getCurrentState());
+			listeners[i].eventSignaled(context, context.getCurrentState());
 		}
 	}
 
@@ -155,7 +155,7 @@ public class FlowExecutionListeners {
 	 */
 	public void fireStateEntered(RequestContext context, State previousState) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].stateEntered(context, previousState, context.getFlowExecutionContext().getCurrentState());
+			listeners[i].stateEntered(context, previousState, context.getCurrentState());
 		}
 	}
 

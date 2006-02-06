@@ -83,7 +83,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	}
 
 	public ViewSelection handle(StateException e, FlowExecutionControlContext context) {
-		State sourceState = context.getFlowExecutionContext().getCurrentState();
+		State sourceState = context.getCurrentState();
 		if (!sourceState.isTransitionable()) {
 			throw new IllegalStateException("The source state '" + sourceState.getId()
 					+ "' to transition from must be transitionable!");

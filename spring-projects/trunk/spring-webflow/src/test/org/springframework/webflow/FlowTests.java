@@ -22,7 +22,6 @@ import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockFlowExecutionControlContext;
-import org.springframework.webflow.test.MockFlowSession;
 
 /**
  * Unit test for the Flow class.
@@ -133,7 +132,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testStart() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		flow.start(null, context);
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
 	}
@@ -146,16 +145,17 @@ public class FlowTests extends TestCase {
 		SubflowState state2 = new SubflowState(flow, "myState2", flow);
 		state2.addTransition(new Transition(to("myState3")));
 		State customStartState = new EndState(flow, "myState3");
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		context.setCurrentState(flow.getRequiredState("myState2"));
 		flow.start(customStartState, context);
-		assertTrue("Should have ended", !context.isActive());
+		assertTrue("Should have ended", !context.getFlowExecutionContext().isActive());
 	}
 
 	public void testHandleStateException() {
 		flow.addExceptionHandler(new TransitionExecutingStateExceptionHandler()
 				.add(MyCustomException.class, "myState2"));
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		context.setCurrentState(flow.getRequiredState("myState1"));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
 		ViewSelection selectedView = flow.handleException(e, context);
 		assertNotNull("Should not have been null", selectedView);
@@ -163,7 +163,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testHandleStateExceptionNoMatch() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new MockFlowSession(flow));
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
 		try {
 			flow.handleException(e, context);
@@ -172,7 +172,7 @@ public class FlowTests extends TestCase {
 			// expected
 		}
 	}
-	
+
 	public static TargetStateResolver to(String stateId) {
 		return new StaticTargetStateResolver(stateId);
 	}

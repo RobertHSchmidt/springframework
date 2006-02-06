@@ -38,9 +38,8 @@ public class AttributeMapperActionTests extends TestCase {
 		ama.setTargetExpression("${flowScope.bar}");
 		ama.initAction();
 		
-		Map params = new HashMap(1);
-		params.put("foo", "value");
-		MockRequestContext context = new MockRequestContext(new MockExternalContext(params));
+		MockRequestContext context = new MockRequestContext();
+		context.addRequestParameter("foo", "value");
 		
 		assertTrue(context.getFlowScope().isEmpty());
 		
