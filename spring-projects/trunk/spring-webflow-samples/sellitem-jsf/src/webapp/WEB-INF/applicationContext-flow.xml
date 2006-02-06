@@ -29,7 +29,7 @@
 	  Spring configured flow navigation handler delegate, allowing for custom configuration
 	  using standard dependency injection techniques.
 	  
-	  Note: this definition is optional--you may choose to simply specify your FlowNavigationHandler
+	  Note: this definition is optional; you may choose to simply specify your FlowNavigationHandler
 	  in your faces-config.xml if its defaults meet your needs.
 	-->
 	<bean id="jsfNavigationHandler" class="org.springframework.webflow.executor.jsf.FlowNavigationHandler"/>
@@ -38,7 +38,7 @@
 	  Spring configured flow phase listener delegate, allowing for custom configuration using
 	  standard dependency injection techniques.
 	  
-	  Note: this definition is optional--you may choose to simply specify your FlowPhaseListener
+	  Note: this definition is optional; you may choose to simply specify your FlowPhaseListener
 	  in your faces-config.xml if its defaults meet your needs.
 	-->
 	<bean id="flowPhaseListener" class="org.springframework.webflow.executor.jsf.FlowPhaseListener"/>
