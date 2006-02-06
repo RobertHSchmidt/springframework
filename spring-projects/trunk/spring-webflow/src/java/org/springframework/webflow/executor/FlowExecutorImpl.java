@@ -233,6 +233,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionContinuationKey continuationKey = parseContinuationKey(flowExecutionId);
 		ConversationLock lock = repository.getLock(continuationKey.getConversationId());
+		lock.lock();
 		try {
 			FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
 			ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
