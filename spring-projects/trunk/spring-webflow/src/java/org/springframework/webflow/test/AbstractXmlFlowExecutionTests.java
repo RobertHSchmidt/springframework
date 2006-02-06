@@ -15,8 +15,10 @@
  */
 package org.springframework.webflow.test;
 
-import org.springframework.webflow.registry.ExternalizedFlowRegistrar;
-import org.springframework.webflow.registry.XmlFlowRegistrar;
+import org.springframework.core.io.Resource;
+import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowBuilder;
+import org.springframework.webflow.builder.XmlFlowBuilder;
 
 /**
  * Base class for flow integration tests that verify a XML flow definition
@@ -53,7 +55,7 @@ import org.springframework.webflow.registry.XmlFlowRegistrar;
  * @author Keith Donald
  */
 public abstract class AbstractXmlFlowExecutionTests extends AbstractExternalizedFlowExecutionTests {
-	protected ExternalizedFlowRegistrar createFlowRegistrar() {
-		return new XmlFlowRegistrar();
+	protected FlowBuilder createFlowBuilder(Resource resource, FlowArtifactFactory flowArtifactFactory) {
+		return new XmlFlowBuilder(resource, flowArtifactFactory);
 	}
 }

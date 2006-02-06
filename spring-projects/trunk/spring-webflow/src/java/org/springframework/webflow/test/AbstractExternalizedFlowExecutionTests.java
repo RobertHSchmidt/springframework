@@ -15,15 +15,14 @@
  */
 package org.springframework.webflow.test;
 
-import java.util.Collection;
-import java.util.Iterator;
-
+import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.builder.FlowAssembler;
+import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
-import org.springframework.webflow.registry.ExternalizedFlowRegistrar;
-import org.springframework.webflow.registry.FlowRegistry;
-import org.springframework.webflow.registry.StaticFlowHolder;
 
 /**
  * Base class for flow integration tests that verify an externalized flow
@@ -31,102 +30,76 @@ import org.springframework.webflow.registry.StaticFlowHolder;
  * 
  * @author Keith Donald
  */
-public abstract class AbstractExternalizedFlowExecutionTests extends AbstractManagedFlowExecutionTests {
+public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlowExecutionTests {
 
 	/**
-	 * Simply tracks the <code>id</code> of the flow definition to test.
+	 * The cached flow definition
 	 */
-	private static String flowId;
+	private static Flow cachedFlowDefinition;
 
 	/**
-	 * The cached flows.
+	 * The flag indicating if the the flow definition built from an externalized
+	 * resource as part of this test should be cached.
 	 */
-	private static Collection cachedFlows;
-	
-	/**
-	 * A flag indicating if this test should cache flow definitions built from
-	 * externalized resources.  Default is <code>true</code>.
-	 */
-	private boolean cacheFlowDefinitions = false;
+	private boolean cacheFlowDefinition;
 
-	protected void populateFlowRegistry(FlowRegistry flowRegistry, FlowArtifactFactory flowArtifactFactory) {
-		if (isCachePopulated()) {
-			Iterator it = cachedFlows.iterator();
-			while (it.hasNext()) {
-				flowRegistry.registerFlow(new StaticFlowHolder((Flow)it.next()));
-			}
+	/**
+	 * Returns if flow definition caching is turned on.
+	 */
+	public boolean isCacheFlowDefinition() {
+		return cacheFlowDefinition;
+	}
+
+	/**
+	 * Sets the flag indicating if the the flow definition built from an
+	 * externalized resource as part of this test should be cached.
+	 */
+	public void setCacheFlowDefinition(boolean cacheFlowDefinition) {
+		this.cacheFlowDefinition = cacheFlowDefinition;
+	}
+
+	protected Flow getFlow() throws FlowArtifactException {
+		if (isCacheFlowDefinition() && cachedFlowDefinition != null) {
+			return cachedFlowDefinition;
 		}
-		else {
-			ExternalizedFlowRegistrar registrar = createFlowRegistrar();
-			ExternalizedFlowDefinition flowDefinition = getFlowDefinition();
-			flowId = flowDefinition.getId();
-			registrar.addFlowDefinition(flowDefinition);
-			registrar.addFlowDefinitions(getSubflowDefinitions());
-			registrar.registerFlows(getFlowRegistry(), getFlowArtifactFactory());
-			if (isCacheFlowDefinitions()) {
-				// cache externally-built flow definitions for performance
-				cachedFlows = flowRegistry.getFlows();
-			}
+		FlowArtifactFactory flowArtifactFactory = createFlowArtifactFactory();
+		ExternalizedFlowDefinition flowDefinition = getFlowDefinition();
+		FlowBuilder builder = createFlowBuilder(flowDefinition.getLocation(), flowArtifactFactory);
+		new FlowAssembler(flowDefinition, builder).assembleFlow();
+		Flow flow = builder.getResult();
+		if (isCacheFlowDefinition()) {
+			cachedFlowDefinition = flow;
 		}
+		return flow;
 	}
 
 	/**
-	 * Returns whether this test is caching the flow definitions built from the
-	 * underlying externalized resources.
+	 * Returns the flow artifact factory to use during flow definition
+	 * construction time for accessing externally managed flow artifacts such as
+	 * actions and flows to be used as subflows.
+	 * <p>
+	 * Subclasses should override to return a specific flow artifact factory
+	 * implementation to support their flow execution test scenarios.
+	 * 
+	 * @return the flow artifact factory
 	 */
-	public boolean isCacheFlowDefinitions() {
-		return cacheFlowDefinitions;
-	}
-	/**
-	 * Set the flag indicating if this test should cache the flow definitions
-	 * built from the referenced externalized resources.
-	 */
-	public void setCacheFlowDefinitions(boolean cacheFlowDefinitions) {
-		this.cacheFlowDefinitions = cacheFlowDefinitions;
-	}
-
-	/**
-	 * Returns if the cache of flow definitions has been populated; only could return 
-	 * true if caching has been turned on.
-	 */
-	public boolean isCachePopulated() {
-		return isCacheFlowDefinitions() && cachedFlows != null;
-	}
-	
-	protected final String getFlowId() {
-		return flowId;
+	protected FlowArtifactFactory createFlowArtifactFactory() {
+		return new FlowArtifactFactoryAdapter();
 	}
 
 	/**
-	 * Factory method that returns the flow registrar that will perform registry
-	 * population of externalized flow definitions. Sublcasses may override.
+	 * Create the builder that will build the flow whose execution will be
+	 * tested.
+	 * @param resource the externalized flow definition resource location
+	 * @param flowArtifactFactory the flow artifact factory
+	 * @return the flow builder
 	 */
-	protected abstract ExternalizedFlowRegistrar createFlowRegistrar();
+	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowArtifactFactory flowArtifactFactory);
 
 	/**
 	 * Returns the definition of the externalized flow needed by this flow
 	 * execution test: subclasses must override.
-	 * <p>
-	 * The Flow definitions store returned is automatically added to this test's
-	 * FlowRegistry by the
-	 * {@link #populateFlowRegistry(FlowRegistry, FlowArtifactFactory)} method,
-	 * called on test setup.
 	 * @return the externalize flow definition to test
 	 */
 	protected abstract ExternalizedFlowDefinition getFlowDefinition();
-
-	/**
-	 * Returns the array of definitions pointing to the externalized flows used
-	 * as subflows in this flow execution test. Optional. This default
-	 * implementation returns <code>null</code>, assuming there are no
-	 * subflows spawned in the flow execution being tested.
-	 * <p>
-	 * Flow definitions stored in the returned resouce array are automatically
-	 * added to this test's FlowRegistry by the {@link #populateFlowRegistry}
-	 * method, called on test setup.
-	 * @return the externalized flow definitions needed as subflows by this test
-	 */
-	protected ExternalizedFlowDefinition[] getSubflowDefinitions() {
-		return null;
-	}
 }
