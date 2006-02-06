@@ -172,8 +172,8 @@
 							The definition of the flow execution.  The flow serves as
 							the blueprint for the conversation.  The flow execution 
 							is an instance of the conversation at a point in time.
-							<emphasis>It may be helpful to think of a flow as like a Class and a 
-							flow execution as like an instance of that Class</emphasis>.
+							<emphasis>It may be helpful to think of a flow as like a <literal>Class</literal> and a 
+							flow execution as like an instance of that <literal>Class</literal></emphasis>.
 							This method may always be safely called.
 						</entry>
 						<entry>
@@ -191,6 +191,70 @@
 						<entry>
 							<emphasis>1</emphasis>
 						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+		<para>
+			As a flow execution is manipulated by clients its contextual state changes.  Consider what 
+			happens when the following events occur in order and how they effect contextual state:
+		</para>
+    	<table>
+			<title>An ordered set of events and the effects on flow execution context</title>
+            <tgroup cols="3">
+   	            <colspec colname="c1" colwidth="2*" />
+   	            <colspec colname="c1" colwidth="2*" />
+                <colspec colname="c2" colwidth="4*" />
+       	        <thead>
+	                <row>
+           	            <entry>Flow Execution Event</entry>
+           	            <entry>Active?</entry>
+               	        <entry>Effect on the <literal>activeSession</literal> context property</entry>
+       	            </row>
+				</thead>
+				<tbody>
+					<row>
+           				<entry>created</entry>
+						<entry>false</entry>
+						<entry>Throws an IllegalStateException</entry>
+					</row>
+					<row>
+   						<entry>started</entry>
+						<entry>true</entry>
+						<entry>
+							Returns a <literal>FlowSession</literal> whose <literal>flow</literal> property
+							is the top-level flow and whose <literal>state</literal> property is the flow's start state.
+						</entry>
+					</row>
+					<row>
+   						<entry>state entered</entry>
+						<entry>true</entry>
+						<entry>
+							Returns a <literal>FlowSession</literal> whose <literal>flow</literal> property
+							is the top-level flow and whose <literal>state</literal> property is the newly entered state.
+						</entry>
+					</row>
+					<row>
+   						<entry>subflow spawned</entry>
+						<entry>true</entry>
+						<entry>
+							Returns a <literal>FlowSession</literal> whose <literal>flow</literal> property
+							is the subflow and whose <literal>state</literal> property is subflow's start state.
+						</entry>
+					</row>
+					<row>
+   						<entry>subflow ended</entry>
+						<entry>true</entry>
+						<entry>
+							Returns a <literal>FlowSession</literal> whose 
+							<literal>flow</literal> property is the top-level flow and whose <literal>state</literal> 
+							property is the resuming state.
+						</entry>
+					</row>
+					<row>
+   						<entry>ended</entry>
+						<entry>false</entry>
+						<entry>Throws an IllegalStateException</entry>
 					</row>
 				</tbody>
 			</tgroup>
