@@ -28,10 +28,11 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 
 /**
  * The default implementation of the central facade for <i>driving</i> the
@@ -103,9 +104,9 @@ public class FlowExecutorImpl implements FlowExecutor {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * The flow execution repository factory, for obtaining repository
-	 * instances to save paused executions that require user input and load
-	 * resuming executions that will process user events.
+	 * The flow execution repository factory, for obtaining repository instances
+	 * to save paused executions that require user input and load resuming
+	 * executions that will process user events.
 	 * <p>
 	 * The default value is the {@link SimpleFlowExecutionRepositoryFactory}
 	 * repository factory that creates repositories within the user session map.
@@ -231,20 +232,27 @@ public class FlowExecutorImpl implements FlowExecutor {
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionContinuationKey continuationKey = parseContinuationKey(flowExecutionId);
-		FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
-		ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
-		if (flowExecution.isActive()) {
-			continuationKey = repository.generateContinuationKey(flowExecution, continuationKey.getConversationId());
-			repository.putFlowExecution(continuationKey, flowExecution);
-			selectedView = prepareSelectedView(selectedView, context, repository, continuationKey, flowExecution);
+		ConversationLock lock = repository.getLock(continuationKey.getConversationId());
+		try {
+			FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
+			ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
+			if (flowExecution.isActive()) {
+				continuationKey = repository
+						.generateContinuationKey(flowExecution, continuationKey.getConversationId());
+				repository.putFlowExecution(continuationKey, flowExecution);
+				selectedView = prepareSelectedView(selectedView, context, repository, continuationKey, flowExecution);
+			}
+			else {
+				repository.invalidateConversation(continuationKey.getConversationId());
+			}
+			if (logger.isDebugEnabled()) {
+				logger.debug("Returning view selection " + selectedView);
+			}
+			return selectedView;
 		}
-		else {
-			repository.invalidateConversation(continuationKey.getConversationId());
+		finally {
+			lock.unlock();
 		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Returning view selection " + selectedView);
-		}
-		return selectedView;
 	}
 
 	public ViewSelection getCurrentViewSelection(String conversationId, ExternalContext context) throws FlowException {

@@ -17,9 +17,9 @@ package org.springframework.webflow.execution.repository.continuation;
 
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.DelegatingFlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
-import org.springframework.webflow.execution.repository.SharedMapFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.support.DelegatingFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
+import org.springframework.webflow.execution.repository.support.SharedMapFlowExecutionRepositoryFactory;
 
 /**
  * A convenient implementation that encapsulates the assembly of a server-side

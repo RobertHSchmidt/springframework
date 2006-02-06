@@ -23,13 +23,15 @@ import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.execution.repository.AbstractFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
 import org.springframework.webflow.execution.repository.InvalidConversationContinuationException;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
-import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
+import org.springframework.webflow.execution.repository.support.NoOpConversationLock;
+import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 
 /**
  * Stores <i>one to many</i> flow execution continuations per conversation,
@@ -135,6 +137,10 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	 */
 	public void setMaxContinuations(int maxContinuations) {
 		this.maxContinuations = maxContinuations;
+	}
+
+	public ConversationLock getLock(Serializable conversationId) {
+		return NoOpConversationLock.INSTANCE;
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {

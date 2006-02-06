@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository;
+package org.springframework.webflow.execution.repository.support;
 
 import java.io.Serializable;
 
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 
 /**
  * A convenient base for flow execution repository implementations.

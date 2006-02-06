@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository;
+package org.springframework.webflow.execution.repository.support;
 
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.executor.EmptyFlowExecutionListenerLoader;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;

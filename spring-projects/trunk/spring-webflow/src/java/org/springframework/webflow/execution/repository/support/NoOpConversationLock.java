@@ -13,17 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository;
+package org.springframework.webflow.execution.repository.support;
 
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.ExternalContext.SharedMap;
+import org.springframework.webflow.execution.repository.ConversationLock;
 
 /**
- * A {@link SharedMapLocator} that returns the external context session map.
+ * A singleton lock that doesn't do anything. For use when repositories don't
+ * require or choose not to implement locking.
+ * 
  * @author Keith Donald
  */
-public class SessionMapLocator implements SharedMapLocator {
-	public SharedMap getMap(ExternalContext context) {
-		return context.getSessionMap();
+public class NoOpConversationLock implements ConversationLock {
+
+	/**
+	 * The singleton instance.
+	 */
+	public static final NoOpConversationLock INSTANCE = new NoOpConversationLock();
+
+	private NoOpConversationLock() {
+
+	}
+
+	public void lock() {
+	}
+
+	public void unlock() {
 	}
 }

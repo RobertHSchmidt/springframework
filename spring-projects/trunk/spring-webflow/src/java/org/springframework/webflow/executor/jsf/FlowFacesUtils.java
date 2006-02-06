@@ -8,7 +8,7 @@ import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 
 public class FlowFacesUtils {
 	

@@ -26,10 +26,12 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.AbstractFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
+import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
+import org.springframework.webflow.execution.repository.support.NoOpConversationLock;
 
 /**
  * Stores flow execution continuations clientside, requiring no use of
@@ -91,6 +93,10 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 
 	public ClientContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
 		super(repositoryServices);
+	}
+
+	public ConversationLock getLock(Serializable conversationId) {
+		return NoOpConversationLock.INSTANCE;
 	}
 
 	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution) {

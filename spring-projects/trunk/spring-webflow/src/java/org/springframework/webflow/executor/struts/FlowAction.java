@@ -34,7 +34,7 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.SimpleFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.support.FlowExecutorHelper;

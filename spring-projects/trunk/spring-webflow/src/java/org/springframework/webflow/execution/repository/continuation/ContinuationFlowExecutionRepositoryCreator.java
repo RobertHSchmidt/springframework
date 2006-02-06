@@ -15,9 +15,9 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
-import org.springframework.webflow.execution.repository.AbstractFlowExecutionRepositoryCreator;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryServices;
+import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepositoryCreator;
+import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
 
 /**
  * Creates continuation-based flow execution repositories.

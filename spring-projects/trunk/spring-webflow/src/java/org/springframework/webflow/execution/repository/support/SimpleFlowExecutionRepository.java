@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository;
+package org.springframework.webflow.execution.repository.support;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.core.JdkVersion;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.repository.ConversationLock;
+import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
+import org.springframework.webflow.execution.repository.InvalidConversationContinuationException;
+import org.springframework.webflow.execution.repository.NoSuchConversationException;
 
 /**
  * Stores <i>exactly one</i> flow execution continuation per conversation,
@@ -72,12 +78,16 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		super(repositoryServices);
 	}
 
+	public ConversationLock getLock(Serializable conversationId) {
+		return getFlowExecutionEntry(conversationId).getLock();
+	}
+
 	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
 		FlowExecutionEntry entry = getFlowExecutionEntry(key.getConversationId());
 		// assert that the provided continuationId matches the entry's
 		// continuationId
 		// if they do not match, access to the conversation is not allowed.
-		if (!key.getContinuationId().equals(entry.getId())) {
+		if (!key.getContinuationId().equals(entry.getContinuationId())) {
 			throw new InvalidConversationContinuationException(this, key, "The continuation id '"
 					+ key.getContinuationId() + "' associated with conversation '" + key.getConversationId()
 					+ "' is invalid.  This will happen when accessing browser history "
@@ -89,22 +99,21 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		return rehydrate(entry.getFlowExecution());
 	}
 
-	private FlowExecutionEntry getFlowExecutionEntry(Serializable conversationId) {
-		FlowExecutionEntry entry = (FlowExecutionEntry)flowExecutionEntries.get(conversationId);
-		if (entry == null) {
-			throw new NoSuchConversationException(this, conversationId);
-		}
-		return entry;
-	}
-
 	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
-		flowExecutionEntries.put(key.getConversationId(),
-				new FlowExecutionEntry(key.getContinuationId(), flowExecution));
+		FlowExecutionEntry entry = (FlowExecutionEntry)flowExecutionEntries.get(key.getConversationId());
+		if (entry != null) {
+			entry.setContinuationId(key.getContinuationId());
+		}
+		else {
+			flowExecutionEntries.put(key.getConversationId(), new FlowExecutionEntry(key.getContinuationId(),
+					flowExecution));
+		}
 	}
 
 	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId)
 			throws FlowExecutionRepositoryException {
-		return new FlowExecutionContinuationKey(conversationId, getFlowExecutionEntry(conversationId).getId());
+		return new FlowExecutionContinuationKey(conversationId, getFlowExecutionEntry(conversationId)
+				.getContinuationId());
 	}
 
 	public ViewSelection getCurrentViewSelection(Serializable conversationId) {
@@ -119,6 +128,14 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		flowExecutionEntries.remove(conversationId);
 	}
 
+	private FlowExecutionEntry getFlowExecutionEntry(Serializable conversationId) {
+		FlowExecutionEntry entry = (FlowExecutionEntry)flowExecutionEntries.get(conversationId);
+		if (entry == null) {
+			throw new NoSuchConversationException(this, conversationId);
+		}
+		return entry;
+	}
+
 	/**
 	 * A holder for a flow execution representing a user conversation with
 	 * Spring Web Flow. Is also assigned an <code>id</code> used as a key for
@@ -130,7 +147,12 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		/**
 		 * The key required to continue the conversation.
 		 */
-		private Serializable id;
+		private Serializable continuationId;
+
+		/**
+		 * The lock for this conversation.
+		 */
+		private ConversationLock lock;
 
 		/**
 		 * The flow execution representing the state of a conversation.
@@ -142,13 +164,28 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		 */
 		private ViewSelection currentViewSelection = ViewSelection.NULL_VIEW_SELECTION;
 
+		/**
+		 * Creates a new flow execution entry represnting a active conversation
+		 * managed in this repository.
+		 * @param id the conversation id
+		 * @param flowExecution the flow execution
+		 */
 		public FlowExecutionEntry(Serializable id, FlowExecution flowExecution) {
-			this.id = id;
+			this.continuationId = id;
+			this.lock = createLock();
 			this.flowExecution = flowExecution;
 		}
 
-		public Serializable getId() {
-			return id;
+		public Serializable getContinuationId() {
+			return continuationId;
+		}
+
+		public void setContinuationId(Serializable continuationId) {
+			this.continuationId = continuationId;
+		}
+
+		public ConversationLock getLock() {
+			return lock;
 		}
 
 		public FlowExecution getFlowExecution() {
@@ -163,8 +200,18 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 			this.currentViewSelection = viewSelection;
 		}
 
+		protected ConversationLock createLock() {
+			if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_15) {
+				return new Jdk15ConversationLock();
+			}
+			else {
+				return NoOpConversationLock.INSTANCE;
+			}
+		}
+
 		public String toString() {
-			return new ToStringCreator(this).append("id", id).append("flowExecution", flowExecution).toString();
+			return new ToStringCreator(this).append("id", continuationId).append("flowExecution", flowExecution)
+					.toString();
 		}
 	}
 }

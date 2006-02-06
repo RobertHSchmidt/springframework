@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository;
+package org.springframework.webflow.execution.repository.support;
 
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryCreator;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 
 /**
  * A convenient base for factories that create or locate flow execution

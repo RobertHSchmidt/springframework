@@ -81,6 +81,32 @@ public interface FlowExecutionRepository {
 			throws FlowExecutionRepositoryException;
 
 	/**
+	 * Return the lock for the conversation, allowing for the lock to be
+	 * acquired or released.
+	 * <p>
+	 * CAUTION: care should be made not to allow for a deadlock situation. If
+	 * you acquire a lock make sure you release it when you are done.
+	 * <p>
+	 * The general pattern for safely doing work against a locked conversation
+	 * follows:
+	 * 
+	 * <pre>
+	 * ConversationLock lock = repository.getLock(conversationId);
+	 * lock.lock();
+	 * try {
+	 *     // do conversation work
+	 * }
+	 * finally {
+	 *     lock.unlock();
+	 * }
+	 * </pre>
+	 * 
+	 * @param conversationId the conversation id
+	 * @return the conversation lock
+	 */
+	public ConversationLock getLock(Serializable conversationId);
+
+	/**
 	 * Return the <code>FlowExecution</code> indexed by the provided
 	 * continuation key. The returned flow execution represents the restored
 	 * state of a user conversation captured by the indexed continuation at a
@@ -119,12 +145,12 @@ public interface FlowExecutionRepository {
 	 * specified conversation.
 	 * @param conversationId the conversation id
 	 * @return the current continuation key
-	 * @throws FlowExecutionRepositoryException if an exception occured
-	 * getting the continuationk ey
+	 * @throws FlowExecutionRepositoryException if an exception occured getting
+	 * the continuationk ey
 	 */
 	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId)
 			throws FlowExecutionRepositoryException;
-	
+
 	/**
 	 * Returns the current (or last) view selection made for the specified
 	 * conversation, or <code>null</code> if no such view selection exists.
@@ -145,8 +171,8 @@ public interface FlowExecutionRepository {
 	 * conversation.
 	 * @param conversationId the id of an existing conversation
 	 * @param viewSelection the view selection, to be set as the current
-	 * @throws FlowExecutionRepositoryException if an exception occured
-	 * setting the current view selection
+	 * @throws FlowExecutionRepositoryException if an exception occured setting
+	 * the current view selection
 	 */
 	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection)
 			throws FlowExecutionRepositoryException;
