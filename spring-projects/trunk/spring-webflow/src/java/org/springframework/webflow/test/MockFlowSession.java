@@ -43,6 +43,10 @@ public class MockFlowSession implements FlowSession {
 
 	private FlowSession parent;
 
+	/**
+	 * Creates a new mock flow session that sets a flow with id "mockFlow" as
+	 * the 'active flow' in state "mockState". This session marks itself active.
+	 */
 	public MockFlowSession() {
 		setFlow(new Flow("mockFlow"));
 		State state = new State(flow, "mockState") {
@@ -53,11 +57,19 @@ public class MockFlowSession implements FlowSession {
 		setStatus(FlowSessionStatus.ACTIVE);
 		setState(state);
 	}
-	
+
+	/**
+	 * Creates a new mock session in a created state for the specified flow
+	 * definition.
+	 */
 	public MockFlowSession(Flow flow) {
 		setFlow(flow);
 	}
 
+	/**
+	 * Creates a new mock session in a created state for the specified flow
+	 * definition.
+	 */
 	public MockFlowSession(Flow flow, Map input) {
 		setFlow(flow);
 		scope.putAll(input);

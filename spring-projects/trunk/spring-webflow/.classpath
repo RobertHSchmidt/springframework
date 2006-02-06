@@ -19,10 +19,10 @@
 	<classpathentry kind="lib" path="lib/global/spring-binding.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
 	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-core.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/spring-portlet.jar"/>
 	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-web.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/struts.jar"/>
+	<classpathentry kind="lib" path="lib/test/spring-mock.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

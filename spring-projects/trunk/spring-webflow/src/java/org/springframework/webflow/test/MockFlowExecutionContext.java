@@ -21,18 +21,26 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 
 	private Scope scope = new Scope();
 
+	/**
+	 * Creates a new mock flow execution context--automatically installs a root
+	 * flow definition and active flow session.
+	 */
 	public MockFlowExecutionContext() {
 		activeSession = new MockFlowSession();
 		this.rootFlow = activeSession.getFlow();
 	}
-	
+
+	/**
+	 * Creates a new mock flow execution context for the specified root flow
+	 * definition.
+	 */
 	public MockFlowExecutionContext(Flow rootFlow) {
 		this.rootFlow = rootFlow;
 		activeSession = new MockFlowSession(rootFlow);
 	}
 
 	// implementing flow execution statistics
-	
+
 	public String getCaption() {
 		return "Mock flow execution context";
 	}
@@ -42,7 +50,7 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	}
 
 	// implementing flow execution context
-	
+
 	public Flow getRootFlow() {
 		return rootFlow;
 	}

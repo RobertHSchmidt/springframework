@@ -48,7 +48,7 @@ import org.springframework.webflow.Transition;
 public class MockRequestContext implements RequestContext {
 
 	private FlowExecutionContext flowExecutionContext = new MockFlowExecutionContext();
-	
+
 	private ExternalContext externalContext = new MockExternalContext();
 
 	private Scope requestScope = new Scope();
@@ -59,10 +59,27 @@ public class MockRequestContext implements RequestContext {
 
 	private Map properties = new HashMap();
 
+	/**
+	 * Creates a new mock request context with the following defaults:
+	 * <ul>
+	 * <li>A flow execution context with a active session of flow "mockFlow" in
+	 * state "mockState".
+	 * <li>A mock external context with no request parameters set.
+	 * </ul>
+	 * To add request parameters to this request, use the
+	 * {@link #addRequestParameter(Object, Object) } method.
+	 */
 	public MockRequestContext() {
-		
+
 	}
-	
+
+	/**
+	 * Creates a new mock request context with the specified external context
+	 * providing access to externally-managed attributes such as request
+	 * parameters.
+	 * 
+	 * @param externalContext the external context
+	 */
 	public MockRequestContext(ExternalContext externalContext) {
 		setExternalContext(externalContext);
 	}
@@ -122,15 +139,15 @@ public class MockRequestContext implements RequestContext {
 	}
 
 	/**
-	 * Set the external context--usefully when unit testing an artifact that depends on a specific 
-	 * external context implementation.
+	 * Set the external context--usefully when unit testing an artifact that
+	 * depends on a specific external context implementation.
 	 */
 	public void setExternalContext(ExternalContext externalContext) {
 		this.externalContext = externalContext;
 	}
 
 	/**
-	 * Set the flow execution context.  Typically not needed to be called.
+	 * Set the flow execution context. Typically not needed to be called.
 	 */
 	public void setFlowExecutionContext(FlowExecutionContext flowExecutionContext) {
 		this.flowExecutionContext = flowExecutionContext;
@@ -160,19 +177,33 @@ public class MockRequestContext implements RequestContext {
 	public void setProperty(String propertyName, Object propertyValue) {
 		properties.put(propertyName, propertyValue);
 	}
-	
+
+	/**
+	 * Returns the flow execution context as a {@link MockFlowExecutionContext}.
+	 */
 	public MockFlowExecutionContext getMockFlowExecutionContext() {
 		return (MockFlowExecutionContext)flowExecutionContext;
 	}
-	
+
+	/**
+	 * Returns the external context as a {@link MockExternalContext}.
+	 */
 	public MockExternalContext getMockExternalContext() {
 		return (MockExternalContext)externalContext;
 	}
-	
+
+	/**
+	 * Sets the active flow session of the executing flow associated with this request.
+	 */
 	public void setActiveSession(FlowSession flowSession) {
 		getMockFlowExecutionContext().setActiveSession(flowSession);
 	}
-	
+
+	/**
+	 * Adds a request parameter to the configured external context.
+	 * @param parameterName the parameter name
+	 * @param parameterValue the parameter value
+	 */
 	public void addRequestParameter(Object parameterName, Object parameterValue) {
 		getMockExternalContext().addRequestParameter(parameterName, parameterValue);
 	}
