@@ -86,7 +86,7 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * participate in this flow execution)
 	 * @throws StateException if an exception was thrown within a state of the
 	 * flow execution during request processing
-	 * @see FlowExecutionContext#getRootFlow()
+	 * @see FlowExecutionContext#getFlow()
 	 */
 	public ViewSelection start(ExternalContext context) throws StateException;
 

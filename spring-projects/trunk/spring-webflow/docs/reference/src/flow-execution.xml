@@ -160,16 +160,20 @@
            				<entry>active</entry>
 						<entry>
 							A flag indicating if the flow execution is active.
-							A inactive flow has either ended or has never been started.
+							An inactive flow execution has either ended or has never been started.
 						</entry>
 					    <entry>
 							<emphasis>1</emphasis>
 						</entry>
 					</row>
 					<row>
-   						<entry>rootFlow</entry>
+   						<entry>flow</entry>
 						<entry>
-							The definition of the flow for which the execution is an instance of.
+							The definition of the flow execution.  The flow serves as
+							the blueprint for the conversation.  The flow execution 
+							is an instance of the conversation at a point in time.
+							<emphasis>It may be helpful to think of a flow as like a Class and a 
+							flow execution as like an instance of that Class</emphasis>.
 							This method may always be safely called.
 						</entry>
 						<entry>
@@ -177,10 +181,12 @@
 						</entry>
 					</row>
 					<row>
-   						<entry>rootFlow</entry>
+   						<entry>activeSession</entry>
 						<entry>
-							The definition of the flow for which the execution is an instance of.
-							This method may always be safely called.
+							The active flow session, tracking the flow that is currently executing
+							and what state it is in.  The active session can change over the life of the 
+							flow execution because a flow can spawn another flow as a subflow.
+							This property can only be queried while the flow execution is active.
 						</entry>
 						<entry>
 							<emphasis>1</emphasis>

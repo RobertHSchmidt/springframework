@@ -142,7 +142,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	// implementing FlowExecutionStatistics
 
 	public String getCaption() {
-		return "FlowExecution:flow=[" + (getRootFlow() != null ? getRootFlow().getId() : rootFlowId) + "]";
+		return "FlowExecution:flow=[" + (getFlow() != null ? getFlow().getId() : rootFlowId) + "]";
 	}
 
 	public boolean isActive() {
@@ -151,7 +151,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// implementing FlowExecutionContext
 
-	public Flow getRootFlow() {
+	public Flow getFlow() {
 		return rootFlow;
 	}
 
@@ -173,7 +173,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
-				ViewSelection selectedView = context.start(getRootFlow(), getRootFlow().getStartState(), null);
+				ViewSelection selectedView = context.start(getFlow(), getFlow().getStartState(), null);
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {
@@ -423,8 +423,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
-		if (getRootFlow() != null) {
-			out.writeObject(getRootFlow().getId());
+		if (getFlow() != null) {
+			out.writeObject(getFlow().getId());
 		}
 		else {
 			out.writeObject(rootFlowId);
@@ -456,7 +456,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		if (isActive()) {
 			// sanity check
-			Assert.isTrue(getRootFlow() == getRootSession().getFlow(),
+			Assert.isTrue(getFlow() == getRootSession().getFlow(),
 					"The root flow of the execution should be the same as the flow in the root flow session");
 		}
 		if (listenerLoader != null) {
@@ -509,7 +509,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			if (isHydrated()) {
 				return new ToStringCreator(this).append("activeFlow", getActiveSession().getFlow().getId()).append(
 						"currentState", getActiveSession().getState().getId())
-						.append("rootFlow", getRootFlow().getId()).append("executingFlowSessions",
+						.append("rootFlow", getFlow().getId()).append("executingFlowSessions",
 								executingFlowSessions).toString();
 			}
 			else {

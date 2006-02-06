@@ -45,7 +45,7 @@ public interface FlowExecutionContext extends FlowExecutionStatistics {
 	 * Returns the root flow definition associated with this executing flow.
 	 * @return the root flow definition
 	 */
-	public Flow getRootFlow();
+	public Flow getFlow();
 
 	/**
 	 * Returns a holder for data placed in <i>conversation scope</i>.  Data in conversation 

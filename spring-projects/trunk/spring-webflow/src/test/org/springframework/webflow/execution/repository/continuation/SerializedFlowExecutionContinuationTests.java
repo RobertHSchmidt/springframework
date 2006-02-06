@@ -99,7 +99,7 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 			return null;
 		}
 
-		public Flow getRootFlow() {
+		public Flow getFlow() {
 			return null;
 		}
 

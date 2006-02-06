@@ -239,7 +239,7 @@ public class XmlFlowBuilderTests extends TestCase {
 
 	public static class TestAction implements Action {
 		public Event execute(RequestContext context) throws Exception {
-			if (context.getFlowExecutionContext().getRootFlow().containsProperty("scenario2")) {
+			if (context.getFlowExecutionContext().getFlow().containsProperty("scenario2")) {
 				return new Event(this, "event2");
 			}
 			return new Event(this, "event1");
