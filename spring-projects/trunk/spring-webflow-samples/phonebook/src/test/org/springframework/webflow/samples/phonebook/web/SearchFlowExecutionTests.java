@@ -18,24 +18,33 @@ package org.springframework.webflow.samples.phonebook.web;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.webflow.Action;
+import org.springframework.webflow.EndState;
+import org.springframework.webflow.Event;
+import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.builder.FlowArtifactFactory;
-import org.springframework.webflow.registry.FlowRegistry;
-import org.springframework.webflow.test.AbstractManagedFlowExecutionTests;
+import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.builder.FlowArtifactParameters;
+import org.springframework.webflow.builder.FlowAssembler;
+import org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook;
+import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
+import org.springframework.webflow.test.AbstractFlowExecutionTests;
 
-public class SearchFlowExecutionTests extends AbstractManagedFlowExecutionTests {
+public class SearchFlowExecutionTests extends AbstractFlowExecutionTests {
 
-	protected String getFlowId() {
-		return "search";
-	}
-	
-	protected void populateFlowRegistry(FlowRegistry flowRegistry, FlowArtifactFactory flowArtifactFactory) {
-		new PhonebookFlowRegistrar().registerFlows(flowRegistry, flowArtifactFactory);
-	}
+	private FlowArtifactFactory flowArtifactFactory = new TestFlowArtifactFactoryAdapter();
 
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath:org/springframework/webflow/samples/phonebook/deploy/service-layer.xml",
-				"classpath:org/springframework/webflow/samples/phonebook/deploy/web-layer.xml" };
+	private PhoneBook phonebook = new ArrayListPhoneBook();
+
+	protected Flow getFlow() throws FlowArtifactException {
+		SearchPersonFlowBuilder flowBuilder = new SearchPersonFlowBuilder(flowArtifactFactory);
+		new FlowAssembler("search", flowBuilder).assembleFlow();
+		return flowBuilder.getResult();
 	}
 
 	public void testStartFlow() {
@@ -43,20 +52,59 @@ public class SearchFlowExecutionTests extends AbstractManagedFlowExecutionTests 
 		assertCurrentStateEquals("displayCriteria");
 	}
 
-	public void testCriteriaView_Submit_Success() {
+	public void testCriteriaSubmitError() {
+		startFlow();
+		// simulate user error by not passing in any params
+		signalEvent("search");
+		assertCurrentStateEquals("displayCriteria");
+	}
+
+	public void testCriteriaSubmitSuccess() {
 		startFlow();
 		Map parameters = new HashMap();
 		parameters.put("firstName", "Keith");
 		parameters.put("lastName", "Donald");
 		ViewSelection view = signalEvent("search", parameters);
 		assertCurrentStateEquals("displayResults");
+		assertViewNameEquals("searchResults", view);
 		assertModelAttributeCollectionSize(1, "results", view);
 	}
 
-	public void testCriteriaView_Submit_Error() {
-		startFlow();
-		// simulate user error by not passing in any params
-		signalEvent("search");
+	public void testSelectValidResult() {
+		testCriteriaSubmitSuccess();
+		Map parameters = new HashMap();
+		parameters.put("id", "1");
+		ViewSelection view = signalEvent("select", parameters);
+		assertCurrentStateEquals("displayResults");
+		assertViewNameEquals("searchResults", view);
+		assertModelAttributeCollectionSize(1, "results", view);
+	}
+	
+	public void testNewSearch() {
+		testCriteriaSubmitSuccess();
+		ViewSelection view = signalEvent("newSearch");
 		assertCurrentStateEquals("displayCriteria");
+		assertViewNameEquals("searchCriteria", view);
+	}
+
+	protected class TestFlowArtifactFactoryAdapter extends FlowArtifactFactoryAdapter {
+		public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
+			// there is only one global action in this flow and its always the same
+			return new LocalBeanInvokingAction(phonebook);
+		}
+		
+		public Flow getSubflow(String id) throws FlowArtifactException {
+			Flow detail = new Flow(id);
+			// test responding to finish result
+			EndState finish = new EndState(detail, "finish");
+			finish.addEntryAction(new AbstractAction() {
+				public Event doExecute(RequestContext context) throws Exception {
+					// test attribute mapping
+					assertEquals(new Long(1), context.getFlowScope().getAttribute("id"));
+					return success();
+				}
+			});
+			return detail;
+		}
 	}
 }
