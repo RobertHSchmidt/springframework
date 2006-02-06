@@ -31,8 +31,6 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.executor.jsf.FlowExecutionHolder;
-import org.springframework.webflow.executor.jsf.FlowPhaseListener;
 
 /**
  * Unit tests for the FlowPhaseListener class.

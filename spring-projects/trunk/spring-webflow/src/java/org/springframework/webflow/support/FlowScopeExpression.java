@@ -23,7 +23,6 @@ import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.Scope;
-import org.springframework.webflow.ScopeType;
 
 /**
  * Expression evaluator that evaluates an expression in flow scope.

@@ -16,7 +16,6 @@
 package org.springframework.webflow.executor.jsf;
 
 import org.easymock.AbstractMatcher;
-import org.springframework.webflow.executor.jsf.JsfExternalContext;
 
 /**
  * Special EasyMock arguments matcher for arguments of type JsfExternalContext,

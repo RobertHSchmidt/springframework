@@ -25,9 +25,6 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.executor.jsf.FlowExecutionHolder;
-import org.springframework.webflow.executor.jsf.FlowNavigationHandler;
-import org.springframework.webflow.executor.jsf.JsfExternalContext;
 
 /**
  * Unit tests for the FlowNavigationHandler class.

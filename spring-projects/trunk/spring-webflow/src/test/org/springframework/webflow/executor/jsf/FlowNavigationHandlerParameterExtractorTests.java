@@ -1,8 +1,5 @@
 package org.springframework.webflow.executor.jsf;
 
-import org.springframework.webflow.executor.jsf.FlowNavigationHandlerParameterExtractor;
-import org.springframework.webflow.executor.jsf.JsfExternalContext;
-
 import junit.framework.TestCase;
 
 public class FlowNavigationHandlerParameterExtractorTests extends TestCase {

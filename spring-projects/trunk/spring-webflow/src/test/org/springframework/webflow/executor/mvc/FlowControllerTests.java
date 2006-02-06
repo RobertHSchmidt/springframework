@@ -22,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.executor.FlowExecutor;
-import org.springframework.webflow.executor.mvc.FlowController;
 
 /**
  * Unit test for the FlowController class.

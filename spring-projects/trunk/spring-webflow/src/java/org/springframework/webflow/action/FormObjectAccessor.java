@@ -18,7 +18,6 @@ package org.springframework.webflow.action;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.Scope;
 import org.springframework.webflow.ScopeType;
 
 /**

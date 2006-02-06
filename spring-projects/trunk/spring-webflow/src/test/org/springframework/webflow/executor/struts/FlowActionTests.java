@@ -24,7 +24,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.executor.struts.FlowAction;
 
 /**
  * Unit tests for the FlowAction class.

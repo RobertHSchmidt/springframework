@@ -18,8 +18,8 @@ package org.springframework.webflow.support;
 import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
-import org.springframework.webflow.Transition;
 import org.springframework.webflow.TargetStateResolver;
+import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionableState;
 
 /**

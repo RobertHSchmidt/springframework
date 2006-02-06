@@ -15,12 +15,8 @@
  */
 package org.springframework.webflow.action;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
-import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
