@@ -21,6 +21,7 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
+import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 
 /**
@@ -98,8 +99,9 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	/**
 	 * Sets the artifact locator.
 	 */
-	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactLocator) {
-		this.flowArtifactFactory = flowArtifactLocator;
+	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
+		Assert.notNull(flowArtifactFactory, "The flow artifact factory is required");
+		this.flowArtifactFactory = flowArtifactFactory;
 	}
 
 	/**

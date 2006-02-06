@@ -45,7 +45,7 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- * public void buildStates() {
+ *     public void buildStates() {
  *      
  *          // get customer information
  *          addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
@@ -64,7 +64,8 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  *              
  *          // finish
  *          addEndState(&quot;finish&quot;);
- *      }}
+ *     }
+ * }
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
