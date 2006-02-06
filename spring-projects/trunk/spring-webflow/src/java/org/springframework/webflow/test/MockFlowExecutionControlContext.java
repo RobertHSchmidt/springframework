@@ -45,7 +45,7 @@ import org.springframework.webflow.ViewSelection;
 public class MockFlowExecutionControlContext extends MockRequestContext implements FlowExecutionControlContext {
 
 	/**
-	 * Creates a new mock control context for controlling an execution of the
+	 * Creates a new mock control context for controlling a mock execution of the
 	 * provided flow definition.
 	 */
 	public MockFlowExecutionControlContext(Flow rootFlow) {
