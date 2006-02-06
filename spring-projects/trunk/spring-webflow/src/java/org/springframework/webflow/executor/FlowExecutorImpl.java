@@ -103,7 +103,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * The flow execution repository factoring, for obtaining repository
+	 * The flow execution repository factory, for obtaining repository
 	 * instances to save paused executions that require user input and load
 	 * resuming executions that will process user events.
 	 * <p>
