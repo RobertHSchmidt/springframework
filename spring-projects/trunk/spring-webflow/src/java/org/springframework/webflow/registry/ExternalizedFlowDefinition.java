@@ -33,6 +33,16 @@ public class ExternalizedFlowDefinition extends FlowArtifactParameters {
 	private Resource location;
 
 	/**
+	 * Creates a new externalized flow definition. The flow id assigned will be
+	 * the same name as the externalized resource's filename.
+	 * @param location the flow resource location.
+	 */
+	public ExternalizedFlowDefinition(Resource location) {
+		super(location.getFilename());
+		this.location = location;
+	}
+
+	/**
 	 * Creates a new externalized flow definition.
 	 * @param id the flow id to be assigned
 	 * @param location the flow resource location.
