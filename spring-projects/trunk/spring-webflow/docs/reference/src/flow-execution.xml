@@ -375,7 +375,7 @@
 	    			</listitem>
 	    			<listitem>
     					<para>
-							From the results page the user may select a result they wish to see additional details on
+							From the results page the user may select a result they wish to browse additional details on
 							or they may request a new search.  On select, the "detail" flow is spawned and 
 							when it finishes the search is re-executed.
 	    				</para>
