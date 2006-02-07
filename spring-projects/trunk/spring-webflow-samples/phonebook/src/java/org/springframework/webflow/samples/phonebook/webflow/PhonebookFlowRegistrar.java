@@ -1,4 +1,4 @@
-package org.springframework.webflow.samples.phonebook.web;
+package org.springframework.webflow.samples.phonebook.webflow;
 
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.registry.FlowRegistrarSupport;

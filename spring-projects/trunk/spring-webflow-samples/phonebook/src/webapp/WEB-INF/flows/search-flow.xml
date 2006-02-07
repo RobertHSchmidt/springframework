@@ -7,7 +7,7 @@
 		<entry-actions>
 			<action bean="formAction" method="setupForm"/>
 		</entry-actions>
-		<transition on="submit" to="executeSearch">
+		<transition on="search" to="executeSearch">
 			<action bean="formAction" method="bindAndValidate"/>
 		</transition>
 	</view-state>
@@ -29,6 +29,6 @@
 		<transition on="finish" to="executeSearch"/>
 	</subflow-state>
 	
-	<import resource="search-flow-context.xml"/>
+	<import resource="search-flow-beans.xml"/>
 	
 </flow>

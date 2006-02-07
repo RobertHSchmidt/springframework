@@ -52,7 +52,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		Map parameters = new HashMap();
 		parameters.put("firstName", "Keith");
 		parameters.put("lastName", "Donald");
-		ViewSelection view = signalEvent("submit", parameters);
+		ViewSelection view = signalEvent("search", parameters);
 		assertCurrentStateEquals("displayResults");
 		assertViewNameEquals("searchResults", view);
 		assertModelAttributeCollectionSize(1, "results", view);
@@ -60,7 +60,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testCriteriaSubmitError() {
 		startFlow();
-		signalEvent("submit");
+		signalEvent("search");
 		assertCurrentStateEquals("enterCriteria");
 	}
 

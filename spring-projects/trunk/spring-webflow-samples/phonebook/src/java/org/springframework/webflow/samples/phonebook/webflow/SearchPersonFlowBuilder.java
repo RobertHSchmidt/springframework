@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.samples.phonebook.web;
+package org.springframework.webflow.samples.phonebook.webflow;
 
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.webflow.Action;
@@ -42,7 +42,7 @@ import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
  */
 public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
-	private static final String DISPLAY_CRITERIA = "displayCriteria";
+	private static final String ENTER_CRITERIA = "enterCriteria";
 
 	private static final String EXECUTE_SEARCH = "executeSearch";
 
@@ -57,7 +57,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
 		Action searchFormAction = createSearchFormAction();
-		ViewState displayCriteria = addViewState(DISPLAY_CRITERIA, "searchCriteria", transition(on("search"),
+		ViewState displayCriteria = addViewState(ENTER_CRITERIA, "searchCriteria", transition(on("search"),
 				to(EXECUTE_SEARCH), ifSuccessful(method("bindAndValidate", searchFormAction))));
 		displayCriteria.addEntryAction(method("setupForm", searchFormAction));
 
@@ -68,7 +68,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 		// view results
 		addViewState(DISPLAY_RESULTS, "searchResults", new Transition[] {
-				transition(on("newSearch"), to(DISPLAY_CRITERIA)), transition(on(select()), to(BROWSE_DETAILS)) });
+				transition(on("newSearch"), to(ENTER_CRITERIA)), transition(on(select()), to(BROWSE_DETAILS)) });
 
 		// view details for selected user id
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
