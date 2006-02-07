@@ -28,12 +28,6 @@ public class AddItemAction extends AbstractAction {
 		if (data != null && data.length() > 0) {
 			list.add(data);
 		}
-		try {
-			// add a bit of artificial think time
-			Thread.sleep(2000);
-		}
-		catch (InterruptedException e) {
-		}
 		return success();
 	}
 }
