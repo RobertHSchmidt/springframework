@@ -39,6 +39,10 @@
 		<property name="flowLocations" value="/WEB-INF/sellitem.xml"/>
 	</bean>
 
+    <bean id="mbeanServerFactory" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+        <property name="locateExistingServerIfPossible" value="true"/>
+    </bean>
+
 	<!-- Automatically exports the created flowRegistry as an MBean -->
 	<bean id="mbeanExporter" class="org.springframework.jmx.export.MBeanExporter">
 		<property name="beans">
