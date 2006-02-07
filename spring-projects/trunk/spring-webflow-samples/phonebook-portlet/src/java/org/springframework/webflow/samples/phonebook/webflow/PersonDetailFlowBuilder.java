@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.samples.phonebook.web;
+package org.springframework.webflow.samples.phonebook.webflow;
 
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.webflow.AnnotatedAction;

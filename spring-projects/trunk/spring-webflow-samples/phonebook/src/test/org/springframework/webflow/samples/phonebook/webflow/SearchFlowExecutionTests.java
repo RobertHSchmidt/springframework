@@ -13,11 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.samples.phonebook.web;
+package org.springframework.webflow.samples.phonebook.webflow;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
@@ -30,33 +33,18 @@ import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
 import org.springframework.webflow.builder.FlowArtifactParameters;
-import org.springframework.webflow.builder.FlowAssembler;
+import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook;
 import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
-import org.springframework.webflow.test.AbstractFlowExecutionTests;
+import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 
-public class SearchFlowExecutionTests extends AbstractFlowExecutionTests {
-
-	private FlowArtifactFactory flowArtifactFactory = new TestFlowArtifactFactoryAdapter();
-
-	private PhoneBook phonebook = new ArrayListPhoneBook();
-
-	protected Flow getFlow() throws FlowArtifactException {
-		SearchPersonFlowBuilder flowBuilder = new SearchPersonFlowBuilder(flowArtifactFactory);
-		new FlowAssembler("search", flowBuilder).assembleFlow();
-		return flowBuilder.getResult();
-	}
+public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testStartFlow() {
-		startFlow();
-		assertCurrentStateEquals("displayCriteria");
-	}
-
-	public void testCriteriaSubmitError() {
-		startFlow();
-		// simulate user error by not passing in any params
-		signalEvent("search");
-		assertCurrentStateEquals("displayCriteria");
+		ViewSelection view = startFlow();
+		assertCurrentStateEquals("enterCriteria");
+		assertViewNameEquals("searchCriteria", view);
+		assertModelAttributeNotNull("searchCriteria", view);
 	}
 
 	public void testCriteriaSubmitSuccess() {
@@ -70,6 +58,19 @@ public class SearchFlowExecutionTests extends AbstractFlowExecutionTests {
 		assertModelAttributeCollectionSize(1, "results", view);
 	}
 
+	public void testCriteriaSubmitError() {
+		startFlow();
+		signalEvent("search");
+		assertCurrentStateEquals("enterCriteria");
+	}
+
+	public void testNewSearch() {
+		testCriteriaSubmitSuccess();
+		ViewSelection view = signalEvent("newSearch");
+		assertCurrentStateEquals("enterCriteria");
+		assertViewNameEquals("searchCriteria", view);
+	}
+
 	public void testSelectValidResult() {
 		testCriteriaSubmitSuccess();
 		Map parameters = new HashMap();
@@ -79,20 +80,35 @@ public class SearchFlowExecutionTests extends AbstractFlowExecutionTests {
 		assertViewNameEquals("searchResults", view);
 		assertModelAttributeCollectionSize(1, "results", view);
 	}
+
+	/**
+	 * A stub for testing.
+	 */
+	private PhoneBook phonebook = new ArrayListPhoneBook();
+
+	@Override
+	protected ExternalizedFlowDefinition getFlowDefinition() {
+		File flowDir = new File("src/webapp/WEB-INF/flows");
+		Resource resource = new FileSystemResource(new File(flowDir, "search-flow.xml"));
+		return new ExternalizedFlowDefinition(resource);
+	}
 	
-	public void testNewSearch() {
-		testCriteriaSubmitSuccess();
-		ViewSelection view = signalEvent("newSearch");
-		assertCurrentStateEquals("displayCriteria");
-		assertViewNameEquals("searchCriteria", view);
+	@Override
+	protected FlowArtifactFactory createFlowArtifactFactory() {
+		return new TestFlowArtifactFactory();
 	}
 
-	protected class TestFlowArtifactFactoryAdapter extends FlowArtifactFactoryAdapter {
+	/**
+	 * Used to wire in test implementations of artifacts used by the flow, such
+	 * as the phonebook and the detail subflow
+	 */
+	protected class TestFlowArtifactFactory extends FlowArtifactFactoryAdapter {
 		public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
-			// there is only one global action in this flow and its always the same
+			// there is only one global action in this flow and its always the
+			// same
 			return new LocalBeanInvokingAction(phonebook);
 		}
-		
+
 		public Flow getSubflow(String id) throws FlowArtifactException {
 			Flow detail = new Flow(id);
 			// test responding to finish result
