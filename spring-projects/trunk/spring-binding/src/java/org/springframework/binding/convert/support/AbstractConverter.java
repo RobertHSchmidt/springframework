@@ -44,6 +44,21 @@ public abstract class AbstractConverter extends AttributeMapAccessorSupport impl
 	}
 
 	/**
+	 * Convenience convert method that converts the provided source to 
+	 * the target class specified with an empty conversion context.
+	 * 
+	 * @param source The source to convert
+	 * @param targetClass the target class to convert the source to, must be one
+	 * of the supported <code>targetClasses</code>
+	 * @return the converted object
+	 * @throws ConversionException a exception occured converting the source
+	 * value
+	 */
+	public Object convert(Object source, Class targetClass) throws ConversionException {
+		return convert(source, targetClass, Collections.EMPTY_MAP);
+	}
+	
+	/**
 	 * Convenience convert method that converts the provided source to the first
 	 * target object supported by this converter. Useful when a converter only
 	 * supports conversion to a single target.
