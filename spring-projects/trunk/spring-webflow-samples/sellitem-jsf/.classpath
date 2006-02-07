@@ -30,5 +30,14 @@
 	<classpathentry kind="lib" path="lib/global/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/global/myfaces-impl.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-digester.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-el.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-fileupload.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-validator.jar"/>
+	<classpathentry kind="lib" path="lib/global/jmx-ri.jar"/>
+	<classpathentry kind="lib" path="lib/global/oro.jar"/>
+	<classpathentry kind="lib" path="lib/global/tomahawk.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
