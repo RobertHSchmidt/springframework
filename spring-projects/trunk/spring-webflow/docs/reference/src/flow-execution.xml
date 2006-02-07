@@ -19,10 +19,18 @@
     <sect1 id="execution">
     	<title>FlowExecution</title>
     	<para>
-		    An executing flow, an instance of <literal>org.springframework.webflow.execution.FlowExecution</literal>,
-		    represents the state of a conversation at a point in time.  Given a flow definition, 
-		    an instance of <literal>org.springframework.webflow.Flow</literal>, a flow execution
+		    An executing flow is called a <emphasis>flow execution</emphasis>, realized by 
+		    an instance of <literal>org.springframework.webflow.execution.FlowExecution</literal>.
+		    A flow execution represents the state of a conversation at a point in time.
+		    A flow definition provides the blueprint for a conversation.  Given an instance
+		    of <literal>org.springframework.webflow.Flow</literal>, any number of flow executions
 		    can be created.
+		</para>
+		<para>
+			<emphasis>
+				It may be helpful to think of a flow as analagous to <literal>Class</literal> and a 
+				flow execution as analagous to an instance of that <literal>Class</literal>
+			</emphasis>.
 		</para>
 		<para>
 			Once created, a new flow execution is initially inactive, waiting to be started.  Once 
@@ -170,9 +178,7 @@
    						<entry>flow</entry>
 						<entry>
 							The definition of the flow execution.  The flow serves as
-							the blueprint for the conversation.  The flow execution 
-							is an instance of the conversation at a point in time.
-							<emphasis>It may be helpful to think of a flow as like a <literal>Class</literal> and a 
+							the blueprint for the conversation.  <emphasis>It may be helpful to think of a flow as like a <literal>Class</literal> and a 
 							flow execution as like an instance of that <literal>Class</literal></emphasis>.
 							This method may always be safely called.
 						</entry>
@@ -196,11 +202,11 @@
 			</tgroup>
 		</table>
 		<para>
-			As a flow execution is manipulated by clients its contextual state changes.  Consider what 
-			happens when the following events occur in order and how they effect contextual state:
+			As a flow execution is manipulated by clients its contextual state changes.  Consider how 
+			contextual state is effected when the following events occur:
 		</para>
     	<table>
-			<title>An ordered set of events and the effects on flow execution context</title>
+			<title>An ordered set of events and their effects on flow execution context</title>
             <tgroup cols="3">
    	            <colspec colname="c1" colwidth="2*" />
    	            <colspec colname="c1" colwidth="2*" />
@@ -209,7 +215,7 @@
 	                <row>
            	            <entry>Flow Execution Event</entry>
            	            <entry>Active?</entry>
-               	        <entry>Effect on the <literal>activeSession</literal> context property</entry>
+               	        <entry>Value of the <literal>activeSession</literal> property</entry>
        	            </row>
 				</thead>
 				<tbody>
@@ -222,33 +228,32 @@
    						<entry>started</entry>
 						<entry>true</entry>
 						<entry>
-							Returns a <literal>FlowSession</literal> whose <literal>flow</literal> property
-							is the top-level flow and whose <literal>state</literal> property is the flow's start state.
+							A <literal>FlowSession</literal> whose <literal>flow</literal>
+							is the top-level flow and whose <literal>state</literal> is the flow's start state.
 						</entry>
 					</row>
 					<row>
    						<entry>state entered</entry>
 						<entry>true</entry>
 						<entry>
-							Returns a <literal>FlowSession</literal> whose <literal>flow</literal> property
-							is the top-level flow and whose <literal>state</literal> property is the newly entered state.
+							A <literal>FlowSession</literal> whose <literal>flow</literal>
+							is the top-level flow and whose <literal>state</literal> is the newly entered state.
 						</entry>
 					</row>
 					<row>
    						<entry>subflow spawned</entry>
 						<entry>true</entry>
 						<entry>
-							Returns a <literal>FlowSession</literal> whose <literal>flow</literal> property
-							is the subflow and whose <literal>state</literal> property is subflow's start state.
+							A <literal>FlowSession</literal> whose <literal>flow</literal>
+							is the subflow and whose <literal>state</literal> is the subflow's start state.
 						</entry>
 					</row>
 					<row>
    						<entry>subflow ended</entry>
 						<entry>true</entry>
 						<entry>
-							Returns a <literal>FlowSession</literal> whose 
-							<literal>flow</literal> property is the top-level flow and whose <literal>state</literal> 
-							property is the resuming state.
+							A <literal>FlowSession</literal> whose <literal>flow</literal> is again the
+							top-level flow and whose <literal>state</literal> is the resuming state.
 						</entry>
 					</row>
 					<row>
@@ -259,6 +264,31 @@
 				</tbody>
 			</tgroup>
 		</table>
+		<para>
+			The following graphic illustrates an example flow execution context graphically:
+		</para>
+		<mediaobject>
+			<imageobject role="fo">
+				<imagedata fileref="images/flowexecution-sessionstack.png" format="PNG" align="center"/>
+			</imageobject>
+			<imageobject role="html">
+				<imagedata fileref="images/flowexecution-sessionstack.png" format="PNG" align="center"/>
+			</imageobject>
+			<caption>
+				<para>Flow execution context</para>
+			</caption>
+		</mediaobject>
+		<para>
+			In this illustration a flow execution has been created for the <literal>Book Flight</literal> flow.
+			The execution is currently active and the <literal>activeSession</literal> indicates it
+			is in the <literal>Display Seating Chart</literal> state of the <literal>Assign Seats</literal> flow,
+			which was spawned as a subflow from the <literal>Enter Seat Assignments</literal> state.		
+		</para>
+		<para>
+			Note how the active session status is <literal>paused</literal>, indicating the flow execution 
+			is currently waiting for user input to be provided to continue.  In this case, it is
+			expected the user will choose a seat for their flight.
+		</para>
     </sect1>	
 	<sect1 id="execution-testing">
 		<title>Flow execution testing</title>
@@ -269,7 +299,7 @@
 			<literal>new</literal> operator.
 		</para>
 		<para>
-			The general testing strategy for testing flows follows:
+			The general strategy for testing flows follows:
 		</para>
 		<para>
     		<orderedlist>
@@ -294,5 +324,34 @@
     		services called by the flow and/or may exercise production implementations.
     		Both are useful system test configurations.
     	</para>
+	    <sect2 id="execution-testing-example">
+ 	  	 	<title>Flow execution test example</title>
+   	 		<para>
+   	 			To help illustrate testing a flow execution, first consider the following flow
+   	 			to search a phonebook for contacts:
+   		 	</para>
+			<mediaobject>
+				<imageobject role="fo">
+					<imagedata fileref="images/phonebook-searchflowuml.png" format="PNG" align="center"/>
+				</imageobject>
+				<imageobject role="html">
+					<imagedata fileref="images/phonebook-searchflowuml.png" format="PNG" align="center"/>
+				</imageobject>
+				<caption>
+					<para>Phonebook Search Flow - UML Model</para>
+				</caption>
+			</mediaobject>
+			<mediaobject>
+				<imageobject role="fo">
+					<imagedata fileref="images/phonebook-searchflow.png" format="PNG" align="center"/>
+				</imageobject>
+				<imageobject role="html">
+					<imagedata fileref="images/phonebook-searchflow.png" format="PNG" align="center"/>
+				</imageobject>
+				<caption>
+					<para>Phonebook Search Flow - XML Definition</para>
+				</caption>
+			</mediaobject>
+		</sect2>
     </sect1>
 </chapter>
