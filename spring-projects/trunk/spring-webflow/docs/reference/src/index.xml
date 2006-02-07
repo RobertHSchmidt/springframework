@@ -5,6 +5,8 @@
 <!ENTITY overview SYSTEM "overview.xml">
 <!ENTITY flow-definition SYSTEM "flow-definition.xml">
 <!ENTITY flow-execution SYSTEM "flow-execution.xml">
+<!ENTITY flow-execution-repository SYSTEM "flow-execution-repository.xml">
+<!ENTITY flow-executor SYSTEM "flow-executor.xml">
 <!ENTITY phonebook SYSTEM "phonebook.xml">
 ]>
 
@@ -15,7 +17,7 @@
 		<title>Spring Web Flow</title>
 		<subtitle>Reference Documentation</subtitle>
 		<releaseinfo>Version 1.0 RC1</releaseinfo>
-		<pubdate>(Work in progress)</pubdate>
+		<pubdate>February 2006</pubdate>
 
 		<authorgroup>
 			<author>
@@ -46,6 +48,8 @@
 	&overview;
 	&flow-definition;
 	&flow-execution;
+	&flow-execution-repository;
+	&flow-executor;
 	&phonebook;
 
 </book>
