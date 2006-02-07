@@ -106,6 +106,10 @@ public class MockRequestContext implements RequestContext {
 		return getFlowExecutionContext().getScope();
 	}
 
+	public Map getRequestParameters() {
+		return externalContext.getRequestParameterMap();
+	}
+	
 	public ExternalContext getExternalContext() {
 		return externalContext;
 	}

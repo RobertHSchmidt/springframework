@@ -90,7 +90,7 @@ public interface RequestContext {
 	 * executing
 	 */
 	public State getCurrentState() throws IllegalStateException;
-	
+
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in
 	 * request scope. <b>Request scoped attributes exist for the duration of
@@ -115,6 +115,15 @@ public interface RequestContext {
 	 * @return the conversation scope
 	 */
 	public Scope getConversationScope();
+
+	/**
+	 * Returns the immutable input parameters associated with this request into
+	 * Spring Web Flow.  The map returned is immutable and cannot be changed.
+	 * <p>
+	 * This is typically a convenient shortcut for accessing the
+	 * {@link ExternalContext#getRequestParameterMap()} directly.
+	 */
+	public Map getRequestParameters();
 
 	/**
 	 * Returns the external client context that originated (or triggered) this
@@ -144,7 +153,7 @@ public interface RequestContext {
 	 * @return the flow execution context
 	 */
 	public FlowExecutionContext getFlowExecutionContext();
-	
+
 	/**
 	 * Returns the last event signaled during this request. The event may or may
 	 * not have caused a state transition to happen.

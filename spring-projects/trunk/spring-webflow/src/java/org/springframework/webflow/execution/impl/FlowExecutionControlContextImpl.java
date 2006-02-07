@@ -120,6 +120,10 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return flowExecution;
 	}
 
+	public Map getRequestParameters() {
+		return externalContext.getRequestParameterMap();
+	}
+	
 	public ExternalContext getExternalContext() {
 		return externalContext;
 	}
