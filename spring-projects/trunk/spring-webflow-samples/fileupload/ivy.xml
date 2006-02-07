@@ -13,7 +13,8 @@
   
   	<!-- global dependencies -->
     <dependency org="apache" name="commons-logging" rev="1.0.4"/>
-    <dependency org="apache" name="commons-fileupload" rev="1.0"/>
+    <dependency org="apache" name="commons-fileupload" rev="1.1"/>
+    <dependency org="apache" name="commons-io" rev="1.0"/>
     <dependency org="apache" name="log4j" rev="1.2.9"/>
     <dependency org="apache" name="taglibs" rev="1.1.2">
        <artifact name="standard" type="jar"/>
