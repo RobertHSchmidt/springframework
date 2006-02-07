@@ -22,9 +22,9 @@
 		    An executing flow is called a <emphasis>flow execution</emphasis>, realized by 
 		    an instance of <literal>org.springframework.webflow.execution.FlowExecution</literal>.
 		    A flow execution represents the state of a conversation at a point in time.
-		    A flow definition provides the blueprint for a flow execution.  Given an instance
-		    of <literal>org.springframework.webflow.Flow</literal>, any number of flow executions
-		    can be created.
+		    Given an instance  of <literal>org.springframework.webflow.Flow</literal>, any
+		    number of flow executions can be created.  A flow definition serves as the
+		    instructional blueprint for a flow execution.  
 		</para>
 		<para>
 			<emphasis>
