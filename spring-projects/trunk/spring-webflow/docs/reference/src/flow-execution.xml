@@ -352,6 +352,36 @@
 					<para>Phonebook Search Flow - XML Definition</para>
 				</caption>
 			</mediaobject>
+			<para>
+				From this you see a flow with four (4) states that execute these behaviors, respectively:
+			</para>
+			<para>
+	    		<orderedlist>
+    				<listitem>
+    					<para>
+							The first state displays a search criteria form so the user can enter who
+							they wish to search for.    					
+	    				</para>
+	    			</listitem>
+	    			<listitem>
+    					<para>
+							On form submit and successful data binding and validation the search is executed.
+	    				</para>
+	    			</listitem>
+	    			<listitem>
+    					<para>
+					  		After search execution, a results page is displayed.
+	    				</para>
+	    			</listitem>
+	    			<listitem>
+    					<para>
+							From the results page the user may select a result they wish to see additional details on
+							or they may request a new search.  On select, the "detail" flow is spawned and 
+							when it finishes the search is re-executed.
+	    				</para>
+	    			</listitem>
+	    		</orderedlist>
+	    	</para>
 		</sect2>
     </sect1>
 </chapter>
