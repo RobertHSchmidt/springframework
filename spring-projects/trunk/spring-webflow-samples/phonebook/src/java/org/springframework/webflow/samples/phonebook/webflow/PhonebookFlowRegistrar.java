@@ -11,7 +11,7 @@ import org.springframework.webflow.registry.FlowRegistry;
  */
 public class PhonebookFlowRegistrar extends FlowRegistrarSupport {
 	public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
-		registerFlow("search", new SearchPersonFlowBuilder(flowArtifactFactory), registry);
-		registerFlow("detail", new PersonDetailFlowBuilder(flowArtifactFactory), registry);
+		registerFlow("search-flow", new SearchPersonFlowBuilder(flowArtifactFactory), registry);
+		registerFlow("detail-flow", new PersonDetailFlowBuilder(flowArtifactFactory), registry);
 	}
 }

@@ -50,6 +50,8 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	private static final String BROWSE_DETAILS = "browseDetails";
 
+	private static final String DETAIL_FLOW = "detail-flow";
+
 	public SearchPersonFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
 		super(flowArtifactFactory);
 	}
@@ -73,7 +75,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 		// view details for selected user id
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("externalContext.requestParameterMap.id", "id", fromStringTo(Long.class)));
-		addSubflowState(BROWSE_DETAILS, flow("detail"), idMapper, transition(on(finish()), to(EXECUTE_SEARCH)));
+		addSubflowState(BROWSE_DETAILS, flow(DETAIL_FLOW), idMapper, transition(on(finish()), to(EXECUTE_SEARCH)));
 
 		// end - an error occured
 		addEndState(error(), "error");

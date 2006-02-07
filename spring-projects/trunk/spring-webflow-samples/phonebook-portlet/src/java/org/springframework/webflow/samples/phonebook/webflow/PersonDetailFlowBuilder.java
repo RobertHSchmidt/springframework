@@ -40,6 +40,8 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	private static final String BROWSE_COLLEAGUE_DETAILS = "browseColleagueDetails";
 
+	private static final String THIS_FLOW = "detail-flow";
+
 	public PersonDetailFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
 		super(flowArtifactFactory);
 	}
@@ -57,7 +59,7 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 		// view details for selected collegue
 		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
 		idMapper.setInputMapping(new Mapping("externalContext.requestParameterMap.id", "id", fromStringTo(Long.class)));
-		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow("detail"), idMapper, transition(on(finish()), to(GET_DETAILS)));
+		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow(THIS_FLOW), idMapper, transition(on(finish()), to(GET_DETAILS)));
 
 		// end
 		addEndState("finish");
