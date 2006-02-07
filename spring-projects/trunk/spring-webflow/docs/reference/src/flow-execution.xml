@@ -353,7 +353,7 @@
 				</caption>
 			</mediaobject>
 			<para>
-				From this you see a flow with four (4) states that execute these behaviors, respectively:
+				Above you see a flow with four (4) states that execute these behaviors, respectively:
 			</para>
 			<para>
 	    		<orderedlist>
@@ -382,6 +382,38 @@
 	    			</listitem>
 	    		</orderedlist>
 	    	</para>
+	    	<para>
+				From this behavior narrative the following assertable test scenarios can be extracted:
+	    	</para>
+	    		<orderedlist>
+    				<listitem>
+    					<para>
+							That when a flow execution starts, it enters the <literal>enterCriteria</literal> state and 
+							makes a <literal>searchCriteria</literal> view selection containing a <emphasis>form object</emphasis>
+							to be used as the basis for form field population.
+	    				</para>
+	    			</listitem>
+	    			<listitem>
+    					<para>
+					  		That on submit with valid input, the search is executed and a <literal>searchResults</literal> view selection is made.
+	    				</para>
+	    			</listitem>
+	    			<listitem>
+    					<para>
+							That on submit with invalid input, the <literal>searchCriteria</literal> view is selected.
+	    				</para>
+	    			</listitem>
+	    			<listitem>
+    					<para>
+							That on newSearch, the <literal>searchCriteria</literal> view is selected.
+	    				</para>
+	    			</listitem>
+	    			<listitem>
+    					<para>
+							That on select, the <literal>detail</literal> flow is spawned and passed the <literal>id</literal> of the selected result as expected.
+	    				</para>
+	    			</listitem>
+	    		</orderedlist>
 		</sect2>
     </sect1>
 </chapter>
