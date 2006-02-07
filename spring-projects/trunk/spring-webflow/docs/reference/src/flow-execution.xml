@@ -328,7 +328,7 @@
 							A status indicator describing what the session is currently doing.
 							Valid values are <literal>CREATED</literal>, <literal>ACTIVE</literal>,
 							<literal>PAUSED</literal>, <literal>SUSPENDED</literal>, <literal>RESUMING</literal>,
-							<literal>ENDING</literal>, <literal>ENDED</literal>
+							<literal>ENDING</literal>, and <literal>ENDED</literal>.
 						</entry>
 						<entry>
 							<emphasis>1</emphasis>
@@ -350,7 +350,7 @@
 		</table>
 		<para>
 			The following graphic illustrates an example flow execution context and flow 
-			session stack graphically:
+			session stack:
 		</para>
 		<mediaobject>
 			<imageobject role="fo">
@@ -390,7 +390,7 @@
     		<orderedlist>
     			<listitem>
     				<para>
-    					Your own implementations of definition artifacts used by the flow such as actions, 
+    					Your own implementations of definitional artifacts used by a flow such as actions, 
 	    				attribute mappers, and exception handlers should be unit tested in isolation.
 	    				Spring Web Flow ships convenient stubs to assist with this.
     				</para>
