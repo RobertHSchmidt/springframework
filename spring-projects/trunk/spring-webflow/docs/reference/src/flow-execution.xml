@@ -12,8 +12,8 @@
 		</para>
 		<para>
 			This chapter documents Spring Web Flow's flow execution system.  You'll
-			learn the core constructs of the system and how to execute flows within a variety 
-			of environments, including JUnit, Spring MVC, Struts, and Java Server Faces (JSF).
+			learn the core constructs of the system and how to execute flows out-of-container 
+			within a JUnit test environment.
 		</para>
     </sect1>
     <sect1 id="execution">
