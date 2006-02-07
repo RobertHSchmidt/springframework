@@ -1760,7 +1760,7 @@
     
 		...
 		        
-        &lt;end-state id="finish"&lt;
+        &lt;end-state id="finish"&gt;
             &lt;output-attribute name="shipping"/&gt;
         &lt;/end-state&gt;
         
