@@ -34,18 +34,18 @@ public class SampleFlowExecutionListener extends FlowExecutionListenerAdapter {
 		 * "captureInput" action, but using a flow execution listener is more
 		 * flexible.
 		 */
-		addInput(context.getExternalContext().getRequestParameterMap(), input);
+		mapInput(context.getRequestParameters(), input);
 	}
 
 	public void resumed(RequestContext context) {
 		// the flow is up & running, map input in the request into it
-		addInput(context.getExternalContext().getRequestParameterMap(), context.getFlowScope());
+		mapInput(context.getRequestParameters(), context.getFlowScope());
 	}
 
-	private void addInput(Map sourceMap, Map targetMap) {
-		String inputParam = (String)sourceMap.get(INPUT_ATTRIBUTE);
-		if (StringUtils.hasText(inputParam)) {
-			targetMap.put(INPUT_ATTRIBUTE, inputParam);
+	private void mapInput(Map sourceMap, Map targetMap) {
+		String inputParameter = (String)sourceMap.get(INPUT_ATTRIBUTE);
+		if (StringUtils.hasText(inputParameter)) {
+			targetMap.put(INPUT_ATTRIBUTE, inputParameter);
 		}
 	}
 }
