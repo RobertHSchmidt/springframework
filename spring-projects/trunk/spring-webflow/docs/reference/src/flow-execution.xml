@@ -414,6 +414,38 @@
 	    				</para>
 	    			</listitem>
 	    		</orderedlist>
+	    	<para>
+				To assist with writing these assertions Spring Web Flow ships with JUnit-based flow execution 
+				test support within the <literal>org.springframwork.webflow.test</literal> package.
+				These base test classes are indicated below:
+	    	</para>
+	    	<table>
+   				<title>Flow execution test support hierarchy</title>
+	            <tgroup cols="2">
+    	            <colspec colname="c1" colwidth="2*" />
+	                <colspec colname="c2" colwidth="4*" />
+        	        <thead>
+		                <row>
+            	            <entry>Class name</entry>
+                	        <entry>Description</entry>
+        	            </row>
+   					</thead>
+   					<tbody>
+						<row>
+             				<entry>AbstractFlowExecutionTests</entry>
+							<entry>The most generic base class for flow execution tests.</entry>
+						</row>
+						<row>
+             				<entry>AbstractExternalizedFlowExecutionTests</entry>
+							<entry>The base class for flow execution tests whose flow is defined within an externalized resource, such as a file.</entry>
+						</row>
+						<row>
+             				<entry>AbstractXmlFlowExecutionTests</entry>
+							<entry>The base class for flow execution tests whose flow is defined within an externalized XML resource.</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
 		</sect2>
     </sect1>
 </chapter>
