@@ -91,8 +91,8 @@ public class HigherLowerGame extends MultiAction implements Serializable {
 
 	private int getGuess(RequestContext context) {
 		try {
-			return ((Integer)new TextToNumber().convert(context.getExternalContext().getRequestParameterMap().get(
-					GUESS_PARAMETER), Integer.class)).intValue();
+			return ((Integer)new TextToNumber().convert(context.getRequestParameters().get(GUESS_PARAMETER),
+					Integer.class)).intValue();
 		}
 		catch (Exception e) {
 			return -1;

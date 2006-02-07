@@ -89,7 +89,7 @@ public class MastermindGame extends MultiAction {
 
 	private String getGuess(RequestContext context) {
 		final String GUESS_PARAMETER = "guess";
-		return (String)context.getExternalContext().getRequestParameterMap().get(GUESS_PARAMETER);
+		return (String)context.getRequestParameters().get(GUESS_PARAMETER);
 	}
 
 	/**
