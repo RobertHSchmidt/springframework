@@ -422,7 +422,7 @@
 	    	<table>
    				<title>Flow execution test support hierarchy</title>
 	            <tgroup cols="2">
-    	            <colspec colname="c1" colwidth="2*" />
+    	            <colspec colname="c1" colwidth="3*" />
 	                <colspec colname="c2" colwidth="4*" />
         	        <thead>
 		                <row>
@@ -450,102 +450,103 @@
 				The completed test for this example extending <literal>AbstractXmlFlowExecutionTests</literal> is shown below:
 	    	</para>
 	    	<programlisting>
-	public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
+    public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	
-		public void testStartFlow() {
-			ViewSelection view = startFlow();
-			assertCurrentStateEquals("enterCriteria");
-			assertViewNameEquals("searchCriteria", view);
-			assertModelAttributeNotNull("searchCriteria", view);
-		}
+        public void testStartFlow() {
+            ViewSelection view = startFlow();
+            assertCurrentStateEquals("enterCriteria");
+            assertViewNameEquals("searchCriteria", view);
+            assertModelAttributeNotNull("searchCriteria", view);
+        }
+        
+        public void testCriteriaSubmitSuccess() {
+            startFlow();
+
+            Map input = new HashMap();
+            input.put("firstName", "Keith");
+            input.put("lastName", "Donald");
+			
+            // submit with valid input
+            ViewSelection view = signalEvent("submit", input);
+			
+            assertCurrentStateEquals("displayResults");
+            assertViewNameEquals("searchResults", view);
+            assertModelAttributeCollectionSize(1, "results", view);
+        }
 	
-		public void testCriteriaSubmitSuccess() {
-			startFlow();
+        public void testCriteriaSubmitError() {
+            startFlow();
 			
-			Map input = new HashMap();
-			input.put("firstName", "Keith");
-			input.put("lastName", "Donald");
+            // submit with no input
+            signalEvent("submit");
 			
-			// submit with valid input
-			ViewSelection view = signalEvent("submit", input);
-			
-			assertCurrentStateEquals("displayResults");
-			assertViewNameEquals("searchResults", view);
-			assertModelAttributeCollectionSize(1, "results", view);
-		}
+            assertCurrentStateEquals("enterCriteria");
+        }
 	
-		public void testCriteriaSubmitError() {
-			startFlow();
-			
-			// submit with no input
-			signalEvent("submit");
-			
-			assertCurrentStateEquals("enterCriteria");
-		}
+        public void testNewSearch() {
+            testCriteriaSubmitSuccess();
+            ViewSelection view = signalEvent("newSearch");
+            assertCurrentStateEquals("enterCriteria");
+            assertViewNameEquals("searchCriteria", view);
+        }
 	
-		public void testNewSearch() {
-			testCriteriaSubmitSuccess();
-			ViewSelection view = signalEvent("newSearch");
-			assertCurrentStateEquals("enterCriteria");
-			assertViewNameEquals("searchCriteria", view);
-		}
-	
-		public void testSelectValidResult() {
-			testCriteriaSubmitSuccess();
+        public void testSelectValidResult() {
+            testCriteriaSubmitSuccess();
 			
-			Map input = new HashMap();
-			input.put("id", "1");
-			// select with valid input
-			ViewSelection view = signalEvent("select", input);
+            Map input = new HashMap();
+            input.put("id", "1");
+            // select with valid input
+            ViewSelection view = signalEvent("select", input);
 			
-			assertCurrentStateEquals("displayResults");
-			assertViewNameEquals("searchResults", view);
-			assertModelAttributeCollectionSize(1, "results", view);
-		}
+            assertCurrentStateEquals("displayResults");
+            assertViewNameEquals("searchResults", view);
+            assertModelAttributeCollectionSize(1, "results", view);
+        }
 	
-		/**
-		 * A stub for testing.
-		 */
-		private PhoneBook phonebook = new ArrayListPhoneBook();
+        /**
+         * A stub for testing.
+         */
+        private PhoneBook phonebook = new ArrayListPhoneBook();
 	
-		@Override
-		protected ExternalizedFlowDefinition getFlowDefinition() {
-			File flowDir = new File("src/webapp/WEB-INF/flows");
-			Resource resource = new FileSystemResource(new File(flowDir, "search-flow.xml"));
-			return new ExternalizedFlowDefinition(resource);
-		}
+        @Override
+        protected ExternalizedFlowDefinition getFlowDefinition() {
+            File flowDir = new File("src/webapp/WEB-INF/flows");
+            File file = new File(flowDir, "search-flow.xml");
+            return new ExternalizedFlowDefinition(new FileSystemResource(file));
+        }
 		
-		@Override
-		protected FlowArtifactFactory createFlowArtifactFactory() {
-			return new TestFlowArtifactFactory();
-		}
+        @Override
+        protected FlowArtifactFactory createFlowArtifactFactory() {
+            return new TestFlowArtifactFactory();
+        }
 	
-		/**
-		 * Used to wire in test implementations of artifacts used by the flow, such
-		 * as the phonebook and the detail subflow
-		 */
-		protected class TestFlowArtifactFactory extends FlowArtifactFactoryAdapter {
-			public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
-				// there is only one global action used by this flow, phonebook
-				return new LocalBeanInvokingAction(phonebook);
-			}
+        /**
+         * Used to wire in test implementations of artifacts used by the flow, such
+         * as the phonebook and the detail subflow
+         */
+        protected class TestFlowArtifactFactory extends FlowArtifactFactoryAdapter {
+        
+            public Action getAction(FlowArtifactParameters parameters){
+                // there is only one global action used by this flow, phonebook
+                return new LocalBeanInvokingAction(phonebook);
+            }
 	
-			public Flow getSubflow(String id) throws FlowArtifactException {
-			    // there is only one subflow, detail
-				Flow detail = new Flow(id);
-				// test responding to finish result by stubbing detail flow
-				EndState finish = new EndState(detail, "finish");
-				finish.addEntryAction(new AbstractAction() {
-					public Event doExecute(RequestContext context) throws Exception {
-						// test attribute mapping behavior
-						assertEquals(new Long(1), context.getFlowScope().getAttribute("id"));
-						return success();
-					}
-				});
-				return detail;
-			}
-		}
-	}	    	
+            public Flow getSubflow(String id) {
+                // there is only one subflow, detail
+                Flow detail = new Flow(id);
+                // test responding to finish result by stubbing detail flow
+                EndState finish = new EndState(detail, "finish");
+                finish.addEntryAction(new AbstractAction() {
+                    public Event doExecute(RequestContext context) {
+                        // test attribute mapping behavior
+                        assertEquals(new Long(1), context.getFlowScope().getAttribute("id"));
+                        return success();
+                    }
+                });
+                return detail;
+            }
+        }
+    }	    	
 	    	</programlisting>
 	    	<para>
 	    		With a well-written flow execution test passing that covers the controller behavior scenarios 
