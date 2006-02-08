@@ -4,7 +4,7 @@
 	Sample B Flow
 	<hr>
 	Flow input was: ${input}<BR>
-	<c:if test="${!flowExecutionContext.rootFlowActive}">
+	<c:if test="${!flowExecutionContext.activeSession.root}">
 	<br>
 	Sample B is now running as a sub flow within Sample A.  This means we can end Sample B and
 	return to the parent flow.  We can do this using either:
