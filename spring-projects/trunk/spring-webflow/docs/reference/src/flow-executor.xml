@@ -73,10 +73,6 @@
     &lt;bean name="/flowController.htm" class="org.springframework.webflow.executor.mvc.FlowController"&gt;
         &lt;constructor-arg ref="flowExecutor"/&gt;
     &lt;/bean&gt;
-		
-    &lt;bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean"&gt;
-        &lt;property name="flowLocations" value="/WEB-INF/flows/**/*-flow.xml"/&gt;
-    &lt;/bean&gt;
 	    	</programlisting>
     	</sect2>
     	<sect2 id="executor-mvc-launch-get">
@@ -190,7 +186,7 @@
     &lt;:commandLink value="Go" action="flowId:myflow"/&gt;
 	    	</programlisting>
     	</sect2>
-    	<sect2 id="executor-mvc-resume-form">
+    	<sect2 id="executor-jsf-resume-form">
     		<title>Resuming a flow execution - form</title>
 	    	<programlisting>
     &lt;h:form id="form"&gt;
