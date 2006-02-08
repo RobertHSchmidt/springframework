@@ -10,6 +10,7 @@
  * phonebook-portlet - the phonebook sample in a portlet environment (notice how the flow definitions do not change)
  * sellitem - demonstrates a wizard with conditional transitions and continuations
  * sellitem-jsf - the sellitem sample in a jsf environment (notice how the flow definition does not change)
+ * shippingrate - demonstrates Spring Web Flow together with Ajax technology.
  */
 
 Sample pre-requisites:
