@@ -3,5 +3,81 @@
 	<title>Flow execution repositories</title>
 	<sect1 id="repository-intro">
 		<title>Introduction</title>
+		<para>
+			A flow execution represents the state of a conversation <emphasis>at a point in time</emphasis>.
+			At runtime there can be any number of conversations active in parallel.  There can also
+			be multiple conversations initiated by the same user ongoing at the same time (for example,
+			for when a user is operating multiple windows or tabs within their browser).
+		</para>
+		<para>
+			Many of these conversations span multiple requests into the server and therefore 
+			must be saved so they can be resumed on subsequent requests.  This presents technical
+			challenges, as there must exist a stable mechanism for a request to be associated
+			with a restored conversation in a state that matches what the user expects.  This problem 
+			is more difficult when you consider that many applications require use of browser
+			navigational buttons, and their use involves updating local history without 
+			notifying the server.
+		</para>
+		<para>
+			The problem of conversation persistence is addressed by Spring Web Flow's <emphasis>flow
+			execution repository subsystem</emphasis>.  In this chapter you will learn how to use the system
+			to manage the storage of active web conversations in a stable manner.
+		</para>
+    </sect1>
+    <sect1 id="repository-architecture">
+    	<title>Repository architecture</title>
+    	<para>
+    		Recall the following bullet points noting what happens when a flow execution enters a ViewState:
+    	</para>
+    	<para>
+    		<orderedlist>
+    			<listitem>
+    				<para>
+						When a flow execution reaches a <literal>ViewState</literal> it is said to have <emphasis>paused</emphasis>,
+						where it waits in that state for user input to be provided so it can continue.  After pausing the 
+						<literal>ViewSelection</literal> returned is used to issue a response to the user
+						that provides a vehicle for collecting the required input.
+					</para>
+				</listitem>
+				<listitem>
+					<para>			
+						User input is provided by <emphasis>signaling an event</emphasis> that
+						<emphasis>resumes</emphasis> the flow execution in the paused ViewState.
+						The input event communicates what user action was taken.
+					</para>					
+    			</listitem>
+    		</orderedlist>
+    	</para>
+    	<para>
+    		Each time an active flow execution is <emphasis>paused</emphasis> it is saved out to a 
+    		repository.  When the next request comes in for that flow execution, it is restored 
+    		from the repository, <emphasis>resumed</emphasis>, and continued.  This process continues 
+    		until the flow execution reaches an end state, at which it is removed from the repository.
+    	</para>
+    	<para>
+    		This process is demonstrated over the next two graphics:
+    	</para>
+		<mediaobject>
+			<imageobject role="fo">
+				<imagedata fileref="images/flowexecution-persistence.png" format="PNG" align="center"/>
+			</imageobject>
+			<imageobject role="html">
+				<imagedata fileref="images/flowexecution-persistence.png" format="PNG" align="center"/>
+			</imageobject>
+			<caption>
+				<para>Request one (1) - Paused flow execution persistence</para>
+			</caption>
+		</mediaobject>    	
+		<mediaobject>
+			<imageobject role="fo">
+				<imagedata fileref="images/flowexecution-restoration.png" format="PNG" align="center"/>
+			</imageobject>
+			<imageobject role="html">
+				<imagedata fileref="images/flowexecution-restoration.png" format="PNG" align="center"/>
+			</imageobject>
+			<caption>
+				<para>Request two (2) - Paused flow execution restoration, Ended conversation invalidation</para>
+			</caption>
+		</mediaobject>    	
     </sect1>
 </chapter>
