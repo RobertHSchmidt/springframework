@@ -5,30 +5,108 @@
 		<title>Introduction</title>
 		<para>
 			Flow executors are facades that act as the highest-level entry points into
-			Spring Web Flow, responsible for driving flow executions in a variety of environments.
+			the Spring Web Flow system, responsible for driving flow executions in a variety of environments.
 		</para>
 		<para>
 			In this chapter you'll learn how to execute flows within Spring MVC, Struts, 
 			and Java Server Faces (JSF) based applications.
 		</para>
     </sect1>
+    <sect1 id="executor">
+    	<title>FlowExecutorImpl</title>
+    	<sect2 id="executor-simple">
+	    	<programlisting>
+    &lt;bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl"&gt;
+        &lt;constructor-arg ref="flowRegistry"/&gt;
+    &lt;/bean&gt;
+		
+    &lt;bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean"&gt;
+        &lt;property name="flowLocations" value="/WEB-INF/flows/**/*-flow.xml"/&gt;
+    &lt;/bean&gt;
+	    	</programlisting>
+    	</sect2>		
+    	<sect2 id="executor-custom-repo">
+	    	<programlisting>
+    &lt;bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl"&gt;
+        &lt;constructor-arg ref="repositoryFactory"/&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id="repositoryFactory" class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepositoryFactory"&gt;
+        &lt;constructor-arg ref="flowRegistry"/&gt;
+    &lt;/bean&gt;
+				
+    &lt;bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean"&gt;
+        &lt;property name="flowLocations" value="/WEB-INF/flows/**/*-flow.xml"/&gt;
+    &lt;/bean&gt;
+	    	</programlisting>
+    	</sect2>		
+    </sect1>
 	<sect1 id="executor-mvc">
 		<title>Spring MVC integration</title>
 		<para>
-			Spring Web Flow integrates with both servlet and portlet MVC, shipping with the 
-			core Spring Framework.
+			Spring Web Flow integrates with both Servlet and Portlet MVC which ship with the 
+			core Spring Framework.  Portlet MVC requires Spring 2.0.
 		</para>
-    </sect1>
+    	<sect2 id="executor-mvc-simple">
+	    	<programlisting>
+    &lt;bean name="/phonebook.htm" class="org.springframework.webflow.executor.mvc.FlowController"&gt;
+        &lt;constructor-arg ref="flowExecutor"/&gt;
+    &lt;/bean&gt;
+		
+    &lt;bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean"&gt;
+        &lt;property name="flowLocations" value="/WEB-INF/flows/**/*-flow.xml"/&gt;
+    &lt;/bean&gt;
+	    	</programlisting>
+    	</sect2>		
+	</sect1>	
 	<sect1 id="executor-struts">
 		<title>Struts integration</title>
 		<para>
 			Spring Web Flow integrates with Struts 1.x or >.
 		</para>
+    	<sect2 id="executor-struts-simple">
+	    	<programlisting>
+    &lt;form-beans&gt;
+        &lt;form-bean name="actionForm" type="org.springframework.web.struts.SpringBindingActionForm"/&gt;
+    &lt;/form-beans&gt;
+	    	
+    &lt;action-mappings&gt;
+        &lt;action path="/flowAction" name="actionForm" scope="request" type="org.springframework.webflow.executor.struts.FlowAction"/&gt;
+    &lt;/action-mappings&gt;
+	    	</programlisting>
+    	</sect2>		
     </sect1>
 	<sect1 id="executor-jsf">
 		<title>Java Server Faces (JSF) integration</title>
 		<para>
 			Spring Web Flow integrates with JSF.
 		</para>
+    	<sect2 id="executor-jsf-simple">
+	    	<programlisting>
+&lt;faces-config&gt;
+    &lt;application&gt;
+        &lt;navigation-handler&gt;
+            org.springframework.webflow.executor.jsf.FlowNavigationHandler
+        &lt;/navigation-handler&gt;
+        &lt;property-resolver&gt;
+            org.springframework.webflow.executor.jsf.FlowPropertyResolver
+        &lt;/property-resolver&gt;
+        &lt;variable-resolver&gt;
+            org.springframework.webflow.executor.jsf.FlowVariableResolver
+        &lt;/variable-resolver&gt;
+        &lt;variable-resolver&gt;
+            org.springframework.web.jsf.DelegatingVariableResolver
+        &lt;/variable-resolver&gt;
+        &lt;variable-resolver>
+            org.springframework.web.jsf.WebApplicationContextVariableResolver
+        &lt;/variable-resolver&gt;
+    &lt;/application&gt;
+
+    &lt;lifecycle&gt;
+        &lt;phase-listener&gt;org.springframework.webflow.executor.jsf.FlowPhaseListener&lt;/phase-listener&gt;
+    &lt;/lifecycle&gt;
+&lt;/faces-config&gt;
+	    	</programlisting>
+    	</sect2>		
     </sect1>
 </chapter>
