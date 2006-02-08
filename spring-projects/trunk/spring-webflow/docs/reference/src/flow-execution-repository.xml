@@ -161,14 +161,14 @@
 				The simplest possible repository and the default implementation.  This repository is stateful,
 				managed in the user session, and stores <emphasis>exactly one</emphasis> flow
 				execution instance per conversation, invalidating it when its end state is reached.
-				This repository implementation is designed with minimal storage overhead.
+				This repository implementation has been designed with minimal storage overhead in mind.
 			</para>
 			<para>
 				It is important to understand that use of this repository consistently prevents
 				duplicate submission when using the back button.  If you attempt to go back
 				and resubmit, the continuation id stored in your browser history will not
 				match the current continuation id needed to access the flow execution and 
-				access to the conversation will be consistently disallowed.
+				access will be disallowed.
 			</para>
 			<para>
 				This repository implementation should generally be used when you do not have to
@@ -188,8 +188,9 @@
  				It is important to understand that use of this repository allows resubmission when
  				using the back button.  If you attempt to go back and resubmit while the conversation
  				is active, the continuation id stored in your browser history will match the
-				continuation id of a previous FlowExecution in the repository, and access to the 
-				conversation will be granted and restored at that point in time.
+				continuation id of a previous flow execution in the repository.  Access to
+				that flow execution representing the state of the conversation at that point in
+				time will be granted.
 			</para>
 			<para>
 				Like simple, this repository implementation provides support for <emphasis>conversation
