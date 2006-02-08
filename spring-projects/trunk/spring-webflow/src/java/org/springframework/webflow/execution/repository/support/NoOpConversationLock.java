@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
+import java.io.ObjectStreamException;
+import java.io.Serializable;
+
 import org.springframework.webflow.execution.repository.ConversationLock;
 
 /**
@@ -23,7 +26,7 @@ import org.springframework.webflow.execution.repository.ConversationLock;
  * 
  * @author Keith Donald
  */
-public class NoOpConversationLock implements ConversationLock {
+public class NoOpConversationLock implements ConversationLock, Serializable {
 
 	/**
 	 * The singleton instance.
@@ -38,5 +41,10 @@ public class NoOpConversationLock implements ConversationLock {
 	}
 
 	public void unlock() {
+	}
+	
+	// resolve the singleton instance
+	private Object readResolve() throws ObjectStreamException {
+		return INSTANCE;
 	}
 }
