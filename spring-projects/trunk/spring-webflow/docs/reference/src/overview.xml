@@ -243,7 +243,7 @@
 			</para>
 			<itemizedlist spacing="compact">
          		<listitem>
-		          	<para>Dependencies: webflow, webflow.execution, junit, spring-mock</para>
+		          	<para>Dependencies: webflow, webflow.execution, junit</para>
         		</listitem>
 			</itemizedlist>
 		</sect2>

@@ -3,5 +3,32 @@
 	<title>Flow executors</title>
 	<sect1 id="executor-intro">
 		<title>Introduction</title>
+		<para>
+			Flow executors are facades that act as the highest-level entry points into
+			Spring Web Flow, responsible for driving flow executions in a variety of environments.
+		</para>
+		<para>
+			In this chapter you'll learn how to execute flows within Spring MVC, Struts, 
+			and Java Server Faces (JSF) based applications.
+		</para>
+    </sect1>
+	<sect1 id="executor-mvc">
+		<title>Spring MVC integration</title>
+		<para>
+			Spring Web Flow integrates with both servlet and portlet MVC, shipping with the 
+			core Spring Framework.
+		</para>
+    </sect1>
+	<sect1 id="executor-struts">
+		<title>Struts integration</title>
+		<para>
+			Spring Web Flow integrates with Struts 1.x or >.
+		</para>
+    </sect1>
+	<sect1 id="executor-jsf">
+		<title>Java Server Faces (JSF) integration</title>
+		<para>
+			Spring Web Flow integrates with JSF.
+		</para>
     </sect1>
 </chapter>
