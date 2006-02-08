@@ -27,6 +27,6 @@ public class Rate implements Serializable {
 	}
 	
 	public String toString() {
-		return value.toPlainString();
+		return value.toString();
 	}
 }
