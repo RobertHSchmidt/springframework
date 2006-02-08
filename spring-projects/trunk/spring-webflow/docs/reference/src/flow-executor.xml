@@ -15,7 +15,7 @@
     <sect1 id="executor">
     	<title>FlowExecutorImpl</title>
     	<sect2 id="executor-simple">
-    		<title>Typical flow executor configuration</title>
+    		<title>A typical flow executor configuration</title>
 	    	<programlisting>
     &lt;bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl"&gt;
         &lt;constructor-arg ref="flowRegistry"/&gt;
@@ -27,7 +27,7 @@
 	    	</programlisting>
     	</sect2>		
     	<sect2 id="executor-custom-repo">
-    		<title>Flow executor with a custom repository factory</title>
+    		<title>A flow executor with a custom repository factory</title>
 	    	<programlisting>
     &lt;bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl"&gt;
         &lt;constructor-arg ref="repositoryFactory"/&gt;
@@ -50,7 +50,7 @@
 			core Spring Framework.  Portlet MVC requires Spring 2.0.
 		</para>
     	<sect2 id="executor-mvc-simple">
-    		<title>Single flow controller executing all flows</title>
+    		<title>A single flow controller executing all flows</title>
 	    	<programlisting>
     &lt;bean name="/flowController.htm" class="org.springframework.webflow.executor.mvc.FlowController"&gt;
         &lt;constructor-arg ref="flowExecutor"/&gt;
@@ -60,7 +60,56 @@
         &lt;property name="flowLocations" value="/WEB-INF/flows/**/*-flow.xml"/&gt;
     &lt;/bean&gt;
 	    	</programlisting>
-    	</sect2>		
+    	</sect2>
+    	<sect2 id="executor-mvc-launch-get">
+    		<title>Launching a flow execution - parameter-style anchor</title>
+	    	<programlisting>
+	&lt;a href="flowController.htm?_flowId=myflow"/&gt;
+	    	</programlisting>
+    	</sect2>
+    	<sect2 id="executor-mvc-launch-get-rest">
+    		<title>Launching a flow execution - REST-style anchor</title>
+	    	<programlisting>
+	&lt;a href="flowController/myflow"/&gt;
+	    	</programlisting>
+    	</sect2>
+    	<sect2 id="executor-mvc-launch-post">
+    		<title>Launching a flow execution - form</title>
+	    	<programlisting>
+    &lt;form action="flowController.htm" method="post"&gt;
+        &lt;input type="submit" value="Go"/>
+        &lt;input type="hidden" name="_flowId" value="myflow"&gt;
+    &lt;/form&gt;
+	    	</programlisting>
+    	</sect2>
+    	<sect2 id="executor-mvc-resume-anchor">
+    		<title>Resuming a flow execution - anchor</title>
+	    	<programlisting>
+	&lt;a href="flowController.htm?_flowExecutionId=${flowExecutionId}&amp;eventId=submit"/&gt;
+	    	</programlisting>
+    	</sect2>
+    	<sect2 id="executor-mvc-resume-form">
+    		<title>Resuming a flow execution - form</title>
+	    	<programlisting>
+    &lt;form action="flowController.htm" method="post"&gt;
+        ...
+        &lt;input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"&gt;
+        &lt;input type="hidden" name="_eventId" value="submit"/>
+        &lt;input type="submit" class="button" value="Submit"&gt;
+    &lt;/form&gt;
+	    	</programlisting>
+    	</sect2>
+    	<sect2 id="executor-mvc-resume-form-buttons">
+    		<title>Resuming a flow execution - multiple form buttons</title>
+	    	<programlisting>
+    &lt;form action="flowController.htm" method="post"&gt;
+        ...
+        &lt;input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"&gt;
+        &lt;input type="submit" class="button" name="_eventId_submit" value="Submit"&gt;
+        &lt;input type="submit" class="button" name="_eventId_cancel" value="Cancel"&gt;
+    &lt;/form&gt;
+	    	</programlisting>
+    	</sect2>
 	</sect1>	
 	<sect1 id="executor-struts">
 		<title>Struts integration</title>
@@ -68,7 +117,7 @@
 			Spring Web Flow integrates with Struts 1.x or >.
 		</para>
     	<sect2 id="executor-struts-simple">
-    		<title>Single flow action executing all flows</title>
+    		<title>A single flow action executing all flows</title>
 	    	<programlisting>
     &lt;form-beans&gt;
         &lt;form-bean name="actionForm" type="org.springframework.web.struts.SpringBindingActionForm"/&gt;
@@ -86,7 +135,7 @@
 			Spring Web Flow integrates with JSF.
 		</para>
     	<sect2 id="executor-jsf-simple">
-    		<title>faces-config.xml</title>
+    		<title>A typical faces-config.xml file</title>
 	    	<programlisting>
 &lt;faces-config&gt;
     &lt;application&gt;
