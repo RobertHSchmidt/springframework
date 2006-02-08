@@ -14,6 +14,17 @@
     </sect1>
     <sect1 id="executor">
     	<title>FlowExecutorImpl</title>
+    	<para>
+    		The <literal>org.springframework.webflow.FlowExecutor</literal> represents the 
+    		central facade interface adapters to other systems can use to drive the execution of flows.
+    		This facade acts as a convenient entry-point into the Spring Web Flow system.
+    	</para>
+    	<para>
+    		The default implementation is <literal>org.springframework.webflow.FlowExecutorImpl</literal>.
+    		It allows for configuration of the flow definitions eligible for execution (exposed in a 
+    		configured flow registry), as well as configuration of the flow
+    		execution repository strategy.
+    	</para>
     	<sect2 id="executor-simple">
     		<title>A typical flow executor configuration</title>
 	    	<programlisting>
@@ -48,6 +59,13 @@
 		<para>
 			Spring Web Flow integrates with both Servlet and Portlet MVC which ship with the 
 			core Spring Framework.  Portlet MVC requires Spring 2.0.
+		</para>
+		<para>
+			Controllers exist that act as adapters between Spring MVC and Spring Web Flow.
+			These controllers delegate to a flow executor for driving the execution of flows.
+			One controller typically executes all flows of an application, relying on 
+			runtime parameterization to determine what flow to launch or what flow execution 
+			to resume.
 		</para>
     	<sect2 id="executor-mvc-simple">
     		<title>A single flow controller executing all flows</title>
@@ -114,7 +132,9 @@
 	<sect1 id="executor-struts">
 		<title>Struts integration</title>
 		<para>
-			Spring Web Flow integrates with Struts 1.x or >.
+			Spring Web Flow integrates with Struts 1.x or >.  The integration is very similiar to 
+			Spring MVC, where a single front controller (FlowAction) drives the execution of all flows
+			for the application, delegating to a configured flow executor.
 		</para>
     	<sect2 id="executor-struts-simple">
     		<title>A single flow action executing all flows</title>
@@ -132,7 +152,9 @@
 	<sect1 id="executor-jsf">
 		<title>Java Server Faces (JSF) integration</title>
 		<para>
-			Spring Web Flow integrates with JSF.
+			Spring Web Flow integrates with JSF.  The JSF integration relies on custom implementations of 
+			core JSF artifacts such as navigation handler and phase listener to drive the 
+			execution of flows.
 		</para>
     	<sect2 id="executor-jsf-simple">
     		<title>A typical faces-config.xml file</title>
@@ -161,6 +183,22 @@
     &lt;/lifecycle&gt;
 &lt;/faces-config&gt;
 	    	</programlisting>
-    	</sect2>		
+    	</sect2>
+    	<sect2 id="executor-jsf-launch-get">
+    		<title>Launching a flow execution - command link</title>
+	    	<programlisting>
+    &lt;:commandLink value="Go" action="flowId:myflow"/&gt;
+	    	</programlisting>
+    	</sect2>
+    	<sect2 id="executor-mvc-resume-form">
+    		<title>Resuming a flow execution - form</title>
+	    	<programlisting>
+    &lt;h:form id="form"&gt;
+        ...
+        &lt;input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"&gt;
+        &lt;h:commandButton type="submit" value="Next" action="submit" immediate="false"&gt;
+    &lt;/form&gt;
+	    	</programlisting>
+    	</sect2>
     </sect1>
 </chapter>
