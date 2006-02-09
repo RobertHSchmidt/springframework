@@ -86,14 +86,12 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	 */
 	private PhoneBook phonebook = new ArrayListPhoneBook();
 
-	@Override
 	protected ExternalizedFlowDefinition getFlowDefinition() {
 		File flowDir = new File("src/webapp/WEB-INF/flows");
 		Resource resource = new FileSystemResource(new File(flowDir, "search-flow.xml"));
 		return new ExternalizedFlowDefinition(resource);
 	}
 	
-	@Override
 	protected FlowArtifactFactory createFlowArtifactFactory() {
 		return new TestFlowArtifactFactory();
 	}
