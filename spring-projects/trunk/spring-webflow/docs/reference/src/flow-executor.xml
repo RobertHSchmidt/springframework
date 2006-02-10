@@ -5,7 +5,7 @@
 		<title>Introduction</title>
 		<para>
 			Flow executors are facades that act as the highest-level entry points into
-			the Spring Web Flow system, responsible for driving flow executions in a variety of environments.
+			the Spring Web Flow system, responsible for driving the execution of flows in a variety of environments.
 		</para>
 		<para>
 			In this chapter you'll learn how to execute flows within Spring MVC, Struts, 
@@ -13,17 +13,17 @@
 		</para>
     </sect1>
     <sect1 id="executor">
-    	<title>FlowExecutorImpl</title>
+    	<title>FlowExecutor</title>
     	<para>
-    		The <literal>org.springframework.webflow.FlowExecutor</literal> represents the 
-    		central facade interface adapters to other systems can use to drive the execution of flows.
+    		<literal>org.springframework.webflow.FlowExecutor</literal> is the 
+    		central facade interface external systems use to drive the execution of flows.
     		This facade acts as a convenient entry-point into the Spring Web Flow system.
     	</para>
     	<para>
     		The default implementation is <literal>org.springframework.webflow.FlowExecutorImpl</literal>.
-    		It allows for configuration of the flow definitions eligible for execution (exposed in a 
-    		configured flow registry), as well as configuration of the flow
-    		execution repository strategy.
+    		It allows for configuration of a flow registry that exposes the flow definitions 
+    		eligible for execution, as well as configuration of the flow execution repository strategy 
+    		to use.
     	</para>
     	<sect2 id="executor-simple">
     		<title>A typical flow executor configuration</title>
@@ -36,7 +36,11 @@
         &lt;property name="flowLocations" value="/WEB-INF/flows/**/*-flow.xml"/&gt;
     &lt;/bean&gt;
 	    	</programlisting>
-    	</sect2>		
+    	</sect2>
+    	<para>
+    		This instructs Spring to create a flow executor that can execute all XML-based flow definitions 
+    		contained within the <literal>/WEB-INF/flows</literal> directory.
+    	</para>	
     	<sect2 id="executor-custom-repo">
     		<title>A flow executor with a custom repository factory</title>
 	    	<programlisting>
@@ -53,6 +57,10 @@
     &lt;/bean&gt;
 	    	</programlisting>
     	</sect2>		
+    	<para>
+    		This executor is configured with a continuation-based repository factory, which accesses 
+    		stateful continuation repositories managed in the user session.
+    	</para>	
     </sect1>
 	<sect1 id="executor-mvc">
 		<title>Spring MVC integration</title>
@@ -61,11 +69,11 @@
 			core Spring Framework.  Portlet MVC requires Spring 2.0.
 		</para>
 		<para>
-			Controllers exist that act as adapters between Spring MVC and Spring Web Flow.
-			These controllers delegate to a flow executor for driving the execution of flows.
-			One controller typically executes all flows of an application, relying on 
-			runtime parameterization to determine what flow to launch or what flow execution 
-			to resume.
+			A Controller implementation acts as an adapter between Spring MVC and Spring Web Flow.
+			For both Servlet and Portlet MVC, this controller delegates to a flow executor
+			for driving the execution of flows.  One controller typically executes all flows
+			of an application, relying on runtime parameterization to determine what flow
+			to launch or what flow execution to resume.
 		</para>
     	<sect2 id="executor-mvc-simple">
     		<title>A single flow controller executing all flows</title>
@@ -75,6 +83,10 @@
     &lt;/bean&gt;
 	    	</programlisting>
     	</sect2>
+   		<para>
+			The next several examples illustrate strategies for parameterizing flow controllers 
+			from the browser to launch and resume flow executions:
+   		</para>
     	<sect2 id="executor-mvc-launch-get">
     		<title>Launching a flow execution - parameter-style anchor</title>
 	    	<programlisting>
