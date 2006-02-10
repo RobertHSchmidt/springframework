@@ -36,7 +36,7 @@ public class SpringBindingActionFormConfigurer extends FlowExecutionListenerAdap
 			if (strutsContext.getActionForm() instanceof SpringBindingActionForm) {
 				// configure the special spring-binding action form
 				SpringBindingActionForm bindingForm = (SpringBindingActionForm)strutsContext.getActionForm();
-				bindingForm.expose(new FormObjectAccessor(context).getFormErrors(), strutsContext.getRequest());
+				bindingForm.expose(new FormObjectAccessor(context).getCurrentFormErrors(), strutsContext.getRequest());
 			}
 		}
 	}

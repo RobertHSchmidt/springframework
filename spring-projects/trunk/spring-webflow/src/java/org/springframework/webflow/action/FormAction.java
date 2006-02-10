@@ -94,19 +94,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *       &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *           &lt;entry-actions&gt;
- *               &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *           &lt;/entry-actions&gt;
- *           &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *               &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *           &lt;/transition&gt;
- *       &lt;/view-state&gt;
- *                            
- *       &lt;action-state id=&quot;executeSearch&quot;&gt;
- *           &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *           &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *       &lt;/action-state&gt;
+ *         &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *             &lt;entry-actions&gt;
+ *                 &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *             &lt;/entry-actions&gt;
+ *             &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *                 &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *             &lt;/transition&gt;
+ *         &lt;/view-state&gt;
+ *                              
+ *         &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *             &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *         &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -324,7 +324,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * Return the name of the form object in the configured scope.
 	 */
 	public String getFormObjectName() {
-		return this.formObjectName;
+		return formObjectName;
 	}
 
 	/**
@@ -339,7 +339,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * Return the form object class for this action.
 	 */
 	public Class getFormObjectClass() {
-		return this.formObjectClass;
+		return formObjectClass;
 	}
 
 	/**
@@ -358,7 +358,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * scope or request scope. Defaults to request scope.
 	 */
 	public ScopeType getFormObjectScope() {
-		return this.formObjectScope;
+		return formObjectScope;
 	}
 
 	/**
@@ -422,7 +422,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * @return bind on setup form
 	 */
 	public boolean getBindOnSetupForm() {
-		return this.bindOnSetupForm;
+		return bindOnSetupForm;
 	}
 
 	/**
@@ -690,12 +690,14 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * @return the form object
 	 */
 	protected Object getFormObject(RequestContext context) throws Exception {
-		Object formObject = getFormObjectAccessor(context).getFormObject(getFormObjectName(), getFormObjectClass(),
-				getFormObjectScope());
+		FormObjectAccessor accessor = getFormObjectAccessor(context);
+		Object formObject = accessor.getFormObject(getFormObjectName(), getFormObjectClass(), getFormObjectScope());
 		if (formObject == null) {
 			formObject = loadFormObject(context);
+			setFormObject(context, formObject);
+		} else {
+			accessor.setCurrentFormObject(formObject, getFormObjectScope());
 		}
-		setFormObject(context, formObject);
 		return formObject;
 	}
 
