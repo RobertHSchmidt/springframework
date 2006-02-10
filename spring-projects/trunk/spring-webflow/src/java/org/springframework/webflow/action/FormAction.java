@@ -94,19 +94,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *         &lt;entry-actions&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *         &lt;/entry-actions&gt;
- *         &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *         &lt;/transition&gt;
- *     &lt;/view-state&gt;
- *                          
- *     &lt;action-state id=&quot;executeSearch&quot;&gt;
- *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *     &lt;/action-state&gt;
+ *       &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *           &lt;entry-actions&gt;
+ *               &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *           &lt;/entry-actions&gt;
+ *           &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *               &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *           &lt;/transition&gt;
+ *       &lt;/view-state&gt;
+ *                            
+ *       &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *           &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *           &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *       &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -145,9 +145,9 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * 
  * <pre>
  * public Event setupReferenceData(RequestContext context) throws Exception {
- *     Scope requestScope = context.getRequestScope();
- * 	   requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
- * 	   return success();
+ * 	Scope requestScope = context.getRequestScope();
+ * 	requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ * 	return success();
  * }
  * </pre>
  * 
@@ -265,8 +265,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	private ScopeType formErrorsScope = ScopeType.REQUEST;
 
 	/**
-	 * A centralized service for property editor registration, for applying 
-	 * type conversion during form object data binding.
+	 * A centralized service for property editor registration, for applying type
+	 * conversion during form object data binding.
 	 */
 	private PropertyEditorRegistrar propertyEditorRegistrar;
 
@@ -500,15 +500,12 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	// action execute methods (as defined by the FormOperations interface)
 
 	public Event exposeFormObject(RequestContext context) throws Exception {
-		Object formObject = getFormObject(context);
-		setFormObject(context, formObject);
-		ensureFormErrorsExposed(context, formObject);
+		ensureFormErrorsExposed(context, getFormObject(context));
 		return success();
 	}
 
 	public Event setupForm(RequestContext context) throws Exception {
 		Object formObject = getFormObject(context);
-		setFormObject(context, formObject);
 		if (setupBindingEnabled(context)) {
 			DataBinder binder = createBinder(context, formObject);
 			doBind(context, binder);
@@ -526,7 +523,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 
 	public Event bindAndValidate(RequestContext context) throws Exception {
 		Object formObject = getFormObject(context);
-		setFormObject(context, formObject);
 		DataBinder binder = createBinder(context, formObject);
 		doBind(context, binder);
 		setFormErrors(context, binder.getErrors());
@@ -548,7 +544,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 
 	public Event bind(RequestContext context) throws Exception {
 		Object formObject = getFormObject(context);
-		setFormObject(context, formObject);
 		DataBinder binder = createBinder(context, formObject);
 		doBind(context, binder);
 		setFormErrors(context, binder.getErrors());
@@ -558,7 +553,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	public Event validate(RequestContext context) throws Exception {
 		if (getValidator() != null && validationEnabled(context)) {
 			Object formObject = getFormObject(context);
-			setFormObject(context, formObject);
 			DataBinder binder = createBinder(context, formObject);
 			doValidate(context, binder);
 			setFormErrors(context, binder.getErrors());
@@ -701,6 +695,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 		if (formObject == null) {
 			formObject = loadFormObject(context);
 		}
+		setFormObject(context, formObject);
 		return formObject;
 	}
 
