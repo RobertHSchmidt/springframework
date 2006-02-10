@@ -340,25 +340,25 @@ public class FormActionTests extends TestCase {
 		
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, action.setupForm(context).getId());
 		
-		assertSame(getFormObject(context), new FormObjectAccessor(context).getFormObject());
-		assertSame(getErrors(context), new FormObjectAccessor(context).getFormErrors());
+		assertSame(getFormObject(context), new FormObjectAccessor(context).getCurrentFormObject());
+		assertSame(getErrors(context), new FormObjectAccessor(context).getCurrentFormErrors());
 		
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, otherAction.setupForm(context).getId());
 
-		assertSame(getFormObject(context, "otherTest"), new FormObjectAccessor(context).getFormObject());
-		assertSame(getErrors(context, "otherTest"), new FormObjectAccessor(context).getFormErrors());
+		assertSame(getFormObject(context, "otherTest"), new FormObjectAccessor(context).getCurrentFormObject());
+		assertSame(getErrors(context, "otherTest"), new FormObjectAccessor(context).getCurrentFormErrors());
 		
 		assertEquals(AbstractAction.ERROR_EVENT_ID, action.bindAndValidate(context).getId());
 		
-		assertSame(getFormObject(context), new FormObjectAccessor(context).getFormObject());
-		assertSame(getErrors(context), new FormObjectAccessor(context).getFormErrors());
+		assertSame(getFormObject(context), new FormObjectAccessor(context).getCurrentFormObject());
+		assertSame(getErrors(context), new FormObjectAccessor(context).getCurrentFormErrors());
 		
 		context.setExternalContext(new MockExternalContext(parameters()));
 
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, otherAction.bindAndValidate(context).getId());
 
-		assertSame(getFormObject(context, "otherTest"), new FormObjectAccessor(context).getFormObject());
-		assertSame(getErrors(context, "otherTest"), new FormObjectAccessor(context).getFormErrors());		
+		assertSame(getFormObject(context, "otherTest"), new FormObjectAccessor(context).getCurrentFormObject());
+		assertSame(getErrors(context, "otherTest"), new FormObjectAccessor(context).getCurrentFormErrors());		
 	}
 	
 	// as reported in SWF-4
@@ -402,13 +402,13 @@ public class FormActionTests extends TestCase {
 		action1.setupForm(context);
 		TestBean test1 = (TestBean)context.getFlowScope().getAttribute("test1");
 		assertNotNull(test1);
-		assertSame(test1, new FormObjectAccessor(context).getFormObject());
+		assertSame(test1, new FormObjectAccessor(context).getCurrentFormObject());
 
 		FormActionMethods action2 = createFormAction("test2");
 		action2.setupForm(context);
 		TestBean test2 = (TestBean)context.getFlowScope().getAttribute("test2");
 		assertNotNull(test2);
-		assertSame(test2, new FormObjectAccessor(context).getFormObject());
+		assertSame(test2, new FormObjectAccessor(context).getCurrentFormObject());
 		
 		Map props = new HashMap();
 		props.put("prop", "12345");
@@ -417,7 +417,7 @@ public class FormActionTests extends TestCase {
 		TestBean test11 = (TestBean)context.getFlowScope().getAttribute("test1");
 		assertSame(test1, test11);
 		assertEquals("12345", test1.getProp());
-		assertSame(test1, new FormObjectAccessor(context).getFormObject());
+		assertSame(test1, new FormObjectAccessor(context).getCurrentFormObject());
 
 		props = new HashMap();
 		props.put("prop", "123456");
@@ -426,7 +426,7 @@ public class FormActionTests extends TestCase {
 		TestBean test22 = (TestBean)context.getFlowScope().getAttribute("test2");
 		assertSame(test22, test2);
 		assertEquals("123456", test2.getProp());
-		assertSame(test2, new FormObjectAccessor(context).getFormObject());
+		assertSame(test2, new FormObjectAccessor(context).getCurrentFormObject());
 	}
 	
 	public void testFormObjectAndNoErrors() throws Exception {
