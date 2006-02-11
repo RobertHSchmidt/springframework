@@ -12,9 +12,9 @@
   <property file="${user.home}/build.properties"/>
   
   <path id="modules">
-    <pathelement location="../spring-ws/oxm"/>
-    <pathelement location="../spring-ws/core"/>
-    <pathelement location="../spring-ws/samples/airline"/>
+    <pathelement location="../spring-oxm"/>
+    <pathelement location="../spring-ws-core"/>
+    <pathelement location="../spring-ws-samples/airline"/>
   </path>
 
   <!-- simplistic pattern for zipping up sources -->
@@ -137,7 +137,7 @@
   <target name="tests" depends="init"
           description="Calls test targets on each project">
     <echo>projects=${projects}</echo>
-	<subant target="run-ltests" inheritall="false">
+	<subant target="tests" inheritall="false">
 	  <buildpath refid="${projects}"/>
     </subant>
   </target>
