@@ -28,14 +28,14 @@ public class InvalidConversationContinuationException extends FlowExecutionRepos
 	/**
 	 * The conversation continuation key that was invalid.
 	 */
-	private FlowExecutionContinuationKey continuationKey;
+	private FlowExecutionKey continuationKey;
 
 	/**
 	 * Creates a new invalid conversation continuation exception.
 	 * @param repository the repository
 	 * @param key the continuation key
 	 */
-	public InvalidConversationContinuationException(FlowExecutionRepository repository, FlowExecutionContinuationKey key) {
+	public InvalidConversationContinuationException(FlowExecutionRepository repository, FlowExecutionKey key) {
 		super(repository, "The continuation id '" + key.getContinuationId() + "' associated with conversation '"
 				+ key.getConversationId()
 				+ "' is invalid.  This could happen if your users are relying on browser history "
@@ -48,14 +48,15 @@ public class InvalidConversationContinuationException extends FlowExecutionRepos
 	 * @param key the continuation key
 	 * @param message a custom message
 	 */
-	public InvalidConversationContinuationException(FlowExecutionRepository repository, FlowExecutionContinuationKey key, String message) {
+	public InvalidConversationContinuationException(FlowExecutionRepository repository, FlowExecutionKey key,
+			String message) {
 		super(repository, message);
 	}
 
 	/**
 	 * Returns the invalid continuation key.
 	 */
-	public FlowExecutionContinuationKey getContinuationKey() {
+	public FlowExecutionKey getContinuationKey() {
 		return continuationKey;
 	}
 }

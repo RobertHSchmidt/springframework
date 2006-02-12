@@ -27,8 +27,8 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
  * <p>
  * Also exposes a convenient configuration interface for clients to configure
  * common {@link FlowExecutionRepositoryServices repository services} directly,
- * allowing for easy customization over the behavior of repositories created by the
- * delegate factory.
+ * allowing for easy customization over the behavior of repositories created by
+ * the delegate factory.
  * 
  * @author Keith Donald
  */

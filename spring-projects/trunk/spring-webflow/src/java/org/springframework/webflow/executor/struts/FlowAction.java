@@ -37,8 +37,9 @@ import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
-import org.springframework.webflow.executor.support.FlowExecutorHelper;
+import org.springframework.webflow.executor.ResponseDescriptor;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
+import org.springframework.webflow.executor.support.FlowExecutorTemplate;
 
 /**
  * Point of integration between Struts and Spring Web Flow: a Struts Action that
@@ -47,7 +48,7 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * Action may signal events in any existing/restored FlowExecutions.
  * <p>
  * Requests are managed by and delegated to a {@link FlowExecutor}, which this
- * class delegates to using a {@link FlowExecutorHelper} (allowing reuse of
+ * class delegates to using a {@link FlowExecutorTemplate} (allowing reuse of
  * common front flow controller logic in other environments). Consult the
  * JavaDoc of those classes for more information on how requests are processed.
  * <p>
@@ -77,10 +78,10 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * FlowAction:
  * 
  * <pre>
- *      &lt;action path=&quot;/userRegistration&quot;
- *          type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
- *          name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *      &lt;/action&gt;
+ *        &lt;action path=&quot;/userRegistration&quot;
+ *            type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
+ *            name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *        &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -125,7 +126,7 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * <code>ActionForm</code> classes found in traditional Struts-based apps.
  * 
  * @see org.springframework.webflow.executor.FlowExecutor
- * @see org.springframework.webflow.executor.support.FlowExecutorHelper
+ * @see org.springframework.webflow.executor.support.FlowExecutorTemplate
  * @see org.springframework.web.struts.SpringBindingActionForm
  * 
  * @author Keith Donald
@@ -234,8 +235,8 @@ public class FlowAction extends ActionSupport {
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		ExternalContext context = new StrutsExternalContext(mapping, form, getServletContext(), request, response);
-		ViewSelection selectedView = createControllerHelper().handleFlowRequest(context);
-		return toActionForward(selectedView, mapping, request);
+		ResponseDescriptor responseDescriptor = createControllerTemplate().handleFlowRequest(context);
+		return toActionForward(responseDescriptor.getViewSelection(), mapping, request);
 	}
 
 	/**
@@ -243,8 +244,8 @@ public class FlowAction extends ActionSupport {
 	 * this flow controller.
 	 * @return the controller helper
 	 */
-	protected FlowExecutorHelper createControllerHelper() {
-		return new FlowExecutorHelper(getFlowExecutor(), getParameterExtractor());
+	protected FlowExecutorTemplate createControllerTemplate() {
+		return new FlowExecutorTemplate(getFlowExecutor(), getParameterExtractor());
 	}
 
 	/**

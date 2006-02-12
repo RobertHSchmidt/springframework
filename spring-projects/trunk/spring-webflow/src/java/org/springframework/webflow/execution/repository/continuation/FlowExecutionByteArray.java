@@ -118,8 +118,10 @@ public class FlowExecutionByteArray implements Serializable {
 	}
 
 	/**
-	 * Return the flow execution in its raw byte[] form. Will decompress if requested.
-	 * @param decompress whether or not to decompress the byte[] array before returning
+	 * Return the flow execution in its raw byte[] form. Will decompress if
+	 * requested.
+	 * @param decompress whether or not to decompress the byte[] array before
+	 * returning
 	 * @return the byte array
 	 * @throws IOException a problem occured with decompression
 	 */

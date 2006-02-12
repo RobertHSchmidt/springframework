@@ -4,6 +4,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.executor.ResponseDescriptor;
 
 /**
  * A parameter extractor that extracts necessary flow executor parameters from
@@ -26,8 +27,21 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
  * @author Keith Donald
  */
 public class RequestPathFlowExecutorParameterExtractor extends FlowExecutorParameterExtractor {
-	
+
 	private static final String CONVERSATION_ID_PREFIX = "/_c";
+
+	public String extractFlowId(ExternalContext context) {
+		String requestPathInfo = context.getRequestPathInfo();
+		if (requestPathInfo == null) {
+			requestPathInfo = "";
+		}
+		String extractedFilename = WebUtils.extractFilenameFromUrlPath(requestPathInfo);
+		return StringUtils.hasText(extractedFilename) ? extractedFilename : getDefaultFlowId();
+	}
+
+	public String createFlowUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
+		return context.getDispatcherPath() + "/" + responseDescriptor.getFlowExecutionContext().getFlow().getId();
+	}
 
 	public String extractConversationId(ExternalContext context) {
 		String requestPathInfo = context.getRequestPathInfo();
@@ -37,12 +51,7 @@ public class RequestPathFlowExecutorParameterExtractor extends FlowExecutorParam
 		return null;
 	}
 
-	public String extractFlowId(ExternalContext context) {
-		String requestPathInfo = context.getRequestPathInfo();
-		if (requestPathInfo == null) {
-			requestPathInfo = "";
-		}
-		String extractedFilename = WebUtils.extractFilenameFromUrlPath(requestPathInfo);
-		return StringUtils.hasText(extractedFilename) ? extractedFilename : getDefaultFlowId();
+	public String createConversationUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
+		return context.getDispatcherPath() + "/_c" + responseDescriptor.getFlowExecutionKey().getConversationId();
 	}
 }

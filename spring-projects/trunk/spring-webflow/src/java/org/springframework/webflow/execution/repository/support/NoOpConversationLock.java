@@ -42,7 +42,7 @@ public class NoOpConversationLock implements ConversationLock, Serializable {
 
 	public void unlock() {
 	}
-	
+
 	// resolve the singleton instance
 	private Object readResolve() throws ObjectStreamException {
 		return INSTANCE;

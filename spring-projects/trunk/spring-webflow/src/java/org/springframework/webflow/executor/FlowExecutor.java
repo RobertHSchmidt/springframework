@@ -17,7 +17,7 @@ package org.springframework.webflow.executor;
 
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 
 /**
  * The central facade or entry-point into the Spring Web Flow system. This
@@ -43,7 +43,7 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured launching the new flow
 	 * execution.
 	 */
-	public ViewSelection launch(String flowId, ExternalContext context) throws FlowException;
+	public ResponseDescriptor launch(String flowId, ExternalContext context) throws FlowException;
 
 	/**
 	 * Signal an occurrence of an event in the current state of an existing,
@@ -60,9 +60,9 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured launching the new flow
 	 * execution.
 	 */
-	public ViewSelection signalEvent(String eventId, String flowExecutionId, ExternalContext context)
-			throws FlowException;
-	
+	public ResponseDescriptor signalEvent(String eventId, FlowExecutionKey continuationKey,
+			ExternalContext context) throws FlowException;
+
 	/**
 	 * Returns the current view selection for the specified conversation, or
 	 * <code>null</code> if no such view selection exists.
@@ -73,6 +73,7 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured retrieving the current view
 	 * selection
 	 */
-	public ViewSelection getCurrentViewSelection(String conversationId, ExternalContext context) throws FlowException;
+	public ResponseDescriptor getCurrentViewSelection(String conversationId, ExternalContext context)
+			throws FlowException;
 
 }

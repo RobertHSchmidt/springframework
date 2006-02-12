@@ -38,7 +38,7 @@ import org.springframework.util.Assert;
  * 
  * @author Keith Donald
  */
-public class FlowExecutionContinuationKey implements Serializable {
+public class FlowExecutionKey implements Serializable {
 
 	/**
 	 * The serialization version id.
@@ -60,7 +60,7 @@ public class FlowExecutionContinuationKey implements Serializable {
 	 * @param conversationId the conversation key part
 	 * @param continuationId the continuation key part
 	 */
-	public FlowExecutionContinuationKey(Serializable conversationId, Serializable continuationId) {
+	public FlowExecutionKey(Serializable conversationId, Serializable continuationId) {
 		Assert.notNull(conversationId, "The conversationId is required");
 		Assert.notNull(continuationId, "The conversationId is required");
 		this.conversationId = conversationId;
@@ -82,10 +82,10 @@ public class FlowExecutionContinuationKey implements Serializable {
 	}
 
 	public boolean equals(Object o) {
-		if (!(o instanceof FlowExecutionContinuationKey)) {
+		if (!(o instanceof FlowExecutionKey)) {
 			return false;
 		}
-		FlowExecutionContinuationKey other = (FlowExecutionContinuationKey)o;
+		FlowExecutionKey other = (FlowExecutionKey)o;
 		return conversationId.equals(other.conversationId) && continuationId.equals(other.continuationId);
 	}
 

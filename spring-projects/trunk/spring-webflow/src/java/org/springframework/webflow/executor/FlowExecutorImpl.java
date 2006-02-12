@@ -15,21 +15,15 @@
  */
 package org.springframework.webflow.executor;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.format.Formatter;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
-import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.ConversationLock;
-import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
@@ -62,12 +56,6 @@ import org.springframework.webflow.execution.repository.support.SimpleFlowExecut
  * server-side session-based repository factory</td>
  * </tr>
  * <tr>
- * <td>continuationKeyFormatter</td>
- * <td>The strategy for formatting continuation keys that identified persisted
- * flow executions represented the state of a conversation at a point in time.</td>
- * <td>The default {@link FlowExecutionContinuationKeyFormatter}</td>
- * </tr>
- * <tr>
  * <td>alwaysRedirectOnPause</td>
  * <td>A flag indicating if this executor should <i>always</i> request a
  * <i>redirect to conversation</i> after pausing an active flow execution.</td>
@@ -76,7 +64,6 @@ import org.springframework.webflow.execution.repository.support.SimpleFlowExecut
  * </table>
  * </p>
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory
- * @see org.springframework.webflow.execution.support.FlowExecutionContinuationKeyFormatter
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.ViewSelection
  * 
@@ -85,18 +72,6 @@ import org.springframework.webflow.execution.repository.support.SimpleFlowExecut
  * @author Colin Sampaleanu
  */
 public class FlowExecutorImpl implements FlowExecutor {
-
-	/**
-	 * The flow execution context itself will be exposed to the view in a model
-	 * attribute with this name ("flowExecutionContext").
-	 */
-	public static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
-
-	/**
-	 * The string-encoded id of the flow execution will be exposed to the view
-	 * in a model attribute with this name ("flowExecutionId").
-	 */
-	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
 
 	/**
 	 * Logger, usable by subclasses.
@@ -112,12 +87,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * repository factory that creates repositories within the user session map.
 	 */
 	private FlowExecutionRepositoryFactory repositoryFactory;
-
-	/**
-	 * The formatter that will parse encoded _flowExecutionId strings into
-	 * {@link FlowExecutionContinuationKey} objects.
-	 */
-	private Formatter continuationKeyFormatter = new FlowExecutionContinuationKeyFormatter();
 
 	/**
 	 * A flag indicating if this executor should <i>always</i> request a
@@ -154,7 +123,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * Set the flow locator to use for lookup of flow definitions to execute.
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
-		this.repositoryFactory = new SimpleFlowExecutionRepositoryFactory(flowLocator);
+		repositoryFactory = new SimpleFlowExecutionRepositoryFactory(flowLocator);
 	}
 
 	/**
@@ -170,21 +139,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 */
 	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryFactory) {
 		this.repositoryFactory = repositoryFactory;
-	}
-
-	/**
-	 * Returns the continuation key formatting strategy.
-	 */
-	public Formatter getContinuationKeyFormatter() {
-		return continuationKeyFormatter;
-	}
-
-	/**
-	 * Sets the flow execution continuation key formatting strategy.
-	 * @param continuationKeyFormatter the continuation key formatter
-	 */
-	public void setContinuationKeyFormatter(Formatter continuationKeyFormatter) {
-		this.continuationKeyFormatter = continuationKeyFormatter;
 	}
 
 	/**
@@ -213,59 +167,58 @@ public class FlowExecutorImpl implements FlowExecutor {
 		this.alwaysRedirectOnPause = alwaysRedirectOnPause;
 	}
 
-	public ViewSelection launch(String flowId, ExternalContext context) throws FlowException {
+	public ResponseDescriptor launch(String flowId, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecution flowExecution = repository.createFlowExecution(flowId);
 		ViewSelection selectedView = flowExecution.start(context);
 		if (flowExecution.isActive()) {
-			FlowExecutionContinuationKey continuationKey = repository.generateContinuationKey(flowExecution);
-			repository.putFlowExecution(continuationKey, flowExecution);
-			selectedView = prepareSelectedView(selectedView, context, repository, continuationKey, flowExecution);
+			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
+			repository.putFlowExecution(flowExecutionKey, flowExecution);
+			if (isAlwaysRedirectOnPause()) {
+				selectedView = selectedView.makeRedirect();
+			}
+			repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView.makeForward());
+			return new ResponseDescriptor(flowExecutionKey, flowExecution, selectedView);
 		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Returning view selection " + selectedView);
+		else {
+			return new ResponseDescriptor(flowExecution, selectedView);
 		}
-		return selectedView;
 	}
 
-	public ViewSelection signalEvent(String eventId, String flowExecutionId, ExternalContext context)
+	public ResponseDescriptor signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
-		FlowExecutionContinuationKey continuationKey = parseContinuationKey(flowExecutionId);
-		ConversationLock lock = repository.getLock(continuationKey.getConversationId());
+		ConversationLock lock = repository.getLock(flowExecutionKey.getConversationId());
 		lock.lock();
 		try {
-			FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
+			FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
 			ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
 			if (flowExecution.isActive()) {
-				continuationKey = repository
-						.generateContinuationKey(flowExecution, continuationKey.getConversationId());
-				repository.putFlowExecution(continuationKey, flowExecution);
-				selectedView = prepareSelectedView(selectedView, context, repository, continuationKey, flowExecution);
+				flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
+				repository.putFlowExecution(flowExecutionKey, flowExecution);
+				if (isAlwaysRedirectOnPause()) {
+					selectedView = selectedView.makeRedirect();
+				}
+				repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView.makeForward());
+				return new ResponseDescriptor(flowExecutionKey, flowExecution, selectedView);
 			}
 			else {
-				repository.invalidateConversation(continuationKey.getConversationId());
+				repository.invalidateConversation(flowExecutionKey.getConversationId());
+				return new ResponseDescriptor(flowExecution, selectedView);
 			}
-			if (logger.isDebugEnabled()) {
-				logger.debug("Returning view selection " + selectedView);
-			}
-			return selectedView;
 		}
 		finally {
 			lock.unlock();
 		}
 	}
 
-	public ViewSelection getCurrentViewSelection(String conversationId, ExternalContext context) throws FlowException {
+	public ResponseDescriptor getCurrentViewSelection(String conversationId, ExternalContext context)
+			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
-		FlowExecutionContinuationKey continuationKey = repository.getCurrentContinuationKey(conversationId);
-		ViewSelection currentViewSelection = repository.getCurrentViewSelection(conversationId);
-		ViewSelection selectedView = createForward(currentViewSelection, continuationKey, repository
-				.getFlowExecution(continuationKey));
-		if (logger.isDebugEnabled()) {
-			logger.debug("Returning current view selection " + selectedView);
-		}
-		return selectedView;
+		FlowExecutionKey continuationKey = repository.getCurrentFlowExecutionKey(conversationId);
+		FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
+		ViewSelection selectedView = repository.getCurrentViewSelection(conversationId);
+		return new ResponseDescriptor(continuationKey, flowExecution, selectedView);
 	}
 
 	/**
@@ -274,85 +227,5 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 */
 	protected FlowExecutionRepository getRepository(ExternalContext context) {
 		return repositoryFactory.getRepository(context);
-	}
-
-	/**
-	 * Helper to parse a flow execution continuation key from its string-encoded
-	 * representation.
-	 * @param flowExecutionId the string encoded key
-	 * @return the parsed key
-	 */
-	protected FlowExecutionContinuationKey parseContinuationKey(String flowExecutionId) {
-		return (FlowExecutionContinuationKey)continuationKeyFormatter.parseValue(flowExecutionId,
-				FlowExecutionContinuationKey.class);
-	}
-
-	/**
-	 * Perform any processing necessary before the view selection made is
-	 * returned to the client of the flow execution manager and rendered out.
-	 * This implementation adds a number of <i>infrastructure attributes</i> to
-	 * the model that will be exposed to the view so clients may record
-	 * information about the flow to support participation in the flow on a
-	 * subsequent request. More specifically, this method will add the
-	 * {@link #FLOW_EXECUTION_CONTEXT_ATTRIBUTE},
-	 * {@link #FLOW_EXECUTION_ID_ATTRIBUTE}.
-	 * @param selectedView the view selection to be prepared
-	 * @param externalContext the externalContext that called into Spring Web
-	 * Flow
-	 * @param continuationKey the assigned repository continuation key
-	 * @param flowExecutionContext the flow context providing info about the
-	 * flow execution
-	 * @return the prepped view selection
-	 */
-	protected ViewSelection prepareSelectedView(ViewSelection selectedView, ExternalContext externalContext,
-			FlowExecutionRepository repository, FlowExecutionContinuationKey continuationKey,
-			FlowExecutionContext flowExecutionContext) {
-		if (flowExecutionContext.isActive()) {
-			if (isAlwaysRedirectOnPause() || selectedView.isRedirect()) {
-				// it's a redirect from a view state of a active flow execution,
-				// save view selection to repository as the "current view
-				// selection" and request redirection to the conversation URI
-				repository.setCurrentViewSelection(continuationKey.getConversationId(), selectedView);
-				return createRedirect(continuationKey.getConversationId(), externalContext);
-			}
-			else {
-				return createForward(selectedView, continuationKey, flowExecutionContext);
-			}
-		}
-		else {
-			return selectedView;
-		}
-	}
-
-	protected ViewSelection createRedirect(Serializable conversationId, ExternalContext context) {
-		String viewName = context.getDispatcherPath() + "/_c" + conversationId;
-		return new ViewSelection(viewName, null, true);
-	}
-
-	protected ViewSelection createForward(ViewSelection selectedView, FlowExecutionContinuationKey continuationKey,
-			FlowExecutionContext flowExecutionContext) {
-		if (selectedView == ViewSelection.NULL_VIEW_SELECTION) {
-			return selectedView;
-		}
-		// it's a forward from a view state of a active flow execution,
-		// expose model and context attributes.
-		Map model = new HashMap(selectedView.getModel().size() + 2);
-		// expose all model attributes from the original view selection
-		model.putAll(selectedView.getModel());
-		// make the entire flow execution context available in the model
-		model.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecutionContext);
-		// make the unique flow execution id available in the model as
-		// convenience to views
-		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, formatContinuationKey(continuationKey));
-		return new ViewSelection(selectedView.getViewName(), model, false);
-	}
-
-	/**
-	 * Convert the continuation key to encoded string form.
-	 * @param key the continuation key
-	 * @return the string-encoded key
-	 */
-	protected String formatContinuationKey(FlowExecutionContinuationKey key) {
-		return continuationKeyFormatter.formatValue(key);
 	}
 }

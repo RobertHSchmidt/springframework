@@ -24,7 +24,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.repository.ConversationLock;
-import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.InvalidConversationContinuationException;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
@@ -143,16 +143,15 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		return NoOpConversationLock.INSTANCE;
 	}
 
-	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
+	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		Conversation conversation = getRequiredConversation(key.getConversationId());
 		FlowExecutionContinuation continuation = getRequiredContinuation(conversation, key);
 		FlowExecutionImpl impl = (FlowExecutionImpl)rehydrate(continuation.getFlowExecution());
 		impl.setScope(conversation.getScope());
-		System.out.println("Got scope: " + impl.getScope());
 		return impl;
 	}
 
-	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
+	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
 		Conversation conversation = (Conversation)getOrCreateConversation(key.getConversationId());
 		conversation.setScope(flowExecution.getScope());
 		removeConversationAttributes(flowExecution);
@@ -167,10 +166,8 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		((FlowExecutionImpl)flowExecution).setScope(null);
 	}
 
-	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId)
-			throws FlowExecutionRepositoryException {
-		return new FlowExecutionContinuationKey(conversationId, getConversation(conversationId)
-				.getCurrentContinuation().getId());
+	public FlowExecutionKey getCurrentFlowExecutionKey(String conversationId) throws FlowExecutionRepositoryException {
+		return new FlowExecutionKey(conversationId, getConversation(conversationId).getCurrentContinuation().getId());
 	}
 
 	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {
@@ -219,7 +216,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	 * found under that key
 	 */
 	private FlowExecutionContinuation getRequiredContinuation(Conversation conversation,
-			FlowExecutionContinuationKey continuationKey) throws InvalidConversationContinuationException {
+			FlowExecutionKey continuationKey) throws InvalidConversationContinuationException {
 		FlowExecutionContinuation continuation = conversation.getContinuation(continuationKey.getContinuationId());
 		if (continuation == null) {
 			throw new InvalidConversationContinuationException(this, continuationKey);

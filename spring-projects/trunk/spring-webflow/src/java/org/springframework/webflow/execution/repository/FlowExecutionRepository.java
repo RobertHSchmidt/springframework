@@ -31,11 +31,11 @@ import org.springframework.webflow.execution.FlowExecution;
  * <p>
  * When placed in a repository, a {@link FlowExecution} object representing the
  * state of a conversation at a point in time is indexed under a unique
- * {@link FlowExecutionContinuationKey}. This key provides enough information
- * to track a single active user conversation with the server, as well as
- * provide an index into one or more restorable conversational snapshots taken
- * at points in time during conversation execution. These restorable
- * conversational snapshots are called <i>continuations</i>.
+ * {@link FlowExecutionKey}. This key provides enough information to track a
+ * single active user conversation with the server, as well as provide an index
+ * into one or more restorable conversational snapshots taken at points in time
+ * during conversation execution. These restorable conversational snapshots are
+ * called <i>continuations</i>.
  * 
  * @author Keith Donald
  */
@@ -64,8 +64,7 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionStorageException a problem occured generating the
 	 * key
 	 */
-	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution)
-			throws FlowExecutionRepositoryException;
+	public FlowExecutionKey generateKey(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Generate a unique flow execution continuation key to be used as an index
@@ -77,7 +76,7 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionStorageException a problem occured generating the
 	 * key
 	 */
-	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution, Serializable conversationId)
+	public FlowExecutionKey generateKey(FlowExecution flowExecution, Serializable conversationId)
 			throws FlowExecutionRepositoryException;
 
 	/**
@@ -94,10 +93,10 @@ public interface FlowExecutionRepository {
 	 * ConversationLock lock = repository.getLock(conversationId);
 	 * lock.lock();
 	 * try {
-	 *     // do conversation work
+	 * 	// do conversation work
 	 * }
 	 * finally {
-	 *     lock.unlock();
+	 * 	lock.unlock();
 	 * }
 	 * </pre>
 	 * 
@@ -111,14 +110,13 @@ public interface FlowExecutionRepository {
 	 * continuation key. The returned flow execution represents the restored
 	 * state of a user conversation captured by the indexed continuation at a
 	 * point in time.
-	 * @param continuationKey the continuation key
+	 * @param key the continuation key
 	 * @return the flow execution, representing the state of a conversation at a
 	 * point in time, fully hydrated and ready to signal an event against.
 	 * @throws FlowExecutionStorageException if no flow execution was indexed
 	 * with the key provided
 	 */
-	public FlowExecution getFlowExecution(FlowExecutionContinuationKey continuationKey)
-			throws FlowExecutionRepositoryException;
+	public FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Place the <code>FlowExecution</code> in this repository, indexed under
@@ -132,12 +130,12 @@ public interface FlowExecutionRepository {
 	 * ongoing conversation, a new continuation capturing this most recent state
 	 * of the conversation will be created.
 	 * 
-	 * @param continuationKey the continuation key
+	 * @param key the continuation key
 	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionStorageException the flow execution could not be
 	 * stored
 	 */
-	public void putFlowExecution(FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution)
+	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution)
 			throws FlowExecutionRepositoryException;
 
 	/**
@@ -148,8 +146,7 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionRepositoryException if an exception occured getting
 	 * the continuationk ey
 	 */
-	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId)
-			throws FlowExecutionRepositoryException;
+	public FlowExecutionKey getCurrentFlowExecutionKey(String conversationId) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Returns the current (or last) view selection made for the specified

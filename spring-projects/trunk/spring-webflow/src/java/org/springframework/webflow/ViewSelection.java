@@ -134,6 +134,22 @@ public class ViewSelection implements Serializable {
 		return (viewName != null ? viewName.hashCode() : 0) + model.hashCode();
 	}
 	
+	public ViewSelection makeForward() {
+		if (!isRedirect()) {
+			return this;
+		} else {
+			return new ViewSelection(viewName, model, false);
+		}
+	}
+	
+	public ViewSelection makeRedirect() {
+		if (isRedirect()) {
+			return this;
+		} else {
+			return new ViewSelection(viewName, model, true);
+		}
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append("viewName", viewName).append("redirect", redirect).append("model",
 				model).toString();

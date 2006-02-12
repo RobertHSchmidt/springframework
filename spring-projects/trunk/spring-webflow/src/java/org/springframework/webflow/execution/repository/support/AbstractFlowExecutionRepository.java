@@ -20,7 +20,7 @@ import java.io.Serializable;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 
 /**
@@ -76,12 +76,12 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 		return new FlowExecutionImpl(flow, repositoryServices.getListenerLoader().getListeners(flow));
 	}
 
-	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution) {
-		return new FlowExecutionContinuationKey(generateId(), generateId());
+	public FlowExecutionKey generateKey(FlowExecution flowExecution) {
+		return new FlowExecutionKey(generateId(), generateId());
 	}
 
-	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution, Serializable conversationId) {
-		return new FlowExecutionContinuationKey(conversationId, generateId());
+	public FlowExecutionKey generateKey(FlowExecution flowExecution, Serializable conversationId) {
+		return new FlowExecutionKey(conversationId, generateId());
 	}
 
 	protected FlowExecution rehydrate(FlowExecution flowExecution) {

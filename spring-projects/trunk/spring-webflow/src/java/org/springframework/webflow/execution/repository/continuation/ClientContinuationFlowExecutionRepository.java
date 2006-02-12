@@ -27,7 +27,7 @@ import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.ConversationLock;
-import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
@@ -39,11 +39,10 @@ import org.springframework.webflow.execution.repository.support.NoOpConversation
  * <p>
  * Specifically, instead of putting {@link FlowExecution} objects in a
  * server-side store, this repository <i>encodes</i> them directly into the
- * <code>continuationId</code> of a generated
- * {@link FlowExecutionContinuationKey}. When asked to load a flow execution by
- * its key, this repository decodes the serialized <code>continuationId</code>,
- * restoring the {@link FlowExecution} object at the state it was when it was
- * encoded.
+ * <code>continuationId</code> of a generated {@link FlowExecutionKey}. When
+ * asked to load a flow execution by its key, this repository decodes the
+ * serialized <code>continuationId</code>, restoring the
+ * {@link FlowExecution} object at the state it was when it was encoded.
  * <p>
  * Note: currently this repository implementation does not support
  * <i>conversation invalidation after completion</i>, which enables automatic
@@ -99,23 +98,23 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 		return NoOpConversationLock.INSTANCE;
 	}
 
-	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution) {
-		return new FlowExecutionContinuationKey(generateId(), encode(generateId(), flowExecution));
+	public FlowExecutionKey generateKey(FlowExecution flowExecution) {
+		return new FlowExecutionKey(generateId(), encode(generateId(), flowExecution));
 	}
 
-	public FlowExecutionContinuationKey generateContinuationKey(FlowExecution flowExecution, Serializable conversationId) {
-		return new FlowExecutionContinuationKey(conversationId, encode(generateId(), flowExecution));
+	public FlowExecutionKey generateKey(FlowExecution flowExecution, Serializable conversationId) {
+		return new FlowExecutionKey(conversationId, encode(generateId(), flowExecution));
 	}
 
-	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
+	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		return decode(key.getContinuationId()).getFlowExecution();
 	}
 
-	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
+	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
 		// nothing to do by default, subclasses may override
 	}
-	
-	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId) throws FlowExecutionRepositoryException {
+
+	public FlowExecutionKey getCurrentFlowExecutionKey(String conversationId) throws FlowExecutionRepositoryException {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -6,8 +6,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
+import org.springframework.webflow.executor.ResponseDescriptor;
 
 /**
  * An immutable helper for flow controllers that encapsulates reusable workflow
@@ -27,17 +28,17 @@ import org.springframework.webflow.executor.FlowExecutor;
  * <li>If no flow execution id was extracted, launch a new flow execution. The
  * top-level flow definition for which an execution is created is determined by
  * extracting the flow id using the
- * {@link FlowExecutorParameterExtractor#extractFlowId(ExternalContext)}.
- * If this parameter parameter is not present, an exception is thrown.</li>
+ * {@link FlowExecutorParameterExtractor#extractFlowId(ExternalContext)}. If
+ * this parameter parameter is not present, an exception is thrown.</li>
  * 
  * @author Keith Donald
  */
-public class FlowExecutorHelper {
+public class FlowExecutorTemplate {
 
 	/**
 	 * Logger.
 	 */
-	private static final Log logger = LogFactory.getLog(FlowExecutorHelper.class);
+	private static final Log logger = LogFactory.getLog(FlowExecutorTemplate.class);
 
 	/**
 	 * The flow execution executor this helper will coordinate with.
@@ -53,7 +54,7 @@ public class FlowExecutorHelper {
 	 * Creates a new flow controller helper.
 	 * @param flowExecutor the flow execution manager to delegate to.
 	 */
-	public FlowExecutorHelper(FlowExecutor flowExecutor) {
+	public FlowExecutorTemplate(FlowExecutor flowExecutor) {
 		this(flowExecutor, new FlowExecutorParameterExtractor());
 	}
 
@@ -61,8 +62,7 @@ public class FlowExecutorHelper {
 	 * Creates a new flow controller helper.
 	 * @param flowExecutor the flow execution manager to delegate to.
 	 */
-	public FlowExecutorHelper(FlowExecutor flowExecutor,
-			FlowExecutorParameterExtractor parameterExtractor) {
+	public FlowExecutorTemplate(FlowExecutor flowExecutor, FlowExecutorParameterExtractor parameterExtractor) {
 		Assert.notNull(flowExecutor, "The flow executor is required");
 		Assert.notNull(parameterExtractor, "The parameter extractor is required");
 		this.flowExecutor = flowExecutor;
@@ -88,20 +88,20 @@ public class FlowExecutorHelper {
 	 * @param context the context in which the request occured.
 	 * @return the selected view that should be rendered as a response
 	 */
-	public ViewSelection handleFlowRequest(ExternalContext context) throws FlowException {
+	public ResponseDescriptor handleFlowRequest(ExternalContext context) throws FlowException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Event signaled in " + context);
 		}
-		String flowExecutionId = parameterExtractor.extractFlowExecutionId(context);
-		if (StringUtils.hasText(flowExecutionId)) {
-			return flowExecutor.signalEvent(parameterExtractor.extractEventId(context), flowExecutionId,
-					context);
+		FlowExecutionKey flowExecutionKey = parameterExtractor.extractFlowExecutionKey(context);
+		if (flowExecutionKey != null) {
+			return flowExecutor.signalEvent(parameterExtractor.extractEventId(context), flowExecutionKey, context);
 		}
 		else {
 			String conversationId = parameterExtractor.extractConversationId(context);
 			if (StringUtils.hasText(conversationId)) {
 				return flowExecutor.getCurrentViewSelection(conversationId, context);
-			} else {
+			}
+			else {
 				return flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
 			}
 		}

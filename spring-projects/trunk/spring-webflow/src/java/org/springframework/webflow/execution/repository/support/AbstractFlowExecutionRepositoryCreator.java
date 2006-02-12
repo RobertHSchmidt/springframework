@@ -19,9 +19,9 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryCreator;
 
 /**
- * A convenient base for flow execution repository creational strategies.
- * Simply exposes a configuration interface for configuring the services needed
- * by repositories created by this creator.
+ * A convenient base for flow execution repository creational strategies. Simply
+ * exposes a configuration interface for configuring the services needed by
+ * repositories created by this creator.
  * 
  * @author Keith Donald
  */

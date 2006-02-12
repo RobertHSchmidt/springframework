@@ -1,12 +1,18 @@
 package org.springframework.webflow.executor.support;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.springframework.binding.format.Formatter;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.executor.FlowExecutionKeyFormatter;
 import org.springframework.webflow.executor.FlowExecutor;
+import org.springframework.webflow.executor.ResponseDescriptor;
 
 /**
  * A strategy for extracting parameters needed by a {@link FlowExecutor} to
@@ -19,22 +25,40 @@ import org.springframework.webflow.executor.FlowExecutor;
 public class FlowExecutorParameterExtractor {
 
 	/**
+	 * The flow execution context itself will be exposed to the view in a model
+	 * attribute with this name ("flowExecutionContext").
+	 */
+	public static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
+
+	/**
+	 * The string-encoded id of the flow execution will be exposed to the view
+	 * in a model attribute with this name ("flowExecutionId").
+	 */
+	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
+
+	/**
 	 * By default, clients can send the id (name) of the flow to be started
 	 * using an event parameter with this name ("_flowId").
 	 */
 	public static final String FLOW_ID_PARAMETER = "_flowId";
 
 	/**
-	 * By default, clients can send the flow execution id using an event
-	 * parameter with this name ("_flowExecutionId").
+	 * By default, clients can send the flow execution id using a parameter with
+	 * this name ("_flowExecutionId").
 	 */
 	public static final String FLOW_EXECUTION_ID_PARAMETER = "_flowExecutionId";
 
 	/**
-	 * By default, clients can send the event to be signaled in an event
-	 * parameter with this name ("_eventId").
+	 * By default, clients can send the event to be signaled in a parameter with
+	 * this name ("_eventId").
 	 */
 	public static final String EVENT_ID_PARAMETER = "_eventId";
+
+	/**
+	 * By default, clients can send the conversation id using a parameter with
+	 * this name ("_conversationId").
+	 */
+	public static final String CONVERSATION_ID_PARAMETER = "_conversationId";
 
 	/**
 	 * The default delimiter used when a parameter value is encoed as part of
@@ -71,10 +95,22 @@ public class FlowExecutorParameterExtractor {
 	private String flowExecutionIdParameterName = FLOW_EXECUTION_ID_PARAMETER;
 
 	/**
+	 * The formatter that will parse encoded _flowExecutionId strings into
+	 * {@link FlowExecutionKey} objects.
+	 */
+	private Formatter flowExecutionKeyFormatter = new FlowExecutionKeyFormatter();
+
+	/**
 	 * Identifies an event that occured in an existing flow execution, defaults
 	 * to ("_eventId_submit").
 	 */
 	private String eventIdParameterName = EVENT_ID_PARAMETER;
+
+	/**
+	 * Identifies an existing conversation to redirect to, defaults to
+	 * ("_conversationId").
+	 */
+	private String conversationIdParameterName = CONVERSATION_ID_PARAMETER;
 
 	/**
 	 * The embedded parameter name/value delimiter value, used to parse a
@@ -130,6 +166,21 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
+	 * Returns the continuation key formatting strategy.
+	 */
+	public Formatter getFlowExecutionKeyFormatter() {
+		return flowExecutionKeyFormatter;
+	}
+
+	/**
+	 * Sets the flow execution continuation key formatting strategy.
+	 * @param continuationKeyFormatter the continuation key formatter
+	 */
+	public void setFlowExecutionKeyFormatter(Formatter continuationKeyFormatter) {
+		this.flowExecutionKeyFormatter = continuationKeyFormatter;
+	}
+
+	/**
 	 * Returns the event id parameter name.
 	 */
 	public String getEventIdParameterName() {
@@ -141,6 +192,20 @@ public class FlowExecutorParameterExtractor {
 	 */
 	public void setEventIdParameterName(String eventIdParameterName) {
 		this.eventIdParameterName = eventIdParameterName;
+	}
+
+	/**
+	 * Returns the conversation id parameter name.
+	 */
+	public String getConversationIdParameterName() {
+		return eventIdParameterName;
+	}
+
+	/**
+	 * Sets the conversation id parameter name.
+	 */
+	public void setConversationIdParameterName(String conversationIdParameterName) {
+		this.conversationIdParameterName = conversationIdParameterName;
 	}
 
 	/**
@@ -190,9 +255,11 @@ public class FlowExecutorParameterExtractor {
 	 * @param context the context in which the external user event occured
 	 * @return the obtained id or <code>null</code> if not found
 	 */
-	public String extractFlowExecutionId(ExternalContext context) {
-		return verifySingleStringInputParameter(getFlowExecutionIdParameterName(), getParameterMap(context).get(
-				getFlowExecutionIdParameterName()));
+	public FlowExecutionKey extractFlowExecutionKey(ExternalContext context) {
+		String flowExecutionId = verifySingleStringInputParameter(getFlowExecutionIdParameterName(), getParameterMap(
+				context).get(getFlowExecutionIdParameterName()));
+		return flowExecutionId != null ? (FlowExecutionKey)flowExecutionKeyFormatter.parseValue(flowExecutionId,
+				FlowExecutionKey.class) : null;
 	}
 
 	/**
@@ -227,7 +294,33 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	public String extractConversationId(ExternalContext context) {
-		return null;
+		return verifySingleStringInputParameter(getConversationIdParameterName(), getParameterMap(context).get(
+				getConversationIdParameterName()));
+	}
+
+	public String createConversationUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
+		Serializable conversationId = responseDescriptor.getFlowExecutionKey().getConversationId();
+		return context.getDispatcherPath() + "?" + getConversationIdParameterName() + "=" + conversationId;
+	}
+
+	public Map prepareModel(ResponseDescriptor responseDescriptor) {
+		// it's a forward from a view state of a active flow execution,
+		// expose model and context attributes.
+		Map model = new HashMap(responseDescriptor.getModel().size() + 2, 1);
+		// expose all model attributes from the original view selection
+		model.putAll(responseDescriptor.getModel());
+		// make the entire flow execution context available in the model
+		model.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, responseDescriptor.getFlowExecutionContext());
+		// make the unique flow execution id available in the model as
+		// convenience to views
+		String flowExecutionId = flowExecutionKeyFormatter.formatValue(responseDescriptor.getFlowExecutionKey());
+		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
+		return model;
+	}
+
+	public String createFlowUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
+		return context.getDispatcherPath() + "?" + getFlowIdParameterName() + "="
+				+ responseDescriptor.getFlowExecutionContext().getFlow().getId();
 	}
 
 	/**

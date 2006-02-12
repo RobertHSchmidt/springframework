@@ -2,14 +2,18 @@ package org.springframework.webflow.manager.support;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionParameterExtractorTests extends TestCase {
 	private FlowExecutorParameterExtractor extractor;
 
+	private FlowExecutionKey flowExecutionKey;
+
 	public void setUp() {
 		extractor = new FlowExecutorParameterExtractor();
+		flowExecutionKey = new FlowExecutionKey("12345", "12345");
 	}
 
 	public void testExtractFlowId() {
@@ -24,7 +28,7 @@ public class FlowExecutionParameterExtractorTests extends TestCase {
 
 	public void testExtractFlowExecutionId() {
 		MockExternalContext context = new MockExternalContext("_flowExecutionId", "_s12345_c12345");
-		assertEquals("_s12345_c12345", extractor.extractFlowExecutionId(context));
+		assertEquals(flowExecutionKey, extractor.extractFlowExecutionKey(context));
 	}
 
 	public void testExtractEventId() {
@@ -41,10 +45,11 @@ public class FlowExecutionParameterExtractorTests extends TestCase {
 		MockExternalContext context = new MockExternalContext("_flowExecutionId", new String[] { "_s12345_c12345",
 				"_s12345_c12345" });
 		try {
-			extractor.extractFlowExecutionId(context);
+			extractor.extractFlowExecutionKey(context);
 			fail("Should've failed");
-		} catch (IllegalArgumentException e) {
-			
+		}
+		catch (IllegalArgumentException e) {
+
 		}
 	}
 }

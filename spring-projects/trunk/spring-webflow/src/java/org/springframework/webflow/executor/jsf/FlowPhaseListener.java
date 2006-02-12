@@ -26,13 +26,12 @@ import javax.faces.event.PhaseListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.format.Formatter;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.executor.FlowExecutionContinuationKeyFormatter;
+import org.springframework.webflow.executor.FlowExecutionKeyFormatter;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
 
 /**
@@ -88,9 +87,9 @@ public class FlowPhaseListener implements PhaseListener {
 
 	/**
 	 * The formatter that will parse encoded _flowExecutionId strings into
-	 * {@link FlowExecutionContinuationKey} objects.
+	 * {@link FlowExecutionKey} objects.
 	 */
-	private Formatter continuationKeyFormatter = new FlowExecutionContinuationKeyFormatter();
+	private Formatter continuationKeyFormatter = new FlowExecutionKeyFormatter();
 
 	/**
 	 * A helper for extracting parameters needed by this flow execution manager.
@@ -171,18 +170,17 @@ public class FlowPhaseListener implements PhaseListener {
 
 	protected void restoreFlowExecution(FacesContext facesContext) {
 		JsfExternalContext context = new JsfExternalContext(facesContext);
-		String flowExecutionId = parameterExtractor.extractFlowExecutionId(context);
-		if (StringUtils.hasText(flowExecutionId)) {
+		FlowExecutionKey flowExecutionKey = parameterExtractor.extractFlowExecutionKey(context);
+		if (flowExecutionKey != null) {
 			// restore flow execution from repository so it will be
 			// available to variable/property resolvers and the flow
 			// navigation handler
-			FlowExecutionContinuationKey continuationKey = parseContinuationKey(flowExecutionId);
 			FlowExecutionRepository repository = getRepository(context);
-			FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
+			FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Loaded existing flow execution from repository with id '" + continuationKey + "'");
+				logger.debug("Loaded existing flow execution from repository with id '" + flowExecutionKey + "'");
 			}
-			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(continuationKey, flowExecution),
+			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecutionKey, flowExecution),
 					facesContext);
 		}
 	}
@@ -194,18 +192,17 @@ public class FlowPhaseListener implements PhaseListener {
 			if (flowExecution.isActive()) {
 				// generate new continuation key for the flow execution
 				// before rendering the response
-				FlowExecutionContinuationKey continuationKey = holder.getContinuationKey();
+				FlowExecutionKey continuationKey = holder.getContinuationKey();
 				FlowExecutionRepository repository = getRepository(new JsfExternalContext(facesContext));
 				if (continuationKey == null) {
 					// it is an entirely new conversation, generate a new
 					// conversation and continuation id
-					continuationKey = repository.generateContinuationKey(flowExecution);
+					continuationKey = repository.generateKey(flowExecution);
 				}
 				else {
 					// it is an existing conversaiton, generate a new
 					// continuation id
-					continuationKey = repository.generateContinuationKey(flowExecution, continuationKey
-							.getConversationId());
+					continuationKey = repository.generateKey(flowExecution, continuationKey.getConversationId());
 				}
 				holder.setContinuationKey(continuationKey);
 				String flowExecutionId = continuationKeyFormatter.formatValue(continuationKey);
@@ -242,8 +239,7 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 	}
 
-	protected FlowExecutionContinuationKey parseContinuationKey(String flowExecutionId) {
-		return (FlowExecutionContinuationKey)continuationKeyFormatter.parseValue(flowExecutionId,
-				FlowExecutionContinuationKey.class);
+	protected FlowExecutionKey parseContinuationKey(String flowExecutionId) {
+		return (FlowExecutionKey)continuationKeyFormatter.parseValue(flowExecutionId, FlowExecutionKey.class);
 	}
 }

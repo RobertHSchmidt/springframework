@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 
 /**
  * A holder storing a reference to a flow execution and the key of that flow
@@ -34,7 +34,7 @@ public class FlowExecutionHolder implements Serializable {
 	 * life of this object, as a flow execution can be given a new key to
 	 * capture its state at another point in time.
 	 */
-	private FlowExecutionContinuationKey continuationKey;
+	private FlowExecutionKey continuationKey;
 
 	/**
 	 * The held flow execution representing the state of an ongoing conversation
@@ -56,7 +56,7 @@ public class FlowExecutionHolder implements Serializable {
 	 * @param continuationKey the continuation key
 	 * @param flowExecution the flow execution to hold
 	 */
-	public FlowExecutionHolder(FlowExecutionContinuationKey continuationKey, FlowExecution flowExecution) {
+	public FlowExecutionHolder(FlowExecutionKey continuationKey, FlowExecution flowExecution) {
 		this.continuationKey = continuationKey;
 		this.flowExecution = flowExecution;
 	}
@@ -64,14 +64,14 @@ public class FlowExecutionHolder implements Serializable {
 	/**
 	 * Returns the continuation key.
 	 */
-	public FlowExecutionContinuationKey getContinuationKey() {
+	public FlowExecutionKey getContinuationKey() {
 		return continuationKey;
 	}
 
 	/**
 	 * Sets the continuation key.
 	 */
-	public void setContinuationKey(FlowExecutionContinuationKey continuationKey) {
+	public void setContinuationKey(FlowExecutionKey continuationKey) {
 		this.continuationKey = continuationKey;
 	}
 

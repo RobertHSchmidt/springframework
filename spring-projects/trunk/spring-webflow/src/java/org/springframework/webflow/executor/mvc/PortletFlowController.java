@@ -15,21 +15,22 @@
  */
 package org.springframework.webflow.executor.mvc;
 
+import java.util.Map;
+
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
-import org.springframework.web.servlet.view.UrlBasedViewResolver;
-import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
-import org.springframework.webflow.executor.support.FlowExecutorHelper;
+import org.springframework.webflow.executor.ResponseDescriptor;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
 
 /**
@@ -60,25 +61,25 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * Usage example:
  * 
  * <pre>
- *     &lt;!--
- *         Exposes flows for execution at a single request URL.
- *         The id of a flow to launch should be passed in by clients using
- *         the &quot;_flowId&quot; request parameter:
- *             e.g. /app.htm?_flowId=flow1
- *     --&gt;
- *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *     &lt;/bean&gt;
- *                                
- *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;flowLocations&quot;&gt;
- *             &lt;list&gt;
- *                 &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *                 &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *             &lt;/list&gt;
- *         &lt;/property&gt;
- *     &lt;/bean&gt;
+ *              &lt;!--
+ *                  Exposes flows for execution at a single request URL.
+ *                  The id of a flow to launch should be passed in by clients using
+ *                  the &quot;_flowId&quot; request parameter:
+ *                      e.g. /app.htm?_flowId=flow1
+ *              --&gt;
+ *              &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *                  &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *              &lt;/bean&gt;
+ *                                         
+ *              &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *              &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *                  &lt;property name=&quot;flowLocations&quot;&gt;
+ *                      &lt;list&gt;
+ *                          &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                          &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *                      &lt;/list&gt;
+ *                  &lt;/property&gt;
+ *              &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorParameterExtractor}
@@ -96,7 +97,8 @@ public class PortletFlowController extends AbstractController {
 	 * The attribute name of the last <code>ViewSelection</code> made by this
 	 * controller for one user's <code>PortletSession</code>
 	 */
-	private static final String VIEW_SELECTION_ATTRIBUTE_NAME = PortletFlowController.class + ".viewSelection";
+	private static final String RESPONSE_DESCRIPTOR_ATTRIBUTE_NAME = PortletFlowController.class
+			+ ".responseDescriptor";
 
 	/**
 	 * Delegate for executing flow executions (launching new executions, and
@@ -110,8 +112,8 @@ public class PortletFlowController extends AbstractController {
 	private FlowExecutorParameterExtractor parameterExtractor = new FlowExecutorParameterExtractor();
 
 	/**
-	 * Create a new PortletFlowController that delegates to the configured executor
-	 * for driving the execution of web flows.
+	 * Create a new PortletFlowController that delegates to the configured
+	 * executor for driving the execution of web flows.
 	 * @param flowExecutor the service to launch and resume flow executions
 	 * brokered by this web controller.
 	 */
@@ -121,8 +123,8 @@ public class PortletFlowController extends AbstractController {
 	}
 
 	/**
-	 * Convenience constructor that creates a new PortletFlowController that initially
-	 * relies on a default
+	 * Convenience constructor that creates a new PortletFlowController that
+	 * initially relies on a default
 	 * {@link org.springframework.webflow.executor.FlowExecutorImpl}
 	 * implementation that uses the provided flow locator to access flow
 	 * definitions at runtime.
@@ -174,55 +176,54 @@ public class PortletFlowController extends AbstractController {
 		this.parameterExtractor = parameterExtractor;
 	}
 
+	/**
+	 * Sets the default flow to launch when this flow controller is rendered.
+	 * @param defaultFlowId the id of the default flow
+	 */
+	public void setDefaultFlowId(String defaultFlowId) {
+		this.parameterExtractor.setDefaultFlowId(defaultFlowId);
+	}
+
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
-		try {
-			ViewSelection selectedView = (ViewSelection)request.getPortletSession().getAttribute(
-					VIEW_SELECTION_ATTRIBUTE_NAME);
-			if (selectedView == null) {
-				selectedView = createControllerHelper().handleFlowRequest(
-						new PortletExternalContext(getPortletContext(), request, response));
-			}
-			// convert view to a renderable portlet mvc "model and view"
-			return toModelAndView(selectedView);
+		ResponseDescriptor responseDescriptor = (ResponseDescriptor)getCurrentResponseDescriptor(request);
+		if (responseDescriptor == null) {
+			PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
+			responseDescriptor = flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
+			setCurrentResponseDescriptor(request, responseDescriptor);
 		}
-		finally {
-			request.getPortletSession().removeAttribute(VIEW_SELECTION_ATTRIBUTE_NAME);
-		}
+		// convert view to a renderable portlet mvc "model and view"
+		return toModelAndView(responseDescriptor);
 	}
 
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
-		// delegate to the flow executor to process the request
-		ViewSelection selectedView = createControllerHelper().handleFlowRequest(
-				new PortletExternalContext(getPortletContext(), request, response));
+		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
+		// resume a flow execution
+		ResponseDescriptor responseDescriptor = flowExecutor.signalEvent(parameterExtractor.extractEventId(context),
+				parameterExtractor.extractFlowExecutionKey(context), context);
 		// expose selected view in session for access during render phase
-		request.getPortletSession().setAttribute(VIEW_SELECTION_ATTRIBUTE_NAME, selectedView);
+		setCurrentResponseDescriptor(request, responseDescriptor);
 	}
 
-	/**
-	 * Factory method that creates a new helper for processing a request into
-	 * this flow controller. The controller is a basic template encapsulating
-	 * reusable flow execution request handling workflow.
-	 * @return the controller helper
-	 */
-	protected FlowExecutorHelper createControllerHelper() {
-		return new FlowExecutorHelper(getFlowExecutor(), getParameterExtractor());
+	private ResponseDescriptor getCurrentResponseDescriptor(PortletRequest request) {
+		return (ResponseDescriptor)request.getPortletSession().getAttribute(RESPONSE_DESCRIPTOR_ATTRIBUTE_NAME);
 	}
 
-	/**
-	 * Create a ModelAndView object based on the information in the selected
-	 * view descriptor. Subclasses can override this to return a specialized
-	 * ModelAndView or to do custom processing on it.
-	 * @param selectedView the view descriptor to convert
-	 * @return a new ModelAndView object
-	 */
-	protected ModelAndView toModelAndView(ViewSelection selectedView) {
-		if (selectedView == ViewSelection.NULL_VIEW_SELECTION) {
+	private void setCurrentResponseDescriptor(PortletRequest request, ResponseDescriptor responseDescriptor) {
+		request.getPortletSession().setAttribute(RESPONSE_DESCRIPTOR_ATTRIBUTE_NAME, responseDescriptor);
+	}
+
+	protected ModelAndView toModelAndView(ResponseDescriptor responseDescriptor) {
+		if (responseDescriptor.isNull()) {
 			return null;
 		}
-		String viewName = selectedView.getViewName();
-		if (selectedView.isRedirect()) {
-			viewName = UrlBasedViewResolver.REDIRECT_URL_PREFIX + viewName;
+		if (responseDescriptor.getFlowExecutionContext().isActive()) {
+			// forward to a view as part of an active conversation
+			Map model = parameterExtractor.prepareModel(responseDescriptor);
+			return new ModelAndView(responseDescriptor.getName(), model);
 		}
-		return new ModelAndView(viewName, selectedView.getModel());
+		else {
+			// forward to a view after flow completion
+			return new ModelAndView(responseDescriptor.getName(), responseDescriptor.getModel());
+		}
 	}
 }

@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 
 /**
  * Unit tests for the FlowVariableResolver class.
@@ -71,7 +71,7 @@ public class FlowVariableResolverTests extends TestCase {
 	public void testResolveVariableFlowScopeWithThreadLocal() {
 		MockControl flowExecutionControl = MockControl.createControl(FlowExecution.class);
 		FlowExecution flowExecutionMock = (FlowExecution)flowExecutionControl.getMock();
-		FlowExecutionContinuationKey key = new FlowExecutionContinuationKey("some conversation id",
+		FlowExecutionKey key = new FlowExecutionKey("some conversation id",
 				"some continuation id");
 		FlowExecutionHolder holder = new FlowExecutionHolder(key, flowExecutionMock);
 		FlowExecutionHolderUtils.setFlowExecutionHolder(holder, mockFacesContext);

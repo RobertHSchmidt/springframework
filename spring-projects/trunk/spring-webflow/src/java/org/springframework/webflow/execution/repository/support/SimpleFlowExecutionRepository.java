@@ -24,7 +24,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.ConversationLock;
-import org.springframework.webflow.execution.repository.FlowExecutionContinuationKey;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.InvalidConversationContinuationException;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
@@ -82,7 +82,7 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		return getFlowExecutionEntry(conversationId).getLock();
 	}
 
-	public FlowExecution getFlowExecution(FlowExecutionContinuationKey key) {
+	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		FlowExecutionEntry entry = getFlowExecutionEntry(key.getConversationId());
 		// assert that the provided continuationId matches the entry's
 		// continuationId
@@ -99,7 +99,7 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		return rehydrate(entry.getFlowExecution());
 	}
 
-	public void putFlowExecution(FlowExecutionContinuationKey key, FlowExecution flowExecution) {
+	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
 		FlowExecutionEntry entry = (FlowExecutionEntry)flowExecutionEntries.get(key.getConversationId());
 		if (entry != null) {
 			entry.setContinuationId(key.getContinuationId());
@@ -110,10 +110,8 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		}
 	}
 
-	public FlowExecutionContinuationKey getCurrentContinuationKey(String conversationId)
-			throws FlowExecutionRepositoryException {
-		return new FlowExecutionContinuationKey(conversationId, getFlowExecutionEntry(conversationId)
-				.getContinuationId());
+	public FlowExecutionKey getCurrentFlowExecutionKey(String conversationId) throws FlowExecutionRepositoryException {
+		return new FlowExecutionKey(conversationId, getFlowExecutionEntry(conversationId).getContinuationId());
 	}
 
 	public ViewSelection getCurrentViewSelection(Serializable conversationId) {

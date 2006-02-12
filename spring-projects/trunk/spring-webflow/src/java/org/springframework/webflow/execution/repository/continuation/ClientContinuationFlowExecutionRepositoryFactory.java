@@ -21,10 +21,10 @@ import org.springframework.webflow.execution.repository.support.FlowExecutionRep
 import org.springframework.webflow.execution.repository.support.SingletonFlowExecutionRepositoryFactory;
 
 /**
- * A convenient implementation that encapsulates the assembly of a
- * "client" flow execution repository factory and delegates to it at runtme. The
- * delegate factory creates repositories that persist flow executions
- * client-side, requiring no server-side state.
+ * A convenient implementation that encapsulates the assembly of a "client" flow
+ * execution repository factory and delegates to it at runtme. The delegate
+ * factory creates repositories that persist flow executions client-side,
+ * requiring no server-side state.
  * <p>
  * Internally, sets a {@link SingletonFlowExecutionRepositoryFactory} configured
  * with a single, stateless
