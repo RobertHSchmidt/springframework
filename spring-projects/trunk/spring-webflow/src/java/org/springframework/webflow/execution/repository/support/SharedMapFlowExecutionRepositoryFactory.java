@@ -95,7 +95,7 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 	 * Returns the shared map repository attribute key.
 	 */
 	protected Object getRepositoryKey() {
-		return FlowExecutionRepository.class.getName();
+		return getRepositoryCreator().getClass().getName();
 	}
 
 	/**
