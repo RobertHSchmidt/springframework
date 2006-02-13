@@ -196,10 +196,10 @@ public class FlowExecutorImpl implements FlowExecutor {
 			if (flowExecution.isActive()) {
 				flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
 				repository.putFlowExecution(flowExecutionKey, flowExecution);
+				repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView.makeForward());
 				if (isAlwaysRedirectOnPause()) {
 					selectedView = selectedView.makeRedirect();
 				}
-				repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView.makeForward());
 				return new ResponseDescriptor(flowExecutionKey, flowExecution, selectedView);
 			}
 			else {
