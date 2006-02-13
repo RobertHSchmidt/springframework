@@ -129,7 +129,8 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 	 */
 	public void setState(State state) {
 		Assert.notNull(state, "The state is required");
-		Assert.isTrue(flow == state.getFlow(), "The state does not belong to the flow associated with this flow session");
+		Assert.isTrue(flow == state.getFlow(),
+				"The state does not belong to the flow associated with this flow session");
 		if (logger.isDebugEnabled()) {
 			logger.debug("Setting current state of '" + getFlow().getId() + "@"
 					+ ObjectUtils.getIdentityHexString(this) + "' to '" + state.getId() + "'");
@@ -175,12 +176,14 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 	public void writeExternal(ObjectOutput out) throws IOException {
 		if (flow != null) {
 			out.writeObject(flow.getId());
-		} else {
+		}
+		else {
 			out.writeObject(flowId);
 		}
 		if (state != null) {
 			out.writeObject(state.getId());
-		} else {
+		}
+		else {
 			out.writeObject(stateId);
 		}
 		out.writeObject(status);
@@ -209,7 +212,6 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 
 	public String toString() {
 		return new ToStringCreator(this).append("flow", flow.getId()).append("state",
-				(state != null ? state.getId() : "[none]")).append("attributesCount", scope.size()).append(
-				"attributes", scope).toString();
+				(state != null ? state.getId() : "[none]")).append("scope", scope).toString();
 	}
 }

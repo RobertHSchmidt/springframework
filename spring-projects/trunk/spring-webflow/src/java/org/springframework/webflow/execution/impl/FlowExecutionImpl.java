@@ -82,7 +82,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * The execution's root flow; the top level flow that acts as the starting
 	 * point for this flow execution.
 	 */
-	private transient Flow rootFlow;
+	private transient Flow flow;
 
 	/**
 	 * A data structure for attributes shared by all flow sessions.
@@ -94,7 +94,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * spawned, they are pushed onto the stack. As they end, they are popped off
 	 * the stack.
 	 */
-	private LinkedList executingFlowSessions = new LinkedList();
+	private LinkedList flowSessions = new LinkedList();
 
 	/**
 	 * A thread-safe listener list, holding listeners monitoring the lifecycle
@@ -105,7 +105,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * Set only on deserialization so this object can be fully reconstructed.
 	 */
-	private String rootFlowId;
+	private String flowId;
 
 	/**
 	 * Default constructor required for externalizable serialization. Should NOT
@@ -118,41 +118,41 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * Create a new flow execution executing the provided flow. This constructor
 	 * is mainly used for testing
-	 * @param rootFlow the root flow of this flow execution
+	 * @param flow the root flow of this flow execution
 	 */
-	public FlowExecutionImpl(Flow rootFlow) {
-		this(rootFlow, new FlowExecutionListener[0]);
+	public FlowExecutionImpl(Flow flow) {
+		this(flow, new FlowExecutionListener[0]);
 	}
 
 	/**
 	 * Create a new flow execution executing the provided flow.
-	 * @param rootFlow the root flow of this flow execution
+	 * @param flow the root flow of this flow execution
 	 * @param listeners the listeners interested in flow execution lifecycle
 	 * events
 	 */
-	public FlowExecutionImpl(Flow rootFlow, FlowExecutionListener[] listeners) {
-		Assert.notNull(rootFlow, "The root flow definition is required");
-		this.rootFlow = rootFlow;
+	public FlowExecutionImpl(Flow flow, FlowExecutionListener[] listeners) {
+		Assert.notNull(flow, "The root flow definition is required");
+		this.flow = flow;
 		this.listeners = new FlowExecutionListeners(listeners);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Created new execution of flow '" + rootFlow.getId() + "'");
+			logger.debug("Created new execution of flow '" + flow.getId() + "'");
 		}
 	}
 
 	// implementing FlowExecutionStatistics
 
 	public String getCaption() {
-		return "FlowExecution:flow=[" + (getFlow() != null ? getFlow().getId() : rootFlowId) + "]";
+		return "FlowExecution:flow=[" + (getFlow() != null ? getFlow().getId() : flowId) + "]";
 	}
 
 	public boolean isActive() {
-		return !executingFlowSessions.isEmpty();
+		return !flowSessions.isEmpty();
 	}
 
 	// implementing FlowExecutionContext
 
 	public Flow getFlow() {
-		return rootFlow;
+		return flow;
 	}
 
 	public FlowSession getActiveSession() {
@@ -227,8 +227,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
-	public ViewSelection signalEvent(String eventId, ExternalContext externalContext)
-			throws StateException {
+	public ViewSelection signalEvent(String eventId, ExternalContext externalContext) throws StateException {
 		assertActive();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Resuming this execution on user event '" + eventId + "'");
@@ -305,7 +304,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 */
 	protected FlowSessionImpl getActiveSessionInternal() throws IllegalStateException {
 		assertActive();
-		return (FlowSessionImpl)executingFlowSessions.getLast();
+		return (FlowSessionImpl)flowSessions.getLast();
 	}
 
 	/**
@@ -319,7 +318,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		assertActive();
 		Assert.state(!getActiveSession().isRoot(),
 				"There is no parent flow session for the currently active flow session");
-		return (FlowSession)executingFlowSessions.get(executingFlowSessions.size() - 2);
+		return (FlowSession)flowSessions.get(flowSessions.size() - 2);
 	}
 
 	/**
@@ -328,7 +327,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 */
 	protected FlowSession getRootSession() throws IllegalStateException {
 		assertActive();
-		return (FlowSession)executingFlowSessions.getFirst();
+		return (FlowSession)flowSessions.getFirst();
 	}
 
 	/**
@@ -367,7 +366,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 */
 	public FlowSession activateSession(Flow flow, Map input) {
 		FlowSessionImpl session;
-		if (!executingFlowSessions.isEmpty()) {
+		if (!flowSessions.isEmpty()) {
 			FlowSessionImpl parent = getActiveSessionInternal();
 			parent.setStatus(FlowSessionStatus.SUSPENDED);
 			session = createFlowSession(flow, input, parent);
@@ -375,7 +374,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		else {
 			session = createFlowSession(flow, input, null);
 		}
-		executingFlowSessions.add(session);
+		flowSessions.add(session);
 		session.setStatus(FlowSessionStatus.STARTING);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting " + session);
@@ -397,9 +396,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	public FlowSession endActiveFlowSession() {
-		FlowSessionImpl endingSession = (FlowSessionImpl)executingFlowSessions.removeLast();
+		FlowSessionImpl endingSession = (FlowSessionImpl)flowSessions.removeLast();
 		endingSession.setStatus(FlowSessionStatus.ENDED);
-		if (!executingFlowSessions.isEmpty()) {
+		if (!flowSessions.isEmpty()) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Resuming session '" + getActiveSessionInternal().getFlow().getId() + "' in state '"
 						+ getActiveSessionInternal().getState().getId() + "'");
@@ -418,8 +417,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	// storage)
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		rootFlowId = (String)in.readObject();
-		executingFlowSessions = (LinkedList)in.readObject();
+		flowId = (String)in.readObject();
+		flowSessions = (LinkedList)in.readObject();
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
@@ -427,9 +426,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			out.writeObject(getFlow().getId());
 		}
 		else {
-			out.writeObject(rootFlowId);
+			out.writeObject(flowId);
 		}
-		out.writeObject(executingFlowSessions);
+		out.writeObject(flowSessions);
 	}
 
 	public synchronized void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader) {
@@ -444,15 +443,15 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			logger.debug("Rehydrating");
 		}
 		Assert.notNull(flowLocator, "The flow locator is required");
-		Assert.notNull(rootFlowId,
+		Assert.notNull(flowId,
 				"The root flow id was not set during deserialization: was this flow execution deserialized properly?");
-		rootFlow = flowLocator.getFlow(rootFlowId);
-		rootFlowId = null;
+		flow = flowLocator.getFlow(flowId);
+		flowId = null;
 		// rehydrate all flow sessions
-		Iterator it = executingFlowSessions.iterator();
+		Iterator it = flowSessions.iterator();
 		while (it.hasNext()) {
 			FlowSessionImpl session = (FlowSessionImpl)it.next();
-			session.rehydrate(new FlowSessionFlowLocator(rootFlow, flowLocator));
+			session.rehydrate(new FlowSessionFlowLocator(flow, flowLocator));
 		}
 		if (isActive()) {
 			// sanity check
@@ -460,7 +459,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 					"The root flow of the execution should be the same as the flow in the root flow session");
 		}
 		if (listenerLoader != null) {
-			listeners = new FlowExecutionListeners(listenerLoader.getListeners(rootFlow));
+			listeners = new FlowExecutionListeners(listenerLoader.getListeners(flow));
 		}
 		else {
 			listeners = new FlowExecutionListeners();
@@ -498,7 +497,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Returns whether this flow execution is hydrated.
 	 */
 	protected boolean isHydrated() {
-		return rootFlow != null;
+		return flow != null;
 	}
 
 	public String toString() {
@@ -507,10 +506,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		else {
 			if (isHydrated()) {
-				return new ToStringCreator(this).append("activeFlow", getActiveSession().getFlow().getId()).append(
-						"currentState", getActiveSession().getState().getId())
-						.append("rootFlow", getFlow().getId()).append("executingFlowSessions",
-								executingFlowSessions).toString();
+				return new ToStringCreator(this).append("flow", getFlow().getId()).append("activeFlow",
+						getActiveSession().getFlow().getId()).append("currentState",
+						getActiveSession().getState().getId()).append("flowSessions", flowSessions).toString();
 			}
 			else {
 				return "[Unhydrated " + getCaption() + "]";
