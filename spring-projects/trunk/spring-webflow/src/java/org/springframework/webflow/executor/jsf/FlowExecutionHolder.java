@@ -34,7 +34,7 @@ public class FlowExecutionHolder implements Serializable {
 	 * life of this object, as a flow execution can be given a new key to
 	 * capture its state at another point in time.
 	 */
-	private FlowExecutionKey continuationKey;
+	private FlowExecutionKey flowExecutionKey;
 
 	/**
 	 * The held flow execution representing the state of an ongoing conversation
@@ -53,26 +53,26 @@ public class FlowExecutionHolder implements Serializable {
 
 	/**
 	 * Creates a new flow execution holder.
-	 * @param continuationKey the continuation key
+	 * @param flowExecutionKey the continuation key
 	 * @param flowExecution the flow execution to hold
 	 */
-	public FlowExecutionHolder(FlowExecutionKey continuationKey, FlowExecution flowExecution) {
-		this.continuationKey = continuationKey;
+	public FlowExecutionHolder(FlowExecutionKey flowExecutionKey, FlowExecution flowExecution) {
+		this.flowExecutionKey = flowExecutionKey;
 		this.flowExecution = flowExecution;
 	}
 
 	/**
 	 * Returns the continuation key.
 	 */
-	public FlowExecutionKey getContinuationKey() {
-		return continuationKey;
+	public FlowExecutionKey getFlowExecutionKey() {
+		return flowExecutionKey;
 	}
 
 	/**
 	 * Sets the continuation key.
 	 */
-	public void setContinuationKey(FlowExecutionKey continuationKey) {
-		this.continuationKey = continuationKey;
+	public void setFlowExecutionKey(FlowExecutionKey continuationKey) {
+		this.flowExecutionKey = continuationKey;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class FlowExecutionHolder implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("continuationKey", continuationKey).append("flowExecution",
+		return new ToStringCreator(this).append("flowExecutionKey", flowExecutionKey).append("flowExecution",
 				flowExecution).toString();
 	}
 }

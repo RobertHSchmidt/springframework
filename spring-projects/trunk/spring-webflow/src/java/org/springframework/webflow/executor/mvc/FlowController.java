@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
-import org.springframework.webflow.executor.ResponseDescriptor;
+import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
 import org.springframework.webflow.executor.support.FlowExecutorTemplate;
 
@@ -65,25 +65,25 @@ import org.springframework.webflow.executor.support.FlowExecutorTemplate;
  * Usage example:
  * 
  * <pre>
- *                           &lt;!--
- *                               Exposes flows for execution at a single request URL.
- *                               The id of a flow to launch should be passed in by clients using
- *                               the &quot;_flowId&quot; request parameter:
- *                               e.g. /app.htm?_flowId=flow1
- *                           --&gt;
- *                           &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
- *                               &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *                           &lt;/bean&gt;
- *                                                     
- *                           &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *                           &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *                               &lt;property name=&quot;flowLocations&quot;&gt;
- *                                   &lt;list&gt;
- *                                       &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *                                       &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *                                   &lt;/list&gt;
- *                               &lt;/property&gt;
- *                           &lt;/bean&gt;
+ *                              &lt;!--
+ *                                  Exposes flows for execution at a single request URL.
+ *                                  The id of a flow to launch should be passed in by clients using
+ *                                  the &quot;_flowId&quot; request parameter:
+ *                                  e.g. /app.htm?_flowId=flow1
+ *                              --&gt;
+ *                              &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
+ *                                  &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *                              &lt;/bean&gt;
+ *                                                        
+ *                              &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *                              &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *                                  &lt;property name=&quot;flowLocations&quot;&gt;
+ *                                      &lt;list&gt;
+ *                                          &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                                          &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *                                      &lt;/list&gt;
+ *                                  &lt;/property&gt;
+ *                              &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorParameterExtractor}
@@ -183,8 +183,8 @@ public class FlowController extends AbstractController {
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		ServletExternalContext context = new ServletExternalContext(getServletContext(), request, response);
-		ResponseDescriptor responseDescriptor = createFlowExecutorTemplate().handleFlowRequest(context);
-		return toModelAndView(responseDescriptor, context);
+		ResponseInstruction responseInstruction = createFlowExecutorTemplate().handleFlowRequest(context);
+		return toModelAndView(responseInstruction, context);
 	}
 
 	/**
@@ -204,47 +204,47 @@ public class FlowController extends AbstractController {
 	 * @param selectedView the view descriptor to convert
 	 * @return a new ModelAndView object
 	 */
-	protected ModelAndView toModelAndView(ResponseDescriptor responseDescriptor, ExternalContext context) {
-		if (responseDescriptor.isNull()) {
+	protected ModelAndView toModelAndView(ResponseInstruction response, ExternalContext context) {
+		if (response.isNull()) {
 			return null;
 		}
-		if (responseDescriptor.isRestart()) {
+		if (response.isRestart()) {
 			// restart the flow by redirecting to flow launch URL
-			String flowId = responseDescriptor.getFlowExecutionContext().getFlow().getId();
+			String flowId = response.getFlowExecutionContext().getFlow().getId();
 			String flowUrl = parameterExtractor.createFlowUrl(flowId, context);
 			return new ModelAndView(new RedirectView(flowUrl));
 		}
-		if (responseDescriptor.getFlowExecutionContext().isActive()) {
-			if (responseDescriptor.isRedirect()) {
+		if (response.getFlowExecutionContext().isActive()) {
+			if (response.isRedirect()) {
 				// redirect to active conversation URL
-				Serializable conversationId = responseDescriptor.getFlowExecutionKey().getConversationId();
+				Serializable conversationId = response.getFlowExecutionKey().getConversationId();
 				String conversationUrl = parameterExtractor.createConversationUrl(conversationId, context);
 				return new ModelAndView(new RedirectView(conversationUrl, true));
 			}
 			else {
 				// forward to a view as part of an active conversation
-				Map model = new HashMap(responseDescriptor.getModel().size() + 2, 1);
-				model.putAll(responseDescriptor.getModel());
-				FlowExecutionKey flowExecutionKey = responseDescriptor.getFlowExecutionKey();
-				FlowExecutionContext flowExecutionContext = responseDescriptor.getFlowExecutionContext();
+				Map model = new HashMap(response.getModel().size() + 2, 1);
+				model.putAll(response.getModel());
+				FlowExecutionKey flowExecutionKey = response.getFlowExecutionKey();
+				FlowExecutionContext flowExecutionContext = response.getFlowExecutionContext();
 				parameterExtractor.putContextAttributes(flowExecutionKey, flowExecutionContext, model);
-				return new ModelAndView(responseDescriptor.getName(), model);
+				return new ModelAndView(response.getViewName(), model);
 			}
 		}
 		else {
-			if (responseDescriptor.isRedirect()) {
+			if (response.isRedirect()) {
 				// redirect to an external URL after flow completion
-				return new ModelAndView(new RedirectView(responseDescriptor.getName(),
-						isContextRelative(responseDescriptor.getName())), responseDescriptor.getModel());
+				boolean contextRelative = isContextRelativeUrl(response.getViewName());
+				return new ModelAndView(new RedirectView(response.getViewName(), contextRelative), response.getModel());
 			}
 			else {
 				// forward to a view after flow completion
-				return new ModelAndView(responseDescriptor.getName(), responseDescriptor.getModel());
+				return new ModelAndView(response.getViewName(), response.getModel());
 			}
 		}
 	}
 
-	protected boolean isContextRelative(String viewName) {
+	protected boolean isContextRelativeUrl(String viewName) {
 		return viewName.startsWith("/");
 	}
 }

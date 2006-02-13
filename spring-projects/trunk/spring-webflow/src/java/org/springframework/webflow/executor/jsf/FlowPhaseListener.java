@@ -157,7 +157,7 @@ public class FlowPhaseListener implements PhaseListener {
 			if (flowExecution.isActive()) {
 				// generate new continuation key for the flow execution
 				// before rendering the response
-				FlowExecutionKey flowExecutionKey = holder.getContinuationKey();
+				FlowExecutionKey flowExecutionKey = holder.getFlowExecutionKey();
 				FlowExecutionRepository repository = getRepository(new JsfExternalContext(facesContext));
 				if (flowExecutionKey == null) {
 					// it is an new conversation, generate a brand new key
@@ -168,7 +168,7 @@ public class FlowPhaseListener implements PhaseListener {
 					// generate a new continuation id
 					flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
 				}
-				holder.setContinuationKey(flowExecutionKey);
+				holder.setFlowExecutionKey(flowExecutionKey);
 				Map requestMap = facesContext.getExternalContext().getRequestMap();
 				parameterExtractor.putContextAttributes(flowExecutionKey, flowExecution, requestMap);
 			}
@@ -183,13 +183,13 @@ public class FlowPhaseListener implements PhaseListener {
 			if (flowExecution.isActive()) {
 				// save the flow execution out to the repository
 				if (logger.isDebugEnabled()) {
-					logger.debug("Saving continuation to repository with key " + holder.getContinuationKey());
+					logger.debug("Saving continuation to repository with key " + holder.getFlowExecutionKey());
 				}
-				repository.putFlowExecution(holder.getContinuationKey(), flowExecution);
+				repository.putFlowExecution(holder.getFlowExecutionKey(), flowExecution);
 			}
 			else {
 				// remove the conversation from the repository
-				Serializable conversationId = holder.getContinuationKey().getConversationId();
+				Serializable conversationId = holder.getFlowExecutionKey().getConversationId();
 				if (logger.isDebugEnabled()) {
 					logger.debug("Removing conversation in repository with id '" + conversationId + "'");
 				}

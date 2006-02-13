@@ -43,7 +43,7 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured launching the new flow
 	 * execution.
 	 */
-	public ResponseDescriptor launch(String flowId, ExternalContext context) throws FlowException;
+	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException;
 
 	/**
 	 * Signal an occurrence of an event in the current state of an existing,
@@ -60,8 +60,8 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured launching the new flow
 	 * execution.
 	 */
-	public ResponseDescriptor signalEvent(String eventId, FlowExecutionKey continuationKey,
-			ExternalContext context) throws FlowException;
+	public ResponseInstruction signalEvent(String eventId, FlowExecutionKey continuationKey, ExternalContext context)
+			throws FlowException;
 
 	/**
 	 * Returns the current view selection for the specified conversation, or
@@ -73,7 +73,6 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured retrieving the current view
 	 * selection
 	 */
-	public ResponseDescriptor getCurrentResponseDescriptor(String conversationId, ExternalContext context)
-			throws FlowException;
+	public ResponseInstruction getCurrentResponse(String conversationId, ExternalContext context) throws FlowException;
 
 }

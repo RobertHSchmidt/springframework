@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
-import org.springframework.webflow.executor.ResponseDescriptor;
+import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
 
 /**
@@ -64,25 +64,25 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * Usage example:
  * 
  * <pre>
- *               &lt;!--
- *                   Exposes flows for execution at a single request URL.
- *                   The id of a flow to launch should be passed in by clients using
- *                   the &quot;_flowId&quot; request parameter:
- *                       e.g. /app.htm?_flowId=flow1
- *               --&gt;
- *               &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *                   &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *               &lt;/bean&gt;
- *                                          
- *               &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *               &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *                   &lt;property name=&quot;flowLocations&quot;&gt;
- *                       &lt;list&gt;
- *                           &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *                           &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *                       &lt;/list&gt;
- *                   &lt;/property&gt;
- *               &lt;/bean&gt;
+ *                  &lt;!--
+ *                      Exposes flows for execution at a single request URL.
+ *                      The id of a flow to launch should be passed in by clients using
+ *                      the &quot;_flowId&quot; request parameter:
+ *                          e.g. /app.htm?_flowId=flow1
+ *                  --&gt;
+ *                  &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *                      &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *                  &lt;/bean&gt;
+ *                                             
+ *                  &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *                  &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *                      &lt;property name=&quot;flowLocations&quot;&gt;
+ *                          &lt;list&gt;
+ *                              &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                              &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *                          &lt;/list&gt;
+ *                      &lt;/property&gt;
+ *                  &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorParameterExtractor}
@@ -100,8 +100,8 @@ public class PortletFlowController extends AbstractController {
 	 * The attribute name of the last <code>ViewSelection</code> made by this
 	 * controller for one user's <code>PortletSession</code>
 	 */
-	private static final String RESPONSE_DESCRIPTOR_ATTRIBUTE_NAME = PortletFlowController.class
-			+ ".responseDescriptor";
+	private static final String RESPONSE_INSTRUCTION_ATTRIBUTE_NAME = PortletFlowController.class
+			+ ".responseInstruction";
 
 	/**
 	 * Delegate for executing flow executions (launching new executions, and
@@ -188,49 +188,49 @@ public class PortletFlowController extends AbstractController {
 	}
 
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
-		ResponseDescriptor responseDescriptor = (ResponseDescriptor)getCurrentResponseDescriptor(request);
-		if (responseDescriptor == null) {
+		ResponseInstruction responseInstruction = (ResponseInstruction)getCurrentResponse(request);
+		if (responseInstruction == null) {
 			PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
-			responseDescriptor = flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
-			setCurrentResponseDescriptor(request, responseDescriptor);
+			responseInstruction = flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
+			setCurrentResponse(request, responseInstruction);
 		}
 		// convert view to a renderable portlet mvc "model and view"
-		return toModelAndView(responseDescriptor);
+		return toModelAndView(responseInstruction);
 	}
 
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
 		// resume a flow execution
-		ResponseDescriptor responseDescriptor = flowExecutor.signalEvent(parameterExtractor.extractEventId(context),
+		ResponseInstruction responseInstruction = flowExecutor.signalEvent(parameterExtractor.extractEventId(context),
 				parameterExtractor.extractFlowExecutionKey(context), context);
 		// expose selected view in session for access during render phase
-		setCurrentResponseDescriptor(request, responseDescriptor);
+		setCurrentResponse(request, responseInstruction);
 	}
 
-	private ResponseDescriptor getCurrentResponseDescriptor(PortletRequest request) {
-		return (ResponseDescriptor)request.getPortletSession().getAttribute(RESPONSE_DESCRIPTOR_ATTRIBUTE_NAME);
+	private ResponseInstruction getCurrentResponse(PortletRequest request) {
+		return (ResponseInstruction)request.getPortletSession().getAttribute(RESPONSE_INSTRUCTION_ATTRIBUTE_NAME);
 	}
 
-	private void setCurrentResponseDescriptor(PortletRequest request, ResponseDescriptor responseDescriptor) {
-		request.getPortletSession().setAttribute(RESPONSE_DESCRIPTOR_ATTRIBUTE_NAME, responseDescriptor);
+	private void setCurrentResponse(PortletRequest request, ResponseInstruction responseDescriptor) {
+		request.getPortletSession().setAttribute(RESPONSE_INSTRUCTION_ATTRIBUTE_NAME, responseDescriptor);
 	}
 
-	protected ModelAndView toModelAndView(ResponseDescriptor responseDescriptor) {
-		if (responseDescriptor.isNull()) {
+	protected ModelAndView toModelAndView(ResponseInstruction response) {
+		if (response.isNull()) {
 			return null;
 		}
-		if (responseDescriptor.getFlowExecutionContext().isActive()) {
+		if (response.getFlowExecutionContext().isActive()) {
 			// forward to a view as part of an active conversation
-			Map model = new HashMap(responseDescriptor.getModel().size() + 2, 1);
-			model.putAll(responseDescriptor.getModel());
-			FlowExecutionKey flowExecutionKey = responseDescriptor.getFlowExecutionKey();
-			FlowExecutionContext flowExecutionContext = responseDescriptor.getFlowExecutionContext();
+			Map model = new HashMap(response.getModel().size() + 2, 1);
+			model.putAll(response.getModel());
+			FlowExecutionKey flowExecutionKey = response.getFlowExecutionKey();
+			FlowExecutionContext flowExecutionContext = response.getFlowExecutionContext();
 			parameterExtractor.putContextAttributes(flowExecutionKey, flowExecutionContext, model);
-			return new ModelAndView(responseDescriptor.getName(), model);
+			return new ModelAndView(response.getViewName(), model);
 		}
 		else {
 			// forward to a view after flow completion
-			return new ModelAndView(responseDescriptor.getName(), responseDescriptor.getModel());
+			return new ModelAndView(response.getViewName(), response.getModel());
 		}
 	}
 }

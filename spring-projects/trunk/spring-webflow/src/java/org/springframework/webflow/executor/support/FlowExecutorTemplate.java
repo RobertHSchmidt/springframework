@@ -8,7 +8,7 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
-import org.springframework.webflow.executor.ResponseDescriptor;
+import org.springframework.webflow.executor.ResponseInstruction;
 
 /**
  * An immutable helper for flow controllers that encapsulates reusable workflow
@@ -88,34 +88,34 @@ public class FlowExecutorTemplate {
 	 * @param context the context in which the request occured.
 	 * @return the selected view that should be rendered as a response
 	 */
-	public ResponseDescriptor handleFlowRequest(ExternalContext context) throws FlowException {
+	public ResponseInstruction handleFlowRequest(ExternalContext context) throws FlowException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Event signaled in " + context);
 		}
 		FlowExecutionKey flowExecutionKey = parameterExtractor.extractFlowExecutionKey(context);
 		if (flowExecutionKey != null) {
-			ResponseDescriptor responseDescriptor = flowExecutor.signalEvent(
-					parameterExtractor.extractEventId(context), flowExecutionKey, context);
+			ResponseInstruction response = flowExecutor.signalEvent(parameterExtractor.extractEventId(context),
+					flowExecutionKey, context);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Returning [resume] response descriptor " + responseDescriptor);
+				logger.debug("Returning [resume] " + response);
 			}
-			return responseDescriptor;
+			return response;
 		}
 		else {
 			String conversationId = parameterExtractor.extractConversationId(context);
 			if (StringUtils.hasText(conversationId)) {
-				ResponseDescriptor responseDescriptor = flowExecutor.getCurrentResponseDescriptor(conversationId, context);
+				ResponseInstruction response = flowExecutor.getCurrentResponse(conversationId, context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning [current] response descriptor " + responseDescriptor);
-				}				
-				return responseDescriptor;
+					logger.debug("Returning [current] " + response);
+				}
+				return response;
 			}
 			else {
-				ResponseDescriptor responseDescriptor = flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
+				ResponseInstruction response = flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning [launch] response descriptor " + responseDescriptor);
+					logger.debug("Returning [launch] " + response);
 				}
-				return responseDescriptor;
+				return response;
 			}
 		}
 	}

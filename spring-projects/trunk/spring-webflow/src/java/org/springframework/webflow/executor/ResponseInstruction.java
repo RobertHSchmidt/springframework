@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ResponseDescriptor implements Serializable {
+public class ResponseInstruction implements Serializable {
 
 	/**
 	 * The id of the flow execution.
@@ -52,7 +52,7 @@ public class ResponseDescriptor implements Serializable {
 	 * @param flowExecutionContext
 	 * @param viewSelection
 	 */
-	public ResponseDescriptor(FlowExecutionKey flowExecutionKey, FlowExecutionContext flowExecutionContext,
+	public ResponseInstruction(FlowExecutionKey flowExecutionKey, FlowExecutionContext flowExecutionContext,
 			ViewSelection viewSelection) {
 		this.flowExecutionKey = flowExecutionKey;
 		this.flowExecutionContext = flowExecutionContext;
@@ -64,13 +64,13 @@ public class ResponseDescriptor implements Serializable {
 	 * @param flowExecutionContext
 	 * @param viewSelection
 	 */
-	public ResponseDescriptor(FlowExecutionContext flowExecutionContext, ViewSelection viewSelection) {
+	public ResponseInstruction(FlowExecutionContext flowExecutionContext, ViewSelection viewSelection) {
 		this.flowExecutionKey = null;
 		this.flowExecutionContext = flowExecutionContext;
 		this.viewSelection = viewSelection;
 	}
 
-	public String getName() {
+	public String getViewName() {
 		return viewSelection.getViewName();
 	}
 

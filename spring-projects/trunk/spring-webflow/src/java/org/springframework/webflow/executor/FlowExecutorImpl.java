@@ -167,7 +167,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		this.alwaysRedirectOnPause = alwaysRedirectOnPause;
 	}
 
-	public ResponseDescriptor launch(String flowId, ExternalContext context) throws FlowException {
+	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecution flowExecution = repository.createFlowExecution(flowId);
 		ViewSelection selectedView = flowExecution.start(context);
@@ -178,14 +178,14 @@ public class FlowExecutorImpl implements FlowExecutor {
 				selectedView = selectedView.makeRedirect();
 			}
 			repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView.makeForward());
-			return new ResponseDescriptor(flowExecutionKey, flowExecution, selectedView);
+			return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
 		}
 		else {
-			return new ResponseDescriptor(flowExecution, selectedView);
+			return new ResponseInstruction(flowExecution, selectedView);
 		}
 	}
 
-	public ResponseDescriptor signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
+	public ResponseInstruction signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		ConversationLock lock = repository.getLock(flowExecutionKey.getConversationId());
@@ -200,11 +200,11 @@ public class FlowExecutorImpl implements FlowExecutor {
 				if (isAlwaysRedirectOnPause()) {
 					selectedView = selectedView.makeRedirect();
 				}
-				return new ResponseDescriptor(flowExecutionKey, flowExecution, selectedView);
+				return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
 			}
 			else {
 				repository.invalidateConversation(flowExecutionKey.getConversationId());
-				return new ResponseDescriptor(flowExecution, selectedView);
+				return new ResponseInstruction(flowExecution, selectedView);
 			}
 		}
 		finally {
@@ -212,13 +212,12 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public ResponseDescriptor getCurrentResponseDescriptor(String conversationId, ExternalContext context)
-			throws FlowException {
+	public ResponseInstruction getCurrentResponse(String conversationId, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey continuationKey = repository.getCurrentFlowExecutionKey(conversationId);
 		FlowExecution flowExecution = repository.getFlowExecution(continuationKey);
 		ViewSelection selectedView = repository.getCurrentViewSelection(conversationId);
-		return new ResponseDescriptor(continuationKey, flowExecution, selectedView);
+		return new ResponseInstruction(continuationKey, flowExecution, selectedView);
 	}
 
 	/**
