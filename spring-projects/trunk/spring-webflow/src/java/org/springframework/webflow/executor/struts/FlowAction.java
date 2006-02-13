@@ -27,7 +27,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.struts.ActionSupport;
@@ -84,10 +83,10 @@ import org.springframework.webflow.executor.support.FlowExecutorTemplate;
  * FlowAction:
  * 
  * <pre>
- *              &lt;action path=&quot;/userRegistration&quot;
- *                  type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
- *                  name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *              &lt;/action&gt;
+ *               &lt;action path=&quot;/userRegistration&quot;
+ *                   type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
+ *                   name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *               &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -285,7 +284,7 @@ public class FlowAction extends ActionSupport {
 				WebUtils.exposeRequestAttributes(request, contextAttributes);
 				if (form instanceof SpringBindingActionForm) {
 					SpringBindingActionForm bindingForm = (SpringBindingActionForm)form;
-					bindingForm.expose(getErrors(responseDescriptor.getModel()), request);
+					bindingForm.expose(getCurrentErrors(responseDescriptor.getModel()), request);
 				}
 				return findForward(responseDescriptor, mapping);
 			}
@@ -303,10 +302,10 @@ public class FlowAction extends ActionSupport {
 		}
 	}
 
-	private Errors getErrors(Map model) {
-		return (Errors)model.get(BindException.ERROR_KEY_PREFIX + FormObjectAccessor.CURRENT_FORM_OBJECT_ATTRIBUTE);
+	private Errors getCurrentErrors(Map model) {
+		return (Errors)model.get(FormObjectAccessor.getCurrentFormErrorsName());
 	}
-	
+
 	/**
 	 * Takes the view name of the selected view and appends the model properties
 	 * as query parameters.

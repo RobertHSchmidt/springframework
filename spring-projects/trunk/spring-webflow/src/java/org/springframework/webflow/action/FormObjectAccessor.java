@@ -25,11 +25,11 @@ import org.springframework.webflow.ScopeType;
  * objects and associated errors to and from a flow execution context.
  * <p>
  * <b>Note</b>: The form object available under the well known attribute name
- * {@link #CURRENT_FORM_OBJECT_ATTRIBUTE} will be the last ("current") form object set in
- * the request context. The same is true for the associated errors object. This
- * implies that special care should be taken when accessing the form object
- * using this alias if there are multiple form objects available in the flow
- * execution context!
+ * {@link #CURRENT_FORM_OBJECT_ATTRIBUTE} will be the last ("current") form
+ * object set in the request context. The same is true for the associated errors
+ * object. This implies that special care should be taken when accessing the
+ * form object using this alias if there are multiple form objects available in
+ * the flow execution context!
  * 
  * @see org.springframework.webflow.RequestContext
  * @see org.springframework.validation.Errors
@@ -85,7 +85,7 @@ public class FormObjectAccessor {
 	 * @return the form object, or null if not found
 	 */
 	public Object getCurrentFormObject(ScopeType scope) {
-		return getFormObject(CURRENT_FORM_OBJECT_ATTRIBUTE, scope);
+		return getFormObject(getCurrentFormObjectName(), scope);
 	}
 
 	/**
@@ -128,13 +128,13 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope in which to expose the form object
 	 */
 	public void setCurrentFormObject(Object formObject, ScopeType scopeType) {
-		scopeType.getScope(context).setAttribute(CURRENT_FORM_OBJECT_ATTRIBUTE, formObject);
+		scopeType.getScope(context).setAttribute(getCurrentFormObjectName(), formObject);
 	}
 
 	/**
 	 * Gets the form object <code>Errors</code> tracker from the context,
-	 * using the form object name {@link #CURRENT_FORM_OBJECT_ATTRIBUTE}. This method will
-	 * search all scopes.
+	 * using the form object name {@link #CURRENT_FORM_OBJECT_ATTRIBUTE}. This
+	 * method will search all scopes.
 	 * @return the form object Errors tracker, or null if not found
 	 */
 	public Errors getCurrentFormErrors() {
@@ -157,7 +157,7 @@ public class FormObjectAccessor {
 	 * @return the form object Errors tracker, or null if not found
 	 */
 	public Errors getCurrentFormErrors(ScopeType scopeType) {
-		return getFormErrors(CURRENT_FORM_OBJECT_ATTRIBUTE, scopeType);
+		return getFormErrors(getCurrentFormObjectName(), scopeType);
 	}
 
 	/**
@@ -190,6 +190,22 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope in which to expose the errors instance
 	 */
 	public void setCurrentFormErrors(Errors errors, ScopeType scopeType) {
-		scopeType.getScope(context).setAttribute(BindException.ERROR_KEY_PREFIX + CURRENT_FORM_OBJECT_ATTRIBUTE, errors);
+		scopeType.getScope(context).setAttribute(getCurrentFormErrorsName(), errors);
+	}
+
+	/**
+	 * Returns the current form object name.
+	 * @return the current form object name
+	 */
+	public static String getCurrentFormObjectName() {
+		return FormObjectAccessor.CURRENT_FORM_OBJECT_ATTRIBUTE;
+	}
+	
+	/**
+	 * Returns the current form object errors attribute name.
+	 * @return the current form object errors attribute name
+	 */
+	public static String getCurrentFormErrorsName() {
+		return BindException.ERROR_KEY_PREFIX + getCurrentFormObjectName();
 	}
 }
