@@ -52,6 +52,6 @@ public class RequestPathFlowExecutorParameterExtractor extends FlowExecutorParam
 	}
 
 	public String createConversationUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
-		return context.getDispatcherPath() + "/_c" + responseDescriptor.getFlowExecutionKey().getConversationId();
+		return context.getDispatcherPath() + CONVERSATION_ID_PREFIX + responseDescriptor.getFlowExecutionKey().getConversationId();
 	}
 }
