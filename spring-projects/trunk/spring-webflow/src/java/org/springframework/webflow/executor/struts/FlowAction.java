@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.executor.struts;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -32,8 +34,9 @@ import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowArtifactException;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
@@ -78,10 +81,10 @@ import org.springframework.webflow.executor.support.FlowExecutorTemplate;
  * FlowAction:
  * 
  * <pre>
- *        &lt;action path=&quot;/userRegistration&quot;
- *            type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
- *            name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *        &lt;/action&gt;
+ *             &lt;action path=&quot;/userRegistration&quot;
+ *                 type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
+ *                 name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *             &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -236,7 +239,7 @@ public class FlowAction extends ActionSupport {
 			HttpServletResponse response) throws Exception {
 		ExternalContext context = new StrutsExternalContext(mapping, form, getServletContext(), request, response);
 		ResponseDescriptor responseDescriptor = createControllerTemplate().handleFlowRequest(context);
-		return toActionForward(responseDescriptor.getViewSelection(), mapping, request);
+		return toActionForward(responseDescriptor, mapping, request, context);
 	}
 
 	/**
@@ -252,28 +255,46 @@ public class FlowAction extends ActionSupport {
 	 * Return a Struts ActionForward given a ViewSelection. Adds all attributes
 	 * from the ViewSelection as request attributes.
 	 */
-	protected ActionForward toActionForward(ViewSelection selectedView, ActionMapping mapping,
-			HttpServletRequest request) {
-		if (selectedView == ViewSelection.NULL_VIEW_SELECTION) {
+	protected ActionForward toActionForward(ResponseDescriptor responseDescriptor, ActionMapping mapping,
+			HttpServletRequest request, ExternalContext context) {
+		if (responseDescriptor.isNull()) {
 			return null;
 		}
-		WebUtils.exposeRequestAttributes(request, selectedView.getModel());
-		ActionForward forward = mapping.findForward(selectedView.getViewName());
-		if (forward != null) {
-			// the 1.2.1 copy constructor would ideally be better to use,
-			// but it is not Struts 1.1 compatible
-			forward = new ActionForward(forward.getName(), forward.getPath(), selectedView.isRedirect());
+		if (responseDescriptor.isRestart()) {
+			// restart the flow by redirecting to flow launch URL
+			String flowId = responseDescriptor.getFlowExecutionContext().getFlow().getId();
+			String flowUrl = parameterExtractor.createFlowUrl(flowId, context);
+			return new ActionForward(flowUrl, true);
 		}
-		else {
-			if (selectedView.isRedirect()) {
-				forward = new ActionForward(buildRedirectUrlPath(selectedView), true);
+		if (responseDescriptor.getFlowExecutionContext().isActive()) {
+			if (responseDescriptor.isRedirect()) {
+				// redirect to active conversation URL
+				Serializable conversationId = responseDescriptor.getFlowExecutionKey().getConversationId();
+				String conversationUrl = parameterExtractor.createConversationUrl(conversationId, context);
+				return new ActionForward(conversationUrl, true);
 			}
 			else {
-				forward = new ActionForward(selectedView.getViewName(), false);
+				// forward to a view as part of an active conversation
+				WebUtils.exposeRequestAttributes(request, responseDescriptor.getModel());
+				FlowExecutionKey flowExecutionKey = responseDescriptor.getFlowExecutionKey();
+				FlowExecutionContext flowExecutionContext = responseDescriptor.getFlowExecutionContext();
+				Map contextAttributes = new HashMap(2, 1);
+				parameterExtractor.putContextAttributes(flowExecutionKey, flowExecutionContext, contextAttributes);
+				WebUtils.exposeRequestAttributes(request, contextAttributes);
+				return findForward(responseDescriptor, mapping);
 			}
 		}
-		forward.freeze();
-		return forward;
+		else {
+			if (responseDescriptor.isRedirect()) {
+				// redirect to an external URL after flow completion
+				return new ActionForward(buildRedirectUrlPath(responseDescriptor), true);
+			}
+			else {
+				// forward to a view after flow completion
+				WebUtils.exposeRequestAttributes(request, responseDescriptor.getModel());
+				return findForward(responseDescriptor, mapping);
+			}
+		}
 	}
 
 	/**
@@ -282,12 +303,12 @@ public class FlowAction extends ActionSupport {
 	 * @param selectedView the selected view
 	 * @return the relative url path to redirect to
 	 */
-	protected String buildRedirectUrlPath(ViewSelection selectedView) {
-		StringBuffer path = new StringBuffer(selectedView.getViewName());
-		if (selectedView.getModel().size() > 0) {
+	protected String buildRedirectUrlPath(ResponseDescriptor responseDescriptor) {
+		StringBuffer path = new StringBuffer(responseDescriptor.getName());
+		if (responseDescriptor.getModel().size() > 0) {
 			// append model attributes as redirect query parameters
 			path.append('?');
-			Iterator it = selectedView.getModel().entrySet().iterator();
+			Iterator it = responseDescriptor.getModel().entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry)it.next();
 				path.append(entry.getKey()).append('=').append(entry.getValue());
@@ -297,5 +318,18 @@ public class FlowAction extends ActionSupport {
 			}
 		}
 		return path.toString();
+	}
+	
+	private ActionForward findForward(ResponseDescriptor responseDescriptor, ActionMapping mapping) {
+		ActionForward forward = mapping.findForward(responseDescriptor.getName());
+		if (forward != null) {
+			// the 1.2.1 copy constructor would ideally be better to
+			// use, but it is not Struts 1.1 compatible
+			forward = new ActionForward(forward.getName(), forward.getPath(), false);
+		}
+		else {
+			forward = new ActionForward(responseDescriptor.getName(), false);
+		}
+		return forward;
 	}
 }
