@@ -33,6 +33,11 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 public class ResponseInstruction implements Serializable {
 
 	/**
+	 * Generated serialization id.
+	 */
+	private static final long serialVersionUID = -3787181142379347131L;
+
+	/**
 	 * The id of the flow execution.
 	 */
 	private final FlowExecutionKey flowExecutionKey;
@@ -70,14 +75,6 @@ public class ResponseInstruction implements Serializable {
 		this.viewSelection = viewSelection;
 	}
 
-	public String getViewName() {
-		return viewSelection.getViewName();
-	}
-
-	public Map getModel() {
-		return viewSelection.getModel();
-	}
-
 	public boolean isNull() {
 		return viewSelection.isNull();
 	}
@@ -88,6 +85,14 @@ public class ResponseInstruction implements Serializable {
 
 	public boolean isRestart() {
 		return false;
+	}
+	
+	public String getViewName() {
+		return viewSelection.getViewName();
+	}
+
+	public Map getModel() {
+		return viewSelection.getModel();
 	}
 
 	public FlowExecutionKey getFlowExecutionKey() {
