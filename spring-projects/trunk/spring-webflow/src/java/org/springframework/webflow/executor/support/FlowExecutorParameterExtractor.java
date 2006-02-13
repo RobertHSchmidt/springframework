@@ -197,7 +197,7 @@ public class FlowExecutorParameterExtractor {
 	 * Returns the conversation id parameter name.
 	 */
 	public String getConversationIdParameterName() {
-		return eventIdParameterName;
+		return conversationIdParameterName;
 	}
 
 	/**
