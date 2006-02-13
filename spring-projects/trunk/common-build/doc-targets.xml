@@ -48,6 +48,12 @@
 				<include name="*.svg" />
 				<include name="*.jpg" />
 			</fileset>
+			<fileset dir="${docs.ref.dir}/images">
+				<include name="**/*.gif" />
+				<include name="**/*.png" />
+				<include name="**/*.svg" />
+				<include name="**/*.jpg" />
+			</fileset>
 		</copy>
 
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}">
@@ -84,6 +90,12 @@
 				<include name="*.svg" />
 				<include name="*.jpg" />
 			</fileset>
+			<fileset dir="${docs.ref.dir}/images">
+				<include name="**/*.gif" />
+				<include name="**/*.png" />
+				<include name="**/*.svg" />
+				<include name="**/*.jpg" />
+			</fileset>
 		</copy>
 
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.target.dir}/html">
@@ -107,9 +119,15 @@
 				<include name="*.svg" />
 				<include name="*.jpg" />
 			</fileset>
+			<fileset dir="${docs.ref.dir}/images">
+				<include name="**/*.gif" />
+				<include name="**/*.png" />
+				<include name="**/*.svg" />
+				<include name="**/*.jpg" />
+			</fileset>
 		</copy>
 
-		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.target.dir}/html">
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.target.dir}/html_single">
 			<classpath>
 				<fileset dir="${docs.ref.lib.dir}">
 					<include name="**/*.jar" />
