@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.executor.mvc;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.portlet.ActionRequest;
@@ -26,8 +27,10 @@ import javax.portlet.RenderResponse;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseDescriptor;
@@ -61,25 +64,25 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * Usage example:
  * 
  * <pre>
- *              &lt;!--
- *                  Exposes flows for execution at a single request URL.
- *                  The id of a flow to launch should be passed in by clients using
- *                  the &quot;_flowId&quot; request parameter:
- *                      e.g. /app.htm?_flowId=flow1
- *              --&gt;
- *              &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *                  &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *              &lt;/bean&gt;
- *                                         
- *              &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *              &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *                  &lt;property name=&quot;flowLocations&quot;&gt;
- *                      &lt;list&gt;
- *                          &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
- *                          &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
- *                      &lt;/list&gt;
- *                  &lt;/property&gt;
- *              &lt;/bean&gt;
+ *               &lt;!--
+ *                   Exposes flows for execution at a single request URL.
+ *                   The id of a flow to launch should be passed in by clients using
+ *                   the &quot;_flowId&quot; request parameter:
+ *                       e.g. /app.htm?_flowId=flow1
+ *               --&gt;
+ *               &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *                   &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *               &lt;/bean&gt;
+ *                                          
+ *               &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *               &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *                   &lt;property name=&quot;flowLocations&quot;&gt;
+ *                       &lt;list&gt;
+ *                           &lt;value&gt;/WEB-INF/flow1.xml&quot;&lt;/value&gt;
+ *                           &lt;value&gt;/WEB-INF/flow2.xml&quot;&lt;/value&gt;
+ *                       &lt;/list&gt;
+ *                   &lt;/property&gt;
+ *               &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorParameterExtractor}
@@ -218,7 +221,11 @@ public class PortletFlowController extends AbstractController {
 		}
 		if (responseDescriptor.getFlowExecutionContext().isActive()) {
 			// forward to a view as part of an active conversation
-			Map model = parameterExtractor.prepareForwardModel(responseDescriptor);
+			Map model = new HashMap(responseDescriptor.getModel().size() + 2, 1);
+			model.putAll(responseDescriptor.getModel());
+			FlowExecutionKey flowExecutionKey = responseDescriptor.getFlowExecutionKey();
+			FlowExecutionContext flowExecutionContext = responseDescriptor.getFlowExecutionContext();
+			parameterExtractor.putContextAttributes(flowExecutionKey, flowExecutionContext, model);
 			return new ModelAndView(responseDescriptor.getName(), model);
 		}
 		else {

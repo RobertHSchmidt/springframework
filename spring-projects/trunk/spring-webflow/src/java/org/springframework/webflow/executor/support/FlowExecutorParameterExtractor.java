@@ -1,7 +1,6 @@
 package org.springframework.webflow.executor.support;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -9,10 +8,10 @@ import org.springframework.binding.format.Formatter;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutionKeyFormatter;
 import org.springframework.webflow.executor.FlowExecutor;
-import org.springframework.webflow.executor.ResponseDescriptor;
 
 /**
  * A strategy for extracting parameters needed by a {@link FlowExecutor} to
@@ -23,18 +22,6 @@ import org.springframework.webflow.executor.ResponseDescriptor;
  * @author Keith Donald
  */
 public class FlowExecutorParameterExtractor {
-
-	/**
-	 * The flow execution context itself will be exposed to the view in a model
-	 * attribute with this name ("flowExecutionContext").
-	 */
-	public static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
-
-	/**
-	 * The string-encoded id of the flow execution will be exposed to the view
-	 * in a model attribute with this name ("flowExecutionId").
-	 */
-	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
 
 	/**
 	 * By default, clients can send the id (name) of the flow to be started
@@ -74,6 +61,18 @@ public class FlowExecutorParameterExtractor {
 	 * Event id value indicating that the event has not been set ("@NOT_SET@").
 	 */
 	public static final String NOT_SET_EVENT_ID = "@NOT_SET@";
+
+	/**
+	 * The flow execution context itself will be exposed to the view in a model
+	 * attribute with this name ("flowExecutionContext").
+	 */
+	public static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
+
+	/**
+	 * The string-encoded id of the flow execution will be exposed to the view
+	 * in a model attribute with this name ("flowExecutionId").
+	 */
+	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
 
 	/**
 	 * Identifies a flow definition to launch a new execution for, defaults to
@@ -258,9 +257,8 @@ public class FlowExecutorParameterExtractor {
 	 * @param context the external context
 	 * @return the relative flow URL path
 	 */
-	public String createFlowUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
-		return context.getDispatcherPath() + "?" + getFlowIdParameterName() + "="
-				+ responseDescriptor.getFlowExecutionContext().getFlow().getId();
+	public String createFlowUrl(String flowId, ExternalContext externalContext) {
+		return externalContext.getDispatcherPath() + "?" + getFlowIdParameterName() + "=" + flowId;
 	}
 
 	/**
@@ -324,32 +322,20 @@ public class FlowExecutorParameterExtractor {
 	 * @param context the external context
 	 * @return the relative conversation URL path
 	 */
-	public String createConversationUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
-		Serializable conversationId = responseDescriptor.getFlowExecutionKey().getConversationId();
+	public String createConversationUrl(Serializable conversationId, ExternalContext context) {
 		return context.getDispatcherPath() + "?" + getConversationIdParameterName() + "=" + conversationId;
 	}
 
 	/**
-	 * Prepare the application model for the selected response, adding in
-	 * necessary flow execution contextual attributes. This isto be used as part
-	 * of a forward when the response is issued by a local resource within this
-	 * request.
-	 * @param responseDescriptor the response selection
-	 * @return the prepared model, for rendering by a view as part of a forward
+	 * Add flow execution context attributes to the model under well-defined
+	 * names.
+	 * @param flowExecutionKey the flow execution key
+	 * @param context the flow execution context
+	 * @param model the model
 	 */
-	public Map prepareForwardModel(ResponseDescriptor responseDescriptor) {
-		// it's a forward from a view state of a active flow execution,
-		// expose model and context attributes.
-		Map model = new HashMap(responseDescriptor.getModel().size() + 2, 1);
-		// expose all model attributes from the original view selection
-		model.putAll(responseDescriptor.getModel());
-		// make the entire flow execution context available in the model
-		model.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, responseDescriptor.getFlowExecutionContext());
-		// make the unique flow execution id available in the model as
-		// convenience to views
-		String flowExecutionId = flowExecutionKeyFormatter.formatValue(responseDescriptor.getFlowExecutionKey());
-		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
-		return model;
+	public void putContextAttributes(FlowExecutionKey flowExecutionKey, FlowExecutionContext context, Map model) {
+		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionKeyFormatter.formatValue(flowExecutionKey));
+		model.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, context);
 	}
 
 	/**

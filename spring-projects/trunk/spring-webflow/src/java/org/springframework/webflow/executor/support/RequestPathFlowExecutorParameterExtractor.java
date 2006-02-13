@@ -1,10 +1,11 @@
 package org.springframework.webflow.executor.support;
 
+import java.io.Serializable;
+
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.executor.ResponseDescriptor;
 
 /**
  * A parameter extractor that extracts necessary flow executor parameters from
@@ -39,8 +40,8 @@ public class RequestPathFlowExecutorParameterExtractor extends FlowExecutorParam
 		return StringUtils.hasText(extractedFilename) ? extractedFilename : getDefaultFlowId();
 	}
 
-	public String createFlowUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
-		return context.getDispatcherPath() + "/" + responseDescriptor.getFlowExecutionContext().getFlow().getId();
+	public String createFlowUrl(String flowId, ExternalContext context) {
+		return context.getDispatcherPath() + "/" + flowId;
 	}
 
 	public String extractConversationId(ExternalContext context) {
@@ -51,7 +52,7 @@ public class RequestPathFlowExecutorParameterExtractor extends FlowExecutorParam
 		return null;
 	}
 
-	public String createConversationUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
-		return context.getDispatcherPath() + CONVERSATION_ID_PREFIX + responseDescriptor.getFlowExecutionKey().getConversationId();
+	public String createConversationUrl(Serializable conversationId, ExternalContext context) {
+		return context.getDispatcherPath() + CONVERSATION_ID_PREFIX + conversationId;
 	}
 }

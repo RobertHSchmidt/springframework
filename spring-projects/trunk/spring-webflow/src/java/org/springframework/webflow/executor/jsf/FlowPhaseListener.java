@@ -25,13 +25,11 @@ import javax.faces.event.PhaseListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.format.Formatter;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.executor.FlowExecutionKeyFormatter;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
 
 /**
@@ -62,18 +60,6 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
 public class FlowPhaseListener implements PhaseListener {
 
 	/**
-	 * The flow context itself will be exposed to the view in a model attribute
-	 * with this name ("flowExecutionContext").
-	 */
-	public static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
-
-	/**
-	 * The id of the flow execution will be exposed to the view in a model
-	 * attribute with this name ("flowExecutionId").
-	 */
-	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
-
-	/**
 	 * Logger, usable by subclasses.
 	 */
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -84,12 +70,6 @@ public class FlowPhaseListener implements PhaseListener {
 	 * resuming executions that will process user events.
 	 */
 	private FlowExecutionRepositoryFactory repositoryFactory;
-
-	/**
-	 * The formatter that will parse encoded _flowExecutionId strings into
-	 * {@link FlowExecutionKey} objects.
-	 */
-	private Formatter continuationKeyFormatter = new FlowExecutionKeyFormatter();
 
 	/**
 	 * A helper for extracting parameters needed by this flow execution manager.
@@ -118,21 +98,6 @@ public class FlowPhaseListener implements PhaseListener {
 			repositoryFactory = FlowFacesUtils.getRepositoryFactory(context.getFacesContext());
 		}
 		return repositoryFactory.getRepository(context);
-	}
-
-	/**
-	 * Returns the continuation key formatting strategy.
-	 */
-	public Formatter getContinuationKeyFormatter() {
-		return continuationKeyFormatter;
-	}
-
-	/**
-	 * Sets the flow execution continuation key formatting strategy.
-	 * @param continuationKeyFormatter the continuation key formatter
-	 */
-	public void setContinuationKeyFormatter(Formatter continuationKeyFormatter) {
-		this.continuationKeyFormatter = continuationKeyFormatter;
 	}
 
 	/**
@@ -192,26 +157,20 @@ public class FlowPhaseListener implements PhaseListener {
 			if (flowExecution.isActive()) {
 				// generate new continuation key for the flow execution
 				// before rendering the response
-				FlowExecutionKey continuationKey = holder.getContinuationKey();
+				FlowExecutionKey flowExecutionKey = holder.getContinuationKey();
 				FlowExecutionRepository repository = getRepository(new JsfExternalContext(facesContext));
-				if (continuationKey == null) {
-					// it is an entirely new conversation, generate a new
-					// conversation and continuation id
-					continuationKey = repository.generateKey(flowExecution);
+				if (flowExecutionKey == null) {
+					// it is an new conversation, generate a brand new key
+					flowExecutionKey = repository.generateKey(flowExecution);
 				}
 				else {
-					// it is an existing conversaiton, generate a new
-					// continuation id
-					continuationKey = repository.generateKey(flowExecution, continuationKey.getConversationId());
+					// it is an existing conversaiton, use same conversation id,
+					// generate a new continuation id
+					flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
 				}
-				holder.setContinuationKey(continuationKey);
-				String flowExecutionId = continuationKeyFormatter.formatValue(continuationKey);
+				holder.setContinuationKey(flowExecutionKey);
 				Map requestMap = facesContext.getExternalContext().getRequestMap();
-				// make the entire flow execution context available in the
-				// requset map
-				requestMap.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, flowExecution);
-				// expose string-encoded continuation key in the request map
-				requestMap.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
+				parameterExtractor.putContextAttributes(flowExecutionKey, flowExecution, requestMap);
 			}
 		}
 	}
@@ -237,9 +196,5 @@ public class FlowPhaseListener implements PhaseListener {
 				repository.invalidateConversation(conversationId);
 			}
 		}
-	}
-
-	protected FlowExecutionKey parseContinuationKey(String flowExecutionId) {
-		return (FlowExecutionKey)continuationKeyFormatter.parseValue(flowExecutionId, FlowExecutionKey.class);
 	}
 }
