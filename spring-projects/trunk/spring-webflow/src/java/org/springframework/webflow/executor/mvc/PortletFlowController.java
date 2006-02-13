@@ -218,7 +218,7 @@ public class PortletFlowController extends AbstractController {
 		}
 		if (responseDescriptor.getFlowExecutionContext().isActive()) {
 			// forward to a view as part of an active conversation
-			Map model = parameterExtractor.prepareModel(responseDescriptor);
+			Map model = parameterExtractor.prepareForwardModel(responseDescriptor);
 			return new ModelAndView(responseDescriptor.getName(), model);
 		}
 		else {

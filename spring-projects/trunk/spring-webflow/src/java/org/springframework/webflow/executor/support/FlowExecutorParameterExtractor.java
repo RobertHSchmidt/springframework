@@ -251,6 +251,19 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
+	 * Create a URL path to that launches a new execution of the flow that
+	 * produced the given response. Used to support the <i>restart flow</i> use
+	 * case.
+	 * @param responseDescriptor the response descriptor
+	 * @param context the external context
+	 * @return the relative flow URL path
+	 */
+	public String createFlowUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
+		return context.getDispatcherPath() + "?" + getFlowIdParameterName() + "="
+				+ responseDescriptor.getFlowExecutionContext().getFlow().getId();
+	}
+
+	/**
 	 * Extract the flow execution id from the external context.
 	 * @param context the context in which the external user event occured
 	 * @return the obtained id or <code>null</code> if not found
@@ -293,17 +306,38 @@ public class FlowExecutorParameterExtractor {
 		return eventId;
 	}
 
+	/**
+	 * Extract the flow execution conversation id from the external context.
+	 * @param context the context in which the external user event occured
+	 * @return the conversation id
+	 */
 	public String extractConversationId(ExternalContext context) {
 		return verifySingleStringInputParameter(getConversationIdParameterName(), getParameterMap(context).get(
 				getConversationIdParameterName()));
 	}
 
+	/**
+	 * Create a URL path to that when redirected to renders the <i>current view
+	 * selection</i> of the conversation that that produced the given response.
+	 * Used to support the <i>conversation redirect</i> use case.
+	 * @param responseDescriptor the response descriptor
+	 * @param context the external context
+	 * @return the relative conversation URL path
+	 */
 	public String createConversationUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
 		Serializable conversationId = responseDescriptor.getFlowExecutionKey().getConversationId();
 		return context.getDispatcherPath() + "?" + getConversationIdParameterName() + "=" + conversationId;
 	}
 
-	public Map prepareModel(ResponseDescriptor responseDescriptor) {
+	/**
+	 * Prepare the application model for the selected response, adding in
+	 * necessary flow execution contextual attributes. This isto be used as part
+	 * of a forward when the response is issued by a local resource within this
+	 * request.
+	 * @param responseDescriptor the response selection
+	 * @return the prepared model, for rendering by a view as part of a forward
+	 */
+	public Map prepareForwardModel(ResponseDescriptor responseDescriptor) {
 		// it's a forward from a view state of a active flow execution,
 		// expose model and context attributes.
 		Map model = new HashMap(responseDescriptor.getModel().size() + 2, 1);
@@ -316,11 +350,6 @@ public class FlowExecutorParameterExtractor {
 		String flowExecutionId = flowExecutionKeyFormatter.formatValue(responseDescriptor.getFlowExecutionKey());
 		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionId);
 		return model;
-	}
-
-	public String createFlowUrl(ResponseDescriptor responseDescriptor, ExternalContext context) {
-		return context.getDispatcherPath() + "?" + getFlowIdParameterName() + "="
-				+ responseDescriptor.getFlowExecutionContext().getFlow().getId();
 	}
 
 	/**

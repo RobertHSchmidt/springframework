@@ -94,15 +94,28 @@ public class FlowExecutorTemplate {
 		}
 		FlowExecutionKey flowExecutionKey = parameterExtractor.extractFlowExecutionKey(context);
 		if (flowExecutionKey != null) {
-			return flowExecutor.signalEvent(parameterExtractor.extractEventId(context), flowExecutionKey, context);
+			ResponseDescriptor responseDescriptor = flowExecutor.signalEvent(
+					parameterExtractor.extractEventId(context), flowExecutionKey, context);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Returning [resume] response descriptor " + responseDescriptor);
+			}
+			return responseDescriptor;
 		}
 		else {
 			String conversationId = parameterExtractor.extractConversationId(context);
 			if (StringUtils.hasText(conversationId)) {
-				return flowExecutor.getCurrentViewSelection(conversationId, context);
+				ResponseDescriptor responseDescriptor = flowExecutor.getCurrentResponseDescriptor(conversationId, context);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Returning [current] response descriptor " + responseDescriptor);
+				}				
+				return responseDescriptor;
 			}
 			else {
-				return flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
+				ResponseDescriptor responseDescriptor = flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Returning [launch] response descriptor " + responseDescriptor);
+				}
+				return responseDescriptor;
 			}
 		}
 	}

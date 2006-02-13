@@ -212,7 +212,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public ResponseDescriptor getCurrentViewSelection(String conversationId, ExternalContext context)
+	public ResponseDescriptor getCurrentResponseDescriptor(String conversationId, ExternalContext context)
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey continuationKey = repository.getCurrentFlowExecutionKey(conversationId);
