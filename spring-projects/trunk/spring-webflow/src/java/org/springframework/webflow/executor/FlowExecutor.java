@@ -73,6 +73,7 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured retrieving the current view
 	 * selection
 	 */
-	public ResponseInstruction getCurrentResponse(String conversationId, ExternalContext context) throws FlowException;
+	public ResponseInstruction getCurrentResponseInstruction(String conversationId, ExternalContext context)
+			throws FlowException;
 
 }

@@ -85,7 +85,7 @@ public class ResponseInstruction implements Serializable {
 	public boolean isRedirect() {
 		return viewSelection.isRedirect();
 	}
-	
+
 	public boolean isRestart() {
 		return false;
 	}
@@ -97,7 +97,7 @@ public class ResponseInstruction implements Serializable {
 	public FlowExecutionContext getFlowExecutionContext() {
 		return flowExecutionContext;
 	}
-	
+
 	public ViewSelection getViewSelection() {
 		return viewSelection;
 	}

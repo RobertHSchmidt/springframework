@@ -13,8 +13,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
  * FlowExecutionKey formatting and parsing logic.
  * <p>
  * This implementation expects parseable flow execution keys to be in the
- * following string format:
- * <code>
+ * following string format: <code>
  * {@link #CONVERSATION_ID_PREFIX}&lt;conversationId&gt;{@link #CONTINUATION_ID_PREFIX}&lt;continuationId&gt;
  * </code>
  * @author Keith Donald

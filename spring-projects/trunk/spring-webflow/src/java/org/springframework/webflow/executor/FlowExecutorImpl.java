@@ -212,7 +212,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public ResponseInstruction getCurrentResponse(String conversationId, ExternalContext context) throws FlowException {
+	public ResponseInstruction getCurrentResponseInstruction(String conversationId, ExternalContext context)
+			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey continuationKey = repository.getCurrentFlowExecutionKey(conversationId);
 		FlowExecution flowExecution = repository.getFlowExecution(continuationKey);

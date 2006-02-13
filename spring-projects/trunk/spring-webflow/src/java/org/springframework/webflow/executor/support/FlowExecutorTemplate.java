@@ -104,7 +104,7 @@ public class FlowExecutorTemplate {
 		else {
 			String conversationId = parameterExtractor.extractConversationId(context);
 			if (StringUtils.hasText(conversationId)) {
-				ResponseInstruction response = flowExecutor.getCurrentResponse(conversationId, context);
+				ResponseInstruction response = flowExecutor.getCurrentResponseInstruction(conversationId, context);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning [current] " + response);
 				}

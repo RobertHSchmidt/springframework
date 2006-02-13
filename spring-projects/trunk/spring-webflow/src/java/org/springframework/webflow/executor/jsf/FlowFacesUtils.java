@@ -11,7 +11,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 
 public class FlowFacesUtils {
-	
+
 	/**
 	 * The service name of the default {@link FlowExecutionRepositoryFactory}
 	 * implementation exported in the Spring Web Application Context.
@@ -23,7 +23,7 @@ public class FlowFacesUtils {
 	 * exported in the Spring Web Application Context.
 	 */
 	private static final String FLOW_LOCATOR_BEAN_NAME = "flowLocator";
-	
+
 	/**
 	 * Lookup the flow locator service by querying the application context for a
 	 * bean with name {@link #FLOW_LOCATOR_BEAN_NAME}.
