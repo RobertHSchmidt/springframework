@@ -25,7 +25,7 @@ import org.springframework.webflow.ScopeType;
  * objects and associated errors to and from a flow execution context.
  * <p>
  * <b>Note</b>: The form object available under the well known attribute name
- * {@link #FORM_OBJECT_ALIAS} will be the last ("current") form object set in
+ * {@link #CURRENT_FORM_OBJECT_ATTRIBUTE} will be the last ("current") form object set in
  * the request context. The same is true for the associated errors object. This
  * implies that special care should be taken when accessing the form object
  * using this alias if there are multiple form objects available in the flow
@@ -46,7 +46,7 @@ public class FormObjectAccessor {
 	 * Note that if you would have multiple form objects in the request context,
 	 * the last one that was used would be available using this alias!
 	 */
-	public static final String FORM_OBJECT_ALIAS = "#formObject";
+	public static final String CURRENT_FORM_OBJECT_ATTRIBUTE = "#formObject";
 
 	/**
 	 * The current request context.
@@ -63,7 +63,7 @@ public class FormObjectAccessor {
 
 	/**
 	 * Gets the form object from the context, using the well-known attribute
-	 * name {@link #FORM_OBJECT_ALIAS}. Will try all scopes.
+	 * name {@link #CURRENT_FORM_OBJECT_ATTRIBUTE}. Will try all scopes.
 	 * @return the form object, or null if not found
 	 */
 	public Object getCurrentFormObject() {
@@ -80,12 +80,12 @@ public class FormObjectAccessor {
 
 	/**
 	 * Gets the form object from the context, using the well-known attribute
-	 * name {@link #FORM_OBJECT_ALIAS}.
+	 * name {@link #CURRENT_FORM_OBJECT_ATTRIBUTE}.
 	 * @param scope the scope to obtain the form object from
 	 * @return the form object, or null if not found
 	 */
 	public Object getCurrentFormObject(ScopeType scope) {
-		return getFormObject(FORM_OBJECT_ALIAS, scope);
+		return getFormObject(CURRENT_FORM_OBJECT_ATTRIBUTE, scope);
 	}
 
 	/**
@@ -123,17 +123,17 @@ public class FormObjectAccessor {
 
 	/**
 	 * Expose given form object using the well known alias
-	 * {@link #FORM_OBJECT_ALIAS} in the specified scope.
+	 * {@link #CURRENT_FORM_OBJECT_ATTRIBUTE} in the specified scope.
 	 * @param formObject the form object
 	 * @param scopeType the scope in which to expose the form object
 	 */
 	public void setCurrentFormObject(Object formObject, ScopeType scopeType) {
-		scopeType.getScope(context).setAttribute(FORM_OBJECT_ALIAS, formObject);
+		scopeType.getScope(context).setAttribute(CURRENT_FORM_OBJECT_ATTRIBUTE, formObject);
 	}
 
 	/**
 	 * Gets the form object <code>Errors</code> tracker from the context,
-	 * using the form object name {@link #FORM_OBJECT_ALIAS}. This method will
+	 * using the form object name {@link #CURRENT_FORM_OBJECT_ATTRIBUTE}. This method will
 	 * search all scopes.
 	 * @return the form object Errors tracker, or null if not found
 	 */
@@ -152,12 +152,12 @@ public class FormObjectAccessor {
 
 	/**
 	 * Gets the form object <code>Errors</code> tracker from the context,
-	 * using the form object name {@link #FORM_OBJECT_ALIAS}.
+	 * using the form object name {@link #CURRENT_FORM_OBJECT_ATTRIBUTE}.
 	 * @param scopeType the scope to obtain the errors from
 	 * @return the form object Errors tracker, or null if not found
 	 */
 	public Errors getCurrentFormErrors(ScopeType scopeType) {
-		return getFormErrors(FORM_OBJECT_ALIAS, scopeType);
+		return getFormErrors(CURRENT_FORM_OBJECT_ATTRIBUTE, scopeType);
 	}
 
 	/**
@@ -185,11 +185,11 @@ public class FormObjectAccessor {
 
 	/**
 	 * Expose given errors instance using the well known alias
-	 * {@link #FORM_OBJECT_ALIAS} in the specified scope.
+	 * {@link #CURRENT_FORM_OBJECT_ATTRIBUTE} in the specified scope.
 	 * @param errors the errors instance
 	 * @param scopeType the scope in which to expose the errors instance
 	 */
 	public void setCurrentFormErrors(Errors errors, ScopeType scopeType) {
-		scopeType.getScope(context).setAttribute(BindException.ERROR_KEY_PREFIX + FORM_OBJECT_ALIAS, errors);
+		scopeType.getScope(context).setAttribute(BindException.ERROR_KEY_PREFIX + CURRENT_FORM_OBJECT_ATTRIBUTE, errors);
 	}
 }

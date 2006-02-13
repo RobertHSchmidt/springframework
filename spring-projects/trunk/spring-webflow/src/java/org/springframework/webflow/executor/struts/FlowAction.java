@@ -27,6 +27,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.struts.ActionSupport;
 import org.springframework.web.struts.DelegatingActionProxy;
@@ -35,6 +37,7 @@ import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowExecutionContext;
+import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
@@ -81,10 +84,10 @@ import org.springframework.webflow.executor.support.FlowExecutorTemplate;
  * FlowAction:
  * 
  * <pre>
- *             &lt;action path=&quot;/userRegistration&quot;
- *                 type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
- *                 name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *             &lt;/action&gt;
+ *              &lt;action path=&quot;/userRegistration&quot;
+ *                  type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
+ *                  name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *              &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -231,7 +234,6 @@ public class FlowAction extends ActionSupport {
 	 */
 	protected void setDefaultFlowExecutor(FlowLocator flowLocator) {
 		SimpleFlowExecutionRepositoryFactory repositoryFactory = new SimpleFlowExecutionRepositoryFactory(flowLocator);
-		repositoryFactory.setListenerLoader(new StrutsFlowExecutionListenerLoader());
 		setFlowExecutor(new FlowExecutorImpl(repositoryFactory));
 	}
 
@@ -239,7 +241,7 @@ public class FlowAction extends ActionSupport {
 			HttpServletResponse response) throws Exception {
 		ExternalContext context = new StrutsExternalContext(mapping, form, getServletContext(), request, response);
 		ResponseDescriptor responseDescriptor = createControllerTemplate().handleFlowRequest(context);
-		return toActionForward(responseDescriptor, mapping, request, context);
+		return toActionForward(responseDescriptor, mapping, form, request, context);
 	}
 
 	/**
@@ -256,7 +258,7 @@ public class FlowAction extends ActionSupport {
 	 * from the ViewSelection as request attributes.
 	 */
 	protected ActionForward toActionForward(ResponseDescriptor responseDescriptor, ActionMapping mapping,
-			HttpServletRequest request, ExternalContext context) {
+			ActionForm form, HttpServletRequest request, ExternalContext context) {
 		if (responseDescriptor.isNull()) {
 			return null;
 		}
@@ -281,6 +283,10 @@ public class FlowAction extends ActionSupport {
 				Map contextAttributes = new HashMap(2, 1);
 				parameterExtractor.putContextAttributes(flowExecutionKey, flowExecutionContext, contextAttributes);
 				WebUtils.exposeRequestAttributes(request, contextAttributes);
+				if (form instanceof SpringBindingActionForm) {
+					SpringBindingActionForm bindingForm = (SpringBindingActionForm)form;
+					bindingForm.expose(getErrors(responseDescriptor.getModel()), request);
+				}
 				return findForward(responseDescriptor, mapping);
 			}
 		}
@@ -297,6 +303,10 @@ public class FlowAction extends ActionSupport {
 		}
 	}
 
+	private Errors getErrors(Map model) {
+		return (Errors)model.get(BindException.ERROR_KEY_PREFIX + FormObjectAccessor.CURRENT_FORM_OBJECT_ATTRIBUTE);
+	}
+	
 	/**
 	 * Takes the view name of the selected view and appends the model properties
 	 * as query parameters.
@@ -319,7 +329,7 @@ public class FlowAction extends ActionSupport {
 		}
 		return path.toString();
 	}
-	
+
 	private ActionForward findForward(ResponseDescriptor responseDescriptor, ActionMapping mapping) {
 		ActionForward forward = mapping.findForward(responseDescriptor.getName());
 		if (forward != null) {
