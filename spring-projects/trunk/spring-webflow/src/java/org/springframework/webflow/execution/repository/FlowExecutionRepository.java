@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.FlowExecution;
  * single active user conversation with the server, as well as provide an index
  * into one or more restorable conversational snapshots taken at points in time
  * during conversation execution. These restorable conversational snapshots are
- * called <i>continuations</i>.
+ * also called <i>continuations</i>.
  * 
  * @author Keith Donald
  */
@@ -56,23 +56,23 @@ public interface FlowExecutionRepository {
 	public FlowExecution createFlowExecution(String flowId);
 
 	/**
-	 * Generate a unique flow execution continuation key to be used as an index
-	 * into an active flow execution representing the start of a new user
-	 * conversation in this repository. Both the <code>conversationId</code>
-	 * and <code>continuationId</code> key parts are guaranteed to be unique.
-	 * @return the continuation key
+	 * Generate a unique flow execution key to be used as an index into an
+	 * active flow execution representing the start of a new user conversation
+	 * in this repository. Both the <code>conversationId</code> and
+	 * <code>continuationId</code> key parts are guaranteed to be unique.
+	 * @param key the flow execution key
 	 * @throws FlowExecutionStorageException a problem occured generating the
 	 * key
 	 */
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
 
 	/**
-	 * Generate a unique flow execution continuation key to be used as an index
-	 * into a new flow execution continuation associated with an <i>existing</i>
-	 * user conversation managed in this repository. The returned key consists
-	 * of the provided <code>conversationId</code> provided and a new, unique
+	 * Generate a unique flow execution key to be used as an index into a new
+	 * flow execution continuation associated with an <i>existing</i> user
+	 * conversation managed in this repository. The returned key consists of the
+	 * provided <code>conversationId</code> provided and a new, unique
 	 * <code>continuationId</code>.
-	 * @return the continuation key
+	 * @param key the flow execution key
 	 * @throws FlowExecutionStorageException a problem occured generating the
 	 * key
 	 */
@@ -106,11 +106,10 @@ public interface FlowExecutionRepository {
 	public ConversationLock getLock(Serializable conversationId);
 
 	/**
-	 * Return the <code>FlowExecution</code> indexed by the provided
-	 * continuation key. The returned flow execution represents the restored
-	 * state of a user conversation captured by the indexed continuation at a
-	 * point in time.
-	 * @param key the continuation key
+	 * Return the <code>FlowExecution</code> indexed by the provided key. The
+	 * returned flow execution represents the restored state of a user
+	 * conversation captured by the indexed continuation at a point in time.
+	 * @param key the flow execution key
 	 * @return the flow execution, representing the state of a conversation at a
 	 * point in time, fully hydrated and ready to signal an event against.
 	 * @throws FlowExecutionStorageException if no flow execution was indexed
@@ -120,7 +119,7 @@ public interface FlowExecutionRepository {
 
 	/**
 	 * Place the <code>FlowExecution</code> in this repository, indexed under
-	 * the provided continuation key.
+	 * the provided key.
 	 * <p>
 	 * If this flow execution represents the start of a new conversation, that
 	 * conversation will begin to be tracked and a continuation capturing the
@@ -130,7 +129,7 @@ public interface FlowExecutionRepository {
 	 * ongoing conversation, a new continuation capturing this most recent state
 	 * of the conversation will be created.
 	 * 
-	 * @param key the continuation key
+	 * @param key the flow execution key
 	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionStorageException the flow execution could not be
 	 * stored
@@ -139,7 +138,7 @@ public interface FlowExecutionRepository {
 			throws FlowExecutionRepositoryException;
 
 	/**
-	 * Returns the current (or last) continuation key generated for the
+	 * Returns the current (or last) flow execution key generated for the
 	 * specified conversation.
 	 * @param conversationId the conversation id
 	 * @return the current continuation key

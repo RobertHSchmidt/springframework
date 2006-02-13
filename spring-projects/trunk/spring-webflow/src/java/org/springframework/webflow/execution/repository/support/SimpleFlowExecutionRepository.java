@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
-import org.springframework.webflow.execution.repository.InvalidConversationContinuationException;
+import org.springframework.webflow.execution.repository.InvalidContinuationIdException;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
 
 /**
@@ -88,7 +88,7 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		// continuationId
 		// if they do not match, access to the conversation is not allowed.
 		if (!key.getContinuationId().equals(entry.getContinuationId())) {
-			throw new InvalidConversationContinuationException(this, key, "The continuation id '"
+			throw new InvalidContinuationIdException(this, key, "The continuation id '"
 					+ key.getContinuationId() + "' associated with conversation '" + key.getConversationId()
 					+ "' is invalid.  This will happen when accessing browser history "
 					+ "(typically via the back button) that references a previously used continuation id, "

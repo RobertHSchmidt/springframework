@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
-import org.springframework.webflow.execution.repository.InvalidConversationContinuationException;
+import org.springframework.webflow.execution.repository.InvalidContinuationIdException;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
 import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
@@ -212,14 +212,14 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	 * @param conversation the conversation
 	 * @param continuationKey the continuation key
 	 * @return the continuation
-	 * @throws InvalidConversationContinuationException no continuation could be
+	 * @throws InvalidContinuationIdException no continuation could be
 	 * found under that key
 	 */
 	private FlowExecutionContinuation getRequiredContinuation(Conversation conversation,
-			FlowExecutionKey continuationKey) throws InvalidConversationContinuationException {
+			FlowExecutionKey continuationKey) throws InvalidContinuationIdException {
 		FlowExecutionContinuation continuation = conversation.getContinuation(continuationKey.getContinuationId());
 		if (continuation == null) {
-			throw new InvalidConversationContinuationException(this, continuationKey);
+			throw new InvalidContinuationIdException(this, continuationKey);
 		}
 		return continuation;
 	}

@@ -23,19 +23,19 @@ package org.springframework.webflow.execution.repository;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class InvalidConversationContinuationException extends FlowExecutionRepositoryException {
+public class InvalidContinuationIdException extends FlowExecutionRepositoryException {
 
 	/**
 	 * The conversation continuation key that was invalid.
 	 */
-	private FlowExecutionKey continuationKey;
+	private FlowExecutionKey flowExecutionKey;
 
 	/**
 	 * Creates a new invalid conversation continuation exception.
 	 * @param repository the repository
 	 * @param key the continuation key
 	 */
-	public InvalidConversationContinuationException(FlowExecutionRepository repository, FlowExecutionKey key) {
+	public InvalidContinuationIdException(FlowExecutionRepository repository, FlowExecutionKey key) {
 		super(repository, "The continuation id '" + key.getContinuationId() + "' associated with conversation '"
 				+ key.getConversationId()
 				+ "' is invalid.  This could happen if your users are relying on browser history "
@@ -48,7 +48,7 @@ public class InvalidConversationContinuationException extends FlowExecutionRepos
 	 * @param key the continuation key
 	 * @param message a custom message
 	 */
-	public InvalidConversationContinuationException(FlowExecutionRepository repository, FlowExecutionKey key,
+	public InvalidContinuationIdException(FlowExecutionRepository repository, FlowExecutionKey key,
 			String message) {
 		super(repository, message);
 	}
@@ -56,7 +56,7 @@ public class InvalidConversationContinuationException extends FlowExecutionRepos
 	/**
 	 * Returns the invalid continuation key.
 	 */
-	public FlowExecutionKey getContinuationKey() {
-		return continuationKey;
+	public FlowExecutionKey getFlowExecutionKey() {
+		return flowExecutionKey;
 	}
 }
