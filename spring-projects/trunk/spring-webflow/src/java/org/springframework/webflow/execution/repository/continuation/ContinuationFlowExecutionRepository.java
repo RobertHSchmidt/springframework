@@ -23,10 +23,10 @@ import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.execution.repository.CannotContinueConversationException;
 import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
-import org.springframework.webflow.execution.repository.CannotContinueConversationException;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
 import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
@@ -166,7 +166,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		((FlowExecutionImpl)flowExecution).setScope(null);
 	}
 
-	public FlowExecutionKey getCurrentFlowExecutionKey(String conversationId) throws FlowExecutionRepositoryException {
+	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId) throws FlowExecutionRepositoryException {
 		return new FlowExecutionKey(conversationId, getConversation(conversationId).getCurrentContinuation().getId());
 	}
 
@@ -239,7 +239,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		return conversation;
 	}
 
-	/**
+	/** 
 	 * Factory method that returns a new conversation. Subclasses may override.
 	 */
 	protected Conversation createConversation() {

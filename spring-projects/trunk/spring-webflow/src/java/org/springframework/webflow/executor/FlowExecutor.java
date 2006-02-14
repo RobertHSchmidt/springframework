@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.executor;
 
+import java.io.Serializable;
+
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
@@ -73,7 +75,7 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured retrieving the current view
 	 * selection
 	 */
-	public ResponseInstruction getCurrentResponseInstruction(String conversationId, ExternalContext context)
+	public ResponseInstruction getCurrentResponseInstruction(Serializable conversationId, ExternalContext context)
 			throws FlowException;
 
 }

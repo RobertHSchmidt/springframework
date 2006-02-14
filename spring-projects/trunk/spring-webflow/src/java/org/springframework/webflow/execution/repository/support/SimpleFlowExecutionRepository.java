@@ -23,10 +23,10 @@ import org.springframework.core.JdkVersion;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.repository.CannotContinueConversationException;
 import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
-import org.springframework.webflow.execution.repository.CannotContinueConversationException;
 import org.springframework.webflow.execution.repository.NoSuchConversationException;
 
 /**
@@ -110,7 +110,7 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		}
 	}
 
-	public FlowExecutionKey getCurrentFlowExecutionKey(String conversationId) throws FlowExecutionRepositoryException {
+	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId) throws FlowExecutionRepositoryException {
 		return new FlowExecutionKey(conversationId, getFlowExecutionEntry(conversationId).getContinuationId());
 	}
 

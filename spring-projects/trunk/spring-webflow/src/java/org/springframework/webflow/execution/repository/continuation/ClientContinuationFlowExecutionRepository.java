@@ -114,7 +114,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 		// nothing to do by default, subclasses may override
 	}
 
-	public FlowExecutionKey getCurrentFlowExecutionKey(String conversationId) throws FlowExecutionRepositoryException {
+	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId) throws FlowExecutionRepositoryException {
 		// TODO Auto-generated method stub
 		return null;
 	}

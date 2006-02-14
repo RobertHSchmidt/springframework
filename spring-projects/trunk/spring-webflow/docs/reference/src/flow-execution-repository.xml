@@ -112,7 +112,7 @@
 			<title>Flow execution continuation key</title>
 	    	<para>
     			Together the conversation id plus the continuation id makeup the unique two-part
-    			<emphasis>flow execution continuation key</emphasis> that identifies a state 
+    			<emphasis>flow execution key</emphasis> that identifies a state 
     			of a conversation <emphasis>at a point in time</emphasis>.  By submitting this key 
     			in a subsequent request a browser can restore the conversation at that point
     			and <emphasis>continue</emphasis> from there.
@@ -122,7 +122,7 @@
     		So on a subsequent request the conversation is resumed by restoring a flow execution
     		from the repository using the two-part key.  After event processing, if the 
     		flow execution is still active it is saved back out to the repository.
-    		At this time a new flow execution continuation key is generated.  That key
+    		At this time a new flow execution key is generated.  That key
     		retains the	same <emphasis>conversation identifier</emphasis>, as the same logical 
     		conversation is in progress; however the <emphasis>continuation identifier</emphasis>
     		changes to provide an index into the state of the flow execution

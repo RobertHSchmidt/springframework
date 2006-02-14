@@ -4,7 +4,7 @@
 	<sect1 id="executor-intro">
 		<title>Introduction</title>
 		<para>
-			Flow executors are facades that act as the highest-level entry points into
+			Flow executors are the highest-level entry points into
 			the Spring Web Flow system, responsible for driving the execution of flows
 			across a variety of environments.
 		</para>
@@ -26,8 +26,9 @@
     	</para>
     	<programlisting>
     public interface FlowExecutor {
-        ViewSelection start(String flowId, ExternalContext context);
-        ViewSelection signalEvent(String eventId, String flowExecutionId, ExternalContext context);
+        ResponseInstruction start(String flowId, ExternalContext context);
+        ResponseInstruction signalEvent(String eventId, String flowExecutionId, ExternalContext context);
+        ResponseInstruction getCurrentResponseInstruction(Serializable conversationId, ExternalContext context);
     }    	
     	</programlisting>
     	<para>

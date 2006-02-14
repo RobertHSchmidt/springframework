@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.executor;
 
+import java.io.Serializable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.ExternalContext;
@@ -212,7 +214,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public ResponseInstruction getCurrentResponseInstruction(String conversationId, ExternalContext context)
+	public ResponseInstruction getCurrentResponseInstruction(Serializable conversationId, ExternalContext context)
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey flowExecutionKey = repository.getCurrentFlowExecutionKey(conversationId);

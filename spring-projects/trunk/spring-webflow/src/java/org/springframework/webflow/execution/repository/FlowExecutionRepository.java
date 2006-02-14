@@ -145,7 +145,7 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionRepositoryException if an exception occured getting
 	 * the continuationk ey
 	 */
-	public FlowExecutionKey getCurrentFlowExecutionKey(String conversationId) throws FlowExecutionRepositoryException;
+	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Returns the current (or last) view selection made for the specified
