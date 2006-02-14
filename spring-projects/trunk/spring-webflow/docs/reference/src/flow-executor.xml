@@ -287,6 +287,8 @@
 	    	<para>
 	    		The string-encoded _flowExecutionId parameter is parsed into a <literal>FlowExecutionKey</literal> 
 	    		identity object automatically, using a <literal>FlowExecutionKeyFormatter</literal> by default.
+	    		The <literal>eventId</literal> is determined by parsing the parameter name of the 
+	    		button that was pressed.
 	    	</para>
     	</sect2>
 	</sect1>	
