@@ -175,7 +175,7 @@
 			For both Servlet and Portlet MVC a <literal>FlowController</literal> acts as an adapter
 			between Spring MVC and Spring Web Flow.  As an adapter, this controller has knowledge 
 			of both systems and delegates to a flow executor for driving the execution of flows.
-			One controller typically executes all flows of an application, relying on runtime
+			One controller typically executes all flows of an application, relying on 
 			parameterization to determine what flow to launch or what flow execution to resume.
 		</para>
     	<sect2 id="executor-servletmvc">
@@ -192,7 +192,7 @@
     		MVC environment.
     	</para>
     	<sect2 id="executor-portletmvc">
-    		<title>A single portlet flow controller executing all flows in a Portlet MVC environment</title>
+    		<title>A single portlet flow controller executing a flow within a Portlet</title>
 	    	<programlisting>
     &lt;bean id="portletModeControllerMapping" class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
         &lt;property name="portletModeMap">
@@ -204,21 +204,22 @@
 
     &lt;bean id="flowController" class="org.springframework.webflow.executor.mvc.PortletFlowController"&gt;
         &lt;constructor-arg ref="flowExecutor"/&gt;
+		&lt;property name="defaultFlowId" ref="search-flow"/&gt;
     &lt;/bean&gt;
 	    	</programlisting>
     	</sect2>
     	<para>
     		This controller, exported for access with the configured portlet mode,
     		delegates to the configured flow executor for driving flow executions in a Spring Portlet 
-    		MVC environment.
+    		MVC environment (by default, an execution of the <literal>search-flow</literal>).
     	</para>
    	</sect1>
 	<sect1 id="executor-parameterization">
 		<title>Flow executor parameterization</title>
 		<para>
 			Spring Web Flow allows for full control over how flow executor method parameters such as the
-			<literal>flowId</literal>, <literal>flowExecutionId</literal>, and <literal>eventId</literal> are extracted from 
-			an incoming request with the <literal>org.springframework.webflow.executor.support.FlowExecutorParameterExtractor</literal>
+			<literal>flowId</literal>, <literal>flowExecutionKey</literal>, <literal>eventId</literal>, and <literal>conversationId</literal> 
+			are extracted from an incoming request with the <literal>org.springframework.webflow.executor.support.FlowExecutorParameterExtractor</literal>
 			strategy.  The default strategy is request-parameter based.  Support for request path-based 
 			parameter extraction (REST-style URLs) is also provided.
 		</para>
@@ -252,6 +253,10 @@
 	    	<programlisting>
 	&lt;a href="flowController.htm?_flowExecutionId=${flowExecutionId}&amp;eventId=submit"/&gt;
 	    	</programlisting>
+	    	<para>
+	    		Note: the string-encoded _flowExecutionId parameter is parsed into a <literal>FlowExecutionKey</literal> 
+	    		identity object automatically.
+	    	</para>
     	</sect2>
     	<sect2 id="executor-mvc-resume-form">
     		<title>Resuming a flow execution - form</title>
