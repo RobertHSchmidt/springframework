@@ -358,9 +358,11 @@
 	    	<programlisting>
     &lt;h:form id="form"&gt;
         ...
+        &lt;h:inputText id="propertyName" value="#{flowScope.formObject.propertyName}"/&gt;
+        ...
         &lt;input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"&gt;
-        &lt;h:commandButton type="submit" value="Next" action="submit" immediate="false"&gt;
-    &lt;/form&gt;
+        &lt;h:commandButton type="submit" value="Next" action="submit"/&gt;
+    &lt;/h:form&gt;
 	    	</programlisting>
     	</sect2>
     </sect1>
