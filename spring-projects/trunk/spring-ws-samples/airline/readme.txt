@@ -1,5 +1,5 @@
 =====================================================
-== Spring Web Service JPetStore sample application ==
+== Spring Web Service Airline sample application ==
 =====================================================
 
 @author Alef Arendsen
