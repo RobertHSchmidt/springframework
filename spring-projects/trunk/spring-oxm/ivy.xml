@@ -26,7 +26,7 @@
         <dependency org="java" name="jaxb" rev="1.0.5" conf="buildtime->default">
             <artifact name="jaxb-api" type="jar"/>
         </dependency>
-        <dependency org="castor" name="castor-xml" rev="0.9.7" conf="buildtime->default"/>
+        <dependency org="castor" name="castor-xml" rev="1.0-M2" conf="buildtime->default"/>
         <dependency org="xmlbeans" name="xmlbeans" rev="2.0.0" conf="buildtime->default">
             <artifact name="xbean" type="jar"/>
         </dependency>
