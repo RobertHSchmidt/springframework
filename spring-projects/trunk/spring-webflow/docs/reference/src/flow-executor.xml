@@ -200,7 +200,7 @@
                 &lt;entry key="view" value-ref="flowController"/&gt;
             &lt;/map&gt;
         &lt;/property&gt;
-	&lt;/bean&gt;
+    &lt;/bean&gt;
 
     &lt;bean id="flowController" class="org.springframework.webflow.executor.mvc.PortletFlowController"&gt;
         &lt;constructor-arg ref="flowExecutor"/&gt;
