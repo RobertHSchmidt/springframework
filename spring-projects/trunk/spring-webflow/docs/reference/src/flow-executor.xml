@@ -54,7 +54,7 @@
     		application-level attributes.
     	</para>
     	<para>
-    		Both operations return a <literal>ViewSelection</literal> which the calling system is 
+    		Both operations return a <literal>ResponseInstruction</literal> which the calling system is 
     		expected to use to issue a suitable response.
     	</para>
     	<para>
