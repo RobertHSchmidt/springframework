@@ -108,8 +108,8 @@
     			<emphasis>at this point in time</emphasis>.
 			</para>
 		</sect2>
-		<sect2 id="continuationKey">
-			<title>Flow execution continuation key</title>
+		<sect2 id="flowExecutionKey">
+			<title>Flow execution key</title>
 	    	<para>
     			Together the conversation id plus the continuation id makeup the unique two-part
     			<emphasis>flow execution key</emphasis> that identifies a state 
@@ -142,7 +142,7 @@
     		with a logical conversation that spanned more than on request, it is removed from the 
     		repository.  More specifically, the entire conversation is <emphasis>invalidated</emphasis>, 
     		resulting in any flow executions associated with the conversation being purged.
-    		This process is dubbed <emphasis>conversation invalidation after completion</emphasis>
+    		This process is dubbed <emphasis>conversation invalidation after completion</emphasis>.
     	</para>
     	<para>
     		Once a conversation has been invalidated the conversation identifier is no longer valid
