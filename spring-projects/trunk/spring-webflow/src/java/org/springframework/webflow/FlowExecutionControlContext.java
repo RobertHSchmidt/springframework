@@ -58,7 +58,7 @@ public interface FlowExecutionControlContext extends RequestContext {
 	 * method will be called as part of executing a transition from one state to
 	 * another.
 	 * @param lastTransition the last transition that executed
-	 * @see Transition#execute(FlowExecutionControlContext)
+	 * @see Transition#execute(TransitionableState, FlowExecutionControlContext)
 	 */
 	public void setLastTransition(Transition lastTransition);
 

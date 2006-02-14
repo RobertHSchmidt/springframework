@@ -40,8 +40,7 @@ public interface FlowExecutor {
 	 * @param flowId the unique id of the flow definition to launch
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system.
-	 * @return the starting view selection, or <code>null</code> if no view
-	 * selection was made.
+	 * @return the starting response instruction
 	 * @throws FlowException if an exception occured launching the new flow
 	 * execution.
 	 */
@@ -52,17 +51,15 @@ public interface FlowExecutor {
 	 * paused flow execution continuation. The flow execution will resume to
 	 * process the event.
 	 * @param eventId the user event that occured
-	 * @param flowExecutionId the unique id of a paused flow execution
-	 * continuation that is waiting to resume on the occurrence of an user
-	 * event.
+	 * @param flowExecutionKey the identifying key of a paused flow execution
+	 * continuation that is waiting to resume on the ocurrence of an user event.
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system.
-	 * @return the next view selection, or <code>null</code> if no view
-	 * selection was made.
+	 * @return the next response instruction
 	 * @throws FlowException if an exception occured launching the new flow
 	 * execution.
 	 */
-	public ResponseInstruction signalEvent(String eventId, FlowExecutionKey continuationKey, ExternalContext context)
+	public ResponseInstruction signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
 			throws FlowException;
 
 	/**
@@ -71,7 +68,7 @@ public interface FlowExecutor {
 	 * @param conversationId the id of an existing conversation
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system.
-	 * @return the current view selection
+	 * @return the current response instruction
 	 * @throws FlowException if an exception occured retrieving the current view
 	 * selection
 	 */

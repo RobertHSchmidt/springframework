@@ -253,8 +253,8 @@ public class FlowExecutorParameterExtractor {
 	 * Create a URL path to that launches a new execution of the flow that
 	 * produced the given response. Used to support the <i>restart flow</i> use
 	 * case.
-	 * @param responseDescriptor the response descriptor
-	 * @param context the external context
+	 * @param flowId the flow id
+	 * @param externalContext the external context
 	 * @return the relative flow URL path
 	 */
 	public String createFlowUrl(String flowId, ExternalContext externalContext) {
@@ -318,7 +318,7 @@ public class FlowExecutorParameterExtractor {
 	 * Create a URL path to that when redirected to renders the <i>current view
 	 * selection</i> of the conversation that that produced the given response.
 	 * Used to support the <i>conversation redirect</i> use case.
-	 * @param responseDescriptor the response descriptor
+	 * @param conversationId the conversation id
 	 * @param context the external context
 	 * @return the relative conversation URL path
 	 */

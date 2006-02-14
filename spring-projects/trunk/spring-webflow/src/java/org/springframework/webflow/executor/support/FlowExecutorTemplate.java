@@ -20,7 +20,7 @@ import org.springframework.webflow.executor.ResponseInstruction;
  * operation and implements the following algorithm:
  * <ol>
  * <li>Extract the flow execution id by calling
- * {@link FlowExecutorParameterExtractor#extractFlowExecutionId(ExternalContext)}.</li>
+ * {@link FlowExecutorParameterExtractor#extractFlowExecutionKey(ExternalContext)}.</li>
  * <li>If a valid flow execution id was extracted, signal an event in that
  * existing execution. The event to signal is determined by calling the
  * {@link FlowExecutorParameterExtractor#extractEventId(ExternalContext)}

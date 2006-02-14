@@ -41,7 +41,7 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * <ul>
  * <li>On BEFORE_RESTORE_VIEW, restore the {@link FlowExecution} the user is
  * participating in if a call to
- * {@link FlowExecutorParameterExtractor#extractFlowExecutionId(ExternalContext)}
+ * {@link FlowExecutorParameterExtractor#extractFlowExecutionKey(ExternalContext)}
  * returns a submitted flow execution identifier. Place the restored flow
  * execution in a holder that other JSF artifacts such as VariableResolvers,
  * PropertyResolvers, and NavigationHandlers may access during the request

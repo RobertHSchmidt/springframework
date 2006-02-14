@@ -79,7 +79,6 @@ public class Transition extends AnnotatedObject {
 
 	/**
 	 * Default constructor for bean style usage.
-	 * @see #setSourceState(TransitionableState)
 	 * @see #setMatchingCriteria(TransitionCriteria)
 	 * @see #setExecutionCriteria(TransitionCriteria)
 	 * @see #setTargetStateResolver(TargetStateResolver)
@@ -93,7 +92,6 @@ public class Transition extends AnnotatedObject {
 	 * targetStateResolver.
 	 * @param targetStateResolver the resolver of the target state of this
 	 * transition
-	 * @see #setSourceState(TransitionableState)
 	 * @see #setMatchingCriteria(TransitionCriteria)
 	 * @see #setExecutionCriteria(TransitionCriteria)
 	 */
@@ -105,9 +103,9 @@ public class Transition extends AnnotatedObject {
 	 * Create a new transition that matches on the specified criteria,
 	 * transitioning to the target state calculated by the provided
 	 * targetStateResolver.
+	 * @param matchingCriteria the criteria that matches this transition
 	 * @param targetStateResolver the resolver of the target state of this
 	 * transition
-	 * @see #setSourceState(TransitionableState)
 	 * @see #setExecutionCriteria(TransitionCriteria)
 	 */
 	public Transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver) {

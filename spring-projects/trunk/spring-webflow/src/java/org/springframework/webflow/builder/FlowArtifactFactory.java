@@ -103,7 +103,6 @@ public interface FlowArtifactFactory {
 
 	/**
 	 * Create a new state transition with the assigned properties.
-	 * @param sourceState the source state of the transition
 	 * @param properties the assigned transition properties
 	 * @return the transition
 	 */

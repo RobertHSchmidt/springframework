@@ -83,10 +83,10 @@ import org.springframework.webflow.executor.support.FlowExecutorTemplate;
  * FlowAction:
  * 
  * <pre>
- *                 &lt;action path=&quot;/userRegistration&quot;
- *                     type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
- *                     name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *                 &lt;/action&gt;
+ *     &lt;action path=&quot;/userRegistration&quot;
+ *         type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
+ *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *     &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -108,9 +108,6 @@ import org.springframework.webflow.executor.support.FlowExecutorTemplate;
  * <code>org.springframework.web.struts.SpringBindingActionForm</code> and use
  * it with your FlowAction.
  * <li>This class depends on a {@link FlowExecutor} instance to be configured.
- * If you are using Spring's {@link SpringBindingActionForm}, the executor must
- * have a {@link SpringBindingActionFormConfigurer} listener attached, which is
- * conveniently done by configuring a {@link StrutsFlowExecutionListenerLoader}.
  * <li> If relying on Spring's {@link DelegatingActionProxy} (which is
  * recommended), a FlowExecutor reference can simply be injected using standard
  * Spring DependencyInjection techniques. If you are not using the proxy-based
@@ -309,15 +306,15 @@ public class FlowAction extends ActionSupport {
 	/**
 	 * Takes the view name of the selected view and appends the model properties
 	 * as query parameters.
-	 * @param selectedView the selected view
+	 * @param response the response instruction
 	 * @return the relative url path to redirect to
 	 */
-	protected String buildRedirectUrlPath(ResponseInstruction responseDescriptor) {
-		StringBuffer path = new StringBuffer(responseDescriptor.getViewName());
-		if (responseDescriptor.getModel().size() > 0) {
+	protected String buildRedirectUrlPath(ResponseInstruction response) {
+		StringBuffer path = new StringBuffer(response.getViewName());
+		if (response.getModel().size() > 0) {
 			// append model attributes as redirect query parameters
 			path.append('?');
-			Iterator it = responseDescriptor.getModel().entrySet().iterator();
+			Iterator it = response.getModel().entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry)it.next();
 				path.append(entry.getKey()).append('=').append(entry.getValue());

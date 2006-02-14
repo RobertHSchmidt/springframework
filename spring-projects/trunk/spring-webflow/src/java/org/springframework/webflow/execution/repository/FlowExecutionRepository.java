@@ -60,7 +60,7 @@ public interface FlowExecutionRepository {
 	 * active flow execution representing the start of a new user conversation
 	 * in this repository. Both the <code>conversationId</code> and
 	 * <code>continuationId</code> key parts are guaranteed to be unique.
-	 * @param key the flow execution key
+	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionStorageException a problem occured generating the
 	 * key
 	 */
@@ -72,7 +72,7 @@ public interface FlowExecutionRepository {
 	 * conversation managed in this repository. The returned key consists of the
 	 * provided <code>conversationId</code> provided and a new, unique
 	 * <code>continuationId</code>.
-	 * @param key the flow execution key
+	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionStorageException a problem occured generating the
 	 * key
 	 */

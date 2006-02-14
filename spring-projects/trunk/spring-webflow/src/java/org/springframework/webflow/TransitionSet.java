@@ -51,7 +51,7 @@ public class TransitionSet {
 
 	/**
 	 * Add a collection of transition instances to this set.
-	 * @param transition the transitions to add
+	 * @param transitions the transitions to add
 	 * @return true if this set's contents changed as a result of the add
 	 * operation
 	 */

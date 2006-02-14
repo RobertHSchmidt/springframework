@@ -53,6 +53,7 @@ public class ResponseInstruction implements Serializable {
 	private final ViewSelection viewSelection;
 
 	/**
+	 * Create a new response instruction for a paused flow execution.
 	 * @param flowExecutionKey
 	 * @param flowExecutionContext
 	 * @param viewSelection
@@ -65,7 +66,7 @@ public class ResponseInstruction implements Serializable {
 	}
 
 	/**
-	 * @param flowExecutionKey
+	 * Create a new response instruction for a ended flow execution.
 	 * @param flowExecutionContext
 	 * @param viewSelection
 	 */

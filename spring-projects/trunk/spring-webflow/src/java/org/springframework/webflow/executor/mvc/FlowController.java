@@ -199,9 +199,9 @@ public class FlowController extends AbstractController {
 
 	/**
 	 * Create a ModelAndView object based on the information in the selected
-	 * view descriptor. Subclasses can override this to return a specialized
+	 * response instruction. Subclasses can override this to return a specialized
 	 * ModelAndView or to do custom processing on it.
-	 * @param selectedView the view descriptor to convert
+	 * @param response instruction the response instruction to convert
 	 * @return a new ModelAndView object
 	 */
 	protected ModelAndView toModelAndView(ResponseInstruction response, ExternalContext context) {

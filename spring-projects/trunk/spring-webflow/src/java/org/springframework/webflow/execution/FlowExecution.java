@@ -52,9 +52,7 @@ import org.springframework.webflow.ViewSelection;
  * subsystem.
  * <p>
  * Subsequent requests from the client to manipuate this flow execution trigger
- * restoration and
- * {@link #rehydrate(FlowLocator, FlowExecutionListenerLoader) rehydration} of
- * this object, followed by an invocation of the
+ * restoration and rehydration of this object, followed by an invocation of the
  * {@link #signalEvent(String, ExternalContext)} operation. The signalEvent
  * operation tells this state machine what action the user took from within the
  * context of the current state; for example, the user may have pressed pressed
