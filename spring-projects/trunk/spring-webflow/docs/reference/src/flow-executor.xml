@@ -32,29 +32,35 @@
     }    	
     	</programlisting>
     	<para>
-    		As you can see there are two central use-cases fulfilled by this interface:
+    		As you can see there are three central use-cases fulfilled by this interface:
     		<orderedlist>
     			<listitem>
     				<para>
-    					Start a new flow execution in the context of the current request.
+    					Start a new flow execution.
     				</para>
     			</listitem>
     			<listitem>
     				<para>
-    					Resume a paused flow execution by signaling an event in the 
-    					context of the current request.
+    					Resume a paused flow execution by signaling an event in its current state.
+    				</para>
+    			</listitem>
+    			<listitem>
+    				<para>
+    					Request that the last response issued by an active conversation be re-issued. 
+    					Unlike start and signalEvent, this is an idempotent operation that does not 
+    					affect the state of the flow.
     				</para>
     			</listitem>
     		</orderedlist>
     	</para>
     	<para>
-    		Both operations accept an <literal>ExternalContext</literal> that provides normalized 
+    		Each operation accepts an <literal>ExternalContext</literal> that provides normalized 
     		access to properties of an external system that has called into Spring Web Flow, allowing
     		access to environment-specific request parameters as well as request, session, and
     		application-level attributes.
     	</para>
     	<para>
-    		Both operations return a <literal>ResponseInstruction</literal> which the calling system is 
+    		Each operation returns a <literal>ResponseInstruction</literal> which the calling system is 
     		expected to use to issue a suitable response.
     	</para>
     	<para>
@@ -72,7 +78,7 @@
 			</caption>
 		</mediaobject>
 		<para>
-			As you can see, an ExternalContext implementation exists for each of the environments
+			As you can see, an <literal>ExternalContext</literal> implementation exists for each of the environments
 			Spring Web Flow supports.  If a flow artifact such as an action needs to access
 			native constructs of the calling environment it can downcast the context to the
 			specific implementation.  The need for such downcasting is considered a special case.
