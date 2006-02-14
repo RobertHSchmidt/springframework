@@ -27,7 +27,7 @@
     	<programlisting>
     public interface FlowExecutor {
         ResponseInstruction start(String flowId, ExternalContext context);
-        ResponseInstruction signalEvent(String eventId, String flowExecutionId, ExternalContext context);
+        ResponseInstruction signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context);
         ResponseInstruction getCurrentResponseInstruction(Serializable conversationId, ExternalContext context);
     }    	
     	</programlisting>
