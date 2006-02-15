@@ -2,7 +2,7 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC1 (18.1.2006)
+Changes in version 1.0 RC1 (20.2.2006)
 ------------------------------------
 
 Overall
@@ -95,7 +95,7 @@ Package org.springframework.webflow.execution
 * Removed ExpiredFlowCleanupFilter, as a more powerful expiry capability built into the
   FlowExecutionRepository subsystem is under consideration.
 
-Package org.springframework.webflow.exectuor
+Package org.springframework.webflow.executor
 * Introduced the webflow.executor package, the highest-layer subsystem of SWF for driving the execution of flows.
 * Renamed FlowExecutionManager to FlowExecutor; FlowExecutor is now a central facade interface
   defining the SWF system boundary for typical clients.  FlowExecutorImpl is the default implementation; FlowLocator is now a required dependency.
@@ -106,6 +106,8 @@ Package org.springframework.webflow.exectuor
 * Introduced JSF flow executor integration, see the "jsf" package.
 * Reinstated the Spring Portlet MVC flow executor integration, see the "mvc" package.
   Note: the portlet MVC support requires Spring 2.0.
+* Added ResponseInstruction, for allowing strongly-typed access to a flow execution context when preparing 
+  a response to issue.
 
 Package org.springframework.webflow.registry
 * Added the FlowRegistry subsystem in webflow.registry, for registering groups of refreshable Flow definitions.
@@ -119,6 +121,10 @@ Package org.springframework.webflow.registry
   
 Package org.springframework.webflow.test
 * Improved FlowExecution test support with AbstractFlowExecutionTests.
+* Decoupled flow execution test infrastructure from a first class dependency on spring-mock and
+  AbstractTransactionalDataSourceSpringContextTests; this allows for testing flow executions and 
+  their associated artifacts in isolation without a dependency on the container, and also makes it much 
+  easier to test a flow execution with a mock service-layer.
 * Added convenient AbstractXmlFlowExecutionTests, for easy testing of xml-based flow definitions.
 * Small improvements in MockRequestContext to make it easier to use.
 
