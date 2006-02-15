@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="swf-numberguess-sample" default="dist">
+<project name="swf-numberguess" default="dist">
 
   <property file="build.properties"/>
   <property file="project.properties"/>
@@ -9,9 +9,7 @@
   <property file="${user.home}/build.properties"/>
 
   <property name="build.web" value="true"/>
-  <property name="project.webapp.name" value="numberguess"/>
 
   <import file="${common.build.dir}/common-targets.xml"/>
-
   <import file="${common.build.dir}/tomcat-targets.xml"/>
 </project>

@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-  <info organisation="springframework" module="swf-sellitem-sample"/>
+  <info organisation="springframework" module="swf-sellitem"/>
 	
   <configurations>
     <conf name="default" extends="global"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="swf-sellitem-jsf-sample" default="dist">
+<project name="swf-sellitem-jsf" default="dist">
   <property file="build.properties"/>
   <property file="project.properties"/>
   <property file="${common.build.dir}/build.properties"/>
@@ -8,7 +8,6 @@
   <property file="${user.home}/build.properties"/>
 
   <property name="build.web" value="true"/>
-  <property name="project.webapp.name" value="sellitem-jsf"/>
 	
   <import file="${common.build.dir}/common-targets.xml"/>
 

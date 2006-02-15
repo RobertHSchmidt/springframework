@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-  <info organisation="springframework" module="swf-flowlauncher-sample"/>
+  <info organisation="springframework" module="swf-flowlauncher"/>
 	
   <configurations>
     <conf name="default" extends="global"/>
