@@ -166,7 +166,7 @@
 
 	<target name="doc" depends="init" description="Calls doc targets on applicable projects">
 		<echo>projects=${projects}</echo>
-		<subant target="doc-all" inheritall="false">
+		<subant target="doc-all" inheritall="false" failonerror="false">
 			<buildpathelement location="../spring-webflow" />
 		</subant>
 	</target>
@@ -178,6 +178,8 @@
 		<delete file="${target.release.dir}/${release.zip}" />
 
 		<zip zipfile="${target.release.dir}/${release.zip}">
+			<!-- important readme, license, and other text files -->
+			<zipfileset file="../spring-webflow/*.txt" prefix="${zip.toplevel.dir}" />
 			<!-- binary files -->
 			<zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}" />
 			<zipfileset dir="../spring-binding/target/dist/jars" prefix="${zip.toplevel.dir}" />
@@ -185,7 +187,7 @@
 			<zipfileset dir="../spring-webflow/docs/reference/target" prefix="${zip.toplevel.dir}/docs/reference">
 				<exclude name="**/html_single/**" />
 			</zipfileset>
-			<!-- project source -->
+			<!-- project sources -->
 			<zipfileset dir=".." prefix="${zip.toplevel.dir}/projects">
 				<selector refid="project.source.zip.includes" />
 			</zipfileset>
