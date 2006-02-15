@@ -19,9 +19,10 @@ Package org.springframework.webflow
 * Added support for "global transitions" at the Flow level.  Flows may now be configured with a set 
   of one or more Transition objects that are inherited by all states of the Flow.
 * Added Transition TargetStateResolver strategy, allowing for dynamic target state calculation.
-* Added ExternalContext facade for providing a normalized interface about clients who have called into
+* Added ExternalContext facade for providing a normalized interface about external clients who have called into
   the Spring Web Flow system.
 * Renamed ViewDescriptor and ViewDescriptorCreator to ViewSelection and ViewSelector, respectively, for clarity and consistency with lexicon.
+  Also made ViewSelection immutable, as a value object created by a selector.
 
 Package org.springframework.webflow.action
 * Added support for invoking strongly typed methods on arbitrary beans (POJOs) as a SWF Action.
@@ -87,6 +88,8 @@ Package org.springframework.webflow.execution
 * Reworked the flow execution package, decoupling the Event abstraction from the notion of an ExternalContext.
 * Reworked the FlowExecution interface, making central start and signalEvent operations more explicit.  It is also now 
   impossible for external actors to signal an event in another state other than the current state.
+  Also removed the "rehydrate" method from the public interface, as it's an implementation detail to 
+  internal actors that create and restore flow executions.
 * Removed FlowExecutionStorage infrastructure, replaced by an enhanced FlowExecutionRepository subsystem.
 * Removed TransactionSynchronizer abstraction, which has been obsoleted since such a capability is being built
   into the FlowExecutionRepository implementations directly.
@@ -99,6 +102,8 @@ Package org.springframework.webflow.executor
 * Introduced the webflow.executor package, the highest-layer subsystem of SWF for driving the execution of flows.
 * Renamed FlowExecutionManager to FlowExecutor; FlowExecutor is now a central facade interface
   defining the SWF system boundary for typical clients.  FlowExecutorImpl is the default implementation; FlowLocator is now a required dependency.
+* Added ResponseInstruction, for allowing strongly-typed access to a flow execution context when preparing 
+  a response to issue.
 * Added the FlowExecutorParameterExtractor helper for extracting arguments needed by FlowExecutor implementations
   such as the flowId, flowExecutionId, and eventId.
 * Added RequestPathFlowExecutorParameterExtractor, for extracting parameters from the request URL. 
@@ -106,8 +111,6 @@ Package org.springframework.webflow.executor
 * Introduced JSF flow executor integration, see the "jsf" package.
 * Reinstated the Spring Portlet MVC flow executor integration, see the "mvc" package.
   Note: the portlet MVC support requires Spring 2.0.
-* Added ResponseInstruction, for allowing strongly-typed access to a flow execution context when preparing 
-  a response to issue.
 
 Package org.springframework.webflow.registry
 * Added the FlowRegistry subsystem in webflow.registry, for registering groups of refreshable Flow definitions.
@@ -123,8 +126,9 @@ Package org.springframework.webflow.test
 * Improved FlowExecution test support with AbstractFlowExecutionTests.
 * Decoupled flow execution test infrastructure from a first class dependency on spring-mock and
   AbstractTransactionalDataSourceSpringContextTests; this allows for testing flow executions and 
-  their associated artifacts in isolation without a dependency on the container, and also makes it much 
-  easier to test a flow execution with a mock service-layer.
+  their associated artifacts in isolation without a dependency on the container, and also makes it
+  easier to test a flow execution with a mock service-layer.  See Phonebook and Sellitem src/test 
+  tree for an example.
 * Added convenient AbstractXmlFlowExecutionTests, for easy testing of xml-based flow definitions.
 * Small improvements in MockRequestContext to make it easier to use.
 
@@ -132,6 +136,7 @@ Package org.springframework.webflow.samples
 * Changed numberguess sample application to use the new StatefulActionProxy.
 * Added sellitem-jsf sample.
 * Added phonebook-portlet sample.
+* Added shippingrate sample, showing Spring Web Flow together with Ajax technology.
 
 Changes in version PR5 (28.7.2005)
 ------------------------------------
