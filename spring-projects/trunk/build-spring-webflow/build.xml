@@ -82,8 +82,9 @@
 
 		<ivy:buildlist reference="modules">
 			<fileset dir="..">
-				<include name="spring-webflow-samples/*/build.xml" />
+				<include name="spring-binding/build.xml" />
 				<include name="spring-webflow/build.xml" />
+				<include name="spring-webflow-samples/*/build.xml" />
 			</fileset>
 		</ivy:buildlist>
 
