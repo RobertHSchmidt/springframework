@@ -773,7 +773,7 @@
   <target name="javadoc" depends="build.prepare" description="Create the project API documentation">
     <mkdir dir="${target.javadocs.dir}" />
     <property name="copyright" value="Copyright &#169; 2005. All Rights Reserved." />
-    <javadoc destdir="${target.javadocs.dir}" author="true" version="true" windowtitle="${project.title} API" doctitle="${project.title}" bottom="${copyright}">
+    <javadoc destdir="${target.javadocs.dir}" author="true" version="true" windowtitle="${project.title} ${project.version} API" doctitle="${project.title} ${project.version}" bottom="${copyright}">
       <classpath>
         <pathelement location="${target.classes.dir}" />
         <pathelement location="${target.testclasses.dir}" />
