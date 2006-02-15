@@ -18,23 +18,9 @@
   <path id="ivy.lib.path">
     <fileset dir="${common.build.dir}/lib" includes="*.jar"/>
   </path>
-  <taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
-           uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
+	
+  <taskdef resource="fr/jayasoft/ivy/ant/antlib.xml" uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
   
-  <!-- we don't need these any longer, ivy builds this list now in dependency order
-       Keep them here for a little while in case we find an issue and need to go
-	   back to manual ordering
-  <path id="modules">
-    <pathelement location="../spring-webflow"/>
-    <pathelement location="../spring-webflow-samples/birthdate"/>
-    <pathelement location="../spring-webflow-samples/fileupload"/>
-    <pathelement location="../spring-webflow-samples/flowlauncher"/>
-    <pathelement location="../spring-webflow-samples/itemlist"/>
-    <pathelement location="../spring-webflow-samples/numberguess"/>
-    <pathelement location="../spring-webflow-samples/phonebook"/>
-    <pathelement location="../spring-webflow-samples/sellitem"/>
-  </path-->
-
   <!-- simplistic pattern for zipping up sources -->
   <selector id="project.source.zip.includes">
     <or>
@@ -113,13 +99,8 @@
     <property name="target.release.dir" value="${target.dir}/release"/>
   
     <!-- directory for release zips -->
-    <property name="release.bin.zip"
+    <property name="release.zip"
 	          value="spring-webflow-bin-${release.version}.zip"/>
-    <property name="release.bin.deps.zip"
-	          value="spring-webflow-bin-with-dependencies-${release.version}.zip"/>
-    <property name="release.buildable.zip"
-	          value="spring-webflow-buildable-${release.version}.zip"/>
-
     <property name="zip.toplevel.dir" value="spring-webflow-${release.version}"/>
 
     <echo message='user.dir = "${user.dir}"' />
@@ -132,12 +113,10 @@
   <target name="init.post" >
     <property name="projects" value="modules"/>
     <property name="projects.names" refid="modules"/>
-
     <property name="init.done" value="true"/>
   </target>
   
-  <target name="clean" depends="init"
-          description="Cleans all build output files from all projects">
+  <target name="clean" depends="init" description="Cleans all build output files from all projects">
     <echo>projects=${projects}</echo>
     <echo>projects.names=${projects.names}</echo>
 	<subant target="clean" inheritall="false">
@@ -145,106 +124,69 @@
     </subant>
   </target>
 
-  <target name="clean-all" depends="init"
-          description="Cleans all build output files from all projects, and also retrieved libs">
+  <target name="clean-all" depends="init" description="Cleans all build output files from all projects, and also retrieved libs">
     <echo>projects=${projects}</echo>
 	<subant target="clean-all" inheritall="false">
 	  <buildpath refid="${projects}"/>
     </subant>
   </target>
   
-  <target name="publish" depends="init"
-          description="Calls publish targets on each project">
+  <target name="publish" depends="init" description="Calls publish targets on each project">
     <echo>projects=${projects}</echo>
 	<subant target="publish" inheritall="false">
 	  <buildpath refid="${projects}"/>
     </subant>
   </target>
 
-  <target name="dist" depends="init"
-          description="Calls dist targets on each project">
+  <target name="dist" depends="init" description="Calls dist targets on each project">
     <echo>projects=${projects}</echo>
 	<subant target="dist" inheritall="false">
 	  <buildpath refid="${projects}"/>
     </subant>
   </target>
   
-  <target name="tests" depends="init"
-          description="Calls test targets on each project">
+  <target name="tests" depends="init" description="Calls test targets on each project">
     <echo>projects=${projects}</echo>
 	<subant target="tests" inheritall="false">
 	  <buildpath refid="${projects}"/>
     </subant>
   </target>
 
-  <target name="javadoc" depends="init"
-          description="Calls javadoc targets on each project">
+  <target name="javadoc" depends="init" description="Calls javadoc targets on each project">
     <echo>projects=${projects}</echo>
 	<subant target="javadoc" inheritall="false">
 	  <buildpath refid="${projects}"/>
     </subant>
   </target>
 
-  <target name="doc" depends="init"
-          description="Calls doc targets on appropriate projects">
+  <target name="doc" depends="init" description="Calls doc targets on applicable projects">
     <echo>projects=${projects}</echo>
 	<subant target="doc-all" inheritall="false">
       <buildpathelement location="../spring-webflow"/>
     </subant>
   </target>
 
-  <target name="release"
-          depends="dist, javadoc, doc, gen-release-bins, gen-release-bins-with-deps, gen-buildable-zip"
-          description="Generate release zips">
-  </target>
+  <target name="release" depends="dist, javadoc, doc, gen.release.zip" description="Generate the spring-webflow release archive"/>
 
-  <target name="gen-release-bins" depends="init"
-          description="Generate bin zips/tarballs">
-
+  <target name="gen.release.zip" depends="init">
     <mkdir dir="${target.release.dir}"/>
-    <delete file="${target.release.dir}/${release.bin.zip}"/>
+    <delete file="${target.release.dir}/${release.zip}"/>
 
-    <zip zipfile="${target.release.dir}/${release.bin.zip}">
-	  <zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
-	  <zipfileset dir="../spring-webflow/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
-	  <zipfileset dir="../spring-webflow/target/javadocs" prefix="${zip.toplevel.dir}/doc/api"/>
-	  <zipfileset dir="../spring-webflow/docs/reference/target/" 
-	              prefix="${zip.toplevel.dir}/doc/reference">
-        <exclude name="**/html/**"/>
+    <zip zipfile="${target.release.dir}/${release.zip}">
+      <!-- binary files -->
+  	  <zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
+  	  <zipfileset dir="../spring-webflow/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
+  	  <zipfileset dir="../spring-webflow/target/javadocs" prefix="${zip.toplevel.dir}/doc/api"/>
+  	  <zipfileset dir="../spring-webflow/docs/reference/target/" prefix="${zip.toplevel.dir}/doc/reference">
+          <exclude name="**/html/**"/>
       </zipfileset>
-    </zip>
-  </target>
-
-  <target name="gen-release-bins-with-deps" depends="init"
-          description="Generate bin zips/tarballs with all dependencies">
-
-    <mkdir dir="${target.release.dir}"/>
-    <delete file="${target.release.dir}/${release.bin.deps.zip}"/>
-
-    <zip zipfile="${target.release.dir}/${release.bin.deps.zip}">
-	  <zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
-	  <zipfileset dir="../spring-webflow/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
-	  <zipfileset dir="../spring-webflow/target/javadocs" prefix="${zip.toplevel.dir}/doc/api"/>
-	  <zipfileset dir="../spring-webflow/docs/reference/target/" 
-	              prefix="${zip.toplevel.dir}/doc/reference">
-        <exclude name="**/html/**"/>
-      </zipfileset>
-	  <zipfileset dir="../spring-webflow/lib/global" prefix="${zip.toplevel.dir}/lib"/>
-	</zip>
-  </target>
-  
-  <target name="gen-buildable-zip" depends="init"
-          description="Generate archive with buildable sources">
-
-    <mkdir dir="${target.release.dir}"/>
-    <delete file="${target.release.dir}/${release.buildable.zip}"/>
-
-    <zip zipfile="${target.release.dir}/${release.buildable.zip}">
-      <zipfileset dir="..">
+      <!-- source -->
+	  <zipfileset dir="..">
         <selector refid="project.source.zip.includes"/>
       </zipfileset>
 	  <zipfileset dir="../spring-webflow/target/javadocs" prefix="doc/api"/>
     </zip>
+  	
   </target>
   
 </project>
