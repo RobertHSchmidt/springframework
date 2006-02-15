@@ -36,7 +36,7 @@ public class FlowSessionStatus extends StaticLabeledEnum {
 	/**
 	 * A flow session with STARTING status is about to enter its start state.
 	 */
-	public static FlowSessionStatus STARTING = new FlowSessionStatus(1, "Created");
+	public static FlowSessionStatus STARTING = new FlowSessionStatus(1, "Starting");
 
 	/**
 	 * A flow session with ACTIVE status is currently executing.
@@ -59,7 +59,7 @@ public class FlowSessionStatus extends StaticLabeledEnum {
 	 * A flow session that has ENDED is no longer actively executing a flow.
 	 * This is the final status of a flow session.
 	 */
-	public static FlowSessionStatus ENDED = new FlowSessionStatus(4, "Ended");
+	public static FlowSessionStatus ENDED = new FlowSessionStatus(5, "Ended");
 
 	/**
 	 * Private constructor because this is a typesafe enum!
