@@ -1,14 +1,16 @@
-SPRING WEB FLOW
+SPRING WEB FLOW (SWF) - 1.0 Release archive table of contents
 
-Release archive table of contents
----------------------------------------------------
-* build-spring-webflow - contains master build files to produce this release archive
-* common-build - contains the ant 1.6 "common build system" used by all spring projects to compile/build/test
-* dist - contains project distribution units (jars and source zip archives)
-* doc - contains project API JavaDocs
-* repository - contains distribution units (jars) for this project's dependencies
-* spring-webflow - contains project sources
-* spring-webflow-samples - contains sample project sources
+Directory | Description
+-----------------------
+. | contains project distribution units (jars and source zip archives)
+docs | contains the reference manual and API Javadocs
+projects | contains buildable Spring Web Flow projects, including sample applications
+projects/build-spring-webflow | contains the master build file to build all projects
+projects/common-build | contains the ant 1.6 "common build system" used by all projects to compile/build/test
+projects/repository | contains Spring Web Flow project dependencies (jars)
+projects/spring-binding | contains buildable Spring Binding project sources, an internal library used by SWF
+projects/spring-webflow | contains buildable Spring Web Flow project sources
+projects/spring-webflow-samples | contains buildable Spring Web Flow sample application sources
 
 Each source project like "spring-webflow" and "spring-webflow-samples/phonebook" is directly
 importable as an Eclipse project.
