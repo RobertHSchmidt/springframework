@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
@@ -27,6 +29,8 @@ import org.springframework.webflow.action.LocalBeanInvokingAction;
  */
 public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 
+	private ConversionService conversionService;
+	
 	public Flow getSubflow(String id) throws FlowArtifactException {
 		throw new FlowArtifactException(id, Flow.class, "Subflow lookup is not supported by this artifact factory");
 	}
@@ -95,6 +99,24 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 		throw new UnsupportedOperationException("Resource lookup not supported by this artifact factory");
 	}
 
+	public ConversionService getConversionService() {
+		if (conversionService == null) {
+			DefaultConversionService service = new DefaultConversionService();
+			service.addConverter(new TextToTransitionCriteria(this));
+			service.addConverter(new TextToViewSelector(this, service));
+			service.addConverter(new TextToTransitionTargetStateResolver(this));
+			setConversionService(service);
+		}
+		return conversionService;
+	}
+	
+	/**
+	 * Setter allowing configuration of the conversion service in use.
+	 */
+	public void setConversionService(ConversionService conversionService) {
+		this.conversionService = conversionService;
+	}
+	
 	/**
 	 * Helper method to the given service object into an action. If the given
 	 * service object implements the <code>Action</code> interface, it is

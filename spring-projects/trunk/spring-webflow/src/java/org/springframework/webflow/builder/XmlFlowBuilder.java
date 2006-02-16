@@ -34,6 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.convert.ConversionExecutor;
+import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.mapping.Mapping;
@@ -352,7 +353,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			throw new FlowBuilderException(this, "Could not parse the flow definition XML document at '"
 					+ getLocation() + "'", e);
 		}
-		initConversionService();
 		setFlow(parseFlow(flowParameters, getDocumentElement()));
 		addInlineFlowDefinitions(getFlow(), getDocumentElement());
 	}
@@ -630,7 +630,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				parseParameters(element));
 		Map context = new HashMap(2, 1);
 		context.put(TextToViewSelector.STATE_CONTEXT_ATTRIBUTE, state);
-		context.put(TextToViewSelector.REDIRECT_CONTEXT_ATTRIBUTE, Boolean.valueOf(element.getAttribute(REDIRECT_ATTRIBUTE)));
+		context.put(TextToViewSelector.REDIRECT_CONTEXT_ATTRIBUTE, Boolean.valueOf(element
+				.getAttribute(REDIRECT_ATTRIBUTE)));
 		if (element.hasAttribute(VIEW_ATTRIBUTE)) {
 			state.setViewSelector((ViewSelector)fromStringTo(ViewSelector.class).execute(
 					element.getAttribute(VIEW_ATTRIBUTE), context));
@@ -818,8 +819,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		transition.setMatchingCriteria((TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(ON_ATTRIBUTE)));
 		transition.setExecutionCriteria(TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element)));
-		transition.setTargetStateResolver((TargetStateResolver)fromStringTo(
-				TargetStateResolver.class).execute(element.getAttribute(TO_ATTRIBUTE)));
+		transition.setTargetStateResolver((TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
+				element.getAttribute(TO_ATTRIBUTE)));
 		return transition;
 	}
 
@@ -846,12 +847,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				element.getAttribute(TEST_ATTRIBUTE));
 		Transition thenTransition = getLocalFlowArtifactFactory().createTransition(Collections.EMPTY_MAP);
 		thenTransition.setMatchingCriteria(criteria);
-		thenTransition.setTargetStateResolver(new StaticTargetStateResolver(element
-				.getAttribute(THEN_ATTRIBUTE)));
+		thenTransition.setTargetStateResolver(new StaticTargetStateResolver(element.getAttribute(THEN_ATTRIBUTE)));
 		if (StringUtils.hasText(element.getAttribute(ELSE_ATTRIBUTE))) {
 			Transition elseTransition = getLocalFlowArtifactFactory().createTransition(Collections.EMPTY_MAP);
-			elseTransition.setTargetStateResolver(new StaticTargetStateResolver(element
-					.getAttribute(ELSE_ATTRIBUTE)));
+			elseTransition.setTargetStateResolver(new StaticTargetStateResolver(element.getAttribute(ELSE_ATTRIBUTE)));
 			return new Transition[] { thenTransition, elseTransition };
 		}
 		else {
@@ -960,8 +959,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		String to = element.getAttribute(TO_ATTRIBUTE);
 		if (StringUtils.hasText(from)) {
 			if (StringUtils.hasText(to)) {
-				return getConversionService().getConversionExecutor(getConversionService().getClassByAlias(from),
-						getConversionService().getClassByAlias(to));
+				ConversionService service = getFlowArtifactFactory().getConversionService();
+				return service.getConversionExecutor(service.getClassByAlias(from), service.getClassByAlias(to));
 			}
 			else {
 				throw new IllegalArgumentException("Use of the 'from' attribute requires use of the 'to' attribute");

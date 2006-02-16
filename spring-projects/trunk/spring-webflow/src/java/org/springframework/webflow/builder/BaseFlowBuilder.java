@@ -19,8 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
-import org.springframework.binding.convert.ConversionService;
-import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 
@@ -55,12 +53,6 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * flow built by this builder.
 	 */
 	private FlowArtifactFactory flowArtifactFactory;
-
-	/**
-	 * The conversion service to convert to flow-related artifacts, typically
-	 * from string encoded representations.
-	 */
-	private ConversionService conversionService;
 
 	/**
 	 * Default constructor for subclassing.
@@ -105,35 +97,6 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	}
 
 	/**
-	 * Returns the conversion service.
-	 */
-	protected ConversionService getConversionService() {
-		return conversionService;
-	}
-
-	/**
-	 * Sets the conversion service.
-	 */
-	public void setConversionService(ConversionService conversionService) {
-		this.conversionService = conversionService;
-	}
-
-	/**
-	 * Initialize this builder's conversion service and register default
-	 * converters. Called by subclasses who wish to use the conversion
-	 * infrastructure.
-	 */
-	protected void initConversionService() {
-		if (getConversionService() == null) {
-			DefaultConversionService service = new DefaultConversionService();
-			service.addConverter(new TextToTransitionCriteria(getFlowArtifactFactory()));
-			service.addConverter(new TextToViewSelector(getFlowArtifactFactory(), service));
-			service.addConverter(new TextToTransitionTargetStateResolver(getFlowArtifactFactory()));
-			setConversionService(service);
-		}
-	}
-
-	/**
 	 * Returns a conversion executor capable of converting string objects to the
 	 * target class aliased by the provided alias.
 	 * @param targetAlias the target class alias, e.g "long" or "float"
@@ -141,7 +104,8 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * converter exists for given alias
 	 */
 	protected ConversionExecutor fromStringToAliased(String targetAlias) {
-		return getConversionService().getConversionExecutorByTargetAlias(String.class, targetAlias);
+		return getFlowArtifactFactory().getConversionService().getConversionExecutorByTargetAlias(String.class,
+				targetAlias);
 	}
 
 	/**
@@ -152,9 +116,9 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * @throws ConversionException when the converter cannot be found
 	 */
 	protected ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
-		return getConversionService().getConversionExecutor(String.class, targetType);
+		return getFlowArtifactFactory().getConversionService().getConversionExecutor(String.class, targetType);
 	}
-	
+
 	/**
 	 * Get the flow (result) built by this builder.
 	 */

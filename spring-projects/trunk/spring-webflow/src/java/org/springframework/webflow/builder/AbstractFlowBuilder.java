@@ -159,7 +159,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	public void init(FlowArtifactParameters flowParameters) throws FlowBuilderException {
-		initConversionService();
 		setFlow(getFlowArtifactFactory().createFlow(flowParameters.applyAndOverride(flowProperties())));
 	}
 

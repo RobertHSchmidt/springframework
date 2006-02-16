@@ -3,6 +3,7 @@ package org.springframework.webflow.builder;
 import java.util.Map;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.binding.convert.ConversionService;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
@@ -122,4 +123,9 @@ public interface FlowArtifactFactory {
 	 */
 	public ResourceLoader getResourceLoader() throws UnsupportedOperationException;
 
+	/**
+	 * Returns a generic type conversion service.
+	 * @return the conversion service
+	 */
+	public ConversionService getConversionService();
 }
