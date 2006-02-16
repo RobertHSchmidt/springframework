@@ -25,7 +25,7 @@ import EDU.oswego.cs.dl.util.concurrent.ReentrantLock;
  * 
  * @author Keith Donald
  */
-class ConcurrentConversationLock implements ConversationLock {
+public class ConcurrentConversationLock implements ConversationLock {
 
 	private static boolean utilConcurrentPresent;
 	
