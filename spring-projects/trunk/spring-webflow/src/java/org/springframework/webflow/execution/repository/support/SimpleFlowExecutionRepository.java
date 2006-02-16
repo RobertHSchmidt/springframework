@@ -200,7 +200,10 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 
 		protected ConversationLock createLock() {
 			if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_15) {
-				return new Jdk15ConversationLock();
+				return new Jdk5ConversationLock();
+			}
+			else if (ConcurrentConversationLock.isUtilConcurrentPresent()) {
+				return new ConcurrentConversationLock();
 			}
 			else {
 				return NoOpConversationLock.INSTANCE;

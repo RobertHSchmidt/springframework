@@ -6,6 +6,7 @@
 	<classpathentry kind="lib" path="lib/test/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-codec.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/concurrent.jar"/>
 	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
 	<classpathentry kind="lib" path="lib/global/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/jmx-ri.jar"/>
