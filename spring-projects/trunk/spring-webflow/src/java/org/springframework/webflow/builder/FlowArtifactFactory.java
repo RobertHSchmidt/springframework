@@ -119,13 +119,13 @@ public interface FlowArtifactFactory {
 	/**
 	 * Returns a generic resource loader for accessing file-based resources.
 	 * @return the generic resource loader
-	 * @throws UnsupportedOperationException when not supported by this factory
 	 */
-	public ResourceLoader getResourceLoader() throws UnsupportedOperationException;
+	public ResourceLoader getResourceLoader();
 
 	/**
-	 * Returns a generic type conversion service.
-	 * @return the conversion service
+	 * Returns a generic type conversion service for converting between types,
+	 * typically from string to a rich value object.
+	 * @return the generic conversion service
 	 */
 	public ConversionService getConversionService();
 }

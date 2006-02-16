@@ -18,7 +18,6 @@ package org.springframework.webflow.registry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
@@ -54,11 +53,6 @@ public class FlowRegistryFlowArtifactFactory extends FlowArtifactFactoryAdapter 
 	private BeanFactory beanFactory;
 
 	/**
-	 * An optional resource loader that can load resources.
-	 */
-	private ResourceLoader resourceLoader;
-
-	/**
 	 * Creates a flow artifact factory that retrieves subflows from the provided
 	 * registry and additional artifacts from the provided bean factory.
 	 * @param subflowRegistry The registry for loading subflows
@@ -67,10 +61,6 @@ public class FlowRegistryFlowArtifactFactory extends FlowArtifactFactoryAdapter 
 	public FlowRegistryFlowArtifactFactory(FlowRegistry subflowRegistry, BeanFactory beanFactory) {
 		this.subflowRegistry = subflowRegistry;
 		this.beanFactory = beanFactory;
-	}
-
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
 	}
 
 	public Flow getSubflow(String id) throws FlowArtifactException {
@@ -117,9 +107,5 @@ public class FlowRegistryFlowArtifactFactory extends FlowArtifactFactoryAdapter 
 
 	public BeanFactory getServiceRegistry() throws UnsupportedOperationException {
 		return beanFactory;
-	}
-
-	public ResourceLoader getResourceLoader() throws UnsupportedOperationException {
-		return resourceLoader;
 	}
 }

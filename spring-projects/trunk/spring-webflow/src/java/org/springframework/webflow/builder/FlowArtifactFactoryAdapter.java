@@ -6,6 +6,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
@@ -29,40 +30,65 @@ import org.springframework.webflow.action.LocalBeanInvokingAction;
  */
 public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 
+	/**
+	 * A conversion service that can convert between types.
+	 */
 	private ConversionService conversionService;
-	
+
+	/**
+	 * A resource loader that can load resources.
+	 */
+	private ResourceLoader resourceLoader;
+
+	/**
+	 * Set the conversion service to use to convert between types; typically
+	 * from string to a rich object type.
+	 */
+	public void setConversionService(ConversionService conversionService) {
+		this.conversionService = conversionService;
+	}
+
+	/**
+	 * Set the resource loader to load file-based resources from string-encoded
+	 * paths.
+	 */
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
+	}
+
 	public Flow getSubflow(String id) throws FlowArtifactException {
 		throw new FlowArtifactException(id, Flow.class, "Subflow lookup is not supported by this artifact factory");
 	}
 
 	public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
-		throw new FlowArtifactException(parameters.getId(), Action.class,
-				"Unable to lookup action with id '" + parameters.getId() + "'; action lookup is not supported by this artifact factory");
+		throw new FlowArtifactException(parameters.getId(), Action.class, "Unable to lookup action with id '"
+				+ parameters.getId() + "'; action lookup is not supported by this artifact factory");
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, FlowAttributeMapper.class,
-				"Unable to lookup attribute mapper with id '" + id + "'; attribute mapper lookup is not supported by this artifact factory");
+		throw new FlowArtifactException(id, FlowAttributeMapper.class, "Unable to lookup attribute mapper with id '"
+				+ id + "'; attribute mapper lookup is not supported by this artifact factory");
 	}
 
 	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, TransitionCriteria.class,
-				"Unable to lookup transition criteria with id '" + id + "'; transition criteria lookup is not supported by this artifact factory");
+		throw new FlowArtifactException(id, TransitionCriteria.class, "Unable to lookup transition criteria with id '"
+				+ id + "'; transition criteria lookup is not supported by this artifact factory");
 	}
 
 	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, ViewSelector.class,
-				"Unable to lookup view selector with id '" + id + "'; view selector lookup is not supported by this artifact factory");
+		throw new FlowArtifactException(id, ViewSelector.class, "Unable to lookup view selector with id '" + id
+				+ "'; view selector lookup is not supported by this artifact factory");
 	}
 
 	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, StateExceptionHandler.class,
-				"Unable to lookup exception handler with id '" + id + "'; state exception handler lookup is not supported by this artifact factory");
+		throw new FlowArtifactException(id, StateExceptionHandler.class, "Unable to lookup exception handler with id '"
+				+ id + "'; state exception handler lookup is not supported by this artifact factory");
 	}
 
 	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
 		throw new FlowArtifactException(id, TargetStateResolver.class,
-				"Unable to lookup target state resolver with id '" + id + "'; transition target state resolver lookup is not supported by this artifact factory");
+				"Unable to lookup target state resolver with id '" + id
+						+ "'; transition target state resolver lookup is not supported by this artifact factory");
 	}
 
 	public Flow createFlow(FlowArtifactParameters parameters) throws FlowArtifactException {
@@ -96,7 +122,10 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	}
 
 	public ResourceLoader getResourceLoader() throws UnsupportedOperationException {
-		throw new UnsupportedOperationException("Resource lookup not supported by this artifact factory");
+		if (resourceLoader == null) {
+			setResourceLoader(new DefaultResourceLoader());
+		}
+		return resourceLoader;
 	}
 
 	public ConversionService getConversionService() {
@@ -109,14 +138,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 		}
 		return conversionService;
 	}
-	
-	/**
-	 * Setter allowing configuration of the conversion service in use.
-	 */
-	public void setConversionService(ConversionService conversionService) {
-		this.conversionService = conversionService;
-	}
-	
+
 	/**
 	 * Helper method to the given service object into an action. If the given
 	 * service object implements the <code>Action</code> interface, it is

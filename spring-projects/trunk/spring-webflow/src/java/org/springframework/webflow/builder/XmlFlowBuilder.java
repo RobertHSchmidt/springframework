@@ -438,26 +438,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			}
 		}
 		GenericApplicationContext context = new GenericApplicationContext();
-		setResourceLoaderIfSupported(context);
+		context.setResourceLoader(getFlowArtifactFactory().getResourceLoader());
 		new XmlBeanDefinitionReader(context).loadBeanDefinitions(resources);
 		localFlowArtifactFactory.push(new LocalFlowArtifactRegistry(context));
-	}
-
-	/**
-	 * Sets a context relative resource loader if supported by the configured
-	 * FlowArtifactFactory.
-	 * @param context the resource loading context
-	 */
-	protected void setResourceLoaderIfSupported(GenericApplicationContext context) {
-		try {
-			if (getFlowArtifactFactory().getResourceLoader() == null) {
-				// for context relative resource loading
-				context.setResourceLoader(getFlowArtifactFactory().getResourceLoader());
-			}
-		}
-		catch (UnsupportedOperationException e) {
-
-		}
 	}
 
 	/**
