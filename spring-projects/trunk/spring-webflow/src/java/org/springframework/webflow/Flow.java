@@ -141,7 +141,7 @@ public class Flow extends AnnotatedObject {
 	private ActionList endActionList = new ActionList();
 
 	/**
-	 * The list of exception handlers for this flow.
+	 * The set of exception handlers for this flow.
 	 */
 	private StateExceptionHandlerSet exceptionHandlerSet = new StateExceptionHandlerSet();
 
