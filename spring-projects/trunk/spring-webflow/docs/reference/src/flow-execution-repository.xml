@@ -111,7 +111,7 @@
 		<sect2 id="flowExecutionKey">
 			<title>Flow execution key</title>
 	    	<para>
-    			Together the conversation id plus the continuation id makeup the unique two-part
+    			Together the conversation id plus the continuation id make up the unique two-part
     			<emphasis>flow execution key</emphasis> that identifies a state 
     			of a conversation <emphasis>at a point in time</emphasis>.  By submitting this key 
     			in a subsequent request a browser can restore the conversation at that point

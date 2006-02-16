@@ -576,8 +576,8 @@
     		</para>
     		<para>
     		    Spring Web Flow gives you full control over the view selection process and, on resume,
-    		    how a view state responds to an user input event.  It's important to understand that Spring Web Flow does <emphasis>not</emphasis>
-    		    care for response rendering--as a controller, a flow makes <emphasis>logical</emphasis> view selections when user input is required. 
+    		    how a view state responds to an user input event.  It's important to understand that Spring Web Flow is <emphasis>not</emphasis>
+    		    responsible for response rendering--as a controller, a flow makes <emphasis>logical</emphasis> view selections when user input is required. 
     		    It is up to the calling system to issue a response suitable for the environment in which the flow is executing.
     		</para>
     	    <para>
@@ -1351,7 +1351,7 @@
     &lt;flow start-state="shippingRequired"&gt;
     
         &lt;decision-state id="shippingRequired"&gt;
-            &lt;if test="${flowScope.order.needsShipping} then="enterShippingDetails" else="placeOrder"/&gt;
+            &lt;if test="${flowScope.order.needsShipping}" then="enterShippingDetails" else="placeOrder"/&gt;
         &lt;/decision-state&gt;
         ...
     &lt;/flow&gt;
