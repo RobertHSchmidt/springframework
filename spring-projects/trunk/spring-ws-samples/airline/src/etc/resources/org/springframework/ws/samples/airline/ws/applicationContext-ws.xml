@@ -99,11 +99,7 @@
         <description>
             The JAXB Marshaller is used by the getFlightsEndpoint to (un)marshal XML to objects and vice-versa.
         </description>
-        <property name="jaxbContext">
-            <bean class="org.springframework.oxm.jaxb.JaxbContextFactoryBean">
-                <property name="contextPath" value="org.springframework.ws.samples.airline.schema"/>
-            </bean>
-        </property>
+        <property name="contextPath" value="org.springframework.ws.samples.airline.schema"/>
     </bean>
 
     <bean id="endpointExceptionResolver"

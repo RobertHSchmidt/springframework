@@ -15,8 +15,6 @@
  */
 package org.springframework.oxm.jibx;
 
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
 import org.springframework.oxm.AbstractUnmarshallerTest;
 import org.springframework.oxm.Unmarshaller;
 
@@ -24,8 +22,7 @@ public class JibxUnmarshallerTest extends AbstractUnmarshallerTest {
 
     protected Unmarshaller createUnmarshaller() throws Exception {
         JibxMarshaller unmarshaller = new JibxMarshaller();
-        IBindingFactory bindingFactory = BindingDirectory.getFactory(Flights.class);
-        unmarshaller.setBindingFactory(bindingFactory);
+        unmarshaller.setTargetClass(Flights.class);
         unmarshaller.afterPropertiesSet();
         return unmarshaller;
     }

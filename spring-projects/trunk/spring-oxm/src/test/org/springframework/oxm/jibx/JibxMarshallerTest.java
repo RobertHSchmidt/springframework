@@ -16,8 +16,6 @@
 
 package org.springframework.oxm.jibx;
 
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
 import org.springframework.oxm.AbstractMarshallerTest;
 import org.springframework.oxm.Marshaller;
 
@@ -25,8 +23,7 @@ public class JibxMarshallerTest extends AbstractMarshallerTest {
 
     protected Marshaller createMarshaller() throws Exception {
         JibxMarshaller marshaller = new JibxMarshaller();
-        IBindingFactory bindingFactory = BindingDirectory.getFactory(Flights.class);
-        marshaller.setBindingFactory(bindingFactory);
+        marshaller.setTargetClass(Flights.class);
         marshaller.afterPropertiesSet();
         return marshaller;
     }
@@ -42,6 +39,16 @@ public class JibxMarshallerTest extends AbstractMarshallerTest {
     public void testMarshalDOMResult() throws Exception {
         // Unfortunately, JiBX does not support DOMResults
         // hence the override here
+    }
+
+    public void testAfterPropertiesSetNoContextPath() throws Exception {
+        try {
+            JibxMarshaller marshaller = new JibxMarshaller();
+            marshaller.afterPropertiesSet();
+            fail("Should have thrown an IllegalArgumentException");
+        }
+        catch (IllegalArgumentException e) {
+        }
     }
 
 }

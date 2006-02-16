@@ -15,8 +15,6 @@
  */
 package org.springframework.oxm.jaxb;
 
-import javax.xml.bind.JAXBContext;
-
 import org.springframework.oxm.AbstractUnmarshallerTest;
 import org.springframework.oxm.Unmarshaller;
 
@@ -24,8 +22,7 @@ public class JaxbUnmarshallerTest extends AbstractUnmarshallerTest {
 
     protected Unmarshaller createUnmarshaller() throws Exception {
         JaxbMarshaller marshaller = new JaxbMarshaller();
-        JAXBContext context = JAXBContext.newInstance("org.springframework.oxm.jaxb");
-        marshaller.setJaxbContext(context);
+        marshaller.setContextPath("org.springframework.oxm.jaxb");
         marshaller.afterPropertiesSet();
         return marshaller;
     }

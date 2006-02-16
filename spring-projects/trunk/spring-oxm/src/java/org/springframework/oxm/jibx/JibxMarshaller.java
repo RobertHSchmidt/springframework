@@ -22,6 +22,9 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -30,38 +33,64 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.oxm.AbstractMarshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.ext.LexicalHandler;
 
 /**
- * Implementation of the <code>Marshaller</code> and <code>Unmarshaller</code> interfaces for JiBX. The
+ * Implementation of the <code>Marshaller</code> and <code>Unmarshaller</code> interfaces for JiBX.
+ * <p/>
+ * The typical usage will be to set the <code>targetClass</code> and optionally the <code>bindingName</code> property on
+ * this bean, and to refer to it.
+ * <p/>
+ * <strong>Note</strong> that the <code>JibxMarshaller</code> only operates on streams, and not on DOM nodes, nor SAX
+ * handlers. More specifically, it only unmarshals from <code>StreamSource</code>s and <code>SAXSource</code>s, and only
+ * marshals to <code>StreamResult</code>s.
  *
  * @author Arjen Poutsma
  */
 public class JibxMarshaller extends AbstractMarshaller implements InitializingBean {
 
+    private static final Log logger = LogFactory.getLog(JibxMarshaller.class);
+
     private IMarshallingContext marshallingContext;
 
     private IUnmarshallingContext unmarshallingContext;
 
-    private IBindingFactory bindingFactory;
+    private Class targetClass;
+
+    private String bindingName;
 
     /**
-     * Sets the JiBX binding factory, required for usage.
-     *
-     * @see JibxBindingFactoryBean
+     * Sets the optional binding name for this instance.
      */
-    public void setBindingFactory(IBindingFactory bindingFactory) {
-        this.bindingFactory = bindingFactory;
+    public void setBindingName(String bindingName) {
+        this.bindingName = bindingName;
+    }
+
+    /**
+     * Sets the target class for this instance. This property is required.
+     */
+    public void setTargetClass(Class targetClass) {
+        this.targetClass = targetClass;
     }
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(bindingFactory, "bindingFactory is required");
+        Assert.notNull(targetClass, "targetClass is required");
+        if (logger.isInfoEnabled()) {
+            logger.info("Using target class [" + targetClass + "] and bindingName [" + bindingName + "]");
+        }
         try {
+            IBindingFactory bindingFactory;
+            if (StringUtils.hasLength(bindingName)) {
+                bindingFactory = BindingDirectory.getFactory(bindingName, targetClass);
+            }
+            else {
+                bindingFactory = BindingDirectory.getFactory(targetClass);
+            }
             marshallingContext = bindingFactory.createMarshallingContext();
             unmarshallingContext = bindingFactory.createUnmarshallingContext();
-            bindingFactory = null;
         }
         catch (JiBXException ex) {
             throw new JibxSystemException(ex);

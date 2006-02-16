@@ -23,7 +23,7 @@ import org.xml.sax.ext.LexicalHandler;
  * Implementation of the <code>Marshaller</code> interface for XMLBeans.
  * <p/>
  * <strong>Note</strong> that due to the nature of XMLBeans, this marshaller requires all passed objects to be of type
- * <code>XmlObject</code>. A
+ * <code>XmlObject</code>.
  *
  * @author Arjen Poutsma
  * @see org.apache.xmlbeans.XmlObject

@@ -22,29 +22,35 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.oxm.XmlMappingException;
-import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for JAXB.
+ * <p/>
+ * The typical usage will be to set the <code>contextPath</code> property on this bean, and to refer to it.
  *
  * @author Arjen Poutsma
  */
 public class JaxbMarshaller
         implements org.springframework.oxm.Marshaller, org.springframework.oxm.Unmarshaller, InitializingBean {
 
+    private static final Log logger = LogFactory.getLog(JaxbMarshaller.class);
+
     private Marshaller marshaller;
 
     private Unmarshaller unmarshaller;
 
-    private JAXBContext jaxbContext;
+    private String contextPath;
 
     /**
-     * Sets the <code>JAXBContext</code>.
+     * Sets the JAXB Context path.
      */
-    public void setJaxbContext(JAXBContext jaxbContext) {
-        this.jaxbContext = jaxbContext;
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 
     public void marshal(Object graph, Result result) {
@@ -66,8 +72,14 @@ public class JaxbMarshaller
     }
 
     public final void afterPropertiesSet() throws XmlMappingException {
-        Assert.notNull(jaxbContext, "jaxbContext is required");
+        if (!StringUtils.hasLength(contextPath)) {
+            throw new IllegalArgumentException("contextPath is required");
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("Using context path [" + contextPath + "]");
+        }
         try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(contextPath);
             marshaller = jaxbContext.createMarshaller();
             unmarshaller = jaxbContext.createUnmarshaller();
         }
