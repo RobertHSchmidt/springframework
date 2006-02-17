@@ -457,7 +457,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		for (int i = 0; i < varElements.size(); i++) {
 			variableCreator.addVariable(parseVariable((Element)varElements.get(i)));
 		}
-		flow.getStartActionList().add(variableCreator);
+		flow.addStartAction(variableCreator);
 	}
 
 	/**
@@ -1183,7 +1183,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		/**
 		 * Create new registry
-		 * @param flow the flow
 		 * @param registry the local registry
 		 */
 		public LocalFlowArtifactRegistry(ConfigurableApplicationContext registry) {
