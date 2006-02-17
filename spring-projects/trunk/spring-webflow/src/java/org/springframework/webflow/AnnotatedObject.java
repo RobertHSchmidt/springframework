@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.util.Assert;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

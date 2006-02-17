@@ -113,7 +113,7 @@ public class Scope implements Map, Serializable {
 	 * @param attributeName name of the attribute to get
 	 * @param requiredType the required type of the attribute value
 	 * @return the attribute value, or null if not found
-	 * @throws IllegalStatetException when the value is not of the required type
+	 * @throws IllegalStateException when the value is not of the required type
 	 */
 	public Object getAttribute(String attributeName, Class requiredType) throws IllegalStateException {
 		Object value = getAttribute(attributeName);
