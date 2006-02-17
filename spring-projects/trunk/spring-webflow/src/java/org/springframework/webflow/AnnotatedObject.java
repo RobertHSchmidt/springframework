@@ -100,9 +100,7 @@ public abstract class AnnotatedObject {
 	 */
 	public int getIntProperty(String name, int defaultValue) {
 		if (containsProperty(name)) {
-            Object property = getProperty(name);
-            Assert.isInstanceOf(Integer.class, property);
-            return ((Integer)property).intValue();
+            return ((Integer)getProperty(name)).intValue();
 		}
 		else {
 			return defaultValue;
