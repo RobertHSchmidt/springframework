@@ -106,14 +106,14 @@ public class FlowExecutorTemplate {
 	 */
 	public ResponseInstruction handleFlowRequest(ExternalContext context) throws FlowException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Event signaled in '" + context + "'");
+			logger.debug("Event signaled in " + context);
 		}
 		FlowExecutionKey flowExecutionKey = parameterExtractor.extractFlowExecutionKey(context);
 		if (flowExecutionKey != null) {
 			ResponseInstruction response = flowExecutor.signalEvent(parameterExtractor.extractEventId(context),
 					flowExecutionKey, context);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Returning [resume] '" + response + "'");
+				logger.debug("Returning [resume] " + response);
 			}
 			return response;
 		}
@@ -122,14 +122,14 @@ public class FlowExecutorTemplate {
 			if (StringUtils.hasText(conversationId)) {
 				ResponseInstruction response = flowExecutor.getCurrentResponseInstruction(conversationId, context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning [current] '" + response + "'");
+					logger.debug("Returning [current] " + response);
 				}
 				return response;
 			}
 			else {
 				ResponseInstruction response = flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning [launch] '" + response + "'");
+					logger.debug("Returning [launch] " + response);
 				}
 				return response;
 			}
