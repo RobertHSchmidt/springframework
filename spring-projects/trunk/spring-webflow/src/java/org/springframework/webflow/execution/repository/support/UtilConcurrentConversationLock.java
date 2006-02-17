@@ -52,7 +52,7 @@ public class UtilConcurrentConversationLock implements ConversationLock {
 	 * Releases the lock.
 	 */
 	public void unlock() {
-		lock.release();
+		this.lock.release();
 	}
 
 	/**
