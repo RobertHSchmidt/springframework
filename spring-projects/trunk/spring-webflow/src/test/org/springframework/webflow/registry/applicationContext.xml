@@ -32,5 +32,14 @@
 			</list>
 		</property>
 	</bean>
+
+	<bean id="flowRegistry3" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
+		<property name="flowDefinitionProperties">
+			<value>
+				flow1=classpath:org/springframework/webflow/registry/flow1.xml
+				flow2=classpath:org/springframework/webflow/registry/flow2.xml
+			</value>
+		</property>
+	</bean>
 	
 </beans>

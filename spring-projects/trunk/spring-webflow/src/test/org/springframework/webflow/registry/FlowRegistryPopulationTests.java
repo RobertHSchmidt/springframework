@@ -78,6 +78,16 @@ public class FlowRegistryPopulationTests extends TestCase {
 		assertEquals("Property not assigned?", "testPropertyValue", flow4.getProperty("testPropertyName"));
 	}
 
+	public void testXmlFlowRegistryFactoryBeanFlowDefinitionProperties() {
+		GenericApplicationContext ac = new GenericApplicationContext();
+		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(ac);
+		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
+		FlowRegistry registry = (FlowRegistry)ac.getBean("flowRegistry3");
+		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());
+		registry.getFlow("flow1");
+		registry.getFlow("flow2");
+	}
+
 	public static class MyFlowRegistrar extends FlowRegistrarSupport {
 		public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
 			File parent = new File("src/test/org/springframework/webflow/registry");

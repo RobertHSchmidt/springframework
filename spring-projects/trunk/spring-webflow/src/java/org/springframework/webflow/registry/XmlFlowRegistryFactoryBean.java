@@ -168,11 +168,11 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	}
 
 	protected void doPopulate(FlowRegistry registry) {
-		setFlowDefinitionsFromPropertiesIfNecessary();
+		addFlowDefinitionsFromPropertiesIfNecessary();
 		getFlowRegistrar().registerFlows(registry, getFlowArtifactFactory());
 	}
 	
-	private void setFlowDefinitionsFromPropertiesIfNecessary() {
+	private void addFlowDefinitionsFromPropertiesIfNecessary() {
 		if (flowDefinitionProperties != null && flowDefinitionProperties.size() > 0) {
 			List flows = new ArrayList(flowDefinitionProperties.size());
 			Iterator it = flowDefinitionProperties.entrySet().iterator();
@@ -183,7 +183,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 				Resource resource = getFlowArtifactFactory().getResourceLoader().getResource(location);
 				flows.add(new ExternalizedFlowDefinition(flowId, resource));
 			}
-			setFlowDefinitions((ExternalizedFlowDefinition[])flows.toArray(new ExternalizedFlowDefinition[0]));
+			getFlowRegistrar().addFlowDefinitions((ExternalizedFlowDefinition[])flows.toArray(new ExternalizedFlowDefinition[0]));
 			flowDefinitionProperties = null;
 		}
 	}
