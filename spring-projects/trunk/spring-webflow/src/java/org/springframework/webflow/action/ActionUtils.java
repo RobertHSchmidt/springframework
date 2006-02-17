@@ -8,7 +8,7 @@ import org.springframework.webflow.RequestContext;
  * 
  * @author Keith Donald
  */
-public class ActionUtils {
+public abstract class ActionUtils {
 
 	/**
 	 * Cannot be instantiated - static utility class.

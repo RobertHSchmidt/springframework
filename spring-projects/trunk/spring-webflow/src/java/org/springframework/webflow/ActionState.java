@@ -201,8 +201,7 @@ public class ActionState extends TransitionableState {
 			}
 			else {
 				if (logger.isDebugEnabled()) {
-					logger
-							.debug("Action execution ["
+					logger.debug("Action execution ["
 									+ (executionCount + 1)
 									+ "] returned a [null] event"
 									+ (it.hasNext() ? ": proceeding to the next action in the list"

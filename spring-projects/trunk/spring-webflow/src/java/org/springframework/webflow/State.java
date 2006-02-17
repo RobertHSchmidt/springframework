@@ -231,7 +231,7 @@ public abstract class State extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
-	 * @throws the exception, if it was not handled
+	 * @throws StateException passed in, if it was not handled
 	 */
 	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
 			throws StateException {
@@ -239,9 +239,11 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	public String toString() {
-		ToStringCreator creator = new ToStringCreator(this).append("id", getId()).append("flow",
-				flow == null ? "<not set>" : flow.getId()).append("entryActionList", entryActionList).append(
-				"exceptionHandlerSet", exceptionHandlerSet);
+        String flowName = (flow == null ? "<not set>" : flow.getId());
+        ToStringCreator creator = new ToStringCreator(this).append("id", getId())
+                .append("flow", flowName)
+                .append("entryActionList", entryActionList)
+                .append("exceptionHandlerSet", exceptionHandlerSet);
 		createToString(creator);
 		return creator.toString();
 	}

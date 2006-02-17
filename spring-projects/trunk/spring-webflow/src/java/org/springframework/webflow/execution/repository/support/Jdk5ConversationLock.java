@@ -17,6 +17,7 @@ package org.springframework.webflow.execution.repository.support;
 
 import java.io.Serializable;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Lock;
 
 import org.springframework.webflow.execution.repository.ConversationLock;
 
@@ -31,7 +32,7 @@ public class Jdk5ConversationLock implements ConversationLock, Serializable {
 	/**
 	 * The lock.
 	 */
-	private ReentrantLock lock = new ReentrantLock();
+	private Lock lock = new ReentrantLock();
 
 	public void lock() {
 		lock.lock();

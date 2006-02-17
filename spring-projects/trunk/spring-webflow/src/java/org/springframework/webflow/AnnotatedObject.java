@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow;
 
+import org.springframework.util.Assert;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,7 +100,9 @@ public abstract class AnnotatedObject {
 	 */
 	public int getIntProperty(String name, int defaultValue) {
 		if (containsProperty(name)) {
-			return ((Integer)getProperty(name)).intValue();
+            Object property = getProperty(name);
+            Assert.isInstanceOf(Integer.class, property);
+            return ((Integer)property).intValue();
 		}
 		else {
 			return defaultValue;

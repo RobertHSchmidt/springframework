@@ -1,3 +1,19 @@
+/*
+ * Copyright 2002-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.webflow.executor.support;
 
 import org.apache.commons.logging.Log;
@@ -90,14 +106,14 @@ public class FlowExecutorTemplate {
 	 */
 	public ResponseInstruction handleFlowRequest(ExternalContext context) throws FlowException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Event signaled in " + context);
+			logger.debug("Event signaled in '" + context + "'");
 		}
 		FlowExecutionKey flowExecutionKey = parameterExtractor.extractFlowExecutionKey(context);
 		if (flowExecutionKey != null) {
 			ResponseInstruction response = flowExecutor.signalEvent(parameterExtractor.extractEventId(context),
 					flowExecutionKey, context);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Returning [resume] " + response);
+				logger.debug("Returning [resume] '" + response + "'");
 			}
 			return response;
 		}
@@ -106,14 +122,14 @@ public class FlowExecutorTemplate {
 			if (StringUtils.hasText(conversationId)) {
 				ResponseInstruction response = flowExecutor.getCurrentResponseInstruction(conversationId, context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning [current] " + response);
+					logger.debug("Returning [current] '" + response + "'");
 				}
 				return response;
 			}
 			else {
 				ResponseInstruction response = flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning [launch] " + response);
+					logger.debug("Returning [launch] '" + response + "'");
 				}
 				return response;
 			}

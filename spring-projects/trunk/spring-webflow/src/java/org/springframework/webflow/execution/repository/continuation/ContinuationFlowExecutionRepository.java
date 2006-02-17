@@ -152,7 +152,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
-		Conversation conversation = (Conversation)getOrCreateConversation(key.getConversationId());
+		Conversation conversation = getOrCreateConversation(key.getConversationId());
 		conversation.setScope(flowExecution.getScope());
 		removeConversationAttributes(flowExecution);
 		conversation.addContinuation(continuationFactory.createContinuation(key.getContinuationId(), flowExecution));

@@ -130,7 +130,7 @@ public class ActionList {
 	 * @return the action list, as a typed array
 	 */
 	public Action[] toArray() {
-		return (Action[])actions.toArray(new Action[0]);
+        return (Action[])this.actions.toArray(new Action[this.actions.size()]);
 	}
 
 	/**
@@ -150,7 +150,7 @@ public class ActionList {
 	public AnnotatedAction[] toAnnotatedArray() {
 		AnnotatedAction[] annotatedActions = new AnnotatedAction[actions.size()];
 		for (int i = 0; i < size(); i++) {
-			Action action = (Action)get(i);
+			Action action = get(i);
 			if (action instanceof AnnotatedAction) {
 				annotatedActions[i] = (AnnotatedAction)action;
 			}

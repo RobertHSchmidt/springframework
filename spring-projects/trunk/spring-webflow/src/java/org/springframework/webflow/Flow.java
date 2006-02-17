@@ -232,7 +232,7 @@ public class Flow extends AnnotatedObject {
 	 * Returns the list of states in this flow.
 	 */
 	public State[] getStates() {
-		return (State[])states.toArray(new State[0]);
+		return (State[])this.states.toArray(new State[this.states.size()]);
 	}
 
 	/**
@@ -442,11 +442,11 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Returns the set of exception handlers, allowing manipulation of how state
 	 * exceptions are handled when thrown during flow execution.
-	 * <p>
+	 * <p/>
 	 * Exception handlers are invoked when an exception occurs when this state
 	 * is entered, and can execute custom exception handling logic as well as
 	 * select an error view to display.
-	 * <p>
+	 * <p/>
 	 * State exception handlers attached at the flow level have a opportunity to
 	 * handle exceptions that aren't handled at the state level.
 	 * @return the state exception handler set
@@ -482,7 +482,7 @@ public class Flow extends AnnotatedObject {
 	 * @return the list of inline flows
 	 */
 	public Flow[] getInlineFlows() {
-		return (Flow[])inlineFlows.toArray(new Flow[0]);
+		return (Flow[])this.inlineFlows.toArray(new Flow[this.inlineFlows.size()]);
 	}
 
 	/**
@@ -617,7 +617,7 @@ public class Flow extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
-	 * @throws the exception, if it was not handled
+	 * @throws StateException passed in, if it was not handled
 	 */
 	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
 			throws StateException {

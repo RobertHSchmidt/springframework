@@ -135,9 +135,8 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 		Assert.hasText(actionId,
 				"You must specify the id of the stateful action to invoke using the 'actionId' property");
 		String actionAttribute = getActionAttribute(context, actionId);
-		Assert
-				.hasText(actionAttribute,
-						"You must specify the attribute name of the stateful action in flow scope using the 'actionAttribute' property");
+		Assert.hasText(actionAttribute, "You must specify the attribute name of the stateful action in flow " +
+                                "scope using the 'actionAttribute' property");
 		if (!context.getFlowScope().containsAttribute(actionAttribute)) {
 			context.getFlowScope().setAttribute(actionAttribute, lookupAction(actionId));
 		}

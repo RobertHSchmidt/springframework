@@ -103,7 +103,7 @@ public class TransitionSet {
 	 * @return the transition set as a typed array
 	 */
 	public Transition[] toArray() {
-		return (Transition[])transitions.toArray(new Transition[0]);
+		return (Transition[])this.transitions.toArray(new Transition[this.transitions.size()]);
 	}
 
 	/**
