@@ -49,12 +49,12 @@ import org.springframework.webflow.executor.ResponseInstruction;
  * 
  * @author Keith Donald
  */
-public class FlowExecutorTemplate {
+public class FlowRequestHandler {
 
 	/**
 	 * Logger.
 	 */
-	private static final Log logger = LogFactory.getLog(FlowExecutorTemplate.class);
+	private static final Log logger = LogFactory.getLog(FlowRequestHandler.class);
 
 	/**
 	 * The flow execution executor this helper will coordinate with.
@@ -70,7 +70,7 @@ public class FlowExecutorTemplate {
 	 * Creates a new flow controller helper.
 	 * @param flowExecutor the flow execution manager to delegate to.
 	 */
-	public FlowExecutorTemplate(FlowExecutor flowExecutor) {
+	public FlowRequestHandler(FlowExecutor flowExecutor) {
 		this(flowExecutor, new FlowExecutorParameterExtractor());
 	}
 
@@ -78,7 +78,7 @@ public class FlowExecutorTemplate {
 	 * Creates a new flow controller helper.
 	 * @param flowExecutor the flow execution manager to delegate to.
 	 */
-	public FlowExecutorTemplate(FlowExecutor flowExecutor, FlowExecutorParameterExtractor parameterExtractor) {
+	public FlowRequestHandler(FlowExecutor flowExecutor, FlowExecutorParameterExtractor parameterExtractor) {
 		Assert.notNull(flowExecutor, "The flow executor is required");
 		Assert.notNull(parameterExtractor, "The parameter extractor is required");
 		this.flowExecutor = flowExecutor;

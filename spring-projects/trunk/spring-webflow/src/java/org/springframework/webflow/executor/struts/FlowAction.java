@@ -44,7 +44,7 @@ import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
-import org.springframework.webflow.executor.support.FlowExecutorTemplate;
+import org.springframework.webflow.executor.support.FlowRequestHandler;
 
 /**
  * Point of integration between Struts and Spring Web Flow: a Struts Action that
@@ -53,7 +53,7 @@ import org.springframework.webflow.executor.support.FlowExecutorTemplate;
  * Action may signal events in any existing/restored FlowExecutions.
  * <p>
  * Requests are managed by and delegated to a {@link FlowExecutor}, which this
- * class delegates to using a {@link FlowExecutorTemplate} (allowing reuse of
+ * class delegates to using a {@link FlowRequestHandler} (allowing reuse of
  * common front flow controller logic in other environments). Consult the
  * JavaDoc of those classes for more information on how requests are processed.
  * <p>
@@ -128,7 +128,7 @@ import org.springframework.webflow.executor.support.FlowExecutorTemplate;
  * <code>ActionForm</code> classes found in traditional Struts-based apps.
  * 
  * @see org.springframework.webflow.executor.FlowExecutor
- * @see org.springframework.webflow.executor.support.FlowExecutorTemplate
+ * @see org.springframework.webflow.executor.support.FlowRequestHandler
  * @see org.springframework.web.struts.SpringBindingActionForm
  * 
  * @author Keith Donald
@@ -245,8 +245,8 @@ public class FlowAction extends ActionSupport {
 	 * this flow controller.
 	 * @return the controller helper
 	 */
-	protected FlowExecutorTemplate createControllerTemplate() {
-		return new FlowExecutorTemplate(getFlowExecutor(), getParameterExtractor());
+	protected FlowRequestHandler createControllerTemplate() {
+		return new FlowRequestHandler(getFlowExecutor(), getParameterExtractor());
 	}
 
 	/**

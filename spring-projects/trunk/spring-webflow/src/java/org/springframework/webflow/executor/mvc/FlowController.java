@@ -35,7 +35,7 @@ import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
-import org.springframework.webflow.executor.support.FlowExecutorTemplate;
+import org.springframework.webflow.executor.support.FlowRequestHandler;
 
 /**
  * Point of integration between Spring MVC and Spring Web Flow: a
@@ -43,7 +43,7 @@ import org.springframework.webflow.executor.support.FlowExecutorTemplate;
  * executions.
  * <p>
  * Requests into the web flow system are handled by a {@link FlowExecutor},
- * which this class delegates to using a {@link FlowExecutorTemplate}. Consult
+ * which this class delegates to using a {@link FlowRequestHandler}. Consult
  * the JavaDoc of that class for more information on how requests are processed.
  * <p>
  * Note: a single FlowController may execute all flows of your application.
@@ -188,8 +188,8 @@ public class FlowController extends AbstractController {
 	 * reusable flow execution request handling workflow.
 	 * @return the controller helper
 	 */
-	protected FlowExecutorTemplate createFlowExecutorTemplate() {
-		return new FlowExecutorTemplate(getFlowExecutor(), getParameterExtractor());
+	protected FlowRequestHandler createFlowExecutorTemplate() {
+		return new FlowRequestHandler(getFlowExecutor(), getParameterExtractor());
 	}
 
 	/**

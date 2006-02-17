@@ -105,7 +105,7 @@ public class FlowTests extends TestCase {
 			flow.getRequiredState("myState3");
 			fail("Returned a state that doesn't exist");
 		}
-		catch (NoSuchFlowStateException e) {
+		catch (NoSuchStateException e) {
 			// expected
 		}
 	}
@@ -126,7 +126,7 @@ public class FlowTests extends TestCase {
 		try {
 			flow.getRequiredTransitionableState("doesNotExist");
 		}
-		catch (NoSuchFlowStateException e) {
+		catch (NoSuchStateException e) {
 			// expected
 		}
 	}

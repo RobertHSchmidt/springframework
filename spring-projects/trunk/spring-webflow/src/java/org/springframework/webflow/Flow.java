@@ -254,10 +254,10 @@ public class Flow extends AnnotatedObject {
 	 * <code>stateId</code>; a state must exist by the provided
 	 * <code>stateId</code>.
 	 * @param stateId the id of the new start state
-	 * @throws NoSuchFlowStateException when no state exists with the id you
+	 * @throws NoSuchStateException when no state exists with the id you
 	 * provided
 	 */
-	public void setStartState(String stateId) throws NoSuchFlowStateException {
+	public void setStartState(String stateId) throws NoSuchStateException {
 		setStartState(getRequiredState(stateId));
 	}
 
@@ -265,12 +265,12 @@ public class Flow extends AnnotatedObject {
 	 * Set the start state for this flow to the state provided; any state may be
 	 * the start state.
 	 * @param state the new start state
-	 * @throws NoSuchFlowStateException given state has not been added to this
+	 * @throws NoSuchStateException given state has not been added to this
 	 * flow
 	 */
-	public void setStartState(State state) throws NoSuchFlowStateException {
+	public void setStartState(State state) throws NoSuchStateException {
 		if (!containsStateInstance(state)) {
-			throw new NoSuchFlowStateException(this, state.getId());
+			throw new NoSuchStateException(this, state.getId());
 		}
 		this.startState = state;
 	}
@@ -325,12 +325,12 @@ public class Flow extends AnnotatedObject {
 	 * exists with that id.
 	 * @param stateId the state id
 	 * @return the state with that id
-	 * @throws NoSuchFlowStateException when no state exists with that id
+	 * @throws NoSuchStateException when no state exists with that id
 	 */
-	public State getRequiredState(String stateId) throws NoSuchFlowStateException {
+	public State getRequiredState(String stateId) throws NoSuchStateException {
 		State state = getState(stateId);
 		if (state == null) {
-			throw new NoSuchFlowStateException(this, stateId);
+			throw new NoSuchStateException(this, stateId);
 		}
 		return state;
 	}
@@ -359,14 +359,14 @@ public class Flow extends AnnotatedObject {
 	 * @return the transitionable state
 	 * @throws IllegalStateException when the identified state is not
 	 * transitionable
-	 * @throws NoSuchFlowStateException when no transitionable state exists by
+	 * @throws NoSuchStateException when no transitionable state exists by
 	 * this id
 	 */
 	public TransitionableState getRequiredTransitionableState(String stateId) throws IllegalStateException,
-			NoSuchFlowStateException {
+			NoSuchStateException {
 		TransitionableState state = getTransitionableState(stateId);
 		if (state == null) {
-			throw new NoSuchFlowStateException(this, stateId);
+			throw new NoSuchStateException(this, stateId);
 		}
 		return state;
 	}
