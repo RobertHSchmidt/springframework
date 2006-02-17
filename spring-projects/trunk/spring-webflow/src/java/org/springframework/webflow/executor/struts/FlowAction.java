@@ -117,7 +117,7 @@ import org.springframework.webflow.executor.support.FlowExecutorTemplate;
  * instance {@link FlowLocator} named {@link #FLOW_LOCATOR_BEAN_NAME}. If the
  * FlowLocator dependency is resolved, this class will automatically configure a
  * default flow executor implementation suitable for a Struts environment (see
- * {@link #setDefaultFlowExecutor(FlowLocator)}). In addition, you may choose
+ * {@link #initDefaultFlowExecutor(FlowLocator)}). In addition, you may choose
  * to simply inject a FlowLocator directly if the FlowExecutor defaults meet
  * your requirements.
  * </ul>
@@ -164,7 +164,7 @@ public class FlowAction extends ActionSupport {
 	 * execute.
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
-		setDefaultFlowExecutor(flowLocator);
+		initDefaultFlowExecutor(flowLocator);
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class FlowAction extends ActionSupport {
 			else {
 				try {
 					FlowLocator flowLocator = (FlowLocator)context.getBean(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class);
-					setDefaultFlowExecutor(flowLocator);
+					initDefaultFlowExecutor(flowLocator);
 				}
 				catch (NoSuchBeanDefinitionException e) {
 					String message = "No '" + FLOW_LOCATOR_BEAN_NAME + "' or '" + FLOW_EXECUTOR_BEAN_NAME
@@ -228,7 +228,7 @@ public class FlowAction extends ActionSupport {
 	 * SpringBindingActionForm adaption.
 	 * @param flowLocator the flow locator
 	 */
-	protected void setDefaultFlowExecutor(FlowLocator flowLocator) {
+	protected void initDefaultFlowExecutor(FlowLocator flowLocator) {
 		SimpleFlowExecutionRepositoryFactory repositoryFactory = new SimpleFlowExecutionRepositoryFactory(flowLocator);
 		setFlowExecutor(new FlowExecutorImpl(repositoryFactory));
 	}

@@ -412,8 +412,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected Flow parseFlow(FlowArtifactParameters flowParameters, Element flowElement) {
 		Assert.state(FLOW_ELEMENT.equals(flowElement.getTagName()), "This is not the '" + FLOW_ELEMENT + "' element");
 		initLocalFlowArtifactFactoryRegistry(flowElement);
-		Flow flow = (Flow)getLocalFlowArtifactFactory().createFlow(
-				flowParameters.applyAndOverride(parseProperties(flowElement)));
+		FlowArtifactParameters parameters = flowParameters.applyAndOverride(parseProperties(flowElement));
+		Flow flow = getLocalFlowArtifactFactory().createFlow(parameters);
 		parseAndAddFlowVariables(flowElement, flow);
 		parseAndAddFlowActions(flowElement, flow);
 		parseAndAddFlowTransitions(flowElement, flow);
@@ -798,7 +798,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * object.
 	 */
 	protected Transition parseTransition(Element element) {
-		Transition transition = (Transition)getLocalFlowArtifactFactory().createTransition(parseProperties(element));
+		Transition transition = getLocalFlowArtifactFactory().createTransition(parseProperties(element));
 		transition.setMatchingCriteria((TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(ON_ATTRIBUTE)));
 		transition.setExecutionCriteria(TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element)));

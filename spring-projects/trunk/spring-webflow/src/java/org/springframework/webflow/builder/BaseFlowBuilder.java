@@ -78,7 +78,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 
 	/**
 	 * Returns the artifact locator
-	 * @throws an IllegalStateException if the artifact locator is not set
+	 * @throws IllegalStateException if the artifact locator is not set
 	 */
 	protected FlowArtifactFactory getRequiredFlowArtifactFactory() {
 		if (flowArtifactFactory == null) {

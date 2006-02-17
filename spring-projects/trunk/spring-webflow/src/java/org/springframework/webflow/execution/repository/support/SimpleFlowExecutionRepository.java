@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.core.JdkVersion;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
@@ -199,15 +198,7 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		}
 
 		protected ConversationLock createLock() {
-			if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_15) {
-				return new Jdk5ConversationLock();
-			}
-			else if (ConcurrentConversationLock.isUtilConcurrentPresent()) {
-				return new ConcurrentConversationLock();
-			}
-			else {
-				return NoOpConversationLock.INSTANCE;
-			}
+			return ConversationLockFactory.createLock();
 		}
 
 		public String toString() {
@@ -215,4 +206,5 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 					.toString();
 		}
 	}
+
 }

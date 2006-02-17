@@ -95,8 +95,7 @@ public class TextToTransitionCriteria extends AbstractConverter {
 			return WildcardTransitionCriteria.INSTANCE;
 		}
 		else if (expressionParser.isExpression(encodedCriteria)) {
-			Expression expression = (Expression)expressionParser
-					.parseExpression(encodedCriteria, Collections.EMPTY_MAP);
+			Expression expression = this.expressionParser.parseExpression(encodedCriteria, Collections.EMPTY_MAP);
 			return createBooleanExpressionTransitionCriteria(expression);
 		}
 		else if (encodedCriteria.startsWith(BEAN_PREFIX)) {
