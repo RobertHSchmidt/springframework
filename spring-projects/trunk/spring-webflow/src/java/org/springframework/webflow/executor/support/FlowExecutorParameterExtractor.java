@@ -30,10 +30,10 @@ public class FlowExecutorParameterExtractor {
 	public static final String FLOW_ID_PARAMETER = "_flowId";
 
 	/**
-	 * By default, clients can send the flow execution id using a parameter with
-	 * this name ("_flowExecutionId").
+	 * By default, clients can send the flow execution key using a parameter
+	 * with this name ("_flowExecutionKey").
 	 */
-	public static final String FLOW_EXECUTION_ID_PARAMETER = "_flowExecutionId";
+	public static final String FLOW_EXECUTION_KEY_PARAMETER = "_flowExecutionKey";
 
 	/**
 	 * By default, clients can send the event to be signaled in a parameter with
@@ -70,9 +70,9 @@ public class FlowExecutorParameterExtractor {
 
 	/**
 	 * The string-encoded id of the flow execution will be exposed to the view
-	 * in a model attribute with this name ("flowExecutionId").
+	 * in a model attribute with this name ("flowExecutionKey").
 	 */
-	public static final String FLOW_EXECUTION_ID_ATTRIBUTE = "flowExecutionId";
+	public static final String FLOW_EXECUTION_KEY_ATTRIBUTE = "flowExecutionKey";
 
 	/**
 	 * Identifies a flow definition to launch a new execution for, defaults to
@@ -88,10 +88,16 @@ public class FlowExecutorParameterExtractor {
 	private String defaultFlowId;
 
 	/**
-	 * Identifies an existing flow execution to participate in, defaults to
-	 * ("_flowExecutionId").
+	 * Identifies an existing flow execution to participate in, defaults
+	 * {@link #FLOW_EXECUTION_KEY_PARAMETER }.
 	 */
-	private String flowExecutionIdParameterName = FLOW_EXECUTION_ID_PARAMETER;
+	private String flowExecutionKeyParameterName = FLOW_EXECUTION_KEY_PARAMETER;
+
+	/**
+	 * Identifies the id of the flow execution participated in, defaults to
+	 * {@link #FLOW_EXECUTION_KEY_ATTRIBUTE }.
+	 */
+	private String flowExecutionKeyAttributeName = FLOW_EXECUTION_KEY_PARAMETER;
 
 	/**
 	 * The formatter that will parse encoded _flowExecutionId strings into
@@ -151,17 +157,31 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
-	 * Returns the flow execution id parameter name.
+	 * Returns the flow execution key parameter name.
 	 */
-	public String getFlowExecutionIdParameterName() {
-		return flowExecutionIdParameterName;
+	public String getFlowExecutionKeyParameterName() {
+		return flowExecutionKeyParameterName;
 	}
 
 	/**
-	 * Sets the flow execution id parameter name.
+	 * Sets the flow execution key parameter name.
 	 */
-	public void setFlowExecutionIdParameterName(String flowExecutionIdParameterName) {
-		this.flowExecutionIdParameterName = flowExecutionIdParameterName;
+	public void setFlowExecutionKeyParameterName(String flowExecutionIdParameterName) {
+		this.flowExecutionKeyParameterName = flowExecutionIdParameterName;
+	}
+
+	/**
+	 * Returns the flow execution key attribute name.
+	 */
+	public String getFlowExecutionKeyAttributeName() {
+		return flowExecutionKeyAttributeName;
+	}
+
+	/**
+	 * Sets the flow execution key attribute name.
+	 */
+	public void setFlowExecutionKeyAttributeName(String flowExecutionKeyAttributeName) {
+		this.flowExecutionKeyAttributeName = flowExecutionKeyAttributeName;
 	}
 
 	/**
@@ -262,13 +282,13 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
-	 * Extract the flow execution id from the external context.
+	 * Extract the flow execution key from the external context.
 	 * @param context the context in which the external user event occured
-	 * @return the obtained id or <code>null</code> if not found
+	 * @return the obtained key or <code>null</code> if not found
 	 */
 	public FlowExecutionKey extractFlowExecutionKey(ExternalContext context) {
-		String flowExecutionId = verifySingleStringInputParameter(getFlowExecutionIdParameterName(), getParameterMap(
-				context).get(getFlowExecutionIdParameterName()));
+		String flowExecutionId = verifySingleStringInputParameter(getFlowExecutionKeyParameterName(), getParameterMap(
+				context).get(getFlowExecutionKeyParameterName()));
 		return flowExecutionId != null ? (FlowExecutionKey)flowExecutionKeyFormatter.parseValue(flowExecutionId,
 				FlowExecutionKey.class) : null;
 	}
@@ -334,7 +354,7 @@ public class FlowExecutorParameterExtractor {
 	 * @param model the model
 	 */
 	public void putContextAttributes(FlowExecutionKey flowExecutionKey, FlowExecutionContext context, Map model) {
-		model.put(FLOW_EXECUTION_ID_ATTRIBUTE, flowExecutionKeyFormatter.formatValue(flowExecutionKey));
+		model.put(FLOW_EXECUTION_KEY_ATTRIBUTE, flowExecutionKeyFormatter.formatValue(flowExecutionKey));
 		model.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, context);
 	}
 

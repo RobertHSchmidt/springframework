@@ -55,7 +55,7 @@ import org.springframework.webflow.executor.support.FlowRequestHandler;
  * parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
- * {@link FlowExecutorParameterExtractor#getFlowExecutionIdParameterName()}
+ * {@link FlowExecutorParameterExtractor#getFlowExecutionKeyParameterName()}
  * request parameter identifying the conversation to participate in.
  * </ul>
  * <p>

@@ -27,7 +27,7 @@ public class FlowExecutionParameterExtractorTests extends TestCase {
 	}
 
 	public void testExtractFlowExecutionId() {
-		MockExternalContext context = new MockExternalContext("_flowExecutionId", "_s12345_c12345");
+		MockExternalContext context = new MockExternalContext("_flowExecutionKey", "_s12345_c12345");
 		assertEquals(flowExecutionKey, extractor.extractFlowExecutionKey(context));
 	}
 
@@ -42,7 +42,7 @@ public class FlowExecutionParameterExtractorTests extends TestCase {
 	}
 
 	public void testAccidentalParameterArraySubmit() {
-		MockExternalContext context = new MockExternalContext("_flowExecutionId", new String[] { "_s12345_c12345",
+		MockExternalContext context = new MockExternalContext("_flowExecutionKey", new String[] { "_s12345_c12345",
 				"_s12345_c12345" });
 		try {
 			extractor.extractFlowExecutionKey(context);
