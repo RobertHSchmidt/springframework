@@ -13,7 +13,7 @@
 	<tr>
 		<td>an anchor:</td>
 		<td>
-			<a href="<c:url value="/flowController.htm?_flowExecutionId=${flowExecutionId}&_eventId=end"/>">
+			<a href="<c:url value="/flowController.htm?_flowExecutionKey=${flowExecutionKey}&_eventId=end"/>">
 				End Sample B
 			</a>
 		</td>
@@ -25,7 +25,7 @@
 			<form action="flowController.htm" method="post">
 			<tr>
 				<td class="buttonBar">
-					<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
+					<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
 					<input type="submit" name="_eventId_end" value="End Sample B">
 				</td>
 			</tr>

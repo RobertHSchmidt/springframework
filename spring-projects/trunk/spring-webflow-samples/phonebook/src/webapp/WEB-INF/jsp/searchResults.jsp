@@ -30,7 +30,7 @@
 							<td>${person.firstName}</td>
 							<td>${person.lastName}</td>
 							<td>
-								<a href="phonebook.htm?_flowExecutionId=${flowExecutionId}&_eventId=select&id=${person.id}">
+								<a href="phonebook.htm?_flowExecutionKey=${flowExecutionKey}&_eventId=select&id=${person.id}">
 									${person.userId}
 								</a>
 							</td>
@@ -42,7 +42,7 @@
 		</tr>
 		<tr>
 			<td class="buttonBar">
-				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
+				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
 				<input type="submit" class="button" name="_eventId_newSearch" value="New Search">
 			</td>
 		</tr>

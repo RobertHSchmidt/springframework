@@ -8,7 +8,7 @@
 	</HEAD>
 	<BODY>
 		<FORM name="submitForm" action="admin.htm">
-			<INPUT type="hidden" name="_flowExecutionId" value="<%=request.getAttribute("flowExecutionId") %>">
+			<INPUT type="hidden" name="_flowExecutionKey" value="<%=request.getAttribute("flowExecutionKey") %>">
 			<INPUT type="hidden" name="_eventId" value="back">
 		</FORM>
 		<DIV align="left">File Contents</DIV>

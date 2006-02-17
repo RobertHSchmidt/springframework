@@ -26,7 +26,7 @@
 	<tr>
 		<td colspan="2" class="buttonBar">
 			<html:image src="images/submit.jpg" property="_eventId_submit" value="Next"/>
-			<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
+			<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
 		</td>
 	</tr>
 	</html:form>

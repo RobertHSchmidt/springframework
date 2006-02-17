@@ -28,7 +28,7 @@
 			<input type="radio" name="${status.expression}" value="false" <c:if test="${status.value == false}">checked</c:if>><br>
 		</spring:bind>
 
-		<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
+		<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
 		<input type="submit" value="Next" name="_eventId_submit">
 	</fieldset>
 

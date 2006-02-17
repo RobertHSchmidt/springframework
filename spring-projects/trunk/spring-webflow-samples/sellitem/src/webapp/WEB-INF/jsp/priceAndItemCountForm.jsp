@@ -31,7 +31,7 @@
 		</tr>
 		<tr>
 			<td colspan="2" class="buttonBar">
-				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}">
+				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
 				<input type="submit" class="button" name="_eventId_submit" value="Next">
 				<input type="submit" class="button" name="_eventId_preview" value="Preview Sale">
 			</td>

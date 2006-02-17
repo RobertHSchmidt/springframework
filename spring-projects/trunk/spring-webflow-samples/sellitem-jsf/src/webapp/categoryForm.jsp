@@ -32,7 +32,7 @@
 		</tr>
 		<tr>
 			<td colspan="2" class="buttonBar">
-				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"/>
+				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"/>
 				<h:commandButton type="submit" value="Next" action="submit" immediate="false" /></td>
 			</td>
 		</tr>

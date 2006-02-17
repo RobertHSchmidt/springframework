@@ -17,7 +17,7 @@
 		<tr>
 			<td colspan="2" class="buttonBar">
 				<!-- Tell webflow what executing flow we are participating in -->
-				<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"/>
+				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"/>
 				<!-- Tell webflow what event happened -->
 				<input type="submit" name="_eventId_submit" value="Submit">
 			</td>
