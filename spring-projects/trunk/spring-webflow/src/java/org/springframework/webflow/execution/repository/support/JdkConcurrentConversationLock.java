@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.repository.ConversationLock;
  * 
  * @author Keith Donald
  */
-public class Jdk5ConversationLock implements ConversationLock, Serializable {
+public class JdkConcurrentConversationLock implements ConversationLock, Serializable {
 
 	/**
 	 * The lock.
