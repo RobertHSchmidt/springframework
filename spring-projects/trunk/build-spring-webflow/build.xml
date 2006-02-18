@@ -25,7 +25,6 @@
 	<selector id="project.source.zip.includes">
 		<or>
 			<filename name="common-build/**" />
-			<filename name="repository/**" />
 			<and>
 				<or>
 					<filename name="build-spring-webflow/**" />
@@ -122,6 +121,7 @@
 	</target>
 
 	<target name="clean" depends="init" description="Cleans all build output files from all projects">
+        <delete dir="${target.dir}" />
 		<echo>projects=${projects}</echo>
 		<echo>projects.names=${projects.names}</echo>
 		<subant target="clean" inheritall="false">
@@ -130,6 +130,7 @@
 	</target>
 
 	<target name="clean-all" depends="init" description="Cleans all build output files from all projects, and also retrieved libs">
+        <delete dir="${target.dir}" />
 		<echo>projects=${projects}</echo>
 		<subant target="clean-all" inheritall="false">
 			<buildpath refid="${projects}" />
@@ -146,6 +147,19 @@
 	<target name="dist" depends="init" description="Calls dist targets on each project">
 		<echo>projects=${projects}</echo>
 		<subant target="dist" inheritall="false">
+			<buildpath refid="${projects}" />
+		</subant>
+	</target>
+
+	<target name="build-release-repo" depends="init"
+	        description="Builds repo of all dependencies for all projects">
+		<echo>projects=${projects}</echo>
+		<subant target="retrieve-to-repo" inheritall="false">
+            <property name="retrieve.to.repo.dir" value="${target.dir}/repo" />
+            <property name="retrieve.to.repo.pattern"
+	                  value="${release.repo.ivy.retrieve.pattern}" />
+            <property name="retrieve.to.repo.pattern.ivy" 
+                      value="${release.repo.ivy.retrieve.ivy.pattern}" />
 			<buildpath refid="${projects}" />
 		</subant>
 	</target>
@@ -171,7 +185,8 @@
 		</subant>
 	</target>
 
-	<target name="release" depends="dist, javadoc, doc, gen.release.zip" description="Generate the spring-webflow release archive" />
+	<target name="release" depends="dist, build-release-repo, javadoc, doc, gen.release.zip"
+	              description="Generate the spring-webflow release archive" />
 
 	<target name="gen.release.zip" depends="init">
 		<mkdir dir="${target.release.dir}" />
@@ -183,10 +198,14 @@
 			<!-- binary files -->
 			<zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}" />
 			<zipfileset dir="../spring-binding/target/dist/jars" prefix="${zip.toplevel.dir}" />
-			<zipfileset dir="../spring-webflow/target/javadocs" prefix="${zip.toplevel.dir}/docs/api" />
-			<zipfileset dir="../spring-webflow/docs/reference/target" prefix="${zip.toplevel.dir}/docs/reference">
+			<zipfileset dir="../spring-webflow/target/javadocs" 
+			            prefix="${zip.toplevel.dir}/docs/api" />
+			<zipfileset dir="../spring-webflow/docs/reference/target" 
+			            prefix="${zip.toplevel.dir}/docs/reference">
 				<exclude name="**/html_single/**" />
 			</zipfileset>
+			<zipfileset dir="${target.dir}/repo" 
+			            prefix="${zip.toplevel.dir}/projects/repository" />
 			<!-- project sources -->
 			<zipfileset dir=".." prefix="${zip.toplevel.dir}/projects">
 				<selector refid="project.source.zip.includes" />

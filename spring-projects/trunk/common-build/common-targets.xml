@@ -365,6 +365,19 @@
     <antcall target="build.prepare.make.config.dirs" />
   </target>
 
+  <!-- retrieve target to pull down deps and ivys to some location, used for building repos -->
+  <target name="retrieve-to-repo" depends="resolve">
+    <property name="retrieve.to.repo.conf" value="*" />
+    <property name="retrieve.to.repo.dir" value="${target.dir}/repo" />
+    <property name="retrieve.to.repo.pattern"
+	          value="[organisation]/[module]/[type]s/[artifact]-[revision].[ext]" />
+    <property name="retrieve.to.repo.pattern.ivy" 
+	          value="[organisation]/[module]/ivy-[revision].xml" />
+    <retrieve.conf conf="${retrieve.to.repo.conf}"
+	               pattern="${retrieve.to.repo.dir}/${retrieve.to.repo.pattern}"
+				   ivypattern="${retrieve.to.repo.dir}/${retrieve.to.repo.pattern.ivy}"/>
+  </target>
+
   <!-- statics: copies statics files before compiles -->
   <target name="statics" depends="retrieve, ivy.configure, statics.pre, statics.main, statics.test, statics.web, statics.post" description="Copy static files before compile, replacing tokens as needed">
   </target>
