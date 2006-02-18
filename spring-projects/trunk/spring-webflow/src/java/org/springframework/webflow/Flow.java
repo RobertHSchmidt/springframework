@@ -196,7 +196,7 @@ public class Flow extends AnnotatedObject {
 			throw new IllegalArgumentException("State " + state + " cannot be added to this flow '" + getId()
 					+ "' -- it already belongs to a different flow");
 		}
-		if (containsStateInstance(state)) {
+		if (states.contains(state)) {
 			return;
 		}
 		if (containsState(state.getId())) {
@@ -220,19 +220,10 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Returns an ordered iterator over the state definitions of this flow. The
-	 * order is determined by the order in which the states were added.
-	 * @return the states iterator
-	 */
-	public Iterator statesIterator() {
-		return states.iterator();
-	}
-
-	/**
 	 * Returns the list of states in this flow.
 	 */
 	public State[] getStates() {
-		return (State[])this.states.toArray(new State[this.states.size()]);
+		return (State[])states.toArray(new State[states.size()]);
 	}
 
 	/**
@@ -265,30 +256,13 @@ public class Flow extends AnnotatedObject {
 	 * Set the start state for this flow to the state provided; any state may be
 	 * the start state.
 	 * @param state the new start state
-	 * @throws NoSuchStateException given state has not been added to this
-	 * flow
+	 * @throws NoSuchStateException given state has not been added to this flow
 	 */
 	public void setStartState(State state) throws NoSuchStateException {
-		if (!containsStateInstance(state)) {
+		if (!states.contains(state)) {
 			throw new NoSuchStateException(this, state.getId());
 		}
-		this.startState = state;
-	}
-
-	/**
-	 * Checks if given state instance is present in this flow. Does a "same"
-	 * (==) check.
-	 * @param state the state to search for
-	 * @return true if yes (the same instance is present), false otherwise
-	 */
-	protected boolean containsStateInstance(State state) {
-		Iterator it = statesIterator();
-		while (it.hasNext()) {
-			if (it.next() == state) {
-				return true;
-			}
-		}
-		return false;
+		startState = state;
 	}
 
 	/**
@@ -310,7 +284,7 @@ public class Flow extends AnnotatedObject {
 		if (!StringUtils.hasText(stateId)) {
 			throw new IllegalArgumentException("The specified stateId is invalid: state identifiers must be non-blank");
 		}
-		Iterator it = statesIterator();
+		Iterator it = states.iterator();
 		while (it.hasNext()) {
 			State state = (State)it.next();
 			if (state.getId().equals(stateId)) {
@@ -359,8 +333,8 @@ public class Flow extends AnnotatedObject {
 	 * @return the transitionable state
 	 * @throws IllegalStateException when the identified state is not
 	 * transitionable
-	 * @throws NoSuchStateException when no transitionable state exists by
-	 * this id
+	 * @throws NoSuchStateException when no transitionable state exists by this
+	 * id
 	 */
 	public TransitionableState getRequiredTransitionableState(String stateId) throws IllegalStateException,
 			NoSuchStateException {
@@ -380,7 +354,7 @@ public class Flow extends AnnotatedObject {
 	public String[] getStateIds() {
 		String[] stateIds = new String[getStateCount()];
 		int i = 0;
-		Iterator it = statesIterator();
+		Iterator it = states.iterator();
 		while (it.hasNext()) {
 			stateIds[i++] = ((State)it.next()).getId();
 		}
@@ -441,14 +415,12 @@ public class Flow extends AnnotatedObject {
 
 	/**
 	 * Returns the set of exception handlers, allowing manipulation of how state
-	 * exceptions are handled when thrown during flow execution.
-	 * <p/>
-	 * Exception handlers are invoked when an exception occurs when this state
-	 * is entered, and can execute custom exception handling logic as well as
-	 * select an error view to display.
-	 * <p/>
-	 * State exception handlers attached at the flow level have a opportunity to
-	 * handle exceptions that aren't handled at the state level.
+	 * exceptions are handled when thrown during flow execution. <p/> Exception
+	 * handlers are invoked when an exception occurs when this state is entered,
+	 * and can execute custom exception handling logic as well as select an
+	 * error view to display. <p/> State exception handlers attached at the flow
+	 * level have a opportunity to handle exceptions that aren't handled at the
+	 * state level.
 	 * @return the state exception handler set
 	 */
 	public StateExceptionHandlerSet getExceptionHandlerSet() {
@@ -470,7 +442,7 @@ public class Flow extends AnnotatedObject {
 	public String[] getInlineFlowIds() {
 		String[] flowIds = new String[getInlineFlowCount()];
 		int i = 0;
-		Iterator it = inlineFlowIterator();
+		Iterator it = inlineFlows.iterator();
 		while (it.hasNext()) {
 			flowIds[i++] = ((Flow)it.next()).getId();
 		}
@@ -482,7 +454,7 @@ public class Flow extends AnnotatedObject {
 	 * @return the list of inline flows
 	 */
 	public Flow[] getInlineFlows() {
-		return (Flow[])this.inlineFlows.toArray(new Flow[this.inlineFlows.size()]);
+		return (Flow[])inlineFlows.toArray(new Flow[inlineFlows.size()]);
 	}
 
 	/**
@@ -514,7 +486,7 @@ public class Flow extends AnnotatedObject {
 			throw new IllegalArgumentException(
 					"The specified inline flowId is invalid: flow identifiers must be non-blank");
 		}
-		Iterator it = inlineFlowIterator();
+		Iterator it = inlineFlows.iterator();
 		while (it.hasNext()) {
 			Flow flow = (Flow)it.next();
 			if (flow.getId().equals(id)) {
@@ -522,13 +494,6 @@ public class Flow extends AnnotatedObject {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Returns an inline flow iterator.
-	 */
-	public Iterator inlineFlowIterator() {
-		return inlineFlows.iterator();
 	}
 
 	/**
@@ -626,8 +591,8 @@ public class Flow extends AnnotatedObject {
 
 	public String toString() {
 		return new ToStringCreator(this).append("id", id).append("states", states).append("startState", startState)
-				.append("startActionList", startActionList).append("inlineFlows", inlineFlows).append(
-						"exceptionHandlerSet", exceptionHandlerSet).append("endActionList", endActionList).append(
-						"transitionSet", globalTransitionSet).toString();
+				.append("startActionList", startActionList).append("exceptionHandlerSet", exceptionHandlerSet).append(
+						"endActionList", endActionList).append("transitionSet", globalTransitionSet).append(
+						"inlineFlows", inlineFlows).toString();
 	}
 }
