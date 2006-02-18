@@ -114,8 +114,8 @@ public class ViewState extends TransitionableState {
 		return selection;
 	}
 
-	protected void createToString(ToStringCreator creator) {
+	protected void appendToString(ToStringCreator creator) {
 		creator.append("viewSelector", viewSelector);
-		super.createToString(creator);
+		super.appendToString(creator);
 	}
 }

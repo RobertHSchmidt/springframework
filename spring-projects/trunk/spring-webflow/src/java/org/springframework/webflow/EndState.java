@@ -188,7 +188,7 @@ public class EndState extends State {
 		return output;
 	}
 
-	protected void createToString(ToStringCreator creator) {
+	protected void appendToString(ToStringCreator creator) {
 		creator.append("viewSelector", viewSelector).append("outputAttributeNames", outputAttributeNames);
 	}
 }

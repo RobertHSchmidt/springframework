@@ -233,7 +233,7 @@ public abstract class State extends AnnotatedObject {
                 .append("flow", flowName)
                 .append("entryActionList", entryActionList)
                 .append("exceptionHandlerSet", exceptionHandlerSet);
-		createToString(creator);
+		appendToString(creator);
 		return creator.toString();
 	}
 
@@ -242,6 +242,6 @@ public abstract class State extends AnnotatedObject {
 	 * state. This default implementation does nothing.
 	 * @param creator the toString creator, to stringify properties
 	 */
-	protected void createToString(ToStringCreator creator) {
+	protected void appendToString(ToStringCreator creator) {
 	}
 }

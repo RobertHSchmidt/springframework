@@ -188,8 +188,8 @@ public class SubflowState extends TransitionableState {
 		}
 	}
 
-	protected void createToString(ToStringCreator creator) {
+	protected void appendToString(ToStringCreator creator) {
 		creator.append("subflow", subflow.getId()).append("attributeMapper", attributeMapper);
-		super.createToString(creator);
+		super.appendToString(creator);
 	}
 }

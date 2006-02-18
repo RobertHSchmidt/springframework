@@ -228,9 +228,9 @@ public class ActionState extends TransitionableState {
 		}
 	}
 
-	protected void createToString(ToStringCreator creator) {
+	protected void appendToString(ToStringCreator creator) {
 		creator.append("actionList", actionList);
-		super.createToString(creator);
+		super.appendToString(creator);
 	}
 
 	/**

@@ -144,7 +144,7 @@ public abstract class TransitionableState extends State {
 		exitActionList.execute(context);
 	}
 
-	protected void createToString(ToStringCreator creator) {
+	protected void appendToString(ToStringCreator creator) {
 		creator.append("transitions", transitions).append("exitActionList", exitActionList);
 	}
 }
