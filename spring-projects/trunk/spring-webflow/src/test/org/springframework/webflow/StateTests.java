@@ -113,7 +113,6 @@ public class StateTests extends TestCase {
 		ViewState state = new ViewState(flow, "viewState");
 		state.setViewSelector(view("myViewName"));
 		state.addTransition(new Transition(on("submit"), to("finish")));
-		assertTrue(state.isTransitionable());
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());

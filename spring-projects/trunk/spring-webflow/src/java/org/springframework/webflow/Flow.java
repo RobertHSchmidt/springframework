@@ -345,7 +345,7 @@ public class Flow extends AnnotatedObject {
 	 */
 	public TransitionableState getTransitionableState(String stateId) throws IllegalStateException {
 		State state = getState(stateId);
-		if (state != null && !state.isTransitionable()) {
+		if (state != null && !(state instanceof TransitionableState)) {
 			throw new IllegalStateException("The state '" + stateId + "' of flow '" + getId()
 					+ "' must be transitionable");
 		}
@@ -594,7 +594,7 @@ public class Flow extends AnnotatedObject {
 
 	private TransitionableState getCurrentTransitionableState(FlowExecutionControlContext context) {
 		State currentState = context.getCurrentState();
-		if (!currentState.isTransitionable()) {
+		if (!(currentState instanceof TransitionableState)) {
 			throw new IllegalStateException("You can only signal events in transitionable states, and state "
 					+ context.getCurrentState() + "  is not - programmer error");
 		}
