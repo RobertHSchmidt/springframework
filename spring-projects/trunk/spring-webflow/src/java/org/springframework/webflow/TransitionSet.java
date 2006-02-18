@@ -15,12 +15,10 @@
  */
 package org.springframework.webflow;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -37,7 +35,7 @@ public class TransitionSet {
 	/**
 	 * The set of transitions.
 	 */
-	private Set transitions = CollectionFactory.createLinkedSetIfPossible(3);
+	private List transitions = new LinkedList();
 
 	/**
 	 * Add a transition to this set.
@@ -46,6 +44,9 @@ public class TransitionSet {
 	 * operation
 	 */
 	public boolean add(Transition transition) {
+		if (contains(transition)) {
+			return false;
+		}
 		return transitions.add(transition);
 	}
 
@@ -59,7 +60,13 @@ public class TransitionSet {
 		if (transitions == null) {
 			return false;
 		}
-		return this.transitions.addAll(Arrays.asList(transitions));
+		boolean changed = false;
+		for (int i = 0; i < transitions.length; i++) {
+			if (add(transitions[i]) && !changed) {
+				changed = true;
+			}
+		}
+		return changed;
 	}
 
 	/**
@@ -90,28 +97,11 @@ public class TransitionSet {
 	}
 
 	/**
-	 * Returns an iterator that allows iteration over the set of transitions in
-	 * this set.
-	 * @return the Transition iterator
-	 */
-	public Iterator iterator() {
-		return transitions.iterator();
-	}
-
-	/**
 	 * Convert this set to a typed transition array.
 	 * @return the transition set as a typed array
 	 */
 	public Transition[] toArray() {
-		return (Transition[])this.transitions.toArray(new Transition[this.transitions.size()]);
-	}
-
-	/**
-	 * Convert this list to a <code>java.util.List</code>.
-	 * @return the exception handler list, as a java.util.List
-	 */
-	public Set toSet() {
-		return Collections.unmodifiableSet(transitions);
+		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
 	}
 
 	/**
@@ -122,7 +112,7 @@ public class TransitionSet {
 	public TransitionCriteria[] getTransitionCriterias() {
 		TransitionCriteria[] criterias = new TransitionCriteria[transitions.size()];
 		int i = 0;
-		Iterator it = iterator();
+		Iterator it = transitions.iterator();
 		while (it.hasNext()) {
 			criterias[i++] = ((Transition)it.next()).getMatchingCriteria();
 		}
@@ -135,7 +125,7 @@ public class TransitionSet {
 	 * @return the transition, or null if not found
 	 */
 	public Transition getTransition(RequestContext context) {
-		Iterator it = iterator();
+		Iterator it = transitions.iterator();
 		while (it.hasNext()) {
 			Transition transition = (Transition)it.next();
 			if (transition.matches(context)) {

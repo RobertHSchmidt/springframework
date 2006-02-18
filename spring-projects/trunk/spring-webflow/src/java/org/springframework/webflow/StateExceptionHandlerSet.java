@@ -15,12 +15,10 @@
  */
 package org.springframework.webflow;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -37,7 +35,7 @@ public class StateExceptionHandlerSet {
 	/**
 	 * The set of exception handlers.
 	 */
-	private Set exceptionHandlers = CollectionFactory.createLinkedSetIfPossible(3);
+	private List exceptionHandlers = new LinkedList();
 
 	/**
 	 * Add a state exception handler to this set.
@@ -46,6 +44,9 @@ public class StateExceptionHandlerSet {
 	 * operation
 	 */
 	public boolean add(StateExceptionHandler exceptionHandler) {
+		if (contains(exceptionHandler)) {
+			return false;
+		}
 		return exceptionHandlers.add(exceptionHandler);
 	}
 
@@ -59,7 +60,13 @@ public class StateExceptionHandlerSet {
 		if (exceptionHandlers == null) {
 			return false;
 		}
-		return this.exceptionHandlers.addAll(Arrays.asList(exceptionHandlers));
+		boolean changed = false;
+		for (int i = 0; i < exceptionHandlers.length; i++) {
+			if (add(exceptionHandlers[i]) && !changed) {
+				changed = true;
+			}
+		}
+		return changed;
 	}
 
 	/**
@@ -91,28 +98,11 @@ public class StateExceptionHandlerSet {
 	}
 
 	/**
-	 * Returns an iterator that allows iteration over the set of state exception
-	 * handlers in this set.
-	 * @return the StateExceptionHandler iterator
-	 */
-	public Iterator iterator() {
-		return exceptionHandlers.iterator();
-	}
-
-	/**
 	 * Convert this list to a typed state exception handler array.
 	 * @return the exception handler list, as a typed array
 	 */
 	public StateExceptionHandler[] toArray() {
-		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[0]);
-	}
-
-	/**
-	 * Convert this list to a <code>java.util.List</code>.
-	 * @return the exception handler list, as a java.util.List
-	 */
-	public Set toSet() {
-		return Collections.unmodifiableSet(exceptionHandlers);
+		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
 	}
 
 	/**

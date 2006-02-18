@@ -16,7 +16,6 @@
 package org.springframework.webflow;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,7 +77,7 @@ public class ActionList {
 	 * Remove the action instance from this list.
 	 * @param action the action to add
 	 * @return true if this list's contents changed as a result of the remove
-	 * operation 
+	 * operation
 	 */
 	public boolean remove(Action action) {
 		return actions.remove(action);
@@ -90,14 +89,6 @@ public class ActionList {
 	 */
 	public int size() {
 		return actions.size();
-	}
-
-	/**
-	 * Returns an iterator over the list of actions in this list.
-	 * @return the action list iterator
-	 */
-	public Iterator iterator() {
-		return actions.iterator();
 	}
 
 	/**
@@ -126,19 +117,18 @@ public class ActionList {
 	}
 
 	/**
+	 * Returns an iterator over this action list.
+	 */
+	public Iterator iterator() {
+		return actions.iterator();
+	}
+
+	/**
 	 * Convert this list to a typed action array.
 	 * @return the action list, as a typed array
 	 */
 	public Action[] toArray() {
-        return (Action[])this.actions.toArray(new Action[this.actions.size()]);
-	}
-
-	/**
-	 * Convert this list to a <code>java.util.List</code>.
-	 * @return the action list, as a java.util.List
-	 */
-	public List toList() {
-		return Collections.unmodifiableList(actions);
+		return (Action[])actions.toArray(new Action[actions.size()]);
 	}
 
 	/**
@@ -169,8 +159,7 @@ public class ActionList {
 	public void execute(RequestContext context) {
 		Iterator it = actions.iterator();
 		while (it.hasNext()) {
-			Action action = (Action)it.next();
-			ActionExecutor.execute(action, context);
+			ActionExecutor.execute((Action)it.next(), context);
 		}
 	}
 
