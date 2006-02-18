@@ -102,7 +102,7 @@ public class DecisionState extends TransitionableState {
 	 */
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 		if (action != null) {
-			Event event = new ActionExecutor(action).execute(context);
+			Event event = ActionExecutor.execute(action, context);
 			if (event != null) {
 				return context.signalEvent(event);
 			}

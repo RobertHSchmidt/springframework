@@ -181,7 +181,7 @@ public class ActionState extends TransitionableState {
 		Iterator it = actionList.iterator();
 		while (it.hasNext()) {
 			Action action = (Action)it.next();
-			Event event = new ActionExecutor(action).execute(context);
+			Event event = ActionExecutor.execute(action, context);
 			if (event != null) {
 				eventIds[executionCount] = event.getId();
 				try {

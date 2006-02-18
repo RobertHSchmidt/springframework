@@ -170,7 +170,7 @@ public class ActionList {
 		Iterator it = actions.iterator();
 		while (it.hasNext()) {
 			Action action = (Action)it.next();
-			new ActionExecutor(action).execute(context);
+			ActionExecutor.execute(action, context);
 		}
 	}
 

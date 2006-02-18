@@ -17,7 +17,6 @@ package org.springframework.webflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.Assert;
 
 /**
  * A helper that performs action execution, encapsulating common logging and
@@ -29,29 +28,11 @@ import org.springframework.util.Assert;
  */
 public class ActionExecutor {
 
-	private final Log logger = LogFactory.getLog(ActionExecutor.class);
+	private static final Log logger = LogFactory.getLog(ActionExecutor.class);
 
-	/**
-	 * The action that will be executed.
-	 */
-	private Action action;
-
-	/**
-	 * Create a new action executor.
-	 * @param action the action to execute
-	 */
-	public ActionExecutor(Action action) {
-		Assert.notNull(action, "The action to execute is required");
-		this.action = action;
+	private ActionExecutor() {
 	}
-
-	/**
-	 * Returns the wrapped action.
-	 */
-	public Action getAction() {
-		return action;
-	}
-
+	
 	/**
 	 * Execute the wrapped action.
 	 * @param context the flow execution request context
@@ -59,7 +40,7 @@ public class ActionExecutor {
 	 * @throws ActionExecutionException if the action threw an exception while
 	 * executing
 	 */
-	public Event execute(RequestContext context) throws ActionExecutionException {
+	public static Event execute(Action action, RequestContext context) throws ActionExecutionException {
 		try {
 			if (logger.isDebugEnabled()) {
 				if (context.getFlowExecutionContext().getActiveSession().getStatus() == FlowSessionStatus.STARTING) {
@@ -84,9 +65,5 @@ public class ActionExecutor {
 				throw new ActionExecutionException(context.getCurrentState(), action, context.getProperties(), e);
 			}
 		}
-	}
-
-	public String toString() {
-		return action.toString();
 	}
 }

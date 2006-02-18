@@ -84,7 +84,7 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 	}
 	
 	public boolean test(RequestContext context) {
-		Event result = new ActionExecutor(getAction()).execute(context);
+		Event result = ActionExecutor.execute(getAction(), context);
 		return result != null && getTrueEventId().equals(result.getId());
 	}
 }
