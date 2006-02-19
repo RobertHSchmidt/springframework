@@ -27,8 +27,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
@@ -36,17 +34,6 @@ import org.springframework.ws.mock.soap.MockSoapMessage;
 import org.springframework.ws.mock.soap.MockSoapMessageContext;
 
 public class MarshallingPayloadEndpointTest extends XMLTestCase {
-
-    private MockControl endpointControl;
-
-    private AbstractMarshallingPayloadEndpoint endpointMock;
-
-    protected void setUp() throws Exception {
-        endpointControl = MockClassControl.createControl(AbstractMarshallingPayloadEndpoint.class);
-        endpointMock = (AbstractMarshallingPayloadEndpoint) endpointControl.getMock();
-
-        endpointControl.reset();
-    }
 
     public void testInvoke() throws Exception {
         MockSoapMessage request = new MockSoapMessage();
@@ -78,19 +65,21 @@ public class MarshallingPayloadEndpointTest extends XMLTestCase {
                 }
             }
         };
-        endpointMock.setMarshaller(marshaller);
-        endpointMock.setUnmarshaller(unmarshaller);
-        endpointMock.afterPropertiesSet();
-        endpointControl.reset();
+        AbstractMarshallingPayloadEndpoint endpoint = new AbstractMarshallingPayloadEndpoint() {
+            protected Object invokeInternal(Object requestObject) throws Exception {
+                assertEquals("Invalid request object", new Long(42), requestObject);
+                return "result";
+            }
+        };
+        endpoint.setMarshaller(marshaller);
+        endpoint.setUnmarshaller(unmarshaller);
+        endpoint.afterPropertiesSet();
 
-        endpointControl.expectAndReturn(endpointMock.invokeInternal(new Long(42)), "result");
-        endpointControl.replay();
         MockSoapMessageContext context = new MockSoapMessageContext(request);
-        endpointMock.invoke(context);
+        endpoint.invoke(context);
         MockSoapMessage response = (MockSoapMessage) context.getResponse();
         assertNotNull("Invalid result", response);
         assertXMLEqual("Invalid response", "<result/>", response.getPayloadAsString());
-        endpointControl.verify();
     }
 
     public void testInvokeNullResponse() throws Exception {
@@ -117,17 +106,19 @@ public class MarshallingPayloadEndpointTest extends XMLTestCase {
                 fail("marshal not expected");
             }
         };
-        endpointMock.setMarshaller(marshaller);
-        endpointMock.setUnmarshaller(unmarshaller);
-        endpointMock.afterPropertiesSet();
-        endpointControl.reset();
-        endpointControl.expectAndReturn(endpointMock.invokeInternal(new Long(42)), null);
-        endpointControl.replay();
+        AbstractMarshallingPayloadEndpoint endpoint = new AbstractMarshallingPayloadEndpoint() {
+            protected Object invokeInternal(Object requestObject) throws Exception {
+                assertEquals("Invalid request object", new Long(42), requestObject);
+                return null;
+            }
+        };
+        endpoint.setMarshaller(marshaller);
+        endpoint.setUnmarshaller(unmarshaller);
+        endpoint.afterPropertiesSet();
         MockSoapMessageContext context = new MockSoapMessageContext(request);
-        endpointMock.invoke(context);
+        endpoint.invoke(context);
         MockSoapMessage response = (MockSoapMessage) context.getResponse();
         assertNull("Invalid result", response);
-        endpointControl.verify();
     }
 
 }

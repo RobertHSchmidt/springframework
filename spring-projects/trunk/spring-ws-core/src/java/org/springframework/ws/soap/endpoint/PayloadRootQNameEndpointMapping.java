@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
  */
 public class PayloadRootQNameEndpointMapping extends AbstractQNameEndpointMapping implements InitializingBean {
 
-    private Transformer transformer;
+    private TransformerFactory transformerFactory;
 
     protected QName resolveQName(WebServiceMessage message) throws TransformerException {
         Element payloadElement = getMessagePayloadElement(message);
@@ -42,13 +42,13 @@ public class PayloadRootQNameEndpointMapping extends AbstractQNameEndpointMappin
     }
 
     private Element getMessagePayloadElement(WebServiceMessage message) throws TransformerException {
+        Transformer transformer = transformerFactory.newTransformer();
         DOMResult domResult = new DOMResult();
         transformer.transform(message.getPayloadSource(), domResult);
         return (Element) domResult.getNode().getFirstChild();
     }
 
     public void afterPropertiesSet() throws Exception {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        transformer = transformerFactory.newTransformer();
+        transformerFactory = TransformerFactory.newInstance();
     }
 }

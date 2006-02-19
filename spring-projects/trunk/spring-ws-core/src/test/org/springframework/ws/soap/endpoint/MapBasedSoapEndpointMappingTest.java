@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import junit.framework.TestCase;
-import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.ws.WebServiceMessage;
 
@@ -30,15 +28,6 @@ import org.springframework.ws.WebServiceMessage;
  * Test case for AbstractMapBasedSoapEndpointMapping.
  */
 public class MapBasedSoapEndpointMappingTest extends TestCase {
-
-    private MockControl mappingControl;
-
-    private AbstractMapBasedSoapEndpointMapping mappingMock;
-
-    protected void setUp() throws Exception {
-        mappingControl = MockClassControl.createControl(AbstractMapBasedSoapEndpointMapping.class);
-        mappingMock = (AbstractMapBasedSoapEndpointMapping) mappingControl.getMock();
-    }
 
     public void testBeanNames() throws Exception {
         StaticApplicationContext context = new StaticApplicationContext();

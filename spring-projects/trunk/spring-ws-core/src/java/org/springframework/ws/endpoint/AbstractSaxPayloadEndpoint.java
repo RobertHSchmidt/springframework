@@ -42,11 +42,10 @@ public abstract class AbstractSaxPayloadEndpoint implements PayloadEndpoint, Ini
 
     protected final Log logger = LogFactory.getLog(getClass());
 
-    private Transformer transformer;
+    private TransformerFactory transformerFactory;
 
     public final void afterPropertiesSet() throws Exception {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        transformer = transformerFactory.newTransformer();
+        transformerFactory = TransformerFactory.newInstance();
         onAfterPropertiesSet();
     }
 
@@ -58,6 +57,7 @@ public abstract class AbstractSaxPayloadEndpoint implements PayloadEndpoint, Ini
      * @see #getResponse(org.xml.sax.ContentHandler)
      */
     public final Source invoke(Source request) throws Exception {
+        Transformer transformer = transformerFactory.newTransformer();
         ContentHandler contentHandler = createContentHandler();
         SAXResult result = new SAXResult(contentHandler);
         transformer.transform(request, result);

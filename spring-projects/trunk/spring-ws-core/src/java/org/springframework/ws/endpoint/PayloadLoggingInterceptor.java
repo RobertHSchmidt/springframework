@@ -20,6 +20,7 @@ import java.io.StringWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -48,7 +49,7 @@ public class PayloadLoggingInterceptor implements EndpointInterceptor, Initializ
 
     private boolean logResponse = true;
 
-    private Transformer transformer;
+    private TransformerFactory transformerFactory;
 
     /**
      * Indicates whether the request should be logged. Default is <code>true</code>.
@@ -97,18 +98,23 @@ public class PayloadLoggingInterceptor implements EndpointInterceptor, Initializ
     }
 
     public void afterPropertiesSet() throws Exception {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.setOutputProperty(OutputKeys.INDENT, "no");
+        transformerFactory = TransformerFactory.newInstance();
     }
 
     private void logMessagePayload(String logMessage, WebServiceMessage message) throws TransformerException {
         Source source = message.getPayloadSource();
         if (source != null) {
+            Transformer transformer = createTransformer();
             StringWriter writer = new StringWriter();
             transformer.transform(source, new StreamResult(writer));
             logger.debug(logMessage + writer.toString());
         }
+    }
+
+    private Transformer createTransformer() throws TransformerConfigurationException {
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.setOutputProperty(OutputKeys.INDENT, "no");
+        return transformer;
     }
 }

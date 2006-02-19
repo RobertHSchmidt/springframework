@@ -45,19 +45,19 @@ public abstract class AbstractDomPayloadEndpoint implements PayloadEndpoint, Ini
 
     protected final Log logger = LogFactory.getLog(getClass());
 
-    private Transformer transformer;
-
     private DocumentBuilder documentBuilder;
 
+    private TransformerFactory transformerFactory;
+
     public final void afterPropertiesSet() throws Exception {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        transformer = transformerFactory.newTransformer();
+        transformerFactory = TransformerFactory.newInstance();
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilder = documentBuilderFactory.newDocumentBuilder();
         onAfterPropertiesSet();
     }
 
     public final Source invoke(Source request) throws Exception {
+        Transformer transformer = transformerFactory.newTransformer();
         DOMResult domResult = new DOMResult();
         transformer.transform(request, domResult);
         Element requestElement = (Element) ((Document) domResult.getNode()).getFirstChild();
