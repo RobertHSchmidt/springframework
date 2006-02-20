@@ -20,14 +20,13 @@ import java.util.Map;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.Converter;
-import org.springframework.binding.util.AttributeMapAccessorSupport;
 
 /**
  * Base class for converters provided as a convenience to implementors.
  * 
  * @author Keith Donald
  */
-public abstract class AbstractConverter extends AttributeMapAccessorSupport implements Converter {
+public abstract class AbstractConverter implements Converter {
 
 	/**
 	 * Convenience convert method that converts the provided source to the first

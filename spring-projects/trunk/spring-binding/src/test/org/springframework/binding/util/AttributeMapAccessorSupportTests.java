@@ -6,12 +6,16 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 public class AttributeMapAccessorSupportTests extends TestCase {
-	private AttributeMapAccessorSupport tested = new AttributeMapAccessorSupport();
+	private MapAccessor tested;
 	
-	public void testGetBoolean() {
+	public void setUp() {
 		Map attributes = new HashMap();
 		attributes.put("boolean", Boolean.TRUE);
-		boolean result = tested.getBooleanAttribute("boolean", attributes, false);
+		tested = new MapAccessor(attributes);
+	}
+	
+	public void testGetBoolean() {
+		boolean result = tested.getBooleanValue("boolean", false);
 		assertEquals(true, result);
 	}
 }
