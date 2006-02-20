@@ -220,5 +220,12 @@
 	  <zipfileset dir="../spring-ws/oxm/target/javadocs" prefix="doc/api/oxm"/>
     </zip>
   </target>
-  
+
+  <target name="cvs-update">
+	<cvs dest="${basedir}" command="update"/>
+	<cvs dest="${basedir}/../spring-oxm" command="update"/>
+	<cvs dest="${basedir}/../spring-ws-core" command="update"/>
+	<cvs dest="${basedir}/../common-build" command="update"/>
+	<cvs dest="${basedir}/../spring-ws-samples" command="update"/>  
+  </target>
 </project>
