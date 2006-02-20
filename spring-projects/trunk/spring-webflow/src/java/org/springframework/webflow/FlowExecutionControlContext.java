@@ -20,8 +20,7 @@ import java.util.Map;
 /**
  * Mutable control interface used to manipulate an ongoing flow execution in the
  * context of one client request. Primarily used internally by the various flow
- * artifacts when they are invoked, but also used by the flow execution
- * management layer to drive flow execution.
+ * artifacts when they are invoked.
  * <p>
  * This interface acts as a facade for core definition constructs such as the
  * central <code>Flow</code> and <code>State</code> classes, abstracting
@@ -73,7 +72,8 @@ public interface FlowExecutionControlContext extends RequestContext {
 
 	/**
 	 * Spawn a new flow session and activate it in the currently executing flow.
-	 * Also transitions the spawned flow to its start state. This method should
+	 * Also transitions the spawned flow to its start state, which may be
+	 * overridden by providing the optional state parameter. This method should
 	 * be called by clients that wish to spawn new flows, such as subflow
 	 * states.
 	 * @param flow the flow to start, its <code>start()</code> method will be
