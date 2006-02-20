@@ -41,12 +41,12 @@ import org.springframework.webflow.RequestContext;
  * definition:
  * 
  * <pre>
- *  &lt;action-state id=&quot;doStuff&quot;&gt;
- *     &lt;action bean=&quot;myStatefulActionProxy&quot; method=&quot;myActionMethod&quot;&gt;
- *        &lt;property name=&quot;actionId&quot; value=&quot;myStatefulMultiAction&quot; /&gt;
- *        &lt;property name=&quot;myCustomProperty&quot; value=&quot;myValue&quot; /&gt;
- *     &lt;/action&gt;
- *  &lt;/action-state&gt;
+ *   &lt;action-state id=&quot;doStuff&quot;&gt;
+ *      &lt;action bean=&quot;myStatefulActionProxy&quot; method=&quot;myActionMethod&quot;&gt;
+ *         &lt;property name=&quot;actionId&quot; value=&quot;myStatefulMultiAction&quot; /&gt;
+ *         &lt;property name=&quot;myCustomProperty&quot; value=&quot;myValue&quot; /&gt;
+ *      &lt;/action&gt;
+ *   &lt;/action-state&gt;
  * </pre>
  * 
  * <p>
@@ -91,7 +91,7 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * action bean should be configured as a prototype instance.
 	 */
 	public String getActionId() {
-		return this.actionId;
+		return actionId;
 	}
 
 	/**
@@ -135,8 +135,8 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 		Assert.hasText(actionId,
 				"You must specify the id of the stateful action to invoke using the 'actionId' property");
 		String actionAttribute = getActionAttribute(context, actionId);
-		Assert.hasText(actionAttribute, "You must specify the attribute name of the stateful action in flow " +
-                                "scope using the 'actionAttribute' property");
+		Assert.hasText(actionAttribute, "You must specify the attribute name of the stateful action in flow "
+				+ "scope using the 'actionAttribute' property");
 		if (!context.getFlowScope().containsAttribute(actionAttribute)) {
 			context.getFlowScope().setAttribute(actionAttribute, lookupAction(actionId));
 		}
@@ -162,12 +162,7 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * @return the bean id
 	 */
 	protected String getActionId(RequestContext context) {
-		if (context.getProperties().containsKey(ACTION_ID_PROPERTY)) {
-			return (String)context.getProperties().get(ACTION_ID_PROPERTY);
-		}
-		else {
-			return getActionId();
-		}
+		return getActionPropertyAccessor(context).getString(ACTION_ID_PROPERTY, getActionId());
 	}
 
 	/**
@@ -180,17 +175,12 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * @return the action attribute name
 	 */
 	protected String getActionAttribute(RequestContext context, String actionId) {
-		Object result = getActionProperty(context, ACTION_ATTRIBUTE_PROPERTY, null);
+		String result = getActionPropertyAccessor(context).getString(ACTION_ATTRIBUTE_PROPERTY, null);
 		if (result != null) {
-			return (String)result;
+			return result;
 		}
 		else {
-			if (StringUtils.hasText(getActionAttribute())) {
-				return getActionAttribute();
-			}
-			else {
-				return actionId;
-			}
+			return StringUtils.hasText(getActionAttribute()) ? getActionAttribute() : actionId;
 		}
 	}
 }

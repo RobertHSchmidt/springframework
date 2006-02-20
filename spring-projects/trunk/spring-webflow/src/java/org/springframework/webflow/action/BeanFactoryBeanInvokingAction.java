@@ -113,7 +113,7 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	 * its life.
 	 */
 	protected Object getBean(RequestContext context) {
-		String beanName = (String)getActionProperty(context, BEAN_PROPERTY, getTargetBeanName());
+		String beanName = getActionPropertyAccessor(context).getString(BEAN_PROPERTY, getTargetBeanName());
 		Assert.hasText(beanName, "The bean name to invoke was not specified: set the bean property");
 		return getBeanFactory().getBean(beanName);
 	}

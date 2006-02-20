@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.DecisionState;
@@ -130,10 +131,10 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * @param context the request context
 	 */
 	protected void processMethodReturnValue(Object returnValue, RequestContext context) {
-		String resultName = (String)getActionProperty(context, AnnotatedAction.RESULT_NAME_PROPERTY, null);
+		MapAccessor propertyMap = getActionPropertyAccessor(context);
+		String resultName = propertyMap.getString(AnnotatedAction.RESULT_NAME_PROPERTY, null);
 		if (resultName != null) {
-			ScopeType scopeType = (ScopeType)getActionProperty(context, AnnotatedAction.RESULT_SCOPE_PROPERTY,
-					ScopeType.REQUEST);
+			ScopeType scopeType = (ScopeType)propertyMap.get(AnnotatedAction.RESULT_SCOPE_PROPERTY, ScopeType.REQUEST);
 			scopeType.getScope(context).setAttribute(resultName, returnValue);
 		}
 	}
@@ -189,16 +190,16 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 			else {
 				// simply return success, saving the return value as an event
 				// parameter
-				String resultParameterName = (String)ActionUtils.getActionProperty(context, RESULT_PARAMETER,
-						RESULT_PARAMETER);
+				MapAccessor propertyMap = new MapAccessor(context.getProperties());
+				String resultParameterName = propertyMap.getString(RESULT_PARAMETER, RESULT_PARAMETER);
 				return success(resultParameterName, resultObject);
 			}
 		}
 
 		/**
 		 * Called when this action is invoked by a decision state - adapts the
-		 * invoked method's return value to an event identifier the decision state
-		 * can respond to.
+		 * invoked method's return value to an event identifier the decision
+		 * state can respond to.
 		 * @param context the request context
 		 * @param resultObject the return value
 		 * @return the decision event

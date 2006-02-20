@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -59,28 +60,13 @@ public abstract class AbstractAction extends EventFactorySupport implements Acti
 	}
 
 	/**
-	 * Get a named execution property for this action from the request context.
+	 * Get an accessor for getting contextual properties that may be used to affect this 
+	 * action's execution.
 	 * @param context the flow execution request context
-	 * @param propertyName the name of the property to get
-	 * @param defaultValue the default value to use when the named property
-	 * cannot be found in the execution properties
-	 * @return the property value
+	 * @return the action property accessor
 	 */
-	protected Object getActionProperty(RequestContext context, String propertyName, Object defaultValue) {
-		return ActionUtils.getActionProperty(context, propertyName, defaultValue);
-	}
-
-	/**
-	 * Get a names execution property for this action from the request context.
-	 * Throw an exception if the property is not defined.
-	 * @param context the flow execution request context
-	 * @param propertyName the name of the property to get
-	 * @return the property value
-	 * @throws IllegalStateException when the property is not defined
-	 */
-	protected Object getRequiredActionProperty(RequestContext context, String propertyName)
-			throws IllegalStateException {
-		return ActionUtils.getRequiredActionProperty(context, propertyName);
+	protected MapAccessor getActionPropertyAccessor(RequestContext context) {
+		return new MapAccessor(context.getProperties());
 	}
 
 	public final Event execute(RequestContext context) throws Exception {
