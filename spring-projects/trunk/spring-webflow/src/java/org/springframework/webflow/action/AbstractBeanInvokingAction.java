@@ -131,7 +131,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * @param context the request context
 	 */
 	protected void processMethodReturnValue(Object returnValue, RequestContext context) {
-		MapAccessor propertyMap = getActionPropertyAccessor(context);
+		MapAccessor propertyMap = getPropertyMapAccessor(context);
 		String resultName = propertyMap.getString(AnnotatedAction.RESULT_NAME_PROPERTY, null);
 		if (resultName != null) {
 			ScopeType scopeType = (ScopeType)propertyMap.get(AnnotatedAction.RESULT_SCOPE_PROPERTY, ScopeType.REQUEST);

@@ -41,12 +41,12 @@ import org.springframework.webflow.RequestContext;
  * definition:
  * 
  * <pre>
- *   &lt;action-state id=&quot;doStuff&quot;&gt;
- *      &lt;action bean=&quot;myStatefulActionProxy&quot; method=&quot;myActionMethod&quot;&gt;
- *         &lt;property name=&quot;actionId&quot; value=&quot;myStatefulMultiAction&quot; /&gt;
- *         &lt;property name=&quot;myCustomProperty&quot; value=&quot;myValue&quot; /&gt;
- *      &lt;/action&gt;
- *   &lt;/action-state&gt;
+ *    &lt;action-state id=&quot;doStuff&quot;&gt;
+ *       &lt;action bean=&quot;myStatefulActionProxy&quot; method=&quot;myActionMethod&quot;&gt;
+ *          &lt;property name=&quot;actionId&quot; value=&quot;myStatefulMultiAction&quot; /&gt;
+ *          &lt;property name=&quot;myCustomProperty&quot; value=&quot;myValue&quot; /&gt;
+ *       &lt;/action&gt;
+ *    &lt;/action-state&gt;
  * </pre>
  * 
  * <p>
@@ -162,7 +162,7 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * @return the bean id
 	 */
 	protected String getActionId(RequestContext context) {
-		return getActionPropertyAccessor(context).getString(ACTION_ID_PROPERTY, getActionId());
+		return getPropertyMapAccessor(context).getString(ACTION_ID_PROPERTY, getActionId());
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * @return the action attribute name
 	 */
 	protected String getActionAttribute(RequestContext context, String actionId) {
-		String result = getActionPropertyAccessor(context).getString(ACTION_ATTRIBUTE_PROPERTY, null);
+		String result = getPropertyMapAccessor(context).getString(ACTION_ATTRIBUTE_PROPERTY, null);
 		if (result != null) {
 			return result;
 		}

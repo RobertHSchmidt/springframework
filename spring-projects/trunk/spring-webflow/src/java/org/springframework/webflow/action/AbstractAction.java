@@ -65,7 +65,7 @@ public abstract class AbstractAction extends EventFactorySupport implements Acti
 	 * @param context the flow execution request context
 	 * @return the action property accessor
 	 */
-	protected MapAccessor getActionPropertyAccessor(RequestContext context) {
+	protected MapAccessor getPropertyMapAccessor(RequestContext context) {
 		return new MapAccessor(context.getProperties());
 	}
 
