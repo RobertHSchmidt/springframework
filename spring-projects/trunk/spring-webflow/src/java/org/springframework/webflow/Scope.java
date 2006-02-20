@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.core.style.StylerUtils;
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
@@ -54,13 +54,18 @@ public class Scope implements Map, Serializable {
 	/**
 	 * The data holder map.
 	 */
-	private Map attributes = Collections.EMPTY_MAP;
+	private Map attributes;
 
+	/**
+	 * A helper for accessing attributes. 
+	 */
+	private transient MapAccessor attributesAccessor;
+	
 	/**
 	 * Creates a new scope, initially empty.
 	 */
 	public Scope() {
-		
+		initAttributes(Collections.EMPTY_MAP);
 	}
 	
 	/**
@@ -69,7 +74,9 @@ public class Scope implements Map, Serializable {
 	 */
 	public Scope(Map attributes) {
 		if (attributes != null) {
-			this.attributes = attributes;
+			initAttributes(attributes);
+		} else {
+			initAttributes(Collections.EMPTY_MAP);
 		}
 	}
 	
@@ -90,13 +97,7 @@ public class Scope implements Map, Serializable {
 	 * @return true if so, false otherwise
 	 */
 	public boolean containsAttribute(String attributeName, Class requiredType) {
-		if (containsAttribute(attributeName)) {
-			Assert.notNull(requiredType, "The required type to assert is required");
-			return requiredType.isInstance(attributes.get(attributeName));
-		}
-		else {
-			return false;
-		}
+		return attributesAccessor.containsKey(attributeName, requiredType);
 	}
 
 	/**
@@ -116,12 +117,7 @@ public class Scope implements Map, Serializable {
 	 * @throws IllegalStateException when the value is not of the required type
 	 */
 	public Object getAttribute(String attributeName, Class requiredType) throws IllegalStateException {
-		Object value = getAttribute(attributeName);
-		if (value != null) {
-			Assert.notNull(requiredType, "The required type to assert is required");
-			Assert.isInstanceOf(requiredType, value);
-		}
-		return value;
+		return attributesAccessor.get(attributeName, requiredType);
 	}
 
 	/**
@@ -131,12 +127,7 @@ public class Scope implements Map, Serializable {
 	 * @throws IllegalStateException when the attribute is not found
 	 */
 	public Object getRequiredAttribute(String attributeName) throws IllegalStateException {
-		Object value = getAttribute(attributeName);
-		if (value == null) {
-			throw new IllegalStateException("Required attribute '" + attributeName + "' is not present in " + this
-					+ "; attributes present are " + StylerUtils.style(getAttributeMap()));
-		}
-		return value;
+		return attributesAccessor.getRequired(attributeName);
 	}
 
 	/**
@@ -149,10 +140,7 @@ public class Scope implements Map, Serializable {
 	 * the required type
 	 */
 	public Object getRequiredAttribute(String attributeName, Class requiredType) throws IllegalStateException {
-		Assert.notNull(requiredType, "The required type to assert is required");
-		Object value = getRequiredAttribute(attributeName);
-		Assert.isInstanceOf(requiredType, value);
-		return value;
+		return attributesAccessor.getRequired(attributeName);
 	}
 
 	/**
@@ -175,7 +163,7 @@ public class Scope implements Map, Serializable {
 	 */
 	public Object setAttribute(String attributeName, Object attributeValue) {
 		if (attributes == Collections.EMPTY_MAP) {
-			attributes = createAttributeMap();
+			initAttributes(createAttributeMap());
 		}
 		return attributes.put(attributeName, attributeValue);
 	}
@@ -244,10 +232,9 @@ public class Scope implements Map, Serializable {
 
 	public void putAll(Map attributes) {
 		if (this.attributes == Collections.EMPTY_MAP) {
-			this.attributes = new HashMap(attributes);
-		} else {
-			this.attributes.putAll(attributes);
+			initAttributes(createAttributeMap());
 		}
+		this.attributes.putAll(attributes);
 	}
 
 	public void clear() {
@@ -278,6 +265,10 @@ public class Scope implements Map, Serializable {
 		return attributes.equals(other.attributes);
 	}
 	
+	private void initAttributes(Map attributes) {
+		this.attributes = attributes;
+		attributesAccessor = new MapAccessor(this.attributes);
+	}
 	public String toString() {
 		return new ToStringCreator(this).append("attributes", attributes).toString();
 	}
