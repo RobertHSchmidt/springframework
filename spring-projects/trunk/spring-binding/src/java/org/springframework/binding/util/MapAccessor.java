@@ -15,6 +15,7 @@
  */
 package org.springframework.binding.util;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.util.Assert;
@@ -46,7 +47,7 @@ public class MapAccessor {
 	 * @return the map
 	 */
 	public Map getMap() {
-		return map;
+		return Collections.unmodifiableMap(map);
 	}
 
 	/**
@@ -56,11 +57,11 @@ public class MapAccessor {
 	 * @param defaultValue the default
 	 * @return the attribute value
 	 */
-	public Object getValue(Object key, Object defaultValue) throws IllegalArgumentException {
-		if (!contains(key)) {
+	public Object get(Object key, Object defaultValue) throws IllegalArgumentException {
+		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
-		return getMap().get(key);
+		return map.get(key);
 	}
 
 	/**
@@ -70,22 +71,10 @@ public class MapAccessor {
 	 * @param requiredType the required type
 	 * @return the attribute value
 	 */
-	public Object getValue(Object key, Class requiredType) throws IllegalArgumentException {
-		if (!contains(key)) {
-			return getMap().get(key);
+	public Object get(Object key, Class requiredType) throws IllegalArgumentException {
+		if (!map.containsKey(key)) {
+			return map.get(key);
 		}
-		return assertValueType(key, requiredType);
-	}
-
-	/**
-	 * Returns an attribute value in the map, asserting it is present and of the
-	 * required type.
-	 * @param key the attribute name
-	 * @param requiredType the required type
-	 * @return the attribute value
-	 */
-	public Object getRequiredValue(Object key, Class requiredType) throws IllegalArgumentException {
-		assertContains(key);
 		return assertValueType(key, requiredType);
 	}
 
@@ -95,9 +84,21 @@ public class MapAccessor {
 	 * @param key the attribute name
 	 * @return the attribute value
 	 */
-	public Object getRequiredValue(Object key) throws IllegalArgumentException {
-		assertContains(key);
-		return getMap().get(key);
+	public Object getRequired(Object key) throws IllegalArgumentException {
+		assertContainsKey(key);
+		return map.get(key);
+	}
+
+	/**
+	 * Returns an attribute value in the map, asserting it is present and of the
+	 * required type.
+	 * @param key the attribute name
+	 * @param requiredType the required type
+	 * @return the attribute value
+	 */
+	public Object getRequired(Object key, Class requiredType) throws IllegalArgumentException {
+		assertContainsKey(key);
+		return assertValueType(key, requiredType);
 	}
 
 	/**
@@ -107,8 +108,8 @@ public class MapAccessor {
 	 * @param defaultValue the default
 	 * @return the stringattribute value
 	 */
-	public String getStringValue(Object key, String defaultValue) throws IllegalArgumentException {
-		if (!contains(key)) {
+	public String getString(Object key, String defaultValue) throws IllegalArgumentException {
+		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
 		return (String)assertValueType(key, String.class);
@@ -120,8 +121,8 @@ public class MapAccessor {
 	 * @param key the attribute name
 	 * @return the string attribute value
 	 */
-	public String getRequiredStringValue(Object key) throws IllegalArgumentException {
-		assertContains(key);
+	public String getRequiredString(Object key) throws IllegalArgumentException {
+		assertContainsKey(key);
 		return (String)assertValueType(key, String.class);
 	}
 
@@ -132,8 +133,8 @@ public class MapAccessor {
 	 * @param defaultValue the default
 	 * @return the int attribute value
 	 */
-	public int getIntValue(Object key, int defaultValue) throws IllegalArgumentException {
-		if (!contains(key)) {
+	public int getInt(Object key, int defaultValue) throws IllegalArgumentException {
+		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
 		return ((Integer)assertValueType(key, Integer.class)).intValue();
@@ -145,8 +146,8 @@ public class MapAccessor {
 	 * @param key the attribute name
 	 * @return the int attribute value
 	 */
-	public int getRequiredIntValue(Object key) throws IllegalArgumentException {
-		assertContains(key);
+	public int getRequiredInt(Object key) throws IllegalArgumentException {
+		assertContainsKey(key);
 		return ((Integer)assertValueType(key, Integer.class)).intValue();
 	}
 
@@ -157,8 +158,8 @@ public class MapAccessor {
 	 * @param defaultValue the default
 	 * @return the int attribute value
 	 */
-	public long getLongValue(Object key, long defaultValue) throws IllegalArgumentException {
-		if (!contains(key)) {
+	public long getLong(Object key, long defaultValue) throws IllegalArgumentException {
+		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
 		return ((Long)assertValueType(key, Long.class)).longValue();
@@ -170,8 +171,8 @@ public class MapAccessor {
 	 * @param key the attribute name
 	 * @return the int attribute value
 	 */
-	public long getRequiredLongValue(Object key) throws IllegalArgumentException {
-		assertContains(key);
+	public long getRequiredLong(Object key) throws IllegalArgumentException {
+		assertContainsKey(key);
 		return ((Long)assertValueType(key, Long.class)).longValue();
 	}
 
@@ -182,8 +183,8 @@ public class MapAccessor {
 	 * @param defaultValue the default
 	 * @return the boolean attribute value
 	 */
-	public boolean getBooleanValue(Object key, boolean defaultValue) throws IllegalArgumentException {
-		if (!contains(key)) {
+	public boolean getBoolean(Object key, boolean defaultValue) throws IllegalArgumentException {
+		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
 		return ((Boolean)assertValueType(key, Boolean.class)).booleanValue();
@@ -195,8 +196,8 @@ public class MapAccessor {
 	 * @param key the attribute name
 	 * @return the boolean attribute value
 	 */
-	public boolean getRequiredBooleanValue(Object key) throws IllegalArgumentException {
-		assertContains(key);
+	public boolean getRequiredBoolean(Object key) throws IllegalArgumentException {
+		assertContainsKey(key);
 		return ((Boolean)assertValueType(key, Boolean.class)).booleanValue();
 	}
 
@@ -206,20 +207,11 @@ public class MapAccessor {
 	 * @param attributes the attribute map
 	 * @return true if present, false if not present.
 	 */
-	public void assertContains(Object key) throws IllegalArgumentException {
-		if (!contains(key)) {
+	public void assertContainsKey(Object key) throws IllegalArgumentException {
+		if (!map.containsKey(key)) {
 			throw new IllegalArgumentException("Required attribute '" + key
 					+ "' is not present in map; attributes present are [" + getMap() + "]");
 		}
-	}
-
-	/**
-	 * Indicates if the attribute is present in the attribute map.
-	 * @param attributeName the attribute name
-	 * @return true if present, false if not present.
-	 */
-	public boolean contains(Object key) {
-		return getMap() != null && getMap().containsKey(key);
 	}
 
 	/**
@@ -228,8 +220,8 @@ public class MapAccessor {
 	 * @param key the attribute name
 	 * @return true if present and of the required type, false if not present.
 	 */
-	public boolean contains(Object key, Class requiredType) throws IllegalArgumentException {
-		if (contains(key)) {
+	public boolean containsKey(Object key, Class requiredType) throws IllegalArgumentException {
+		if (map.containsKey(key)) {
 			assertValueType(key, requiredType);
 			return true;
 		}
@@ -246,7 +238,7 @@ public class MapAccessor {
 	 * @return the attribute value
 	 */
 	public Object assertValueType(Object key, Class requiredType) {
-		Object value = getMap().get(key);
+		Object value = map.get(key);
 		if (!requiredType.isInstance(value)) {
 			throw new IllegalArgumentException("Map key '" + key + "' has value [" + value
 					+ "] that is not of expected type [" + requiredType + "], instead it is of type ["

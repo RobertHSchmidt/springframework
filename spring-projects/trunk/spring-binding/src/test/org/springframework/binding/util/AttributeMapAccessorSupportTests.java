@@ -15,7 +15,7 @@ public class AttributeMapAccessorSupportTests extends TestCase {
 	}
 	
 	public void testGetBoolean() {
-		boolean result = tested.getBooleanValue("boolean", false);
+		boolean result = tested.getBoolean("boolean", false);
 		assertEquals(true, result);
 	}
 }
