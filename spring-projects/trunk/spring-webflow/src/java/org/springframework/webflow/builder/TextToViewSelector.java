@@ -22,6 +22,7 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.CompositeStringExpression;
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.State;
@@ -54,12 +55,14 @@ import org.springframework.webflow.support.SimpleViewSelector;
 public class TextToViewSelector extends ConversionServiceAwareConverter {
 
 	/**
-	 * The name of the state context attribute; can be used to influence converter behavior.
+	 * The name of the state context attribute; can be used to influence
+	 * converter behavior.
 	 */
 	public static final String STATE_CONTEXT_ATTRIBUTE = "state";
 
 	/**
-	 * The name of the redirect context attribute; can be used to influence converter behavior.
+	 * The name of the redirect context attribute; can be used to influence
+	 * converter behavior.
 	 */
 	public static final String REDIRECT_CONTEXT_ATTRIBUTE = "redirect";
 
@@ -125,7 +128,8 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 * @throws ConversionException when an error occurs
 	 */
 	protected ViewSelector createSimpleViewSelector(String encodedView, Map context) throws ConversionException {
-		return new SimpleViewSelector(encodedView, getBooleanAttribute(REDIRECT_CONTEXT_ATTRIBUTE, context, false));
+		boolean redirect = new MapAccessor(context).getBooleanValue(REDIRECT_CONTEXT_ATTRIBUTE, false);
+		return new SimpleViewSelector(encodedView, redirect);
 	}
 
 	/**

@@ -98,7 +98,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		context.setLastEvent(createEvent("action2Name.event2"));
 		assertTrue(actionState1.getTransitionSet().transitionMatches(context));
 		transition = actionState1.getRequiredTransition(context);
-		assertEquals("viewState2",  getTargetStateId(transition));
+		assertEquals("viewState2", getTargetStateId(transition));
 		assertEquals("prop1Value", actionState1.getActionList().getAnnotated(0).getProperties().get("prop1"));
 		assertEquals("prop2Value", actionState1.getActionList().getAnnotated(0).getProperties().get("prop2"));
 
@@ -112,7 +112,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		context.setLastEvent(createEvent("event1"));
 		assertTrue(viewState1.getTransitionSet().transitionMatches(context));
 		transition = viewState1.getRequiredTransition(context);
-		assertEquals("subFlowState1",  getTargetStateId(transition));
+		assertEquals("subFlowState1", getTargetStateId(transition));
 
 		ViewState viewState2 = (ViewState)flow.getState("viewState2");
 		assertNotNull(viewState2);
@@ -120,7 +120,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		context.setLastEvent(createEvent("event2"));
 		assertTrue(viewState2.getTransitionSet().transitionMatches(context));
 		transition = viewState2.getRequiredTransition(context);
-		assertEquals("subFlowState2",  getTargetStateId(transition));
+		assertEquals("subFlowState2", getTargetStateId(transition));
 
 		SubflowState subFlowState1 = (SubflowState)flow.getState("subFlowState1");
 		assertNotNull(subFlowState1);
@@ -131,7 +131,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		context.setLastEvent(createEvent("finish"));
 		assertTrue(subFlowState1.getTransitionSet().transitionMatches(context));
 		transition = subFlowState1.getRequiredTransition(context);
-		assertEquals("spawnInlineFlow",  getTargetStateId(transition));
+		assertEquals("spawnInlineFlow", getTargetStateId(transition));
 
 		SubflowState subFlowState2 = (SubflowState)flow.getState("subFlowState2");
 		assertNotNull(subFlowState2);
@@ -142,7 +142,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		context.setLastEvent(createEvent("finish"));
 		assertTrue(subFlowState2.getTransitionSet().transitionMatches(context));
 		transition = subFlowState2.getRequiredTransition(context);
-		assertEquals("decisionState1",  getTargetStateId(transition));
+		assertEquals("decisionState1", getTargetStateId(transition));
 
 		ParameterizableFlowAttributeMapper mapper = (ParameterizableFlowAttributeMapper)subFlowState2
 				.getAttributeMapper();
@@ -189,8 +189,9 @@ public class XmlFlowBuilderTests extends TestCase {
 	}
 
 	protected String getTargetStateId(Transition transition) {
-		 return ((StaticTargetStateResolver)transition.getTargetStateResolver()).getTargetStateId();
+		return ((StaticTargetStateResolver)transition.getTargetStateResolver()).getTargetStateId();
 	}
+
 	/**
 	 * Flow service locator for the services needed by the testFlow (defined in
 	 * testFlow.xml)

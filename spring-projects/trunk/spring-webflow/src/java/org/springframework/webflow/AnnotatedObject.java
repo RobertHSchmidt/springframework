@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.binding.util.MapAccessor;
+
 /**
  * Superclass of all objects in the web flow system that support annotation
  * using arbitrary properties. Mainly used to ensure consistent configuration of
@@ -46,7 +48,12 @@ public abstract class AnnotatedObject {
 	 * Additional properties further describing this object. The properties set
 	 * in this map may be arbitrary.
 	 */
-	private Map properties = new HashMap(6);
+	private Map properties = new HashMap();
+
+	/**
+	 * A helper for accessing the properties describing this object.
+	 */
+	private transient MapAccessor propertyMapAccessor = new MapAccessor(properties);
 
 	/**
 	 * Returns the value of given property, or <code>null</code> if not found.
@@ -74,52 +81,7 @@ public abstract class AnnotatedObject {
 	public boolean containsProperty(String name) {
 		return properties.containsKey(name);
 	}
-
-	/**
-	 * Returns a string property value.
-	 * @param name the property name
-	 * @param defaultValue the default value, if the property is not set
-	 * @return the property value
-	 */
-	public String getStringProperty(String name, String defaultValue) {
-		if (containsProperty(name)) {
-			return (String)getProperty(name);
-		}
-		else {
-			return defaultValue;
-		}
-	}
-
-	/**
-	 * Returns an integer property value.
-	 * @param name the property name
-	 * @param defaultValue the default value, if the property is not set
-	 * @return the property value
-	 */
-	public int getIntProperty(String name, int defaultValue) {
-		if (containsProperty(name)) {
-            return ((Integer)getProperty(name)).intValue();
-		}
-		else {
-			return defaultValue;
-		}
-	}
-
-	/**
-	 * Returns a boolean property value.
-	 * @param name the property name
-	 * @param defaultValue the default value, if the property is not set
-	 * @return the property value
-	 */
-	public boolean getBooleanProperty(String name, boolean defaultValue) {
-		if (containsProperty(name)) {
-			return ((Boolean)getProperty(name)).booleanValue();
-		}
-		else {
-			return defaultValue;
-		}
-	}
-
+	
 	/**
 	 * Returns the short description of the action (suitable for display in a
 	 * tooltip).
@@ -150,7 +112,7 @@ public abstract class AnnotatedObject {
 	public void setDescription(String description) {
 		setProperty(DESCRIPTION_PROPERTY, description);
 	}
-	
+
 	/**
 	 * Returns the additional properties describing this object in an
 	 * unmodifiable map.
@@ -158,7 +120,7 @@ public abstract class AnnotatedObject {
 	public Map getProperties() {
 		return Collections.unmodifiableMap(properties);
 	}
-
+	
 	/**
 	 * Adds (puts) additional properties describing this object.
 	 */
@@ -166,5 +128,13 @@ public abstract class AnnotatedObject {
 		if (properties != null) {
 			this.properties.putAll(properties);
 		}
+	}
+
+	/**
+	 * Returns a helper for accessing properties of this annotated object.
+	 * @return the property map accessor
+	 */
+	public MapAccessor getPropertyMapAccessor() {
+		return propertyMapAccessor;
 	}
 }
