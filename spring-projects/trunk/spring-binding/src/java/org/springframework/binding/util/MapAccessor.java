@@ -65,24 +65,24 @@ public class MapAccessor {
 	}
 
 	/**
-	 * Returns an attribute value in the map, asserting it is of the required
-	 * type if present.
-	 * @param key the attribute name
+	 * Returns a value in the map, asserting it is of the required type if
+	 * present.
+	 * @param key the key
 	 * @param requiredType the required type
-	 * @return the attribute value
+	 * @return the value
 	 */
 	public Object get(Object key, Class requiredType) throws IllegalArgumentException {
 		if (!map.containsKey(key)) {
 			return map.get(key);
 		}
-		return assertValueType(key, requiredType);
+		return assertValueOfType(key, requiredType);
 	}
 
 	/**
-	 * Returns an attribute value in the map, throwing an exception if the
-	 * attribute is not present and of the correct type.
-	 * @param key the attribute name
-	 * @return the attribute value
+	 * Returns a value in the map, throwing an exception if the attribute is not
+	 * present and of the correct type.
+	 * @param key the key
+	 * @return the value
 	 */
 	public Object getRequired(Object key) throws IllegalArgumentException {
 		assertContainsKey(key);
@@ -90,122 +90,218 @@ public class MapAccessor {
 	}
 
 	/**
-	 * Returns an attribute value in the map, asserting it is present and of the
-	 * required type.
-	 * @param key the attribute name
+	 * Returns an value in the map, asserting it is present and of the required
+	 * type.
+	 * @param key the key
 	 * @param requiredType the required type
-	 * @return the attribute value
+	 * @return the value
 	 */
 	public Object getRequired(Object key, Class requiredType) throws IllegalArgumentException {
 		assertContainsKey(key);
-		return assertValueType(key, requiredType);
+		return assertValueOfType(key, requiredType);
 	}
 
 	/**
-	 * Returns a string attribute value in the map, returning the defaultValue
-	 * if no value was found.
-	 * @param key the attribute name
+	 * Returns a string value in the map, returning <code>null</code> if no
+	 * value was found.
+	 * @param key the key
+	 * @return the string value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not a string
+	 */
+	public String getString(Object key) throws IllegalArgumentException {
+		return getString(key, null);
+	}
+
+	/**
+	 * Returns a string value in the map, returning the defaultValue if no value
+	 * was found.
+	 * @param key the key
 	 * @param defaultValue the default
-	 * @return the stringattribute value
+	 * @return the string value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not a string
 	 */
 	public String getString(Object key, String defaultValue) throws IllegalArgumentException {
 		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
-		return (String)assertValueType(key, String.class);
+		return (String)assertValueOfType(key, String.class);
 	}
 
 	/**
-	 * Returns a string attribute value in the map, throwing an exception if the
-	 * attribute is not present and of the correct type.
-	 * @param key the attribute name
-	 * @return the string attribute value
+	 * Returns a string value in the map, throwing an exception if the attribute
+	 * is not present and of the correct type.
+	 * @param key the key
+	 * @return the string value
+	 * @throws IllegalArgumentException if the key is not present or present but
+	 * the value is not a string
 	 */
 	public String getRequiredString(Object key) throws IllegalArgumentException {
 		assertContainsKey(key);
-		return (String)assertValueType(key, String.class);
+		return (String)assertValueOfType(key, String.class);
 	}
 
 	/**
-	 * Returns an int attribute value in the map, returning the defaultValue if
-	 * no value was found.
+	 * Returns a number value in the map that is of the specified type,
+	 * returning <code>null</code> if no value was found.
+	 * @param key the key
+	 * @param requiredType the required number type
+	 * @return the numbervalue
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not a number of the required type
+	 */
+	public Number getNumber(Object key, Class requiredType) throws IllegalArgumentException {
+		return getNumber(key, null, requiredType);
+	}
+
+	/**
+	 * Returns a number attribute value in the map of the specified type,
+	 * returning the defaultValue if no value was found.
 	 * @param key the attribute name
 	 * @param defaultValue the default
-	 * @return the int attribute value
+	 * @return the number value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not a number of the required type
 	 */
-	public int getInt(Object key, int defaultValue) throws IllegalArgumentException {
+	public Number getNumber(Object key, Number defaultValue, Class requiredType) throws IllegalArgumentException {
 		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
-		return ((Integer)assertValueType(key, Integer.class)).intValue();
+		return (Number)assertValueOfType(key, requiredType);
 	}
 
 	/**
-	 * Returns an int attribute value in the map, throwing an exception if the
-	 * attribute is not present and of the correct type.
-	 * @param key the attribute name
-	 * @return the int attribute value
+	 * Returns a number value in the map, throwing an exception if the attribute
+	 * is not present and of the correct type.
+	 * @param key the key
+	 * @return the number value
+	 * @throws IllegalArgumentException if the key is not present or present but
+	 * the value is not a number of the required type
 	 */
-	public int getRequiredInt(Object key) throws IllegalArgumentException {
+	public Number getRequiredNumber(Object key, Class requiredType) throws IllegalArgumentException {
 		assertContainsKey(key);
-		return ((Integer)assertValueType(key, Integer.class)).intValue();
+		return (Number)assertValueOfType(key, requiredType);
 	}
 
 	/**
-	 * Returns a long attribute value in the map, returning the defaultValue if
-	 * no value was found.
-	 * @param key the attribute name
-	 * @param defaultValue the default
-	 * @return the int attribute value
+	 * Returns an integer value in the map, returning <code>null</code> if no
+	 * value was found.
+	 * @param key the key
+	 * @return the integer value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not an integer
 	 */
-	public long getLong(Object key, long defaultValue) throws IllegalArgumentException {
+	public Integer getInteger(Object key) throws IllegalArgumentException {
+		return getInteger(key, null);
+	}
+
+	/**
+	 * Returns an integer value in the map, returning the defaultValue if no
+	 * value was found.
+	 * @param key the key
+	 * @param defaultValue the default
+	 * @return the integer value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not an integer
+	 */
+	public Integer getInteger(Object key, Integer defaultValue) throws IllegalArgumentException {
+		return (Integer)getNumber(key, defaultValue, Integer.class);
+	}
+
+	/**
+	 * Returns an integer value in the map, throwing an exception if the value
+	 * is not present and of the correct type.
+	 * @param key the attribute name
+	 * @return the integer attribute value
+	 * @throws IllegalArgumentException if the key is not present or present but
+	 * the value is not an integer
+	 */
+	public Integer getRequiredInteger(Object key) throws IllegalArgumentException {
+		return (Integer)getRequiredNumber(key, Integer.class);
+	}
+
+	/**
+	 * Returns a long value in the map, returning <code>null</code> if no
+	 * value was found.
+	 * @param key the key
+	 * @return the long value
+	 * @throws IllegalArgumentException if the key is present but not a long
+	 */
+	public Long getLong(Object key) throws IllegalArgumentException {
+		return getLong(key, null);
+	}
+
+	/**
+	 * Returns a long value in the map, returning the defaultValue if no value
+	 * was found.
+	 * @param key the key
+	 * @param defaultValue the default
+	 * @return the long attribute value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not a long
+	 */
+	public Long getLong(Object key, Long defaultValue) throws IllegalArgumentException {
+		return (Long)getNumber(key, defaultValue, Long.class);
+	}
+
+	/**
+	 * Returns a long value in the map, throwing an exception if the value is
+	 * not present and of the correct type.
+	 * @param key the key
+	 * @return the long attribute value
+	 * @throws IllegalArgumentException if the key is not present or present but
+	 * the value is not a long
+	 */
+	public Long getRequiredLong(Object key) throws IllegalArgumentException {
+		return (Long)getRequiredNumber(key, Long.class);
+	}
+
+	/**
+	 * Returns a boolean value in the map, returning <code>null</code> if no
+	 * value was found.
+	 * @param key the key
+	 * @return the boolean value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not a boolean
+	 */
+	public Boolean getBoolean(Object key) throws IllegalArgumentException {
+		return getBoolean(key, null);
+	}
+
+	/**
+	 * Returns a boolean value in the map, returning the defaultValue if no
+	 * value was found.
+	 * @param key the key
+	 * @param defaultValue the default
+	 * @return the boolean value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not a boolean
+	 */
+	public Boolean getBoolean(Object key, Boolean defaultValue) throws IllegalArgumentException {
 		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
-		return ((Long)assertValueType(key, Long.class)).longValue();
+		return (Boolean)assertValueOfType(key, Boolean.class);
 	}
 
 	/**
-	 * Returns a long attribute value in the map, throwing an exception if the
-	 * attribute is not present and of the correct type.
-	 * @param key the attribute name
-	 * @return the int attribute value
+	 * Returns a boolean value in the map, throwing an exception if the value is
+	 * not present and of the correct type.
+	 * @param key the attribute
+	 * @return the boolean value
+	 * @throws IllegalArgumentException if the key is not present or present but
+	 * the value is not a boolean
 	 */
-	public long getRequiredLong(Object key) throws IllegalArgumentException {
+	public Boolean getRequiredBoolean(Object key) throws IllegalArgumentException {
 		assertContainsKey(key);
-		return ((Long)assertValueType(key, Long.class)).longValue();
-	}
-
-	/**
-	 * Returns a boolean attribute value in the map, returning the defaultValue
-	 * if no value was found.
-	 * @param key the attribute name
-	 * @param defaultValue the default
-	 * @return the boolean attribute value
-	 */
-	public boolean getBoolean(Object key, boolean defaultValue) throws IllegalArgumentException {
-		if (!map.containsKey(key)) {
-			return defaultValue;
-		}
-		return ((Boolean)assertValueType(key, Boolean.class)).booleanValue();
-	}
-
-	/**
-	 * Returns a boolean attribute value in the map, throwing an exception if
-	 * the attribute is not present and of the correct type.
-	 * @param key the attribute name
-	 * @return the boolean attribute value
-	 */
-	public boolean getRequiredBoolean(Object key) throws IllegalArgumentException {
-		assertContainsKey(key);
-		return ((Boolean)assertValueType(key, Boolean.class)).booleanValue();
+		return (Boolean)assertValueOfType(key, Boolean.class);
 	}
 
 	/**
 	 * Asserts that the attribute is present in the attribute map.
-	 * @param key the attribute name
-	 * @param attributes the attribute map
-	 * @return true if present, false if not present.
+	 * @param key the key
+	 * @throws IllegalArgumentException if the key is not present
 	 */
 	public void assertContainsKey(Object key) throws IllegalArgumentException {
 		if (!map.containsKey(key)) {
@@ -222,7 +318,7 @@ public class MapAccessor {
 	 */
 	public boolean containsKey(Object key, Class requiredType) throws IllegalArgumentException {
 		if (map.containsKey(key)) {
-			assertValueType(key, requiredType);
+			assertValueOfType(key, requiredType);
 			return true;
 		}
 		else {
@@ -237,7 +333,7 @@ public class MapAccessor {
 	 * @param type the required type
 	 * @return the attribute value
 	 */
-	public Object assertValueType(Object key, Class requiredType) {
+	public Object assertValueOfType(Object key, Class requiredType) {
 		Object value = map.get(key);
 		if (!requiredType.isInstance(value)) {
 			throw new IllegalArgumentException("Map key '" + key + "' has value [" + value
