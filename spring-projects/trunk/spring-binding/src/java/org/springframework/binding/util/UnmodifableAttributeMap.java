@@ -1,52 +1,26 @@
 package org.springframework.binding.util;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A generic attribute map with string keys.
+ * A wrapper around a attribute map that hides mutable operations. Useful for
+ * passing around when modification of the target map should be disallowed.
  * 
  * @author Keith Donald
  */
-public class AttributeMap implements AttributesGetter, AttributesSetter, Serializable {
+public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 
 	/**
-	 * The backing map storing the attributes.
+	 * The wrapped, modifiable attribute map.
 	 */
-	private Map attributes = new HashMap();
-
-	/**
-	 * A helper for accessing attributes.
-	 */
-	private transient MapAccessor attributesAccessor;
+	private AttributeMap attributes;
 
 	/**
 	 * Creates a new attribute map, initially empty.
 	 */
-	public AttributeMap() {
-		initAttributes(new HashMap());
-	}
-
-	/**
-	 * Creates a new attribute map of the specified size.
-	 */
-	public AttributeMap(int size) {
-		initAttributes(new HashMap(size));
-	}
-
-	/**
-	 * Creates a new attribute map of the specified size and loadFactor.
-	 */
-	public AttributeMap(int size, int loadFactor) {
-		initAttributes(new HashMap(size, loadFactor));
-	}
-
-	/**
-	 * Creates a new attribute map from the provided attribute map.
-	 */
-	public AttributeMap(AttributeMap attributeMap) {
-		initAttributes(new HashMap(attributeMap.getMap()));
+	public UnmodifableAttributeMap(AttributeMap attributes) {
+		this.attributes = attributes;
 	}
 
 	/**
@@ -55,7 +29,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * @return true if so, false otherwise
 	 */
 	public boolean containsAttribute(String attributeName) {
-		return attributes.containsKey(attributeName);
+		return attributes.containsAttribute(attributeName);
 	}
 
 	/**
@@ -66,7 +40,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * @return true if so, false otherwise
 	 */
 	public boolean containsAttribute(String attributeName, Class requiredType) throws IllegalArgumentException {
-		return attributesAccessor.containsKey(attributeName, requiredType);
+		return attributes.containsAttribute(attributeName, requiredType);
 	}
 
 	/**
@@ -75,14 +49,14 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * @throws IllegalArgumentException if the key is not present
 	 */
 	public void assertContainsAttribute(String attributeName) throws IllegalArgumentException {
-		attributesAccessor.assertContainsKey(attributeName);
+		attributes.assertContainsAttribute(attributeName);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.springframework.binding.util.AttributesGetter#getAttribute(java.lang.String)
 	 */
 	public Object getAttribute(String attributeName) {
-		return attributes.get(attributeName);
+		return attributes.getAttribute(attributeName);
 	}
 
 	/**
@@ -93,7 +67,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * @throws IllegalStateException when the value is not of the required type
 	 */
 	public Object getAttribute(String attributeName, Class requiredType) throws IllegalStateException {
-		return attributesAccessor.get(attributeName, requiredType);
+		return attributes.getAttribute(attributeName, requiredType);
 	}
 
 	/**
@@ -105,7 +79,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * string
 	 */
 	public String getStringAttribute(String attributeName) throws IllegalArgumentException {
-		return attributesAccessor.getString(attributeName);
+		return attributes.getStringAttribute(attributeName);
 	}
 
 	/**
@@ -118,7 +92,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * string
 	 */
 	public String getStringAttribute(String attributeName, String defaultValue) throws IllegalArgumentException {
-		return attributesAccessor.getString(attributeName, defaultValue);
+		return attributes.getStringAttribute(attributeName, defaultValue);
 	}
 
 	/**
@@ -130,7 +104,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * present but not a string
 	 */
 	public String getRequiredStringAttribute(String attributeName) throws IllegalArgumentException {
-		return attributesAccessor.getRequiredString(attributeName);
+		return attributes.getRequiredStringAttribute(attributeName);
 	}
 
 	/**
@@ -143,7 +117,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * number of the required type
 	 */
 	public Number getNumberAttribute(String attributeName, Class requiredType) throws IllegalArgumentException {
-		return attributesAccessor.getNumber(attributeName, requiredType);
+		return attributes.getNumberAttribute(attributeName, requiredType);
 	}
 
 	/**
@@ -157,7 +131,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 */
 	public Number getNumberAttribute(String attributeName, Number defaultValue, Class requiredType)
 			throws IllegalArgumentException {
-		return attributesAccessor.getNumber(attributeName, defaultValue, requiredType);
+		return attributes.getNumberAttribute(attributeName, defaultValue, requiredType);
 	}
 
 	/**
@@ -169,7 +143,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * present but not a number of the required type
 	 */
 	public Number getRequiredNumberAttribute(String attributeName, Class requiredType) throws IllegalArgumentException {
-		return attributesAccessor.getRequiredNumber(attributeName, requiredType);
+		return attributes.getRequiredNumberAttribute(attributeName, requiredType);
 	}
 
 	/**
@@ -181,7 +155,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * integer
 	 */
 	public Integer getIntegerAttribute(String attributeName) throws IllegalArgumentException {
-		return attributesAccessor.getInteger(attributeName);
+		return attributes.getIntegerAttribute(attributeName);
 	}
 
 	/**
@@ -194,7 +168,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * integer
 	 */
 	public Integer getIntegerAttribute(String attributeName, Integer defaultValue) throws IllegalArgumentException {
-		return attributesAccessor.getInteger(attributeName, defaultValue);
+		return attributes.getIntegerAttribute(attributeName, defaultValue);
 	}
 
 	/**
@@ -206,7 +180,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * present but not an integer
 	 */
 	public Integer getRequiredIntegerAttribute(String attributeName) throws IllegalArgumentException {
-		return attributesAccessor.getRequiredInteger(attributeName);
+		return attributes.getRequiredIntegerAttribute(attributeName);
 	}
 
 	/**
@@ -218,7 +192,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * long
 	 */
 	public Long getLongAttribute(String attributeName) throws IllegalArgumentException {
-		return attributesAccessor.getLong(attributeName);
+		return attributes.getLongAttribute(attributeName);
 	}
 
 	/**
@@ -231,7 +205,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * long
 	 */
 	public Long getLongAttribute(String attributeName, Long defaultValue) throws IllegalArgumentException {
-		return attributesAccessor.getLong(attributeName, defaultValue);
+		return attributes.getLongAttribute(attributeName, defaultValue);
 	}
 
 	/**
@@ -243,7 +217,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * present but not a long
 	 */
 	public Long getRequiredLongAttribute(String attributeName) throws IllegalArgumentException {
-		return attributesAccessor.getRequiredLong(attributeName);
+		return attributes.getRequiredLongAttribute(attributeName);
 	}
 
 	/**
@@ -255,7 +229,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * boolean
 	 */
 	public Boolean getBooleanAttribute(String attributeName) {
-		return attributesAccessor.getBoolean(attributeName);
+		return attributes.getBooleanAttribute(attributeName);
 	}
 
 	/**
@@ -268,7 +242,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * boolean
 	 */
 	public Boolean getBooleanAttribute(String attributeName, Boolean defaultValue) {
-		return attributesAccessor.getBoolean(attributeName, defaultValue);
+		return attributes.getBooleanAttribute(attributeName, defaultValue);
 	}
 
 	/**
@@ -280,7 +254,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * present but is not a boolean
 	 */
 	public Boolean getRequiredBooleanAttribute(String attributeName) {
-		return attributesAccessor.getRequiredBoolean(attributeName);
+		return attributes.getRequiredBooleanAttribute(attributeName);
 	}
 
 	/**
@@ -290,7 +264,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * @throws IllegalStateException when the attribute is not found
 	 */
 	public Object getRequiredAttribute(String attributeName) throws IllegalStateException {
-		return attributesAccessor.getRequired(attributeName);
+		return attributes.getRequiredAttribute(attributeName);
 	}
 
 	/**
@@ -303,22 +277,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * the required type
 	 */
 	public Object getRequiredAttribute(String attributeName, Class requiredType) throws IllegalStateException {
-		return attributesAccessor.getRequired(attributeName);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.springframework.binding.util.AttributesSetter#setAttribute(java.lang.String, java.lang.Object)
-	 */
-	public Object setAttribute(String attributeName, Object attributeValue) {
-		return attributes.put(attributeName, attributeValue);
-	}
-
-	/**
-	 * Put all the attributes into this scope.
-	 * @param attributes the attributes to put into this scope.
-	 */
-	public void addAttributes(AttributeMap attributeMap) {
-		attributes.putAll(attributeMap.getMap());
+		return attributes.getRequiredAttribute(attributeName);
 	}
 
 	/**
@@ -327,25 +286,7 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * @return the number of attributes in this scope
 	 */
 	public int getAttributesCount() {
-		return attributes.size();
-	}
-
-	/**
-	 * Remove an attribute from this scope.
-	 * @param attributeName the name of the attribute to remove
-	 * @return previous value associated with specified attribute name, or
-	 * <tt>null</tt> if there was no mapping for the name
-	 */
-	public Object removeAttribute(String attributeName) {
-		return attributes.remove(attributeName);
-	}
-
-	/**
-	 * Clear the attributes in this map.
-	 * @throws UnsupportedOperationException clear is not supported
-	 */
-	public void clear() throws UnsupportedOperationException {
-		attributes.clear();
+		return attributes.getAttributesCount();
 	}
 
 	/**
@@ -353,18 +294,6 @@ public class AttributeMap implements AttributesGetter, AttributesSetter, Seriali
 	 * @return the scope contents, unmodifiable
 	 */
 	public Map getMap() {
-		return attributesAccessor.getMap();
-	}
-
-	/**
-	 * Factory method to return the default attribute map used by this scope.
-	 */
-	protected Map createAttributeMap() {
-		return new HashMap();
-	}
-
-	private void initAttributes(Map attributes) {
-		this.attributes = attributes;
-		attributesAccessor = new MapAccessor(this.attributes);
+		return attributes.getMap();
 	}
 }
