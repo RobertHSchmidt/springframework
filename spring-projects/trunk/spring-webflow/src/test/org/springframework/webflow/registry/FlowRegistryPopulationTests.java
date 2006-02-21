@@ -75,7 +75,8 @@ public class FlowRegistryPopulationTests extends TestCase {
 		FlowRegistry registry = (FlowRegistry)ac.getBean("flowRegistry2");
 		assertEquals("Wrong registry definition count", 9, registry.getFlowCount());
 		Flow flow4 = registry.getFlow("flow4");
-		assertEquals("Property not assigned?", "testPropertyValue", flow4.getProperty("testPropertyName"));
+		assertEquals("Property not assigned?", "testPropertyValue", flow4.getAttributeMap().getAttribute(
+				"testPropertyName"));
 	}
 
 	public void testXmlFlowRegistryFactoryBeanFlowDefinitionProperties() {

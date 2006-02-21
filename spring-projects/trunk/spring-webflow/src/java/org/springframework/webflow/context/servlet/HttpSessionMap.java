@@ -20,9 +20,9 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.webflow.ExternalContext.SharedMap;
-import org.springframework.webflow.util.EmptyEnumeration;
-import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
+import org.springframework.binding.util.EmptyEnumeration;
+import org.springframework.binding.util.SharedMap;
+import org.springframework.binding.util.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP session, for accessing session scoped
@@ -30,7 +30,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
  * 
  * @author Keith Donald
  */
-public class HttpSessionMap extends StringKeyedAttributeMapAdapter implements SharedMap {
+public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 
 	/**
 	 * The wrapped http request, providing access to the session.

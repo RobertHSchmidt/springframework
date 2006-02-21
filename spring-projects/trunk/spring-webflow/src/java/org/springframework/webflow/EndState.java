@@ -16,12 +16,10 @@
 package org.springframework.webflow;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.support.MarkerViewSelector;
@@ -160,12 +158,12 @@ public class EndState extends State {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Returning ending view selection " + selectedView);
 			}
-			context.endActiveFlowSession(createOutput(activeSession.getScope()));
+			context.endActiveFlowSession(createSessionOutput(activeSession.getScope()));
 			return selectedView;
 		}
 		else {
 			// there is a parent flow that will resume (this flow is a subflow)
-			Map sessionOutput = createOutput(activeSession.getScope());
+			AttributeMap sessionOutput = createSessionOutput(activeSession.getScope());
 			context.endActiveFlowSession(sessionOutput);
 			return context.signalEvent(new Event(this, getId(), sessionOutput));
 		}
@@ -175,15 +173,15 @@ public class EndState extends State {
 	 * Returns the subflow result event parameter map. Default implementation
 	 * returns an empty map. Subclasses may override.
 	 */
-	protected Map createOutput(Scope subflowScope) {
+	protected AttributeMap createSessionOutput(AttributeMap scope) {
 		if (outputAttributeNames.isEmpty()) {
-			return Collections.EMPTY_MAP;
+			return new AttributeMap();
 		}
-		Map output = new HashMap(outputAttributeNames.size());
+		AttributeMap output = new AttributeMap(outputAttributeNames.size());
 		Iterator it = outputAttributeNames.iterator();
 		while (it.hasNext()) {
 			String attributeName = (String)it.next();
-			output.put(attributeName, subflowScope.getAttribute(attributeName));
+			output.setAttribute(attributeName, scope.getAttribute(attributeName));
 		}
 		return output;
 	}

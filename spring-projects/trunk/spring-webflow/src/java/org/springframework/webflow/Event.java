@@ -15,18 +15,18 @@
  */
 package org.springframework.webflow;
 
-import java.util.Collections;
 import java.util.EventObject;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.EmptyAttributeCollection;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
  * Signals the occurence of something an executing flow should respond to. Each
  * event has a string id that provides a key for what happened: e.g
- * "coinInserted", or "pinDropped". Events may have parameters that provide
+ * "coinInserted", or "pinDropped". Events may have attributes that provide
  * arbitrary payload data, e.g. "coin.amount=25", or "pinDropSpeed=25ms".
  * <p>
  * For example, a "submit" event might signal that a Submit button was pressed
@@ -42,22 +42,22 @@ import org.springframework.util.Assert;
  * @author Erwin Vervaet
  * @author Colin Sampaleanu
  */
-public class Event extends EventObject {
+public final class Event extends EventObject {
 
 	/**
 	 * The event identifier.
 	 */
-	private String id;
+	private final String id;
 
 	/**
 	 * The time the event occured.
 	 */
-	private long timestamp = System.currentTimeMillis();
+	private final long timestamp = System.currentTimeMillis();
 
 	/**
-	 * Additional event parameters that form this event's payload.
+	 * Additional event attributes that form this event's payload.
 	 */
-	private Map parameters;
+	private final UnmodifiableAttributeMap attributes;
 
 	/**
 	 * Create a new event with the specified <code>id</code>.
@@ -65,8 +65,7 @@ public class Event extends EventObject {
 	 * @param id the event identifier
 	 */
 	public Event(Object source, String id) {
-		super(source);
-		setRequiredId(id);
+		this(source, id, EmptyAttributeCollection.INSTANCE);
 	}
 
 	/**
@@ -74,12 +73,17 @@ public class Event extends EventObject {
 	 * contextual parameters.
 	 * @param source the source of the event
 	 * @param id the event identifier
-	 * @param parameters contextual parameters
+	 * @param attributes additional event attributes
 	 */
-	public Event(Object source, String id, Map parameters) {
+	public Event(Object source, String id, AttributeCollection attributes) {
 		super(source);
-		setRequiredId(id);
-		setParameters(parameters);
+		Assert.hasText(id, "The event id is required: please set this event's id to a non-blank string identifier");
+		this.id = id;
+		if (attributes == null) {
+			attributes = EmptyAttributeCollection.INSTANCE;
+		}
+		this.attributes = attributes.unmodifiable();
+		
 	}
 
 	/**
@@ -88,25 +92,7 @@ public class Event extends EventObject {
 	 * @return the event id
 	 */
 	public String getId() {
-		return this.id;
-	}
-
-	/**
-	 * Set the event identifier and make sure it is not null.
-	 * @param id the event identifier
-	 * @throws IllegalArgumentException when the provided id is null or an empty
-	 * string
-	 */
-	protected void setRequiredId(String id) throws IllegalArgumentException {
-		Assert.hasText(id, "The event id is required: please set this event's id to a non-blank string identifier");
-		setId(id);
-	}
-
-	/**
-	 * Set the event identifier.
-	 */
-	protected void setId(String id) {
-		this.id = id;
+		return id;
 	}
 
 	/**
@@ -115,23 +101,7 @@ public class Event extends EventObject {
 	 * @return the timestamp
 	 */
 	public long getTimestamp() {
-		return this.timestamp;
-	}
-
-	/**
-	 * Returns a parameter value given a parameter name, or <code>null</code>
-	 * if the parameter was not found.
-	 * @param parameterName the name of the parameter
-	 * @return the parameter value, or <code>null</code> if the parameter is
-	 * not present in the event
-	 */
-	public Object getParameter(String parameterName) {
-		if (parameters != null) {
-			return parameters.get(parameterName);
-		}
-		else {
-			return null;
-		}
+		return timestamp;
 	}
 
 	/**
@@ -139,36 +109,14 @@ public class Event extends EventObject {
 	 * this event.
 	 * @return the parameters of the event
 	 */
-	public Map getParameters() {
-		if (parameters != null) {
-			return Collections.unmodifiableMap(parameters);
-		}
-		else {
-			return Collections.EMPTY_MAP;
-		}
+	public UnmodifiableAttributeMap getAttributes() {
+		return attributes;
 	}
 
-	/**
-	 * Set the contextual parameters.
-	 */
-	protected void setParameters(Map parameters) {
-		this.parameters = parameters;
-	}
-
-	/**
-	 * Add given parameters to the set of parameters of this event.
-	 */
-	protected void addParameters(Map parameters) {
-		if (parameters != null) {
-			if (this.parameters == null) {
-				this.parameters = new HashMap(parameters.size());
-			}
-			this.parameters.putAll(parameters);
-		}
-	}
-
+	// helpers
+	
 	public String toString() {
-		return new ToStringCreator(this).append("source", getSource()).append("id", getId()).append("parameters",
-				getParameters()).toString();
+		return new ToStringCreator(this).append("source", getSource()).append("id", getId()).append("attributes",
+				getAttributes()).toString();
 	}
 }

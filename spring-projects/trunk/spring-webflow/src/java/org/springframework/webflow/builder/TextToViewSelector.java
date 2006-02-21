@@ -128,7 +128,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 * @throws ConversionException when an error occurs
 	 */
 	protected ViewSelector createSimpleViewSelector(String encodedView, Map context) throws ConversionException {
-		boolean redirect = new MapAccessor(context).getBoolean(REDIRECT_CONTEXT_ATTRIBUTE, false);
+		boolean redirect = new MapAccessor(context).getBoolean(REDIRECT_CONTEXT_ATTRIBUTE, Boolean.FALSE).booleanValue();
 		return new SimpleViewSelector(encodedView, redirect);
 	}
 

@@ -17,6 +17,10 @@ package org.springframework.webflow;
 
 import java.util.Map;
 
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+
 /**
  * Central interface that allows clients to access contextual information about
  * an ongoing flow execution within the context of a single client request. The
@@ -97,7 +101,7 @@ public interface RequestContext {
 	 * this request only.</b>
 	 * @return the request scope
 	 */
-	public Scope getRequestScope();
+	public AttributeMap getRequestScope();
 
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in
@@ -106,7 +110,7 @@ public interface RequestContext {
 	 * @return the flow scope
 	 * @see FlowExecutionContext#getActiveSession()
 	 */
-	public Scope getFlowScope();
+	public AttributeMap getFlowScope();
 
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in
@@ -114,16 +118,16 @@ public interface RequestContext {
 	 * of the executing flow and are shared accross all flow sessions.</b>
 	 * @return the conversation scope
 	 */
-	public Scope getConversationScope();
+	public AttributeMap getConversationScope();
 
 	/**
 	 * Returns the immutable input parameters associated with this request into
-	 * Spring Web Flow.  The map returned is immutable and cannot be changed.
+	 * Spring Web Flow. The map returned is immutable and cannot be changed.
 	 * <p>
 	 * This is typically a convenient shortcut for accessing the
 	 * {@link ExternalContext#getRequestParameterMap()} directly.
 	 */
-	public Map getRequestParameters();
+	public UnmodifiableAttributeMap getRequestParameters();
 
 	/**
 	 * Returns the external client context that originated (or triggered) this
@@ -169,19 +173,21 @@ public interface RequestContext {
 	public Transition getLastTransition();
 
 	/**
-	 * Returns a context map for accessing arbitrary properties about the state
-	 * of the current request. Properties provisioned within this map are often
-	 * used by {@link Action} implementations to influence their behavior.
-	 * @return the current properties of this request, or empty if not set
+	 * Returns a context map for accessing arbitrary attributes about the state
+	 * of the current request.
+	 * <p>
+	 * Attributes provisioned within this map are often used by {@link Action}
+	 * implementations to influence their behavior.
+	 * @return the current attributes of this request, or empty if not set
 	 */
-	public Map getProperties();
+	public UnmodifiableAttributeMap getAttributes();
 
 	/**
-	 * Update the set of contextual properties describing the state of this
-	 * request.
-	 * @param properties the properties
+	 * Set the contextual attributes describing the state of this request.
+	 * Overwrites any pre-existing collection.
+	 * @param attributes the attributes
 	 */
-	public void setProperties(Map properties);
+	public void setAttributes(AttributeCollection attributes);
 
 	/**
 	 * Returns the data model for this context, suitable for exposing to clients
@@ -190,5 +196,5 @@ public interface RequestContext {
 	 * @return the model that can be exposed to a client view for rendering
 	 * purposes
 	 */
-	public Map getModel();
+	public UnmodifiableAttributeMap getModel();
 }

@@ -3,10 +3,10 @@
  */
 package org.springframework.webflow.test;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.Scope;
 
 /**
  * A stub implementation of the flow execution context interface.
@@ -19,7 +19,7 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 
 	private FlowSession activeSession;
 
-	private Scope scope = new Scope();
+	private AttributeMap scope = new AttributeMap();
 
 	/**
 	 * Creates a new mock flow execution context--automatically installs a root
@@ -62,7 +62,7 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 		return activeSession;
 	}
 
-	public Scope getScope() {
+	public AttributeMap getScope() {
 		return scope;
 	}
 
@@ -83,7 +83,7 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	/**
 	 * Sets flow execution (conversational) scope.
 	 */
-	public void setScope(Scope scope) {
+	public void setScope(AttributeMap scope) {
 		this.scope = scope;
 	}
 

@@ -17,6 +17,7 @@ package org.springframework.webflow.execution;
 
 import java.util.Map;
 
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.util.Assert;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
@@ -158,7 +159,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		executing = true;
 	}
 
-	public void sessionEnded(RequestContext context, FlowSession endedSession, Map sessionOutput) {
+	public void sessionEnded(RequestContext context, FlowSession endedSession, UnmodifiableAttributeMap sessionOutput) {
 		assertStarted();
 		if (endedSession.isRoot()) {
 			Assert.state(flowNestingLevel == 0, "The flow execution should have ended");

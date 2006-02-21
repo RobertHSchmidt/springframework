@@ -19,8 +19,8 @@ import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
 
-import org.springframework.webflow.ExternalContext.SharedMap;
-import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
+import org.springframework.binding.util.SharedMap;
+import org.springframework.binding.util.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Servlet context, for accessing application scoped
@@ -28,7 +28,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
  * 
  * @author Keith Donald
  */
-public class HttpServletContextMap extends StringKeyedAttributeMapAdapter implements SharedMap {
+public class HttpServletContextMap extends StringKeyedMapAdapter implements SharedMap {
 
 	/**
 	 * The wrapped servlet context.

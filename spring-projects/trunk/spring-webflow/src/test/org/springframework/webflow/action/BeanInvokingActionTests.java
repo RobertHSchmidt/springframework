@@ -20,6 +20,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.binding.method.Parameter;
 import org.springframework.binding.method.Parameters;
@@ -62,8 +63,8 @@ public class BeanInvokingActionTests extends TestCase {
 		beanFactory.registerSingleton("bean", Bean.class);
 		action.setBeanFactory(beanFactory);
 		MockRequestContext context = new MockRequestContext();
-		context.setProperty("method", new MethodKey("execute"));
-		context.setProperty("bean", "bean");
+		context.setAttribute("method", new MethodKey("execute"));
+		context.setAttribute("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
 		assertTrue(bean.executed);
@@ -75,11 +76,11 @@ public class BeanInvokingActionTests extends TestCase {
 		beanFactory.registerSingleton("bean", Bean.class);
 		action.setBeanFactory(beanFactory);
 		MockRequestContext context = new MockRequestContext();
-		Map parameters = new HashMap();
-		parameters.put("foo", "a string value");
-		context.setLastEvent(new Event(this, "submit", parameters));
-		context.setProperty("method", new MethodKey("execute", new Parameter(String.class, "lastEvent.parameters.foo")));
-		context.setProperty("bean", "bean");
+		AttributeMap attributes = new AttributeMap();
+		attributes.setAttribute("foo", "a string value");
+		context.setLastEvent(new Event(this, "submit", attributes));
+		context.setAttribute("method", new MethodKey("execute", new Parameter(String.class, "lastEvent.attributes.foo")));
+		context.setAttribute("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
 		assertTrue("Didn't execute:", bean.executed);
@@ -92,13 +93,13 @@ public class BeanInvokingActionTests extends TestCase {
 		beanFactory.registerSingleton("bean", Bean.class);
 		action.setBeanFactory(beanFactory);
 		MockRequestContext context = new MockRequestContext();
-		Map parameters = new HashMap();
-		parameters.put("foo", "a string value");
-		parameters.put("bar", "12345");
-		context.setLastEvent(new Event(this, "submit", parameters));
-		context.setProperty("method", new MethodKey("execute", new Parameters(new Parameter[] {
-				new Parameter(String.class, "lastEvent.parameters.foo"), new Parameter(Integer.class, "lastEvent.parameters.bar") })));
-		context.setProperty("bean", "bean");
+		AttributeMap attributes = new AttributeMap();
+		attributes.setAttribute("foo", "a string value");
+		attributes.setAttribute("bar", "12345");
+		context.setLastEvent(new Event(this, "submit", attributes));
+		context.setAttribute("method", new MethodKey("execute", new Parameters(new Parameter[] {
+				new Parameter(String.class, "lastEvent.attributes.foo"), new Parameter(Integer.class, "lastEvent.attributes.bar") })));
+		context.setAttribute("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
 		assertTrue(bean.executed);

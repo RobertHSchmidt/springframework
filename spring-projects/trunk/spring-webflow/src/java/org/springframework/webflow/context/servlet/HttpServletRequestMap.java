@@ -19,7 +19,7 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
+import org.springframework.binding.util.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP request attribute map, for accessing request
@@ -27,7 +27,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
  * 
  * @author Keith Donald
  */
-public class HttpServletRequestMap extends StringKeyedAttributeMapAdapter {
+public class HttpServletRequestMap extends StringKeyedMapAdapter {
 
 	/**
 	 * The wrapped http request.

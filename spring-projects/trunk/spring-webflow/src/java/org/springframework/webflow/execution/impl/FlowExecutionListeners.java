@@ -17,6 +17,8 @@ package org.springframework.webflow.execution.impl;
 
 import java.util.Map;
 
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -103,7 +105,7 @@ public class FlowExecutionListeners {
 	 * Notify all interested listeners that a flow execution session is
 	 * starting.
 	 */
-	public void fireSessionStarting(RequestContext context, State startState, Map input) {
+	public void fireSessionStarting(RequestContext context, State startState, AttributeMap input) {
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].sessionStarting(context, startState, input);
 		}
@@ -183,7 +185,7 @@ public class FlowExecutionListeners {
 	 * Notify all interested listeners that the active flow execution session is
 	 * ending.
 	 */
-	public void fireSessionEnding(RequestContext context, Map sessionOutput) {
+	public void fireSessionEnding(RequestContext context, AttributeMap sessionOutput) {
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].sessionEnding(context, sessionOutput);
 		}
@@ -192,7 +194,7 @@ public class FlowExecutionListeners {
 	/**
 	 * Notify all interested listeners that a flow execution session has ended.
 	 */
-	public void fireSessionEnded(RequestContext context, FlowSession endedSession, Map sessionOutput) {
+	public void fireSessionEnded(RequestContext context, FlowSession endedSession, UnmodifiableAttributeMap sessionOutput) {
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].sessionEnded(context, endedSession, sessionOutput);
 		}

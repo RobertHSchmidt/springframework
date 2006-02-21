@@ -19,9 +19,11 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.util.Assert;
-import org.springframework.webflow.Scope;
 import org.springframework.webflow.ViewSelection;
+
+import sun.reflect.generics.scope.Scope;
 
 /**
  * Represents an active, ongoing conversation between a user and the Spring Web
@@ -53,7 +55,7 @@ public class Conversation implements Serializable {
 	/**
 	 * The attribute map that forms the basis of <i>conversationScope</i>.
 	 */
-	private Scope scope = new Scope();
+	private AttributeMap scope = new AttributeMap();
 
 	/**
 	 * Creates a new object representing a logical conversation between a
@@ -132,7 +134,7 @@ public class Conversation implements Serializable {
 	 * Returns conversation attributes that form the basis of <i>conversation
 	 * scope</i>.
 	 */
-	public Scope getScope() {
+	public AttributeMap getScope() {
 		return scope;
 	}
 
@@ -140,7 +142,7 @@ public class Conversation implements Serializable {
 	 * Sets the conversation attributes that form the basis of <i>conversation
 	 * scope</i>.
 	 */
-	public void setScope(Scope scope) {
+	public void setScope(AttributeMap scope) {
 		this.scope = scope;
 	}
 }

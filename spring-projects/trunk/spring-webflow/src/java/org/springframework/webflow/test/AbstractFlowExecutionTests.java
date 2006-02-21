@@ -20,6 +20,8 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.webflow.ExternalContext;
@@ -87,14 +89,14 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	/**
 	 * Start the flow execution that will be tested. Pass in the populated
 	 * request parameter map for access during execution startup.
-	 * @param requestParameterMap request parameters needed by the flow
-	 * execution to complete startup
+	 * @param requestParameters request parameters needed by the flow execution
+	 * to complete startup
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
-	protected ViewSelection startFlow(Map requestParameterMap) {
-		return startFlow(new MockExternalContext(requestParameterMap), null);
+	protected ViewSelection startFlow(AttributeCollection requestParameters) {
+		return startFlow(new MockExternalContext(requestParameters), null);
 	}
 
 	/**
@@ -112,16 +114,16 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	/**
 	 * Start the flow execution that will be tested. Pass in the populated
 	 * request parameter map for access during execution startup.
-	 * @param requestParameterMap request parameters needed by the flow
-	 * execution to complete startup
+	 * @param requestParameters request parameters needed by the flow execution
+	 * to complete startup
 	 * @param listener a single listener to attach to the flow execution for
 	 * this test scenario.
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
-	protected ViewSelection startFlow(Map requestParameterMap, FlowExecutionListener listener) {
-		return startFlow(new MockExternalContext(requestParameterMap), new FlowExecutionListener[] { listener });
+	protected ViewSelection startFlow(AttributeCollection requestParameters, FlowExecutionListener listener) {
+		return startFlow(new MockExternalContext(requestParameters), new FlowExecutionListener[] { listener });
 	}
 
 	/**
@@ -178,11 +180,11 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * Signal an occurence of an event in the current state of the flow
 	 * execution being tested.
 	 * @param eventId the event that occured
-	 * @param requestParameterMap request parameters needed by the flow
-	 * execution to complete event processing
+	 * @param requestParameters request parameters needed by the flow execution
+	 * to complete event processing
 	 */
-	protected ViewSelection signalEvent(String eventId, Map requestParameterMap) {
-		return flowExecution.signalEvent(eventId, new MockExternalContext(requestParameterMap));
+	protected ViewSelection signalEvent(String eventId, AttributeCollection requestParameters) {
+		return flowExecution.signalEvent(eventId, new MockExternalContext(requestParameters));
 	}
 
 	/**
@@ -421,7 +423,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param model the model map
 	 * @return the attribute expression value
 	 */
-	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
+	protected Object evaluateModelAttributeExpression(String attributeName, UnmodifiableAttributeMap model) {
 		return ExpressionFactory.parseExpression(attributeName).evaluateAgainst(model, null);
 	}
 }

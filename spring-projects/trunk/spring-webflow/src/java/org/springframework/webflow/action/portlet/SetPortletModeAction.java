@@ -48,8 +48,11 @@ public class SetPortletModeAction extends AbstractAction {
 	 * The portlet mode to set can be specified in an action state action
 	 * property with this name.
 	 */
-	public static final String PORTLET_MODE_PROPERTY = "portletMode";
+	public static final String PORTLET_MODE_ATTRIBUTE = "portletMode";
 
+	/**
+	 * The default portlet mode.
+	 */
 	private PortletMode portletMode = PortletMode.VIEW;
 
 	/**
@@ -79,11 +82,8 @@ public class SetPortletModeAction extends AbstractAction {
 				+ ClassUtils.getShortName(this.getClass()) + "' can only work with 'PortletExternalContext': ");
 		PortletExternalContext portletContext = (PortletExternalContext)context.getExternalContext();
 		if (portletContext.getResponse() instanceof ActionResponse) {
-			PortletMode mode = getPortletMode();
-			if (context.getProperties().containsKey(PORTLET_MODE_PROPERTY)) {
-				mode = (PortletMode)PORTLET_MODE_CONSTANTS.asObject((String)context.getProperties().get(
-						PORTLET_MODE_PROPERTY));
-			}
+			PortletMode mode = (PortletMode)context.getAttributes().getAttribute(PORTLET_MODE_ATTRIBUTE,
+					PortletMode.class, getPortletMode());
 			((ActionResponse)portletContext.getResponse()).setPortletMode(mode);
 			return success();
 		}
@@ -91,9 +91,9 @@ public class SetPortletModeAction extends AbstractAction {
 			// portlet mode and the window state can be changed through
 			// ActionResponse only, if this is not the case, it means that this
 			// action has been invoked directly in a RenderRequest
-			throw new ActionExecutionException(context.getCurrentState(), this, context
-					.getProperties(), "This SetPortletModeAction can only work with 'ActionResponse' "
-					+ "-- make sure you are not invoking it in a RenderRequest", null);
+			throw new ActionExecutionException(context.getCurrentState(), this, context.getAttributes(),
+					"This SetPortletModeAction can only work with 'ActionResponse' "
+							+ "-- make sure you are not invoking it in a RenderRequest", null);
 		}
 	}
 }

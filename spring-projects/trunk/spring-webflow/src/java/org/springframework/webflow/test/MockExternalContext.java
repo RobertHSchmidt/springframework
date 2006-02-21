@@ -15,14 +15,14 @@
  */
 package org.springframework.webflow.test;
 
-import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.SharedAttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.util.SharedMapDecorator;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.context.SharedMapDecorator;
 
 /**
  * Mock implementation of the <code>ExternalContext</code> interface.
@@ -35,13 +35,13 @@ public class MockExternalContext implements ExternalContext {
 
 	private String requestPathInfo;
 
-	private Map requestParameterMap = new TreeMap();
+	private AttributeMap requestParameterMap = new AttributeMap();
 
-	private Map requestMap = new TreeMap();
+	private AttributeMap requestMap = new AttributeMap();
 
-	private Map sessionMap = new TreeMap();
+	private SharedAttributeMap sessionMap = new SharedAttributeMap(new SharedMapDecorator(new HashMap()));
 
-	private Map applicationMap = new TreeMap();
+	private SharedAttributeMap applicationMap = new SharedAttributeMap(new SharedMapDecorator(new HashMap()));
 
 	/**
 	 * Creates a mock external context with an empty request parameter map.
@@ -57,17 +57,17 @@ public class MockExternalContext implements ExternalContext {
 	 * @param singleRequestParameterValue the parameter value
 	 */
 	public MockExternalContext(String singleRequestParameterName, Object singleRequestParameterValue) {
-		requestParameterMap = new HashMap(1);
-		requestParameterMap.put(singleRequestParameterName, singleRequestParameterValue);
+		requestParameterMap = new AttributeMap(1, 1);
+		requestParameterMap.setAttribute(singleRequestParameterName, singleRequestParameterValue);
 	}
 
 	/**
 	 * Creates a mock external context with the specified parameters in the
 	 * request parameter map.
-	 * @param requestParameterMap the request parameter map
+	 * @param requestParameters the request parameters
 	 */
-	public MockExternalContext(Map requestParameterMap) {
-		this.requestParameterMap = Collections.unmodifiableMap(requestParameterMap);
+	public MockExternalContext(AttributeCollection requestParameters) {
+		requestParameterMap.addAttributes(requestParameters);
 	}
 
 	// implementing external context
@@ -80,20 +80,20 @@ public class MockExternalContext implements ExternalContext {
 		return requestPathInfo;
 	}
 
-	public Map getRequestParameterMap() {
-		return Collections.unmodifiableMap(requestParameterMap);
+	public UnmodifiableAttributeMap getRequestParameterMap() {
+		return requestParameterMap.unmodifiable();
 	}
 
-	public Map getRequestMap() {
+	public AttributeMap getRequestMap() {
 		return requestMap;
 	}
 
-	public SharedMap getSessionMap() {
-		return new MockSharedMapDecorator(sessionMap);
+	public SharedAttributeMap getSessionMap() {
+		return sessionMap;
 	}
 
-	public SharedMap getApplicationMap() {
-		return new MockSharedMapDecorator(applicationMap);
+	public SharedAttributeMap getApplicationMap() {
+		return applicationMap;
 	}
 
 	// helper setters
@@ -106,25 +106,7 @@ public class MockExternalContext implements ExternalContext {
 		this.dispatcherPath = dispatcherPath;
 	}
 
-	public void addRequestParameter(Object parameterName, Object parameterValue) {
-		requestParameterMap.put(parameterName, parameterValue);
-	}
-
-	private static class MockSharedMapDecorator extends SharedMapDecorator {
-		private Mutex mutex = new Mutex();
-
-		public MockSharedMapDecorator(Map map) {
-			super(map);
-		}
-
-		public Object getMutex() {
-			return mutex;
-		}
-	}
-
-	/**
-	 * A simple mock mutex.
-	 */
-	private static class Mutex implements Serializable {
+	public void addRequestParameter(String parameterName, Object parameterValue) {
+		requestParameterMap.setAttribute(parameterName, parameterValue);
 	}
 }

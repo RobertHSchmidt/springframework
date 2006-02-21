@@ -44,7 +44,7 @@ public class TextToViewSelectorTests extends TestCase {
 		RequestContext context = getRequestContext();
 		ViewSelection view = selector.makeSelection(context);
 		assertEquals("myView", view.getViewName());
-		assertEquals(5, view.getModel().size());
+		assertEquals(5, view.getModel().getAttributeCount());
 	}
 
 	public void testRedirectView() {
@@ -57,7 +57,7 @@ public class TextToViewSelectorTests extends TestCase {
 		RequestContext context = getRequestContext();
 		ViewSelection view = selector.makeSelection(context);
 		assertEquals("myView", view.getViewName());
-		assertEquals(2, view.getModel().size());
+		assertEquals(2, view.getModel().getAttributeCount());
 	}
 
 	private RequestContext getRequestContext() {
@@ -78,45 +78,45 @@ public class TextToViewSelectorTests extends TestCase {
 
 		ViewSelection selection = converter.createRedirectViewSelector("/viewName").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
-		assertEquals(0, selection.getModel().size());
+		assertEquals(0, selection.getModel().getAttributeCount());
 
 		selection = converter.createRedirectViewSelector("").makeSelection(context);
 		assertEquals("", selection.getViewName());
-		assertEquals(0, selection.getModel().size());
+		assertEquals(0, selection.getModel().getAttributeCount());
 
 		selection = converter.createRedirectViewSelector(null).makeSelection(context);
 		assertEquals("", selection.getViewName());
-		assertEquals(0, selection.getModel().size());
+		assertEquals(0, selection.getModel().getAttributeCount());
 
 		selection = converter.createRedirectViewSelector("/viewName?").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
-		assertEquals(0, selection.getModel().size());
+		assertEquals(0, selection.getModel().getAttributeCount());
 
 		selection = converter.createRedirectViewSelector("/viewName?param0=").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
-		assertEquals(1, selection.getModel().size());
-		assertEquals("", selection.getModel().get("param0"));
+		assertEquals(1, selection.getModel().getAttributeCount());
+		assertEquals("", selection.getModel().getAttribute("param0"));
 
 		selection = converter.createRedirectViewSelector("/viewName?=value0").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
-		assertEquals(1, selection.getModel().size());
-		assertEquals("value0", selection.getModel().get(""));
+		assertEquals(1, selection.getModel().getAttributeCount());
+		assertEquals("value0", selection.getModel().getAttribute(""));
 
 		selection = converter.createRedirectViewSelector("/viewName?param0=value0").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
-		assertEquals(1, selection.getModel().size());
-		assertEquals("value0", selection.getModel().get("param0"));
+		assertEquals(1, selection.getModel().getAttributeCount());
+		assertEquals("value0", selection.getModel().getAttribute("param0"));
 
 		selection = converter.createRedirectViewSelector("/viewName?param0=${flowScope.foo}").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
-		assertEquals(1, selection.getModel().size());
-		assertEquals("foo", selection.getModel().get("param0"));
+		assertEquals(1, selection.getModel().getAttributeCount());
+		assertEquals("foo", selection.getModel().getAttribute("param0"));
 
 		selection = converter.createRedirectViewSelector("/viewName?param0=${flowScope.foo}&param1=${flowScope.bar}")
 				.makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());
-		assertEquals(2, selection.getModel().size());
-		assertEquals("foo", selection.getModel().get("param0"));
-		assertEquals("bar", selection.getModel().get("param1"));
+		assertEquals(2, selection.getModel().getAttributeCount());
+		assertEquals("foo", selection.getModel().getAttribute("param0"));
+		assertEquals("bar", selection.getModel().getAttribute("param1"));
 	}
 }

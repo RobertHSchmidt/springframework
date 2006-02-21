@@ -15,9 +15,8 @@
  */
 package org.springframework.webflow.support;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.action.AbstractAction;
 
@@ -176,24 +175,24 @@ public class EventFactorySupport {
 	 * Consider calling the error() or success() factory methods for returning
 	 * common results.
 	 * @param eventId the result event identifier
-	 * @param parameters the event parameters
+	 * @param attributes the event attributes
 	 * @return the action result event
 	 */
-	protected Event result(String eventId, Map parameters) {
-		return new Event(this, eventId, parameters);
+	protected Event result(String eventId, AttributeCollection attributes) {
+		return new Event(this, eventId, attributes);
 	}
 
 	/**
 	 * Returns a result event for this action with the specified identifier and
 	 * a single parameter.
 	 * @param eventId the result id
-	 * @param parameterName the parameter name
-	 * @param parameterValue the parameter value
+	 * @param attributeName the parameter name
+	 * @param attributeValue the parameter value
 	 * @return the action result event
 	 */
-	protected Event result(String eventId, String parameterName, Object parameterValue) {
-		HashMap parameters = new HashMap(1);
-		parameters.put(parameterName, parameterValue);
-		return new Event(this, eventId, parameters);
+	protected Event result(String eventId, String attributeName, Object attributeValue) {
+		AttributeMap attributes = new AttributeMap(1, 1);
+		attributes.setAttribute(attributeName, attributeValue);
+		return new Event(this, eventId, attributes);
 	}
 }

@@ -3,22 +3,22 @@
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
 <flow start-state="actionState1">
-	<property name="propInteger" value="12345" type="integer"/>
+	<attribute name="propInteger" value="12345" type="integer"/>
 
 	<var name="attribute1" type="org.springframework.webflow.TestBean"/>
 	<var name="attribute3" type="org.springframework.webflow.TestBean"/>
 	<var name="items" type="java.util.ArrayList"/>
 	
 	<action-state id="actionState1">
-		<property name="propBoolean" value="true" type="boolean"/>
-		<property name="propString" value="aString"/>
+		<attribute name="propBoolean" value="true" type="boolean"/>
+		<attribute name="propString" value="aString"/>
 		<action bean="action1">
-			<property name="prop1"><value>prop1Value</value></property>
-			<property name="prop2" value="prop2Value"/>
+			<attribute name="prop1"><value>prop1Value</value></attribute>
+			<attribute name="prop2" value="prop2Value"/>
 		</action>
 		<action name="action2Name" bean="action2"/>
 		<transition on="event1" to="viewState1">
-			<property name="propBigDecimal" value="123.45" type="bigDecimal"/>
+			<attribute name="propBigDecimal" value="123.45" type="bigDecimal"/>
 		</transition>
 		<transition on="event2" to="actionState2"/>
 		<transition on="action2Name.event2" to="viewState2"/>

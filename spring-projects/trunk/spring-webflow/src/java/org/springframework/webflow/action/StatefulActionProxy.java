@@ -162,7 +162,7 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * @return the bean id
 	 */
 	protected String getActionId(RequestContext context) {
-		return getPropertyMapAccessor(context).getString(ACTION_ID_PROPERTY, getActionId());
+		return context.getAttributes().getStringAttribute(ACTION_ID_PROPERTY, getActionId());
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * @return the action attribute name
 	 */
 	protected String getActionAttribute(RequestContext context, String actionId) {
-		String result = getPropertyMapAccessor(context).getString(ACTION_ATTRIBUTE_PROPERTY, null);
+		String result = context.getAttributes().getStringAttribute(ACTION_ATTRIBUTE_PROPERTY);
 		if (result != null) {
 			return result;
 		}

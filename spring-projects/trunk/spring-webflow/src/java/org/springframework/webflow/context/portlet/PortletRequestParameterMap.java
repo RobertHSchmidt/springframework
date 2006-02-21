@@ -19,7 +19,7 @@ import java.util.Enumeration;
 
 import javax.portlet.PortletRequest;
 
-import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
+import org.springframework.binding.util.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Portlet request parameter map, for accessing request local
@@ -27,7 +27,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
  * 
  * @author Keith Donald
  */
-public class PortletRequestParameterMap extends StringKeyedAttributeMapAdapter {
+public class PortletRequestParameterMap extends StringKeyedMapAdapter {
 
 	/**
 	 * The wrapped portlet request.

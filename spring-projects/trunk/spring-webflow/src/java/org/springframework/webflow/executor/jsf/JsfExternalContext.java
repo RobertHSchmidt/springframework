@@ -15,13 +15,14 @@
  */
 package org.springframework.webflow.executor.jsf;
 
-import java.util.Map;
-
 import javax.faces.context.FacesContext;
 
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.SharedAttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.util.SharedMapDecorator;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.context.SharedMapDecorator;
 
 /**
  * Provides contextual information about a JSF environment that has interacted
@@ -74,28 +75,20 @@ public class JsfExternalContext implements ExternalContext {
 		return facesContext.getExternalContext().getRequestPathInfo();
 	}
 
-	public Map getRequestParameterMap() {
-		return facesContext.getExternalContext().getRequestParameterMap();
+	public UnmodifiableAttributeMap getRequestParameterMap() {
+		return new UnmodifiableAttributeMap(facesContext.getExternalContext().getRequestParameterMap());
 	}
 
-	public Map getRequestMap() {
-		return facesContext.getExternalContext().getRequestMap();
+	public AttributeMap getRequestMap() {
+		return new AttributeMap(facesContext.getExternalContext().getRequestMap());
 	}
 
-	public SharedMap getSessionMap() {
-		return new SharedMapDecorator(facesContext.getExternalContext().getSessionMap()) {
-			public Object getMutex() {
-				return facesContext.getExternalContext().getSession(false);
-			}
-		};
+	public SharedAttributeMap getSessionMap() {
+		return new SharedAttributeMap(new SessionSharedMap(facesContext));
 	}
 
-	public SharedMap getApplicationMap() {
-		return new SharedMapDecorator(facesContext.getExternalContext().getApplicationMap()) {
-			public Object getMutex() {
-				return facesContext.getExternalContext().getContext();
-			}
-		};
+	public SharedAttributeMap getApplicationMap() {
+		return new SharedAttributeMap(new ApplicationSharedMap(facesContext));
 	}
 
 	/**
@@ -117,6 +110,34 @@ public class JsfExternalContext implements ExternalContext {
 	 */
 	public String getOutcome() {
 		return outcome;
+	}
+
+	private static class SessionSharedMap extends SharedMapDecorator {
+
+		private FacesContext facesContext;
+		
+		public SessionSharedMap(FacesContext facesContext) {
+			super(facesContext.getExternalContext().getSessionMap());
+			this.facesContext = facesContext;
+		}
+
+		public Object getMutex() {
+			return facesContext.getExternalContext().getSession(false);
+		}
+	}
+
+	private static class ApplicationSharedMap extends SharedMapDecorator {
+
+		private FacesContext facesContext;
+		
+		public ApplicationSharedMap(FacesContext facesContext) {
+			super(facesContext.getExternalContext().getApplicationMap());
+			this.facesContext = facesContext;
+		}
+
+		public Object getMutex() {
+			return facesContext.getExternalContext().getContext();
+		}
 	}
 
 	public String toString() {

@@ -15,8 +15,9 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
+import org.springframework.binding.attribute.SharedAttributeMap;
+import org.springframework.binding.util.SharedMap;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.ExternalContext.SharedMap;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryCreator;
 
@@ -36,7 +37,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryC
  * {@link FlowExecutionRepositoryCreator}, a creational strategy. The newly
  * created repository will then be placed in the shared map where it can be
  * accessed at a later point in time. Synchronization will occur on the mutex of
- * the {@link SharedMap} to ensure thread safety.
+ * the {@link SharedAttributeMap} to ensure thread safety.
  * 
  * @author Keith Donald
  */
@@ -133,7 +134,7 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 	 */
 	public static class SessionMapLocator implements SharedMapLocator {
 		public SharedMap getMap(ExternalContext context) {
-			return context.getSessionMap();
+			return context.getSessionMap().getSharedMap();
 		}
 	}
 }

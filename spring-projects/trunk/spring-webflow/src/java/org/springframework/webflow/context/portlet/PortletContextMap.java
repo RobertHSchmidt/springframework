@@ -19,8 +19,8 @@ import java.util.Enumeration;
 
 import javax.portlet.PortletContext;
 
-import org.springframework.webflow.ExternalContext.SharedMap;
-import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
+import org.springframework.binding.util.SharedMap;
+import org.springframework.binding.util.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Portlet context, for accessing application scoped
@@ -28,7 +28,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
  * 
  * @author Keith Donald
  */
-public class PortletContextMap extends StringKeyedAttributeMapAdapter implements SharedMap {
+public class PortletContextMap extends StringKeyedMapAdapter implements SharedMap {
 
 	/**
 	 * The wrapped portlet context.
@@ -57,7 +57,7 @@ public class PortletContextMap extends StringKeyedAttributeMapAdapter implements
 	protected Enumeration getAttributeNames() {
 		return context.getAttributeNames();
 	}
-	
+
 	public Object getMutex() {
 		return context;
 	}

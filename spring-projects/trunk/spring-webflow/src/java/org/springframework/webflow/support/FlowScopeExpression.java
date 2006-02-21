@@ -17,12 +17,12 @@ package org.springframework.webflow.support;
 
 import java.util.Map;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.Scope;
 
 /**
  * Expression evaluator that evaluates an expression in flow scope.
@@ -66,12 +66,12 @@ public class FlowScopeExpression implements Expression {
 		if (target instanceof RequestContext) {
 			return expression.evaluateAgainst(((RequestContext)target).getFlowScope(), context);
 		}
-		else if (target instanceof Scope) {
+		else if (target instanceof AttributeMap) {
 			return expression.evaluateAgainst(target, context);
 		}
 		else {
 			throw new IllegalArgumentException(
-					"Only supports evaluation against a [RequestScope] or [Scope] instance of [ScopeType.FLOW], but was a [" + target.getClass() + "]");
+					"Only supports evaluation against a [RequestContext] or [Scope] instance, but was a [" + target.getClass() + "]");
 		}
 	}
 

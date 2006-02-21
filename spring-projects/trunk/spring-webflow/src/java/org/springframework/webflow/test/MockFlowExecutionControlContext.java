@@ -15,8 +15,7 @@
  */
 package org.springframework.webflow.test;
 
-import java.util.Map;
-
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
@@ -51,8 +50,8 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 	public MockFlowExecutionControlContext(Flow rootFlow) {
 		setFlowExecutionContext(new MockFlowExecutionContext(rootFlow));
 	}
-
-	public ViewSelection start(Flow flow, State startState, Map input) throws IllegalStateException {
+	
+	public ViewSelection start(Flow flow, State startState, AttributeMap input) throws IllegalStateException {
 		getMockFlowExecutionContext().setActiveSession(new MockFlowSession(flow, input));
 		ViewSelection selectedView = flow.start(startState, this);
 		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.PAUSED);
@@ -66,7 +65,7 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 		return selectedView;
 	}
 
-	public FlowSession endActiveFlowSession(Map sessionOutput) throws IllegalStateException {
+	public FlowSession endActiveFlowSession(AttributeMap sessionOutput) throws IllegalStateException {
 		MockFlowSession endingSession = getMockFlowExecutionContext().getMockActiveSession();
 		endingSession.getFlow().end(this, sessionOutput);
 		endingSession.setStatus(FlowSessionStatus.ENDED);

@@ -18,6 +18,7 @@ package org.springframework.webflow.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
@@ -114,17 +115,21 @@ public class CompositeAction extends AbstractAction {
 
 	public Event doExecute(RequestContext context) throws Exception {
 		Action[] actions = getActions();
+		String eventId = getSuccessEventId();
+		AttributeMap eventAttributes = new AttributeMap();
 		List actionResults = new ArrayList(actions.length);
 		for (int i = 0; i < actions.length; i++) {
 			Event result = actions[i].execute(context);
 			if (result != null) {
 				actionResults.add(result);
 				if (isStopOnError() && result != null && result.getId().equals(getErrorEventId())) {
-					return new CompositeEvent(this, getErrorEventId(), (Event[])actionResults.toArray(new Event[0]));
+					eventId = getErrorEventId();
+					break;
 				}
 			}
 		}
-		return new CompositeEvent(this, getSuccessEventId(), (Event[])actionResults.toArray(new Event[0]));
+		eventAttributes.setAttribute("actionResults", actionResults);
+		return new Event(this, eventId, eventAttributes);
 	}
 
 	public String toString() {

@@ -19,10 +19,10 @@ import java.io.Serializable;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.Scope;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
@@ -80,7 +80,7 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 	 */
 	private static class MockFlowExecution implements FlowExecution, Serializable {
 
-		public Scope getScope() throws IllegalStateException {
+		public AttributeMap getScope() throws IllegalStateException {
 			return null;
 		}
 

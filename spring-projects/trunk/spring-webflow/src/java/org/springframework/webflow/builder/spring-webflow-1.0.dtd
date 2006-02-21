@@ -28,7 +28,7 @@
 	Defines exactly one flow definition.
 	
 	A flow is composed of one or more states that define the steps of the flow.
-	It may be annotated with properties that define custom characteristics that
+	It may be annotated with attributes that define custom characteristics that
 	can be used to affect flow execution.
 	
 	A flow may also be configured to respond to exceptions thrown by its states.
@@ -40,7 +40,7 @@
 	Finally, a flow may nest one or more other flows within this document to
 	use as subflows, referred to as 'inline flows'.
 -->
-<!ELEMENT flow ( property*, start-actions?, var*, ( action-state | view-state | decision-state | subflow-state | end-state )+, global-transitions?, end-actions?, exception-handler*, import*, inline-flow* )>
+<!ELEMENT flow ( attribute*, start-actions?, var*, ( action-state | view-state | decision-state | subflow-state | end-state )+, global-transitions?, end-actions?, exception-handler*, import*, inline-flow* )>
 
 <!--
 	The the start state of this flow; the start state is the point where flow execution will begin.
@@ -69,34 +69,33 @@
 <!ATTLIST var type CDATA #IMPLIED>
 
 <!--
-	A property about this element.
+	An attribute about this element.
 	
-	Properties are simple strings or typed attributes that allow you to annotate an element.
+	Attributes are simple strings or typed values that allow you to annotate an element.
 	For example:
-	- an element's 'caption' property might serve a GUI tooltip or logging statement
-	- an Action's 'validatorMethod' property might specify a target method to invoke on a validator
-	- a Flow's 'transactional' property might indicate the flow should exhibit transactionl characteristics
+	- an element's 'caption' attribute might serve a GUI tooltip or logging statement
+	- an Action's 'validatorMethod' attribute might specify a target method to invoke on a validator
 -->
-<!ELEMENT property ( value? )>
+<!ELEMENT attribute ( value? )>
 
 <!--
-	The name of this property.
+	The name of this attribute.
 -->
-<!ATTLIST property name CDATA #REQUIRED>
+<!ATTLIST attribute name CDATA #REQUIRED>
 
 <!--
-	The target type of the property value; to facilitate from-string type conversion. This type
+	The target type of the attribute value; to facilitate from-string type conversion. This type
 	string may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer').
 -->
-<!ATTLIST property type CDATA #IMPLIED>
+<!ATTLIST attribute type CDATA #IMPLIED>
 
 <!--
-	The value of this property; a short-cut alternative to an explicit child 'value' element.
+	The value of this attribute; a short-cut alternative to an explicit child 'value' element.
 -->
-<!ATTLIST property value CDATA #IMPLIED>
+<!ATTLIST attribute value CDATA #IMPLIED>
 
 <!--
-	The value of this property.
+	The value of this attribute.
 -->
 <!ELEMENT value ( #PCDATA )>
 
@@ -106,7 +105,7 @@
 	An action state is a transitionable state.  A transition out of this state 
 	is driven by the result of action execution (e.g. success, error).
 -->
-<!ELEMENT action-state ( property*, entry-actions?, action+, transition+, exit-actions?, exception-handler* )>
+<!ELEMENT action-state ( attribute*, entry-actions?, action+, transition+, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this action state; must be unique to this flow.
@@ -124,7 +123,7 @@
 	
 	An action may be annotated with properties that can be used to affect the action's execution.
 -->
-<!ELEMENT action ( property* )>
+<!ELEMENT action ( attribute* )>
 
 <!--
 	The identifier of the action implementation to execute, typically the id of a bean
@@ -211,7 +210,7 @@
 	A transitions may be annotated with properties and may specify one or more
 	actions to execute before executing.
 -->
-<!ELEMENT transition ( property*, action* )>
+<!ELEMENT transition ( attribute*, action* )>
 
 <!--
 	The criteria that guards this transition's execution, typically reasoning on the
@@ -245,7 +244,7 @@
 	A view state is a transitionable state. A view state transition is triggered by a
 	user input event.
 -->
-<!ELEMENT view-state ( property*, entry-actions?, transition+, exit-actions?, exception-handler* )>
+<!ELEMENT view-state ( attribute*, entry-actions?, transition+, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this view state; must be unique to this flow.
@@ -347,7 +346,7 @@
 	Do not combine use of the 'if' element with use of the 'transition' element or 'action' 
 	element.  Use one strategy or the other.
 -->
-<!ELEMENT decision-state ( property*, entry-actions?, if*, action?, transition*, exit-actions?, exception-handler* )>
+<!ELEMENT decision-state ( attribute*, entry-actions?, if*, action?, transition*, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this decision state; must be unique to this flow.
@@ -401,7 +400,7 @@
 	to respond to the result of that execution. The result of subflow execution, the end state 
 	that was reached, should be used as grounds for a transition out of this state.
 -->
-<!ELEMENT subflow-state ( property*, entry-actions?, attribute-mapper?, transition+, exit-actions?, exception-handler* )>
+<!ELEMENT subflow-state ( attribute*, entry-actions?, attribute-mapper?, transition+, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this subflow state; must be unique to this flow.
@@ -537,7 +536,7 @@
 	responds to the result of the subflow, typically by reasoning on the id of the end
 	state that was reached.
 -->
-<!ELEMENT end-state ( property*, entry-actions?, output-attribute*, exception-handler* )>
+<!ELEMENT end-state ( attribute*, entry-actions?, output-attribute*, exception-handler* )>
 
 <!--
 	The unique identifier of this end state; must be unique to this flow.

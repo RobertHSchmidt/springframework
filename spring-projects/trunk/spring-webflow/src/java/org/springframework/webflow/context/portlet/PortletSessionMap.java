@@ -20,9 +20,9 @@ import java.util.Enumeration;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
-import org.springframework.webflow.ExternalContext.SharedMap;
-import org.springframework.webflow.util.EmptyEnumeration;
-import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
+import org.springframework.binding.util.EmptyEnumeration;
+import org.springframework.binding.util.SharedMap;
+import org.springframework.binding.util.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Portlet session, for accessing session scoped attributes in
@@ -30,7 +30,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
  * 
  * @author Keith Donald
  */
-public class PortletSessionMap extends StringKeyedAttributeMapAdapter implements SharedMap {
+public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMap {
 
 	/**
 	 * The wrapped portlet request, providing access to the session.

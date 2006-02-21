@@ -94,19 +94,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *         &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *             &lt;entry-actions&gt;
- *                 &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *             &lt;/entry-actions&gt;
- *             &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *                 &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *             &lt;/transition&gt;
- *         &lt;/view-state&gt;
- *                              
- *         &lt;action-state id=&quot;executeSearch&quot;&gt;
- *             &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *             &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *         &lt;/action-state&gt;
+ *          &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *              &lt;entry-actions&gt;
+ *                  &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *              &lt;/entry-actions&gt;
+ *              &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *                  &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *              &lt;/transition&gt;
+ *          &lt;/view-state&gt;
+ *                               
+ *          &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *              &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *              &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *          &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -630,7 +630,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 				logger.debug("(Any field is allowed)");
 			}
 		}
-		binder.bind(new MutablePropertyValues(context.getExternalContext().getRequestParameterMap()));
+		binder.bind(new MutablePropertyValues(context.getRequestParameters().getMap()));
 		if (logger.isDebugEnabled()) {
 			logger.debug("Binding completed for form object with name '" + binder.getObjectName()
 					+ "', postbind formObject toString = " + binder.getTarget());
@@ -651,7 +651,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	protected void doValidate(RequestContext context, DataBinder binder) throws Exception {
 		Assert.notNull(validator, "The validator must not be null when attempting validation -- programmer error");
-		String validatorMethodName = (String)context.getProperties().get(VALIDATOR_METHOD_PROPERTY);
+		String validatorMethodName = context.getAttributes().getStringAttribute(VALIDATOR_METHOD_PROPERTY);
 		if (StringUtils.hasText(validatorMethodName)) {
 			invokeValidatorMethod(validatorMethodName, binder.getTarget(), binder.getErrors());
 		}
@@ -695,7 +695,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 		if (formObject == null) {
 			formObject = loadFormObject(context);
 			setFormObject(context, formObject);
-		} else {
+		}
+		else {
 			accessor.setCurrentFormObject(formObject, getFormObjectScope());
 		}
 		return formObject;
@@ -890,7 +891,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	protected boolean validationEnabled(RequestContext context) {
 		if (getValidateUsingValidatorMethod()) {
-			return context.getProperties().containsKey(VALIDATOR_METHOD_PROPERTY);
+			return context.getAttributes().containsAttribute(VALIDATOR_METHOD_PROPERTY);
 		}
 		else {
 			return true;

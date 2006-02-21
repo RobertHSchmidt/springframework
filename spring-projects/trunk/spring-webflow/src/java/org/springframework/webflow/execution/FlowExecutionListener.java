@@ -17,6 +17,8 @@ package org.springframework.webflow.execution;
 
 import java.util.Map;
 
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -68,7 +70,8 @@ public interface FlowExecutionListener {
 	 * @throws EnterStateVetoException the start state transition should not be
 	 * allowed
 	 */
-	public void sessionStarting(RequestContext context, State startState, Map input) throws EnterStateVetoException;
+	public void sessionStarting(RequestContext context, State startState, AttributeMap input)
+			throws EnterStateVetoException;
 
 	/**
 	 * Called when a new flow execution session was started -- the start state
@@ -126,7 +129,7 @@ public interface FlowExecutionListener {
 	 * session. The map may be modified by this listener to affect the output
 	 * returned.
 	 */
-	public void sessionEnding(RequestContext context, Map sessionOutput);
+	public void sessionEnding(RequestContext context, AttributeMap sessionOutput);
 
 	/**
 	 * Called when a flow execution session ends. If the ended session was the
@@ -136,5 +139,5 @@ public interface FlowExecutionListener {
 	 * @param sessionOutput final, unmodifiable output returned by the ended
 	 * session that is eligible for mapping by this listener
 	 */
-	public void sessionEnded(RequestContext context, FlowSession endedSession, Map sessionOutput);
+	public void sessionEnded(RequestContext context, FlowSession endedSession, UnmodifiableAttributeMap sessionOutput);
 }

@@ -15,11 +15,10 @@
  */
 package org.springframework.webflow;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AttributeMapperAction;
@@ -179,8 +178,8 @@ public class StateTests extends TestCase {
 		endState.setViewSelector(view("myParentFlowEndingViewName"));
 
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		Map input = new HashMap();
-		input.put("parentInputAttribute", "attributeValue");
+		AttributeMap input = new AttributeMap();
+		input.setAttribute("parentInputAttribute", "attributeValue");
 		ViewSelection view = flowExecution.start(new MockExternalContext(input));
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
@@ -189,7 +188,7 @@ public class StateTests extends TestCase {
 		view = flowExecution.signalEvent("submit", new MockExternalContext());
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
 		assertTrue(!flowExecution.isActive());
-		assertEquals("attributeValue", view.getModel().get("parentOutputAttribute"));
+		assertEquals("attributeValue", view.getModel().getAttribute("parentOutputAttribute"));
 	}
 
 	public static TransitionCriteria on(String event) {
@@ -205,15 +204,15 @@ public class StateTests extends TestCase {
 	}
 
 	public static class InputOutputMapper implements FlowAttributeMapper {
-		public Map createSubflowInput(RequestContext context) {
-			Map inputMap = new HashMap(1);
-			inputMap.put("childInputAttribute", context.getFlowScope().getAttribute("parentInputAttribute"));
+		public AttributeMap createSubflowInput(RequestContext context) {
+			AttributeMap inputMap = new AttributeMap();
+			inputMap.setAttribute("childInputAttribute", context.getFlowScope().getAttribute("parentInputAttribute"));
 			return inputMap;
 		}
 
-		public void mapSubflowOutput(Map subflowOutput, RequestContext context) {
-			Scope parentAttributes = context.getFlowExecutionContext().getActiveSession().getScope();
-			parentAttributes.setAttribute("parentOutputAttribute", subflowOutput.get("childInputAttribute"));
+		public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
+			AttributeMap parentAttributes = context.getFlowExecutionContext().getActiveSession().getScope();
+			parentAttributes.setAttribute("parentOutputAttribute", subflowOutput.getAttribute("childInputAttribute"));
 		}
 	}
 

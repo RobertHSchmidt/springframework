@@ -15,8 +15,7 @@
  */
 package org.springframework.webflow;
 
-import java.util.Map;
-
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
@@ -29,8 +28,8 @@ import org.springframework.util.StringUtils;
  * <code>TransitionCriteria</code> definition, or in a test environment.
  * <p>
  * An annotated action is an action that wraps another action (referred to as
- * the <i>target action), setting up the target action's execution properties before
- * invoking {@link Action#execute}
+ * the <i>target action), setting up the target action's execution properties
+ * before invoking {@link Action#execute}
  * 
  * @author Keith Donald
  */
@@ -88,9 +87,9 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @see #setResultScope(ScopeType)
 	 */
 	public AnnotatedAction() {
-		
+
 	}
-	
+
 	/**
 	 * Creates a new annotated action object for the specified action. No
 	 * contextual properties are provided.
@@ -105,9 +104,9 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * contextual properties are provided.
 	 * @param targetAction the action
 	 */
-	public AnnotatedAction(Action targetAction, Map properties) {
+	public AnnotatedAction(Action targetAction, AttributeMap attributes) {
 		setTargetAction(targetAction);
-		addProperties(properties);
+		getAttributeMap().addAttributes(attributes);
 	}
 
 	/**
@@ -133,7 +132,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @see #postProcessResult(Event)
 	 */
 	public String getName() {
-		return (String)getProperty(NAME_PROPERTY);
+		return getAttributeMap().getStringAttribute(NAME_PROPERTY);
 	}
 
 	/**
@@ -142,7 +141,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param name the action name
 	 */
 	public void setName(String name) {
-		setProperty(NAME_PROPERTY, name);
+		getAttributeMap().setAttribute(NAME_PROPERTY, name);
 	}
 
 	/**
@@ -158,7 +157,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * executed.
 	 */
 	public MethodKey getMethod() {
-		return (MethodKey)getProperty(METHOD_PROPERTY);
+		return (MethodKey)getAttributeMap().getAttribute(METHOD_PROPERTY, MethodKey.class);
 	}
 
 	/**
@@ -167,7 +166,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param method the action method name.
 	 */
 	public void setMethod(MethodKey method) {
-		setProperty(METHOD_PROPERTY, method);
+		getAttributeMap().setAttribute(METHOD_PROPERTY, method);
 	}
 
 	/**
@@ -175,7 +174,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * value under.
 	 */
 	public String getResultName() {
-		return (String)getProperty(RESULT_NAME_PROPERTY);
+		return getAttributeMap().getStringAttribute(RESULT_NAME_PROPERTY);
 	}
 
 	/**
@@ -184,7 +183,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param resultName the action return value attribute name
 	 */
 	public void setResultName(String resultName) {
-		setProperty(RESULT_NAME_PROPERTY, resultName);
+		getAttributeMap().setAttribute(RESULT_NAME_PROPERTY, resultName);
 	}
 
 	/**
@@ -192,7 +191,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * value under.
 	 */
 	public ScopeType getResultScope() {
-		return (ScopeType)getProperty(RESULT_SCOPE_PROPERTY);
+		return (ScopeType)getAttributeMap().getAttribute(RESULT_SCOPE_PROPERTY, ScopeType.class);
 	}
 
 	/**
@@ -200,17 +199,17 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param resultScope the result scope
 	 */
 	public void setResultScope(ScopeType resultScope) {
-		setProperty(RESULT_SCOPE_PROPERTY, resultScope);
+		getAttributeMap().setAttribute(RESULT_SCOPE_PROPERTY, resultScope);
 	}
 
 	public Event execute(RequestContext context) throws Exception {
 		try {
-			context.setProperties(getProperties());
+			context.setAttributes(getAttributeMap());
 			Event result = getTargetAction().execute(context);
 			return postProcessResult(result);
 		}
 		finally {
-			context.setProperties(null);
+			context.setAttributes(null);
 		}
 	}
 
@@ -228,13 +227,14 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 		}
 		if (isNamed()) {
 			// qualify result event id with action name for a named action
-			resultEvent.setId(getName() + "." + resultEvent.getId());
+			String qualifiedId = getName() + "." + resultEvent.getId();
+			resultEvent = new Event(resultEvent.getSource(), qualifiedId, resultEvent.getAttributes());
 		}
 		return resultEvent;
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("targetAction", getTargetAction())
-				.append("properties", getProperties()).toString();
+		return new ToStringCreator(this).append("targetAction", getTargetAction()).append("attributes",
+				getAttributeMap()).toString();
 	}
 }

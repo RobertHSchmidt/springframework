@@ -15,11 +15,12 @@
  */
 package org.springframework.webflow.builder;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
@@ -143,13 +144,13 @@ public class AbstractFlowBuilderTests extends TestCase {
 	}
 
 	public static class PersonIdMapper implements FlowAttributeMapper {
-		public Map createSubflowInput(RequestContext context) {
-			Map inputMap = new HashMap(1);
-			inputMap.put("personId", context.getFlowScope().getAttribute("personId"));
+		public AttributeMap createSubflowInput(RequestContext context) {
+			AttributeMap inputMap = new AttributeMap(1);
+			inputMap.setAttribute("personId", context.getFlowScope().getAttribute("personId"));
 			return inputMap;
 		}
 
-		public void mapSubflowOutput(Map subflowOutput, RequestContext context) {
+		public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
 		}
 	}
 

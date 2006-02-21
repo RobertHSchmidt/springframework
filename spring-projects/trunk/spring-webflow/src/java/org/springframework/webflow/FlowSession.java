@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow;
 
+import org.springframework.binding.attribute.AttributeMap;
+
 /**
  * A runtime object that represents a single client session of a
  * specific <code>Flow</code> definition. This object maintains all the 
@@ -84,7 +86,7 @@ public interface FlowSession {
 	 * Return the session attributes; the basis for "flow scope".
 	 * @return the flow scope attributes
 	 */
-	public Scope getScope();
+	public AttributeMap getScope();
 
 	/**
 	 * Returns the parent flow session in the current flow execution,

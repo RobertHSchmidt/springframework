@@ -19,17 +19,16 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
-import org.springframework.webflow.Scope;
 import org.springframework.webflow.State;
 import org.springframework.webflow.execution.FlowLocator;
 
@@ -83,7 +82,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The session data model ("flow scope").
 	 */
-	private Scope scope = new Scope();
+	private AttributeMap scope = new AttributeMap();
 
 	/**
 	 * The parent session of this session (may be null if this is a root
@@ -106,11 +105,11 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 	 * @param parent the parent flow session of the created flow session in the
 	 * owning flow execution
 	 */
-	public FlowSessionImpl(Flow flow, Map input, FlowSessionImpl parent) {
+	public FlowSessionImpl(Flow flow, AttributeMap input, FlowSessionImpl parent) {
 		Assert.notNull(flow, "The flow is required");
 		this.flow = flow;
 		if (input != null) {
-			scope.setAttributes(input);
+			scope.addAttributes(input);
 		}
 		this.parent = parent;
 	}
@@ -151,7 +150,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 		this.status = status;
 	}
 
-	public Scope getScope() {
+	public AttributeMap getScope() {
 		return scope;
 	}
 
@@ -169,7 +168,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 		flowId = (String)in.readObject();
 		stateId = (String)in.readObject();
 		status = (FlowSessionStatus)in.readObject();
-		scope = (Scope)in.readObject();
+		scope = (AttributeMap)in.readObject();
 		parent = (FlowSessionImpl)in.readObject();
 	}
 

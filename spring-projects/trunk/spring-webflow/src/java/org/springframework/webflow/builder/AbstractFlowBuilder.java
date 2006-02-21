@@ -15,8 +15,7 @@
  */
 package org.springframework.webflow.builder;
 
-import java.util.Map;
-
+import org.springframework.binding.attribute.AttributeCollection;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
@@ -45,27 +44,26 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- *     public void buildStates() {
- *      
- *          // get customer information
- *          addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
- *              on(success(), to(&quot;displayDetails&quot;)));
+ * public void buildStates() {
  *              
- *          // view customer information               
- *          addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *              on(submit(), to(&quot;bindAndValidate&quot;));
- *          
- *          // bind and validate customer information updates 
- *          addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
- *              new Transition[] {
- *                  on(error(), to(&quot;displayDetails&quot;)),
- *                  on(success(), to(&quot;finish&quot;))
- *              });
- *              
- *          // finish
- *          addEndState(&quot;finish&quot;);
- *     }
- * }
+ *                  // get customer information
+ *                  addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
+ *                      on(success(), to(&quot;displayDetails&quot;)));
+ *                      
+ *                  // view customer information               
+ *                  addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *                      on(submit(), to(&quot;bindAndValidate&quot;));
+ *                  
+ *                  // bind and validate customer information updates 
+ *                  addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
+ *                      new Transition[] {
+ *                          on(error(), to(&quot;displayDetails&quot;)),
+ *                          on(success(), to(&quot;finish&quot;))
+ *                      });
+ *                      
+ *                  // finish
+ *                  addEndState(&quot;finish&quot;);
+ *             }}
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
@@ -159,7 +157,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	public void init(FlowArtifactParameters flowParameters) throws FlowBuilderException {
-		setFlow(getFlowArtifactFactory().createFlow(flowParameters.applyAndOverride(flowProperties())));
+		setFlow(getFlowArtifactFactory().createFlow(flowParameters.addAttributes(flowAttributes())));
 	}
 
 	/**
@@ -167,7 +165,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * flow built by this builder. Returns <code>null</code> by default.
 	 * @return additional properties describing the flow being built
 	 */
-	protected Map flowProperties() {
+	protected AttributeCollection flowAttributes() {
 		return null;
 	}
 
@@ -225,13 +223,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param transitions the supported transitions for this state, where each
 	 * transition maps a path from this state to another state (triggered by an
 	 * event)
-	 * @param properties additional properties describing the state
+	 * @param attributes additional attributes describing the state
 	 * @return the view marker state
 	 * @throws IllegalArgumentException the stateId was not unique
 	 */
-	protected ViewState addViewState(String stateId, Transition[] transitions, Map properties)
+	protected ViewState addViewState(String stateId, Transition[] transitions, AttributeCollection attributes)
 			throws IllegalArgumentException {
-		return addViewState(stateId, (String)null, transitions, properties);
+		return addViewState(stateId, (String)null, transitions, attributes);
 	}
 
 	/**
@@ -282,13 +280,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param transitions the supported transitions for this state, where each
 	 * transition maps a path from this state to another state (triggered by an
 	 * event)
-	 * @param properties additional properties describing the state
+	 * @param attributes additional attributes describing the state
 	 * @return the view state
 	 * @throws IllegalArgumentException the stateId was not unique
 	 */
-	protected ViewState addViewState(String stateId, String viewName, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
-		return addViewState(stateId, viewSelector(viewName), transitions, properties);
+	protected ViewState addViewState(String stateId, String viewName, Transition[] transitions,
+			AttributeCollection attributes) throws IllegalArgumentException {
+		return addViewState(stateId, viewSelector(viewName), transitions, attributes);
 	}
 
 	/**
@@ -323,16 +321,16 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param transitions the supported transitions for this state, where each
 	 * transition maps a path from this state to another state (triggered by an
 	 * event)
-	 * @param properties additional properties describing the state
+	 * @param attributes additional attributes describing the state
 	 * @return the view state
 	 * @throws IllegalArgumentException the stateId was not unique
 	 */
-	protected ViewState addViewState(String stateId, ViewSelector viewSelector, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
+	protected ViewState addViewState(String stateId, ViewSelector viewSelector, Transition[] transitions,
+			AttributeCollection attributes) throws IllegalArgumentException {
 		ViewState state = new ViewState(getFlow(), stateId);
 		state.setViewSelector(viewSelector);
 		state.getTransitionSet().addAll(transitions);
-		state.addProperties(properties);
+		state.getAttributeMap().addAttributes(attributes);
 		return state;
 	}
 
@@ -390,13 +388,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param transitions the supported transitions for this state, where each
 	 * transition maps a path from this state to another state (triggered by an
 	 * event)
-	 * @param properties additional properties describing the state
+	 * @param attributes additional attributes describing the state
 	 * @return the action state
 	 * @throws IllegalArgumentException the stateId was not unique
 	 */
-	protected ActionState addActionState(String stateId, Action action, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
-		return addActionState(stateId, new Action[] { action }, transitions, properties);
+	protected ActionState addActionState(String stateId, Action action, Transition[] transitions,
+			AttributeCollection attributes) throws IllegalArgumentException {
+		return addActionState(stateId, new Action[] { action }, transitions, attributes);
 	}
 
 	/**
@@ -429,16 +427,16 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param transitions the supported transitions for this state, where each
 	 * transition maps a path from this state to another state (triggered by an
 	 * event)
-	 * @param properties additional properties describing the state
+	 * @param attributes additional attributes describing the state
 	 * @return the action state
 	 * @throws IllegalArgumentException the stateId was not unique
 	 */
-	protected ActionState addActionState(String stateId, Action[] actions, Transition[] transitions, Map properties)
-			throws IllegalArgumentException {
+	protected ActionState addActionState(String stateId, Action[] actions, Transition[] transitions,
+			AttributeCollection attributes) throws IllegalArgumentException {
 		ActionState state = new ActionState(getFlow(), stateId);
 		state.getTransitionSet().addAll(transitions);
 		state.getActionList().addAll(actions);
-		state.addProperties(properties);
+		state.getAttributeMap().addAttributes(attributes);
 		return state;
 	}
 
@@ -500,11 +498,12 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * built by this builder
 	 * @param subFlow the flow to be used as a subflow
 	 * @param transitions the eligible set of state transitions
-	 * @param properties additional properties describing the state
+	 * @param attributes additional attributes describing the state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected SubflowState addSubflowState(String stateId, Flow subFlow, Transition[] transitions, Map properties) {
-		return addSubflowState(stateId, subFlow, null, transitions, properties);
+	protected SubflowState addSubflowState(String stateId, Flow subFlow, Transition[] transitions,
+			AttributeCollection attributes) {
+		return addSubflowState(stateId, subFlow, null, transitions, attributes);
 	}
 
 	/**
@@ -546,15 +545,15 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param attributeMapper the attribute mapper to map attributes between the
 	 * flow built by this builder and the subflow
 	 * @param transitions the eligible set of state transitions
-	 * @param properties additional properties describing the state
+	 * @param attributes additional attributes describing the state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
 	protected SubflowState addSubflowState(String stateId, Flow subFlow, FlowAttributeMapper attributeMapper,
-			Transition[] transitions, Map properties) {
+			Transition[] transitions, AttributeCollection attributes) {
 		SubflowState state = new SubflowState(getFlow(), stateId, subFlow);
 		state.getTransitionSet().addAll(transitions);
 		state.setAttributeMapper(attributeMapper);
-		state.addProperties(properties);
+		state.getAttributeMap().addAttributes(attributes);
 		return state;
 	}
 
@@ -610,17 +609,17 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * true/fase decision to make
 	 * @param ifTrueStateId the state to transition to if the criteria is true
 	 * @param ifFalseStateId the state to transition if the criteria is false
-	 * @param properties custom decision state properties
+	 * @param attributes custom decision state attributes
 	 * @return the configured decision state
 	 * @throws IllegalArgumentException
 	 */
 	protected DecisionState addDecisionState(String stateId, TransitionCriteria matchingCriteria, String ifTrueStateId,
-			String ifFalseStateId, Map properties) throws IllegalArgumentException {
+			String ifFalseStateId, AttributeCollection attributes) throws IllegalArgumentException {
 		Transition[] transitions = new Transition[2];
 		transitions[0] = new Transition(to(ifTrueStateId));
 		transitions[0].setMatchingCriteria(matchingCriteria);
 		transitions[1] = new Transition(to(ifFalseStateId));
-		return addDecisionState(stateId, transitions, properties);
+		return addDecisionState(stateId, transitions, attributes);
 	}
 
 	/**
@@ -642,15 +641,15 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param stateId the state id
 	 * @param transitions the state's supported transitions, evaluated in the
 	 * specified order until a match is found
-	 * @param properties custom decision state properties
+	 * @param attributes custom decision state attributes
 	 * @return the configured decision state
 	 * @throws IllegalArgumentException
 	 */
-	protected DecisionState addDecisionState(String stateId, Transition[] transitions, Map properties)
+	protected DecisionState addDecisionState(String stateId, Transition[] transitions, AttributeCollection attributes)
 			throws IllegalArgumentException {
 		DecisionState state = new DecisionState(getFlow(), stateId);
 		state.getTransitionSet().addAll(transitions);
-		state.addProperties(properties);
+		state.getAttributeMap().addAttributes(attributes);
 		return state;
 	}
 
@@ -703,7 +702,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the end state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected EndState addEndState(String stateId, String viewName, String[] outputAttributeNames) throws IllegalArgumentException {
+	protected EndState addEndState(String stateId, String viewName, String[] outputAttributeNames)
+			throws IllegalArgumentException {
 		return addEndState(stateId, viewSelector(viewName), outputAttributeNames, null);
 	}
 
@@ -731,9 +731,11 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the end state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
-	protected EndState addEndState(String stateId, ViewSelector viewSelector, String[] outputAttributeNames) throws IllegalArgumentException {
+	protected EndState addEndState(String stateId, ViewSelector viewSelector, String[] outputAttributeNames)
+			throws IllegalArgumentException {
 		return addEndState(stateId, viewSelector, outputAttributeNames, null);
 	}
+
 	/**
 	 * Adds an end state with the specified id that will message the specified
 	 * view selector to produce a view to display when entered as part of a root
@@ -743,16 +745,16 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param outputAttributeNames the names of the attributes in flow scope to
 	 * expose as output attributes, making them available for output mapping by
 	 * a calling parent flow
-	 * @param properties additional properties describing the state
+	 * @param attributes additional attributes describing the state
 	 * @return the end state
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
 	protected EndState addEndState(String stateId, ViewSelector viewSelector, String[] outputAttributeNames,
-			Map properties) throws IllegalArgumentException {
+			AttributeCollection attributes) throws IllegalArgumentException {
 		EndState state = new EndState(getFlow(), stateId);
 		state.setViewSelector(viewSelector);
 		state.addOutputAttributeNames(outputAttributeNames);
-		state.addProperties(properties);
+		state.getAttributeMap().addAttributes(attributes);
 		return state;
 	}
 

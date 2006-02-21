@@ -65,20 +65,20 @@ import org.springframework.webflow.executor.support.FlowRequestHandler;
  * Usage example:
  * 
  * <pre>
- *     &lt;!--
- *         Exposes flows for execution at a single request URL.
- *         The id of a flow to launch should be passed in by clients using
- *         the &quot;_flowId&quot; request parameter:
- *         e.g. /app.htm?_flowId=flow1
- *     --&gt;
- *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
- *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *     &lt;/bean&gt;
- *                                                         
- *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;flowLocations&quot; value="/WEB-INF/flows/*-flow.xml"/&gt;
- *     &lt;/bean&gt;
+ *      &lt;!--
+ *          Exposes flows for execution at a single request URL.
+ *          The id of a flow to launch should be passed in by clients using
+ *          the &quot;_flowId&quot; request parameter:
+ *          e.g. /app.htm?_flowId=flow1
+ *      --&gt;
+ *      &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
+ *          &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *      &lt;/bean&gt;
+ *                                                          
+ *      &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *      &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *          &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *      &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorParameterExtractor}
@@ -194,8 +194,8 @@ public class FlowController extends AbstractController {
 
 	/**
 	 * Create a ModelAndView object based on the information in the selected
-	 * response instruction. Subclasses can override this to return a specialized
-	 * ModelAndView or to do custom processing on it.
+	 * response instruction. Subclasses can override this to return a
+	 * specialized ModelAndView or to do custom processing on it.
 	 * @param response instruction the response instruction to convert
 	 * @return a new ModelAndView object
 	 */
@@ -218,8 +218,8 @@ public class FlowController extends AbstractController {
 			}
 			else {
 				// forward to a view as part of an active conversation
-				Map model = new HashMap(response.getModel().size() + 2, 1);
-				model.putAll(response.getModel());
+				Map model = new HashMap(response.getModel().getAttributeCount() + 2, 1);
+				model.putAll(response.getModel().getMap());
 				FlowExecutionKey flowExecutionKey = response.getFlowExecutionKey();
 				FlowExecutionContext flowExecutionContext = response.getFlowExecutionContext();
 				parameterExtractor.putContextAttributes(flowExecutionKey, flowExecutionContext, model);
@@ -230,11 +230,12 @@ public class FlowController extends AbstractController {
 			if (response.isRedirect()) {
 				// redirect to an external URL after flow completion
 				boolean contextRelative = isContextRelativeUrl(response.getViewName());
-				return new ModelAndView(new RedirectView(response.getViewName(), contextRelative), response.getModel());
+				return new ModelAndView(new RedirectView(response.getViewName(), contextRelative), response.getModel()
+						.getMap());
 			}
 			else {
 				// forward to a view after flow completion
-				return new ModelAndView(response.getViewName(), response.getModel());
+				return new ModelAndView(response.getViewName(), response.getModel().getMap());
 			}
 		}
 	}

@@ -15,11 +15,7 @@
  */
 package org.springframework.webflow;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.binding.util.MapAccessor;
+import org.springframework.binding.attribute.AttributeMap;
 
 /**
  * Superclass of all objects in the web flow system that support annotation
@@ -48,46 +44,14 @@ public abstract class AnnotatedObject {
 	 * Additional properties further describing this object. The properties set
 	 * in this map may be arbitrary.
 	 */
-	private Map properties = new HashMap();
+	private AttributeMap attributes = new AttributeMap();
 
-	/**
-	 * A helper for accessing the properties describing this object.
-	 */
-	private transient MapAccessor propertyMapAccessor = new MapAccessor(properties);
-
-	/**
-	 * Returns the value of given property, or <code>null</code> if not found.
-	 */
-	public Object getProperty(String name) {
-		return properties.get(name);
-	}
-
-	/**
-	 * Set the value of named property.
-	 * @param name the name of the property
-	 * @param value the value to set
-	 * @return previous value associated with specified name
-	 */
-	public Object setProperty(String name, Object value) {
-		return properties.put(name, value);
-	}
-
-	/**
-	 * Returns whether or not this annotated object contains a property with
-	 * specified name.
-	 * @param name the name of the property
-	 * @return true if the property is set, false otherwise
-	 */
-	public boolean containsProperty(String name) {
-		return properties.containsKey(name);
-	}
-	
 	/**
 	 * Returns the short description of the action (suitable for display in a
 	 * tooltip).
 	 */
 	public String getCaption() {
-		return (String)getProperty(CAPTION_PROPERTY);
+		return attributes.getStringAttribute(CAPTION_PROPERTY);
 	}
 
 	/**
@@ -95,14 +59,14 @@ public abstract class AnnotatedObject {
 	 * @param caption the caption
 	 */
 	public void setCaption(String caption) {
-		setProperty(CAPTION_PROPERTY, caption);
+		attributes.setAttribute(CAPTION_PROPERTY, caption);
 	}
 
 	/**
 	 * Returns the long description of this action.
 	 */
 	public String getDescription() {
-		return (String)getProperty(DESCRIPTION_PROPERTY);
+		return attributes.getStringAttribute(DESCRIPTION_PROPERTY);
 	}
 
 	/**
@@ -110,31 +74,14 @@ public abstract class AnnotatedObject {
 	 * @param description the long description
 	 */
 	public void setDescription(String description) {
-		setProperty(DESCRIPTION_PROPERTY, description);
+		attributes.setAttribute(DESCRIPTION_PROPERTY, description);
 	}
 
 	/**
-	 * Returns the additional properties describing this object in an
-	 * unmodifiable map.
+	 * Returns the attribute map containing the attributes annotating this
+	 * object.
 	 */
-	public Map getProperties() {
-		return Collections.unmodifiableMap(properties);
-	}
-	
-	/**
-	 * Adds (puts) additional properties describing this object.
-	 */
-	public void addProperties(Map properties) {
-		if (properties != null) {
-			this.properties.putAll(properties);
-		}
-	}
-
-	/**
-	 * Returns a helper for accessing properties of this annotated object.
-	 * @return the property map accessor
-	 */
-	public MapAccessor getPropertyMapAccessor() {
-		return propertyMapAccessor;
+	public AttributeMap getAttributeMap() {
+		return attributes;
 	}
 }

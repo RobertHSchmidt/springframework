@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow;
 
-import java.util.Map;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 
 /**
  * Thrown if an unhandled exception occurs when an action is executed. Typically
@@ -54,7 +54,7 @@ public class ActionExecutionException extends StateException {
 	 * The action's execution properties, which may have affected its execution
 	 * and possibly contributed to this exception being thrown.
 	 */
-	private Map executionProperties;
+	private UnmodifiableAttributeMap executionProperties;
 
 	/**
 	 * Create a new action execution exception that occured while a flow
@@ -63,7 +63,8 @@ public class ActionExecutionException extends StateException {
 	 * @param action the action that generated an unrecoverable exception
 	 * @param cause the underlying cause
 	 */
-	public ActionExecutionException(Flow flow, Action action, Map executionProperties, Throwable cause) {
+	public ActionExecutionException(Flow flow, Action action, UnmodifiableAttributeMap executionProperties,
+			Throwable cause) {
 		this(null, action, executionProperties, "Exception thrown executing start " + action + " of flow '"
 				+ flow.getId() + "'", cause);
 		this.flow = flow;
@@ -77,7 +78,8 @@ public class ActionExecutionException extends StateException {
 	 * @param executionProperties action execution properties
 	 * @param cause the underlying cause
 	 */
-	public ActionExecutionException(State state, Action action, Map executionProperties, Throwable cause) {
+	public ActionExecutionException(State state, Action action, UnmodifiableAttributeMap executionProperties,
+			Throwable cause) {
 		this(state, action, executionProperties, "Exception thrown executing " + action + " in state '" + state.getId()
 				+ "' of flow '" + state.getFlow().getId() + "'", cause);
 	}
@@ -91,7 +93,8 @@ public class ActionExecutionException extends StateException {
 	 * @param message a descriptive message
 	 * @param cause the underlying cause
 	 */
-	public ActionExecutionException(State state, Action action, Map executionProperties, String message, Throwable cause) {
+	public ActionExecutionException(State state, Action action, UnmodifiableAttributeMap executionProperties,
+			String message, Throwable cause) {
 		super(state, message, cause);
 		this.action = action;
 		this.executionProperties = executionProperties;
@@ -122,7 +125,7 @@ public class ActionExecutionException extends StateException {
 	 * Returns the properties (attributes) associated with the action during
 	 * execution.
 	 */
-	public Map getExecutionProperties() {
+	public UnmodifiableAttributeMap getExecutionProperties() {
 		return executionProperties;
 	}
 }

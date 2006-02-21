@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.binding.format.Formatter;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
@@ -366,7 +367,7 @@ public class FlowExecutorParameterExtractor {
 	 * @return the parameter map
 	 */
 	protected Map getParameterMap(ExternalContext context) {
-		return context.getRequestParameterMap();
+		return context.getRequestParameterMap().getMap();
 	}
 
 	// utility methods

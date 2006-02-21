@@ -19,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.binding.util.MapAccessor;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -57,16 +56,6 @@ public abstract class AbstractAction extends EventFactorySupport implements Acti
 	 * custom initialization logic.
 	 */
 	protected void initAction() throws Exception {
-	}
-
-	/**
-	 * Get an accessor for getting contextual properties that may be used to affect this 
-	 * action's execution.
-	 * @param context the flow execution request context
-	 * @return the action property accessor
-	 */
-	protected MapAccessor getPropertyMapAccessor(RequestContext context) {
-		return new MapAccessor(context.getProperties());
 	}
 
 	public final Event execute(RequestContext context) throws Exception {

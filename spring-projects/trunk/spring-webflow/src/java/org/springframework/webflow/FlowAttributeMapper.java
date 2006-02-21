@@ -15,7 +15,8 @@
  */
 package org.springframework.webflow;
 
-import java.util.Map;
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 
 /**
  * A service interface that maps attributes between two flows.
@@ -94,7 +95,7 @@ public interface FlowAttributeMapper {
 	 * @return a map of attributes (name=value pairs) to pass as input to the
 	 * spawning subflow
 	 */
-	public Map createSubflowInput(RequestContext context);
+	public AttributeMap createSubflowInput(RequestContext context);
 
 	/**
 	 * Map output attributes of an ended subflow to a resuming parent flow
@@ -104,5 +105,5 @@ public interface FlowAttributeMapper {
 	 * @param context the current request execution context, which gives access
 	 * to the parent flow scope
 	 */
-	public void mapSubflowOutput(Map subflowOutput, RequestContext context);
+	public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context);
 }

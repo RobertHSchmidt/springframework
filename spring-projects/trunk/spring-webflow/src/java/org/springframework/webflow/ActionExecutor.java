@@ -59,10 +59,10 @@ public class ActionExecutor {
 		catch (Exception e) {
 			// wrap the action as an ActionExecutionException
 			if (context.getFlowExecutionContext().getActiveSession().getStatus() == FlowSessionStatus.STARTING) {
-				throw new ActionExecutionException(context.getActiveFlow(), action, context.getProperties(), e);
+				throw new ActionExecutionException(context.getActiveFlow(), action, context.getAttributes(), e);
 			}
 			else {
-				throw new ActionExecutionException(context.getCurrentState(), action, context.getProperties(), e);
+				throw new ActionExecutionException(context.getCurrentState(), action, context.getAttributes(), e);
 			}
 		}
 	}

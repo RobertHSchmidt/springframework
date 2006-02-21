@@ -235,7 +235,7 @@ public class Transition extends AnnotatedObject {
 
 	public String toString() {
 		return new ToStringCreator(this).append("matchingCriteria", getMatchingCriteria()).append("executionCriteria",
-				getExecutionCriteria()).append("targetStateResolver", getTargetStateResolver()).append("properties",
-				getProperties()).toString();
+				getExecutionCriteria()).append("targetStateResolver", getTargetStateResolver()).append("attributes",
+				getAttributeMap()).toString();
 	}
 }

@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
-import java.util.Map;
-
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -39,7 +39,8 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void requestProcessed(RequestContext context) {
 	}
 
-	public void sessionStarting(RequestContext context, State startState, Map input) throws EnterStateVetoException {
+	public void sessionStarting(RequestContext context, State startState, AttributeMap input)
+			throws EnterStateVetoException {
 	}
 
 	public void sessionStarted(RequestContext context) {
@@ -60,9 +61,9 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void paused(RequestContext context, ViewSelection selectedView) {
 	}
 
-	public void sessionEnding(RequestContext context, Map sessionOutput) {
+	public void sessionEnding(RequestContext context, AttributeMap sessionOutput) {
 	}
 
-	public void sessionEnded(RequestContext context, FlowSession endedSession, Map sessionOutput) {
+	public void sessionEnded(RequestContext context, FlowSession endedSession, UnmodifiableAttributeMap sessionOutput) {
 	}
 }

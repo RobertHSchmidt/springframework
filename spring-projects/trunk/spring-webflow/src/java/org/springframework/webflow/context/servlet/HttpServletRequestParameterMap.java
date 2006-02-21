@@ -20,8 +20,8 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.binding.util.StringKeyedMapAdapter;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP request parameter map, for accessing request
@@ -30,7 +30,7 @@ import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
  * 
  * @author Keith Donald
  */
-public class HttpServletRequestParameterMap extends StringKeyedAttributeMapAdapter {
+public class HttpServletRequestParameterMap extends StringKeyedMapAdapter {
 
 	/**
 	 * The wrapped http request.

@@ -15,14 +15,11 @@
  */
 package org.springframework.webflow.action;
 
-import java.util.Map;
-
 import org.springframework.binding.method.MethodKey;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker;
-
 
 /**
  * Action implementation that bundles two or more action execution methods into
@@ -30,7 +27,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * the following signature:
  * 
  * <pre>
- *      public Event ${method}(RequestContext context) throws Exception;
+ *         public Event ${method}(RequestContext context) throws Exception;
  * </pre>
  * 
  * When this action is invoked, by default the <code>id</code> of the calling
@@ -41,10 +38,10 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * For example, the following action state definition:
  * 
  * <pre>
- *      &lt;action-state id=&quot;search&quot;&gt;
- *          &lt;action bean=&quot;my.search.action&quot;/&gt;
- *          &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
- *      &lt;/action-state&gt;
+ *         &lt;action-state id=&quot;search&quot;&gt;
+ *             &lt;action bean=&quot;my.search.action&quot;/&gt;
+ *             &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
+ *         &lt;/action-state&gt;
  * </pre>
  * 
  * ... when entered, executes the method:
@@ -56,10 +53,10 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Alternatively you may explictly specify the method name:
  * 
  * <pre>
- *      &lt;action-state id=&quot;searchState&quot;&gt;
- *          &lt;action bean=&quot;my.search.action&amp;quot method=&quot;search&quot;/&gt;
- *          &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
- *      &lt;/action-state&gt;
+ *         &lt;action-state id=&quot;searchState&quot;&gt;
+ *             &lt;action bean=&quot;my.search.action&amp;quot method=&quot;search&quot;/&gt;
+ *             &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
+ *         &lt;/action-state&gt;
  * </pre>
  * 
  * <p>
@@ -176,15 +173,8 @@ public class MultiAction extends AbstractAction {
 	 */
 	public static class DefaultActionMethodResolver implements ActionMethodResolver {
 		public MethodKey getMethodKey(RequestContext context) {
-			Map properties = context.getProperties();
-			if (properties.containsKey(AnnotatedAction.METHOD_PROPERTY)) {
-				// use specified execute method name
-				return (MethodKey)properties.get(AnnotatedAction.METHOD_PROPERTY);
-			}
-			else {
-				// use current state name as method name
-				return new MethodKey(context.getCurrentState().getId());
-			}
+			return (MethodKey)context.getAttributes().getAttribute(AnnotatedAction.METHOD_PROPERTY, MethodKey.class,
+					new MethodKey(context.getCurrentState().getId()));
 		}
 	}
 }

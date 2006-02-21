@@ -15,7 +15,9 @@
  */
 package org.springframework.webflow;
 
-import java.util.Map;
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.SharedAttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 
 /**
  * A facade that provides access to the state of an external system that has
@@ -54,7 +56,7 @@ public interface ExternalContext {
 	 * be changed.
 	 * @return the immutable request parameter map
 	 */
-	public Map getRequestParameterMap();
+	public UnmodifiableAttributeMap getRequestParameterMap();
 
 	/**
 	 * Provides access to the external request attribute map, providing a
@@ -62,7 +64,7 @@ public interface ExternalContext {
 	 * internal and external SWF artifacts.
 	 * @return the mutable request attribute map
 	 */
-	public Map getRequestMap();
+	public AttributeMap getRequestMap();
 
 	/**
 	 * Provides access to the external session map, providing a storage for data
@@ -70,7 +72,7 @@ public interface ExternalContext {
 	 * external SWF artifacts.
 	 * @return the mutable session attribute map
 	 */
-	public SharedMap getSessionMap();
+	public SharedAttributeMap getSessionMap();
 
 	/**
 	 * Provides access to the external application map, providing a storage for
@@ -78,34 +80,6 @@ public interface ExternalContext {
 	 * internal and external SWF artifacts.
 	 * @return the mutable application attribute map
 	 */
-	public SharedMap getApplicationMap();
+	public SharedAttributeMap getApplicationMap();
 
-	/**
-	 * A simple subinterface of {@link Map} that exposes a mutex that
-	 * application code can synchronize on.
-	 * <p>
-	 * Expected to be implemented by Maps that are backed by shared objects that
-	 * require synchronization between multiple threads. An example would be the
-	 * HTTP session map.
-	 * 
-	 * @author Keith Donald
-	 */
-	public interface SharedMap extends Map {
-
-		/**
-		 * Returns the shared mutex that may be synchronized on using a
-		 * synchronized block. The returned mutex is guaranteed to be non-null.
-		 * 
-		 * Example usage:
-		 * 
-		 * <pre>
-		 * synchronized (sharedMap.getMutex()) {
-		 * 	// do synchronized work
-		 * }
-		 * </pre>
-		 * 
-		 * @return the mutex
-		 */
-		public Object getMutex();
-	}
 }

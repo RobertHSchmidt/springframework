@@ -15,13 +15,13 @@
  */
 package org.springframework.webflow.context.portlet;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import javax.portlet.PortletContext;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.SharedAttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
 
@@ -67,20 +67,20 @@ public class PortletExternalContext implements ExternalContext {
 		return null;
 	}
 
-	public Map getRequestParameterMap() {
-		return new PortletRequestParameterMap(request);
+	public UnmodifiableAttributeMap getRequestParameterMap() {
+		return new UnmodifiableAttributeMap(new PortletRequestParameterMap(request));
 	}
 
-	public Map getRequestMap() {
-		return new PortletRequestMap(request);
+	public AttributeMap getRequestMap() {
+		return new AttributeMap(new PortletRequestMap(request));
 	}
 
-	public SharedMap getSessionMap() {
-		return new PortletSessionMap(request);
+	public SharedAttributeMap getSessionMap() {
+		return new SharedAttributeMap(new PortletSessionMap(request));
 	}
 
-	public SharedMap getApplicationMap() {
-		return new PortletContextMap(context);
+	public SharedAttributeMap getApplicationMap() {
+		return new SharedAttributeMap(new PortletContextMap(context));
 	}
 
 	/**
@@ -105,7 +105,6 @@ public class PortletExternalContext implements ExternalContext {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("requestParameterMap", new TreeMap(getRequestParameterMap()))
-				.toString();
+		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
 	}
 }

@@ -16,10 +16,11 @@
 package org.springframework.webflow;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.EmptyAttributeCollection;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 
@@ -67,7 +68,7 @@ public class ViewSelection implements Serializable {
 	/**
 	 * A map of the data available to the view for rendering.
 	 */
-	private final Map model;
+	private final UnmodifiableAttributeMap model;
 
 	/**
 	 * Indicates whether or not the view should be rendered after a redirect.
@@ -81,14 +82,12 @@ public class ViewSelection implements Serializable {
 	 * model entries may not be null, but the model Map may be null if there is
 	 * no model data
 	 */
-	public ViewSelection(String viewName, Map model, boolean redirect) {
+	public ViewSelection(String viewName, AttributeCollection model, boolean redirect) {
 		this.viewName = viewName;
-		if (model != null) {
-			this.model = new HashMap(model);
+		if (model == null) {
+			model = EmptyAttributeCollection.INSTANCE;
 		}
-		else {
-			this.model = Collections.EMPTY_MAP;
-		}
+		this.model = model.unmodifiable();
 		this.redirect = redirect;
 	}
 
@@ -103,8 +102,8 @@ public class ViewSelection implements Serializable {
 	 * Return the model map. Never returns null. To be called by application
 	 * code for modifying the model.
 	 */
-	public Map getModel() {
-		return Collections.unmodifiableMap(model);
+	public UnmodifiableAttributeMap getModel() {
+		return model;
 	}
 
 	/**
@@ -119,7 +118,7 @@ public class ViewSelection implements Serializable {
 	 * view and does not contain a model.
 	 */
 	public boolean isNull() {
-		return (viewName == null && model.isEmpty());
+		return (viewName == null && model.getAttributeCount() == 0);
 	}
 
 	public boolean equals(Object o) {

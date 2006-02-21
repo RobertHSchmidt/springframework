@@ -15,11 +15,9 @@
  */
 package org.springframework.webflow.execution;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
@@ -80,7 +78,8 @@ public class FlowExecutionTests extends TestCase {
 		new EndState(flow, "finish");
 
 		MockFlowExecutionListener flowExecutionListener = new MockFlowExecutionListener();
-		FlowExecutionImpl flowExecution = new FlowExecutionImpl(flow, new FlowExecutionListener[] { flowExecutionListener });
+		FlowExecutionImpl flowExecution = new FlowExecutionImpl(flow,
+				new FlowExecutionListener[] { flowExecutionListener });
 		flowExecution.start(new MockExternalContext());
 		assertTrue(!flowExecutionListener.isExecuting());
 		assertEquals(0, flowExecutionListener.getFlowNestingLevel());
@@ -177,9 +176,9 @@ public class FlowExecutionTests extends TestCase {
 	public void testExtensiveFlowNavigationScenario2() {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
 				new XmlFlowBuilderTests.TestFlowArtifactFactory());
-		Map props = new HashMap();
-		props.put("scenario2", Boolean.TRUE);
-		FlowAssembler assembler = new FlowAssembler(new FlowArtifactParameters("testFlow1", props), builder);
+		AttributeMap attributes = new AttributeMap();
+		attributes.setAttribute("scenario2", Boolean.TRUE);
+		FlowAssembler assembler = new FlowAssembler(new FlowArtifactParameters("testFlow1", attributes), builder);
 		assembler.assembleFlow();
 		FlowExecution execution = new FlowExecutionImpl(builder.getResult());
 		MockExternalContext context = new MockExternalContext();
@@ -197,7 +196,7 @@ public class FlowExecutionTests extends TestCase {
 	public static TargetStateResolver to(String stateId) {
 		return new StaticTargetStateResolver(stateId);
 	}
-	
+
 	public static ViewSelector view(String viewName) {
 		return new SimpleViewSelector(viewName);
 	}

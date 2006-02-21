@@ -20,12 +20,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
@@ -89,8 +89,8 @@ public class FlowExecutionImplTests extends TestCase {
 
 		assertEquals(flowExecution.isActive(), restoredFlowExecution.isActive());
 		if (flowExecution.isActive()) {
-			assertTrue(entriesCollectionsAreEqual(flowExecution.getActiveSession().getScope().getAttributeMap()
-					.entrySet(), restoredFlowExecution.getActiveSession().getScope().getAttributeMap().entrySet()));
+			assertTrue(entriesCollectionsAreEqual(flowExecution.getActiveSession().getScope().getMap()
+					.entrySet(), restoredFlowExecution.getActiveSession().getScope().getMap().entrySet()));
 			assertEquals(flowExecution.getActiveSession().getState().getId(), restoredFlowExecution
 					.getActiveSession().getState().getId());
 			assertEquals(flowExecution.getActiveSession().getFlow().getId(), restoredFlowExecution.getActiveSession()
@@ -102,8 +102,9 @@ public class FlowExecutionImplTests extends TestCase {
 
 	public void testRehydrate() throws Exception {
 		// setup some input data
-		Map input = new HashMap(1);
-		input.put("name", "value");
+		
+		AttributeMap input = new AttributeMap(1);
+		input.setAttribute("name", "value");
 		// start the flow execution
 		flowExecution.start(new MockExternalContext(input));
 		runFlowExecutionRehydrationTest();

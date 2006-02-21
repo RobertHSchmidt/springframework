@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -33,6 +32,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionFactory;
@@ -85,8 +87,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -200,7 +202,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String FROM_ATTRIBUTE = "from";
 
-	private static final String PROPERTY_ELEMENT = "property";
+	private static final String ATTRIBUTE_ELEMENT = "attribute";
 
 	private static final String VALUE_ELEMENT = "value";
 
@@ -412,7 +414,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected Flow parseFlow(FlowArtifactParameters flowParameters, Element flowElement) {
 		Assert.state(FLOW_ELEMENT.equals(flowElement.getTagName()), "This is not the '" + FLOW_ELEMENT + "' element");
 		initLocalFlowArtifactFactoryRegistry(flowElement);
-		FlowArtifactParameters parameters = flowParameters.applyAndOverride(parseProperties(flowElement));
+		FlowArtifactParameters parameters = flowParameters.addAttributes(parseAttributes(flowElement));
 		Flow flow = getLocalFlowArtifactFactory().createFlow(parameters);
 		parseAndAddFlowVariables(flowElement, flow);
 		parseAndAddFlowActions(flowElement, flow);
@@ -624,7 +626,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	protected FlowArtifactParameters parseParameters(Element element) {
-		return new FlowArtifactParameters(element.getAttribute(ID_ATTRIBUTE), parseProperties(element));
+		return new FlowArtifactParameters(element.getAttribute(ID_ATTRIBUTE), parseAttributes(element));
 	}
 
 	/**
@@ -713,17 +715,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 					element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
 			action.setResultScope(scopeType);
 		}
-		action.addProperties(parseProperties(element));
-		action.setTargetAction(parseAction(element, action.getProperties()));
+		action.getAttributeMap().addAttributes(parseAttributes(element));
+		action.setTargetAction(parseAction(element, action.getAttributeMap()));
 		return action;
 	}
 
 	/**
 	 * Parse an action definition and return the corresponding object.
 	 */
-	protected Action parseAction(Element element, Map properties) {
+	protected Action parseAction(Element element, AttributeMap attributes) {
 		String actionId = element.getAttribute(BEAN_ATTRIBUTE);
-		FlowArtifactParameters actionParameters = new FlowArtifactParameters(actionId, properties);
+		FlowArtifactParameters actionParameters = new FlowArtifactParameters(actionId, attributes);
 		return getLocalFlowArtifactFactory().getAction(actionParameters);
 	}
 
@@ -732,20 +734,20 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * the properties as a map: the name of the property is the key, the
 	 * associated value the value.
 	 */
-	protected Map parseProperties(Element element) {
-		Map properties = new HashMap();
-		List propertyElements = DomUtils.getChildElementsByTagName(element, PROPERTY_ELEMENT);
+	protected AttributeCollection parseAttributes(Element element) {
+		AttributeMap attributes = new AttributeMap();
+		List propertyElements = DomUtils.getChildElementsByTagName(element, ATTRIBUTE_ELEMENT);
 		for (int i = 0; i < propertyElements.size(); i++) {
-			parseAndSetProperty((Element)propertyElements.get(i), properties);
+			parseAndSetAttribute((Element)propertyElements.get(i), attributes);
 		}
-		return properties;
+		return attributes;
 	}
 
 	/**
 	 * Parse a property definition from given element and add the property to
 	 * given set.
 	 */
-	protected void parseAndSetProperty(Element element, Map properties) {
+	protected void parseAndSetAttribute(Element element, AttributeMap attributes) {
 		String name = element.getAttribute(NAME_ATTRIBUTE);
 		String value = null;
 		if (element.hasAttribute(VALUE_ATTRIBUTE)) {
@@ -756,7 +758,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Assert.state(valueElements.size() == 1, "A property value should be specified for property '" + name + "'");
 			value = DomUtils.getTextValue((Element)valueElements.get(0));
 		}
-		properties.put(name, convertPropertyValue(element, value));
+		attributes.setAttribute(name, convertPropertyValue(element, value));
 	}
 
 	/**
@@ -798,7 +800,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * object.
 	 */
 	protected Transition parseTransition(Element element) {
-		Transition transition = getLocalFlowArtifactFactory().createTransition(parseProperties(element));
+		Transition transition = getLocalFlowArtifactFactory().createTransition(parseAttributes(element).unmodifiable());
 		transition.setMatchingCriteria((TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(ON_ATTRIBUTE)));
 		transition.setExecutionCriteria(TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element)));
@@ -828,11 +830,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected Transition[] parseIf(Element element) {
 		TransitionCriteria criteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(TEST_ATTRIBUTE));
-		Transition thenTransition = getLocalFlowArtifactFactory().createTransition(Collections.EMPTY_MAP);
+		Transition thenTransition = getLocalFlowArtifactFactory().createTransition(UnmodifiableAttributeMap.EMPTY_MAP);
 		thenTransition.setMatchingCriteria(criteria);
 		thenTransition.setTargetStateResolver(new StaticTargetStateResolver(element.getAttribute(THEN_ATTRIBUTE)));
 		if (StringUtils.hasText(element.getAttribute(ELSE_ATTRIBUTE))) {
-			Transition elseTransition = getLocalFlowArtifactFactory().createTransition(Collections.EMPTY_MAP);
+			Transition elseTransition = getLocalFlowArtifactFactory().createTransition(
+					UnmodifiableAttributeMap.EMPTY_MAP);
 			elseTransition.setTargetStateResolver(new StaticTargetStateResolver(element.getAttribute(ELSE_ATTRIBUTE)));
 			return new Transition[] { thenTransition, elseTransition };
 		}
@@ -1083,7 +1086,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (containsBean(parameters.getId())) {
-					return toAction(getBean(parameters.getId(), Action.class, false), parameters.getProperties());
+					return toAction(getBean(parameters.getId(), Action.class, false), parameters.getAttributes());
 				}
 			}
 			return getFlowArtifactFactory().getAction(parameters);
@@ -1144,8 +1147,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().createState(flow, stateType, parameters);
 		}
 
-		public Transition createTransition(Map properties) throws FlowArtifactException {
-			return getFlowArtifactFactory().createTransition(properties);
+		public Transition createTransition(UnmodifiableAttributeMap attributes) throws FlowArtifactException {
+			return getFlowArtifactFactory().createTransition(attributes);
 		}
 
 		protected boolean containsBean(String id) {

@@ -68,7 +68,7 @@ public class FlowRegistryFlowArtifactFactory extends FlowArtifactFactoryAdapter 
 	}
 
 	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
-		return toAction(getBean(actionParameters.getId(), Action.class, false), actionParameters.getProperties());
+		return toAction(getBean(actionParameters.getId(), Action.class, false), actionParameters.getAttributes());
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {

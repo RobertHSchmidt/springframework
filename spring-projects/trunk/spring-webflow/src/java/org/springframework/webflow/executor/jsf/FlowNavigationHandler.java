@@ -196,7 +196,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	 * @param facesContext <code>FacesContext</code> for the current request
 	 */
 	public void renderView(ViewSelection selectedView, FacesContext facesContext) {
-		putInto(facesContext.getExternalContext().getRequestMap(), selectedView.getModel());
+		putInto(facesContext.getExternalContext().getRequestMap(), selectedView.getModel().getMap());
 		// stay on the same view if requested
 		if (selectedView.getViewName() == null) {
 			return;

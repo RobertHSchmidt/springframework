@@ -105,11 +105,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
 		getStatePersister().restoreState(bean, context);
-		MethodKey methodKey = (MethodKey)context.getProperties().get(AnnotatedAction.METHOD_PROPERTY);
-		if (methodKey == null) {
-			throw new IllegalStateException("The method to invoke was not provided, please set the '"
-					+ AnnotatedAction.METHOD_PROPERTY + "' property");
-		}
+		MethodKey methodKey = (MethodKey)context.getAttributes().getRequiredAttribute(AnnotatedAction.METHOD_PROPERTY,
+				MethodKey.class);
 		Object returnValue = getMethodInvoker().invoke(methodKey, bean, context);
 		processMethodReturnValue(returnValue, context);
 		Event resultEvent = getEventFactory().createEvent(returnValue, context);
@@ -131,10 +128,10 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * @param context the request context
 	 */
 	protected void processMethodReturnValue(Object returnValue, RequestContext context) {
-		MapAccessor propertyMap = getPropertyMapAccessor(context);
-		String resultName = propertyMap.getString(AnnotatedAction.RESULT_NAME_PROPERTY, null);
+		String resultName = context.getAttributes().getStringAttribute(AnnotatedAction.RESULT_NAME_PROPERTY, null);
 		if (resultName != null) {
-			ScopeType scopeType = (ScopeType)propertyMap.get(AnnotatedAction.RESULT_SCOPE_PROPERTY, ScopeType.REQUEST);
+			ScopeType scopeType = (ScopeType)context.getAttributes().getAttribute(
+					AnnotatedAction.RESULT_SCOPE_PROPERTY, ScopeType.REQUEST);
 			scopeType.getScope(context).setAttribute(resultName, returnValue);
 		}
 	}
@@ -190,8 +187,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 			else {
 				// simply return success, saving the return value as an event
 				// parameter
-				MapAccessor propertyMap = new MapAccessor(context.getProperties());
-				String resultParameterName = propertyMap.getString(RESULT_PARAMETER, RESULT_PARAMETER);
+				String resultParameterName = context.getAttributes().getStringAttribute(RESULT_PARAMETER, RESULT_PARAMETER);
 				return success(resultParameterName, resultObject);
 			}
 		}

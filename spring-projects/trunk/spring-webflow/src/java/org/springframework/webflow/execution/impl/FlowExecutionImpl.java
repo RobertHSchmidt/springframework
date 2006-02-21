@@ -21,10 +21,10 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
@@ -34,7 +34,6 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
-import org.springframework.webflow.Scope;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
@@ -87,7 +86,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * A data structure for attributes shared by all flow sessions.
 	 */
-	private Scope scope = new Scope();
+	private AttributeMap scope = new AttributeMap();
 
 	/**
 	 * The stack of active, currently executing flow sessions. As subflows are
@@ -159,7 +158,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return getActiveSessionInternal();
 	}
 
-	public Scope getScope() {
+	public AttributeMap getScope() {
 		assertActive();
 		return scope;
 	}
@@ -345,7 +344,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Sets the attributes shared by all sessions.
 	 * @param scope the data shared by all sessions.
 	 */
-	public void setScope(Scope scope) {
+	public void setScope(AttributeMap scope) {
 		this.scope = scope;
 	}
 
@@ -364,7 +363,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param input the flow session input
 	 * @return the new flow session
 	 */
-	public FlowSession activateSession(Flow flow, Map input) {
+	public FlowSession activateSession(Flow flow, AttributeMap input) {
 		FlowSessionImpl session;
 		if (!flowSessions.isEmpty()) {
 			FlowSessionImpl parent = getActiveSessionInternal();
@@ -391,7 +390,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * created flow session
 	 * @return the newly created flow session
 	 */
-	protected FlowSessionImpl createFlowSession(Flow flow, Map input, FlowSessionImpl parent) {
+	protected FlowSessionImpl createFlowSession(Flow flow, AttributeMap input, FlowSessionImpl parent) {
 		return new FlowSessionImpl(flow, input, parent);
 	}
 

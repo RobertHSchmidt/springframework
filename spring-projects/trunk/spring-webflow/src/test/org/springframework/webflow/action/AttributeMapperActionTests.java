@@ -37,11 +37,11 @@ public class AttributeMapperActionTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		context.addRequestParameter("foo", "value");
 		
-		assertTrue(context.getFlowScope().isEmpty());
+		assertTrue(context.getFlowScope().getAttributeCount() == 0);
 		
 		ama.execute(context);
 		
-		assertEquals(1, context.getFlowScope().size());
+		assertEquals(1, context.getFlowScope().getAttributeCount());
 		assertEquals("value", context.getFlowScope().getAttribute("bar"));
 	}
 }

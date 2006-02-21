@@ -15,13 +15,11 @@
  */
 package org.springframework.webflow.test;
 
-import java.util.Map;
-
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
-import org.springframework.webflow.Scope;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
 import org.springframework.webflow.ViewSelection;
@@ -39,7 +37,7 @@ public class MockFlowSession implements FlowSession {
 
 	private FlowSessionStatus status = FlowSessionStatus.CREATED;
 
-	private Scope scope = new Scope();
+	private AttributeMap scope = new AttributeMap();
 
 	private FlowSession parent;
 
@@ -70,9 +68,9 @@ public class MockFlowSession implements FlowSession {
 	 * Creates a new mock session in a created state for the specified flow
 	 * definition.
 	 */
-	public MockFlowSession(Flow flow, Map input) {
+	public MockFlowSession(Flow flow, AttributeMap input) {
 		setFlow(flow);
-		scope.putAll(input);
+		scope.addAttributes(input);
 	}
 
 	public Flow getFlow() {
@@ -83,7 +81,7 @@ public class MockFlowSession implements FlowSession {
 		return state;
 	}
 
-	public Scope getScope() {
+	public AttributeMap getScope() {
 		return scope;
 	}
 
@@ -125,7 +123,7 @@ public class MockFlowSession implements FlowSession {
 	 * scope data of the ongoing flow execution. As such, the given scope should
 	 * be of type {@link ScopeType#FLOW}.
 	 */
-	public void setScope(Scope scope) {
+	public void setScope(AttributeMap scope) {
 		this.scope = scope;
 	}
 

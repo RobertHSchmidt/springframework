@@ -15,13 +15,13 @@
  */
 package org.springframework.webflow.context.servlet;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.SharedAttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
 
@@ -54,8 +54,7 @@ public class ServletExternalContext implements ExternalContext {
 	 * @param request the HTTP request
 	 * @param response the HTTP response
 	 */
-	public ServletExternalContext(ServletContext context, HttpServletRequest request,
-			HttpServletResponse response) {
+	public ServletExternalContext(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
 		this.context = context;
 		this.request = request;
 		this.response = response;
@@ -69,20 +68,20 @@ public class ServletExternalContext implements ExternalContext {
 		return request.getPathInfo();
 	}
 
-	public Map getRequestParameterMap() {
-		return new HttpServletRequestParameterMap(request);
+	public UnmodifiableAttributeMap getRequestParameterMap() {
+		return new UnmodifiableAttributeMap(new HttpServletRequestParameterMap(request));
 	}
 
-	public Map getRequestMap() {
-		return new HttpServletRequestMap(request);
+	public AttributeMap getRequestMap() {
+		return new AttributeMap(new HttpServletRequestMap(request));
 	}
 
-	public SharedMap getSessionMap() {
-		return new HttpSessionMap(request);
+	public SharedAttributeMap getSessionMap() {
+		return new SharedAttributeMap(new HttpSessionMap(request));
 	}
 
-	public SharedMap getApplicationMap() {
-		return new HttpServletContextMap(context);
+	public SharedAttributeMap getApplicationMap() {
+		return new SharedAttributeMap(new HttpServletContextMap(context));
 	}
 
 	/**
@@ -107,7 +106,6 @@ public class ServletExternalContext implements ExternalContext {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("requestParameterMap", new TreeMap(getRequestParameterMap()))
-				.toString();
+		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
 	}
 }

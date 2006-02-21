@@ -15,16 +15,15 @@
  */
 package org.springframework.webflow.test;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.Scope;
 import org.springframework.webflow.State;
 import org.springframework.webflow.Transition;
 
@@ -51,13 +50,13 @@ public class MockRequestContext implements RequestContext {
 
 	private ExternalContext externalContext = new MockExternalContext();
 
-	private Scope requestScope = new Scope();
+	private AttributeMap requestScope = new AttributeMap();
 
 	private Event lastEvent;
 
 	private Transition lastTransition;
 
-	private Map properties = new HashMap();
+	private AttributeMap attributes = new AttributeMap();
 
 	/**
 	 * Creates a new mock request context with the following defaults:
@@ -94,22 +93,22 @@ public class MockRequestContext implements RequestContext {
 		return getFlowExecutionContext().getActiveSession().getState();
 	}
 
-	public Scope getRequestScope() {
+	public AttributeMap getRequestScope() {
 		return requestScope;
 	}
 
-	public Scope getFlowScope() {
+	public AttributeMap getFlowScope() {
 		return getFlowExecutionContext().getActiveSession().getScope();
 	}
 
-	public Scope getConversationScope() {
+	public AttributeMap getConversationScope() {
 		return getFlowExecutionContext().getScope();
 	}
 
-	public Map getRequestParameters() {
+	public UnmodifiableAttributeMap getRequestParameters() {
 		return externalContext.getRequestParameterMap();
 	}
-	
+
 	public ExternalContext getExternalContext() {
 		return externalContext;
 	}
@@ -126,20 +125,12 @@ public class MockRequestContext implements RequestContext {
 		return lastTransition;
 	}
 
-	public Map getProperties() {
-		return properties;
+	public UnmodifiableAttributeMap getAttributes() {
+		return attributes.unmodifiable();
 	}
 
-	public void setProperties(Map properties) {
-		this.properties = properties;
-	}
-
-	public Map getModel() {
-		// merge request and flow scope
-		Map model = new HashMap(getFlowScope().size() + getRequestScope().size());
-		model.putAll(getFlowScope().getAttributeMap());
-		model.putAll(getRequestScope().getAttributeMap());
-		return model;
+	public UnmodifiableAttributeMap getModel() {
+		return getConversationScope().union(getFlowScope()).union(getRequestScope()).unmodifiable();
 	}
 
 	/**
@@ -174,12 +165,16 @@ public class MockRequestContext implements RequestContext {
 	}
 
 	/**
-	 * Set an execution property.
-	 * @param propertyName the attribute name
-	 * @param propertyValue the attribute value
+	 * Set an execution attribute.
+	 * @param attributeName the attribute name
+	 * @param attributeValue the attribute value
 	 */
-	public void setProperty(String propertyName, Object propertyValue) {
-		properties.put(propertyName, propertyValue);
+	public void setAttribute(String attributeName, Object attributeValue) {
+		attributes.setAttribute(attributeName, attributeValue);
+	}
+
+	public void setAttributes(AttributeCollection attributes) {
+		this.attributes.replaceWith(attributes);
 	}
 
 	/**
@@ -197,7 +192,8 @@ public class MockRequestContext implements RequestContext {
 	}
 
 	/**
-	 * Sets the active flow session of the executing flow associated with this request.
+	 * Sets the active flow session of the executing flow associated with this
+	 * request.
 	 */
 	public void setActiveSession(FlowSession flowSession) {
 		getMockFlowExecutionContext().setActiveSession(flowSession);
@@ -208,7 +204,7 @@ public class MockRequestContext implements RequestContext {
 	 * @param parameterName the parameter name
 	 * @param parameterValue the parameter value
 	 */
-	public void addRequestParameter(Object parameterName, Object parameterValue) {
+	public void addRequestParameter(String parameterName, Object parameterValue) {
 		getMockExternalContext().addRequestParameter(parameterName, parameterValue);
 	}
 }

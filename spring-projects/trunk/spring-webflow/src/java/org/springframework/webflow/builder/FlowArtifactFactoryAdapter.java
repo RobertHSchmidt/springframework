@@ -1,9 +1,9 @@
 package org.springframework.webflow.builder;
 
-import java.util.Map;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -94,7 +94,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	public Flow createFlow(FlowArtifactParameters parameters) throws FlowArtifactException {
 		Flow flow = (Flow)newInstance(Flow.class);
 		flow.setId(parameters.getId());
-		flow.addProperties(parameters.getProperties());
+		flow.getAttributeMap().addAttributes(parameters.getAttributes());
 		return flow;
 	}
 
@@ -103,13 +103,13 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 		State state = (State)newInstance(stateType);
 		state.setId(parameters.getId());
 		state.setFlow(flow);
-		state.addProperties(parameters.getProperties());
+		state.getAttributeMap().addAttributes(parameters.getAttributes());
 		return state;
 	}
 
-	public Transition createTransition(Map properties) throws FlowArtifactException {
+	public Transition createTransition(UnmodifiableAttributeMap attributes) throws FlowArtifactException {
 		Transition transition = (Transition)newInstance(Transition.class);
-		transition.addProperties(properties);
+		transition.getAttributeMap().addAttributes(attributes);
 		return transition;
 	}
 
@@ -147,7 +147,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	 * @param artifact the service bean
 	 * @return the action
 	 */
-	protected Action toAction(Object artifact, Map properties) {
+	protected Action toAction(Object artifact, UnmodifiableAttributeMap attributes) {
 		if (artifact instanceof Action) {
 			return (Action)artifact;
 		}

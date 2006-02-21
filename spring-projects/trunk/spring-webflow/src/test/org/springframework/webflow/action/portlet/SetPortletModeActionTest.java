@@ -64,7 +64,7 @@ public class SetPortletModeActionTest extends TestCase {
 		PortletExternalContext externalContext = new PortletExternalContext(null, null, mockActionResponse);
 		MockRequestContext mockRequestContext = new MockRequestContext();
 		mockRequestContext.setExternalContext(externalContext);
-		mockRequestContext.setProperty(SetPortletModeAction.PORTLET_MODE_PROPERTY, "HELP");
+		mockRequestContext.setAttribute(SetPortletModeAction.PORTLET_MODE_ATTRIBUTE, "HELP");
 
 		// perform test
 		Event result = tested.doExecute(mockRequestContext);
@@ -78,7 +78,7 @@ public class SetPortletModeActionTest extends TestCase {
 		PortletExternalContext externalContext = new PortletExternalContext(null, null, mockActionResponse);
 		MockRequestContext mockRequestContext = new MockRequestContext();
 		mockRequestContext.setExternalContext(externalContext);
-		mockRequestContext.setProperty(SetPortletModeAction.PORTLET_MODE_PROPERTY, PortletMode.HELP);
+		mockRequestContext.setAttribute(SetPortletModeAction.PORTLET_MODE_ATTRIBUTE, PortletMode.HELP);
 
 		// perform test
 		try {
@@ -96,7 +96,7 @@ public class SetPortletModeActionTest extends TestCase {
 		PortletExternalContext externalContext = new PortletExternalContext(null, null, mockRenderResponse);
 		MockRequestContext mockRequestContext = new MockRequestContext();
 		mockRequestContext.setExternalContext(externalContext);	
-		mockRequestContext.setProperty(SetPortletModeAction.PORTLET_MODE_PROPERTY, PortletMode.HELP);
+		mockRequestContext.setAttribute(SetPortletModeAction.PORTLET_MODE_ATTRIBUTE, PortletMode.HELP);
 
 		// perform test
 		try {

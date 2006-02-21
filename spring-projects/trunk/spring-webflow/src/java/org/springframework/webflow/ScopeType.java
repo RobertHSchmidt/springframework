@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.core.enums.StaticLabeledEnum;
 
 /**
@@ -30,7 +31,7 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	 * life of a request submitted to a flow execution for processing.
 	 */
 	public static final ScopeType REQUEST = new ScopeType(0, "Request") {
-		public Scope getScope(RequestContext context) {
+		public AttributeMap getScope(RequestContext context) {
 			return context.getRequestScope();
 		}
 	};
@@ -41,7 +42,7 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	 * and lives locally for the life of a executing flow session.
 	 */
 	public static final ScopeType FLOW = new ScopeType(1, "Flow") {
-		public Scope getScope(RequestContext context) {
+		public AttributeMap getScope(RequestContext context) {
 			return context.getFlowScope();
 		}
 	};
@@ -53,7 +54,7 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	 * conversation).
 	 */
 	public static final ScopeType CONVERSATION = new ScopeType(2, "Conversation") {
-		public Scope getScope(RequestContext context) {
+		public AttributeMap getScope(RequestContext context) {
 			return context.getConversationScope();
 		}
 	};
@@ -75,5 +76,5 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	 * @param context a flow execution request context
 	 * @return the scope
 	 */
-	public abstract Scope getScope(RequestContext context);
+	public abstract AttributeMap getScope(RequestContext context);
 }

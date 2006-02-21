@@ -16,10 +16,11 @@
 package org.springframework.webflow.builder;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.EmptyAttributeCollection;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
@@ -40,7 +41,7 @@ public class FlowArtifactParameters implements Serializable {
 	/**
 	 * The flow artifact properties.
 	 */
-	private Map properties;
+	private UnmodifiableAttributeMap attributes;
 
 	/**
 	 * Creates a parameters value object containing the specified id and an
@@ -56,14 +57,13 @@ public class FlowArtifactParameters implements Serializable {
 	 * empty properties map.
 	 * @param id the flow Id
 	 */
-	public FlowArtifactParameters(String id, Map properties) {
+	public FlowArtifactParameters(String id, AttributeCollection attributes) {
 		Assert.hasText(id, "The id parameter is required");
 		this.id = id;
-		if (properties != null) {
-			this.properties = Collections.unmodifiableMap(properties);
-		} else {
-			this.properties = Collections.EMPTY_MAP;
+		if (attributes == null) {
+			attributes = EmptyAttributeCollection.INSTANCE;
 		}
+		this.attributes = attributes.unmodifiable();
 	}
 
 	/**
@@ -76,8 +76,8 @@ public class FlowArtifactParameters implements Serializable {
 	/**
 	 * Returns the properties map.
 	 */
-	public Map getProperties() {
-		return properties;
+	public UnmodifiableAttributeMap getAttributes() {
+		return attributes;
 	}
 
 	/**
@@ -88,17 +88,16 @@ public class FlowArtifactParameters implements Serializable {
 	 * @param properties the properties to apply and then override
 	 * @return the artifact parameters
 	 */
-	public FlowArtifactParameters applyAndOverride(Map properties) {
-		if (properties != null) {
-			Map copyProperties = new HashMap(properties);
-			copyProperties.putAll(getProperties());
-			return new FlowArtifactParameters(getId(), copyProperties);
-		} else {
-			return new FlowArtifactParameters(getId(), getProperties());
+	public FlowArtifactParameters addAttributes(AttributeCollection attributes) {
+		if (attributes != null) {
+			return new FlowArtifactParameters(getId(), new AttributeMap(getAttributes()).addAttributes(attributes));
+		}
+		else {
+			return new FlowArtifactParameters(getId(), getAttributes());
 		}
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("id", getId()).append("properties", properties).toString();
+		return new ToStringCreator(this).append("id", getId()).append("attributes", attributes).toString();
 	}
 }

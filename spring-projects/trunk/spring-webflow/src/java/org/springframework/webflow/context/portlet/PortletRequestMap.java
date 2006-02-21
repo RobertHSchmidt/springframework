@@ -19,14 +19,14 @@ import java.util.Enumeration;
 
 import javax.portlet.PortletRequest;
 
-import org.springframework.webflow.util.StringKeyedAttributeMapAdapter;
+import org.springframework.binding.util.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Portlet request, for accessing request scoped attributes.
  * 
  * @author Keith Donald
  */
-public class PortletRequestMap extends StringKeyedAttributeMapAdapter {
+public class PortletRequestMap extends StringKeyedMapAdapter {
 
 	/**
 	 * The wrapped portlet request.

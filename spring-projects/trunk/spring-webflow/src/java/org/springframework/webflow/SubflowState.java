@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow;
 
-import java.util.Map;
-
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
@@ -57,7 +57,7 @@ public class SubflowState extends TransitionableState {
 	 * to the spawned subflow and visa versa.
 	 */
 	private FlowAttributeMapper attributeMapper;
-	
+
 	/**
 	 * Default constructor for bean style usage.
 	 * @see TransitionableState#TransitionableState()
@@ -99,16 +99,16 @@ public class SubflowState extends TransitionableState {
 	}
 
 	/**
-	 * Set the attribute mapper to use to map model data between parent and child
-	 * subflow model. Can be null if no mapping is needed.
+	 * Set the attribute mapper to use to map model data between parent and
+	 * child subflow model. Can be null if no mapping is needed.
 	 */
 	public void setAttributeMapper(FlowAttributeMapper attributeMapper) {
 		this.attributeMapper = attributeMapper;
 	}
 
 	/**
-	 * Returns the attribute mapper used to map data between parent and child subflow
-	 * model, or null if no mapping is needed.
+	 * Returns the attribute mapper used to map data between parent and child
+	 * subflow model, or null if no mapping is needed.
 	 */
 	public FlowAttributeMapper getAttributeMapper() {
 		return attributeMapper;
@@ -133,14 +133,13 @@ public class SubflowState extends TransitionableState {
 		return context.start(getSubflow(), getSubflowStartState(context), createSubflowInput(context));
 	}
 
-	
-	private Map createSubflowInput(RequestContext context) {
+	private AttributeMap createSubflowInput(RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Messaging the configured attribute mapper to map attributes "
 						+ "down to the spawned subflow for access within the subflow");
 			}
-			return this.attributeMapper.createSubflowInput(context);
+			return getAttributeMapper().createSubflowInput(context);
 		}
 		else {
 			if (logger.isDebugEnabled()) {
@@ -153,23 +152,25 @@ public class SubflowState extends TransitionableState {
 	}
 
 	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
-		mapSubflowOutput(event.getParameters(), context);
+		mapSubflowOutput(event.getAttributes(), context);
 		return super.onEvent(event, context);
 	}
 
-	private void mapSubflowOutput(Map subflowOutput, RequestContext context) {
+	private void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Messaging the configured attribute mapper to map subflow result attributes to the "
-						+ "resuming parent flow -- It will have access to attributes passed up by the completed subflow");
+				logger
+						.debug("Messaging the configured attribute mapper to map subflow result attributes to the "
+								+ "resuming parent flow -- It will have access to attributes passed up by the completed subflow");
 			}
 			attributeMapper.mapSubflowOutput(subflowOutput, context);
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				logger.debug("No attribute mapper is configured for the resuming state '"
-						+ getId()
-						+ "' -- as a result, no attributes in the ending subflow scope will be passed to the resuming flow");
+				logger
+						.debug("No attribute mapper is configured for the resuming state '"
+								+ getId()
+								+ "' -- as a result, no attributes in the ending subflow scope will be passed to the resuming flow");
 			}
 		}
 	}
@@ -179,8 +180,8 @@ public class SubflowState extends TransitionableState {
 	 * start state configured for the flow should be used.
 	 */
 	protected State getSubflowStartState(RequestContext context) {
-		if (containsProperty(START_STATE_PROPERTY)) {
-			return getFlow().getRequiredState((String)getProperty(START_STATE_PROPERTY));
+		if (getAttributeMap().containsAttribute(START_STATE_PROPERTY)) {
+			return getFlow().getRequiredState(getAttributeMap().getStringAttribute(START_STATE_PROPERTY));
 		}
 		else {
 			// the default start state of the flow will be used

@@ -17,6 +17,10 @@ package org.springframework.webflow;
 
 import java.util.Map;
 
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+
 /**
  * Mutable control interface used to manipulate an ongoing flow execution in the
  * context of one client request. Primarily used internally by the various flow
@@ -88,7 +92,7 @@ public interface FlowExecutionControlContext extends RequestContext {
 	 * flow during execution of this start operation
 	 * @see Flow#start(State, FlowExecutionControlContext)
 	 */
-	public ViewSelection start(Flow flow, State startState, Map input) throws StateException;
+	public ViewSelection start(Flow flow, State startState, AttributeMap input) throws StateException;
 
 	/**
 	 * Signals the occurence of an event in the current state of this flow
@@ -116,6 +120,6 @@ public interface FlowExecutionControlContext extends RequestContext {
 	 * @throws IllegalStateException when the flow execution is not active
 	 * @see Flow#end(FlowExecutionControlContext, Map)
 	 */
-	public FlowSession endActiveFlowSession(Map sessionOutput) throws IllegalStateException;
+	public FlowSession endActiveFlowSession(AttributeMap sessionOutput) throws IllegalStateException;
 
 }

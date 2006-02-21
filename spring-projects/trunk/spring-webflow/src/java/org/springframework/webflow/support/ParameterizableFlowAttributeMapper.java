@@ -19,11 +19,12 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.Mapping;
@@ -287,20 +288,20 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 		this.outputMapper = outputMapper;
 	}
 
-	public Map createSubflowInput(RequestContext context) {
+	public AttributeMap createSubflowInput(RequestContext context) {
 		if (inputMapper != null) {
-			Map input = new HashMap();
+			AttributeMap input = new AttributeMap();
 			// map from request context to input map
 			inputMapper.map(context, input, getMappingContext(context));
 			return input;
 		}
 		else {
-			// an empty, but modifyable map
-			return new HashMap();
+			// an empty, but modifiable map
+			return new AttributeMap();
 		}
 	}
 
-	public void mapSubflowOutput(Map subflowOutput, RequestContext context) {
+	public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
 		if (outputMapper != null && subflowOutput != null) {
 			// map from request context to parent flow scope
 			outputMapper.map(subflowOutput, context.getFlowExecutionContext().getActiveSession().getScope(),
@@ -324,7 +325,7 @@ public class ParameterizableFlowAttributeMapper implements FlowAttributeMapper, 
 	 * Attribute mapper specialization that knows if an "attribute name" is
 	 * provided, and not a value ${expression}, that the name should be treated
 	 * as a flow scope expression. This is needed because all <i>from</i>
-	 * expressions will be evaluated agains the request context. Expressions
+	 * expressions will be evaluated against the request context. Expressions
 	 * need to explicitly handle this (e.g. "${flowScope.bean.prop}"), but
 	 * simple names should automatically evaluate against the flow scope
 	 * ("bean.prop").

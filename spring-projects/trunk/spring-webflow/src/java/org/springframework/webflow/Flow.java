@@ -16,9 +16,9 @@
 package org.springframework.webflow;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
@@ -572,7 +572,7 @@ public class Flow extends AnnotatedObject {
 	 * @param sessionOutput initial output produced by the session that is
 	 * eligible for modification by this method.
 	 */
-	public void end(FlowExecutionControlContext context, Map sessionOutput) {
+	public void end(FlowExecutionControlContext context, AttributeMap sessionOutput) {
 		endActionList.execute(context);
 	}
 

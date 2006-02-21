@@ -16,11 +16,14 @@
 package org.springframework.webflow.execution.impl;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.EmptyAttributeCollection;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
@@ -30,7 +33,6 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
-import org.springframework.webflow.Scope;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
@@ -60,7 +62,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	/**
 	 * The request scope data map.
 	 */
-	private Scope requestScope = new Scope();
+	private AttributeMap requestScope = new AttributeMap();
 
 	/**
 	 * The original event that triggered the creation of this state context.
@@ -80,7 +82,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	/**
 	 * Holder for contextual execution properties.
 	 */
-	private Map properties = Collections.EMPTY_MAP;
+	private UnmodifiableAttributeMap attributes;
 
 	/**
 	 * Create a new request context.
@@ -99,20 +101,20 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 	public Flow getActiveFlow() {
 		return flowExecution.getActiveSession().getFlow();
 	}
-	
+
 	public State getCurrentState() {
 		return flowExecution.getActiveSession().getState();
 	}
-	
-	public Scope getRequestScope() {
+
+	public AttributeMap getRequestScope() {
 		return requestScope;
 	}
 
-	public Scope getFlowScope() {
+	public AttributeMap getFlowScope() {
 		return flowExecution.getActiveSession().getScope();
 	}
-	
-	public Scope getConversationScope() {
+
+	public AttributeMap getConversationScope() {
 		return flowExecution.getScope();
 	}
 
@@ -120,10 +122,10 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return flowExecution;
 	}
 
-	public Map getRequestParameters() {
+	public UnmodifiableAttributeMap getRequestParameters() {
 		return externalContext.getRequestParameterMap();
 	}
-	
+
 	public ExternalContext getExternalContext() {
 		return externalContext;
 	}
@@ -136,26 +138,19 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return lastTransition;
 	}
 
-	public Map getProperties() {
-		return properties;
+	public UnmodifiableAttributeMap getAttributes() {
+		return attributes;
 	}
 
-	public void setProperties(Map properties) {
-		if (properties != null) {
-			this.properties = properties;
+	public void setAttributes(AttributeCollection attributes) {
+		if (attributes == null) {
+			attributes = EmptyAttributeCollection.INSTANCE;
 		}
-		else {
-			properties = Collections.EMPTY_MAP;
-		}
+		this.attributes = attributes.unmodifiable();
 	}
 
-	public Map getModel() {
-		// merge flow and request scope
-		Map model = new HashMap(getFlowScope().size() + getRequestScope().size());
-		model.putAll(getConversationScope().getAttributeMap());
-		model.putAll(getFlowScope().getAttributeMap());
-		model.putAll(getRequestScope().getAttributeMap());
-		return model;
+	public UnmodifiableAttributeMap getModel() {
+		return getConversationScope().union(getFlowScope()).union(getRequestScope()).unmodifiable();
 	}
 
 	// implementing FlowExecutionControlContext
@@ -178,10 +173,10 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		flowExecution.getListeners().fireStateEntered(this, previousState);
 	}
 
-	public ViewSelection start(Flow flow, State startState, Map input) throws StateException {
+	public ViewSelection start(Flow flow, State startState, AttributeMap input) throws StateException {
 		if (input == null) {
 			// create a mutable map so entries can be added by listeners!
-			input = new HashMap();
+			input = new AttributeMap();
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Activating new session for flow '" + flow.getId() + "' in state '"
@@ -206,20 +201,20 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return selectedView;
 	}
 
-	public FlowSession endActiveFlowSession(Map sessionOutput) throws IllegalStateException {
+	public FlowSession endActiveFlowSession(AttributeMap sessionOutput) throws IllegalStateException {
 		flowExecution.getListeners().fireSessionEnding(this, sessionOutput);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Ending active session " + getFlowExecutionContext().getActiveSession());
 		}
 		getActiveFlow().end(this, sessionOutput);
 		FlowSession endedSession = flowExecution.endActiveFlowSession();
-		flowExecution.getListeners().fireSessionEnded(this, endedSession, Collections.unmodifiableMap(sessionOutput));
+		flowExecution.getListeners().fireSessionEnded(this, endedSession, sessionOutput.unmodifiable());
 		return endedSession;
 	}
 
 	public String toString() {
 		return new ToStringCreator(this).append("externalContext", externalContext)
-				.append("requestScope", requestScope).append("executionProperties", properties).append(
-						"flowExecution", flowExecution).toString();
+				.append("requestScope", requestScope).append("executionProperties", attributes).append("flowExecution",
+						flowExecution).toString();
 	}
 }

@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow;
 
+import org.springframework.binding.attribute.AttributeMap;
+
 /**
  * Provides contextual information about an actively executing flow representing
  * the current state of exactly one conversation. An object implementing this
@@ -53,7 +55,7 @@ public interface FlowExecutionContext extends FlowExecutionStatistics {
 	 * logical conversation associated with this flow execution.
 	 * @return the conversation scope
 	 */
-	public Scope getScope();
+	public AttributeMap getScope();
 	
 	/**
 	 * Returns the active flow session of this flow execution.
