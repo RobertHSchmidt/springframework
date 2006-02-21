@@ -1,26 +1,60 @@
-package org.springframework.binding.util;
+/*
+ * Copyright 2002-2006 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package org.springframework.binding.attribute;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.springframework.binding.util.MapAccessor;
+import org.springframework.core.style.StylerUtils;
+
 /**
- * A wrapper around a attribute map that hides mutable operations. Useful for
- * passing around when modification of the target map should be disallowed.
+ * A generic attribute map with string keys.
  * 
  * @author Keith Donald
  */
-public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
+public abstract class AbstractAttributeMap implements AttributeCollection, Serializable {
 
 	/**
-	 * The wrapped, modifiable attribute map.
+	 * The backing map storing the attributes.
 	 */
-	private AttributeMap attributes;
+	private Map attributes;
 
 	/**
-	 * Creates a new attribute map, initially empty.
+	 * A helper for accessing attributes.
 	 */
-	public UnmodifableAttributeMap(AttributeMap attributes) {
-		this.attributes = attributes;
+	private transient MapAccessor attributesAccessor;
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.binding.attribute.AttributeCollection#getMap()
+	 */
+	public Map getMap() {
+		return attributesAccessor.getMap();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.binding.attribute.AttributeCollection#getAttributesCount()
+	 */
+	public int getAttributeCount() {
+		return attributes.size();
 	}
 
 	/**
@@ -29,7 +63,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * @return true if so, false otherwise
 	 */
 	public boolean containsAttribute(String attributeName) {
-		return attributes.containsAttribute(attributeName);
+		return attributes.containsKey(attributeName);
 	}
 
 	/**
@@ -40,23 +74,25 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * @return true if so, false otherwise
 	 */
 	public boolean containsAttribute(String attributeName, Class requiredType) throws IllegalArgumentException {
-		return attributes.containsAttribute(attributeName, requiredType);
+		return attributesAccessor.containsKey(attributeName, requiredType);
 	}
 
-	/**
-	 * Asserts that the attribute is present in the attribute map.
-	 * @param key the attribute name
-	 * @throws IllegalArgumentException if the key is not present
-	 */
-	public void assertContainsAttribute(String attributeName) throws IllegalArgumentException {
-		attributes.assertContainsAttribute(attributeName);
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.springframework.binding.util.AttributesGetter#getAttribute(java.lang.String)
 	 */
 	public Object getAttribute(String attributeName) {
-		return attributes.getAttribute(attributeName);
+		return attributes.get(attributeName);
+	}
+
+	/**
+	 * Get an attribute value, returning the defaultValue if no value is found.
+	 * @param attributeName the attribute name
+	 * @param defaultValue the default value
+	 * @return the attribute value
+	 */
+	public Object getAttribute(String attributeName, Object defaultValue) throws IllegalArgumentException {
+		return attributesAccessor.get(attributeName, defaultValue);
 	}
 
 	/**
@@ -67,7 +103,21 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * @throws IllegalStateException when the value is not of the required type
 	 */
 	public Object getAttribute(String attributeName, Class requiredType) throws IllegalStateException {
-		return attributes.getAttribute(attributeName, requiredType);
+		return attributesAccessor.get(attributeName, requiredType);
+	}
+
+	/**
+	 * Get an attribute value and make sure it is of the required type,
+	 * returning the default if not found.
+	 * @param attributeName name of the attribute to get
+	 * @param requiredType the required type of the attribute value
+	 * @param defaultValue the default value
+	 * @return the attribute value, or the default if not found
+	 * @throws IllegalStateException when the value is not of the required type
+	 */
+	public Object getAttribute(String attributeName, Class requiredType, Object defaultValue)
+			throws IllegalStateException {
+		return attributesAccessor.get(attributeName, requiredType, defaultValue);
 	}
 
 	/**
@@ -79,7 +129,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * string
 	 */
 	public String getStringAttribute(String attributeName) throws IllegalArgumentException {
-		return attributes.getStringAttribute(attributeName);
+		return attributesAccessor.getString(attributeName);
 	}
 
 	/**
@@ -92,7 +142,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * string
 	 */
 	public String getStringAttribute(String attributeName, String defaultValue) throws IllegalArgumentException {
-		return attributes.getStringAttribute(attributeName, defaultValue);
+		return attributesAccessor.getString(attributeName, defaultValue);
 	}
 
 	/**
@@ -104,7 +154,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * present but not a string
 	 */
 	public String getRequiredStringAttribute(String attributeName) throws IllegalArgumentException {
-		return attributes.getRequiredStringAttribute(attributeName);
+		return attributesAccessor.getRequiredString(attributeName);
 	}
 
 	/**
@@ -117,7 +167,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * number of the required type
 	 */
 	public Number getNumberAttribute(String attributeName, Class requiredType) throws IllegalArgumentException {
-		return attributes.getNumberAttribute(attributeName, requiredType);
+		return attributesAccessor.getNumber(attributeName, requiredType);
 	}
 
 	/**
@@ -129,9 +179,9 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * @throws IllegalArgumentException if the attribute is present but not a
 	 * number of the required type
 	 */
-	public Number getNumberAttribute(String attributeName, Number defaultValue, Class requiredType)
+	public Number getNumberAttribute(String attributeName, Class requiredType, Number defaultValue)
 			throws IllegalArgumentException {
-		return attributes.getNumberAttribute(attributeName, defaultValue, requiredType);
+		return attributesAccessor.getNumber(attributeName, requiredType, defaultValue);
 	}
 
 	/**
@@ -143,7 +193,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * present but not a number of the required type
 	 */
 	public Number getRequiredNumberAttribute(String attributeName, Class requiredType) throws IllegalArgumentException {
-		return attributes.getRequiredNumberAttribute(attributeName, requiredType);
+		return attributesAccessor.getRequiredNumber(attributeName, requiredType);
 	}
 
 	/**
@@ -155,7 +205,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * integer
 	 */
 	public Integer getIntegerAttribute(String attributeName) throws IllegalArgumentException {
-		return attributes.getIntegerAttribute(attributeName);
+		return attributesAccessor.getInteger(attributeName);
 	}
 
 	/**
@@ -168,7 +218,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * integer
 	 */
 	public Integer getIntegerAttribute(String attributeName, Integer defaultValue) throws IllegalArgumentException {
-		return attributes.getIntegerAttribute(attributeName, defaultValue);
+		return attributesAccessor.getInteger(attributeName, defaultValue);
 	}
 
 	/**
@@ -180,7 +230,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * present but not an integer
 	 */
 	public Integer getRequiredIntegerAttribute(String attributeName) throws IllegalArgumentException {
-		return attributes.getRequiredIntegerAttribute(attributeName);
+		return attributesAccessor.getRequiredInteger(attributeName);
 	}
 
 	/**
@@ -192,7 +242,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * long
 	 */
 	public Long getLongAttribute(String attributeName) throws IllegalArgumentException {
-		return attributes.getLongAttribute(attributeName);
+		return attributesAccessor.getLong(attributeName);
 	}
 
 	/**
@@ -205,7 +255,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * long
 	 */
 	public Long getLongAttribute(String attributeName, Long defaultValue) throws IllegalArgumentException {
-		return attributes.getLongAttribute(attributeName, defaultValue);
+		return attributesAccessor.getLong(attributeName, defaultValue);
 	}
 
 	/**
@@ -217,7 +267,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * present but not a long
 	 */
 	public Long getRequiredLongAttribute(String attributeName) throws IllegalArgumentException {
-		return attributes.getRequiredLongAttribute(attributeName);
+		return attributesAccessor.getRequiredLong(attributeName);
 	}
 
 	/**
@@ -229,7 +279,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * boolean
 	 */
 	public Boolean getBooleanAttribute(String attributeName) {
-		return attributes.getBooleanAttribute(attributeName);
+		return attributesAccessor.getBoolean(attributeName);
 	}
 
 	/**
@@ -242,7 +292,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * boolean
 	 */
 	public Boolean getBooleanAttribute(String attributeName, Boolean defaultValue) {
-		return attributes.getBooleanAttribute(attributeName, defaultValue);
+		return attributesAccessor.getBoolean(attributeName, defaultValue);
 	}
 
 	/**
@@ -254,7 +304,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * present but is not a boolean
 	 */
 	public Boolean getRequiredBooleanAttribute(String attributeName) {
-		return attributes.getRequiredBooleanAttribute(attributeName);
+		return attributesAccessor.getRequiredBoolean(attributeName);
 	}
 
 	/**
@@ -264,7 +314,7 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * @throws IllegalStateException when the attribute is not found
 	 */
 	public Object getRequiredAttribute(String attributeName) throws IllegalStateException {
-		return attributes.getRequiredAttribute(attributeName);
+		return attributesAccessor.getRequired(attributeName);
 	}
 
 	/**
@@ -277,23 +327,35 @@ public class UnmodifableAttributeMap implements AttributesGetter, Serializable {
 	 * the required type
 	 */
 	public Object getRequiredAttribute(String attributeName, Class requiredType) throws IllegalStateException {
-		return attributes.getRequiredAttribute(attributeName);
+		return attributesAccessor.getRequired(attributeName);
 	}
 
 	/**
-	 * Returns the count of the number of attributes contained within this
-	 * scope.
-	 * @return the number of attributes in this scope
+	 * Initializes this attribute map.
+	 * @param attributes the attributes
 	 */
-	public int getAttributesCount() {
-		return attributes.getAttributesCount();
+	protected void initAttributes(Map attributes) {
+		this.attributes = attributes;
+		attributesAccessor = new MapAccessor(this.attributes);
 	}
 
 	/**
-	 * Returns the contents of this scope as an unmodifiable map.
-	 * @return the scope contents, unmodifiable
+	 * Returns the wrapped, modifiable map.
 	 */
-	public Map getMap() {
-		return attributes.getMap();
+	protected Map getMapInternal() {
+		return attributes;
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.defaultWriteObject();
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		attributesAccessor = new MapAccessor(attributes);
+	}
+
+	public String toString() {
+		return StylerUtils.style(attributes);
 	}
 }

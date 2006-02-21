@@ -3,6 +3,7 @@ package org.springframework.binding.util;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import junit.framework.TestCase;
 
 public class AttributeMapAccessorSupportTests extends TestCase {

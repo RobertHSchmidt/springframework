@@ -57,7 +57,7 @@ public class MapAccessor {
 	 * @param defaultValue the default
 	 * @return the attribute value
 	 */
-	public Object get(Object key, Object defaultValue) throws IllegalArgumentException {
+	public Object get(Object key, Object defaultValue) {
 		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
@@ -66,12 +66,28 @@ public class MapAccessor {
 
 	/**
 	 * Returns a value in the map, asserting it is of the required type if
-	 * present.
+	 * present and returning <code>null</code> if not found.
 	 * @param key the key
 	 * @param requiredType the required type
 	 * @return the value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not of the required type
 	 */
 	public Object get(Object key, Class requiredType) throws IllegalArgumentException {
+		return get(key, requiredType, null);
+	}
+
+	/**
+	 * Returns a value in the map of the specified type, returning the
+	 * defaultValue if no value is found.
+	 * @param key the key
+	 * @param requiredType the required type
+	 * @param defaultValue the default
+	 * @return the attribute value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not of the required type
+	 */
+	public Object get(Object key, Class requiredType, Object defaultValue) {
 		if (!map.containsKey(key)) {
 			return map.get(key);
 		}
@@ -152,19 +168,19 @@ public class MapAccessor {
 	 * not a number of the required type
 	 */
 	public Number getNumber(Object key, Class requiredType) throws IllegalArgumentException {
-		return getNumber(key, null, requiredType);
+		return getNumber(key, requiredType, null);
 	}
 
 	/**
 	 * Returns a number attribute value in the map of the specified type,
 	 * returning the defaultValue if no value was found.
 	 * @param key the attribute name
-	 * @param defaultValue the default
 	 * @return the number value
+	 * @param defaultValue the default
 	 * @throws IllegalArgumentException if the key is present but the value is
 	 * not a number of the required type
 	 */
-	public Number getNumber(Object key, Number defaultValue, Class requiredType) throws IllegalArgumentException {
+	public Number getNumber(Object key, Class requiredType, Number defaultValue) throws IllegalArgumentException {
 		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
@@ -206,7 +222,7 @@ public class MapAccessor {
 	 * not an integer
 	 */
 	public Integer getInteger(Object key, Integer defaultValue) throws IllegalArgumentException {
-		return (Integer)getNumber(key, defaultValue, Integer.class);
+		return (Integer)getNumber(key, Integer.class, defaultValue);
 	}
 
 	/**
@@ -242,7 +258,7 @@ public class MapAccessor {
 	 * not a long
 	 */
 	public Long getLong(Object key, Long defaultValue) throws IllegalArgumentException {
-		return (Long)getNumber(key, defaultValue, Long.class);
+		return (Long)getNumber(key, Long.class, defaultValue);
 	}
 
 	/**
@@ -335,6 +351,7 @@ public class MapAccessor {
 	 */
 	public Object assertValueOfType(Object key, Class requiredType) {
 		Object value = map.get(key);
+		Assert.notNull(requiredType, "The required type to assert is required");
 		if (!requiredType.isInstance(value)) {
 			throw new IllegalArgumentException("Map key '" + key + "' has value [" + value
 					+ "] that is not of expected type [" + requiredType + "], instead it is of type ["
