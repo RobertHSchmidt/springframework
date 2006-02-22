@@ -215,8 +215,7 @@ public class FlowAction extends ActionSupport {
 							+ "' bean definition could be found; to use Spring Web Flow with Struts you must "
 							+ "configure this FlowAction with either a FlowLocator "
 							+ "(exposing a registry of flow definitions) or a custom FlowExecutor "
-							+ "(allowing more configuration options, and typically configured"
-							+ "with a StrutsFlowExecutionListenerLoader for use with the SpringBindingActionForm)";
+							+ "(allowing more configuration options)";
 					throw new FlowArtifactException(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class, message, e);
 				}
 			}
