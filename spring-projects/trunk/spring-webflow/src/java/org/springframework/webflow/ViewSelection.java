@@ -16,7 +16,6 @@
 package org.springframework.webflow;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import org.springframework.binding.attribute.AttributeCollection;
 import org.springframework.binding.attribute.EmptyAttributeCollection;

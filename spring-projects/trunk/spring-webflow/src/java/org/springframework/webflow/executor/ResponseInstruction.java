@@ -16,7 +16,6 @@
 package org.springframework.webflow.executor;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;

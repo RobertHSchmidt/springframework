@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow;
 
-import java.util.Map;
-
 import org.springframework.binding.attribute.AttributeCollection;
 import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.binding.attribute.UnmodifiableAttributeMap;

@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.action;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
 import org.springframework.binding.attribute.AttributeMap;

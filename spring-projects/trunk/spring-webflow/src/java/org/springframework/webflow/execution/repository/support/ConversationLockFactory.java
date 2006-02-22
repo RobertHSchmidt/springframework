@@ -18,8 +18,8 @@ package org.springframework.webflow.execution.repository.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.core.JdkVersion;
+import org.springframework.webflow.execution.repository.ConversationLock;
 
 /**
  * Simple utility class for creating instances of {@link org.springframework.webflow.execution.repository.ConversationLock} based

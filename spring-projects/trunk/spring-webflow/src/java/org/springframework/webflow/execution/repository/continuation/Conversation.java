@@ -23,8 +23,6 @@ import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.util.Assert;
 import org.springframework.webflow.ViewSelection;
 
-import sun.reflect.generics.scope.Scope;
-
 /**
  * Represents an active, ongoing conversation between a user and the Spring Web
  * Flow system.

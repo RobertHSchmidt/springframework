@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodKey;
-import org.springframework.binding.util.MapAccessor;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.DecisionState;

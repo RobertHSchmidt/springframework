@@ -16,8 +16,8 @@
 package org.springframework.webflow.execution.repository.support;
 
 import java.io.Serializable;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.springframework.webflow.execution.repository.ConversationLock;
 

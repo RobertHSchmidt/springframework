@@ -16,9 +16,10 @@
 
 package org.springframework.webflow.execution.repository.support;
 
-import EDU.oswego.cs.dl.util.concurrent.ReentrantLock;
-import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.core.NestedRuntimeException;
+import org.springframework.webflow.execution.repository.ConversationLock;
+
+import EDU.oswego.cs.dl.util.concurrent.ReentrantLock;
 
 /**
  * A conversation lock that relies on a {@link ReentrantLock} within Doug Lea's

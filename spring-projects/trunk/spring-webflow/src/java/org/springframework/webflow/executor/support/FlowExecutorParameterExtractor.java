@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.binding.format.Formatter;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;

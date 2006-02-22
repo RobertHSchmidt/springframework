@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.builder;
 
-import java.util.Map;
-
 import junit.framework.TestCase;
 
 import org.springframework.binding.attribute.AttributeMap;
