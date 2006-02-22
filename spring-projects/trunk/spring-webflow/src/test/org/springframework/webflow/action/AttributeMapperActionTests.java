@@ -17,6 +17,8 @@ package org.springframework.webflow.action;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.mapping.DefaultAttributeMapper;
+import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -29,18 +31,18 @@ import org.springframework.webflow.test.MockRequestContext;
 public class AttributeMapperActionTests extends TestCase {
 
 	public void testMapping() throws Exception {
-		AttributeMapperAction ama = new AttributeMapperAction();
-		ama.setSourceExpression("${externalContext.requestParameterMap.foo}");
-		ama.setTargetExpression("${flowScope.bar}");
-		ama.initAction();
-		
+		DefaultAttributeMapper mapper = new DefaultAttributeMapper();
+		mapper.addMapping(new MappingBuilder().source("${externalContext.requestParameterMap.foo}").target(
+				"${flowScope.bar}").value());
+		AttributeMapperAction action = new AttributeMapperAction(mapper);
+
 		MockRequestContext context = new MockRequestContext();
 		context.addRequestParameter("foo", "value");
-		
+
 		assertTrue(context.getFlowScope().getAttributeCount() == 0);
-		
-		ama.execute(context);
-		
+
+		action.execute(context);
+
 		assertEquals(1, context.getFlowScope().getAttributeCount());
 		assertEquals("value", context.getFlowScope().getAttribute("bar"));
 	}

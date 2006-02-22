@@ -70,7 +70,7 @@ import org.springframework.webflow.action.FlowVariableCreatingAction;
 import org.springframework.webflow.support.CollectionAddingPropertyExpression;
 import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.FlowVariable;
-import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
+import org.springframework.webflow.support.DefaultFlowAttributeMapper;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionCriteriaChain;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
@@ -87,8 +87,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *        &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *        &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -861,19 +861,19 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			}
 			else {
 				// inline definition of a mapping
-				ParameterizableFlowAttributeMapper attributeMapper = new ParameterizableFlowAttributeMapper();
+				DefaultFlowAttributeMapper attributeMapper = new DefaultFlowAttributeMapper();
 				List inputElements = DomUtils.getChildElementsByTagName(mapperElement, INPUT_MAPPING_ELEMENT);
 				List inputMappings = new ArrayList(inputElements.size());
 				for (Iterator it = inputElements.iterator(); it.hasNext();) {
 					parseAndAddInputMapping((Element)it.next(), inputMappings);
 				}
-				attributeMapper.setInputMappings(inputMappings);
+				attributeMapper.addInputMappings((Mapping[])inputMappings.toArray(new Mapping[inputMappings.size()]));
 				List outputElements = DomUtils.getChildElementsByTagName(mapperElement, OUTPUT_MAPPING_ELEMENT);
 				List outputMappings = new ArrayList(outputElements.size());
 				for (Iterator it = outputElements.iterator(); it.hasNext();) {
 					parseAndAddOutputMapping((Element)it.next(), outputMappings);
 				}
-				attributeMapper.setOutputMappings(outputMappings);
+				attributeMapper.addOutputMappings((Mapping[])outputMappings.toArray(new Mapping[outputMappings.size()]));
 				return attributeMapper;
 			}
 		}

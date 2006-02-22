@@ -22,9 +22,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 
 /**
  * A single mapping definition, encapulating the information neccessary to map
@@ -40,76 +40,17 @@ public class Mapping implements Serializable {
 	/**
 	 * The source expression to evaluate against a source object to map from.
 	 */
-	private Expression sourceExpression;
+	private final Expression sourceExpression;
 
 	/**
 	 * The target property expression to set on a target object to map to.
 	 */
-	private PropertyExpression targetPropertyExpression;
+	private final PropertyExpression targetPropertyExpression;
 
 	/**
 	 * A type converter to apply during the mapping process.
 	 */
-	private ConversionExecutor typeConverter;
-
-	/**
-	 * Creates a new mapping.
-	 * @param sourceAndTargetExpressionString
-	 */
-	public Mapping(String sourceAndTargetExpressionString) {
-		this(ExpressionFactory.parseExpression(sourceAndTargetExpressionString), ExpressionFactory
-				.parsePropertyExpression(sourceAndTargetExpressionString));
-	}
-
-	/**
-	 * Creates a new mapping.
-	 * @param sourceTargetExpressionString
-	 * @param typeConverter
-	 */
-	public Mapping(String sourceTargetExpressionString, ConversionExecutor typeConverter) {
-		this(ExpressionFactory.parseExpression(sourceTargetExpressionString), ExpressionFactory
-				.parsePropertyExpression(sourceTargetExpressionString), typeConverter);
-	}
-
-	/**
-	 * Creates a new mapping.
-	 * @param sourceExpressionString
-	 * @param targetExpressionString
-	 */
-	public Mapping(String sourceExpressionString, String targetExpressionString) {
-		this(ExpressionFactory.parseExpression(sourceExpressionString), ExpressionFactory
-				.parsePropertyExpression(targetExpressionString));
-	}
-
-	/**
-	 * Creates a new mapping.
-	 * @param sourceExpressionString
-	 * @param targetExpressionString
-	 * @param typeConverter
-	 */
-	public Mapping(String sourceExpressionString, String targetExpressionString, ConversionExecutor typeConverter) {
-		this(ExpressionFactory.parseExpression(sourceExpressionString), ExpressionFactory
-				.parsePropertyExpression(targetExpressionString), typeConverter);
-	}
-
-	/**
-	 * Creates a new mapping.
-	 * @param sourceAndTargetExpression
-	 */
-	public Mapping(PropertyExpression sourceAndTargetExpression) {
-		this.sourceExpression = sourceAndTargetExpression;
-		this.targetPropertyExpression = sourceAndTargetExpression;
-	}
-
-	/**
-	 * Creates a new mapping.
-	 * @param sourceExpression
-	 * @param targetPropertyExpression
-	 */
-	public Mapping(Expression sourceExpression, PropertyExpression targetPropertyExpression) {
-		this.sourceExpression = sourceExpression;
-		this.targetPropertyExpression = targetPropertyExpression;
-	}
+	private final ConversionExecutor typeConverter;
 
 	/**
 	 * Creates a new mapping.
@@ -119,6 +60,8 @@ public class Mapping implements Serializable {
 	 */
 	public Mapping(Expression sourceExpression, PropertyExpression targetPropertyExpression,
 			ConversionExecutor typeConverter) {
+		Assert.notNull(sourceExpression, "The source expression is required");
+		Assert.notNull(targetPropertyExpression, "The target property expression is required");
 		this.sourceExpression = sourceExpression;
 		this.targetPropertyExpression = targetPropertyExpression;
 		this.typeConverter = typeConverter;
@@ -146,6 +89,18 @@ public class Mapping implements Serializable {
 		targetPropertyExpression.setValue(target, targetValue, mappingContext);
 	}
 
+	public boolean equals(Object o) {
+		if (!(o instanceof Mapping)) {
+			return false;
+		}
+		Mapping other = (Mapping)o;
+		return sourceExpression.equals(other.sourceExpression) && targetPropertyExpression.equals(other.targetPropertyExpression);
+	}
+	
+	public int hashCode() {
+		return sourceExpression.hashCode() + targetPropertyExpression.hashCode();
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append(sourceExpression + " -> " + targetPropertyExpression).append(
 				"typeConverter", typeConverter).toString();

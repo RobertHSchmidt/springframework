@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.binding.attribute.UnmodifiableAttributeMap;
-import org.springframework.binding.mapping.ParameterizableAttributeMapper;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.core.io.ClassPathResource;
@@ -40,7 +39,7 @@ import org.springframework.webflow.action.FlowVariableCreatingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
-import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
+import org.springframework.webflow.support.DefaultFlowAttributeMapper;
 import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
@@ -143,10 +142,9 @@ public class XmlFlowBuilderTests extends TestCase {
 		transition = subFlowState2.getRequiredTransition(context);
 		assertEquals("decisionState1", getTargetStateId(transition));
 
-		ParameterizableFlowAttributeMapper mapper = (ParameterizableFlowAttributeMapper)subFlowState2
-				.getAttributeMapper();
-		assertEquals(3, ((ParameterizableAttributeMapper)mapper.getInputMapper()).getMappings().length);
-		assertEquals(4, ((ParameterizableAttributeMapper)mapper.getOutputMapper()).getMappings().length);
+		DefaultFlowAttributeMapper mapper = (DefaultFlowAttributeMapper)subFlowState2.getAttributeMapper();
+		assertEquals(3, mapper.getInputMappings().length);
+		assertEquals(4, mapper.getOutputMappings().length);
 
 		DecisionState decisionState1 = (DecisionState)flow.getState("decisionState1");
 		assertTrue(decisionState1.getTransitionSet().size() == 2);
@@ -162,14 +160,16 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertTrue(decisionState3.getTransitionSet().size() == 2);
 		assertNotNull(decisionState3);
 		assertNotNull(decisionState3.getAction());
-		assertEquals(new MethodKey("booleanMethod"), decisionState3.getAnnotatedAction().getAttributeMap().getAttribute("method"));
+		assertEquals(new MethodKey("booleanMethod"), decisionState3.getAnnotatedAction().getAttributeMap()
+				.getAttribute("method"));
 		assertTrue(decisionState3.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
 
 		DecisionState decisionState4 = (DecisionState)flow.getState("decisionState4");
 		assertTrue(decisionState4.getTransitionSet().size() == 2);
 		assertNotNull(decisionState4);
 		assertNotNull(decisionState4.getAction());
-		assertEquals(new MethodKey("enumMethod"), decisionState4.getAnnotatedAction().getAttributeMap().getAttribute("method"));
+		assertEquals(new MethodKey("enumMethod"), decisionState4.getAnnotatedAction().getAttributeMap().getAttribute(
+				"method"));
 		assertTrue(decisionState4.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
 
 		EndState endState1 = (EndState)flow.getState("endState1");

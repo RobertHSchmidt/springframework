@@ -18,11 +18,7 @@ package org.springframework.webflow.action;
 import java.util.Collections;
 import java.util.Map;
 
-import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.mapping.AttributeMapper;
-import org.springframework.binding.mapping.Mapping;
-import org.springframework.binding.mapping.ParameterizableAttributeMapper;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
@@ -84,109 +80,17 @@ import org.springframework.webflow.RequestContext;
 public class AttributeMapperAction extends AbstractAction {
 
 	/**
-	 * The source value expression.
-	 */
-	private String sourceExpression;
-
-	/**
-	 * The target property expression.
-	 */
-	private String targetExpression;
-
-	/**
-	 * A type converter to apply to the source value.
-	 */
-	private ConversionExecutor valueConverter;
-
-	/**
 	 * The attribute mapper strategy.
 	 */
 	private AttributeMapper attributeMapper;
 
-	/**
-	 * Creates a new action with an initially empty mappings list.
-	 */
-	public AttributeMapperAction() {
+	public AttributeMapperAction(AttributeMapper attributeMapper) {
+		this.attributeMapper = attributeMapper;
 	}
-
-	/**
-	 * Create a new action with the specified mapping.
-	 * @param mapping the mapping
-	 */
-	public AttributeMapperAction(Mapping mapping) {
-		setMappings(new Mapping[] { mapping });
-	}
-
-	/**
-	 * Create a new action with the specified mappings.
-	 * @param mappings the mappings
-	 */
-	public AttributeMapperAction(Mapping[] mappings) {
-		setMappings(mappings);
-	}
-
-	/**
-	 * Set the single mapping for this action.
-	 * @param mapping the mapping
-	 */
-	public void setMapping(Mapping mapping) {
-		setMappings(new Mapping[] { mapping });
-	}
-
-	/**
-	 * Set the mappings for this action.
-	 * @param mappings the mappings
-	 */
-	public void setMappings(Mapping[] mappings) {
-		setAttributeMapper(new ParameterizableAttributeMapper(mappings));
-	}
-
-	/**
-	 * Set to completely customize the attribute mapper strategy.
-	 * @param mapper the mapping strategy
-	 */
-	public void setAttributeMapper(AttributeMapper mapper) {
-		this.attributeMapper = mapper;
-	}
-
-	/**
-	 * Set the expression which obtains the source attribute to map. If you use
-	 * this, you also need to specify the "targetExpression".
-	 */
-	public void setSourceExpression(String sourceExpression) {
-		this.sourceExpression = sourceExpression;
-	}
-
-	/**
-	 * Set the expression used to set the target attribute during the mapping.
-	 * If you use this, you also need to specify the "sourceExpression".
-	 */
-	public void setTargetExpression(String targetExpression) {
-		this.targetExpression = targetExpression;
-	}
-
-	/**
-	 * Set a value converter to use during the mapping. This is optional and
-	 * will only be used if you do not explicitly set the mapper or mapping to
-	 * use, but instead used the "sourceExpression" and "targetExpression"
-	 * properties.
-	 */
-	public void setValueConverter(ConversionExecutor valueConverter) {
-		this.valueConverter = valueConverter;
-	}
-
-	protected void initAction() {
-		if (attributeMapper == null) {
-			if (StringUtils.hasText(sourceExpression) && StringUtils.hasText(targetExpression)) {
-				setAttributeMapper(new ParameterizableAttributeMapper(new Mapping(sourceExpression, targetExpression,
-						valueConverter)));
-			}
-		}
-	}
-
+	
 	protected Event doExecute(RequestContext context) throws Exception {
 		if (attributeMapper != null) {
-			// map from the request context to the request context
+			// map arbitrary attributes from the request context to the request context
 			attributeMapper.map(context, context, getMappingContext(context));
 		}
 		return success();

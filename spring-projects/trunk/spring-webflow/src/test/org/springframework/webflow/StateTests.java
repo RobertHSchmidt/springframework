@@ -19,7 +19,8 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.binding.attribute.UnmodifiableAttributeMap;
-import org.springframework.binding.mapping.Mapping;
+import org.springframework.binding.mapping.DefaultAttributeMapper;
+import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AttributeMapperAction;
 import org.springframework.webflow.execution.FlowExecution;
@@ -165,8 +166,10 @@ public class StateTests extends TestCase {
 
 		Flow flow = new Flow("myFlow");
 		ActionState mapperState = new ActionState(flow, "mapperState");
-		Action mapperAction = new AttributeMapperAction(new Mapping(
-				"externalContext.requestParameterMap.parentInputAttribute", "flowScope.parentInputAttribute"));
+		DefaultAttributeMapper mapper = new DefaultAttributeMapper();
+		mapper.addMapping(new MappingBuilder().source("externalContext.requestParameterMap.parentInputAttribute")
+				.target("flowScope.parentInputAttribute").value());
+		Action mapperAction = new AttributeMapperAction(mapper);
 		mapperState.addAction(mapperAction);
 		mapperState.addTransition(new Transition(on("success"), to("subFlowState")));
 

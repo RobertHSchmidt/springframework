@@ -24,7 +24,7 @@ public class SharedAttributeMap extends AttributeMap {
 	}
 	
 	public SharedMap getSharedMap() {
-		return (SharedMap)getMap();
+		return (SharedMap)getMapInternal();
 	}
 	
 	public Object getMutex() {

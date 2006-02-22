@@ -28,7 +28,7 @@ import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
+import org.springframework.webflow.support.DefaultFlowAttributeMapper;
 
 /**
  * Test case for XML flow builder, testing pluggability of custom types.
@@ -66,7 +66,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 		}
 	}
 
-	public static class CustomAttributeMapper extends ParameterizableFlowAttributeMapper {
+	public static class CustomAttributeMapper extends DefaultFlowAttributeMapper {
 	}
 
 	public static class CustomExceptionHandler implements StateExceptionHandler {
