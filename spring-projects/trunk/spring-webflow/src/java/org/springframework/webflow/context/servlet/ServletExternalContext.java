@@ -19,9 +19,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.SharedAttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.ParameterMap;
+import org.springframework.binding.map.SharedAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
 
@@ -68,8 +68,8 @@ public class ServletExternalContext implements ExternalContext {
 		return request.getPathInfo();
 	}
 
-	public UnmodifiableAttributeMap getRequestParameterMap() {
-		return new UnmodifiableAttributeMap(new HttpServletRequestParameterMap(request));
+	public ParameterMap getRequestParameterMap() {
+		return new ParameterMap(new HttpServletRequestParameterMap(request));
 	}
 
 	public AttributeMap getRequestMap() {

@@ -15,9 +15,10 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.attribute.AttributeCollection;
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeCollection;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.ParameterMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 
 /**
  * Central interface that allows clients to access contextual information about
@@ -125,7 +126,7 @@ public interface RequestContext {
 	 * This is typically a convenient shortcut for accessing the
 	 * {@link ExternalContext#getRequestParameterMap()} directly.
 	 */
-	public UnmodifiableAttributeMap getRequestParameters();
+	public ParameterMap getRequestParameters();
 
 	/**
 	 * Returns the external client context that originated (or triggered) this

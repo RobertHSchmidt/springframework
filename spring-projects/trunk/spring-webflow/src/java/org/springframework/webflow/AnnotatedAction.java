@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.AttributeMap;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
@@ -106,7 +106,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 */
 	public AnnotatedAction(Action targetAction, AttributeMap attributes) {
 		setTargetAction(targetAction);
-		getAttributeMap().addAttributes(attributes);
+		getAttributeMap().add(attributes);
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @see #postProcessResult(Event)
 	 */
 	public String getName() {
-		return getAttributeMap().getStringAttribute(NAME_PROPERTY);
+		return getAttributeMap().getString(NAME_PROPERTY);
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param name the action name
 	 */
 	public void setName(String name) {
-		getAttributeMap().setAttribute(NAME_PROPERTY, name);
+		getAttributeMap().set(NAME_PROPERTY, name);
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * executed.
 	 */
 	public MethodKey getMethod() {
-		return (MethodKey)getAttributeMap().getAttribute(METHOD_PROPERTY, MethodKey.class);
+		return (MethodKey)getAttributeMap().get(METHOD_PROPERTY, MethodKey.class);
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param method the action method name.
 	 */
 	public void setMethod(MethodKey method) {
-		getAttributeMap().setAttribute(METHOD_PROPERTY, method);
+		getAttributeMap().set(METHOD_PROPERTY, method);
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * value under.
 	 */
 	public String getResultName() {
-		return getAttributeMap().getStringAttribute(RESULT_NAME_PROPERTY);
+		return getAttributeMap().getString(RESULT_NAME_PROPERTY);
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param resultName the action return value attribute name
 	 */
 	public void setResultName(String resultName) {
-		getAttributeMap().setAttribute(RESULT_NAME_PROPERTY, resultName);
+		getAttributeMap().set(RESULT_NAME_PROPERTY, resultName);
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * value under.
 	 */
 	public ScopeType getResultScope() {
-		return (ScopeType)getAttributeMap().getAttribute(RESULT_SCOPE_PROPERTY, ScopeType.class);
+		return (ScopeType)getAttributeMap().get(RESULT_SCOPE_PROPERTY, ScopeType.class);
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param resultScope the result scope
 	 */
 	public void setResultScope(ScopeType resultScope) {
-		getAttributeMap().setAttribute(RESULT_SCOPE_PROPERTY, resultScope);
+		getAttributeMap().set(RESULT_SCOPE_PROPERTY, resultScope);
 	}
 
 	public Event execute(RequestContext context) throws Exception {

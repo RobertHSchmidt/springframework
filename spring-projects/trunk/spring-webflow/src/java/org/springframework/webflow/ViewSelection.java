@@ -17,9 +17,9 @@ package org.springframework.webflow;
 
 import java.io.Serializable;
 
-import org.springframework.binding.attribute.AttributeCollection;
-import org.springframework.binding.attribute.EmptyAttributeCollection;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeCollection;
+import org.springframework.binding.map.EmptyAttributeCollection;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 
@@ -117,7 +117,7 @@ public class ViewSelection implements Serializable {
 	 * view and does not contain a model.
 	 */
 	public boolean isNull() {
-		return (viewName == null && model.getAttributeCount() == 0);
+		return (viewName == null && model.size() == 0);
 	}
 
 	public boolean equals(Object o) {

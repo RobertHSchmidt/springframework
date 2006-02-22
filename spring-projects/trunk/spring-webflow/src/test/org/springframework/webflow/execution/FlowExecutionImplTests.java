@@ -25,7 +25,8 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.MockParameterMap;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
@@ -103,8 +104,8 @@ public class FlowExecutionImplTests extends TestCase {
 	public void testRehydrate() throws Exception {
 		// setup some input data
 		
-		AttributeMap input = new AttributeMap(1);
-		input.setAttribute("name", "value");
+		MockParameterMap input = new MockParameterMap();
+		input.add("name", "value");
 		// start the flow execution
 		flowExecution.start(new MockExternalContext(input));
 		runFlowExecutionRehydrationTest();

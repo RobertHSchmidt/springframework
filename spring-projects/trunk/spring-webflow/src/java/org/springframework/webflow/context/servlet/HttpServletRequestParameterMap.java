@@ -20,7 +20,7 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.binding.util.StringKeyedMapAdapter;
+import org.springframework.binding.map.StringKeyedMapAdapter;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 /**

@@ -22,7 +22,7 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.CompositeStringExpression;
-import org.springframework.binding.util.MapAccessor;
+import org.springframework.binding.map.MapAccessor;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.State;

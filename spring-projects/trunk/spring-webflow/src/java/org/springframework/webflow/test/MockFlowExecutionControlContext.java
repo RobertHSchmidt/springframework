@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.test;
 
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
@@ -48,7 +48,7 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 	 * provided flow definition.
 	 */
 	public MockFlowExecutionControlContext(Flow rootFlow) {
-		setFlowExecutionContext(new MockFlowExecutionContext(rootFlow));
+		getMockFlowExecutionContext().setRootFlow(rootFlow);
 	}
 	
 	public ViewSelection start(Flow flow, State startState, AttributeMap input) throws IllegalStateException {

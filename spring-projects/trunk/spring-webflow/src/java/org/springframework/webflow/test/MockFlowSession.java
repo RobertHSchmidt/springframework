@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.test;
 
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.AttributeMap;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
@@ -70,7 +70,7 @@ public class MockFlowSession implements FlowSession {
 	 */
 	public MockFlowSession(Flow flow, AttributeMap input) {
 		setFlow(flow);
-		scope.addAttributes(input);
+		scope.add(input);
 	}
 
 	public Flow getFlow() {

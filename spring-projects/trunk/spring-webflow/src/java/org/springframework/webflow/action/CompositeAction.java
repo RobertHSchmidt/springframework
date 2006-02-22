@@ -18,7 +18,7 @@ package org.springframework.webflow.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
@@ -128,7 +128,7 @@ public class CompositeAction extends AbstractAction {
 				}
 			}
 		}
-		eventAttributes.setAttribute("actionResults", actionResults);
+		eventAttributes.set("actionResults", actionResults);
 		return new Event(this, eventId, eventAttributes);
 	}
 

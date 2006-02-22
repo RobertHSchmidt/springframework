@@ -79,7 +79,7 @@ public class FlowPropertyResolver extends PropertyResolver {
 		}
 		FlowExecution execution = (FlowExecution)base;
 		// we want to access flow scope of the active session (conversation)
-		Object value = execution.getActiveSession().getScope().getAttribute((String)property);
+		Object value = execution.getActiveSession().getScope().get((String)property);
 		// note that MyFaces returns Object.class for a null value here, but
 		// as I read the JSF spec, null should be returned when the object
 		// type can not be determined this certainly seems to be the case
@@ -105,7 +105,7 @@ public class FlowPropertyResolver extends PropertyResolver {
 		}
 		FlowExecution execution = (FlowExecution)base;
 		String attributeName = (String)property;
-		Object value = execution.getActiveSession().getScope().getAttribute(attributeName);
+		Object value = execution.getActiveSession().getScope().get(attributeName);
 		if (value == null) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			Assert.notNull(context, "FacesContext must exist during property resolution stage");
@@ -115,7 +115,7 @@ public class FlowPropertyResolver extends PropertyResolver {
 				// either a stateless singleton bean, or a stateful/stateless
 				// prototype
 				value = wac.getBean(attributeName);
-				execution.getActiveSession().getScope().setAttribute(attributeName, value);
+				execution.getActiveSession().getScope().set(attributeName, value);
 			}
 		}
 		return value;
@@ -154,7 +154,7 @@ public class FlowPropertyResolver extends PropertyResolver {
 					"Attempt to set Flow attribute with null name, empty name, or non-String name");
 		}
 		FlowExecution execution = (FlowExecution)base;
-		execution.getActiveSession().getScope().setAttribute((String)property, value);
+		execution.getActiveSession().getScope().set((String)property, value);
 	}
 
 	/**

@@ -17,11 +17,11 @@ package org.springframework.webflow.test;
 
 import java.util.HashMap;
 
-import org.springframework.binding.attribute.AttributeCollection;
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.SharedAttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
-import org.springframework.binding.util.SharedMapDecorator;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.MockParameterMap;
+import org.springframework.binding.map.ParameterMap;
+import org.springframework.binding.map.SharedAttributeMap;
+import org.springframework.binding.map.SharedMapDecorator;
 import org.springframework.webflow.ExternalContext;
 
 /**
@@ -35,7 +35,7 @@ public class MockExternalContext implements ExternalContext {
 
 	private String requestPathInfo;
 
-	private AttributeMap requestParameterMap = new AttributeMap();
+	private ParameterMap requestParameterMap = new MockParameterMap();
 
 	private AttributeMap requestMap = new AttributeMap();
 
@@ -51,23 +51,12 @@ public class MockExternalContext implements ExternalContext {
 	}
 
 	/**
-	 * Creates a mock external context with a single parameter in the request
-	 * parameter map.
-	 * @param singleRequestParameterName the parameter name
-	 * @param singleRequestParameterValue the parameter value
-	 */
-	public MockExternalContext(String singleRequestParameterName, Object singleRequestParameterValue) {
-		requestParameterMap = new AttributeMap(1, 1);
-		requestParameterMap.setAttribute(singleRequestParameterName, singleRequestParameterValue);
-	}
-
-	/**
 	 * Creates a mock external context with the specified parameters in the
 	 * request parameter map.
 	 * @param requestParameters the request parameters
 	 */
-	public MockExternalContext(AttributeCollection requestParameters) {
-		requestParameterMap.addAttributes(requestParameters);
+	public MockExternalContext(ParameterMap requestParameterMap) {
+		this.requestParameterMap = requestParameterMap;
 	}
 
 	// implementing external context
@@ -80,8 +69,8 @@ public class MockExternalContext implements ExternalContext {
 		return requestPathInfo;
 	}
 
-	public UnmodifiableAttributeMap getRequestParameterMap() {
-		return requestParameterMap.unmodifiable();
+	public ParameterMap getRequestParameterMap() {
+		return requestParameterMap;
 	}
 
 	public AttributeMap getRequestMap() {
@@ -106,7 +95,31 @@ public class MockExternalContext implements ExternalContext {
 		this.dispatcherPath = dispatcherPath;
 	}
 
-	public void addRequestParameter(String parameterName, Object parameterValue) {
-		requestParameterMap.setAttribute(parameterName, parameterValue);
+	public void setRequestParameterMap(ParameterMap requestParameterMap) {
+		this.requestParameterMap = requestParameterMap;
+	}
+	
+	public void setRequestMap(AttributeMap requestMap) {
+		this.requestMap = requestMap;
+	}
+
+	public void setSessionMap(SharedAttributeMap sessionMap) {
+		this.sessionMap = sessionMap;
+	}
+
+	public void setApplicationMap(SharedAttributeMap applicationMap) {
+		this.applicationMap = applicationMap;
+	}
+
+	public MockParameterMap getMockRequestParameterMap() {
+		return (MockParameterMap)requestParameterMap;
+	}
+	
+	public void addRequestParameter(String parameterName, String parameterValue) {
+		getMockRequestParameterMap().add(parameterName, parameterValue);
+	}
+
+	public void addRequestParameter(String parameterName, String[] parameterValues) {
+		getMockRequestParameterMap().add(parameterName, parameterValues);
 	}
 }

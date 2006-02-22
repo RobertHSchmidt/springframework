@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.builder;
 
-import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.map.AttributeCollection;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.webflow.Action;
@@ -337,7 +337,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		ViewState state = new ViewState(getFlow(), stateId);
 		state.setViewSelector(viewSelector);
 		state.getTransitionSet().addAll(transitions);
-		state.getAttributeMap().addAttributes(attributes);
+		state.getAttributeMap().add(attributes);
 		return state;
 	}
 
@@ -443,7 +443,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		ActionState state = new ActionState(getFlow(), stateId);
 		state.getTransitionSet().addAll(transitions);
 		state.getActionList().addAll(actions);
-		state.getAttributeMap().addAttributes(attributes);
+		state.getAttributeMap().add(attributes);
 		return state;
 	}
 
@@ -560,7 +560,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		SubflowState state = new SubflowState(getFlow(), stateId, subFlow);
 		state.getTransitionSet().addAll(transitions);
 		state.setAttributeMapper(attributeMapper);
-		state.getAttributeMap().addAttributes(attributes);
+		state.getAttributeMap().add(attributes);
 		return state;
 	}
 
@@ -656,7 +656,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 			throws IllegalArgumentException {
 		DecisionState state = new DecisionState(getFlow(), stateId);
 		state.getTransitionSet().addAll(transitions);
-		state.getAttributeMap().addAttributes(attributes);
+		state.getAttributeMap().add(attributes);
 		return state;
 	}
 
@@ -761,7 +761,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		EndState state = new EndState(getFlow(), stateId);
 		state.setViewSelector(viewSelector);
 		state.addOutputAttributeNames(outputAttributeNames);
-		state.getAttributeMap().addAttributes(attributes);
+		state.getAttributeMap().add(attributes);
 		return state;
 	}
 

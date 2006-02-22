@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.AttributeMap;
 
 /**
  * Superclass of all objects in the web flow system that support annotation
@@ -51,7 +51,7 @@ public abstract class AnnotatedObject {
 	 * tooltip).
 	 */
 	public String getCaption() {
-		return attributes.getStringAttribute(CAPTION_PROPERTY);
+		return attributes.getString(CAPTION_PROPERTY);
 	}
 
 	/**
@@ -59,14 +59,14 @@ public abstract class AnnotatedObject {
 	 * @param caption the caption
 	 */
 	public void setCaption(String caption) {
-		attributes.setAttribute(CAPTION_PROPERTY, caption);
+		attributes.set(CAPTION_PROPERTY, caption);
 	}
 
 	/**
 	 * Returns the long description of this action.
 	 */
 	public String getDescription() {
-		return attributes.getStringAttribute(DESCRIPTION_PROPERTY);
+		return attributes.getString(DESCRIPTION_PROPERTY);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public abstract class AnnotatedObject {
 	 * @param description the long description
 	 */
 	public void setDescription(String description) {
-		attributes.setAttribute(DESCRIPTION_PROPERTY, description);
+		attributes.set(DESCRIPTION_PROPERTY, description);
 	}
 
 	/**

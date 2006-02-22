@@ -20,9 +20,10 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.attribute.AttributeCollection;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.binding.expression.ExpressionFactory;
+import org.springframework.binding.map.MockParameterMap;
+import org.springframework.binding.map.ParameterMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
@@ -95,7 +96,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
-	protected ViewSelection startFlow(AttributeCollection requestParameters) {
+	protected ViewSelection startFlow(ParameterMap requestParameters) {
 		return startFlow(new MockExternalContext(requestParameters), null);
 	}
 
@@ -122,7 +123,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
-	protected ViewSelection startFlow(AttributeCollection requestParameters, FlowExecutionListener listener) {
+	protected ViewSelection startFlow(ParameterMap requestParameters, FlowExecutionListener listener) {
 		return startFlow(new MockExternalContext(requestParameters), new FlowExecutionListener[] { listener });
 	}
 
@@ -183,7 +184,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param requestParameters request parameters needed by the flow execution
 	 * to complete event processing
 	 */
-	protected ViewSelection signalEvent(String eventId, AttributeCollection requestParameters) {
+	protected ViewSelection signalEvent(String eventId, ParameterMap requestParameters) {
 		return flowExecution.signalEvent(eventId, new MockExternalContext(requestParameters));
 	}
 
@@ -252,7 +253,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the attribute value
 	 */
 	protected Object getConversationAttribute(String attributeName) {
-		return getFlowExecutionContext().getScope().getAttribute(attributeName);
+		return getFlowExecutionContext().getScope().get(attributeName);
 	}
 
 	/**
@@ -264,7 +265,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @throws IllegalStateException if the attribute was not present.
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName) throws IllegalStateException {
-		return getFlowExecutionContext().getScope().getRequiredAttribute(attributeName);
+		return getFlowExecutionContext().getScope().getRequired(attributeName);
 	}
 
 	/**
@@ -278,7 +279,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName, Class requiredType)
 			throws IllegalStateException {
-		return getFlowExecutionContext().getScope().getRequiredAttribute(attributeName, requiredType);
+		return getFlowExecutionContext().getScope().getRequired(attributeName, requiredType);
 	}
 
 	/**
@@ -288,7 +289,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the attribute value
 	 */
 	protected Object getFlowAttribute(String attributeName) {
-		return getFlowExecutionContext().getActiveSession().getScope().getAttribute(attributeName);
+		return getFlowExecutionContext().getActiveSession().getScope().get(attributeName);
 	}
 
 	/**
@@ -299,7 +300,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @throws IllegalStateException if the attribute was not present.
 	 */
 	protected Object getRequiredFlowAttribute(String attributeName) throws IllegalStateException {
-		return getFlowExecutionContext().getActiveSession().getScope().getRequiredAttribute(attributeName);
+		return getFlowExecutionContext().getActiveSession().getScope().getRequired(attributeName);
 	}
 
 	/**
@@ -313,7 +314,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 */
 	protected Object getRequiredFlowAttribute(String attributeName, Class requiredType) throws IllegalStateException {
 		return getFlowExecutionContext().getActiveSession().getScope()
-				.getRequiredAttribute(attributeName, requiredType);
+				.getRequired(attributeName, requiredType);
 	}
 
 	/**

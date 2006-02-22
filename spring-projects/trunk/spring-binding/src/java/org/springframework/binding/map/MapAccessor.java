@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.binding.util;
+package org.springframework.binding.map;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
  * 
  * @author Keith Donald
  */
-public class MapAccessor {
+public class MapAccessor implements MapAdaptable {
 
 	/**
 	 * The target map.
@@ -186,6 +186,7 @@ public class MapAccessor {
 		if (!map.containsKey(key)) {
 			return null;
 		}
+		assertAssignableTo(Collection.class, requiredType);
 		return (Collection)assertValueOfType(key, requiredType);
 	}
 
@@ -212,9 +213,40 @@ public class MapAccessor {
 	 */
 	public Collection getRequiredCollection(Object key, Class requiredType) throws IllegalArgumentException {
 		assertContainsKey(key);
+		assertAssignableTo(Collection.class, requiredType);
 		return (Collection)assertValueOfType(key, requiredType);
 	}
 
+	/**
+	 * Returns a array value in the map, asserting it is of the required type if
+	 * present and returning <code>null</code> if not found.
+	 * @param key the key
+	 * @return the array value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not an array of the required type
+	 */
+	public Object[] getArray(Object key, Class requiredType) throws IllegalArgumentException {
+		assertAssignableTo(Object[].class, requiredType);
+		if (!map.containsKey(key)) {
+			return null;
+		}
+		return (Object[])assertValueOfType(key, requiredType);
+	}
+
+	/**
+	 * Returns an array value in the map, asserting it is of the required
+	 * type if present and throwing an exception if not found.
+	 * @param key the key
+	 * @return the array value
+	 * @throws IllegalArgumentException if the key is not present or present but
+	 * the value is not a array of the required type
+	 */
+	public Object[] getRequiredArray(Object key, Class requiredType) throws IllegalArgumentException {
+		assertContainsKey(key);
+		assertAssignableTo(Object[].class, requiredType);
+		return (Object[])assertValueOfType(key, requiredType);
+	}
+	
 	/**
 	 * Returns a number value in the map that is of the specified type,
 	 * returning <code>null</code> if no value was found.
@@ -241,6 +273,7 @@ public class MapAccessor {
 		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
+		assertAssignableTo(Number.class, requiredType);
 		return (Number)assertValueOfType(key, requiredType);
 	}
 
@@ -415,5 +448,10 @@ public class MapAccessor {
 					+ value.getClass() + "]");
 		}
 		return value;
+	}
+
+	private void assertAssignableTo(Class clazz, Class requiredType) {
+		Assert.isTrue(clazz.isAssignableFrom(requiredType), "The provided required type must be assignable to ["
+				+ clazz + "]");
 	}
 }

@@ -104,7 +104,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
 		getStatePersister().restoreState(bean, context);
-		MethodKey methodKey = (MethodKey)context.getAttributes().getRequiredAttribute(AnnotatedAction.METHOD_PROPERTY,
+		MethodKey methodKey = (MethodKey)context.getAttributes().getRequired(AnnotatedAction.METHOD_PROPERTY,
 				MethodKey.class);
 		Object returnValue = getMethodInvoker().invoke(methodKey, bean, context);
 		processMethodReturnValue(returnValue, context);
@@ -127,11 +127,11 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * @param context the request context
 	 */
 	protected void processMethodReturnValue(Object returnValue, RequestContext context) {
-		String resultName = context.getAttributes().getStringAttribute(AnnotatedAction.RESULT_NAME_PROPERTY, null);
+		String resultName = context.getAttributes().getString(AnnotatedAction.RESULT_NAME_PROPERTY, null);
 		if (resultName != null) {
-			ScopeType scopeType = (ScopeType)context.getAttributes().getAttribute(
+			ScopeType scopeType = (ScopeType)context.getAttributes().get(
 					AnnotatedAction.RESULT_SCOPE_PROPERTY, ScopeType.REQUEST);
-			scopeType.getScope(context).setAttribute(resultName, returnValue);
+			scopeType.getScope(context).set(resultName, returnValue);
 		}
 	}
 
@@ -186,7 +186,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 			else {
 				// simply return success, saving the return value as an event
 				// parameter
-				String resultParameterName = context.getAttributes().getStringAttribute(RESULT_PARAMETER, RESULT_PARAMETER);
+				String resultParameterName = context.getAttributes().getString(RESULT_PARAMETER, RESULT_PARAMETER);
 				return success(resultParameterName, resultObject);
 			}
 		}

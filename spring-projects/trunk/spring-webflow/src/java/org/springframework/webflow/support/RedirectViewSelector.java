@@ -19,8 +19,8 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
-import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
@@ -83,10 +83,10 @@ public class RedirectViewSelector implements ViewSelector, Serializable {
 				String nameAndValue = parameters[i];
 				index = nameAndValue.indexOf('=');
 				if (index != -1) {
-					model.setAttribute(nameAndValue.substring(0, index), nameAndValue.substring(index + 1));
+					model.set(nameAndValue.substring(0, index), nameAndValue.substring(index + 1));
 				}
 				else {
-					model.setAttribute(nameAndValue, "");
+					model.set(nameAndValue, "");
 				}
 			}
 		}

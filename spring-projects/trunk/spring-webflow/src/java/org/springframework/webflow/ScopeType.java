@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.enums.StaticLabeledEnum;
 
 /**

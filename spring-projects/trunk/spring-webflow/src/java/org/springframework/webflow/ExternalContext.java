@@ -15,9 +15,9 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.SharedAttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.ParameterMap;
+import org.springframework.binding.map.SharedAttributeMap;
 
 /**
  * A facade that provides access to the state of an external system that has
@@ -56,7 +56,7 @@ public interface ExternalContext {
 	 * be changed.
 	 * @return the immutable request parameter map
 	 */
-	public UnmodifiableAttributeMap getRequestParameterMap();
+	public ParameterMap getRequestParameterMap();
 
 	/**
 	 * Provides access to the external request attribute map, providing a

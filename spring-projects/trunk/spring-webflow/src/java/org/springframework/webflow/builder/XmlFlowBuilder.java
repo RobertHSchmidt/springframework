@@ -32,13 +32,13 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.binding.attribute.AttributeCollection;
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.map.AttributeCollection;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -715,7 +715,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 					element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
 			action.setResultScope(scopeType);
 		}
-		action.getAttributeMap().addAttributes(parseAttributes(element));
+		action.getAttributeMap().add(parseAttributes(element));
 		action.setTargetAction(parseAction(element, action.getAttributeMap()));
 		return action;
 	}
@@ -758,7 +758,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Assert.state(valueElements.size() == 1, "A property value should be specified for property '" + name + "'");
 			value = DomUtils.getTextValue((Element)valueElements.get(0));
 		}
-		attributes.setAttribute(name, convertPropertyValue(element, value));
+		attributes.set(name, convertPropertyValue(element, value));
 	}
 
 	/**

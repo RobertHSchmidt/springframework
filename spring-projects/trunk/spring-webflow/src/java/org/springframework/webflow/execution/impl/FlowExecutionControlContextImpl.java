@@ -17,10 +17,11 @@ package org.springframework.webflow.execution.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.attribute.AttributeCollection;
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.EmptyAttributeCollection;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeCollection;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.EmptyAttributeCollection;
+import org.springframework.binding.map.ParameterMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
@@ -119,7 +120,7 @@ public class FlowExecutionControlContextImpl implements FlowExecutionControlCont
 		return flowExecution;
 	}
 
-	public UnmodifiableAttributeMap getRequestParameters() {
+	public ParameterMap getRequestParameters() {
 		return externalContext.getRequestParameterMap();
 	}
 

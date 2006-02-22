@@ -173,7 +173,7 @@ public class MultiAction extends AbstractAction {
 	 */
 	public static class DefaultActionMethodResolver implements ActionMethodResolver {
 		public MethodKey getMethodKey(RequestContext context) {
-			return (MethodKey)context.getAttributes().getAttribute(AnnotatedAction.METHOD_PROPERTY, MethodKey.class,
+			return (MethodKey)context.getAttributes().get(AnnotatedAction.METHOD_PROPERTY, MethodKey.class,
 					new MethodKey(context.getCurrentState().getId()));
 		}
 	}

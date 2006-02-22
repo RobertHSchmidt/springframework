@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.support;
 
-import org.springframework.binding.attribute.AttributeCollection;
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.AttributeCollection;
+import org.springframework.binding.map.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.action.AbstractAction;
 
@@ -192,7 +192,7 @@ public class EventFactorySupport {
 	 */
 	protected Event result(String eventId, String attributeName, Object attributeValue) {
 		AttributeMap attributes = new AttributeMap(1, 1);
-		attributes.setAttribute(attributeName, attributeValue);
+		attributes.set(attributeName, attributeValue);
 		return new Event(this, eventId, attributes);
 	}
 }

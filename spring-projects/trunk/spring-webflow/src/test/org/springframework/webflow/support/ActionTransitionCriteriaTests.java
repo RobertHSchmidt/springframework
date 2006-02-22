@@ -67,7 +67,7 @@ public class ActionTransitionCriteriaTests extends TestCase {
 	}
 
 	public void testTest() throws Exception {
-		MockRequestContext mockRequestContext = new MockRequestContext(new MockExternalContext());
+		MockRequestContext mockRequestContext = new MockRequestContext();
 		actionControl.expectAndReturn(actionMock.execute(mockRequestContext), new Event(this, "success"));
 		actionControl.replay();
 

@@ -17,7 +17,7 @@ package org.springframework.webflow.execution;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
@@ -168,7 +168,7 @@ public class FlowExecutionTests extends TestCase {
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
 		assertEquals("viewState1", execution.getActiveSession().getState().getId());
-		assertNotNull(execution.getActiveSession().getScope().getAttribute("items"));
+		assertNotNull(execution.getActiveSession().getScope().get("items"));
 		execution.signalEvent("event1", context);
 		assertTrue(!execution.isActive());
 	}
@@ -177,14 +177,14 @@ public class FlowExecutionTests extends TestCase {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
 				new XmlFlowBuilderTests.TestFlowArtifactFactory());
 		AttributeMap attributes = new AttributeMap();
-		attributes.setAttribute("scenario2", Boolean.TRUE);
+		attributes.set("scenario2", Boolean.TRUE);
 		FlowAssembler assembler = new FlowAssembler(new FlowArtifactParameters("testFlow1", attributes), builder);
 		assembler.assembleFlow();
 		FlowExecution execution = new FlowExecutionImpl(builder.getResult());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
 		assertEquals("viewState2", execution.getActiveSession().getState().getId());
-		assertNotNull(execution.getActiveSession().getScope().getAttribute("items"));
+		assertNotNull(execution.getActiveSession().getScope().get("items"));
 		execution.signalEvent("event2", context);
 		assertTrue(!execution.isActive());
 	}

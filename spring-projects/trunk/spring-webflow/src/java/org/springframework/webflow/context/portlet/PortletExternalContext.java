@@ -19,9 +19,9 @@ import javax.portlet.PortletContext;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.SharedAttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.ParameterMap;
+import org.springframework.binding.map.SharedAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
 
@@ -67,8 +67,8 @@ public class PortletExternalContext implements ExternalContext {
 		return null;
 	}
 
-	public UnmodifiableAttributeMap getRequestParameterMap() {
-		return new UnmodifiableAttributeMap(new PortletRequestParameterMap(request));
+	public ParameterMap getRequestParameterMap() {
+		return new ParameterMap(new PortletRequestParameterMap(request));
 	}
 
 	public AttributeMap getRequestMap() {

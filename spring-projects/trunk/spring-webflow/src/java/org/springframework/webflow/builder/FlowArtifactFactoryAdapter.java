@@ -2,9 +2,9 @@ package org.springframework.webflow.builder;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
@@ -93,7 +93,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	public Flow createFlow(FlowArtifactParameters parameters) throws FlowArtifactException {
 		Flow flow = (Flow)newInstance(Flow.class);
 		flow.setId(parameters.getId());
-		flow.getAttributeMap().addAttributes(parameters.getAttributes());
+		flow.getAttributeMap().add(parameters.getAttributes());
 		return flow;
 	}
 
@@ -102,13 +102,13 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 		State state = (State)newInstance(stateType);
 		state.setId(parameters.getId());
 		state.setFlow(flow);
-		state.getAttributeMap().addAttributes(parameters.getAttributes());
+		state.getAttributeMap().add(parameters.getAttributes());
 		return state;
 	}
 
 	public Transition createTransition(UnmodifiableAttributeMap attributes) throws FlowArtifactException {
 		Transition transition = (Transition)newInstance(Transition.class);
-		transition.getAttributeMap().addAttributes(attributes);
+		transition.getAttributeMap().add(attributes);
 		return transition;
 	}
 

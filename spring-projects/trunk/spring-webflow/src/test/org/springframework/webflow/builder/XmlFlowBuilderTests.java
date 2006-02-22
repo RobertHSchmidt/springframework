@@ -17,8 +17,8 @@ package org.springframework.webflow.builder;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.core.io.ClassPathResource;
@@ -85,8 +85,8 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(actionState1);
 		assertEquals(2, actionState1.getActionList().size());
 		assertEquals(null, actionState1.getActionList().getAnnotated(0).getCaption());
-		assertEquals(Boolean.TRUE, actionState1.getAttributeMap().getBooleanAttribute("propBoolean"));
-		assertEquals("aString", actionState1.getAttributeMap().getStringAttribute("propString"));
+		assertEquals(Boolean.TRUE, actionState1.getAttributeMap().getBoolean("propBoolean"));
+		assertEquals("aString", actionState1.getAttributeMap().getString("propString"));
 		assertEquals("action2Name", actionState1.getActionList().getAnnotated(1).getName());
 		assertEquals(3, actionState1.getTransitionSet().size());
 		context.setLastEvent(createEvent("event1"));
@@ -97,8 +97,8 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertTrue(actionState1.getTransitionSet().transitionMatches(context));
 		transition = actionState1.getRequiredTransition(context);
 		assertEquals("viewState2", getTargetStateId(transition));
-		assertEquals("prop1Value", actionState1.getActionList().getAnnotated(0).getAttributeMap().getAttribute("prop1"));
-		assertEquals("prop2Value", actionState1.getActionList().getAnnotated(0).getAttributeMap().getAttribute("prop2"));
+		assertEquals("prop1Value", actionState1.getActionList().getAnnotated(0).getAttributeMap().get("prop1"));
+		assertEquals("prop2Value", actionState1.getActionList().getAnnotated(0).getAttributeMap().get("prop2"));
 
 		ActionState actionState2 = (ActionState)flow.getState("actionState2");
 		assertEquals(1, actionState2.getExceptionHandlerSet().size());
@@ -161,14 +161,14 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(decisionState3);
 		assertNotNull(decisionState3.getAction());
 		assertEquals(new MethodKey("booleanMethod"), decisionState3.getAnnotatedAction().getAttributeMap()
-				.getAttribute("method"));
+				.get("method"));
 		assertTrue(decisionState3.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
 
 		DecisionState decisionState4 = (DecisionState)flow.getState("decisionState4");
 		assertTrue(decisionState4.getTransitionSet().size() == 2);
 		assertNotNull(decisionState4);
 		assertNotNull(decisionState4.getAction());
-		assertEquals(new MethodKey("enumMethod"), decisionState4.getAnnotatedAction().getAttributeMap().getAttribute(
+		assertEquals(new MethodKey("enumMethod"), decisionState4.getAnnotatedAction().getAttributeMap().get(
 				"method"));
 		assertTrue(decisionState4.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
 
@@ -239,7 +239,7 @@ public class XmlFlowBuilderTests extends TestCase {
 
 	public static class TestAction implements Action {
 		public Event execute(RequestContext context) throws Exception {
-			if (context.getFlowExecutionContext().getFlow().getAttributeMap().containsAttribute("scenario2")) {
+			if (context.getFlowExecutionContext().getFlow().getAttributeMap().contains("scenario2")) {
 				return new Event(this, "event2");
 			}
 			return new Event(this, "event1");

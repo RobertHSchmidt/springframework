@@ -17,7 +17,7 @@ package org.springframework.webflow.executor;
 
 import java.io.Serializable;
 
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;

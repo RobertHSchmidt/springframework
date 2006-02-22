@@ -218,7 +218,7 @@ public class FlowController extends AbstractController {
 			}
 			else {
 				// forward to a view as part of an active conversation
-				Map model = new HashMap(response.getModel().getAttributeCount() + 2, 1);
+				Map model = new HashMap(response.getModel().size() + 2, 1);
 				model.putAll(response.getModel().getMap());
 				FlowExecutionKey flowExecutionKey = response.getFlowExecutionKey();
 				FlowExecutionContext flowExecutionContext = response.getFlowExecutionContext();

@@ -17,7 +17,7 @@ package org.springframework.webflow.execution;
 
 import java.util.Map;
 
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.util.Assert;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;

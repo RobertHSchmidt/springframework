@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 
 /**
  * Thrown if an unhandled exception occurs when an action is executed. Typically

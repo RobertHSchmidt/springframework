@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.support.MarkerViewSelector;
@@ -181,7 +181,7 @@ public class EndState extends State {
 		Iterator it = outputAttributeNames.iterator();
 		while (it.hasNext()) {
 			String attributeName = (String)it.next();
-			output.setAttribute(attributeName, scope.getAttribute(attributeName));
+			output.set(attributeName, scope.get(attributeName));
 		}
 		return output;
 	}

@@ -17,10 +17,10 @@ package org.springframework.webflow.executor.jsf;
 
 import javax.faces.context.FacesContext;
 
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.SharedAttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
-import org.springframework.binding.util.SharedMapDecorator;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.ParameterMap;
+import org.springframework.binding.map.SharedAttributeMap;
+import org.springframework.binding.map.SharedMapDecorator;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ExternalContext;
 
@@ -75,8 +75,8 @@ public class JsfExternalContext implements ExternalContext {
 		return facesContext.getExternalContext().getRequestPathInfo();
 	}
 
-	public UnmodifiableAttributeMap getRequestParameterMap() {
-		return new UnmodifiableAttributeMap(facesContext.getExternalContext().getRequestParameterMap());
+	public ParameterMap getRequestParameterMap() {
+		return new ParameterMap(facesContext.getExternalContext().getRequestParameterMap());
 	}
 
 	public AttributeMap getRequestMap() {

@@ -17,8 +17,8 @@ package org.springframework.webflow.builder;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.EndState;
@@ -144,7 +144,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 	public static class PersonIdMapper implements FlowAttributeMapper {
 		public AttributeMap createSubflowInput(RequestContext context) {
 			AttributeMap inputMap = new AttributeMap(1);
-			inputMap.setAttribute("personId", context.getFlowScope().getAttribute("personId"));
+			inputMap.set("personId", context.getFlowScope().get("personId"));
 			return inputMap;
 		}
 

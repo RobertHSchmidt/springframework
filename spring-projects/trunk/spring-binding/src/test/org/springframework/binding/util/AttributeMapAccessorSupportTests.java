@@ -3,6 +3,8 @@ package org.springframework.binding.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.binding.map.MapAccessor;
+
 
 import junit.framework.TestCase;
 

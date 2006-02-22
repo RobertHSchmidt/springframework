@@ -1,8 +1,8 @@
 package org.springframework.webflow.builder;
 
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;

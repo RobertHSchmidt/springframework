@@ -15,9 +15,10 @@
  */
 package org.springframework.webflow.test;
 
-import org.springframework.binding.attribute.AttributeCollection;
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeCollection;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.ParameterMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
@@ -66,21 +67,22 @@ public class MockRequestContext implements RequestContext {
 	 * <li>A mock external context with no request parameters set.
 	 * </ul>
 	 * To add request parameters to this request, use the
-	 * {@link #addRequestParameter(Object, Object) } method.
+	 * {@link #addRequestParameter(String, String) } method.
 	 */
 	public MockRequestContext() {
 
 	}
-
+	
 	/**
-	 * Creates a new mock request context with the specified external context
-	 * providing access to externally-managed attributes such as request
-	 * parameters.
-	 * 
-	 * @param externalContext the external context
+	 * Creates a new mock request context with the following defaults:
+	 * <ul>
+	 * <li>A flow execution context with a active session of flow "mockFlow" in
+	 * state "mockState".
+	 * <li>A mock external context with the provided parameters set.
+	 * </ul>
 	 */
-	public MockRequestContext(ExternalContext externalContext) {
-		setExternalContext(externalContext);
+	public MockRequestContext(ParameterMap requestParameterMap) {
+		externalContext = new MockExternalContext(requestParameterMap);
 	}
 
 	// implementing RequestContext
@@ -105,7 +107,7 @@ public class MockRequestContext implements RequestContext {
 		return getFlowExecutionContext().getScope();
 	}
 
-	public UnmodifiableAttributeMap getRequestParameters() {
+	public ParameterMap getRequestParameters() {
 		return externalContext.getRequestParameterMap();
 	}
 
@@ -129,23 +131,12 @@ public class MockRequestContext implements RequestContext {
 		return attributes.unmodifiable();
 	}
 
+	public void setAttributes(AttributeCollection attributes) {
+		this.attributes.replaceWith(attributes);
+	}
+
 	public UnmodifiableAttributeMap getModel() {
 		return getConversationScope().union(getFlowScope()).union(getRequestScope()).unmodifiable();
-	}
-
-	/**
-	 * Set the external context--usefully when unit testing an artifact that
-	 * depends on a specific external context implementation.
-	 */
-	public void setExternalContext(ExternalContext externalContext) {
-		this.externalContext = externalContext;
-	}
-
-	/**
-	 * Set the flow execution context. Typically not needed to be called.
-	 */
-	public void setFlowExecutionContext(FlowExecutionContext flowExecutionContext) {
-		this.flowExecutionContext = flowExecutionContext;
 	}
 
 	/**
@@ -170,11 +161,21 @@ public class MockRequestContext implements RequestContext {
 	 * @param attributeValue the attribute value
 	 */
 	public void setAttribute(String attributeName, Object attributeValue) {
-		attributes.setAttribute(attributeName, attributeValue);
+		attributes.set(attributeName, attributeValue);
 	}
 
-	public void setAttributes(AttributeCollection attributes) {
-		this.attributes.replaceWith(attributes);
+	/**
+	 * Sets the flow execution context.
+	 */
+	public void setFlowExecutionContext(FlowExecutionContext flowExecutionContext) {
+		this.flowExecutionContext = flowExecutionContext;
+	}
+
+	/**
+	 * Sets the external context.
+	 */
+	public void setExternalContext(ExternalContext externalContext) {
+		this.externalContext = externalContext;
 	}
 
 	/**
@@ -204,7 +205,16 @@ public class MockRequestContext implements RequestContext {
 	 * @param parameterName the parameter name
 	 * @param parameterValue the parameter value
 	 */
-	public void addRequestParameter(String parameterName, Object parameterValue) {
+	public void addRequestParameter(String parameterName, String parameterValue) {
 		getMockExternalContext().addRequestParameter(parameterName, parameterValue);
+	}
+
+	/**
+	 * Adds a multi-valued request parameter to the configured external context.
+	 * @param parameterName the parameter name
+	 * @param parameterValue the parameter values
+	 */
+	public void addRequestParameter(String parameterName, String[] parameterValues) {
+		getMockExternalContext().addRequestParameter(parameterName, parameterValues);
 	}
 }

@@ -95,7 +95,7 @@ public class FormObjectAccessor {
 	 * @return the form object, or null if not found
 	 */
 	public Object getFormObject(String formObjectName, ScopeType scopeType) {
-		return scopeType.getScope(context).getAttribute(formObjectName);
+		return scopeType.getScope(context).get(formObjectName);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class FormObjectAccessor {
 	 * @return the form object, or null if not found
 	 */
 	public Object getFormObject(String formObjectName, Class formObjectClass, ScopeType scopeType) {
-		return scopeType.getScope(context).getAttribute(formObjectName, formObjectClass);
+		return scopeType.getScope(context).get(formObjectName, formObjectClass);
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope in which to expose the form object
 	 */
 	public void setFormObject(Object formObject, String formObjectName, ScopeType scopeType) {
-		scopeType.getScope(context).setAttribute(formObjectName, formObject);
+		scopeType.getScope(context).set(formObjectName, formObject);
 		setCurrentFormObject(formObject, scopeType);
 	}
 
@@ -128,7 +128,7 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope in which to expose the form object
 	 */
 	public void setCurrentFormObject(Object formObject, ScopeType scopeType) {
-		scopeType.getScope(context).setAttribute(getCurrentFormObjectName(), formObject);
+		scopeType.getScope(context).set(getCurrentFormObjectName(), formObject);
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class FormObjectAccessor {
 	 * @return the form object errors instance, or null if not found
 	 */
 	public Errors getFormErrors(String formObjectName, ScopeType scopeType) {
-		return (Errors)scopeType.getScope(context).getAttribute(BindException.ERROR_KEY_PREFIX + formObjectName,
+		return (Errors)scopeType.getScope(context).get(BindException.ERROR_KEY_PREFIX + formObjectName,
 				Errors.class);
 	}
 
@@ -179,7 +179,7 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope to expose the errors in
 	 */
 	public void setFormErrors(Errors errors, ScopeType scopeType) {
-		scopeType.getScope(context).setAttribute(BindException.ERROR_KEY_PREFIX + errors.getObjectName(), errors);
+		scopeType.getScope(context).set(BindException.ERROR_KEY_PREFIX + errors.getObjectName(), errors);
 		setCurrentFormErrors(errors, scopeType);
 	}
 
@@ -190,7 +190,7 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope in which to expose the errors instance
 	 */
 	public void setCurrentFormErrors(Errors errors, ScopeType scopeType) {
-		scopeType.getScope(context).setAttribute(getCurrentFormErrorsName(), errors);
+		scopeType.getScope(context).set(getCurrentFormErrorsName(), errors);
 	}
 
 	/**

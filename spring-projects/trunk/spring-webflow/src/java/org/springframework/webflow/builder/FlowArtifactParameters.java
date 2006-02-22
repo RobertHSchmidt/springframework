@@ -17,10 +17,10 @@ package org.springframework.webflow.builder;
 
 import java.io.Serializable;
 
-import org.springframework.binding.attribute.AttributeCollection;
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.EmptyAttributeCollection;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeCollection;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.EmptyAttributeCollection;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
@@ -90,7 +90,7 @@ public class FlowArtifactParameters implements Serializable {
 	 */
 	public FlowArtifactParameters addAttributes(AttributeCollection attributes) {
 		if (attributes != null) {
-			return new FlowArtifactParameters(getId(), new AttributeMap(getAttributes()).addAttributes(attributes));
+			return new FlowArtifactParameters(getId(), new AttributeMap(getAttributes()).add(attributes));
 		}
 		else {
 			return new FlowArtifactParameters(getId(), getAttributes());

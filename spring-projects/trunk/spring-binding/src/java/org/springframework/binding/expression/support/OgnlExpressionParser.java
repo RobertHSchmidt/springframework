@@ -22,10 +22,10 @@ import ognl.OgnlException;
 import ognl.OgnlRuntime;
 import ognl.PropertyAccessor;
 
-import org.springframework.binding.attribute.AttributeCollection;
-import org.springframework.binding.attribute.MutableAttributeCollection;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ParserException;
+import org.springframework.binding.map.MapAdaptable;
+import org.springframework.binding.map.MutableAttributeCollection;
 
 /**
  * An expression parser that parses Ognl expressions.
@@ -34,7 +34,7 @@ import org.springframework.binding.expression.ParserException;
 public class OgnlExpressionParser extends AbstractExpressionParser {
 
 	public OgnlExpressionParser() {
-		OgnlRuntime.setPropertyAccessor(AttributeCollection.class, new AttributeCollectionPropertyAccessor());
+		OgnlRuntime.setPropertyAccessor(MapAdaptable.class, new MapAdaptablePropertyAccessor());
 		OgnlRuntime.setPropertyAccessor(MutableAttributeCollection.class,
 				new MutableAttributeCollectionPropertyAccessor());
 	}
@@ -48,19 +48,20 @@ public class OgnlExpressionParser extends AbstractExpressionParser {
 		}
 	}
 
-	private static class AttributeCollectionPropertyAccessor implements PropertyAccessor {
+	private static class MapAdaptablePropertyAccessor implements PropertyAccessor {
 		public Object getProperty(Map context, Object target, Object name) throws OgnlException {
-			return ((AttributeCollection)target).getAttribute((String)name);
+			return ((MapAdaptable)target).getMap().get(name);
 		}
 
 		public void setProperty(Map context, Object target, Object name, Object value) throws OgnlException {
-			throw new UnsupportedOperationException("Cannot mutate immutable attribute collections; operation disallowed");
+			throw new UnsupportedOperationException(
+					"Cannot mutate immutable attribute collections; operation disallowed");
 		}
 	}
 
-	private static class MutableAttributeCollectionPropertyAccessor extends AttributeCollectionPropertyAccessor {
+	private static class MutableAttributeCollectionPropertyAccessor extends MapAdaptablePropertyAccessor {
 		public void setProperty(Map context, Object target, Object name, Object value) throws OgnlException {
-			((MutableAttributeCollection)target).setAttribute((String)name, value);
+			((MutableAttributeCollection)target).set((String)name, value);
 		}
 	}
 }

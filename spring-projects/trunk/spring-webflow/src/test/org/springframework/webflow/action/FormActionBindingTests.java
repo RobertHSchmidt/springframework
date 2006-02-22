@@ -54,7 +54,8 @@ public class FormActionBindingTests extends TestCase {
 		request.setMethod("POST");
 		request.addParameter("prop", "A");
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockRequestContext context = new MockRequestContext(new ServletExternalContext(null, request, response));
+		MockRequestContext context = new MockRequestContext();
+		context.setExternalContext(new ServletExternalContext(null, request, response));
 		context.setAttribute("method", new MethodKey("bindAndValidate"));
 
 		// use a FormAction to do the binding
@@ -62,7 +63,7 @@ public class FormActionBindingTests extends TestCase {
 		formAction.setFormObjectClass(TestBean.class);
 		formAction.setFormObjectName("formObject");
 		formAction.execute(context);
-		Errors formActionErrors = (Errors)context.getRequestScope().getAttribute(BindException.ERROR_KEY_PREFIX + "formObject");
+		Errors formActionErrors = (Errors)context.getRequestScope().get(BindException.ERROR_KEY_PREFIX + "formObject");
 		assertNotNull(formActionErrors);
 		assertTrue(formActionErrors.hasErrors());
 

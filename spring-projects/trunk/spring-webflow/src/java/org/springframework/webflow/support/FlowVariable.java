@@ -69,7 +69,7 @@ public class FlowVariable implements Serializable {
 	 * @param context the flow execution request context
 	 */
 	public void create(RequestContext context) {
-		context.getFlowScope().setAttribute(name, BeanUtils.instantiateClass(type));
+		context.getFlowScope().set(name, BeanUtils.instantiateClass(type));
 	}
 
 	public String toString() {

@@ -17,8 +17,9 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.MockParameterMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.util.StringUtils;
@@ -181,17 +182,17 @@ public class StateTests extends TestCase {
 		endState.setViewSelector(view("myParentFlowEndingViewName"));
 
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		AttributeMap input = new AttributeMap();
-		input.setAttribute("parentInputAttribute", "attributeValue");
+		MockParameterMap input = new MockParameterMap();
+		input.add("parentInputAttribute", "attributeValue");
 		ViewSelection view = flowExecution.start(new MockExternalContext(input));
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
-		assertEquals("attributeValue", flowExecution.getActiveSession().getScope().getAttribute("childInputAttribute"));
+		assertEquals("attributeValue", flowExecution.getActiveSession().getScope().get("childInputAttribute"));
 		view = flowExecution.signalEvent("submit", new MockExternalContext());
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
 		assertTrue(!flowExecution.isActive());
-		assertEquals("attributeValue", view.getModel().getAttribute("parentOutputAttribute"));
+		assertEquals("attributeValue", view.getModel().get("parentOutputAttribute"));
 	}
 
 	public static TransitionCriteria on(String event) {
@@ -209,13 +210,13 @@ public class StateTests extends TestCase {
 	public static class InputOutputMapper implements FlowAttributeMapper {
 		public AttributeMap createSubflowInput(RequestContext context) {
 			AttributeMap inputMap = new AttributeMap();
-			inputMap.setAttribute("childInputAttribute", context.getFlowScope().getAttribute("parentInputAttribute"));
+			inputMap.set("childInputAttribute", context.getFlowScope().get("parentInputAttribute"));
 			return inputMap;
 		}
 
 		public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
 			AttributeMap parentAttributes = context.getFlowExecutionContext().getActiveSession().getScope();
-			parentAttributes.setAttribute("parentOutputAttribute", subflowOutput.getAttribute("childInputAttribute"));
+			parentAttributes.set("parentOutputAttribute", subflowOutput.get("childInputAttribute"));
 		}
 	}
 

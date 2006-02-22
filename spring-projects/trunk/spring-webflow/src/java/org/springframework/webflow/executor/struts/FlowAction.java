@@ -27,7 +27,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.struts.ActionSupport;
@@ -300,7 +300,7 @@ public class FlowAction extends ActionSupport {
 	}
 
 	private Errors getCurrentErrors(UnmodifiableAttributeMap model) {
-		return (Errors)model.getRequiredAttribute(FormObjectAccessor.getCurrentFormErrorsName(), Errors.class);
+		return (Errors)model.getRequired(FormObjectAccessor.getCurrentFormErrorsName(), Errors.class);
 	}
 
 	/**
@@ -311,7 +311,7 @@ public class FlowAction extends ActionSupport {
 	 */
 	protected String buildRedirectUrlPath(ResponseInstruction response) {
 		StringBuffer path = new StringBuffer(response.getViewName());
-		if (response.getModel().getAttributeCount() > 0) {
+		if (response.getModel().size() > 0) {
 			// append model attributes as redirect query parameters
 			path.append('?');
 			Iterator it = response.getModel().getMap().entrySet().iterator();

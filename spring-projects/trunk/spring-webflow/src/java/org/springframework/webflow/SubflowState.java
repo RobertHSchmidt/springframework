@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
@@ -180,8 +180,8 @@ public class SubflowState extends TransitionableState {
 	 * start state configured for the flow should be used.
 	 */
 	protected State getSubflowStartState(RequestContext context) {
-		if (getAttributeMap().containsAttribute(START_STATE_PROPERTY)) {
-			return getFlow().getRequiredState(getAttributeMap().getStringAttribute(START_STATE_PROPERTY));
+		if (getAttributeMap().contains(START_STATE_PROPERTY)) {
+			return getFlow().getRequiredState(getAttributeMap().getString(START_STATE_PROPERTY));
 		}
 		else {
 			// the default start state of the flow will be used

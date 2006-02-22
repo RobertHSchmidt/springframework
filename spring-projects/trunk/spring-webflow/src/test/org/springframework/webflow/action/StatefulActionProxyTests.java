@@ -35,16 +35,16 @@ public class StatefulActionProxyTests extends TestCase {
 		StatefulActionProxy proxy = new StatefulActionProxy();
 		proxy.setBeanFactory(new XmlBeanFactory(new ClassPathResource("context.xml", getClass())));
 		
-		assertTrue(context.getFlowScope().getAttributeCount() == 0);
+		assertTrue(context.getFlowScope().size() == 0);
 		
 		context.setAttribute("method", new MethodKey("increment"));
 		proxy.execute(context);
 		
-		assertEquals(1, context.getFlowScope().getAttributeCount());
-		TestAction testAction = (TestAction)context.getFlowScope().getAttribute("test");
+		assertEquals(1, context.getFlowScope().size());
+		TestAction testAction = (TestAction)context.getFlowScope().get("test");
 		assertEquals(1, testAction.getCounter());
 		proxy.execute(context);
-		assertSame(testAction, context.getFlowScope().getAttribute("test"));
+		assertSame(testAction, context.getFlowScope().get("test"));
 		assertEquals(2, testAction.getCounter());
 
 		context.setAttribute("method", new MethodKey("decrement"));
@@ -52,8 +52,8 @@ public class StatefulActionProxyTests extends TestCase {
 		proxy.execute(context);
 		proxy.execute(context);
 
-		assertEquals(1, context.getFlowScope().getAttributeCount());
-		assertSame(testAction, context.getFlowScope().getAttribute("test"));
+		assertEquals(1, context.getFlowScope().size());
+		assertSame(testAction, context.getFlowScope().get("test"));
 		assertEquals(-1, testAction.getCounter());
 	}
 }

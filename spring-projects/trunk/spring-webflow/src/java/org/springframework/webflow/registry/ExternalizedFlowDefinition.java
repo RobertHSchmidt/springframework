@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.registry;
 
-import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.map.AttributeCollection;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.builder.FlowArtifactParameters;
 

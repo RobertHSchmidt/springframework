@@ -82,7 +82,7 @@ public class SetPortletModeAction extends AbstractAction {
 				+ ClassUtils.getShortName(this.getClass()) + "' can only work with 'PortletExternalContext': ");
 		PortletExternalContext portletContext = (PortletExternalContext)context.getExternalContext();
 		if (portletContext.getResponse() instanceof ActionResponse) {
-			PortletMode mode = (PortletMode)context.getAttributes().getAttribute(PORTLET_MODE_ATTRIBUTE,
+			PortletMode mode = (PortletMode)context.getAttributes().get(PORTLET_MODE_ATTRIBUTE,
 					PortletMode.class, getPortletMode());
 			((ActionResponse)portletContext.getResponse()).setPortletMode(mode);
 			return success();

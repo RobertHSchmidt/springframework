@@ -19,7 +19,7 @@ import java.util.Enumeration;
 
 import javax.portlet.PortletRequest;
 
-import org.springframework.binding.util.StringKeyedMapAdapter;
+import org.springframework.binding.map.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Portlet request, for accessing request scoped attributes.

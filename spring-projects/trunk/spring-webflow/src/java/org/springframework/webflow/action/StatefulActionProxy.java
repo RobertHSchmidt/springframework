@@ -137,10 +137,10 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 		String actionAttribute = getActionAttribute(context, actionId);
 		Assert.hasText(actionAttribute, "You must specify the attribute name of the stateful action in flow "
 				+ "scope using the 'actionAttribute' property");
-		if (!context.getFlowScope().containsAttribute(actionAttribute)) {
-			context.getFlowScope().setAttribute(actionAttribute, lookupAction(actionId));
+		if (!context.getFlowScope().contains(actionAttribute)) {
+			context.getFlowScope().set(actionAttribute, lookupAction(actionId));
 		}
-		return (Action)context.getFlowScope().getAttribute(actionAttribute, Action.class);
+		return (Action)context.getFlowScope().get(actionAttribute, Action.class);
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * @return the bean id
 	 */
 	protected String getActionId(RequestContext context) {
-		return context.getAttributes().getStringAttribute(ACTION_ID_PROPERTY, getActionId());
+		return context.getAttributes().getString(ACTION_ID_PROPERTY, getActionId());
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class StatefulActionProxy extends AbstractAction implements BeanFactoryAw
 	 * @return the action attribute name
 	 */
 	protected String getActionAttribute(RequestContext context, String actionId) {
-		String result = context.getAttributes().getStringAttribute(ACTION_ATTRIBUTE_PROPERTY);
+		String result = context.getAttributes().getString(ACTION_ATTRIBUTE_PROPERTY);
 		if (result != null) {
 			return result;
 		}
