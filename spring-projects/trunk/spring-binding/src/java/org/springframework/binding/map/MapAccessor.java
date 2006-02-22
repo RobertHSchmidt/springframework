@@ -90,7 +90,7 @@ public class MapAccessor implements MapAdaptable {
 	 */
 	public Object get(Object key, Class requiredType, Object defaultValue) {
 		if (!map.containsKey(key)) {
-			return map.get(key);
+			return defaultValue;
 		}
 		return assertValueOfType(key, requiredType);
 	}

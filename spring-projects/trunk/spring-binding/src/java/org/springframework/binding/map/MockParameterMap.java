@@ -38,7 +38,7 @@ public class MockParameterMap extends ParameterMap {
 	 * @param parameterValue the parameter value
 	 * @return this, to support call chaining
 	 */
-	public MockParameterMap add(String parameterName, String parameterValue) {
+	public MockParameterMap put(String parameterName, String parameterValue) {
 		getMapInternal().put(parameterName, parameterValue);
 		return this;
 	}
@@ -49,7 +49,7 @@ public class MockParameterMap extends ParameterMap {
 	 * @param parameterValues the parameter values
 	 * @return this, to support call chaining
 	 */
-	public MockParameterMap add(String parameterName, String[] parameterValues) {
+	public MockParameterMap put(String parameterName, String[] parameterValues) {
 		getMapInternal().put(parameterName, parameterValues);
 		return this;
 	}
