@@ -93,7 +93,7 @@ public class RedirectViewSelector implements ViewSelector, Serializable {
 		else {
 			viewName = fullView;
 		}
-		return new ViewSelection(viewName, model, true);
+		return new ViewSelection(viewName, model.getMap(), true);
 	}
 
 	/**

@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.map.ParameterMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
@@ -312,8 +311,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * the wrong type.
 	 */
 	protected Object getRequiredFlowAttribute(String attributeName, Class requiredType) throws IllegalStateException {
-		return getFlowExecutionContext().getActiveSession().getScope()
-				.getRequired(attributeName, requiredType);
+		return getFlowExecutionContext().getActiveSession().getScope().getRequired(attributeName, requiredType);
 	}
 
 	/**
@@ -423,7 +421,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param model the model map
 	 * @return the attribute expression value
 	 */
-	protected Object evaluateModelAttributeExpression(String attributeName, UnmodifiableAttributeMap model) {
+	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
 		return ExpressionFactory.parseExpression(attributeName).evaluateAgainst(model, null);
 	}
 }

@@ -219,7 +219,7 @@ public class FlowController extends AbstractController {
 			else {
 				// forward to a view as part of an active conversation
 				Map model = new HashMap(response.getModel().size() + 2, 1);
-				model.putAll(response.getModel().getMap());
+				model.putAll(response.getModel());
 				FlowExecutionKey flowExecutionKey = response.getFlowExecutionKey();
 				FlowExecutionContext flowExecutionContext = response.getFlowExecutionContext();
 				parameterExtractor.putContextAttributes(flowExecutionKey, flowExecutionContext, model);
@@ -230,12 +230,11 @@ public class FlowController extends AbstractController {
 			if (response.isRedirect()) {
 				// redirect to an external URL after flow completion
 				boolean contextRelative = isContextRelativeUrl(response.getViewName());
-				return new ModelAndView(new RedirectView(response.getViewName(), contextRelative), response.getModel()
-						.getMap());
+				return new ModelAndView(new RedirectView(response.getViewName(), contextRelative), response.getModel());
 			}
 			else {
 				// forward to a view after flow completion
-				return new ModelAndView(response.getViewName(), response.getModel().getMap());
+				return new ModelAndView(response.getViewName(), response.getModel());
 			}
 		}
 	}

@@ -16,8 +16,8 @@
 package org.springframework.webflow.executor;
 
 import java.io.Serializable;
+import java.util.Map;
 
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
@@ -45,7 +45,7 @@ public class ResponseInstruction implements Serializable {
 	/**
 	 * A state of the flow execution.
 	 */
-	private final FlowExecutionContext flowExecutionContext;
+	private transient final FlowExecutionContext flowExecutionContext;
 
 	/**
 	 * The view selection that was made.
@@ -92,7 +92,7 @@ public class ResponseInstruction implements Serializable {
 		return viewSelection.getViewName();
 	}
 
-	public UnmodifiableAttributeMap getModel() {
+	public Map getModel() {
 		return viewSelection.getModel();
 	}
 

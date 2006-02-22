@@ -101,7 +101,7 @@ public class SimpleViewSelector implements ViewSelector, Serializable {
 	}
 
 	public ViewSelection makeSelection(RequestContext context) {
-		return new ViewSelection(getViewName(), context.getModel(), isRequestConversationRedirect());
+		return new ViewSelection(getViewName(), context.getModel().getMap(), isRequestConversationRedirect());
 	}
 
 	public String toString() {

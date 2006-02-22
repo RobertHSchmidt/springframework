@@ -27,7 +27,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.struts.ActionSupport;
@@ -273,7 +272,7 @@ public class FlowAction extends ActionSupport {
 			}
 			else {
 				// forward to a view as part of an active conversation
-				WebUtils.exposeRequestAttributes(request, response.getModel().getMap());
+				WebUtils.exposeRequestAttributes(request, response.getModel());
 				FlowExecutionKey flowExecutionKey = response.getFlowExecutionKey();
 				FlowExecutionContext flowExecutionContext = response.getFlowExecutionContext();
 				Map contextAttributes = new HashMap(2, 1);
@@ -293,14 +292,14 @@ public class FlowAction extends ActionSupport {
 			}
 			else {
 				// forward to a view after flow completion
-				WebUtils.exposeRequestAttributes(request, response.getModel().getMap());
+				WebUtils.exposeRequestAttributes(request, response.getModel());
 				return findForward(response, mapping);
 			}
 		}
 	}
 
-	private Errors getCurrentErrors(UnmodifiableAttributeMap model) {
-		return (Errors)model.getRequired(FormObjectAccessor.getCurrentFormErrorsName(), Errors.class);
+	private Errors getCurrentErrors(Map model) {
+		return (Errors)model.get(FormObjectAccessor.getCurrentFormErrorsName());
 	}
 
 	/**
@@ -314,7 +313,7 @@ public class FlowAction extends ActionSupport {
 		if (response.getModel().size() > 0) {
 			// append model attributes as redirect query parameters
 			path.append('?');
-			Iterator it = response.getModel().getMap().entrySet().iterator();
+			Iterator it = response.getModel().entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry)it.next();
 				path.append(entry.getKey()).append('=').append(entry.getValue());
