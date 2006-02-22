@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Random;
 
-import org.springframework.binding.convert.support.TextToNumber;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.MultiAction;
@@ -64,7 +63,7 @@ public class HigherLowerGame extends MultiAction implements Serializable {
 	}
 
 	public Event guess(RequestContext context) throws Exception {
-		int guess = getGuess(context);
+		int guess = context.getRequestParameters().getIntegerAttribute(GUESS_PARAMETER, new Integer(-1)).intValue();
 		if (guess < 0 || guess > 100) {
 			lastGuessResult = "invalid";
 			return result("invalidInput");
@@ -86,16 +85,6 @@ public class HigherLowerGame extends MultiAction implements Serializable {
 				durationSeconds = durationMilliseconds / 1000;
 				return result("correct");
 			}
-		}
-	}
-
-	private int getGuess(RequestContext context) {
-		try {
-			return ((Integer)new TextToNumber().convert(context.getRequestParameters().get(GUESS_PARAMETER),
-					Integer.class)).intValue();
-		}
-		catch (Exception e) {
-			return -1;
 		}
 	}
 }

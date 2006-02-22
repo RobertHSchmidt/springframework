@@ -45,7 +45,7 @@ public class MastermindGame extends MultiAction {
 	}
 	
 	public Event guess(RequestContext context) throws Exception {
-		String guess = getGuess(context);
+		String guess = context.getRequestParameters().getStringAttribute("guess");
 		if (guess == null || guess.length() != 4) {
 			return result("invalidInput");
 		}
@@ -85,11 +85,6 @@ public class MastermindGame extends MultiAction {
 		} else {
 			return result("retry");
 		}
-	}
-
-	private String getGuess(RequestContext context) {
-		final String GUESS_PARAMETER = "guess";
-		return (String)context.getRequestParameters().get(GUESS_PARAMETER);
 	}
 
 	/**
