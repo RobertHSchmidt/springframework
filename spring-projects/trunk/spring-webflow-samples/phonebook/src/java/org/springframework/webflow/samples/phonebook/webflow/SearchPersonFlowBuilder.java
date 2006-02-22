@@ -16,6 +16,7 @@
 package org.springframework.webflow.samples.phonebook.webflow;
 
 import org.springframework.binding.mapping.Mapping;
+import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.ScopeType;
@@ -27,7 +28,7 @@ import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.samples.phonebook.domain.SearchCriteria;
 import org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValidator;
-import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
+import org.springframework.webflow.support.DefaultFlowAttributeMapper;
 
 /**
  * Java-based flow builder that searches for people in the phonebook. The flow
@@ -73,8 +74,8 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 				transition(on("newSearch"), to(ENTER_CRITERIA)), transition(on(select()), to(BROWSE_DETAILS)) });
 
 		// view details for selected user id
-		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
-		idMapper.setInputMapping(new Mapping("externalContext.requestParameterMap.id", "id", fromStringTo(Long.class)));
+		DefaultFlowAttributeMapper idMapper = new DefaultFlowAttributeMapper();
+		idMapper.addInputMapping(mapping().source("externalContext.requestParameterMap.id").target("id").from(String.class).to(Long.class).value());
 		addSubflowState(BROWSE_DETAILS, flow(DETAIL_FLOW), idMapper, transition(on(finish()), to(EXECUTE_SEARCH)));
 
 		// end - an error occured

@@ -16,6 +16,7 @@
 package org.springframework.webflow.builder;
 
 import org.springframework.binding.attribute.AttributeCollection;
+import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.binding.method.MethodKey;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
@@ -160,6 +161,12 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		setFlow(getFlowArtifactFactory().createFlow(flowParameters.addAttributes(flowAttributes())));
 	}
 
+	protected MappingBuilder mapping() {
+		MappingBuilder mapping = new MappingBuilder();
+		mapping.setConversionService(getFlowArtifactFactory().getConversionService());
+		return mapping;
+	}
+	
 	/**
 	 * Hook subclasses may override to provide additional properties for the
 	 * flow built by this builder. Returns <code>null</code> by default.
