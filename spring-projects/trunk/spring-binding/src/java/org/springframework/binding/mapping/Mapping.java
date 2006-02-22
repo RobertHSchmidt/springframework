@@ -83,8 +83,8 @@ public class Mapping implements Serializable {
 		}
 		// set target value
 		if (logger.isDebugEnabled()) {
-			logger.debug("Mapping'" + sourceExpression + "' value " + sourceValue + " to target '"
-					+ targetPropertyExpression + "', setting target value to " + targetValue);
+			logger.debug("Mapping " + sourceExpression + " value [" + sourceValue + "] to target property '"
+					+ targetPropertyExpression + "'; setting property value to [" + targetValue + "]");
 		}
 		targetPropertyExpression.setValue(target, targetValue, mappingContext);
 	}
