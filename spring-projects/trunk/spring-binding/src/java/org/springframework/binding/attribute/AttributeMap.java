@@ -21,7 +21,7 @@ import java.util.Map;
 import org.springframework.util.Assert;
 
 /**
- * A generic attribute map with string keys.
+ * A generic, mutable attribute map with string keys.
  * 
  * @author Keith Donald
  */
@@ -65,32 +65,6 @@ public class AttributeMap extends AbstractAttributeMap implements MutableAttribu
 	}
 
 	/**
-	 * Merge the attributes in the provided map into the attributes in this map,
-	 * and returning a copy containing the union.
-	 * @param attributes the attributes to merge in
-	 * @return a new attribute map, the union of this map and the provided map.
-	 */
-	public AttributeMap union(AttributeCollection attributes) {
-		Map map = new HashMap(getAttributeCount() + attributes.getAttributeCount(), 1);
-		map.putAll(getMap());
-		map.putAll(attributes.getMap());
-		return new AttributeMap(map);
-	}
-
-	public UnmodifiableAttributeMap unmodifiable() {
-		return new UnmodifiableAttributeMap(getMap());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.binding.util.AttributesSetter#setAttribute(java.lang.String,
-	 * java.lang.Object)
-	 */
-	public Object setAttribute(String attributeName, Object attributeValue) {
-		return getMapInternal().put(attributeName, attributeValue);
-	}
-
-	/**
 	 * Put all the attributes into this scope.
 	 * @param attributes the attributes to put into this scope.
 	 * @return this, to support call chaining.
@@ -124,7 +98,7 @@ public class AttributeMap extends AbstractAttributeMap implements MutableAttribu
 	}
 
 	/**
-	 * Replace the contents of this attribute map with the contents of the 
+	 * Replace the contents of this attribute map with the contents of the
 	 * provided collection.
 	 * @param attributes the attribute collection
 	 * @return this, to support call chaining
@@ -134,7 +108,36 @@ public class AttributeMap extends AbstractAttributeMap implements MutableAttribu
 		addAttributes(attributes);
 		return this;
 	}
-	
+
+	/**
+	 * Merge the attributes in the provided map into the attributes in this map,
+	 * and returning a copy containing the union.
+	 * @param attributes the attributes to merge in
+	 * @return a new attribute map, the union of this map and the provided map.
+	 */
+	public AttributeMap union(AttributeCollection attributes) {
+		Map map = new HashMap(getAttributeCount() + attributes.getAttributeCount(), 1);
+		map.putAll(getMap());
+		map.putAll(attributes.getMap());
+		return new AttributeMap(map);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.springframework.binding.attribute.AttributeCollection#unmodifiable()
+	 */
+	public UnmodifiableAttributeMap unmodifiable() {
+		return new UnmodifiableAttributeMap(getMap());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.binding.util.AttributesSetter#setAttribute(java.lang.String,
+	 * java.lang.Object)
+	 */
+	public Object setAttribute(String attributeName, Object attributeValue) {
+		return getMapInternal().put(attributeName, attributeValue);
+	}
+
 	/**
 	 * Factory method to return the default attribute map used by this scope.
 	 */

@@ -24,7 +24,7 @@ import java.util.Set;
 
 /**
  * Base class for attribute map adapters whose keys are String values. Concrete`
- * classses need only implement the abstract hook method defined by this class.
+ * classes need only implement the abstract hook method defined by this class.
  * 
  * @author Keith Donald
  */

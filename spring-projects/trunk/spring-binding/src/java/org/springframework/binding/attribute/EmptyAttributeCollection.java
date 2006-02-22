@@ -3,8 +3,15 @@ package org.springframework.binding.attribute;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * An attribute collection with no entries.
+ * @author Keith Donald
+ */
 public class EmptyAttributeCollection implements AttributeCollection, Serializable {
 
+	/**
+	 * The shared, singleton empty attribute collection instance.
+	 */
 	public static final AttributeCollection INSTANCE = new EmptyAttributeCollection();
 
 	private EmptyAttributeCollection() {

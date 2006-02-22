@@ -17,16 +17,34 @@ package org.springframework.binding.attribute;
 
 import org.springframework.binding.util.SharedMap;
 
+/**
+ * An attribute map that decorates a {@link SharedMap}. Shared maps are
+ * accessed by multiple threads in parallel and thus expose a
+ * {@link #getMutex()} that allows for synchronization on a per-thread basis.
+ * 
+ * @author Keith Donald
+ */
 public class SharedAttributeMap extends AttributeMap {
-	
+
+	/**
+	 * Creates a new shared attribute map.
+	 * @param sharedMap the shared map
+	 */
 	public SharedAttributeMap(SharedMap sharedMap) {
 		super(sharedMap);
 	}
-	
+
+	/**
+	 * Returns the wrapped shared map.
+	 */
 	public SharedMap getSharedMap() {
 		return (SharedMap)getMapInternal();
 	}
-	
+
+	/**
+	 * Returns the shared map's mutex, which may be synchronized on to block
+	 * access to the map by other threads.
+	 */
 	public Object getMutex() {
 		return getSharedMap().getMutex();
 	}

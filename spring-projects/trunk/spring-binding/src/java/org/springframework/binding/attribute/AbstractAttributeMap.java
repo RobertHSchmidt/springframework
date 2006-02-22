@@ -19,13 +19,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map;
 
 import org.springframework.binding.util.MapAccessor;
 import org.springframework.core.style.StylerUtils;
 
 /**
- * A generic attribute map with string keys.
+ * A base class for map decorators who manage the storage of String-keyed
+ * attributes in a backing {@link Map} implementation. This base provides
+ * convenient operations for accessing attributes in a typed-manner.
  * 
  * @author Keith Donald
  */
@@ -37,7 +40,8 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	private Map attributes;
 
 	/**
-	 * A helper for accessing attributes.
+	 * A helper for accessing attributes. Marked transient and restored on
+	 * deserialization.
 	 */
 	private transient MapAccessor attributesAccessor;
 
@@ -121,6 +125,29 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	}
 
 	/**
+	 * Get the value of a required attribute.
+	 * @param attributeName name of the attribute to get
+	 * @return the attribute value
+	 * @throws IllegalStateException when the attribute is not found
+	 */
+	public Object getRequiredAttribute(String attributeName) throws IllegalStateException {
+		return attributesAccessor.getRequired(attributeName);
+	}
+
+	/**
+	 * Get the value of a required attribute and make sure it is of the required
+	 * type.
+	 * @param attributeName name of the attribute to get
+	 * @param requiredType the required type of the attribute value
+	 * @return the attribute value
+	 * @throws IllegalStateException when the attribute is not found or not of
+	 * the required type
+	 */
+	public Object getRequiredAttribute(String attributeName, Class requiredType) throws IllegalStateException {
+		return attributesAccessor.getRequired(attributeName);
+	}
+	
+	/**
 	 * Returns a string attribute value in the map, returning <code>null</code>
 	 * if no value was found.
 	 * @param attributeName the attribute name
@@ -155,6 +182,56 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 */
 	public String getRequiredStringAttribute(String attributeName) throws IllegalArgumentException {
 		return attributesAccessor.getRequiredString(attributeName);
+	}
+
+	/**
+	 * Returns a collection attribute value in the map.
+	 * @param attributeName the attribute name
+	 * @param defaultValue the default
+	 * @return the collection attribute value
+	 * @throws IllegalArgumentException if the attribute is present but not a
+	 * collection
+	 */
+	public Collection getCollectionAttribute(String attributeName) throws IllegalArgumentException {
+		return attributesAccessor.getCollection(attributeName);
+	}
+
+	/**
+	 * Returns a collection attribute value in the map and make sure it is of
+	 * the required type.
+	 * @param attributeName the attribute name
+	 * @param requiredType the required type of the attribute value
+	 * @return the collection attribute value
+	 * @throws IllegalArgumentException if the attribute is present but not a
+	 * collection of the required type
+	 */
+	public Collection getCollectionAttribute(String attributeName, Class requiredType) throws IllegalArgumentException {
+		return attributesAccessor.getCollection(attributeName, requiredType);
+	}
+
+	/**
+	 * Returns a collection attribute value in the map, throwing an exception if
+	 * the attribute is not present or not a collection.
+	 * @param attributeName the attribute name
+	 * @return the collection attribute value
+	 * @throws IllegalArgumentException if the attribute is not present or is
+	 * present but not a collection
+	 */
+	public Collection getRequiredCollectionAttribute(String attributeName) throws IllegalArgumentException {
+		return attributesAccessor.getRequiredCollection(attributeName);
+	}
+
+	/**
+	 * Returns a collection attribute value in the map, throwing an exception if
+	 * the attribute is not present or not a collection of the required type.
+	 * @param attributeName the attribute name
+	 * @return the collection attribute value
+	 * @throws IllegalArgumentException if the attribute is not present or is
+	 * present but not a collection of the required type
+	 */
+	public Collection getRequiredCollectionAttribute(String attributeName, Class requiredType)
+			throws IllegalArgumentException {
+		return attributesAccessor.getRequiredCollection(attributeName);
 	}
 
 	/**
@@ -308,29 +385,6 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	}
 
 	/**
-	 * Get the value of a required attribute.
-	 * @param attributeName name of the attribute to get
-	 * @return the attribute value
-	 * @throws IllegalStateException when the attribute is not found
-	 */
-	public Object getRequiredAttribute(String attributeName) throws IllegalStateException {
-		return attributesAccessor.getRequired(attributeName);
-	}
-
-	/**
-	 * Get the value of a required attribute and make sure it is of the required
-	 * type.
-	 * @param attributeName name of the attribute to get
-	 * @param requiredType the required type of the attribute value
-	 * @return the attribute value
-	 * @throws IllegalStateException when the attribute is not found or not of
-	 * the required type
-	 */
-	public Object getRequiredAttribute(String attributeName, Class requiredType) throws IllegalStateException {
-		return attributesAccessor.getRequired(attributeName);
-	}
-
-	/**
 	 * Initializes this attribute map.
 	 * @param attributes the attributes
 	 */
@@ -340,7 +394,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	}
 
 	/**
-	 * Returns the wrapped, modifiable map.
+	 * Returns the wrapped, modifiable map implementation.
 	 */
 	protected Map getMapInternal() {
 		return attributes;

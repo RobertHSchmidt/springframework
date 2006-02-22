@@ -15,14 +15,15 @@
  */
 package org.springframework.binding.util;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.util.Assert;
 
 /**
- * A simple decorator for getting attributes out of a map. May be instantiated
- * directly or used as a base class as a convenience.
+ * A simple, generic decorator for getting attributes out of a map. May be
+ * instantiated directly or used as a base class as a convenience.
  * 
  * @author Keith Donald
  */
@@ -156,6 +157,62 @@ public class MapAccessor {
 	public String getRequiredString(Object key) throws IllegalArgumentException {
 		assertContainsKey(key);
 		return (String)assertValueOfType(key, String.class);
+	}
+
+	/**
+	 * Returns a collection value in the map, returning <code>null</code> if
+	 * no value was found.
+	 * @param key the key
+	 * @return the collection value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not a collection
+	 */
+	public Collection getCollection(Object key) throws IllegalArgumentException {
+		if (!map.containsKey(key)) {
+			return null;
+		}
+		return (Collection)assertValueOfType(key, Collection.class);
+	}
+
+	/**
+	 * Returns a collection value in the map, asserting it is of the required
+	 * type if present and returning <code>null</code> if not found.
+	 * @param key the key
+	 * @return the collection value
+	 * @throws IllegalArgumentException if the key is present but the value is
+	 * not a collection
+	 */
+	public Collection getCollection(Object key, Class requiredType) throws IllegalArgumentException {
+		if (!map.containsKey(key)) {
+			return null;
+		}
+		return (Collection)assertValueOfType(key, requiredType);
+	}
+
+	/**
+	 * Returns a collection value in the map, throwing an exception if not
+	 * found.
+	 * @param key the key
+	 * @return the collection value
+	 * @throws IllegalArgumentException if the key is not present or present but
+	 * the value is not a collection
+	 */
+	public Collection getRequiredCollection(Object key) throws IllegalArgumentException {
+		assertContainsKey(key);
+		return (Collection)assertValueOfType(key, Collection.class);
+	}
+
+	/**
+	 * Returns a collection value in the map, asserting it is of the required
+	 * type if present and throwing an exception if not found.
+	 * @param key the key
+	 * @return the collection value
+	 * @throws IllegalArgumentException if the key is not present or present but
+	 * the value is not a collection of the required type
+	 */
+	public Collection getRequiredCollection(Object key, Class requiredType) throws IllegalArgumentException {
+		assertContainsKey(key);
+		return (Collection)assertValueOfType(key, requiredType);
 	}
 
 	/**

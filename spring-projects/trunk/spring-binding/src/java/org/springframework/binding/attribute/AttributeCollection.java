@@ -18,14 +18,14 @@ package org.springframework.binding.attribute;
 import java.util.Map;
 
 /**
- * An interface for objects that can get attribute values.
+ * An interface for objects that manage the storage of attribute values.
+ * 
  * @author Keith Donald
  */
 public interface AttributeCollection {
 
 	/**
 	 * Returns the number of attributes in this collection.
-	 * 
 	 * @return the number of attributes in this collection
 	 */
 	public int getAttributeCount();
@@ -39,13 +39,16 @@ public interface AttributeCollection {
 	public Object getAttribute(String attributeName);
 
 	/**
-	 * Returns this collection as a {@link Map}.  The returned map cannot be modified.
+	 * Returns this collection as a {@link Map}. The returned map cannot be
+	 * modified.
 	 * @return the attribute collection as as map.
 	 */
 	public Map getMap();
-	
+
 	/**
-	 * Returns this collection as an {@link UnmodifiableAttributeMap}.
+	 * Returns this collection as an {@link UnmodifiableAttributeMap}, which
+	 * provides access to the attributes in this collection in an immutable,
+	 * more strongly-typed manner.
 	 * @return the attribute collection as an unmodifiable map.
 	 */
 	public UnmodifiableAttributeMap unmodifiable();

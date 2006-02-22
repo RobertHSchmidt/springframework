@@ -19,18 +19,19 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * A wrapper around a attribute map that hides mutable operations. Useful for
- * passing around when modification of the target map should be disallowed.
+ * An attribute map that encapsulates mutable {@link Map} operations. Useful for
+ * passing around when modification of the target map should be always
+ * disallowed.
  * 
  * @author Keith Donald
  */
 public class UnmodifiableAttributeMap extends AbstractAttributeMap {
 
 	/**
-	 * Empty map instance. 
+	 * The shared, singleton empty unmodifiable map instance.
 	 */
 	public static final UnmodifiableAttributeMap EMPTY_MAP = new UnmodifiableAttributeMap(Collections.EMPTY_MAP);
-	
+
 	/**
 	 * Creates a new attribute map, initially empty.
 	 */
@@ -44,5 +45,5 @@ public class UnmodifiableAttributeMap extends AbstractAttributeMap {
 	public UnmodifiableAttributeMap unmodifiable() {
 		return this;
 	}
-	
+
 }
