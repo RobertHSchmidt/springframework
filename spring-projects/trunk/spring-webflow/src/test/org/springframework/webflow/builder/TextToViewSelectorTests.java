@@ -62,19 +62,19 @@ public class TextToViewSelectorTests extends TestCase {
 
 	private RequestContext getRequestContext() {
 		MockRequestContext ctx = new MockRequestContext();
-		ctx.getFlowScope().set("foo", "bar");
-		ctx.getFlowScope().set("bar", "car");
-		ctx.getRequestScope().set("oven", "mit");
-		ctx.getRequestScope().set("cat", "woman");
-		ctx.getFlowScope().set("boo", new Integer(3));
+		ctx.getFlowScope().put("foo", "bar");
+		ctx.getFlowScope().put("bar", "car");
+		ctx.getRequestScope().put("oven", "mit");
+		ctx.getRequestScope().put("cat", "woman");
+		ctx.getFlowScope().put("boo", new Integer(3));
 		ctx.setLastEvent(new Event(this, "sample"));
 		return ctx;
 	}
 
 	public void testCreateRedirectViewDescriptorCreator() {
 		RequestContext context = new MockRequestContext();
-		context.getFlowScope().set("foo", "foo");
-		context.getFlowScope().set("bar", "bar");
+		context.getFlowScope().put("foo", "foo");
+		context.getFlowScope().put("bar", "bar");
 
 		ViewSelection selection = converter.createRedirectViewSelector("/viewName").makeSelection(context);
 		assertEquals("/viewName", selection.getViewName());

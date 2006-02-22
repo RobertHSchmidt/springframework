@@ -59,7 +59,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		mapper.addOutputMapping(mapping.source("y").value());
 
 		context.setActiveSession(parentSession);
-		context.getFlowScope().set("x", "xValue");
+		context.getFlowScope().put("x", "xValue");
 		AttributeMap input = mapper.createSubflowInput(context);
 		assertEquals(1, input.size());
 		assertEquals("xValue", input.get("y"));
@@ -67,7 +67,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		parentSession.getScope().clear();
 
 		AttributeMap subflowOutput = new AttributeMap();
-		subflowOutput.set("y", "xValue");
+		subflowOutput.put("y", "xValue");
 		mapper.mapSubflowOutput(subflowOutput.unmodifiable(), context);
 		assertEquals(1, parentSession.getScope().size());
 		assertEquals("xValue", parentSession.getScope().get("y"));
@@ -78,16 +78,16 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		mapper.addOutputAttributes(new String[] { "someAttribute", "someOtherAttribute" });
 
 		context.setActiveSession(parentSession);
-		context.getFlowScope().set("someAttribute", "someValue");
-		context.getFlowScope().set("someOtherAttribute", "someOtherValue");
+		context.getFlowScope().put("someAttribute", "someValue");
+		context.getFlowScope().put("someOtherAttribute", "someOtherValue");
 		AttributeMap input = mapper.createSubflowInput(context);
 		assertEquals(2, input.size());
 		assertEquals("someValue", input.get("someAttribute"));
 		assertEquals("someOtherValue", input.get("someOtherAttribute"));
 
 		AttributeMap subflowOutput = new AttributeMap();
-		subflowOutput.set("someAttribute", "someUpdatedValue");
-		subflowOutput.set("someOtherAttribute", "someOtherUpdatedValue");
+		subflowOutput.put("someAttribute", "someUpdatedValue");
+		subflowOutput.put("someOtherAttribute", "someOtherUpdatedValue");
 		mapper.mapSubflowOutput(subflowOutput.unmodifiable(), context);
 		assertEquals(2, parentSession.getScope().size());
 		assertEquals("someUpdatedValue", parentSession.getScope().get("someAttribute"));
@@ -106,8 +106,8 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		bean.setProp("value");
 
 		context.setActiveSession(parentSession);
-		context.getFlowScope().set("bean", bean);
-		context.getFlowScope().set("otherAttr", "otherValue");
+		context.getFlowScope().put("bean", bean);
+		context.getFlowScope().put("otherAttr", "otherValue");
 		AttributeMap input = mapper.createSubflowInput(context);
 		assertEquals(2, input.size());
 		assertEquals("value", input.get("attr"));
@@ -117,8 +117,8 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		bean.setProp("value");
 
 		AttributeMap subflowOutput = new AttributeMap();
-		subflowOutput.set("bean", bean);
-		subflowOutput.set("otherAttr", "otherValue");
+		subflowOutput.put("bean", bean);
+		subflowOutput.put("otherAttr", "otherValue");
 		mapper.mapSubflowOutput(subflowOutput.unmodifiable(), context);
 		assertEquals(2, parentSession.getScope().size());
 		assertEquals("value", parentSession.getScope().get("attr"));
@@ -132,8 +132,8 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 				mapping.source("y").target("z").value() });
 
 		context.setActiveSession(parentSession);
-		context.getRequestScope().set("a", "aValue");
-		context.getFlowScope().set("x", "xValue");
+		context.getRequestScope().put("a", "aValue");
+		context.getFlowScope().put("x", "xValue");
 		AttributeMap input = mapper.createSubflowInput(context);
 		assertEquals(2, input.size());
 		assertEquals("aValue", input.get("b"));
@@ -142,8 +142,8 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		parentSession.getScope().clear();
 
 		AttributeMap subflowOutput = new AttributeMap();
-		subflowOutput.set("b", "aValue");
-		subflowOutput.set("y", "xValue");
+		subflowOutput.put("b", "aValue");
+		subflowOutput.put("y", "xValue");
 		mapper.mapSubflowOutput(subflowOutput.unmodifiable(), context);
 		assertEquals(2, parentSession.getScope().size());
 		assertEquals("aValue", parentSession.getScope().get("c"));
@@ -156,7 +156,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		mapper.addOutputMappings(new Mapping[] { mapping.source("y").target("c").value(),
 				mapping.source("b").target("z").value() });
 
-		parentSession.getScope().set("x", null);
+		parentSession.getScope().put("x", null);
 
 		context.setActiveSession(parentSession);
 		AttributeMap input = mapper.createSubflowInput(context);

@@ -181,7 +181,7 @@ public class EndState extends State {
 		Iterator it = outputAttributeNames.iterator();
 		while (it.hasNext()) {
 			String attributeName = (String)it.next();
-			output.set(attributeName, scope.get(attributeName));
+			output.put(attributeName, scope.get(attributeName));
 		}
 		return output;
 	}

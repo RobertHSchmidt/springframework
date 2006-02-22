@@ -54,7 +54,7 @@ public class FlowPropertyResolverTests extends TestCase {
 	
 	public void testGetTypeBaseProperty() {
 		MockFlowSession flowSession = new MockFlowSession();
-		flowSession.getScope().set("name", "joe");
+		flowSession.getScope().put("name", "joe");
 		flowEx.getActiveSession();
 		flowExControl.setReturnValue(flowSession);
 		flowExControl.replay();
@@ -73,7 +73,7 @@ public class FlowPropertyResolverTests extends TestCase {
 
 	public void testGetValueBaseProperty() {
 		MockFlowSession flowSession = new MockFlowSession();
-		flowSession.getScope().set("name", "joe");
+		flowSession.getScope().put("name", "joe");
 		flowEx.getActiveSession();
 		flowExControl.setReturnValue(flowSession);
 		flowExControl.replay();

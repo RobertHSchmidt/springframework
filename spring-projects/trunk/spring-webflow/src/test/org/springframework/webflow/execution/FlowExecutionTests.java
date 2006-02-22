@@ -177,7 +177,7 @@ public class FlowExecutionTests extends TestCase {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
 				new XmlFlowBuilderTests.TestFlowArtifactFactory());
 		AttributeMap attributes = new AttributeMap();
-		attributes.set("scenario2", Boolean.TRUE);
+		attributes.put("scenario2", Boolean.TRUE);
 		FlowAssembler assembler = new FlowAssembler(new FlowArtifactParameters("testFlow1", attributes), builder);
 		assembler.assembleFlow();
 		FlowExecution execution = new FlowExecutionImpl(builder.getResult());

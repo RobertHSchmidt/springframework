@@ -56,6 +56,22 @@ public class AttributeMap extends AbstractAttributeMap implements MutableAttribu
 		initAttributes(new HashMap(attributes.getMap()));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.binding.util.AttributesSetter#setAttribute(java.lang.String,
+	 * java.lang.Object)
+	 */
+	public Object put(String attributeName, Object attributeValue) {
+		return getMapInternal().put(attributeName, attributeValue);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.springframework.binding.attribute.AttributeCollection#unmodifiable()
+	 */
+	public UnmodifiableAttributeMap unmodifiable() {
+		return new UnmodifiableAttributeMap(getMap());
+	}
+
 	/**
 	 * Creates a new attribute map wrapping the specified map.
 	 */
@@ -69,7 +85,7 @@ public class AttributeMap extends AbstractAttributeMap implements MutableAttribu
 	 * @param attributes the attributes to put into this scope.
 	 * @return this, to support call chaining.
 	 */
-	public AttributeMap add(AttributeCollection attributes) {
+	public AttributeMap putAll(AttributeCollection attributes) {
 		if (attributes == null) {
 			return this;
 		}
@@ -105,7 +121,7 @@ public class AttributeMap extends AbstractAttributeMap implements MutableAttribu
 	 */
 	public AttributeMap replaceWith(AttributeCollection attributes) throws UnsupportedOperationException {
 		clear();
-		add(attributes);
+		putAll(attributes);
 		return this;
 	}
 
@@ -120,22 +136,6 @@ public class AttributeMap extends AbstractAttributeMap implements MutableAttribu
 		map.putAll(getMap());
 		map.putAll(attributes.getMap());
 		return new AttributeMap(map);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.springframework.binding.attribute.AttributeCollection#unmodifiable()
-	 */
-	public UnmodifiableAttributeMap unmodifiable() {
-		return new UnmodifiableAttributeMap(getMap());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.binding.util.AttributesSetter#setAttribute(java.lang.String,
-	 * java.lang.Object)
-	 */
-	public Object set(String attributeName, Object attributeValue) {
-		return getMapInternal().put(attributeName, attributeValue);
 	}
 
 	/**

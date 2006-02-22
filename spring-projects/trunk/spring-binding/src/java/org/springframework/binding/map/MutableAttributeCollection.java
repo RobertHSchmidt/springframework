@@ -29,6 +29,6 @@ public interface MutableAttributeCollection extends AttributeCollection {
 	 * @return the previous attribute value, or <code>null</code> if there was
 	 * no previous value set
 	 */
-	public Object set(String attributeName, Object attributeValue);
+	public Object put(String attributeName, Object attributeValue);
 
 }

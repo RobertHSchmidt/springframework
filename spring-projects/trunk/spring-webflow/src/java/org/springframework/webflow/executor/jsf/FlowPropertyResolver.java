@@ -115,7 +115,7 @@ public class FlowPropertyResolver extends PropertyResolver {
 				// either a stateless singleton bean, or a stateful/stateless
 				// prototype
 				value = wac.getBean(attributeName);
-				execution.getActiveSession().getScope().set(attributeName, value);
+				execution.getActiveSession().getScope().put(attributeName, value);
 			}
 		}
 		return value;
@@ -154,7 +154,7 @@ public class FlowPropertyResolver extends PropertyResolver {
 					"Attempt to set Flow attribute with null name, empty name, or non-String name");
 		}
 		FlowExecution execution = (FlowExecution)base;
-		execution.getActiveSession().getScope().set((String)property, value);
+		execution.getActiveSession().getScope().put((String)property, value);
 	}
 
 	/**

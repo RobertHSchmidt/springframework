@@ -70,7 +70,7 @@ public class MockFlowSession implements FlowSession {
 	 */
 	public MockFlowSession(Flow flow, AttributeMap input) {
 		setFlow(flow);
-		scope.add(input);
+		scope.putAll(input);
 	}
 
 	public Flow getFlow() {

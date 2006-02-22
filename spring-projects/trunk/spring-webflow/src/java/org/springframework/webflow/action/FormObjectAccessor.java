@@ -117,7 +117,7 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope in which to expose the form object
 	 */
 	public void setFormObject(Object formObject, String formObjectName, ScopeType scopeType) {
-		scopeType.getScope(context).set(formObjectName, formObject);
+		scopeType.getScope(context).put(formObjectName, formObject);
 		setCurrentFormObject(formObject, scopeType);
 	}
 
@@ -128,7 +128,7 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope in which to expose the form object
 	 */
 	public void setCurrentFormObject(Object formObject, ScopeType scopeType) {
-		scopeType.getScope(context).set(getCurrentFormObjectName(), formObject);
+		scopeType.getScope(context).put(getCurrentFormObjectName(), formObject);
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope to expose the errors in
 	 */
 	public void setFormErrors(Errors errors, ScopeType scopeType) {
-		scopeType.getScope(context).set(BindException.ERROR_KEY_PREFIX + errors.getObjectName(), errors);
+		scopeType.getScope(context).put(BindException.ERROR_KEY_PREFIX + errors.getObjectName(), errors);
 		setCurrentFormErrors(errors, scopeType);
 	}
 
@@ -190,7 +190,7 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope in which to expose the errors instance
 	 */
 	public void setCurrentFormErrors(Errors errors, ScopeType scopeType) {
-		scopeType.getScope(context).set(getCurrentFormErrorsName(), errors);
+		scopeType.getScope(context).put(getCurrentFormErrorsName(), errors);
 	}
 
 	/**

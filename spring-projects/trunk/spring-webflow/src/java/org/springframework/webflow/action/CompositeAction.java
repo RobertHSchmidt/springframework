@@ -128,7 +128,7 @@ public class CompositeAction extends AbstractAction {
 				}
 			}
 		}
-		eventAttributes.set("actionResults", actionResults);
+		eventAttributes.put("actionResults", actionResults);
 		return new Event(this, eventId, eventAttributes);
 	}
 

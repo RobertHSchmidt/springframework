@@ -715,7 +715,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 					element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
 			action.setResultScope(scopeType);
 		}
-		action.getAttributeMap().add(parseAttributes(element));
+		action.getAttributeMap().putAll(parseAttributes(element));
 		action.setTargetAction(parseAction(element, action.getAttributeMap()));
 		return action;
 	}
@@ -758,7 +758,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Assert.state(valueElements.size() == 1, "A property value should be specified for property '" + name + "'");
 			value = DomUtils.getTextValue((Element)valueElements.get(0));
 		}
-		attributes.set(name, convertPropertyValue(element, value));
+		attributes.put(name, convertPropertyValue(element, value));
 	}
 
 	/**

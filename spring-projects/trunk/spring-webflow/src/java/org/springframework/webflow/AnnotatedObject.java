@@ -59,7 +59,7 @@ public abstract class AnnotatedObject {
 	 * @param caption the caption
 	 */
 	public void setCaption(String caption) {
-		attributes.set(CAPTION_PROPERTY, caption);
+		attributes.put(CAPTION_PROPERTY, caption);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public abstract class AnnotatedObject {
 	 * @param description the long description
 	 */
 	public void setDescription(String description) {
-		attributes.set(DESCRIPTION_PROPERTY, description);
+		attributes.put(DESCRIPTION_PROPERTY, description);
 	}
 
 	/**

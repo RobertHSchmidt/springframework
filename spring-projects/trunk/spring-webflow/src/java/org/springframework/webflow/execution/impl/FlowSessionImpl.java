@@ -109,7 +109,7 @@ public class FlowSessionImpl implements FlowSession, Externalizable {
 		Assert.notNull(flow, "The flow is required");
 		this.flow = flow;
 		if (input != null) {
-			scope.add(input);
+			scope.putAll(input);
 		}
 		this.parent = parent;
 	}

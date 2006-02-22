@@ -61,7 +61,7 @@ public class OgnlExpressionParser extends AbstractExpressionParser {
 
 	private static class MutableAttributeCollectionPropertyAccessor extends MapAdaptablePropertyAccessor {
 		public void setProperty(Map context, Object target, Object name, Object value) throws OgnlException {
-			((MutableAttributeCollection)target).set((String)name, value);
+			((MutableAttributeCollection)target).put((String)name, value);
 		}
 	}
 }

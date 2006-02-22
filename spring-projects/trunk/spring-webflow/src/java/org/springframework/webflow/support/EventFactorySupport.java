@@ -192,7 +192,7 @@ public class EventFactorySupport {
 	 */
 	protected Event result(String eventId, String attributeName, Object attributeValue) {
 		AttributeMap attributes = new AttributeMap(1, 1);
-		attributes.set(attributeName, attributeValue);
+		attributes.put(attributeName, attributeValue);
 		return new Event(this, eventId, attributes);
 	}
 }

@@ -93,7 +93,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	public Flow createFlow(FlowArtifactParameters parameters) throws FlowArtifactException {
 		Flow flow = (Flow)newInstance(Flow.class);
 		flow.setId(parameters.getId());
-		flow.getAttributeMap().add(parameters.getAttributes());
+		flow.getAttributeMap().putAll(parameters.getAttributes());
 		return flow;
 	}
 
@@ -102,13 +102,13 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 		State state = (State)newInstance(stateType);
 		state.setId(parameters.getId());
 		state.setFlow(flow);
-		state.getAttributeMap().add(parameters.getAttributes());
+		state.getAttributeMap().putAll(parameters.getAttributes());
 		return state;
 	}
 
 	public Transition createTransition(UnmodifiableAttributeMap attributes) throws FlowArtifactException {
 		Transition transition = (Transition)newInstance(Transition.class);
-		transition.getAttributeMap().add(attributes);
+		transition.getAttributeMap().putAll(attributes);
 		return transition;
 	}
 

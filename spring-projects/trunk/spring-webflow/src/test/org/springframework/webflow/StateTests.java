@@ -210,13 +210,13 @@ public class StateTests extends TestCase {
 	public static class InputOutputMapper implements FlowAttributeMapper {
 		public AttributeMap createSubflowInput(RequestContext context) {
 			AttributeMap inputMap = new AttributeMap();
-			inputMap.set("childInputAttribute", context.getFlowScope().get("parentInputAttribute"));
+			inputMap.put("childInputAttribute", context.getFlowScope().get("parentInputAttribute"));
 			return inputMap;
 		}
 
 		public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
 			AttributeMap parentAttributes = context.getFlowExecutionContext().getActiveSession().getScope();
-			parentAttributes.set("parentOutputAttribute", subflowOutput.get("childInputAttribute"));
+			parentAttributes.put("parentOutputAttribute", subflowOutput.get("childInputAttribute"));
 		}
 	}
 

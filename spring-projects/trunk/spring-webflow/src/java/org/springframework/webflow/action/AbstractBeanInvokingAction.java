@@ -131,7 +131,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 		if (resultName != null) {
 			ScopeType scopeType = (ScopeType)context.getAttributes().get(
 					AnnotatedAction.RESULT_SCOPE_PROPERTY, ScopeType.REQUEST);
-			scopeType.getScope(context).set(resultName, returnValue);
+			scopeType.getScope(context).put(resultName, returnValue);
 		}
 	}
 

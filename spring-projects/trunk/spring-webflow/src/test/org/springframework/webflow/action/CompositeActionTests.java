@@ -54,7 +54,7 @@ public class CompositeActionTests extends TestCase {
 	public void testDoExecute() throws Exception {
 		MockRequestContext mockRequestContext = new MockRequestContext();
 		AttributeMap attributes = new AttributeMap();
-		attributes.set("some key", "some value");
+		attributes.put("some key", "some value");
 		actionControl
 				.expectAndReturn(actionMock.execute(mockRequestContext), new Event(this, "some event", attributes));
 		actionControl.replay();

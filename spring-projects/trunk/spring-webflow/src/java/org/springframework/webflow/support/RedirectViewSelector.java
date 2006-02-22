@@ -83,10 +83,10 @@ public class RedirectViewSelector implements ViewSelector, Serializable {
 				String nameAndValue = parameters[i];
 				index = nameAndValue.indexOf('=');
 				if (index != -1) {
-					model.set(nameAndValue.substring(0, index), nameAndValue.substring(index + 1));
+					model.put(nameAndValue.substring(0, index), nameAndValue.substring(index + 1));
 				}
 				else {
-					model.set(nameAndValue, "");
+					model.put(nameAndValue, "");
 				}
 			}
 		}

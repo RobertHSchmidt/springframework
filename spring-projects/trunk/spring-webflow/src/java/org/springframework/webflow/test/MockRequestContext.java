@@ -161,7 +161,7 @@ public class MockRequestContext implements RequestContext {
 	 * @param attributeValue the attribute value
 	 */
 	public void setAttribute(String attributeName, Object attributeValue) {
-		attributes.set(attributeName, attributeValue);
+		attributes.put(attributeName, attributeValue);
 	}
 
 	/**

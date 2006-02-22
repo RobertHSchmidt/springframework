@@ -106,7 +106,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 */
 	public AnnotatedAction(Action targetAction, AttributeMap attributes) {
 		setTargetAction(targetAction);
-		getAttributeMap().add(attributes);
+		getAttributeMap().putAll(attributes);
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param name the action name
 	 */
 	public void setName(String name) {
-		getAttributeMap().set(NAME_PROPERTY, name);
+		getAttributeMap().put(NAME_PROPERTY, name);
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param method the action method name.
 	 */
 	public void setMethod(MethodKey method) {
-		getAttributeMap().set(METHOD_PROPERTY, method);
+		getAttributeMap().put(METHOD_PROPERTY, method);
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param resultName the action return value attribute name
 	 */
 	public void setResultName(String resultName) {
-		getAttributeMap().set(RESULT_NAME_PROPERTY, resultName);
+		getAttributeMap().put(RESULT_NAME_PROPERTY, resultName);
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param resultScope the result scope
 	 */
 	public void setResultScope(ScopeType resultScope) {
-		getAttributeMap().set(RESULT_SCOPE_PROPERTY, resultScope);
+		getAttributeMap().put(RESULT_SCOPE_PROPERTY, resultScope);
 	}
 
 	public Event execute(RequestContext context) throws Exception {
