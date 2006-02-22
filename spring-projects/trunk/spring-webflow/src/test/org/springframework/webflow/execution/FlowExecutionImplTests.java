@@ -25,7 +25,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.binding.map.MockParameterMap;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Flow;

@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

@@ -21,7 +21,6 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.ExpressionFactory;
-import org.springframework.binding.map.MockParameterMap;
 import org.springframework.binding.map.ParameterMap;
 import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.StylerUtils;

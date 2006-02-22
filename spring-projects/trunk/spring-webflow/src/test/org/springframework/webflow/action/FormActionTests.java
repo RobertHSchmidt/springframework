@@ -17,10 +17,8 @@ package org.springframework.webflow.action;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.binding.map.MockParameterMap;
 import org.springframework.binding.map.ParameterMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
