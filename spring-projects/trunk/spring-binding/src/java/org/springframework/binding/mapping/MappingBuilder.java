@@ -6,7 +6,6 @@ import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.expression.support.ExpressionParserUtils;
