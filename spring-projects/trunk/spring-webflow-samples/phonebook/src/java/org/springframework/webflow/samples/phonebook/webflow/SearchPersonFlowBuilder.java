@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.samples.phonebook.webflow;
 
-import org.springframework.binding.mapping.Mapping;
-import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.ScopeType;

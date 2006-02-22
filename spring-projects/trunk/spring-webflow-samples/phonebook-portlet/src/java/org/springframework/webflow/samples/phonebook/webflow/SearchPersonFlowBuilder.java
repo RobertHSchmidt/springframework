@@ -73,7 +73,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 		// view details for selected user id
 		DefaultFlowAttributeMapper idMapper = new DefaultFlowAttributeMapper();
-		idMapper.addInputMapping(mapping().source("externalContext.requestParameterMap.id").target("id").from(String.class).to(Long.class).value());
+		idMapper.addInputMapping(mapping().source("requestParameters.id").target("id").from(String.class).to(Long.class).value());
 		addSubflowState(BROWSE_DETAILS, flow(DETAIL_FLOW), idMapper, transition(on(finish()), to(EXECUTE_SEARCH)));
 
 		// end - an error occured
