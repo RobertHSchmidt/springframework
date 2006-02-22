@@ -15,13 +15,12 @@
  */
 package org.springframework.webflow.samples.phonebook.webflow;
 
-import org.springframework.binding.mapping.Mapping;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilderException;
-import org.springframework.webflow.support.ParameterizableFlowAttributeMapper;
+import org.springframework.webflow.support.DefaultFlowAttributeMapper;
 
 /**
  * Java-based flow builder that builds the person details flow, exactly like it
@@ -57,8 +56,8 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 				transition(on(select()), to(BROWSE_COLLEAGUE_DETAILS)) });
 
 		// view details for selected collegue
-		ParameterizableFlowAttributeMapper idMapper = new ParameterizableFlowAttributeMapper();
-		idMapper.setInputMapping(new Mapping("externalContext.requestParameterMap.id", "id", fromStringTo(Long.class)));
+		DefaultFlowAttributeMapper idMapper = new DefaultFlowAttributeMapper();
+		idMapper.addInputMapping(mapping().source("externalContext.requestParameterMap.id").target("id").from(String.class).to(Long.class).value());
 		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow(THIS_FLOW), idMapper, transition(on(finish()), to(GET_DETAILS)));
 
 		// end

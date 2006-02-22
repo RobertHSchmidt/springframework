@@ -16,9 +16,8 @@
 package org.springframework.webflow.samples.phonebook.webflow;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Action;
@@ -49,9 +48,9 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testCriteriaSubmitSuccess() {
 		startFlow();
-		Map parameters = new HashMap();
-		parameters.put("firstName", "Keith");
-		parameters.put("lastName", "Donald");
+		AttributeMap parameters = new AttributeMap();
+		parameters.setAttribute("firstName", "Keith");
+		parameters.setAttribute("lastName", "Donald");
 		ViewSelection view = signalEvent("search", parameters);
 		assertCurrentStateEquals("displayResults");
 		assertViewNameEquals("searchResults", view);
@@ -73,8 +72,8 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testSelectValidResult() {
 		testCriteriaSubmitSuccess();
-		Map parameters = new HashMap();
-		parameters.put("id", "1");
+		AttributeMap parameters = new AttributeMap();
+		parameters.setAttribute("id", "1");
 		ViewSelection view = signalEvent("select", parameters);
 		assertCurrentStateEquals("displayResults");
 		assertViewNameEquals("searchResults", view);
@@ -91,7 +90,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		Resource resource = new FileSystemResource(new File(flowDir, "search-flow.xml"));
 		return new ExternalizedFlowDefinition(resource);
 	}
-	
+
 	protected FlowArtifactFactory createFlowArtifactFactory() {
 		return new TestFlowArtifactFactory();
 	}
