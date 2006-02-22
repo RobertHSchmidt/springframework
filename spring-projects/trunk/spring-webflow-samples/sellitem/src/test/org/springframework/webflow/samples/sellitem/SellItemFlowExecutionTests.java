@@ -1,10 +1,9 @@
 package org.springframework.webflow.samples.sellitem;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.easymock.MockControl;
+import org.springframework.binding.attribute.AttributeMap;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Action;
