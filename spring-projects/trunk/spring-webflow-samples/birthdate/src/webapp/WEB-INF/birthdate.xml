@@ -26,7 +26,7 @@
 	<!-- Bind and validate input data from the form -->
 	<action-state id="processBirthdateFormSubmit">
 		<action bean="formAction" method="bindAndValidate">
-			<property name="validatorMethod" value="validateBirthdateForm"/>
+			<attribute name="validatorMethod" value="validateBirthdateForm"/>
 		</action>
 		<transition on="success" to="enterCardInformation"/>
 		<transition on="error" to="enterBirthdate"/>
@@ -40,7 +40,7 @@
 	<!-- Bind and validate input data from the form -->
 	<action-state id="processCardFormSubmit">
 		<action bean="formAction" method="bindAndValidate">
-			<property name="validatorMethod" value="validateCardForm"/>
+			<attribute name="validatorMethod" value="validateCardForm"/>
 		</action>
 		<transition on="success" to="calculateAge"/>
 		<transition on="error" to="enterCardInformation"/>

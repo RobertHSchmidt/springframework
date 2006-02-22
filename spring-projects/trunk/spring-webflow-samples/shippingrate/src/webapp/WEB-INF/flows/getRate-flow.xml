@@ -19,7 +19,7 @@
 		</entry-actions>
         <transition on="submit" to="selectReceiver">
 			<action bean="formAction" method="bindAndValidate">
-				<property name="validatorMethod" value="validateSender"/>
+				<attribute name="validatorMethod" value="validateSender"/>
 			</action>
         </transition>
 	</view-state>
@@ -30,7 +30,7 @@
 		</entry-actions>
         <transition on="submit" to="selectPackageDetails">
 			<action bean="formAction" method="bindAndValidate">
-				<property name="validatorMethod" value="validateReceiver"/>
+				<attribute name="validatorMethod" value="validateReceiver"/>
 			</action>
         </transition>
 	</view-state>
@@ -41,7 +41,7 @@
 		</entry-actions>
         <transition on="submit" to="findRate">
 			<action bean="formAction" method="bindAndValidate">
-				<property name="validatorMethod" value="validatePackageDetails"/>
+				<attribute name="validatorMethod" value="validatePackageDetails"/>
 			</action>
         </transition>
 	</view-state>

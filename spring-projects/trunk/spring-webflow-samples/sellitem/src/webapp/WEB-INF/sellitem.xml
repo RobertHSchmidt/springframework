@@ -10,7 +10,7 @@
 		</entry-actions>
 		<transition on="submit" to="enterCategory">
 			<action bean="formAction" method="bindAndValidate">
-				<property name="validatorMethod" value="validatePriceAndItemCount"/>
+				<attribute name="validatorMethod" value="validatePriceAndItemCount"/>
 			</action>
 		</transition>
 	</view-state>

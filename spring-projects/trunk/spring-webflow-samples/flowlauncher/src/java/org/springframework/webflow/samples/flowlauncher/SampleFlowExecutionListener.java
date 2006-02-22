@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.samples.flowlauncher;
 
-import java.util.Map;
-
+import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.attribute.UnmodifiableAttributeMap;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -27,7 +27,8 @@ public class SampleFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	public static final String INPUT_ATTRIBUTE = "input";
 
-	public void sessionStarting(RequestContext context, State startState, Map input) throws EnterStateVetoException {
+	public void sessionStarting(RequestContext context, State startState, AttributeMap input)
+			throws EnterStateVetoException {
 		/*
 		 * Each time a flow is starting, check if there is input data in the
 		 * request and if so, put it in flow scope. You could also do this in a
@@ -42,10 +43,10 @@ public class SampleFlowExecutionListener extends FlowExecutionListenerAdapter {
 		mapInput(context.getRequestParameters(), context.getFlowScope());
 	}
 
-	private void mapInput(Map sourceMap, Map targetMap) {
-		String inputParameter = (String)sourceMap.get(INPUT_ATTRIBUTE);
-		if (StringUtils.hasText(inputParameter)) {
-			targetMap.put(INPUT_ATTRIBUTE, inputParameter);
+	private void mapInput(UnmodifiableAttributeMap sourceMap, AttributeMap targetMap) {
+		String input = sourceMap.getStringAttribute(INPUT_ATTRIBUTE);
+		if (StringUtils.hasText(input)) {
+			targetMap.setAttribute(INPUT_ATTRIBUTE, input);
 		}
 	}
 }

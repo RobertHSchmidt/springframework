@@ -7,7 +7,7 @@
 	<view-state id="enterPriceAndItemCount" view="/priceAndItemCountForm">
 		<transition on="submit" to="enterCategory">
 			<action bean="sellItemFormAction" method="validate">
-				<property name="validatorMethod" value="validatePriceAndItemCount"/>
+				<attribute name="validatorMethod" value="validatePriceAndItemCount"/>
 			</action>
 		</transition>
 	</view-state>

@@ -20,12 +20,12 @@
 	</listener>
 
 	<servlet>
-		<servlet-name>@PROJECT_WEBAPP_NAME@</servlet-name>
+		<servlet-name>flowlauncher</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>@PROJECT_WEBAPP_NAME@</servlet-name>
+		<servlet-name>flowlauncher</servlet-name>
 		<url-pattern>*.htm</url-pattern>
 	</servlet-mapping>
 

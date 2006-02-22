@@ -11,7 +11,7 @@ import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 
 public class SellItemFlowExecutionListener extends FlowExecutionListenerAdapter {
 	public void stateEntering(RequestContext context, State nextState) throws EnterStateVetoException {
-		String role = (String)nextState.getProperty("role");
+		String role = (String)nextState.getAttributeMap().getStringAttribute("role");
 		if (StringUtils.hasText(role)) {
 			HttpServletRequest request = ((ServletExternalContext)context.getExternalContext()).getRequest();
 			if (!request.isUserInRole(role)) {

@@ -38,7 +38,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testSubmitPriceAndItemCount() {
 		testStartFlow();
-		Map parameters = new HashMap(2);
+		AttributeMap parameters = new AttributeMap(2);
 		parameters.put("itemCount", "4");
 		parameters.put("price", "25");
 		ViewSelection selectedView = signalEvent("submit", parameters);
@@ -47,7 +47,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testSubmitCategoryForm() {
 		testSubmitPriceAndItemCount();
-		Map parameters = new HashMap(1);
+		AttributeMap parameters = new AttributeMap(1);
 		parameters.put("category", "A");
 		ViewSelection selectedView = signalEvent("submit", parameters);
 		assertViewNameEquals("costOverview", selectedView);
@@ -56,7 +56,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testSubmitCategoryFormWithShipping() {
 		testSubmitPriceAndItemCount();
-		Map parameters = new HashMap(1);
+		AttributeMap parameters = new AttributeMap(2);
 		parameters.put("category", "A");
 		parameters.put("shipping", "true");
 		ViewSelection selectedView = signalEvent("submit", parameters);
@@ -69,7 +69,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		saleProcessor.process((Sale)getRequiredConversationAttribute("sale", Sale.class));
 		saleProcessorControl.replay();
 
-		Map parameters = new HashMap(1);
+		AttributeMap parameters = new AttributeMap(1);
 		parameters.put("shippingType", "E");
 		ViewSelection selectedView = signalEvent("submit", parameters);
 		assertViewNameEquals("costOverview", selectedView);
