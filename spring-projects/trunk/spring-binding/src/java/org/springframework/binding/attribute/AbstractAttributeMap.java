@@ -162,7 +162,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	/**
 	 * Returns a string attribute value in the map, returning the defaultValue
 	 * if no value was found.
-	 * @param attributeNamethe attribute name
+	 * @param attributeName the attribute name
 	 * @param defaultValue the default
 	 * @return the string attribute value
 	 * @throws IllegalArgumentException if the attribute is present but not a
@@ -187,7 +187,6 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	/**
 	 * Returns a collection attribute value in the map.
 	 * @param attributeName the attribute name
-	 * @param defaultValue the default
 	 * @return the collection attribute value
 	 * @throws IllegalArgumentException if the attribute is present but not a
 	 * collection
