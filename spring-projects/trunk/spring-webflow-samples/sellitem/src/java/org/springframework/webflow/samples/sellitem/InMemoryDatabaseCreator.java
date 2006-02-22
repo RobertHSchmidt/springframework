@@ -2,6 +2,7 @@ package org.springframework.webflow.samples.sellitem;
 
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
+
 public class InMemoryDatabaseCreator extends JdbcDaoSupport {
 
 	@Override

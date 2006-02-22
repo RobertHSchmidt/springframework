@@ -19,8 +19,8 @@ import java.util.Map;
 
 public interface RateService {
 	public Map getCountries();
-	
+
 	public Map getPackageTypes();
-	
+
 	public Rate getRate(RateCriteria criteria);
 }

@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.samples.itemlist;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -23,8 +23,8 @@ import org.springframework.webflow.action.AbstractAction;
 
 public class AddItemAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
-		List list = (List)context.getFlowScope().getRequiredAttribute("list", List.class);
-		String data = context.getRequestParameters().getStringAttribute("data");
+		Collection list = context.getFlowScope().getRequiredCollection("list");
+		String data = context.getRequestParameters().get("data");
 		if (data != null && data.length() > 0) {
 			list.add(data);
 		}

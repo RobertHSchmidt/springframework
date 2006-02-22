@@ -85,7 +85,7 @@ public class BirthDateFormAction extends FormAction {
 		ageStr.append(ageDays).append(" days");
 
 		// put it in the model for display by the view
-		context.getRequestScope().setAttribute(AGE_NAME, ageStr);
+		context.getRequestScope().put(AGE_NAME, ageStr);
 
 		return success();
 	}

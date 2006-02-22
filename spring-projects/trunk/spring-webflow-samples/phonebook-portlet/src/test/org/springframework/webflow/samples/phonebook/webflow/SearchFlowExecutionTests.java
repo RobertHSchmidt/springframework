@@ -17,7 +17,7 @@ package org.springframework.webflow.samples.phonebook.webflow;
 
 import java.io.File;
 
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.MockParameterMap;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Action;
@@ -48,9 +48,9 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testCriteriaSubmitSuccess() {
 		startFlow();
-		AttributeMap parameters = new AttributeMap();
-		parameters.setAttribute("firstName", "Keith");
-		parameters.setAttribute("lastName", "Donald");
+		MockParameterMap parameters = new MockParameterMap();
+		parameters.put("firstName", "Keith");
+		parameters.put("lastName", "Donald");
 		ViewSelection view = signalEvent("search", parameters);
 		assertCurrentStateEquals("displayResults");
 		assertViewNameEquals("searchResults", view);
@@ -72,8 +72,8 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testSelectValidResult() {
 		testCriteriaSubmitSuccess();
-		AttributeMap parameters = new AttributeMap();
-		parameters.setAttribute("id", "1");
+		MockParameterMap parameters = new MockParameterMap();
+		parameters.put("id", "1");
 		ViewSelection view = signalEvent("select", parameters);
 		assertCurrentStateEquals("displayResults");
 		assertViewNameEquals("searchResults", view);
@@ -113,7 +113,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 			finish.addEntryAction(new AbstractAction() {
 				public Event doExecute(RequestContext context) throws Exception {
 					// test attribute mapping
-					assertEquals(new Long(1), context.getFlowScope().getAttribute("id"));
+					assertEquals(new Long(1), context.getFlowScope().get("id"));
 					return success();
 				}
 			});

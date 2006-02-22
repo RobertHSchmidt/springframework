@@ -2,6 +2,7 @@ package org.springframework.webflow.samples.sellitem;
 
 import org.springframework.test.AbstractTransactionalDataSourceSpringContextTests;
 
+
 public class SaleProcessorIntegrationTests extends AbstractTransactionalDataSourceSpringContextTests {
 
 	private SaleProcessor saleProcessor;

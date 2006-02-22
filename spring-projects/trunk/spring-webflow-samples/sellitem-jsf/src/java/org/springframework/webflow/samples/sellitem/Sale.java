@@ -89,7 +89,8 @@ public class Sale implements Serializable {
 			if (itemCount >= 100) {
 				discount = 0.1;
 			}
-		} else if ("B".equals(category)) {
+		}
+		else if ("B".equals(category)) {
 			if (itemCount >= 200) {
 				discount = 0.2;
 			}
@@ -111,7 +112,8 @@ public class Sale implements Serializable {
 		double delCost = 0.0;
 		if ("S".equals(shippingType)) {
 			delCost = 10.0;
-		} else if ("E".equals(shippingType)) {
+		}
+		else if ("E".equals(shippingType)) {
 			delCost = 20.0;
 		}
 		return delCost;
@@ -125,7 +127,6 @@ public class Sale implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("price", price).append(
-				"itemCount", itemCount).toString();
+		return new ToStringCreator(this).append("price", price).append("itemCount", itemCount).toString();
 	}
 }

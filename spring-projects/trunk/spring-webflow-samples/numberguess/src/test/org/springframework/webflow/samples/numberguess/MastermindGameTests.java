@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.Event;
 import org.springframework.webflow.samples.numberguess.MastermindGame.GameData;
-import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class MastermindGameTests extends TestCase {
@@ -14,10 +13,10 @@ public class MastermindGameTests extends TestCase {
 		Event result = action.guess(context);
 		assertEquals("invalidInput", result.getId());
 	}
-	
+
 	public void testGuessInputInvalidLength() throws Exception {
 		MockRequestContext context = new MockRequestContext();
-		context.setExternalContext(new MockExternalContext("guess", "123"));
+		context.putRequestParameter("guess", "123");
 		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
 		assertEquals("invalidInput", result.getId());
@@ -25,7 +24,7 @@ public class MastermindGameTests extends TestCase {
 
 	public void testGuessInputNotAllDigits() throws Exception {
 		MockRequestContext context = new MockRequestContext();
-		context.setExternalContext(new MockExternalContext("guess", "12AB"));
+		context.putRequestParameter("guess", "12AB");
 		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
 		assertEquals("invalidInput", result.getId());
@@ -33,7 +32,7 @@ public class MastermindGameTests extends TestCase {
 
 	public void testGuessInputNotUniqueDigits() throws Exception {
 		MockRequestContext context = new MockRequestContext();
-		context.setExternalContext(new MockExternalContext("guess", "1111"));
+		context.putRequestParameter("guess", "1111");
 		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
 		assertEquals("invalidInput", result.getId());
@@ -41,19 +40,19 @@ public class MastermindGameTests extends TestCase {
 
 	public void testGuessRetry() throws Exception {
 		MockRequestContext context = new MockRequestContext();
-		context.setExternalContext(new MockExternalContext("guess", "1234"));
+		context.putRequestParameter("guess", "1234");
 		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
 		assertEquals("retry", result.getId());
 	}
-	
+
 	public void testGuessCorrect() throws Exception {
 		MockRequestContext context = new MockRequestContext();
 		MastermindGame action = new MastermindGame();
 		Event result = action.guess(context);
 		GameData data = action.getData();
 		String answer = data.getAnswer();
-		context.setExternalContext(new MockExternalContext("guess", answer));
+		context.putRequestParameter("guess", answer);
 		result = action.guess(context);
 		assertEquals("correct", result.getId());
 	}

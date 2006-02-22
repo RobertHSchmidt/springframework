@@ -45,7 +45,7 @@ public class MastermindGame extends MultiAction {
 	}
 	
 	public Event guess(RequestContext context) throws Exception {
-		String guess = context.getRequestParameters().getStringAttribute("guess");
+		String guess = context.getRequestParameters().get("guess");
 		if (guess == null || guess.length() != 4) {
 			return result("invalidInput");
 		}

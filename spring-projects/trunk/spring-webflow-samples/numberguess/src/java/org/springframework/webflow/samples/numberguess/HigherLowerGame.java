@@ -63,7 +63,7 @@ public class HigherLowerGame extends MultiAction implements Serializable {
 	}
 
 	public Event guess(RequestContext context) throws Exception {
-		int guess = context.getRequestParameters().getIntegerAttribute(GUESS_PARAMETER, new Integer(-1)).intValue();
+		int guess = context.getRequestParameters().getInteger(GUESS_PARAMETER, new Integer(-1)).intValue();
 		if (guess < 0 || guess > 100) {
 			lastGuessResult = "invalid";
 			return result("invalidInput");

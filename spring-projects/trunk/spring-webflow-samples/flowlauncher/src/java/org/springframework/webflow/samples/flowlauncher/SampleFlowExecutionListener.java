@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.samples.flowlauncher;
 
-import org.springframework.binding.attribute.AttributeMap;
-import org.springframework.binding.attribute.UnmodifiableAttributeMap;
+import org.springframework.binding.map.AttributeMap;
+import org.springframework.binding.map.ParameterMap;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -43,10 +43,10 @@ public class SampleFlowExecutionListener extends FlowExecutionListenerAdapter {
 		mapInput(context.getRequestParameters(), context.getFlowScope());
 	}
 
-	private void mapInput(UnmodifiableAttributeMap sourceMap, AttributeMap targetMap) {
-		String input = sourceMap.getStringAttribute(INPUT_ATTRIBUTE);
+	private void mapInput(ParameterMap sourceMap, AttributeMap targetMap) {
+		String input = sourceMap.get(INPUT_ATTRIBUTE);
 		if (StringUtils.hasText(input)) {
-			targetMap.setAttribute(INPUT_ATTRIBUTE, input);
+			targetMap.put(INPUT_ATTRIBUTE, input);
 		}
 	}
 }

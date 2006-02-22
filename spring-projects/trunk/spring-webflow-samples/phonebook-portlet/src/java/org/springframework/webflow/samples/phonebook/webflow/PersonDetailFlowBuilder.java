@@ -22,6 +22,7 @@ import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.support.DefaultFlowAttributeMapper;
 
+
 /**
  * Java-based flow builder that builds the person details flow, exactly like it
  * is defined in the <code>detail.xml</code> XML flow definition.

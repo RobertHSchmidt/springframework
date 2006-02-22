@@ -1,7 +1,6 @@
 package org.springframework.webflow.samples.birthdate;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import junit.framework.TestCase;
 

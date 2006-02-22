@@ -3,7 +3,7 @@ package org.springframework.webflow.samples.sellitem;
 import java.io.File;
 
 import org.easymock.MockControl;
-import org.springframework.binding.attribute.AttributeMap;
+import org.springframework.binding.map.MockParameterMap;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Action;
@@ -37,17 +37,17 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testSubmitPriceAndItemCount() {
 		testStartFlow();
-		AttributeMap parameters = new AttributeMap(2);
-		parameters.setAttribute("itemCount", "4");
-		parameters.setAttribute("price", "25");
+		MockParameterMap parameters = new MockParameterMap();
+		parameters.put("itemCount", "4");
+		parameters.put("price", "25");
 		ViewSelection selectedView = signalEvent("submit", parameters);
 		assertViewNameEquals("categoryForm", selectedView);
 	}
 
 	public void testSubmitCategoryForm() {
 		testSubmitPriceAndItemCount();
-		AttributeMap parameters = new AttributeMap(1);
-		parameters.setAttribute("category", "A");
+		MockParameterMap parameters = new MockParameterMap();
+		parameters.put("category", "A");
 		ViewSelection selectedView = signalEvent("submit", parameters);
 		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
@@ -55,9 +55,9 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testSubmitCategoryFormWithShipping() {
 		testSubmitPriceAndItemCount();
-		AttributeMap parameters = new AttributeMap(2);
-		parameters.setAttribute("category", "A");
-		parameters.setAttribute("shipping", "true");
+		MockParameterMap parameters = new MockParameterMap();
+		parameters.put("category", "A");
+		parameters.put("shipping", "true");
 		ViewSelection selectedView = signalEvent("submit", parameters);
 		assertViewNameEquals("shippingDetailsForm", selectedView);
 	}
@@ -68,8 +68,8 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		saleProcessor.process((Sale)getRequiredConversationAttribute("sale", Sale.class));
 		saleProcessorControl.replay();
 
-		AttributeMap parameters = new AttributeMap(1);
-		parameters.setAttribute("shippingType", "E");
+		MockParameterMap parameters = new MockParameterMap();
+		parameters.put("shippingType", "E");
 		ViewSelection selectedView = signalEvent("submit", parameters);
 		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
