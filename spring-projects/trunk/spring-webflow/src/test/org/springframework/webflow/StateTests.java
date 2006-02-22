@@ -183,7 +183,7 @@ public class StateTests extends TestCase {
 
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		MockParameterMap input = new MockParameterMap();
-		input.add("parentInputAttribute", "attributeValue");
+		input.put("parentInputAttribute", "attributeValue");
 		ViewSelection view = flowExecution.start(new MockExternalContext(input));
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());

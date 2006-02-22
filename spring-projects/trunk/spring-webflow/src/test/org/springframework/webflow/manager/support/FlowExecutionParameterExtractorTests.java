@@ -20,7 +20,7 @@ public class FlowExecutionParameterExtractorTests extends TestCase {
 	}
 
 	public void testExtractFlowId() {
-		context.addRequestParameter("_flowId", "flow");
+		context.putRequestParameter("_flowId", "flow");
 		assertEquals("flow", extractor.extractFlowId(context));
 	}
 
@@ -30,22 +30,22 @@ public class FlowExecutionParameterExtractorTests extends TestCase {
 	}
 
 	public void testExtractFlowExecutionId() {
-		context.addRequestParameter("_flowExecutionKey", "_s12345_c12345");
+		context.putRequestParameter("_flowExecutionKey", "_s12345_c12345");
 		assertEquals(flowExecutionKey, extractor.extractFlowExecutionKey(context));
 	}
 
 	public void testExtractEventId() {
-		context.addRequestParameter("_eventId", "submit");
+		context.putRequestParameter("_eventId", "submit");
 		assertEquals("submit", extractor.extractEventId(context));
 	}
 
 	public void testExtractEventIdButtonNameFormat() {
-		context.addRequestParameter("_eventId_submit", "not important");
+		context.putRequestParameter("_eventId_submit", "not important");
 		assertEquals("submit", extractor.extractEventId(context));
 	}
 
 	public void testAccidentalParameterArraySubmit() {
-		context.addRequestParameter("_flowExecutionKey", new String[] { "_s12345_c12345", "_s12345_c12345" });
+		context.putRequestParameter("_flowExecutionKey", new String[] { "_s12345_c12345", "_s12345_c12345" });
 		try {
 			extractor.extractFlowExecutionKey(context);
 			fail("Should've failed");

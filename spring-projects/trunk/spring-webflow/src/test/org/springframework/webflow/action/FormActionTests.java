@@ -108,13 +108,13 @@ public class FormActionTests extends TestCase {
 	
 	protected ParameterMap parameters() {
 		MockParameterMap map = new MockParameterMap();
-		map.add("prop", "value");
+		map.put("prop", "value");
 		return map;
 	}
 
 	protected ParameterMap blankParameters() {
 		MockParameterMap map = new MockParameterMap();
-		map.add("prop", "");
+		map.put("prop", "");
 		return map;
 	}
 
@@ -410,7 +410,7 @@ public class FormActionTests extends TestCase {
 		assertSame(test2, new FormObjectAccessor(context).getCurrentFormObject());
 		
 		MockParameterMap parameters = new MockParameterMap();
-		parameters.add("prop", "12345");
+		parameters.put("prop", "12345");
 		context.setExternalContext(new MockExternalContext(parameters));
 		action1.bindAndValidate(context);
 		TestBean test11 = (TestBean)context.getFlowScope().get("test1");
@@ -419,7 +419,7 @@ public class FormActionTests extends TestCase {
 		assertSame(test1, new FormObjectAccessor(context).getCurrentFormObject());
 
 		parameters = new MockParameterMap();
-		parameters.add("prop", "123456");
+		parameters.put("prop", "123456");
 		context.setExternalContext(new MockExternalContext(parameters));
 		action2.bindAndValidate(context);
 		TestBean test22 = (TestBean)context.getFlowScope().get("test2");

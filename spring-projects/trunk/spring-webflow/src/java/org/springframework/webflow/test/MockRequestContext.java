@@ -67,7 +67,7 @@ public class MockRequestContext implements RequestContext {
 	 * <li>A mock external context with no request parameters set.
 	 * </ul>
 	 * To add request parameters to this request, use the
-	 * {@link #addRequestParameter(String, String) } method.
+	 * {@link #putRequestParameter(String, String) } method.
 	 */
 	public MockRequestContext() {
 
@@ -205,8 +205,8 @@ public class MockRequestContext implements RequestContext {
 	 * @param parameterName the parameter name
 	 * @param parameterValue the parameter value
 	 */
-	public void addRequestParameter(String parameterName, String parameterValue) {
-		getMockExternalContext().addRequestParameter(parameterName, parameterValue);
+	public void putRequestParameter(String parameterName, String parameterValue) {
+		getMockExternalContext().putRequestParameter(parameterName, parameterValue);
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class MockRequestContext implements RequestContext {
 	 * @param parameterName the parameter name
 	 * @param parameterValue the parameter values
 	 */
-	public void addRequestParameter(String parameterName, String[] parameterValues) {
-		getMockExternalContext().addRequestParameter(parameterName, parameterValues);
+	public void putRequestParameter(String parameterName, String[] parameterValues) {
+		getMockExternalContext().putRequestParameter(parameterName, parameterValues);
 	}
 }

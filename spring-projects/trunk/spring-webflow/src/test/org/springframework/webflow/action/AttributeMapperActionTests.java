@@ -37,7 +37,7 @@ public class AttributeMapperActionTests extends TestCase {
 		AttributeMapperAction action = new AttributeMapperAction(mapper);
 
 		MockRequestContext context = new MockRequestContext();
-		context.addRequestParameter("foo", "value");
+		context.putRequestParameter("foo", "value");
 
 		assertTrue(context.getFlowScope().size() == 0);
 

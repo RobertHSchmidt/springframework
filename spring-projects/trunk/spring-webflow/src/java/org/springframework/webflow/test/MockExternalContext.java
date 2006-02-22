@@ -115,11 +115,11 @@ public class MockExternalContext implements ExternalContext {
 		return (MockParameterMap)requestParameterMap;
 	}
 	
-	public void addRequestParameter(String parameterName, String parameterValue) {
-		getMockRequestParameterMap().add(parameterName, parameterValue);
+	public void putRequestParameter(String parameterName, String parameterValue) {
+		getMockRequestParameterMap().put(parameterName, parameterValue);
 	}
 
-	public void addRequestParameter(String parameterName, String[] parameterValues) {
-		getMockRequestParameterMap().add(parameterName, parameterValues);
+	public void putRequestParameter(String parameterName, String[] parameterValues) {
+		getMockRequestParameterMap().put(parameterName, parameterValues);
 	}
 }
