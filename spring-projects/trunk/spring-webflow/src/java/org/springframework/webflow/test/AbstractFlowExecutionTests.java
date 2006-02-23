@@ -43,10 +43,10 @@ import org.springframework.webflow.execution.impl.FlowExecutionImpl;
  * <ul>
  * <li>That the flow execution starts as expected given a request from an
  * external context containing potential input request parameters (see the
- * {@link #startFlow(Map)} variants).
+ * {@link #startFlow(ParameterMap)} variants).
  * <li>That given the set of supported transition criteria for a state, that
  * the state executes the appropriate transition when an event is signaled (with
- * potential input request parameters, see the {@link #signalEvent(String, Map)}
+ * potential input request parameters, see the {@link #signalEvent(String, ParameterMap)}
  * variants). A test case should be coded for each logical event that can occur,
  * where an event drives a possible path through the flow. The goal should be to
  * exercise all possible paths of the flow.
