@@ -78,9 +78,10 @@ public class HibernateFlightDaoTest extends AbstractTransactionalDataSourceSprin
         flight.setArrivalTime(arrivalTime);
         flight.setArrivalAirport(arrivalAirport);
         flight.setServiceClass(ServiceClass.ECONOMY);
+        int startCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM FLIGHT");
         flightDao.insertFlight(flight);
-        int count = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM FLIGHT");
-        assertEquals("Flight not inserted", 1, count);
+        int endCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM FLIGHT");
+        assertEquals("Flight not inserted", 1, endCount - startCount);
     }
 
     public void testGetById() {

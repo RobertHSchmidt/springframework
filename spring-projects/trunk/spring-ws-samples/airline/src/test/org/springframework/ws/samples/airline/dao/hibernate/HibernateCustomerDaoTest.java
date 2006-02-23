@@ -30,9 +30,15 @@ public class HibernateCustomerDaoTest extends AbstractTransactionalDataSourceSpr
         Customer customer = new Customer();
         customer.setFirstName("firstName");
         customer.setLastName("lastName");
+        int startCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM CUSTOMER");
         dao.insertCustomer(customer);
-        Long id = customer.getId();
-        Customer other = dao.getCustomer(id.longValue());
+        int endCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM CUSTOMER");
+        assertEquals("Customer not inserted", 1, endCount - startCount);
+    }
+
+    public void testGetById() {
+        jdbcTemplate.update("INSERT INTO CUSTOMER (ID, FIRST_NAME, LAST_NAME) VALUES(1, 'firstName', 'lastName')");
+        Customer other = dao.getCustomer(1);
         assertNotNull("Invalid customer", other);
         assertEquals("Invalid name", "firstName", other.getFirstName());
         assertEquals("Invalid name", "lastName", other.getLastName());

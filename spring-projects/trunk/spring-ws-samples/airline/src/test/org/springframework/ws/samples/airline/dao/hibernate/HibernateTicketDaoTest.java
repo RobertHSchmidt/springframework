@@ -104,9 +104,10 @@ public class HibernateTicketDaoTest extends AbstractTransactionalDataSourceSprin
         ticket.setCustomer(customer);
         ticket.setFlight(flight);
         ticket.setIssueDate(issueDate);
+        int startCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM TICKET");
         dao.insertTicket(ticket);
-        int count = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM TICKET");
-        assertEquals("Flight not inserted", 1, count);
+        int endCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM TICKET");
+        assertEquals("Flight not inserted", 1, endCount - startCount);
     }
 
     public void testGet() throws Exception {
