@@ -17,10 +17,10 @@ package org.springframework.webflow.support;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
@@ -74,11 +74,11 @@ public class RedirectViewSelector implements ViewSelector, Serializable {
 		// now parse that and build a corresponding view selection
 		int index = fullView.indexOf('?');
 		String viewName;
-		AttributeMap model = null;
+		Map model = null;
 		if (index != -1) {
 			viewName = fullView.substring(0, index);
 			String[] parameters = StringUtils.delimitedListToStringArray(fullView.substring(index + 1), "&");
-			model = new AttributeMap(parameters.length, 1);
+			model = new HashMap(parameters.length, 1);
 			for (int i = 0; i < parameters.length; i++) {
 				String nameAndValue = parameters[i];
 				index = nameAndValue.indexOf('=');
@@ -93,7 +93,7 @@ public class RedirectViewSelector implements ViewSelector, Serializable {
 		else {
 			viewName = fullView;
 		}
-		return new ViewSelection(viewName, model.getMap(), true);
+		return new ViewSelection(viewName, model, true);
 	}
 
 	/**
