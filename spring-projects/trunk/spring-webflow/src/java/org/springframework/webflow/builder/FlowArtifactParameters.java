@@ -93,7 +93,7 @@ public class FlowArtifactParameters implements Serializable {
 			return new FlowArtifactParameters(getId(), new AttributeMap(getAttributes()).putAll(attributes));
 		}
 		else {
-			return new FlowArtifactParameters(getId(), getAttributes());
+			return this;
 		}
 	}
 
