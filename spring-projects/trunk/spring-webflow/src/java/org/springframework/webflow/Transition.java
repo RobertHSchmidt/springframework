@@ -208,10 +208,16 @@ public class Transition extends AnnotatedObject {
 			throws StateException {
 		ViewSelection selectedView;
 		if (canExecute(context)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Executing " + this + " out of state '" + sourceState.getId() + "'");
+			if (sourceState != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Executing " + this + " out of state '" + sourceState.getId() + "'");
+				}
+				sourceState.exit(context);
+			} else {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Executing " + this);
+				}
 			}
-			sourceState.exit(context);
 			State targetState = getTargetState(sourceState, context);
 			context.setLastTransition(this);
 			// enter the target state (note: any exceptions are propagated)
@@ -219,7 +225,11 @@ public class Transition extends AnnotatedObject {
 		}
 		else {
 			// 'roll back' and re-enter the source state
-			selectedView = sourceState.reenter(context);
+			if (sourceState != null) {
+				selectedView = sourceState.reenter(context);
+			} else {
+				throw new CannotExecuteTransitionException(this);
+			}
 		}
 		if (logger.isDebugEnabled()) {
 			if (context.getFlowExecutionContext().isActive()) {
@@ -233,6 +243,35 @@ public class Transition extends AnnotatedObject {
 		return selectedView;
 	}
 
+	/**
+	 * Thrown when a state transition could not be executed.
+	 * @author Keith Donald
+	 */
+	public class CannotExecuteTransitionException extends FlowException {
+		
+		/**
+		 * The transition that could not be executed. 
+		 */
+		private Transition transition;
+
+		/**
+		 * Create a new exception.
+		 * @param transition the transition
+		 */
+		public CannotExecuteTransitionException(Transition transition) {
+			super("Cannot execute transition " + transition);
+			this.transition = transition;
+		}
+
+		/**
+		 * Returns the transition that could not be executed.
+		 * @return the transition
+		 */
+		public Transition getTransition() {
+			return transition;
+		}
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append("matchingCriteria", getMatchingCriteria()).append("executionCriteria",
 				getExecutionCriteria()).append("targetStateResolver", getTargetStateResolver()).append("attributes",
