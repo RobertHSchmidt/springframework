@@ -36,11 +36,8 @@ import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.expression.PropertyExpression;
-import org.springframework.binding.map.AttributeCollection;
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.binding.mapping.Mapping;
-import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
@@ -51,6 +48,9 @@ import org.springframework.util.xml.SimpleSaxErrorHandler;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
+import org.springframework.webflow.AttributeCollection;
+import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
@@ -64,6 +64,7 @@ import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionableState;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.FlowVariableCreatingAction;
@@ -703,7 +704,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			action.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)) {
-			MethodKey method = (MethodKey)fromStringTo(MethodKey.class).execute(element.getAttribute(METHOD_ATTRIBUTE));
+			MethodSignature method = (MethodSignature)fromStringTo(MethodSignature.class).execute(element.getAttribute(METHOD_ATTRIBUTE));
 			action.setMethod(method);
 		}
 		if (element.hasAttribute(RESULT_NAME_ATTRIBUTE)) {
@@ -830,12 +831,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected Transition[] parseIf(Element element) {
 		TransitionCriteria criteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(TEST_ATTRIBUTE));
-		Transition thenTransition = getLocalFlowArtifactFactory().createTransition(UnmodifiableAttributeMap.EMPTY_MAP);
+		Transition thenTransition = getLocalFlowArtifactFactory().createTransition(CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 		thenTransition.setMatchingCriteria(criteria);
 		thenTransition.setTargetStateResolver(new StaticTargetStateResolver(element.getAttribute(THEN_ATTRIBUTE)));
 		if (StringUtils.hasText(element.getAttribute(ELSE_ATTRIBUTE))) {
 			Transition elseTransition = getLocalFlowArtifactFactory().createTransition(
-					UnmodifiableAttributeMap.EMPTY_MAP);
+					CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 			elseTransition.setTargetStateResolver(new StaticTargetStateResolver(element.getAttribute(ELSE_ATTRIBUTE)));
 			return new Transition[] { thenTransition, elseTransition };
 		}

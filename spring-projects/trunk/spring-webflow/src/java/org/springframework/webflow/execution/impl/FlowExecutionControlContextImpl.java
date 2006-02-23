@@ -17,13 +17,11 @@ package org.springframework.webflow.execution.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.map.AttributeCollection;
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.EmptyAttributeCollection;
-import org.springframework.binding.map.ParameterMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.webflow.AttributeCollection;
+import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
@@ -31,9 +29,11 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
+import org.springframework.webflow.ParameterMap;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.Transition;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelection;
 
 /**
@@ -142,9 +142,10 @@ class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
 
 	public void setAttributes(AttributeCollection attributes) {
 		if (attributes == null) {
-			attributes = EmptyAttributeCollection.INSTANCE;
+			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
+		} else {
+			this.attributes = attributes.unmodifiable();
 		}
-		this.attributes = attributes.unmodifiable();
 	}
 
 	public UnmodifiableAttributeMap getModel() {

@@ -21,12 +21,12 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.ExpressionFactory;
-import org.springframework.binding.map.ParameterMap;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowExecutionContext;
+import org.springframework.webflow.ParameterMap;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;

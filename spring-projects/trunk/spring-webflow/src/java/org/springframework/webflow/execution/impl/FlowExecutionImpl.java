@@ -24,9 +24,9 @@ import java.util.LinkedList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;

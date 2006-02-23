@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 
 /**
  * A service interface that maps attributes between two flows.

@@ -18,10 +18,10 @@ package org.springframework.webflow.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 

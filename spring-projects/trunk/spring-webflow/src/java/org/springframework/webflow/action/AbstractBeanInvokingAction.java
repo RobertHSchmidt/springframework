@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
-import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.DecisionState;
@@ -104,8 +104,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
 		getStatePersister().restoreState(bean, context);
-		MethodKey methodKey = (MethodKey)context.getAttributes().getRequired(AnnotatedAction.METHOD_PROPERTY,
-				MethodKey.class);
+		MethodSignature methodKey = (MethodSignature)context.getAttributes().getRequired(AnnotatedAction.METHOD_PROPERTY,
+				MethodSignature.class);
 		Object returnValue = getMethodInvoker().invoke(methodKey, bean, context);
 		processMethodReturnValue(returnValue, context);
 		Event resultEvent = getEventFactory().createEvent(returnValue, context);

@@ -18,8 +18,8 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.webflow.Action;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.test.MockRequestContext;
 

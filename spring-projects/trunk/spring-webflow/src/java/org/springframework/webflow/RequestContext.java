@@ -15,10 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.map.AttributeCollection;
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.ParameterMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 
 /**
  * Central interface that allows clients to access contextual information about

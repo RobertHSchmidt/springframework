@@ -20,8 +20,8 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.binding.map.StringKeyedMapAdapter;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.webflow.context.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP request parameter map, for accessing request

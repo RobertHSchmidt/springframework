@@ -17,7 +17,7 @@ package org.springframework.webflow.action;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindException;
@@ -56,7 +56,7 @@ public class FormActionBindingTests extends TestCase {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		MockRequestContext context = new MockRequestContext();
 		context.setExternalContext(new ServletExternalContext(null, request, response));
-		context.setAttribute("method", new MethodKey("bindAndValidate"));
+		context.setAttribute("method", new MethodSignature("bindAndValidate"));
 
 		// use a FormAction to do the binding
 		FormAction formAction = new FormAction();

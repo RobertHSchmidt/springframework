@@ -19,8 +19,8 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.util.Assert;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ViewSelection;
 
 /**

@@ -17,12 +17,12 @@ package org.springframework.webflow.executor.jsf;
 
 import javax.faces.context.FacesContext;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.ParameterMap;
-import org.springframework.binding.map.SharedAttributeMap;
-import org.springframework.binding.map.SharedMapDecorator;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.ParameterMap;
+import org.springframework.webflow.SharedAttributeMap;
+import org.springframework.webflow.context.SharedMapDecorator;
 
 /**
  * Provides contextual information about a JSF environment that has interacted

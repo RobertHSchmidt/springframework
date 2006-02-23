@@ -17,11 +17,11 @@ package org.springframework.webflow.action;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.Parameter;
 import org.springframework.binding.method.Parameters;
 import org.springframework.web.context.support.StaticWebApplicationContext;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -60,7 +60,7 @@ public class BeanInvokingActionTests extends TestCase {
 		beanFactory.registerSingleton("bean", Bean.class);
 		action.setBeanFactory(beanFactory);
 		MockRequestContext context = new MockRequestContext();
-		context.setAttribute("method", new MethodKey("execute"));
+		context.setAttribute("method", new MethodSignature("execute"));
 		context.setAttribute("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
@@ -76,7 +76,7 @@ public class BeanInvokingActionTests extends TestCase {
 		AttributeMap attributes = new AttributeMap();
 		attributes.put("foo", "a string value");
 		context.setLastEvent(new Event(this, "submit", attributes));
-		context.setAttribute("method", new MethodKey("execute", new Parameter(String.class, "lastEvent.attributes.foo")));
+		context.setAttribute("method", new MethodSignature("execute", new Parameter(String.class, "lastEvent.attributes.foo")));
 		context.setAttribute("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
@@ -94,7 +94,7 @@ public class BeanInvokingActionTests extends TestCase {
 		attributes.put("foo", "a string value");
 		attributes.put("bar", "12345");
 		context.setLastEvent(new Event(this, "submit", attributes));
-		context.setAttribute("method", new MethodKey("execute", new Parameters(new Parameter[] {
+		context.setAttribute("method", new MethodSignature("execute", new Parameters(new Parameter[] {
 				new Parameter(String.class, "lastEvent.attributes.foo"), new Parameter(Integer.class, "lastEvent.attributes.bar") })));
 		context.setAttribute("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");

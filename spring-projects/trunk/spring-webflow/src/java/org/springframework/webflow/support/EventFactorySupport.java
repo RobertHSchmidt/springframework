@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.support;
 
-import org.springframework.binding.map.AttributeCollection;
-import org.springframework.binding.map.AttributeMap;
+import org.springframework.webflow.AttributeCollection;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.action.AbstractAction;
 

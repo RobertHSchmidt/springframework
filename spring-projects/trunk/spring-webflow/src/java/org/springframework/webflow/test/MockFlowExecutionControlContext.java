@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.test;
 
-import org.springframework.binding.map.AttributeMap;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;

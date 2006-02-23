@@ -19,7 +19,7 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.binding.map.StringKeyedMapAdapter;
+import org.springframework.webflow.context.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP request attribute map, for accessing request

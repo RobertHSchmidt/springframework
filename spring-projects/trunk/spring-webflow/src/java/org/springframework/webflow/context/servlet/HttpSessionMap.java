@@ -20,9 +20,9 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.binding.map.SharedMap;
-import org.springframework.binding.map.StringKeyedMapAdapter;
 import org.springframework.binding.util.EmptyEnumeration;
+import org.springframework.webflow.SharedMap;
+import org.springframework.webflow.context.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP session, for accessing session scoped

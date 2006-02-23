@@ -15,8 +15,7 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -51,9 +50,10 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	/**
 	 * The action execution method property ("method").
 	 * <p>
-	 * The method property is the name of a specific method on a
+	 * The method property is a hint about what method should be invoked; e.g
+	 * the name of a specific method on a
 	 * <code>{@link org.springframework.webflow.action.MultiAction}</code> to
-	 * execute, or the name of a specific method on a arbitrary POJO (plain old
+	 * execute or the name of a specific method on a arbitrary POJO (plain old
 	 * java.lang.Object).
 	 * <p>
 	 * @see ActionState
@@ -82,7 +82,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @see #setCaption(String)
 	 * @see #setDescription(String)
 	 * @see #setName(String)
-	 * @see #setMethod(MethodKey)
+	 * @see #setMethod(MethodSignature)
 	 * @see #setResultName(String)
 	 * @see #setResultScope(ScopeType)
 	 */
@@ -156,8 +156,8 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * Returns the name of the action method to invoke when the target action is
 	 * executed.
 	 */
-	public MethodKey getMethod() {
-		return (MethodKey)getAttributeMap().get(METHOD_PROPERTY, MethodKey.class);
+	public MethodSignature getMethod() {
+		return (MethodSignature)getAttributeMap().get(METHOD_PROPERTY, MethodSignature.class);
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * executed.
 	 * @param method the action method name.
 	 */
-	public void setMethod(MethodKey method) {
+	public void setMethod(MethodSignature method) {
 		getAttributeMap().put(METHOD_PROPERTY, method);
 	}
 

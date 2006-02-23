@@ -19,11 +19,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.ParameterMap;
-import org.springframework.binding.map.SharedAttributeMap;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.ParameterMap;
+import org.springframework.webflow.SharedAttributeMap;
 
 /**
  * Provides contextual information about an HTTP Servlet environment that has

@@ -19,11 +19,11 @@ import javax.portlet.PortletContext;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.ParameterMap;
-import org.springframework.binding.map.SharedAttributeMap;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.ParameterMap;
+import org.springframework.webflow.SharedAttributeMap;
 
 /**
  * Provides contextual information about a portlet environment that has

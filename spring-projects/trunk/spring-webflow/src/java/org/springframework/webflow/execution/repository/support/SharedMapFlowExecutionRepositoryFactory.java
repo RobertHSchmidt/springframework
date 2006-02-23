@@ -15,9 +15,9 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
-import org.springframework.binding.map.SharedAttributeMap;
-import org.springframework.binding.map.SharedMap;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.SharedAttributeMap;
+import org.springframework.webflow.SharedMap;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryCreator;
 

@@ -20,8 +20,8 @@ import java.util.Map;
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionFactory;
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.RequestContext;
 
 /**

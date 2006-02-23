@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 

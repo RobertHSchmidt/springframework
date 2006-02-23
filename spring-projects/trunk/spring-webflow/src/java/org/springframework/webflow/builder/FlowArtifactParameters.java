@@ -17,12 +17,12 @@ package org.springframework.webflow.builder;
 
 import java.io.Serializable;
 
-import org.springframework.binding.map.AttributeCollection;
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.EmptyAttributeCollection;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.webflow.AttributeCollection;
+import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.CollectionUtils;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 
 /**
  * A simple, immutable parameter object that holds initialization information
@@ -62,9 +62,10 @@ public class FlowArtifactParameters implements Serializable {
 		Assert.hasText(id, "The id parameter is required");
 		this.id = id;
 		if (attributes == null) {
-			attributes = EmptyAttributeCollection.INSTANCE;
+			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
+		} else {
+			this.attributes = attributes.unmodifiable();
 		}
-		this.attributes = attributes.unmodifiable();
 	}
 
 	/**

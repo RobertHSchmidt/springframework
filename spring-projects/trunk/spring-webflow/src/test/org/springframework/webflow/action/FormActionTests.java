@@ -17,16 +17,16 @@ package org.springframework.webflow.action;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.map.MockParameterMap;
-import org.springframework.binding.map.ParameterMap;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.ParameterMap;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.test.MockParameterMap;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

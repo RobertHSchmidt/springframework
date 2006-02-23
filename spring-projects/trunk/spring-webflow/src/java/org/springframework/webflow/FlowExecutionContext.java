@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.map.AttributeMap;
 
 /**
  * Provides contextual information about an actively executing flow representing

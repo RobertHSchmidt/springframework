@@ -17,10 +17,9 @@ package org.springframework.webflow.builder;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
@@ -29,6 +28,7 @@ import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewState;
 
 /**

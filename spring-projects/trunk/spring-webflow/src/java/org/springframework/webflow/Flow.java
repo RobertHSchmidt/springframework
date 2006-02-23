@@ -18,7 +18,6 @@ package org.springframework.webflow;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;

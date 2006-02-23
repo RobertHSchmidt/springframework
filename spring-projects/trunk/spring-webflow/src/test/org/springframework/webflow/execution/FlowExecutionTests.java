@@ -17,9 +17,9 @@ package org.springframework.webflow.execution;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.ActionState;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;

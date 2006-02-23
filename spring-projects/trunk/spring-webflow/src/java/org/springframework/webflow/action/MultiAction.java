@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.action;
 
-import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -27,7 +27,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * the following signature:
  * 
  * <pre>
- *         public Event ${method}(RequestContext context) throws Exception;
+ *     public Event ${method}(RequestContext context) throws Exception;
  * </pre>
  * 
  * When this action is invoked, by default the <code>id</code> of the calling
@@ -38,10 +38,10 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * For example, the following action state definition:
  * 
  * <pre>
- *         &lt;action-state id=&quot;search&quot;&gt;
- *             &lt;action bean=&quot;my.search.action&quot;/&gt;
- *             &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
- *         &lt;/action-state&gt;
+ *     &lt;action-state id=&quot;search&quot;&gt;
+ *         &lt;action bean=&quot;my.search.action&quot;/&gt;
+ *         &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
+ *     &lt;/action-state&gt;
  * </pre>
  * 
  * ... when entered, executes the method:
@@ -53,10 +53,10 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Alternatively you may explictly specify the method name:
  * 
  * <pre>
- *         &lt;action-state id=&quot;searchState&quot;&gt;
- *             &lt;action bean=&quot;my.search.action&amp;quot method=&quot;search&quot;/&gt;
- *             &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
- *         &lt;/action-state&gt;
+ *     &lt;action-state id=&quot;searchState&quot;&gt;
+ *         &lt;action bean=&quot;phonebook&amp;quot method=&quot;executeSearch&quot;/&gt;
+ *         &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
+ *     &lt;/action-state&gt;
  * </pre>
  * 
  * <p>
@@ -78,7 +78,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <td>Set the delegate object holding the action execution methods.</td>
  * </tr>
  * <tr>
- * <td>executeMethodKeyResolver</td>
+ * <td>methodResolver</td>
  * <td><i>{@link MultiAction.DefaultActionMethodResolver default}</i></td>
  * <td>Set the strategy used to resolve the name (key) of an action execution
  * method. Allows full control over the method resolution algorithm.</td>
@@ -110,7 +110,7 @@ public class MultiAction extends AbstractAction {
 	 * Defaults to this object.
 	 */
 	public Object getDelegate() {
-		return this.methodInvoker.getTarget();
+		return methodInvoker.getTarget();
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class MultiAction extends AbstractAction {
 	 * @param delegate the delegate to set
 	 */
 	public void setDelegate(Object delegate) {
-		this.methodInvoker.setTarget(delegate);
+		methodInvoker.setTarget(delegate);
 	}
 
 	/**
@@ -137,8 +137,8 @@ public class MultiAction extends AbstractAction {
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		MethodKey methodKey = getMethodResolver().getMethodKey(context);
-		return (Event)methodInvoker.invoke(methodKey.getMethodName(), new Object[] { context });
+		MethodSignature method = getMethodResolver().resolveMethod(context);
+		return (Event)methodInvoker.invoke(method.getMethodName(), new Object[] { context });
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class MultiAction extends AbstractAction {
 		 * @return the key identifying the method that should handle action
 		 * execution
 		 */
-		public MethodKey getMethodKey(RequestContext context);
+		public MethodSignature resolveMethod(RequestContext context);
 	}
 
 	/**
@@ -172,9 +172,9 @@ public class MultiAction extends AbstractAction {
 	 * @author Erwin Vervaet
 	 */
 	public static class DefaultActionMethodResolver implements ActionMethodResolver {
-		public MethodKey getMethodKey(RequestContext context) {
-			return (MethodKey)context.getAttributes().get(AnnotatedAction.METHOD_PROPERTY, MethodKey.class,
-					new MethodKey(context.getCurrentState().getId()));
+		public MethodSignature resolveMethod(RequestContext context) {
+			return (MethodSignature)context.getAttributes().get(AnnotatedAction.METHOD_PROPERTY, MethodSignature.class,
+					new MethodSignature(context.getCurrentState().getId()));
 		}
 	}
 }

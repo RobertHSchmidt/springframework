@@ -17,9 +17,6 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.MockParameterMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.util.StringUtils;
@@ -30,6 +27,7 @@ import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.test.MockParameterMap;
 
 /**
  * Tests that each of the Flow state types execute as expected when entered.

@@ -17,11 +17,11 @@ package org.springframework.webflow.execution;
 
 import java.util.Map;
 
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.util.Assert;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelection;
 
 /**

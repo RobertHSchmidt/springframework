@@ -22,10 +22,10 @@ import java.io.ObjectOutput;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;

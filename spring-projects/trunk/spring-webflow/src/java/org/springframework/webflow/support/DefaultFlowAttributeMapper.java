@@ -23,14 +23,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.binding.expression.PropertyExpression;
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 
 /**
  * Generic flow attribute mapper implementation that allows mappings to be

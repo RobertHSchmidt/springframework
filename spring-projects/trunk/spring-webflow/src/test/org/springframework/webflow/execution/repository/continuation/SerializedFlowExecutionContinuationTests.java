@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.map.AttributeMap;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;

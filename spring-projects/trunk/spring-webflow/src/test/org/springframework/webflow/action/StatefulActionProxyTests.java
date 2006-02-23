@@ -18,7 +18,7 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.springframework.beans.factory.xml.XmlBeanFactory;
-import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -37,7 +37,7 @@ public class StatefulActionProxyTests extends TestCase {
 		
 		assertTrue(context.getFlowScope().size() == 0);
 		
-		context.setAttribute("method", new MethodKey("increment"));
+		context.setAttribute("method", new MethodSignature("increment"));
 		proxy.execute(context);
 		
 		assertEquals(1, context.getFlowScope().size());
@@ -47,7 +47,7 @@ public class StatefulActionProxyTests extends TestCase {
 		assertSame(testAction, context.getFlowScope().get("test"));
 		assertEquals(2, testAction.getCounter());
 
-		context.setAttribute("method", new MethodKey("decrement"));
+		context.setAttribute("method", new MethodSignature("decrement"));
 		proxy.execute(context);
 		proxy.execute(context);
 		proxy.execute(context);

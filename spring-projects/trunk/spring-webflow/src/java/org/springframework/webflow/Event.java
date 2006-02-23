@@ -17,9 +17,6 @@ package org.springframework.webflow;
 
 import java.util.EventObject;
 
-import org.springframework.binding.map.AttributeCollection;
-import org.springframework.binding.map.EmptyAttributeCollection;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
@@ -65,7 +62,7 @@ public final class Event extends EventObject {
 	 * @param id the event identifier
 	 */
 	public Event(Object source, String id) {
-		this(source, id, EmptyAttributeCollection.INSTANCE);
+		this(source, id, CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 	}
 
 	/**
@@ -80,9 +77,10 @@ public final class Event extends EventObject {
 		Assert.hasText(id, "The event id is required: please set this event's id to a non-blank string identifier");
 		this.id = id;
 		if (attributes == null) {
-			attributes = EmptyAttributeCollection.INSTANCE;
+			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
+		} else {
+			this.attributes = attributes.unmodifiable();
 		}
-		this.attributes = attributes.unmodifiable();
 		
 	}
 

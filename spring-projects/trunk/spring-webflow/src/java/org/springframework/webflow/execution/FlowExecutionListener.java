@@ -15,11 +15,11 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelection;
 
 /**

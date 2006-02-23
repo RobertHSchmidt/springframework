@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.map.AttributeMap;
 
 /**
  * A runtime object that represents a single client session of a

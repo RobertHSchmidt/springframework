@@ -17,12 +17,11 @@ package org.springframework.webflow.test;
 
 import java.util.HashMap;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.MockParameterMap;
-import org.springframework.binding.map.ParameterMap;
-import org.springframework.binding.map.SharedAttributeMap;
-import org.springframework.binding.map.SharedMapDecorator;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.ParameterMap;
+import org.springframework.webflow.SharedAttributeMap;
+import org.springframework.webflow.context.SharedMapDecorator;
 
 /**
  * Mock implementation of the <code>ExternalContext</code> interface.

@@ -17,13 +17,12 @@ package org.springframework.webflow.builder;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
-import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
@@ -34,6 +33,7 @@ import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.FlowVariableCreatingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
@@ -160,7 +160,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertTrue(decisionState3.getTransitionSet().size() == 2);
 		assertNotNull(decisionState3);
 		assertNotNull(decisionState3.getAction());
-		assertEquals(new MethodKey("booleanMethod"), decisionState3.getAnnotatedAction().getAttributeMap()
+		assertEquals(new MethodSignature("booleanMethod"), decisionState3.getAnnotatedAction().getAttributeMap()
 				.get("method"));
 		assertTrue(decisionState3.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
 
@@ -168,7 +168,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertTrue(decisionState4.getTransitionSet().size() == 2);
 		assertNotNull(decisionState4);
 		assertNotNull(decisionState4.getAction());
-		assertEquals(new MethodKey("enumMethod"), decisionState4.getAnnotatedAction().getAttributeMap().get(
+		assertEquals(new MethodSignature("enumMethod"), decisionState4.getAnnotatedAction().getAttributeMap().get(
 				"method"));
 		assertTrue(decisionState4.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
 

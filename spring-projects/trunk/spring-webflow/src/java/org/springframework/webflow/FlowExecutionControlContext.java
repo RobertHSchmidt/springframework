@@ -17,7 +17,6 @@ package org.springframework.webflow;
 
 import java.util.Map;
 
-import org.springframework.binding.map.AttributeMap;
 
 /**
  * Mutable control interface used to manipulate an ongoing flow execution in the

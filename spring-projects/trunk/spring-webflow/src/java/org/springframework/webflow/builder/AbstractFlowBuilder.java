@@ -15,12 +15,12 @@
  */
 package org.springframework.webflow.builder;
 
-import org.springframework.binding.map.AttributeCollection;
 import org.springframework.binding.mapping.MappingBuilder;
-import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
+import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
@@ -467,7 +467,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the annotated action
 	 */
 	protected AnnotatedAction method(String encodedMethodKey, Action action) {
-		MethodKey method = (MethodKey)fromStringTo(MethodKey.class).execute(encodedMethodKey);
+		MethodSignature method = (MethodSignature)fromStringTo(MethodSignature.class).execute(encodedMethodKey);
 		AnnotatedAction annotatedAction = new AnnotatedAction(action);
 		annotatedAction.setMethod(method);
 		return annotatedAction;

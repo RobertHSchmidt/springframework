@@ -19,8 +19,8 @@ import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
 
-import org.springframework.binding.map.SharedMap;
-import org.springframework.binding.map.StringKeyedMapAdapter;
+import org.springframework.webflow.SharedMap;
+import org.springframework.webflow.context.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Servlet context, for accessing application scoped

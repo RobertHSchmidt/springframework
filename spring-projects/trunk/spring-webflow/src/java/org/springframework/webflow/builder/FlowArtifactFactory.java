@@ -2,7 +2,6 @@ package org.springframework.webflow.builder;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
@@ -13,6 +12,7 @@ import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
 
 /**

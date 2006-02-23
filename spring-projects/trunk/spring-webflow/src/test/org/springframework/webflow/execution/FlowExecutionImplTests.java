@@ -25,7 +25,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.map.MockParameterMap;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
@@ -34,6 +33,7 @@ import org.springframework.webflow.builder.XmlFlowBuilder;
 import org.springframework.webflow.builder.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.test.MockParameterMap;
 
 /**
  * Test case for FlowExecutionStack.

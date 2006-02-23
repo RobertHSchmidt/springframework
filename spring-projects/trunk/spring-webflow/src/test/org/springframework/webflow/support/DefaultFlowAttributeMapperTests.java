@@ -17,11 +17,11 @@ package org.springframework.webflow.support;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
-import org.springframework.binding.method.MethodKey;
+import org.springframework.binding.method.MethodSignature;
+import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.action.FormAction;
@@ -168,7 +168,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 
 		parentSession.getScope().clear();
 
-		mapper.mapSubflowOutput(UnmodifiableAttributeMap.EMPTY_MAP, context);
+		mapper.mapSubflowOutput(CollectionUtils.EMPTY_ATTRIBUTE_MAP, context);
 		assertEquals(2, parentSession.getScope().size());
 		assertTrue(parentSession.getScope().contains("c"));
 		assertNull(parentSession.getScope().get("c"));
@@ -186,7 +186,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		action.setFormObjectName("command");
 		action.setFormObjectClass(TestBean.class);
 		action.setFormObjectScope(ScopeType.FLOW);
-		context.setAttribute("method", new MethodKey("setupForm"));
+		context.setAttribute("method", new MethodSignature("setupForm"));
 
 		action.execute(context);
 

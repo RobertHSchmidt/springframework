@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.map.AttributeMap;
 
 /**
  * Superclass of all objects in the web flow system that support annotation

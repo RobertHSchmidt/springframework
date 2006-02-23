@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.springframework.binding.map.AttributeMap;
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.support.MarkerViewSelector;

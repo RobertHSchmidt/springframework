@@ -15,18 +15,18 @@
  */
 package org.springframework.webflow.test;
 
-import org.springframework.binding.map.AttributeCollection;
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.ParameterMap;
-import org.springframework.binding.map.UnmodifiableAttributeMap;
+import org.springframework.webflow.AttributeCollection;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.FlowSession;
+import org.springframework.webflow.ParameterMap;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.Transition;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 
 /**
  * Mock implementation of the <code>RequestContext</code> interface to
