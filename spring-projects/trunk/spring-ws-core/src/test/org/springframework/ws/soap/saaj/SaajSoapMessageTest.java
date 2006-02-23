@@ -62,6 +62,17 @@ public class SaajSoapMessageTest extends XMLTestCase {
         assertXMLEqual("Invalid source", "<child/>", writer.toString());
     }
 
+    public void testGetPayloadSourceText() throws Exception {
+        saajMessage.getSOAPBody().addTextNode(" ");
+        saajMessage.getSOAPBody().addChildElement("child");
+        Source source = message.getPayloadSource();
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        StringWriter writer = new StringWriter();
+        transformer.transform(source, new StreamResult(writer));
+        assertXMLEqual("Invalid source", "<child/>", writer.toString());
+    }
+
     public void testGetPayloadResult() throws Exception {
         StringReader reader = new StringReader("<child/>");
         TransformerFactory transformerFactory = TransformerFactory.newInstance();

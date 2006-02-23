@@ -73,12 +73,18 @@ public class SaajMessageHelper {
      * Retrieves the payload of the given SAAJ message as a single DOM element. The payload of a message is the contents
      * of the SOAP body.
      *
-     * @return the message payload
+     * @return the message payload, or <code>null</code> if none is set.
      * @throws SOAPException when the message payload cannot be retrieved
      */
     public Element getPayloadElement() throws SOAPException {
         SOAPBody body = message.getSOAPBody();
-        return (Element) body.getFirstChild();
+        NodeList children = body.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                return (Element) children.item(i);
+            }
+        }
+        return null;
     }
 
     public Source getPayloadSource() throws SOAPException {
