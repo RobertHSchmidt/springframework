@@ -48,7 +48,7 @@ import org.springframework.webflow.ViewSelection;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
+class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
 
 	protected static final Log logger = LogFactory.getLog(FlowExecutionControlContextImpl.class);
 

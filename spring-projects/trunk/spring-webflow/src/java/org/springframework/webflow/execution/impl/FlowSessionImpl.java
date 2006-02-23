@@ -45,7 +45,7 @@ import org.springframework.webflow.execution.FlowLocator;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowSessionImpl implements FlowSession, Externalizable {
+class FlowSessionImpl implements FlowSession, Externalizable {
 
 	/**
 	 * The serialization version id.
