@@ -103,7 +103,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
 			// there is only one global action in this flow and its always the
 			// same
-			return new LocalBeanInvokingAction(phonebook);
+			return toAction(phonebook, parameters);
 		}
 
 		public Flow getSubflow(String id) throws FlowArtifactException {
