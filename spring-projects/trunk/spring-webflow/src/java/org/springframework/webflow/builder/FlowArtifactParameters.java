@@ -25,9 +25,9 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * A simple, immutable parameter object that holds information used to assist
- * with the construction of a flow artifact such as a Flow or a State
- * definition. Used only during flow construction/configuration time.
+ * A simple, immutable parameter object that holds initialization information
+ * used to assist with the construction of a flow artifact such as a Flow or a
+ * State definition. Used only during flow construction/configuration time.
  * 
  * @author Keith Donald
  */
@@ -39,23 +39,24 @@ public class FlowArtifactParameters implements Serializable {
 	private String id;
 
 	/**
-	 * The flow artifact properties.
+	 * The assigned flow artifact attributes.
 	 */
 	private UnmodifiableAttributeMap attributes;
 
 	/**
 	 * Creates a parameters value object containing the specified id and an
 	 * empty properties map.
-	 * @param id the flow Id
+	 * @param id the flow artifact id
 	 */
 	public FlowArtifactParameters(String id) {
 		this(id, null);
 	}
 
 	/**
-	 * Creates a parameters value object containing the specified id and an
-	 * empty properties map.
-	 * @param id the flow Id
+	 * Creates a parameters value object containing the specified id and
+	 * attribute collection.
+	 * @param id the flow artifact id
+	 * @param attributes the attribute collection
 	 */
 	public FlowArtifactParameters(String id, AttributeCollection attributes) {
 		Assert.hasText(id, "The id parameter is required");
@@ -74,7 +75,7 @@ public class FlowArtifactParameters implements Serializable {
 	}
 
 	/**
-	 * Returns the properties map.
+	 * Returns the attributes map.
 	 */
 	public UnmodifiableAttributeMap getAttributes() {
 		return attributes;

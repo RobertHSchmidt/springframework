@@ -112,7 +112,7 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 		return transition;
 	}
 
-	protected Object newInstance(Class artifactType) {
+	private Object newInstance(Class artifactType) {
 		return BeanUtils.instantiateClass(artifactType);
 	}
 
@@ -139,14 +139,16 @@ public class FlowArtifactFactoryAdapter implements FlowArtifactFactory {
 	}
 
 	/**
-	 * Helper method to the given service object into an action. If the given
-	 * service object implements the <code>Action</code> interface, it is
-	 * returned as is, otherwise it is wrapped in an action that can invoke a
-	 * method on the service bean.
-	 * @param artifact the service bean
+	 * Helper method to the transform the given object into an {@link Action}.
+	 * By default, if the given object implements the <code>Action</code>
+	 * interface it is returned as is, otherwise it is wrapped in an action
+	 * adapter that can invoke an arbitrary method on the object. Subclasses may
+	 * override.
+	 * @param artifact the object to be adapted as an action
+	 * @param parameters assigned action construction parameters
 	 * @return the action
 	 */
-	protected Action toAction(Object artifact, UnmodifiableAttributeMap attributes) {
+	protected Action toAction(Object artifact, FlowArtifactParameters parameters) {
 		if (artifact instanceof Action) {
 			return (Action)artifact;
 		}
