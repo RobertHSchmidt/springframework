@@ -65,8 +65,8 @@ public class SetPortletModeAction extends AbstractAction {
 	/**
 	 * Sets the mode that will be set in the response.
 	 */
-	public void setPortletMode(PortletMode mode) {
-		this.portletMode = mode;
+	public void setPortletMode(PortletMode portletMode) {
+		this.portletMode = portletMode;
 	}
 
 	/**

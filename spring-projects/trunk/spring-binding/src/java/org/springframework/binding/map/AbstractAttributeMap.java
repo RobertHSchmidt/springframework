@@ -75,6 +75,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 * @param attributeName the attribute name
 	 * @param requiredType the required class of the attribute value
 	 * @return true if so, false otherwise
+	 * @throws IllegalArgumentException when the value is not of the required type
 	 */
 	public boolean contains(String attributeName, Class requiredType) throws IllegalArgumentException {
 		return attributeAccessor.containsKey(attributeName, requiredType);
@@ -89,34 +90,35 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	}
 
 	/**
-	 * Get an attribute value, returning the defaultValue if no value is found.
-	 * @param attributeName the attribute name
+	 * Get an attribute value, returning the default value if no value is found.
+	 * @param attributeName the name of the attribute
 	 * @param defaultValue the default value
 	 * @return the attribute value
 	 */
-	public Object get(String attributeName, Object defaultValue) throws IllegalArgumentException {
+	public Object get(String attributeName, Object defaultValue) {
 		return attributeAccessor.get(attributeName, defaultValue);
 	}
 
 	/**
 	 * Get an attribute value and make sure it is of the required type.
-	 * @param attributeName name of the attribute to get
+	 * @param attributeName the name of the attribute
 	 * @param requiredType the required type of the attribute value
 	 * @return the attribute value, or null if not found
-	 * @throws IllegalStateException when the value is not of the required type
+	 * @throws IllegalArgumentException when the value is not of the required type
 	 */
-	public Object get(String attributeName, Class requiredType) throws IllegalStateException {
+	public Object get(String attributeName, Class requiredType) throws IllegalArgumentException {
 		return attributeAccessor.get(attributeName, requiredType);
 	}
 
 	/**
-	 * Get an attribute value and make sure it is of the required type,
-	 * returning the default if not found.
-	 * @param attributeName name of the attribute to get
-	 * @param requiredType the required type of the attribute value
+	 * Get an attribute value and assert it is of the required type, returning
+	 * the default value if not found.
+	 * @param attributeName the name of the attribute
+	 * @param requiredType the value required type
 	 * @param defaultValue the default value
 	 * @return the attribute value, or the default if not found
-	 * @throws IllegalStateException when the value is not of the required type
+	 * @throws IllegalArgumentException when the value is not of the required
+	 * type
 	 */
 	public Object get(String attributeName, Class requiredType, Object defaultValue) throws IllegalStateException {
 		return attributeAccessor.get(attributeName, requiredType, defaultValue);
@@ -124,11 +126,11 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 
 	/**
 	 * Get the value of a required attribute.
-	 * @param attributeName name of the attribute to get
+	 * @param attributeName the name of the attribute
 	 * @return the attribute value
-	 * @throws IllegalStateException when the attribute is not found
+	 * @throws IllegalArgumentException when the attribute is not found
 	 */
-	public Object getRequired(String attributeName) throws IllegalStateException {
+	public Object getRequired(String attributeName) throws IllegalArgumentException {
 		return attributeAccessor.getRequired(attributeName);
 	}
 
@@ -138,10 +140,10 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 * @param attributeName name of the attribute to get
 	 * @param requiredType the required type of the attribute value
 	 * @return the attribute value
-	 * @throws IllegalStateException when the attribute is not found or not of
-	 * the required type
+	 * @throws IllegalArgumentException when the attribute is not found or not
+	 * of the required type
 	 */
-	public Object getRequired(String attributeName, Class requiredType) throws IllegalStateException {
+	public Object getRequired(String attributeName, Class requiredType) throws IllegalArgumentException {
 		return attributeAccessor.getRequired(attributeName);
 	}
 
@@ -160,7 +162,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	/**
 	 * Returns a string attribute value in the map, returning the defaultValue
 	 * if no value was found.
-	 * @param attributeNamethe attribute name
+	 * @param attributeName the attribute name
 	 * @param defaultValue the default
 	 * @return the string attribute value
 	 * @throws IllegalArgumentException if the attribute is present but not a
@@ -185,7 +187,6 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	/**
 	 * Returns a collection attribute value in the map.
 	 * @param attributeName the attribute name
-	 * @param defaultValue the default
 	 * @return the collection attribute value
 	 * @throws IllegalArgumentException if the attribute is present but not a
 	 * collection
@@ -223,6 +224,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 * Returns a collection attribute value in the map, throwing an exception if
 	 * the attribute is not present or not a collection of the required type.
 	 * @param attributeName the attribute name
+	 * @param requiredType the required collection type
 	 * @return the collection attribute value
 	 * @throws IllegalArgumentException if the attribute is not present or is
 	 * present but not a collection of the required type
@@ -246,7 +248,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 
 	/**
 	 * Returns a number attribute value in the map of the specified type,
-	 * returning the defaultValue if no value was found.
+	 * returning the default value if no value was found.
 	 * @param attributeName the attribute name
 	 * @param defaultValue the default
 	 * @return the number attribute value
@@ -283,7 +285,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	}
 
 	/**
-	 * Returns an integer attribute value in the map, returning the defaultValue
+	 * Returns an integer attribute value in the map, returning the default value
 	 * if no value was found.
 	 * @param attributeName the attribute name
 	 * @param defaultValue the default
@@ -320,7 +322,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	}
 
 	/**
-	 * Returns a long attribute value in the map, returning the defaultValue if
+	 * Returns a long attribute value in the map, returning the default value if
 	 * no value was found.
 	 * @param attributeName the attribute name
 	 * @param defaultValue the default
@@ -352,12 +354,12 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 * @throws IllegalArgumentException if the attribute is present but not a
 	 * boolean
 	 */
-	public Boolean getBoolean(String attributeName) {
+	public Boolean getBoolean(String attributeName) throws IllegalArgumentException {
 		return attributeAccessor.getBoolean(attributeName);
 	}
 
 	/**
-	 * Returns a boolean attribute value in the map, returning the defaultValue
+	 * Returns a boolean attribute value in the map, returning the default value
 	 * if no value was found.
 	 * @param attributeName the attribute name
 	 * @param defaultValue the default
@@ -365,7 +367,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 * @throws IllegalArgumentException if the attribute is present but not a
 	 * boolean
 	 */
-	public Boolean getBoolean(String attributeName, Boolean defaultValue) {
+	public Boolean getBoolean(String attributeName, Boolean defaultValue) throws IllegalArgumentException {
 		return attributeAccessor.getBoolean(attributeName, defaultValue);
 	}
 
@@ -377,7 +379,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 * @throws IllegalArgumentException if the attribute is not present or
 	 * present but is not a boolean
 	 */
-	public Boolean getRequiredBoolean(String attributeName) {
+	public Boolean getRequiredBoolean(String attributeName) throws IllegalArgumentException {
 		return attributeAccessor.getRequiredBoolean(attributeName);
 	}
 
