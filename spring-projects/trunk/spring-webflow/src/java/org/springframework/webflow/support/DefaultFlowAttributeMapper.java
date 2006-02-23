@@ -36,78 +36,13 @@ import org.springframework.webflow.RequestContext;
  * Generic flow attribute mapper implementation that allows mappings to be
  * configured in a declarative fashion.
  * <p>
- * <b>Exposed configuration properties:</b> <br>
- * <table border="1">
- * <tr>
- * <td><b>name</b></td>
- * <td><b>default</b></td>
- * <td><b>description</b></td>
- * </tr>
- * <tr>
- * <td>inputAttribute(s)</td>
- * <td><i>null</i></td>
- * <td>Sets the name of input attributes in flow scope to map to the subflow.</td>
- * </tr>
- * <tr>
- * <td>inputMapper</td>
- * <td><i>null</i></td>
- * <td>The AttributeMapper strategy responsible for mapping starting subflow
- * input attributes from a suspending parent flow.</td>
- * </tr>
- * <tr>
- * <td>inputMapping(s)</td>
- * <td><i>empty</i></td>
- * <td>Mappings executed when mapping <i>input data</i> from the parent flow
- * to a newly spawned sub flow. Each list item must be a String, a Map or a
- * List. If the list item is a simple String value, the attribute will be mapped
- * as having the same name in the parent flow and in the sub flow. If the list
- * item is a Map, each map entry must be a String key naming the attribute in
- * the parent flow, and a String value naming the attribute in the child flow.
- * If the list item is itself a List, then that list is evaluated recursively,
- * and must contain Strings, Lists or Maps.</td>
- * </tr>
- * <tr>
- * <td>inputMappingsMap</td>
- * <td><i>empty</i></td>
- * <td>Mappings executed when mapping <i>input data</i> from the parent flow
- * to a newly spawned sub flow. The keys in given map are the names of entries
- * in the parent model that will be mapped. The value associated with a key is
- * the name of the target entry that will be placed in the subflow model.</td>
- * </tr>
- * <tr>
- * <td>outputAttribute(s)</td>
- * <td><i>null</i></td>
- * <td>ets the name of output attributes in flow scope to map to the parent
- * flow.</td>
- * </tr>
- * <tr>
- * <td>outputMapper</td>
- * <td><i>null</i></td>
- * <td>The AttributeMapper strategy responsible for mapping ending subflow
- * output attributes to a resuming parent flow as output.</td>
- * </tr>
- * <tr>
- * <td>outputMapping(s)</td>
- * <td><i>empty</i></td>
- * <td>Mappings executed when mapping subflow <i>output</i> data back to the
- * parent flow (once the subflow ends and the parent flow resumes). Each list
- * item must be a String, a List or a Map. If the list item is a simple String
- * value, the attribute will be mapped as having the same name in the parent
- * flow and in the child flow. If the list item is a Map, each map entry must be
- * a String key naming the attribute in the sub flow, and a String value naming
- * the attribute in the parent flow. If the list item is itself a List, then
- * that list is evaluated recursively, and must contain Strings, Lists or Maps.</td>
- * </tr>
- * <tr>
- * <td>outputMappingsMap</td>
- * <td><i>empty</i></td>
- * <td>Mappings executed when mapping subflow <i>output</i> data back to the
- * parent flow (once the subflow ends and the parent flow resumes). The keys in
- * given map are the names of entries in the subflow model that will be mapped.
- * The value associated with a key is the name of the target entry that will be
- * placed in the parent flow model.</td>
- * </tr>
- * </table>
+ * Two types of mappings may be configured, input mappings and output mappings:
+ * <ol>
+ * <li>Input mappings define the rules for mapping attributes in parent flow
+ * scope to a spawning subflow.
+ * <li>Output mappings define the rules for mapping attributes returned from an
+ * ended subflow into the resuming parent flow scope.
+ * </ol>
  * <p>
  * The mappings defined using the above configuration properties fully support
  * bean property access. So an entry name in a mapping can either be "beanName"
@@ -130,28 +65,50 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 	protected final Log logger = LogFactory.getLog(getClass());;
 
 	/**
-	 * The mapper that maps attributes into the spawning subflow.
+	 * The mapper that maps attributes into a spawning subflow.
 	 */
 	private DefaultAttributeMapper inputMapper = new DefaultAttributeMapper();
 
 	/**
-	 * The mapper that maps attributes out from an ending subflow.
+	 * The mapper that maps attributes returned by an ended subflow.
 	 */
 	private DefaultAttributeMapper outputMapper = new DefaultAttributeMapper();
 
+	/**
+	 * Adds a new input mapping. Use when you need full control over defining
+	 * how a subflow input attribute mapping will be perfomed.
+	 * @param inputMapping the input mapping
+	 */
 	public void addInputMapping(Mapping inputMapping) {
 		inputMapper.addMapping(inputMapping);
 	}
 
+	/**
+	 * Adds a collection of input mappings. Use when you need full control over
+	 * defining how an subflow input attribute mapping will be perfomed.
+	 * @param inputMappings the input mappings
+	 */
 	public void addInputMappings(Mapping[] inputMappings) {
 		inputMapper.addMappings(inputMappings);
 	}
 
+	/**
+	 * Adds a input mapping that maps a single attribute in parent flow scope
+	 * into subflow scope.
+	 * @param inputAttributeName the attribute in flow scope to map into the
+	 * subflow
+	 */
 	public void addInputAttribute(String inputAttributeName) {
 		PropertyExpression expr = ExpressionFactory.parsePropertyExpression(inputAttributeName);
 		inputMapper.addMapping(new Mapping(new FlowScopeExpression(expr), expr, null));
 	}
 
+	/**
+	 * Adds a collection of input mappings that map attributes in parent flow
+	 * scope into subflow scope.
+	 * @param inputAttributeNames the attributes in flow scope to map into the
+	 * subflow
+	 */
 	public void addInputAttributes(String[] inputAttributeNames) {
 		if (inputAttributeNames == null) {
 			return;
@@ -161,18 +118,40 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 		}
 	}
 
+	/**
+	 * Adds a new output mapping. Use when you need full control over defining
+	 * how a subflow output attribute mapping will be perfomed.
+	 * @param outputMapping the output mapping
+	 */
 	public void addOutputMapping(Mapping outputMapping) {
 		outputMapper.addMapping(outputMapping);
 	}
 
+	/**
+	 * Adds a collection of output mappings. Use when you need full control over
+	 * defining how a subflow output attribute mapping will be perfomed.
+	 * @param outputMappings the output mappings
+	 */
 	public void addOutputMappings(Mapping[] outputMappings) {
 		outputMapper.addMappings(outputMappings);
 	}
 
+	/**
+	 * Adds an output mapping that maps a single subflow output attribute into
+	 * the scope of the resuming parent flow.
+	 * @param outputAttributeName the subflow output attribute to map into the
+	 * parent flow
+	 */
 	public void addOutputAttribute(String outputAttributeName) {
 		outputMapper.addMapping(new MappingBuilder().source(outputAttributeName).value());
 	}
 
+	/**
+	 * Adds a collection of output mappings that map subflow output attributes
+	 * into the scope of the resuming parent flow.
+	 * @param outputAttributeNames the subflow output attributes to map into the
+	 * parent flow
+	 */
 	public void addOutputAttributes(String[] outputAttributeNames) {
 		if (outputAttributeNames == null) {
 			return;
@@ -182,10 +161,18 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 		}
 	}
 
+	/**
+	 * Returns a typed-array of configured input mappings.
+	 * @return the configured input mappings
+	 */
 	public Mapping[] getInputMappings() {
 		return inputMapper.getMappings();
 	}
 
+	/**
+	 * Returns a typed-array of configured output mappings.
+	 * @return the configured output mappings
+	 */
 	public Mapping[] getOutputMappings() {
 		return outputMapper.getMappings();
 	}

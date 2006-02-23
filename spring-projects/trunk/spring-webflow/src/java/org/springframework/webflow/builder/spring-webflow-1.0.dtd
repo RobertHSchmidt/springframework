@@ -15,7 +15,7 @@
 	function of the state's type. Core state types include view states,
 	action states, subflow states, decision states, and end states.
     
-    Each flow definition must specify exactly one start state and at least one end state.
+    Each flow definition must specify exactly one start state.
     Events that occur in transitionable states drive state transitions.
     
 	XML documents that conform to this DTD should declare the following doctype:
@@ -71,7 +71,7 @@
 <!--
 	An attribute about this element.
 	
-	Attributes are simple strings or typed values that allow you to annotate an element.
+	Attributes are simple strings or typed values that allow you to annotate an element with metadata.
 	For example:
 	- an element's 'caption' attribute might serve a GUI tooltip or logging statement
 	- an Action's 'validatorMethod' attribute might specify a target method to invoke on a validator
