@@ -91,11 +91,11 @@ public interface FlowExecutionListener {
 	 * Called when a state transitions, after the transition is matched but
 	 * before the transition occurs.
 	 * @param context the source of the event
-	 * @param nextState the proposed state to transition to
+	 * @param state the proposed state to transition to
 	 * @throws EnterStateVetoException the state transition should not be
 	 * allowed
 	 */
-	public void stateEntering(RequestContext context, State nextState) throws EnterStateVetoException;
+	public void stateEntering(RequestContext context, State state) throws EnterStateVetoException;
 
 	/**
 	 * Called when a state transitions, after the transition occured.

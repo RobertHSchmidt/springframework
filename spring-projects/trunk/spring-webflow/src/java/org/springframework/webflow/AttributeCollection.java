@@ -42,5 +42,5 @@ public interface AttributeCollection extends MapAdaptable {
 	 * more strongly-typed manner.
 	 * @return the attribute collection as an unmodifiable map.
 	 */
-	public UnmodifiableAttributeMap unmodifiable();;
+	public UnmodifiableAttributeMap unmodifiable();
 }
