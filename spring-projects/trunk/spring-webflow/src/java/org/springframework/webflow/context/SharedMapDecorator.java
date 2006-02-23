@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.SharedMap;
+import org.springframework.webflow.ExternalContext.SharedMap;
 
 /**
  * A map decorator that implements <code>SharedMap</code>. By default, simply

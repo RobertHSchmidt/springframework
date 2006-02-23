@@ -21,7 +21,7 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
 import org.springframework.webflow.CollectionUtils;
-import org.springframework.webflow.SharedMap;
+import org.springframework.webflow.ExternalContext.SharedMap;
 import org.springframework.webflow.context.StringKeyedMapAdapter;
 
 /**

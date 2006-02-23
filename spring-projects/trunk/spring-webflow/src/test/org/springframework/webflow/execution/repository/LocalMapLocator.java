@@ -6,7 +6,7 @@ package org.springframework.webflow.execution.repository;
 import java.util.HashMap;
 
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.SharedMap;
+import org.springframework.webflow.ExternalContext.SharedMap;
 import org.springframework.webflow.context.SharedMapDecorator;
 import org.springframework.webflow.execution.repository.support.SharedMapFlowExecutionRepositoryFactory.SharedMapLocator;
 

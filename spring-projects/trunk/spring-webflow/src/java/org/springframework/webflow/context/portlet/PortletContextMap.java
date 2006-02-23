@@ -19,7 +19,7 @@ import java.util.Enumeration;
 
 import javax.portlet.PortletContext;
 
-import org.springframework.webflow.SharedMap;
+import org.springframework.webflow.ExternalContext.SharedMap;
 import org.springframework.webflow.context.StringKeyedMapAdapter;
 
 /**

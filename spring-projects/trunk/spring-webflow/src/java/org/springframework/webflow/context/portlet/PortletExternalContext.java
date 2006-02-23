@@ -23,7 +23,6 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ParameterMap;
-import org.springframework.webflow.SharedAttributeMap;
 
 /**
  * Provides contextual information about a portlet environment that has
