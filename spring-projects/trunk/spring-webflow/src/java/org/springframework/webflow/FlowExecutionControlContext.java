@@ -17,7 +17,6 @@ package org.springframework.webflow;
 
 import java.util.Map;
 
-
 /**
  * Mutable control interface used to manipulate an ongoing flow execution in the
  * context of one client request. Primarily used internally by the various flow

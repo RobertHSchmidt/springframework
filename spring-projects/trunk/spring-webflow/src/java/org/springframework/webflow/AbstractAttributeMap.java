@@ -75,7 +75,8 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 * @param attributeName the attribute name
 	 * @param requiredType the required class of the attribute value
 	 * @return true if so, false otherwise
-	 * @throws IllegalArgumentException when the value is not of the required type
+	 * @throws IllegalArgumentException when the value is not of the required
+	 * type
 	 */
 	public boolean contains(String attributeName, Class requiredType) throws IllegalArgumentException {
 		return attributeAccessor.containsKey(attributeName, requiredType);
@@ -104,7 +105,8 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 * @param attributeName the name of the attribute
 	 * @param requiredType the required type of the attribute value
 	 * @return the attribute value, or null if not found
-	 * @throws IllegalArgumentException when the value is not of the required type
+	 * @throws IllegalArgumentException when the value is not of the required
+	 * type
 	 */
 	public Object get(String attributeName, Class requiredType) throws IllegalArgumentException {
 		return attributeAccessor.get(attributeName, requiredType);
@@ -285,8 +287,8 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	}
 
 	/**
-	 * Returns an integer attribute value in the map, returning the default value
-	 * if no value was found.
+	 * Returns an integer attribute value in the map, returning the default
+	 * value if no value was found.
 	 * @param attributeName the attribute name
 	 * @param defaultValue the default
 	 * @return the integer attribute value

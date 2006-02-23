@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-
 /**
  * An interface for objects that manage the storage of attribute values.
  * 
@@ -43,5 +42,5 @@ public interface AttributeCollection extends MapAdaptable {
 	 * more strongly-typed manner.
 	 * @return the attribute collection as an unmodifiable map.
 	 */
-	public UnmodifiableAttributeMap unmodifiable();;	
+	public UnmodifiableAttributeMap unmodifiable();;
 }

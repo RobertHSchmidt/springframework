@@ -15,10 +15,12 @@
  */
 package org.springframework.webflow;
 
+import java.io.Serializable;
 import java.util.Collections;
+import java.util.Enumeration;
 
 /**
- * A utility class for working with attribute and parameter collections.
+ * A utility class for working with collections used by Spring Web FLow.
  * @author Keith Donald
  */
 public class CollectionUtils {
@@ -34,7 +36,26 @@ public class CollectionUtils {
 	 */
 	public static final ParameterMap EMPTY_PARAMETER_MAP = new ParameterMap(Collections.EMPTY_MAP);
 
+	/**
+	 * The shared, singleton empty enumeration instance.
+	 */
+	public static final EmptyEnumeration EMPTY_ENUMERATION = new EmptyEnumeration();
+
 	private CollectionUtils() {
 
+	}
+
+	private static class EmptyEnumeration implements Enumeration, Serializable {
+		private EmptyEnumeration() {
+
+		}
+
+		public boolean hasMoreElements() {
+			return false;
+		}
+
+		public Object nextElement() {
+			throw new UnsupportedOperationException("There are no elements");
+		}
 	}
 }

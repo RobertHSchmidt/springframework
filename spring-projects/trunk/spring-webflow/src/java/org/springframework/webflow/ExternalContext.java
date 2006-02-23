@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-
 /**
  * A facade that provides access to the state of an external system that has
  * interacted with Spring Web Flow.

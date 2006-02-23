@@ -41,7 +41,7 @@ public class WildcardTransitionCriteria implements TransitionCriteria, Serializa
 	 */
 	private WildcardTransitionCriteria() {
 	}
-	
+
 	public boolean test(RequestContext context) {
 		return true;
 	}

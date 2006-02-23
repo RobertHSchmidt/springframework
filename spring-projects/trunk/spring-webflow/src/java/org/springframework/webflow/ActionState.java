@@ -60,11 +60,11 @@ import org.springframework.core.style.ToStringCreator;
  * the last one in the chain. For example:
  * 
  * <pre>
- *      &lt;action-state id=&quot;setupForm&quot;&gt; 
- *          &lt;action name=&quot;setup&quot; bean=&quot;myAction&quot; method=&quot;setupForm&quot;/&gt; 
- *          &lt;action name=&quot;referenceData&quot; bean=&quot;myAction&quot; method=&quot;setupReferenceData&quot;/&gt; 
- *          &lt;transition on=&quot;referenceData.success&quot; to=&quot;displayForm&quot;/&gt; 
- *      &lt;/action-state&gt;
+ *       &lt;action-state id=&quot;setupForm&quot;&gt; 
+ *           &lt;action name=&quot;setup&quot; bean=&quot;myAction&quot; method=&quot;setupForm&quot;/&gt; 
+ *           &lt;action name=&quot;referenceData&quot; bean=&quot;myAction&quot; method=&quot;setupReferenceData&quot;/&gt; 
+ *           &lt;transition on=&quot;referenceData.success&quot; to=&quot;displayForm&quot;/&gt; 
+ *       &lt;/action-state&gt;
  * </pre>
  * 
  * When the 'setupForm' state above is entered, the 'setup' action will execute,
@@ -201,7 +201,8 @@ public class ActionState extends TransitionableState {
 			}
 			else {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Action execution ["
+					logger
+							.debug("Action execution ["
 									+ (executionCount + 1)
 									+ "] returned a [null] event"
 									+ (it.hasNext() ? ": proceeding to the next action in the list"

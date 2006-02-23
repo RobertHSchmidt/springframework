@@ -78,10 +78,11 @@ public final class Event extends EventObject {
 		this.id = id;
 		if (attributes == null) {
 			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
-		} else {
+		}
+		else {
 			this.attributes = attributes.unmodifiable();
 		}
-		
+
 	}
 
 	/**
@@ -112,7 +113,7 @@ public final class Event extends EventObject {
 	}
 
 	// helpers
-	
+
 	public String toString() {
 		return new ToStringCreator(this).append("source", getSource()).append("id", getId()).append("attributes",
 				getAttributes()).toString();

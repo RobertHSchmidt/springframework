@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-
 /**
  * A service interface that maps attributes between two flows.
  * <p>
@@ -29,10 +28,10 @@ package org.springframework.webflow;
  * <p>
  * 
  * <pre>
- *  Parent Flow Session
- *  -------------------
- *  : flow = myFlow
- *  : flowScope = [map:attribute1=value1, attribute2=value2, attribute3=value3]
+ *   Parent Flow Session
+ *   -------------------
+ *   : flow = myFlow
+ *   : flowScope = [map:attribute1=value1, attribute2=value2, attribute3=value3]
  * </pre>
  * 
  * <p>
@@ -48,10 +47,10 @@ package org.springframework.webflow;
  * <p>
  * 
  * <pre>
- *  Flow Attribute Mapper Configuration
- *  -----------------------------------
- *  : inputMappings = [map:attribute1-&gt;attribute1, attribute3-&gt;attribute4]
- *  : outputMappings = [map:attribute4-&gt;attribute3]
+ *   Flow Attribute Mapper Configuration
+ *   -----------------------------------
+ *   : inputMappings = [map:attribute1-&gt;attribute1, attribute3-&gt;attribute4]
+ *   : outputMappings = [map:attribute4-&gt;attribute3]
  * </pre>
  * 
  * <p>

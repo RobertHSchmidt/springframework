@@ -234,8 +234,8 @@ public class MapAccessor implements MapAdaptable {
 	}
 
 	/**
-	 * Returns an array value in the map, asserting it is of the required
-	 * type if present and throwing an exception if not found.
+	 * Returns an array value in the map, asserting it is of the required type
+	 * if present and throwing an exception if not found.
 	 * @param key the key
 	 * @return the array value
 	 * @throws IllegalArgumentException if the key is not present or present but
@@ -246,7 +246,7 @@ public class MapAccessor implements MapAdaptable {
 		assertAssignableTo(Object[].class, requiredType);
 		return (Object[])assertValueOfType(key, requiredType);
 	}
-	
+
 	/**
 	 * Returns a number value in the map that is of the specified type,
 	 * returning <code>null</code> if no value was found.

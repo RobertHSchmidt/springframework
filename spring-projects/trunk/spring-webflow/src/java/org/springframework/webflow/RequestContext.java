@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-
 /**
  * Central interface that allows clients to access contextual information about
  * an ongoing flow execution within the context of a single client request. The

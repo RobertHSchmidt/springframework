@@ -40,5 +40,5 @@ public interface FlowExecutionStatistics {
 	 * @return true if active, false if flow execution has terminated
 	 */
 	public boolean isActive();
-	
+
 }

@@ -20,7 +20,7 @@ package org.springframework.webflow;
  * invocation, taking into account the information in the provided flow
  * execution request context.
  * <p>
- * Note: this class is a runtime factory.  Instances are used at flow execution
+ * Note: this class is a runtime factory. Instances are used at flow execution
  * time by objects like the {@link ViewState} to produce new
  * {@link ViewSelection view selections}
  * <p>

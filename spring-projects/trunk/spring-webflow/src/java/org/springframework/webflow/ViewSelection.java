@@ -72,7 +72,7 @@ public class ViewSelection implements Serializable {
 	 * Indicates whether or not the view should be rendered after a redirect.
 	 */
 	private final boolean redirect;
-	
+
 	/**
 	 * Creates a new view selection given a view name and a model.
 	 * @param viewName name of the view to render
@@ -110,7 +110,7 @@ public class ViewSelection implements Serializable {
 	public boolean isRedirect() {
 		return redirect;
 	}
-	
+
 	/**
 	 * Return whether this view selection is empty: whether it does not hold any
 	 * view and does not contain a model.
@@ -126,27 +126,29 @@ public class ViewSelection implements Serializable {
 		ViewSelection other = (ViewSelection)o;
 		return ObjectUtils.nullSafeEquals(viewName, other.viewName) && model.equals(other.model);
 	}
-	
+
 	public int hashCode() {
 		return (viewName != null ? viewName.hashCode() : 0) + model.hashCode();
 	}
-	
+
 	public ViewSelection makeForward() {
 		if (!isRedirect()) {
 			return this;
-		} else {
+		}
+		else {
 			return new ViewSelection(viewName, model, false);
 		}
 	}
-	
+
 	public ViewSelection makeRedirect() {
 		if (isRedirect()) {
 			return this;
-		} else {
+		}
+		else {
 			return new ViewSelection(viewName, model, true);
 		}
 	}
-	
+
 	public String toString() {
 		return new ToStringCreator(this).append("viewName", viewName).append("redirect", redirect).append("model",
 				model).toString();

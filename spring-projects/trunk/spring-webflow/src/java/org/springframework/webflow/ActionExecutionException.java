@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-
 /**
  * Thrown if an unhandled exception occurs when an action is executed. Typically
  * wraps another exception noting the root cause failure, which may be checked

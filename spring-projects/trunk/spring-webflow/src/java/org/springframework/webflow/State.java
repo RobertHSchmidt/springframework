@@ -228,11 +228,9 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	public String toString() {
-        String flowName = (flow == null ? "<not set>" : flow.getId());
-        ToStringCreator creator = new ToStringCreator(this).append("id", getId())
-                .append("flow", flowName)
-                .append("entryActionList", entryActionList)
-                .append("exceptionHandlerSet", exceptionHandlerSet);
+		String flowName = (flow == null ? "<not set>" : flow.getId());
+		ToStringCreator creator = new ToStringCreator(this).append("id", getId()).append("flow", flowName).append(
+				"entryActionList", entryActionList).append("exceptionHandlerSet", exceptionHandlerSet);
 		appendToString(creator);
 		return creator.toString();
 	}

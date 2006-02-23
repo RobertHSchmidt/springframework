@@ -47,10 +47,9 @@ public class NoSuchStateException extends FlowArtifactException {
 	 * @param cause the underlying cause of this exception
 	 */
 	public NoSuchStateException(Flow flow, String stateId, Throwable cause) {
-		super(stateId, State.class,
-				"No state with state id '" + stateId + "' exists for flow '" + flow.getId() + "' -- valid states are "
-				+ StylerUtils.style(flow.getStateIds()) + "-- likely programmer error, check your flow configuration",
-				cause);
+		super(stateId, State.class, "No state with state id '" + stateId + "' exists for flow '" + flow.getId()
+				+ "' -- valid states are " + StylerUtils.style(flow.getStateIds())
+				+ "-- likely programmer error, check your flow configuration", cause);
 		this.flow = flow;
 	}
 

@@ -20,7 +20,7 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.binding.util.EmptyEnumeration;
+import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.SharedMap;
 import org.springframework.webflow.context.StringKeyedMapAdapter;
 
@@ -70,7 +70,7 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 
 	protected Enumeration getAttributeNames() {
 		HttpSession session = getSession();
-		return (session == null) ? EmptyEnumeration.INSTANCE : session.getAttributeNames();
+		return (session == null) ? CollectionUtils.EMPTY_ENUMERATION : session.getAttributeNames();
 	}
 
 	public Object getMutex() {
