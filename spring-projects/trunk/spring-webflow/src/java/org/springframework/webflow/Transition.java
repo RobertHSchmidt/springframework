@@ -247,7 +247,7 @@ public class Transition extends AnnotatedObject {
 	 * Thrown when a state transition could not be executed.
 	 * @author Keith Donald
 	 */
-	public class CannotExecuteTransitionException extends FlowException {
+	public static class CannotExecuteTransitionException extends FlowException {
 		
 		/**
 		 * The transition that could not be executed. 
