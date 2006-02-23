@@ -39,7 +39,7 @@ public class UnmodifiableAttributeMap extends AbstractAttributeMap {
 		if (attributes == null) {
 			attributes = Collections.EMPTY_MAP;
 		}
-		initAttributes(Collections.unmodifiableMap(attributes));
+		initAttributes(attributes);
 	}
 
 	public UnmodifiableAttributeMap unmodifiable() {
