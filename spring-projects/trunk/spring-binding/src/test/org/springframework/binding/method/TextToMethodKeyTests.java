@@ -9,20 +9,20 @@ import org.springframework.binding.expression.ExpressionFactory;
 public class TextToMethodKeyTests extends TestCase {
 
 	public void testMethodKeyConversionNoArg() {
-		TextToMethodKey converter = new TextToMethodKey(new DefaultConversionService());
-		MethodKey key = (MethodKey)converter.convert("execute");
+		TextToMethodSignature converter = new TextToMethodSignature(new DefaultConversionService());
+		MethodSignature key = (MethodSignature)converter.convert("execute");
 		assertEquals("Method key wrong", "execute", key.getMethodName());
 	}
 
 	public void testMethodKeyConversionNoArg2() {
-		TextToMethodKey converter = new TextToMethodKey(new DefaultConversionService());
-		MethodKey key = (MethodKey)converter.convert("execute()");
+		TextToMethodSignature converter = new TextToMethodSignature(new DefaultConversionService());
+		MethodSignature key = (MethodSignature)converter.convert("execute()");
 		assertEquals("Method key wrong", "execute", key.getMethodName());
 	}
 
 	public void testMethodKeyConversionWithArgs() {
-		TextToMethodKey converter = new TextToMethodKey(new DefaultConversionService());
-		MethodKey key = (MethodKey)converter.convert("execute(string foo, int bar)");
+		TextToMethodSignature converter = new TextToMethodSignature(new DefaultConversionService());
+		MethodSignature key = (MethodSignature)converter.convert("execute(string foo, int bar)");
 		assertEquals("Method key wrong", "execute", key.getMethodName());
 		assertEquals("Arguments size wrong", 2, key.getParameters().size());
 		assertEquals("Argument 1 name wrong", expression("foo"), key.getParameters().getParameter(0).getName());
@@ -32,8 +32,8 @@ public class TextToMethodKeyTests extends TestCase {
 	}
 	
 	public void testMethodKeyConversionWithArgsButNoTypes() {
-		TextToMethodKey converter = new TextToMethodKey(new DefaultConversionService());
-		MethodKey key = (MethodKey)converter.convert("execute(foo)");
+		TextToMethodSignature converter = new TextToMethodSignature(new DefaultConversionService());
+		MethodSignature key = (MethodSignature)converter.convert("execute(foo)");
 		assertEquals("Method key wrong", "execute", key.getMethodName());
 		assertEquals("Arguments size wrong", 1, key.getParameters().size());
 		assertEquals("Argument 1 name wrong", expression("foo"), key.getParameters().getParameter(0).getName());

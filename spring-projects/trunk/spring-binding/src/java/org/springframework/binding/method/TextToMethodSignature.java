@@ -38,22 +38,22 @@ import org.springframework.util.StringUtils;
  * data binding to retrieve the argument value.
  * </ul>
  * 
- * @see org.springframework.webflow.action.bean.MethodKey
+ * @see org.springframework.webflow.action.bean.MethodSignature
  * 
  * @author Keith Donald
  */
-public class TextToMethodKey extends ConversionServiceAwareConverter {
+public class TextToMethodSignature extends ConversionServiceAwareConverter {
 
 	/**
 	 * Create a new converter that converts strings to MethodKey objects.
 	 */
-	public TextToMethodKey() {
+	public TextToMethodSignature() {
 	}
 
 	/**
 	 * Create a new converter that converts strings to MethodKey objects.
 	 */
-	public TextToMethodKey(ConversionService conversionService) {
+	public TextToMethodSignature(ConversionService conversionService) {
 		super(conversionService);
 	}
 
@@ -62,7 +62,7 @@ public class TextToMethodKey extends ConversionServiceAwareConverter {
 	}
 
 	public Class[] getTargetClasses() {
-		return new Class[] { MethodKey.class };
+		return new Class[] { MethodSignature.class };
 	}
 
 	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
@@ -70,13 +70,13 @@ public class TextToMethodKey extends ConversionServiceAwareConverter {
 		encodedMethodKey = encodedMethodKey.trim();
 		int openParan = encodedMethodKey.indexOf('(');
 		if (openParan == -1) {
-			return new MethodKey(encodedMethodKey);
+			return new MethodSignature(encodedMethodKey);
 		}
 		else {
 			String methodName = encodedMethodKey.substring(0, openParan);
 			int closeParan = encodedMethodKey.lastIndexOf(')');
 			if (closeParan == -1) {
-				throw new ConversionException(encodedMethodKey, MethodKey.class, null,
+				throw new ConversionException(encodedMethodKey, MethodSignature.class, null,
 						"Syntax error: No close parenthesis specified for method parameter list");
 			}
 			String delimParamList = encodedMethodKey.substring(openParan + 1, closeParan);
@@ -93,7 +93,7 @@ public class TextToMethodKey extends ConversionServiceAwareConverter {
 					params.add(new Parameter(parseExpression(param)));
 				}
 			}
-			return new MethodKey(methodName, params);
+			return new MethodSignature(methodName, params);
 		}
 	}
 }

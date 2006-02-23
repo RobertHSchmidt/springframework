@@ -29,8 +29,8 @@ import org.springframework.binding.convert.Converter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.format.support.SimpleFormatterFactory;
 import org.springframework.binding.mapping.Mapping;
-import org.springframework.binding.method.MethodKey;
-import org.springframework.binding.method.TextToMethodKey;
+import org.springframework.binding.method.MethodSignature;
+import org.springframework.binding.method.TextToMethodSignature;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -85,7 +85,7 @@ public class DefaultConversionService implements ConversionService {
 		addConverter(new TextToBoolean());
 		addConverter(new TextToExpression());
 		addConverter(new TextToExpressions());
-		addConverter(new TextToMethodKey());
+		addConverter(new TextToMethodSignature());
 		addConverter(new TextToLabeledEnum());
 		addDefaultAlias(String.class);
 		addDefaultAlias(Short.class);
@@ -102,7 +102,7 @@ public class DefaultConversionService implements ConversionService {
 		addDefaultAlias(Expression.class);
 		addAlias("labeledEnum", LabeledEnum.class);
 		addAlias("expressionString", Expression[].class);
-		addAlias("method", MethodKey.class);
+		addAlias("method", MethodSignature.class);
 	}
 
 	public void addConverter(Converter converter) {

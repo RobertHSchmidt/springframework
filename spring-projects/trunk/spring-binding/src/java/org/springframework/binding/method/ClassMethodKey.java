@@ -27,7 +27,7 @@ import org.springframework.util.ObjectUtils;
  * 
  * @author Keith Donald
  */
-public class Signature implements Serializable {
+class ClassMethodKey implements Serializable {
 
 	/**
 	 * The class the method is a member of.
@@ -54,7 +54,7 @@ public class Signature implements Serializable {
 	 * 
 	 * @param name the name
 	 */
-	public Signature(Class type, String methodName, Class[] parameterTypes) {
+	public ClassMethodKey(Class type, String methodName, Class[] parameterTypes) {
 		this.type = type;
 		this.methodName = methodName;
 		this.parameterTypes = parameterTypes;
@@ -128,10 +128,10 @@ public class Signature implements Serializable {
 	}
 
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Signature)) {
+		if (!(obj instanceof ClassMethodKey)) {
 			return false;
 		}
-		Signature other = (Signature)obj;
+		ClassMethodKey other = (ClassMethodKey)obj;
 		return type.equals(other.type) && methodName.equals(other.methodName)
 				&& argumentTypesEqual(other.parameterTypes);
 	}

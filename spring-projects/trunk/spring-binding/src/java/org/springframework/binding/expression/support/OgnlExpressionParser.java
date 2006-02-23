@@ -19,13 +19,9 @@ import java.util.Map;
 
 import ognl.Ognl;
 import ognl.OgnlException;
-import ognl.OgnlRuntime;
-import ognl.PropertyAccessor;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ParserException;
-import org.springframework.binding.map.MapAdaptable;
-import org.springframework.binding.map.MutableAttributeCollection;
 
 /**
  * An expression parser that parses Ognl expressions.
@@ -33,35 +29,12 @@ import org.springframework.binding.map.MutableAttributeCollection;
  */
 public class OgnlExpressionParser extends AbstractExpressionParser {
 
-	public OgnlExpressionParser() {
-		OgnlRuntime.setPropertyAccessor(MapAdaptable.class, new MapAdaptablePropertyAccessor());
-		OgnlRuntime.setPropertyAccessor(MutableAttributeCollection.class,
-				new MutableAttributeCollectionPropertyAccessor());
-	}
-
 	public Expression parseExpression(String expressionString, Map parseContext) throws ParserException {
 		try {
 			return new OgnlExpression(Ognl.parseExpression(cutExpression(expressionString)));
 		}
 		catch (OgnlException e) {
 			throw new ParserException(expressionString, parseContext, e);
-		}
-	}
-
-	private static class MapAdaptablePropertyAccessor implements PropertyAccessor {
-		public Object getProperty(Map context, Object target, Object name) throws OgnlException {
-			return ((MapAdaptable)target).getMap().get(name);
-		}
-
-		public void setProperty(Map context, Object target, Object name, Object value) throws OgnlException {
-			throw new UnsupportedOperationException(
-					"Cannot mutate immutable attribute collections; operation disallowed");
-		}
-	}
-
-	private static class MutableAttributeCollectionPropertyAccessor extends MapAdaptablePropertyAccessor {
-		public void setProperty(Map context, Object target, Object name, Object value) throws OgnlException {
-			((MutableAttributeCollection)target).put((String)name, value);
 		}
 	}
 }

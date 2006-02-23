@@ -25,7 +25,7 @@ import org.springframework.core.style.ToStringCreator;
  * 
  * @author Keith Donald
  */
-public class MethodKey implements Serializable {
+public class MethodSignature implements Serializable {
 
 	/**
 	 * The name of the method, e.g execute
@@ -42,7 +42,7 @@ public class MethodKey implements Serializable {
 	 * 
 	 * @param methodName the name of the method.
 	 */
-	public MethodKey(String methodName) {
+	public MethodSignature(String methodName) {
 		this(methodName, Parameters.NONE);
 	}
 
@@ -51,7 +51,7 @@ public class MethodKey implements Serializable {
 	 * @param methodName the name of the method
 	 * @param parameter the method argument
 	 */
-	public MethodKey(String methodName, Parameter parameter) {
+	public MethodSignature(String methodName, Parameter parameter) {
 		this(methodName, new Parameters(parameter));
 	}
 
@@ -60,7 +60,7 @@ public class MethodKey implements Serializable {
 	 * @param methodName the name of the method
 	 * @param parameters the method arguments
 	 */
-	public MethodKey(String methodName, Parameters parameters) {
+	public MethodSignature(String methodName, Parameters parameters) {
 		this.methodName = methodName;
 		this.parameters = parameters;
 	}
@@ -74,10 +74,10 @@ public class MethodKey implements Serializable {
 	}
 
 	public boolean equals(Object obj) {
-		if (!(obj instanceof MethodKey)) {
+		if (!(obj instanceof MethodSignature)) {
 			return false;
 		}
-		MethodKey other = (MethodKey)obj;
+		MethodSignature other = (MethodSignature)obj;
 		return methodName.equals(methodName) && parameters.equals(other.parameters);
 	}
 

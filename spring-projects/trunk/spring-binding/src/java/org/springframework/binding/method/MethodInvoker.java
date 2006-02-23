@@ -47,7 +47,7 @@ public class MethodInvoker {
 	 */
 	private CachingMapDecorator methodCache = new CachingMapDecorator(true) {
 		public Object create(Object key) {
-			return ((Signature)key).getMethod();
+			return ((ClassMethodKey)key).getMethod();
 		}
 	};
 
@@ -62,16 +62,16 @@ public class MethodInvoker {
 	 * Invoke the method on the bean provided. Argument values are pulled from
 	 * the provided argument source.
 	 * 
-	 * @param methodKey the definition of the method to invoke, including the
+	 * @param signature the definition of the method to invoke, including the
 	 * method name and the method argument types
 	 * @param bean the bean to invoke
 	 * @param parameterValueSource the source for method parameter values
 	 * @return the invoked method's return value
 	 * @throws MethodInvocationException the method could not be invoked
 	 */
-	public Object invoke(MethodKey methodKey, Object bean, Object parameterValueSource)
+	public Object invoke(MethodSignature signature, Object bean, Object parameterValueSource)
 			throws MethodInvocationException {
-		Parameters parameters = methodKey.getParameters();
+		Parameters parameters = signature.getParameters();
 		Object[] parameterValues = new Object[parameters.size()];
 		for (int i = 0; i < parameters.size(); i++) {
 			Parameter parameter = (Parameter)parameters.getParameter(i);
@@ -87,22 +87,22 @@ public class MethodInvoker {
 				}
 			}
 		}
-		Signature signature = new Signature(bean.getClass(), methodKey.getMethodName(), parameterTypes);
+		ClassMethodKey key = new ClassMethodKey(bean.getClass(), signature.getMethodName(), parameterTypes);
 		try {
-			Method method = (Method)methodCache.get(signature);
+			Method method = (Method)methodCache.get(key);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Invoking method with signature [" + signature + "] with arguments "
+				logger.debug("Invoking method with signature [" + key + "] with arguments "
 						+ StylerUtils.style(parameterValues) + " on bean [" + bean + "]");
 
 			}
 			Object returnValue = method.invoke(bean, parameterValues);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Invoked method with signature [" + signature + "]' returned value [" + returnValue + "]");
+				logger.debug("Invoked method with signature [" + key + "]' returned value [" + returnValue + "]");
 			}
 			return returnValue;
 		}
 		catch (Exception e) {
-			throw new MethodInvocationException(signature, parameterValues, e);
+			throw new MethodInvocationException(key, parameterValues, e);
 		}
 	}
 

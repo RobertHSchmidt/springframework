@@ -32,7 +32,7 @@ public class InvalidMethodSignatureException extends NestedRuntimeException {
 	 * @param methodKey the method key
 	 * @param cause the cause
 	 */
-	public InvalidMethodSignatureException(Signature signature, Exception cause) {
+	public InvalidMethodSignatureException(ClassMethodKey signature, Exception cause) {
 		super("Could not resolve method with signature " + signature, cause);
 	}
 }
