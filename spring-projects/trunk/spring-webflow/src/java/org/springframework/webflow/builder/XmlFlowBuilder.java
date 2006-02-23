@@ -414,7 +414,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected Flow parseFlow(FlowArtifactParameters flowParameters, Element flowElement) {
 		Assert.state(FLOW_ELEMENT.equals(flowElement.getTagName()), "This is not the '" + FLOW_ELEMENT + "' element");
 		initLocalFlowArtifactFactoryRegistry(flowElement);
-		FlowArtifactParameters parameters = flowParameters.putAttributes(parseAttributes(flowElement));
+		FlowArtifactParameters parameters = flowParameters.putAll(parseAttributes(flowElement));
 		Flow flow = getLocalFlowArtifactFactory().createFlow(parameters);
 		parseAndAddFlowVariables(flowElement, flow);
 		parseAndAddFlowActions(flowElement, flow);

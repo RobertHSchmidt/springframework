@@ -88,7 +88,7 @@ public class FlowArtifactParameters implements Serializable {
 	 * @param properties the properties to apply and then override
 	 * @return the artifact parameters
 	 */
-	public FlowArtifactParameters putAttributes(AttributeCollection attributes) {
+	public FlowArtifactParameters putAll(AttributeCollection attributes) {
 		if (attributes != null) {
 			return new FlowArtifactParameters(getId(), new AttributeMap(getAttributes()).putAll(attributes));
 		}

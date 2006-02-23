@@ -159,7 +159,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	public void init(FlowArtifactParameters flowParameters) throws FlowBuilderException {
-		setFlow(getFlowArtifactFactory().createFlow(flowParameters.putAttributes(flowAttributes())));
+		setFlow(getFlowArtifactFactory().createFlow(flowParameters.putAll(flowAttributes())));
 	}
 
 	protected MappingBuilder mapping() {
