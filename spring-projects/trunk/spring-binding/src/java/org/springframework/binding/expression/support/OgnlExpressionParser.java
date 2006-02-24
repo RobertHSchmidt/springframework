@@ -15,8 +15,6 @@
  */
 package org.springframework.binding.expression.support;
 
-import java.util.Map;
-
 import ognl.Ognl;
 import ognl.OgnlException;
 import ognl.OgnlRuntime;
@@ -32,16 +30,16 @@ import org.springframework.binding.expression.PropertyExpression;
  */
 public class OgnlExpressionParser extends AbstractExpressionParser {
 
-	public Expression parseExpression(String expressionString, Map parseContext) throws ParserException {
-		return parsePropertyExpression(expressionString, parseContext);
+	public Expression parseExpression(String expressionString) throws ParserException {
+		return parsePropertyExpression(expressionString);
 	}
 
-	public PropertyExpression parsePropertyExpression(String expressionString, Map parseContext) throws ParserException {
+	public PropertyExpression parsePropertyExpression(String expressionString) throws ParserException {
 		try {
 			return new OgnlExpression(Ognl.parseExpression(cutExpression(expressionString)));
 		}
 		catch (OgnlException e) {
-			throw new ParserException(expressionString, parseContext, e);
+			throw new ParserException(expressionString, e);
 		}
 	}
 

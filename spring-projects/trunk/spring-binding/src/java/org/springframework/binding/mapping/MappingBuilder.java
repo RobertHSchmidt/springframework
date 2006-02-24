@@ -1,7 +1,5 @@
 package org.springframework.binding.mapping;
 
-import java.util.Collections;
-
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
@@ -18,7 +16,6 @@ import org.springframework.util.Assert;
  * 
  * <pre>
  * MappingBuilder mapping = new MappingBuilder();
- * 
  * Mapping result = mapping.source(&quot;foo&quot;).target(&quot;bar&quot;).from(String.class).to(Long.class).value();
  * </pre>
  * 
@@ -93,7 +90,7 @@ public class MappingBuilder {
 	 * @return this, to support call-chaining
 	 */
 	public MappingBuilder source(String expressionString) {
-		sourceExpression = expressionParser.parseExpression(expressionString, Collections.EMPTY_MAP);
+		sourceExpression = expressionParser.parseExpression(expressionString);
 		return this;
 	}
 
@@ -103,8 +100,7 @@ public class MappingBuilder {
 	 * @return this, to support call-chaining
 	 */
 	public MappingBuilder target(String expressionString) {
-		targetExpression = (PropertyExpression)expressionParser
-				.parseExpression(expressionString, Collections.EMPTY_MAP);
+		targetExpression = (PropertyExpression)expressionParser.parseExpression(expressionString);
 		return this;
 	}
 

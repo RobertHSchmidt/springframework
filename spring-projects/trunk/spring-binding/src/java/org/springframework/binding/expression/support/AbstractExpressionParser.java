@@ -17,11 +17,11 @@ package org.springframework.binding.expression.support;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.ParserException;
+import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.util.StringUtils;
 
 /**
@@ -78,7 +78,7 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	 * string. @param expressionString the expression string @return the parsed
 	 * expressions @throws ParserException when the expressions cannot be parsed
 	 */
-	public Expression[] parseExpressions(String expressionString, Map parseContext) throws ParserException {
+	public Expression[] parseExpressions(String expressionString) throws ParserException {
 		List expressions = new LinkedList();
 		if (StringUtils.hasText(expressionString)) {
 			int startIdx = 0;
@@ -92,8 +92,7 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 					}
 					int exprEndIdx = expressionString.indexOf(getExpressionSuffix(), exprStartIdx);
 					if (exprEndIdx >= exprStartIdx) {
-						expressions.add(parseExpression(expressionString.substring(exprStartIdx, exprEndIdx + 1),
-								parseContext));
+						expressions.add(parseExpression(expressionString.substring(exprStartIdx, exprEndIdx + 1)));
 						startIdx = exprEndIdx + 1;
 					}
 					else {
@@ -110,4 +109,9 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 		}
 		return (Expression[])expressions.toArray(new Expression[expressions.size()]);
 	}
+
+	public abstract Expression parseExpression(String expressionString) throws ParserException;
+
+	public abstract PropertyExpression parsePropertyExpression(String expressionString) throws ParserException, UnsupportedOperationException;
+	
 }

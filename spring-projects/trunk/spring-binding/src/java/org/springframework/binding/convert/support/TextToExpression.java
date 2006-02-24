@@ -62,6 +62,6 @@ public class TextToExpression extends AbstractConverter {
 	}
 
 	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
-		return getExpressionParser().parseExpression((String)source, context);
+		return getExpressionParser().parseExpression((String)source);
 	}
 }
