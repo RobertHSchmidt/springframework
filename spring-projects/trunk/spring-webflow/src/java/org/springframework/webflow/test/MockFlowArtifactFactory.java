@@ -5,7 +5,7 @@ import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.registry.FlowRegistryImpl;
-import org.springframework.webflow.registry.RegistryFlowArtifactFactory;
+import org.springframework.webflow.registry.RegistryBackedFlowArtifactFactory;
 import org.springframework.webflow.registry.StaticFlowHolder;
 
 /**
@@ -21,7 +21,7 @@ import org.springframework.webflow.registry.StaticFlowHolder;
  * 
  * @author Keith Donald
  */
-public class MockFlowArtifactFactory extends RegistryFlowArtifactFactory {
+public class MockFlowArtifactFactory extends RegistryBackedFlowArtifactFactory {
 
 	/**
 	 * Creates a new mock flow artifact factory.
