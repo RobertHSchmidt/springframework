@@ -17,25 +17,21 @@ package org.springframework.webflow.samples.phonebook.webflow;
 
 import java.io.File;
 
-import org.springframework.binding.map.MockParameterMap;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.Action;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.builder.FlowArtifactFactory;
-import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
-import org.springframework.webflow.builder.FlowArtifactParameters;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook;
 import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
 import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
+import org.springframework.webflow.test.MockFlowArtifactFactory;
+import org.springframework.webflow.test.MockParameterMap;
 
 public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
@@ -92,32 +88,20 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	}
 
 	protected FlowArtifactFactory createFlowArtifactFactory() {
-		return new TestFlowArtifactFactory();
-	}
+		MockFlowArtifactFactory flowArtifactFactory = new MockFlowArtifactFactory();
 
-	/**
-	 * Used to wire in test implementations of artifacts used by the flow, such
-	 * as the phonebook and the detail subflow
-	 */
-	protected class TestFlowArtifactFactory extends FlowArtifactFactoryAdapter {
-		public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
-			// there is only one global action in this flow and its always the
-			// same
-			return toAction(phonebook, parameters);
-		}
-
-		public Flow getSubflow(String id) throws FlowArtifactException {
-			Flow detail = new Flow(id);
-			// test responding to finish result
-			EndState finish = new EndState(detail, "finish");
-			finish.addEntryAction(new AbstractAction() {
-				public Event doExecute(RequestContext context) throws Exception {
-					// test attribute mapping
-					assertEquals(new Long(1), context.getFlowScope().get("id"));
-					return success();
-				}
-			});
-			return detail;
-		}
+		Flow detailFlow = new Flow("detail-flow");
+		// test responding to finish result
+		EndState finish = new EndState(detailFlow, "finish");
+		finish.addEntryAction(new AbstractAction() {
+			public Event doExecute(RequestContext context) throws Exception {
+				// test attribute mapping
+				assertEquals(new Long(1), context.getFlowScope().get("id"));
+				return success();
+			}
+		});
+		flowArtifactFactory.registerSubFlow(detailFlow);
+		flowArtifactFactory.registerBean("phonebook", phonebook);
+		return flowArtifactFactory;
 	}
 }

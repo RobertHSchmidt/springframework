@@ -3,18 +3,14 @@ package org.springframework.webflow.samples.sellitem;
 import java.io.File;
 
 import org.easymock.MockControl;
-import org.springframework.binding.map.MockParameterMap;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.Action;
-import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.builder.FlowArtifactFactory;
-import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
-import org.springframework.webflow.builder.FlowArtifactParameters;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
+import org.springframework.webflow.test.MockFlowArtifactFactory;
+import org.springframework.webflow.test.MockParameterMap;
 
 public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
@@ -81,12 +77,8 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	protected FlowArtifactFactory createFlowArtifactFactory() {
 		saleProcessorControl = MockControl.createControl(SaleProcessor.class);
 		saleProcessor = (SaleProcessor)saleProcessorControl.getMock();
-		return new FlowArtifactFactoryAdapter() {
-			@Override
-			public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
-				// there is only one global action in this flow
-				return new LocalBeanInvokingAction(saleProcessor);
-			}
-		};
+		MockFlowArtifactFactory flowArtifactFactory = new MockFlowArtifactFactory();
+		flowArtifactFactory.registerBean("saleProcessor", saleProcessor);
+		return flowArtifactFactory;
 	}
 }

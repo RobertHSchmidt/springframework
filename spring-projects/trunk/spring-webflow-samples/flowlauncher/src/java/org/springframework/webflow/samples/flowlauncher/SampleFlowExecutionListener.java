@@ -15,9 +15,9 @@
  */
 package org.springframework.webflow.samples.flowlauncher;
 
-import org.springframework.binding.map.AttributeMap;
-import org.springframework.binding.map.ParameterMap;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.ParameterMap;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.execution.EnterStateVetoException;
