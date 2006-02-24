@@ -17,6 +17,7 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.expression.support.OgnlExpressionParser;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.util.StringUtils;
@@ -166,8 +167,9 @@ public class StateTests extends TestCase {
 		Flow flow = new Flow("myFlow");
 		ActionState mapperState = new ActionState(flow, "mapperState");
 		DefaultAttributeMapper mapper = new DefaultAttributeMapper();
-		mapper.addMapping(new MappingBuilder().source("externalContext.requestParameterMap.parentInputAttribute")
-				.target("flowScope.parentInputAttribute").value());
+		mapper.addMapping(new MappingBuilder(new OgnlExpressionParser()).source(
+				"externalContext.requestParameterMap.parentInputAttribute").target("flowScope.parentInputAttribute")
+				.value());
 		Action mapperAction = new AttributeMapperAction(mapper);
 		mapperState.addAction(mapperAction);
 		mapperState.addTransition(new Transition(on("success"), to("subFlowState")));

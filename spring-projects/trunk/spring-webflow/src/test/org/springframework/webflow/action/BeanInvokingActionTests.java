@@ -17,6 +17,8 @@ package org.springframework.webflow.action;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.support.OgnlExpressionParser;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.Parameter;
 import org.springframework.binding.method.Parameters;
@@ -30,7 +32,7 @@ import org.springframework.webflow.test.MockRequestContext;
  * @author Keith Donald
  */
 public class BeanInvokingActionTests extends TestCase {
-	
+
 	public static class Bean {
 		private String datum1;
 
@@ -76,7 +78,8 @@ public class BeanInvokingActionTests extends TestCase {
 		AttributeMap attributes = new AttributeMap();
 		attributes.put("foo", "a string value");
 		context.setLastEvent(new Event(this, "submit", attributes));
-		context.setAttribute("method", new MethodSignature("execute", new Parameter(String.class, "lastEvent.attributes.foo")));
+		context.setAttribute("method", new MethodSignature("execute", new Parameter(String.class,
+				expression("lastEvent.attributes.foo"))));
 		context.setAttribute("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
@@ -95,7 +98,8 @@ public class BeanInvokingActionTests extends TestCase {
 		attributes.put("bar", "12345");
 		context.setLastEvent(new Event(this, "submit", attributes));
 		context.setAttribute("method", new MethodSignature("execute", new Parameters(new Parameter[] {
-				new Parameter(String.class, "lastEvent.attributes.foo"), new Parameter(Integer.class, "lastEvent.attributes.bar") })));
+				new Parameter(String.class, expression("lastEvent.attributes.foo")),
+				new Parameter(Integer.class, expression("lastEvent.attributes.bar")) })));
 		context.setAttribute("bean", "bean");
 		Bean bean = (Bean)beanFactory.getBean("bean");
 		action.execute(context);
@@ -104,4 +108,7 @@ public class BeanInvokingActionTests extends TestCase {
 		assertEquals("Property not set:", new Integer(12345), bean.datum2);
 	}
 
+	private Expression expression(String string) {
+		return new OgnlExpressionParser().parseExpression(string, null);
+	}
 }

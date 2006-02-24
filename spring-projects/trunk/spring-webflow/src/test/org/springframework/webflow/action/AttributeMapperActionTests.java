@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.util.ExpressionUtils;
 
 /**
  * Unit test for the AttributeMapperAction.
@@ -32,8 +33,8 @@ public class AttributeMapperActionTests extends TestCase {
 
 	public void testMapping() throws Exception {
 		DefaultAttributeMapper mapper = new DefaultAttributeMapper();
-		mapper.addMapping(new MappingBuilder().source("${externalContext.requestParameterMap.foo}").target(
-				"${flowScope.bar}").value());
+		mapper.addMapping(new MappingBuilder(ExpressionUtils.getDefaultExpressionParser()).source(
+				"${externalContext.requestParameterMap.foo}").target("${flowScope.bar}").value());
 		AttributeMapperAction action = new AttributeMapperAction(mapper);
 
 		MockRequestContext context = new MockRequestContext();

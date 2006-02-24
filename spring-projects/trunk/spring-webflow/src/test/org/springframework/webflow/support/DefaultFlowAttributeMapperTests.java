@@ -17,6 +17,7 @@ package org.springframework.webflow.support;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.expression.support.OgnlExpressionParser;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.binding.method.MethodSignature;
@@ -47,7 +48,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		mapper = new DefaultFlowAttributeMapper();
-		mapping = new MappingBuilder();
+		mapping = new MappingBuilder(new OgnlExpressionParser());
 		context = new MockRequestContext();
 		parentSession = new MockFlowSession();
 		subflowSession = new MockFlowSession();
@@ -71,27 +72,6 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		mapper.mapSubflowOutput(subflowOutput.unmodifiable(), context);
 		assertEquals(1, parentSession.getScope().size());
 		assertEquals("xValue", parentSession.getScope().get("y"));
-	}
-
-	public void testSimpleMapping() {
-		mapper.addInputAttributes(new String[] { "someAttribute", "someOtherAttribute" });
-		mapper.addOutputAttributes(new String[] { "someAttribute", "someOtherAttribute" });
-
-		context.setActiveSession(parentSession);
-		context.getFlowScope().put("someAttribute", "someValue");
-		context.getFlowScope().put("someOtherAttribute", "someOtherValue");
-		AttributeMap input = mapper.createSubflowInput(context);
-		assertEquals(2, input.size());
-		assertEquals("someValue", input.get("someAttribute"));
-		assertEquals("someOtherValue", input.get("someOtherAttribute"));
-
-		AttributeMap subflowOutput = new AttributeMap();
-		subflowOutput.put("someAttribute", "someUpdatedValue");
-		subflowOutput.put("someOtherAttribute", "someOtherUpdatedValue");
-		mapper.mapSubflowOutput(subflowOutput.unmodifiable(), context);
-		assertEquals(2, parentSession.getScope().size());
-		assertEquals("someUpdatedValue", parentSession.getScope().get("someAttribute"));
-		assertEquals("someOtherUpdatedValue", parentSession.getScope().get("someOtherAttribute"));
 	}
 
 	public void testBeanPropertyMapping() {

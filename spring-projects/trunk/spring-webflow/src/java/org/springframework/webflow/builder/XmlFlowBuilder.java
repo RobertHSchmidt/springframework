@@ -34,7 +34,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
-import org.springframework.binding.expression.ExpressionFactory;
+import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.method.MethodSignature;
@@ -88,8 +88,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *           &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *           &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -704,7 +704,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			action.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)) {
-			MethodSignature method = (MethodSignature)fromStringTo(MethodSignature.class).execute(element.getAttribute(METHOD_ATTRIBUTE));
+			MethodSignature method = (MethodSignature)fromStringTo(MethodSignature.class).execute(
+					element.getAttribute(METHOD_ATTRIBUTE));
 			action.setMethod(method);
 		}
 		if (element.hasAttribute(RESULT_NAME_ATTRIBUTE)) {
@@ -874,7 +875,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				for (Iterator it = outputElements.iterator(); it.hasNext();) {
 					parseAndAddOutputMapping((Element)it.next(), outputMappings);
 				}
-				attributeMapper.addOutputMappings((Mapping[])outputMappings.toArray(new Mapping[outputMappings.size()]));
+				attributeMapper
+						.addOutputMappings((Mapping[])outputMappings.toArray(new Mapping[outputMappings.size()]));
 				return attributeMapper;
 			}
 		}
@@ -889,24 +891,25 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		String value = element.getAttribute(VALUE_ATTRIBUTE);
 		String as = element.getAttribute(AS_ATTRIBUTE);
 		ConversionExecutor typeConverter = parseTypeConverter(element);
+		ExpressionParser parser = getExpressionParser();
 		if (StringUtils.hasText(name)) {
 			Assert.isTrue(!StringUtils.hasText(value),
 					"The 'name' attribute cannot be used with the 'value' attribute -- use one or the other");
 			if (StringUtils.hasText(as)) {
-				inputMappings.add(new Mapping(new FlowScopeExpression(name), ExpressionFactory
-						.parsePropertyExpression(as), typeConverter));
+				inputMappings.add(new Mapping(new FlowScopeExpression(parser.parseExpression(name, null)), parser
+						.parsePropertyExpression(as, null), typeConverter));
 			}
 			else {
-				inputMappings.add(new Mapping(new FlowScopeExpression(name), ExpressionFactory
-						.parsePropertyExpression(name), typeConverter));
+				inputMappings.add(new Mapping(new FlowScopeExpression(parser.parseExpression(name, null)),
+						getExpressionParser().parsePropertyExpression(name, null), typeConverter));
 			}
 		}
 		else if (StringUtils.hasText(value)) {
 			// "value" allows you to specify the value that should get mapped
 			// using an expression against the request context
 			Assert.hasText(as, "The 'as' attribute is required with the 'value' attribute");
-			inputMappings.add(new Mapping(ExpressionFactory.parseExpression(value), ExpressionFactory
-					.parsePropertyExpression(as), typeConverter));
+			inputMappings.add(new Mapping(getExpressionParser().parseExpression(value, null), getExpressionParser()
+					.parsePropertyExpression(as, null), typeConverter));
 		}
 		else {
 			throw new FlowBuilderException(this,
@@ -923,20 +926,21 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		String as = element.getAttribute(AS_ATTRIBUTE);
 		String collection = element.getAttribute(COLLECTION_ATTRIBUTE);
 		ConversionExecutor typeConverter = parseTypeConverter(element);
+		ExpressionParser parser = getExpressionParser();
 		if (StringUtils.hasText(as)) {
-			outputMappings.add(new Mapping(ExpressionFactory.parseExpression(name), ExpressionFactory
-					.parsePropertyExpression(as), typeConverter));
+			outputMappings.add(new Mapping(parser.parseExpression(name, null), getExpressionParser()
+					.parsePropertyExpression(as, null), typeConverter));
 		}
 		else {
 			if (StringUtils.hasText(collection)) {
 				PropertyExpression collectionExpression = new CollectionAddingPropertyExpression(
-						new FlowScopeExpression(collection));
-				outputMappings.add(new Mapping(ExpressionFactory.parseExpression(name), collectionExpression,
+						new FlowScopeExpression(parser.parseExpression(collection, null)));
+				outputMappings.add(new Mapping(getExpressionParser().parseExpression(name, null), collectionExpression,
 						typeConverter));
 			}
 			else {
-				outputMappings.add(new Mapping(ExpressionFactory.parseExpression(name), ExpressionFactory
-						.parsePropertyExpression(name), typeConverter));
+				outputMappings.add(new Mapping(getExpressionParser().parseExpression(name, null), getExpressionParser()
+						.parsePropertyExpression(name, null), typeConverter));
 			}
 		}
 	}
@@ -1012,11 +1016,19 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	/**
+	 * Returns the configured expression parser.
+	 * @return the expression parser
+	 */
+	private ExpressionParser getExpressionParser() {
+		return getFlowArtifactFactory().getExpressionParser();
+	}
+
+	/**
 	 * A local artifact factory that searches local registries first before
 	 * querying the global, externally managed artifact factory.
 	 * @author Keith Donald
 	 */
-	private class LocalFlowArtifactFactory extends FlowArtifactFactoryAdapter {
+	private class LocalFlowArtifactFactory extends DefaultFlowArtifactFactory {
 
 		/**
 		 * The stack of registries.

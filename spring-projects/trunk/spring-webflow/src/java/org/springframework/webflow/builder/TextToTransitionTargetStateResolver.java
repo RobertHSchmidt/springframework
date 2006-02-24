@@ -19,8 +19,6 @@ import java.util.Map;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
-import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 
@@ -51,11 +49,6 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 	private static final String BEAN_PREFIX = "bean:";
 
 	/**
-	 * Parser to user for parsing transition criteria expressions.
-	 */
-	private ExpressionParser expressionParser = ExpressionParserUtils.getDefaultExpressionParser();
-
-	/**
 	 * Locator to use for loading custom TransitionCriteria beans.
 	 */
 	private FlowArtifactFactory flowArtifactFactory;
@@ -79,7 +72,7 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 
 	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
 		String encodedCriteria = (String)source;
-		if (expressionParser.isExpression(encodedCriteria)) {
+		if (flowArtifactFactory.getExpressionParser().isExpression(encodedCriteria)) {
 			throw new UnsupportedOperationException("Target state resolver expressions are not yet supported");
 		}
 		else if (encodedCriteria.startsWith(BEAN_PREFIX)) {

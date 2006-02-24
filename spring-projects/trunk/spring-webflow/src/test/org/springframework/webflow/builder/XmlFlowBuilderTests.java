@@ -197,7 +197,7 @@ public class XmlFlowBuilderTests extends TestCase {
 	 * 
 	 * @author Erwin Vervaet
 	 */
-	public static class TestFlowArtifactFactory extends FlowArtifactFactoryAdapter {
+	public static class TestFlowArtifactFactory extends DefaultFlowArtifactFactory {
 
 		public Flow getSubflow(String id) throws FlowArtifactException {
 			if ("subFlow1".equals(id) || "subFlow2".equals(id)) {

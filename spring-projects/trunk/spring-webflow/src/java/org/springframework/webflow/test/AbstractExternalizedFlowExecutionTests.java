@@ -19,7 +19,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.builder.FlowArtifactFactory;
-import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.builder.DefaultFlowArtifactFactory;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
@@ -84,7 +84,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @return the flow artifact factory
 	 */
 	protected FlowArtifactFactory createFlowArtifactFactory() {
-		return new FlowArtifactFactoryAdapter();
+		return new DefaultFlowArtifactFactory();
 	}
 
 	/**

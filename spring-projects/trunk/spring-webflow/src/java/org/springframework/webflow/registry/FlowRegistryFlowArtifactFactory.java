@@ -27,7 +27,7 @@ import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.builder.FlowArtifactFactory;
-import org.springframework.webflow.builder.FlowArtifactFactoryAdapter;
+import org.springframework.webflow.builder.DefaultFlowArtifactFactory;
 import org.springframework.webflow.builder.FlowArtifactParameters;
 
 /**
@@ -40,7 +40,7 @@ import org.springframework.webflow.builder.FlowArtifactParameters;
  * 
  * @author Keith Donald
  */
-public class FlowRegistryFlowArtifactFactory extends FlowArtifactFactoryAdapter implements ResourceLoaderAware {
+public class FlowRegistryFlowArtifactFactory extends DefaultFlowArtifactFactory implements ResourceLoaderAware {
 
 	/**
 	 * The registry for locating subflows.

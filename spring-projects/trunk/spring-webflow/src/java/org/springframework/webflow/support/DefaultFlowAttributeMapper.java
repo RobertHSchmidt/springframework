@@ -21,11 +21,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.binding.expression.ExpressionFactory;
-import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
-import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.FlowAttributeMapper;
@@ -93,32 +90,6 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 	}
 
 	/**
-	 * Adds a input mapping that maps a single attribute in parent flow scope
-	 * into subflow scope.
-	 * @param inputAttributeName the attribute in flow scope to map into the
-	 * subflow
-	 */
-	public void addInputAttribute(String inputAttributeName) {
-		PropertyExpression expr = ExpressionFactory.parsePropertyExpression(inputAttributeName);
-		inputMapper.addMapping(new Mapping(new FlowScopeExpression(expr), expr, null));
-	}
-
-	/**
-	 * Adds a collection of input mappings that map attributes in parent flow
-	 * scope into subflow scope.
-	 * @param inputAttributeNames the attributes in flow scope to map into the
-	 * subflow
-	 */
-	public void addInputAttributes(String[] inputAttributeNames) {
-		if (inputAttributeNames == null) {
-			return;
-		}
-		for (int i = 0; i < inputAttributeNames.length; i++) {
-			addInputAttribute(inputAttributeNames[i]);
-		}
-	}
-
-	/**
 	 * Adds a new output mapping. Use when you need full control over defining
 	 * how a subflow output attribute mapping will be perfomed.
 	 * @param outputMapping the output mapping
@@ -134,31 +105,6 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 	 */
 	public void addOutputMappings(Mapping[] outputMappings) {
 		outputMapper.addMappings(outputMappings);
-	}
-
-	/**
-	 * Adds an output mapping that maps a single subflow output attribute into
-	 * the scope of the resuming parent flow.
-	 * @param outputAttributeName the subflow output attribute to map into the
-	 * parent flow
-	 */
-	public void addOutputAttribute(String outputAttributeName) {
-		outputMapper.addMapping(new MappingBuilder().source(outputAttributeName).value());
-	}
-
-	/**
-	 * Adds a collection of output mappings that map subflow output attributes
-	 * into the scope of the resuming parent flow.
-	 * @param outputAttributeNames the subflow output attributes to map into the
-	 * parent flow
-	 */
-	public void addOutputAttributes(String[] outputAttributeNames) {
-		if (outputAttributeNames == null) {
-			return;
-		}
-		for (int i = 0; i < outputAttributeNames.length; i++) {
-			addOutputAttribute(outputAttributeNames[i]);
-		}
 	}
 
 	/**

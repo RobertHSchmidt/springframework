@@ -21,8 +21,6 @@ import java.util.Map;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.WildcardTransitionCriteria;
@@ -62,11 +60,6 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	private static final String BEAN_PREFIX = "bean:";
 
 	/**
-	 * Parser to user for parsing transition criteria expressions.
-	 */
-	private ExpressionParser expressionParser = ExpressionParserUtils.getDefaultExpressionParser();
-
-	/**
 	 * Locator to use for loading custom TransitionCriteria beans.
 	 */
 	private FlowArtifactFactory flowArtifactFactory;
@@ -94,8 +87,9 @@ public class TextToTransitionCriteria extends AbstractConverter {
 				|| WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
 			return WildcardTransitionCriteria.INSTANCE;
 		}
-		else if (expressionParser.isExpression(encodedCriteria)) {
-			Expression expression = this.expressionParser.parseExpression(encodedCriteria, Collections.EMPTY_MAP);
+		else if (flowArtifactFactory.getExpressionParser().isExpression(encodedCriteria)) {
+			Expression expression = flowArtifactFactory.getExpressionParser().parseExpression(encodedCriteria,
+					Collections.EMPTY_MAP);
 			return createBooleanExpressionTransitionCriteria(expression);
 		}
 		else if (encodedCriteria.startsWith(BEAN_PREFIX)) {

@@ -2,6 +2,7 @@ package org.springframework.webflow.builder;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
@@ -121,6 +122,12 @@ public interface FlowArtifactFactory {
 	 */
 	public ResourceLoader getResourceLoader();
 
+	/**
+	 * Returns the expression parser for parsing expression strings.
+	 * @return the expression parser
+	 */
+	public ExpressionParser getExpressionParser();
+	
 	/**
 	 * Returns a generic type conversion service for converting between types,
 	 * typically from string to a rich value object.

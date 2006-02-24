@@ -20,7 +20,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
@@ -415,13 +414,12 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
-	 * Evaluates a model attribute expression: e.g.
-	 * attributeName.childAttribute.attr
+	 * Evaluates a model attribute expression.
 	 * @param attributeName the attribute expression
 	 * @param model the model map
 	 * @return the attribute expression value
 	 */
 	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
-		return ExpressionFactory.parseExpression(attributeName).evaluateAgainst(model, null);
+		return model.get(attributeName);
 	}
 }

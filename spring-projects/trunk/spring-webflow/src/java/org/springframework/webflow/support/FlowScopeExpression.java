@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.RequestContext;
@@ -35,16 +34,6 @@ public class FlowScopeExpression implements Expression {
 	 * The expression to evaluate.
 	 */
 	private Expression expression;
-
-	/**
-	 * Create a new expression evaluator that executes given expression 'in flow
-	 * scope'. The expression will be parsed using the default expression
-	 * parser.
-	 * @param expressionString the expression string
-	 */
-	public FlowScopeExpression(String expressionString) {
-		this(ExpressionFactory.parseExpression(expressionString));
-	}
 
 	/**
 	 * Create a new expression evaluator that executes given expression 'in flow
@@ -71,7 +60,8 @@ public class FlowScopeExpression implements Expression {
 		}
 		else {
 			throw new IllegalArgumentException(
-					"Only supports evaluation against a [RequestContext] or [Scope] instance, but was a [" + target.getClass() + "]");
+					"Only supports evaluation against a [RequestContext] or [Scope] instance, but was a ["
+							+ target.getClass() + "]");
 		}
 	}
 

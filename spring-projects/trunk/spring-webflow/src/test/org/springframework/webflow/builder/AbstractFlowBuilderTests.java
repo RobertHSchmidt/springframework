@@ -48,7 +48,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 
 	public void testDependencyLookup() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
-		master.setFlowArtifactFactory(new FlowArtifactFactoryAdapter() {
+		master.setFlowArtifactFactory(new DefaultFlowArtifactFactory() {
 			public Flow getSubflow(String id) throws FlowArtifactException {
 				if (id.equals(PERSON_DETAILS)) {
 					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();

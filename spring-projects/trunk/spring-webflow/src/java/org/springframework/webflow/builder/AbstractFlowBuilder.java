@@ -163,7 +163,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	protected MappingBuilder mapping() {
-		MappingBuilder mapping = new MappingBuilder();
+		MappingBuilder mapping = new MappingBuilder(getFlowArtifactFactory().getExpressionParser());
 		mapping.setConversionService(getFlowArtifactFactory().getConversionService());
 		return mapping;
 	}

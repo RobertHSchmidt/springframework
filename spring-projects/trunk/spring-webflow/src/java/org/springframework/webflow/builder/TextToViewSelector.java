@@ -86,9 +86,8 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	/**
 	 * Create a new text to ViewSelector converter.
 	 */
-	public TextToViewSelector(FlowArtifactFactory artifactLocator, ConversionService conversionService) {
-		super(conversionService);
-		this.flowArtifactFactory = artifactLocator;
+	public TextToViewSelector(FlowArtifactFactory flowArtifactFactory) {
+		this.flowArtifactFactory = flowArtifactFactory;
 	}
 
 	public Class[] getSourceClasses() {
@@ -128,7 +127,8 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 * @throws ConversionException when an error occurs
 	 */
 	protected ViewSelector createSimpleViewSelector(String encodedView, Map context) throws ConversionException {
-		boolean redirect = new MapAccessor(context).getBoolean(REDIRECT_CONTEXT_ATTRIBUTE, Boolean.FALSE).booleanValue();
+		boolean redirect = new MapAccessor(context).getBoolean(REDIRECT_CONTEXT_ATTRIBUTE, Boolean.FALSE)
+				.booleanValue();
 		return new SimpleViewSelector(encodedView, redirect);
 	}
 
