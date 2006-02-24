@@ -2,10 +2,11 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC1 (20.2.2006)
+Changes in version 1.0 Early Access (27.2.2006)
 ------------------------------------
 
 Overall
+* The proposal to the community for Spring Web Flow 1.0.
 * Introduced the reference manual in HTML and PDF form, see "docs" directory.
 * Added unit tests, with total test coverage above 70%.
 * Added extensive JavaDoc enhancements.
