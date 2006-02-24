@@ -44,20 +44,16 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 */
 	private transient MapAccessor attributeAccessor;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.binding.attribute.AttributeCollection#getMap()
-	 */
-	public Map getMap() {
-		return attributeAccessor.getMap();
+	public Object get(String attributeName) {
+		return attributes.get(attributeName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.binding.attribute.AttributeCollection#getAttributesCount()
-	 */
 	public int size() {
 		return attributes.size();
+	}
+
+	public Map getMap() {
+		return attributeAccessor.getMap();
 	}
 
 	/**
@@ -82,14 +78,6 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 		return attributeAccessor.containsKey(attributeName, requiredType);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.binding.util.AttributesGetter#getAttribute(java.lang.String)
-	 */
-	public Object get(String attributeName) {
-		return attributes.get(attributeName);
-	}
-
 	/**
 	 * Get an attribute value, returning the default value if no value is found.
 	 * @param attributeName the name of the attribute
@@ -101,7 +89,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	}
 
 	/**
-	 * Get an attribute value and make sure it is of the required type.
+	 * Get an attribute value, asserting the value is of the required type.
 	 * @param attributeName the name of the attribute
 	 * @param requiredType the required type of the attribute value
 	 * @return the attribute value, or null if not found
@@ -113,7 +101,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	}
 
 	/**
-	 * Get an attribute value and assert it is of the required type, returning
+	 * Get an attribute value, asserting the value is of the required type, returning
 	 * the default value if not found.
 	 * @param attributeName the name of the attribute
 	 * @param requiredType the value required type
@@ -162,7 +150,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	}
 
 	/**
-	 * Returns a string attribute value in the map, returning the defaultValue
+	 * Returns a string attribute value in the map, returning the default value
 	 * if no value was found.
 	 * @param attributeName the attribute name
 	 * @param defaultValue the default
