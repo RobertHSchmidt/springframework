@@ -22,7 +22,7 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
-import org.springframework.webflow.util.ExpressionUtils;
+import org.springframework.webflow.support.DefaultExpressionParserFactory;
 
 /**
  * Base implementation of a flow artifact factory that implements a minimal set
@@ -148,7 +148,7 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 
 	public ExpressionParser getExpressionParser() {
 		if (expressionParser == null) {
-			setExpressionParser(ExpressionUtils.getDefaultExpressionParser());
+			setExpressionParser(new DefaultExpressionParserFactory().getExpressionParser());
 		}
 		return expressionParser;
 	}

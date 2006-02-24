@@ -88,8 +88,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *           &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *           &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *                  &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *                  &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -896,20 +896,20 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Assert.isTrue(!StringUtils.hasText(value),
 					"The 'name' attribute cannot be used with the 'value' attribute -- use one or the other");
 			if (StringUtils.hasText(as)) {
-				inputMappings.add(new Mapping(new FlowScopeExpression(parser.parseExpression(name, null)), parser
-						.parsePropertyExpression(as, null), typeConverter));
+				inputMappings.add(new Mapping(new FlowScopeExpression(parser.parseExpression(name)), parser
+						.parsePropertyExpression(as), typeConverter));
 			}
 			else {
-				inputMappings.add(new Mapping(new FlowScopeExpression(parser.parseExpression(name, null)),
-						getExpressionParser().parsePropertyExpression(name, null), typeConverter));
+				inputMappings.add(new Mapping(new FlowScopeExpression(parser.parseExpression(name)),
+						getExpressionParser().parsePropertyExpression(name), typeConverter));
 			}
 		}
 		else if (StringUtils.hasText(value)) {
 			// "value" allows you to specify the value that should get mapped
 			// using an expression against the request context
 			Assert.hasText(as, "The 'as' attribute is required with the 'value' attribute");
-			inputMappings.add(new Mapping(getExpressionParser().parseExpression(value, null), getExpressionParser()
-					.parsePropertyExpression(as, null), typeConverter));
+			inputMappings.add(new Mapping(getExpressionParser().parseExpression(value), getExpressionParser()
+					.parsePropertyExpression(as), typeConverter));
 		}
 		else {
 			throw new FlowBuilderException(this,
@@ -928,19 +928,18 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		ConversionExecutor typeConverter = parseTypeConverter(element);
 		ExpressionParser parser = getExpressionParser();
 		if (StringUtils.hasText(as)) {
-			outputMappings.add(new Mapping(parser.parseExpression(name, null), getExpressionParser()
-					.parsePropertyExpression(as, null), typeConverter));
+			outputMappings.add(new Mapping(parser.parseExpression(name), parser.parsePropertyExpression(as),
+					typeConverter));
 		}
 		else {
 			if (StringUtils.hasText(collection)) {
 				PropertyExpression collectionExpression = new CollectionAddingPropertyExpression(
-						new FlowScopeExpression(parser.parseExpression(collection, null)));
-				outputMappings.add(new Mapping(getExpressionParser().parseExpression(name, null), collectionExpression,
-						typeConverter));
+						new FlowScopeExpression(parser.parseExpression(collection)));
+				outputMappings.add(new Mapping(parser.parseExpression(name), collectionExpression, typeConverter));
 			}
 			else {
-				outputMappings.add(new Mapping(getExpressionParser().parseExpression(name, null), getExpressionParser()
-						.parsePropertyExpression(name, null), typeConverter));
+				outputMappings.add(new Mapping(parser.parseExpression(name), parser.parsePropertyExpression(name),
+						typeConverter));
 			}
 		}
 	}

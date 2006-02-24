@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.builder;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.binding.convert.ConversionException;
@@ -88,8 +87,7 @@ public class TextToTransitionCriteria extends AbstractConverter {
 			return WildcardTransitionCriteria.INSTANCE;
 		}
 		else if (flowArtifactFactory.getExpressionParser().isExpression(encodedCriteria)) {
-			Expression expression = flowArtifactFactory.getExpressionParser().parseExpression(encodedCriteria,
-					Collections.EMPTY_MAP);
+			Expression expression = flowArtifactFactory.getExpressionParser().parseExpression(encodedCriteria);
 			return createBooleanExpressionTransitionCriteria(expression);
 		}
 		else if (encodedCriteria.startsWith(BEAN_PREFIX)) {

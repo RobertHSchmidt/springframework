@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
@@ -30,7 +31,6 @@ import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.UnmodifiableAttributeMap;
-import org.springframework.webflow.util.ExpressionUtils;
 
 /**
  * Generic flow attribute mapper implementation that allows mappings to be
@@ -64,6 +64,11 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 	 */
 	protected final Log logger = LogFactory.getLog(getClass());;
 
+	/**
+	 * The expression parser that will parse input and output attribute expressions. 
+	 */
+	private ExpressionParser expressionParser = new DefaultExpressionParserFactory().getExpressionParser();
+	
 	/**
 	 * The mapper that maps attributes into a spawning subflow.
 	 */
@@ -99,7 +104,7 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 	 * subflow
 	 */
 	public void addInputAttribute(String inputAttributeName) {
-		PropertyExpression expr = ExpressionUtils.parsePropertyExpression(inputAttributeName);
+		PropertyExpression expr = expressionParser.parsePropertyExpression(inputAttributeName);
 		inputMapper.addMapping(new Mapping(new FlowScopeExpression(expr), expr, null));
 	}
 
@@ -204,7 +209,7 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 	 * @return the mapping builder
 	 */
 	protected MappingBuilder mapping() {
-		return new MappingBuilder(ExpressionUtils.getDefaultExpressionParser());
+		return new MappingBuilder(expressionParser);
 	}
 
 	/**

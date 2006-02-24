@@ -18,13 +18,13 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.support.OgnlExpressionParser;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.Parameter;
 import org.springframework.binding.method.Parameters;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.support.WebFlowOgnlExpressionParser;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -109,6 +109,6 @@ public class BeanInvokingActionTests extends TestCase {
 	}
 
 	private Expression expression(String string) {
-		return new OgnlExpressionParser().parseExpression(string, null);
+		return new WebFlowOgnlExpressionParser().parseExpression(string);
 	}
 }
