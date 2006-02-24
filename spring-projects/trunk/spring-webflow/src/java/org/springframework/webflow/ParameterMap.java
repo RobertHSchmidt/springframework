@@ -30,12 +30,14 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * A base class for map decorators who manage the storage of immutable
  * String-keyed, String-valued parameters in a backing {@link Map}
  * implementation. This base provides convenient operations for accessing
- * parameters in a typed-manner.
+ * parameters in a typed-manner. It also includes support file accessing
+ * {@link MultipartFile} parameters.
  * 
  * @author Keith Donald
  */
@@ -112,6 +114,16 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	}
 
 	/**
+	 * Get a multi-part file parameter value, returning <code>null</code> if
+	 * no value is found.
+	 * @param parameterName the parameter name
+	 * @return the multipart file
+	 */
+	public MultipartFile getMultipartFile(String parameterName) {
+		return (MultipartFile)parameterAccessor.get(parameterName, MultipartFile.class);
+	}
+
+	/**
 	 * Get a multi-valued parameter value, converting each value to the target
 	 * type or returning <code>null</code> if no value is found.
 	 * @param parameterName the parameter name
@@ -170,6 +182,16 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 */
 	public String[] getRequiredArray(String parameterName) throws IllegalArgumentException {
 		return (String[])parameterAccessor.getRequiredArray(parameterName, String[].class);
+	}
+
+	/**
+	 * Get the value of a required multipart file parameter.
+	 * @param parameterName the name of the parameter
+	 * @return the parameter value
+	 * @throws IllegalArgumentException when the parameter is not found
+	 */
+	public MultipartFile getRequiredMultipartFile(String parameterName) throws IllegalArgumentException {
+		return (MultipartFile)parameterAccessor.getRequired(parameterName, MultipartFile.class);
 	}
 
 	/**
