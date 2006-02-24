@@ -37,9 +37,9 @@ import org.springframework.core.io.Resource;
  * in the registry created by this factory bean.
  * <p>
  * This class is also <code>BeanFactoryAware</code> and when used with Spring
- * will automatically create a configured
- * {@link RegistryFlowArtifactFactory} for loading Flow artifacts like
- * Actions from the Spring bean factory during the Flow registration process.
+ * will automatically create a configured {@link RegistryFlowArtifactFactory}
+ * for loading Flow artifacts like Actions from the Spring bean factory during
+ * the Flow registration process.
  * <p>
  * This class is also <code>ResourceLoaderAware</code>; when an instance is
  * created by a Spring BeanFactory the factory will automatically configure the
@@ -49,13 +49,8 @@ import org.springframework.core.io.Resource;
  * Usage example:
  * 
  * <pre>
- *     &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;flowLocations&quot;&gt;
- *             &lt;list&gt;
- *                 &lt;value&gt;/WEB-INF/flow1.xml&lt;/value&gt;
- *                 &lt;value&gt;/WEB-INF/flow2.xml&lt;/value&gt;
- *             &lt;/list&gt;
- *         &lt;/property&gt;
+ *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;flowLocations&quot;&gt; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt; 
  *     &lt;/bean&gt;
  * </pre>
  * 
@@ -69,10 +64,10 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	private ExternalizedFlowRegistrar flowRegistrar = createFlowRegistrar();
 
 	/**
-	 * Temporary holder for flow definitions configured using a property map. 
+	 * Temporary holder for flow definitions configured using a property map.
 	 */
-	private Properties flowDefinitionProperties;
-	
+	private Properties flowDefinitions;
+
 	/**
 	 * Creates a xml flow registry factory bean.
 	 */
@@ -122,9 +117,9 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * Another example:
 	 * 
 	 * <pre>
-	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
-	 *         &lt;property name=&quot;flowLocations&quot;&gt; value=&quot;classpath*:/example/flows/*-flow.xml&quot;/&gt; 
-	 *     &lt;/bean&gt;
+	 *    &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+	 *        &lt;property name=&quot;flowLocations&quot;&gt; value=&quot;classpath*:/example/flows/*-flow.xml&quot;/&gt; 
+	 *    &lt;/bean&gt;
 	 * </pre>
 	 * 
 	 * Flows registered from this set will be automatically assigned an id based
@@ -136,46 +131,50 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	}
 
 	/**
-	 * Sets the formal set of externalized XML flow definitions to be
-	 * registered.
-	 * <p>
-	 * Use this method when you want full control over the assigned flow id and
-	 * the set of properties applied to the externalized flow resource.
-	 * @param flowDefinitions the externalized flow definition specification
-	 */
-	public void setFlowDefinitions(ExternalizedFlowDefinition[] flowDefinitions) {
-		getFlowRegistrar().setFlowDefinitions(flowDefinitions);
-	}
-
-	/**
 	 * Convenience method that allows for setting externalized flow definitions
-	 * from a <code>java.util.Properties</code> map.
+	 * from a <code>java.util.Properties</code> map. Allows for more control
+	 * over the definition, including which <code>flowId</code> is assigned.
 	 * <p>
 	 * 
-	 * Each property key is the <code>flowId</code> and each property value
-	 * is the string encoded location of the externalized flow definition resource.
-	 * 
-	 * Here is the format:
+	 * Each property key is the <code>flowId</code> and each property value is
+	 * the string encoded location of the externalized flow definition resource.
+	 * <p>
+	 * Here is the exact format:
 	 * 
 	 * <pre>
-	 *     flowId=RESOURCE
+	 *     flow id=resource
 	 * </pre>
 	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+	 *         &lt;property name=&quot;flowDefinitions&quot;&gt;
+	 *             &lt;value&gt;
+	 *                 searchFlow=/WEB-INF/flows/search.xml
+	 *                 detailFlow=/WEB-INF/flows/detail.xml
+	 *             &lt;/value&gt;
+	 *         &lt;/property&gt;
+	 *     &lt;/bean&gt;
+	 * </pre>
+	 * 
+	 * The flow id key and resource value is required. Flow attributes (e.g.
+	 * attr1) are optional.
 	 * @param properties the flow definition properties
 	 */
-	public void setFlowDefinitionProperties(Properties flowDefinitionProperties) {
-		this.flowDefinitionProperties = flowDefinitionProperties;
+	public void setFlowDefinitions(Properties flowDefinitions) {
+		this.flowDefinitions = flowDefinitions;
 	}
 
 	protected void doPopulate(FlowRegistry registry) {
 		addFlowDefinitionsFromPropertiesIfNecessary();
 		getFlowRegistrar().registerFlows(registry, getFlowArtifactFactory());
 	}
-	
+
 	private void addFlowDefinitionsFromPropertiesIfNecessary() {
-		if (flowDefinitionProperties != null && flowDefinitionProperties.size() > 0) {
-			List flows = new ArrayList(flowDefinitionProperties.size());
-			Iterator it = flowDefinitionProperties.entrySet().iterator();
+		if (flowDefinitions != null && flowDefinitions.size() > 0) {
+			List flows = new ArrayList(flowDefinitions.size());
+			Iterator it = flowDefinitions.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry)it.next();
 				String flowId = (String)entry.getKey();
@@ -183,8 +182,9 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 				Resource resource = getFlowArtifactFactory().getResourceLoader().getResource(location);
 				flows.add(new ExternalizedFlowDefinition(flowId, resource));
 			}
-			getFlowRegistrar().addFlowDefinitions((ExternalizedFlowDefinition[])flows.toArray(new ExternalizedFlowDefinition[0]));
-			flowDefinitionProperties = null;
+			getFlowRegistrar().addFlowDefinitions(
+					(ExternalizedFlowDefinition[])flows.toArray(new ExternalizedFlowDefinition[0]));
+			flowDefinitions = null;
 		}
 	}
 }
