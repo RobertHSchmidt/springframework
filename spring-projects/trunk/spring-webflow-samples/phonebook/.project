@@ -3,6 +3,7 @@
 	<name>swf-phonebook</name>
 	<comment></comment>
 	<projects>
+		<project>spring-webflow</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

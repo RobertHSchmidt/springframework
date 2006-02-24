@@ -3,6 +3,7 @@
 	<name>swf-sellitem-jsf</name>
 	<comment></comment>
 	<projects>
+		<project>spring-webflow</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

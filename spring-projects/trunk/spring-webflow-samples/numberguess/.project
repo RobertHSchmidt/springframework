@@ -3,6 +3,7 @@
 	<name>swf-numberguess</name>
 	<comment></comment>
 	<projects>
+		<project>spring-webflow</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

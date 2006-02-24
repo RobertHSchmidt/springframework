@@ -3,6 +3,8 @@
 	<name>spring-binding</name>
 	<comment></comment>
 	<projects>
+		<project>common-build</project>
+		<project>repository</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
