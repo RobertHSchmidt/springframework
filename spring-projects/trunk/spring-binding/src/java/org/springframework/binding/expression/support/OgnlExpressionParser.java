@@ -24,6 +24,7 @@ import ognl.PropertyAccessor;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ParserException;
+import org.springframework.binding.expression.PropertyExpression;
 
 /**
  * An expression parser that parses Ognl expressions.
@@ -32,6 +33,10 @@ import org.springframework.binding.expression.ParserException;
 public class OgnlExpressionParser extends AbstractExpressionParser {
 
 	public Expression parseExpression(String expressionString, Map parseContext) throws ParserException {
+		return parsePropertyExpression(expressionString, parseContext);
+	}
+
+	public PropertyExpression parsePropertyExpression(String expressionString, Map parseContext) throws ParserException {
 		try {
 			return new OgnlExpression(Ognl.parseExpression(cutExpression(expressionString)));
 		}
@@ -39,7 +44,7 @@ public class OgnlExpressionParser extends AbstractExpressionParser {
 			throw new ParserException(expressionString, parseContext, e);
 		}
 	}
-	
+
 	/**
 	 * Add a property access strategy for the given class.
 	 * @param clazz the class that contains properties needing access

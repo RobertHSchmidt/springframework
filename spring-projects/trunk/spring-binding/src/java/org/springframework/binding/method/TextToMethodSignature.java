@@ -90,7 +90,7 @@ public class TextToMethodSignature extends ConversionServiceAwareConverter {
 					params.add(new Parameter(type, parseExpression(typeAndName[1].trim())));
 				}
 				else {
-					params.add(new Parameter(parseExpression(param)));
+					params.add(new Parameter(null, parseExpression(param)));
 				}
 			}
 			return new MethodSignature(methodName, params);

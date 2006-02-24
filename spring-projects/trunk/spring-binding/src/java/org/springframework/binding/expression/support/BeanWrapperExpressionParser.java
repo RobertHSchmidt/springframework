@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ParserException;
+import org.springframework.binding.expression.PropertyExpression;
 
 /**
  * An expression parser that parses bean wrapper expressions.
@@ -26,6 +27,10 @@ import org.springframework.binding.expression.ParserException;
  */
 public class BeanWrapperExpressionParser extends AbstractExpressionParser {
 	public Expression parseExpression(String expressionString, Map parseContext) throws ParserException {
+		return parsePropertyExpression(expressionString, parseContext);
+	}
+	
+	public PropertyExpression parsePropertyExpression(String expressionString, Map parseContext) throws ParserException {
 		return new BeanWrapperExpression(cutExpression(expressionString));
 	}
 }

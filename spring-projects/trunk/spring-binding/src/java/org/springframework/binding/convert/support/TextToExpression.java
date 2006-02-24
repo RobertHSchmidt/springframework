@@ -20,7 +20,7 @@ import java.util.Map;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
-import org.springframework.binding.expression.support.ExpressionParserUtils;
+import org.springframework.util.Assert;
 
 /**
  * Converter that converts a String into an Expression object.
@@ -32,20 +32,25 @@ import org.springframework.binding.expression.support.ExpressionParserUtils;
  */
 public class TextToExpression extends AbstractConverter {
 
-	private ExpressionParser expressionParser = ExpressionParserUtils.getDefaultExpressionParser();
+	/**
+	 * The expression string parser.
+	 */
+	private ExpressionParser expressionParser;
+
+	/**
+	 * Creates a new string-to-expression converter.
+	 * @param expressionParser the expression string parser
+	 */
+	public TextToExpression(ExpressionParser expressionParser) {
+		Assert.notNull(expressionParser, "The expression parser is required");
+		this.expressionParser = expressionParser;
+	}
 
 	/**
 	 * Returns the expression parser used by this converter.
 	 */
 	public ExpressionParser getExpressionParser() {
 		return expressionParser;
-	}
-
-	/**
-	 * Set the expression parser used by this converter.
-	 */
-	public void setExpressionParser(ExpressionParser expressionParser) {
-		this.expressionParser = expressionParser;
 	}
 
 	public Class[] getSourceClasses() {

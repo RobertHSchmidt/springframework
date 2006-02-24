@@ -83,9 +83,6 @@ public class DefaultConversionService implements ConversionService {
 		addConverter(new TextToClass());
 		addConverter(new TextToNumber(new SimpleFormatterFactory()));
 		addConverter(new TextToBoolean());
-		addConverter(new TextToExpression());
-		addConverter(new TextToExpressions());
-		addConverter(new TextToMethodSignature());
 		addConverter(new TextToLabeledEnum());
 		addDefaultAlias(String.class);
 		addDefaultAlias(Short.class);
@@ -101,8 +98,6 @@ public class DefaultConversionService implements ConversionService {
 		addDefaultAlias(Class.class);
 		addDefaultAlias(Expression.class);
 		addAlias("labeledEnum", LabeledEnum.class);
-		addAlias("expressionString", Expression[].class);
-		addAlias("method", MethodSignature.class);
 	}
 
 	public void addConverter(Converter converter) {

@@ -79,10 +79,6 @@ public class DefaultAttributeMapper implements AttributeMapper, Serializable {
 		}
 	}
 
-	protected MappingBuilder mapping() {
-		return new MappingBuilder();
-	}
-	
 	public String toString() {
 		return new ToStringCreator(this).append("mappings", mappings).toString();
 	}

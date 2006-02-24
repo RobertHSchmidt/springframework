@@ -74,7 +74,7 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	 * contained in "${...}" markers. For instance: "foo${expr0}bar${expr1}".
 	 * The static pieces of text will also be returned as Expressions that just
 	 * return that static piece of text. As a result, evaluating all returned
-	 * expressions and concatenagint the results produces the complete evaluated
+	 * expressions and concating the results produces the complete evaluated
 	 * string. @param expressionString the expression string @return the parsed
 	 * expressions @throws ParserException when the expressions cannot be parsed
 	 */

@@ -20,6 +20,7 @@ import java.util.Map;
 /**
  * Parses expression strings, returing a configured evaluator instance capable
  * of performing parsed expression evaluation in a thread safe way.
+ * 
  * @author Keith Donald
  */
 public interface ExpressionParser {
@@ -42,13 +43,26 @@ public interface ExpressionParser {
 	public Expression parseExpression(String expressionString, Map parseContext) throws ParserException;
 
 	/**
-	 * Parse the provided expression string, returning an array of evaluatable
-	 * expressions.
+	 * Parse the provided string containing multiple expressions, returning an
+	 * array of evaluatable expressions.
 	 * @param expressionString the parseable expression
 	 * @context the parsing context
 	 * @return the evaluator for the parsed expression
 	 * @throws ParserException an exception occured during parsing
 	 */
 	public Expression[] parseExpressions(String expressionString, Map parseContext) throws ParserException;
+
+	/**
+	 * Parse the provided property expression string, returning an evaluator
+	 * capable of evaluating its value as well as setting its value.
+	 * @param expressionString the parseable property path expression
+	 * @context the parsing context
+	 * @return the evaluator for the parsed expression
+	 * @throws ParserException an exception occured during parsing
+	 * @throws UnsupportedOperationException this parser does not support
+	 * property expressions
+	 */
+	public PropertyExpression parsePropertyExpression(String expressionString, Map parseContext)
+			throws ParserException, UnsupportedOperationException;
 
 }

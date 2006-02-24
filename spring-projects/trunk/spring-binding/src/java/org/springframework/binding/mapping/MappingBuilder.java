@@ -8,7 +8,6 @@ import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
-import org.springframework.binding.expression.support.ExpressionParserUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -52,12 +51,21 @@ public class MappingBuilder {
 	/**
 	 * The expression string parser.
 	 */
-	private ExpressionParser expressionParser = ExpressionParserUtils.getDefaultExpressionParser();
+	private ExpressionParser expressionParser;
 
 	/**
 	 * The conversion service for applying type conversions.
 	 */
 	private ConversionService conversionService = new DefaultConversionService();
+
+	/**
+	 * Creates a mapping builder that uses the expression parser to parse
+	 * attribute mapping expressions.
+	 * @param expressionParser the expression parser.
+	 */
+	public MappingBuilder(ExpressionParser expressionParser) {
+		setExpressionParser(expressionParser);
+	}
 
 	/**
 	 * Sets the expression parser that will parse string-encoded source and
@@ -125,9 +133,9 @@ public class MappingBuilder {
 	}
 
 	/**
-	 * The logical GOF builder getResult method, returning a fully constructed Mapping from 
-	 * the configured pieces.  Once called, the state of this builder is nulled out to support 
-	 * building a new mapping object again.
+	 * The logical GOF builder getResult method, returning a fully constructed
+	 * Mapping from the configured pieces. Once called, the state of this
+	 * builder is nulled out to support building a new mapping object again.
 	 * @return the mapping result
 	 */
 	public Mapping value() {

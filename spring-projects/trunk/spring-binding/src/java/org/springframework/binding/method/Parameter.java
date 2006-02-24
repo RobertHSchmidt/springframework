@@ -18,7 +18,6 @@ package org.springframework.binding.method;
 import java.io.Serializable;
 
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.ExpressionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 
@@ -40,33 +39,6 @@ public class Parameter implements Serializable {
 	 * "accountNumber".
 	 */
 	private Expression name;
-
-	/**
-	 * Create a new named parameter definition.
-	 * 
-	 * @param name the name
-	 */
-	public Parameter(String name) {
-		this(null, name);
-	}
-
-	/**
-	 * Create a new named parameter definition.
-	 * 
-	 * @param name the name
-	 */
-	public Parameter(Class type, String name) {
-		this(type, ExpressionFactory.parseExpression(name));
-	}
-
-	/**
-	 * Create a new named parameter definition.
-	 * 
-	 * @param name the name
-	 */
-	public Parameter(Expression name) {
-		this(null, name);
-	}
 
 	/**
 	 * Create a new named parameter definition.
