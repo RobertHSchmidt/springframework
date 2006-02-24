@@ -18,7 +18,6 @@ package org.springframework.webflow.builder;
 import java.util.Map;
 
 import org.springframework.binding.convert.ConversionException;
-import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.CompositeStringExpression;
