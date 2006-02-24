@@ -42,6 +42,12 @@ import org.springframework.webflow.ViewSelection;
 public class TransitionExecutingStateExceptionHandler implements StateExceptionHandler {
 
 	/**
+	 * The name of the attribute to expose an handled state exception under in
+	 * request scope.
+	 */
+	public static final String HANDLED_STATE_EXCEPTION_ATTRIBUTE = "handledStateException";
+
+	/**
 	 * The exceptionType->targetStateId map.
 	 */
 	private Map exceptionTargetStateIdMapping = new HashMap();
@@ -89,6 +95,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 					+ "' to transition from must be transitionable!");
 		}
 		TargetStateResolver targetStateResolver = new StaticTargetStateResolver(getTargetStateId(e));
+		context.getRequestScope().put(HANDLED_STATE_EXCEPTION_ATTRIBUTE, e);
 		return new Transition(targetStateResolver).execute((TransitionableState)sourceState, context);
 	}
 
