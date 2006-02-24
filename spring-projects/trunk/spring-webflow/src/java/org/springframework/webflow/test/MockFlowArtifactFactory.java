@@ -1,6 +1,6 @@
 package org.springframework.webflow.test;
 
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.registry.FlowRegistryFlowArtifactFactory;
@@ -14,8 +14,9 @@ import org.springframework.webflow.registry.StaticFlowHolder;
  * tested, see {@link #registerSubFlow(Flow)}.
  * <p>
  * Also supports programmatic registration of additional custom artifacts needed
- * by a flow (such as Actions) managed in a backing Spring {@link BeanFactory};
- * see {@link #registerBean(String, Object)}.
+ * by a flow (such as Actions) managed in a backing Spring {@link ConfigurableBeanFactory};
+ * see {@link #registerBean(String, Object)}.  Beans registered are typically mocks or 
+ * stubs of business services invoked by the flow.
  * 
  * @author Keith Donald
  */
