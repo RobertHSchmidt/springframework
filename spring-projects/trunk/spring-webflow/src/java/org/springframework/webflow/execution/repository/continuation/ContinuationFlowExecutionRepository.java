@@ -201,7 +201,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	private Conversation getRequiredConversation(Serializable conversationId) throws NoSuchConversationException {
 		Conversation conversation = getConversation(conversationId);
 		if (conversation == null) {
-			throw new NoSuchConversationException(this, conversationId);
+			throw new NoSuchConversationException(conversationId);
 		}
 		return conversation;
 	}
@@ -219,7 +219,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 			FlowExecutionKey continuationKey) throws CannotContinueConversationException {
 		FlowExecutionContinuation continuation = conversation.getContinuation(continuationKey.getContinuationId());
 		if (continuation == null) {
-			throw new CannotContinueConversationException(this, continuationKey);
+			throw new CannotContinueConversationException(continuationKey);
 		}
 		return continuation;
 	}

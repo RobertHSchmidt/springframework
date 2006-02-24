@@ -87,8 +87,8 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		// continuationId
 		// if they do not match, access to the conversation is not allowed.
 		if (!key.getContinuationId().equals(entry.getContinuationId())) {
-			throw new CannotContinueConversationException(this, key, "The continuation id '"
-					+ key.getContinuationId() + "' associated with conversation '" + key.getConversationId()
+			throw new CannotContinueConversationException(key, "The continuation id '" + key.getContinuationId()
+					+ "' associated with conversation '" + key.getConversationId()
 					+ "' is invalid.  This will happen when accessing browser history "
 					+ "(typically via the back button) that references a previously used continuation id, "
 					+ "as this simple repository implementation does not support multiple continuations.  "
@@ -109,7 +109,8 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		}
 	}
 
-	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId) throws FlowExecutionRepositoryException {
+	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId)
+			throws FlowExecutionRepositoryException {
 		return new FlowExecutionKey(conversationId, getFlowExecutionEntry(conversationId).getContinuationId());
 	}
 
@@ -128,7 +129,7 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 	private FlowExecutionEntry getFlowExecutionEntry(Serializable conversationId) {
 		FlowExecutionEntry entry = (FlowExecutionEntry)flowExecutionEntries.get(conversationId);
 		if (entry == null) {
-			throw new NoSuchConversationException(this, conversationId);
+			throw new NoSuchConversationException(conversationId);
 		}
 		return entry;
 	}

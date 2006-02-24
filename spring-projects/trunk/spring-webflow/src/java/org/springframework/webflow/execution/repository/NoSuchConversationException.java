@@ -37,8 +37,8 @@ public class NoSuchConversationException extends FlowExecutionRepositoryExceptio
 	 * @param repository the repository
 	 * @param conversationId the conversation id
 	 */
-	public NoSuchConversationException(FlowExecutionRepository repository, Serializable conversationId) {
-		super(repository, "No conversation could be found with id '" + conversationId
+	public NoSuchConversationException(Serializable conversationId) {
+		super("No conversation could be found with id '" + conversationId
 				+ "' -- perhaps this executing flow has ended or expired? "
 				+ "This could happen if your users are relying on browser history "
 				+ "(typically via the back button) that reference ended flows.");
