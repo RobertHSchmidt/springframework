@@ -31,11 +31,11 @@
 							<td>${person.lastName}</td>
 							<td>
 								<a href="
-                                    <portlet:renderURL>
+                                    <portlet:actionURL>
 						                <portlet:param name="_flowExecutionKey" value="${flowExecutionKey}" />
 						            	<portlet:param name="_eventId" value="select" />
 						            	<portlet:param name="id" value="${person.id}>" />
-						            </portlet:renderURL>">
+						            </portlet:actionURL>">
 							        ${person.userId}
 								</a>
 							</td>
