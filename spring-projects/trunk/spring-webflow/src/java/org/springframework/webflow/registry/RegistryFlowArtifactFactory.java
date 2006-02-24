@@ -33,14 +33,14 @@ import org.springframework.webflow.builder.FlowArtifactParameters;
 /**
  * A flow artifact factory that obtains subflow definitions from a explict
  * {@link FlowRegistry} The remaining types of artifacts are sourced from a
- * standard Spring BeanFactory.
+ * standard Spring {@link BeanFactory} registry.
  * 
  * @see FlowRegistry
  * @see FlowArtifactFactory#getSubflow(String)
  * 
  * @author Keith Donald
  */
-public class FlowRegistryFlowArtifactFactory extends DefaultFlowArtifactFactory implements ResourceLoaderAware {
+public class RegistryFlowArtifactFactory extends DefaultFlowArtifactFactory implements ResourceLoaderAware {
 
 	/**
 	 * The registry for locating subflows.
@@ -58,7 +58,7 @@ public class FlowRegistryFlowArtifactFactory extends DefaultFlowArtifactFactory 
 	 * @param subflowRegistry The registry for loading subflows
 	 * @param beanFactory The spring bean factory
 	 */
-	public FlowRegistryFlowArtifactFactory(FlowRegistry subflowRegistry, BeanFactory beanFactory) {
+	public RegistryFlowArtifactFactory(FlowRegistry subflowRegistry, BeanFactory beanFactory) {
 		this.subflowRegistry = subflowRegistry;
 		this.beanFactory = beanFactory;
 	}

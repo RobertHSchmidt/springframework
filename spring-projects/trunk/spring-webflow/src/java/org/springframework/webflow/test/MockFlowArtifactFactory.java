@@ -3,7 +3,7 @@ package org.springframework.webflow.test;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.registry.FlowRegistryFlowArtifactFactory;
+import org.springframework.webflow.registry.RegistryFlowArtifactFactory;
 import org.springframework.webflow.registry.FlowRegistryImpl;
 import org.springframework.webflow.registry.StaticFlowHolder;
 
@@ -20,7 +20,7 @@ import org.springframework.webflow.registry.StaticFlowHolder;
  * 
  * @author Keith Donald
  */
-public class MockFlowArtifactFactory extends FlowRegistryFlowArtifactFactory {
+public class MockFlowArtifactFactory extends RegistryFlowArtifactFactory {
 
 	/**
 	 * Creates a new mock flow artifact factory.

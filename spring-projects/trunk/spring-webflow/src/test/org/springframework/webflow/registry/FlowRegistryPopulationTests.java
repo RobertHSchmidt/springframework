@@ -45,7 +45,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 
 	public void testXmlPopulationWithRecursion() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
-		FlowArtifactFactory flowArtifactFactory = new FlowRegistryFlowArtifactFactory(registry,
+		FlowArtifactFactory flowArtifactFactory = new RegistryFlowArtifactFactory(registry,
 				new DefaultListableBeanFactory());
 		File parent = new File("src/test/org/springframework/webflow/registry");
 		XmlFlowRegistrar registrar = new XmlFlowRegistrar();

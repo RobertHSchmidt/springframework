@@ -26,7 +26,7 @@ import java.util.List;
  * <p>
  * This class is also <code>BeanFactoryAware</code> and when used with Spring
  * will automatically create a configured
- * {@link FlowRegistryFlowArtifactFactory} for loading Flow artifacts like
+ * {@link RegistryFlowArtifactFactory} for loading Flow artifacts like
  * Actions from the Spring bean factory during the Flow registration process.
  * <p>
  * Usage example:
