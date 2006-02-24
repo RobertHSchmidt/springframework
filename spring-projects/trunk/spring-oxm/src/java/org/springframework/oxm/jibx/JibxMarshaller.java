@@ -49,6 +49,9 @@ import org.xml.sax.ext.LexicalHandler;
  * marshals to <code>StreamResult</code>s.
  *
  * @author Arjen Poutsma
+ * @see javax.xml.transform.stream.StreamSource
+ * @see javax.xml.transform.sax.SAXSource
+ * @see javax.xml.transform.stream.StreamResult
  */
 public class JibxMarshaller extends AbstractMarshaller implements InitializingBean {
 
@@ -130,6 +133,11 @@ public class JibxMarshaller extends AbstractMarshaller implements InitializingBe
         }
     }
 
+    /**
+     * Throws <code>UnsupportedOperationException</code>.
+     *
+     * @throws UnsupportedOperationException
+     */
     protected void marshalSaxHandlers(Object graph, ContentHandler contentHandler, LexicalHandler lexicalHandler)
             throws XmlMappingException {
         throw new UnsupportedOperationException("JibxMarshaller does not support marshalling of SAX Handlers");
@@ -144,6 +152,11 @@ public class JibxMarshaller extends AbstractMarshaller implements InitializingBe
         }
     }
 
+    /**
+     * Throws <code>UnsupportedOperationException</code>.
+     *
+     * @throws UnsupportedOperationException
+     */
     protected Object unmarshalDomNode(Node node) throws XmlMappingException {
         throw new UnsupportedOperationException("JibxMarshaller does not support unmarshalling of DOM Nodes");
     }

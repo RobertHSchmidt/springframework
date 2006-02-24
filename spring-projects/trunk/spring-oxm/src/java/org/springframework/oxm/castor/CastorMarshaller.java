@@ -39,7 +39,7 @@ import org.xml.sax.ext.LexicalHandler;
 /**
  * Implementation of the <code>Marshaller</code> interface for Castor.
  * <p/>
- * Due to Castor's API, it is required to set the encoding used for writing. It defaults to <code>UTF-8</code.
+ * Due to Castor's API, it is required to set the encoding used for writing. It defaults to <code>UTF-8</code>.
  *
  * @author Arjen Poutsma
  * @see #setEncoding(String)
@@ -64,7 +64,7 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
      *
      * @see #DEFAULT_ENCODING
      */
-    public String getEncoding() {
+    private String getEncoding() {
         return (encoding != null) ? encoding : DEFAULT_ENCODING;
     }
 
