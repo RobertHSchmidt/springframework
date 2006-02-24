@@ -5,7 +5,10 @@ import java.util.Map;
 import ognl.OgnlException;
 import ognl.PropertyAccessor;
 
+import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
+import org.springframework.binding.expression.ParserException;
+import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.expression.support.OgnlExpressionParser;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.MapAdaptable;
@@ -49,7 +52,29 @@ public class ExpressionUtils {
 		}
 		return defaultExpressionParser;
 	}
-	
+
+	/**
+	 * Helper for parsing an expression using the
+	 * {@link #getDefaultExpressionParser() default expression parser}.
+	 * @param expressionString the expression string
+	 * @return the parsed, evaluatable expression
+	 * @throws ParserException an exception occured during expression parsing
+	 */
+	public static Expression parseExpression(String expressionString) throws ParserException {
+		return getDefaultExpressionParser().parseExpression(expressionString, null);
+	}
+
+	/**
+	 * Helper for parsing a property expression using the
+	 * {@link #getDefaultExpressionParser() default expression parser}.
+	 * @param expressionString the expression string
+	 * @return the parsed, evaluatable expression
+	 * @throws ParserException an exception occured during expression parsing
+	 */
+	public static PropertyExpression parsePropertyExpression(String expressionString) throws ParserException {
+		return getDefaultExpressionParser().parsePropertyExpression(expressionString, null);
+	}
+
 	private static class MapAdaptablePropertyAccessor implements PropertyAccessor {
 		public Object getProperty(Map context, Object target, Object name) throws OgnlException {
 			return ((MapAdaptable)target).getMap().get(name);

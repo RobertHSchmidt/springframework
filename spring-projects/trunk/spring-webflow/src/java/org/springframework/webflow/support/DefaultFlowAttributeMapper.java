@@ -99,8 +99,7 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 	 * subflow
 	 */
 	public void addInputAttribute(String inputAttributeName) {
-		PropertyExpression expr = ExpressionUtils.getDefaultExpressionParser().parsePropertyExpression(
-				inputAttributeName, null);
+		PropertyExpression expr = ExpressionUtils.parsePropertyExpression(inputAttributeName);
 		inputMapper.addMapping(new Mapping(new FlowScopeExpression(expr), expr, null));
 	}
 
