@@ -122,13 +122,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	/**
-	 * Set the flow locator to use for lookup of flow definitions to execute.
-	 */
-	public void setFlowLocator(FlowLocator flowLocator) {
-		repositoryFactory = new SimpleFlowExecutionRepositoryFactory(flowLocator);
-	}
-
-	/**
 	 * Returns the repository factory in use by this flow executor.
 	 */
 	public FlowExecutionRepositoryFactory getRepositoryFactory() {
@@ -141,6 +134,14 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 */
 	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryFactory) {
 		this.repositoryFactory = repositoryFactory;
+	}
+
+	/**
+	 * Convenience method that set the flow locator to use for lookup of flow
+	 * definitions to execute.
+	 */
+	public void setFlowLocator(FlowLocator flowLocator) {
+		repositoryFactory = new SimpleFlowExecutionRepositoryFactory(flowLocator);
 	}
 
 	/**
