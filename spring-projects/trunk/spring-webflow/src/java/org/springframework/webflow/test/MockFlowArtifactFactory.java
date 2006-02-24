@@ -14,22 +14,23 @@ import org.springframework.webflow.registry.StaticFlowHolder;
  * tested, see {@link #registerSubFlow(Flow)}.
  * <p>
  * Also supports programmatic registration of additional custom artifacts needed
- * by a flow (such as Actions), managed in a backing Spring {@link BeanFactory};
+ * by a flow (such as Actions) managed in a backing Spring {@link BeanFactory};
  * see {@link #registerBean(String, Object)}.
  * 
  * @author Keith Donald
  */
 public class MockFlowArtifactFactory extends FlowRegistryFlowArtifactFactory {
-	
+
 	/**
-	 * Creates a new mock flow artifact factory. 
+	 * Creates a new mock flow artifact factory.
 	 */
 	public MockFlowArtifactFactory() {
 		super(new FlowRegistryImpl(), new StaticApplicationContext());
 	}
 
 	/**
-	 * Register a subflow definition in this factory.
+	 * Register a subflow definition in this factory; typically to support a
+	 * flow execution test.
 	 * @param subflow the subflow
 	 */
 	public void registerSubFlow(Flow subflow) {
@@ -37,7 +38,9 @@ public class MockFlowArtifactFactory extends FlowRegistryFlowArtifactFactory {
 	}
 
 	/**
-	 * Register a bean in this factory.
+	 * Register a bean in this factory; typically to support a flow execution
+	 * test. If this bean is a service object used as an Action, it is often a
+	 * stub or dynamic mock.
 	 * @param beanName the bean name
 	 * @param bean the singleton instance
 	 */
