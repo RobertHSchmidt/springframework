@@ -50,32 +50,30 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * <ul>
  * <li>To have this controller launch a new flow execution (conversation), have
  * the client send a
- * {@link FlowExecutorParameterExtractor#getFlowIdParameterName()} request
- * parameter indicating the flow definition to launch.
+ * {@link FlowExecutorParameterExtractor#getFlowIdParameterName()} <i>render
+ * request</i> parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
- * {@link FlowExecutorParameterExtractor#getFlowExecutionKeyParameterName()}
- * request parameter identifying the conversation to participate in.
+ * {@link FlowExecutorParameterExtractor#getFlowExecutionKeyParameterName()} and
+ * {@link FlowExecutorParameterExtractor#getEventIdParameterName()} <i>action
+ * request</i> identifying the conversation to participate in.
  * </ul>
- * <p>
- * See the flowLauncher sample application for an example of this controller
- * parameterization.
  * <p>
  * Usage example:
  * 
  * <pre>
- *     &lt;!--
- *         Exposes flows for execution.
- *     --&gt;
- *     &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *         &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *         &lt;property name="defaultFlowId" value="example-flow"/&gt;
- *     &lt;/bean&gt;
- *                                                         
- *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *     &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;flowLocations&quot; value="/WEB-INF/flows/*-flow.xml"/&gt;
- *     &lt;/bean&gt;
+ *      &lt;!--
+ *          Exposes flows for execution.
+ *      --&gt;
+ *      &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *          &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
+ *          &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
+ *      &lt;/bean&gt;
+ *                                                          
+ *      &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *      &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *          &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *      &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorParameterExtractor}
