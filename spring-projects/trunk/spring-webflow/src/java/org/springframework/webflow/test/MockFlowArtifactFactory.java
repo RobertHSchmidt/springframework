@@ -2,7 +2,6 @@ package org.springframework.webflow.test;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.registry.FlowRegistryImpl;
 import org.springframework.webflow.registry.RegistryBackedFlowArtifactFactory;
@@ -47,6 +46,6 @@ public class MockFlowArtifactFactory extends RegistryBackedFlowArtifactFactory {
 	 * @param bean the singleton instance
 	 */
 	public void registerBean(String beanName, Object bean) {
-		((StaticApplicationContext)getBeanFactory()).getBeanFactory().registerSingleton(beanName, bean);
+		((ConfigurableBeanFactory)getBeanFactory()).registerSingleton(beanName, bean);
 	}
 }
