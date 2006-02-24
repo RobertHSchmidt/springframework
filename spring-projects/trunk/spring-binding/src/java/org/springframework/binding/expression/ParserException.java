@@ -15,10 +15,6 @@
  */
 package org.springframework.binding.expression;
 
-import java.util.Map;
-
-import org.springframework.core.style.StylerUtils;
-
 /**
  * Base class for exceptions thrown by expression parsing system.
  * @author Keith Donald
@@ -31,18 +27,12 @@ public class ParserException extends RuntimeException {
 	private String expressionString;
 
 	/**
-	 * The parsing context.
-	 */
-	private Map parseContext;
-
-	/**
 	 * Creates a new parser exception.
 	 * @param expressionString
 	 * @param cause
 	 */
-	public ParserException(String expressionString, Map parseContext, Throwable cause) {
-		this(expressionString, parseContext, cause, "Unable to parse expression string '" + expressionString
-				+ "' in context " + StylerUtils.style(parseContext));
+	public ParserException(String expressionString, Throwable cause) {
+		this(expressionString, cause, "Unable to parse expression string '" + expressionString + "'");
 	}
 
 	/**
@@ -51,10 +41,9 @@ public class ParserException extends RuntimeException {
 	 * @param cause
 	 * @param message
 	 */
-	public ParserException(String expressionString, Map parseContext, Throwable cause, String message) {
+	public ParserException(String expressionString, Throwable cause, String message) {
 		super(message, cause);
 		this.expressionString = expressionString;
-		this.parseContext = parseContext;
 	}
 
 	/**
@@ -62,12 +51,5 @@ public class ParserException extends RuntimeException {
 	 */
 	public Object getExpressionString() {
 		return expressionString;
-	}
-
-	/**
-	 * Returns the parsing context when the failure occured.
-	 */
-	public Map getParseContext() {
-		return parseContext;
 	}
 }
