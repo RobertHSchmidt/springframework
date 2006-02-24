@@ -1,0 +1,47 @@
+package org.springframework.webflow.test;
+
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.webflow.Flow;
+import org.springframework.webflow.registry.FlowRegistryFlowArtifactFactory;
+import org.springframework.webflow.registry.FlowRegistryImpl;
+import org.springframework.webflow.registry.StaticFlowHolder;
+
+/**
+ * A stub flow artifact factory implementation suitable for a test environment.
+ * <p>
+ * Allows programmatic registration of subflows needed by a flow execution being
+ * tested, see {@link #registerSubFlow(Flow)}.
+ * <p>
+ * Also supports programmatic registration of additional custom artifacts needed
+ * by a flow (such as Actions), managed in a backing Spring {@link BeanFactory};
+ * see {@link #registerBean(String, Object)}.
+ * 
+ * @author Keith Donald
+ */
+public class MockFlowArtifactFactory extends FlowRegistryFlowArtifactFactory {
+	
+	/**
+	 * Creates a new mock flow artifact factory. 
+	 */
+	public MockFlowArtifactFactory() {
+		super(new FlowRegistryImpl(), new StaticApplicationContext());
+	}
+
+	/**
+	 * Register a subflow definition in this factory.
+	 * @param subflow the subflow
+	 */
+	public void registerSubFlow(Flow subflow) {
+		getSubflowRegistry().registerFlow(new StaticFlowHolder(subflow));
+	}
+
+	/**
+	 * Register a bean in this factory.
+	 * @param beanName the bean name
+	 * @param bean the singleton instance
+	 */
+	public void registerBean(String beanName, Object bean) {
+		((StaticApplicationContext)getBeanFactory()).getBeanFactory().registerSingleton(beanName, bean);
+	}
+}

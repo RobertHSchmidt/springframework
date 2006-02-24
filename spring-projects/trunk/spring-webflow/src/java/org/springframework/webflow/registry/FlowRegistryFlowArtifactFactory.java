@@ -26,13 +26,13 @@ import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.DefaultFlowArtifactFactory;
+import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowArtifactParameters;
 
 /**
- * A flow artifact locator that obtains subflow definitions from a explict
- * {@link FlowRegistry} The remaining types of artifacts ared sourced from a
+ * A flow artifact factory that obtains subflow definitions from a explict
+ * {@link FlowRegistry} The remaining types of artifacts are sourced from a
  * standard Spring BeanFactory.
  * 
  * @see FlowRegistry
@@ -61,6 +61,24 @@ public class FlowRegistryFlowArtifactFactory extends DefaultFlowArtifactFactory 
 	public FlowRegistryFlowArtifactFactory(FlowRegistry subflowRegistry, BeanFactory beanFactory) {
 		this.subflowRegistry = subflowRegistry;
 		this.beanFactory = beanFactory;
+	}
+
+	/**
+	 * Returns the flow registry used by this flow artifact factory to manage
+	 * subflow definitions.
+	 * @return the flow registry
+	 */
+	public FlowRegistry getSubflowRegistry() {
+		return subflowRegistry;
+	}
+
+	/**
+	 * Returns the bean factory used by this flow artifact factory to manage
+	 * custom flow artifacts.
+	 * @return the bean factory
+	 */
+	public BeanFactory getBeanFactory() {
+		return beanFactory;
 	}
 
 	public Flow getSubflow(String id) throws FlowArtifactException {
