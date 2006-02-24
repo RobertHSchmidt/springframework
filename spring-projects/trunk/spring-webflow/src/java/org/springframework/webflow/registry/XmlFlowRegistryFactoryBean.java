@@ -37,7 +37,7 @@ import org.springframework.core.io.Resource;
  * in the registry created by this factory bean.
  * <p>
  * This class is also <code>BeanFactoryAware</code> and when used with Spring
- * will automatically create a configured {@link RegistryFlowArtifactFactory}
+ * will automatically create a configured {@link RegistryBackedFlowArtifactFactory}
  * for loading Flow artifacts like Actions from the Spring bean factory during
  * the Flow registration process.
  * <p>

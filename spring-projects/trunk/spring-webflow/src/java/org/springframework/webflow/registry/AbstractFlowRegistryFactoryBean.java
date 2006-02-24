@@ -41,7 +41,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * Strategy for locating externally managed dependent artifacts when a
 	 * registered Flow is being built.
 	 */
-	private RegistryFlowArtifactFactory flowArtifactFactory;
+	private RegistryBackedFlowArtifactFactory flowArtifactFactory;
 
 	/**
 	 * Sets the parent registry of the registry constructed by this factory
@@ -53,7 +53,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		flowArtifactFactory = new RegistryFlowArtifactFactory(getFlowRegistry(), beanFactory);
+		flowArtifactFactory = new RegistryBackedFlowArtifactFactory(getFlowRegistry(), beanFactory);
 	}
 
 	public void setResourceLoader(ResourceLoader resourceLoader) {

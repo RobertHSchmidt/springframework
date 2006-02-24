@@ -1,6 +1,7 @@
 package org.springframework.webflow.test;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.registry.FlowRegistryImpl;
@@ -26,7 +27,7 @@ public class MockFlowArtifactFactory extends RegistryFlowArtifactFactory {
 	 * Creates a new mock flow artifact factory.
 	 */
 	public MockFlowArtifactFactory() {
-		super(new FlowRegistryImpl(), new StaticApplicationContext());
+		super(new FlowRegistryImpl(), new StaticListableBeanFactory());
 	}
 
 	/**

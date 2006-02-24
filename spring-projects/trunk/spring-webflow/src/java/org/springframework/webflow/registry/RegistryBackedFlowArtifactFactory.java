@@ -40,7 +40,7 @@ import org.springframework.webflow.builder.FlowArtifactParameters;
  * 
  * @author Keith Donald
  */
-public class RegistryFlowArtifactFactory extends DefaultFlowArtifactFactory implements ResourceLoaderAware {
+public class RegistryBackedFlowArtifactFactory extends DefaultFlowArtifactFactory implements ResourceLoaderAware {
 
 	/**
 	 * The registry for locating subflows.
@@ -58,7 +58,7 @@ public class RegistryFlowArtifactFactory extends DefaultFlowArtifactFactory impl
 	 * @param subflowRegistry The registry for loading subflows
 	 * @param beanFactory The spring bean factory
 	 */
-	public RegistryFlowArtifactFactory(FlowRegistry subflowRegistry, BeanFactory beanFactory) {
+	public RegistryBackedFlowArtifactFactory(FlowRegistry subflowRegistry, BeanFactory beanFactory) {
 		this.subflowRegistry = subflowRegistry;
 		this.beanFactory = beanFactory;
 	}
