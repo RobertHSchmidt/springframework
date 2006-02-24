@@ -73,10 +73,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(ac);
 		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
 		FlowRegistry registry = (FlowRegistry)ac.getBean("flowRegistry2");
-		assertEquals("Wrong registry definition count", 9, registry.getFlowCount());
-		Flow flow4 = registry.getFlow("flow4");
-		assertEquals("Property not assigned?", "testPropertyValue", flow4.getAttributeMap().get(
-				"testPropertyName"));
+		assertEquals("Wrong registry definition count", 7, registry.getFlowCount());
 	}
 
 	public void testXmlFlowRegistryFactoryBeanFlowDefinitionProperties() {

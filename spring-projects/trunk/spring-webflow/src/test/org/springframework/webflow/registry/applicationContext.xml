@@ -14,27 +14,10 @@
 
 	<bean id="flowRegistry2" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
 		<property name="flowLocations" value="classpath*:org/springframework/webflow/registry/**/flow*.xml"/>
-		<property name="flowDefinitions">
-			<list>
-				<bean class="org.springframework.webflow.registry.ExternalizedFlowDefinition">
-					<constructor-arg value="flow3"/>
-					<constructor-arg value="classpath:org/springframework/webflow/registry/flow1.xml"/>
-				</bean>
-				<bean class="org.springframework.webflow.registry.ExternalizedFlowDefinition">
-					<constructor-arg value="flow4"/>
-					<constructor-arg value="classpath:org/springframework/webflow/registry/flow2.xml"/>
-					<constructor-arg>
-						<map>
-							<entry key="testPropertyName" value="testPropertyValue"/>
-						</map>
-					</constructor-arg>
-				</bean>
-			</list>
-		</property>
 	</bean>
 
 	<bean id="flowRegistry3" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
-		<property name="flowDefinitionProperties">
+		<property name="flowDefinitions">
 			<value>
 				flow1=classpath:org/springframework/webflow/registry/flow1.xml
 				flow2=classpath:org/springframework/webflow/registry/flow2.xml

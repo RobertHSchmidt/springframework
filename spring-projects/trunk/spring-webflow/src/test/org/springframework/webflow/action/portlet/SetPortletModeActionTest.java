@@ -64,31 +64,13 @@ public class SetPortletModeActionTest extends TestCase {
 		PortletExternalContext externalContext = new PortletExternalContext(null, null, mockActionResponse);
 		MockRequestContext mockRequestContext = new MockRequestContext();
 		mockRequestContext.setExternalContext(externalContext);
-		mockRequestContext.setAttribute(SetPortletModeAction.PORTLET_MODE_ATTRIBUTE, "HELP");
+		mockRequestContext.setAttribute(SetPortletModeAction.PORTLET_MODE_ATTRIBUTE, PortletMode.HELP);
 
 		// perform test
 		Event result = tested.doExecute(mockRequestContext);
 
 		assertEquals(AbstractAction.SUCCESS_EVENT_ID, result.getId());
 		assertEquals(PortletMode.HELP, mockActionResponse.getPortletMode());
-	}
-
-	public void testDoExecuteWithPortletModeAsAttributeNotString() throws Exception {
-		MockActionResponse mockActionResponse = new MockActionResponse();
-		PortletExternalContext externalContext = new PortletExternalContext(null, null, mockActionResponse);
-		MockRequestContext mockRequestContext = new MockRequestContext();
-		mockRequestContext.setExternalContext(externalContext);
-		mockRequestContext.setAttribute(SetPortletModeAction.PORTLET_MODE_ATTRIBUTE, PortletMode.HELP);
-
-		// perform test
-		try {
-			tested.doExecute(mockRequestContext);
-			fail("ClassCastException expected");
-		} catch (ClassCastException expected) {
-			// expected
-		}
-
-		assertNull("No mode should be set", mockActionResponse.getPortletMode());
 	}
 
 	public void testDoExecuteWithWrongResponseClass() throws Exception {
