@@ -31,14 +31,14 @@ public class FlowExecutionKeyFormatter implements Formatter {
 	private static final String CONTINUATION_ID_PREFIX = "_c";
 
 	public String formatValue(Object continuationKey) throws IllegalArgumentException {
-		Assert.notNull(continuationKey, "The continuation key is required");
+		Assert.notNull(continuationKey, "The flow execution key is required");
 		FlowExecutionKey key = (FlowExecutionKey)continuationKey;
 		return CONVERSATION_ID_PREFIX + key.getConversationId() + CONTINUATION_ID_PREFIX + key.getContinuationId();
 	}
 
 	public Object parseValue(String continuationKeyString, Class targetClass) throws InvalidFormatException {
-		Assert.hasText(continuationKeyString, "The encoded continuation key must have text");
-		Assert.isTrue(continuationKeyString.startsWith(CONVERSATION_ID_PREFIX), "Invalid encoded flow execution key '"
+		Assert.hasText(continuationKeyString, "The string encoded flow execution key is required");
+		Assert.isTrue(continuationKeyString.startsWith(CONVERSATION_ID_PREFIX), "Invalid string encoded flow execution key '"
 				+ continuationKeyString + "'");
 		int continuationStart = continuationKeyString.indexOf(CONTINUATION_ID_PREFIX, CONVERSATION_ID_PREFIX.length());
 		String conversationId = continuationKeyString.substring(CONVERSATION_ID_PREFIX.length(), continuationStart);
