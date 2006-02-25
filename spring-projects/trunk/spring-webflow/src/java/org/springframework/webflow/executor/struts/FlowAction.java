@@ -235,7 +235,7 @@ public class FlowAction extends ActionSupport {
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		ExternalContext context = new StrutsExternalContext(mapping, form, getServletContext(), request, response);
-		ResponseInstruction responseInstruction = createControllerTemplate().handleFlowRequest(context);
+		ResponseInstruction responseInstruction = createRequestHandler().handleFlowRequest(context);
 		return toActionForward(responseInstruction, mapping, form, request, context);
 	}
 
@@ -244,7 +244,7 @@ public class FlowAction extends ActionSupport {
 	 * this flow controller.
 	 * @return the controller helper
 	 */
-	protected FlowRequestHandler createControllerTemplate() {
+	protected FlowRequestHandler createRequestHandler() {
 		return new FlowRequestHandler(getFlowExecutor(), getParameterExtractor());
 	}
 

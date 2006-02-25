@@ -176,7 +176,7 @@ public class FlowController extends AbstractController {
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		ServletExternalContext context = new ServletExternalContext(getServletContext(), request, response);
-		ResponseInstruction responseInstruction = createFlowExecutorTemplate().handleFlowRequest(context);
+		ResponseInstruction responseInstruction = createRequestHandler().handleFlowRequest(context);
 		return toModelAndView(responseInstruction, context);
 	}
 
@@ -186,7 +186,7 @@ public class FlowController extends AbstractController {
 	 * reusable flow execution request handling workflow.
 	 * @return the controller helper
 	 */
-	protected FlowRequestHandler createFlowExecutorTemplate() {
+	protected FlowRequestHandler createRequestHandler() {
 		return new FlowRequestHandler(getFlowExecutor(), getParameterExtractor());
 	}
 
