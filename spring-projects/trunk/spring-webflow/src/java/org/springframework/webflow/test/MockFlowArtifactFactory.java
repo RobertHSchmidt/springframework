@@ -11,7 +11,7 @@ import org.springframework.webflow.registry.StaticFlowHolder;
  * A stub flow artifact factory implementation suitable for a test environment.
  * <p>
  * Allows programmatic registration of subflows needed by a flow execution being
- * tested, see {@link #registerSubFlow(Flow)}.
+ * tested, see {@link #registerSubflow(Flow)}.
  * <p>
  * Also supports programmatic registration of additional custom artifacts needed
  * by a flow (such as Actions) managed in a backing Spring {@link ConfigurableBeanFactory};
@@ -34,7 +34,7 @@ public class MockFlowArtifactFactory extends RegistryBackedFlowArtifactFactory {
 	 * flow execution test.
 	 * @param subflow the subflow
 	 */
-	public void registerSubFlow(Flow subflow) {
+	public void registerSubflow(Flow subflow) {
 		getSubflowRegistry().registerFlow(new StaticFlowHolder(subflow));
 	}
 
