@@ -27,10 +27,8 @@ import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
@@ -65,20 +63,20 @@ import org.springframework.webflow.executor.support.FlowRequestHandler;
  * Usage example:
  * 
  * <pre>
- *      &lt;!--
- *          Exposes flows for execution at a single request URL.
- *          The id of a flow to launch should be passed in by clients using
- *          the &quot;_flowId&quot; request parameter:
- *          e.g. /app.htm?_flowId=flow1
- *      --&gt;
- *      &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
- *          &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *      &lt;/bean&gt;
- *                                                          
- *      &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *      &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *          &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *      &lt;/bean&gt;
+ *     &lt;!--
+ *         Exposes flows for execution at a single request URL.
+ *         The id of a flow to launch should be passed in by clients using
+ *         the &quot;_flowId&quot; request parameter:
+ *         e.g. /app.htm?_flowId=flow1
+ *     --&gt;
+ *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
+ *         &lt;constructor-arg ref=&quot;flowRegistry&quot;/&gt;
+ *     &lt;/bean&gt;
+ *                                                           
+ *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *     &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorParameterExtractor}
@@ -220,9 +218,8 @@ public class FlowController extends AbstractController {
 				// forward to a view as part of an active conversation
 				Map model = new HashMap(response.getModel().size() + 2, 1);
 				model.putAll(response.getModel());
-				FlowExecutionKey flowExecutionKey = response.getFlowExecutionKey();
-				FlowExecutionContext flowExecutionContext = response.getFlowExecutionContext();
-				parameterExtractor.putContextAttributes(flowExecutionKey, flowExecutionContext, model);
+				parameterExtractor.putContextAttributes(response.getFlowExecutionKey(), response
+						.getFlowExecutionContext(), model);
 				return new ModelAndView(response.getViewName(), model);
 			}
 		}

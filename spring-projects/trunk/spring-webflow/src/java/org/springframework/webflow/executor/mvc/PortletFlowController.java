@@ -27,10 +27,8 @@ import javax.portlet.RenderResponse;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
-import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
@@ -62,18 +60,18 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * Usage example:
  * 
  * <pre>
- *      &lt;!--
- *          Exposes flows for execution.
- *      --&gt;
- *      &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *          &lt;constructor-arg ref=&quot;flowLocator&quot;/&gt;
- *          &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
- *      &lt;/bean&gt;
- *                                                          
- *      &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *      &lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *          &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *      &lt;/bean&gt;
+ *     &lt;!--
+ *         Exposes flows for execution.
+ *     --&gt;
+ *     &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *         &lt;constructor-arg ref=&quot;flowRegistry&quot;/&gt;
+ *         &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
+ *     &lt;/bean&gt;
+ *                                                         
+ *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *     &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorParameterExtractor}
@@ -175,7 +173,7 @@ public class PortletFlowController extends AbstractController {
 	 * @param defaultFlowId the id of the default flow
 	 */
 	public void setDefaultFlowId(String defaultFlowId) {
-		this.parameterExtractor.setDefaultFlowId(defaultFlowId);
+		parameterExtractor.setDefaultFlowId(defaultFlowId);
 	}
 
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
@@ -214,9 +212,8 @@ public class PortletFlowController extends AbstractController {
 			// forward to a view as part of an active conversation
 			Map model = new HashMap(response.getModel().size() + 2, 1);
 			model.putAll(response.getModel());
-			FlowExecutionKey flowExecutionKey = response.getFlowExecutionKey();
-			FlowExecutionContext flowExecutionContext = response.getFlowExecutionContext();
-			parameterExtractor.putContextAttributes(flowExecutionKey, flowExecutionContext, model);
+			parameterExtractor.putContextAttributes(response.getFlowExecutionKey(), response.getFlowExecutionContext(),
+					model);
 			return new ModelAndView(response.getViewName(), model);
 		}
 		else {
