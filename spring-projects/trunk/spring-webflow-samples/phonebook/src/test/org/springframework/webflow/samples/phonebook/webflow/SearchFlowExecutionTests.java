@@ -100,7 +100,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 				return success();
 			}
 		});
-		flowArtifactFactory.registerSubFlow(detailFlow);
+		flowArtifactFactory.registerSubflow(detailFlow);
 		flowArtifactFactory.registerBean("phonebook", phonebook);
 		return flowArtifactFactory;
 	}

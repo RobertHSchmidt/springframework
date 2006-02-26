@@ -20,7 +20,7 @@
 	-->
 	<bean id="flowController" class="org.springframework.webflow.executor.mvc.PortletFlowController">
 		<constructor-arg ref="flowExecutor" />
-		<property name="defaultFlowId" ref="search-flow"/>
+		<property name="defaultFlowId" value="search-flow"/>
 	</bean>
 
 	<!-- ResourceViewResolver -->
