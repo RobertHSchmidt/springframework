@@ -71,11 +71,6 @@ public class MessageDispatcher extends ApplicationObjectSupport
         implements MessageEndpoint, InitializingBean, BeanNameAware {
 
     /**
-     * Logger available to subclasses
-     */
-    protected final Log logger = LogFactory.getLog(getClass());
-
-    /**
      * Name of the class path resource (relative to the MessageDispatcher class) that defines MessageDispatcher's
      * default strategy names.
      */

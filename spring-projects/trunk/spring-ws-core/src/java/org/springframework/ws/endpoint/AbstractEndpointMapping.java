@@ -16,8 +16,6 @@
 
 package org.springframework.ws.endpoint;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.EndpointInvocationChain;
@@ -36,8 +34,6 @@ import org.springframework.ws.WebServiceMessage;
  * @see org.springframework.ws.EndpointInterceptor
  */
 public abstract class AbstractEndpointMapping extends ApplicationObjectSupport implements EndpointMapping {
-
-    protected final Log logger = LogFactory.getLog(getClass());
 
     private Object defaultEndpoint;
 
@@ -122,15 +118,13 @@ public abstract class AbstractEndpointMapping extends ApplicationObjectSupport i
 
     /**
      * Resolves an endpoint string. If the given string can is a bean name, it is resolved using the application
-     * context. If it contains a bean name with a method (<code>beanName#method</code>), it is resolved to a
-     * <code>MethodEndpoint</code> containing both the resolved bean and method.
+     * context.
      *
      * @param endpointName the endpoint name
      * @return the resolved enpoint, or <code>null</code> if the name could not be resolved
      */
     protected Object resolveStringEndpoint(String endpointName) {
-        int index = endpointName.indexOf('#');
-        if (index == -1 && getApplicationContext().containsBean(endpointName)) {
+        if (getApplicationContext().containsBean(endpointName)) {
             return getApplicationContext().getBean(endpointName);
         }
         else {
