@@ -27,7 +27,7 @@
 		<tr>
 			<td>First Name</td>
 			<td>
-				<input type="text" name="${status.expression}" value="${status.value}">
+				<input type="text" name="<c:out value="${status.expression}"/>" value="<c:out value="${status.value}"/>">
 			</td>
 		</tr>
 		</spring:bind>		
@@ -35,7 +35,7 @@
 		<TR>
 			<td>Last Name</td>
 			<td>
-				<input type="text" name="${status.expression}" value="${status.value}">
+				<input type="text" name="<c:out value="${status.expression}"/>" value="<c:out value="${status.value}"/>">
 			</td>
 		</TR>
 		</spring:bind>
@@ -46,7 +46,7 @@
 		</tr>
 		<tr>
 			<td colspan="2" class="buttonBar">
-				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
+				<input type="hidden" name="_flowExecutionKey" value="<c:out value="${flowExecutionKey}"/>">
 				<input type="submit" class="portlet-form-button" name="_eventId_search" value="Search">
 			</td>
 		</tr>

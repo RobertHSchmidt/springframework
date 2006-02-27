@@ -1,5 +1,7 @@
 <%@ include file="includeTop.jsp" %>
 
+<%@ page import="org.springframework.webflow.samples.phonebook.domain.Person" %>
+
 <div id="content">
 	<div id="insert">
 		<img src="images/webflow-logo.jpg"/>
@@ -27,19 +29,19 @@
 					</tr>
 					<c:forEach var="person" items="${results}">
 						<tr>
-							<td>${person.firstName}</td>
-							<td>${person.lastName}</td>
+							<td><c:out value="${person.firstName}"/></td>
+							<td><c:out value="${person.lastName}"/></td>
 							<td>
 								<a href="
                                     <portlet:actionURL>
-						                <portlet:param name="_flowExecutionKey" value="${flowExecutionKey}" />
+						                <portlet:param name="_flowExecutionKey" value="<%= (String)request.getAttribute("flowExecutionKey") %>" />
 						            	<portlet:param name="_eventId" value="select" />
-						            	<portlet:param name="id" value="${person.id}>" />
+						            	<portlet:param name="id" value="<%= ((Person)pageContext.getAttribute("person")).getId().toString() %>"/>
 						            </portlet:actionURL>">
-							        ${person.userId}
+							        <c:out value="${person.userId}"/>
 								</a>
 							</td>
-							<td>${person.phone}</td>
+							<td><c:out value="${person.phone}"/></td>
 						</tr>
 					</c:forEach>
 				</table>
@@ -47,7 +49,7 @@
 		</tr>
 		<tr>
 			<td class="buttonBar">
-				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
+				<input type="hidden" name="_flowExecutionKey" value="<c:out value="${flowExecutionKey}"/>">
 				<input type="submit" class="button" name="_eventId_newSearch" value="New Search">
 			</td>
 		</tr>

@@ -1,13 +1,12 @@
 <%@ page contentType="text/html" %>
 <%@ page session="false" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
+<%@ taglib prefix="portlet" uri="http://java.sun.com/portlet" %>
 
 <html>
 <head>
-<title>Sell an item</title>
+<title>Search the Phonebook</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>

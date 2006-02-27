@@ -1,5 +1,7 @@
 <%@ include file="includeTop.jsp" %>
 
+<%@ page import="org.springframework.webflow.samples.phonebook.domain.Person" %>
+
 <div id="content">
 	<div id="insert">
 		<img src="images/webflow-logo.jpg"/>
@@ -14,19 +16,19 @@
 		</tr>
 		<tr>
 			<td><b>First Name</b></td>
-			<td>${person.firstName}</td>
+			<td><c:out value="${person.firstName}"/></td>
 		</tr>
 		<tr>
 			<td><b>Last Name</b></td>
-			<td>${person.lastName}</td>
+			<td><c:out value="${person.lastName}"/></td>
 		</tr>
 		<tr>
 			<td><b>User Id</B></td>
-			<td>${person.userId}</td>
+			<td><c:out value="${person.userId}"/></td>
 		</tr>
 		<tr>
 			<td><b>Phone</b></td>
-			<td>${person.phone}</td>
+			<td><c:out value="${person.phone}"/></td>
 		</tr>
 		<tr>
 			<td colspan="2">
@@ -35,19 +37,19 @@
 				<br>
 				<c:forEach var="colleague" items="${person.colleagues}">
 					<a href="
-                        <portlet:actionURL>
-			                <portlet:param name="_flowExecutionKey" value="${flowExecutionKey}" />
-			            	<portlet:param name="_eventId" value="select" />
-			            	<portlet:param name="id" value="${colleague.id}>" />
-			            </portlet:actionURL>">
-  			            ${colleague.userId}
+                    	<portlet:actionURL>
+							<portlet:param name="_flowExecutionKey" value="<%= (String)request.getAttribute("flowExecutionKey") %>" />
+						    <portlet:param name="_eventId" value="select" />
+						    <portlet:param name="id" value="<%= ((Person)pageContext.getAttribute("colleague")).getId().toString() %>"/>
+						</portlet:actionURL>">
+  			            <c:out value="${colleague.firstName}"/> <c:out value="${colleague.lastName}"/><br>
 					</a>
 				</c:forEach>				
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2" class="buttonBar">
-				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
+				<input type="hidden" name="_flowExecutionKey" value="<c:out value="${flowExecutionKey}"/>">
 				<input type="submit" class="button" name="_eventId_back" value="Back">
 			</td>
 		</tr>
