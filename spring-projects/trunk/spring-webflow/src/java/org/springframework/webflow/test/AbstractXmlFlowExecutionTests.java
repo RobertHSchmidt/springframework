@@ -31,8 +31,8 @@ import org.springframework.webflow.builder.XmlFlowBuilder;
  * 
  * 	   protected ExternalizedFlowDefinition getFlowDefinition() {
  * 	       File flowDir = new File(&quot;src/webapp/WEB-INF&quot;);
- * 	       Resource resource = return new FileSystemResource(new File(flowDir, &quot;search.xml&quot;));
- * 		   return new ExternalizedFlowDefinition("search", resource);
+ * 	       Resource resource = return new FileSystemResource(new File(flowDir, &quot;search-flow.xml&quot;));
+ * 		   return new ExternalizedFlowDefinition("searchFlow", resource);
  * 	   }
  * 
  *     public void testStartFlow() {
@@ -42,9 +42,9 @@ import org.springframework.webflow.builder.XmlFlowBuilder;
  * 
  * 	   public void testDisplayCriteriaSubmitSuccess() {
  * 	       startFlow();
- * 		   Map parameters = new HashMap();
- * 		   parameters.put(&quot;firstName&quot;, &quot;Keith&quot;);
- * 		   parameters.put(&quot;lastName&quot;, &quot;Donald&quot;);
+ *         MockParameterMap parameters = new MockParameterMap();
+ *         parameters.put("firstName", "Keith");
+ *         parameters.put("lastName", "Donald");
  * 		   ViewSelection view = signalEvent(&quot;search&quot;, parameters);
  * 		   assertCurrentStateEquals(&quot;displaySearchResults&quot;);
  * 		   assertModelAttributeCollectionSize(1, &quot;results&quot;, view);

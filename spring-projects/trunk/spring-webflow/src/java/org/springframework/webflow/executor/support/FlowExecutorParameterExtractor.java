@@ -48,6 +48,18 @@ public class FlowExecutorParameterExtractor {
 	public static final String CONVERSATION_ID_PARAMETER = "_conversationId";
 
 	/**
+	 * The string-encoded id of the flow execution will be exposed to the view
+	 * in a model attribute with this name ("flowExecutionKey").
+	 */
+	public static final String FLOW_EXECUTION_KEY_ATTRIBUTE = "flowExecutionKey";
+
+	/**
+	 * The flow execution context itself will be exposed to the view in a model
+	 * attribute with this name ("flowExecutionContext").
+	 */
+	public static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
+
+	/**
 	 * The default delimiter used when a parameter value is encoed as part of
 	 * the name of an event parameter (e.g. "_eventId_submit").
 	 * <p>
@@ -61,19 +73,7 @@ public class FlowExecutorParameterExtractor {
 	 * Event id value indicating that the event has not been set ("@NOT_SET@").
 	 */
 	public static final String NOT_SET_EVENT_ID = "@NOT_SET@";
-
-	/**
-	 * The flow execution context itself will be exposed to the view in a model
-	 * attribute with this name ("flowExecutionContext").
-	 */
-	public static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
-
-	/**
-	 * The string-encoded id of the flow execution will be exposed to the view
-	 * in a model attribute with this name ("flowExecutionKey").
-	 */
-	public static final String FLOW_EXECUTION_KEY_ATTRIBUTE = "flowExecutionKey";
-
+	
 	/**
 	 * Identifies a flow definition to launch a new execution for, defaults to
 	 * ("_flowId").
@@ -97,7 +97,7 @@ public class FlowExecutorParameterExtractor {
 	 * Identifies the id of the flow execution participated in, defaults to
 	 * {@link #FLOW_EXECUTION_KEY_ATTRIBUTE }.
 	 */
-	private String flowExecutionKeyAttributeName = FLOW_EXECUTION_KEY_PARAMETER;
+	private String flowExecutionKeyAttributeName = FLOW_EXECUTION_KEY_ATTRIBUTE;
 
 	/**
 	 * The formatter that will parse encoded _flowExecutionId strings into
@@ -105,6 +105,12 @@ public class FlowExecutorParameterExtractor {
 	 */
 	private Formatter flowExecutionKeyFormatter = new FlowExecutionKeyFormatter();
 
+	/**
+	 * Identifies the the flow execution participated in, defaults to
+	 * {@link #FLOW_EXECUTION_CONTEXT_ATTRIBUTE }.
+	 */
+	private String flowExecutionContextAttributeName = FLOW_EXECUTION_CONTEXT_ATTRIBUTE;
+	
 	/**
 	 * Identifies an event that occured in an existing flow execution, defaults
 	 * to ("_eventId_submit").
@@ -199,6 +205,20 @@ public class FlowExecutorParameterExtractor {
 		this.flowExecutionKeyFormatter = continuationKeyFormatter;
 	}
 
+	/**
+	 * Returns the flow execution context attribute name.
+	 */
+	public String getFlowExecutionContextAttributeName() {
+		return flowExecutionContextAttributeName;
+	}
+
+	/**
+	 * Sets the flow execution context attribute name.
+	 */
+	public void setFlowExecutionContextAttributeName(String flowExecutionContextAttributeName) {
+		this.flowExecutionContextAttributeName = flowExecutionContextAttributeName;
+	}
+	
 	/**
 	 * Returns the event id parameter name.
 	 */
@@ -354,8 +374,8 @@ public class FlowExecutorParameterExtractor {
 	 * @param model the model
 	 */
 	public void putContextAttributes(FlowExecutionKey flowExecutionKey, FlowExecutionContext context, Map model) {
-		model.put(FLOW_EXECUTION_KEY_ATTRIBUTE, flowExecutionKeyFormatter.formatValue(flowExecutionKey));
-		model.put(FLOW_EXECUTION_CONTEXT_ATTRIBUTE, context);
+		model.put(getFlowExecutionKeyAttributeName(), flowExecutionKeyFormatter.formatValue(flowExecutionKey));
+		model.put(getFlowExecutionContextAttributeName(), context);
 	}
 
 	/**
