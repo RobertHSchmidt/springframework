@@ -56,7 +56,7 @@ public interface FlowExecutor {
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system.
 	 * @return the next response instruction
-	 * @throws FlowException if an exception occured launching the new flow
+	 * @throws FlowException if an exception occured resuming the existing flow
 	 * execution.
 	 */
 	public ResponseInstruction signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
@@ -69,8 +69,7 @@ public interface FlowExecutor {
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system.
 	 * @return the current response instruction
-	 * @throws FlowException if an exception occured retrieving the current view
-	 * selection
+	 * @throws FlowException if an exception occured retrieving the current response instruction
 	 */
 	public ResponseInstruction getCurrentResponseInstruction(Serializable conversationId, ExternalContext context)
 			throws FlowException;
