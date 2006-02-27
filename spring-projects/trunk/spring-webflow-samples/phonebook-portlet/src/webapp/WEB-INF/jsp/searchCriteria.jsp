@@ -1,8 +1,9 @@
 <%@ include file="includeTop.jsp" %>
 
 <div id="content">
+
 	<div id="insert">
-		<img src="images/webflow-logo.jpg"/>
+		<img src="<%= renderResponse.encodeURL(renderRequest.getContextPath() + "/images/webflow-logo.jpg") %>"/>
 	</div>
 	<form action="<portlet:actionURL/>" method="post">
 	<table>
