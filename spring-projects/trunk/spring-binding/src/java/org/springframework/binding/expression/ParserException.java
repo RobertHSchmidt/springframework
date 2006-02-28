@@ -15,41 +15,43 @@
  */
 package org.springframework.binding.expression;
 
+import org.springframework.core.NestedRuntimeException;
+
 /**
  * Base class for exceptions thrown by expression parsing system.
  * @author Keith Donald
  */
-public class ParserException extends RuntimeException {
+public class ParserException extends NestedRuntimeException {
 
-	/**
-	 * The expression string that could not be parsed.
-	 */
-	private String expressionString;
+    /**
+     * The expression string that could not be parsed.
+     */
+    private String expressionString;
 
-	/**
-	 * Creates a new parser exception.
-	 * @param expressionString
-	 * @param cause
-	 */
-	public ParserException(String expressionString, Throwable cause) {
-		this(expressionString, cause, "Unable to parse expression string '" + expressionString + "'");
-	}
+    /**
+     * Creates a new parser exception.
+     * @param expressionString
+     * @param cause
+     */
+    public ParserException(String expressionString, Throwable cause) {
+        this(expressionString, cause, "Unable to parse expression string '" + expressionString + "'");
+    }
 
-	/**
-	 * Creates a new parser exception.
-	 * @param expressionString
-	 * @param cause
-	 * @param message
-	 */
-	public ParserException(String expressionString, Throwable cause, String message) {
-		super(message, cause);
-		this.expressionString = expressionString;
-	}
+    /**
+     * Creates a new parser exception.
+     * @param expressionString
+     * @param cause
+     * @param message
+     */
+    public ParserException(String expressionString, Throwable cause, String message) {
+        super(message, cause);
+        this.expressionString = expressionString;
+    }
 
-	/**
-	 * Returns the expression string that could not be parsed.
-	 */
-	public Object getExpressionString() {
-		return expressionString;
-	}
+    /**
+     * Returns the expression string that could not be parsed.
+     */
+    public Object getExpressionString() {
+        return expressionString;
+    }
 }
