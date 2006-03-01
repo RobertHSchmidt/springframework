@@ -358,46 +358,51 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
-	 * Assert that the returned view selection is an instance of {@link ApplicationView}.
+	 * Assert that the returned view selection is an instance of
+	 * {@link ApplicationView}.
 	 * @param viewSelection the view selection
 	 */
-	public ApplicationView applicationView(ViewSelection viewSelection) {
+	protected ApplicationView applicationView(ViewSelection viewSelection) {
 		Assert.isInstanceOf(ApplicationView.class, viewSelection, "Unexpected class of view selection: ");
 		return (ApplicationView)viewSelection;
 	}
 
 	/**
-	 * Assert that the returned view selection is an instance of {@link ConversationRedirect}.
+	 * Assert that the returned view selection is an instance of
+	 * {@link ConversationRedirect}.
 	 * @param viewSelection the view selection
 	 */
-	public ConversationRedirect conversationRedirect(ViewSelection viewSelection) {
+	protected ConversationRedirect conversationRedirect(ViewSelection viewSelection) {
 		Assert.isInstanceOf(ConversationRedirect.class, viewSelection, "Unexpected class of view selection: ");
 		return (ConversationRedirect)viewSelection;
 	}
 
 	/**
-	 * Assert that the returned view selection is an instance of {@link FlowRedirect}.
+	 * Assert that the returned view selection is an instance of
+	 * {@link FlowRedirect}.
 	 * @param viewSelection the view selection
 	 */
-	public FlowRedirect flowRedirect(ViewSelection viewSelection) {
+	protected FlowRedirect flowRedirect(ViewSelection viewSelection) {
 		Assert.isInstanceOf(FlowRedirect.class, viewSelection, "Unexpected class of view selection: ");
 		return (FlowRedirect)viewSelection;
 	}
 
 	/**
-	 * Assert that the returned view selection is an instance of {@link ExternalRedirect}.
+	 * Assert that the returned view selection is an instance of
+	 * {@link ExternalRedirect}.
 	 * @param viewSelection the view selection
 	 */
-	public ExternalRedirect externalRedirect(ViewSelection viewSelection) {
+	protected ExternalRedirect externalRedirect(ViewSelection viewSelection) {
 		Assert.isInstanceOf(ExternalRedirect.class, viewSelection, "Unexpected class of view selection: ");
 		return (ExternalRedirect)viewSelection;
 	}
-	
+
 	/**
-	 * Assert that the returned view selection is the {@link ViewSelection#NULL_VIEW_SELECTION}.
+	 * Assert that the returned view selection is the
+	 * {@link ViewSelection#NULL_VIEW_SELECTION}.
 	 * @param viewSelection the view selection
 	 */
-	public void assertNull(ViewSelection viewSelection) {
+	protected void assertNull(ViewSelection viewSelection) {
 		assertEquals("Not the null view selection:", viewSelection, ViewSelection.NULL_VIEW_SELECTION);
 	}
 
@@ -407,7 +412,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertViewNameEquals(String expectedViewName, ApplicationView viewSelection) {
+	protected void assertViewNameEquals(String expectedViewName, ApplicationView viewSelection) {
 		assertEquals("The view name is wrong:", expectedViewName, viewSelection.getViewName());
 	}
 
@@ -419,7 +424,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeEquals(Object expectedValue, String attributeName, ApplicationView viewSelection) {
+	protected void assertModelAttributeEquals(Object expectedValue, String attributeName, ApplicationView viewSelection) {
 		assertEquals("The model attribute '" + attributeName + "' value is wrong:", expectedValue,
 				evaluateModelAttributeExpression(attributeName, viewSelection.getModel()));
 	}
@@ -432,7 +437,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ApplicationView viewSelection) {
+	protected void assertModelAttributeCollectionSize(int expectedSize, String attributeName,
+			ApplicationView viewSelection) {
 		assertModelAttributeNotNull(attributeName, viewSelection);
 		Collection c = (Collection)evaluateModelAttributeExpression(attributeName, viewSelection.getModel());
 		assertEquals("The model attribute '" + attributeName + "' collection size is wrong:", expectedSize, c.size());
@@ -444,7 +450,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeNotNull(String attributeName, ApplicationView viewSelection) {
+	protected void assertModelAttributeNotNull(String attributeName, ApplicationView viewSelection) {
 		assertNotNull("The model attribute '" + attributeName + "' is null but should not be; model contents are "
 				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
 				viewSelection.getModel()));
@@ -457,7 +463,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeNull(String attributeName, ApplicationView viewSelection) {
+	protected void assertModelAttributeNull(String attributeName, ApplicationView viewSelection) {
 		assertNull("The model attribute '" + attributeName + "' is not null but should be; model contents are "
 				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
 				viewSelection.getModel()));
