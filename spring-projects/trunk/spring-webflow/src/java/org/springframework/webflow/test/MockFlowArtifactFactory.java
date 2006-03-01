@@ -46,6 +46,6 @@ public class MockFlowArtifactFactory extends RegistryBackedFlowArtifactFactory {
 	 * @param bean the singleton instance
 	 */
 	public void registerBean(String beanName, Object bean) {
-		((ConfigurableBeanFactory)getBeanFactory()).registerSingleton(beanName, bean);
+		((StaticListableBeanFactory)getBeanFactory()).addBean(beanName, bean);
 	}
 }
