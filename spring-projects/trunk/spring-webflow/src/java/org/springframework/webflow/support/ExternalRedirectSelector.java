@@ -17,12 +17,10 @@ package org.springframework.webflow.support;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
@@ -43,57 +41,33 @@ import org.springframework.webflow.ViewSelector;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class RedirectViewSelector implements ViewSelector, Serializable {
+public class ExternalRedirectSelector implements ViewSelector, Serializable {
 
 	/**
 	 * The parsed, evaluatable redirect expression.
 	 */
-	private Expression redirectExpression;
+	private Expression urlExpression;
 
 	/**
 	 * Create a new redirecting view descriptor creator that takes given
 	 * expression as input. The expression is the parsed form
 	 * (expression-tokenized) of the encoded view (e.g.
-	 * "/viewName?param0=value0&param1=value1").
+	 * "/pathInfo?param0=value0&param1=value1").
 	 */
-	public RedirectViewSelector(Expression expression) {
-		this.redirectExpression = expression;
+	public ExternalRedirectSelector(Expression urlExpression) {
+		this.urlExpression = urlExpression;
 	}
 
 	/**
 	 * Returns the expression used by this view selector.
 	 */
-	protected Expression getRedirectExpression() {
-		return redirectExpression;
+	protected Expression getUrlExpression() {
+		return urlExpression;
 	}
 
 	public ViewSelection makeSelection(RequestContext context) {
-		String fullView = (String)redirectExpression.evaluateAgainst(context, getEvaluationContext(context));
-		// the resulting fullView should look something like
-		// "/viewName?param0=value0&param1=value1"
-		// now parse that and build a corresponding view selection
-		int index = fullView.indexOf('?');
-		String viewName;
-		Map model = null;
-		if (index != -1) {
-			viewName = fullView.substring(0, index);
-			String[] parameters = StringUtils.delimitedListToStringArray(fullView.substring(index + 1), "&");
-			model = new HashMap(parameters.length, 1);
-			for (int i = 0; i < parameters.length; i++) {
-				String nameAndValue = parameters[i];
-				index = nameAndValue.indexOf('=');
-				if (index != -1) {
-					model.put(nameAndValue.substring(0, index), nameAndValue.substring(index + 1));
-				}
-				else {
-					model.put(nameAndValue, "");
-				}
-			}
-		}
-		else {
-			viewName = fullView;
-		}
-		return new ViewSelection(viewName, model, true);
+		String url = (String)urlExpression.evaluateAgainst(context, getEvaluationContext(context));
+		return new ExternalRedirect(url);
 	}
 
 	/**
@@ -104,6 +78,6 @@ public class RedirectViewSelector implements ViewSelector, Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("redirectExpression", redirectExpression).toString();
+		return new ToStringCreator(this).append("urlExpression", urlExpression).toString();
 	}
 }

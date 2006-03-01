@@ -28,7 +28,6 @@ import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.StateTests.ExecutionCounterAction;
@@ -41,6 +40,7 @@ import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.builder.XmlFlowBuilder;
 import org.springframework.webflow.builder.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.support.ApplicationViewSelection;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
@@ -105,15 +105,15 @@ public class FlowExecutionTests extends TestCase {
 		new FlowAssembler("flow", builder).assembleFlow();
 		Flow flow = builder.getResult();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(new MockExternalContext());
+		ApplicationViewSelection view = (ApplicationViewSelection)flowExecution.start(new MockExternalContext());
 		assertNotNull(view);
 		assertEquals("viewName", view.getViewName());
 		for (int i = 0; i < 10; i++) {
-			view = flowExecution.signalEvent("submit", new MockExternalContext());
+			view = (ApplicationViewSelection)flowExecution.signalEvent("submit", new MockExternalContext());
 			assertEquals("viewName", view.getViewName());
 		}
 		assertTrue(flowExecution.isActive());
-		view = flowExecution.signalEvent("finish", new MockExternalContext());
+		flowExecution.signalEvent("finish", new MockExternalContext());
 		assertFalse(flowExecution.isActive());
 	}
 

@@ -16,12 +16,15 @@
 package org.springframework.webflow.executor;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ConversationRedirect;
+import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.support.FlowRedirect;
 
 /**
  * Immutable value object that provides clients with information about a
@@ -76,26 +79,6 @@ public class ResponseInstruction implements Serializable {
 		this.viewSelection = viewSelection;
 	}
 
-	public boolean isNull() {
-		return viewSelection.isNull();
-	}
-
-	public boolean isRedirect() {
-		return viewSelection.isRedirect();
-	}
-
-	public boolean isRestart() {
-		return false;
-	}
-	
-	public String getViewName() {
-		return viewSelection.getViewName();
-	}
-
-	public Map getModel() {
-		return viewSelection.getModel();
-	}
-
 	public FlowExecutionKey getFlowExecutionKey() {
 		return flowExecutionKey;
 	}
@@ -108,6 +91,34 @@ public class ResponseInstruction implements Serializable {
 		return viewSelection;
 	}
 
+	public boolean isNull() {
+		return viewSelection == ViewSelection.NULL_VIEW_SELECTION;
+	}
+
+	public boolean isApplicationView() {
+		return viewSelection instanceof ApplicationViewSelection;
+	}
+	
+	public boolean isActiveForward() {
+		return isApplicationView() && flowExecutionContext.isActive();
+	}
+	
+	public boolean isConfirmationForward() {
+		return isApplicationView() && !flowExecutionContext.isActive();
+	}
+	
+	public boolean isConversationRedirect() {
+		return viewSelection instanceof ConversationRedirect;
+	}
+
+	public boolean isExternalRedirect() {
+		return viewSelection instanceof ExternalRedirect;
+	}
+
+	public boolean isFlowRedirect() {
+		return viewSelection instanceof FlowRedirect;
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append("flowExecutionKey", flowExecutionKey).append("flowExecutionContext",
 				flowExecutionContext).append("viewSelection", viewSelection).toString();

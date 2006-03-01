@@ -4,7 +4,7 @@
 package org.springframework.webflow;
 
 import org.springframework.binding.expression.support.StaticExpression;
-import org.springframework.webflow.support.RedirectViewSelector;
+import org.springframework.webflow.support.ExternalRedirectSelector;
 import org.springframework.webflow.support.SimpleViewSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 
@@ -17,6 +17,6 @@ public class SimpleFlow extends Flow {
 		state1.addTransition(new Transition(new StaticTargetStateResolver("end")));
 
 		EndState state2 = new EndState(this, "end");
-		state2.setViewSelector(new RedirectViewSelector(new StaticExpression("confirm")));
+		state2.setViewSelector(new ExternalRedirectSelector(new StaticExpression("confirm")));
 	}
 }

@@ -16,10 +16,11 @@
 
 package org.springframework.webflow.executor.support;
 
+import java.io.Serializable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
@@ -118,8 +119,8 @@ public class FlowRequestHandler {
 			return response;
 		}
 		else {
-			String conversationId = parameterExtractor.extractConversationId(context);
-			if (StringUtils.hasText(conversationId)) {
+			Serializable conversationId = parameterExtractor.extractConversationId(context);
+			if (conversationId != null) {
 				ResponseInstruction response = flowExecutor.getCurrentResponseInstruction(conversationId, context);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning [current] " + response);

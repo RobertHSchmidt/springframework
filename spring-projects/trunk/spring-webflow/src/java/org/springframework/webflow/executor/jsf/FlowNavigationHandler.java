@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.executor.jsf;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -31,6 +32,10 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
+import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ConversationRedirect;
+import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.support.FlowRedirect;
 
 /**
  * An implementation of a JSF <code>NavigationHandler</code> that provides
@@ -161,7 +166,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 			FlowExecution flowExecution = holder.getFlowExecution();
 			String eventId = parameterExtractor.extractEventId(context);
 			ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
-			renderView(selectedView, facesContext);
+			renderView(selectedView, context);
 		}
 		else {
 			String flowId = parameterExtractor.extractFlowId(context);
@@ -170,7 +175,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 				FlowExecution flowExecution = getRepository(context).createFlowExecution(flowId);
 				ViewSelection selectedView = flowExecution.start(context);
 				FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecution), facesContext);
-				renderView(selectedView, facesContext);
+				renderView(selectedView, context);
 			}
 			else {
 				// neither has happened, delegate to std navigation handler
@@ -195,16 +200,51 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	 * @param selectedView <code>ViewSelection</code> for the view to render
 	 * @param facesContext <code>FacesContext</code> for the current request
 	 */
-	public void renderView(ViewSelection selectedView, FacesContext facesContext) {
-		putInto(facesContext.getExternalContext().getRequestMap(), selectedView.getModel());
-		// stay on the same view if requested
-		if (selectedView.getViewName() == null) {
+	public void renderView(ViewSelection selectedView, JsfExternalContext context) {
+		if (selectedView == ViewSelection.NULL_VIEW_SELECTION) {
 			return;
 		}
-		// create the specified view so that it can be rendered
-		ViewHandler handler = facesContext.getApplication().getViewHandler();
-		UIViewRoot view = handler.createView(facesContext, viewIdResolver.resolveViewId(selectedView.getViewName()));
-		facesContext.setViewRoot(view);
+		FacesContext facesContext = context.getFacesContext();
+		if (selectedView instanceof ApplicationViewSelection) {
+			ApplicationViewSelection forward = (ApplicationViewSelection)selectedView;
+			putInto(facesContext.getExternalContext().getRequestMap(), forward.getModel());
+			// stay on the same view if requested
+			if (forward.getViewName() == null) {
+				return;
+			}
+			// create the specified view so that it can be rendered
+			ViewHandler handler = facesContext.getApplication().getViewHandler();
+			UIViewRoot view = handler.createView(facesContext, viewIdResolver.resolveViewId(forward.getViewName()));
+			facesContext.setViewRoot(view);
+		}
+		else if (selectedView instanceof ConversationRedirect) {
+			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
+			String conversationUrl = parameterExtractor.createConversationUrl(holder.getFlowExecutionKey()
+					.getConversationId(), context);
+			sendRedirect(conversationUrl, facesContext);
+		}
+		else if (selectedView instanceof ExternalRedirect) {
+			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
+			String externalUrl = parameterExtractor.createExternalUrl((ExternalRedirect)selectedView, holder
+					.getFlowExecutionKey(), context);
+			sendRedirect(externalUrl, facesContext);
+		}
+		else if (selectedView instanceof FlowRedirect) {
+			String flowUrl = parameterExtractor.createFlowUrl((FlowRedirect)selectedView, context);
+			sendRedirect(flowUrl, facesContext);
+		}
+		else {
+			throw new IllegalArgumentException("Don't know how to handle view selection " + selectedView);
+		}
+	}
+
+	private void sendRedirect(String url, FacesContext facesContext) {
+		try {
+			facesContext.getExternalContext().redirect(url);
+		}
+		catch (IOException e) {
+			throw new IllegalArgumentException("Could not send redirect to " + url);
+		}
 	}
 
 	/**

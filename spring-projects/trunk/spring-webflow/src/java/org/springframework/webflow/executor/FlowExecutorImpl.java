@@ -91,15 +91,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 	private FlowExecutionRepositoryFactory repositoryFactory;
 
 	/**
-	 * A flag indicating if this executor should <i>always</i> request a
-	 * <i>redirect to conversation</i> after pausing an active flow execution.
-	 * <p>
-	 * This allows the user to participate in the current state of the
-	 * conversation using a bookmarkable URL.
-	 */
-	private boolean alwaysRedirectOnPause;
-
-	/**
 	 * Create a new flow executor that uses the repository factory to access a
 	 * repository to create, save, and restore managed flow executions driven by
 	 * this executor.
@@ -144,32 +135,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 		repositoryFactory = new SimpleFlowExecutionRepositoryFactory(flowLocator);
 	}
 
-	/**
-	 * Returns the flag indicating if this executor should always request a
-	 * <i>redirect to conversation</i> after pausing an active flow execution.
-	 * <p>
-	 * This allows the user to participate in the current view-state of a
-	 * conversation using a bookmarkable URL.
-	 */
-	public boolean isAlwaysRedirectOnPause() {
-		return alwaysRedirectOnPause;
-	}
-
-	/**
-	 * Sets the flag indicating if this executor should always request a
-	 * <i>redirect to conversation</i> after pausing an active flow execution.
-	 * <p>
-	 * If set to <code>true</code> this executor will always request a
-	 * redirect. If this is set to <code>false</code> this executor will only
-	 * request a redirect if the entered flow view state did so.
-	 * <p>
-	 * This allows the user to participate in the current view-state of a
-	 * conversation using a bookmarkable URL.
-	 */
-	public void setAlwaysRedirectOnPause(boolean alwaysRedirectOnPause) {
-		this.alwaysRedirectOnPause = alwaysRedirectOnPause;
-	}
-
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecution flowExecution = repository.createFlowExecution(flowId);
@@ -177,10 +142,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		if (flowExecution.isActive()) {
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);
-			if (isAlwaysRedirectOnPause()) {
-				selectedView = selectedView.makeRedirect();
-			}
-			repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView.makeForward());
+			selectedView = repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView);
 			return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
 		}
 		else {
@@ -199,10 +161,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 			if (flowExecution.isActive()) {
 				flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
 				repository.putFlowExecution(flowExecutionKey, flowExecution);
-				repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView.makeForward());
-				if (isAlwaysRedirectOnPause()) {
-					selectedView = selectedView.makeRedirect();
-				}
+				selectedView = repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView);
 				return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
 			}
 			else {

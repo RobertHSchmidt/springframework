@@ -167,10 +167,11 @@ public interface FlowExecutionRepository {
 	 * conversation.
 	 * @param conversationId the id of an existing conversation
 	 * @param viewSelection the view selection, to be set as the current
+	 * @return the view selection, now set as the 'current' view selection.
 	 * @throws FlowExecutionRepositoryException if an exception occured setting
 	 * the current view selection
 	 */
-	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection)
+	public ViewSelection setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection)
 			throws FlowExecutionRepositoryException;
 
 	/**

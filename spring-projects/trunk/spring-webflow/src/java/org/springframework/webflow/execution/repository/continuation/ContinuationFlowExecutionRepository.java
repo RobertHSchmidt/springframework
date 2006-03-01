@@ -174,8 +174,9 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 		return getConversation(conversationId).getCurrentViewSelection();
 	}
 
-	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException {
+	public ViewSelection setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException {
 		getConversation(conversationId).setCurrentViewSelection(viewSelection);
+		return viewSelection;
 	}
 
 	public void invalidateConversation(Serializable conversationId) {

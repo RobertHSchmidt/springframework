@@ -125,7 +125,7 @@ public class Conversation implements Serializable {
 	 * Sets the current view selection.
 	 */
 	public void setCurrentViewSelection(ViewSelection viewSelection) {
-		this.currentViewSelection = viewSelection;
+		currentViewSelection = viewSelection;
 	}
 
 	/**

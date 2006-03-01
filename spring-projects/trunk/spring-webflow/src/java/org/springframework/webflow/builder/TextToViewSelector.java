@@ -26,8 +26,8 @@ import org.springframework.webflow.EndState;
 import org.springframework.webflow.MapAccessor;
 import org.springframework.webflow.State;
 import org.springframework.webflow.ViewSelector;
+import org.springframework.webflow.support.ExternalRedirectSelector;
 import org.springframework.webflow.support.MarkerViewSelector;
-import org.springframework.webflow.support.RedirectViewSelector;
 import org.springframework.webflow.support.SimpleViewSelector;
 
 /**
@@ -39,7 +39,7 @@ import org.springframework.webflow.support.SimpleViewSelector;
  * <li>"viewName" - will result in a {@link SimpleViewSelector} that returns a
  * ViewSelection with the provided view name.</li>
  * <li>"redirect:&lt;viewName&gt;" - will result in a
- * {@link RedirectViewSelector} that returns a ViewSelection with the provided
+ * {@link ExternalRedirectSelector} that returns a ViewSelection with the provided
  * view name and redirect flag set to true.</li>
  * <li>"bean:&lt;id&gt;" - will result usage of a custom
  * <code>ViewSelector</code> bean implementation.</li>
@@ -139,6 +139,6 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 * @throws ConversionException when something goes wrong
 	 */
 	protected ViewSelector createRedirectViewSelector(String encodedView) throws ConversionException {
-		return new RedirectViewSelector((Expression)fromStringTo(CompositeStringExpression.class).execute(encodedView));
+		return new ExternalRedirectSelector((Expression)fromStringTo(CompositeStringExpression.class).execute(encodedView));
 	}
 }

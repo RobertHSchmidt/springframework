@@ -114,7 +114,8 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 		// nothing to do by default, subclasses may override
 	}
 
-	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId) throws FlowExecutionRepositoryException {
+	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId)
+			throws FlowExecutionRepositoryException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -124,8 +125,10 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 		return null;
 	}
 
-	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException {
+	public ViewSelection setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection)
+			throws FlowException {
 		// nothing to do by default, subclasses may override
+		return viewSelection;
 	}
 
 	public void invalidateConversation(Serializable conversationId) {

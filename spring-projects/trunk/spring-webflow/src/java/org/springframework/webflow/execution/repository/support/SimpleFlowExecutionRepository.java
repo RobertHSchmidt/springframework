@@ -118,8 +118,9 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		return getFlowExecutionEntry(conversationId).getCurrentViewSelection();
 	}
 
-	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) {
+	public ViewSelection setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) {
 		getFlowExecutionEntry(conversationId).setCurrentViewSelection(viewSelection);
+		return viewSelection;
 	}
 
 	public void invalidateConversation(Serializable conversationId) {
@@ -195,7 +196,7 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		}
 
 		public void setCurrentViewSelection(ViewSelection viewSelection) {
-			this.currentViewSelection = viewSelection;
+			currentViewSelection = viewSelection;
 		}
 
 		protected ConversationLock createLock() {

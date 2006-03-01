@@ -46,8 +46,13 @@ public class FormObjectAccessor {
 	 * Note that if you would have multiple form objects in the request context,
 	 * the last one that was used would be available using this alias!
 	 */
-	public static final String CURRENT_FORM_OBJECT_ATTRIBUTE = "#formObject";
+	private static final String CURRENT_FORM_OBJECT_ATTRIBUTE = "currentFormObject";
 
+	/**
+	 * The errors prefix.
+	 */
+	private static final String ERRORS_PREFIX = "errors.";
+	
 	/**
 	 * The current request context.
 	 */
@@ -169,7 +174,7 @@ public class FormObjectAccessor {
 	 * @return the form object errors instance, or null if not found
 	 */
 	public Errors getFormErrors(String formObjectName, ScopeType scopeType) {
-		return (Errors)scopeType.getScope(context).get(BindException.ERROR_KEY_PREFIX + formObjectName,
+		return (Errors)scopeType.getScope(context).get(ERRORS_PREFIX + formObjectName,
 				Errors.class);
 	}
 
@@ -179,7 +184,7 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope to expose the errors in
 	 */
 	public void setFormErrors(Errors errors, ScopeType scopeType) {
-		scopeType.getScope(context).put(BindException.ERROR_KEY_PREFIX + errors.getObjectName(), errors);
+		scopeType.getScope(context).put(ERRORS_PREFIX + errors.getObjectName(), errors);
 		setCurrentFormErrors(errors, scopeType);
 	}
 
@@ -198,7 +203,7 @@ public class FormObjectAccessor {
 	 * @return the current form object name
 	 */
 	public static String getCurrentFormObjectName() {
-		return FormObjectAccessor.CURRENT_FORM_OBJECT_ATTRIBUTE;
+		return CURRENT_FORM_OBJECT_ATTRIBUTE;
 	}
 	
 	/**
@@ -206,6 +211,6 @@ public class FormObjectAccessor {
 	 * @return the current form object errors attribute name
 	 */
 	public static String getCurrentFormErrorsName() {
-		return BindException.ERROR_KEY_PREFIX + getCurrentFormObjectName();
+		return ERRORS_PREFIX + getCurrentFormObjectName();
 	}
 }

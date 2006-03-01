@@ -17,7 +17,6 @@ package org.springframework.webflow.executor.struts;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,16 +34,17 @@ import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowArtifactException;
-import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
 import org.springframework.webflow.executor.support.FlowRequestHandler;
+import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.support.FlowRedirect;
 
 /**
  * Point of integration between Struts and Spring Web Flow: a Struts Action that
@@ -83,10 +83,10 @@ import org.springframework.webflow.executor.support.FlowRequestHandler;
  * FlowAction:
  * 
  * <pre>
- *     &lt;action path=&quot;/userRegistration&quot;
- *         type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
- *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *     &lt;/action&gt;
+ *       &lt;action path=&quot;/userRegistration&quot;
+ *           type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
+ *           name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *       &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -254,47 +254,43 @@ public class FlowAction extends ActionSupport {
 	 */
 	protected ActionForward toActionForward(ResponseInstruction response, ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, ExternalContext context) {
-		if (response.isNull()) {
-			return null;
+		if (response.isApplicationView()) {
+			// forward to a view as part of an active conversation
+			ApplicationViewSelection forward = (ApplicationViewSelection)response.getViewSelection();
+			Map model = new HashMap(forward.getModel());
+			parameterExtractor.put(response.getFlowExecutionKey(), model);
+			parameterExtractor.put(response.getFlowExecutionContext(), model);
+			WebUtils.exposeRequestAttributes(request, model);
+			if (form instanceof SpringBindingActionForm) {
+				SpringBindingActionForm bindingForm = (SpringBindingActionForm)form;
+				bindingForm.expose(getCurrentErrors(forward.getModel()), request);
+			}
+			return findActionForward(forward, mapping);
+
 		}
-		if (response.isRestart()) {
+		else if (response.isConversationRedirect()) {
+			// redirect to active conversation URL
+			Serializable conversationId = response.getFlowExecutionKey().getConversationId();
+			String conversationUrl = parameterExtractor.createConversationUrl(conversationId, context);
+			return new ActionForward(conversationUrl, true);
+		}
+		else if (response.isExternalRedirect()) {
+			// redirect to external URL
+			String externalUrl = parameterExtractor.createExternalUrl((ExternalRedirect)response.getViewSelection(),
+					response.getFlowExecutionKey(), context);
+			return new ActionForward(externalUrl, true);
+		}
+		else if (response.isFlowRedirect()) {
 			// restart the flow by redirecting to flow launch URL
-			String flowId = response.getFlowExecutionContext().getFlow().getId();
-			String flowUrl = parameterExtractor.createFlowUrl(flowId, context);
+			String flowUrl = parameterExtractor.createFlowUrl((FlowRedirect)response.getViewSelection(), context);
 			return new ActionForward(flowUrl, true);
 		}
-		if (response.getFlowExecutionContext().isActive()) {
-			if (response.isRedirect()) {
-				// redirect to active conversation URL
-				Serializable conversationId = response.getFlowExecutionKey().getConversationId();
-				String conversationUrl = parameterExtractor.createConversationUrl(conversationId, context);
-				return new ActionForward(conversationUrl, true);
-			}
-			else {
-				// forward to a view as part of an active conversation
-				WebUtils.exposeRequestAttributes(request, response.getModel());
-				FlowExecutionKey flowExecutionKey = response.getFlowExecutionKey();
-				FlowExecutionContext flowExecutionContext = response.getFlowExecutionContext();
-				Map contextAttributes = new HashMap(2, 1);
-				parameterExtractor.putContextAttributes(flowExecutionKey, flowExecutionContext, contextAttributes);
-				WebUtils.exposeRequestAttributes(request, contextAttributes);
-				if (form instanceof SpringBindingActionForm) {
-					SpringBindingActionForm bindingForm = (SpringBindingActionForm)form;
-					bindingForm.expose(getCurrentErrors(response.getModel()), request);
-				}
-				return findForward(response, mapping);
-			}
+		else if (response.isNull()) {
+			// no response to issue
+			return null;
 		}
 		else {
-			if (response.isRedirect()) {
-				// redirect to an external URL after flow completion
-				return new ActionForward(buildRedirectUrlPath(response), true);
-			}
-			else {
-				// forward to a view after flow completion
-				WebUtils.exposeRequestAttributes(request, response.getModel());
-				return findForward(response, mapping);
-			}
+			throw new IllegalArgumentException("Don't know how to handle response instruction " + response);
 		}
 	}
 
@@ -302,39 +298,16 @@ public class FlowAction extends ActionSupport {
 		return (Errors)model.get(FormObjectAccessor.getCurrentFormErrorsName());
 	}
 
-	/**
-	 * Takes the view name of the selected view and appends the model properties
-	 * as query parameters.
-	 * @param response the response instruction
-	 * @return the relative url path to redirect to
-	 */
-	protected String buildRedirectUrlPath(ResponseInstruction response) {
-		StringBuffer path = new StringBuffer(response.getViewName());
-		if (response.getModel().size() > 0) {
-			// append model attributes as redirect query parameters
-			path.append('?');
-			Iterator it = response.getModel().entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry)it.next();
-				path.append(entry.getKey()).append('=').append(entry.getValue());
-				if (it.hasNext()) {
-					path.append('&');
-				}
-			}
-		}
-		return path.toString();
-	}
-
-	private ActionForward findForward(ResponseInstruction responseDescriptor, ActionMapping mapping) {
-		ActionForward forward = mapping.findForward(responseDescriptor.getViewName());
-		if (forward != null) {
+	private ActionForward findActionForward(ApplicationViewSelection forward, ActionMapping mapping) {
+		ActionForward actionForward = mapping.findForward(forward.getViewName());
+		if (actionForward != null) {
 			// the 1.2.1 copy constructor would ideally be better to
 			// use, but it is not Struts 1.1 compatible
-			forward = new ActionForward(forward.getName(), forward.getPath(), false);
+			actionForward = new ActionForward(actionForward.getName(), actionForward.getPath(), false);
 		}
 		else {
-			forward = new ActionForward(responseDescriptor.getViewName(), false);
+			actionForward = new ActionForward(forward.getViewName(), false);
 		}
-		return forward;
+		return actionForward;
 	}
 }

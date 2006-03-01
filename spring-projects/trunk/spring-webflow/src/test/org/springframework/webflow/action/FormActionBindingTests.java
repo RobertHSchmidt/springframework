@@ -63,7 +63,7 @@ public class FormActionBindingTests extends TestCase {
 		formAction.setFormObjectClass(TestBean.class);
 		formAction.setFormObjectName("formObject");
 		formAction.execute(context);
-		Errors formActionErrors = (Errors)context.getRequestScope().get(BindException.ERROR_KEY_PREFIX + "formObject");
+		Errors formActionErrors = (Errors)context.getRequestScope().get(FormObjectAccessor.getCurrentFormErrorsName());
 		assertNotNull(formActionErrors);
 		assertTrue(formActionErrors.hasErrors());
 

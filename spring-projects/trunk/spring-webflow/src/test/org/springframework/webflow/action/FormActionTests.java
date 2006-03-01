@@ -467,7 +467,7 @@ public class FormActionTests extends TestCase {
 	}
 	
 	private Errors getErrors(RequestContext context, String formObjectName) {
-		return (Errors)context.getRequestScope().get(BindException.ERROR_KEY_PREFIX + formObjectName);
+		return (Errors)new FormObjectAccessor(context).getFormErrors(formObjectName, ScopeType.REQUEST);
 	}
 	
 	private TestBean getFormObject(RequestContext context) {

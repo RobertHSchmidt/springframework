@@ -21,6 +21,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.core.style.StylerUtils;
+import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
@@ -30,6 +31,10 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ConversationRedirect;
+import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.support.FlowRedirect;
 
 /**
  * Base class for integration tests that verify a flow executes as expected.
@@ -45,10 +50,11 @@ import org.springframework.webflow.execution.impl.FlowExecutionImpl;
  * {@link #startFlow(ParameterMap)} variants).
  * <li>That given the set of supported transition criteria for a state, that
  * the state executes the appropriate transition when an event is signaled (with
- * potential input request parameters, see the {@link #signalEvent(String, ParameterMap)}
- * variants). A test case should be coded for each logical event that can occur,
- * where an event drives a possible path through the flow. The goal should be to
- * exercise all possible paths of the flow.
+ * potential input request parameters, see the
+ * {@link #signalEvent(String, ParameterMap)} variants). A test case should be
+ * coded for each logical event that can occur, where an event drives a possible
+ * path through the flow. The goal should be to exercise all possible paths of
+ * the flow.
  * <li>That given a transition that leads to an interactive state type (a view
  * state or an end state), that the view selection returned to the client
  * matches what was expected and the current state of the flow matches what is
@@ -352,13 +358,57 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
+	 * Assert that the returned view selection is an instance of {@link ApplicationViewSelection}.
+	 * @param viewSelection the view selection
+	 */
+	public ApplicationViewSelection applicationView(ViewSelection viewSelection) {
+		Assert.isInstanceOf(ApplicationViewSelection.class, viewSelection, "Unexpected class of view selection: ");
+		return (ApplicationViewSelection)viewSelection;
+	}
+
+	/**
+	 * Assert that the returned view selection is an instance of {@link ConversationRedirect}.
+	 * @param viewSelection the view selection
+	 */
+	public ConversationRedirect conversationRedirect(ViewSelection viewSelection) {
+		Assert.isInstanceOf(ConversationRedirect.class, viewSelection, "Unexpected class of view selection: ");
+		return (ConversationRedirect)viewSelection;
+	}
+
+	/**
+	 * Assert that the returned view selection is an instance of {@link FlowRedirect}.
+	 * @param viewSelection the view selection
+	 */
+	public FlowRedirect flowRedirect(ViewSelection viewSelection) {
+		Assert.isInstanceOf(FlowRedirect.class, viewSelection, "Unexpected class of view selection: ");
+		return (FlowRedirect)viewSelection;
+	}
+
+	/**
+	 * Assert that the returned view selection is an instance of {@link ExternalRedirect}.
+	 * @param viewSelection the view selection
+	 */
+	public ExternalRedirect externalRedirect(ViewSelection viewSelection) {
+		Assert.isInstanceOf(ExternalRedirect.class, viewSelection, "Unexpected class of view selection: ");
+		return (ExternalRedirect)viewSelection;
+	}
+	
+	/**
+	 * Assert that the returned view selection is the {@link ViewSelection#NULL_VIEW_SELECTION}.
+	 * @param viewSelection the view selection
+	 */
+	public void assertNull(ViewSelection viewSelection) {
+		assertEquals("Not the null view selection:", viewSelection, ViewSelection.NULL_VIEW_SELECTION);
+	}
+
+	/**
 	 * Assert that the view name equals the provided value.
 	 * @param expectedViewName the expected name
-	 * @param selectedView the selected view with a model attribute map to
+	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertViewNameEquals(String expectedViewName, ViewSelection selectedView) {
-		assertEquals("The view name is wrong:", expectedViewName, selectedView.getViewName());
+	public void assertViewNameEquals(String expectedViewName, ApplicationViewSelection viewSelection) {
+		assertEquals("The view name is wrong:", expectedViewName, viewSelection.getViewName());
 	}
 
 	/**
@@ -366,12 +416,12 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * the provided expected value.
 	 * @param expectedValue the expected value
 	 * @param attributeName the attribute name
-	 * @param selectedView the selected view with a model attribute map to
+	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeEquals(Object expectedValue, String attributeName, ViewSelection selectedView) {
+	public void assertModelAttributeEquals(Object expectedValue, String attributeName, ApplicationViewSelection viewSelection) {
 		assertEquals("The model attribute '" + attributeName + "' value is wrong:", expectedValue,
-				evaluateModelAttributeExpression(attributeName, selectedView.getModel()));
+				evaluateModelAttributeExpression(attributeName, viewSelection.getModel()));
 	}
 
 	/**
@@ -379,38 +429,38 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * attribute with the provided expected size.
 	 * @param expectedSize the expected size
 	 * @param attributeName the collection attribute name
-	 * @param selectedView the selected view with a model attribute map to
+	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ViewSelection selectedView) {
-		assertModelAttributeNotNull(attributeName, selectedView);
-		Collection c = (Collection)evaluateModelAttributeExpression(attributeName, selectedView.getModel());
+	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ApplicationViewSelection viewSelection) {
+		assertModelAttributeNotNull(attributeName, viewSelection);
+		Collection c = (Collection)evaluateModelAttributeExpression(attributeName, viewSelection.getModel());
 		assertEquals("The model attribute '" + attributeName + "' collection size is wrong:", expectedSize, c.size());
 	}
 
 	/**
 	 * Assert that the selected view contains the specified model attribute.
 	 * @param attributeName the attribute name
-	 * @param selectedView the selected view with a model attribute map to
+	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeNotNull(String attributeName, ViewSelection selectedView) {
+	public void assertModelAttributeNotNull(String attributeName, ApplicationViewSelection viewSelection) {
 		assertNotNull("The model attribute '" + attributeName + "' is null but should not be; model contents are "
-				+ StylerUtils.style(selectedView.getModel()), evaluateModelAttributeExpression(attributeName,
-				selectedView.getModel()));
+				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
+				viewSelection.getModel()));
 	}
 
 	/**
 	 * Assert that the selected view does not contain the specified model
 	 * attribute.
 	 * @param attributeName the attribute name
-	 * @param selectedView the selected view with a model attribute map to
+	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeNull(String attributeName, ViewSelection selectedView) {
+	public void assertModelAttributeNull(String attributeName, ApplicationViewSelection viewSelection) {
 		assertNull("The model attribute '" + attributeName + "' is not null but should be; model contents are "
-				+ StylerUtils.style(selectedView.getModel()), evaluateModelAttributeExpression(attributeName,
-				selectedView.getModel()));
+				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
+				viewSelection.getModel()));
 	}
 
 	/**

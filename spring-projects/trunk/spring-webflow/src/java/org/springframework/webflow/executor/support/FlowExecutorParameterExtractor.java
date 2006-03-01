@@ -1,10 +1,13 @@
 package org.springframework.webflow.executor.support;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.springframework.binding.format.Formatter;
+import org.springframework.core.JdkVersion;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
@@ -12,6 +15,8 @@ import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutionKeyFormatter;
 import org.springframework.webflow.executor.FlowExecutor;
+import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.support.FlowRedirect;
 
 /**
  * A strategy for extracting parameters needed by a {@link FlowExecutor} to
@@ -73,7 +78,12 @@ public class FlowExecutorParameterExtractor {
 	 * Event id value indicating that the event has not been set ("@NOT_SET@").
 	 */
 	public static final String NOT_SET_EVENT_ID = "@NOT_SET@";
-	
+
+	/**
+	 * The default URL encoding scheme.
+	 */
+	public static final String DEFAULT_URL_ENCODING_SCHEME = "UTF-8";
+
 	/**
 	 * Identifies a flow definition to launch a new execution for, defaults to
 	 * ("_flowId").
@@ -110,7 +120,7 @@ public class FlowExecutorParameterExtractor {
 	 * {@link #FLOW_EXECUTION_CONTEXT_ATTRIBUTE }.
 	 */
 	private String flowExecutionContextAttributeName = FLOW_EXECUTION_CONTEXT_ATTRIBUTE;
-	
+
 	/**
 	 * Identifies an event that occured in an existing flow execution, defaults
 	 * to ("_eventId_submit").
@@ -129,6 +139,12 @@ public class FlowExecutorParameterExtractor {
 	 * "_eventId_bar").
 	 */
 	private String parameterDelimiter = PARAMETER_VALUE_DELIMITER;
+
+	/**
+	 * The url encoding scheme to be used to encode URLs built by this parameter
+	 * extractor.
+	 */
+	private String urlEncodingScheme = DEFAULT_URL_ENCODING_SCHEME;
 
 	/**
 	 * Returns the flow id parameter name.
@@ -218,7 +234,7 @@ public class FlowExecutorParameterExtractor {
 	public void setFlowExecutionContextAttributeName(String flowExecutionContextAttributeName) {
 		this.flowExecutionContextAttributeName = flowExecutionContextAttributeName;
 	}
-	
+
 	/**
 	 * Returns the event id parameter name.
 	 */
@@ -297,8 +313,13 @@ public class FlowExecutorParameterExtractor {
 	 * @param externalContext the external context
 	 * @return the relative flow URL path
 	 */
-	public String createFlowUrl(String flowId, ExternalContext externalContext) {
-		return externalContext.getDispatcherPath() + "?" + getFlowIdParameterName() + "=" + flowId;
+	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext externalContext) {
+		StringBuffer flowUrl = new StringBuffer();
+		flowUrl.append(externalContext.getDispatcherPath());
+		flowUrl.append('?');
+		appendQueryParameter(getFlowIdParameterName(), flowRedirect.getFlowId(), flowUrl);
+		appendQueryParameters(flowRedirect.getInput(), flowUrl);
+		return flowUrl.toString();
 	}
 
 	/**
@@ -349,7 +370,7 @@ public class FlowExecutorParameterExtractor {
 	 * @param context the context in which the external user event occured
 	 * @return the conversation id
 	 */
-	public String extractConversationId(ExternalContext context) {
+	public Serializable extractConversationId(ExternalContext context) {
 		return verifySingleStringInputParameter(getConversationIdParameterName(), getParameterMap(context).get(
 				getConversationIdParameterName()));
 	}
@@ -363,18 +384,55 @@ public class FlowExecutorParameterExtractor {
 	 * @return the relative conversation URL path
 	 */
 	public String createConversationUrl(Serializable conversationId, ExternalContext context) {
-		return context.getDispatcherPath() + "?" + getConversationIdParameterName() + "=" + conversationId;
+		StringBuffer conversationUrl = new StringBuffer();
+		conversationUrl.append(context.getDispatcherPath());
+		conversationUrl.append('?');
+		appendQueryParameter(getConversationIdParameterName(), conversationId, conversationUrl);
+		return conversationUrl.toString();
+	}
+
+	/**
+	 * Create a URL path to that when redirected to communicates with an
+	 * external system outside of SWF.
+	 * @param redirect the external redirect request
+	 * @param flowExecutionKey the flow execution key to send through the
+	 * redirect
+	 * @param context the external context
+	 */
+	public String createExternalUrl(ExternalRedirect redirect, FlowExecutionKey flowExecutionKey,
+			ExternalContext context) {
+		StringBuffer externalUrl = new StringBuffer();
+		externalUrl.append(redirect.getUrl());
+		if (flowExecutionKey != null) {
+			boolean first = redirect.getUrl().indexOf('?') < 0;
+			if (first) {
+				externalUrl.append('?');
+			} else {
+				externalUrl.append('&');
+			}
+			appendQueryParameter(getFlowExecutionKeyParameterName(), flowExecutionKeyFormatter
+					.formatValue(flowExecutionKey), externalUrl);
+		}
+		return externalUrl.toString();
 	}
 
 	/**
 	 * Add flow execution context attributes to the model under well-defined
 	 * names.
 	 * @param flowExecutionKey the flow execution key
+	 * @param model the model
+	 */
+	public void put(FlowExecutionKey flowExecutionKey, Map model) {
+		model.put(getFlowExecutionKeyAttributeName(), flowExecutionKeyFormatter.formatValue(flowExecutionKey));
+	}
+
+	/**
+	 * Add flow execution context attributes to the model under well-defined
+	 * names.
 	 * @param context the flow execution context
 	 * @param model the model
 	 */
-	public void putContextAttributes(FlowExecutionKey flowExecutionKey, FlowExecutionContext context, Map model) {
-		model.put(getFlowExecutionKeyAttributeName(), flowExecutionKeyFormatter.formatValue(flowExecutionKey));
+	public void put(FlowExecutionContext context, Map model) {
 		model.put(getFlowExecutionContextAttributeName(), context);
 	}
 
@@ -398,7 +456,7 @@ public class FlowExecutorParameterExtractor {
 	 * @param parameterValue the parameter value
 	 * @return the string value
 	 */
-	public String verifySingleStringInputParameter(String parameterName, Object parameterValue) {
+	protected String verifySingleStringInputParameter(String parameterName, Object parameterValue) {
 		String str = null;
 		if (parameterValue != null) {
 			try {
@@ -448,7 +506,7 @@ public class FlowExecutorParameterExtractor {
 	 * @return the value of the parameter, or <code>null</code> if the
 	 * parameter does not exist in given request
 	 */
-	public Object findParameter(String logicalParameterName, Map parameters) {
+	protected Object findParameter(String logicalParameterName, Map parameters) {
 		// first try to get it as a normal name=value parameter
 		Object value = parameters.get(logicalParameterName);
 		if (value != null) {
@@ -471,5 +529,59 @@ public class FlowExecutorParameterExtractor {
 		}
 		// we couldn't find the parameter value
 		return null;
+	}
+
+	/**
+	 * Append query properties to the redirect URL. Stringifies, URL-encodes and
+	 * formats model attributes as query properties.
+	 * @param targetUrl the StringBuffer to append the properties to
+	 * @param model Map that contains model attributes
+	 */
+	private void appendQueryParameters(Map model, StringBuffer targetUrl) {
+		Iterator entries = model.entrySet().iterator();
+		while (entries.hasNext()) {
+			Map.Entry entry = (Map.Entry)entries.next();
+			appendQueryParameter(entry.getKey(), entry.getValue(), targetUrl);
+			if (entries.hasNext()) {
+				targetUrl.append('&');
+			}
+		}
+	}
+
+	/**
+	 * Appends a single query parameter to a URL.
+	 * @param key the parameter name
+	 * @param value the parameter value
+	 * @param targetUrl the target url
+	 */
+	private void appendQueryParameter(Object key, Object value, StringBuffer targetUrl) {
+		String encodedKey = urlEncode(key.toString());
+		String encodedValue = value != null ? urlEncode(value.toString()) : "";
+		targetUrl.append(encodedKey).append('=').append(encodedValue);
+	}
+
+	/**
+	 * URL-encode the given input String with the given encoding scheme.
+	 * <p>
+	 * Default implementation uses <code>URLEncoder.encode(input, enc)</code>
+	 * on JDK 1.4+, falling back to <code>URLEncoder.encode(input)</code>
+	 * (which uses the platform default encoding) on JDK 1.3.
+	 * @param input the unencoded input String
+	 * @param encodingScheme the encoding scheme
+	 * @return the encoded output String
+	 * @throws UnsupportedEncodingException if thrown by the JDK URLEncoder
+	 * @see java.net.URLEncoder#encode(String, String)
+	 * @see java.net.URLEncoder#encode(String)
+	 */
+	protected String urlEncode(String input) {
+		if (JdkVersion.getMajorJavaVersion() < JdkVersion.JAVA_14) {
+			return URLEncoder.encode(input);
+		}
+		try {
+			return URLEncoder.encode(input, urlEncodingScheme);
+		}
+		catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException("Cannot encode URL " + input);
+		}
 	}
 }

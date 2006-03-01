@@ -44,7 +44,7 @@ public class RequestPathFlowExecutorParameterExtractor extends FlowExecutorParam
 		return context.getDispatcherPath() + "/" + flowId;
 	}
 
-	public String extractConversationId(ExternalContext context) {
+	public Serializable extractConversationId(ExternalContext context) {
 		String requestPathInfo = context.getRequestPathInfo();
 		if (requestPathInfo != null && requestPathInfo.startsWith(CONVERSATION_ID_PREFIX)) {
 			return requestPathInfo.substring(CONVERSATION_ID_PREFIX.length());

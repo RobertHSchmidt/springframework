@@ -15,16 +15,17 @@
  */
 package org.springframework.webflow.executor.mvc;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
-import org.springframework.util.StringUtils;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
@@ -35,6 +36,8 @@ import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
+import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.FlowRedirect;
 
 /**
  * Point of integration between Spring Portlet MVC and Spring Web Flow: a
@@ -62,18 +65,18 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * Usage example:
  * 
  * <pre>
- *          &lt;!--
- *              Exposes flows for execution.
- *          --&gt;
- *          &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *              &lt;constructor-arg ref=&quot;flowRegistry&quot;/&gt;
- *              &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
- *          &lt;/bean&gt;
- *                                                               
- *          &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *          &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *              &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *          &lt;/bean&gt;
+ *                        &lt;!--
+ *                            Exposes flows for execution.
+ *                        --&gt;
+ *                        &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *                            &lt;constructor-arg ref=&quot;flowRegistry&quot;/&gt;
+ *                            &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
+ *                        &lt;/bean&gt;
+ *                                                                             
+ *                        &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *                        &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *                            &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *                        &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorParameterExtractor}
@@ -173,18 +176,11 @@ public class PortletFlowController extends AbstractController {
 
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
-		String conversationId = parameterExtractor.extractConversationId(context);
-		if (StringUtils.hasText(conversationId)) {
-			ResponseInstruction responseInstruction = null;
-			PortletSession session = request.getPortletSession(false);
-			// try and grab last conversation response selection from session
-			if (session != null) {
-				responseInstruction = (ResponseInstruction)session.getAttribute(conversationId);
-				if (responseInstruction != null) {
-					session.setAttribute(conversationId, null);
-				}
-			}
-			// rely on current response instruction for active conversation 
+		Serializable conversationId = parameterExtractor.extractConversationId(context);
+		if (conversationId != null) {
+			ResponseInstruction responseInstruction = getCachedResponseInstruction(request,
+					getConversationAttributeName(conversationId));
+			// rely on current response instruction for active conversation
 			if (responseInstruction == null) {
 				responseInstruction = flowExecutor.getCurrentResponseInstruction(conversationId, context);
 			}
@@ -192,45 +188,79 @@ public class PortletFlowController extends AbstractController {
 		}
 		else {
 			// launch a new flow execution
-			return toModelAndView(flowExecutor.launch(parameterExtractor.extractFlowId(context), context));
+			String flowId = parameterExtractor.extractFlowId(context);
+			ResponseInstruction responseInstruction = flowExecutor.launch(flowId, context);
+			return toModelAndView(responseInstruction);
 		}
 	}
 
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
+		String eventId = parameterExtractor.extractEventId(context);
 		FlowExecutionKey flowExecutionKey = parameterExtractor.extractFlowExecutionKey(context);
-		ResponseInstruction responseInstruction = flowExecutor.signalEvent(parameterExtractor.extractEventId(context),
-				flowExecutionKey, context);
-		response.setRenderParameter(parameterExtractor.getConversationIdParameterName(), String
-				.valueOf(flowExecutionKey.getConversationId()));
-		if (!responseInstruction.getFlowExecutionContext().isActive()) {
-			if (responseInstruction.isRedirect()) {
-				// TODO request logical "redirect to flow"
-			} else {
-				// cache ending response selection for logical forward to 'confirmation view' if applicable
-				PortletSession session = request.getPortletSession(false);
-				if (session != null) {
-					session.setAttribute(String.valueOf(flowExecutionKey.getConversationId()), responseInstruction);
-				}
+		ResponseInstruction responseInstruction = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
+		if (responseInstruction.isApplicationView() || responseInstruction.isConversationRedirect()) {
+			Serializable conversationId = flowExecutionKey.getConversationId();
+			response.setRenderParameter(parameterExtractor.getConversationIdParameterName(), String
+					.valueOf(conversationId));
+			if (responseInstruction.isConfirmationForward()) {
+				// cache ending response temporarily for final forward on the
+				// next render request
+				cacheResponseInstruction(request, responseInstruction, conversationId);
 			}
+		}
+		else if (responseInstruction.isFlowRedirect()) {
+			// request that a new flow be launched within this portlet
+			String flowId = ((FlowRedirect)responseInstruction.getViewSelection()).getFlowId();
+			response.setRenderParameter(parameterExtractor.getFlowIdParameterName(), flowId);
+		}
+		else {
+			throw new IllegalArgumentException("Don't know how to handle response instruction " + response);
 		}
 	}
 
+	// helpers
+
+	private ResponseInstruction getCachedResponseInstruction(PortletRequest request, String attributeName) {
+		PortletSession session = request.getPortletSession(false);
+		// try and grab last conversation response selection from session
+		ResponseInstruction response = null;
+		if (session != null) {
+			response = (ResponseInstruction)session.getAttribute(attributeName);
+			if (response != null) {
+				// remove it
+				session.removeAttribute(attributeName);
+			}
+		}
+		return response;
+	}
+
 	protected ModelAndView toModelAndView(ResponseInstruction response) {
-		if (response.isNull()) {
+		if (response.isApplicationView()) {
+			// forward to a view as part of an active conversation
+			ApplicationViewSelection forward = (ApplicationViewSelection)response.getViewSelection();
+			Map model = new HashMap(forward.getModel());
+			parameterExtractor.put(response.getFlowExecutionKey(), model);
+			parameterExtractor.put(response.getFlowExecutionContext(), model);
+			return new ModelAndView(forward.getViewName(), model);
+		}
+		else if (response.isNull()) {
 			return null;
 		}
-		if (response.getFlowExecutionContext().isActive()) {
-			// forward to a view as part of an active conversation
-			Map model = new HashMap(response.getModel().size() + 2, 1);
-			model.putAll(response.getModel());
-			parameterExtractor.putContextAttributes(response.getFlowExecutionKey(), response.getFlowExecutionContext(),
-					model);
-			return new ModelAndView(response.getViewName(), model);
-		}
 		else {
-			// forward to a view after flow completion
-			return new ModelAndView(response.getViewName(), response.getModel());
+			throw new IllegalArgumentException("Don't know how to handle response instruction " + response);
 		}
 	}
-} 
+
+	private void cacheResponseInstruction(PortletRequest request, ResponseInstruction response,
+			Serializable conversationId) {
+		PortletSession session = request.getPortletSession(false);
+		if (session != null) {
+			session.setAttribute(getConversationAttributeName(conversationId), response);
+		}
+	}
+
+	private String getConversationAttributeName(Serializable conversationId) {
+		return "responseInstruction." + conversationId;
+	}
+}

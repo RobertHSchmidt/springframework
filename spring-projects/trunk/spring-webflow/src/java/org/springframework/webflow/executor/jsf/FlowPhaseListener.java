@@ -170,7 +170,8 @@ public class FlowPhaseListener implements PhaseListener {
 				}
 				holder.setFlowExecutionKey(flowExecutionKey);
 				Map requestMap = facesContext.getExternalContext().getRequestMap();
-				parameterExtractor.putContextAttributes(flowExecutionKey, flowExecution, requestMap);
+				parameterExtractor.put(flowExecutionKey, requestMap);
+				parameterExtractor.put(flowExecution, requestMap);
 			}
 		}
 	}

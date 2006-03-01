@@ -20,13 +20,13 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
+import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -47,7 +47,7 @@ public class TextToViewSelectorTests extends TestCase {
 	public void testStaticView() {
 		ViewSelector selector = (ViewSelector)converter.convert("myView");
 		RequestContext context = getRequestContext();
-		ViewSelection view = selector.makeSelection(context);
+		ApplicationViewSelection view = (ApplicationViewSelection)selector.makeSelection(context);
 		assertEquals("myView", view.getViewName());
 		assertEquals(5, view.getModel().size());
 	}
@@ -60,9 +60,8 @@ public class TextToViewSelectorTests extends TestCase {
 		ViewSelector selector = (ViewSelector)converter
 				.convert("redirect:myView?foo=${flowScope.foo}&bar=${requestScope.oven}", cContext);
 		RequestContext context = getRequestContext();
-		ViewSelection view = selector.makeSelection(context);
-		assertEquals("myView", view.getViewName());
-		assertEquals(2, view.getModel().size());
+		ExternalRedirect view = (ExternalRedirect)selector.makeSelection(context);
+		assertEquals("myView?foo=bar&bar=mit", view.getUrl());
 	}
 
 	private RequestContext getRequestContext() {
@@ -74,54 +73,5 @@ public class TextToViewSelectorTests extends TestCase {
 		ctx.getFlowScope().put("boo", new Integer(3));
 		ctx.setLastEvent(new Event(this, "sample"));
 		return ctx;
-	}
-
-	public void testCreateRedirectViewDescriptorCreator() {
-		RequestContext context = new MockRequestContext();
-		context.getFlowScope().put("foo", "foo");
-		context.getFlowScope().put("bar", "bar");
-
-		ViewSelection selection = converter.createRedirectViewSelector("/viewName").makeSelection(context);
-		assertEquals("/viewName", selection.getViewName());
-		assertEquals(0, selection.getModel().size());
-
-		selection = converter.createRedirectViewSelector("").makeSelection(context);
-		assertEquals("", selection.getViewName());
-		assertEquals(0, selection.getModel().size());
-
-		selection = converter.createRedirectViewSelector(null).makeSelection(context);
-		assertEquals("", selection.getViewName());
-		assertEquals(0, selection.getModel().size());
-
-		selection = converter.createRedirectViewSelector("/viewName?").makeSelection(context);
-		assertEquals("/viewName", selection.getViewName());
-		assertEquals(0, selection.getModel().size());
-
-		selection = converter.createRedirectViewSelector("/viewName?param0=").makeSelection(context);
-		assertEquals("/viewName", selection.getViewName());
-		assertEquals(1, selection.getModel().size());
-		assertEquals("", selection.getModel().get("param0"));
-
-		selection = converter.createRedirectViewSelector("/viewName?=value0").makeSelection(context);
-		assertEquals("/viewName", selection.getViewName());
-		assertEquals(1, selection.getModel().size());
-		assertEquals("value0", selection.getModel().get(""));
-
-		selection = converter.createRedirectViewSelector("/viewName?param0=value0").makeSelection(context);
-		assertEquals("/viewName", selection.getViewName());
-		assertEquals(1, selection.getModel().size());
-		assertEquals("value0", selection.getModel().get("param0"));
-
-		selection = converter.createRedirectViewSelector("/viewName?param0=${flowScope.foo}").makeSelection(context);
-		assertEquals("/viewName", selection.getViewName());
-		assertEquals(1, selection.getModel().size());
-		assertEquals("foo", selection.getModel().get("param0"));
-
-		selection = converter.createRedirectViewSelector("/viewName?param0=${flowScope.foo}&param1=${flowScope.bar}")
-				.makeSelection(context);
-		assertEquals("/viewName", selection.getViewName());
-		assertEquals(2, selection.getModel().size());
-		assertEquals("foo", selection.getModel().get("param0"));
-		assertEquals("bar", selection.getModel().get("param1"));
 	}
 }
