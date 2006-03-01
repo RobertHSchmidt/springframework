@@ -28,7 +28,6 @@
 		<!-- Launches new flow executions and resumes existing executions. -->	
 	<bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
 		<constructor-arg ref="flowRegistry"/>
-		<property name="alwaysRedirectOnPause" value="true"/>
 	</bean>
 
 	<!-- Creates the registry of flow definitions for this application -->
