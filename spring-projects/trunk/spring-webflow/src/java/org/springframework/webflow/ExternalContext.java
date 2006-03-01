@@ -36,8 +36,14 @@ import java.util.Map;
 public interface ExternalContext {
 
 	/**
-	 * Returns the path (or identifier) of the dispatcher that dispatched this
-	 * request.
+	 * Returns the path (or identifier) of the application that is executing.
+	 * @return the application context path
+	 */
+	public String getContextPath();
+
+	/**
+	 * Returns the path (or identifier) of the dispatcher within the application
+	 * that dispatched this request.
 	 * @return the dispatcher path
 	 */
 	public String getDispatcherPath();
@@ -79,10 +85,10 @@ public interface ExternalContext {
 	 * @return the mutable application attribute map
 	 */
 	public SharedAttributeMap getApplicationMap();
-	
+
 	/**
-	 * A simple subinterface of {@link Map} that exposes a mutex that application
-	 * code can synchronize on.
+	 * A simple subinterface of {@link Map} that exposes a mutex that
+	 * application code can synchronize on.
 	 * <p>
 	 * Expected to be implemented by Maps that are backed by shared objects that
 	 * require synchronization between multiple threads. An example would be the
@@ -93,8 +99,8 @@ public interface ExternalContext {
 	public interface SharedMap extends Map {
 
 		/**
-		 * Returns the shared mutex that may be synchronized on using a synchronized
-		 * block. The returned mutex is guaranteed to be non-null.
+		 * Returns the shared mutex that may be synchronized on using a
+		 * synchronized block. The returned mutex is guaranteed to be non-null.
 		 * 
 		 * Example usage:
 		 * 
@@ -108,7 +114,7 @@ public interface ExternalContext {
 		 */
 		public Object getMutex();
 	}
-	
+
 	public static class SharedAttributeMap extends AttributeMap {
 
 		/**
@@ -134,5 +140,5 @@ public interface ExternalContext {
 			return getSharedMap().getMutex();
 		}
 	}
-	
+
 }

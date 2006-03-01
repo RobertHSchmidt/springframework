@@ -66,6 +66,10 @@ public class JsfExternalContext implements ExternalContext {
 		this.outcome = outcome;
 	}
 
+	public String getContextPath() {
+		return facesContext.getExternalContext().getRequestContextPath();
+	}
+	
 	public String getDispatcherPath() {
 		return facesContext.getExternalContext().getRequestServletPath();
 	}

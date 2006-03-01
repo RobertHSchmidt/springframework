@@ -58,6 +58,10 @@ public class PortletExternalContext implements ExternalContext {
 		this.response = response;
 	}
 
+	public String getContextPath() {
+		return request.getContextPath();
+	}
+
 	public String getDispatcherPath() {
 		return null;
 	}

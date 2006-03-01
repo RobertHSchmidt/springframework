@@ -29,6 +29,8 @@ import org.springframework.webflow.context.SharedMapDecorator;
  */
 public class MockExternalContext implements ExternalContext {
 
+	private String contextPath;
+	
 	private String dispatcherPath;
 
 	private String requestPathInfo;
@@ -59,6 +61,10 @@ public class MockExternalContext implements ExternalContext {
 
 	// implementing external context
 	
+	public String getContextPath() {
+		return contextPath;
+	}
+	
 	public String getDispatcherPath() {
 		return dispatcherPath;
 	}
@@ -84,13 +90,17 @@ public class MockExternalContext implements ExternalContext {
 	}
 
 	// helper setters
-	
-	public void setRequestPathInfo(String requestPathInfo) {
-		this.requestPathInfo = requestPathInfo;
-	}
 
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
+	}
+	
 	public void setDispatcherPath(String dispatcherPath) {
 		this.dispatcherPath = dispatcherPath;
+	}
+
+	public void setRequestPathInfo(String requestPathInfo) {
+		this.requestPathInfo = requestPathInfo;
 	}
 
 	public void setRequestParameterMap(ParameterMap requestParameterMap) {

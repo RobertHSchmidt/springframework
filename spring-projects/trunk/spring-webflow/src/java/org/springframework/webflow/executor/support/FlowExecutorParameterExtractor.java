@@ -578,10 +578,14 @@ public class FlowExecutorParameterExtractor {
 	 */
 	private void appendQueryParameter(Object key, Object value, StringBuffer targetUrl) {
 		String encodedKey = urlEncode(key.toString());
-		String encodedValue = value != null ? urlEncode(value.toString()) : "";
+		String encodedValue = encodeValue(value);
 		targetUrl.append(encodedKey).append('=').append(encodedValue);
 	}
 
+	protected String encodeValue(Object value) {
+		return value != null ? urlEncode(value.toString()) : "";
+	}
+	
 	/**
 	 * URL-encode the given input String with the given encoding scheme.
 	 * <p>
