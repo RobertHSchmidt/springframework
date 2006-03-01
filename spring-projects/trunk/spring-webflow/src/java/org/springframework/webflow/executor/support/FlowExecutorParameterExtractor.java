@@ -11,6 +11,7 @@ import org.springframework.core.JdkVersion;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutionKeyFormatter;
@@ -98,14 +99,14 @@ public class FlowExecutorParameterExtractor {
 	private String defaultFlowId;
 
 	/**
-	 * Identifies an existing flow execution to participate in, defaults
-	 * {@link #FLOW_EXECUTION_KEY_PARAMETER }.
+	 * Input parameter that identifies an existing flow execution to participate
+	 * in, defaults {@link #FLOW_EXECUTION_KEY_PARAMETER }.
 	 */
 	private String flowExecutionKeyParameterName = FLOW_EXECUTION_KEY_PARAMETER;
 
 	/**
-	 * Identifies the id of the flow execution participated in, defaults to
-	 * {@link #FLOW_EXECUTION_KEY_ATTRIBUTE }.
+	 * Context attribuet that identifies the id of the flow execution
+	 * participated in, defaults to {@link #FLOW_EXECUTION_KEY_ATTRIBUTE }.
 	 */
 	private String flowExecutionKeyAttributeName = FLOW_EXECUTION_KEY_ATTRIBUTE;
 
@@ -116,8 +117,8 @@ public class FlowExecutorParameterExtractor {
 	private Formatter flowExecutionKeyFormatter = new FlowExecutionKeyFormatter();
 
 	/**
-	 * Identifies the the flow execution participated in, defaults to
-	 * {@link #FLOW_EXECUTION_CONTEXT_ATTRIBUTE }.
+	 * Context attribute that provides state about the flow participated in,
+	 * defaults to {@link #FLOW_EXECUTION_CONTEXT_ATTRIBUTE }.
 	 */
 	private String flowExecutionContextAttributeName = FLOW_EXECUTION_CONTEXT_ATTRIBUTE;
 
@@ -147,21 +148,22 @@ public class FlowExecutorParameterExtractor {
 	private String urlEncodingScheme = DEFAULT_URL_ENCODING_SCHEME;
 
 	/**
-	 * Returns the flow id parameter name.
+	 * Returns the flow id parameter name, used to request a flow to launch.
 	 */
 	public String getFlowIdParameterName() {
 		return flowIdParameterName;
 	}
 
 	/**
-	 * Sets the flow id parameter name.
+	 * Sets the flow id parameter name, used to request a flow to launch.
 	 */
 	public void setFlowIdParameterName(String flowIdParameterName) {
 		this.flowIdParameterName = flowIdParameterName;
 	}
 
 	/**
-	 * Returns the default flowId parameter value.
+	 * Returns the <i>default</i> flowId parameter value. If no flow id
+	 * parameter is provided, the default acts as a fallback.
 	 */
 	public String getDefaultFlowId() {
 		return defaultFlowId;
@@ -179,42 +181,51 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
-	 * Returns the flow execution key parameter name.
+	 * Returns the flow execution key parameter name, used to request that an
+	 * executing conversation resume at a specific point in time.
 	 */
 	public String getFlowExecutionKeyParameterName() {
 		return flowExecutionKeyParameterName;
 	}
 
 	/**
-	 * Sets the flow execution key parameter name.
+	 * Sets the flow execution key parameter name, used to request that an
+	 * executing conversation resume at a specific point in time.
 	 */
 	public void setFlowExecutionKeyParameterName(String flowExecutionIdParameterName) {
 		this.flowExecutionKeyParameterName = flowExecutionIdParameterName;
 	}
 
 	/**
-	 * Returns the flow execution key attribute name.
+	 * Returns the flow execution key attribute name, used as a context
+	 * attribute for identifying the executing flow being participated in.
 	 */
 	public String getFlowExecutionKeyAttributeName() {
 		return flowExecutionKeyAttributeName;
 	}
 
 	/**
-	 * Sets the flow execution key attribute name.
+	 * Sets the flow execution key attribute name, used as a context attribute
+	 * for identifying the current state of the executing flow being
+	 * participated in (typically used by view templates during rendering).
 	 */
 	public void setFlowExecutionKeyAttributeName(String flowExecutionKeyAttributeName) {
 		this.flowExecutionKeyAttributeName = flowExecutionKeyAttributeName;
 	}
 
 	/**
-	 * Returns the continuation key formatting strategy.
+	 * Returns the flow execution key formatting strategy, used to convert
+	 * between encoded flow execution key Strings and {@link FlowExecutionKey}
+	 * objects.
 	 */
 	public Formatter getFlowExecutionKeyFormatter() {
 		return flowExecutionKeyFormatter;
 	}
 
 	/**
-	 * Sets the flow execution continuation key formatting strategy.
+	 * Sets the flow execution continuation key formatting strategy, used to
+	 * convert between encoded flow execution key Strings and
+	 * {@link FlowExecutionKey} objects.
 	 * @param continuationKeyFormatter the continuation key formatter
 	 */
 	public void setFlowExecutionKeyFormatter(Formatter continuationKeyFormatter) {
@@ -236,28 +247,34 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
-	 * Returns the event id parameter name.
+	 * Returns the event id parameter name, used to signal what user action
+	 * happened within a paused flow execution.
 	 */
 	public String getEventIdParameterName() {
 		return eventIdParameterName;
 	}
 
 	/**
-	 * Sets the event id parameter name.
+	 * Sets the event id parameter name, used to signal what user action
+	 * happened within a paused flow execution.
 	 */
 	public void setEventIdParameterName(String eventIdParameterName) {
 		this.eventIdParameterName = eventIdParameterName;
 	}
 
 	/**
-	 * Returns the conversation id parameter name.
+	 * Returns the conversation id parameter name, used to identify an active
+	 * active conversation that is ongoing between a browser and Spring Web
+	 * Flow.
 	 */
 	public String getConversationIdParameterName() {
 		return conversationIdParameterName;
 	}
 
 	/**
-	 * Sets the conversation id parameter name.
+	 * Sets the conversation id parameter name, used to identify an active
+	 * active conversation that is ongoing between a browser and Spring Web
+	 * Flow.
 	 */
 	public void setConversationIdParameterName(String conversationIdParameterName) {
 		this.conversationIdParameterName = conversationIdParameterName;
@@ -293,8 +310,9 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
-	 * Extracts the flow id from the external context. If not found, the
-	 * <code>defaultFlowId</code> will be returned instead.
+	 * Extracts the flow id from the external context. If found, a new execution
+	 * of the {@link Flow} with the extracted id should be launched. If not
+	 * found, the <code>defaultFlowId</code> will be returned instead.
 	 * @see #getDefaultFlowId()
 	 * @param context the context in which the external user event occurred
 	 * @return the obtained id or <code>null</code> if not found
@@ -306,12 +324,12 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
-	 * Create a URL path to that launches a new execution of the flow that
-	 * produced the given response. Used to support the <i>restart flow</i> use
-	 * case.
-	 * @param flowId the flow id
+	 * Create a URL that when redirected to launches a entirely new execution of
+	 * a flow (starts a new conversation). Used to support the <i>restart flow</i>
+	 * and <i>redirect to flow</i> use cases.
+	 * @param flowRedirect the flow redirect selection
 	 * @param externalContext the external context
-	 * @return the relative flow URL path
+	 * @return the relative flow URL path to redirect to
 	 */
 	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext externalContext) {
 		StringBuffer flowUrl = new StringBuffer();
@@ -326,8 +344,10 @@ public class FlowExecutorParameterExtractor {
 	 * Extract the flow execution key from the external context.
 	 * @param context the context in which the external user event occured
 	 * @return the obtained key or <code>null</code> if not found
+	 * @throws IllegalArgumentException if the flow execution key parameter was
+	 * present but could not be parsed
 	 */
-	public FlowExecutionKey extractFlowExecutionKey(ExternalContext context) {
+	public FlowExecutionKey extractFlowExecutionKey(ExternalContext context) throws IllegalArgumentException {
 		String flowExecutionId = verifySingleStringInputParameter(getFlowExecutionKeyParameterName(), getParameterMap(
 				context).get(getFlowExecutionKeyParameterName()));
 		return flowExecutionId != null ? (FlowExecutionKey)flowExecutionKeyFormatter.parseValue(flowExecutionId,
@@ -366,7 +386,7 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
-	 * Extract the flow execution conversation id from the external context.
+	 * Extract the conversation id from the external context.
 	 * @param context the context in which the external user event occured
 	 * @return the conversation id
 	 */
@@ -376,9 +396,10 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
-	 * Create a URL path to that when redirected to renders the <i>current view
-	 * selection</i> of the conversation that that produced the given response.
-	 * Used to support the <i>conversation redirect</i> use case.
+	 * Create a URL path that when redirected to renders the <i>current</i> (or
+	 * last) view selection</i> made by the conversation identified by the
+	 * provided conversationId. Used to support the <i>conversation redirect</i>
+	 * use case.
 	 * @param conversationId the conversation id
 	 * @param context the external context
 	 * @return the relative conversation URL path
@@ -393,7 +414,7 @@ public class FlowExecutorParameterExtractor {
 
 	/**
 	 * Create a URL path to that when redirected to communicates with an
-	 * external system outside of SWF.
+	 * external system outside of Spring Web Flow.
 	 * @param redirect the external redirect request
 	 * @param flowExecutionKey the flow execution key to send through the
 	 * redirect
@@ -407,7 +428,8 @@ public class FlowExecutorParameterExtractor {
 			boolean first = redirect.getUrl().indexOf('?') < 0;
 			if (first) {
 				externalUrl.append('?');
-			} else {
+			}
+			else {
 				externalUrl.append('&');
 			}
 			appendQueryParameter(getFlowExecutionKeyParameterName(), flowExecutionKeyFormatter
@@ -417,8 +439,8 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
-	 * Add flow execution context attributes to the model under well-defined
-	 * names.
+	 * Put the flow execution key into the provided model map under the
+	 * configured context attribute name.
 	 * @param flowExecutionKey the flow execution key
 	 * @param model the model
 	 */
@@ -427,8 +449,8 @@ public class FlowExecutorParameterExtractor {
 	}
 
 	/**
-	 * Add flow execution context attributes to the model under well-defined
-	 * names.
+	 * Put the flow execution context into the provided model map under the
+	 * configured context attribute name.
 	 * @param context the flow execution context
 	 * @param model the model
 	 */
@@ -569,7 +591,6 @@ public class FlowExecutorParameterExtractor {
 	 * @param input the unencoded input String
 	 * @param encodingScheme the encoding scheme
 	 * @return the encoded output String
-	 * @throws UnsupportedEncodingException if thrown by the JDK URLEncoder
 	 * @see java.net.URLEncoder#encode(String, String)
 	 * @see java.net.URLEncoder#encode(String)
 	 */
