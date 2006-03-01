@@ -32,7 +32,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
-import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowRedirect;
@@ -205,8 +205,8 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 			return;
 		}
 		FacesContext facesContext = context.getFacesContext();
-		if (selectedView instanceof ApplicationViewSelection) {
-			ApplicationViewSelection forward = (ApplicationViewSelection)selectedView;
+		if (selectedView instanceof ApplicationView) {
+			ApplicationView forward = (ApplicationView)selectedView;
 			putInto(facesContext.getExternalContext().getRequestMap(), forward.getModel());
 			// stay on the same view if requested
 			if (forward.getViewName() == null) {

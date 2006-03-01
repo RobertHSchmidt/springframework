@@ -21,7 +21,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
-import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowRedirect;
@@ -96,7 +96,7 @@ public class ResponseInstruction implements Serializable {
 	}
 
 	public boolean isApplicationView() {
-		return viewSelection instanceof ApplicationViewSelection;
+		return viewSelection instanceof ApplicationView;
 	}
 	
 	public boolean isActiveView() {

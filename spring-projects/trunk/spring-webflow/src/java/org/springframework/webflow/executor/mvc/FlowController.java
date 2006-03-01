@@ -34,7 +34,7 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
 import org.springframework.webflow.executor.support.FlowRequestHandler;
-import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowRedirect;
 
@@ -203,7 +203,7 @@ public class FlowController extends AbstractController {
 	protected ModelAndView toModelAndView(ResponseInstruction response, ExternalContext context) {
 		if (response.isApplicationView()) {
 			// forward to a view as part of an active conversation
-			ApplicationViewSelection forward = (ApplicationViewSelection)response.getViewSelection();
+			ApplicationView forward = (ApplicationView)response.getViewSelection();
 			Map model = new HashMap(forward.getModel());
 			parameterExtractor.put(response.getFlowExecutionKey(), model);
 			parameterExtractor.put(response.getFlowExecutionContext(), model);

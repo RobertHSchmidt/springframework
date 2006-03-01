@@ -24,10 +24,10 @@ import org.springframework.binding.expression.support.CompositeStringExpression;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.MapAccessor;
+import org.springframework.webflow.NullViewSelector;
 import org.springframework.webflow.State;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.support.ExternalRedirectSelector;
-import org.springframework.webflow.support.MarkerViewSelector;
 import org.springframework.webflow.support.ApplicationViewSelector;
 
 /**
@@ -100,7 +100,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
 		String encodedView = (String)source;
 		if (!StringUtils.hasText(encodedView)) {
-			return MarkerViewSelector.INSTANCE;
+			return NullViewSelector.INSTANCE;
 		}
 		if (encodedView.startsWith(BEAN_PREFIX)) {
 			return getCustomViewSelector(encodedView.substring(BEAN_PREFIX.length()));

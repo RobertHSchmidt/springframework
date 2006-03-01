@@ -18,7 +18,7 @@ package org.springframework.webflow;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.builder.MyCustomException;
-import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
@@ -158,7 +158,7 @@ public class FlowTests extends TestCase {
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		context.setCurrentState(flow.getRequiredState("myState1"));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
-		ApplicationViewSelection selectedView = (ApplicationViewSelection)flow.handleException(e, context);
+		ApplicationView selectedView = (ApplicationView)flow.handleException(e, context);
 		assertNotNull("Should not have been null", selectedView);
 		assertEquals("Wrong selected view", "myView2", selectedView.getViewName());
 	}

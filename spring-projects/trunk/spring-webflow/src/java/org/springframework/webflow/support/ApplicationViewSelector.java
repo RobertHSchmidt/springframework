@@ -24,7 +24,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
 
 /**
- * Simple view selector that makes an {@link ApplicationViewSelection} with the
+ * Simple view selector that makes an {@link ApplicationView} with the
  * same view name each time. This factory will treat all attributes returned
  * from calling {@link RequestContext#getModel()} as the application model
  * exposed to the view during rendering. This is typically the union of
@@ -32,7 +32,7 @@ import org.springframework.webflow.ViewSelector;
  * <p>
  * This selector also supports setting a <i>requestConversationRedirect</i>
  * flag that will trigger a {@link ConversationRedirect} to the
- * {@link ApplicationViewSelection} at a bookmarkable conversation URL.
+ * {@link ApplicationView} at a bookmarkable conversation URL.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -103,7 +103,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	}
 
 	public ViewSelection makeSelection(RequestContext context) {
-		ApplicationViewSelection view = new ApplicationViewSelection(getViewName(), context.getModel().getMap());
+		ApplicationView view = new ApplicationView(getViewName(), context.getModel().getMap());
 		if (isRequestConversationRedirect()) {
 			return new ConversationRedirect(view);
 		}

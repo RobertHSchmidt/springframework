@@ -31,7 +31,7 @@ import org.springframework.webflow.ViewSelection;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public final class ApplicationViewSelection extends ViewSelection {
+public final class ApplicationView extends ViewSelection {
 
 	/**
 	 * The name of the view (or page or other response) to render. This name may
@@ -55,7 +55,7 @@ public final class ApplicationViewSelection extends ViewSelection {
 	 * objects (Objects), model entries may not be null, but the model Map may
 	 * be null if there is no model data
 	 */
-	public ApplicationViewSelection(String viewName, Map model) {
+	public ApplicationView(String viewName, Map model) {
 		if (model == null) {
 			model = Collections.EMPTY_MAP;
 		}
@@ -79,10 +79,10 @@ public final class ApplicationViewSelection extends ViewSelection {
 	}
 
 	public boolean equals(Object o) {
-		if (!(o instanceof ApplicationViewSelection)) {
+		if (!(o instanceof ApplicationView)) {
 			return false;
 		}
-		ApplicationViewSelection other = (ApplicationViewSelection)o;
+		ApplicationView other = (ApplicationView)o;
 		return ObjectUtils.nullSafeEquals(viewName, other.viewName) && model.equals(other.model);
 	}
 

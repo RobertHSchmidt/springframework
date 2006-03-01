@@ -24,7 +24,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AttributeMapperAction;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
@@ -116,7 +116,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("submit"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ApplicationViewSelection view = (ApplicationViewSelection)flowExecution.start(new MockExternalContext());
+		ApplicationView view = (ApplicationView)flowExecution.start(new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
 		assertNotNull(view);
 		assertEquals("myViewName", view.getViewName());
@@ -148,11 +148,11 @@ public class StateTests extends TestCase {
 		state3.setViewSelector(view("myParentFlowEndingViewName"));
 
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ApplicationViewSelection view = (ApplicationViewSelection)flowExecution.start(new MockExternalContext());
+		ApplicationView view = (ApplicationView)flowExecution.start(new MockExternalContext());
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
-		view = (ApplicationViewSelection)flowExecution.signalEvent("submit", new MockExternalContext());
+		view = (ApplicationView)flowExecution.signalEvent("submit", new MockExternalContext());
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
 		assertTrue(!flowExecution.isActive());
 	}
@@ -185,12 +185,12 @@ public class StateTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		MockParameterMap input = new MockParameterMap();
 		input.put("parentInputAttribute", "attributeValue");
-		ApplicationViewSelection view = (ApplicationViewSelection)flowExecution.start(new MockExternalContext(input));
+		ApplicationView view = (ApplicationView)flowExecution.start(new MockExternalContext(input));
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
 		assertEquals("attributeValue", flowExecution.getActiveSession().getScope().get("childInputAttribute"));
-		view = (ApplicationViewSelection)flowExecution.signalEvent("submit", new MockExternalContext());
+		view = (ApplicationView)flowExecution.signalEvent("submit", new MockExternalContext());
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
 		assertTrue(!flowExecution.isActive());
 		assertEquals("attributeValue", view.getModel().get("parentOutputAttribute"));

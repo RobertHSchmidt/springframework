@@ -31,7 +31,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowRedirect;
@@ -358,12 +358,12 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
-	 * Assert that the returned view selection is an instance of {@link ApplicationViewSelection}.
+	 * Assert that the returned view selection is an instance of {@link ApplicationView}.
 	 * @param viewSelection the view selection
 	 */
-	public ApplicationViewSelection applicationView(ViewSelection viewSelection) {
-		Assert.isInstanceOf(ApplicationViewSelection.class, viewSelection, "Unexpected class of view selection: ");
-		return (ApplicationViewSelection)viewSelection;
+	public ApplicationView applicationView(ViewSelection viewSelection) {
+		Assert.isInstanceOf(ApplicationView.class, viewSelection, "Unexpected class of view selection: ");
+		return (ApplicationView)viewSelection;
 	}
 
 	/**
@@ -407,7 +407,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertViewNameEquals(String expectedViewName, ApplicationViewSelection viewSelection) {
+	public void assertViewNameEquals(String expectedViewName, ApplicationView viewSelection) {
 		assertEquals("The view name is wrong:", expectedViewName, viewSelection.getViewName());
 	}
 
@@ -419,7 +419,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeEquals(Object expectedValue, String attributeName, ApplicationViewSelection viewSelection) {
+	public void assertModelAttributeEquals(Object expectedValue, String attributeName, ApplicationView viewSelection) {
 		assertEquals("The model attribute '" + attributeName + "' value is wrong:", expectedValue,
 				evaluateModelAttributeExpression(attributeName, viewSelection.getModel()));
 	}
@@ -432,7 +432,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ApplicationViewSelection viewSelection) {
+	public void assertModelAttributeCollectionSize(int expectedSize, String attributeName, ApplicationView viewSelection) {
 		assertModelAttributeNotNull(attributeName, viewSelection);
 		Collection c = (Collection)evaluateModelAttributeExpression(attributeName, viewSelection.getModel());
 		assertEquals("The model attribute '" + attributeName + "' collection size is wrong:", expectedSize, c.size());
@@ -444,7 +444,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeNotNull(String attributeName, ApplicationViewSelection viewSelection) {
+	public void assertModelAttributeNotNull(String attributeName, ApplicationView viewSelection) {
 		assertNotNull("The model attribute '" + attributeName + "' is null but should not be; model contents are "
 				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
 				viewSelection.getModel()));
@@ -457,7 +457,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param viewSelection the selected view with a model attribute map to
 	 * assert against
 	 */
-	public void assertModelAttributeNull(String attributeName, ApplicationViewSelection viewSelection) {
+	public void assertModelAttributeNull(String attributeName, ApplicationView viewSelection) {
 		assertNull("The model attribute '" + attributeName + "' is not null but should be; model contents are "
 				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
 				viewSelection.getModel()));

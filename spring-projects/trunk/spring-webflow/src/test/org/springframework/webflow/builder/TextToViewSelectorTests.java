@@ -25,7 +25,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -47,7 +47,7 @@ public class TextToViewSelectorTests extends TestCase {
 	public void testStaticView() {
 		ViewSelector selector = (ViewSelector)converter.convert("myView");
 		RequestContext context = getRequestContext();
-		ApplicationViewSelection view = (ApplicationViewSelection)selector.makeSelection(context);
+		ApplicationView view = (ApplicationView)selector.makeSelection(context);
 		assertEquals("myView", view.getViewName());
 		assertEquals(5, view.getModel().size());
 	}

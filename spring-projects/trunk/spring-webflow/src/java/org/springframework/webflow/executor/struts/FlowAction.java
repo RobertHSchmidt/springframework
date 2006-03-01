@@ -42,7 +42,7 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
 import org.springframework.webflow.executor.support.FlowRequestHandler;
-import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowRedirect;
 
@@ -256,7 +256,7 @@ public class FlowAction extends ActionSupport {
 			HttpServletRequest request, ExternalContext context) {
 		if (response.isApplicationView()) {
 			// forward to a view as part of an active conversation
-			ApplicationViewSelection forward = (ApplicationViewSelection)response.getViewSelection();
+			ApplicationView forward = (ApplicationView)response.getViewSelection();
 			Map model = new HashMap(forward.getModel());
 			parameterExtractor.put(response.getFlowExecutionKey(), model);
 			parameterExtractor.put(response.getFlowExecutionContext(), model);
@@ -298,7 +298,7 @@ public class FlowAction extends ActionSupport {
 		return (Errors)model.get(FormObjectAccessor.getCurrentFormErrorsName());
 	}
 
-	private ActionForward findActionForward(ApplicationViewSelection forward, ActionMapping mapping) {
+	private ActionForward findActionForward(ApplicationView forward, ActionMapping mapping) {
 		ActionForward actionForward = mapping.findForward(forward.getViewName());
 		if (actionForward != null) {
 			// the 1.2.1 copy constructor would ideally be better to

@@ -16,7 +16,6 @@
 package org.springframework.webflow;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.support.MarkerViewSelector;
 
 /**
  * A view state is a state in which a physical view resource should be rendered
@@ -43,7 +42,7 @@ public class ViewState extends TransitionableState {
 	/**
 	 * The factory for the view selection to return when this state is entered.
 	 */
-	private ViewSelector viewSelector = MarkerViewSelector.INSTANCE;
+	private ViewSelector viewSelector = NullViewSelector.INSTANCE;
 
 	/**
 	 * Default constructor for bean style usage.
@@ -76,9 +75,6 @@ public class ViewState extends TransitionableState {
 	 * Sets the strategy used to select the view to render in this view state.
 	 */
 	public void setViewSelector(ViewSelector viewSelector) {
-		if (viewSelector == null) {
-			viewSelector = MarkerViewSelector.INSTANCE;
-		}
 		this.viewSelector = viewSelector;
 	}
 

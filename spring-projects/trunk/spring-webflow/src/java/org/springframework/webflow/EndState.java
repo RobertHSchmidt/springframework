@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.support.MarkerViewSelector;
 
 /**
  * Terminates an active flow session when entered. If the terminated session is
@@ -55,7 +54,7 @@ public class EndState extends State {
 	 * The optional view selector that will select a view to render if this end
 	 * state terminates an executing root flow.
 	 */
-	private ViewSelector viewSelector = MarkerViewSelector.INSTANCE;
+	private ViewSelector viewSelector = NullViewSelector.INSTANCE;
 
 	/**
 	 * The set of output attributes that will be returned to the parent flow
@@ -98,7 +97,7 @@ public class EndState extends State {
 	 */
 	public void setViewSelector(ViewSelector viewSelector) {
 		if (viewSelector == null) {
-			viewSelector = MarkerViewSelector.INSTANCE;
+			viewSelector = NullViewSelector.INSTANCE;
 		}
 		this.viewSelector = viewSelector;
 	}

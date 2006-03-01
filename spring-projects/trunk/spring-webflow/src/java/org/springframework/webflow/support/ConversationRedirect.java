@@ -39,14 +39,14 @@ public final class ConversationRedirect extends ViewSelection {
 	/**
 	 * The view to render to on receipt of subsequent conversation requests.
 	 */
-	private final ApplicationViewSelection applicationView;
+	private final ApplicationView applicationView;
 
 	/**
 	 * Creates a new conversation redirect.
 	 * @param applicationView the view to render on receipt of the conversation
 	 * redirect request.
 	 */
-	public ConversationRedirect(ApplicationViewSelection applicationView) {
+	public ConversationRedirect(ApplicationView applicationView) {
 		this.applicationView = applicationView;
 	}
 
@@ -54,7 +54,7 @@ public final class ConversationRedirect extends ViewSelection {
 	 * Return the application view to render on receipt of the conversation
 	 * redirect request.
 	 */
-	public ApplicationViewSelection getApplicationView() {
+	public ApplicationView getApplicationView() {
 		return applicationView;
 	}
 
