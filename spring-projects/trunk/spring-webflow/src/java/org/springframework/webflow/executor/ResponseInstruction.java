@@ -99,11 +99,11 @@ public class ResponseInstruction implements Serializable {
 		return viewSelection instanceof ApplicationViewSelection;
 	}
 	
-	public boolean isActiveForward() {
+	public boolean isActiveView() {
 		return isApplicationView() && flowExecutionContext.isActive();
 	}
 	
-	public boolean isConfirmationForward() {
+	public boolean isConfirmationView() {
 		return isApplicationView() && !flowExecutionContext.isActive();
 	}
 	

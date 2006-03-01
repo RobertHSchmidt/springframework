@@ -203,7 +203,7 @@ public class PortletFlowController extends AbstractController {
 			Serializable conversationId = flowExecutionKey.getConversationId();
 			response.setRenderParameter(parameterExtractor.getConversationIdParameterName(), String
 					.valueOf(conversationId));
-			if (responseInstruction.isConfirmationForward()) {
+			if (responseInstruction.isConfirmationView()) {
 				// cache ending response temporarily for final forward on the
 				// next render request
 				cacheResponseInstruction(request, responseInstruction, conversationId);
