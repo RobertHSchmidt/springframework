@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationViewSelection;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
-import org.springframework.webflow.support.SimpleViewSelector;
+import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockParameterMap;
@@ -205,7 +205,7 @@ public class StateTests extends TestCase {
 	}
 
 	public static ViewSelector view(String viewName) {
-		return new SimpleViewSelector(viewName);
+		return new ApplicationViewSelector(viewName);
 	}
 
 	public static class InputOutputMapper implements FlowAttributeMapper {

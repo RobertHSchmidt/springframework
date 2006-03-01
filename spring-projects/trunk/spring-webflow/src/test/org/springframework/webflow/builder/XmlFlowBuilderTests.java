@@ -40,7 +40,7 @@ import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.support.DefaultFlowAttributeMapper;
-import org.springframework.webflow.support.SimpleViewSelector;
+import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockRequestContext;
@@ -105,7 +105,7 @@ public class XmlFlowBuilderTests extends TestCase {
 
 		ViewState viewState1 = (ViewState)flow.getState("viewState1");
 		assertNotNull(viewState1);
-		assertEquals("view1", ((SimpleViewSelector)viewState1.getViewSelector()).getViewName());
+		assertEquals("view1", ((ApplicationViewSelector)viewState1.getViewSelector()).getViewName());
 		assertEquals(1, viewState1.getTransitionSet().size());
 		context.setLastEvent(createEvent("event1"));
 		assertTrue(viewState1.getTransitionSet().transitionMatches(context));
@@ -174,7 +174,7 @@ public class XmlFlowBuilderTests extends TestCase {
 
 		EndState endState1 = (EndState)flow.getState("endState1");
 		assertNotNull(endState1);
-		assertEquals("endView1", ((SimpleViewSelector)endState1.getViewSelector()).getViewName());
+		assertEquals("endView1", ((ApplicationViewSelector)endState1.getViewSelector()).getViewName());
 
 		EndState endState2 = (EndState)flow.getState("endState2");
 		assertNotNull(endState2);

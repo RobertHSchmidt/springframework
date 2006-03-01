@@ -39,7 +39,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		};
 		state1.addTransition(new Transition(to("end")));
 		EndState state2 = new EndState(flow, "end");
-		state2.setViewSelector(new SimpleViewSelector("view"));
+		state2.setViewSelector(new ApplicationViewSelector("view"));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		handler.add(MyCustomException.class, "end");
 		flow.addExceptionHandler(handler);
@@ -57,7 +57,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		};
 		state1.addTransition(new Transition(to("end")));
 		EndState state2 = new EndState(flow, "end");
-		state2.setViewSelector(new SimpleViewSelector("view"));
+		state2.setViewSelector(new ApplicationViewSelector("view"));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		handler.add(MyCustomException.class, "end");
 		state1.addExceptionHandler(handler);

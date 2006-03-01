@@ -30,13 +30,12 @@ import org.springframework.webflow.ViewSelector;
  * URL outside of the flow.
  * <p>
  * This selector is applicable when you wish to request a <i>redirect after
- * conversation completion</i> as part of entering an EndState. This selector
- * generally does not make sense to be used with a ViewState. If you seek
- * "in-flow" redirect behavior use a {@link SimpleViewSelector} instead with the
- * {@link SimpleViewSelector#isRequestConversationRedirect()} flag set to true.
+ * conversation completion</i> as part of entering an EndState.
  * <p>
- * Only parameter values encoded in the view (e.g.
- * "/viewName?param0=value0&param1=value1") are exposed in the model.
+ * This selector may also be used to redirect to an external URL from a
+ * ViewState of an active conversation. The external system redirected to will
+ * be provided the flow execution context necessary to allow it to communicate
+ * back to the executing flow at a later time.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -44,15 +43,14 @@ import org.springframework.webflow.ViewSelector;
 public class ExternalRedirectSelector implements ViewSelector, Serializable {
 
 	/**
-	 * The parsed, evaluatable redirect expression.
+	 * The parsed, evaluatable redirect URL expression.
 	 */
 	private Expression urlExpression;
 
 	/**
-	 * Create a new redirecting view descriptor creator that takes given
-	 * expression as input. The expression is the parsed form
-	 * (expression-tokenized) of the encoded view (e.g.
-	 * "/pathInfo?param0=value0&param1=value1").
+	 * Create a new redirecting view selector that takes given URL expression as
+	 * input. The expression is the parsed form (expression-tokenized) of the
+	 * encoded view (e.g. "/pathInfo?param0=value0&param1=value1").
 	 */
 	public ExternalRedirectSelector(Expression urlExpression) {
 		this.urlExpression = urlExpression;
@@ -67,7 +65,7 @@ public class ExternalRedirectSelector implements ViewSelector, Serializable {
 
 	public ViewSelection makeSelection(RequestContext context) {
 		String url = (String)urlExpression.evaluateAgainst(context, getEvaluationContext(context));
-		return new ExternalRedirect(url);
+		return new ExternalRedirect(url, false);
 	}
 
 	/**

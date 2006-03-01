@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.builder.MyCustomException;
 import org.springframework.webflow.support.ApplicationViewSelection;
-import org.springframework.webflow.support.SimpleViewSelector;
+import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockFlowExecutionControlContext;
@@ -36,10 +36,10 @@ public class FlowTests extends TestCase {
 	private Flow createSimpleFlow() {
 		flow = new Flow("myFlow");
 		ViewState state1 = new ViewState(flow, "myState1");
-		state1.setViewSelector(new SimpleViewSelector("myView"));
+		state1.setViewSelector(new ApplicationViewSelector("myView"));
 		state1.addTransition(new Transition(to("myState2")));
 		EndState state2 = new EndState(flow, "myState2");
-		state2.setViewSelector(new SimpleViewSelector("myView2"));
+		state2.setViewSelector(new ApplicationViewSelector("myView2"));
 		return flow;
 	}
 
@@ -141,7 +141,7 @@ public class FlowTests extends TestCase {
 	public void testStartInCustomStartState() {
 		flow = new Flow("myFlow");
 		ViewState state1 = new ViewState(flow, "myState1");
-		state1.setViewSelector(new SimpleViewSelector("myView"));
+		state1.setViewSelector(new ApplicationViewSelector("myView"));
 		state1.addTransition(new Transition(to("myState2")));
 		SubflowState state2 = new SubflowState(flow, "myState2", flow);
 		state2.addTransition(new Transition(to("myState3")));

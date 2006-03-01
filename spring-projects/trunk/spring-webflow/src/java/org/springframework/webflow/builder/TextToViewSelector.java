@@ -28,7 +28,7 @@ import org.springframework.webflow.State;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.support.ExternalRedirectSelector;
 import org.springframework.webflow.support.MarkerViewSelector;
-import org.springframework.webflow.support.SimpleViewSelector;
+import org.springframework.webflow.support.ApplicationViewSelector;
 
 /**
  * Converter that converts an encoded string representation of a view selector
@@ -36,7 +36,7 @@ import org.springframework.webflow.support.SimpleViewSelector;
  * 
  * This converter supports the following encoded forms:
  * <ul>
- * <li>"viewName" - will result in a {@link SimpleViewSelector} that returns a
+ * <li>"viewName" - will result in a {@link ApplicationViewSelector} that returns a
  * ViewSelection with the provided view name.</li>
  * <li>"redirect:&lt;viewName&gt;" - will result in a
  * {@link ExternalRedirectSelector} that returns a ViewSelection with the provided
@@ -128,7 +128,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	protected ViewSelector createSimpleViewSelector(String encodedView, Map context) throws ConversionException {
 		boolean redirect = new MapAccessor(context).getBoolean(REDIRECT_CONTEXT_ATTRIBUTE, Boolean.FALSE)
 				.booleanValue();
-		return new SimpleViewSelector(encodedView, redirect);
+		return new ApplicationViewSelector(encodedView, redirect);
 	}
 
 	/**

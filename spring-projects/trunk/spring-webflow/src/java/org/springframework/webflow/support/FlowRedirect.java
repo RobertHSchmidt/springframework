@@ -18,12 +18,17 @@ package org.springframework.webflow.support;
 import java.util.Collections;
 import java.util.Map;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 import org.springframework.webflow.ViewSelection;
 
 /**
- * Requests that a <i>new</u> flow execution (representing the start of a new
- * conversation) be launched.
+ * Concrete response type that requests that a <i>new</u> flow execution
+ * (representing the start of a new conversation) be launched.
+ * <p>
+ * This allows "redirect to new flow" semantics; useful for restarting a flow
+ * after completion, or starting an entirely new flow from within the end state
+ * of another flow definition.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -77,5 +82,9 @@ public final class FlowRedirect extends ViewSelection {
 
 	public int hashCode() {
 		return flowId.hashCode() + input.hashCode();
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("flowId", flowId).append("input", input).toString();
 	}
 }

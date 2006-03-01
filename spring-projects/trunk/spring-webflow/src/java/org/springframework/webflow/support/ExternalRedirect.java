@@ -15,11 +15,13 @@
  */
 package org.springframework.webflow.support;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 import org.springframework.webflow.ViewSelection;
 
 /**
- * Requests redirect to an external URL outside of Spring Web Flow.
+ * Concrete response type that requests a redirect to an external URL outside of
+ * Spring Web Flow.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -27,16 +29,22 @@ import org.springframework.webflow.ViewSelection;
 public final class ExternalRedirect extends ViewSelection {
 
 	/**
-	 * The url path to redirect to.
+	 * The arbitrary url path to redirect to.
 	 */
 	private final String url;
 
 	/**
-	 * Creates a external redirect request.
+	 * A flag indicating if the redirect URL is context relative.
+	 */
+	private final boolean contextRelative;
+
+	/**
+	 * Creates an external redirect request.
 	 * @param url the url path to redirect to
 	 */
-	public ExternalRedirect(String url) {
+	public ExternalRedirect(String url, boolean contextRelative) {
 		this.url = url;
+		this.contextRelative = contextRelative;
 	}
 
 	/**
@@ -56,5 +64,9 @@ public final class ExternalRedirect extends ViewSelection {
 
 	public int hashCode() {
 		return url.hashCode();
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("url", url).append("contextRelative", contextRelative).toString();
 	}
 }

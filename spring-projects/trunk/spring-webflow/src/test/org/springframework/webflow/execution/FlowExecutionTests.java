@@ -42,7 +42,7 @@ import org.springframework.webflow.builder.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationViewSelection;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
-import org.springframework.webflow.support.SimpleViewSelector;
+import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
 
@@ -198,6 +198,6 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public static ViewSelector view(String viewName) {
-		return new SimpleViewSelector(viewName);
+		return new ApplicationViewSelector(viewName);
 	}
 }

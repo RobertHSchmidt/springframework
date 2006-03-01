@@ -24,18 +24,20 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
 
 /**
- * Simple view selector that makes an selection with the same view name each
- * time. This producer will make all model data from both flow and request scope
- * available to the view.
+ * Simple view selector that makes an {@link ApplicationViewSelection} with the
+ * same view name each time. This factory will treat all attributes returned
+ * from calling {@link RequestContext#getModel()} as the application model
+ * exposed to the view during rendering. This is typically the union of
+ * attributes in request, flow, and conversation scope.
  * <p>
- * Also supports setting a <i>requestConversationRedirect</i> flag that will
- * trigger a redirect to the ViewSelection made by this selector at a
- * bookmarkable conversation URL.
+ * This selector also supports setting a <i>requestConversationRedirect</i>
+ * flag that will trigger a {@link ConversationRedirect} to the
+ * {@link ApplicationViewSelection} at a bookmarkable conversation URL.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class SimpleViewSelector implements ViewSelector, Serializable {
+public class ApplicationViewSelector implements ViewSelector, Serializable {
 
 	/**
 	 * The static view name to render.
@@ -55,7 +57,7 @@ public class SimpleViewSelector implements ViewSelector, Serializable {
 	 * requesting that the specified view is rendered.
 	 * @param viewName the view name
 	 */
-	public SimpleViewSelector(String viewName) {
+	public ApplicationViewSelector(String viewName) {
 		setViewName(viewName);
 	}
 
@@ -64,7 +66,7 @@ public class SimpleViewSelector implements ViewSelector, Serializable {
 	 * requesting that the specified view is rendered.
 	 * @param viewName the view name
 	 */
-	public SimpleViewSelector(String viewName, boolean requestConversationRedirect) {
+	public ApplicationViewSelector(String viewName, boolean requestConversationRedirect) {
 		setViewName(viewName);
 		setRequestConversationRedirect(requestConversationRedirect);
 	}
@@ -101,11 +103,12 @@ public class SimpleViewSelector implements ViewSelector, Serializable {
 	}
 
 	public ViewSelection makeSelection(RequestContext context) {
-		ApplicationViewSelection forward = new ApplicationViewSelection(getViewName(), context.getModel().getMap());
+		ApplicationViewSelection view = new ApplicationViewSelection(getViewName(), context.getModel().getMap());
 		if (isRequestConversationRedirect()) {
-			return new ConversationRedirect(forward);
-		} else {
-			return forward;
+			return new ConversationRedirect(view);
+		}
+		else {
+			return view;
 		}
 	}
 

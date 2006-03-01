@@ -18,17 +18,23 @@ package org.springframework.webflow;
 import java.io.Serializable;
 
 /**
- * Base class for value objects that provide clients with information about a
- * logical response to issue and the dynamic application "model" data necessary
- * to render it.
+ * Abstract base class for value objects that provide SWF callers with
+ * information about a logical response to issue and the data necessary to issue
+ * it.
+ * <p>
+ * This class is a generic marker returned from a request into an executing flow
+ * has completed processing, indicating a client response needs to be issued. An
+ * instance of a ViewSelection subclass represents the selection of a concrete
+ * response type. It is expected that callers introspect the returned view
+ * selection instance to handle the response types they support.
  * <p>
  * View selections are returned as a result of entering a {@link ViewState} or
  * {@link EndState}, typically created by those states delegating to a
- * {@link ViewSelector} factory. When a state of either of those types is
- * entered and returns, the caller into the web flow system is handed a
- * fully-configured <code>ViewSelection</code> instance and is expected to
- * present a screen to the user that allows them to interact at that point
- * within the flow.
+ * {@link ViewSelector} factory (a creational strategy). When a state of either
+ * of those types is entered and returns, the caller into the web flow system is
+ * handed a fully-configured <code>ViewSelection</code> instance and is
+ * expected to present some form inteface to the client that allows for
+ * interaction at that point within the flow.
  * 
  * @see org.springframework.webflow.ViewSelector
  * 
@@ -38,16 +44,16 @@ import java.io.Serializable;
 public abstract class ViewSelection implements Serializable {
 
 	/**
-	 * Serialization version uid.
-	 */
-	private static final long serialVersionUID = -7048182063951237313L;
-
-	/**
 	 * Constant for a <code>null</code> or empty view selection, indicating no
 	 * response should be issued.
 	 */
 	public static final ViewSelection NULL_VIEW_SELECTION = new NullViewSelection();
 
+	/**
+	 * The definition of the 'null' view selection type, indicating that no
+	 * response should be issued.
+	 * @author Keith Donald
+	 */
 	private static class NullViewSelection extends ViewSelection {
 	}
 }

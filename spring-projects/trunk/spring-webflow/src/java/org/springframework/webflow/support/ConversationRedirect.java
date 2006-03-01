@@ -15,16 +15,18 @@
  */
 package org.springframework.webflow.support;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 import org.springframework.webflow.ViewSelection;
 
 /**
- * Requests an redirect to an <i>existing</i> conversation at a SWF-specific
- * <i>conversation URL</i>. This enables redirect after post semantics from
- * within an <i>active</i> flow execution.
+ * Concerete response type that requests an redirect to an <i>existing</i>,
+ * active Spring Web Flow conversation at a SWF-specific <i>conversation URL</i>.
+ * This enables the triggering of redirect after post semantics from within an
+ * <i>active</i> flow execution.
  * <p>
  * Once the redirect response is issued, the configured
- * {@link #getViewSelection()} is treated as the view to forward on the
+ * {@link #getApplicationView()} is treated as the view to render on the
  * subsequent request issued from the browser, targeted at the conversation URL.
  * The conversation URL is stabally refreshable (and bookmarkable) while the
  * conversation remains active.
@@ -37,23 +39,23 @@ public final class ConversationRedirect extends ViewSelection {
 	/**
 	 * The view to render to on receipt of subsequent conversation requests.
 	 */
-	private final ApplicationViewSelection viewSelection;
+	private final ApplicationViewSelection applicationView;
 
 	/**
 	 * Creates a new conversation redirect.
-	 * @param viewSelection the view to render on receipt of the conversation
+	 * @param applicationView the view to render on receipt of the conversation
 	 * redirect request.
 	 */
-	public ConversationRedirect(ApplicationViewSelection viewSelection) {
-		this.viewSelection = viewSelection;
+	public ConversationRedirect(ApplicationViewSelection applicationView) {
+		this.applicationView = applicationView;
 	}
 
 	/**
 	 * Return the application view to render on receipt of the conversation
 	 * redirect request.
 	 */
-	public ApplicationViewSelection getViewSelection() {
-		return viewSelection;
+	public ApplicationViewSelection getApplicationView() {
+		return applicationView;
 	}
 
 	public boolean equals(Object o) {
@@ -61,10 +63,14 @@ public final class ConversationRedirect extends ViewSelection {
 			return false;
 		}
 		ConversationRedirect other = (ConversationRedirect)o;
-		return ObjectUtils.nullSafeEquals(viewSelection, other.viewSelection);
+		return ObjectUtils.nullSafeEquals(applicationView, other.applicationView);
 	}
 
 	public int hashCode() {
-		return viewSelection.hashCode();
+		return applicationView.hashCode();
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("applicationView", applicationView).toString();
 	}
 }
