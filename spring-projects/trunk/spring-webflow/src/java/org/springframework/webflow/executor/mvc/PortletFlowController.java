@@ -102,39 +102,6 @@ public class PortletFlowController extends AbstractController {
 	private FlowExecutorParameterExtractor parameterExtractor = new FlowExecutorParameterExtractor();
 
 	/**
-	 * Create a new PortletFlowController that delegates to the configured
-	 * executor for driving the execution of web flows.
-	 * @param flowExecutor the service to launch and resume flow executions
-	 * brokered by this web controller.
-	 */
-	public PortletFlowController(FlowExecutor flowExecutor) {
-		initDefaults();
-		setFlowExecutor(flowExecutor);
-	}
-
-	/**
-	 * Convenience constructor that creates a new PortletFlowController that
-	 * initially relies on a default
-	 * {@link org.springframework.webflow.executor.FlowExecutorImpl}
-	 * implementation that uses the provided flow locator to access flow
-	 * definitions at runtime.
-	 */
-	public PortletFlowController(FlowLocator flowLocator) {
-		initDefaults();
-		setFlowExecutor(new FlowExecutorImpl(flowLocator));
-	}
-
-	/**
-	 * Set default properties for this controller. * The "cacheSeconds" property
-	 * is by default set to 0 (so by default there is no HTTP header caching for
-	 * web flow controllers).
-	 */
-	protected void initDefaults() {
-		// no caching
-		setCacheSeconds(0);
-	}
-
-	/**
 	 * Returns the flow executor used by this controller.
 	 * @return the flow executor
 	 */
@@ -172,6 +139,16 @@ public class PortletFlowController extends AbstractController {
 	 */
 	public void setDefaultFlowId(String defaultFlowId) {
 		parameterExtractor.setDefaultFlowId(defaultFlowId);
+	}
+
+	/**
+	 * Set default properties for this controller. * The "cacheSeconds" property
+	 * is by default set to 0 (so by default there is no HTTP header caching for
+	 * web flow controllers).
+	 */
+	protected void initDefaults() {
+		// no caching
+		setCacheSeconds(0);
 	}
 
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {

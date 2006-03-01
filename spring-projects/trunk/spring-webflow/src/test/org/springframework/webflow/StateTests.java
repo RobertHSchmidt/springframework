@@ -130,7 +130,7 @@ public class StateTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
-		assertEquals(ViewSelection.NULL_VIEW_SELECTION, view);
+		assertEquals(ViewSelection.NULL_VIEW, view);
 	}
 
 	public void testSubFlowState() {

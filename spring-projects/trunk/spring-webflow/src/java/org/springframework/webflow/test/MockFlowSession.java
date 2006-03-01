@@ -49,7 +49,7 @@ public class MockFlowSession implements FlowSession {
 		setFlow(new Flow("mockFlow"));
 		State state = new State(flow, "mockState") {
 			protected ViewSelection doEnter(FlowExecutionControlContext context) {
-				return ViewSelection.NULL_VIEW_SELECTION;
+				return ViewSelection.NULL_VIEW;
 			}
 		};
 		setStatus(FlowSessionStatus.ACTIVE);

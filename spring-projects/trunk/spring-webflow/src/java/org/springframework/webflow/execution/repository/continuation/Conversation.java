@@ -48,7 +48,7 @@ public class Conversation implements Serializable {
 	/**
 	 * The last (current) view selection made by the conversation.
 	 */
-	private ViewSelection currentViewSelection = ViewSelection.NULL_VIEW_SELECTION;
+	private ViewSelection currentViewSelection = ViewSelection.NULL_VIEW;
 
 	/**
 	 * The attribute map that forms the basis of <i>conversationScope</i>.

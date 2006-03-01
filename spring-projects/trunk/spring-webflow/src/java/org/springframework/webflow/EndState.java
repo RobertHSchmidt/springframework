@@ -96,9 +96,6 @@ public class EndState extends State {
 	 * is entered and terminates a root flow.
 	 */
 	public void setViewSelector(ViewSelector viewSelector) {
-		if (viewSelector == null) {
-			viewSelector = NullViewSelector.INSTANCE;
-		}
 		this.viewSelector = viewSelector;
 	}
 

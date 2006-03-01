@@ -24,6 +24,6 @@ public final class NullViewSelector implements ViewSelector {
 	}
 
 	public ViewSelection makeSelection(RequestContext context) {
-		return ViewSelection.NULL_VIEW_SELECTION;
+		return ViewSelection.NULL_VIEW;
 	}
 }

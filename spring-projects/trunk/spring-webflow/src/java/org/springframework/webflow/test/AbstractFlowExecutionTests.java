@@ -399,11 +399,11 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 
 	/**
 	 * Assert that the returned view selection is the
-	 * {@link ViewSelection#NULL_VIEW_SELECTION}.
+	 * {@link ViewSelection#NULL_VIEW}.
 	 * @param viewSelection the view selection
 	 */
 	protected void assertNull(ViewSelection viewSelection) {
-		assertEquals("Not the null view selection:", viewSelection, ViewSelection.NULL_VIEW_SELECTION);
+		assertEquals("Not the null view selection:", viewSelection, ViewSelection.NULL_VIEW);
 	}
 
 	/**

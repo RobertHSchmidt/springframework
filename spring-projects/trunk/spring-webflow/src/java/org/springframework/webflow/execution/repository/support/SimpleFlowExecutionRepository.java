@@ -161,7 +161,7 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		/**
 		 * The last (current) view selection made by the conversation.
 		 */
-		private ViewSelection currentViewSelection = ViewSelection.NULL_VIEW_SELECTION;
+		private ViewSelection currentViewSelection = ViewSelection.NULL_VIEW;
 
 		/**
 		 * Creates a new flow execution entry represnting a active conversation

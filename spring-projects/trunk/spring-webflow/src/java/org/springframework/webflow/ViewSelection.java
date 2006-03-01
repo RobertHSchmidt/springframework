@@ -47,7 +47,7 @@ public abstract class ViewSelection implements Serializable {
 	 * Constant for a <code>null</code> or empty view selection, indicating no
 	 * response should be issued.
 	 */
-	public static final ViewSelection NULL_VIEW_SELECTION = new NullViewSelection();
+	public static final ViewSelection NULL_VIEW = new NullViewSelection();
 
 	/**
 	 * The definition of the 'null' view selection type, indicating that no

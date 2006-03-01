@@ -201,7 +201,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	 * @param facesContext <code>FacesContext</code> for the current request
 	 */
 	public void renderView(ViewSelection selectedView, JsfExternalContext context) {
-		if (selectedView == ViewSelection.NULL_VIEW_SELECTION) {
+		if (selectedView == ViewSelection.NULL_VIEW) {
 			return;
 		}
 		FacesContext facesContext = context.getFacesContext();

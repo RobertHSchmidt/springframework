@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
@@ -57,12 +58,6 @@ import org.springframework.webflow.execution.repository.support.SimpleFlowExecut
  * <td>A {@link SimpleFlowExecutionRepositoryFactory simple}, stateful
  * server-side session-based repository factory</td>
  * </tr>
- * <tr>
- * <td>alwaysRedirectOnPause</td>
- * <td>A flag indicating if this executor should <i>always</i> request a
- * <i>redirect to conversation</i> after pausing an active flow execution.</td>
- * <td>false</td>
- * </tr>
  * </table>
  * </p>
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory
@@ -97,42 +92,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * @param repositoryFactory the repository factory
 	 */
 	public FlowExecutorImpl(FlowExecutionRepositoryFactory repositoryFactory) {
-		setRepositoryFactory(repositoryFactory);
-	}
-
-	/**
-	 * Convenience constructor that configures the default
-	 * {@link FlowExecutionRepositoryFactory} implementation with the provided
-	 * flow locator. This locator is responsible for loading flow definitions as
-	 * needed by the repository to support execution creation.
-	 * @param flowLocator the flow locator to use
-	 * @see #setFlowLocator(FlowLocator)
-	 */
-	public FlowExecutorImpl(FlowLocator flowLocator) {
-		setFlowLocator(flowLocator);
-	}
-
-	/**
-	 * Returns the repository factory in use by this flow executor.
-	 */
-	public FlowExecutionRepositoryFactory getRepositoryFactory() {
-		return repositoryFactory;
-	}
-
-	/**
-	 * Set the repository factory to use for accessing a repository to create,
-	 * save, and restore managed flow executions driven by this executor.
-	 */
-	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryFactory) {
+		Assert.notNull(repositoryFactory, "The repository factory is required");
 		this.repositoryFactory = repositoryFactory;
-	}
-
-	/**
-	 * Convenience method that set the flow locator to use for lookup of flow
-	 * definitions to execute.
-	 */
-	public void setFlowLocator(FlowLocator flowLocator) {
-		repositoryFactory = new SimpleFlowExecutionRepositoryFactory(flowLocator);
 	}
 
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {

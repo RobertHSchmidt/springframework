@@ -22,6 +22,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.Controller;
@@ -29,6 +31,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
@@ -89,7 +92,7 @@ import org.springframework.webflow.support.FlowRedirect;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class FlowController extends AbstractController {
+public class FlowController extends AbstractController implements InitializingBean {
 
 	/**
 	 * Delegate for managing flow executions (launching new executions, and
@@ -101,30 +104,7 @@ public class FlowController extends AbstractController {
 	 * Delegate for extracting flow executor parameters from a request made by a
 	 * {@link ExternalContext}.
 	 */
-	private FlowExecutorParameterExtractor parameterExtractor = new FlowExecutorParameterExtractor();
-
-	/**
-	 * Create a new FlowController that delegates to the configured executor for
-	 * driving the execution of web flows.
-	 * @param flowExecutor the service to launch and resume flow executions
-	 * brokered by this web controller.
-	 */
-	public FlowController(FlowExecutor flowExecutor) {
-		initDefaults();
-		setFlowExecutor(flowExecutor);
-	}
-
-	/**
-	 * Convenience constructor that creates a new FlowController that initially
-	 * relies on a default
-	 * {@link org.springframework.webflow.executor.FlowExecutorImpl}
-	 * implementation that uses the provided flow locator to access flow
-	 * definitions at runtime.
-	 */
-	public FlowController(FlowLocator flowLocator) {
-		initDefaults();
-		setFlowExecutor(new FlowExecutorImpl(flowLocator));
-	}
+	private FlowExecutorParameterExtractor parameterExtractor;
 
 	/**
 	 * Set default properties for this controller. * The "cacheSeconds" property
@@ -136,6 +116,14 @@ public class FlowController extends AbstractController {
 		setCacheSeconds(0);
 	}
 
+	/**
+	 * Sets the flow executor to use.
+	 * @param flowExecutor the flow executor
+	 */
+	public void setFlowLocator(FlowLocator flowLocator) {
+		this.flowExecutor = new FlowExecutorImpl(new SimpleFlowExecutionRepositoryFactory(flowLocator));
+	}
+	
 	/**
 	 * Returns the flow executor used by this controller.
 	 * @return the flow executor
@@ -176,6 +164,13 @@ public class FlowController extends AbstractController {
 		parameterExtractor.setDefaultFlowId(defaultFlowId);
 	}
 
+	public void afterPropertiesSet() {
+		if (parameterExtractor == null) {
+			parameterExtractor = new FlowExecutorParameterExtractor(); 
+		}
+		Assert.notNull(flowExecutor, "The flow executor is required");
+	}
+	
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		ServletExternalContext context = new ServletExternalContext(getServletContext(), request, response);

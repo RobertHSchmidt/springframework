@@ -92,7 +92,7 @@ public class ResponseInstruction implements Serializable {
 	}
 
 	public boolean isNull() {
-		return viewSelection == ViewSelection.NULL_VIEW_SELECTION;
+		return viewSelection == ViewSelection.NULL_VIEW;
 	}
 
 	public boolean isApplicationView() {
