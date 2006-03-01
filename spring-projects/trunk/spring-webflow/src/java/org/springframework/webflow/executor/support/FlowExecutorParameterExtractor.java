@@ -441,11 +441,14 @@ public class FlowExecutorParameterExtractor {
 	/**
 	 * Put the flow execution key into the provided model map under the
 	 * configured context attribute name.
-	 * @param flowExecutionKey the flow execution key
+	 * @param flowExecutionKey the flow execution key (may be null if the
+	 * conversation has ended).
 	 * @param model the model
 	 */
 	public void put(FlowExecutionKey flowExecutionKey, Map model) {
-		model.put(getFlowExecutionKeyAttributeName(), flowExecutionKeyFormatter.formatValue(flowExecutionKey));
+		if (flowExecutionKey != null) {
+			model.put(getFlowExecutionKeyAttributeName(), flowExecutionKeyFormatter.formatValue(flowExecutionKey));
+		}
 	}
 
 	/**
@@ -585,7 +588,7 @@ public class FlowExecutorParameterExtractor {
 	protected String encodeValue(Object value) {
 		return value != null ? urlEncode(value.toString()) : "";
 	}
-	
+
 	/**
 	 * URL-encode the given input String with the given encoding scheme.
 	 * <p>
