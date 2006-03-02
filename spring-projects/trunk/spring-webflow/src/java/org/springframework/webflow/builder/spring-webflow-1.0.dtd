@@ -262,21 +262,17 @@
 	ViewSelector strategy.
 
 	Use of the "redirect:" prefix indicates this view state should trigger a redirect to a 
-	well-known "conversation URL".  This causes the selected application view to be cached and a redirect request is issued that
-	refers back to it at a specific URL.  This allows for bookmarking and refreshing the
-	last view selection made in a stable manner.
+	well-known "conversation URL".  This causes the selected application view to be cached
+	and a redirect request is issued that refers back to it at a specific URL.  This allows
+	for bookmarking and refreshing the last view selection made.
 		"redirect:priceForm"
 
 	Use of the "externalRedirect:" prefix indicates this view state should trigger a 
-	redirect to an absolute external URL.  External redirect query parameters may be specified
-	using ${expressions} that evaluate against the request context. For example:
+	redirect to an absolute external URL, typically to interface with an external system.
+	External redirect query parameters may be specified using ${expressions} that evaluate
+	against the request context. For example:
 	    "externalRedirect:/someOtherSystem.htm?orderId=${flowScope.order.id}"
 	
-	Use of the "flowRedirect:" prefix indicates this view state should trigger a redirect that
-	starts another flow.  Flow input parameters may be specified using ${expressions} that 
-	evaluate against the request context.
-		"redirect:search-flow?flightNumber=${flowScope.flight.number}"
-		
 	Use of the "bean:" prefix references a custom ViewSelector implementation you define,
 	exposed by id in either a flow-local context using the "import" element or in the parent 
 	context.
@@ -578,7 +574,7 @@
 	the request context. For example:
 	    "redirect:/thankyou.htm?confirmationNumber=${flowScope.order.confirmation.id}"
 	
-	Use of the "flowRedirect:" prefix indicates this view state should trigger a redirect that
+	Use of the "flowRedirect:" prefix indicates this end state should trigger a redirect that
 	starts another flow.  Flow input parameters may be specified using ${expressions} that 
 	evaluate against the request context.
 		"flowRedirect:search-flow?firstName=${flowScope.searchCriteria.firstName}"
