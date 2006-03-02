@@ -135,7 +135,7 @@ public class FlowController extends AbstractController implements InitializingBe
 	 * when this controller is invoked.
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
-		this.flowExecutor = new FlowExecutorImpl(new SimpleFlowExecutionRepositoryFactory(flowLocator));
+		this.flowExecutor = new FlowExecutorImpl(flowLocator);
 	}
 
 	/**

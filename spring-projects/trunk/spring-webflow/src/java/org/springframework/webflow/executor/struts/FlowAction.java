@@ -36,7 +36,6 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
@@ -164,7 +163,7 @@ public class FlowAction extends ActionSupport {
 	 * execute.
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
-		flowExecutor = new FlowExecutorImpl(new SimpleFlowExecutionRepositoryFactory(flowLocator));
+		flowExecutor = new FlowExecutorImpl(flowLocator);
 	}
 
 	/**
