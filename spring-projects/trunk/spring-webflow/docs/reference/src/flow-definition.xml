@@ -690,8 +690,8 @@
             				<row>
               					<entry>ApplicationViewSelector</entry>
 								<entry>
-									Returns a ApplicationView referencing a static <literal>viewName</literal> to render an containing a
-									<literal>modelMap</literal> containing the application data to make available to the rendering process
+									Returns an ApplicationView referencing a static <literal>viewName</literal> to render an containing a
+									<literal>modelMap</literal> representing the application data to make available to the rendering process
 									(by default, this map contains the union of the attributes in flow and request scope).
 									Supports setting a <literal>requestConversationRedirect</literal> flag that triggers
 									a browser redirect to the selected view. The default implementation.
