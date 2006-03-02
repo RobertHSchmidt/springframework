@@ -10,7 +10,7 @@
 	      e.g. /play.htm?_flowId=mastermind
 	-->
 	<bean name="/play.htm" class="org.springframework.webflow.executor.mvc.FlowController">
-		<constructor-arg ref="flowRegistry"/>
+		<property name="flowLocator" ref="flowRegistry"/>
 	</bean>
 
 	<!-- Creates the registry of flow definitions for this application -->

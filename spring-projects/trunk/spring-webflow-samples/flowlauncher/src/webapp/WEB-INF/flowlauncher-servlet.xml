@@ -10,7 +10,7 @@
 	      e.g. /flowController.htm?_flowId=sampleA
 	-->
 	<bean name="/flowController.htm" class="org.springframework.webflow.executor.mvc.FlowController">
-		<constructor-arg ref="flowExecutor"/>
+		<property name="flowExecutor" ref="flowExecutor"/>
 		<property name="cacheSeconds" value="5"/>
 	</bean>
 

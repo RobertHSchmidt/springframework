@@ -19,15 +19,16 @@
 	      e.g. /app/itemlist
 	-->
 	<bean id="flowController" class="org.springframework.webflow.executor.mvc.FlowController">
-		<constructor-arg ref="flowExecutor"/>
-		<property name="parameterExtractor">
-			<bean class="org.springframework.webflow.executor.support.RequestPathFlowExecutorParameterExtractor"/>
+		<property name="flowLocator" ref="flowRegistry"/>
+		<property name="argumentExtractor">
+			<bean class="org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentExtractor"/>
 		</property>
 	</bean>
 	
 		<!-- Launches new flow executions and resumes existing executions. -->	
 	<bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
 		<constructor-arg ref="flowRegistry"/>
+		<property name="alwaysRedirectOnPause" value="true"/>
 	</bean>
 
 	<!-- Creates the registry of flow definitions for this application -->

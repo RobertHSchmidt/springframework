@@ -9,7 +9,7 @@
 		in using the "_flowId" request parameter: e.g. /pos.htm?_flowId=sellItem
 	-->
 	<bean name="/pos.htm" class="org.springframework.webflow.executor.mvc.FlowController">
-		<constructor-arg ref="flowExecutor"/>
+		<property name="flowExecutor" ref="flowExecutor"/>
 		<!--
 			Set cacheSeconds to a small, non 0, value so you can do ctrl-N to open an new
 			window and experiment with the continuations stuff.

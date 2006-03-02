@@ -19,7 +19,7 @@
 		- appropriate _flowExecutionId and _eventId.
 	-->
 	<bean id="flowController" class="org.springframework.webflow.executor.mvc.PortletFlowController">
-		<constructor-arg ref="flowExecutor" />
+		<property name="flowLocator" ref="flowRegistry"/>
 		<property name="defaultFlowId" value="search-flow"/>
 	</bean>
 
