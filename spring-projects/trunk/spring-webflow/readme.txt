@@ -45,12 +45,12 @@ The following distinct jar files are included in the distribution. This list
 specifies the respective contents and third-party dependencies. Libraries in [brackets] are
 optional, i.e. just necessary for certain functionality.
 
-* spring-webflow-1.0-rc1.jar
+* spring-webflow-1.0-ea.jar
 - Contents: The Spring Web Flow system
 - Dependencies: Commons Logging, spring-beans, spring-core, spring-context, spring-web, spring-binding,
                 [Log4J, Commons Codec, OGNL, spring-webmvc, spring-mock, JUnit, Servlet API, Portlet API, JMX, Struts, JSF]
               
-* spring-binding-1.0-rc1.jar
+* spring-binding-1.0-ea.jar
 - Contents: The Spring Data Binding framework, an internal library used by SWF
 - Dependencies: Commons Logging, spring-beans, spring-core, spring-context
                 [Log4J]
