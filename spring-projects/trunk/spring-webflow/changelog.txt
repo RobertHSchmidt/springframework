@@ -6,7 +6,8 @@ Changes in version 1.0 Early Access (02.3.2006)
 ------------------------------------
 
 Overall
-* The proposal to the community for Spring Web Flow 1.0; the next release will be 1.0 RC1 (production ready)
+* The proposal to the community for Spring Web Flow 1.0; the next release will be 1.0 RC1 
+  after a fixed user evaluation period
 * Introduced the reference manual in HTML and PDF form, see "docs" directory.
 * Added unit tests, with total test coverage above 70%.
 * Added extensive JavaDoc enhancements.
