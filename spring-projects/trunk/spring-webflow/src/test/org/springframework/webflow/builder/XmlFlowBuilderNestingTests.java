@@ -32,8 +32,8 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.registry.RegistryBackedFlowArtifactFactory;
 import org.springframework.webflow.registry.FlowRegistryImpl;
+import org.springframework.webflow.registry.RegistryBackedFlowArtifactFactory;
 
 /**
  * Test case for XML flow builder, testing flow nesting.

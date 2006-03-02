@@ -17,6 +17,7 @@ package org.springframework.webflow.execution.repository.support;
 
 import java.io.Serializable;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
@@ -45,7 +46,7 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	 * to function.
 	 */
 	public AbstractFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
-		this.repositoryServices = repositoryServices;
+		setRepositoryServices(repositoryServices);
 	}
 
 	/**
@@ -60,6 +61,7 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	 * Sets the holder for accessing common services needed by this repository.
 	 */
 	public void setRepositoryServices(FlowExecutionRepositoryServices repositoryServices) {
+		Assert.notNull(repositoryServices, "The repository services instance is required");
 		this.repositoryServices = repositoryServices;
 	}
 

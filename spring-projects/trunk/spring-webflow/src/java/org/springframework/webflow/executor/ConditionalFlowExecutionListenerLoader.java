@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.TextToFlowExecutionListenerCriteria
 
 /**
  * Default implementation of a listener loader that stores listeners in a
- * set-based data structure and allows for configuration of which listeners
+ * list-backed data structure and allows for configuration of which listeners
  * should apply to which flow definitions.
  * 
  * @author Keith Donald
