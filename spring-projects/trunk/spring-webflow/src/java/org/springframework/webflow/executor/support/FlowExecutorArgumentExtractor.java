@@ -390,6 +390,9 @@ public class FlowExecutorArgumentExtractor {
 		flowUrl.append(externalContext.getDispatcherPath());
 		flowUrl.append('?');
 		appendQueryParameter(flowIdParameterName, flowRedirect.getFlowId(), flowUrl);
+		if (!flowRedirect.getInput().isEmpty()) {
+			flowUrl.append('&');
+		}
 		appendQueryParameters(flowRedirect.getInput(), flowUrl);
 		return flowUrl.toString();
 	}
