@@ -107,7 +107,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
-		return decode(key.getContinuationId()).getFlowExecution();
+		return rehydrate(decode(key.getContinuationId()).getFlowExecution());
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
