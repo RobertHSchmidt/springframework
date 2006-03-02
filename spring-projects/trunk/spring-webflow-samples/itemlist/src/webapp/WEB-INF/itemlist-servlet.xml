@@ -19,7 +19,7 @@
 	      e.g. /app/itemlist
 	-->
 	<bean id="flowController" class="org.springframework.webflow.executor.mvc.FlowController">
-		<property name="flowLocator" ref="flowRegistry"/>
+		<property name="flowExecutor" ref="flowExecutor"/>
 		<property name="argumentExtractor">
 			<bean class="org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentExtractor"/>
 		</property>

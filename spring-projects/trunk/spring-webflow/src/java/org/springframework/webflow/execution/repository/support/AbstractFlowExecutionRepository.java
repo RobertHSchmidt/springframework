@@ -41,6 +41,13 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	private transient FlowExecutionRepositoryServices repositoryServices;
 
 	/**
+	 * Protected default constructor for repository implementations that are serializable.
+	 */
+	protected AbstractFlowExecutionRepository() {
+		
+	}
+	
+	/**
 	 * Creates a new flow execution repository
 	 * @param repositoryServices the common services needed by this repository
 	 * to function.
