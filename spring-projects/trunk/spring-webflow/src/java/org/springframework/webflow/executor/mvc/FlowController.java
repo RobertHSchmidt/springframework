@@ -71,26 +71,26 @@ import org.springframework.webflow.support.FlowRedirect;
  * Usage example:
  * 
  * <pre>
- *     &lt;!--
- *         Exposes flows for execution at a single request URL.
- *         The id of a flow to launch should be passed in by clients using
- *         the &quot;_flowId&quot; request parameter:
- *         e.g. /app.htm?_flowId=flow1
- *     --&gt;
- *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
- *         &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
- *     &lt;/bean&gt;
- *                                                                                   
- *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *     &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *     &lt;/bean&gt;
+ *      &lt;!--
+ *          Exposes flows for execution at a single request URL.
+ *          The id of a flow to launch should be passed in by clients using
+ *          the &quot;_flowId&quot; request parameter:
+ *          e.g. /app.htm?_flowId=flow1
+ *      --&gt;
+ *      &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
+ *          &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
+ *      &lt;/bean&gt;
+ *                                                                                    
+ *      &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *      &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *          &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *      &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
  * strategy to allow for different types of controller parameterization, for
- * example perhaps in conjunction with a REST-style request mapper
- * (see {@link RequestPathFlowExecutorArgumentExtractor}).
+ * example perhaps in conjunction with a REST-style request mapper (see
+ * {@link RequestPathFlowExecutorArgumentExtractor}).
  * 
  * @see FlowExecutor
  * @see FlowExecutorArgumentExtractor
@@ -217,18 +217,18 @@ public class FlowController extends AbstractController implements InitializingBe
 			// redirect to active conversation URL
 			Serializable conversationId = response.getFlowExecutionKey().getConversationId();
 			String conversationUrl = argumentExtractor.createConversationUrl(conversationId, context);
-			return new ModelAndView(new RedirectView(conversationUrl));
+			return new ModelAndView(new RedirectView(conversationUrl, true));
 		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL
-			String externalUrl = argumentExtractor.createExternalUrl((ExternalRedirect)response.getViewSelection(),
-					response.getFlowExecutionKey(), context);
-			return new ModelAndView(new RedirectView(externalUrl));
+			ExternalRedirect redirect = (ExternalRedirect)response.getViewSelection();
+			String externalUrl = argumentExtractor.createExternalUrl(redirect, response.getFlowExecutionKey(), context);
+			return new ModelAndView(new RedirectView(externalUrl, redirect.isContextRelative()));
 		}
 		else if (response.isFlowRedirect()) {
 			// restart the flow by redirecting to flow launch URL
 			String flowUrl = argumentExtractor.createFlowUrl((FlowRedirect)response.getViewSelection(), context);
-			return new ModelAndView(new RedirectView(flowUrl));
+			return new ModelAndView(new RedirectView(flowUrl, true));
 		}
 		else if (response.isNull()) {
 			// no response to issue

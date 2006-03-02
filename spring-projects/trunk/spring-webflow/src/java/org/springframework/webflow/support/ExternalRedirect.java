@@ -16,7 +16,7 @@
 package org.springframework.webflow.support;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.ObjectUtils;
+import org.springframework.util.Assert;
 import org.springframework.webflow.ViewSelection;
 
 /**
@@ -43,10 +43,11 @@ public final class ExternalRedirect extends ViewSelection {
 	 * @param url the url path to redirect to
 	 */
 	public ExternalRedirect(String url, boolean contextRelative) {
+		Assert.notNull(url, "The external URL to redirect to is required");
 		this.url = url;
 		this.contextRelative = contextRelative;
 	}
-
+	
 	/**
 	 * Returns the external URL to redirect to.
 	 */
@@ -54,16 +55,23 @@ public final class ExternalRedirect extends ViewSelection {
 		return url;
 	}
 
+	/**
+	 * Returns the flag indicating if the external URL is context (application) relative.
+	 */
+	public boolean isContextRelative() {
+		return contextRelative;
+	}
+	
 	public boolean equals(Object o) {
 		if (!(o instanceof ExternalRedirect)) {
 			return false;
 		}
 		ExternalRedirect other = (ExternalRedirect)o;
-		return ObjectUtils.nullSafeEquals(url, other.url);
+		return url.equals(other.url) && contextRelative == other.contextRelative;
 	}
 
 	public int hashCode() {
-		return url.hashCode();
+		return url.hashCode() + (contextRelative ? 1 : 0) * 29;
 	}
 
 	public String toString() {
