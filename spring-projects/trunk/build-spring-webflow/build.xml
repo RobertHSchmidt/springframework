@@ -185,6 +185,13 @@
 		</subant>
 	</target>
 
+	<target name="tomcat-copy-war" depends="init" description="Copies all war to tomcat webapp dir">
+		<echo>projects=${projects}</echo>
+		<subant target="tomcat-copy-war" inheritall="false" failonerror="no">
+			<buildpath refid="${projects}" />
+		</subant>
+	</target>
+
 	<target name="release" depends="dist, build-release-repo, javadoc, doc, gen.release.zip"
 	              description="Generate the spring-webflow release archive" />
 
