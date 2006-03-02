@@ -118,9 +118,8 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		return getFlowExecutionEntry(conversationId).getCurrentViewSelection();
 	}
 
-	public ViewSelection setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) {
+	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) {
 		getFlowExecutionEntry(conversationId).setCurrentViewSelection(viewSelection);
-		return viewSelection;
 	}
 
 	public void invalidateConversation(Serializable conversationId) {

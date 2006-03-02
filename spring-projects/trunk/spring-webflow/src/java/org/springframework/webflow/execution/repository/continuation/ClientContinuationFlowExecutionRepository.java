@@ -125,10 +125,9 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 		return null;
 	}
 
-	public ViewSelection setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection)
+	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection)
 			throws FlowException {
 		// nothing to do by default, subclasses may override
-		return viewSelection;
 	}
 
 	public void invalidateConversation(Serializable conversationId) {

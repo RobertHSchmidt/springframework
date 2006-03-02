@@ -103,7 +103,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		if (flowExecution.isActive()) {
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);
-			selectedView = repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView);
+			repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView);
 			return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
 		}
 		else {
@@ -122,7 +122,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 			if (flowExecution.isActive()) {
 				flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
 				repository.putFlowExecution(flowExecutionKey, flowExecution);
-				selectedView = repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView);
+				repository.setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView);
 				return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
 			}
 			else {
