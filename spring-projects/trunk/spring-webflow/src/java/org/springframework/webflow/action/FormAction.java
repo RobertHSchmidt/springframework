@@ -94,19 +94,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *          &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *              &lt;entry-actions&gt;
- *                  &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *              &lt;/entry-actions&gt;
- *              &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *                  &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *              &lt;/transition&gt;
- *          &lt;/view-state&gt;
+ *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *         &lt;entry-actions&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *         &lt;/entry-actions&gt;
+ *         &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *         &lt;/transition&gt;
+ *     &lt;/view-state&gt;
  *                               
- *          &lt;action-state id=&quot;executeSearch&quot;&gt;
- *              &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *              &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *          &lt;/action-state&gt;
+ *     &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *     &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
