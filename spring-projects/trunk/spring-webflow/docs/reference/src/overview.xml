@@ -263,7 +263,8 @@
 	<sect1 id="introduction-support">
 		<title>Support</title>
 		<para>
-			Spring Web Flow 1.0 is supported on Spring 1.2.7 or later.
+			Spring Web Flow 1.0 is supported on Spring 1.2.6 or later.  The JSF integration requires
+			Spring 1.2.7.  The Portlet integration requires Spring 2.0.
 		</para>
 		<para>
 		    The community support forum is located at http://forum.springframework.org.
