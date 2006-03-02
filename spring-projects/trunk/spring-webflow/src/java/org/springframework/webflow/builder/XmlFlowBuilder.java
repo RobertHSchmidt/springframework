@@ -161,8 +161,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String VIEW_ATTRIBUTE = "view";
 
-	private static final String REDIRECT_ATTRIBUTE = "redirect";
-
 	private static final String DECISION_STATE_ELEMENT = "decision-state";
 
 	private static final String IF_ELEMENT = "if";
