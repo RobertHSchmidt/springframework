@@ -82,7 +82,8 @@
   	<property name="project.title" value="${project.name}" />
    	<property name="project.base.version" value="1.0-dev" />
     <property name="project.version" value="${project.base.version}-${build.timestamp}" />
-
+	<property name="project.copyright" value="Copyright &#169; 2002-2006. All Rights Reserved."/>
+  	
     <property environment="myenv" />
 
     <!-- Compiler options -->
@@ -785,8 +786,7 @@
   <!-- javadocs:  Creates the API documentation -->
   <target name="javadoc" depends="build.prepare" description="Create the project API documentation">
     <mkdir dir="${target.javadocs.dir}" />
-    <property name="copyright" value="Copyright &#169; 2005. All Rights Reserved." />
-    <javadoc destdir="${target.javadocs.dir}" author="true" version="true" windowtitle="${project.title} ${project.version} API" doctitle="${project.title} ${project.version}" bottom="${copyright}">
+    <javadoc destdir="${target.javadocs.dir}" author="true" version="true" windowtitle="${project.title} ${project.version} API" doctitle="${project.title} ${project.version}" bottom="${project.copyright}">
       <classpath>
         <pathelement location="${target.classes.dir}" />
         <pathelement location="${target.testclasses.dir}" />
