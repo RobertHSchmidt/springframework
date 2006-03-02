@@ -417,6 +417,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		flowId = (String)in.readObject();
+		scope = (AttributeMap)in.readObject();
 		flowSessions = (LinkedList)in.readObject();
 	}
 
@@ -427,6 +428,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		else {
 			out.writeObject(flowId);
 		}
+		out.writeObject(scope);
 		out.writeObject(flowSessions);
 	}
 
