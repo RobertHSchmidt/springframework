@@ -45,7 +45,7 @@ import org.springframework.webflow.executor.ResponseInstruction;
  * top-level flow definition for which an execution is created is determined by
  * extracting the flow id using the
  * {@link FlowExecutorArgumentExtractor#extractFlowId(ExternalContext)}. If
- * this parameter parameter is not present, an exception is thrown.</li>
+ * this parameter is not present, an exception is thrown.</li>
  * 
  * @author Keith Donald
  */
