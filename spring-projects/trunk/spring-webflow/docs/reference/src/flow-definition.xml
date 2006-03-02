@@ -577,8 +577,8 @@
     		<para>
     		    Spring Web Flow gives you full control over the view selection process and, on resume,
     		    how a view state responds to an user input event.  It's important to understand that Spring Web Flow is <emphasis>not</emphasis>
-    		    responsible for response rendering--as a controller, a flow makes <emphasis>logical</emphasis> view selections when user input is required, 
-    		    where a view selection serves as a response instruction.  It is up to the calling system to issue a
+    		    responsible for response rendering--as a controller, a flow make a <emphasis>logical</emphasis> view selection when user input is required, 
+    		    where a view selection serves as a response instruction.  It is up to the calling system to interpret that instruction to issue a
     		    response suitable for the environment in which the flow is executing.
     		</para>
     	    <para>
@@ -636,7 +636,7 @@
             			<row>
               				<entry>ConversationRedirect</entry>
               				<entry>
-              					Wraps an ApplicationView, and requests a redirect to the view at a SWF-specific <emphasis>conversation URL</emphasis>.  
+              					Wraps an ApplicationView and requests a redirect to that view at a SWF-specific <emphasis>conversation URL</emphasis>.  
               					When the URL is accessed on subsequent requests, the wrapped ApplicationView will be rendered.  The
               					URL itself is bookmarkable and refreshable while the conversation remains active.
               				</entry>
@@ -670,7 +670,7 @@
 	    		<para>
     				The creational strategy responsible for making a <literal>ViewSelection</literal> when an <literal>ViewState</literal> is entered
     				is <literal>org.springframework.webflow.ViewSelector</literal>.  This provides a plugin-point for customizing <emphasis>how</emphasis>
-    				a response instruction is calculated.
+    				a response instruction is constructed.
     			</para>
     			<para>
     			    Three <literal>ViewSelector</literal> implementations are provided with Spring Web Flow:
@@ -735,9 +735,9 @@
 				</caption>
 			</mediaobject>
     	    <sect3 id="viewStateXml">
-    	    	<title>ViewState XML - simple view selection</title>
+    	    	<title>ViewState XML - application view selection</title>
     	    	<para>
-    	    	    The following example shows a <literal>view-state</literal> definition in XML that makes a simple view 
+    	    	    The following example shows a <literal>view-state</literal> definition in XML that makes an application view 
     	    	    selection when entered, selecting the <literal>searchForm</literal> view for display and, on resume, responding to 
     	    	    two possible user input events (submit and cancel) in different ways:
     	    	</para>
@@ -753,7 +753,7 @@
     			</programlisting>
 			</sect3>  		
     	    <sect3 id="viewStateJava">
-    	    	<title>ViewState API - simple view selection</title>
+    	    	<title>ViewState API - application view selection</title>
     	    	<para>
     	    	    The following example shows the equivalent view state definition using 
     	    	    the FlowBuilder API:
@@ -775,8 +775,8 @@
     	    <sect3 id="viewStateXml-redirect">
     	    	<title>ViewState XML - conversation redirect</title>
     	    	<para>
-    	    	    The following example illustrates a <literal>view-state</literal> definition in XML that makes a simple view 
-    	    	    selection when entered, redirecting to the <literal>yourList</literal> view for display.
+    	    	    The following example illustrates a <literal>view-state</literal> definition in XML that makes a conversation
+    	    	    redirect selection when entered, redirecting to the <literal>yourList</literal> view for display.
     	    	</para>
     	    	<programlisting>
     &lt;flow start-state="displayList"&gt;
@@ -789,9 +789,9 @@
     			</programlisting>
 			</sect3>
 			<para>
-			    This is example is called a <emphasis>conversation redirect</emphasis> because the ViewSelection made is cached 
-			    between request as the "current view selection" for the active conversation.  The actual redirect sent is a
-			    conversation URL that renders the current view selection on a request into the server.
+			    This is example is called a <emphasis>conversation redirect</emphasis> because the application view selected is cached 
+			    between requests as the "current view selection" for the active conversation.  The redirect sent is to a
+			    conversation URL that renders this cached application view on the next request into the server.
 			</para>
     	    <sect3 id="viewStateJava-redirect">
     	    	<title>ViewState API - conversation redirect</title>
@@ -970,7 +970,7 @@
     			<para>
     			    An <literal>Action</literal> may be annotated with attributes by wrapping the Action 
     			    in a decorator, an instance of <literal>org.springframework.webflow.AnnotatedAction</literal>.
-    			    These properties may provide descriptive characteristics, or may be used to affect
+    			    These attributes may provide descriptive characteristics, or may be used to affect
     			    the action's execution in a specific usage context.
 	    		</para>
     			<para>
@@ -1672,8 +1672,8 @@
         }
         
         protected FlowAttributeMapper shippingMapper() {
-            ParameterizableFlowAttributeMapper mapper = new ParameterizableFlowAttributeMapper();
-    	    mapper.addMapping("${flowScope.order.shipping}", "shipping");
+            DefaultFlowAttributeMapper mapper = new DefaultFlowAttributeMapper();
+    	    mapper.addInputMapping(mapping().source("${flowScope.order.shipping}").target("shipping").value());
     	    return mapper;
     	}
     }	
@@ -1704,7 +1704,7 @@
     		</para>
     		<para>
     			As outlined, an end state entered as part of a root flow messages its <literal>ViewSelector</literal>
-    			to make a ending view selection.  Typically this is a <literal>RedirectViewSelector</literal>, 
+    			to make a ending view selection.  Typically this is a redirect-based <literal>ViewSelector</literal>, 
     			allowing for <emphasis>redirect after flow completion</emphasis>.  An end state entered as part of
     			a subflow is not responsible for a view selection; this responsibility falls on the calling flow.
     		</para>
@@ -1770,48 +1770,6 @@
             	   </tbody>
 	          </tgroup>
     	    </table>
-    	    <sect3 id="endStateXml">
-    	    	<title>EndState XML - output attribute</title>
-    	    	<para>
-    	    	    The following example constructs an <literal>EndState</literal> from
-    	    	    XML that terminates a shipping subflow:
-    	    	</para>
-    	    	<programlisting>
-    &lt;flow start-state="enterShippingDetails"&gt;
-    
-		...
-		        
-        &lt;end-state id="finish"&gt;
-            &lt;output-attribute name="shipping"/&gt;
-        &lt;/end-state&gt;
-        
-    &lt;/flow&gt;
-    			</programlisting>
-    			<para>
-    			    This end state definition reads "<emphasis>terminate the <literal>shipping</literal> flow 
-    			    and expose the <literal>shipping</literal> property in flow scope as an output attribute</emphasis>."
-    			</para>
-    			<para>
-    			    Since this end-state does not make a view selection it is expected this flow will be always used 
-    			    as a subflow.  When this flow ends, the calling parent flow is expected to respond to the 
-    			    <literal>finish</literal> result, and may map the <literal>shipping</literal> attribute into 
-    			    its own scope.
-    			</para>
-			</sect3>
-    	    <sect3 id="endStateJava">
-    	    	<title>EndState API - output attribute</title>
-    	    	<para>
-    	    	    The following illustrates the equivalent example using the <literal>FlowBuilder</literal> API:
-    	    	</para>
-    	    	<programlisting>
-    public class ShippingFlowBuilder extends AbstractFlowBuilder {
-    	public void buildStates() {
-    	    ...
-            addEndState("finish", new String[] { "shipping" } );
-        }
-    }	
-    			</programlisting>
-    		</sect3>
     	    <sect3 id="endStateXml-flowredirect">
     	    	<title>EndState XML - redirect to flow after completion</title>
     	    	<para>
@@ -1821,9 +1779,7 @@
     	    	</para>
     	    	<programlisting>
     &lt;flow start-state="enterOrderInformation"&gt;
-    
         ...
-		        
         &lt;end-state id="finish" view="flowRedirect:searchFlow"/&gt;
         
     &lt;/flow&gt;
@@ -1842,9 +1798,7 @@
     	    	</para>
     	    	<programlisting>
     &lt;flow start-state="enterOrderInformation"&gt;
-    
         ...
-		        
         &lt;end-state id="finish" view="externalRedirect:/orders/${flowScope.order.id}"/&gt;
         
     &lt;/flow&gt;
@@ -1860,6 +1814,46 @@
     				to be viewed (in this case using REST-style URLs).
     			</para>
 			</sect3>
+    	    <sect3 id="endStateXml-outputattribute">
+    	    	<title>EndState XML - flow output attribute</title>
+    	    	<para>
+    	    	    The following example constructs an <literal>EndState</literal> from
+    	    	    XML that terminates a shipping subflow:
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="enterShippingDetails"&gt;
+        ...
+        &lt;end-state id="finish"&gt;
+            &lt;output-attribute name="shipping"/&gt;
+        &lt;/end-state&gt;
+        
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This end state definition reads "<emphasis>terminate the <literal>shipping</literal> flow 
+    			    and expose the <literal>shipping</literal> property in flow scope as an output attribute</emphasis>."
+    			</para>
+    			<para>
+    			    Since this end-state does not make a view selection it is expected this flow will be always used 
+    			    as a subflow.  When this flow ends, the calling parent flow is expected to respond to the 
+    			    <literal>finish</literal> result, and may map the <literal>shipping</literal> attribute into 
+    			    its own scope.
+    			</para>
+			</sect3>
+    	    <sect3 id="endStateJava-outputattribute">
+    	    	<title>EndState API - flow output attribute</title>
+    	    	<para>
+    	    	    The following illustrates the equivalent example using the <literal>FlowBuilder</literal> API:
+    	    	</para>
+    	    	<programlisting>
+    public class ShippingFlowBuilder extends AbstractFlowBuilder {
+    	public void buildStates() {
+    	    ...
+            addEndState("finish", new String[] { "shipping" } );
+        }
+    }	
+    			</programlisting>
+    		</sect3>
     	</sect2>
     </sect1>
 </chapter>

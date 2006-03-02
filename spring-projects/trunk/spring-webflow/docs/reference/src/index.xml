@@ -7,7 +7,6 @@
 <!ENTITY flow-execution SYSTEM "flow-execution.xml">
 <!ENTITY flow-execution-repository SYSTEM "flow-execution-repository.xml">
 <!ENTITY flow-executor SYSTEM "flow-executor.xml">
-<!ENTITY showcases SYSTEM "showcases.xml">
 ]>
 
 
@@ -46,6 +45,5 @@
 	&flow-execution;
 	&flow-execution-repository;
 	&flow-executor;
-	&showcases;
 	
 </book>
