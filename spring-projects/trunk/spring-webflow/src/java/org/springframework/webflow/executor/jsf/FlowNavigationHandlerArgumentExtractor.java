@@ -1,16 +1,16 @@
 package org.springframework.webflow.executor.jsf;
 
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**
- * A extension of {@link FlowExecutorParameterExtractor} that is aware of JSF
+ * A extension of {@link DefaultFlowExecutorParameterExtractor} that is aware of JSF
  * outcomes that communicate requests to launch flow executions and signal event
  * in existing flow executions.
  * 
  * @author Keith Donald
  */
-public class FlowNavigationHandlerParameterExtractor extends FlowExecutorParameterExtractor {
+public class FlowNavigationHandlerArgumentExtractor extends FlowExecutorArgumentExtractor {
 
 	/**
 	 * The prefix on a logical outcome value that identifies a logical outcome

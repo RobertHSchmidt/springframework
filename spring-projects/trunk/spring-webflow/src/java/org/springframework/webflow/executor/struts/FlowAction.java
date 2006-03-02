@@ -40,7 +40,7 @@ import org.springframework.webflow.execution.repository.support.SimpleFlowExecut
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
-import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 import org.springframework.webflow.executor.support.FlowRequestHandler;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ExternalRedirect;
@@ -59,11 +59,11 @@ import org.springframework.webflow.support.FlowRedirect;
  * <p>
  * <li>By default, to have this controller launch a new flow execution
  * (conversation), have the client send a
- * {@link FlowExecutorParameterExtractor#getFlowIdParameterName()} request
+ * {@link FlowExecutorArgumentExtractor#getFlowIdParameterName()} request
  * parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
- * {@link FlowExecutorParameterExtractor#getFlowExecutionKeyParameterName()}
+ * {@link FlowExecutorArgumentExtractor#getFlowExecutionKeyParameterName()}
  * request parameter identifying the conversation to participate in.
  * <p>
  * On each request received by this action, a {@link StrutsExternalContext}
@@ -83,10 +83,10 @@ import org.springframework.webflow.support.FlowRedirect;
  * FlowAction:
  * 
  * <pre>
- *       &lt;action path=&quot;/userRegistration&quot;
- *           type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
- *           name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
- *       &lt;/action&gt;
+ *     &lt;action path=&quot;/userRegistration&quot;
+ *         type=&quot;org.springframework.webflow.executor.struts.FlowAction&quot;
+ *         name=&quot;springBindingActionForm&quot; scope=&quot;request&quot;&gt;
+ *     &lt;/action&gt;
  * </pre>
  * 
  * This example associates the logical request URL
@@ -157,14 +157,14 @@ public class FlowAction extends ActionSupport {
 	/**
 	 * Delegate for extract flow executor parameters.
 	 */
-	private FlowExecutorParameterExtractor parameterExtractor = new FlowExecutorParameterExtractor();
+	private FlowExecutorArgumentExtractor parameterExtractor;
 
 	/**
 	 * Set the flow locator to use for the lookup of flow definitions to
 	 * execute.
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
-		initDefaultFlowExecutor(flowLocator);
+		flowExecutor = new FlowExecutorImpl(new SimpleFlowExecutionRepositoryFactory(flowLocator));
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class FlowAction extends ActionSupport {
 	 * Returns the flow executor parameter extractor used by this controller.
 	 * @return the parameter extractor
 	 */
-	public FlowExecutorParameterExtractor getParameterExtractor() {
+	public FlowExecutorArgumentExtractor getParameterExtractor() {
 		return parameterExtractor;
 	}
 
@@ -194,7 +194,7 @@ public class FlowAction extends ActionSupport {
 	 * Sets the flow executor parameter extractor to use.
 	 * @param parameterExtractor the parameter extractor
 	 */
-	public void setParameterExtractor(FlowExecutorParameterExtractor parameterExtractor) {
+	public void setParameterExtractor(FlowExecutorArgumentExtractor parameterExtractor) {
 		this.parameterExtractor = parameterExtractor;
 	}
 
@@ -206,8 +206,7 @@ public class FlowAction extends ActionSupport {
 			}
 			else {
 				try {
-					FlowLocator flowLocator = (FlowLocator)context.getBean(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class);
-					initDefaultFlowExecutor(flowLocator);
+					setFlowLocator((FlowLocator)context.getBean(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class));
 				}
 				catch (NoSuchBeanDefinitionException e) {
 					String message = "No '" + FLOW_LOCATOR_BEAN_NAME + "' or '" + FLOW_EXECUTOR_BEAN_NAME
@@ -219,17 +218,9 @@ public class FlowAction extends ActionSupport {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Sets the default flow executor implementation, which automatically
-	 * installs a StrutsFlowExecutionListenerLoader that applies
-	 * SpringBindingActionForm adaption.
-	 * @param flowLocator the flow locator
-	 */
-	protected void initDefaultFlowExecutor(FlowLocator flowLocator) {
-		SimpleFlowExecutionRepositoryFactory repositoryFactory = new SimpleFlowExecutionRepositoryFactory(flowLocator);
-		setFlowExecutor(new FlowExecutorImpl(repositoryFactory));
+		if (getParameterExtractor() == null) {
+			parameterExtractor = new FlowExecutorArgumentExtractor();
+		}
 	}
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,

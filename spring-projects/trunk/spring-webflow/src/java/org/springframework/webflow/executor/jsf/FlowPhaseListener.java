@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**
  * JSF phase listener that is responsible for managing a {@link FlowExecution}
@@ -41,7 +41,7 @@ import org.springframework.webflow.executor.support.FlowExecutorParameterExtract
  * <ul>
  * <li>On BEFORE_RESTORE_VIEW, restore the {@link FlowExecution} the user is
  * participating in if a call to
- * {@link FlowExecutorParameterExtractor#extractFlowExecutionKey(ExternalContext)}
+ * {@link FlowExecutorArgumentExtractor#extractFlowExecutionKey(ExternalContext)}
  * returns a submitted flow execution identifier. Place the restored flow
  * execution in a holder that other JSF artifacts such as VariableResolvers,
  * PropertyResolvers, and NavigationHandlers may access during the request
@@ -72,9 +72,9 @@ public class FlowPhaseListener implements PhaseListener {
 	private FlowExecutionRepositoryFactory repositoryFactory;
 
 	/**
-	 * A helper for extracting parameters needed by this flow execution manager.
+	 * A helper for extracting arguments needed by this flow executor.
 	 */
-	private FlowExecutorParameterExtractor parameterExtractor = new FlowExecutorParameterExtractor();
+	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
 
 	/**
 	 * Returns the repository factory used by this phase listener.
@@ -91,27 +91,17 @@ public class FlowPhaseListener implements PhaseListener {
 	}
 
 	/**
-	 * Returns the repository instance to be used by this phase listener.
+	 * Returns the argument extractor used by this phase listener.
 	 */
-	protected FlowExecutionRepository getRepository(JsfExternalContext context) {
-		if (repositoryFactory == null) {
-			repositoryFactory = FlowFacesUtils.getRepositoryFactory(context.getFacesContext());
-		}
-		return repositoryFactory.getRepository(context);
-	}
-
-	/**
-	 * Returns the parameter extractor used by this navigation handler.
-	 */
-	public FlowExecutorParameterExtractor getParameterExtractor() {
-		return parameterExtractor;
+	public FlowExecutorArgumentExtractor getArgumentExtractor() {
+		return argumentExtractor;
 	}
 
 	/**
 	 * Sets the parameter extractor to use.
 	 */
-	public void setParameterExtractor(FlowExecutorParameterExtractor parameterExtractor) {
-		this.parameterExtractor = parameterExtractor;
+	public void setArgumentExtractor(FlowExecutorArgumentExtractor argumentExtractor) {
+		this.argumentExtractor = argumentExtractor;
 	}
 
 	public PhaseId getPhaseId() {
@@ -135,7 +125,7 @@ public class FlowPhaseListener implements PhaseListener {
 
 	protected void restoreFlowExecution(FacesContext facesContext) {
 		JsfExternalContext context = new JsfExternalContext(facesContext);
-		FlowExecutionKey flowExecutionKey = parameterExtractor.extractFlowExecutionKey(context);
+		FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 		if (flowExecutionKey != null) {
 			// restore flow execution from repository so it will be
 			// available to variable/property resolvers and the flow
@@ -148,6 +138,16 @@ public class FlowPhaseListener implements PhaseListener {
 			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecutionKey, flowExecution),
 					facesContext);
 		}
+	}
+
+	/**
+	 * Returns the repository instance to be used by this phase listener.
+	 */
+	protected FlowExecutionRepository getRepository(JsfExternalContext context) {
+		if (repositoryFactory == null) {
+			repositoryFactory = FlowFacesUtils.getRepositoryFactory(context.getFacesContext());
+		}
+		return repositoryFactory.getRepository(context);
 	}
 
 	protected void prepareView(FacesContext facesContext) {
@@ -170,8 +170,8 @@ public class FlowPhaseListener implements PhaseListener {
 				}
 				holder.setFlowExecutionKey(flowExecutionKey);
 				Map requestMap = facesContext.getExternalContext().getRequestMap();
-				parameterExtractor.put(flowExecutionKey, requestMap);
-				parameterExtractor.put(flowExecution, requestMap);
+				argumentExtractor.put(flowExecutionKey, requestMap);
+				argumentExtractor.put(flowExecution, requestMap);
 			}
 		}
 	}

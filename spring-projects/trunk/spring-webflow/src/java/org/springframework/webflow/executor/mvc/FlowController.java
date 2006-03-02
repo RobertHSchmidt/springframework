@@ -30,12 +30,14 @@ import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
-import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 import org.springframework.webflow.executor.support.FlowRequestHandler;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ExternalRedirect;
@@ -47,45 +49,34 @@ import org.springframework.webflow.support.FlowRedirect;
  * executions.
  * <p>
  * Requests into the web flow system are handled by a {@link FlowExecutor},
- * which this class delegates to using a {@link FlowRequestHandler}. Consult
- * the JavaDoc of that class for more information on how requests are processed.
+ * which this class delegates to using a {@link FlowRequestHandler} helper.
+ * Consult the JavaDoc of that class for more information on how requests are
+ * processed.
  * <p>
- * Note: a single FlowController may execute all flows of your application.
- * Specifically:
- * <ul>
- * <li>To have this controller launch a new flow execution (conversation), have
- * the client send a
- * {@link FlowExecutorParameterExtractor#getFlowIdParameterName()} request
- * parameter indicating the flow definition to launch.
- * <li>To have this controller participate in an existing flow execution
- * (conversation), have the client send a
- * {@link FlowExecutorParameterExtractor#getFlowExecutionKeyParameterName()}
- * request parameter identifying the conversation to participate in.
- * </ul>
- * <p>
- * See the flowLauncher sample application for an example of this controller
- * parameterization.
+ * Note: a single FlowController may execute all flows of your application.  
+ * See the flowLauncher sample application for examples of the various strategies 
+ * for launching and resuming flow executions.
  * <p>
  * Usage example:
  * 
  * <pre>
- *             &lt;!--
- *                 Exposes flows for execution at a single request URL.
- *                 The id of a flow to launch should be passed in by clients using
- *                 the &quot;_flowId&quot; request parameter:
- *                 e.g. /app.htm?_flowId=flow1
- *             --&gt;
- *             &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
- *                 &lt;constructor-arg ref=&quot;flowRegistry&quot;/&gt;
- *             &lt;/bean&gt;
- *                                                                   
- *             &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *             &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *                 &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *             &lt;/bean&gt;
+ *     &lt;!--
+ *         Exposes flows for execution at a single request URL.
+ *         The id of a flow to launch should be passed in by clients using
+ *         the &quot;_flowId&quot; request parameter:
+ *         e.g. /app.htm?_flowId=flow1
+ *     --&gt;
+ *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
+ *         &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
+ *     &lt;/bean&gt;
+ *                                                                                  
+ *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *     &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
- * It is also possible to customize the {@link FlowExecutorParameterExtractor}
+ * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
  * strategy to allow for different types of controller parameterization, for
  * example perhaps in conjunction with a REST-style request mapper.
  * 
@@ -95,35 +86,31 @@ import org.springframework.webflow.support.FlowRedirect;
 public class FlowController extends AbstractController implements InitializingBean {
 
 	/**
-	 * Delegate for managing flow executions (launching new executions, and
-	 * resuming existing executions).
+	 * The facade for executing flows (launching new executions, and resuming
+	 * existing executions).
 	 */
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * Delegate for extracting flow executor parameters from a request made by a
-	 * {@link ExternalContext}.
+	 * The strategy for extracting flow executor parameters from a request made
+	 * by a {@link ExternalContext}.
 	 */
-	private FlowExecutorParameterExtractor parameterExtractor;
+	private FlowExecutorArgumentExtractor argumentExtractor;
 
 	/**
-	 * Set default properties for this controller. * The "cacheSeconds" property
-	 * is by default set to 0 (so by default there is no HTTP header caching for
-	 * web flow controllers).
-	 */
-	protected void initDefaults() {
-		// no caching
-		setCacheSeconds(0);
-	}
-
-	/**
-	 * Sets the flow executor to use.
-	 * @param flowExecutor the flow executor
+	 * Sets the flow locator responsible for loading flow definitions when
+	 * requested for execution by clients.
+	 * <p>
+	 * This is a convenience setter that configures a {@link FlowExecutorImpl}
+	 * with a default {@link SimpleFlowExecutionRepositoryFactory} for managing
+	 * the storage of executing flows.
+	 * @param flowLocator the locator responsible for loading flow definitions
+	 * when this controller is invoked.
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
 		this.flowExecutor = new FlowExecutorImpl(new SimpleFlowExecutionRepositoryFactory(flowLocator));
 	}
-	
+
 	/**
 	 * Returns the flow executor used by this controller.
 	 * @return the flow executor
@@ -134,6 +121,12 @@ public class FlowController extends AbstractController implements InitializingBe
 
 	/**
 	 * Sets the flow executor to use.
+	 * <p>
+	 * This setter allows for customization of the backing flow execution
+	 * strategy, which might involve configuration of a custom
+	 * {@link FlowExecutionRepositoryFactory} for managing the storage of flows
+	 * and/or one or more {@link FlowExecutionListener} objects for observing
+	 * the lifecycle of executing flows.
 	 * @param flowExecutor the flow executor
 	 */
 	public void setFlowExecutor(FlowExecutor flowExecutor) {
@@ -141,36 +134,28 @@ public class FlowController extends AbstractController implements InitializingBe
 	}
 
 	/**
-	 * Returns the flow executor parameter extractor used by this controller.
-	 * @return the parameter extractor
+	 * Returns the flow executor argument extractor used by this controller.
+	 * @return the argument extractor
 	 */
-	public FlowExecutorParameterExtractor getParameterExtractor() {
-		return parameterExtractor;
+	public FlowExecutorArgumentExtractor getArgumentExtractor() {
+		return argumentExtractor;
 	}
 
 	/**
-	 * Sets the flow executor parameter extractor to use.
-	 * @param parameterExtractor the parameter extractor
+	 * Sets the flow executor argument extractor to use.
+	 * @param parameterExtractor the argument extractor
 	 */
-	public void setParameterExtractor(FlowExecutorParameterExtractor parameterExtractor) {
-		this.parameterExtractor = parameterExtractor;
-	}
-
-	/**
-	 * Sets the default flow to launch when this flow controller is rendered.
-	 * @param defaultFlowId the id of the default flow
-	 */
-	public void setDefaultFlowId(String defaultFlowId) {
-		parameterExtractor.setDefaultFlowId(defaultFlowId);
+	public void setArgumentExtractor(FlowExecutorArgumentExtractor parameterExtractor) {
+		this.argumentExtractor = parameterExtractor;
 	}
 
 	public void afterPropertiesSet() {
-		if (parameterExtractor == null) {
-			parameterExtractor = new FlowExecutorParameterExtractor(); 
+		Assert.notNull(flowExecutor, "The flow executor property is required");
+		if (argumentExtractor == null) {
+			argumentExtractor = new FlowExecutorArgumentExtractor();
 		}
-		Assert.notNull(flowExecutor, "The flow executor is required");
 	}
-	
+
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		ServletExternalContext context = new ServletExternalContext(getServletContext(), request, response);
@@ -185,7 +170,7 @@ public class FlowController extends AbstractController implements InitializingBe
 	 * @return the controller helper
 	 */
 	protected FlowRequestHandler createRequestHandler() {
-		return new FlowRequestHandler(getFlowExecutor(), getParameterExtractor());
+		return new FlowRequestHandler(getFlowExecutor(), getArgumentExtractor());
 	}
 
 	/**
@@ -198,27 +183,27 @@ public class FlowController extends AbstractController implements InitializingBe
 	protected ModelAndView toModelAndView(ResponseInstruction response, ExternalContext context) {
 		if (response.isApplicationView()) {
 			// forward to a view as part of an active conversation
-			ApplicationView forward = (ApplicationView)response.getViewSelection();
-			Map model = new HashMap(forward.getModel());
-			parameterExtractor.put(response.getFlowExecutionKey(), model);
-			parameterExtractor.put(response.getFlowExecutionContext(), model);
-			return new ModelAndView(forward.getViewName(), model);
+			ApplicationView view = (ApplicationView)response.getViewSelection();
+			Map model = new HashMap(view.getModel());
+			argumentExtractor.put(response.getFlowExecutionKey(), model);
+			argumentExtractor.put(response.getFlowExecutionContext(), model);
+			return new ModelAndView(view.getViewName(), model);
 		}
 		else if (response.isConversationRedirect()) {
 			// redirect to active conversation URL
 			Serializable conversationId = response.getFlowExecutionKey().getConversationId();
-			String conversationUrl = parameterExtractor.createConversationUrl(conversationId, context);
+			String conversationUrl = argumentExtractor.createConversationUrl(conversationId, context);
 			return new ModelAndView(new RedirectView(conversationUrl));
 		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL
-			String externalUrl = parameterExtractor.createExternalUrl((ExternalRedirect)response.getViewSelection(),
+			String externalUrl = argumentExtractor.createExternalUrl((ExternalRedirect)response.getViewSelection(),
 					response.getFlowExecutionKey(), context);
 			return new ModelAndView(new RedirectView(externalUrl));
 		}
 		else if (response.isFlowRedirect()) {
 			// restart the flow by redirecting to flow launch URL
-			String flowUrl = parameterExtractor.createFlowUrl((FlowRedirect)response.getViewSelection(), context);
+			String flowUrl = argumentExtractor.createFlowUrl((FlowRedirect)response.getViewSelection(), context);
 			return new ModelAndView(new RedirectView(flowUrl));
 		}
 		else if (response.isNull()) {

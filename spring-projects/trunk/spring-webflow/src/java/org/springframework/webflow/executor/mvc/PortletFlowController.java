@@ -26,16 +26,19 @@ import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
-import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.FlowRedirect;
 
@@ -48,38 +51,29 @@ import org.springframework.webflow.support.FlowRedirect;
  * which this class delegates to. Consult the JavaDoc of that class for more
  * information on how requests are processed.
  * <p>
- * Note: a single FlowController may execute all flows of your application.
- * Specifically:
- * <ul>
- * <li>To have this controller launch a new flow execution (conversation), have
- * the client send a
- * {@link FlowExecutorParameterExtractor#getFlowIdParameterName()} <i>render
- * request</i> parameter indicating the flow definition to launch.
- * <li>To have this controller participate in an existing flow execution
- * (conversation), have the client send a
- * {@link FlowExecutorParameterExtractor#getFlowExecutionKeyParameterName()} and
- * {@link FlowExecutorParameterExtractor#getEventIdParameterName()} <i>action
- * request</i> identifying the conversation to participate in.
+ * Note: a single PortletFlowController may execute all flows within your portlet.
+ * See the phonebook-portlet sample application for examples of the various strategies 
+ * for launching and resuming flow executions in a Portlet environment. 
  * </ul>
  * <p>
  * Usage example:
  * 
  * <pre>
- *                        &lt;!--
- *                            Exposes flows for execution.
- *                        --&gt;
- *                        &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *                            &lt;constructor-arg ref=&quot;flowRegistry&quot;/&gt;
- *                            &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
- *                        &lt;/bean&gt;
+ *     &lt;!--
+ *         Exposes flows for execution.
+ *     --&gt;
+ *     &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *         &lt;property name="flowLocator" ref=&quot;flowRegistry&quot;/&gt;
+ *         &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
+ *     &lt;/bean&gt;
  *                                                                             
- *                        &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *                        &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *                            &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *                        &lt;/bean&gt;
+ *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *         &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * 
- * It is also possible to customize the {@link FlowExecutorParameterExtractor}
+ * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
  * strategy to allow for different types of controller parameterization, for
  * example perhaps in conjunction with a REST-style request mapper.
  * 
@@ -88,7 +82,7 @@ import org.springframework.webflow.support.FlowRedirect;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class PortletFlowController extends AbstractController {
+public class PortletFlowController extends AbstractController implements InitializingBean {
 
 	/**
 	 * Delegate for executing flow executions (launching new executions, and
@@ -97,9 +91,23 @@ public class PortletFlowController extends AbstractController {
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * Delegate for extracting flow executor parameters.
+	 * Delegate for extracting flow executor arguments.
 	 */
-	private FlowExecutorParameterExtractor parameterExtractor = new FlowExecutorParameterExtractor();
+	private FlowExecutorArgumentExtractor argumentExtractor;
+
+	/**
+	 * Sets the flow locator responsible for loading flow definitions when
+	 * requested for execution by clients.
+	 * <p>
+	 * This is a convenience setter that configures a {@link FlowExecutorImpl}
+	 * with a default {@link SimpleFlowExecutionRepositoryFactory} for managing
+	 * the storage of executing flows.
+	 * @param flowLocator the locator responsible for loading flow definitions
+	 * when this controller is invoked.
+	 */
+	public void setFlowLocator(FlowLocator flowLocator) {
+		this.flowExecutor = new FlowExecutorImpl(new SimpleFlowExecutionRepositoryFactory(flowLocator));
+	}
 
 	/**
 	 * Returns the flow executor used by this controller.
@@ -118,42 +126,31 @@ public class PortletFlowController extends AbstractController {
 	}
 
 	/**
-	 * Returns the flow executor parameter extractor used by this controller.
-	 * @return the parameter extractor
+	 * Returns the flow executor argument extractor used by this controller.
+	 * @return the argument extractor
 	 */
-	public FlowExecutorParameterExtractor getParameterExtractor() {
-		return parameterExtractor;
+	public FlowExecutorArgumentExtractor getArgumentExtractor() {
+		return argumentExtractor;
 	}
 
 	/**
-	 * Sets the flow executor parameter extractor to use.
-	 * @param parameterExtractor the parameter extractor
+	 * Sets the flow executor argument extractor to use.
+	 * @param parameterExtractor the argument extractor
 	 */
-	public void setParameterExtractor(FlowExecutorParameterExtractor parameterExtractor) {
-		this.parameterExtractor = parameterExtractor;
+	public void setArgumentExtractor(FlowExecutorArgumentExtractor parameterExtractor) {
+		this.argumentExtractor = parameterExtractor;
 	}
 
-	/**
-	 * Sets the default flow to launch when this flow controller is rendered.
-	 * @param defaultFlowId the id of the default flow
-	 */
-	public void setDefaultFlowId(String defaultFlowId) {
-		parameterExtractor.setDefaultFlowId(defaultFlowId);
+	public void afterPropertiesSet() {
+		Assert.notNull(flowExecutor, "The flow executor property is required");
+		if (argumentExtractor == null) {
+			argumentExtractor = new FlowExecutorArgumentExtractor();
+		}
 	}
-
-	/**
-	 * Set default properties for this controller. * The "cacheSeconds" property
-	 * is by default set to 0 (so by default there is no HTTP header caching for
-	 * web flow controllers).
-	 */
-	protected void initDefaults() {
-		// no caching
-		setCacheSeconds(0);
-	}
-
+	
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
-		Serializable conversationId = parameterExtractor.extractConversationId(context);
+		Serializable conversationId = argumentExtractor.extractConversationId(context);
 		if (conversationId != null) {
 			ResponseInstruction responseInstruction = getCachedResponseInstruction(request,
 					getConversationAttributeName(conversationId));
@@ -165,7 +162,7 @@ public class PortletFlowController extends AbstractController {
 		}
 		else {
 			// launch a new flow execution
-			String flowId = parameterExtractor.extractFlowId(context);
+			String flowId = argumentExtractor.extractFlowId(context);
 			ResponseInstruction responseInstruction = flowExecutor.launch(flowId, context);
 			return toModelAndView(responseInstruction);
 		}
@@ -173,12 +170,12 @@ public class PortletFlowController extends AbstractController {
 
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
-		String eventId = parameterExtractor.extractEventId(context);
-		FlowExecutionKey flowExecutionKey = parameterExtractor.extractFlowExecutionKey(context);
+		String eventId = argumentExtractor.extractEventId(context);
+		FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 		ResponseInstruction responseInstruction = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
 		if (responseInstruction.isApplicationView() || responseInstruction.isConversationRedirect()) {
 			Serializable conversationId = flowExecutionKey.getConversationId();
-			response.setRenderParameter(parameterExtractor.getConversationIdParameterName(), String
+			response.setRenderParameter(argumentExtractor.getConversationIdParameterName(), String
 					.valueOf(conversationId));
 			if (responseInstruction.isConfirmationView()) {
 				// cache ending response temporarily for final forward on the
@@ -189,7 +186,7 @@ public class PortletFlowController extends AbstractController {
 		else if (responseInstruction.isFlowRedirect()) {
 			// request that a new flow be launched within this portlet
 			String flowId = ((FlowRedirect)responseInstruction.getViewSelection()).getFlowId();
-			response.setRenderParameter(parameterExtractor.getFlowIdParameterName(), flowId);
+			response.setRenderParameter(argumentExtractor.getFlowIdParameterName(), flowId);
 		}
 		else {
 			throw new IllegalArgumentException("Don't know how to handle response instruction " + response);
@@ -217,8 +214,8 @@ public class PortletFlowController extends AbstractController {
 			// forward to a view as part of an active conversation
 			ApplicationView forward = (ApplicationView)response.getViewSelection();
 			Map model = new HashMap(forward.getModel());
-			parameterExtractor.put(response.getFlowExecutionKey(), model);
-			parameterExtractor.put(response.getFlowExecutionContext(), model);
+			argumentExtractor.put(response.getFlowExecutionKey(), model);
+			argumentExtractor.put(response.getFlowExecutionContext(), model);
 			return new ModelAndView(forward.getViewName(), model);
 		}
 		else if (response.isNull()) {

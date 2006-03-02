@@ -10,8 +10,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.support.FlowRedirect;
 
 /**
- * A parameter extractor that extracts necessary flow executor parameters from
- * the request path.
+ * Extracts flow executor arguments from the request path.
  * <p>
  * This allows for REST-style URLs to launch flows in the general format:
  * <code>http://${host}/${context}/${servlet}/${flowId}</code>
@@ -29,7 +28,7 @@ import org.springframework.webflow.support.FlowRedirect;
  * 
  * @author Keith Donald
  */
-public class RequestPathFlowExecutorParameterExtractor extends FlowExecutorParameterExtractor {
+public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgumentExtractor {
 
 	private static final String CONVERSATION_ID_PREFIX = "/_c";
 
@@ -39,7 +38,16 @@ public class RequestPathFlowExecutorParameterExtractor extends FlowExecutorParam
 			requestPathInfo = "";
 		}
 		String extractedFilename = WebUtils.extractFilenameFromUrlPath(requestPathInfo);
-		return StringUtils.hasText(extractedFilename) ? extractedFilename : getDefaultFlowId();
+		return StringUtils.hasText(extractedFilename) ? extractedFilename : super.extractFlowId(context);
+	}
+
+	public Serializable extractConversationId(ExternalContext context) {
+		String requestPathInfo = context.getRequestPathInfo();
+		if (requestPathInfo != null && requestPathInfo.startsWith(CONVERSATION_ID_PREFIX)) {
+			return requestPathInfo.substring(CONVERSATION_ID_PREFIX.length());
+		} else {
+			return super.extractConversationId(context);
+		}
 	}
 
 	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext context) {
@@ -60,15 +68,8 @@ public class RequestPathFlowExecutorParameterExtractor extends FlowExecutorParam
 		return flowUrl.toString();
 	}
 
-	public Serializable extractConversationId(ExternalContext context) {
-		String requestPathInfo = context.getRequestPathInfo();
-		if (requestPathInfo != null && requestPathInfo.startsWith(CONVERSATION_ID_PREFIX)) {
-			return requestPathInfo.substring(CONVERSATION_ID_PREFIX.length());
-		}
-		return null;
-	}
-
 	public String createConversationUrl(Serializable conversationId, ExternalContext context) {
 		return context.getDispatcherPath() + CONVERSATION_ID_PREFIX + conversationId;
 	}
+	
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springframework.webflow.executor.support;
 
 import java.io.Serializable;
@@ -37,15 +36,15 @@ import org.springframework.webflow.executor.ResponseInstruction;
  * operation and implements the following algorithm:
  * <ol>
  * <li>Extract the flow execution id by calling
- * {@link FlowExecutorParameterExtractor#extractFlowExecutionKey(ExternalContext)}.</li>
+ * {@link FlowExecutorArgumentExtractor#extractFlowExecutionKey(ExternalContext)}.</li>
  * <li>If a valid flow execution id was extracted, signal an event in that
- * existing execution. The event to signal is determined by calling the
- * {@link FlowExecutorParameterExtractor#extractEventId(ExternalContext)}
+ * existing execution to resume it. The event to signal is determined by calling
+ * the {@link FlowExecutorArgumentExtractor#extractEventId(ExternalContext)}
  * method.
  * <li>If no flow execution id was extracted, launch a new flow execution. The
  * top-level flow definition for which an execution is created is determined by
  * extracting the flow id using the
- * {@link FlowExecutorParameterExtractor#extractFlowId(ExternalContext)}. If
+ * {@link FlowExecutorArgumentExtractor#extractFlowId(ExternalContext)}. If
  * this parameter parameter is not present, an exception is thrown.</li>
  * 
  * @author Keith Donald
@@ -63,41 +62,28 @@ public class FlowRequestHandler {
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * A helper for extracting parameters needed by the flowExecutionManager.
+	 * A helper for extracting arguments of flow executor operations.
 	 */
-	private FlowExecutorParameterExtractor parameterExtractor;
+	private FlowExecutorArgumentExtractor argumentExtractor;
 
 	/**
 	 * Creates a new flow controller helper.
 	 * @param flowExecutor the flow execution manager to delegate to.
 	 */
 	public FlowRequestHandler(FlowExecutor flowExecutor) {
-		this(flowExecutor, new FlowExecutorParameterExtractor());
+		this(flowExecutor, new FlowExecutorArgumentExtractor());
 	}
 
 	/**
 	 * Creates a new flow controller helper.
-	 * @param flowExecutor the flow execution manager to delegate to.
+	 * @param flowExecutor the flow executor to delegate to.
+	 * @param argumentExtractor the flow executor argument extractor
 	 */
-	public FlowRequestHandler(FlowExecutor flowExecutor, FlowExecutorParameterExtractor parameterExtractor) {
+	public FlowRequestHandler(FlowExecutor flowExecutor, FlowExecutorArgumentExtractor argumentExtractor) {
 		Assert.notNull(flowExecutor, "The flow executor is required");
-		Assert.notNull(parameterExtractor, "The parameter extractor is required");
+		Assert.notNull(argumentExtractor, "The flow executor argument extractor is required");
 		this.flowExecutor = flowExecutor;
-		this.parameterExtractor = parameterExtractor;
-	}
-
-	/**
-	 * Returns the flow execution manager.
-	 */
-	public FlowExecutor getFlowExecutor() {
-		return flowExecutor;
-	}
-
-	/**
-	 * Returns the parameter extractor strategy.
-	 */
-	public FlowExecutorParameterExtractor getParameterExtractor() {
-		return parameterExtractor;
+		this.argumentExtractor = argumentExtractor;
 	}
 
 	/**
@@ -109,9 +95,9 @@ public class FlowRequestHandler {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Event signaled in " + context);
 		}
-		FlowExecutionKey flowExecutionKey = parameterExtractor.extractFlowExecutionKey(context);
+		FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 		if (flowExecutionKey != null) {
-			ResponseInstruction response = flowExecutor.signalEvent(parameterExtractor.extractEventId(context),
+			ResponseInstruction response = flowExecutor.signalEvent(argumentExtractor.extractEventId(context),
 					flowExecutionKey, context);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Returning [resume] " + response);
@@ -119,7 +105,7 @@ public class FlowRequestHandler {
 			return response;
 		}
 		else {
-			Serializable conversationId = parameterExtractor.extractConversationId(context);
+			Serializable conversationId = argumentExtractor.extractConversationId(context);
 			if (conversationId != null) {
 				ResponseInstruction response = flowExecutor.getCurrentResponseInstruction(conversationId, context);
 				if (logger.isDebugEnabled()) {
@@ -128,7 +114,7 @@ public class FlowRequestHandler {
 				return response;
 			}
 			else {
-				ResponseInstruction response = flowExecutor.launch(parameterExtractor.extractFlowId(context), context);
+				ResponseInstruction response = flowExecutor.launch(argumentExtractor.extractFlowId(context), context);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning [launch] " + response);
 				}

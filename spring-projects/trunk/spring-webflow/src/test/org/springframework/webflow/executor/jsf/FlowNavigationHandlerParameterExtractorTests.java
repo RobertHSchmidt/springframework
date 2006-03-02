@@ -3,7 +3,7 @@ package org.springframework.webflow.executor.jsf;
 import junit.framework.TestCase;
 
 public class FlowNavigationHandlerParameterExtractorTests extends TestCase {
-	private FlowNavigationHandlerParameterExtractor extractor = new FlowNavigationHandlerParameterExtractor();
+	private FlowNavigationHandlerArgumentExtractor extractor = new FlowNavigationHandlerArgumentExtractor();
 
 	public void testExtractFlowId() {
 		JsfExternalContext context = new JsfExternalContext(new MockFacesContext(), "action", "flowId:foo");

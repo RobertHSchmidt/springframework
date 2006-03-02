@@ -31,7 +31,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.executor.support.FlowExecutorParameterExtractor;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.ExternalRedirect;
@@ -91,7 +91,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	 * A helper for extracting parameters needed by this flow navigation
 	 * handler.
 	 */
-	private FlowExecutorParameterExtractor parameterExtractor = new FlowNavigationHandlerParameterExtractor();
+	private FlowExecutorArgumentExtractor argumentExtractor = new FlowNavigationHandlerArgumentExtractor();
 
 	/**
 	 * Resolves selected Web Flow view names to JSF view ids.
@@ -130,17 +130,17 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	}
 
 	/**
-	 * Returns the parameter extractor used by this navigation handler.
+	 * Returns the argument extractor used by this navigation handler.
 	 */
-	public FlowExecutorParameterExtractor getParameterExtractor() {
-		return parameterExtractor;
+	public FlowExecutorArgumentExtractor getArgumentExtractor() {
+		return argumentExtractor;
 	}
 
 	/**
-	 * Sets the parameter extractor to use.
+	 * Sets the argument extractor to use.
 	 */
-	public void setParameterExtractor(FlowExecutorParameterExtractor parameterExtractor) {
-		this.parameterExtractor = parameterExtractor;
+	public void setArgumentExtractor(FlowExecutorArgumentExtractor argumentExtractor) {
+		this.argumentExtractor = argumentExtractor;
 	}
 
 	/**
@@ -164,12 +164,12 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 		if (holder != null) {
 			// a flow execution has already been restored, signal an event in it
 			FlowExecution flowExecution = holder.getFlowExecution();
-			String eventId = parameterExtractor.extractEventId(context);
+			String eventId = argumentExtractor.extractEventId(context);
 			ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
 			renderView(selectedView, context);
 		}
 		else {
-			String flowId = parameterExtractor.extractFlowId(context);
+			String flowId = argumentExtractor.extractFlowId(context);
 			if (StringUtils.hasText(flowId)) {
 				// a flow execution launch has been requested, start it
 				FlowExecution flowExecution = getRepository(context).createFlowExecution(flowId);
@@ -219,18 +219,18 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 		}
 		else if (selectedView instanceof ConversationRedirect) {
 			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-			String conversationUrl = parameterExtractor.createConversationUrl(holder.getFlowExecutionKey()
+			String conversationUrl = argumentExtractor.createConversationUrl(holder.getFlowExecutionKey()
 					.getConversationId(), context);
 			sendRedirect(conversationUrl, facesContext);
 		}
 		else if (selectedView instanceof ExternalRedirect) {
 			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-			String externalUrl = parameterExtractor.createExternalUrl((ExternalRedirect)selectedView, holder
+			String externalUrl = argumentExtractor.createExternalUrl((ExternalRedirect)selectedView, holder
 					.getFlowExecutionKey(), context);
 			sendRedirect(externalUrl, facesContext);
 		}
 		else if (selectedView instanceof FlowRedirect) {
-			String flowUrl = parameterExtractor.createFlowUrl((FlowRedirect)selectedView, context);
+			String flowUrl = argumentExtractor.createFlowUrl((FlowRedirect)selectedView, context);
 			sendRedirect(flowUrl, facesContext);
 		}
 		else {
