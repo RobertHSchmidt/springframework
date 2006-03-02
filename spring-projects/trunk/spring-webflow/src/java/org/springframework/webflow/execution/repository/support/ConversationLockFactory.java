@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.repository.ConversationLock;
  * @author Keith Donald
  * @author Rob Harrop
  */
-class ConversationLockFactory {
+public class ConversationLockFactory {
 
 	private static final Log logger = LogFactory.getLog(ConversationLockFactory.class);
 
