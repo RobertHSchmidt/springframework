@@ -32,7 +32,7 @@ public class CannotContinueConversationException extends FlowExecutionRepository
 
 	/**
 	 * Creates a new invalid conversation continuation exception.
-	 * @param key the continuation key
+	 * @param key the flow execution key
 	 */
 	public CannotContinueConversationException(FlowExecutionKey key) {
 		super("Cannot continue conversation '" + key.getConversationId() + "'; the submitted continuation id '"
@@ -43,7 +43,7 @@ public class CannotContinueConversationException extends FlowExecutionRepository
 
 	/**
 	 * Creates a new invalid conversation continuation exception.
-	 * @param key the continuation key
+	 * @param key the flow execution key
 	 * @param message a custom message
 	 */
 	public CannotContinueConversationException(FlowExecutionKey key, String message) {

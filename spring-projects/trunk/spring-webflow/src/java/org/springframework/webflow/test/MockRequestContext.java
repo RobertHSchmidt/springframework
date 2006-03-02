@@ -212,7 +212,7 @@ public class MockRequestContext implements RequestContext {
 	/**
 	 * Adds a multi-valued request parameter to the configured external context.
 	 * @param parameterName the parameter name
-	 * @param parameterValue the parameter values
+	 * @param parameterValues the parameter values
 	 */
 	public void putRequestParameter(String parameterName, String[] parameterValues) {
 		getMockExternalContext().putRequestParameter(parameterName, parameterValues);

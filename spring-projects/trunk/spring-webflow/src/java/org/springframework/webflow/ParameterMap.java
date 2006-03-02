@@ -127,6 +127,7 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 * Get a multi-valued parameter value, converting each value to the target
 	 * type or returning <code>null</code> if no value is found.
 	 * @param parameterName the parameter name
+	 * @param targetElementType the target type of the array's elements
 	 * @return the converterd parameter value array
 	 * @throws ConversionException when the value could not be converted
 	 */
@@ -151,7 +152,7 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 * Get a parameter value, converting it from <code>String</code> to the
 	 * target type or returning the defaultValue if not found.
 	 * @param parameterName name of the parameter to get
-	 * @param targetType the required type of the parameter value
+	 * @param targetType the target type of the parameter value
 	 * @param defaultValue the default value
 	 * @return the converted parameter value, or the default if not found
 	 * @throws ConversionException when a value could not be converted
@@ -176,7 +177,7 @@ public class ParameterMap implements MapAdaptable, Serializable {
 
 	/**
 	 * Get a required multi-valued parameter value.
-	 * @param parameterNamethe name of the parameter
+	 * @param parameterName the name of the parameter
 	 * @return the parameter value
 	 * @throws IllegalArgumentException when the parameter is not found
 	 */
@@ -197,7 +198,7 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	/**
 	 * Get a required multi-valued parameter value, converting each value to the
 	 * target type.
-	 * @param parameterNamethe name of the parameter
+	 * @param parameterName the name of the parameter
 	 * @return the parameter value
 	 * @throws IllegalArgumentException when the parameter is not found
 	 * @throws ConversionException when a value could not be converted
@@ -225,7 +226,7 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 * Returns a number parameter value in the map that is of the specified
 	 * type, returning <code>null</code> if no value was found.
 	 * @param parameterName the parameter name
-	 * @param requiredType the required number type
+	 * @param targetType the target number type
 	 * @return the number parameter value
 	 * @throws ConversionException when the value could not be converted
 	 */

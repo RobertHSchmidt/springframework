@@ -19,6 +19,8 @@ import org.springframework.webflow.FlowException;
 
 /**
  * The root of the {@link FlowExecutionRepository} exception hierarchy.
+ * Indicates a problem occured either creating, restoring, saving, or
+ * invalidating a managed flow execution.
  * 
  * @author Keith Donald
  */
@@ -27,7 +29,6 @@ public abstract class FlowExecutionRepositoryException extends FlowException {
 	/**
 	 * Creates a new flow execution repository exception explicitly noting the
 	 * repository that had the problem.
-	 * @param repository the repository that had a problem
 	 * @param message the message
 	 */
 	public FlowExecutionRepositoryException(String message) {
@@ -37,12 +38,11 @@ public abstract class FlowExecutionRepositoryException extends FlowException {
 	/**
 	 * Creates a new flow execution repository exception explicitly noting the
 	 * repository that had the problem.
-	 * @param repository the repository that had a problem
 	 * @param message the message
 	 * @param cause the root cause of the problem
 	 */
 	public FlowExecutionRepositoryException(String message, Throwable cause) {
 		super(message, cause);
 	}
-	
+
 }

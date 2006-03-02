@@ -103,10 +103,10 @@ public class FlowExecutorImpl implements FlowExecutor {
 	private boolean alwaysRedirectOnPause;
 
 	/**
-	 * Create a new flow executor that uses the repository factory to access a
-	 * repository to create, save, and restore managed flow executions driven by
-	 * this executor.
-	 * @param repositoryFactory the repository factory
+	 * Create a new flow executor that configures use of the default repository
+	 * strategy ({@link SimpleFlowExecutionRepositoryFactory}) to drive the
+	 * the execution of flows loaded by the provided flow locator.
+	 * @param flowLocator the flow locator
 	 */
 	public FlowExecutorImpl(FlowLocator flowLocator) {
 		this(new SimpleFlowExecutionRepositoryFactory(flowLocator));

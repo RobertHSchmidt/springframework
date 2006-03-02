@@ -53,7 +53,7 @@ public class MockExternalContext implements ExternalContext {
 	/**
 	 * Creates a mock external context with the specified parameters in the
 	 * request parameter map.
-	 * @param requestParameters the request parameters
+	 * @param requestParameterMap the request parameters
 	 */
 	public MockExternalContext(ParameterMap requestParameterMap) {
 		this.requestParameterMap = requestParameterMap;
@@ -123,10 +123,20 @@ public class MockExternalContext implements ExternalContext {
 		return (MockParameterMap)requestParameterMap;
 	}
 	
+	/**
+	 * Puts a request parameter into the mock parameter map.
+	 * @param parameterName the parameter name
+	 * @param parameterValue the parameter value
+	 */
 	public void putRequestParameter(String parameterName, String parameterValue) {
 		getMockRequestParameterMap().put(parameterName, parameterValue);
 	}
 
+	/**
+	 * Puts a multi-valued request parameter into the mock parameter map.
+	 * @param parameterName the parameter name
+	 * @param parameterValues the parameter values
+	 */
 	public void putRequestParameter(String parameterName, String[] parameterValues) {
 		getMockRequestParameterMap().put(parameterName, parameterValues);
 	}

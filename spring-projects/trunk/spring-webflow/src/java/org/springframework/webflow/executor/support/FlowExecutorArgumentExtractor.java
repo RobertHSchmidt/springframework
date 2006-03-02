@@ -465,7 +465,7 @@ public class FlowExecutorArgumentExtractor {
 
 	/**
 	 * URL-encode the given input String with the given encoding scheme.
-	 * @param input the unencoded value
+	 * @param value the unencoded value
 	 * @return the encoded output String
 	 */
 	protected String encodeValue(Object value) {

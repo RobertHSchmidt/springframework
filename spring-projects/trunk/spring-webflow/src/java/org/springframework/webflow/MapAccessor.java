@@ -436,7 +436,7 @@ public class MapAccessor implements MapAdaptable {
 	 * Assert that the type of the given attribute value is of the required
 	 * type.
 	 * @param key the attribute name
-	 * @param type the required type
+	 * @param requiredType the required attribute value type
 	 * @return the attribute value
 	 */
 	public Object assertValueOfType(Object key, Class requiredType) {

@@ -145,7 +145,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * 
 	 * The flow id key and resource value is required. Flow attributes (e.g.
 	 * attr1) are optional.
-	 * @param properties the flow definition properties
+	 * @param flowDefinitions the flow definition, defined within a properties map
 	 */
 	public void setFlowDefinitions(Properties flowDefinitions) {
 		this.flowDefinitions = flowDefinitions;

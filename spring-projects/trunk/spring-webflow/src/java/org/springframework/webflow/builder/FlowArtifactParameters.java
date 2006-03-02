@@ -76,7 +76,7 @@ public class FlowArtifactParameters implements Serializable {
 	}
 
 	/**
-	 * Returns the attributes map.
+	 * Returns the artifact attributes to be assigned and/or used to affect artifact construction.
 	 */
 	public UnmodifiableAttributeMap getAttributes() {
 		return attributes;
@@ -87,7 +87,7 @@ public class FlowArtifactParameters implements Serializable {
 	 * properties defined in the provided map. This method first adds the
 	 * provided properties to the copy, and then applies the properties of this
 	 * (original) object in 'override' fashion.
-	 * @param properties the properties to apply and then override
+	 * @param attributes the attributes collection
 	 * @return the artifact parameters
 	 */
 	public FlowArtifactParameters putAll(AttributeCollection attributes) {

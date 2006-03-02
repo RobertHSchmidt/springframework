@@ -116,7 +116,7 @@ import org.springframework.webflow.support.FlowRedirect;
  * instance {@link FlowLocator} named {@link #FLOW_LOCATOR_BEAN_NAME}. If the
  * FlowLocator dependency is resolved, this class will automatically configure a
  * default flow executor implementation suitable for a Struts environment (see
- * {@link #initDefaultFlowExecutor(FlowLocator)}). In addition, you may choose
+ * {@link #setFlowLocator(FlowLocator)}). In addition, you may choose
  * to simply inject a FlowLocator directly if the FlowExecutor defaults meet
  * your requirements.
  * </ul>

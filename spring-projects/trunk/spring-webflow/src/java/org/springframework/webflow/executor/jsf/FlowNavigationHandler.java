@@ -199,7 +199,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	 * Render the view specified by this <code>ViewSelection</code>, after
 	 * exposing any model data it includes.
 	 * @param selectedView <code>ViewSelection</code> for the view to render
-	 * @param facesContext <code>FacesContext</code> for the current request
+	 * @param context <code>JsfExternalContext</code> for the current request
 	 */
 	public void renderView(ViewSelection selectedView, JsfExternalContext context) {
 		if (selectedView == ViewSelection.NULL_VIEW) {
