@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryCreator;
 
@@ -39,6 +40,7 @@ public abstract class AbstractFlowExecutionRepositoryCreator implements FlowExec
 	 * repositories created by this creator.
 	 */
 	public AbstractFlowExecutionRepositoryCreator(FlowExecutionRepositoryServices repositoryServices) {
+		Assert.notNull(repositoryServices, "The repository services instance is required");
 		this.repositoryServices = repositoryServices;
 	}
 

@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -78,7 +79,8 @@ public class FlowExecutionRepositoryServices {
 	 * @param flowLocator the flow locator (required)
 	 */
 	public FlowExecutionRepositoryServices(FlowLocator flowLocator) {
-		setFlowLocator(flowLocator);
+		Assert.notNull(flowLocator, "The flow locator is required");
+		this.flowLocator = flowLocator;
 	}
 
 	/**
@@ -87,13 +89,6 @@ public class FlowExecutionRepositoryServices {
 	 */
 	public FlowLocator getFlowLocator() {
 		return flowLocator;
-	}
-
-	/**
-	 * Set the flow locator to use for lookup of flow definitions to execute.
-	 */
-	public void setFlowLocator(FlowLocator flowLocator) {
-		this.flowLocator = flowLocator;
 	}
 
 	/**

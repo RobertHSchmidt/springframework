@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryCreator;
@@ -42,6 +43,7 @@ public abstract class AbstractFlowExecutionRepositoryFactory implements FlowExec
 	 * factory.
 	 */
 	protected AbstractFlowExecutionRepositoryFactory(FlowExecutionRepositoryCreator repositoryCreator) {
+		Assert.notNull(repositoryCreator, "The repository creator is required");
 		this.repositoryCreator = repositoryCreator;
 	}
 

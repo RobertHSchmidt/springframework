@@ -24,6 +24,7 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -100,6 +101,16 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * conversation using a bookmarkable URL.
 	 */
 	private boolean alwaysRedirectOnPause;
+
+	/**
+	 * Create a new flow executor that uses the repository factory to access a
+	 * repository to create, save, and restore managed flow executions driven by
+	 * this executor.
+	 * @param repositoryFactory the repository factory
+	 */
+	public FlowExecutorImpl(FlowLocator flowLocator) {
+		this(new SimpleFlowExecutionRepositoryFactory(flowLocator));
+	}
 
 	/**
 	 * Create a new flow executor that uses the repository factory to access a
