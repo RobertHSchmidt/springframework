@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.ExternalContext.SharedMap;
 import org.springframework.webflow.context.StringKeyedMapAdapter;
@@ -74,6 +75,8 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 	}
 
 	public Object getMutex() {
-		return request.getSession(true);
+		HttpSession session = request.getSession(true);
+		Object mutex = session.getAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE);
+		return mutex != null ? mutex : session;
 	}
 }

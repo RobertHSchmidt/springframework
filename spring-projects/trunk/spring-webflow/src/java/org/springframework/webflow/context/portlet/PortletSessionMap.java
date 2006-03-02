@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
+import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.ExternalContext.SharedMap;
 import org.springframework.webflow.context.StringKeyedMapAdapter;
@@ -74,6 +75,8 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 	}
 
 	public Object getMutex() {
-		return request.getPortletSession(true);
+		PortletSession session = request.getPortletSession(true);
+		Object mutex = session.getAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE);
+		return mutex != null ? mutex : session;
 	}
 }
