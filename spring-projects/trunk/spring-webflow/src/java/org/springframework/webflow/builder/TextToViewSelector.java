@@ -17,18 +17,17 @@ package org.springframework.webflow.builder;
 
 import java.util.Map;
 
-import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.CompositeStringExpression;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.EndState;
-import org.springframework.webflow.MapAccessor;
 import org.springframework.webflow.NullViewSelector;
-import org.springframework.webflow.State;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.support.ApplicationViewSelector;
+import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.ExternalRedirectSelector;
+import org.springframework.webflow.support.FlowRedirect;
+import org.springframework.webflow.support.FlowRedirectSelector;
 
 /**
  * Converter that converts an encoded string representation of a view selector
@@ -36,11 +35,16 @@ import org.springframework.webflow.support.ExternalRedirectSelector;
  * 
  * This converter supports the following encoded forms:
  * <ul>
- * <li>"viewName" - will result in a {@link ApplicationViewSelector} that returns a
- * ViewSelection with the provided view name.</li>
+ * <li>"viewName" - will result in a {@link ApplicationViewSelector} that
+ * returns a ViewSelection with the provided view name.</li>
  * <li>"redirect:&lt;viewName&gt;" - will result in a
- * {@link ExternalRedirectSelector} that returns a ViewSelection with the provided
- * view name and redirect flag set to true.</li>
+ * {@link ApplicationViewSelector} that returns a ViewSelection with the
+ * provided view name and redirect flag set to true.</li>
+ * <li>"externalRedirect:&lt;url&gt;" - will result in a
+ * {@link ExternalRedirectSelector} that returns a {@link ExternalRedirect} to a
+ * URL.</li>
+ * <li>"flowRedirect:&lt;url&gt;" - will result in a
+ * {@link FlowRedirectSelector} that returns a {@link FlowRedirect} to a flow.</li>
  * <li>"bean:&lt;id&gt;" - will result usage of a custom
  * <code>ViewSelector</code> bean implementation.</li>
  * </ul>
@@ -54,16 +58,22 @@ import org.springframework.webflow.support.ExternalRedirectSelector;
 public class TextToViewSelector extends ConversionServiceAwareConverter {
 
 	/**
-	 * The name of the state context attribute; can be used to influence
-	 * converter behavior.
+	 * Prefix used when the encoded view name wants to specify that a redirect
+	 * is required.
 	 */
-	public static final String STATE_CONTEXT_ATTRIBUTE = "state";
+	public static final String REDIRECT_PREFIX = "redirect:";
 
 	/**
-	 * The name of the redirect context attribute; can be used to influence
-	 * converter behavior.
+	 * Prefix used when the encoded view name wants to specify that a redirect
+	 * to an external URL is required.
 	 */
-	public static final String REDIRECT_CONTEXT_ATTRIBUTE = "redirect";
+	public static final String EXTERNAL_REDIRECT_PREFIX = "externalRedirect:";
+
+	/**
+	 * Prefix used when the encoded view name wants to specify that a redirect
+	 * to a flow is requred.
+	 */
+	public static final String FLOW_REDIRECT_PREFIX = "flowRedirect:";
 
 	/**
 	 * Prefix used when the user wants to use a ViewSelector implementation
@@ -72,13 +82,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	private static final String BEAN_PREFIX = "bean:";
 
 	/**
-	 * Prefix used when the encoded view name wants to specify that a redirect
-	 * is required.
-	 */
-	public static final String REDIRECT_PREFIX = "redirect:";
-
-	/**
-	 * Locator to use for loading custom ViewSelector beans.
+	 * Factory to use for loading custom ViewSelector beans.
 	 */
 	private FlowArtifactFactory flowArtifactFactory;
 
@@ -102,43 +106,26 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		if (!StringUtils.hasText(encodedView)) {
 			return NullViewSelector.INSTANCE;
 		}
-		if (encodedView.startsWith(BEAN_PREFIX)) {
-			return getCustomViewSelector(encodedView.substring(BEAN_PREFIX.length()));
+		if (encodedView.startsWith(REDIRECT_PREFIX)) {
+			String viewName = encodedView.substring(REDIRECT_PREFIX.length());
+			return new ApplicationViewSelector(viewName, true);
 		}
-		State state = (State)context.get(STATE_CONTEXT_ATTRIBUTE);
-		if (state instanceof EndState && encodedView.startsWith(REDIRECT_PREFIX)) {
-			return createRedirectViewSelector(encodedView.substring(REDIRECT_PREFIX.length()));
+		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
+			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
+			Expression urlExpr = (Expression)fromStringTo(CompositeStringExpression.class).execute(externalUrl);
+			return new ExternalRedirectSelector(urlExpr);
+		}
+		else if (encodedView.startsWith(FLOW_REDIRECT_PREFIX)) {
+			String flowRedirect = encodedView.substring(FLOW_REDIRECT_PREFIX.length());
+			Expression redirectExpr = (Expression)fromStringTo(CompositeStringExpression.class).execute(flowRedirect);
+			return new FlowRedirectSelector(redirectExpr);
+		}
+		else if (encodedView.startsWith(BEAN_PREFIX)) {
+			String id = encodedView.substring(BEAN_PREFIX.length());
+			return flowArtifactFactory.getViewSelector(id);
 		}
 		else {
-			return createSimpleViewSelector(encodedView, context);
+			return new ApplicationViewSelector(encodedView);
 		}
-	}
-
-	protected ViewSelector getCustomViewSelector(String id) {
-		return flowArtifactFactory.getViewSelector(id);
-	}
-
-	/**
-	 * Hook method subclasses can override to return a special simple view
-	 * selector implementation.
-	 * @param encodedView the name of the view to render
-	 * @return the simple view selector
-	 * @throws ConversionException when an error occurs
-	 */
-	protected ViewSelector createSimpleViewSelector(String encodedView, Map context) throws ConversionException {
-		boolean redirect = new MapAccessor(context).getBoolean(REDIRECT_CONTEXT_ATTRIBUTE, Boolean.FALSE)
-				.booleanValue();
-		return new ApplicationViewSelector(encodedView, redirect);
-	}
-
-	/**
-	 * Hook method sublcasses can override to return a specialized
-	 * implementation of a view selector that triggers a redirect.
-	 * @param encodedView the encoded view, without the "redirect:" prefix
-	 * @return the redirecting view selector
-	 * @throws ConversionException when something goes wrong
-	 */
-	protected ViewSelector createRedirectViewSelector(String encodedView) throws ConversionException {
-		return new ExternalRedirectSelector((Expression)fromStringTo(CompositeStringExpression.class).execute(encodedView));
 	}
 }

@@ -15,18 +15,15 @@
  */
 package org.springframework.webflow.builder;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
-import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.support.ApplicationView;
+import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.support.FlowRedirect;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -37,14 +34,14 @@ import org.springframework.webflow.test.MockRequestContext;
 public class TextToViewSelectorTests extends TestCase {
 
 	private TextToViewSelector converter;
-	
+
 	public void setUp() {
 		DefaultFlowArtifactFactory flowArtifactFactory = new DefaultFlowArtifactFactory();
 		converter = new TextToViewSelector(flowArtifactFactory);
 		converter.setConversionService(flowArtifactFactory.getConversionService());
 	}
 
-	public void testStaticView() {
+	public void testApplicationView() {
 		ViewSelector selector = (ViewSelector)converter.convert("myView");
 		RequestContext context = getRequestContext();
 		ApplicationView view = (ApplicationView)selector.makeSelection(context);
@@ -52,16 +49,28 @@ public class TextToViewSelectorTests extends TestCase {
 		assertEquals(5, view.getModel().size());
 	}
 
-	public void testRedirectView() {
-		Flow flow = new Flow("test");
-		EndState endState = new EndState(flow, "id");
-		Map cContext = new HashMap();
-		cContext.put(TextToViewSelector.STATE_CONTEXT_ATTRIBUTE, endState);
+	public void testConversationRedirect() {
+		ViewSelector selector = (ViewSelector)converter.convert("redirect:myView");
+		RequestContext context = getRequestContext();
+		ConversationRedirect redirect = (ConversationRedirect)selector.makeSelection(context);
+		assertEquals("myView", redirect.getApplicationView().getViewName());
+		assertEquals(5, redirect.getApplicationView().getModel().size());
+	}
+	
+	public void testFlowRedirect() {
+		ViewSelector selector = (ViewSelector)converter.convert("flowRedirect:myFlow");
+		RequestContext context = getRequestContext();
+		FlowRedirect redirect = (FlowRedirect)selector.makeSelection(context);
+		assertEquals("myFlow", redirect.getFlowId());
+		assertEquals(0, redirect.getInput().size());
+	}
+	
+	public void testExternalRedirect() {
 		ViewSelector selector = (ViewSelector)converter
-				.convert("redirect:myView?foo=${flowScope.foo}&bar=${requestScope.oven}", cContext);
+				.convert("externalRedirect:myUrl.htm?foo=${flowScope.foo}&bar=${requestScope.oven}");
 		RequestContext context = getRequestContext();
 		ExternalRedirect view = (ExternalRedirect)selector.makeSelection(context);
-		assertEquals("myView?foo=bar&bar=mit", view.getUrl());
+		assertEquals("myUrl.htm?foo=bar&bar=mit", view.getUrl());
 	}
 
 	private RequestContext getRequestContext() {
