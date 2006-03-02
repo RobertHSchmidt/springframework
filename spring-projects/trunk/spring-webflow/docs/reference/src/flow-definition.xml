@@ -709,7 +709,7 @@
             				<row>
               					<entry>ExternalRedirectViewSelector</entry>
 								<entry>
-									Returns a ExternalRedirect that triggers a browser redirect to an abitrary external URL.
+									Returns an ExternalRedirect that triggers a browser redirect to an abitrary external URL.
 									Mainly used by end states to redirect to external systems after flow completion,
 									but can also be used by view states to interface with an external system that may
 									call back into the conversation at a later point.
@@ -725,10 +725,10 @@
     		</para>
 			<mediaobject>
 				<imageobject role="fo">
-					<imagedata fileref="images/viewstate-classdiagram.jpg" format="JPEG" align="center"/>
+					<imagedata fileref="images/viewstate-classdiagram.png" format="PNG" align="center"/>
 				</imageobject>
 				<imageobject role="html">
-					<imagedata fileref="images/viewstate-classdiagram.jpg" format="JPEG" align="center"/>
+					<imagedata fileref="images/viewstate-classdiagram.png" format="PNG" align="center"/>
 				</imageobject>
 				<caption>
 					<para>ViewState class diagram</para>
