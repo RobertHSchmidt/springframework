@@ -1026,7 +1026,7 @@
             				<row>
               					<entry>resultScope</entry>
 								<entry>
-									If the resultName property is specified, this is the scope the result attribute should be indexed in.
+									If the resultName attribute is specified, this is the scope the result attribute should be indexed in.
 									For example, "request" or "flow" scope.
 								</entry>
 	        	   	        </row>
@@ -1094,13 +1094,13 @@
         public Event execute(RequestContext context) {
             // lookup the search criteria in "flow scope"
             SearchCriteria criteria =
-                (SearchCriteria)context.getFlowScope().getAttribute("criteria");
+                (SearchCriteria)context.getFlowScope().get("criteria");
     	        
             // execute the search
             Collection results = searchService.executeSearch(criteria);
     	    
             // set the results in "request scope"
-            context.getRequestScope().setAttribute("results", results);
+            context.getRequestScope().put("results", results);
     	    
             // return "success"
             return new Event(this, "success");
@@ -1161,13 +1161,13 @@
         public Event executeSearch(RequestContext context) {
             // lookup the search criteria in "flow scope"
             SearchCriteria criteria =
-                (SearchCriteria)context.getFlowScope().getAttribute("criteria");
+                (SearchCriteria)context.getFlowScope().get("criteria");
     	        
             // execute the search
             Collection results = searchService.executeSearch(criteria);
     	    
             // set the results in "request scope"
-            context.getRequestScope().setAttribute("results", results);
+            context.getRequestScope().put("results", results);
     	    
             // return "success"
             return success();
