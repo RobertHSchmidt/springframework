@@ -405,9 +405,9 @@
     		</orderedlist>
     	</para>
     	<para>
-    		Note: a flow execution integration test may select mock or stub implementations of application 
-    		services called by the flow and/or may exercise production implementations.
-    		Both are useful system test configurations.
+    		Note: a flow execution integration test typically selects mock or stub implementations of application 
+    		services called by the flow, though it may also exercise production implementations.
+    		Both are useful, supported system test configurations.
     	</para>
 	    <sect2 id="execution-testing-example">
  	  	 	<title>Flow execution test example</title>
@@ -538,7 +538,7 @@
     public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	
         public void testStartFlow() {
-            ViewSelection view = startFlow();
+            ApplicationView view = applicationView(startFlow());
             assertCurrentStateEquals("enterCriteria");
             assertViewNameEquals("searchCriteria", view);
             assertModelAttributeNotNull("searchCriteria", view);
@@ -547,12 +547,12 @@
         public void testCriteriaSubmitSuccess() {
             startFlow();
 
-            Map input = new HashMap();
+            ParameterMap input = new ParameterMap();
             input.put("firstName", "Keith");
             input.put("lastName", "Donald");
 			
             // submit with valid input
-            ViewSelection view = signalEvent("submit", input);
+            ApplicationView view = applicationView(signalEvent("submit", input));
 			
             assertCurrentStateEquals("displayResults");
             assertViewNameEquals("searchResults", view);
@@ -564,13 +564,12 @@
 			
             // submit with no input
             signalEvent("submit");
-			
             assertCurrentStateEquals("enterCriteria");
         }
 	
         public void testNewSearch() {
             testCriteriaSubmitSuccess();
-            ViewSelection view = signalEvent("newSearch");
+            ApplicationView view = applicationView(signalEvent("newSearch"));
             assertCurrentStateEquals("enterCriteria");
             assertViewNameEquals("searchCriteria", view);
         }
@@ -578,7 +577,7 @@
         public void testSelectValidResult() {
             testCriteriaSubmitSuccess();
 			
-            Map input = new HashMap();
+            ParameterMap input = new ParameterMap();
             input.put("id", "1");
             // select with valid input
             ViewSelection view = signalEvent("select", input);
@@ -599,37 +598,23 @@
             File file = new File(flowDir, "search-flow.xml");
             return new ExternalizedFlowDefinition(new FileSystemResource(file));
         }
-		
-        @Override
+
         protected FlowArtifactFactory createFlowArtifactFactory() {
-            return new TestFlowArtifactFactory();
-        }
-	
-        /**
-         * Used to wire in test implementations of artifacts used by the flow, such
-         * as the phonebook and the detail subflow
-         */
-        protected class TestFlowArtifactFactory extends FlowArtifactFactoryAdapter {
-        
-            public Action getAction(FlowArtifactParameters parameters){
-                // there is only one global action used by this flow, phonebook
-                return new LocalBeanInvokingAction(phonebook);
-            }
-	
-            public Flow getSubflow(String id) {
-                // there is only one subflow, detail
-                Flow detail = new Flow(id);
-                // test responding to finish result by stubbing detail flow
-                EndState finish = new EndState(detail, "finish");
-                finish.addEntryAction(new AbstractAction() {
-                    public Event doExecute(RequestContext context) {
-                        // test attribute mapping behavior
-                        assertEquals(new Long(1), context.getFlowScope().getAttribute("id"));
-                        return success();
-                    }
-                });
-                return detail;
-            }
+            MockFlowArtifactFactory flowArtifactFactory = new MockFlowArtifactFactory();
+
+            Flow detailFlow = new Flow("detail-flow");
+            // test responding to finish result
+            EndState finish = new EndState(detailFlow, "finish");
+            finish.addEntryAction(new AbstractAction() {
+                public Event doExecute(RequestContext context) throws Exception {
+                    // test attribute mapping
+                    assertEquals(new Long(1), context.getFlowScope().get("id"));
+                    return success();
+                }
+            });
+            flowArtifactFactory.registerSubflow(detailFlow);
+            flowArtifactFactory.registerBean("phonebook", phonebook);
+            return flowArtifactFactory;
         }
     }	    	
 	    	</programlisting>

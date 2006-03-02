@@ -220,7 +220,7 @@
 		<para>
 			Spring Web Flow allows for full control over how flow executor method parameters such as the
 			<literal>flowId</literal>, <literal>flowExecutionKey</literal>, <literal>eventId</literal>, and <literal>conversationId</literal> 
-			are extracted from an incoming controller request with the <literal>org.springframework.webflow.executor.support.FlowExecutorParameterExtractor</literal>
+			are extracted from an incoming controller request with the <literal>org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor</literal>
 			strategy.  The default strategy is request-parameter based.  Support for request path-based 
 			parameter extraction (REST-style URLs) is also provided.
 		</para>
@@ -252,10 +252,10 @@
     	<sect2 id="executor-mvc-resume-anchor">
     		<title>Resuming a flow execution - anchor</title>
 	    	<programlisting>
-    &lt;a href="flowController.htm?_flowExecutionId=${flowExecutionId}&amp;eventId=submit"/&gt;
+    &lt;a href="flowController.htm?_flowExecutionKey=${flowExecutionKey}&amp;eventId=submit"/&gt;
 	    	</programlisting>
 	    	<para>
-	    		The string-encoded _flowExecutionId parameter is parsed into a <literal>FlowExecutionKey</literal> 
+	    		The string-encoded _flowExecutionKey parameter is parsed into a <literal>FlowExecutionKey</literal> 
 	    		identity object automatically, using a <literal>FlowExecutionKeyFormatter</literal> by default.
 	    	</para>
     	</sect2>
@@ -264,13 +264,13 @@
 	    	<programlisting>
     &lt;form action="flowController.htm" method="post"&gt;
         ...
-        &lt;input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"&gt;
+        &lt;input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"&gt;
         &lt;input type="hidden" name="_eventId" value="submit"/>
         &lt;input type="submit" class="button" value="Submit"&gt;
     &lt;/form&gt;
 	    	</programlisting>
 	    	<para>
-	    		The string-encoded _flowExecutionId parameter is parsed into a <literal>FlowExecutionKey</literal> 
+	    		The string-encoded _flowExecutionKey parameter is parsed into a <literal>FlowExecutionKey</literal> 
 	    		identity object automatically, using a <literal>FlowExecutionKeyFormatter</literal> by default.
 	    	</para>
     	</sect2>
@@ -279,13 +279,13 @@
 	    	<programlisting>
     &lt;form action="flowController.htm" method="post"&gt;
         ...
-        &lt;input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"&gt;
+        &lt;input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"&gt;
         &lt;input type="submit" class="button" name="_eventId_submit" value="Submit"&gt;
         &lt;input type="submit" class="button" name="_eventId_cancel" value="Cancel"&gt;
     &lt;/form&gt;
 	    	</programlisting>
 	    	<para>
-	    		The string-encoded _flowExecutionId parameter is parsed into a <literal>FlowExecutionKey</literal> 
+	    		The string-encoded _flowExecutionKey parameter is parsed into a <literal>FlowExecutionKey</literal> 
 	    		identity object automatically, using a <literal>FlowExecutionKeyFormatter</literal> by default.
 	    		The <literal>eventId</literal> is determined by parsing the parameter name of the 
 	    		button that was pressed.
@@ -360,7 +360,7 @@
         ...
         &lt;h:inputText id="propertyName" value="#{flowScope.managedBeanName.propertyName}"/&gt;
         ...
-        &lt;input type="hidden" name="_flowExecutionId" value="${flowExecutionId}"&gt;
+        &lt;input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"&gt;
         &lt;h:commandButton type="submit" value="Next" action="submit"/&gt;
     &lt;/h:form&gt;
 	    	</programlisting>

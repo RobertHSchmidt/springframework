@@ -64,8 +64,8 @@
 				       </entry>
                    </row>         
                    <row>
-                       <entry>properties</entry>
-                       <entry>Additional custom properties about the flow.</entry>
+                       <entry>attributes</entry>
+                       <entry>Additional custom attributes about the flow.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -136,7 +136,7 @@
         	<title>XML-based flow template</title>
        	    <programlisting>
     &lt;flow start-state="startingPoint"&gt;
-        &lt;property .../&gt;
+        &lt;attribute .../&gt;
         
         &lt;start-actions&gt;
             ...
@@ -164,7 +164,7 @@
            <title>Java flow API example</title>
            <programlisting>
     Flow flow = new Flow("id");
-    flow.setProperty(..., ...);
+    flow.getAttributeMap().put("name", "value");
     flow.addState(...);
     flow.setStartState("startingPoint");
     flow.addStartAction(...);
@@ -213,8 +213,8 @@
 				       </entry>
                    </row>
                    <row>
-                       <entry>properties</entry>
-                       <entry>Additional custom properties about the state.</entry>
+                       <entry>attributes</entry>
+                       <entry>Additional custom attributes about the state.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -290,7 +290,7 @@
        	    <programlisting>
     &lt;flow start-state="stateId"&gt;
         &lt;some-state id="stateId"&gt;
-            &lt;property .../&gt;
+            &lt;attribute .../&gt;
             
             &lt;entry-actions&gt;
                 ...
@@ -312,7 +312,7 @@
            <programlisting>
     Flow flow = new Flow("id");
     TransitionableState state = new SomeConcreteStateType(flow, "stateId");
-    state.setProperty(..., ...);
+    state.getAttributeMap().put("name", "value");
     state.addEntryAction(...);
     state.addTransition(...);
     state.addExitAction(...);
@@ -611,46 +611,55 @@
 	          </tgroup>
     	    </table>
     	    <para>
-    	    	The properties of a <literal>org.springframework.webflow.ViewSelection</literal> are summarized below:
+    	    	The <literal>org.springframework.webflow.ViewSelection</literal> base class is abstract, 
+    	    	acting as a marker indicating a response should be issued to the client interacting 
+    	    	with the flow.  Concrete subtypes exist for each of the supported response types.
+    	    	These response types are summarized below:
     	    </para>
 	    	<table>
-    	        <title>ViewSelection properties</title>
-        	    <tgroup cols="4">
+    	        <title>ViewSelection types</title>
+        	    <tgroup cols="2">
             	    <colspec colname="c1" colwidth="2*" />
         			<colspec colname="c2" colwidth="4*" />
-	                <colspec colname="c2" colwidth="2*" />
-    	            <colspec colname="c2" colwidth="2*" />
 	                <thead>
        		            <row>
-               		        <entry>Property name</entry>
+               		        <entry>Type</entry>
                				<entry>Description</entry>
-	                        <entry>Cardinality</entry>
-       		                <entry>Default value</entry>
            				</row>
 		  			</thead>
 				  	<tbody>
             			<row>
-              				<entry>viewName</entry>
-							<entry>The <emphasis>logical</emphasis> identifier of a response that should be issued.</entry>
-						    <entry>
-								<emphasis>1</emphasis>
-							</entry>
+              				<entry>ApplicationView</entry>
+              				<entry>Requests the rendering of a local, internal application view resource such as a JSP, Velocity, or Freemarker template.</entry>
  						</row>
             			<row>
-              				<entry>modelMap</entry>
-							<entry>The data that will be issued in the response.</entry>
-						    <entry>
-								<emphasis>0..*</emphasis>
-							</entry>
-							<entry>Empty</entry>
+              				<entry>ConversationRedirect</entry>
+              				<entry>
+              					Wraps an ApplicationView, requesting a redirect to the view at a SWF-specific <i>conversation URL</i>.  
+              					When the URL is accessed on subsequent requests, the wrapped ApplicationView will be rendered.  The
+              					URL itself is bookmarkable and refreshable while the conversation remains active.
+              				</entry>
  						</row>
             			<row>
-              				<entry>redirect</entry>
-							<entry>Requests whether a browser redirect should be triggered.</entry>
-						    <entry>
-								<emphasis>1</emphasis>
-							</entry>
-							<entry>False</entry>
+              				<entry>FlowRedirect</entry>
+              				<entry>
+              					Requests a redirect that launches an entirely new flow--a new conversation.  Used to support 
+              					<i>redirect to flow</i> and <i>restart flow</i> use cases.
+              				</entry>
+ 						</row>
+            			<row>
+              				<entry>ExternalRedirect</entry>
+              				<entry>
+              					Requests a redirect to an arbitrary external URL, typically used to inteface 
+              					with an external system.
+              				</entry>
+ 						</row>
+            			<row>
+              				<entry>NullView</entry>
+              				<entry>
+              					Requests that no response be issued; for use in corner cases where the flow itself has already 
+              					issued the response.
+              				</entry>
  						</row>
             	   </tbody>
 	          </tgroup>
@@ -658,12 +667,12 @@
     	    <sect3 id="viewSelector">
     			<title>ViewSelector</title>
 	    		<para>
-    				The creational strategy that is responsible for making a <literal>ViewSelection</literal> when an <literal>ViewState</literal> is entered
+    				The creational strategy responsible for making a <literal>ViewSelection</literal> when an <literal>ViewState</literal> is entered
     				is <literal>org.springframework.webflow.ViewSelector</literal>.  This provides a plugin-point for customizing <emphasis>how</emphasis>
-    				the <literal>viewName</literal> is calculated, how the <literal>modelMap</literal> is prepared, and whether a redirect should be issued.
+    				a response instruction is calculated.
     			</para>
     			<para>
-    			    Two <literal>ViewSelector</literal> implementations are provided with Spring Web Flow:
+    			    Three <literal>ViewSelector</literal> implementations are provided with Spring Web Flow:
     			</para>
 	    		<table>
     	   			<title>ViewSelector implementations</title>
@@ -678,20 +687,29 @@
 						</thead>
 					  	<tbody>
             				<row>
-              					<entry>SimpleViewSelector</entry>
+              					<entry>ApplicationViewSelector</entry>
 								<entry>
-									Returns a ViewSelection with a static <literal>viewName</literal> and <literal>modelMap</literal> containing the union of 
+									Returns a ApplicationView referencing a static <literal>viewName</literal> and <literal>modelMap</literal> containing the union of 
 									the attributes in flow scope and request scope.  Supports setting a <literal>requestConversationRedirect</literal>
 									flag that triggers a browser redirect to the selected view.  The default implementation.
 								</entry>
 	        	   	        </row>
+	        	   	        <row>
+              					<entry>FlowRedirectViewSelector</entry>
+								<entry>
+									Returns a FlowRedirect with a <literal>flowId</literal> and <literal>inputMap</literal> requesting 
+									the start of an entirely new conversation (an instance of the Flow identified by the flowId).
+									Useful for <emphasis>redirect after flow completion</emphasis>, where one flow ending should trigger
+									the start of another flow, independently.
+								</entry>
+	        	   	        </row>
             				<row>
-              					<entry>RedirectViewSelector</entry>
+              					<entry>ExternalRedirectViewSelector</entry>
 								<entry>
 									Returns a ViewSelection that triggers a browser redirect to an abitrary external URL.
-									The <literal>viewName</literal> is the relative URL to redirect to.  Attributes added to the <literal>modelMap</literal>
-									become URL query parameters.  Mainly used by end states to
-									<emphasis>redirect after flow completion</emphasis>.
+									Mainly used by end states to redirect to external systems after flow completion,
+									but can also be used by view states to interface with an external system that may
+									call back into the conversation at a later point.
 								</entry>
 	        	   	        </row>
 	            		</tbody>
@@ -759,7 +777,7 @@
     	    	</para>
     	    	<programlisting>
     &lt;flow start-state="displayList"&gt;
-        &lt;view-state id="displayList" view="yourList" redirect="true"&gt;
+        &lt;view-state id="displayList" view="redirect:yourList"&gt;
             &lt;transition on="add" to="addListItem"/&gt;
         &lt;/view-state&gt;
         
@@ -781,7 +799,7 @@
     	    	<programlisting>
     public class SearchFlowBuilder extends AbstractFlowBuilder {
     	public void buildStates() {
-    	    addViewState("displayList", new SimpleViewSelector("yourView", true),
+    	    addViewState("displayList", new ApplicationViewSelector("yourView", true),
    	            transition(on("add"), to("addListItem"))
     	    );
             ...    	          
@@ -1669,7 +1687,7 @@
     			If the ended flow was acting as a top-level or <emphasis>root flow</emphasis> the
     			entire flow execution ends and cannot be resumed.  In this case the end state is responsible
     			for making a <literal>ViewSelection</literal> that is the basis for the ending response (for example, 
-    			a confirmation page, or a redirect request to an external URL).
+    			a confirmation page, or a redirect request to another flow or an external URL).
     		</para>
     		<para>
     			If the ended flow was acting as a subflow, the spawned subflow session ends and
@@ -1791,7 +1809,28 @@
     }	
     			</programlisting>
     		</sect3>
-    	    <sect3 id="endStateXml-redirect">
+    	    <sect3 id="endStateXml-flowredirect">
+    	    	<title>EndState XML - redirect to flow after completion</title>
+    	    	<para>
+    	    	    The following example constructs an <literal>EndState</literal> from
+    	    	    XML that terminates a shipping subflow and requests a 
+    	    	    redirect response to another flow:
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="enterOrderInformation"&gt;
+    
+        ...
+		        
+        &lt;end-state id="finish" view="flowRedirect:searchFlow"/&gt;
+        
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This end state definition reads "<emphasis>terminate the <literal>order</literal> flow 
+    			    and request a redirect to the <literal>searchFlow</literal></emphasis>".
+    			</para>
+			</sect3>    		
+    	    <sect3 id="endStateXml-externalRedirect">
     	    	<title>EndState XML - redirect after flow completion</title>
     	    	<para>
     	    	    The following example constructs an <literal>EndState</literal> from
@@ -1803,7 +1842,7 @@
     
         ...
 		        
-        &lt;end-state id="finish" view="redirect:/orders/${flowScope.order.id}"/&gt;
+        &lt;end-state id="finish" view="externalRedirect:/orders/${flowScope.order.id}"/&gt;
         
     &lt;/flow&gt;
     			</programlisting>
