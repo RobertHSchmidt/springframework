@@ -690,9 +690,11 @@
             				<row>
               					<entry>ApplicationViewSelector</entry>
 								<entry>
-									Returns a ApplicationView referencing a static <literal>viewName</literal> and <literal>modelMap</literal> containing the union of 
-									the attributes in flow scope and request scope.  Supports setting a <literal>requestConversationRedirect</literal>
-									flag that triggers a browser redirect to the selected view.  The default implementation.
+									Returns a ApplicationView referencing a static <literal>viewName</literal> to render an containing a
+									<literal>modelMap</literal> containing the application data to make available to the rendering process
+									(by default, this map contains the union of the attributes in flow and request scope).
+									Supports setting a <literal>requestConversationRedirect</literal> flag that triggers
+									a browser redirect to the selected view. The default implementation.
 								</entry>
 	        	   	        </row>
 	        	   	        <row>
@@ -707,7 +709,7 @@
             				<row>
               					<entry>ExternalRedirectViewSelector</entry>
 								<entry>
-									Returns a ViewSelection that triggers a browser redirect to an abitrary external URL.
+									Returns a ExternalRedirect that triggers a browser redirect to an abitrary external URL.
 									Mainly used by end states to redirect to external systems after flow completion,
 									but can also be used by view states to interface with an external system that may
 									call back into the conversation at a later point.
