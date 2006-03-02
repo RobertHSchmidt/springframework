@@ -23,7 +23,7 @@
 	<bean id="repositoryFactory" class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepositoryFactory">
 		<constructor-arg ref="flowRegistry"/>
 		<property name="listenerLoader">
-			<bean class="org.springframework.webflow.executor.ConditionalFlowExecutionListenerLoader">
+			<bean class="org.springframework.webflow.execution.ConditionalFlowExecutionListenerLoader">
 		        <property name="listener">
 					<bean class="org.springframework.webflow.samples.flowlauncher.SampleFlowExecutionListener"/>
     		    </property>
