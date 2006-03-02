@@ -62,9 +62,9 @@ For an exact list of Spring Web Flow project dependencies see "projects/spring-w
 This distribution contains extensive documentation and sample applications illustrating the
 features of Spring Web Flow.
 
-A great way to get started is to review and run the sample applications, supplimenting with
+*** A great way to get started is to review and run the sample applications, supplimenting with
 reference manual material as needed.  To build deployable .war files for all samples, simply 
-access the "build-spring-webflow" directory and execute the "dist" target.
+access the "build-spring-webflow" directory and execute the "dist" target. ***
 
 More information on deploying SWF sample applications can be found at:
 	projects/spring-webflow-samples/readme.txt
