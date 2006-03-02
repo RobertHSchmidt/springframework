@@ -165,7 +165,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 	// implementing FlowLocator
 	
 	public Flow getFlow(String id) throws FlowArtifactException {
-		Assert.hasText(id, "The flow id is required");
+		Assert.hasText(id, "Unable to load a flow definition: no flow id was provided.  Please provide a valid flow identifier.");
 		try {
 			return getFlowDefinitionHolder(id).getFlow();
 		}
