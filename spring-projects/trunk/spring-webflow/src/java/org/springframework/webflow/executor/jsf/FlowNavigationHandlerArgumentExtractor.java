@@ -4,7 +4,7 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**
- * A extension of {@link DefaultFlowExecutorParameterExtractor} that is aware of JSF
+ * An extension of {@link FlowExecutorArgumentExtractor} that is aware of JSF
  * outcomes that communicate requests to launch flow executions and signal event
  * in existing flow executions.
  * 

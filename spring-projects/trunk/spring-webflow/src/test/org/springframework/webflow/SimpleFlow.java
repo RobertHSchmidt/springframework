@@ -4,8 +4,8 @@
 package org.springframework.webflow;
 
 import org.springframework.binding.expression.support.StaticExpression;
-import org.springframework.webflow.support.ExternalRedirectSelector;
 import org.springframework.webflow.support.ApplicationViewSelector;
+import org.springframework.webflow.support.ExternalRedirectSelector;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 
 public class SimpleFlow extends Flow {

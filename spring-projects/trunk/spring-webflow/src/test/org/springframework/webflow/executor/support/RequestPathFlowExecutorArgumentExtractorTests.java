@@ -2,7 +2,6 @@ package org.springframework.webflow.executor.support;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentExtractor;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
