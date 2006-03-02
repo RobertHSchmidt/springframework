@@ -1,17 +1,7 @@
 <?xml version="1.0"?>
 
 <!-- 
-
-    This is the XSL FO configuration file for the Hibernate
-    Reference Documentation. It defines a custom titlepage and
-    the parameters for the A4 sized PDF printable output.
-    
-    It took me days to figure out this stuff and fix most of
-    the obvious bugs in the DocBook XSL distribution, so if you
-    use this stylesheet, give some credit back to the Hibernate
-    project.
-    
-    christian.bauer@bluemars.de
+	The base of this stylesheet was graciously borrowed from the Hibernate project.
 -->
 
 <!DOCTYPE xsl:stylesheet [
@@ -59,7 +49,7 @@
                     <fo:table-row>
                         <fo:table-cell text-align="center">
                             <fo:block font-family="Helvetica" font-size="12pt" padding="10mm">
-                                <xsl:text>Copyright (c) 2004-2005 </xsl:text>
+                                <xsl:text>Copyright (c) 2004-2006 </xsl:text>
                                 <xsl:for-each select="bookinfo/authorgroup/author">
                                     <xsl:if test="position() > 1">
                                         <xsl:text>, </xsl:text>

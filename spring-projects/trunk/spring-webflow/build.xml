@@ -10,6 +10,7 @@
 
 	<property name="project.title" value="Spring Web Flow" />
 	<property name="project.package" value="org.springframework.webflow" />
+	<property name="project.copyright" value="Copyright &#169; 2002-2004. All Rights Reserved."/>
 
 	<import file="${common.build.dir}/common-targets.xml" />
 	<import file="${common.build.dir}/clover-targets.xml" />
