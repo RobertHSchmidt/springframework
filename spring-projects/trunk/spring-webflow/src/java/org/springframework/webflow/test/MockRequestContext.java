@@ -217,4 +217,13 @@ public class MockRequestContext implements RequestContext {
 	public void putRequestParameter(String parameterName, String[] parameterValues) {
 		getMockExternalContext().putRequestParameter(parameterName, parameterValues);
 	}
+	
+	/**
+	 * Returns the contained mutable context {@link AttributeMap} allowing setting of mock context 
+	 * attributes.
+	 * @return the attribute map
+	 */
+	public AttributeMap getAttributeMap() {
+		return attributes;
+	}
 }
