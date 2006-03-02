@@ -7,7 +7,7 @@
 	
 	<context-param>
 		<param-name>webAppRootKey</param-name>
-		<param-value>@PROJECT_WEBAPP_NAME@.root</param-value>
+		<param-value>flowlauncher.root</param-value>
 	</context-param>
 	
 	<context-param>

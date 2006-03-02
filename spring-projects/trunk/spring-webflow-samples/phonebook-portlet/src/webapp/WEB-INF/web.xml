@@ -4,7 +4,7 @@
 
 	<context-param>
 		<param-name>webAppRootKey</param-name>
-		<param-value>phonebook.root</param-value>
+		<param-value>phonebook-portlet.root</param-value>
 	</context-param>
 
 	<context-param>
