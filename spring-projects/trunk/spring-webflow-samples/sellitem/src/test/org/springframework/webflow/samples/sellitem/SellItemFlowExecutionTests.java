@@ -7,7 +7,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
-import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 import org.springframework.webflow.test.MockFlowArtifactFactory;
 import org.springframework.webflow.test.MockParameterMap;
@@ -26,7 +26,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	}
 
 	public void testStartFlow() {
-		ApplicationViewSelection selectedView = applicationView(startFlow());
+		ApplicationView selectedView = applicationView(startFlow());
 		assertModelAttributeNotNull("sale", selectedView);
 		assertViewNameEquals("priceAndItemCountForm", selectedView);
 	}
@@ -36,7 +36,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		MockParameterMap parameters = new MockParameterMap();
 		parameters.put("itemCount", "4");
 		parameters.put("price", "25");
-		ApplicationViewSelection selectedView = applicationView(signalEvent("submit", parameters));
+		ApplicationView selectedView = applicationView(signalEvent("submit", parameters));
 		assertViewNameEquals("categoryForm", selectedView);
 	}
 
@@ -44,7 +44,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		testSubmitPriceAndItemCount();
 		MockParameterMap parameters = new MockParameterMap();
 		parameters.put("category", "A");
-		ApplicationViewSelection selectedView = applicationView(signalEvent("submit", parameters));
+		ApplicationView selectedView = applicationView(signalEvent("submit", parameters));
 		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
 	}
@@ -54,7 +54,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		MockParameterMap parameters = new MockParameterMap();
 		parameters.put("category", "A");
 		parameters.put("shipping", "true");
-		ApplicationViewSelection selectedView = applicationView(signalEvent("submit", parameters));
+		ApplicationView selectedView = applicationView(signalEvent("submit", parameters));
 		assertViewNameEquals("shippingDetailsForm", selectedView);
 	}
 
@@ -66,7 +66,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 		MockParameterMap parameters = new MockParameterMap();
 		parameters.put("shippingType", "E");
-		ApplicationViewSelection selectedView = applicationView(signalEvent("submit", parameters));
+		ApplicationView selectedView = applicationView(signalEvent("submit", parameters));
 		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
 

@@ -28,7 +28,7 @@ import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook;
 import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
-import org.springframework.webflow.support.ApplicationViewSelection;
+import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
 import org.springframework.webflow.test.MockFlowArtifactFactory;
 import org.springframework.webflow.test.MockParameterMap;
@@ -36,7 +36,7 @@ import org.springframework.webflow.test.MockParameterMap;
 public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testStartFlow() {
-		ApplicationViewSelection view = applicationView(startFlow());
+		ApplicationView view = applicationView(startFlow());
 		assertCurrentStateEquals("enterCriteria");
 		assertViewNameEquals("searchCriteria", view);
 		assertModelAttributeNotNull("searchCriteria", view);
@@ -47,7 +47,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		MockParameterMap parameters = new MockParameterMap();
 		parameters.put("firstName", "Keith");
 		parameters.put("lastName", "Donald");
-		ApplicationViewSelection view = applicationView(signalEvent("search", parameters));
+		ApplicationView view = applicationView(signalEvent("search", parameters));
 		assertCurrentStateEquals("displayResults");
 		assertViewNameEquals("searchResults", view);
 		assertModelAttributeCollectionSize(1, "results", view);
@@ -61,7 +61,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testNewSearch() {
 		testCriteriaSubmitSuccess();
-		ApplicationViewSelection view = applicationView(signalEvent("newSearch"));
+		ApplicationView view = applicationView(signalEvent("newSearch"));
 		assertCurrentStateEquals("enterCriteria");
 		assertViewNameEquals("searchCriteria", view);
 	}
@@ -70,7 +70,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		testCriteriaSubmitSuccess();
 		MockParameterMap parameters = new MockParameterMap();
 		parameters.put("id", "1");
-		ApplicationViewSelection view = applicationView(signalEvent("select", parameters));
+		ApplicationView view = applicationView(signalEvent("select", parameters));
 		assertCurrentStateEquals("displayResults");
 		assertViewNameEquals("searchResults", view);
 		assertModelAttributeCollectionSize(1, "results", view);
