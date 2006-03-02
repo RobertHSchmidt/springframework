@@ -39,6 +39,7 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 import org.springframework.webflow.executor.support.FlowRequestHandler;
+import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentExtractor;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowRedirect;
@@ -53,9 +54,19 @@ import org.springframework.webflow.support.FlowRedirect;
  * Consult the JavaDoc of that class for more information on how requests are
  * processed.
  * <p>
- * Note: a single FlowController may execute all flows of your application.  
- * See the flowLauncher sample application for examples of the various strategies 
- * for launching and resuming flow executions.
+ * Note: a single FlowController may execute all flows of your application.
+ * <p>
+ * <li>By default, to have this controller launch a new flow execution
+ * (conversation), have the client send a
+ * {@link FlowExecutorArgumentExtractor#getFlowIdParameterName()} request
+ * parameter indicating the flow definition to launch.
+ * <li>To have this controller participate in an existing flow execution
+ * (conversation), have the client send a
+ * {@link FlowExecutorArgumentExtractor#getFlowExecutionKeyParameterName()}
+ * request parameter identifying the conversation to participate in.
+ * <p>
+ * See the flowLauncher sample application for examples of the various
+ * strategies for launching and resuming flow executions.
  * <p>
  * Usage example:
  * 
@@ -69,7 +80,7 @@ import org.springframework.webflow.support.FlowRedirect;
  *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
  *         &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
  *     &lt;/bean&gt;
- *                                                                                  
+ *                                                                                   
  *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
  *     &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
  *         &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
@@ -78,7 +89,11 @@ import org.springframework.webflow.support.FlowRedirect;
  * 
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
  * strategy to allow for different types of controller parameterization, for
- * example perhaps in conjunction with a REST-style request mapper.
+ * example perhaps in conjunction with a REST-style request mapper
+ * (see {@link RequestPathFlowExecutorArgumentExtractor}).
+ * 
+ * @see FlowExecutor
+ * @see FlowExecutorArgumentExtractor
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -95,7 +110,7 @@ public class FlowController extends AbstractController implements InitializingBe
 	 * The strategy for extracting flow executor parameters from a request made
 	 * by a {@link ExternalContext}.
 	 */
-	private FlowExecutorArgumentExtractor argumentExtractor;
+	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
 
 	/**
 	 * Sets the flow locator responsible for loading flow definitions when
@@ -147,6 +162,15 @@ public class FlowController extends AbstractController implements InitializingBe
 	 */
 	public void setArgumentExtractor(FlowExecutorArgumentExtractor parameterExtractor) {
 		this.argumentExtractor = parameterExtractor;
+	}
+
+	/**
+	 * Sets the identifier of the default flow to launch if no flowId argument
+	 * can be extracted by the configured {@link FlowExecutorArgumentExtractor}
+	 * during request processing.
+	 */
+	public void setDefaultFlowId(String defaultFlowId) {
+		this.argumentExtractor.setDefaultFlowId(defaultFlowId);
 	}
 
 	public void afterPropertiesSet() {

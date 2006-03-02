@@ -51,9 +51,10 @@ import org.springframework.webflow.support.FlowRedirect;
  * which this class delegates to. Consult the JavaDoc of that class for more
  * information on how requests are processed.
  * <p>
- * Note: a single PortletFlowController may execute all flows within your portlet.
- * See the phonebook-portlet sample application for examples of the various strategies 
- * for launching and resuming flow executions in a Portlet environment. 
+ * Note: a single PortletFlowController may execute all flows within your
+ * portlet. See the phonebook-portlet sample application for examples of the
+ * various strategies for launching and resuming flow executions in a Portlet
+ * environment.
  * </ul>
  * <p>
  * Usage example:
@@ -63,10 +64,10 @@ import org.springframework.webflow.support.FlowRedirect;
  *         Exposes flows for execution.
  *     --&gt;
  *     &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *         &lt;property name="flowLocator" ref=&quot;flowRegistry&quot;/&gt;
+ *         &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
  *         &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
  *     &lt;/bean&gt;
- *                                                                             
+ *                                                                              
  *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
  *         &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
  *         &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
@@ -76,6 +77,9 @@ import org.springframework.webflow.support.FlowRedirect;
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
  * strategy to allow for different types of controller parameterization, for
  * example perhaps in conjunction with a REST-style request mapper.
+ * 
+ * @see FlowExecutor
+ * @see FlowExecutorArgumentExtractor
  * 
  * @author J.Enrique Ruiz
  * @author César Ordiñana
@@ -93,7 +97,7 @@ public class PortletFlowController extends AbstractController implements Initial
 	/**
 	 * Delegate for extracting flow executor arguments.
 	 */
-	private FlowExecutorArgumentExtractor argumentExtractor;
+	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
 
 	/**
 	 * Sets the flow locator responsible for loading flow definitions when
@@ -141,13 +145,19 @@ public class PortletFlowController extends AbstractController implements Initial
 		this.argumentExtractor = parameterExtractor;
 	}
 
+	/**
+	 * Sets the identifier of the default flow to launch if no flowId argument
+	 * can be extracted by the configured {@link FlowExecutorArgumentExtractor}
+	 * during render request processing.
+	 */
+	public void setDefaultFlowId(String defaultFlowId) {
+		this.argumentExtractor.setDefaultFlowId(defaultFlowId);
+	}
+
 	public void afterPropertiesSet() {
 		Assert.notNull(flowExecutor, "The flow executor property is required");
-		if (argumentExtractor == null) {
-			argumentExtractor = new FlowExecutorArgumentExtractor();
-		}
 	}
-	
+
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
 		Serializable conversationId = argumentExtractor.extractConversationId(context);

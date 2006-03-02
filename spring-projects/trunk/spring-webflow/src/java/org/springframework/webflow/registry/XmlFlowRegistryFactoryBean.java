@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.io.Resource;
 
 /**
@@ -67,20 +66,6 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * Temporary holder for flow definitions configured using a property map.
 	 */
 	private Properties flowDefinitions;
-
-	/**
-	 * Creates a xml flow registry factory bean.
-	 */
-	public XmlFlowRegistryFactoryBean() {
-	}
-
-	/**
-	 * Creates a xml flow registry factory bean, for programmatic usage only.
-	 * @param beanFactory the bean factory to use for locating flow artifacts.
-	 */
-	public XmlFlowRegistryFactoryBean(BeanFactory beanFactory) {
-		setBeanFactory(beanFactory);
-	}
 
 	/**
 	 * Factory method that returns a new externalized flow registrar. Subclasses
