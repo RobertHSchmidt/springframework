@@ -1,4 +1,4 @@
-SPRING WEB FLOW 1.0 RC1 (February 2006)
+SPRING WEB FLOW 1.0 EARLY ACCESS (March 2006)
 -------------------------------
 http://opensource.atlassian.com/confluence/spring/display/WEBFLOW/Home
 http://forum.springframework.org
