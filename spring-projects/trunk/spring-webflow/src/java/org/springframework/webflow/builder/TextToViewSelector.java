@@ -27,8 +27,8 @@ import org.springframework.webflow.MapAccessor;
 import org.springframework.webflow.NullViewSelector;
 import org.springframework.webflow.State;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.support.ExternalRedirectSelector;
 import org.springframework.webflow.support.ApplicationViewSelector;
+import org.springframework.webflow.support.ExternalRedirectSelector;
 
 /**
  * Converter that converts an encoded string representation of a view selector

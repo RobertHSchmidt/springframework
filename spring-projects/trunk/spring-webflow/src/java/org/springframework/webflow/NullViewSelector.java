@@ -15,8 +15,18 @@
  */
 package org.springframework.webflow;
 
-public final class NullViewSelector implements ViewSelector {
+import java.io.Serializable;
 
+/**
+ * Makes a null view selection, indicating no response should be issued.
+ * 
+ * @author Keith Donald
+ */
+public final class NullViewSelector implements ViewSelector, Serializable {
+
+	/**
+	 * The shared singleton {@link NullViewSelector} instance. 
+	 */
 	public static final ViewSelector INSTANCE = new NullViewSelector();
 
 	private NullViewSelector() {
