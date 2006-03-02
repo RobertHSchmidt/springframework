@@ -112,6 +112,18 @@ public class FlowController extends AbstractController implements InitializingBe
 	 */
 	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
 
+	public FlowController() {
+		initDefaults();
+	}
+	
+	/**
+	 * Initialize the defaults of this constructor. 
+	 */
+	protected void initDefaults() {
+		// set the cache seconds property to 0 so no pages are cached by default for flows.
+		setCacheSeconds(0);
+	}
+	
 	/**
 	 * Sets the flow locator responsible for loading flow definitions when
 	 * requested for execution by clients.
