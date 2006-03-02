@@ -368,8 +368,8 @@
 	  			</thead>
 			  	<tbody>
            			<row>
-           				<entry>properties</entry>
-						<entry>Additional properties describing the transition.</entry>
+           				<entry>attributes</entry>
+						<entry>Additional attributes describing the transition.</entry>
 					    <entry>
 							<emphasis>0..*</emphasis>
 						</entry>
@@ -416,7 +416,7 @@
         	<title>Transition XML template</title>
        	    <programlisting>
     &lt;transition on="event" to="targetState"&gt;
-        &lt;property .../&gt;
+        &lt;attribute .../&gt;
         &lt;action ../&gt;
     &lt;/transition&gt;
          	</programlisting>
@@ -425,7 +425,7 @@
         	<title>Transition Java API example</title>
        	    <programlisting>
     Transition transition = new Transition(new StaticTargetStateResolver("targetState"));
-    transition.setProperty(..., ...);
+    transition.getAttributeMap().put("name", "value");
     transition.setMatchingCriteria(new EventIdTransitionCriteria("event"));
     transition.setExecutionCriteria(...);
          	</programlisting>
@@ -963,25 +963,25 @@
     		    </table> 	
     		</sect3>
     		<sect3>
-    			<title>Action properties</title>
+    			<title>Action attributes</title>
     			<para>
-    			    An <literal>Action</literal> may be annotated with properties by wrapping the Action 
+    			    An <literal>Action</literal> may be annotated with attributes by wrapping the Action 
     			    in a decorator, an instance of <literal>org.springframework.webflow.AnnotatedAction</literal>.
     			    These properties may provide descriptive characteristics, or may be used to affect
     			    the action's execution in a specific usage context.
 	    		</para>
     			<para>
-    			    Support for setting several common properties are provided for convenience.  These 
+    			    Support for setting several common attributes are provided for convenience.  These 
     			    include:
 	    		</para>
 	    		<table>
-    	   			<title>Common Action properties</title>
+    	   			<title>Common Action attributes</title>
         		    <tgroup cols="2">
 		           	    <colspec colname="c1" colwidth="2*" />
         				<colspec colname="c2" colwidth="4*" />
 	        	        <thead>
        		    	        <row>
-               			        <entry>Property name</entry>
+               			        <entry>Attribute name</entry>
                					<entry>Description</entry>
                			    </row>
 						</thead>
