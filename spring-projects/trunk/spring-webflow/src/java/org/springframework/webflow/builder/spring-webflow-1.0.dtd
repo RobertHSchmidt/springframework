@@ -254,22 +254,40 @@
 <!--
 	The name of the view to render when this view state is entered.
 	
-	This value may be a static view name or even a direct pointer to a view template. For example:
+	This value may be a logical application view name or even a direct pointer to a view template.
+	For example:
 	    "priceForm" or "/WEB-INF/jsp/priceForm.jsp"
 	
 	This value may also be qualified with a prefix to denote a specific (possibly custom)
 	ViewSelector strategy.
 
+	Use of the "redirect:" prefix indicates this view state should trigger a redirect to a 
+	well-known "conversation URL".  This causes the selected application view to be cached and a redirect request is issued that
+	refers back to it at a specific URL.  This allows for bookmarking and refreshing the
+	last view selection made in a stable manner.
+		"redirect:priceForm"
+
+	Use of the "externalRedirect:" prefix indicates this view state should trigger a 
+	redirect to an absolute external URL.  External redirect query parameters may be specified
+	using ${expressions} that evaluate against the request context. For example:
+	    "externalRedirect:/someOtherSystem.htm?orderId=${flowScope.order.id}"
+	
+	Use of the "flowRedirect:" prefix indicates this view state should trigger a redirect that
+	starts another flow.  Flow input parameters may be specified using ${expressions} that 
+	evaluate against the request context.
+		"redirect:search-flow?flightNumber=${flowScope.flight.number}"
+		
 	Use of the "bean:" prefix references a custom ViewSelector implementation you define,
 	exposed by id in either a flow-local context using the "import" element or in the parent 
 	context.
+	    "bean:myCustomViewSelector"
 	
 	The exact semantics regarding the interpretation of this value are determined by the
 	installed TextToViewSelector converter.
 
-	Note when no view name is provided, this view state will act as a marker state. A marker
-	view state does not request the rendering of a view, it only pauses the flow and returns control 
-	the client. Use a marker view state when another state is expected to generate the response.
+	Note when no view name is provided, this view state will make a "null" view selection. A null
+	view does not request the rendering of a view, it only pauses the flow and returns control 
+	the client. Use a null view when another state is expected to generate the response.
 -->
 <!ATTLIST view-state view CDATA #IMPLIED>
 
@@ -552,14 +570,27 @@
 	This value may also be qualified with a prefix to denote a specific (possibly custom)
 	ViewSelector strategy. Specifically:
 	
-	Use of the "redirect:" prefix triggers creation of a RedirectViewSelector which will request
-	a redirect to a specific "after conversation completion" URL. For example:
+	Use of the "redirect:" prefix triggers a redirect to a specific "after conversation completion"
+	external URL.  For example:
 	    "redirect:/home.html"
 	
 	Redirect query parameters may also be specified using ${expressions} that evaluate against
 	the request context. For example:
 	    "redirect:/thankyou.htm?confirmationNumber=${flowScope.order.confirmation.id}"
 	
+	Use of the "flowRedirect:" prefix indicates this view state should trigger a redirect that
+	starts another flow.  Flow input parameters may be specified using ${expressions} that 
+	evaluate against the request context.
+		"flowRedirect:search-flow?firstName=${flowScope.searchCriteria.firstName}"
+		
+	Use of the "bean:" prefix references a custom ViewSelector implementation you define,
+	exposed by id in either a flow-local context using the "import" element or in the parent 
+	context.
+	    "bean:myCustomViewSelector"
+	
+	The exact semantics regarding the interpretation of this value are determined by the
+	installed TextToViewSelector converter.
+
 	The exact semantics regarding the interpretation of this value are determined by the
 	installed TextToViewSelector converter.
 
