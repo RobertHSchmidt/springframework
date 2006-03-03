@@ -31,15 +31,11 @@ public abstract class JaxpVersion {
 
     public static final int JAXP_11 = 1;
 
-    public static final int JAXP_12 = 1;
-
     public static final int JAXP_13 = 3;
 
     public static final int JAXP_14 = 4;
 
     private static final String JAXP_11_CLASS_NAME = "javax.xml.transform.Transformer";
-
-    private static final String JAXP_12_CLASS_NAME = "javax.xml.namespace.QName";
 
     private static final String JAXP_13_CLASS_NAME = "javax.xml.xpath.XPath";
 
