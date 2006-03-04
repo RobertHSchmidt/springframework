@@ -52,6 +52,7 @@ public abstract class AbstractDomPayloadEndpoint implements PayloadEndpoint, Ini
     public final void afterPropertiesSet() throws Exception {
         transformerFactory = TransformerFactory.newInstance();
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
         onAfterPropertiesSet();
     }
 
