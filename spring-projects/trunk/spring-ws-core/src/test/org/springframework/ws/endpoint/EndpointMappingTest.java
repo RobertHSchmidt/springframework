@@ -91,43 +91,6 @@ public class EndpointMappingTest extends TestCase {
         assertNotNull("No endpoint returned", result);
     }
 
-/*
-    public void testEndpointMethodName() throws Exception {
-        StaticApplicationContext applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton("endpoint", MyEndpoint.class);
-        AbstractEndpointMapping endpointMapping = new AbstractEndpointMapping() {
-
-            protected Object getEndpointInternal(SOAPMessage message) throws Exception {
-                assertEquals(getRequest(), message);
-                return "endpoint#method";
-            }
-        };
-        endpointMapping.setApplicationContext(applicationContext);
-
-        EndpointInvocationChain result = endpointMapping.getEndpoint(request);
-        assertNotNull("No endpoint returned", result);
-        MethodEndpoint methodEndpoint = (MethodEndpoint) result.getEndpoint();
-        assertTrue("Bean name not resolved", methodEndpoint.getTargetObject() instanceof MyEndpoint);
-        assertEquals("Bean method not resolved", "method", methodEndpoint.getTargetMethod().getName());
-    }
-
-    public void testEndpointInvalidMethodName() throws Exception {
-        StaticApplicationContext applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton("endpoint", MyEndpoint.class);
-        AbstractEndpointMapping endpointMapping = new AbstractEndpointMapping() {
-
-            protected Object getEndpointInternal(SOAPMessage message) throws Exception {
-                assertEquals(getRequest(), message);
-                return "endpoint#noSuchMethod";
-            }
-        };
-        endpointMapping.setApplicationContext(applicationContext);
-
-        EndpointInvocationChain result = endpointMapping.getEndpoint(null);
-        assertNull("Endpoint returned", result);
-    }
-*/
-
     public void testEndpointInvalidBeanName() throws Exception {
         final MockSoapMessage request = new MockSoapMessage();
 
@@ -148,12 +111,5 @@ public class EndpointMappingTest extends TestCase {
         assertNull("No endpoint returned", result);
     }
 
-/*
-    private static class MyEndpoint {
-
-        public void method() {
-        }
-    }
-*/
 
 }
