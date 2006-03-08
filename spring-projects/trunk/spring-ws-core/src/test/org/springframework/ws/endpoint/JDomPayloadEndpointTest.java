@@ -25,9 +25,6 @@ import org.jdom.Element;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
-/**
- * @author Arjen Poutsma
- */
 public class JDomPayloadEndpointTest extends XMLTestCase {
 
     public void testInvokeInternalNullResponse() throws Exception {
