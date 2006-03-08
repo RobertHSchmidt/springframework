@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 
 /**
  * Abstract base class for endpoints that handle the message payload as DOM elements. Offers the message payload as a
- * DOM <code>Element</code>, and allows subclasses to create a response by returning an <code>Elements</code>.
+ * DOM <code>Element</code>, and allows subclasses to create a response by returning an <code>Element</code>.
  * <p/>
  * An <code>AbstractDomPayloadEndpoint</code> only accept one payload element. Multiple payload elements are not in
  * accordance with WS-I.
