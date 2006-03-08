@@ -53,6 +53,10 @@ public class SoapMessageDispatcher extends MessageDispatcher {
         if (mappedEndpoint instanceof SoapEndpointInvocationChain && messageContext instanceof SoapMessageContext) {
             SoapEndpointInvocationChain mappedSoapEndpoint = (SoapEndpointInvocationChain) mappedEndpoint;
             SoapMessageContext soapContext = (SoapMessageContext) messageContext;
+            if (soapContext.getSoapRequest().getSoapHeader() == null) {
+                // no headers to process
+                return true;
+            }
             for (int i = 0; i < mappedSoapEndpoint.getRoles().length; i++) {
                 String role = mappedSoapEndpoint.getRoles()[i];
                 if (!handleRequestForRole(mappedSoapEndpoint, soapContext, role)) {
