@@ -137,6 +137,20 @@ public class SoapMessageDispatcherTest extends TestCase {
         verifyMockControls();
     }
 
+    public void testProcessNoHeader() throws Exception {
+        contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
+        messageControl.expectAndReturn(requestMock.getSoapHeader(), null);
+
+        replayMockControls();
+
+        SoapEndpointInvocationChain chain = new SoapEndpointInvocationChain(new Object(),
+                new SoapEndpointInterceptor[]{interceptorMock}, new String[]{"role"});
+
+        boolean result = dispatcher.handleRequest(chain, contextMock);
+        assertTrue("Invalid result", result);
+        verifyMockControls();
+    }
+
     private void replayMockControls() {
         contextControl.replay();
         messageControl.replay();
