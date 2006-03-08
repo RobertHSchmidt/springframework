@@ -90,7 +90,7 @@ public abstract class QNameUtils {
 
     /**
      * Convert a namespace URI and DOM or SAX qualified name to a <code>QName</code>. The qualified name can have the
-     * form <<code>prefix:localname</code> or <code>localName</code>.
+     * form <code>prefix:localname</code> or <code>localName</code>.
      *
      * @param namespaceUri  the namespace URI
      * @param qualifiedName the qualified name
@@ -107,20 +107,10 @@ public abstract class QNameUtils {
     }
 
     /**
-     * Parse the given qualified name string into a <code>QName</code>. Expects the syntax
-     * <pre>
-     * localPart
-     * </pre>
-     * or
-     * <pre>
-     * {namespace}localPart
-     * </pre>
-     * or
-     * <pre>
-     * {namespace}prefix:localPart
-     * </pre>
-     * This resembles the <code>toString()</code> representation of <code>QName</code> itself, but allows for prefixes
-     * to be specified as well.
+     * Parse the given qualified name string into a <code>QName</code>. Expects the syntax <code>localPart</code>,
+     * <code>{namespace}localPart</code>, or <code>{namespace}prefix:localPart</code>. This format resembles the
+     * <code>toString()</code> representation of <code>QName</code> itself, but allows for prefixes to be specified as
+     * well.
      *
      * @param qNameString
      * @return a corresponding QName instance
