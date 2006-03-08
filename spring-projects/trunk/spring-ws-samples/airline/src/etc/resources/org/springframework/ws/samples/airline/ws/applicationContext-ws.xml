@@ -106,17 +106,16 @@
           class="org.springframework.ws.soap.endpoint.SoapFaultMappingExceptionResolver">
         <description>
             This exception resolver maps exceptions to SOAP Faults. Both UnmarshallingException and
-            ValidationFailureException
-            are mapped to a SOAP Fault with a "Client" fault code. All other exceptions are mapped to a "Server" error
-            code.
+            ValidationFailureException are mapped to a SOAP Fault with a "Sender" fault code. All other exceptions are
+            mapped to a "Receiver" error code, the default.
         </description>
         <property name="defaultFault">
-            <value>Server,Server error</value>
+            <value>RECEIVER,Server error</value>
         </property>
         <property name="exceptionMappings">
             <props>
-                <prop key="org.springframework.oxm.UnmarshallingException">Client,Invalid request</prop>
-                <prop key="org.springframework.oxm.ValidationFailureException">Client,Invalid request</prop>
+                <prop key="org.springframework.oxm.UnmarshallingException">SENDER,Invalid request</prop>
+                <prop key="org.springframework.oxm.ValidationFailureException">SENDER,Invalid request</prop>
             </props>
         </property>
     </bean>
