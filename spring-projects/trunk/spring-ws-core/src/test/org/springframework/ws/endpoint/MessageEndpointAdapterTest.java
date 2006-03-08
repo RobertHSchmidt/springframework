@@ -18,7 +18,7 @@ package org.springframework.ws.endpoint;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
-import org.springframework.ws.mock.soap.MockSoapMessageContext;
+import org.springframework.ws.mock.MockMessageContext;
 
 public class MessageEndpointAdapterTest extends TestCase {
 
@@ -39,7 +39,7 @@ public class MessageEndpointAdapterTest extends TestCase {
     }
 
     public void testInvoke() throws Exception {
-        MockSoapMessageContext context = new MockSoapMessageContext();
+        MockMessageContext context = new MockMessageContext();
 
         endpointMock.invoke(context);
         endpointControl.replay();

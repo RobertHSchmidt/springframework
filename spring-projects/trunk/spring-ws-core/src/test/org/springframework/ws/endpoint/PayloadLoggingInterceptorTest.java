@@ -22,8 +22,8 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
-import org.springframework.ws.mock.soap.MockSoapMessage;
-import org.springframework.ws.mock.soap.MockSoapMessageContext;
+import org.springframework.ws.mock.MockMessageContext;
+import org.springframework.ws.mock.MockWebServiceMessage;
 
 public class PayloadLoggingInterceptorTest extends TestCase {
 
@@ -31,7 +31,7 @@ public class PayloadLoggingInterceptorTest extends TestCase {
 
     private CountingAppender appender;
 
-    private MockSoapMessageContext messageContext;
+    private MockMessageContext messageContext;
 
     protected void setUp() throws Exception {
         interceptor = new PayloadLoggingInterceptor();
@@ -39,9 +39,8 @@ public class PayloadLoggingInterceptorTest extends TestCase {
         appender = new CountingAppender();
         BasicConfigurator.configure(appender);
         Logger.getRootLogger().setLevel(Level.DEBUG);
-        MockSoapMessage request = new MockSoapMessage();
-        request.setPayload("<request/>");
-        messageContext = new MockSoapMessageContext(request);
+        MockWebServiceMessage request = new MockWebServiceMessage("<request/>");
+        messageContext = new MockMessageContext(request);
         appender.reset();
     }
 
@@ -59,7 +58,7 @@ public class PayloadLoggingInterceptorTest extends TestCase {
     }
 
     public void testHandleResponseDisabled() throws Exception {
-        MockSoapMessage response = (MockSoapMessage) messageContext.createResponse();
+        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
         response.setPayload("<response/>");
         interceptor.setLogResponse(false);
         int eventCount = appender.getCount();
@@ -68,7 +67,7 @@ public class PayloadLoggingInterceptorTest extends TestCase {
     }
 
     public void testHandleResponseEnabled() throws Exception {
-        MockSoapMessage response = (MockSoapMessage) messageContext.createResponse();
+        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
         response.setPayload("<response/>");
         int eventCount = appender.getCount();
         interceptor.handleResponse(messageContext, null);

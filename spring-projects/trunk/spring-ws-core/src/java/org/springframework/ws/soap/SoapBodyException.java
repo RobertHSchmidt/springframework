@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap.saaj;
-
-import org.springframework.ws.soap.SoapMessageFaultException;
+package org.springframework.ws.soap;
 
 /**
+ * Exception thrown when a SOAP body could not be accessed.
+ *
  * @author Arjen Poutsma
  */
-public class SaajSoapMessageFaultException extends SoapMessageFaultException {
+public class SoapBodyException extends SoapMessageException {
 
-    public SaajSoapMessageFaultException(String msg) {
+    public SoapBodyException(String msg) {
         super(msg);
     }
 
-    public SaajSoapMessageFaultException(String msg, Throwable ex) {
+    public SoapBodyException(String msg, Throwable ex) {
         super(msg, ex);
     }
 
-    public SaajSoapMessageFaultException(Throwable ex) {
-        super(ex);
+    public SoapBodyException(Throwable ex) {
+        super("Could not access body: " + ex.getMessage(), ex);
     }
+
 }

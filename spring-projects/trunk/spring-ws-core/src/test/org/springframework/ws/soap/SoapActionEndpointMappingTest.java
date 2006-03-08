@@ -17,26 +17,34 @@
 package org.springframework.ws.soap;
 
 import junit.framework.TestCase;
-import org.springframework.ws.mock.soap.MockSoapMessage;
+import org.easymock.MockControl;
 
 public class SoapActionEndpointMappingTest extends TestCase {
 
     private SoapActionEndpointMapping mapping;
 
+    private MockControl messageControl;
+
+    private SoapMessage messageMock;
+
     protected void setUp() throws Exception {
+        messageControl = MockControl.createControl(SoapMessage.class);
+        messageMock = (SoapMessage) messageControl.getMock();
         mapping = new SoapActionEndpointMapping();
     }
 
     public void testGetLookupKeyForMessage() throws Exception {
-        MockSoapMessage message = new MockSoapMessage();
-        message.setSoapAction("SoapAction");
-        assertEquals("Invalid lookup key", "SoapAction", mapping.getLookupKeyForMessage(message));
+        messageControl.expectAndReturn(messageMock.getSoapAction(), "SoapAction");
+        messageControl.replay();
+        assertEquals("Invalid lookup key", "SoapAction", mapping.getLookupKeyForMessage(messageMock));
+        messageControl.verify();
     }
 
     public void testGetLookupKeyForMessageQuoted() throws Exception {
-        MockSoapMessage message = new MockSoapMessage();
-        message.setSoapAction("\"SoapAction\"");
-        assertEquals("Invalid lookup key", "SoapAction", mapping.getLookupKeyForMessage(message));
+        messageControl.expectAndReturn(messageMock.getSoapAction(), "\"SoapAction\"");
+        messageControl.replay();
+        assertEquals("Invalid lookup key", "SoapAction", mapping.getLookupKeyForMessage(messageMock));
+        messageControl.verify();
     }
 
     public void testValidateLookupKey() throws Exception {

@@ -17,7 +17,7 @@
 package org.springframework.ws.endpoint;
 
 import java.io.IOException;
-import javax.xml.namespace.QName;
+import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,11 +27,12 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapEndpointInterceptor;
+import org.springframework.ws.soap.SoapFault;
+import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.xml.validation.XmlValidator;
 import org.springframework.xml.validation.XmlValidatorFactory;
-import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -117,7 +118,8 @@ public class PayloadValidatingInterceptor implements SoapEndpointInterceptor, In
                 }
                 if (messageContext instanceof SoapMessageContext) {
                     SoapMessage response = ((SoapMessageContext) messageContext).createSoapResponse();
-                    response.addFault(new QName("Client"), "Validation error", null);
+                    SoapFault fault = response.getSoapBody().addSenderFault();
+                    fault.setFaultString("Validation error", Locale.ENGLISH);
                 }
                 return false;
             }
@@ -168,9 +170,9 @@ public class PayloadValidatingInterceptor implements SoapEndpointInterceptor, In
     }
 
     /**
-     * Returns <code>false</code>, i.e. SOAP Headers are not understood.
+     * Returns <code>false</code>, i.e. all SOAP Headers are not understood.
      */
-    public boolean understands(Element header) {
+    public boolean understands(SoapHeaderElement header) {
         return false;
     }
 }

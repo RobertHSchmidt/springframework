@@ -18,7 +18,6 @@ package org.springframework.ws.soap;
 
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.context.MessageContext;
-import org.w3c.dom.Element;
 
 /**
  * SOAP-specific extension of the <code>EndpointInterceptor</code> interface. Allows for handling of SOAP faults, which
@@ -40,11 +39,12 @@ public interface SoapEndpointInterceptor extends EndpointInterceptor {
     boolean handleFault(MessageContext messageContext, Object endpoint) throws Exception;
 
     /**
-     * Given a header, return whether or not this <code>SoapEndpointInterceptor</code> understands it.
+     * Given a <code>SoapHeaderElement</code>, return whether or not this <code>SoapEndpointInterceptor</code>
+     * understands it.
      *
      * @param header the header
-     * @return whether or not this interceptor support the given header
+     * @return <code>true</code> if understood, <code>false</code> otherwise
      */
-    boolean understands(Element header);
+    boolean understands(SoapHeaderElement header);
 
 }

@@ -16,6 +16,7 @@
 
 package org.springframework.ws.soap.endpoint;
 
+import java.util.Locale;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
@@ -28,22 +29,38 @@ public class SoapFaultDefinitionEditorTest extends TestCase {
         editor = new SoapFaultDefinitionEditor();
     }
 
-    public void testSetAsTextNoActor() throws Exception {
+    public void testSetAsTextNoLocale() throws Exception {
         editor.setAsText("Server, Server error");
         SoapFaultDefinition definition = (SoapFaultDefinition) editor.getValue();
         assertNotNull("fault not set", definition);
-        assertEquals("Invalid fault code", new QName("Server"), definition.getCode());
-        assertEquals("Invalid fault string", "Server error", definition.getString());
-        assertNull("Actor set", definition.getActor());
+        assertEquals("Invalid fault code", new QName("Server"), definition.getFaultCode());
+        assertEquals("Invalid fault string", "Server error", definition.getFaultString());
+        assertEquals("Invalid fault string locale", Locale.ENGLISH, definition.getFaultStringLocale());
     }
 
-    public void testSetAsTextActor() throws Exception {
-        editor.setAsText("Server, Server error, http://tempuri.org");
+    public void testSetAsTextLocale() throws Exception {
+        editor.setAsText("Server, Server error, nl");
         SoapFaultDefinition definition = (SoapFaultDefinition) editor.getValue();
         assertNotNull("fault not set", definition);
-        assertEquals("Invalid fault code", new QName("Server"), definition.getCode());
-        assertEquals("Invalid fault string", "Server error", definition.getString());
-        assertEquals("Invalid fault actor", "http://tempuri.org", definition.getActor());
+        assertEquals("Invalid fault code", new QName("Server"), definition.getFaultCode());
+        assertEquals("Invalid fault string", "Server error", definition.getFaultString());
+        assertEquals("Invalid fault string locale", new Locale("nl"), definition.getFaultStringLocale());
+    }
+
+    public void testSetAsTextSender() throws Exception {
+        editor.setAsText("SENDER, Server error");
+        SoapFaultDefinition definition = (SoapFaultDefinition) editor.getValue();
+        assertNotNull("fault not set", definition);
+        assertEquals("Invalid fault code", SoapFaultDefinition.SENDER, definition.getFaultCode());
+        assertEquals("Invalid fault string", "Server error", definition.getFaultString());
+    }
+
+    public void testSetAsTextReceiver() throws Exception {
+        editor.setAsText("RECEIVER, Server error");
+        SoapFaultDefinition definition = (SoapFaultDefinition) editor.getValue();
+        assertNotNull("fault not set", definition);
+        assertEquals("Invalid fault code", SoapFaultDefinition.RECEIVER, definition.getFaultCode());
+        assertEquals("Invalid fault string", "Server error", definition.getFaultString());
     }
 
     public void testSetAsTextIllegalArgument() throws Exception {

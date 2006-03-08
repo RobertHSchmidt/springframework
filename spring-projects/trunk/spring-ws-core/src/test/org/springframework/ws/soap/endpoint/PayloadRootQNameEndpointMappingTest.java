@@ -19,7 +19,7 @@ package org.springframework.ws.soap.endpoint;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
-import org.springframework.ws.mock.soap.MockSoapMessage;
+import org.springframework.ws.mock.MockWebServiceMessage;
 
 public class PayloadRootQNameEndpointMappingTest extends TestCase {
 
@@ -31,8 +31,7 @@ public class PayloadRootQNameEndpointMappingTest extends TestCase {
     }
 
     public void testResolveQNames() throws Exception {
-        MockSoapMessage message = new MockSoapMessage();
-        message.setPayload("<root/>");
+        MockWebServiceMessage message = new MockWebServiceMessage("<root/>");
 
         QName qName = mapping.resolveQName(message);
         assertNotNull("mapping returns null", qName);
@@ -40,8 +39,7 @@ public class PayloadRootQNameEndpointMappingTest extends TestCase {
     }
 
     public void testGetQNameNameNamespace() throws Exception {
-        MockSoapMessage message = new MockSoapMessage();
-        message.setPayload("<prefix:localname xmlns:prefix=\"namespace\"/>");
+        MockWebServiceMessage message = new MockWebServiceMessage("<prefix:localname xmlns:prefix=\"namespace\"/>");
 
         QName qName = mapping.resolveQName(message);
         assertNotNull("mapping returns null", qName);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@
 
 package org.springframework.ws.soap.saaj;
 
-import org.springframework.ws.soap.SoapMessageHeaderException;
+import org.springframework.ws.soap.SoapEnvelopeException;
 
 /**
  * @author Arjen Poutsma
  */
-public class SaajSoapMessageHeaderException extends SoapMessageHeaderException {
+public class SaajSoapEnvelopeException extends SoapEnvelopeException {
 
-    public SaajSoapMessageHeaderException(String msg) {
+    public SaajSoapEnvelopeException(String msg) {
         super(msg);
     }
 
-    public SaajSoapMessageHeaderException(String msg, Throwable ex) {
+    public SaajSoapEnvelopeException(String msg, Throwable ex) {
         super(msg, ex);
     }
 
-    public SaajSoapMessageHeaderException(Throwable ex) {
+    public SaajSoapEnvelopeException(Throwable ex) {
         super(ex);
     }
 }

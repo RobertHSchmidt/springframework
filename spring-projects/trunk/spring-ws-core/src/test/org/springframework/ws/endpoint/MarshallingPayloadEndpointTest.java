@@ -30,14 +30,13 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
-import org.springframework.ws.mock.soap.MockSoapMessage;
-import org.springframework.ws.mock.soap.MockSoapMessageContext;
+import org.springframework.ws.mock.MockMessageContext;
+import org.springframework.ws.mock.MockWebServiceMessage;
 
 public class MarshallingPayloadEndpointTest extends XMLTestCase {
 
     public void testInvoke() throws Exception {
-        MockSoapMessage request = new MockSoapMessage();
-        request.setPayload("<request/>");
+        MockWebServiceMessage request = new MockWebServiceMessage("<request/>");
         final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 
         Unmarshaller unmarshaller = new Unmarshaller() {
@@ -75,16 +74,15 @@ public class MarshallingPayloadEndpointTest extends XMLTestCase {
         endpoint.setUnmarshaller(unmarshaller);
         endpoint.afterPropertiesSet();
 
-        MockSoapMessageContext context = new MockSoapMessageContext(request);
+        MockMessageContext context = new MockMessageContext(request);
         endpoint.invoke(context);
-        MockSoapMessage response = (MockSoapMessage) context.getResponse();
+        MockWebServiceMessage response = (MockWebServiceMessage) context.getResponse();
         assertNotNull("Invalid result", response);
         assertXMLEqual("Invalid response", "<result/>", response.getPayloadAsString());
     }
 
     public void testInvokeNullResponse() throws Exception {
-        MockSoapMessage request = new MockSoapMessage();
-        request.setPayload("<request/>");
+        MockWebServiceMessage request = new MockWebServiceMessage("<request/>");
         final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 
         Unmarshaller unmarshaller = new Unmarshaller() {
@@ -115,9 +113,9 @@ public class MarshallingPayloadEndpointTest extends XMLTestCase {
         endpoint.setMarshaller(marshaller);
         endpoint.setUnmarshaller(unmarshaller);
         endpoint.afterPropertiesSet();
-        MockSoapMessageContext context = new MockSoapMessageContext(request);
+        MockMessageContext context = new MockMessageContext(request);
         endpoint.invoke(context);
-        MockSoapMessage response = (MockSoapMessage) context.getResponse();
+        MockWebServiceMessage response = (MockWebServiceMessage) context.getResponse();
         assertNull("Invalid result", response);
     }
 

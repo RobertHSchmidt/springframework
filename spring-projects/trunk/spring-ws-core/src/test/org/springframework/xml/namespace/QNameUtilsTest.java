@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.support;
+package org.springframework.xml.namespace;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -76,4 +76,29 @@ public class QNameUtilsTest extends TestCase {
         assertEquals("Qname has invalid prefix", "prefix", qName.getPrefix());
     }
 
+    public void testToQualifiedNamePrefix() throws Exception {
+        QName qName = new QName("namespace", "localName", "prefix");
+        String result = QNameUtils.toQualifiedName(qName);
+        assertEquals("Invalid result", "prefix:localName", result);
+    }
+
+    public void testToQualifiedNameNoPrefix() throws Exception {
+        QName qName = new QName("localName");
+        String result = QNameUtils.toQualifiedName(qName);
+        assertEquals("Invalid result", "localName", result);
+    }
+
+    public void testToQNamePrefix() throws Exception {
+        QName result = QNameUtils.toQName("namespace", "prefix:localName");
+        assertEquals("namespace", result.getNamespaceURI());
+        assertEquals("prefix", result.getPrefix());
+        assertEquals("localName", result.getLocalPart());
+    }
+
+    public void testToQNameNoPrefix() throws Exception {
+        QName result = QNameUtils.toQName("namespace", "localName");
+        assertEquals("namespace", result.getNamespaceURI());
+        assertEquals("", result.getPrefix());
+        assertEquals("localName", result.getLocalPart());
+    }
 }

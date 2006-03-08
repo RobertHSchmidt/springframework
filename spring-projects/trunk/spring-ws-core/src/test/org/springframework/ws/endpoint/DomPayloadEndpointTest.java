@@ -16,22 +16,20 @@
 
 package org.springframework.ws.endpoint;
 
-import java.io.StringReader;
-import java.io.StringWriter;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.springframework.xml.transform.StringResult;
+import org.springframework.xml.transform.StringSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class DomPayloadEndpointTest extends XMLTestCase {
 
     public void testInvokeInternalNullResponse() throws Exception {
-        Source request = new StreamSource(new StringReader("<request/>"));
+        Source request = new StringSource("<request/>");
         AbstractDomPayloadEndpoint endpoint = new AbstractDomPayloadEndpoint() {
 
             protected Element invokeInternal(Element requestElement, Document document) throws Exception {
@@ -50,18 +48,17 @@ public class DomPayloadEndpointTest extends XMLTestCase {
 
             protected Element invokeInternal(Element requestElement, Document document) throws Exception {
                 assertEquals("Invalid request element", "request", requestElement.getNodeName());
-                Element responseElement = document.createElement("response");
-                return responseElement;
+                return document.createElement("response");
             }
         };
         endpoint.afterPropertiesSet();
 
-        Source request = new StreamSource(new StringReader("<request/>"));
-        Source result = endpoint.invoke(request);
+        Source request = new StringSource("<request/>");
+        Source response = endpoint.invoke(request);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        StringWriter writer = new StringWriter();
-        transformer.transform(result, new StreamResult(writer));
-        assertXMLEqual("Invalid response", "<response/>", writer.toString());
+        StringResult result = new StringResult();
+        transformer.transform(response, result);
+        assertXMLEqual("Invalid response", "<response/>", result.toString());
     }
 
 }

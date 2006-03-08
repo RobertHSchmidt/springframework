@@ -24,7 +24,7 @@ import javax.xml.transform.dom.DOMResult;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.support.QNameUtils;
+import org.springframework.xml.namespace.QNameUtils;
 import org.w3c.dom.Element;
 
 /**

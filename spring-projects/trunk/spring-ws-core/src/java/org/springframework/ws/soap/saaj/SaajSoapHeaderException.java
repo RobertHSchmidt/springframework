@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap;
+package org.springframework.ws.soap.saaj;
+
+import org.springframework.ws.soap.SoapHeaderException;
 
 /**
- * Exception thrown when a SOAP fault could not be accessed.
- *
  * @author Arjen Poutsma
  */
-public class SoapMessageFaultException extends SoapMessageBodyException {
+public class SaajSoapHeaderException extends SoapHeaderException {
 
-    public SoapMessageFaultException(String msg) {
+    public SaajSoapHeaderException(String msg) {
         super(msg);
     }
 
-    public SoapMessageFaultException(String msg, Throwable ex) {
+    public SaajSoapHeaderException(String msg, Throwable ex) {
         super(msg, ex);
     }
 
-    public SoapMessageFaultException(Throwable ex) {
-        super("Could not access fault: " + ex.getMessage(), ex);
+    public SaajSoapHeaderException(Throwable ex) {
+        super(ex);
     }
-
 }

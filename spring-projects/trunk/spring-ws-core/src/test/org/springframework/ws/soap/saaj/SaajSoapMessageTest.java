@@ -16,13 +16,10 @@
 
 package org.springframework.ws.soap.saaj;
 
+import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -32,7 +29,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-import org.w3c.dom.Element;
 
 public class SaajSoapMessageTest extends XMLTestCase {
 
@@ -44,12 +40,6 @@ public class SaajSoapMessageTest extends XMLTestCase {
         MessageFactory messageFactory = MessageFactory.newInstance();
         saajMessage = messageFactory.createMessage();
         this.message = new SaajSoapMessage(saajMessage);
-    }
-
-    public void testGetFault() throws Exception {
-        assertNull("Message has fault", message.getFault());
-        saajMessage.getSOAPBody().addFault();
-        assertNotNull("Message has no fault", message.getFault());
     }
 
     public void testGetPayloadSource() throws Exception {
@@ -83,6 +73,7 @@ public class SaajSoapMessageTest extends XMLTestCase {
         assertEquals("Invalid child node created", "child", saajMessage.getSOAPBody().getFirstChild().getLocalName());
     }
 
+    /*
     public void testGetHeaderElements() throws Exception {
         Name headerName = saajMessage.getSOAPPart().getEnvelope().createName("header", "prefix", "namespace");
         saajMessage.getSOAPHeader().addChildElement(headerName);
@@ -105,29 +96,17 @@ public class SaajSoapMessageTest extends XMLTestCase {
         assertEquals("Invalid header", "prefix", headers[0].getPrefix());
         assertEquals("Invalid header", "namespace", headers[0].getNamespaceURI());
     }
+    */
 
-    public void testGetMimeHeader() throws Exception {
+    public void testGetSoapAction() throws Exception {
         saajMessage.getMimeHeaders().addHeader("SOAPAction", "value");
         assertEquals("Invalid mime header value", "value", message.getSoapAction());
     }
 
-    public void testAddFault() throws Exception {
-        Element fault = message.addFault(new QName("Server"), "string", null);
-        assertNotNull("Fault is null", fault);
-        assertTrue("Message has not fault", saajMessage.getSOAPBody().hasFault());
-        SOAPFault soapFault = saajMessage.getSOAPBody().getFault();
-        assertEquals("Invalid Fault code", "SOAP-ENV:Server", soapFault.getFaultCode());
+    public void testWriteTo() throws Exception {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        message.writeTo(outputStream);
+        assertXMLEqual("<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'><Header/><Body/></Envelope>",
+                new String(outputStream.toByteArray(), "UTF-8"));
     }
-
-    public void testAddHeaderElement() throws Exception {
-        Element header = message.addHeaderElement(new QName("namespace", "localpart", "prefix"), true, "actor");
-        assertNotNull("Header is null", header);
-        SOAPHeaderElement saajHeader = (SOAPHeaderElement) saajMessage.getSOAPHeader().getFirstChild();
-        assertEquals("Invalid header localname", saajHeader.getLocalName(), "localpart");
-        assertEquals("Invalid header prefix", saajHeader.getPrefix(), "prefix");
-        assertEquals("Invalid header namespace", saajHeader.getNamespaceURI(), "namespace");
-        assertTrue("Invalid header mustUnderstand", saajHeader.getMustUnderstand());
-        assertEquals("Invalid header actor", "actor", saajHeader.getActor());
-    }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap.saaj;
-
-import org.springframework.ws.soap.SoapMessageBodyException;
+package org.springframework.ws.soap;
 
 /**
+ * Exception thrown when a SOAP body could not be accessed.
+ *
  * @author Arjen Poutsma
  */
-public class SaajSoapMessageBodyException extends SoapMessageBodyException {
+public class SoapEnvelopeException extends SoapMessageException {
 
-    public SaajSoapMessageBodyException(String msg) {
+    public SoapEnvelopeException(String msg) {
         super(msg);
     }
 
-    public SaajSoapMessageBodyException(String msg, Throwable ex) {
+    public SoapEnvelopeException(String msg, Throwable ex) {
         super(msg, ex);
     }
 
-    public SaajSoapMessageBodyException(Throwable ex) {
-        super(ex);
+    public SoapEnvelopeException(Throwable ex) {
+        super("Could not access envelope: " + ex.getMessage(), ex);
     }
+
 }

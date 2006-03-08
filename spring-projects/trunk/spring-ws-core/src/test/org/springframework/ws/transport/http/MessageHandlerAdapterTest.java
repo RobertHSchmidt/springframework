@@ -25,7 +25,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ws.NoEndpointFoundException;
 import org.springframework.ws.context.MessageContextFactory;
 import org.springframework.ws.endpoint.MessageEndpoint;
-import org.springframework.ws.mock.soap.MockSoapMessageContext;
+import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.context.SoapMessageContext;
 
 public class MessageHandlerAdapterTest extends TestCase {
 
@@ -37,9 +38,9 @@ public class MessageHandlerAdapterTest extends TestCase {
 
     private MessageHandlerAdapter adapter;
 
-    private MockHttpServletRequest request;
+    private MockHttpServletRequest httpRequest;
 
-    private MockHttpServletResponse response;
+    private MockHttpServletResponse httpResponse;
 
     private MockControl endpointControl;
 
@@ -49,88 +50,105 @@ public class MessageHandlerAdapterTest extends TestCase {
 
     private MessageContextFactory factoryMock;
 
+    private MockControl contextControl;
+
+    private SoapMessageContext contextMock;
+
+    private MockControl messageControl;
+
+    private SoapMessage messageMock;
+
     protected void setUp() throws Exception {
         adapter = new MessageHandlerAdapter();
-        request = new MockHttpServletRequest();
-        response = new MockHttpServletResponse();
+        httpRequest = new MockHttpServletRequest();
+        httpResponse = new MockHttpServletResponse();
         endpointControl = MockControl.createControl(MessageEndpoint.class);
         endpointMock = (MessageEndpoint) endpointControl.getMock();
         factoryControl = MockControl.createControl(MessageContextFactory.class);
         factoryMock = (MessageContextFactory) factoryControl.getMock();
         adapter.setMessageContextFactory(factoryMock);
+        contextControl = MockControl.createControl(SoapMessageContext.class);
+        contextMock = (SoapMessageContext) contextControl.getMock();
+        messageControl = MockControl.createControl(SoapMessage.class);
+        messageMock = (SoapMessage) messageControl.getMock();
     }
 
     public void testHandleNonPost() throws Exception {
-        request.setMethod("GET");
+        httpRequest.setMethod("GET");
         endpointControl.replay();
-        adapter.handle(request, response, endpointMock);
+        adapter.handle(httpRequest, httpResponse, endpointMock);
         endpointControl.verify();
     }
 
     public void testHandlePostNoResponse() throws Exception {
-        request.setMethod("POST");
-        request.setContent(REQUEST.getBytes("UTF-8"));
-        request.setContentType("text/xml; charset=\"utf-8\"");
-        request.setCharacterEncoding("UTF-8");
-
+        httpRequest.setMethod("POST");
+        httpRequest.setContent(REQUEST.getBytes("UTF-8"));
+        httpRequest.setContentType("text/xml; charset=\"utf-8\"");
+        httpRequest.setCharacterEncoding("UTF-8");
         endpointMock.invoke(null);
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        factoryControl.expectAndReturn(factoryMock.createContext(httpRequest), contextMock);
+        contextControl.expectAndReturn(contextMock.getResponse(), null);
 
-        MockSoapMessageContext messageContext = new MockSoapMessageContext();
-        factoryControl.expectAndReturn(factoryMock.createContext(request), messageContext);
+        replayMockControls();
 
-        endpointControl.replay();
-        factoryControl.replay();
-        adapter.handle(request, response, endpointMock);
-        endpointControl.verify();
-        factoryControl.verify();
-        assertEquals("Invalid status code on response", HttpServletResponse.SC_OK, response.getStatus());
-        assertEquals("Response written", 0, response.getContentAsString().length());
+        adapter.handle(httpRequest, httpResponse, endpointMock);
+
+        assertEquals("Invalid status code on response", HttpServletResponse.SC_OK, httpResponse.getStatus());
+        assertEquals("Response written", 0, httpResponse.getContentAsString().length());
+        verifyMockControls();
     }
 
     public void testHandlePostResponse() throws Exception {
-        request.setMethod("POST");
-        request.setContent(REQUEST.getBytes("UTF-8"));
-        request.setContentType("text/xml; charset=\"utf-8\"");
-        request.setCharacterEncoding("UTF-8");
-
+        httpRequest.setMethod("POST");
+        httpRequest.setContent(REQUEST.getBytes("UTF-8"));
+        httpRequest.setContentType("text/xml; charset=\"utf-8\"");
+        httpRequest.setCharacterEncoding("UTF-8");
         endpointMock.invoke(null);
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        factoryControl.expectAndReturn(factoryMock.createContext(httpRequest), contextMock);
+        contextControl.expectAndReturn(contextMock.getResponse(), messageMock);
+        messageMock.writeTo(httpResponse.getOutputStream());
 
-        MockSoapMessageContext messageContext = new MockSoapMessageContext();
-        messageContext.createResponse();
-        factoryControl.expectAndReturn(factoryMock.createContext(request), messageContext);
+        replayMockControls();
 
-        endpointControl.replay();
-        factoryControl.replay();
-        adapter.handle(request, response, endpointMock);
-        endpointControl.verify();
-        factoryControl.verify();
-        assertEquals("Invalid status code on response", HttpServletResponse.SC_OK, response.getStatus());
-        assertTrue("No Response written", response.getContentAsString().length() > 0);
+        adapter.handle(httpRequest, httpResponse, endpointMock);
+
+        assertEquals("Invalid status code on response", HttpServletResponse.SC_OK, httpResponse.getStatus());
+        verifyMockControls();
     }
 
     public void testHandleNotFound() throws Exception {
-        request.setMethod("POST");
-        request.setContent(REQUEST.getBytes("UTF-8"));
-        request.setContentType("text/xml; charset=\"utf-8\"");
-        request.setCharacterEncoding("UTF-8");
-
+        httpRequest.setMethod("POST");
+        httpRequest.setContent(REQUEST.getBytes("UTF-8"));
+        httpRequest.setContentType("text/xml; charset=\"utf-8\"");
+        httpRequest.setCharacterEncoding("UTF-8");
         endpointMock.invoke(null);
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
         endpointControl.setThrowable(new NoEndpointFoundException(null));
+        factoryControl.expectAndReturn(factoryMock.createContext(httpRequest), contextMock);
 
-        MockSoapMessageContext messageContext = new MockSoapMessageContext();
-        factoryControl.expectAndReturn(factoryMock.createContext(request), messageContext);
+        replayMockControls();
 
+        adapter.handle(httpRequest, httpResponse, endpointMock);
+        assertEquals("No 404 returned", HttpServletResponse.SC_NOT_FOUND, httpResponse.getStatus());
+
+        verifyMockControls();
+
+    }
+
+    private void replayMockControls() {
         endpointControl.replay();
         factoryControl.replay();
-        adapter.handle(request, response, endpointMock);
+        contextControl.replay();
+        messageControl.replay();
+    }
+
+    private void verifyMockControls() {
         endpointControl.verify();
         factoryControl.verify();
-
-        assertEquals("No 404 returned", HttpServletResponse.SC_NOT_FOUND, response.getStatus());
-
+        contextControl.verify();
+        messageControl.verify();
     }
 
 }

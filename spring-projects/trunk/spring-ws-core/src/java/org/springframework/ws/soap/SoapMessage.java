@@ -16,54 +16,24 @@
 
 package org.springframework.ws.soap;
 
-import javax.xml.namespace.QName;
-
 import org.springframework.ws.WebServiceMessage;
-import org.w3c.dom.Element;
 
 /**
+ * Represents an abstraction for SOAP messages, providing access to a SOAP Envelope. The contents of the SOAP body can
+ * be retrieved by <code>getPayloadSource()</code> and <code>getPayloadResult()</code> on
+ * <code>WebServiceMessage</code>, the super-interface of this interface.
+ *
  * @author Arjen Poutsma
+ * @see #getPayloadSource()
+ * @see #getPayloadResult()
+ * @see #getEnvelope()
  */
 public interface SoapMessage extends WebServiceMessage {
 
     /**
-     * Returns the SOAP Header of this message. This is the parent of the header elements.
-     *
-     * @return the SOAP header element
-     * @see #getHeaderElements()
+     * Returns the <code>SoapEnvelope</code> associated with this <code>SoapMessage</code>.
      */
-    Element getHeader();
-
-    /**
-     * Returns a specific SOAP header element in this message.
-     *
-     * @param qName the qualified name of the header element
-     * @return the SOAP header element
-     */
-    Element[] getHeaderElements(QName qName);
-
-    /**
-     * Returns all SOAP headers elements in this message.
-     *
-     * @return the SOAP header elements
-     */
-    Element[] getHeaderElements();
-
-    /**
-     * Returns all SOAP headers elements that have the specified actor role and that have a <code>MustUnderstand</code>
-     * attribute whose value is equivalent to <code>true</code>.
-     *
-     * @param actor the actor for which to search, or <code>null</code> to return all headers
-     * @return all the header elements that contain the specified actor and are marked as <code>MustUnderstand</code>
-     */
-    Element[] getMustUnderstandHeaderElements(String actor);
-
-    /**
-     * Returns the SOAP fault element in the body of this message. Returns <code>null</code> if no fault is present.
-     *
-     * @return the SOAP fault element; or <code>null</code> if none exists
-     */
-    Element getFault();
+    SoapEnvelope getEnvelope();
 
     /**
      * Get the SOAP Action for this messaage, or <code>null</code> if not present.
@@ -73,24 +43,18 @@ public interface SoapMessage extends WebServiceMessage {
     String getSoapAction();
 
     /**
-     * Creates a new SOAP Fault to the body using the supplied parameters and adds it to the body.
+     * Returns the <code>SoapBody</code> associated with this <code>SoapMessage</code>. This is a convenience method for
+     * <code>getEnvelope().getBody()</code>.
      *
-     * @param faultCode   the qualified fault code
-     * @param faultString an explanation of the fault
-     * @param faultActor  the fault actor, which may be <code>null</code>
-     * @return the SOAP Fault element
+     * @see SoapEnvelope#getBody()
      */
-    Element addFault(QName faultCode, String faultString, String faultActor);
+    SoapBody getSoapBody();
 
     /**
-     * Creates a new SOAP Header element using the supplied qualified name and other parameters. Apart from the
-     * qualified name and <code>mustUnderstand</code> flag, all parameters are optional, and can be set to
-     * <code>null</code>.
+     * Returns the <code>SoapHeader</code> associated with this <code>SoapMessage</code>. This is a convenience method
+     * for <code>getEnvelope().getHeader()</code>.
      *
-     * @param qName          the qualified name of the header
-     * @param mustUnderstand whether the SOAP mustUnderstand attribute for the created header is turned on
-     * @param actor          the uri of the actor associated with the created header, or <code>null</code> for no actor
-     * @return the created element
+     * @see SoapEnvelope#getHeader()
      */
-    Element addHeaderElement(QName qName, boolean mustUnderstand, String actor);
+    SoapHeader getSoapHeader();
 }

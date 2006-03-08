@@ -16,23 +16,49 @@
 
 package org.springframework.ws.soap.endpoint;
 
+import java.util.Locale;
 import java.util.Properties;
 import javax.xml.namespace.QName;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-import org.springframework.ws.context.MessageContext;
-import org.springframework.ws.mock.soap.MockSoapMessageContext;
+import org.easymock.MockControl;
+import org.springframework.ws.soap.SoapBody;
+import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapMessageException;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.springframework.ws.soap.context.SoapMessageContext;
 
 public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
 
     private SoapFaultMappingExceptionResolver resolver;
 
+    private MockControl contextControl;
+
+    private SoapMessageContext contextMock;
+
+    private MockControl messageControl;
+
+    private SoapMessage messageMock;
+
+    private MockControl bodyControl;
+
+    private SoapBody bodyMock;
+
+    private MockControl faultControl;
+
+    private SoapFault faultMock;
+
     protected void setUp() throws Exception {
         resolver = new SoapFaultMappingExceptionResolver();
+        contextControl = MockControl.createControl(SoapMessageContext.class);
+        contextMock = (SoapMessageContext) contextControl.getMock();
+        messageControl = MockControl.createControl(SoapMessage.class);
+        messageMock = (SoapMessage) messageControl.getMock();
+        bodyControl = MockControl.createControl(SoapBody.class);
+        bodyMock = (SoapBody) bodyControl.getMock();
+        faultControl = MockControl.createControl(SoapFault.class);
+        faultMock = (SoapFault) faultControl.getMock();
+
     }
 
     public void testGetDepth() throws Exception {
@@ -43,48 +69,77 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
                 resolver.getDepth("IllegalArgumentException", new IllegalStateException()));
     }
 
-    public void testResolveExceptionNoDefault() throws Exception {
+    public void testResolveExceptionSender() throws Exception {
         Properties mappings = new Properties();
-        mappings.setProperty(Exception.class.getName(), "Server,Server error");
-        mappings.setProperty(RuntimeException.class.getName(), "Client, Client error");
+        mappings.setProperty(Exception.class.getName(), "RECEIVER,Receiver error");
+        mappings.setProperty(RuntimeException.class.getName(), "SENDER, Sender error");
         resolver.setExceptionMappings(mappings);
-        MessageContext messageContext = new MockSoapMessageContext();
-        boolean result = resolver.resolveException(messageContext, null, new IllegalArgumentException("bla"));
+        contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
+        messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
+        bodyControl.expectAndReturn(bodyMock.addSenderFault(), faultMock);
+        faultMock.setFaultString("Sender error", Locale.ENGLISH);
+
+        replayMockControls();
+
+        boolean result = resolver.resolveException(contextMock, null, new IllegalArgumentException("bla"));
         assertTrue("resolveException returns false", result);
-        SoapMessage response = (SoapMessage) messageContext.getResponse();
-        assertNotNull("Response not set", response);
-        Element fault = response.getFault();
-        assertNotNull("Returned message does not contain fault", fault);
-        testFault(fault, "Client", "Client error");
+
+        verifyMockControls();
+    }
+
+    public void testResolveExceptionReceiver() throws Exception {
+        Properties mappings = new Properties();
+        mappings.setProperty(Exception.class.getName(), "SENDER,Sender error");
+        mappings.setProperty(RuntimeException.class.getName(), "RECEIVER, Receiver error, en");
+        resolver.setExceptionMappings(mappings);
+        contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
+        messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
+        bodyControl.expectAndReturn(bodyMock.addReceiverFault(), faultMock);
+        faultMock.setFaultString("Receiver error", Locale.ENGLISH);
+
+        replayMockControls();
+
+        boolean result = resolver.resolveException(contextMock, null, new IllegalArgumentException("bla"));
+        assertTrue("resolveException returns false", result);
+
+        verifyMockControls();
     }
 
     public void testResolveExceptionDefault() throws Exception {
         Properties mappings = new Properties();
-        mappings.setProperty(SoapMessageException.class.getName(), "Server,Server error");
+        mappings.setProperty(SoapMessageException.class.getName(), "RECEIVER,Receiver error");
         resolver.setExceptionMappings(mappings);
         SoapFaultDefinition defaultFault = new SoapFaultDefinition();
-        defaultFault.setCode(new QName("MustUnderstand"));
-        defaultFault.setString("Header not understood");
+        QName faultCode = new QName("namespace", "faultcode", "prefix");
+        defaultFault.setFaultCode(faultCode);
+        defaultFault.setFaultString("faultstring");
         resolver.setDefaultFault(defaultFault);
-        MessageContext messageContext = new MockSoapMessageContext();
-        boolean result = resolver.resolveException(messageContext, null, new IllegalArgumentException("bla"));
+        contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
+        messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
+        bodyControl.expectAndReturn(bodyMock.addFault(faultCode), faultMock);
+        faultMock.setFaultString("faultstring", Locale.ENGLISH);
+
+        replayMockControls();
+
+        boolean result = resolver.resolveException(contextMock, null, new IllegalArgumentException("bla"));
         assertTrue("resolveException returns false", result);
-        SoapMessage response = (SoapMessage) messageContext.getResponse();
-        assertNotNull("Response not set", response);
-        Element fault = response.getFault();
-        assertNotNull("Returned message does not contain fault", fault);
-        testFault(fault, "MustUnderstand", "Header not understood");
+
+        verifyMockControls();
     }
 
-    private void testFault(Element fault, String code, String string) throws Exception {
-        assertEquals("Invalid localName", "Fault", fault.getLocalName());
-        assertEquals("Invalid uri", "http://schemas.xmlsoap.org/soap/envelope/", fault.getNamespaceURI());
-        NodeList children = fault.getChildNodes();
-        assertTrue("Invalid amount of children", children.getLength() >= 2);
-        assertEquals("Invalid localName", "faultcode", children.item(0).getLocalName());
-        assertEquals("Invalid faultCode", code, children.item(0).getTextContent());
-        assertEquals("Invalid localName", "faultstring", children.item(1).getLocalName());
-        assertEquals("Invalid faultCode", string, children.item(1).getTextContent());
+    private void replayMockControls() {
+        contextControl.replay();
+        messageControl.replay();
+        bodyControl.replay();
+        faultControl.replay();
     }
+
+    private void verifyMockControls() {
+        contextControl.verify();
+        messageControl.verify();
+        bodyControl.verify();
+        faultControl.verify();
+    }
+
 
 }

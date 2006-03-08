@@ -16,6 +16,7 @@
 
 package org.springframework.ws.soap.endpoint;
 
+import java.util.Locale;
 import javax.xml.namespace.QName;
 
 /**
@@ -25,34 +26,71 @@ import javax.xml.namespace.QName;
  */
 public class SoapFaultDefinition {
 
-    private QName code;
+    /**
+     * Constant <code>QName</code> used to indicate that a <code>Client</code> or <code>Sender</code> fault must be
+     * created.
+     *
+     * @see org.springframework.ws.soap.SoapBody#addSenderFault()
+     */
+    public static final QName SENDER = new QName("SENDER");
 
-    private String string;
+    /**
+     * Constant <code>QName</code> used to indicate that a <code>Server</code> or <code>Receiver</code> fault must be
+     * created.
+     *
+     * @see org.springframework.ws.soap.SoapBody#addSenderFault()
+     */
+    public static final QName RECEIVER = new QName("RECEIVER");
 
-    private String actor;
+    private QName faultCode;
 
-    public QName getCode() {
-        return code;
+    private String faultString;
+
+    private Locale faultStringLocale = Locale.ENGLISH;
+
+    /**
+     * Returns the fault code.
+     */
+    public QName getFaultCode() {
+        return faultCode;
     }
 
-    public void setCode(QName code) {
-        this.code = code;
+    /**
+     * Sets the fault code.
+     */
+    public void setFaultCode(QName faultCode) {
+        this.faultCode = faultCode;
     }
 
-    public String getString() {
-        return string;
+    /**
+     * Returns the fault string.
+     */
+    public String getFaultString() {
+        return faultString;
     }
 
-    public void setString(String string) {
-        this.string = string;
+    /**
+     * Sets the fault string.
+     */
+    public void setFaultString(String faultString) {
+        this.faultString = faultString;
     }
 
-    public String getActor() {
-        return actor;
+    /**
+     * Gets the fault string locale. By default, it is English.
+     *
+     * @see Locale#ENGLISH
+     */
+    public Locale getFaultStringLocale() {
+        return faultStringLocale;
     }
 
-    public void setActor(String actor) {
-        this.actor = actor;
+    /**
+     * Sets the fault string locale. By default, it is English.
+     *
+     * @see Locale#ENGLISH
+     */
+    public void setFaultStringLocale(Locale faultStringLocale) {
+        this.faultStringLocale = faultStringLocale;
     }
-
 }

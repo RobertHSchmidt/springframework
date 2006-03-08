@@ -16,10 +16,19 @@
 
 package org.springframework.ws.endpoint;
 
+import java.util.Locale;
+
 import junit.framework.TestCase;
+import org.easymock.MockControl;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.ws.mock.soap.MockSoapMessage;
-import org.springframework.ws.mock.soap.MockSoapMessageContext;
+import org.springframework.ws.mock.MockMessageContext;
+import org.springframework.ws.mock.MockWebServiceMessage;
+import org.springframework.ws.soap.SoapBody;
+import org.springframework.ws.soap.SoapFault;
+import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.context.AbstractSoapMessageContext;
+import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.xml.transform.StringSource;
 
 public class PayloadValidatingInterceptorTest extends TestCase {
 
@@ -31,9 +40,9 @@ public class PayloadValidatingInterceptorTest extends TestCase {
     private static final String INVALID_MESSAGE =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><product xmlns=\"http://www.springframework.org/spring-ws/test/validation\" effDate=\"2006-01-01\"><size>20</size></product>";
 
-    private MockSoapMessage request;
+    private MockWebServiceMessage request;
 
-    private MockSoapMessageContext messageContext;
+    private MockMessageContext messageContext;
 
     protected void setUp() throws Exception {
         interceptor = new PayloadValidatingInterceptor();
@@ -41,8 +50,8 @@ public class PayloadValidatingInterceptorTest extends TestCase {
         interceptor.setValidateRequest(true);
         interceptor.setValidateResponse(true);
         interceptor.afterPropertiesSet();
-        request = new MockSoapMessage();
-        messageContext = new MockSoapMessageContext(request);
+        request = new MockWebServiceMessage();
+        messageContext = new MockMessageContext(request);
     }
 
     public void testHandleValidRequest() throws Exception {
@@ -53,22 +62,51 @@ public class PayloadValidatingInterceptorTest extends TestCase {
     }
 
     public void testHandleInvalidRequest() throws Exception {
-        request.setPayload(INVALID_MESSAGE);
-        boolean result = interceptor.handleRequest(messageContext, null);
+        MockControl soapMessageControl = MockControl.createControl(SoapMessage.class);
+        final SoapMessage requestMock = (SoapMessage) soapMessageControl.getMock();
+        final SoapMessage responseMock = (SoapMessage) soapMessageControl.getMock();
+        SoapMessageContext soapMessageContext = new AbstractSoapMessageContext() {
+            public SoapMessage getSoapRequest() {
+                return requestMock;
+            }
+
+            public SoapMessage createSoapResponse() {
+                return responseMock;
+            }
+
+            public SoapMessage getSoapResponse() {
+                return responseMock;
+            }
+        };
+        MockControl soapBodyControl = MockControl.createControl(SoapBody.class);
+        SoapBody soapBodyMock = (SoapBody) soapBodyControl.getMock();
+        soapMessageControl.expectAndReturn(requestMock.getPayloadSource(), new StringSource(INVALID_MESSAGE));
+        soapMessageControl.expectAndReturn(responseMock.getSoapBody(), soapBodyMock);
+        MockControl soapFaultControl = MockControl.createControl(SoapFault.class);
+        SoapFault soapFaultMock = (SoapFault) soapFaultControl.getMock();
+        soapBodyControl.expectAndReturn(soapBodyMock.addSenderFault(), soapFaultMock);
+        soapFaultMock.setFaultString("Validation error", Locale.ENGLISH);
+
+        soapMessageControl.replay();
+        soapBodyControl.replay();
+        soapFaultControl.replay();
+
+        boolean result = interceptor.handleRequest(soapMessageContext, null);
         assertFalse("Invalid response from interceptor", result);
-        assertNotNull("No Response set", messageContext.getSoapResponse());
-        assertNotNull("No fault set in response", messageContext.getSoapResponse().getFault());
+        soapMessageControl.verify();
+        soapBodyControl.verify();
+        soapFaultControl.verify();
     }
 
     public void testHandleValidResponse() throws Exception {
-        MockSoapMessage response = (MockSoapMessage) messageContext.createResponse();
+        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
         response.setPayload(VALID_MESSAGE);
         boolean result = interceptor.handleResponse(messageContext, null);
         assertTrue("Invalid response from interceptor", result);
     }
 
     public void testHandleInvalidResponse() throws Exception {
-        MockSoapMessage response = (MockSoapMessage) messageContext.createResponse();
+        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
         response.setPayload(INVALID_MESSAGE);
         boolean result = interceptor.handleResponse(messageContext, null);
         assertFalse("Invalid response from interceptor", result);

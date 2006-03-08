@@ -21,12 +21,12 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.EndpointInvocationChain;
 import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.mock.soap.MockSoapMessage;
+import org.springframework.ws.mock.MockWebServiceMessage;
 
 public class EndpointMappingTest extends TestCase {
 
     public void testDefaultEndpoint() throws Exception {
-        final MockSoapMessage request = new MockSoapMessage();
+        final MockWebServiceMessage request = new MockWebServiceMessage();
         Object defaultEndpoint = new Object();
         AbstractEndpointMapping mapping = new AbstractEndpointMapping() {
             protected Object getEndpointInternal(WebServiceMessage givenRequest) throws Exception {
@@ -42,7 +42,7 @@ public class EndpointMappingTest extends TestCase {
     }
 
     public void testEndpoint() throws Exception {
-        final MockSoapMessage request = new MockSoapMessage();
+        final MockWebServiceMessage request = new MockWebServiceMessage();
         final Object endpoint = new Object();
         AbstractEndpointMapping mapping = new AbstractEndpointMapping() {
             protected Object getEndpointInternal(WebServiceMessage givenRequest) throws Exception {
@@ -57,7 +57,7 @@ public class EndpointMappingTest extends TestCase {
     }
 
     public void testEndpointInterceptors() throws Exception {
-        final MockSoapMessage request = new MockSoapMessage();
+        final MockWebServiceMessage request = new MockWebServiceMessage();
         final Object endpoint = new Object();
         EndpointInterceptor interceptor = new EndpointInterceptorAdapter();
         AbstractEndpointMapping mapping = new AbstractEndpointMapping() {
@@ -73,7 +73,7 @@ public class EndpointMappingTest extends TestCase {
     }
 
     public void testEndpointBeanName() throws Exception {
-        final MockSoapMessage request = new MockSoapMessage();
+        final MockWebServiceMessage request = new MockWebServiceMessage();
 
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("endpoint", Object.class);
@@ -92,7 +92,7 @@ public class EndpointMappingTest extends TestCase {
     }
 
     public void testEndpointInvalidBeanName() throws Exception {
-        final MockSoapMessage request = new MockSoapMessage();
+        final MockWebServiceMessage request = new MockWebServiceMessage();
 
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("endpoint", Object.class);

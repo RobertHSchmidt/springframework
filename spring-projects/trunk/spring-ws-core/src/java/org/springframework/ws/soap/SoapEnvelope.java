@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,25 @@
 package org.springframework.ws.soap;
 
 /**
- * Exception thrown when a SOAP header could not be accessed.
+ * Represents the <code>Envelope</code> element in a SOAP message. The header contains the <code>SoapHeader</code> and
+ * <code>SoapBody</code>.
  *
  * @author Arjen Poutsma
  */
-public class SoapMessageHeaderException extends SoapMessageException {
+public interface SoapEnvelope extends SoapElement {
 
-    public SoapMessageHeaderException(String msg) {
-        super(msg);
-    }
+    /**
+     * Returns the <code>SoapHeader</code>.
+     *
+     * @return the <code>SoapHeader</code>
+     */
+    SoapHeader getHeader();
 
-    public SoapMessageHeaderException(String msg, Throwable ex) {
-        super(msg, ex);
-    }
-
-    public SoapMessageHeaderException(Throwable ex) {
-        super("Could not access header: " + ex.getMessage(), ex);
-    }
+    /**
+     * Returns the <code>SoapBody</code>.
+     *
+     * @return the <code>SoapBody</code>
+     */
+    SoapBody getBody();
 
 }

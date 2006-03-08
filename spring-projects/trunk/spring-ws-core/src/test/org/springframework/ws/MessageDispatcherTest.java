@@ -22,23 +22,23 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.ws.context.MessageContext;
-import org.springframework.ws.mock.soap.MockSoapMessage;
-import org.springframework.ws.mock.soap.MockSoapMessageContext;
+import org.springframework.ws.mock.MockMessageContext;
+import org.springframework.ws.mock.MockWebServiceMessage;
 
 public class MessageDispatcherTest extends TestCase {
 
     private MessageDispatcher dispatcher;
 
-    private MockSoapMessageContext messageContext;
+    private MockMessageContext messageContext;
 
-    private MockSoapMessage request;
+    private MockWebServiceMessage request;
 
     protected void setUp() throws Exception {
         dispatcher = new MessageDispatcher();
         dispatcher.setApplicationContext(new StaticApplicationContext());
         dispatcher.afterPropertiesSet();
-        request = new MockSoapMessage();
-        messageContext = new MockSoapMessageContext(request);
+        request = new MockWebServiceMessage();
+        messageContext = new MockMessageContext(request);
     }
 
     public void testGetEndpoint() throws Exception {

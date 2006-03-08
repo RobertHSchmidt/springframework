@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,29 @@
 
 package org.springframework.ws.soap;
 
+import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+
 /**
- * Exception thrown when a SOAP body could not be accessed.
+ * The base interface for all elements that are contained in a SOAP message.
  *
  * @author Arjen Poutsma
+ * @see SoapMessage
  */
-public class SoapMessageBodyException extends SoapMessageException {
+public interface SoapElement {
 
-    public SoapMessageBodyException(String msg) {
-        super(msg);
-    }
+    /**
+     * Returns the qualified name of this element.
+     *
+     * @return the qualified name of this element
+     */
+    QName getName();
 
-    public SoapMessageBodyException(String msg, Throwable ex) {
-        super(msg, ex);
-    }
-
-    public SoapMessageBodyException(Throwable ex) {
-        super("Could not access body: " + ex.getMessage(), ex);
-    }
+    /**
+     * Returns the <code>Source</code> of this element.
+     *
+     * @return the <code>Source</code> of this element
+     */
+    Source getSource();
 
 }

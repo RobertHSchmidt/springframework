@@ -19,7 +19,7 @@ package org.springframework.ws.soap.endpoint;
 import javax.xml.namespace.QName;
 
 import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.support.QNameUtils;
+import org.springframework.xml.namespace.QNameUtils;
 
 /**
  * Abstract base class for <code>EndpointMapping</code>s that resolve qualified names as registration keys.

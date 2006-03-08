@@ -17,32 +17,49 @@
 package org.springframework.ws.soap.endpoint;
 
 import java.beans.PropertyEditorSupport;
+import java.util.Locale;
 import javax.xml.namespace.QName;
 
+import org.springframework.beans.propertyeditors.LocaleEditor;
 import org.springframework.util.StringUtils;
 import org.springframework.ws.propertyeditors.QNameEditor;
 
 /**
- * PropertyEditor for <code>SoapFaultDefinition</code> objects. Takes Strings of form
+ * PropertyEditor for <code>SoapFaultDefinition</code> objects. Takes strings of form
  * <pre>
- *  faultCode,faultMessage,faultActor
+ * faultCode,faultString,faultStringLocale
  * </pre>
- * where faultCode is the string representation of a qualfied name, and faultActor is not required. For example:
+ * where <code>faultCode</code> is the string representation of a <code>QName</code>, <code>faultString</code> is the
+ * fault string, and <code>faultStringLocale</code> is the optional string representations for the fault string
+ * language. By default, the language is set to English.
+ * <p/>
+ * Instead of supplying a custom fault code, you can use the constants <code>RECEIVER</code> or <code>SENDER</code> to
+ * indicate a <code>Server</code>/<code>Receiver</code> or <code>Client</code>/<code>Sender</code> fault respectivaly.
+ * <p/>
+ * For example:
  * <pre>
- * SOAP-ENV:Server,Server error
+ * RECEIVER,Server error
+ * </pre>
+ * or
+ * <pre>
+ * SENDER,Client error
  * </pre>
  *
  * @author Arjen Poutsma
  * @see javax.xml.namespace.QName#toString()
  * @see org.springframework.ws.propertyeditors.QNameEditor
+ * @see SoapFaultDefinition#RECEIVER
+ * @see SoapFaultDefinition#SENDER
+ * @see org.springframework.ws.soap.SoapFault#getFaultCode()
+ * @see org.springframework.ws.soap.SoapFault#getFaultString()
  */
 public class SoapFaultDefinitionEditor extends PropertyEditorSupport {
 
-    private static final int CODE_INDEX = 0;
+    private static final int FAULT_CODE_INDEX = 0;
 
-    private static final int STRING_INDEX = 1;
+    private static final int FAULT_STRING_INDEX = 1;
 
-    private static final int ACTOR_INDEX = 2;
+    private static final int FAULT_STRING_LOCALE_INDEX = 2;
 
     public void setAsText(String text) throws IllegalArgumentException {
         if (!StringUtils.hasLength(text)) {
@@ -55,12 +72,14 @@ public class SoapFaultDefinitionEditor extends PropertyEditorSupport {
                         "]: SoapFaultDefinitionEditor requires at least 2");
             }
             SoapFaultDefinition definition = new SoapFaultDefinition();
-            QNameEditor editor = new QNameEditor();
-            editor.setAsText(tokens[CODE_INDEX].trim());
-            definition.setCode((QName) editor.getValue());
-            definition.setString(tokens[STRING_INDEX].trim());
+            QNameEditor qNameEditor = new QNameEditor();
+            qNameEditor.setAsText(tokens[FAULT_CODE_INDEX].trim());
+            definition.setFaultCode((QName) qNameEditor.getValue());
+            definition.setFaultString(tokens[FAULT_STRING_INDEX].trim());
             if (tokens.length > 2) {
-                definition.setActor(tokens[ACTOR_INDEX].trim());
+                LocaleEditor localeEditor = new LocaleEditor();
+                localeEditor.setAsText(tokens[FAULT_STRING_LOCALE_INDEX].trim());
+                definition.setFaultStringLocale((Locale) localeEditor.getValue());
             }
             setValue(definition);
         }

@@ -55,7 +55,7 @@ public class MessageHandlerAdapter implements HandlerAdapter, InitializingBean {
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setContentType("text/xml; charset=\"utf-8\"");
                     response.setCharacterEncoding("UTF-8");
-                    if (response instanceof SoapMessage && ((SoapMessage) responseMessage).getFault() != null) {
+                    if (response instanceof SoapMessage && ((SoapMessage) responseMessage).getSoapBody().hasFault()) {
                         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     }
                     responseMessage.writeTo(response.getOutputStream());
