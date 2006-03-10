@@ -29,10 +29,10 @@ import org.springframework.webflow.support.EventFactorySupport;
  * Base action that provides assistance commonly needed by action
  * implementations. These include:
  * <ul>
- * <li>Is an initializing bean, capable of receiving a init callback when
- * deployed within a Spring bean factory.
- * <li>Exposes event factory methods, for creating common result {@link Event}
- * objects such as "success" and "error".
+ * <li>Implementing {@link InitializingBean}, for receiving an init callback
+ * when deployed within a Spring bean factory.
+ * <li>Exposing convenient event factory methods, for creating common result
+ * {@link Event} objects such as "success" and "error".
  * <li>A hook for inserting action pre and post execution logic
  * </ul>
  * 
