@@ -25,52 +25,12 @@ import org.springframework.webflow.RequestContext;
 /**
  * Action that executes an attribute mapper to map information in the request
  * context. Both the source and the target of the mapping will be the request
- * context. This allows for maximum flexibility when defining mappings,
- * typically using expressions (e.g. "${flowScope.someAttribute}").
+ * context. This allows for maximum flexibility when defining attribute mapping
+ * expressions (e.g. "${flowScope.someAttribute}").
  * <p>
  * This action always returns the
  * {@link org.springframework.webflow.action.AbstractAction#success() success}
  * event.
- * <p>
- * <b>Exposed configuration properties:</b> <br>
- * <table border="1">
- * <tr>
- * <td><b>Name </b></td>
- * <td><b>Default </b></td>
- * <td><b>Description </b></td>
- * </tr>
- * <tr>
- * <td>mapping(s)</td>
- * <td><i>null</i></td>
- * <td>The mappings executed by this action.</td>
- * </tr>
- * <tr>
- * <td>attributeMapper</td>
- * <td><i>null</i></td>
- * <td>The custom mapping strategy used by this action.</td>
- * </tr>
- * <tr>
- * <td>sourceExpression</td>
- * <td><i>null</i></td>
- * <td>Set the expression which obtains the source attribute to map. If you use
- * this, you also need to specify the "targetExpression".</td>
- * </tr>
- * <tr>
- * <td>targetExpression</td>
- * <td><i>null</i></td>
- * <td>Set the expression used to set the target attribute during the mapping.
- * If you use this, you also need to specify the <code>sourceExpression</code>.</td>
- * </tr>
- * <tr>
- * <td>valueConverter</td>
- * <td><i>null</i></td>
- * <td>Set a value converter to use during the mapping. This is optional and
- * will only be used if you do not explicitly set the mapper or mapping to use,
- * but instead used the <code>sourceExpression</code> and
- * <code>targetExpression</code> properties.</td>
- * </tr>
- * </table>
- * 
  * @see org.springframework.binding.mapping.AttributeMapper
  * @see org.springframework.webflow.RequestContext
  * 
