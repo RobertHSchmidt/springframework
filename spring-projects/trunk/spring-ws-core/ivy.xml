@@ -44,7 +44,7 @@
         <dependency org="apache" name="xerces" rev="2.7.1" conf="test->default">
             <artifact name="xercesImpl" type="jar"/>
         </dependency>
-        <dependency org="woodstox" name="woodstox" rev="2.9.1" conf="buildtime->default">
+        <dependency org="woodstox" name="woodstox" rev="2.9.1" conf="test->default">
             <artifact name="wstx-asl" type="jar"/>
         </dependency>
 
