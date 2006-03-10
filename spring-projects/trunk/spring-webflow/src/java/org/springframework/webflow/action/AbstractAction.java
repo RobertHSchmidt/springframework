@@ -50,6 +50,11 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	private EventFactorySupport eventFactorySupport = new EventFactorySupport();
 
 	/**
+	 * Logger, usable in subclasses.
+	 */
+	protected final Log logger = LogFactory.getLog(getClass());
+
+	/**
 	 * Returns the helper delegate for creating action execution result events.
 	 * @return the event factory support
 	 */
@@ -58,18 +63,15 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
-	 * Sets the helper delegate for creating action execution result events
+	 * Sets the helper delegate for creating action execution result events.  This allows 
+	 * for customizing how common action result events such as "success" and "error" 
+	 * are created.
 	 * @return the event factory support
 	 */
 	public void setEventFactorySupport(EventFactorySupport eventFactorySupport) {
 		this.eventFactorySupport = eventFactorySupport;
 	}
-
-	/**
-	 * Logger, usable in subclasses.
-	 */
-	protected final Log logger = LogFactory.getLog(getClass());
-
+	
 	public void afterPropertiesSet() throws Exception {
 		try {
 			initAction();
