@@ -19,17 +19,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.ClassUtils;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.support.EventFactorySupport;
 
 /**
- * Base action implementation that provides a number of helper methods generally
- * useful to any action command. These include:
+ * Base action that provides assistance commonly needed by action
+ * implementations. These include:
  * <ul>
- * <li>Creating common action result events
- * <li>Inserting action pre and post execution logic
+ * <li>Is an initializing bean, capable of receiving a init callback when
+ * deployed within a Spring bean factory.
+ * <li>Exposes event factory methods, for creating common result {@link Event}
+ * objects such as "success" and "error".
+ * <li>A hook for inserting action pre and post execution logic
  * </ul>
  * 
  * @author Keith Donald
@@ -47,7 +51,7 @@ public abstract class AbstractAction extends EventFactorySupport implements Acti
 			initAction();
 		}
 		catch (Exception ex) {
-			throw new BeanInitializationException("Initialization of Action failed: " + ex.getMessage(), ex);
+			throw new BeanInitializationException("Initialization of this Action failed: " + ex.getMessage(), ex);
 		}
 	}
 
@@ -60,26 +64,26 @@ public abstract class AbstractAction extends EventFactorySupport implements Acti
 
 	public final Event execute(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Action '" + getClass().getName() + "' beginning execution");
+			logger.debug("Action '" + ClassUtils.getShortName(getClass()) + "' beginning execution");
 		}
 		Event result = doPreExecute(context);
 		if (result == null) {
 			result = doExecute(context);
 			if (logger.isDebugEnabled()) {
 				if (result != null) {
-					logger.debug("Action '" + getClass().getName() + "' completed execution; result is '"
-							+ result.getId() + "'");
+					logger.debug("Action '" + ClassUtils.getShortName(getClass())
+							+ "' completed execution; result is '" + result.getId() + "'");
 				}
 				else {
-					logger.debug("Action '" + getClass().getName() + "' completed execution; "
-							+ "returned result is [null]");
+					logger.debug("Action '" + ClassUtils.getShortName(getClass())
+							+ "' completed execution; result is [null]");
 				}
 			}
 			doPostExecute(context);
 		}
 		else {
 			if (logger.isInfoEnabled()) {
-				logger.info("Action execution disallowed; pre-execute result is '" + result.getId() + "'");
+				logger.info("Action execution disallowed; pre-execution result is '" + result.getId() + "'");
 			}
 		}
 		return result;
