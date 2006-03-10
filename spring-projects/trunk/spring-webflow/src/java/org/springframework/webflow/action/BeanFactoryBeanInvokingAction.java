@@ -26,8 +26,19 @@ import org.springframework.webflow.RequestContext;
  * bean factory. The bean does not have to implement any special interface to be
  * invoked.
  * <p>
- * To use this class, you configure the name of the bean you wish to invoke, and
- * what method on that bean should be invoked with what arguments.
+ * To use this class, you configure the name of the bean you wish to invoke and
+ * what method on that bean should be invoked with what arguments, typically using
+ * flow request context attributes.
+ * <p>
+ * Example configuration and usage:
+ * <pre>
+ * BeanFactoryInvokingAction action = new BeanFactoryBeanInvokingAction();
+ * action.setBeanFactory(...);
+ * MockRequestContext context = new MockRequestContext();
+ * context.setAttribute("method", new MethodSignature("myMethod"));
+ * context.setAttribute("bean", "myBean");
+ * action.execute(context);
+ * </pre>
  * 
  * @author Keith Donald
  */
@@ -40,10 +51,11 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 
 	/**
 	 * The name of the default bean to invoke when this action is executed.
-	 * Optional: the bean to invoke may instead be specified as an action
-	 * execution property.
+	 * <p>
+	 * Optional: the bean to invoke may instead be specified as an
+	 * {@link RequestContext#getAttributes() context attribute}.
 	 */
-	private String targetBeanName;
+	private String beanName;
 
 	/**
 	 * The bean factory for loading beans to invoke by <code>id</code>.
@@ -51,52 +63,26 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	private BeanFactory beanFactory;
 
 	/**
-	 * Create a bean factory bean invoking action that is expected to be
-	 * parameterized with information about which bean to invoke and the bean
-	 * factory to retrieve it from.
-	 */
-	public BeanFactoryBeanInvokingAction() {
-	}
-
-	/**
-	 * Create a bean factory bean invoking action that invokes the bean with the
-	 * specified name.
-	 * @param targetBeanName the bean name
-	 */
-	public BeanFactoryBeanInvokingAction(String targetBeanName) {
-		setTargetBeanName(targetBeanName);
-	}
-
-	/**
-	 * Create a bean factory bean invoking action that invokes the bean with the
-	 * specified name.
-	 * @param targetBeanName the bean name
-	 * @param beanFactory the bean factory
-	 */
-	public BeanFactoryBeanInvokingAction(String targetBeanName, BeanFactory beanFactory) {
-		setTargetBeanName(targetBeanName);
-		setBeanFactory(beanFactory);
-	}
-
-	/**
 	 * Returns the target bean name.
 	 */
-	public String getTargetBeanName() {
-		return targetBeanName;
+	public String getBeanName() {
+		return beanName;
 	}
 
 	/**
 	 * Set the name of the target bean to invoke. The bean will be looked up in
 	 * the bean factory on action execution.
 	 * 
-	 * @param targetBeanName the target bean name
+	 * @param beanName the target bean name
 	 */
-	public void setTargetBeanName(String targetBeanName) {
-		Assert.hasText(targetBeanName,
-				"The name of the target bean to invoke cannot be null or blank -- it is required");
-		this.targetBeanName = targetBeanName;
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
 	}
 
+	/**
+	 * Returns the configured bean factory member.
+	 * @return the bean factory
+	 */
 	protected BeanFactory getBeanFactory() {
 		return beanFactory;
 	}
@@ -113,8 +99,9 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	 * its life.
 	 */
 	protected Object getBean(RequestContext context) {
-		String beanName = context.getAttributes().getString(BEAN_PROPERTY, getTargetBeanName());
-		Assert.hasText(beanName, "The bean name to invoke was not specified: set the bean property");
+		String beanName = context.getAttributes().getString(BEAN_PROPERTY, getBeanName());
+		Assert.hasText(beanName,
+				"The bean name to invoke was not specified: set the 'beanName' property or 'bean' context attribute");
 		return getBeanFactory().getBean(beanName);
 	}
 }

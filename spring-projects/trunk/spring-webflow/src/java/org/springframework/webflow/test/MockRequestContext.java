@@ -156,7 +156,7 @@ public class MockRequestContext implements RequestContext {
 	}
 
 	/**
-	 * Set an execution attribute.
+	 * Set a request context attribute.
 	 * @param attributeName the attribute name
 	 * @param attributeValue the attribute value
 	 */
@@ -164,6 +164,14 @@ public class MockRequestContext implements RequestContext {
 		attributes.put(attributeName, attributeValue);
 	}
 
+	/**
+	 * Remove a request context attribute.
+	 * @param attributeName the attribute name
+	 */
+	public void removeAttribute(String attributeName) {
+		attributes.remove(attributeName);
+	}
+	
 	/**
 	 * Sets the flow execution context.
 	 */
