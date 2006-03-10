@@ -19,6 +19,8 @@ package org.springframework.ws.transport.http;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.HandlerAdapter;
@@ -37,6 +39,8 @@ import org.springframework.ws.soap.SoapMessage;
  * @see org.springframework.ws.endpoint.MessageEndpoint
  */
 public class MessageHandlerAdapter implements HandlerAdapter, InitializingBean {
+
+    private static final Log logger = LogFactory.getLog(MessageHandlerAdapter.class);
 
     private MessageContextFactory messageContextFactory;
 
@@ -80,5 +84,6 @@ public class MessageHandlerAdapter implements HandlerAdapter, InitializingBean {
 
     public final void afterPropertiesSet() throws Exception {
         Assert.notNull(messageContextFactory, "messageContextFactory is required");
+        logger.info("Using message context factory " + messageContextFactory);
     }
 }
