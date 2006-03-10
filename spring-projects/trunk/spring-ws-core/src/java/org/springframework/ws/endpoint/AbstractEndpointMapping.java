@@ -62,15 +62,6 @@ public abstract class AbstractEndpointMapping extends ApplicationObjectSupport i
     }
 
     /**
-     * Returns the endpoint interceptors to apply to all endpoints mapped by this endpoint mapping.
-     *
-     * @return array of endpoint interceptors, or <code>null</code> if none
-     */
-    protected final EndpointInterceptor[] getInterceptors() {
-        return this.interceptors;
-    }
-
-    /**
      * Sets the endpoint interceptors to apply to all endpoints mapped by this endpoint mapping.
      *
      * @param interceptors array of endpoint interceptors, or <code>null</code> if none
@@ -101,19 +92,23 @@ public abstract class AbstractEndpointMapping extends ApplicationObjectSupport i
                 return null;
             }
         }
-        return createEndpointInvocationChain(endpoint);
+        return createEndpointInvocationChain(request, endpoint, interceptors);
     }
 
     /**
-     * Creates a new <code>EndpointInvocationChain</code> based on the given endpoint. Default implementation creates a
-     * chain based on the set interceptors.
+     * Creates a new <code>EndpointInvocationChain</code> based on the given request, endpoint, and interceptors.
+     * Default implementation creates a chain based on the set interceptors.
      *
-     * @param endpoint the endpoint
+     * @param request      the current message request
+     * @param endpoint     the endpoint
+     * @param interceptors the endpoint interceptors
      * @return the created invocation chain
      * @see #setInterceptors(org.springframework.ws.EndpointInterceptor[])
      */
-    protected EndpointInvocationChain createEndpointInvocationChain(Object endpoint) {
-        return new EndpointInvocationChain(endpoint, this.interceptors);
+    protected EndpointInvocationChain createEndpointInvocationChain(WebServiceMessage request,
+                                                                    Object endpoint,
+                                                                    EndpointInterceptor[] interceptors) {
+        return new EndpointInvocationChain(endpoint, interceptors);
     }
 
     /**

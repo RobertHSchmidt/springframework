@@ -16,7 +16,9 @@
 
 package org.springframework.ws.soap.endpoint;
 
+import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.EndpointInvocationChain;
+import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.endpoint.AbstractEndpointMapping;
 import org.springframework.ws.soap.SoapEndpointInvocationChain;
 
@@ -58,12 +60,16 @@ public abstract class AbstractSoapEndpointMapping extends AbstractEndpointMappin
      * Creates a new <code>SoapEndpointInvocationChain</code> based on the given endpoint, and the set interceptors, and
      * roles.
      *
-     * @param endpoint the endpoint
+     * @param request      the current message request
+     * @param endpoint     the endpoint
+     * @param interceptors the endpoint interceptors
      * @return the created invocation chain
      * @see #setInterceptors(org.springframework.ws.EndpointInterceptor[])
      * @see #setRoles(String[])
      */
-    protected EndpointInvocationChain createEndpointInvocationChain(Object endpoint) {
-        return new SoapEndpointInvocationChain(endpoint, getInterceptors(), this.roles);
+    protected EndpointInvocationChain createEndpointInvocationChain(WebServiceMessage request,
+                                                                    Object endpoint,
+                                                                    EndpointInterceptor[] interceptors) {
+        return new SoapEndpointInvocationChain(endpoint, interceptors, this.roles);
     }
 }
