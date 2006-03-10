@@ -18,7 +18,6 @@ package org.springframework.webflow.support;
 import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.action.AbstractAction;
 
 /**
  * A convenience support class assisting in the creation of event objects.
@@ -68,7 +67,7 @@ public class EventFactorySupport {
 	/**
 	 * Returns an "error" result event caused by the provided exception.
 	 * @param e the exception that caused the error event, to be sent as an
-	 * event parameter under the name {@link AbstractAction#EXCEPTION_PARAMETER}
+	 * event parameter under the name {@link #EXCEPTION_PARAMETER}
 	 */
 	protected Event error(Exception e) {
 		return result(ERROR_EVENT_ID, EXCEPTION_PARAMETER, e);
@@ -84,22 +83,11 @@ public class EventFactorySupport {
 	/**
 	 * Returns a "success" result event with the provided result object as a
 	 * parameter. The result object is identified by the parameter name
-	 * {@link AbstractAction#RESULT_PARAMETER}.
+	 * {@link #RESULT_PARAMETER}.
 	 * @param result the action success result;
 	 */
 	protected Event success(Object result) {
 		return result(SUCCESS_EVENT_ID, RESULT_PARAMETER, result);
-	}
-
-	/**
-	 * Returns a "success" result event with the provided result object as a
-	 * parameter.
-	 * @param resultParameterName the name of the result paramter in the created
-	 * event
-	 * @param result the action success result
-	 */
-	protected Event success(String resultParameterName, Object result) {
-		return result(SUCCESS_EVENT_ID, resultParameterName, result);
 	}
 
 	/**

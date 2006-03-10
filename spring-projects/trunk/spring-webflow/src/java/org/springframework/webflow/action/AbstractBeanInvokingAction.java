@@ -184,10 +184,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 				return toDecisionStateEvent(resultObject, context);
 			}
 			else {
-				// simply return success, saving the return value as an event
-				// parameter
-				String resultParameterName = context.getAttributes().getString(RESULT_PARAMETER, RESULT_PARAMETER);
-				return success(resultParameterName, resultObject);
+				return success(resultObject);
 			}
 		}
 
