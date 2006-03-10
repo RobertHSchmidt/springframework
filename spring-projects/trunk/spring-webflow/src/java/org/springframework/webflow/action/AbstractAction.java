@@ -147,14 +147,14 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Typically called as part of return, for example:
 	 * 
 	 * <pre>
-	 *       protected Event doExecute(RequestContext context) {
-	 *           // do some work
-	 *           if (some condition) {
-	 *               return result(&quot;success&quot;);
-	 *           } else {
-	 *               return result(&quot;error&quot;);
-	 *           }
-	 *       }
+	 *     protected Event doExecute(RequestContext context) {
+	 *         // do some work
+	 *         if (some condition) {
+	 *             return result(&quot;success&quot;);
+	 *         } else {
+	 *             return result(&quot;error&quot;);
+	 *         }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
@@ -172,16 +172,16 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * example:
 	 * 
 	 * <pre>
-	 *       protected Event doExecute(RequestContext context) {
-	 *           // do some work
-	 *           AttributeMap resultAttributes = new AttributeMap();
-	 *           resultParameters.put(&quot;name&quot;, &quot;value&quot;);
-	 *           if (some condition) {
-	 *               return result(&quot;success&quot;, resultAttributes);
-	 *           } else {
-	 *               return result(&quot;error&quot;, resultAttributes);
-	 *           }
-	 *       }
+	 *     protected Event doExecute(RequestContext context) {
+	 *         // do some work
+	 *         AttributeMap resultAttributes = new AttributeMap();
+	 *         resultAttributes.put(&quot;name&quot;, &quot;value&quot;);
+	 *         if (some condition) {
+	 *             return result(&quot;success&quot;, resultAttributes);
+	 *         } else {
+	 *             return result(&quot;error&quot;, resultAttributes);
+	 *         }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
