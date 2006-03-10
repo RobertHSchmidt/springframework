@@ -44,7 +44,9 @@
         <dependency org="apache" name="xerces" rev="2.7.1" conf="test->default">
             <artifact name="xercesImpl" type="jar"/>
         </dependency>
-        <dependency org="stax" name="stax-dev" rev="1.1.2" conf="test->default"/>
+        <dependency org="woodstox" name="woodstox" rev="2.9.1" conf="buildtime->default">
+            <artifact name="wstx-asl" type="jar"/>
+        </dependency>
 
         <dependency org="springframework" name="spring-mock" rev="1.2.6" conf="test->default"/>
         <dependency org="xmlunit" name="xmlunit" rev="1.0" conf="test->default"/>
