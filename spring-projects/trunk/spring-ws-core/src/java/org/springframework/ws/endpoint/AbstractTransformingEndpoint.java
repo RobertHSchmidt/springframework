@@ -58,7 +58,7 @@ public abstract class AbstractTransformingEndpoint {
 
     /**
      * Create a <code>TransformerFactory</code> that this endpoint will use to create <code>Transformer</code>s. Can be
-     * overridden in subclasses, adding further initialization of the builder. The resulting
+     * overridden in subclasses, adding further initialization of the factory. The resulting
      * <code>TransformerFactory</code> is cached, so this method will only be called once.
      *
      * @return the created <code>TransformerFactory</code>
