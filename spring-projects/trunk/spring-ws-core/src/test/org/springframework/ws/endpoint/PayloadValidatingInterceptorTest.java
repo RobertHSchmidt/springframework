@@ -16,8 +16,6 @@
 
 package org.springframework.ws.endpoint;
 
-import java.util.Locale;
-
 import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.core.io.ClassPathResource;
@@ -84,8 +82,7 @@ public class PayloadValidatingInterceptorTest extends TestCase {
         soapMessageControl.expectAndReturn(responseMock.getSoapBody(), soapBodyMock);
         MockControl soapFaultControl = MockControl.createControl(SoapFault.class);
         SoapFault soapFaultMock = (SoapFault) soapFaultControl.getMock();
-        soapBodyControl.expectAndReturn(soapBodyMock.addSenderFault(), soapFaultMock);
-        soapFaultMock.setFaultString("Validation error", Locale.ENGLISH);
+        soapBodyControl.expectAndReturn(soapBodyMock.addSenderFault("Validation error"), soapFaultMock);
 
         soapMessageControl.replay();
         soapBodyControl.replay();

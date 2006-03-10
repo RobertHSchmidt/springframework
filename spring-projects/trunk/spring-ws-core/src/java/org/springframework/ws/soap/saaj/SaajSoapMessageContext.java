@@ -33,7 +33,7 @@ import org.springframework.ws.soap.context.AbstractSoapMessageContext;
  */
 public class SaajSoapMessageContext extends AbstractSoapMessageContext {
 
-    private SaajSoapMessage request;
+    private final SaajSoapMessage request;
 
     private SaajSoapMessage response;
 

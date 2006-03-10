@@ -16,6 +16,9 @@
 
 package org.springframework.ws.soap;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+
 /**
  * Abstract implementation of the <code>SoapMessage</code> interface.
  *
@@ -35,5 +38,19 @@ public abstract class AbstractSoapMessage implements SoapMessage {
      */
     public SoapHeader getSoapHeader() {
         return getEnvelope().getHeader();
+    }
+
+    /**
+     * Returns <code>getSoapBody().getPayloadSource()</code>.
+     */
+    public Source getPayloadSource() {
+        return getSoapBody().getPayloadSource();
+    }
+
+    /**
+     * Returns <code>getSoapBody().getPayloadResult()</code>.
+     */
+    public Result getPayloadResult() {
+        return getSoapBody().getPayloadResult();
     }
 }

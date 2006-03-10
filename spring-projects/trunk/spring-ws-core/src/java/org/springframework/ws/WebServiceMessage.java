@@ -30,22 +30,24 @@ import javax.xml.transform.Source;
 public interface WebServiceMessage {
 
     /**
-     * Returns the contents of the message as a <code>java.xml.transform.Source</code>. The payload can be retrieved
-     * multiple times.
+     * Returns the contents of the message as a <code>java.xml.transform.Source</code>. Depending on the implementation,
+     * this can be retrieved multiple times, or just a single time.
      *
      * @return the message contents
      */
     Source getPayloadSource();
 
     /**
-     * Returns the contents of the message as a <code>java.xml.transform.Result</code>.
+     * Returns the contents of the message as a <code>java.xml.transform.Result</code>. Some implementations are
+     * read-only, and may throws an <code>UnsupportedOperationException</code>.
      *
      * @return the messaage contents
+     * @throws UnsupportedOperationException if the message is read-only
      */
     Result getPayloadResult();
 
     /**
-     * Writes the entire message to the given output stream. 
+     * Writes the entire message to the given output stream.
      *
      * @param outputStream the stream to write to
      * @throws IOException if an I/O exception occurs

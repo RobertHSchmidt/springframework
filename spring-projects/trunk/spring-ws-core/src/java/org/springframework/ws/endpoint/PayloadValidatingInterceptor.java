@@ -17,7 +17,6 @@
 package org.springframework.ws.endpoint;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +26,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapEndpointInterceptor;
-import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.context.SoapMessageContext;
@@ -118,8 +116,7 @@ public class PayloadValidatingInterceptor implements SoapEndpointInterceptor, In
                 }
                 if (messageContext instanceof SoapMessageContext) {
                     SoapMessage response = ((SoapMessageContext) messageContext).createSoapResponse();
-                    SoapFault fault = response.getSoapBody().addSenderFault();
-                    fault.setFaultString("Validation error", Locale.ENGLISH);
+                    response.getSoapBody().addSenderFault("Validation error");
                 }
                 return false;
             }

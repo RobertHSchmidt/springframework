@@ -16,7 +16,6 @@
 
 package org.springframework.ws.soap.endpoint;
 
-import java.util.Locale;
 import java.util.Properties;
 import javax.xml.namespace.QName;
 
@@ -76,8 +75,7 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         resolver.setExceptionMappings(mappings);
         contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
-        bodyControl.expectAndReturn(bodyMock.addSenderFault(), faultMock);
-        faultMock.setFaultString("Sender error", Locale.ENGLISH);
+        bodyControl.expectAndReturn(bodyMock.addSenderFault("Sender error"), faultMock);
 
         replayMockControls();
 
@@ -94,8 +92,7 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         resolver.setExceptionMappings(mappings);
         contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
-        bodyControl.expectAndReturn(bodyMock.addReceiverFault(), faultMock);
-        faultMock.setFaultString("Receiver error", Locale.ENGLISH);
+        bodyControl.expectAndReturn(bodyMock.addReceiverFault("Receiver"), faultMock);
 
         replayMockControls();
 
@@ -116,8 +113,7 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         resolver.setDefaultFault(defaultFault);
         contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
-        bodyControl.expectAndReturn(bodyMock.addFault(faultCode), faultMock);
-        faultMock.setFaultString("faultstring", Locale.ENGLISH);
+        bodyControl.expectAndReturn(bodyMock.addFault(faultCode, "faultstring"), faultMock);
 
         replayMockControls();
 

@@ -36,6 +36,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.ws.soap.AbstractSoapMessage;
@@ -73,47 +74,12 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         return this.saajMessage;
     }
 
-    /**
-     * Retrieves the payload of the wrapped SAAJ message as a single DOM element. The payload of a message is the
-     * contents of the SOAP body.
-     *
-     * @return the message payload, or <code>null</code> if none is set.
-     */
-    private SOAPBodyElement getPayloadElement() {
+    public SoapEnvelope getEnvelope() {
         try {
-            for (Iterator iterator = this.saajMessage.getSOAPBody().getChildElements(); iterator.hasNext();) {
-                Object child = iterator.next();
-                if (child instanceof SOAPBodyElement) {
-                    return (SOAPBodyElement) child;
-                }
-            }
+            return new SaajSoapEnvelope(saajMessage.getSOAPPart().getEnvelope());
         }
         catch (SOAPException ex) {
-            throw new SaajSoapBodyException(ex);
-        }
-        return null;
-    }
-
-    public Source getPayloadSource() {
-        SOAPBodyElement payloadElement = getPayloadElement();
-        return (payloadElement != null) ? new DOMSource(payloadElement) : null;
-    }
-
-    public Result getPayloadResult() {
-        try {
-            return new DOMResult(saajMessage.getSOAPBody());
-        }
-        catch (SOAPException ex) {
-            throw new SaajSoapBodyException(ex);
-        }
-    }
-
-    public void writeTo(OutputStream outputStream) throws IOException {
-        try {
-            this.saajMessage.writeTo(outputStream);
-        }
-        catch (SOAPException ex) {
-            throw new SaajSoapMessageNotWritableException(ex);
+            throw new SaajSoapEnvelopeException(ex);
         }
     }
 
@@ -122,12 +88,12 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         return (ObjectUtils.isEmpty(values)) ? null : values[0];
     }
 
-    public SoapEnvelope getEnvelope() {
+    public void writeTo(OutputStream outputStream) throws IOException {
         try {
-            return new SaajSoapEnvelope(saajMessage.getSOAPPart().getEnvelope());
+            this.saajMessage.writeTo(outputStream);
         }
         catch (SOAPException ex) {
-            throw new SaajSoapEnvelopeException(ex);
+            throw new SaajSoapMessageNotWritableException(ex);
         }
     }
 
@@ -268,7 +234,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         public void setMustUnderstand(boolean mustUnderstand) {
             saajHeaderElement.setMustUnderstand(mustUnderstand);
         }
-
     }
 
     /**
@@ -286,40 +251,66 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             return (SOAPEnvelope) saajBody.getParentElement();
         }
 
+        public Source getPayloadSource() {
+            SOAPBodyElement payloadElement = getPayloadElement();
+            return (payloadElement != null) ? new DOMSource(payloadElement) : null;
+        }
+
+        /**
+         * Retrieves the payload of the wrapped SAAJ message as a single DOM element. The payload of a message is the
+         * contents of the SOAP body.
+         *
+         * @return the message payload, or <code>null</code> if none is set.
+         */
+        private SOAPBodyElement getPayloadElement() {
+            for (Iterator iterator = saajBody.getChildElements(); iterator.hasNext();) {
+                Object child = iterator.next();
+                if (child instanceof SOAPBodyElement) {
+                    return (SOAPBodyElement) child;
+                }
+            }
+            return null;
+        }
+
+        public Result getPayloadResult() {
+            return new DOMResult(saajBody);
+        }
+
         public SoapFault addMustUnderstandFault(QName[] headers) {
             try {
                 Name name = getEnvelope()
                         .createName(SaajSoapFault.MUST_UNDERSTAND, null, SOAPConstants.URI_NS_SOAP_ENVELOPE);
-                SoapFault fault = addFault(name);
-                fault.setFaultString("Mandatory Header error.", Locale.ENGLISH);
-                return fault;
+                return addFault(name, "Mandatory Header error.");
             }
             catch (SOAPException ex) {
                 throw new SaajSoapFaultException(ex);
             }
         }
 
-        public SoapFault addSenderFault() {
+        public SoapFault addSenderFault(String faultString) {
+            Assert.hasLength("faultString cannot be empty", faultString);
             try {
                 Name name = getEnvelope().createName(SaajSoapFault.CLIENT, null, SOAPConstants.URI_NS_SOAP_ENVELOPE);
-                return addFault(name);
+                return addFault(name, faultString);
             }
             catch (SOAPException ex) {
                 throw new SaajSoapFaultException(ex);
             }
         }
 
-        public SoapFault addReceiverFault() {
+        public SoapFault addReceiverFault(String faultString) {
+            Assert.hasLength("faultString cannot be empty", faultString);
             try {
                 Name name = getEnvelope().createName(SaajSoapFault.SERVER, null, SOAPConstants.URI_NS_SOAP_ENVELOPE);
-                return addFault(name);
+                return addFault(name, faultString);
             }
             catch (SOAPException ex) {
                 throw new SaajSoapFaultException(ex);
             }
         }
 
-        public SoapFault addFault(QName faultCode) {
+        public SoapFault addFault(QName faultCode, String faultString) {
+            Assert.hasLength("faultString cannot be empty", faultString);
             if (!StringUtils.hasLength(faultCode.getNamespaceURI()) || (!StringUtils.hasLength(faultCode.getPrefix())))
             {
                 throw new IllegalArgumentException("A fully qualified fault code (namespace, prefix, and local part) " +
@@ -327,16 +318,20 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             }
             try {
                 Name name = SaajUtils.toName(faultCode, getEnvelope());
-                return addFault(name);
+                return addFault(name, faultString);
             }
             catch (SOAPException ex) {
                 throw new SaajSoapFaultException(ex);
             }
         }
 
-        private SoapFault addFault(Name name) throws SOAPException {
-            SOAPFault saajFault = saajBody.addFault();
-            saajFault.setFaultCode(name);
+        private SoapFault addFault(Name name, String faultString) throws SOAPException {
+            for (Iterator iterator = saajBody.getChildElements(); iterator.hasNext();) {
+                SOAPBodyElement bodyElement = (SOAPBodyElement) iterator.next();
+                bodyElement.detachNode();
+                bodyElement.recycleNode();
+            }
+            SOAPFault saajFault = saajBody.addFault(name, faultString);
             return new SaajSoapFault(saajFault);
         }
 
@@ -431,5 +426,4 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             return new DOMSource(saajFault);
         }
     }
-
 }

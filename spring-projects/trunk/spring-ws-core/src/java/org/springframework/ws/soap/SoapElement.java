@@ -35,7 +35,8 @@ public interface SoapElement {
     QName getName();
 
     /**
-     * Returns the <code>Source</code> of this element.
+     * Returns the <code>Source</code> of this element. This includes the element itself, i.e.
+     * <code>SoapEnvelope.getSource()</code> will include the <code>Envelope</code> tag.
      *
      * @return the <code>Source</code> of this element
      */

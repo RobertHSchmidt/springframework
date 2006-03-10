@@ -92,13 +92,13 @@ public class SoapFaultMappingExceptionResolver implements EndpointExceptionResol
         SoapBody body = soapContext.createSoapResponse().getSoapBody();
         SoapFault fault = null;
         if (SoapFaultDefinition.RECEIVER.equals(definition.getFaultCode())) {
-            fault = body.addReceiverFault();
+            fault = body.addReceiverFault(definition.getFaultString());
         }
         else if (SoapFaultDefinition.SENDER.equals(definition.getFaultCode())) {
-            fault = body.addSenderFault();
+            fault = body.addSenderFault(definition.getFaultString());
         }
         else {
-            fault = body.addFault(definition.getFaultCode());
+            fault = body.addFault(definition.getFaultCode(), definition.getFaultString());
         }
         fault.setFaultString(definition.getFaultString(), definition.getFaultStringLocale());
         return true;

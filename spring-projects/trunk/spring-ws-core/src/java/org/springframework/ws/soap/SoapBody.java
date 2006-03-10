@@ -17,25 +17,43 @@
 package org.springframework.ws.soap;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 
 /**
  * Represents the <code>Body</code> element in a SOAP message. A SOAP body contains the <strong>payload</strong> of the
- * message. This payload can be custom XML, or a <code>SoapFault</code>.
+ * message. This payload can be custom XML, or a <code>SoapFault</code> (but not both).
  * <p/>
  * Note that the source returned by <code>getSource()</code> includes the SOAP Body element itself. For the contents of
- * the body, use <code>SoapMessage.getPayloadSource()</code>.
+ * the body, use <code>getPayloadSource()</code>.
  *
  * @author Arjen Poutsma
  * @see SoapEnvelope#getBody()
- * @see SoapMessage#getPayloadSource()
- * @see SoapMessage#getPayloadResult()
+ * @see #getPayloadSource()
+ * @see #getPayloadResult()
  * @see SoapFault
  */
 public interface SoapBody extends SoapElement {
 
     /**
+     * Returns a <code>Source</code> that represents the contents of the body.
+     *
+     * @return the message contents
+     */
+    Source getPayloadSource();
+
+    /**
+     * Returns a <code>Result</code> that represents the contents of the body.
+     *
+     * @return the messaage contents
+     */
+    Result getPayloadResult();
+
+    /**
      * Adds a <code>MustUnderstand</code> fault to the body. A <code>MustUnderstand</code> is returned when a SOAP
      * header with a <code>MustUnderstand</code> attribute is not understood.
+     * <p/>
+     * Adding a fault removes the current content of the body.
      * <p/>
      * The specified headers can be used to generate an fault string.
      *
@@ -49,34 +67,38 @@ public interface SoapBody extends SoapElement {
      * Adds a <code>Sender</code>/<code>Client</code> fault to the body.  If the underlying message is SOAP 1.1 based,
      * this methods creates a <code>Client</code> fault code; in SOAP 1.2, it creates a <code>Sender</code> fault code.
      * <p/>
-     * The specified headers can be used to generate an fault string.
+     * Adding a fault removes the current content of the body.
      *
+     * @param faultString the fault string
      * @return the created <code>SoapFault</code>
      * @see SoapFault#isMustUnderstandFault()
      */
-    SoapFault addSenderFault();
+    SoapFault addSenderFault(String faultString);
 
     /**
      * Adds a <code>Receiver</code>/<code>Server</code> fault to the body.  If the underlying message is SOAP 1.1 based,
      * this methods creates a <code>Receiver</code> fault code; in SOAP 1.2, it creates a <code>Receiver</code> fault
      * code.
      * <p/>
-     * The specified headers can be used to generate an fault string.
+     * Adding a fault removes the current content of the body.
      *
+     * @param faultString the fault string
      * @return the created <code>SoapFault</code>
      * @see SoapFault#isMustUnderstandFault()
      */
-    SoapFault addReceiverFault();
+    SoapFault addReceiverFault(String faultString);
 
     /**
      * Adds a custom soap fault to the body. The given fault code must be fully qualified (i.e. namespace, prefix, and
      * local part must be present).
+     * <p/>
+     * Adding a fault removes the current content of the body.
      *
      * @param faultCode the fully qualified fault code
      * @return the added <code>SoapFault</code>
      * @throws IllegalArgumentException if the fault code is not fully qualified
      */
-    SoapFault addFault(QName faultCode);
+    SoapFault addFault(QName faultCode, String faultString);
 
     /**
      * Indicates whether this body has a <code>SoapFault</code>.
