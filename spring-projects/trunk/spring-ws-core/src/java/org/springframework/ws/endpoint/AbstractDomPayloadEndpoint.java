@@ -18,15 +18,12 @@ package org.springframework.ws.endpoint;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -41,31 +38,42 @@ import org.w3c.dom.Element;
  * @author Alef Arendsen
  * @see #invokeInternal(org.w3c.dom.Element, org.w3c.dom.Document)
  */
-public abstract class AbstractDomPayloadEndpoint implements PayloadEndpoint, InitializingBean {
-
-    protected final Log logger = LogFactory.getLog(getClass());
-
-    private TransformerFactory transformerFactory;
+public abstract class AbstractDomPayloadEndpoint extends AbstractTransformingEndpoint implements PayloadEndpoint {
 
     private DocumentBuilderFactory documentBuilderFactory;
 
-    public final void afterPropertiesSet() throws Exception {
-        transformerFactory = TransformerFactory.newInstance();
-        documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setNamespaceAware(true);
-        onAfterPropertiesSet();
+    private boolean validating = false;
+
+    private boolean namespaceAware = true;
+
+    /**
+     * Set whether or not the XML parser should be XML namespace aware. Default is <code>true</code>.
+     */
+    public void setNamespaceAware(boolean namespaceAware) {
+        this.namespaceAware = namespaceAware;
+    }
+
+    /**
+     * Set if the XML parser should validate the document. Default is <code>false</code>.
+     */
+    public void setValidating(boolean validating) {
+        this.validating = validating;
     }
 
     public final Source invoke(Source request) throws Exception {
-        Transformer transformer = transformerFactory.newTransformer();
-        DOMResult domResult = new DOMResult();
+        Transformer transformer = createTransformer();
+        if (documentBuilderFactory == null) {
+            documentBuilderFactory = createDocumentBuilderFactory();
+        }
+        DocumentBuilder documentBuilder = createDocumentBuilder(documentBuilderFactory);
+        Document requestDocument = documentBuilder.newDocument();
+        DOMResult domResult = new DOMResult(requestDocument);
         transformer.transform(request, domResult);
-        Element requestElement = (Element) ((Document) domResult.getNode()).getFirstChild();
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document document = documentBuilder.newDocument();
-        Element responseElement = invokeInternal(requestElement, document);
+        Element requestElement = (Element) requestDocument.getFirstChild();
+        Document resonseDocument = documentBuilder.newDocument();
+        Element responseElement = invokeInternal(requestElement, resonseDocument);
         if (responseElement != null) {
-            document.normalizeDocument();
+            resonseDocument.normalizeDocument();
             return new DOMSource(responseElement);
         }
         else {
@@ -74,9 +82,31 @@ public abstract class AbstractDomPayloadEndpoint implements PayloadEndpoint, Ini
     }
 
     /**
-     * Template method which can be used for initalization.
+     * Create a <code>DocumentBuilder</code> that this endpoint will use for parsing XML documents. Can be overridden in
+     * subclasses, adding further initialization of the builder.
+     *
+     * @param factory the <code>DocumentBuilderFactory</code> that the DocumentBuilder should be created with
+     * @return the <code>DocumentBuilder</code>
+     * @throws ParserConfigurationException if thrown by JAXP methods
      */
-    protected void onAfterPropertiesSet() throws Exception {
+    protected DocumentBuilder createDocumentBuilder(DocumentBuilderFactory factory)
+            throws ParserConfigurationException {
+        return factory.newDocumentBuilder();
+    }
+
+    /**
+     * Create a <code>DocumentBuilderFactory</code> that this endpoint will use for constructing XML documents. Can be
+     * overridden in subclasses, adding further initialization of the factory. The resulting
+     * <code>DocumentBuilderFactory</code> is cached, so this method will only be called once.
+     *
+     * @return the DocumentBuilderFactory
+     * @throws ParserConfigurationException if thrown by JAXP methods
+     */
+    protected DocumentBuilderFactory createDocumentBuilderFactory() throws ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(this.validating);
+        factory.setNamespaceAware(this.namespaceAware);
+        return factory;
     }
 
     /**

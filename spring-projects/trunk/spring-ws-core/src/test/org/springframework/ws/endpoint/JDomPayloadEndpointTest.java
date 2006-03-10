@@ -38,7 +38,6 @@ public class JDomPayloadEndpointTest extends XMLTestCase {
             }
 
         };
-        endpoint.afterPropertiesSet();
         Source response = endpoint.invoke(request);
         assertNull("Invalid response", response);
     }
@@ -52,7 +51,6 @@ public class JDomPayloadEndpointTest extends XMLTestCase {
                 return new Element("response", "prefix", "namespace");
             }
         };
-        endpoint.afterPropertiesSet();
 
         Source request = new StringSource("<request xmlns='namespace'/>");
         Source response = endpoint.invoke(request);

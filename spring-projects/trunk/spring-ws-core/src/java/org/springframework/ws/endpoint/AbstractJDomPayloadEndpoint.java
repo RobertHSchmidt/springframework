@@ -18,14 +18,10 @@ package org.springframework.ws.endpoint;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 import org.jdom.transform.JDOMResult;
 import org.jdom.transform.JDOMSource;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Abstract base class for endpoints that handle the message payload as JDOM elements. Offers the message payload as a
@@ -37,30 +33,15 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Arjen Poutsma
  * @see Element
  */
-public abstract class AbstractJDomPayloadEndpoint implements PayloadEndpoint, InitializingBean {
-
-    protected final Log logger = LogFactory.getLog(getClass());
-
-    private TransformerFactory transformerFactory;
-
-    public final void afterPropertiesSet() throws Exception {
-        transformerFactory = TransformerFactory.newInstance();
-        onAfterPropertiesSet();
-    }
+public abstract class AbstractJDomPayloadEndpoint extends AbstractTransformingEndpoint implements PayloadEndpoint {
 
     public final Source invoke(Source request) throws Exception {
-        Transformer transformer = transformerFactory.newTransformer();
+        Transformer transformer = createTransformer();
         JDOMResult jdomResult = new JDOMResult();
         transformer.transform(request, jdomResult);
         Element requestElement = jdomResult.getDocument().getRootElement();
         Element responseElement = invokeInternal(requestElement);
         return responseElement != null ? new JDOMSource(responseElement) : null;
-    }
-
-    /**
-     * Template method which can be used for initalization.
-     */
-    protected void onAfterPropertiesSet() throws Exception {
     }
 
     /**

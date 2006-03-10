@@ -38,7 +38,6 @@ public class DomPayloadEndpointTest extends XMLTestCase {
             }
 
         };
-        endpoint.afterPropertiesSet();
         Source response = endpoint.invoke(request);
         assertNull("Invalid response", response);
     }
@@ -51,7 +50,6 @@ public class DomPayloadEndpointTest extends XMLTestCase {
                 return document.createElement("response");
             }
         };
-        endpoint.afterPropertiesSet();
 
         Source request = new StringSource("<request/>");
         Source response = endpoint.invoke(request);

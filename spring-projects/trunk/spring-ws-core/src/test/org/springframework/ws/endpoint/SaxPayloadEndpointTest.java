@@ -36,7 +36,6 @@ public class SaxPayloadEndpointTest extends TestCase {
         contentHandlerControl = MockControl.createStrictControl(ContentHandler.class);
         contentHandlerMock = (ContentHandler) contentHandlerControl.getMock();
         endpoint = new MySaxPayloadEndpoint(contentHandlerMock);
-        endpoint.afterPropertiesSet();
     }
 
     public void testInvoke() throws Exception {

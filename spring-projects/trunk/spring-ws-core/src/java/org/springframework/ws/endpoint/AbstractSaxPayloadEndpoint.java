@@ -18,12 +18,8 @@ package org.springframework.ws.endpoint;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.xml.sax.ContentHandler;
 
 /**
@@ -38,16 +34,7 @@ import org.xml.sax.ContentHandler;
  * @see #createContentHandler()
  * @see #getResponse(org.xml.sax.ContentHandler)
  */
-public abstract class AbstractSaxPayloadEndpoint implements PayloadEndpoint, InitializingBean {
-
-    protected final Log logger = LogFactory.getLog(getClass());
-
-    private TransformerFactory transformerFactory;
-
-    public final void afterPropertiesSet() throws Exception {
-        transformerFactory = TransformerFactory.newInstance();
-        onAfterPropertiesSet();
-    }
+public abstract class AbstractSaxPayloadEndpoint extends AbstractTransformingEndpoint implements PayloadEndpoint {
 
     /**
      * Invokes the provided <code>ContentHandler</code> and <code>LexicalHandler</code> on the given request. After
@@ -57,17 +44,11 @@ public abstract class AbstractSaxPayloadEndpoint implements PayloadEndpoint, Ini
      * @see #getResponse(org.xml.sax.ContentHandler)
      */
     public final Source invoke(Source request) throws Exception {
-        Transformer transformer = transformerFactory.newTransformer();
+        Transformer transformer = createTransformer();
         ContentHandler contentHandler = createContentHandler();
         SAXResult result = new SAXResult(contentHandler);
         transformer.transform(request, result);
         return getResponse(contentHandler);
-    }
-
-    /**
-     * Template method which can be used for initialization.
-     */
-    protected void onAfterPropertiesSet() throws Exception {
     }
 
     /**
