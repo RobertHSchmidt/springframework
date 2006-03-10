@@ -41,4 +41,9 @@ public class JibxUnmarshallerTest extends AbstractUnmarshallerTest {
         // hence the override here
     }
 
+    public void testUnmarshalSAXSource() throws Exception {
+        // Unfortunately, JiBX does not support SAXSources
+        // hence the override here
+    }
+
 }

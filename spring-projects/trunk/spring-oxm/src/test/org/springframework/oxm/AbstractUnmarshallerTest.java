@@ -17,7 +17,6 @@ package org.springframework.oxm;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -25,18 +24,20 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 public abstract class AbstractUnmarshallerTest extends TestCase {
 
     private Unmarshaller unmarshaller;
 
-    protected static final String INPUT_STRING = "<tns:flights xmlns:tns=\"http://samples.springframework.org/flight\">"
-            + "<tns:flight><tns:number>42</tns:number></tns:flight></tns:flights>";
+    protected static final String INPUT_STRING =
+            "<tns:flights xmlns:tns=\"http://samples.springframework.org/flight\">" +
+                    "<tns:flight><tns:number>42</tns:number></tns:flight></tns:flights>";
 
     protected final void setUp() throws Exception {
         unmarshaller = createUnmarshaller();
@@ -67,7 +68,7 @@ public abstract class AbstractUnmarshallerTest extends TestCase {
         Object flights = unmarshaller.unmarshal(source);
         testFlights(flights);
     }
-    
+
     public void testUnmarshalStreamSourceInputStream() throws Exception {
         StreamSource source = new StreamSource(new ByteArrayInputStream(INPUT_STRING.getBytes("UTF-8")));
         Object flights = unmarshaller.unmarshal(source);
@@ -75,7 +76,8 @@ public abstract class AbstractUnmarshallerTest extends TestCase {
     }
 
     public void testUnmarshalSAXSource() throws Exception {
-        SAXSource source = new SAXSource(new InputSource(new StringReader(INPUT_STRING)));
+        XMLReader reader = XMLReaderFactory.createXMLReader();
+        SAXSource source = new SAXSource(reader, new InputSource(new StringReader(INPUT_STRING)));
         Object flights = unmarshaller.unmarshal(source);
         testFlights(flights);
     }

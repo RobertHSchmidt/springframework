@@ -25,6 +25,7 @@ import java.io.Writer;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.mapping.MappingException;
 import org.exolab.castor.xml.Marshaller;
+import org.exolab.castor.xml.UnmarshalHandler;
 import org.exolab.castor.xml.Unmarshaller;
 import org.exolab.castor.xml.XMLException;
 import org.springframework.beans.factory.InitializingBean;
@@ -34,6 +35,8 @@ import org.springframework.oxm.XmlMappingException;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 
 /**
@@ -188,6 +191,20 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
         }
         catch (XMLException ex) {
             throw convertCastorException(ex, false);
+        }
+    }
+
+    protected Object unmarshalSaxReader(XMLReader xmlReader, InputSource inputSource)
+            throws XmlMappingException, IOException {
+        UnmarshalHandler unmarshalHandler = unmarshaller.createHandler();
+        try {
+            ContentHandler contentHandler = Unmarshaller.getContentHandler(unmarshalHandler);
+            xmlReader.setContentHandler(contentHandler);
+            xmlReader.parse(inputSource);
+            return unmarshalHandler.getObject();
+        }
+        catch (SAXException ex) {
+            throw new CastorUnmarshallingFailureException(ex);
         }
     }
 

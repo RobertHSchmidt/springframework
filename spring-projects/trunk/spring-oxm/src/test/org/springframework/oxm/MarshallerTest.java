@@ -40,8 +40,11 @@ import org.easymock.classextension.MockClassControl;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Testcase for <code>AbstractMarshaller</code>.
@@ -222,61 +225,20 @@ public class MarshallerTest extends TestCase {
         control.verify();
     }
 
-    public void testUnmarshalSaxSourceInputStream() throws IOException {
-        final InputStream inputStream = new ByteArrayInputStream(new byte[0]);
-        final Object object = new Object();
-        AbstractMarshaller marshaller = new AbstractMarshaller() {
-
-            protected void marshalDomNode(Object graph, Node node, Node nextSibling) throws XmlMappingException {
-                fail("Not expected");
-            }
-
-            protected void marshalOutputStream(Object graph, OutputStream outputStream) throws XmlMappingException {
-                fail("Not expected");
-            }
-
-            protected void marshalWriter(Object graph, Writer writer) throws XmlMappingException {
-                fail("Not expected");
-            }
-
-            protected void marshalSaxHandlers(Object graph,
-                                              ContentHandler contentHandler,
-                                              LexicalHandler lexicalHandler) {
-                fail("Not expected");
-            }
-
-            protected Object unmarshalReader(Reader reader) {
-                fail("Not expected");
-                return null;
-            }
-
-            protected Object unmarshalInputStream(InputStream givenInputStream) {
-                assertEquals("Invalid inputStream", inputStream, givenInputStream);
-                return object;
-            }
-
-            protected Object unmarshalDomNode(Node node) {
-                fail("Not expected");
-                return null;
-            }
-        };
-        SAXSource saxSource = new SAXSource(new InputSource(inputStream));
-        Object result = marshaller.unmarshalSaxSource(saxSource);
-        assertEquals("Invalid result returned", object, result);
-    }
-
-    public void testUnmarshalSaxSourceReader() throws IOException {
-        final Reader reader = new StringReader("");
+    public void testUnmarshalSaxSourceXmlReader() throws IOException, SAXException {
+        final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+        final InputSource inputSource = new InputSource();
         final Object object = new Object();
         AbstractMarshaller marshaller = new FailingMarshaller() {
-
-            protected Object unmarshalReader(Reader givenReader) {
-                assertEquals("Invalid reader", reader, givenReader);
+            protected Object unmarshalSaxReader(XMLReader givenXmlReader, InputSource givenInputSource)
+                    throws XmlMappingException {
+                assertEquals("Invalid xmlReader", xmlReader, givenXmlReader);
+                assertEquals("Invalid inputSource", inputSource, givenInputSource);
                 return object;
             }
 
         };
-        SAXSource saxSource = new SAXSource(new InputSource(reader));
+        SAXSource saxSource = new SAXSource(xmlReader, inputSource);
         Object result = marshaller.unmarshalSaxSource(saxSource);
         assertEquals("Invalid result returned", object, result);
     }
@@ -343,6 +305,12 @@ public class MarshallerTest extends TestCase {
         }
 
         protected Object unmarshalDomNode(Node node) throws XmlMappingException {
+            fail("Not expected");
+            return null;
+        }
+
+        protected Object unmarshalSaxReader(XMLReader xmlReader, InputSource inputSource)
+                throws XmlMappingException, IOException {
             fail("Not expected");
             return null;
         }

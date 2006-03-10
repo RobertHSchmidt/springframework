@@ -9,6 +9,7 @@ import java.io.Writer;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.XmlSaxHandler;
 import org.springframework.oxm.AbstractMarshaller;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.XmlMappingException;
@@ -16,7 +17,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 
 /**
@@ -131,9 +134,9 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
      * Abstract template method for unmarshalling from a given DOM <code>Node</code>.
      *
      * @param node The DOM node that contains the objects to be unmarshalled
+     * @return the <code>XmlObject</code> graph
      * @throws org.springframework.oxm.XmlMappingException
-     *                            if the given DOM node cannot be mapped to an object
-     * @throws ClassCastException if <code>graph</code> does not implement <code>XmlObject</code>
+     *          if the given DOM node cannot be mapped to an object
      * @see XmlObject
      */
     protected Object unmarshalDomNode(Node node) throws XmlMappingException {
@@ -146,13 +149,39 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
     }
 
     /**
+     * Abstract template method for unmarshalling using a given SAX <code>XMLReader</code> and
+     * <code>InputSource</code>.
+     *
+     * @param xmlReader   the SAX <code>XMLReader</code> to parse with
+     * @param inputSource the input source to parse from
+     * @return the <code>XmlObject</code> graph
+     * @see XmlObject
+     */
+    protected Object unmarshalSaxReader(XMLReader xmlReader, InputSource inputSource)
+            throws XmlMappingException, IOException {
+        XmlSaxHandler saxHandler = XmlObject.Factory.newXmlSaxHandler(xmlOptions);
+        xmlReader.setContentHandler(saxHandler.getContentHandler());
+        try {
+            xmlReader.setProperty("http://xml.org/sax/properties/lexical-handler", saxHandler.getLexicalHandler());
+            xmlReader.parse(inputSource);
+            return saxHandler.getObject();
+        }
+        catch (SAXException ex) {
+            throw convertXmlBeansException(ex, false);
+        }
+        catch (XmlException ex) {
+            throw convertXmlBeansException(ex, false);
+        }
+    }
+
+    /**
      * Abstract template method for unmarshalling from a given <code>InputStream</code>.
      *
      * @param inputStream the <code>InputStreamStream</code> to read from
+     * @return the <code>XmlObject</code> graph
      * @throws org.springframework.oxm.XmlMappingException
      *                             if the given object cannot be mapped to an object
      * @throws java.io.IOException if an I/O exception occurs
-     * @throws ClassCastException  if <code>graph</code> does not implement <code>XmlObject</code>
      * @see XmlObject
      */
     protected Object unmarshalInputStream(InputStream inputStream) throws XmlMappingException, IOException {
@@ -168,10 +197,10 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
      * Abstract template method for unmarshalling from a given <code>Reader</code>.
      *
      * @param reader the <code>Reader</code> to read from
+     * @return the <code>XmlObject</code> graph
      * @throws org.springframework.oxm.XmlMappingException
      *                             if the given object cannot be mapped to an object
      * @throws java.io.IOException if an I/O exception occurs
-     * @throws ClassCastException  if <code>graph</code> does not implement <code>XmlObject</code>
      * @see XmlObject
      */
     protected Object unmarshalReader(Reader reader) throws XmlMappingException, IOException {
@@ -196,9 +225,7 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
      * @param marshalling indicates whether the exception occurs during marshalling (<code>true</code>), or
      *                    unmarshalling (<code>false</code>)
      * @return the corresponding <code>XmlMappingException</code>
-     * @throws ClassCastException if <code>graph</code> does not implement <code>XmlObject</code>
      * @see XmlBeansUtils#convertXmlBeansException(Exception, boolean)
-     * @see XmlObject
      */
     public XmlMappingException convertXmlBeansException(Exception ex, boolean marshalling) {
         return XmlBeansUtils.convertXmlBeansException(ex, marshalling);

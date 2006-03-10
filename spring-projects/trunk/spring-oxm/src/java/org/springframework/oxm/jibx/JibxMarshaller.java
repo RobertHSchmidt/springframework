@@ -36,6 +36,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 
 /**
@@ -159,6 +161,16 @@ public class JibxMarshaller extends AbstractMarshaller implements InitializingBe
      */
     protected Object unmarshalDomNode(Node node) throws XmlMappingException {
         throw new UnsupportedOperationException("JibxMarshaller does not support unmarshalling of DOM Nodes");
+    }
+
+    /**
+     * Throws <code>UnsupportedOperationException</code>.
+     *
+     * @throws UnsupportedOperationException
+     */
+    protected Object unmarshalSaxReader(XMLReader xmlReader, InputSource inputSource)
+            throws XmlMappingException, IOException {
+        throw new UnsupportedOperationException("JibxMarshaller does not support unmarshalling using SAX XMLReaders");
     }
 
     protected Object unmarshalInputStream(InputStream inputStream) throws XmlMappingException, IOException {

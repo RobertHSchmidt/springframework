@@ -34,6 +34,7 @@ import org.springframework.util.Assert;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 
 /**
@@ -136,9 +137,6 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
         ContentHandler contentHandler = saxResult.getHandler();
         Assert.notNull(contentHandler, "ContentHandler not set on SAXResult");
         LexicalHandler lexicalHandler = saxResult.getLexicalHandler();
-        if (lexicalHandler == null && contentHandler instanceof LexicalHandler) {
-            lexicalHandler = (LexicalHandler) contentHandler;
-        }
         marshalSaxHandlers(graph, contentHandler, lexicalHandler);
     }
 
@@ -184,24 +182,18 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
 
     /**
      * Template method for handling <code>SAXSource</code>s. This implementation defers to
-     * <code>unmarshalInputStream</code>, or <code>unmarshalReader</code>.
+     * <code>unmarshalSaxReader</code>.
      *
      * @param saxSource the <code>SAXSource</code>
      * @return the object graph
      * @throws XmlMappingException if the given source cannot be mapped to an object
      * @throws IOException         if an I/O Exception occurs
+     * @see #unmarshalSaxReader(org.xml.sax.XMLReader, org.xml.sax.InputSource)
      */
     protected Object unmarshalSaxSource(SAXSource saxSource) throws XmlMappingException, IOException {
-        InputSource inputSource = saxSource.getInputSource();
-        if (inputSource.getByteStream() != null) {
-            return unmarshalInputStream(inputSource.getByteStream());
-        }
-        else if (inputSource.getCharacterStream() != null) {
-            return unmarshalReader(inputSource.getCharacterStream());
-        }
-        else {
-            throw new IllegalArgumentException("SAXSource InputSource contains neither InputStream nor Reader");
-        }
+        Assert.notNull(saxSource.getXMLReader(), "SAXSource does not contain XMLReader");
+        Assert.notNull(saxSource.getInputSource(), "SAXSource does not contain InputSource");
+        return unmarshalSaxReader(saxSource.getXMLReader(), saxSource.getInputSource());
     }
 
     /**
@@ -278,14 +270,27 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
      * Abstract template method for unmarshalling from a given DOM <code>Node</code>.
      *
      * @param node The DOM node that contains the objects to be unmarshalled
+     * @return the object graph
      * @throws XmlMappingException if the given DOM node cannot be mapped to an object
      */
     protected abstract Object unmarshalDomNode(Node node) throws XmlMappingException;
 
     /**
+     * Abstract template method for unmarshalling using a given SAX <code>XMLReader</code> and
+     * <code>InputSource</code>.
+     *
+     * @param xmlReader   the SAX <code>XMLReader</code> to parse with
+     * @param inputSource the input source to parse from
+     * @return the object graph
+     */
+    protected abstract Object unmarshalSaxReader(XMLReader xmlReader, InputSource inputSource)
+            throws XmlMappingException, IOException;
+
+    /**
      * Abstract template method for unmarshalling from a given <code>InputStream</code>.
      *
      * @param inputStream the <code>InputStreamStream</code> to read from
+     * @return the object graph
      * @throws XmlMappingException if the given object cannot be mapped to an object
      * @throws IOException         if an I/O exception occurs
      */
@@ -295,6 +300,7 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
      * Abstract template method for unmarshalling from a given <code>Reader</code>.
      *
      * @param reader the <code>Reader</code> to read from
+     * @return the object graph
      * @throws XmlMappingException if the given object cannot be mapped to an object
      * @throws IOException         if an I/O exception occurs
      */
