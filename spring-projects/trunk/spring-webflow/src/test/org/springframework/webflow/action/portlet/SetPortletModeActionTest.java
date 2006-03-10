@@ -23,7 +23,6 @@ import org.springframework.mock.web.portlet.MockActionResponse;
 import org.springframework.mock.web.portlet.MockRenderResponse;
 import org.springframework.webflow.ActionExecutionException;
 import org.springframework.webflow.Event;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -55,7 +54,7 @@ public class SetPortletModeActionTest extends TestCase {
 		// perform test
 		Event result = tested.doExecute(mockRequestContext);
 
-		assertEquals(AbstractAction.SUCCESS_EVENT_ID, result.getId());
+		assertEquals(tested.getEventFactorySupport().getSuccessEventId(), result.getId());
 		assertEquals(tested.getPortletMode(), mockActionResponse.getPortletMode());
 	}
 
@@ -69,7 +68,7 @@ public class SetPortletModeActionTest extends TestCase {
 		// perform test
 		Event result = tested.doExecute(mockRequestContext);
 
-		assertEquals(AbstractAction.SUCCESS_EVENT_ID, result.getId());
+		assertEquals(tested.getEventFactorySupport().getSuccessEventId(), result.getId());
 		assertEquals(PortletMode.HELP, mockActionResponse.getPortletMode());
 	}
 

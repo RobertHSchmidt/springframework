@@ -15,20 +15,14 @@
  */
 package org.springframework.webflow.action;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodSignature;
-import org.springframework.core.enums.LabeledEnum;
 import org.springframework.webflow.AnnotatedAction;
-import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ScopeType;
-import org.springframework.webflow.support.EventFactory;
-import org.springframework.webflow.support.EventFactorySupport;
 
 /**
  * Base class for actions that delegate to methods on abritrary beans. Acts as
@@ -56,7 +50,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	/**
 	 * The strategy that adapts method return values to Event objects.
 	 */
-	private EventFactory eventFactory = new DefaultBeanReturnValueEventFactory();
+	private ResultEventFactory eventFactory = new DefaultResultEventFactory();
 
 	/**
 	 * Returns the bean state management strategy used by this action.
@@ -83,14 +77,14 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	/**
 	 * Returns the event adaption strategy used by this action.
 	 */
-	protected EventFactory getEventFactory() {
+	protected ResultEventFactory getEventFactory() {
 		return eventFactory;
 	}
 
 	/**
 	 * Set the return value -> event adaption strategy.
 	 */
-	public void setEventFactory(EventFactory eventFactory) {
+	public void setEventFactory(ResultEventFactory eventFactory) {
 		this.eventFactory = eventFactory;
 	}
 
@@ -108,7 +102,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 				MethodSignature.class);
 		Object returnValue = getMethodInvoker().invoke(methodKey, bean, context);
 		processMethodReturnValue(returnValue, context);
-		Event resultEvent = getEventFactory().createEvent(returnValue, context);
+		Event resultEvent = getEventFactory().createEvent(bean, returnValue, context);
 		getStatePersister().saveState(bean, context);
 		return resultEvent;
 	}
@@ -136,97 +130,15 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * State persister that doesn't take any action - default implementation.
+	 * State persister that doesn't take any action - default, private implementation.
 	 * 
 	 * @author Keith Donald
 	 */
-	public static class NoOpBeanStatePersister implements BeanStatePersister {
+	private static class NoOpBeanStatePersister implements BeanStatePersister {
 		public void restoreState(Object bean, RequestContext context) throws Exception {
 		}
 
 		public void saveState(Object bean, RequestContext context) throws Exception {
-		}
-	}
-
-	/**
-	 * Default implementation of the event adapter interface.
-	 * @author Keith Donald
-	 */
-	public static class DefaultBeanReturnValueEventFactory extends EventFactorySupport implements EventFactory {
-
-		private static final String NULL_EVENT_ID = "null";
-
-		private static final String JAVA_LANG_ENUM_CLASSNAME = "java.lang.Enum";
-
-		private static Class java5EnumClass;
-
-		private static Method java5EnumNameMethod;
-
-		static {
-			try {
-				java5EnumClass = Class.forName(JAVA_LANG_ENUM_CLASSNAME);
-				try {
-					java5EnumNameMethod = java5EnumClass.getMethod("name", null);
-				}
-				catch (NoSuchMethodException e) {
-					throw new RuntimeException("Should not happen on JDK 1.5");
-				}
-			}
-			catch (ClassNotFoundException ex) {
-			}
-		}
-
-		public Event createEvent(Object resultObject, RequestContext context) {
-			if (resultObject instanceof Event) {
-				return (Event)resultObject;
-			}
-			if (context.getCurrentState() instanceof DecisionState) {
-				return toDecisionStateEvent(resultObject, context);
-			}
-			else {
-				return success(resultObject);
-			}
-		}
-
-		/**
-		 * Called when this action is invoked by a decision state - adapts the
-		 * invoked method's return value to an event identifier the decision
-		 * state can respond to.
-		 * @param context the request context
-		 * @param resultObject the return value
-		 * @return the decision event
-		 */
-		protected Event toDecisionStateEvent(Object resultObject, RequestContext context) {
-			if (resultObject == null) {
-				return result(NULL_EVENT_ID, RESULT_PARAMETER, null);
-			}
-			if (resultObject instanceof Boolean) {
-				return yesOrNo(((Boolean)resultObject).booleanValue());
-			}
-			else {
-				// handle special event adaption for enum return values
-				if (java5EnumClass != null && java5EnumClass.equals(resultObject.getClass())) {
-					return jdk5EnumResult(resultObject);
-				}
-				else if (resultObject instanceof LabeledEnum) {
-					String resultId = ((LabeledEnum)resultObject).getLabel();
-					return result(resultId, RESULT_PARAMETER, resultObject);
-				}
-			}
-			return result(String.valueOf(resultObject), RESULT_PARAMETER, resultObject);
-		}
-
-		protected Event jdk5EnumResult(Object returnEnumValue) {
-			try {
-				String resultEventId = (String)java5EnumNameMethod.invoke(returnEnumValue, null);
-				return result(resultEventId, RESULT_PARAMETER, returnEnumValue);
-			}
-			catch (InvocationTargetException e) {
-				throw new RuntimeException("Should not happen on JDK 1.5");
-			}
-			catch (IllegalAccessException e) {
-				throw new RuntimeException("Should not happen on JDK 1.5");
-			}
 		}
 	}
 }

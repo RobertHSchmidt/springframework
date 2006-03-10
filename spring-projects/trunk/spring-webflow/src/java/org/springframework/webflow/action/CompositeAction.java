@@ -40,16 +40,6 @@ public class CompositeAction extends AbstractAction {
 	private Action[] actions;
 
 	/**
-	 * The success result event identifier.
-	 */
-	private String successEventId = SUCCESS_EVENT_ID;
-
-	/**
-	 * The error result event identifier.
-	 */
-	private String errorEventId = ERROR_EVENT_ID;
-
-	/**
 	 * Should execution stop if one action returns an error event?
 	 */
 	private boolean stopOnError;
@@ -72,34 +62,6 @@ public class CompositeAction extends AbstractAction {
 	}
 
 	/**
-	 * Returns the error event id.
-	 */
-	public String getSuccessEventId() {
-		return successEventId;
-	}
-
-	/**
-	 * Sets the error event id.
-	 */
-	public void setSuccessEventId(String successEventId) {
-		this.successEventId = successEventId;
-	}
-
-	/**
-	 * Returns the error event id.
-	 */
-	public String getErrorEventId() {
-		return errorEventId;
-	}
-
-	/**
-	 * Sets the error event id.
-	 */
-	public void setErrorEventId(String errorEventId) {
-		this.errorEventId = errorEventId;
-	}
-
-	/**
 	 * Returns the stop on error flag.
 	 */
 	public boolean isStopOnError() {
@@ -115,15 +77,16 @@ public class CompositeAction extends AbstractAction {
 
 	public Event doExecute(RequestContext context) throws Exception {
 		Action[] actions = getActions();
-		String eventId = getSuccessEventId();
+		String eventId = getEventFactorySupport().getSuccessEventId();
 		AttributeMap eventAttributes = new AttributeMap();
 		List actionResults = new ArrayList(actions.length);
 		for (int i = 0; i < actions.length; i++) {
 			Event result = actions[i].execute(context);
 			if (result != null) {
 				actionResults.add(result);
-				if (isStopOnError() && result != null && result.getId().equals(getErrorEventId())) {
-					eventId = getErrorEventId();
+				if (isStopOnError() && result != null
+						&& result.getId().equals(getEventFactorySupport().getErrorEventId())) {
+					eventId = getEventFactorySupport().getErrorEventId();
 					break;
 				}
 			}
@@ -133,7 +96,7 @@ public class CompositeAction extends AbstractAction {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("actions", getActions()).append("stopOnError", isStopOnError()).append(
-				"successEventId", getSuccessEventId()).append("errorEventId", getErrorEventId()).toString();
+		return new ToStringCreator(this).append("actions", getActions()).append("stopOnError", isStopOnError())
+				.toString();
 	}
 }

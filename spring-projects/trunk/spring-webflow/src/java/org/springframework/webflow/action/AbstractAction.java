@@ -21,6 +21,8 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.ClassUtils;
 import org.springframework.webflow.Action;
+import org.springframework.webflow.AttributeCollection;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.support.EventFactorySupport;
@@ -39,7 +41,29 @@ import org.springframework.webflow.support.EventFactorySupport;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public abstract class AbstractAction extends EventFactorySupport implements Action, InitializingBean {
+public abstract class AbstractAction implements Action, InitializingBean {
+
+	/**
+	 * A helper for creating action execution result events. The default value
+	 * is {@link EventFactorySupport}.
+	 */
+	private EventFactorySupport eventFactorySupport = new EventFactorySupport();
+
+	/**
+	 * Returns the helper delegate for creating action execution result events.
+	 * @return the event factory support
+	 */
+	public EventFactorySupport getEventFactorySupport() {
+		return eventFactorySupport;
+	}
+
+	/**
+	 * Sets the helper delegate for creating action execution result events
+	 * @return the event factory support
+	 */
+	public void setEventFactorySupport(EventFactorySupport eventFactorySupport) {
+		this.eventFactorySupport = eventFactorySupport;
+	}
 
 	/**
 	 * Logger, usable in subclasses.
@@ -60,6 +84,128 @@ public abstract class AbstractAction extends EventFactorySupport implements Acti
 	 * custom initialization logic.
 	 */
 	protected void initAction() throws Exception {
+	}
+
+	/**
+	 * Returns a "success" result event.
+	 */
+	protected Event success() {
+		return eventFactorySupport.success(this);
+	}
+
+	/**
+	 * Returns a "success" result event with the provided result object as a
+	 * parameter. The result object is identified by the parameter name
+	 * {@link #RESULT_ATTRIBUTE_NAME}.
+	 * @param result the action success result;
+	 */
+	protected Event success(Object result) {
+		return eventFactorySupport.success(this, result);
+	}
+
+	/**
+	 * Returns an "error" result event.
+	 */
+	protected Event error() {
+		return eventFactorySupport.error(this);
+	}
+
+	/**
+	 * Returns an "error" result event caused by the provided exception.
+	 * @param e the exception that caused the error event, to be sent as an
+	 * event parameter under the name {@link #EXCEPTION_ATTRIBUTE_NAME}
+	 */
+	protected Event error(Exception e) {
+		return eventFactorySupport.error(e);
+	}
+
+	/**
+	 * Returns a "yes" result event.
+	 */
+	protected Event yes() {
+		return eventFactorySupport.yes(this);
+	}
+
+	/**
+	 * Returns a "no" result event.
+	 */
+	protected Event no() {
+		return eventFactorySupport.no(this);
+	}
+
+	/**
+	 * Returns yes() if the boolean result is true, no() if false.
+	 * @param booleanResult the boolean
+	 * @return yes or no
+	 */
+	protected Event result(boolean booleanResult) {
+		return eventFactorySupport.event(this, booleanResult);
+	}
+
+	/**
+	 * Returns a result event for this action with the specified identifier.
+	 * Typically called as part of return, for example:
+	 * 
+	 * <pre>
+	 *       protected Event doExecute(RequestContext context) {
+	 *           // do some work
+	 *           if (some condition) {
+	 *               return result(&quot;success&quot;);
+	 *           } else {
+	 *               return result(&quot;error&quot;);
+	 *           }
+	 *       }
+	 * </pre>
+	 * 
+	 * Consider calling the error() or success() factory methods for returning
+	 * common results.
+	 * @param eventId the result event identifier
+	 * @return the action result event
+	 */
+	protected Event result(String eventId) {
+		return eventFactorySupport.event(this, eventId);
+	}
+
+	/**
+	 * Returns a result event for this action with the specified identifier and
+	 * the specified set of attributes. Typically called as part of return, for
+	 * example:
+	 * 
+	 * <pre>
+	 *       protected Event doExecute(RequestContext context) {
+	 *           // do some work
+	 *           AttributeMap resultAttributes = new AttributeMap();
+	 *           resultParameters.put(&quot;name&quot;, &quot;value&quot;);
+	 *           if (some condition) {
+	 *               return result(&quot;success&quot;, resultAttributes);
+	 *           } else {
+	 *               return result(&quot;error&quot;, resultAttributes);
+	 *           }
+	 *       }
+	 * </pre>
+	 * 
+	 * Consider calling the error() or success() factory methods for returning
+	 * common results.
+	 * @param eventId the result event identifier
+	 * @param resultAttributes the event attributes
+	 * @return the action result event
+	 */
+	protected Event result(String eventId, AttributeCollection resultAttributes) {
+		return eventFactorySupport.event(this, eventId, resultAttributes);
+	}
+
+	/**
+	 * Returns a result event for this action with the specified identifier and
+	 * a single attribute.
+	 * @param eventId the result id
+	 * @param resultAttributeName the attribute name
+	 * @param resultAttributeValue the attribute value
+	 * @return the action result event
+	 */
+	protected Event result(String eventId, String resultAttributeName, Object resultAttributeValue) {
+		AttributeMap attributes = new AttributeMap(1, 1);
+		attributes.put(resultAttributeName, resultAttributeValue);
+		return result(eventId, attributes);
 	}
 
 	public final Event execute(RequestContext context) throws Exception {

@@ -18,7 +18,6 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -26,49 +25,37 @@ import org.springframework.webflow.test.MockRequestContext;
  * Unit test for the bean factory bean invoking action.
  * @author Keith Donald
  */
-public class BeanFactoryBeanInvokingActionTests extends TestCase {
+public class LocalBeanInvokingActionTests extends TestCase {
 
-	private BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction();
+	private TestBean bean = new TestBean();
 	
-	private StaticListableBeanFactory beanFactory = new StaticListableBeanFactory();
-
+	private LocalBeanInvokingAction action = new LocalBeanInvokingAction(bean);
+	
 	private MockRequestContext context = new MockRequestContext();
 	
 	public void setUp() {
-		action.setBeanFactory(beanFactory);
 		context.setAttribute("method", new MethodSignature("execute"));
 		context.setAttribute("bean", "bean");
 	}
 	
 	public void testInvokeBean() throws Exception {
-		beanFactory.addBean("bean", new TestBean());
 		action.execute(context);
-		TestBean bean = (TestBean)beanFactory.getBean("bean");
 		assertTrue(bean.executed);
 	}
-	
-	public void testInvokeNoSuchBean() throws Exception {
+
+	public void testNullTargetBean() throws Exception {
 		try {
-			action.execute(context);
-		} catch (NoSuchBeanDefinitionException e) {
+			action = new LocalBeanInvokingAction(null);
+			fail("Should've failed with iae");
+		} catch (IllegalArgumentException e) {
 			
 		}
 	}
 
-	public void testInvokeBeanCustomBeanName() throws Exception {
-		action.setBeanName("bean");
-		context.removeAttribute("bean");
-		beanFactory.addBean("bean", new TestBean());
-		action.execute(context);
-		TestBean bean = (TestBean)beanFactory.getBean("bean");
-		assertTrue(bean.executed);
-	}
-
-	public void testInvalidBeanNameConfiguration() throws Exception {
-		context.setAttributes(null);
+	public void testInvokeNoSuchBean() throws Exception {
 		try {
 			action.execute(context);
-		} catch (IllegalArgumentException e) {
+		} catch (NoSuchBeanDefinitionException e) {
 			
 		}
 	}

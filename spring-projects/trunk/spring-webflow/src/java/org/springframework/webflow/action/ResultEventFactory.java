@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support;
+package org.springframework.webflow.action;
 
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
- * Creates an event object from an abritrary result object.
+ * A strategy for creating an {@link Event} object from an arbitrary action result object, such
+ * as a bean method return value.
  * @author Keith Donald
  */
-public interface EventFactory {
+public interface ResultEventFactory {
 
 	/**
-	 * Create an event instance from the result object.
+	 * Create an event instance from the result object
+	 * @param source the source of the event
 	 * @param resultObject the result object
 	 * @param context a flow execution request context
 	 * @return the event
 	 */
-	public Event createEvent(Object resultObject, RequestContext context);
+	public Event createEvent(Object source, Object resultObject, RequestContext context);
 }

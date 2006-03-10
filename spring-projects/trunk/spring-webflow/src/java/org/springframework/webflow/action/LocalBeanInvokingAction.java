@@ -29,33 +29,26 @@ public class LocalBeanInvokingAction extends AbstractBeanInvokingAction {
 	/**
 	 * The target bean (any POJO) to invoke.
 	 */
-	private Object targetBean;
+	private Object bean;
 
 	/**
 	 * Creates a bean invoking action that invokes the specified bean. The bean
-	 * may be a proxy.
-	 * @param targetBean the bean to wrap
+	 * may be a proxy providing a layer of indirection if necessary.
+	 * @param bean the bean to invoke
 	 */
-	public LocalBeanInvokingAction(Object targetBean) {
-		setTargetBean(targetBean);
+	public LocalBeanInvokingAction(Object bean) {
+		Assert.notNull(bean, "The bean to invoke by this action cannot be null");
+		this.bean = bean;
 	}
 
 	/**
-	 * Returns the target bean.
+	 * Returns the target bean to invoke.
 	 */
-	public Object getTargetBean() {
-		return targetBean;
-	}
-
-	/**
-	 * Set the target bean to wrap.
-	 */
-	public void setTargetBean(Object targetBean) {
-		Assert.notNull(targetBean, "The target bean for this action to invoke cannot be null");
-		this.targetBean = targetBean;
+	public Object getBean() {
+		return bean;
 	}
 
 	protected Object getBean(RequestContext context) {
-		return getTargetBean();
+		return getBean();
 	}
 }
