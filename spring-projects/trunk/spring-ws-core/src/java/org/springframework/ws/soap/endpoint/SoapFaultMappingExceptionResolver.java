@@ -25,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.ws.EndpointExceptionResolver;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapBody;
-import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.context.SoapMessageContext;
 
 /**
@@ -90,17 +89,15 @@ public class SoapFaultMappingExceptionResolver implements EndpointExceptionResol
         }
         SoapMessageContext soapContext = (SoapMessageContext) messageContext;
         SoapBody body = soapContext.createSoapResponse().getSoapBody();
-        SoapFault fault = null;
         if (SoapFaultDefinition.RECEIVER.equals(definition.getFaultCode())) {
-            fault = body.addReceiverFault(definition.getFaultString());
+            body.addReceiverFault(definition.getFaultString());
         }
         else if (SoapFaultDefinition.SENDER.equals(definition.getFaultCode())) {
-            fault = body.addSenderFault(definition.getFaultString());
+            body.addSenderFault(definition.getFaultString());
         }
         else {
-            fault = body.addFault(definition.getFaultCode(), definition.getFaultString());
+            body.addFault(definition.getFaultCode(), definition.getFaultString());
         }
-        fault.setFaultString(definition.getFaultString(), definition.getFaultStringLocale());
         return true;
     }
 

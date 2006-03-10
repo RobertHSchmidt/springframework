@@ -92,7 +92,7 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         resolver.setExceptionMappings(mappings);
         contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
-        bodyControl.expectAndReturn(bodyMock.addReceiverFault("Receiver"), faultMock);
+        bodyControl.expectAndReturn(bodyMock.addReceiverFault("Receiver error"), faultMock);
 
         replayMockControls();
 

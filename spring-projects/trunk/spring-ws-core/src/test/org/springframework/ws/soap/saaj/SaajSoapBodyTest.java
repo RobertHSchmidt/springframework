@@ -16,7 +16,6 @@
 
 package org.springframework.ws.soap.saaj;
 
-import java.util.Locale;
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
@@ -108,7 +107,6 @@ public class SaajSoapBodyTest extends XMLTestCase {
         assertNotNull("SoapBody has no fault", body.getFault());
         assertEquals("Invalid fault code", faultCode, fault.getFaultCode());
         assertEquals("Invalid fault string", "Fault", fault.getFaultString());
-        assertEquals("Invalid fault local", Locale.ENGLISH, fault.getFaultStringLocale());
         assertFalse("Fault is a MustUnderstand fault", fault.isMustUnderstandFault());
         assertFalse("Fault is a Sender fault", fault.isSenderFault());
         assertFalse("Fault is a Receiver fault", fault.isReceiverFault());

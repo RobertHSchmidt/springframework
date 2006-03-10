@@ -79,6 +79,8 @@ public class SoapMessageDispatcherTest extends TestCase {
     public void testProcessMustUnderstandHeadersUnderstood() throws Exception {
         contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
         messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
+        contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
+        messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
         headerControl.expectAndReturn(
                 headerMock.examineMustUnderstandHeaderElements("http://schemas.xmlsoap.org/soap/actor/next"),
                 Collections.singleton(headerElementMock).iterator());
@@ -94,6 +96,8 @@ public class SoapMessageDispatcherTest extends TestCase {
     }
 
     public void testProcessMustUnderstandHeadersNotUnderstood() throws Exception {
+        contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
+        messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
         contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
         messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
         headerControl.expectAndReturn(
@@ -120,6 +124,8 @@ public class SoapMessageDispatcherTest extends TestCase {
     }
 
     public void testProcessMustUnderstandHeadersInRole() throws Exception {
+        contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
+        messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
         contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
         messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
         String role = "role";
