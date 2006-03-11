@@ -51,34 +51,9 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	protected static final String BEAN_NAME_CONTEXT_ATTRIBUTE = "bean";
 
 	/**
-	 * The name of the default bean to invoke when this action is executed.
-	 * <p>
-	 * Optional: the bean to invoke may instead be specified as an
-	 * {@link RequestContext#getAttributes() context attribute}.
-	 */
-	private String beanName;
-
-	/**
 	 * The bean factory for loading beans to invoke by <code>id</code>.
 	 */
 	private BeanFactory beanFactory;
-
-	/**
-	 * Returns the target bean name.
-	 */
-	public String getBeanName() {
-		return beanName;
-	}
-
-	/**
-	 * Set the name of the target bean to invoke. The bean will be looked up in
-	 * the bean factory on action execution.
-	 * 
-	 * @param beanName the target bean name
-	 */
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
-	}
 
 	/**
 	 * Returns the configured bean factory member.
@@ -100,9 +75,14 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	 * its life.
 	 */
 	protected Object getBean(RequestContext context) {
-		String beanName = context.getAttributes().getString(BEAN_NAME_CONTEXT_ATTRIBUTE, getBeanName());
+		String beanName = getBeanName(context);
 		Assert.hasText(beanName,
-				"The bean name to invoke was not specified: set the 'beanName' property or 'bean' context attribute");
+				"The bean name to invoke was not specified: set the '" + BEAN_NAME_CONTEXT_ATTRIBUTE + "' context attribute");
 		return getBeanFactory().getBean(beanName);
 	}
+	
+	protected String getBeanName(RequestContext context) {
+		return context.getAttributes().getString(BEAN_NAME_CONTEXT_ATTRIBUTE);
+	}
+	
 }

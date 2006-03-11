@@ -20,15 +20,14 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ScopeType;
 
 /**
- * Simple action that delegates to a bean that is managed in a stateful
- * scope. The target of this action can be any object (and generally should be
+ * Simple action that delegates to a bean that is managed in a stateful scope.
+ * The target of this action can be any object (and generally should be
  * serializable). The target may hold modifiable state as instance members in a
  * thread safe manner.
  * <p>
- * To use this action, configure the {@link #getBeanName()} property on this
- * class or set the
+ * To use this action, set the
  * {@link BeanFactoryBeanInvokingAction#BEAN_NAME_CONTEXT_ATTRIBUTE} context
- * attribute on each invocation. The context attribute takes precedence.
+ * attribute on each invocation.
  * <p>
  * The resolved bean name will be treated as the identifier of a prototype bean
  * definition in the configured bean factory to retrieve, as well as the name of
@@ -58,11 +57,7 @@ import org.springframework.webflow.ScopeType;
  */
 public class StatefulBeanInvokingAction extends BeanFactoryBeanInvokingAction {
 
-	/**
-	 * The scope to expose the stateful bean in. The default is
-	 * {@link ScopeType#FLOW}.
-	 */
-	private ScopeType beanScope = ScopeType.FLOW;
+	private static final String SCOPE_CONTEXT_ATTRIBUTE = "scope";
 
 	/**
 	 * Creates a new stateful bean invoking action.
@@ -72,31 +67,19 @@ public class StatefulBeanInvokingAction extends BeanFactoryBeanInvokingAction {
 	}
 
 	/**
-	 * Returns the configured bean scope type.
-	 */
-	public ScopeType getBeanScope() {
-		return beanScope;
-	}
-
-	/**
-	 * Set the configured bean scope type.
-	 */
-	public void setBeanScope(ScopeType beanScope) {
-		this.beanScope = beanScope;
-	}
-
-	/**
 	 * Retrieves the bean to invoke from the configured {@link #getBeanScope()}.
 	 */
 	protected Object getBean(RequestContext context) {
-		return beanScope.getScope(context).get(getBeanName(context));
+		return getScopeType(context).getScope(context).get(getBeanName(context));
 	}
-
-	private String getBeanName(RequestContext context) {
-		String beanName = context.getAttributes().getString(BEAN_NAME_CONTEXT_ATTRIBUTE, getBeanName());
-		Assert.hasText(beanName, "The bean name to invoke was not specified: set the 'beanName' property or '"
-				+ BEAN_NAME_CONTEXT_ATTRIBUTE + "' context attribute");
-		return beanName;
+	
+	/**
+	 * Returns the target scope type of the stateful bean.
+	 * @param context the request context
+	 * @return the scope type.
+	 */
+	protected ScopeType getScopeType(RequestContext context) {
+		return (ScopeType)context.getAttributes().get(SCOPE_CONTEXT_ATTRIBUTE, ScopeType.FLOW);
 	}
 
 	/**
@@ -115,11 +98,11 @@ public class StatefulBeanInvokingAction extends BeanFactoryBeanInvokingAction {
 		}
 
 		public void saveState(Object bean, RequestContext context) {
-			beanScope.getScope(context).put(getBeanName(context), bean);
+			getScopeType(context).getScope(context).put(getBeanName(context), bean);
 		}
 
 		private Object getPrototypeBean(String beanName) {
-			Assert.isTrue(getBeanFactory().isSingleton(beanName), "The definition of the stateful with name '"
+			Assert.isTrue(!getBeanFactory().isSingleton(beanName), "The definition of the stateful with name '"
 					+ beanName + "' must be a prototype");
 			return getBeanFactory().getBean(beanName);
 		}

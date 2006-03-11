@@ -56,15 +56,6 @@ public class BeanFactoryBeanInvokingActionTests extends TestCase {
 		}
 	}
 
-	public void testInvokeBeanCustomBeanName() throws Exception {
-		action.setBeanName("bean");
-		context.removeAttribute("bean");
-		beanFactory.addBean("bean", new TestBean());
-		action.execute(context);
-		TestBean bean = (TestBean)beanFactory.getBean("bean");
-		assertTrue(bean.executed);
-	}
-
 	public void testInvalidBeanNameConfiguration() throws Exception {
 		context.setAttributes(null);
 		try {
