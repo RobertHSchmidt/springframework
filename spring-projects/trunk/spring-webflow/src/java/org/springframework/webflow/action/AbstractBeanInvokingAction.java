@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.action;
 
-
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodSignature;
@@ -25,8 +24,9 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ScopeType;
 
 /**
- * Base class for actions that delegate to methods on abritrary beans. Acts as
- * an adapter that adapts an Object's method to the SWF Action contract.
+ * Base class for actions that delegate to methods on beans (plain old
+ * java.lang.Objects). Acts as an adapter that adapts an {@link Object} method
+ * to the SWF Action contract.
  * <p>
  * The method to invoke is determined by the value of the
  * {@link org.springframework.webflow.AnnotatedAction#METHOD_PROPERTY} action
@@ -38,33 +38,28 @@ import org.springframework.webflow.ScopeType;
 public abstract class AbstractBeanInvokingAction extends AbstractAction {
 
 	/**
-	 * The method invoker that performs the action-to-bean method binding.
+	 * The method invoker that performs the action-&gt;bean method binding.
 	 */
 	private MethodInvoker methodInvoker = new MethodInvoker();
 
 	/**
-	 * The strategy that saves and restores stateful bean fields in flow scope.
+	 * The strategy that saves and restores stateful bean fields. Some people
+	 * might call what this enables memento-like <i>bijection</i>, where state
+	 * is <i>injected</i> into a bean before invocation and then <i>outjected</i>
+	 * after invocation.
 	 */
 	private BeanStatePersister statePersister = new NoOpBeanStatePersister();
 
 	/**
-	 * The strategy that adapts method return values to Event objects.
+	 * The strategy that adapts bean method return values to Event objects.
 	 */
-	private ResultEventFactory eventFactory = new DefaultResultEventFactory();
+	private ResultEventFactory resultEventFactory = new DefaultResultEventFactory();
 
 	/**
 	 * Returns the bean state management strategy used by this action.
 	 */
 	protected BeanStatePersister getStatePersister() {
 		return statePersister;
-	}
-
-	/**
-	 * Set the conversion service to perform type conversion of event parameters
-	 * to method arguments as neccessary.
-	 */
-	public void setConversionService(ConversionService conversionService) {
-		methodInvoker.setConversionService(conversionService);
 	}
 
 	/**
@@ -77,15 +72,15 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	/**
 	 * Returns the event adaption strategy used by this action.
 	 */
-	protected ResultEventFactory getEventFactory() {
-		return eventFactory;
+	protected ResultEventFactory getResultEventFactory() {
+		return resultEventFactory;
 	}
 
 	/**
-	 * Set the return value -> event adaption strategy.
+	 * Set the return value-&gt;event adaption strategy.
 	 */
-	public void setEventFactory(ResultEventFactory eventFactory) {
-		this.eventFactory = eventFactory;
+	public void setResultEventFactory(ResultEventFactory eventFactory) {
+		this.resultEventFactory = eventFactory;
 	}
 
 	/**
@@ -95,14 +90,22 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 		return methodInvoker;
 	}
 
+	/**
+	 * Set the conversion service to perform type conversion of event parameters
+	 * to method arguments as neccessary.
+	 */
+	public void setConversionService(ConversionService conversionService) {
+		methodInvoker.setConversionService(conversionService);
+	}
+
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBean(context);
 		getStatePersister().restoreState(bean, context);
-		MethodSignature methodKey = (MethodSignature)context.getAttributes().getRequired(AnnotatedAction.METHOD_PROPERTY,
-				MethodSignature.class);
+		MethodSignature methodKey = (MethodSignature)context.getAttributes().getRequired(
+				AnnotatedAction.METHOD_PROPERTY, MethodSignature.class);
 		Object returnValue = getMethodInvoker().invoke(methodKey, bean, context);
-		processMethodReturnValue(returnValue, context);
-		Event resultEvent = getEventFactory().createEvent(bean, returnValue, context);
+		exposeMethodReturnValue(returnValue, context);
+		Event resultEvent = getResultEventFactory().createResultEvent(bean, returnValue, context);
 		getStatePersister().saveState(bean, context);
 		return resultEvent;
 	}
@@ -114,23 +117,23 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	protected abstract Object getBean(RequestContext context);
 
 	/**
-	 * Template method for post processing the invoked method's return value.
-	 * This implementation exposes the return value as an attribute in a
-	 * configured scope, if necessary. Subclasses may override.
+	 * Exposes the return value as an attribute in a configured scope, if
+	 * necessary. Subclasses may override.
 	 * @param returnValue the return value
 	 * @param context the request context
 	 */
-	protected void processMethodReturnValue(Object returnValue, RequestContext context) {
+	protected void exposeMethodReturnValue(Object returnValue, RequestContext context) {
 		String resultName = context.getAttributes().getString(AnnotatedAction.RESULT_NAME_PROPERTY, null);
 		if (resultName != null) {
-			ScopeType scopeType = (ScopeType)context.getAttributes().get(
-					AnnotatedAction.RESULT_SCOPE_PROPERTY, ScopeType.REQUEST);
+			ScopeType scopeType = (ScopeType)context.getAttributes().get(AnnotatedAction.RESULT_SCOPE_PROPERTY,
+					ScopeType.REQUEST);
 			scopeType.getScope(context).put(resultName, returnValue);
 		}
 	}
 
 	/**
-	 * State persister that doesn't take any action - default, private implementation.
+	 * State persister that doesn't take any action - default, private
+	 * implementation.
 	 * 
 	 * @author Keith Donald
 	 */

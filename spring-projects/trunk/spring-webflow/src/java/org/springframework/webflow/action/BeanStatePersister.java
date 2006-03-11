@@ -19,14 +19,18 @@ import org.springframework.webflow.RequestContext;
 
 /**
  * A service for managing the saving and restoring of state associated with a
- * invokable bean. State is save/restored from flow scope.
+ * invokable bean.
+ * <p>
+ * Some people might call what this strategy enables is memento-like
+ * <i>bijection</i>, where state is <i>injected</i> into a bean before
+ * invocation and then <i>outjected</i> after invocation.
  * 
  * @author Keith Donald
  */
 public interface BeanStatePersister {
-	
+
 	/**
-	 * Save the beans state out to flow scope.
+	 * Save (outject) the bean's state to the context.
 	 * @param bean the bean
 	 * @param context the flow execution request context
 	 * @throws Exception an exception occured
@@ -34,7 +38,7 @@ public interface BeanStatePersister {
 	public void saveState(Object bean, RequestContext context) throws Exception;
 
 	/**
-	 * Restore the bean's state from flow scope.
+	 * Restore (inject) the bean's state from the context.
 	 * @param bean the bean
 	 * @param context the flow execution request context
 	 * @throws Exception an exception occured

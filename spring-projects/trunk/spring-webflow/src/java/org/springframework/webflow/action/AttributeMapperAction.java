@@ -40,17 +40,22 @@ import org.springframework.webflow.RequestContext;
 public class AttributeMapperAction extends AbstractAction {
 
 	/**
-	 * The attribute mapper strategy.
+	 * The attribute mapper strategy to delegate to perform the mapping.
 	 */
 	private AttributeMapper attributeMapper;
 
+	/**
+	 * Creates a new attribute mapper action that delegates to the configured
+	 * attribute mapper to complete the mapping process.
+	 * @param attributeMapper the mapper
+	 */
 	public AttributeMapperAction(AttributeMapper attributeMapper) {
 		this.attributeMapper = attributeMapper;
 	}
-	
+
 	protected Event doExecute(RequestContext context) throws Exception {
 		if (attributeMapper != null) {
-			// map arbitrary attributes from the request context to the request context
+			// map ttributes from the request context to the request context
 			attributeMapper.map(context, context, getMappingContext(context));
 		}
 		return success();
