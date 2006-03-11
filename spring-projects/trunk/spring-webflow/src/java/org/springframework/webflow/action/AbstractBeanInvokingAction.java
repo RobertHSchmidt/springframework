@@ -138,11 +138,11 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * @author Keith Donald
 	 */
 	private static class NoOpBeanStatePersister implements BeanStatePersister {
-		public Object restoreState(Object bean, RequestContext context) throws Exception {
+		public Object restoreState(Object bean, RequestContext context) {
 			return bean;
 		}
 
-		public void saveState(Object bean, RequestContext context) throws Exception {
+		public void saveState(Object bean, RequestContext context) {
 		}
 	}
 }

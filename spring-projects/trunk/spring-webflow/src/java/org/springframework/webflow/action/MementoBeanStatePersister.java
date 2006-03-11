@@ -31,16 +31,19 @@ public class MementoBeanStatePersister implements BeanStatePersister {
 		this.scope = scope;
 	}
 
-	public Object restoreState(Object bean, RequestContext context) throws Exception {
-		String attributeName = context.getAttributes().getString(BEAN_CONTEXT_ATTRIBUTE);
-		Memento memento = (Memento)getScope().getScope(context).getRequired(attributeName);
+	public Object restoreState(Object bean, RequestContext context) {
+		Memento memento = (Memento)getScope().getScope(context).getRequired(getAttributeName(context));
 		((MementoOriginator)bean).setMemento(memento);
 		return bean;
 	}
 
-	public void saveState(Object bean, RequestContext context) throws Exception {
-		String attributeName = context.getAttributes().getString(BEAN_CONTEXT_ATTRIBUTE);
+	public void saveState(Object bean, RequestContext context) {
+		String attributeName = getAttributeName(context);
 		Memento memento = ((MementoOriginator)bean).createMemento();
 		getScope().getScope(context).put(attributeName, memento);
+	}
+	
+	protected String getAttributeName(RequestContext context) {
+		return "memento." + context.getAttributes().getRequiredString(BEAN_CONTEXT_ATTRIBUTE);
 	}
 }

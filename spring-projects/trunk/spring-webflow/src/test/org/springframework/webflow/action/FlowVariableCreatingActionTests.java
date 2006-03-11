@@ -31,19 +31,14 @@ public class FlowVariableCreatingActionTests extends TestCase {
 	private FlowVariableCreatingAction tested;
 
 	protected void setUp() throws Exception {
-		super.setUp();
 		tested = new FlowVariableCreatingAction(new FlowVariable("Some variable", Object.class));
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		tested = null;
-	}
-
 	public void testDoExecute() throws Exception {
-		MockRequestContext mockRequestContext = new MockRequestContext();
-		Event result = tested.doExecute(mockRequestContext);
+		MockRequestContext context = new MockRequestContext();
+		Event result = tested.doExecute(context);
 		assertNotNull(result);
+		assertNotNull(context.getFlowScope().get("Some variable"));
 	}
 
 	public void testConstructorWithArray() throws Exception {

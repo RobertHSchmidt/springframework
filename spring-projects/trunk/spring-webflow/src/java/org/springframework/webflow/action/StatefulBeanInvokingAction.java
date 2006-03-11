@@ -105,7 +105,7 @@ public class StatefulBeanInvokingAction extends BeanFactoryBeanInvokingAction {
 	 * @author Keith Donald
 	 */
 	private class ScopeBeanStatePersister implements BeanStatePersister {
-		public Object restoreState(Object bean, RequestContext context) throws Exception {
+		public Object restoreState(Object bean, RequestContext context) {
 			if (bean == null) {
 				return getPrototypeBean(getBeanName(context));
 			}
@@ -114,7 +114,7 @@ public class StatefulBeanInvokingAction extends BeanFactoryBeanInvokingAction {
 			}
 		}
 
-		public void saveState(Object bean, RequestContext context) throws Exception {
+		public void saveState(Object bean, RequestContext context) {
 			beanScope.getScope(context).put(getBeanName(context), bean);
 		}
 
