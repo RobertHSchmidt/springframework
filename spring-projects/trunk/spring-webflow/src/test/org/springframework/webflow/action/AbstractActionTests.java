@@ -80,5 +80,5 @@ public class AbstractActionTests extends TestCase {
 		protected void doPostExecute(RequestContext context) {
 			postExecuteCalled = true;
 		}
-	}
+	}	
 }

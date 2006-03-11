@@ -50,6 +50,7 @@ public class BeanFactoryBeanInvokingActionTests extends TestCase {
 	public void testInvokeNoSuchBean() throws Exception {
 		try {
 			action.execute(context);
+			fail("Should've failed with no such bean");
 		} catch (NoSuchBeanDefinitionException e) {
 			
 		}
@@ -68,6 +69,7 @@ public class BeanFactoryBeanInvokingActionTests extends TestCase {
 		context.setAttributes(null);
 		try {
 			action.execute(context);
+			fail("Should've failed with iae");
 		} catch (IllegalArgumentException e) {
 			
 		}

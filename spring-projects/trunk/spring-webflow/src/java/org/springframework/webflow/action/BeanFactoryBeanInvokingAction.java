@@ -27,17 +27,18 @@ import org.springframework.webflow.RequestContext;
  * invoked.
  * <p>
  * To use this class, you configure the name of the bean you wish to invoke and
- * what method on that bean should be invoked with what arguments, typically using
- * flow request context attributes.
+ * what method on that bean should be invoked with what arguments, typically
+ * using flow request context attributes.
  * <p>
  * Example configuration and usage:
+ * 
  * <pre>
- * BeanFactoryInvokingAction action = new BeanFactoryBeanInvokingAction();
- * action.setBeanFactory(...);
- * MockRequestContext context = new MockRequestContext();
- * context.setAttribute("method", new MethodSignature("myMethod"));
- * context.setAttribute("bean", "myBean");
- * action.execute(context);
+ *    BeanFactoryInvokingAction action = new BeanFactoryBeanInvokingAction();
+ *    action.setBeanFactory(...);
+ *    MockRequestContext context = new MockRequestContext();
+ *    context.setAttribute(&quot;method&quot;, new MethodSignature(&quot;myMethod&quot;));
+ *    context.setAttribute(&quot;bean&quot;, &quot;myBean&quot;);
+ *    action.execute(context);
  * </pre>
  * 
  * @author Keith Donald
@@ -47,7 +48,7 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	/**
 	 * The bean name action execution property.
 	 */
-	public static final String BEAN_PROPERTY = "bean";
+	protected static final String BEAN_NAME_CONTEXT_ATTRIBUTE = "bean";
 
 	/**
 	 * The name of the default bean to invoke when this action is executed.
@@ -99,7 +100,7 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction im
 	 * its life.
 	 */
 	protected Object getBean(RequestContext context) {
-		String beanName = context.getAttributes().getString(BEAN_PROPERTY, getBeanName());
+		String beanName = context.getAttributes().getString(BEAN_NAME_CONTEXT_ATTRIBUTE, getBeanName());
 		Assert.hasText(beanName,
 				"The bean name to invoke was not specified: set the 'beanName' property or 'bean' context attribute");
 		return getBeanFactory().getBean(beanName);

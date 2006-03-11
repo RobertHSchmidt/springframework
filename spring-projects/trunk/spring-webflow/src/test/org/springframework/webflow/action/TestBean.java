@@ -6,7 +6,7 @@ package org.springframework.webflow.action;
 public class TestBean {
 	String datum1;
 
-	Integer datum2;
+	int datum2;
 
 	boolean executed;
 
@@ -19,9 +19,11 @@ public class TestBean {
 		this.datum1 = parameter;
 	}
 
-	public void execute(String parameter, Integer parameter2) {
+	public int execute(String parameter, int parameter2) {
 		this.executed = true;
 		this.datum1 = parameter;
 		this.datum2 = parameter2;
+		return datum2;
 	}
+
 }

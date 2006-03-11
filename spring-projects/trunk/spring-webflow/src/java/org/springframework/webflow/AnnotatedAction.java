@@ -37,18 +37,18 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	// well known properties
 
 	/**
-	 * The action name property ("name").
+	 * The action name attribute ("name").
 	 * <p>
-	 * The name property is often used as a qualifier for an action's result
+	 * The name attrubte is often used as a qualifier for an action's result
 	 * event, and is typically used to allow the flow to respond to a specific
 	 * action's outcome within a larger action execution chain.
 	 * <p>
 	 * @see ActionState
 	 */
-	public static final String NAME_PROPERTY = "name";
+	public static final String NAME_ATTRIBUTE = "name";
 
 	/**
-	 * The action execution method property ("method").
+	 * The action execution method attribute ("method").
 	 * <p>
 	 * The method property is a hint about what method should be invoked; e.g
 	 * the name of a specific method on a
@@ -58,18 +58,17 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * <p>
 	 * @see ActionState
 	 */
-	public static final String METHOD_PROPERTY = "method";
+	public static final String METHOD_ATTRIBUTE = "method";
 
 	/**
-	 * The action execution method result attribute property ("resultName");
+	 * The action execution method result name attribute ("resultName");
 	 */
-	public static final String RESULT_NAME_PROPERTY = "resultName";
+	public static final String RESULT_NAME_ATTRIBUTE = "resultName";
 
 	/**
-	 * The action execution method result attribute scope property
-	 * ("resultScope");
+	 * The action execution method result scope attribute ("resultScope");
 	 */
-	public static final String RESULT_SCOPE_PROPERTY = "resultScope";
+	public static final String RESULT_SCOPE_ATTRIBUTE = "resultScope";
 
 	/**
 	 * The target action to execute.
@@ -132,7 +131,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @see #postProcessResult(Event)
 	 */
 	public String getName() {
-		return getAttributeMap().getString(NAME_PROPERTY);
+		return getAttributeMap().getString(NAME_ATTRIBUTE);
 	}
 
 	/**
@@ -141,7 +140,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param name the action name
 	 */
 	public void setName(String name) {
-		getAttributeMap().put(NAME_PROPERTY, name);
+		getAttributeMap().put(NAME_ATTRIBUTE, name);
 	}
 
 	/**
@@ -157,7 +156,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * executed.
 	 */
 	public MethodSignature getMethod() {
-		return (MethodSignature)getAttributeMap().get(METHOD_PROPERTY, MethodSignature.class);
+		return (MethodSignature)getAttributeMap().get(METHOD_ATTRIBUTE, MethodSignature.class);
 	}
 
 	/**
@@ -166,7 +165,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param method the action method name.
 	 */
 	public void setMethod(MethodSignature method) {
-		getAttributeMap().put(METHOD_PROPERTY, method);
+		getAttributeMap().put(METHOD_ATTRIBUTE, method);
 	}
 
 	/**
@@ -174,7 +173,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * value under.
 	 */
 	public String getResultName() {
-		return getAttributeMap().getString(RESULT_NAME_PROPERTY);
+		return getAttributeMap().getString(RESULT_NAME_ATTRIBUTE);
 	}
 
 	/**
@@ -183,7 +182,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param resultName the action return value attribute name
 	 */
 	public void setResultName(String resultName) {
-		getAttributeMap().put(RESULT_NAME_PROPERTY, resultName);
+		getAttributeMap().put(RESULT_NAME_ATTRIBUTE, resultName);
 	}
 
 	/**
@@ -191,7 +190,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * value under.
 	 */
 	public ScopeType getResultScope() {
-		return (ScopeType)getAttributeMap().get(RESULT_SCOPE_PROPERTY, ScopeType.class);
+		return (ScopeType)getAttributeMap().get(RESULT_SCOPE_ATTRIBUTE, ScopeType.class);
 	}
 
 	/**
@@ -199,7 +198,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @param resultScope the result scope
 	 */
 	public void setResultScope(ScopeType resultScope) {
-		getAttributeMap().put(RESULT_SCOPE_PROPERTY, resultScope);
+		getAttributeMap().put(RESULT_SCOPE_ATTRIBUTE, resultScope);
 	}
 
 	public Event execute(RequestContext context) throws Exception {

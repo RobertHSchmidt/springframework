@@ -102,7 +102,7 @@ public class FlowVariableCreatingAction extends AbstractAction {
 	 * Returns the flow variables.
 	 */
 	public FlowVariable[] getVariables() {
-		return (FlowVariable[])variables.toArray(new FlowVariable[0]);
+		return (FlowVariable[])variables.toArray(new FlowVariable[variables.size()]);
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {

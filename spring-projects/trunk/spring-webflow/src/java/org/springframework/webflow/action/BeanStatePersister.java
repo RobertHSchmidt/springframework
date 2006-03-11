@@ -41,8 +41,9 @@ public interface BeanStatePersister {
 	 * Restore (inject) the bean's state from the context.
 	 * @param bean the bean
 	 * @param context the flow execution request context
+	 * @return the bean
 	 * @throws Exception an exception occured
 	 */
-	public void restoreState(Object bean, RequestContext context) throws Exception;
+	public Object restoreState(Object bean, RequestContext context) throws Exception;
 
 }

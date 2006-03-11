@@ -17,8 +17,14 @@ package org.springframework.webflow.action;
 
 import junit.framework.TestCase;
 
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.binding.expression.Expression;
 import org.springframework.binding.method.MethodSignature;
+import org.springframework.binding.method.Parameter;
+import org.springframework.binding.method.Parameters;
+import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.Event;
+import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.support.WebFlowOgnlExpressionParser;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -51,12 +57,34 @@ public class LocalBeanInvokingActionTests extends TestCase {
 			
 		}
 	}
+	
+	public void testExposeResultInScopes() throws Exception {
+		AttributeMap attributes = new AttributeMap();
+		attributes.put("foo", "a string value");
+		attributes.put("bar", "12345");
+		context.setLastEvent(new Event(this, "submit", attributes));
+		context.setAttribute("method", new MethodSignature("execute", new Parameters(new Parameter[] {
+				new Parameter(String.class, expression("lastEvent.attributes.foo")),
+				new Parameter(Integer.class, expression("lastEvent.attributes.bar")) })));
+		context.setAttribute("resultName", "foo");
+		testInvokeBean();
+		assertEquals(new Integer(12345), context.getRequestScope().get("foo"));
+		
+		context.getRequestScope().clear();
 
-	public void testInvokeNoSuchBean() throws Exception {
-		try {
-			action.execute(context);
-		} catch (NoSuchBeanDefinitionException e) {
-			
-		}
+		context.setAttribute("resultScope", ScopeType.REQUEST);
+		testInvokeBean();
+		assertEquals(new Integer(12345), context.getRequestScope().get("foo"));
+		
+		context.getRequestScope().clear();
+		
+		context.setAttribute("resultScope", ScopeType.FLOW);
+		testInvokeBean();
+		assertEquals(new Integer(12345), context.getFlowScope().get("foo"));
+		assertNull(context.getRequestScope().get("foo"));
+	}
+	
+	private Expression expression(String string) {
+		return new WebFlowOgnlExpressionParser().parseExpression(string);
 	}
 }

@@ -55,6 +55,15 @@ public class RegistryBackedFlowArtifactFactory extends DefaultFlowArtifactFactor
 	/**
 	 * Creates a flow artifact factory that retrieves subflows from the provided
 	 * registry and additional artifacts from the provided bean factory.
+	 * @param beanFactory The spring bean factory
+	 */
+	public RegistryBackedFlowArtifactFactory(BeanFactory beanFactory) {
+		this(new FlowRegistryImpl(), beanFactory);
+	}
+	
+	/**
+	 * Creates a flow artifact factory that retrieves subflows from the provided
+	 * registry and additional artifacts from the provided bean factory.
 	 * @param subflowRegistry The registry for loading subflows
 	 * @param beanFactory The spring bean factory
 	 */

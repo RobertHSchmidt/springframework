@@ -35,7 +35,7 @@ package org.springframework.webflow;
  * Spring's externalized configuration and dependency injection capabilities
  * (which is a form of Inversion of Control [IoC]). Actions may also be stateful
  * prototypes, storing conversational state as instance variables (see
- * {@link org.springframework.webflow.action.StatefulActionProxy} and
+ * {@link org.springframework.webflow.action.StatefulBeanInvokingAction} and
  * {@link org.springframework.webflow.action.AbstractBeanInvokingAction} for
  * more information). Action instances may also be locally scoped to a specific
  * flow definition (see use of the "import" element of the root XML flow

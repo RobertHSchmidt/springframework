@@ -18,6 +18,7 @@ package org.springframework.webflow.action;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodSignature;
+import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -29,9 +30,9 @@ import org.springframework.webflow.ScopeType;
  * to the SWF Action contract.
  * <p>
  * The method to invoke is determined by the value of the
- * {@link org.springframework.webflow.AnnotatedAction#METHOD_PROPERTY} action
- * execution property, typically set when provisioning this Action's use as part
- * of an {@link org.springframework.webflow.ActionState}.
+ * {@link AnnotatedAction#METHOD_ATTRIBUTE} action execution property, typically
+ * set when provisioning this Action's use as part of an {@link AnnotatedAction}
+ * or an {@link ActionState}.
  * 
  * @author Keith Donald
  */
@@ -48,7 +49,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * is <i>injected</i> into a bean before invocation and then <i>outjected</i>
 	 * after invocation.
 	 */
-	private BeanStatePersister statePersister = new NoOpBeanStatePersister();
+	private BeanStatePersister beanStatePersister = new NoOpBeanStatePersister();
 
 	/**
 	 * The strategy that adapts bean method return values to Event objects.
@@ -58,15 +59,15 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	/**
 	 * Returns the bean state management strategy used by this action.
 	 */
-	protected BeanStatePersister getStatePersister() {
-		return statePersister;
+	protected BeanStatePersister getBeanStatePersister() {
+		return beanStatePersister;
 	}
 
 	/**
 	 * Set the bean state management strategy.
 	 */
-	public void setStatePersister(BeanStatePersister statePersister) {
-		this.statePersister = statePersister;
+	public void setBeanStatePersister(BeanStatePersister beanStatePersister) {
+		this.beanStatePersister = beanStatePersister;
 	}
 
 	/**
@@ -79,8 +80,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	/**
 	 * Set the return value-&gt;event adaption strategy.
 	 */
-	public void setResultEventFactory(ResultEventFactory eventFactory) {
-		this.resultEventFactory = eventFactory;
+	public void setResultEventFactory(ResultEventFactory resultEventFactory) {
+		this.resultEventFactory = resultEventFactory;
 	}
 
 	/**
@@ -99,14 +100,13 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		Object bean = getBean(context);
-		getStatePersister().restoreState(bean, context);
+		Object bean = getBeanStatePersister().restoreState(getBean(context), context);
 		MethodSignature methodKey = (MethodSignature)context.getAttributes().getRequired(
-				AnnotatedAction.METHOD_PROPERTY, MethodSignature.class);
+				AnnotatedAction.METHOD_ATTRIBUTE, MethodSignature.class);
 		Object returnValue = getMethodInvoker().invoke(methodKey, bean, context);
 		exposeMethodReturnValue(returnValue, context);
 		Event resultEvent = getResultEventFactory().createResultEvent(bean, returnValue, context);
-		getStatePersister().saveState(bean, context);
+		getBeanStatePersister().saveState(bean, context);
 		return resultEvent;
 	}
 
@@ -123,9 +123,9 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * @param context the request context
 	 */
 	protected void exposeMethodReturnValue(Object returnValue, RequestContext context) {
-		String resultName = context.getAttributes().getString(AnnotatedAction.RESULT_NAME_PROPERTY, null);
+		String resultName = context.getAttributes().getString(AnnotatedAction.RESULT_NAME_ATTRIBUTE, null);
 		if (resultName != null) {
-			ScopeType scopeType = (ScopeType)context.getAttributes().get(AnnotatedAction.RESULT_SCOPE_PROPERTY,
+			ScopeType scopeType = (ScopeType)context.getAttributes().get(AnnotatedAction.RESULT_SCOPE_ATTRIBUTE,
 					ScopeType.REQUEST);
 			scopeType.getScope(context).put(resultName, returnValue);
 		}
@@ -138,7 +138,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * @author Keith Donald
 	 */
 	private static class NoOpBeanStatePersister implements BeanStatePersister {
-		public void restoreState(Object bean, RequestContext context) throws Exception {
+		public Object restoreState(Object bean, RequestContext context) throws Exception {
+			return bean;
 		}
 
 		public void saveState(Object bean, RequestContext context) throws Exception {

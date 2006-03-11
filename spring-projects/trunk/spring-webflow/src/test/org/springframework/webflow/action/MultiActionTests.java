@@ -16,13 +16,13 @@ public class MultiActionTests extends TestCase {
 	private MockRequestContext context = new MockRequestContext();
 
 	public void testDispatchWithMethodSignature() throws Exception {
-		context.getAttributeMap().put(AnnotatedAction.METHOD_PROPERTY, new MethodSignature("increment"));
+		context.getAttributeMap().put(AnnotatedAction.METHOD_ATTRIBUTE, new MethodSignature("increment"));
 		action.execute(context);
 		assertEquals(1, action.counter);
 	}
 
 	public void testDispatchWithBogusMethodSignature() throws Exception {
-		context.getAttributeMap().put(AnnotatedAction.METHOD_PROPERTY, new MethodSignature("bogus"));
+		context.getAttributeMap().put(AnnotatedAction.METHOD_ATTRIBUTE, new MethodSignature("bogus"));
 		try {
 			action.execute(context);
 			fail("Should've failed with no such method");

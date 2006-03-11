@@ -173,13 +173,13 @@ public class MultiAction extends AbstractAction {
 	 */
 	public static class DefaultActionMethodResolver implements ActionMethodResolver {
 		public MethodSignature resolveMethod(RequestContext context) {
-			MethodSignature method = (MethodSignature)context.getAttributes().get(AnnotatedAction.METHOD_PROPERTY);
+			MethodSignature method = (MethodSignature)context.getAttributes().get(AnnotatedAction.METHOD_ATTRIBUTE);
 			if (method == null) {
 				if (context.getCurrentState() != null) {
 					// default to the stateId
 					method = new MethodSignature(context.getCurrentState().getId());
 				} else {
-					throw new IllegalStateException("Unable to resolve action method; no '" + AnnotatedAction.METHOD_PROPERTY + "' context attribute set");
+					throw new IllegalStateException("Unable to resolve action method; no '" + AnnotatedAction.METHOD_ATTRIBUTE + "' context attribute set");
 				}
 			}
 			return method;
