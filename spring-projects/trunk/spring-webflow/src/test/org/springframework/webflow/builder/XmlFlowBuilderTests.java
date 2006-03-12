@@ -224,6 +224,10 @@ public class XmlFlowBuilderTests extends TestCase {
 			return "multiAction".equals(actionId);
 		}
 
+		public boolean isStatefulAction(String actionId) throws FlowArtifactException {
+			return false;
+		}
+		
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 			if ("attributeMapper1".equals(id)) {
 				return new FlowAttributeMapper() {

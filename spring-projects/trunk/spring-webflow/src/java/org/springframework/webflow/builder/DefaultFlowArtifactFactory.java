@@ -93,6 +93,11 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 				+ actionId + "'; action lookup is not supported by this artifact factory");
 	}
 
+	public boolean isStatefulAction(String actionId) throws FlowArtifactException {
+		throw new FlowArtifactException(actionId, Action.class, "Unable to determine statefulness of action with id '"
+				+ actionId + "'; action lookup is not supported by this artifact factory");
+	}
+	
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 		throw new FlowArtifactException(id, FlowAttributeMapper.class, "Unable to lookup attribute mapper with id '"
 				+ id + "'; attribute mapper lookup is not supported by this artifact factory");
@@ -196,7 +201,7 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 			// declarative instructions
 			Assert.isInstanceOf(BeanInvokingActionParameters.class, parameters);
 			BeanInvokingActionParameters actionParams = (BeanInvokingActionParameters)parameters;
-			if (actionParams.isStateful()) {
+			if (isStatefulAction(parameters.getId())) {
 				if (artifact instanceof MementoOriginator) {
 					BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction(actionParams.getMethod(),
 							parameters.getId(), getServiceRegistry());

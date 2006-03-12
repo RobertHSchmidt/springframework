@@ -86,8 +86,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *             &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *             &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -148,8 +148,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String ACTION_ELEMENT = "action";
 
 	private static final String NAME_ATTRIBUTE = "name";
-
-	private static final String STATEFUL_ATTRIBUTE = "stateful";
 
 	private static final String METHOD_ATTRIBUTE = "method";
 
@@ -709,11 +707,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 */
 	protected Action parseAction(Element element) {
 		String actionId = element.getAttribute(BEAN_ATTRIBUTE);
-		boolean stateful = false;
 		MethodSignature method = null;
-		if (element.hasAttribute(STATEFUL_ATTRIBUTE)) {
-			stateful = ((Boolean)fromStringTo(Boolean.class).execute(element.getAttribute(STATEFUL_ATTRIBUTE))).booleanValue();
-		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)) {
 			method = (MethodSignature)fromStringTo(MethodSignature.class).execute(
 					element.getAttribute(METHOD_ATTRIBUTE));
@@ -728,8 +722,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			resultScope = (ScopeType)fromStringTo(ScopeType.class)
 					.execute(element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
 		}
-		BeanInvokingActionParameters actionParameters = new BeanInvokingActionParameters(actionId, stateful, method,
-				resultName, resultScope, null, null);
+		BeanInvokingActionParameters actionParameters = new BeanInvokingActionParameters(actionId, method, resultName,
+				resultScope, null, null);
 		return getLocalFlowArtifactFactory().getAction(actionParameters);
 	}
 
@@ -1167,6 +1161,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		protected boolean containsBean(String id) {
 			return top().context.containsBean(id);
+		}
+
+		public boolean isStatefulAction(String actionId) {
+			if (containsBean(actionId)) {
+				return !top().context.isSingleton(actionId);
+			}
+			else {
+				return getFlowArtifactFactory().isStatefulAction(actionId);
+			}
 		}
 
 		protected Object getBean(String id, Class type, boolean enforceTypeCheck) {

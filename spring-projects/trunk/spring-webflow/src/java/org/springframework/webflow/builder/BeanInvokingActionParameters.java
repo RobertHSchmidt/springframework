@@ -5,8 +5,6 @@ import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.ScopeType;
 
 public class BeanInvokingActionParameters extends FlowArtifactParameters {
-	private boolean stateful;
-
 	private MethodSignature method;
 
 	private String resultName;
@@ -15,18 +13,13 @@ public class BeanInvokingActionParameters extends FlowArtifactParameters {
 
 	private ScopeType beanScope;
 	
-	public BeanInvokingActionParameters(String id, boolean stateful, MethodSignature method, String resultName,
+	public BeanInvokingActionParameters(String id, MethodSignature method, String resultName,
 			ScopeType resultScope, ScopeType beanScope, AttributeCollection customAttributes) {
 		super(id, customAttributes);
-		this.stateful = stateful;
 		this.method = method;
 		this.resultName = resultName;
 		this.resultScope = resultScope;
 		this.beanScope = beanScope;
-	}
-
-	public boolean isStateful() {
-		return stateful;
 	}
 
 	public MethodSignature getMethod() {

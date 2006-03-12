@@ -207,7 +207,7 @@
 	Defines a transition from one state to another.
 	
 	A transitions defines a supported path through the flow.
-	A transitions may be annotated with properties and may specify one or more
+	A transitions may be annotated with attributes and may specify one or more
 	actions to execute before executing.
 -->
 <!ELEMENT transition ( attribute*, action* )>
@@ -286,14 +286,6 @@
 	the client. Use a null view when another state is expected to generate the response.
 -->
 <!ATTLIST view-state view CDATA #IMPLIED>
-
-<!--
-	Whether or not this view-state should trigger a "conversation URL redirect".  If true, the 
-	ViewSelection made is cached and a redirect request is issued that refers back to it
-	at a specific URL.  This allows for bookmarking and refreshing 
-	the last view selection made by the conversation.
--->
-<!ATTLIST view-state redirect (true | false) "false">
 
 <!--
 	Defines state entry logic to be executed. This logic will always execute when the state is entered.

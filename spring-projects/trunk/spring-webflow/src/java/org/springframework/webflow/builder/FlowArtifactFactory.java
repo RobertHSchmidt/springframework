@@ -51,6 +51,14 @@ public interface FlowArtifactFactory {
 	public boolean isMultiAction(String actionId) throws FlowArtifactException;
 
 	/**
+	 * Returns a flag indicating if the action with the <code>actionId</code> is stateful; that is,
+	 * capable of holding caller-specific state as instance variables.
+	 * @param actionId the action
+	 * @return true if stateful, false if stateless (singleton)
+	 */
+	public boolean isStatefulAction(String actionId) throws FlowArtifactException;
+	
+	/**
 	 * Retrieve the flow attribute mapper to be used in a subflow state with the
 	 * provided id.
 	 * @param id the id
