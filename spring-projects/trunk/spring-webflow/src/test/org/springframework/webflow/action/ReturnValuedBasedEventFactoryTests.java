@@ -1,5 +1,7 @@
 package org.springframework.webflow.action;
 
+import javax.swing.text.html.FormSubmitEvent.MethodType;
+
 import junit.framework.TestCase;
 
 import org.springframework.webflow.Event;
@@ -16,6 +18,14 @@ public class ReturnValuedBasedEventFactoryTests extends TestCase {
 		Event event = new Event(this, "event");
 		Event result = factory.createResultEvent(this, event, context);
 		assertSame(event, result);
+	}
+	
+	public void testMappedTypes() {
+		assertTrue(factory.isMappedType(FlowSessionStatus.class));
+		assertTrue(factory.isMappedType(MethodType.class));
+		assertTrue(factory.isMappedType(Boolean.class));
+		assertTrue(factory.isMappedType(String.class));
+		assertFalse(factory.isMappedType(Integer.class));
 	}
 	
 	public void testNullResult() {
