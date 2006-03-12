@@ -59,6 +59,25 @@
         <delete quiet="true" dir="${upload.tmp.dir}"/>
     </target>
     
+    <target name="email" depends="email-success, email-failure"/>
+    
+    <target name="email-failure" depends="guard.smtp.host">
+    	<mail mailhost="${mail.host}" subject="Spring WebFlow build ${label} FAILED" tolist="alef@interface21.com" from="alef@interface21.com">
+    		<message>Have a look at http://static.springframework.org/spring-webflow/build/index.html
+    			for more details.</message>
+    	</mail>
+    </target>
+    
+    <target name="email-success" depends="guard.smtp.host">
+    	<mail mailhost="${mail.host}" subject="Spring WebFlow build ${label} SUCCEEDED" tolist="alef@interface21.com" from="alef@interface21.com">
+    		<message>Snapshot has been uploaded to http://static.springframework.org/downloads/nightly/spring-webflow</message>
+    	</mail>
+	</target>
+	
+	<target name="guard.smtp.host" unless="smtp.host">
+		<fail message="This target requires the smtp.host property to be set"/>
+	</target>
+    
     <target name="guard.upload.tmp.dir" unless="upload.tmp.dir">
     	<fail message="This target requires the upload.tmp.dir property to be set"/>
     </target>
