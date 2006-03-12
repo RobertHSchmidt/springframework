@@ -85,6 +85,7 @@ public class DefaultConversionService implements ConversionService {
 		addDefaultAlias(String.class);
 		addDefaultAlias(Short.class);
 		addDefaultAlias(Integer.class);
+		addAlias("int", Integer.class);
 		addDefaultAlias(Byte.class);
 		addDefaultAlias(Long.class);
 		addDefaultAlias(Float.class);
@@ -95,7 +96,7 @@ public class DefaultConversionService implements ConversionService {
 		addDefaultAlias(Mapping.class);
 		addDefaultAlias(Class.class);
 		addDefaultAlias(Expression.class);
-		addAlias("labeledEnum", LabeledEnum.class);
+		addDefaultAlias(LabeledEnum.class);
 	}
 
 	public void addConverter(Converter converter) {
