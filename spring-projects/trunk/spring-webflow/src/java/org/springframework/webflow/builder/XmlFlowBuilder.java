@@ -29,6 +29,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
@@ -66,6 +67,7 @@ import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.FlowVariableCreatingAction;
+import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.CollectionAddingPropertyExpression;
 import org.springframework.webflow.support.DefaultFlowAttributeMapper;
 import org.springframework.webflow.support.FlowScopeExpression;
@@ -86,8 +88,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *        &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *        &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -694,7 +696,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			action.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)
-				&& getFlowArtifactFactory().isMultiAction(element.getAttribute(BEAN_ATTRIBUTE))) {
+				&& getLocalFlowArtifactFactory().isMultiAction(element.getAttribute(BEAN_ATTRIBUTE))) {
 			action.setMethod(element.getAttribute(METHOD_ATTRIBUTE));
 		}
 		action.getAttributeMap().putAll(parseAttributes(element));
@@ -1100,6 +1102,24 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getAction(parameters);
 		}
 
+		public boolean isMultiAction(String actionId) {
+			if (containsBean(actionId)) {
+				return MultiAction.class.isAssignableFrom(getServiceRegistry().getType(actionId));
+			}
+			else {
+				return getFlowArtifactFactory().isMultiAction(actionId);
+			}
+		}
+
+		public boolean isStatefulAction(String actionId) {
+			if (containsBean(actionId)) {
+				return !getServiceRegistry().isSingleton(actionId);
+			}
+			else {
+				return getFlowArtifactFactory().isStatefulAction(actionId);
+			}
+		}
+
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 			if (!localFlowArtifactRegistries.isEmpty()) {
 				if (containsBean(id)) {
@@ -1159,26 +1179,21 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().createTransition(attributes);
 		}
 
-		protected boolean containsBean(String id) {
-			return top().context.containsBean(id);
+		public BeanFactory getServiceRegistry() {
+			return top().context;
 		}
 
-		public boolean isStatefulAction(String actionId) {
-			if (containsBean(actionId)) {
-				return !top().context.isSingleton(actionId);
-			}
-			else {
-				return getFlowArtifactFactory().isStatefulAction(actionId);
-			}
+		protected boolean containsBean(String id) {
+			return getServiceRegistry().containsBean(id);
 		}
 
 		protected Object getBean(String id, Class type, boolean enforceTypeCheck) {
 			try {
 				if (enforceTypeCheck) {
-					return top().context.getBean(id, type);
+					return getServiceRegistry().getBean(id, type);
 				}
 				else {
-					return top().context.getBean(id);
+					return getServiceRegistry().getBean(id);
 				}
 			}
 			catch (BeansException e) {

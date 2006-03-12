@@ -100,10 +100,10 @@ public class RegistryBackedFlowArtifactFactory extends DefaultFlowArtifactFactor
 	}
 
 	public boolean isMultiAction(String actionId) throws FlowArtifactException {
-		try {
+		if (beanFactory.containsBean(actionId)) {
 			return MultiAction.class.isAssignableFrom(beanFactory.getType(actionId));
-		} catch (BeansException e) {
-			throw new FlowArtifactException(actionId, Action.class, e);
+		} else {
+			return false;
 		}
 	}
 
