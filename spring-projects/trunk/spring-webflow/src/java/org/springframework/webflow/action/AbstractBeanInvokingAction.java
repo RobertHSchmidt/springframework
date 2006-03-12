@@ -76,7 +76,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	/**
 	 * The strategy that adapts bean method return values to Event objects.
 	 */
-	private ResultEventFactory resultEventFactory = new DefaultResultEventFactory();
+	private ResultEventFactory resultEventFactory = new SuccessEventFactory();
 
 	/**
 	 * Creates a new bean invoking action.
@@ -174,9 +174,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 		Object bean = getBeanStatePersister().restoreState(getBean(context), context);
 		Object returnValue = getMethodInvoker().invoke(methodSignature, bean, context);
 		exposeMethodReturnValue(returnValue, context);
-		Event resultEvent = getResultEventFactory().createResultEvent(bean, returnValue, context);
 		getBeanStatePersister().saveState(bean, context);
-		return resultEvent;
+		return getResultEventFactory().createResultEvent(bean, returnValue, context);
 	}
 
 	/**
