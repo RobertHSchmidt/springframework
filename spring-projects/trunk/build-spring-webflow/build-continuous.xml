@@ -56,6 +56,7 @@
                 <include name="spring-*.zip"/>
             </fileset>
         </scp>
+        <delete quiet="true" dir="${upload.tmp.dir}"/>
     </target>
     
     <target name="guard.upload.tmp.dir" unless="upload.tmp.dir">
