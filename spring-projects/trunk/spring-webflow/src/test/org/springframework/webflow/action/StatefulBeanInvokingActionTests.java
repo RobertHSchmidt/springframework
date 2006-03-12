@@ -7,16 +7,14 @@ import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class StatefulBeanInvokingActionTests extends TestCase {
-	private StatefulBeanInvokingAction action = new StatefulBeanInvokingAction();
+	private StatefulBeanInvokingAction action;
 	
 	private StaticWebApplicationContext beanFactory = new StaticWebApplicationContext();
 
 	private MockRequestContext context = new MockRequestContext();
 	
 	public void setUp() {
-		action.setBeanFactory(beanFactory);
-		context.setAttribute("method", new MethodSignature("execute"));
-		context.setAttribute("bean", "bean");
+		action = new StatefulBeanInvokingAction(new MethodSignature("execute"), "bean", beanFactory);
 	}
 
 	public void testInvokeBean() throws Exception {

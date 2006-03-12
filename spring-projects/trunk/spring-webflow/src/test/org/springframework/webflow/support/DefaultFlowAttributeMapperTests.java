@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.springframework.binding.expression.support.OgnlExpressionParser;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
-import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.Event;
@@ -166,7 +165,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		action.setFormObjectName("command");
 		action.setFormObjectClass(TestBean.class);
 		action.setFormObjectScope(ScopeType.FLOW);
-		context.setAttribute("method", new MethodSignature("setupForm"));
+		context.setAttribute("method", "setupForm");
 
 		action.execute(context);
 

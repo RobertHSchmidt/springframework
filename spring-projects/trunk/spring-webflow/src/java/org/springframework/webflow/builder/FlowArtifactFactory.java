@@ -15,6 +15,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
+import org.springframework.webflow.action.MultiAction;
 
 /**
  * A support interface used by FlowBuilders at configuration time to retrieve
@@ -40,6 +41,14 @@ public interface FlowArtifactFactory {
 	 * @throws FlowArtifactException when no such action is found
 	 */
 	public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException;
+
+	/**
+	 * Returns true if the action with the given <code>actionId</code> is a {@link MultiAction} instance.
+	 * @param actionId the action id
+	 * @return true if the action is a multi action, false otherwise
+	 * @throws FlowArtifactException when no such action is found
+	 */
+	public boolean isMultiAction(String actionId) throws FlowArtifactException;
 
 	/**
 	 * Retrieve the flow attribute mapper to be used in a subflow state with the

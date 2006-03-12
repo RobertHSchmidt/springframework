@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.binding.method.MethodSignature;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -52,23 +51,11 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * <p>
 	 * The method property is a hint about what method should be invoked; e.g
 	 * the name of a specific method on a
-	 * <code>{@link org.springframework.webflow.action.MultiAction}</code> to
-	 * execute or the name of a specific method on a arbitrary POJO (plain old
-	 * java.lang.Object).
+	 * <code>{@link org.springframework.webflow.action.MultiAction}</code>.
 	 * <p>
 	 * @see ActionState
 	 */
 	public static final String METHOD_ATTRIBUTE = "method";
-
-	/**
-	 * The action execution method result name attribute ("resultName");
-	 */
-	public static final String RESULT_NAME_ATTRIBUTE = "resultName";
-
-	/**
-	 * The action execution method result scope attribute ("resultScope");
-	 */
-	public static final String RESULT_SCOPE_ATTRIBUTE = "resultScope";
 
 	/**
 	 * The target action to execute.
@@ -81,9 +68,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @see #setCaption(String)
 	 * @see #setDescription(String)
 	 * @see #setName(String)
-	 * @see #setMethod(MethodSignature)
-	 * @see #setResultName(String)
-	 * @see #setResultScope(ScopeType)
+	 * @see #setMethod(String)
 	 */
 	public AnnotatedAction() {
 
@@ -155,8 +140,8 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * Returns the name of the action method to invoke when the target action is
 	 * executed.
 	 */
-	public MethodSignature getMethod() {
-		return (MethodSignature)getAttributeMap().get(METHOD_ATTRIBUTE, MethodSignature.class);
+	public String getMethod() {
+		return (String)getAttributeMap().getString(METHOD_ATTRIBUTE);
 	}
 
 	/**
@@ -164,41 +149,8 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * executed.
 	 * @param method the action method name.
 	 */
-	public void setMethod(MethodSignature method) {
+	public void setMethod(String method) {
 		getAttributeMap().put(METHOD_ATTRIBUTE, method);
-	}
-
-	/**
-	 * Returns the name of the attribute to export the action method return
-	 * value under.
-	 */
-	public String getResultName() {
-		return getAttributeMap().getString(RESULT_NAME_ATTRIBUTE);
-	}
-
-	/**
-	 * Sets the name of the action method to invoke when the target action is
-	 * executed.
-	 * @param resultName the action return value attribute name
-	 */
-	public void setResultName(String resultName) {
-		getAttributeMap().put(RESULT_NAME_ATTRIBUTE, resultName);
-	}
-
-	/**
-	 * Returns the scope of the attribute to export the action method return
-	 * value under.
-	 */
-	public ScopeType getResultScope() {
-		return (ScopeType)getAttributeMap().get(RESULT_SCOPE_ATTRIBUTE, ScopeType.class);
-	}
-
-	/**
-	 * Sets the scope of the attribute storing the action method return value.
-	 * @param resultScope the result scope
-	 */
-	public void setResultScope(ScopeType resultScope) {
-		getAttributeMap().put(RESULT_SCOPE_ATTRIBUTE, resultScope);
 	}
 
 	public Event execute(RequestContext context) throws Exception {

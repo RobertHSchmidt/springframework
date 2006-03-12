@@ -34,16 +34,15 @@ import org.springframework.webflow.test.MockRequestContext;
 public class LocalBeanInvokingActionTests extends TestCase {
 
 	private TestBean bean = new TestBean();
-	
-	private LocalBeanInvokingAction action = new LocalBeanInvokingAction(bean);
-	
+
+	private LocalBeanInvokingAction action;
+
 	private MockRequestContext context = new MockRequestContext();
-	
+
 	public void setUp() {
-		context.setAttribute("method", new MethodSignature("execute"));
-		context.setAttribute("bean", "bean");
+		action = new LocalBeanInvokingAction(new MethodSignature("execute"), bean);
 	}
-	
+
 	public void testInvokeBean() throws Exception {
 		action.execute(context);
 		assertTrue(bean.executed);
@@ -51,39 +50,41 @@ public class LocalBeanInvokingActionTests extends TestCase {
 
 	public void testNullTargetBean() throws Exception {
 		try {
-			action = new LocalBeanInvokingAction(null);
+			action = new LocalBeanInvokingAction(new MethodSignature("execute"), null);
 			fail("Should've failed with iae");
-		} catch (IllegalArgumentException e) {
-			
+		}
+		catch (IllegalArgumentException e) {
+
 		}
 	}
-	
+
 	public void testExposeResultInScopes() throws Exception {
 		AttributeMap attributes = new AttributeMap();
 		attributes.put("foo", "a string value");
 		attributes.put("bar", "12345");
 		context.setLastEvent(new Event(this, "submit", attributes));
-		context.setAttribute("method", new MethodSignature("execute", new Parameters(new Parameter[] {
+		MethodSignature method = new MethodSignature("execute", new Parameters(new Parameter[] {
 				new Parameter(String.class, expression("lastEvent.attributes.foo")),
-				new Parameter(Integer.class, expression("lastEvent.attributes.bar")) })));
-		context.setAttribute("resultName", "foo");
+				new Parameter(Integer.class, expression("lastEvent.attributes.bar")) }));
+		action = new LocalBeanInvokingAction(method, bean);
+		action.setResultName("foo");
 		testInvokeBean();
 		assertEquals(new Integer(12345), context.getRequestScope().get("foo"));
-		
+
 		context.getRequestScope().clear();
 
-		context.setAttribute("resultScope", ScopeType.REQUEST);
+		action.setResultScope(ScopeType.REQUEST);
 		testInvokeBean();
 		assertEquals(new Integer(12345), context.getRequestScope().get("foo"));
-		
+
 		context.getRequestScope().clear();
-		
-		context.setAttribute("resultScope", ScopeType.FLOW);
+
+		action.setResultScope(ScopeType.FLOW);
 		testInvokeBean();
 		assertEquals(new Integer(12345), context.getFlowScope().get("foo"));
 		assertNull(context.getRequestScope().get("foo"));
 	}
-	
+
 	private Expression expression(String string) {
 		return new WebFlowOgnlExpressionParser().parseExpression(string);
 	}

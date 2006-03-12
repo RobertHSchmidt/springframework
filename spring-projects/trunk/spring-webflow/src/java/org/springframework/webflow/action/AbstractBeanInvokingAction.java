@@ -18,6 +18,7 @@ package org.springframework.webflow.action;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodSignature;
+import org.springframework.util.Assert;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
@@ -39,7 +40,28 @@ import org.springframework.webflow.ScopeType;
 public abstract class AbstractBeanInvokingAction extends AbstractAction {
 
 	/**
-	 * The method invoker that performs the action-&gt;bean method binding.
+	 * The signature of the method to invoke on the target bean, capable of
+	 * resolving the method when used with a {@link MethodInvoker}.  Required.
+	 */
+	private MethodSignature methodSignature;
+
+	/**
+	 * The name of the attribute to index the return value of the invoked bean
+	 * method. Optiona; the default is <code>null</code> which simply
+	 * results in ignoring the return value.
+	 */
+	private String resultName;
+
+	/**
+	 * The scope the attribute indexing the return value of the invoked bean
+	 * method. Default is {@link ScopeType#REQUEST).
+	 */
+	private ScopeType resultScope = ScopeType.REQUEST;
+
+	/**
+	 * The method invoker that performs the action-&gt;bean method binding,
+	 * accepting a {@link MethodSignature} and
+	 * {@link #getBean(RequestContext) target bean} instance.
 	 */
 	private MethodInvoker methodInvoker = new MethodInvoker();
 
@@ -55,6 +77,55 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * The strategy that adapts bean method return values to Event objects.
 	 */
 	private ResultEventFactory resultEventFactory = new DefaultResultEventFactory();
+
+	/**
+	 * Creates a new bean invoking action.
+	 * @param methodSignature the signature of the method to invoke.
+	 */
+	protected AbstractBeanInvokingAction(MethodSignature methodSignature) {
+		Assert.notNull(methodSignature, "The signature of the target method to invoke is required");
+		this.methodSignature = methodSignature;
+	}
+
+	/**
+	 * Returns the signature of the method to invoke on the target bean
+	 */
+	public MethodSignature getMethodSignature() {
+		return methodSignature;
+	}
+
+	/**
+	 * Returns the name of the attribute to use as an index for the return value
+	 * of the invoked bean method.
+	 */
+	public String getResultName() {
+		return resultName;
+	}
+
+	/**
+	 * Sets the name of the attribute to use as an index for return value of the
+	 * invoked bean method.
+	 */
+	public void setResultName(String resultName) {
+		this.resultName = resultName;
+	}
+
+	/**
+	 * Returns the scope of {@link #getResultName() result name} attribute.
+	 */
+	public ScopeType getResultScope() {
+		return resultScope;
+	}
+
+	/**
+	 * Sets the scope of {@link #getResultName() result name} attribute.
+	 */
+	public void setResultScope(ScopeType resultScope) {
+		if (resultScope == null) {
+			resultScope = ScopeType.REQUEST;
+		}
+		this.resultScope = resultScope;
+	}
 
 	/**
 	 * Returns the bean state management strategy used by this action.
@@ -78,7 +149,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * Set the return value-&gt;event adaption strategy.
+	 * Set the bean return value-&gt;event adaption strategy.
 	 */
 	public void setResultEventFactory(ResultEventFactory resultEventFactory) {
 		this.resultEventFactory = resultEventFactory;
@@ -101,9 +172,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBeanStatePersister().restoreState(getBean(context), context);
-		MethodSignature methodKey = (MethodSignature)context.getAttributes().getRequired(
-				AnnotatedAction.METHOD_ATTRIBUTE, MethodSignature.class);
-		Object returnValue = getMethodInvoker().invoke(methodKey, bean, context);
+		Object returnValue = getMethodInvoker().invoke(methodSignature, bean, context);
 		exposeMethodReturnValue(returnValue, context);
 		Event resultEvent = getResultEventFactory().createResultEvent(bean, returnValue, context);
 		getBeanStatePersister().saveState(bean, context);
@@ -123,11 +192,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * @param context the request context
 	 */
 	protected void exposeMethodReturnValue(Object returnValue, RequestContext context) {
-		String resultName = context.getAttributes().getString(AnnotatedAction.RESULT_NAME_ATTRIBUTE, null);
 		if (resultName != null) {
-			ScopeType scopeType = (ScopeType)context.getAttributes().get(AnnotatedAction.RESULT_SCOPE_ATTRIBUTE,
-					ScopeType.REQUEST);
-			scopeType.getScope(context).put(resultName, returnValue);
+			resultScope.getScope(context).put(resultName, returnValue);
 		}
 	}
 

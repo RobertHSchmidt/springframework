@@ -26,6 +26,7 @@ import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
+import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.builder.DefaultFlowArtifactFactory;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowArtifactParameters;
@@ -96,6 +97,14 @@ public class RegistryBackedFlowArtifactFactory extends DefaultFlowArtifactFactor
 
 	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
 		return toAction(getBean(actionParameters.getId(), Action.class, false), actionParameters);
+	}
+
+	public boolean isMultiAction(String actionId) throws FlowArtifactException {
+		try {
+			return MultiAction.class.isAssignableFrom(beanFactory.getType(actionId));
+		} catch (BeansException e) {
+			throw new FlowArtifactException(actionId, Action.class, e);
+		}
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {

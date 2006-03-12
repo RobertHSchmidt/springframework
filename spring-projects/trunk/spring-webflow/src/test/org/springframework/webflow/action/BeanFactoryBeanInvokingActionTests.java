@@ -28,41 +28,30 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class BeanFactoryBeanInvokingActionTests extends TestCase {
 
-	private BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction();
-	
+	private BeanFactoryBeanInvokingAction action;
+
 	private StaticListableBeanFactory beanFactory = new StaticListableBeanFactory();
 
 	private MockRequestContext context = new MockRequestContext();
-	
+
 	public void setUp() {
-		action.setBeanFactory(beanFactory);
-		context.setAttribute("method", new MethodSignature("execute"));
-		context.setAttribute("bean", "bean");
+		action = new BeanFactoryBeanInvokingAction(new MethodSignature("execute"), "bean", beanFactory);
 	}
-	
+
 	public void testInvokeBean() throws Exception {
 		beanFactory.addBean("bean", new TestBean());
 		action.execute(context);
 		TestBean bean = (TestBean)beanFactory.getBean("bean");
 		assertTrue(bean.executed);
 	}
-	
+
 	public void testInvokeNoSuchBean() throws Exception {
 		try {
 			action.execute(context);
 			fail("Should've failed with no such bean");
-		} catch (NoSuchBeanDefinitionException e) {
-			
 		}
-	}
+		catch (NoSuchBeanDefinitionException e) {
 
-	public void testInvalidBeanNameConfiguration() throws Exception {
-		context.setAttributes(null);
-		try {
-			action.execute(context);
-			fail("Should've failed with iae");
-		} catch (IllegalArgumentException e) {
-			
 		}
 	}
 }

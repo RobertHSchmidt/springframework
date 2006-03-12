@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.action;
 
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ScopeType;
@@ -57,29 +59,41 @@ import org.springframework.webflow.ScopeType;
  */
 public class StatefulBeanInvokingAction extends BeanFactoryBeanInvokingAction {
 
-	private static final String SCOPE_CONTEXT_ATTRIBUTE = "scope";
+	/**
+	 * The scope to place the stateful bean instance in.
+	 */
+	private ScopeType beanScope = ScopeType.FLOW;
 
 	/**
 	 * Creates a new stateful bean invoking action.
 	 */
-	public StatefulBeanInvokingAction() {
+	public StatefulBeanInvokingAction(MethodSignature methodSignature, String beanName, BeanFactory beanFactory) {
+		super(methodSignature, beanName, beanFactory);
 		setBeanStatePersister(new ScopeBeanStatePersister());
+	}
+
+	/**
+	 * Returns the scope to put the stateful bean instance in.
+	 */
+	public ScopeType getBeanScope() {
+		return beanScope;
+	}
+
+	/**
+	 * Sets the scope to put the stateful bean instance in.
+	 */
+	public void setBeanScope(ScopeType beanScope) {
+		if (beanScope == null) {
+			beanScope = ScopeType.FLOW;
+		}
+		this.beanScope = beanScope;
 	}
 
 	/**
 	 * Retrieves the bean to invoke from the configured {@link #getBeanScope()}.
 	 */
 	protected Object getBean(RequestContext context) {
-		return getScopeType(context).getScope(context).get(getBeanName(context));
-	}
-	
-	/**
-	 * Returns the target scope type of the stateful bean.
-	 * @param context the request context
-	 * @return the scope type.
-	 */
-	protected ScopeType getScopeType(RequestContext context) {
-		return (ScopeType)context.getAttributes().get(SCOPE_CONTEXT_ATTRIBUTE, ScopeType.FLOW);
+		return beanScope.getScope(context).get(getBeanName());
 	}
 
 	/**
@@ -90,7 +104,7 @@ public class StatefulBeanInvokingAction extends BeanFactoryBeanInvokingAction {
 	private class ScopeBeanStatePersister implements BeanStatePersister {
 		public Object restoreState(Object bean, RequestContext context) {
 			if (bean == null) {
-				return getPrototypeBean(getBeanName(context));
+				return getPrototypeBean(getBeanName());
 			}
 			else {
 				return bean;
@@ -98,7 +112,7 @@ public class StatefulBeanInvokingAction extends BeanFactoryBeanInvokingAction {
 		}
 
 		public void saveState(Object bean, RequestContext context) {
-			getScopeType(context).getScope(context).put(getBeanName(context), bean);
+			getBeanScope().getScope(context).put(getBeanName(), bean);
 		}
 
 		private Object getPrototypeBean(String beanName) {

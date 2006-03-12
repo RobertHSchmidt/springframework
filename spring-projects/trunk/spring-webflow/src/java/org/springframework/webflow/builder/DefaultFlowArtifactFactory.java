@@ -10,6 +10,7 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.method.TextToMethodSignature;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
@@ -21,7 +22,11 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
+import org.springframework.webflow.action.BeanFactoryBeanInvokingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
+import org.springframework.webflow.action.MementoBeanStatePersister;
+import org.springframework.webflow.action.MementoOriginator;
+import org.springframework.webflow.action.StatefulBeanInvokingAction;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
 
 /**
@@ -81,6 +86,11 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 	public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
 		throw new FlowArtifactException(parameters.getId(), Action.class, "Unable to lookup action with id '"
 				+ parameters.getId() + "'; action lookup is not supported by this artifact factory");
+	}
+
+	public boolean isMultiAction(String actionId) throws FlowArtifactException {
+		throw new FlowArtifactException(actionId, Action.class, "Unable to determine class of action with id '"
+				+ actionId + "'; action lookup is not supported by this artifact factory");
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
@@ -182,7 +192,37 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 			return (Action)artifact;
 		}
 		else {
-			return new LocalBeanInvokingAction(artifact);
+			// adapt the bean to an Action using the construction attributes as
+			// declarative instructions
+			Assert.isInstanceOf(BeanInvokingActionParameters.class, parameters);
+			BeanInvokingActionParameters actionParams = (BeanInvokingActionParameters)parameters;
+			if (actionParams.isStateful()) {
+				if (artifact instanceof MementoOriginator) {
+					BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction(actionParams.getMethod(),
+							parameters.getId(), getServiceRegistry());
+					action.setBeanStatePersister(new MementoBeanStatePersister());
+					action.setConversionService(getConversionService());
+					action.setResultName(actionParams.getResultName());
+					action.setResultScope(actionParams.getResultScope());
+					return action;
+				}
+				else {
+					StatefulBeanInvokingAction action = new StatefulBeanInvokingAction(actionParams.getMethod(),
+							parameters.getId(), getServiceRegistry());
+					action.setConversionService(getConversionService());
+					action.setResultName(actionParams.getResultName());
+					action.setResultScope(actionParams.getResultScope());
+					action.setBeanScope(actionParams.getBeanScope());
+					return action;
+				}
+			}
+			else {
+				LocalBeanInvokingAction action = new LocalBeanInvokingAction(actionParams.getMethod(), artifact);
+				action.setConversionService(getConversionService());
+				action.setResultName(actionParams.getResultName());
+				action.setResultScope(actionParams.getResultScope());
+				return action;
+			}
 		}
 	}
 }

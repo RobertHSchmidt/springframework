@@ -15,9 +15,8 @@
  */
 package org.springframework.webflow.action;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 
@@ -33,56 +32,60 @@ import org.springframework.webflow.RequestContext;
  * Example configuration and usage:
  * 
  * <pre>
- *    BeanFactoryInvokingAction action = new BeanFactoryBeanInvokingAction();
- *    action.setBeanFactory(...);
- *    MockRequestContext context = new MockRequestContext();
- *    context.setAttribute(&quot;method&quot;, new MethodSignature(&quot;myMethod&quot;));
- *    context.setAttribute(&quot;bean&quot;, &quot;myBean&quot;);
- *    action.execute(context);
+ *     MethodSignature method = new MethodSignature("myMethod");
+ *     BeanFactory factory = ...
+ *     BeanFactoryInvokingAction action = new BeanFactoryBeanInvokingAction(method, "myBean", factory);
+ *     MockRequestContext context = new MockRequestContext();
+ *     action.execute(context);
  * </pre>
  * 
  * @author Keith Donald
  */
-public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction implements BeanFactoryAware {
+public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction {
 
 	/**
-	 * The bean name action execution property.
+	 * The name of the bean in the factory to invoke. Required.
 	 */
-	protected static final String BEAN_NAME_CONTEXT_ATTRIBUTE = "bean";
+	private String beanName;
 
 	/**
-	 * The bean factory for loading beans to invoke by <code>id</code>.
+	 * The bean factory managing the bean to invoke. Required.
 	 */
 	private BeanFactory beanFactory;
 
 	/**
-	 * Returns the configured bean factory member.
-	 * @return the bean factory
+	 * Creates a bean factory bean invoking action.
+	 * @param methodSignature the signature of the method on the bean to invoke
+	 * @param beanName the id of the bean in the bean factory
+	 * @param beanFactory the bean factory
 	 */
-	protected BeanFactory getBeanFactory() {
-		return beanFactory;
-	}
-
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+	public BeanFactoryBeanInvokingAction(MethodSignature methodSignature, String beanName, BeanFactory beanFactory) {
+		super(methodSignature);
+		Assert.hasText(beanName, "The bean name is required");
+		Assert.notNull(beanFactory, "The bean factory is required");
+		this.beanName = beanName;
 		this.beanFactory = beanFactory;
 	}
 
 	/**
-	 * Retrieves the bean to invoke. This implementation loads the bean by name
-	 * from the BeanFactory. The name to use may be specified in this class, or
-	 * alternatively as a action execution property, allowing this action
-	 * instance to be parameterized to invoke many different beans throughout
-	 * its life.
+	 * Returns the configured bean name.
+	 */
+	public String getBeanName() {
+		return beanName;
+	}
+
+	/**
+	 * Returns the configured bean factory member.
+	 */
+	public BeanFactory getBeanFactory() {
+		return beanFactory;
+	}
+
+	/**
+	 * Looks up the bean to invoke. This implementation loads the bean by name
+	 * from the BeanFactory.
 	 */
 	protected Object getBean(RequestContext context) {
-		String beanName = getBeanName(context);
-		Assert.hasText(beanName,
-				"The bean name to invoke was not specified: set the '" + BEAN_NAME_CONTEXT_ATTRIBUTE + "' context attribute");
-		return getBeanFactory().getBean(beanName);
+		return getBeanFactory().getBean(getBeanName());
 	}
-	
-	protected String getBeanName(RequestContext context) {
-		return context.getAttributes().getString(BEAN_NAME_CONTEXT_ATTRIBUTE);
-	}
-	
 }

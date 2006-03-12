@@ -17,7 +17,6 @@ package org.springframework.webflow.builder;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.method.MethodSignature;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Action;
@@ -160,16 +159,14 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertTrue(decisionState3.getTransitionSet().size() == 2);
 		assertNotNull(decisionState3);
 		assertNotNull(decisionState3.getAction());
-		assertEquals(new MethodSignature("booleanMethod"), decisionState3.getAnnotatedAction().getAttributeMap()
-				.get("method"));
+		assertNull(decisionState3.getAnnotatedAction().getAttributeMap().get("method"));
 		assertTrue(decisionState3.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
-
+		
 		DecisionState decisionState4 = (DecisionState)flow.getState("decisionState4");
 		assertTrue(decisionState4.getTransitionSet().size() == 2);
 		assertNotNull(decisionState4);
 		assertNotNull(decisionState4.getAction());
-		assertEquals(new MethodSignature("enumMethod"), decisionState4.getAnnotatedAction().getAttributeMap().get(
-				"method"));
+		assertNull(decisionState4.getAnnotatedAction().getAttributeMap().get("method"));
 		assertTrue(decisionState4.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
 
 		EndState endState1 = (EndState)flow.getState("endState1");
@@ -217,9 +214,14 @@ public class XmlFlowBuilderTests extends TestCase {
 				return new TestMultiAction();
 			}
 			if ("pojoAction".equals(id)) {
-				return new LocalBeanInvokingAction(new TestPojo());
+				BeanInvokingActionParameters params = (BeanInvokingActionParameters)actionParameters;
+				return toAction(new TestPojo(), params);
 			}
 			throw new FlowArtifactException(id, Action.class);
+		}
+
+		public boolean isMultiAction(String actionId) throws FlowArtifactException {
+			return "multiAction".equals(actionId);
 		}
 
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {

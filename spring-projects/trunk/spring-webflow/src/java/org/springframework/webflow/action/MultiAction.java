@@ -137,8 +137,8 @@ public class MultiAction extends AbstractAction {
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		MethodSignature method = getMethodResolver().resolveMethod(context);
-		return (Event)methodInvoker.invoke(method.getMethodName(), new Object[] { context });
+		String method = getMethodResolver().resolveMethod(context);
+		return (Event)methodInvoker.invoke(method, new Object[] { context });
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class MultiAction extends AbstractAction {
 		 * @return the key identifying the method that should handle action
 		 * execution
 		 */
-		public MethodSignature resolveMethod(RequestContext context);
+		public String resolveMethod(RequestContext context);
 	}
 
 	/**
@@ -172,12 +172,12 @@ public class MultiAction extends AbstractAction {
 	 * @author Erwin Vervaet
 	 */
 	public static class DefaultActionMethodResolver implements ActionMethodResolver {
-		public MethodSignature resolveMethod(RequestContext context) {
-			MethodSignature method = (MethodSignature)context.getAttributes().get(AnnotatedAction.METHOD_ATTRIBUTE);
+		public String resolveMethod(RequestContext context) {
+			String method = context.getAttributes().getString(AnnotatedAction.METHOD_ATTRIBUTE);
 			if (method == null) {
 				if (context.getCurrentState() != null) {
 					// default to the stateId
-					method = new MethodSignature(context.getCurrentState().getId());
+					method = context.getCurrentState().getId();
 				} else {
 					throw new IllegalStateException("Unable to resolve action method; no '" + AnnotatedAction.METHOD_ATTRIBUTE + "' context attribute set");
 				}

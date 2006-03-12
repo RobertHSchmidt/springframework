@@ -86,8 +86,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *             &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *             &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -148,6 +148,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String ACTION_ELEMENT = "action";
 
 	private static final String NAME_ATTRIBUTE = "name";
+
+	private static final String STATEFUL_ATTRIBUTE = "stateful";
 
 	private static final String METHOD_ATTRIBUTE = "method";
 
@@ -693,31 +695,41 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		if (element.hasAttribute(NAME_ATTRIBUTE)) {
 			action.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
-		if (element.hasAttribute(METHOD_ATTRIBUTE)) {
-			MethodSignature method = (MethodSignature)fromStringTo(MethodSignature.class).execute(
-					element.getAttribute(METHOD_ATTRIBUTE));
-			action.setMethod(method);
-		}
-		if (element.hasAttribute(RESULT_NAME_ATTRIBUTE)) {
-			action.setResultName(element.getAttribute(RESULT_NAME_ATTRIBUTE));
-		}
-		if (element.hasAttribute(RESULT_SCOPE_ATTRIBUTE)
-				&& !element.getAttribute(RESULT_SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
-			ScopeType scopeType = (ScopeType)fromStringTo(ScopeType.class).execute(
-					element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
-			action.setResultScope(scopeType);
+		if (element.hasAttribute(METHOD_ATTRIBUTE)
+				&& getFlowArtifactFactory().isMultiAction(element.getAttribute(BEAN_ATTRIBUTE))) {
+			action.setMethod(element.getAttribute(METHOD_ATTRIBUTE));
 		}
 		action.getAttributeMap().putAll(parseAttributes(element));
-		action.setTargetAction(parseAction(element, action.getAttributeMap()));
+		action.setTargetAction(parseAction(element));
 		return action;
 	}
 
 	/**
 	 * Parse an action definition and return the corresponding object.
 	 */
-	protected Action parseAction(Element element, AttributeMap attributes) {
+	protected Action parseAction(Element element) {
 		String actionId = element.getAttribute(BEAN_ATTRIBUTE);
-		FlowArtifactParameters actionParameters = new FlowArtifactParameters(actionId, attributes);
+		boolean stateful = false;
+		MethodSignature method = null;
+		if (element.hasAttribute(STATEFUL_ATTRIBUTE)) {
+			stateful = ((Boolean)fromStringTo(Boolean.class).execute(element.getAttribute(STATEFUL_ATTRIBUTE))).booleanValue();
+		}
+		if (element.hasAttribute(METHOD_ATTRIBUTE)) {
+			method = (MethodSignature)fromStringTo(MethodSignature.class).execute(
+					element.getAttribute(METHOD_ATTRIBUTE));
+		}
+		String resultName = null;
+		if (element.hasAttribute(RESULT_NAME_ATTRIBUTE)) {
+			resultName = element.getAttribute(RESULT_NAME_ATTRIBUTE);
+		}
+		ScopeType resultScope = null;
+		if (element.hasAttribute(RESULT_SCOPE_ATTRIBUTE)
+				&& !element.getAttribute(RESULT_SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
+			resultScope = (ScopeType)fromStringTo(ScopeType.class)
+					.execute(element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
+		}
+		BeanInvokingActionParameters actionParameters = new BeanInvokingActionParameters(actionId, stateful, method,
+				resultName, resultScope, null, null);
 		return getLocalFlowArtifactFactory().getAction(actionParameters);
 	}
 

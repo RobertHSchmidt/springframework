@@ -17,6 +17,7 @@ package org.springframework.webflow.action;
 
 import java.io.Serializable;
 
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 
@@ -38,7 +39,8 @@ public class LocalBeanInvokingAction extends AbstractBeanInvokingAction implemen
 	 * may be a proxy providing a layer of indirection if necessary.
 	 * @param bean the bean to invoke
 	 */
-	public LocalBeanInvokingAction(Object bean) {
+	public LocalBeanInvokingAction(MethodSignature methodSignature, Object bean) {
+		super(methodSignature);
 		Assert.notNull(bean, "The bean to invoke by this action cannot be null");
 		this.bean = bean;
 	}

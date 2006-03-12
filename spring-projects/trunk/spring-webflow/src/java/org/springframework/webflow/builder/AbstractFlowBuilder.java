@@ -463,13 +463,12 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Creates an annotated action with a single property that indicates which
 	 * method should be invoked on the target action when the state is entered.
-	 * @param encodedMethodKey the method name to invoke on the action</code>
+	 * @param methodName the method name to invoke on the action</code>
 	 * @return the annotated action
 	 */
-	protected AnnotatedAction method(String encodedMethodKey, Action action) {
-		MethodSignature method = (MethodSignature)fromStringTo(MethodSignature.class).execute(encodedMethodKey);
+	protected AnnotatedAction method(String methodName, Action action) {
 		AnnotatedAction annotatedAction = new AnnotatedAction(action);
-		annotatedAction.setMethod(method);
+		annotatedAction.setMethod(methodName);
 		return annotatedAction;
 	}
 
