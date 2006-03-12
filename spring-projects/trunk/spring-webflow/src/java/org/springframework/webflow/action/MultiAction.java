@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.action;
 
-import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;

@@ -1,5 +1,7 @@
 package org.springframework.webflow.builder;
 
+import java.lang.reflect.Method;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
@@ -7,6 +9,8 @@ import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.convert.support.TextToExpression;
 import org.springframework.binding.convert.support.TextToExpressions;
 import org.springframework.binding.expression.ExpressionParser;
+import org.springframework.binding.method.ClassMethodKey;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.TextToMethodSignature;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
@@ -26,7 +30,10 @@ import org.springframework.webflow.action.BeanFactoryBeanInvokingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.action.MementoBeanStatePersister;
 import org.springframework.webflow.action.MementoOriginator;
+import org.springframework.webflow.action.ResultEventFactory;
+import org.springframework.webflow.action.ResultObjectBasedEventFactory;
 import org.springframework.webflow.action.StatefulBeanInvokingAction;
+import org.springframework.webflow.action.SuccessEventFactory;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
 
 /**
@@ -206,6 +213,7 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 					BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction(actionParams.getMethod(),
 							parameters.getId(), getServiceRegistry());
 					action.setBeanStatePersister(new MementoBeanStatePersister());
+					action.setResultEventFactory(getResultEventFactory(artifact, actionParams));
 					action.setConversionService(getConversionService());
 					action.setResultName(actionParams.getResultName());
 					action.setResultScope(actionParams.getResultScope());
@@ -215,6 +223,7 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 					StatefulBeanInvokingAction action = new StatefulBeanInvokingAction(actionParams.getMethod(),
 							parameters.getId(), getServiceRegistry());
 					action.setConversionService(getConversionService());
+					action.setResultEventFactory(getResultEventFactory(artifact, actionParams));
 					action.setResultName(actionParams.getResultName());
 					action.setResultScope(actionParams.getResultScope());
 					action.setBeanScope(actionParams.getBeanScope());
@@ -224,10 +233,23 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 			else {
 				LocalBeanInvokingAction action = new LocalBeanInvokingAction(actionParams.getMethod(), artifact);
 				action.setConversionService(getConversionService());
+				action.setResultEventFactory(getResultEventFactory(artifact, actionParams));
 				action.setResultName(actionParams.getResultName());
 				action.setResultScope(actionParams.getResultScope());
 				return action;
 			}
+		}
+	}
+	
+	protected ResultEventFactory getResultEventFactory(Object bean, BeanInvokingActionParameters parameters) {
+		MethodSignature method = parameters.getMethod();
+		ClassMethodKey key = new ClassMethodKey(bean.getClass(), method.getMethodName(), method.getParameters().getTypesArray());
+		Method m = key.getMethod();
+		ResultObjectBasedEventFactory factory = new ResultObjectBasedEventFactory();
+		if (factory.isMappedType(m.getReturnType())) {
+			return factory;
+		} else {
+			return new SuccessEventFactory();
 		}
 	}
 }

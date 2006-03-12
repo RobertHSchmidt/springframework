@@ -1,5 +1,6 @@
 package org.springframework.webflow.action;
 
+import org.springframework.core.JdkVersion;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -11,6 +12,23 @@ import org.springframework.webflow.support.EventFactorySupport;
  * @author Keith Donald
  */
 public class ResultObjectBasedEventFactory extends EventFactorySupport implements ResultEventFactory {
+	
+	public boolean isMappedType(Class type) {
+		if (Boolean.class.isAssignableFrom(type) || isJdk5Enum(type) || LabeledEnum.class.isAssignableFrom(type)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private boolean isJdk5Enum(Class type) {
+		if (!(JdkVersion.getMajorJavaVersion() >= JdkVersion.JAVA_15)) {
+			return false;
+		} else {
+			return type.isEnum();
+		}
+	}
+	
 	public Event createResultEvent(Object source, Object resultObject, RequestContext context) {
 		if (resultObject instanceof Boolean) {
 			return event(source, ((Boolean)resultObject).booleanValue());

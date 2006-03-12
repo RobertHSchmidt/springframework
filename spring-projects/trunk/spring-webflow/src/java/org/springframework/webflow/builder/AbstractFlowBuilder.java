@@ -16,7 +16,6 @@
 package org.springframework.webflow.builder;
 
 import org.springframework.binding.mapping.MappingBuilder;
-import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
