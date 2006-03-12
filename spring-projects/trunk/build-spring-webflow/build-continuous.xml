@@ -58,7 +58,7 @@
         </scp>
     </target>
     
-    <target nmae="guard.upload.tmp.dir" unless="upload.tmp.dir">
+    <target name="guard.upload.tmp.dir" unless="upload.tmp.dir">
     	<fail message="This target requires the upload.tmp.dir property to be set"/>
     </target>
     
