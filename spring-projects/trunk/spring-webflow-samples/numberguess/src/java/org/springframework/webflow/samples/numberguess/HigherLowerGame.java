@@ -19,20 +19,16 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Random;
 
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.action.MultiAction;
+import org.springframework.core.enums.StaticLabeledEnum;
 
 /**
  * Action that encapsulates logic for the number guess sample flow. Note that
- * this is a stateful action: it holds modifiable state in instance memebers!
+ * this is a stateful action: it holds modifiable state in instance members!
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class HigherLowerGame extends MultiAction implements Serializable {
-
-	private static final String GUESS_PARAMETER = "guess";
+public class HigherLowerGame implements Serializable {
 
 	private static final Random random = new Random();
 
@@ -42,49 +38,49 @@ public class HigherLowerGame extends MultiAction implements Serializable {
 
 	private int guesses = 0;
 
-	private String lastGuessResult = "";
-
-	private long durationSeconds = -1;
-
 	public int getAnswer() {
 		return answer;
 	}
 
-	public long getDurationSeconds() {
-		return durationSeconds;
+	public long getGameDuration() {
+		Calendar now = Calendar.getInstance();
+		long durationMilliseconds = now.getTime().getTime() - start.getTime().getTime();
+		return durationMilliseconds / 1000;
 	}
 
 	public int getGuesses() {
 		return guesses;
 	}
 
-	public String getLastGuessResult() {
-		return lastGuessResult;
-	}
-
-	public Event guess(RequestContext context) throws Exception {
-		int guess = context.getRequestParameters().getInteger(GUESS_PARAMETER, new Integer(-1)).intValue();
+	public GuessResult makeGuess(int guess) {
 		if (guess < 0 || guess > 100) {
-			lastGuessResult = "invalid";
-			return result("invalidInput");
+			return GuessResult.INVALID;
 		}
 		else {
 			guesses++;
 			if (answer < guess) {
-				lastGuessResult = "too high!";
-				return result("retry");
+				return GuessResult.TOO_LOW;
 			}
 			else if (answer > guess) {
-				lastGuessResult = "too low!";
-				return result("retry");
+				return GuessResult.TOO_HIGH;
 			}
 			else {
-				lastGuessResult = "correct!";
-				Calendar now = Calendar.getInstance();
-				long durationMilliseconds = now.getTime().getTime() - start.getTime().getTime();
-				durationSeconds = durationMilliseconds / 1000;
-				return result("correct");
+				return GuessResult.CORRECT;
 			}
+		}
+	}
+
+	public static class GuessResult extends StaticLabeledEnum {
+		public static final GuessResult INVALID = new GuessResult(0, "Invalid");
+
+		public static final GuessResult TOO_LOW = new GuessResult(1, "Too low");
+
+		public static final GuessResult TOO_HIGH = new GuessResult(2, "Too high");
+
+		public static final GuessResult CORRECT = new GuessResult(3, "Correct");
+
+		private GuessResult(int code, String label) {
+			super(code, label);
 		}
 	}
 }
