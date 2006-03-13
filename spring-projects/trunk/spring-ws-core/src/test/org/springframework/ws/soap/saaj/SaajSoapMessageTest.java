@@ -29,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.springframework.ws.soap.SoapVersion;
 
 public class SaajSoapMessageTest extends XMLTestCase {
 
@@ -73,31 +74,6 @@ public class SaajSoapMessageTest extends XMLTestCase {
         assertEquals("Invalid child node created", "child", saajMessage.getSOAPBody().getFirstChild().getLocalName());
     }
 
-    /*
-    public void testGetHeaderElements() throws Exception {
-        Name headerName = saajMessage.getSOAPPart().getEnvelope().createName("header", "prefix", "namespace");
-        saajMessage.getSOAPHeader().addChildElement(headerName);
-        Element[] headers = message.getHeaderElements();
-        assertEquals("Invalid amount of headers", 1, headers.length);
-        assertEquals("Invalid header", "header", headers[0].getLocalName());
-        assertEquals("Invalid header", "prefix", headers[0].getPrefix());
-        assertEquals("Invalid header", "namespace", headers[0].getNamespaceURI());
-    }
-
-    public void testGetHeaderElementsQName() throws Exception {
-        Name header1Name = saajMessage.getSOAPPart().getEnvelope().createName("header1", "prefix", "namespace");
-        saajMessage.getSOAPHeader().addChildElement(header1Name);
-        Name header2Name = saajMessage.getSOAPPart().getEnvelope().createName("header2", "prefix", "namespace");
-        saajMessage.getSOAPHeader().addChildElement(header2Name);
-        QName qName = new QName("namespace", "header1", "prefix");
-        Element[] headers = message.getHeaderElements(qName);
-        assertEquals("Invalid amount of headers", 1, headers.length);
-        assertEquals("Invalid header", "header1", headers[0].getLocalName());
-        assertEquals("Invalid header", "prefix", headers[0].getPrefix());
-        assertEquals("Invalid header", "namespace", headers[0].getNamespaceURI());
-    }
-    */
-
     public void testGetSoapAction() throws Exception {
         saajMessage.getMimeHeaders().addHeader("SOAPAction", "value");
         assertEquals("Invalid mime header value", "value", message.getSoapAction());
@@ -108,5 +84,9 @@ public class SaajSoapMessageTest extends XMLTestCase {
         message.writeTo(outputStream);
         assertXMLEqual("<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'><Header/><Body/></Envelope>",
                 new String(outputStream.toByteArray(), "UTF-8"));
+    }
+
+    public void testGetVersion() throws Exception {
+        assertEquals("Invalid SOAP version", SoapVersion.SOAP_11, message.getVersion());
     }
 }

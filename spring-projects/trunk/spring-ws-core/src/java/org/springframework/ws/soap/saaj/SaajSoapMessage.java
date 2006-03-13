@@ -45,6 +45,7 @@ import org.springframework.ws.soap.SoapEnvelope;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
+import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.saaj.support.SaajUtils;
 
 /**
@@ -57,6 +58,10 @@ import org.springframework.ws.soap.saaj.support.SaajUtils;
 public class SaajSoapMessage extends AbstractSoapMessage {
 
     private final SOAPMessage saajMessage;
+
+    private static final String CONTENT_TYPE_HEADER = "Content-Type";
+
+    private static final String SOAP_ACTION_HEADER = "SOAPAction";
 
     /**
      * Create a new <code>SaajSoapMessage</code> based on the given SAAJ <code>SOAPMessage</code>.
@@ -84,8 +89,30 @@ public class SaajSoapMessage extends AbstractSoapMessage {
     }
 
     public String getSoapAction() {
-        String[] values = saajMessage.getMimeHeaders().getHeader("SOAPAction");
+        String[] values = saajMessage.getMimeHeaders().getHeader(SOAP_ACTION_HEADER);
         return (ObjectUtils.isEmpty(values)) ? null : values[0];
+    }
+
+    /**
+     * Returns SOAP 1.1.
+     *
+     * @see SoapVersion#SOAP_11
+     */
+    public SoapVersion getVersion() {
+        String[] contentTypes = saajMessage.getSOAPPart().getMimeHeader(CONTENT_TYPE_HEADER);
+        if (ObjectUtils.isEmpty(contentTypes)) {
+            throw new SaajSoapMessageException("Could not read '" + CONTENT_TYPE_HEADER + "' header from message");
+        }
+        else if (SoapVersion.SOAP_11.getContentType().equals(contentTypes[0])) {
+            return SoapVersion.SOAP_11;
+        }
+        else if (SoapVersion.SOAP_12.getContentType().equals(contentTypes[0])) {
+            return SoapVersion.SOAP_12;
+        }
+        else {
+            throw new SaajSoapMessageException("Unknown content type [" + contentTypes[0] + "]");
+
+        }
     }
 
     public void writeTo(OutputStream outputStream) throws IOException {
@@ -93,7 +120,7 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             this.saajMessage.writeTo(outputStream);
         }
         catch (SOAPException ex) {
-            throw new SaajSoapMessageNotWritableException(ex);
+            throw new SaajSoapMessageException("Could not write message to OutputStream: " + ex.getMessage(), ex);
         }
     }
 

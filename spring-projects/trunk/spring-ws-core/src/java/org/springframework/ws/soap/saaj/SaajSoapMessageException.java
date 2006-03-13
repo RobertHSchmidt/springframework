@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,18 @@
 
 package org.springframework.ws.soap.saaj;
 
-import org.springframework.ws.soap.SoapMessageNotReadableException;
+import org.springframework.ws.soap.SoapMessageException;
 
 /**
  * @author Arjen Poutsma
  */
-public class SaajSoapMessageNotReadableException extends SoapMessageNotReadableException {
+public class SaajSoapMessageException extends SoapMessageException {
 
-    public SaajSoapMessageNotReadableException(String msg) {
+    public SaajSoapMessageException(String msg) {
         super(msg);
     }
 
-    public SaajSoapMessageNotReadableException(String msg, Throwable ex) {
+    public SaajSoapMessageException(String msg, Throwable ex) {
         super(msg, ex);
-    }
-
-    public SaajSoapMessageNotReadableException(Throwable ex) {
-        super(ex);
     }
 }

@@ -57,4 +57,13 @@ public interface SoapMessage extends WebServiceMessage {
      * @see SoapEnvelope#getHeader()
      */
     SoapHeader getSoapHeader();
+
+    /**
+     * Returns the SOAP version of this message. This can be either SOAP 1.1 or SOAP 1.2.
+     *
+     * @return the SOAP version
+     * @see SoapVersion#SOAP_11
+     * @see SoapVersion#SOAP_12
+     */
+    SoapVersion getVersion();
 }
