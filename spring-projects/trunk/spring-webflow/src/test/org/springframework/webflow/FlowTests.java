@@ -17,6 +17,7 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.action.TestMultiAction;
 import org.springframework.webflow.builder.MyCustomException;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
@@ -49,6 +50,9 @@ public class FlowTests extends TestCase {
 		flow.add(new EndState(flow, "myState2"));
 		assertEquals("Wrong start state:", "myState1", flow.getStartState().getId());
 		assertEquals("State count wrong:", 2, flow.getStateCount());
+		assertEquals("State count wrong:", 2, flow.getStates().length);
+		assertTrue(flow.containsState("myState1"));
+		assertTrue(flow.containsState("myState2"));
 		State state = flow.getRequiredState("myState1");
 		assertEquals("Wrong flow:", "myFlow", state.getFlow().getId());
 		assertEquals("Wrong state:", "myState1", flow.getRequiredState("myState1").getId());
@@ -132,24 +136,52 @@ public class FlowTests extends TestCase {
 		}
 	}
 
+	public void testAddActions() {
+		flow.addStartAction(new TestMultiAction());
+		flow.addStartAction(new TestMultiAction());
+		flow.addEndAction(new TestMultiAction());
+		assertEquals(2, flow.getStartActionList().size());
+		assertEquals(1, flow.getEndActionList().size());
+	}
+
+	public void testAddInlineFlow() {
+		Flow inline = new Flow("inline");
+		flow.addInlineFlow(inline);
+		assertSame(inline, flow.getInlineFlow("inline"));
+		assertEquals(1, flow.getInlineFlowCount());
+		String[] inlined = flow.getInlineFlowIds();
+		assertEquals(1, inlined.length);
+		assertSame(flow.getInlineFlows()[0], inline);
+	}
+	
+	public void testAddGlobalTransition() {
+		Transition t = new Transition(new StaticTargetStateResolver("myState2"));
+		flow.addGlobalTransition(t);
+		assertSame(t, flow.getGlobalTransitionSet().toArray()[0]);
+	}
+	
 	public void testStart() {
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
-		flow.start(null, context);
+		flow.start(context);
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
 	}
 
-	public void testStartInCustomStartState() {
-		flow = new Flow("myFlow");
-		ViewState state1 = new ViewState(flow, "myState1");
-		state1.setViewSelector(new ApplicationViewSelector("myView"));
-		state1.addTransition(new Transition(to("myState2")));
-		SubflowState state2 = new SubflowState(flow, "myState2", flow);
-		state2.addTransition(new Transition(to("myState3")));
-		State customStartState = new EndState(flow, "myState3");
+	public void testStartWithAction() {
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
-		context.setCurrentState(flow.getRequiredState("myState2"));
-		flow.start(customStartState, context);
-		assertTrue("Should have ended", !context.getFlowExecutionContext().isActive());
+		TestAction action = new TestAction();
+		flow.addStartAction(action);
+		flow.start(context);
+		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
+		assertEquals(1, action.getExecutionCount());
+	}
+
+	public void testEnd() {
+		TestAction action = new TestAction();
+		flow.addEndAction(action);
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		AttributeMap sessionOutput = new AttributeMap();
+		flow.end(context, sessionOutput);
+		assertEquals(1, action.getExecutionCount());
 	}
 
 	public void testHandleStateException() {
@@ -159,6 +191,7 @@ public class FlowTests extends TestCase {
 		context.setCurrentState(flow.getRequiredState("myState1"));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
 		ApplicationView selectedView = (ApplicationView)flow.handleException(e, context);
+		assertFalse(context.getFlowExecutionContext().isActive());
 		assertNotNull("Should not have been null", selectedView);
 		assertEquals("Wrong selected view", "myView2", selectedView.getViewName());
 	}

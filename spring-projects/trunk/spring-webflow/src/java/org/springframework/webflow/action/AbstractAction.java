@@ -118,7 +118,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * event parameter under the name {@link #EXCEPTION_ATTRIBUTE_NAME}
 	 */
 	protected Event error(Exception e) {
-		return eventFactorySupport.error(e);
+		return eventFactorySupport.error(this, e);
 	}
 
 	/**

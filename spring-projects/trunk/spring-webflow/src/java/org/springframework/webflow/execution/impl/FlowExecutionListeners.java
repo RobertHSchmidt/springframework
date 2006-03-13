@@ -16,6 +16,7 @@
 package org.springframework.webflow.execution.impl;
 
 import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -103,9 +104,9 @@ public class FlowExecutionListeners {
 	 * Notify all interested listeners that a flow execution session is
 	 * starting.
 	 */
-	public void fireSessionStarting(RequestContext context, State startState, AttributeMap input) {
+	public void fireSessionStarting(RequestContext context, Flow flow, AttributeMap input) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].sessionStarting(context, startState, input);
+			listeners[i].sessionStarting(context, flow.getStartState(), input);
 		}
 	}
 

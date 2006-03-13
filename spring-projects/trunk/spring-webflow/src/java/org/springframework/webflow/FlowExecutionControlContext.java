@@ -77,8 +77,6 @@ public interface FlowExecutionControlContext extends RequestContext {
 	 * states.
 	 * @param flow the flow to start, its <code>start()</code> method will be
 	 * called
-	 * @param startState the start state to use, when <code>null</code>, the
-	 * default start state for the flow is used
 	 * @param input initial contents of the newly created flow session (may be
 	 * <code>null</code>, e.g. empty)
 	 * @return the selected starting view, which returns control to the client
@@ -87,7 +85,7 @@ public interface FlowExecutionControlContext extends RequestContext {
 	 * flow during execution of this start operation
 	 * @see Flow#start(State, FlowExecutionControlContext)
 	 */
-	public ViewSelection start(Flow flow, State startState, AttributeMap input) throws StateException;
+	public ViewSelection start(Flow flow, AttributeMap input) throws StateException;
 
 	/**
 	 * Signals the occurence of an event in the current state of this flow

@@ -3,13 +3,15 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.AnnotatedAction;
+import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.action.MultiAction.ActionMethodResolver;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker.MethodLookupException;
 
 public class MultiActionTests extends TestCase {
-	private TestAction action = new TestAction();
+	private TestMultiAction action = new TestMultiAction();
 	
 	private MockRequestContext context = new MockRequestContext();
 
@@ -53,5 +55,16 @@ public class MultiActionTests extends TestCase {
 		} catch (IllegalStateException e) {
 			
 		}
+	}
+	
+	public void testCustomMethodResolver() throws Exception {
+		ActionMethodResolver methodResolver = new ActionMethodResolver() {
+			public String resolveMethod(RequestContext context) {
+				return "increment";
+			}
+		};
+		action.setMethodResolver(methodResolver);
+		action.execute(context);
+		assertEquals(1, action.counter);
 	}
 }

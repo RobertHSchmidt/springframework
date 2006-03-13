@@ -36,6 +36,7 @@ import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -172,7 +173,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
-				ViewSelection selectedView = context.start(getFlow(), getFlow().getStartState(), null);
+				ViewSelection selectedView = context.start(getFlow(), null);
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {

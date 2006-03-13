@@ -23,7 +23,7 @@ import org.springframework.webflow.RequestContext;
  * 
  * @author Erwin Vervaet
  */
-public class TestAction extends MultiAction {
+public class TestMultiAction extends MultiAction {
 	
 	int counter = 0;
 	

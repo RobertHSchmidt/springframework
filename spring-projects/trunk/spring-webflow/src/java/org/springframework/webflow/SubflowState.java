@@ -40,12 +40,6 @@ import org.springframework.util.Assert;
 public class SubflowState extends TransitionableState {
 
 	/**
-	 * Name of the property used to indicate the start state in which to start
-	 * the subflow.
-	 */
-	public static final String START_STATE_PROPERTY = "startState";
-
-	/**
 	 * The subflow that should be spawned when this subflow state is entered.
 	 */
 	private Flow subflow;
@@ -128,7 +122,7 @@ public class SubflowState extends TransitionableState {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Spawning subflow '" + getSubflow().getId() + "' within flow '" + getFlow().getId() + "'");
 		}
-		return context.start(getSubflow(), getSubflowStartState(context), createSubflowInput(context));
+		return context.start(getSubflow(), createSubflowInput(context));
 	}
 
 	private AttributeMap createSubflowInput(RequestContext context) {
@@ -170,20 +164,6 @@ public class SubflowState extends TransitionableState {
 								+ getId()
 								+ "' -- as a result, no attributes in the ending subflow scope will be passed to the resuming flow");
 			}
-		}
-	}
-
-	/**
-	 * Returns the start state to use in the subflow, or null if the default
-	 * start state configured for the flow should be used.
-	 */
-	protected State getSubflowStartState(RequestContext context) {
-		if (getAttributeMap().contains(START_STATE_PROPERTY)) {
-			return getFlow().getRequiredState(getAttributeMap().getString(START_STATE_PROPERTY));
-		}
-		else {
-			// the default start state of the flow will be used
-			return null;
 		}
 	}
 

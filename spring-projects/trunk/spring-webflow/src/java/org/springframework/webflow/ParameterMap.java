@@ -66,10 +66,25 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 * It is expected that the contents of the backing map adhere to the
 	 * parameter map contract; that is, map entries have string keys, string
 	 * values, and remain unmodifiable.
+	 * @param parameters the contents of this parameter map
 	 */
 	public ParameterMap(Map parameters) {
+		this(parameters, new DefaultConversionService());
+	}
+
+	/**
+	 * Creates a new parameter map from the provided map.
+	 * <p>
+	 * It is expected that the contents of the backing map adhere to the
+	 * parameter map contract; that is, map entries have string keys, string
+	 * values, and remain unmodifiable.
+	 * @param parameters the contents of this parameter map
+	 * @param conversionService a helper for performing type conversion of map
+	 * entry values
+	 */
+	public ParameterMap(Map parameters, ConversionService conversionService) {
 		initParameters(parameters);
-		conversionService = new DefaultConversionService();
+		this.conversionService = conversionService;
 	}
 
 	public Map getMap() {
@@ -104,23 +119,35 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	}
 
 	/**
+	 * Get a parameter value, returning the defaultValue if no value is found.
+	 * @param parameterName the parameter name
+	 * @param defaultValue the default
+	 * @return the parameter value
+	 */
+	public String get(String parameterName, String defaultValue) {
+		return parameterAccessor.getString(parameterName, defaultValue);
+	}
+
+	/**
 	 * Get a multi-valued parameter value, returning <code>null</code> if no
-	 * value is found.
+	 * value is found.  If the parameter is single valued an array with a single element 
+	 * is returned.
 	 * @param parameterName the parameter name
 	 * @return the parameter value array
 	 */
 	public String[] getArray(String parameterName) {
-		return (String[])parameterAccessor.getArray(parameterName, String[].class);
-	}
-
-	/**
-	 * Get a multi-part file parameter value, returning <code>null</code> if
-	 * no value is found.
-	 * @param parameterName the parameter name
-	 * @return the multipart file
-	 */
-	public MultipartFile getMultipartFile(String parameterName) {
-		return (MultipartFile)parameterAccessor.get(parameterName, MultipartFile.class);
+		if (!parameters.containsKey(parameterName)) {
+			return null;
+		}
+		Object value = parameters.get(parameterName);
+		if (value.getClass().isArray()) {
+			parameterAccessor.assertKeyValueInstanceOf(parameterName, value, String[].class);
+			return (String[])value;
+		}
+		else {
+			parameterAccessor.assertKeyValueInstanceOf(parameterName, value, String.class);
+			return new String[] { (String)value };
+		}
 	}
 
 	/**
@@ -132,7 +159,7 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 * @throws ConversionException when the value could not be converted
 	 */
 	public Object[] getArray(String parameterName, Class targetElementType) throws ConversionException {
-		String[] parameters = (String[])parameterAccessor.getArray(parameterName, String[].class);
+		String[] parameters = getArray(parameterName);
 		return parameters != null ? convert(parameters, targetElementType) : null;
 	}
 
@@ -166,6 +193,16 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	}
 
 	/**
+	 * Get a multi-part file parameter value, returning <code>null</code> if
+	 * no value is found.
+	 * @param parameterName the parameter name
+	 * @return the multipart file
+	 */
+	public MultipartFile getMultipartFile(String parameterName) {
+		return (MultipartFile)parameterAccessor.get(parameterName, MultipartFile.class);
+	}
+
+	/**
 	 * Get the value of a required parameter.
 	 * @param parameterName the name of the parameter
 	 * @return the parameter value
@@ -182,7 +219,8 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 * @throws IllegalArgumentException when the parameter is not found
 	 */
 	public String[] getRequiredArray(String parameterName) throws IllegalArgumentException {
-		return (String[])parameterAccessor.getRequiredArray(parameterName, String[].class);
+		parameterAccessor.assertContainsKey(parameterName);
+		return (String[])getArray(parameterName);
 	}
 
 	/**
@@ -205,7 +243,7 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 */
 	public Object[] getRequiredArray(String parameterName, Class targetElementType) throws IllegalArgumentException,
 			ConversionException {
-		String[] parameters = (String[])parameterAccessor.getRequiredArray(parameterName, String[].class);
+		String[] parameters = getRequiredArray(parameterName);
 		return convert(parameters, targetElementType);
 	}
 

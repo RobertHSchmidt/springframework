@@ -113,7 +113,7 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * The set of state definitions for this flow.
 	 */
-	private Set states = CollectionFactory.createLinkedSetIfPossible(6);
+	private Set states = CollectionFactory.createLinkedSetIfPossible(9);
 
 	/**
 	 * The default start state for this flow.
@@ -519,14 +519,9 @@ public class Flow extends AnnotatedObject {
 
 	/**
 	 * Start a new execution of this flow in the specified state.
-	 * @param startState the start state to use -- when <code>null</code>,
-	 * the default start state of the flow will be used
 	 * @param context the flow execution control context
 	 */
-	public ViewSelection start(State startState, FlowExecutionControlContext context) {
-		if (startState == null) {
-			startState = getStartState();
-		}
+	public ViewSelection start(FlowExecutionControlContext context) {
 		startActionList.execute(context);
 		return startState.enter(context);
 	}

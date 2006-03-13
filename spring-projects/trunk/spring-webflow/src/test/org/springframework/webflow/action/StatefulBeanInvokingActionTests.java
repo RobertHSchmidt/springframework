@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.web.context.support.StaticWebApplicationContext;
+import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class StatefulBeanInvokingActionTests extends TestCase {
@@ -37,5 +38,14 @@ public class StatefulBeanInvokingActionTests extends TestCase {
 		} catch (IllegalArgumentException e) {
 			
 		}
+	}
+	
+	public void testInvokeBeanCustomScope() throws Exception {
+		action.setBeanScope(ScopeType.CONVERSATION);
+		beanFactory.registerPrototype("bean", TestBean.class);
+		action.execute(context);
+		assertNotNull(context.getConversationScope().get("bean"));
+		TestBean bean = (TestBean)context.getConversationScope().get("bean");
+		assertTrue(bean.executed);
 	}
 }

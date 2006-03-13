@@ -143,7 +143,8 @@ class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
 	public void setAttributes(AttributeCollection attributes) {
 		if (attributes == null) {
 			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
-		} else {
+		}
+		else {
 			this.attributes = attributes.unmodifiable();
 		}
 	}
@@ -172,19 +173,18 @@ class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
 		flowExecution.getListeners().fireStateEntered(this, previousState);
 	}
 
-	public ViewSelection start(Flow flow, State startState, AttributeMap input) throws StateException {
+	public ViewSelection start(Flow flow, AttributeMap input) throws StateException {
 		if (input == null) {
 			// create a mutable map so entries can be added by listeners!
 			input = new AttributeMap();
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Activating new session for flow '" + flow.getId() + "' in state '"
-					+ (startState != null ? startState.getId() : flow.getStartState().getId()) + "' with input "
-					+ input);
+					+ flow.getStartState().getId() + "' with input " + input);
 		}
-		flowExecution.getListeners().fireSessionStarting(this, startState, input);
+		flowExecution.getListeners().fireSessionStarting(this, flow, input);
 		flowExecution.activateSession(flow, input);
-		ViewSelection selectedView = flow.start(startState, this);
+		ViewSelection selectedView = flow.start(this);
 		flowExecution.getListeners().fireSessionStarted(this);
 		return selectedView;
 	}

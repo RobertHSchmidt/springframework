@@ -134,7 +134,7 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 * of the required type
 	 */
 	public Object getRequired(String attributeName, Class requiredType) throws IllegalArgumentException {
-		return attributeAccessor.getRequired(attributeName);
+		return attributeAccessor.getRequired(attributeName, requiredType);
 	}
 
 	/**
@@ -220,7 +220,33 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 * present but not a collection of the required type
 	 */
 	public Collection getRequiredCollection(String attributeName, Class requiredType) throws IllegalArgumentException {
-		return attributeAccessor.getRequiredCollection(attributeName);
+		return attributeAccessor.getRequiredCollection(attributeName, requiredType);
+	}
+
+	/**
+	 * Returns an array attribute value in the map and makes sure it is of
+	 * the required type.
+	 * @param attributeName the attribute name
+	 * @param requiredType the required type of the attribute value
+	 * @return the array attribute value
+	 * @throws IllegalArgumentException if the attribute is present but not an
+	 * array of the required type
+	 */
+	public Object[] getArray(String attributeName, Class requiredType) throws IllegalArgumentException {
+		return attributeAccessor.getArray(attributeName, requiredType);
+	}
+
+	/**
+	 * Returns an array attribute value in the map, throwing an exception if
+	 * the attribute is not present or not a collection of the required type.
+	 * @param attributeName the attribute name
+	 * @param requiredType the required array type
+	 * @return the collection attribute value
+	 * @throws IllegalArgumentException if the attribute is not present or is
+	 * present but not a array of the required type
+	 */
+	public Object[] getRequiredArray(String attributeName, Class requiredType) throws IllegalArgumentException {
+		return attributeAccessor.getRequiredArray(attributeName, requiredType);
 	}
 
 	/**

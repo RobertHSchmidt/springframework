@@ -45,7 +45,7 @@ public class ReturnValuedBasedEventFactoryTests extends TestCase {
 		assertEquals("Active", result.getId());
 	}
 	
-	public void testDOtherResult() {
+	public void testOtherResult() {
 		Event result = factory.createResultEvent(this, "hello", context);
 		assertEquals("hello", result.getId());
 	}	

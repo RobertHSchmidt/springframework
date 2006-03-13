@@ -92,7 +92,7 @@ public class MapAccessor implements MapAdaptable {
 		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
-		return assertValueOfType(key, requiredType);
+		return assertKeyValueOfType(key, requiredType);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class MapAccessor implements MapAdaptable {
 	 */
 	public Object getRequired(Object key, Class requiredType) throws IllegalArgumentException {
 		assertContainsKey(key);
-		return assertValueOfType(key, requiredType);
+		return assertKeyValueOfType(key, requiredType);
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class MapAccessor implements MapAdaptable {
 		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
-		return (String)assertValueOfType(key, String.class);
+		return (String)assertKeyValueOfType(key, String.class);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class MapAccessor implements MapAdaptable {
 	 */
 	public String getRequiredString(Object key) throws IllegalArgumentException {
 		assertContainsKey(key);
-		return (String)assertValueOfType(key, String.class);
+		return (String)assertKeyValueOfType(key, String.class);
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class MapAccessor implements MapAdaptable {
 		if (!map.containsKey(key)) {
 			return null;
 		}
-		return (Collection)assertValueOfType(key, Collection.class);
+		return (Collection)assertKeyValueOfType(key, Collection.class);
 	}
 
 	/**
@@ -187,7 +187,7 @@ public class MapAccessor implements MapAdaptable {
 			return null;
 		}
 		assertAssignableTo(Collection.class, requiredType);
-		return (Collection)assertValueOfType(key, requiredType);
+		return (Collection)assertKeyValueOfType(key, requiredType);
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class MapAccessor implements MapAdaptable {
 	 */
 	public Collection getRequiredCollection(Object key) throws IllegalArgumentException {
 		assertContainsKey(key);
-		return (Collection)assertValueOfType(key, Collection.class);
+		return (Collection)assertKeyValueOfType(key, Collection.class);
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class MapAccessor implements MapAdaptable {
 	public Collection getRequiredCollection(Object key, Class requiredType) throws IllegalArgumentException {
 		assertContainsKey(key);
 		assertAssignableTo(Collection.class, requiredType);
-		return (Collection)assertValueOfType(key, requiredType);
+		return (Collection)assertKeyValueOfType(key, requiredType);
 	}
 
 	/**
@@ -230,7 +230,7 @@ public class MapAccessor implements MapAdaptable {
 		if (!map.containsKey(key)) {
 			return null;
 		}
-		return (Object[])assertValueOfType(key, requiredType);
+		return (Object[])assertKeyValueOfType(key, requiredType);
 	}
 
 	/**
@@ -244,7 +244,7 @@ public class MapAccessor implements MapAdaptable {
 	public Object[] getRequiredArray(Object key, Class requiredType) throws IllegalArgumentException {
 		assertContainsKey(key);
 		assertAssignableTo(Object[].class, requiredType);
-		return (Object[])assertValueOfType(key, requiredType);
+		return (Object[])assertKeyValueOfType(key, requiredType);
 	}
 
 	/**
@@ -274,7 +274,7 @@ public class MapAccessor implements MapAdaptable {
 			return defaultValue;
 		}
 		assertAssignableTo(Number.class, requiredType);
-		return (Number)assertValueOfType(key, requiredType);
+		return (Number)assertKeyValueOfType(key, requiredType);
 	}
 
 	/**
@@ -287,7 +287,7 @@ public class MapAccessor implements MapAdaptable {
 	 */
 	public Number getRequiredNumber(Object key, Class requiredType) throws IllegalArgumentException {
 		assertContainsKey(key);
-		return (Number)assertValueOfType(key, requiredType);
+		return (Number)assertKeyValueOfType(key, requiredType);
 	}
 
 	/**
@@ -388,7 +388,7 @@ public class MapAccessor implements MapAdaptable {
 		if (!map.containsKey(key)) {
 			return defaultValue;
 		}
-		return (Boolean)assertValueOfType(key, Boolean.class);
+		return (Boolean)assertKeyValueOfType(key, Boolean.class);
 	}
 
 	/**
@@ -401,7 +401,7 @@ public class MapAccessor implements MapAdaptable {
 	 */
 	public Boolean getRequiredBoolean(Object key) throws IllegalArgumentException {
 		assertContainsKey(key);
-		return (Boolean)assertValueOfType(key, Boolean.class);
+		return (Boolean)assertKeyValueOfType(key, Boolean.class);
 	}
 
 	/**
@@ -424,7 +424,7 @@ public class MapAccessor implements MapAdaptable {
 	 */
 	public boolean containsKey(Object key, Class requiredType) throws IllegalArgumentException {
 		if (map.containsKey(key)) {
-			assertValueOfType(key, requiredType);
+			assertKeyValueOfType(key, requiredType);
 			return true;
 		}
 		else {
@@ -433,14 +433,23 @@ public class MapAccessor implements MapAdaptable {
 	}
 
 	/**
-	 * Assert that the type of the given attribute value is of the required
-	 * type.
+	 * Assert that value of the mak key is of the required type.
 	 * @param key the attribute name
 	 * @param requiredType the required attribute value type
 	 * @return the attribute value
 	 */
-	public Object assertValueOfType(Object key, Class requiredType) {
-		Object value = map.get(key);
+	public Object assertKeyValueOfType(Object key, Class requiredType) {
+		return assertKeyValueInstanceOf(key, map.get(key), requiredType);
+	}
+
+	/**
+	 * Assert that the key value is an instance of the required type.
+	 * @param key the key
+	 * @param value the value
+	 * @param requiredType the required type
+	 * @return the value
+	 */
+	public Object assertKeyValueInstanceOf(Object key, Object value, Class requiredType) {
 		Assert.notNull(requiredType, "The required type to assert is required");
 		if (!requiredType.isInstance(value)) {
 			throw new IllegalArgumentException("Map key '" + key + "' has value [" + value

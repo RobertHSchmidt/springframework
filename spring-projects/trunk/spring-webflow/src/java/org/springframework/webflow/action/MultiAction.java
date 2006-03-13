@@ -26,7 +26,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * the following signature:
  * 
  * <pre>
- *     public Event ${method}(RequestContext context) throws Exception;
+ *      public Event ${method}(RequestContext context) throws Exception;
  * </pre>
  * 
  * When this action is invoked, by default the <code>id</code> of the calling
@@ -38,7 +38,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * 
  * <pre>
  *     &lt;action-state id=&quot;search&quot;&gt;
- *         &lt;action bean=&quot;my.search.action&quot;/&gt;
+ *         &lt;action bean=&quot;searchAction&quot;/&gt;
  *         &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
  *     &lt;/action-state&gt;
  * </pre>
@@ -52,10 +52,10 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Alternatively you may explictly specify the method name:
  * 
  * <pre>
- *     &lt;action-state id=&quot;searchState&quot;&gt;
- *         &lt;action bean=&quot;phonebook&amp;quot method=&quot;executeSearch&quot;/&gt;
- *         &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
- *     &lt;/action-state&gt;
+ *      &lt;action-state id=&quot;executingSearch&quot;&gt;
+ *          &lt;action bean=&quot;phonebook&amp;quot method=&quot;executeSearch&quot;/&gt;
+ *          &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
+ *      &lt;/action-state&gt;
  * </pre>
  * 
  * <p>
@@ -70,11 +70,6 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <td><b>Name </b></td>
  * <td><b>Default </b></td>
  * <td><b>Description </b></td>
- * </tr>
- * <tr>
- * <td>delegate</td>
- * <td><i>this</i></td>
- * <td>Set the delegate object holding the action execution methods.</td>
  * </tr>
  * <tr>
  * <td>methodResolver</td>
@@ -103,22 +98,6 @@ public class MultiAction extends AbstractAction {
 	 * The action execute method name (key) resolver strategy.
 	 */
 	private ActionMethodResolver methodResolver = new DefaultActionMethodResolver();
-
-	/**
-	 * Returns the delegate object holding the action execution methods.
-	 * Defaults to this object.
-	 */
-	public Object getDelegate() {
-		return methodInvoker.getTarget();
-	}
-
-	/**
-	 * Set the delegate object holding the action execution methods.
-	 * @param delegate the delegate to set
-	 */
-	public void setDelegate(Object delegate) {
-		methodInvoker.setTarget(delegate);
-	}
 
 	/**
 	 * Get the strategy used to resolve action execution method keys. Defaults
@@ -177,8 +156,10 @@ public class MultiAction extends AbstractAction {
 				if (context.getCurrentState() != null) {
 					// default to the stateId
 					method = context.getCurrentState().getId();
-				} else {
-					throw new IllegalStateException("Unable to resolve action method; no '" + AnnotatedAction.METHOD_ATTRIBUTE + "' context attribute set");
+				}
+				else {
+					throw new IllegalStateException("Unable to resolve action method; no '"
+							+ AnnotatedAction.METHOD_ATTRIBUTE + "' context attribute set");
 				}
 			}
 			return method;
