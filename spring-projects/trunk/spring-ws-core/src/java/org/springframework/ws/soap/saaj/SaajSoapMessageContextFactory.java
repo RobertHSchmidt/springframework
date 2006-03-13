@@ -55,20 +55,21 @@ public class SaajSoapMessageContextFactory implements MessageContextFactory, Ini
         this.messageFactory = messageFactory;
     }
 
-    public MessageContext createContext(HttpServletRequest request) throws IOException {
+    public MessageContext createContext(HttpServletRequest httpRequest) throws IOException {
+        Assert.isTrue("POST".equals(httpRequest.getMethod()), "HttpServletRequest does not have POST method");
         MimeHeaders mimeHeaders = new MimeHeaders();
-        for (Enumeration enumeration = request.getHeaderNames(); enumeration.hasMoreElements();) {
+        for (Enumeration enumeration = httpRequest.getHeaderNames(); enumeration.hasMoreElements();) {
             String headerName = (String) enumeration.nextElement();
-            String headerValue = request.getHeader(headerName);
+            String headerValue = httpRequest.getHeader(headerName);
             StringTokenizer tokenizer = new StringTokenizer(headerValue, ",");
             while (tokenizer.hasMoreTokens()) {
                 mimeHeaders.addHeader(headerName, tokenizer.nextToken().trim());
             }
         }
-        mimeHeaders.addHeader("Content-Type", request.getContentType());
-        mimeHeaders.addHeader("Content-Length", Integer.toString(request.getContentLength()));
+        mimeHeaders.addHeader("Content-Type", httpRequest.getContentType());
+        mimeHeaders.addHeader("Content-Length", Integer.toString(httpRequest.getContentLength()));
         try {
-            SOAPMessage requestMessage = messageFactory.createMessage(mimeHeaders, request.getInputStream());
+            SOAPMessage requestMessage = messageFactory.createMessage(mimeHeaders, httpRequest.getInputStream());
             return new SaajSoapMessageContext(requestMessage, messageFactory);
         }
         catch (SOAPException ex) {
