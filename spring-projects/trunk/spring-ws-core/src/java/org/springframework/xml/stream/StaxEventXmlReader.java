@@ -51,11 +51,23 @@ public class StaxEventXmlReader extends AbstractStaxXmlReader {
 
     /**
      * Constructs a new instance of the <code>StaxEventXmlReader</code> that reads from the given
-     * <code>XMLEventReader</code>.
+     * <code>XMLEventReader</code>. The supplied event reader must be in <code>XMLStreamConstants.START_DOCUMENT</code>
+     * or <code>XMLStreamConstants.START_ELEMENT</code> state.
      *
      * @param reader the <code>XMLEventReader</code> to read from
+     * @throws IllegalStateException if the reader is not at the start of a document or element
      */
     public StaxEventXmlReader(XMLEventReader reader) {
+        try {
+            XMLEvent event = reader.peek();
+            if (!(event.isStartDocument() || event.isStartElement())) {
+                throw new IllegalStateException("XMLEventReader not at start of document or element");
+            }
+        }
+        catch (XMLStreamException ex) {
+            throw new IllegalStateException("Could not read first element: " + ex.getMessage(), ex);
+        }
+
         this.reader = reader;
     }
 

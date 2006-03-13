@@ -42,11 +42,17 @@ public class StaxStreamXmlReader extends AbstractStaxXmlReader {
 
     /**
      * Constructs a new instance of the <code>StaxStreamXmlReader</code> that reads from the given
-     * <code>XMLStreamReader</code>.
+     * <code>XMLStreamReader</code>.  The supplied stream reader must be in <code>XMLStreamConstants.START_DOCUMENT</code>
+     * or <code>XMLStreamConstants.START_ELEMENT</code> state.
      *
      * @param reader the <code>XMLEventReader</code> to read from
+     * @throws IllegalStateException if the reader is not at the start of a document or element
      */
     public StaxStreamXmlReader(XMLStreamReader reader) {
+        int event = reader.getEventType();
+        if (!(event == XMLStreamConstants.START_DOCUMENT || event == XMLStreamConstants.START_ELEMENT)) {
+            throw new IllegalStateException("XMLEventReader not at start of document or element");
+        }
         this.reader = reader;
     }
 
