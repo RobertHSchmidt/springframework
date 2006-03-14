@@ -18,7 +18,6 @@ package org.springframework.ws.soap.saaj;
 
 import junit.framework.TestCase;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapMessage;
 
@@ -26,11 +25,8 @@ public class SaajSoapMessageContextFactoryTest extends TestCase {
 
     private SaajSoapMessageContextFactory messageContextFactory;
 
-    private static final String REQUEST = " <SOAP-ENV:Envelope\n" +
-            "  xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-            "  SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" + "   <SOAP-ENV:Body>\n" +
-            "       <m:GetLastTradePrice xmlns:m=\"Some-URI\">\n" + "           <symbol>DIS</symbol>\n" +
-            "       </m:GetLastTradePrice>\n" + "   </SOAP-ENV:Body>\n" + "</SOAP-ENV:Envelope>";
+    private static final String REQUEST =
+            "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'><SOAP-ENV:Body><m:GetLastTradePrice xmlns:m='Some-URI'><symbol>DIS</symbol></m:GetLastTradePrice></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
     protected void setUp() throws Exception {
         messageContextFactory = new SaajSoapMessageContextFactory();
@@ -38,11 +34,11 @@ public class SaajSoapMessageContextFactoryTest extends TestCase {
 
     public void testCreateMessageFromHttpServletRequest() throws Exception {
         MockHttpServletRequest servletRequest = new MockHttpServletRequest();
+        servletRequest.setMethod("POST");
         servletRequest.setContent(REQUEST.getBytes("UTF-8"));
         servletRequest.setContentType("text/xml; charset=\"utf-8\"");
         servletRequest.setCharacterEncoding("UTF-8");
         servletRequest.addHeader("SOAPAction", "\"Some-URI\"");
-        MockHttpServletResponse servletResponse = new MockHttpServletResponse();
 
         MessageContext messageContext = messageContextFactory.createContext(servletRequest);
         SoapMessage requestMessage = (SoapMessage) messageContext.getRequest();
