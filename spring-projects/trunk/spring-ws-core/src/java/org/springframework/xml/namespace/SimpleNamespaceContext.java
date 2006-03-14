@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.xml.namespace;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
      */
     private Map namespaceUriToPrefixes = new HashMap();
 
-    private String defaultNamespaceUri = "";
+    private String defaultNamespaceUri = XMLConstants.NULL_NS_URI;
 
     public String getNamespaceURI(String prefix) {
         Assert.notNull(prefix, "prefix is null");
@@ -140,9 +141,14 @@ public class SimpleNamespaceContext implements NamespaceContext {
      * @param prefix the prefix to be removed
      */
     public void removeBinding(String prefix) {
-        String namespaceUri = (String) namespaceUriToPrefixes.get(prefix);
-        List prefixes = getPrefixesInternal(namespaceUri);
-        prefixes.remove(prefix);
-        namespaceUriToPrefixes.remove(prefixes);
+        if (XMLConstants.DEFAULT_NS_PREFIX.equals(prefix)) {
+            defaultNamespaceUri = XMLConstants.NULL_NS_URI;
+        }
+        else {
+            String namespaceUri = (String) namespaceUriToPrefixes.get(prefix);
+            List prefixes = getPrefixesInternal(namespaceUri);
+            prefixes.remove(prefix);
+            namespaceUriToPrefixes.remove(prefixes);
+        }
     }
 }
