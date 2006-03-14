@@ -16,66 +16,15 @@
 
 package org.springframework.xml.stream;
 
-import java.io.IOException;
-import java.io.StringReader;
-import javax.xml.stream.XMLEventReader;
+import java.io.Reader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
-import junit.framework.TestCase;
-import org.easymock.MockControl;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.DTDHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
+public class StaxEventXmlReaderTest extends AbstractStaxXmlReaderTest {
 
-public class StaxEventXmlReaderTest extends TestCase {
-
-    private static final String XML_DTD_HANDLER =
-            "<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'><beans />";
-
-    private static final String XML_CONTENT_HANDLER =
-            "<?xml version='1.0' encoding='UTF-8'?><?pi content?><root xmlns='namespace'><prefix:child xmlns:prefix='namespace2'>content</prefix:child></root>";
-
-    private XMLInputFactory inputFactory;
-
-    protected void setUp() throws Exception {
-        inputFactory = XMLInputFactory.newInstance();
+    protected AbstractStaxXmlReader createStaxXmlReader(Reader reader) throws XMLStreamException {
+        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        return new StaxEventXmlReader(inputFactory.createXMLEventReader(reader));
     }
-
-    public void testContentHandler() throws SAXException, IOException, XMLStreamException {
-        // record the callbacks by parsing the XML with a regular SAX parser
-        XMLReader reader = XMLReaderFactory.createXMLReader();
-        MockControl control = MockControl.createStrictControl(ContentHandler.class);
-        control.setDefaultMatcher(new SaxArgumentMatcher());
-        ContentHandler mock = (ContentHandler) control.getMock();
-        reader.setContentHandler(mock);
-        reader.parse(new InputSource(new StringReader(XML_CONTENT_HANDLER)));
-        control.replay();
-        XMLEventReader eventReader = inputFactory.createXMLEventReader(new StringReader(XML_CONTENT_HANDLER));
-        StaxEventXmlReader staxEventXMLReader = new StaxEventXmlReader(eventReader);
-        staxEventXMLReader.setContentHandler(mock);
-        staxEventXMLReader.parse("");
-        control.verify();
-    }
-
-    public void testDtdHandler() throws IOException, SAXException, XMLStreamException {
-        // record the callbacks by parsing the XML with a regular SAX parser
-        XMLReader reader = XMLReaderFactory.createXMLReader();
-        MockControl control = MockControl.createStrictControl(DTDHandler.class);
-        control.setDefaultMatcher(new SaxArgumentMatcher());
-        DTDHandler mock = (DTDHandler) control.getMock();
-        reader.setDTDHandler(mock);
-        reader.parse(new InputSource(new StringReader(XML_DTD_HANDLER)));
-        control.replay();
-        XMLEventReader eventReader = inputFactory.createXMLEventReader(new StringReader(XML_DTD_HANDLER));
-        StaxEventXmlReader staxEventXMLReader = new StaxEventXmlReader(eventReader);
-        staxEventXMLReader.setDTDHandler(mock);
-        staxEventXMLReader.parse("");
-        control.verify();
-    }
-
 }
 
