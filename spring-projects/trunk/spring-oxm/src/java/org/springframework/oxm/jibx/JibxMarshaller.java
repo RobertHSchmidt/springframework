@@ -121,7 +121,7 @@ public class JibxMarshaller extends AbstractMarshaller implements InitializingBe
         return JibxUtils.convertJibxException(ex, marshalling);
     }
 
-    protected void marshalDomNode(Object graph, Node node, Node nextSibling) throws XmlMappingException {
+    protected void marshalDomNode(Object graph, Node node) throws XmlMappingException {
         throw new UnsupportedOperationException("JibxMarshaller does not support marshalling of DOM Nodes");
     }
 

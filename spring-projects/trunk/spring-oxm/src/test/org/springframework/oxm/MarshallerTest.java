@@ -287,7 +287,7 @@ public class MarshallerTest extends TestCase {
 
     private class FailingMarshaller extends AbstractMarshaller {
 
-        protected void marshalDomNode(Object graph, Node node, Node nextSibling) throws XmlMappingException {
+        protected void marshalDomNode(Object graph, Node node) throws XmlMappingException {
             fail("Not expected");
         }
 

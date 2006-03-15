@@ -158,7 +158,7 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
         }
     }
 
-    protected void marshalDomNode(Object graph, Node node, Node nextSibling) throws XmlMappingException {
+    protected void marshalDomNode(Object graph, Node node) throws XmlMappingException {
         Marshaller marshaller = new Marshaller(node);
         marshal(graph, marshaller);
     }

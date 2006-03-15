@@ -45,14 +45,11 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
     }
 
     /**
-     * Abstract template method for marshalling the given object graph to a DOM <code>Node</code>, specifying the child
-     * node where the result nodes should be inserted before.
-     * <p/>
-     * In practice, node and nextSibling should be a <code>Document</code> node, a <code>DocumentFragment</code> node,
-     * or a <code>Element</code> node. In other words, a node that accepts children.
+     * Abstract template method for marshalling the given object graph to a DOM <code>Node</code>. In practice, node is
+     * a <code>Document</code> node, a <code>DocumentFragment</code> node, or a <code>Element</code> node. In other
+     * words, a node that accepts children.
      *
-     * @param node        The DOM node that will contain the result tree
-     * @param nextSibling The child node where the result nodes should be inserted before. Can be <code>null</code>.
+     * @param node The DOM node that will contain the result tree
      * @throws org.springframework.oxm.XmlMappingException
      *                            if the given object cannot be marshalled to the DOM node
      * @throws ClassCastException if <code>graph</code> does not implement <code>XmlObject</code>
@@ -61,19 +58,14 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
      * @see org.w3c.dom.Element
      * @see XmlObject
      */
-    protected void marshalDomNode(Object graph, Node node, Node nextSibling) throws XmlMappingException {
+    protected void marshalDomNode(Object graph, Node node) throws XmlMappingException {
         Document document = node.getNodeType() == Node.DOCUMENT_NODE ? (Document) node : node.getOwnerDocument();
         Node xmlBeansNode = ((XmlObject) graph).newDomNode(xmlOptions);
         NodeList xmlBeansChildNodes = xmlBeansNode.getChildNodes();
         for (int i = 0; i < xmlBeansChildNodes.getLength(); i++) {
             Node xmlBeansChildNode = xmlBeansChildNodes.item(i);
             Node importedNode = document.importNode(xmlBeansChildNode, true);
-            if (nextSibling == null) {
-                node.appendChild(importedNode);
-            }
-            else {
-                node.insertBefore(importedNode, nextSibling);
-            }
+            node.appendChild(importedNode);
         }
     }
 

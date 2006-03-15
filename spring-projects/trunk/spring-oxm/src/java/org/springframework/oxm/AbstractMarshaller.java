@@ -21,6 +21,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -34,8 +37,10 @@ import org.springframework.util.Assert;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Abstract implementation of the <code>Marshaller</code> and <code>Unmarshaller</code> interface. This implementation
@@ -45,6 +50,26 @@ import org.xml.sax.ext.LexicalHandler;
  * @author Arjen Poutsma
  */
 public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
+
+    private boolean validating = false;
+
+    private boolean namespaceAware = true;
+
+    private DocumentBuilderFactory documentBuilderFactory;
+
+    /**
+     * Set whether or not the XML parser should be XML namespace aware. Default is <code>true</code>.
+     */
+    public void setNamespaceAware(boolean namespaceAware) {
+        this.namespaceAware = namespaceAware;
+    }
+
+    /**
+     * Set if the XML parser should validate the document. Default is <code>false</code>.
+     */
+    public void setValidating(boolean validating) {
+        this.validating = validating;
+    }
 
     /**
      * Marshals the object graph with the given root into the provided <code>javax.xml.transform.Result</code>.
@@ -111,17 +136,56 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
     }
 
     /**
+     * Create a <code>DocumentBuilder</code> that this marshaller will use for creating DOM documents when passed an
+     * empty <code>DOMSource</code>. Can be overridden in subclasses, adding further initialization of the builder.
+     *
+     * @param factory the <code>DocumentBuilderFactory</code> that the DocumentBuilder should be created with
+     * @return the <code>DocumentBuilder</code>
+     * @throws javax.xml.parsers.ParserConfigurationException
+     *          if thrown by JAXP methods
+     */
+    protected DocumentBuilder createDocumentBuilder(DocumentBuilderFactory factory)
+            throws ParserConfigurationException {
+        return factory.newDocumentBuilder();
+    }
+
+    /**
+     * Create a <code>DocumentBuilder</code> that this marshaller will use for creating DOM documents when passed an
+     * empty <code>DOMSource</code>. The resulting <code>DocumentBuilderFactory</code> is cached, so this method will
+     * only be called once.
+     *
+     * @return the DocumentBuilderFactory
+     * @throws ParserConfigurationException if thrown by JAXP methods
+     */
+    protected DocumentBuilderFactory createDocumentBuilderFactory() throws ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(this.validating);
+        factory.setNamespaceAware(this.namespaceAware);
+        return factory;
+    }
+
+    /**
+     * Create a <code>XMLReader</code> that this marshaller will when passed an empty <code>SAXSource</code>.
+     *
+     * @return the XMLReader
+     * @throws SAXException if thrown by JAXP methods
+     */
+    protected XMLReader createXmlReader() throws SAXException {
+        return XMLReaderFactory.createXMLReader();
+    }
+
+    /**
      * Template method for handling <code>DOMResult</code>s. This implementation defers to <code>marshalDomNode</code>.
      *
      * @param graph     the root of the object graph to marshal
      * @param domResult the <code>DOMResult</code>
      * @throws XmlMappingException      if the given object cannot be marshalled to the result
      * @throws IllegalArgumentException if the <code>domResult</code> is empty
-     * @see #marshalDomNode(Object, org.w3c.dom.Node, org.w3c.dom.Node)
+     * @see #marshalDomNode(Object,org.w3c.dom.Node)
      */
     protected void marshalDomResult(Object graph, DOMResult domResult) throws XmlMappingException {
         Assert.notNull(domResult.getNode(), "DOMResult does not contain Node");
-        marshalDomNode(graph, domResult.getNode(), domResult.getNextSibling());
+        marshalDomNode(graph, domResult.getNode());
     }
 
     /**
@@ -167,7 +231,8 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
 
     /**
      * Template method for handling <code>DOMSource</code>s. This implementation defers to
-     * <code>unmarshalDomNode</code>.
+     * <code>unmarshalDomNode</code>. If the given source is empty, an empty source <code>Document</code> will be
+     * created as a placeholder.
      *
      * @param domSource the <code>DOMSource</code>
      * @return the object graph
@@ -176,7 +241,19 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
      * @see #unmarshalDomNode(org.w3c.dom.Node)
      */
     protected Object unmarshalDomSource(DOMSource domSource) throws XmlMappingException {
-        Assert.notNull(domSource.getNode(), "DOMSource does not contain Node");
+        if (domSource.getNode() == null) {
+            try {
+                if (documentBuilderFactory == null) {
+                    documentBuilderFactory = createDocumentBuilderFactory();
+                }
+                DocumentBuilder documentBuilder = createDocumentBuilder(documentBuilderFactory);
+                domSource.setNode(documentBuilder.newDocument());
+            }
+            catch (ParserConfigurationException ex) {
+                throw new UnmarshallingFailureException(
+                        "Could not create document placeholder for DOMSource: " + ex.getMessage(), ex);
+            }
+        }
         return unmarshalDomNode(domSource.getNode());
     }
 
@@ -191,8 +268,18 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
      * @see #unmarshalSaxReader(org.xml.sax.XMLReader, org.xml.sax.InputSource)
      */
     protected Object unmarshalSaxSource(SAXSource saxSource) throws XmlMappingException, IOException {
-        Assert.notNull(saxSource.getXMLReader(), "SAXSource does not contain XMLReader");
-        Assert.notNull(saxSource.getInputSource(), "SAXSource does not contain InputSource");
+        if (saxSource.getXMLReader() == null) {
+            try {
+                saxSource.setXMLReader(createXmlReader());
+            }
+            catch (SAXException ex) {
+                throw new UnmarshallingFailureException("Could not create XMLReader for SAXSource: " + ex.getMessage(),
+                        ex);
+            }
+        }
+        if (saxSource.getInputSource() == null) {
+            saxSource.setInputSource(new InputSource());
+        }
         return unmarshalSaxReader(saxSource.getXMLReader(), saxSource.getInputSource());
     }
 
@@ -218,20 +305,18 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
     }
 
     /**
-     * Abstract template method for marshalling the given object graph to a DOM <code>Node</code>, specifying the child
-     * node where the result nodes should be inserted before.
+     * Abstract template method for marshalling the given object graph to a DOM <code>Node</code>.
      * <p/>
-     * In practice, node and nextSibling should be a <code>Document</code> node, a <code>DocumentFragment</code> node,
-     * or a <code>Element</code> node. In other words, a node that accepts children.
+     * In practice, node is be a <code>Document</code> node, a <code>DocumentFragment</code> node, or a
+     * <code>Element</code> node. In other words, a node that accepts children.
      *
-     * @param node        The DOM node that will contain the result tree
-     * @param nextSibling The child node where the result nodes should be inserted before. Can be <code>null</code>.
+     * @param node The DOM node that will contain the result tree
      * @throws XmlMappingException if the given object cannot be marshalled to the DOM node
      * @see org.w3c.dom.Document
      * @see org.w3c.dom.DocumentFragment
      * @see org.w3c.dom.Element
      */
-    protected abstract void marshalDomNode(Object graph, Node node, Node nextSibling) throws XmlMappingException;
+    protected abstract void marshalDomNode(Object graph, Node node) throws XmlMappingException;
 
     /**
      * Abstract template method for marshalling the given object graph to a <code>OutputStream</code>.
@@ -276,17 +361,6 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
     protected abstract Object unmarshalDomNode(Node node) throws XmlMappingException;
 
     /**
-     * Abstract template method for unmarshalling using a given SAX <code>XMLReader</code> and
-     * <code>InputSource</code>.
-     *
-     * @param xmlReader   the SAX <code>XMLReader</code> to parse with
-     * @param inputSource the input source to parse from
-     * @return the object graph
-     */
-    protected abstract Object unmarshalSaxReader(XMLReader xmlReader, InputSource inputSource)
-            throws XmlMappingException, IOException;
-
-    /**
      * Abstract template method for unmarshalling from a given <code>InputStream</code>.
      *
      * @param inputStream the <code>InputStreamStream</code> to read from
@@ -305,4 +379,15 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
      * @throws IOException         if an I/O exception occurs
      */
     protected abstract Object unmarshalReader(Reader reader) throws XmlMappingException, IOException;
+
+    /**
+     * Abstract template method for unmarshalling using a given SAX <code>XMLReader</code> and
+     * <code>InputSource</code>.
+     *
+     * @param xmlReader   the SAX <code>XMLReader</code> to parse with
+     * @param inputSource the input source to parse from
+     * @return the object graph
+     */
+    protected abstract Object unmarshalSaxReader(XMLReader xmlReader, InputSource inputSource)
+            throws XmlMappingException, IOException;
 }
