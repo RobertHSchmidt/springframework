@@ -22,7 +22,7 @@ import javax.xml.stream.XMLStreamException;
 
 public class StaxStreamXmlReaderTest extends AbstractStaxXmlReaderTest {
 
-    protected AbstractStaxXmlReader createStaxXmlReader(Reader reader) throws XMLStreamException {
+    protected StaxXmlReader createStaxXmlReader(Reader reader) throws XMLStreamException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         return new StaxStreamXmlReader(inputFactory.createXMLStreamReader(reader));
     }

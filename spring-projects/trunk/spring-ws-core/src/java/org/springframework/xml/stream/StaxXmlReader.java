@@ -39,7 +39,7 @@ import org.xml.sax.XMLReader;
  * @see #setEntityResolver(org.xml.sax.EntityResolver)
  * @see #setErrorHandler(org.xml.sax.ErrorHandler)
  */
-public abstract class AbstractStaxXmlReader implements XMLReader {
+public abstract class StaxXmlReader implements XMLReader {
 
     private DTDHandler dtdHandler;
 

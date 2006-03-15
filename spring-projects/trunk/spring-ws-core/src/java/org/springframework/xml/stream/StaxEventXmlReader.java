@@ -45,7 +45,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * @see #setEntityResolver(org.xml.sax.EntityResolver)
  * @see #setErrorHandler(org.xml.sax.ErrorHandler)
  */
-public class StaxEventXmlReader extends AbstractStaxXmlReader {
+public class StaxEventXmlReader extends StaxXmlReader {
 
     private final XMLEventReader reader;
 

@@ -59,7 +59,7 @@ public abstract class AbstractStaxXmlReaderTest extends TestCase {
         reader.setContentHandler(mock);
         reader.parse(new InputSource(new StringReader(XML_CONTENT_HANDLER)));
         control.replay();
-        AbstractStaxXmlReader staxXmlReader = createStaxXmlReader(new StringReader(XML_CONTENT_HANDLER));
+        StaxXmlReader staxXmlReader = createStaxXmlReader(new StringReader(XML_CONTENT_HANDLER));
         staxXmlReader.setContentHandler(mock);
         staxXmlReader.parse(new InputSource());
         control.verify();
@@ -72,7 +72,7 @@ public abstract class AbstractStaxXmlReaderTest extends TestCase {
         reader.setContentHandler(mock);
         reader.parse(new InputSource(new StringReader(XML_CONTENT_HANDLER_ATTS)));
         control.replay();
-        AbstractStaxXmlReader staxXmlReader = createStaxXmlReader(new StringReader(XML_CONTENT_HANDLER_ATTS));
+        StaxXmlReader staxXmlReader = createStaxXmlReader(new StringReader(XML_CONTENT_HANDLER_ATTS));
         staxXmlReader.setContentHandler(mock);
         staxXmlReader.parse(new InputSource());
         control.verify();
@@ -86,13 +86,13 @@ public abstract class AbstractStaxXmlReaderTest extends TestCase {
         reader.setDTDHandler(mock);
         reader.parse(new InputSource(new StringReader(XML_DTD_HANDLER)));
         control.replay();
-        AbstractStaxXmlReader staxXmlReader = createStaxXmlReader(new StringReader(XML_DTD_HANDLER));
+        StaxXmlReader staxXmlReader = createStaxXmlReader(new StringReader(XML_DTD_HANDLER));
         staxXmlReader.setDTDHandler(mock);
         staxXmlReader.parse(new InputSource());
         control.verify();
     }
 
-    protected abstract AbstractStaxXmlReader createStaxXmlReader(Reader reader) throws XMLStreamException;
+    protected abstract StaxXmlReader createStaxXmlReader(Reader reader) throws XMLStreamException;
 
     /**
      * Easymock <code>ArgumentMatcher</code> implementation that matches SAX arguments.
