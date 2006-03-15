@@ -17,19 +17,17 @@
 package org.springframework.ws.soap.saaj;
 
 import java.io.ByteArrayOutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.springframework.ws.soap.SoapVersion;
+import org.springframework.xml.transform.StringResult;
+import org.springframework.xml.transform.StringSource;
 
 public class SaajSoapMessageTest extends XMLTestCase {
 
@@ -48,9 +46,9 @@ public class SaajSoapMessageTest extends XMLTestCase {
         Source source = message.getPayloadSource();
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
-        StringWriter writer = new StringWriter();
-        transformer.transform(source, new StreamResult(writer));
-        assertXMLEqual("Invalid source", "<child/>", writer.toString());
+        StringResult result = new StringResult();
+        transformer.transform(source, result);
+        assertXMLEqual("Invalid source", "<child/>", result.toString());
     }
 
     public void testGetPayloadSourceText() throws Exception {
@@ -59,17 +57,17 @@ public class SaajSoapMessageTest extends XMLTestCase {
         Source source = message.getPayloadSource();
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
-        StringWriter writer = new StringWriter();
-        transformer.transform(source, new StreamResult(writer));
-        assertXMLEqual("Invalid source", "<child/>", writer.toString());
+        StringResult result = new StringResult();
+        transformer.transform(source, result);
+        assertXMLEqual("Invalid source", "<child/>", result.toString());
     }
 
     public void testGetPayloadResult() throws Exception {
-        StringReader reader = new StringReader("<child/>");
+        StringSource source = new StringSource("<child/>");
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         Result result = message.getPayloadResult();
-        transformer.transform(new StreamSource(reader), result);
+        transformer.transform(source, result);
         assertTrue("No child nodes created", saajMessage.getSOAPBody().hasChildNodes());
         assertEquals("Invalid child node created", "child", saajMessage.getSOAPBody().getFirstChild().getLocalName());
     }

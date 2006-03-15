@@ -57,11 +57,11 @@ import org.springframework.ws.soap.saaj.support.SaajUtils;
  */
 public class SaajSoapMessage extends AbstractSoapMessage {
 
-    private final SOAPMessage saajMessage;
-
     private static final String CONTENT_TYPE_HEADER = "Content-Type";
 
     private static final String SOAP_ACTION_HEADER = "SOAPAction";
+
+    private final SOAPMessage saajMessage;
 
     /**
      * Create a new <code>SaajSoapMessage</code> based on the given SAAJ <code>SOAPMessage</code>.
@@ -111,7 +111,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         }
         else {
             throw new SaajSoapMessageException("Unknown content type [" + contentTypes[0] + "]");
-
         }
     }
 
@@ -135,6 +134,14 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             this.saajEnvelope = saajEnvelope;
         }
 
+        public QName getName() {
+            return SaajUtils.toQName(saajEnvelope.getElementName());
+        }
+
+        public Source getSource() {
+            return new DOMSource(saajEnvelope);
+        }
+
         public SoapHeader getHeader() {
             try {
                 return (saajEnvelope.getHeader() != null) ? new SaajSoapHeader(saajEnvelope.getHeader()) : null;
@@ -152,14 +159,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
                 throw new SaajSoapBodyException(ex);
             }
         }
-
-        public QName getName() {
-            return SaajUtils.toQName(saajEnvelope.getElementName());
-        }
-
-        public Source getSource() {
-            return new DOMSource(saajEnvelope);
-        }
     }
 
     /**
@@ -173,8 +172,12 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             this.saajHeader = saajHeader;
         }
 
-        private SOAPEnvelope getEnvelope() {
-            return (SOAPEnvelope) saajHeader.getParentElement();
+        public QName getName() {
+            return SaajUtils.toQName(saajHeader.getElementName());
+        }
+
+        public Source getSource() {
+            return new DOMSource(saajHeader);
         }
 
         public SoapHeaderElement addHeaderElement(QName name) {
@@ -192,12 +195,8 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             return new SaajSoapHeaderElementIterator(saajHeader.examineMustUnderstandHeaderElements(role));
         }
 
-        public QName getName() {
-            return SaajUtils.toQName(saajHeader.getElementName());
-        }
-
-        public Source getSource() {
-            return new DOMSource(saajHeader);
+        private SOAPEnvelope getEnvelope() {
+            return (SOAPEnvelope) saajHeader.getParentElement();
         }
 
         private static class SaajSoapHeaderElementIterator implements Iterator {
@@ -242,10 +241,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             return new DOMSource(saajHeaderElement);
         }
 
-        public Result getResult() {
-            return new DOMResult(saajHeaderElement);
-        }
-
         public String getRole() {
             return saajHeaderElement.getActor();
         }
@@ -261,6 +256,10 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         public void setMustUnderstand(boolean mustUnderstand) {
             saajHeaderElement.setMustUnderstand(mustUnderstand);
         }
+
+        public Result getResult() {
+            return new DOMResult(saajHeaderElement);
+        }
     }
 
     /**
@@ -274,29 +273,9 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             this.saajBody = saajBody;
         }
 
-        private SOAPEnvelope getEnvelope() {
-            return (SOAPEnvelope) saajBody.getParentElement();
-        }
-
         public Source getPayloadSource() {
             SOAPBodyElement payloadElement = getPayloadElement();
             return (payloadElement != null) ? new DOMSource(payloadElement) : null;
-        }
-
-        /**
-         * Retrieves the payload of the wrapped SAAJ message as a single DOM element. The payload of a message is the
-         * contents of the SOAP body.
-         *
-         * @return the message payload, or <code>null</code> if none is set.
-         */
-        private SOAPBodyElement getPayloadElement() {
-            for (Iterator iterator = saajBody.getChildElements(); iterator.hasNext();) {
-                Object child = iterator.next();
-                if (child instanceof SOAPBodyElement) {
-                    return (SOAPBodyElement) child;
-                }
-            }
-            return null;
         }
 
         public Result getPayloadResult() {
@@ -352,16 +331,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             }
         }
 
-        private SoapFault addFault(Name name, String faultString) throws SOAPException {
-            for (Iterator iterator = saajBody.getChildElements(); iterator.hasNext();) {
-                SOAPBodyElement bodyElement = (SOAPBodyElement) iterator.next();
-                bodyElement.detachNode();
-                bodyElement.recycleNode();
-            }
-            SOAPFault saajFault = saajBody.addFault(name, faultString);
-            return new SaajSoapFault(saajFault);
-        }
-
         public boolean hasFault() {
             return saajBody.hasFault();
         }
@@ -377,6 +346,36 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         public Source getSource() {
             return new DOMSource(saajBody);
         }
+
+        private SoapFault addFault(Name name, String faultString) throws SOAPException {
+            for (Iterator iterator = saajBody.getChildElements(); iterator.hasNext();) {
+                SOAPBodyElement bodyElement = (SOAPBodyElement) iterator.next();
+                bodyElement.detachNode();
+                bodyElement.recycleNode();
+            }
+            SOAPFault saajFault = saajBody.addFault(name, faultString);
+            return new SaajSoapFault(saajFault);
+        }
+
+        private SOAPEnvelope getEnvelope() {
+            return (SOAPEnvelope) saajBody.getParentElement();
+        }
+
+        /**
+         * Retrieves the payload of the wrapped SAAJ message as a single DOM element. The payload of a message is the
+         * contents of the SOAP body.
+         *
+         * @return the message payload, or <code>null</code> if none is set.
+         */
+        private SOAPBodyElement getPayloadElement() {
+            for (Iterator iterator = saajBody.getChildElements(); iterator.hasNext();) {
+                Object child = iterator.next();
+                if (child instanceof SOAPBodyElement) {
+                    return (SOAPBodyElement) child;
+                }
+            }
+            return null;
+        }
     }
 
     /**
@@ -384,16 +383,24 @@ public class SaajSoapMessage extends AbstractSoapMessage {
      */
     private static class SaajSoapFault implements SoapFault {
 
-        private final SOAPFault saajFault;
-
         private static final String MUST_UNDERSTAND = "MustUnderstand";
 
         private static final String SERVER = "Server";
 
         private static final String CLIENT = "Client";
 
+        private final SOAPFault saajFault;
+
         private SaajSoapFault(SOAPFault saajFault) {
             this.saajFault = saajFault;
+        }
+
+        public QName getName() {
+            return SaajUtils.toQName(saajFault.getElementName());
+        }
+
+        public Source getSource() {
+            return new DOMSource(saajFault);
         }
 
         public QName getFaultCode() {
@@ -443,14 +450,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         public boolean isReceiverFault() {
             return (SERVER.equals(saajFault.getFaultCodeAsName().getLocalName()) &&
                     SOAPConstants.URI_NS_SOAP_ENVELOPE.equals(saajFault.getFaultCodeAsName().getURI()));
-        }
-
-        public QName getName() {
-            return SaajUtils.toQName(saajFault.getElementName());
-        }
-
-        public Source getSource() {
-            return new DOMSource(saajFault);
         }
     }
 }
