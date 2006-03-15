@@ -43,7 +43,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
      */
     private Map namespaceUriToPrefixes = new HashMap();
 
-    private String defaultNamespaceUri = XMLConstants.NULL_NS_URI;
+    private String defaultNamespaceUri = "";
 
     public String getNamespaceURI(String prefix) {
         Assert.notNull(prefix, "prefix is null");
@@ -142,7 +142,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
      */
     public void removeBinding(String prefix) {
         if (XMLConstants.DEFAULT_NS_PREFIX.equals(prefix)) {
-            defaultNamespaceUri = XMLConstants.NULL_NS_URI;
+            defaultNamespaceUri = "";
         }
         else {
             String namespaceUri = (String) namespaceUriToPrefixes.get(prefix);
