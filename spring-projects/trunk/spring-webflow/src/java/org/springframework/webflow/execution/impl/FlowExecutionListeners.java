@@ -16,6 +16,7 @@
 package org.springframework.webflow.execution.impl;
 
 import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
@@ -106,7 +107,7 @@ public class FlowExecutionListeners {
 	 */
 	public void fireSessionStarting(RequestContext context, Flow flow, AttributeMap input) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].sessionStarting(context, flow.getStartState(), input);
+			listeners[i].sessionStarting(context, flow, input);
 		}
 	}
 
@@ -114,9 +115,9 @@ public class FlowExecutionListeners {
 	 * Notify all interested listeners that a flow execution session has
 	 * started.
 	 */
-	public void fireSessionStarted(RequestContext context) {
+	public void fireSessionStarted(RequestContext context, FlowSession session) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].sessionStarted(context);
+			listeners[i].sessionStarted(context, session);
 		}
 	}
 
@@ -124,19 +125,9 @@ public class FlowExecutionListeners {
 	 * Notify all interested listeners that an event was signaled in the flow
 	 * execution.
 	 */
-	public void fireEventSignaled(RequestContext context) {
+	public void fireEventSignaled(RequestContext context, Event event) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].eventSignaled(context, context.getCurrentState());
-		}
-	}
-
-	/**
-	 * Notify all interested listeners that an event was signaled in the flow
-	 * execution.
-	 */
-	public void fireEventSignaled(RequestContext context, State state) {
-		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].eventSignaled(context, state);
+			listeners[i].eventSignaled(context, event);
 		}
 	}
 
@@ -184,18 +175,18 @@ public class FlowExecutionListeners {
 	 * Notify all interested listeners that the active flow execution session is
 	 * ending.
 	 */
-	public void fireSessionEnding(RequestContext context, AttributeMap sessionOutput) {
+	public void fireSessionEnding(RequestContext context, FlowSession session, AttributeMap output) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].sessionEnding(context, sessionOutput);
+			listeners[i].sessionEnding(context, session, output);
 		}
 	}
 
 	/**
 	 * Notify all interested listeners that a flow execution session has ended.
 	 */
-	public void fireSessionEnded(RequestContext context, FlowSession endedSession, UnmodifiableAttributeMap sessionOutput) {
+	public void fireSessionEnded(RequestContext context, FlowSession session, UnmodifiableAttributeMap output) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].sessionEnded(context, endedSession, sessionOutput);
+			listeners[i].sessionEnded(context, session, output);
 		}
 	}
 }

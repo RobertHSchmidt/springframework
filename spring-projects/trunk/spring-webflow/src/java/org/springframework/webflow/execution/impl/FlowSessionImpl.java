@@ -105,12 +105,9 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	 * @param parent the parent flow session of the created flow session in the
 	 * owning flow execution
 	 */
-	public FlowSessionImpl(Flow flow, AttributeMap input, FlowSessionImpl parent) {
+	public FlowSessionImpl(Flow flow, FlowSessionImpl parent) {
 		Assert.notNull(flow, "The flow is required");
 		this.flow = flow;
-		if (input != null) {
-			scope.putAll(input);
-		}
 		this.parent = parent;
 	}
 

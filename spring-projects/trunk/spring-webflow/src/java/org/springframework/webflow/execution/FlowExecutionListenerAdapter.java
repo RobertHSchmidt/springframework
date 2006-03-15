@@ -16,6 +16,8 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.Event;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -39,17 +41,16 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void requestProcessed(RequestContext context) {
 	}
 
-	public void sessionStarting(RequestContext context, State startState, AttributeMap input)
-			throws EnterStateVetoException {
+	public void sessionStarting(RequestContext context, Flow flow, AttributeMap input) {
 	}
 
-	public void sessionStarted(RequestContext context) {
+	public void sessionStarted(RequestContext context, FlowSession session) {
 	}
 
-	public void eventSignaled(RequestContext context, State state) {
+	public void eventSignaled(RequestContext context, Event event) {
 	}
 
-	public void stateEntering(RequestContext context, State nextState) throws EnterStateVetoException {
+	public void stateEntering(RequestContext context, State state) throws EnterStateVetoException {
 	}
 
 	public void stateEntered(RequestContext context, State previousState, State newState) {
@@ -61,9 +62,9 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void paused(RequestContext context, ViewSelection selectedView) {
 	}
 
-	public void sessionEnding(RequestContext context, AttributeMap sessionOutput) {
+	public void sessionEnding(RequestContext context, FlowSession session, AttributeMap output) {
 	}
 
-	public void sessionEnded(RequestContext context, FlowSession endedSession, UnmodifiableAttributeMap sessionOutput) {
+	public void sessionEnded(RequestContext context, FlowSession session, UnmodifiableAttributeMap output) {
 	}
 }

@@ -183,9 +183,9 @@ class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
 					+ flow.getStartState().getId() + "' with input " + input);
 		}
 		flowExecution.getListeners().fireSessionStarting(this, flow, input);
-		flowExecution.activateSession(flow, input);
-		ViewSelection selectedView = flow.start(this);
-		flowExecution.getListeners().fireSessionStarted(this);
+		FlowSession session = flowExecution.activateSession(flow);
+		ViewSelection selectedView = flow.start(this, input);
+		flowExecution.getListeners().fireSessionStarted(this, session);
 		return selectedView;
 	}
 
@@ -195,20 +195,21 @@ class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
 					+ "' of flow '" + getActiveFlow().getId() + "'");
 		}
 		setLastEvent(event);
-		flowExecution.getListeners().fireEventSignaled(this);
+		flowExecution.getListeners().fireEventSignaled(this, event);
 		ViewSelection selectedView = getActiveFlow().onEvent(event, this);
 		return selectedView;
 	}
 
-	public FlowSession endActiveFlowSession(AttributeMap sessionOutput) throws IllegalStateException {
-		flowExecution.getListeners().fireSessionEnding(this, sessionOutput);
+	public FlowSession endActiveFlowSession(AttributeMap output) throws IllegalStateException {
+		FlowSession session = getFlowExecutionContext().getActiveSession();
+		flowExecution.getListeners().fireSessionEnding(this, session, output);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Ending active session " + getFlowExecutionContext().getActiveSession());
+			logger.debug("Ending active session " + session);
 		}
-		getActiveFlow().end(this, sessionOutput);
-		FlowSession endedSession = flowExecution.endActiveFlowSession();
-		flowExecution.getListeners().fireSessionEnded(this, endedSession, sessionOutput.unmodifiable());
-		return endedSession;
+		getActiveFlow().end(this, output);
+		session = flowExecution.endActiveFlowSession();
+		flowExecution.getListeners().fireSessionEnded(this, session, output.unmodifiable());
+		return session;
 	}
 
 	public String toString() {

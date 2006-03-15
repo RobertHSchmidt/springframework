@@ -107,12 +107,12 @@ public interface FlowExecutionControlContext extends RequestContext {
 	 * should be called by clients that terminate flows, such as end states. The
 	 * <code>end()</code> method of the flow involved in the flow execution
 	 * will be called.
-	 * @param sessionOutput output produced by the session that is eligible for
+	 * @param output output produced by the session that is eligible for
 	 * mapping by a resuming parent flow.
 	 * @return the ended session
 	 * @throws IllegalStateException when the flow execution is not active
 	 * @see Flow#end(FlowExecutionControlContext, AttributeMap)
 	 */
-	public FlowSession endActiveFlowSession(AttributeMap sessionOutput) throws IllegalStateException;
+	public FlowSession endActiveFlowSession(AttributeMap output) throws IllegalStateException;
 
 }

@@ -162,7 +162,7 @@ public class FlowTests extends TestCase {
 	
 	public void testStart() {
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
-		flow.start(context);
+		flow.start(context, new AttributeMap());
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
 	}
 
@@ -170,7 +170,7 @@ public class FlowTests extends TestCase {
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		TestAction action = new TestAction();
 		flow.addStartAction(action);
-		flow.start(context);
+		flow.start(context, new AttributeMap());
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
 		assertEquals(1, action.getExecutionCount());
 	}

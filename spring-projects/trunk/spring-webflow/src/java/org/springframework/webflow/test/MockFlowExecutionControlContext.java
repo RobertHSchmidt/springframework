@@ -53,7 +53,7 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 	
 	public ViewSelection start(Flow flow, AttributeMap input) throws IllegalStateException {
 		getMockFlowExecutionContext().setActiveSession(new MockFlowSession(flow, input));
-		ViewSelection selectedView = flow.start(this);
+		ViewSelection selectedView = flow.start(this, input);
 		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.PAUSED);
 		return selectedView;
 	}
@@ -65,9 +65,9 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 		return selectedView;
 	}
 
-	public FlowSession endActiveFlowSession(AttributeMap sessionOutput) throws IllegalStateException {
+	public FlowSession endActiveFlowSession(AttributeMap output) throws IllegalStateException {
 		MockFlowSession endingSession = getMockFlowExecutionContext().getMockActiveSession();
-		endingSession.getFlow().end(this, sessionOutput);
+		endingSession.getFlow().end(this, output);
 		endingSession.setStatus(FlowSessionStatus.ENDED);
 		getMockFlowExecutionContext().setActiveSession(null);
 		return endingSession;

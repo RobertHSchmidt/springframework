@@ -16,6 +16,8 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.Event;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -60,40 +62,35 @@ public interface FlowExecutionListener {
 	public void requestProcessed(RequestContext context);
 
 	/**
-	 * Called immediately after a start event is signaled -- indicating the flow
-	 * execution session is starting but hasn't yet entered its start state.
-	 * @param context source of the event
-	 * @param startState the start state of the new flow session
+	 * Called immediately after a start event is signaled, indicating a new session 
+	 * of the flow is starting but has not yet entered its start state.
+	 * @param context the source of the event
+	 * @param flow the flow for which a new session starting.
 	 * @param input a mutable input map to the starting flow session
-	 * @throws EnterStateVetoException the start state transition should not be
-	 * allowed
 	 */
-	public void sessionStarting(RequestContext context, State startState, AttributeMap input)
-			throws EnterStateVetoException;
+	public void sessionStarting(RequestContext context, Flow flow, AttributeMap input);
 
 	/**
 	 * Called when a new flow execution session was started -- the start state
 	 * has been entered.
-	 * @param context source of the event
+	 * @param context the source of the event
 	 */
-	public void sessionStarted(RequestContext context);
+	public void sessionStarted(RequestContext context, FlowSession session);
 
 	/**
-	 * Called when an event is signaled in a state, but prior to any state
+	 * Called when an event is signaled in the current state, but prior to any state
 	 * transition.
-	 * @param context the source of the event, with a 'lastEvent' property for
-	 * accessing the signaled event
-	 * @param state the state the event was signaled in
+	 * @param context the source of the event
+	 * @param event the event that occured
 	 */
-	public void eventSignaled(RequestContext context, State state);
+	public void eventSignaled(RequestContext context, Event event);
 
 	/**
 	 * Called when a state transitions, after the transition is matched but
 	 * before the transition occurs.
 	 * @param context the source of the event
 	 * @param state the proposed state to transition to
-	 * @throws EnterStateVetoException the state transition should not be
-	 * allowed
+	 * @throws EnterStateVetoException when entering the state is now allowed
 	 */
 	public void stateEntering(RequestContext context, State state) throws EnterStateVetoException;
 
@@ -121,21 +118,22 @@ public interface FlowExecutionListener {
 	public void paused(RequestContext context, ViewSelection selectedView);
 
 	/**
-	 * Called when the active flow execution session has been asked to end.
+	 * Called when the active flow execution session has been asked to end but 
+	 * before it has ended.
 	 * @param context the source of the event
-	 * @param sessionOutput initial, modifiable output produced by the active
-	 * session. The map may be modified by this listener to affect the output
-	 * returned.
+	 * @session the current active session that is ending
+	 * @param output the flow output produced by the ending session.
+	 * The map may be modified by this listener to affect the output returned.
 	 */
-	public void sessionEnding(RequestContext context, AttributeMap sessionOutput);
+	public void sessionEnding(RequestContext context, FlowSession session, AttributeMap output);
 
 	/**
 	 * Called when a flow execution session ends. If the ended session was the
 	 * root session of the flow execution, the entire flow execution also ends.
 	 * @param context the source of the event
 	 * @param endedSession ending flow session
-	 * @param sessionOutput final, unmodifiable output returned by the ended
-	 * session that is eligible for mapping by this listener
+	 * @param output final, unmodifiable output returned by the ended
+	 * session
 	 */
-	public void sessionEnded(RequestContext context, FlowSession endedSession, UnmodifiableAttributeMap sessionOutput);
+	public void sessionEnded(RequestContext context, FlowSession session, UnmodifiableAttributeMap output);
 }

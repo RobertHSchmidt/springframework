@@ -18,6 +18,8 @@ package org.springframework.webflow.execution;
 import java.util.Map;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.Event;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -113,7 +115,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		requestInProcess = true;
 	}
 
-	public void sessionStarting(RequestContext context, State startState, Map input) throws EnterStateVetoException {
+	public void sessionStarting(RequestContext context, Flow flow, Map input) throws EnterStateVetoException {
 		if (!context.getFlowExecutionContext().isActive()) {
 			Assert.state(!started, "The flow execution was already started");
 			flowNestingLevel = 0;
@@ -123,8 +125,8 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		}
 	}
 	
-	public void sessionStarted(RequestContext context) {
-		if (context.getFlowExecutionContext().getActiveSession().isRoot()) {
+	public void sessionStarted(RequestContext context, FlowSession session) {
+		if (session.isRoot()) {
 			Assert.state(!started, "The flow execution was already started");
 			started = true;
 		}
@@ -140,14 +142,14 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		requestInProcess = false;
 	}
 
-	public void eventSignaled(RequestContext context) {
+	public void eventSignaled(RequestContext context, Event event) {
 		eventsSignaled++;
 	}
 
-	public void stateEntering(RequestContext context, State nextState) throws EnterStateVetoException {
+	public void stateEntering(RequestContext context, State state) throws EnterStateVetoException {
 	}
 
-	public void stateEntered(RequestContext context, State previousState, State newState) {
+	public void stateEntered(RequestContext context, State newState, State previousState) {
 		stateTransitions++;
 	}
 

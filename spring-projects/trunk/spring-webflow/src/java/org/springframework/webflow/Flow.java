@@ -518,11 +518,14 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Start a new execution of this flow in the specified state.
+	 * Start a new session for this flow in the specified state.
 	 * @param context the flow execution control context
+	 * @param input eligible input into the session
 	 */
-	public ViewSelection start(FlowExecutionControlContext context) {
-		startActionList.execute(context);
+	public ViewSelection start(FlowExecutionControlContext context, AttributeMap input) {
+		// TODO input mapper
+		context.getFlowScope().putAll(input);
+		startActionList. execute(context);
 		return startState.enter(context);
 	}
 
@@ -563,10 +566,10 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Inform this flow definition that a execution session of itself has ended.
 	 * @param context the flow execution control context
-	 * @param sessionOutput initial output produced by the session that is
+	 * @param output initial output produced by the session that is
 	 * eligible for modification by this method.
 	 */
-	public void end(FlowExecutionControlContext context, AttributeMap sessionOutput) {
+	public void end(FlowExecutionControlContext context, AttributeMap output) {
 		endActionList.execute(context);
 	}
 

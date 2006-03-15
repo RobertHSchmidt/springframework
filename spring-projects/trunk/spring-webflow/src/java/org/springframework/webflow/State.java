@@ -182,6 +182,15 @@ public abstract class State extends AnnotatedObject {
 	}
 
 	/**
+	 * Returns a flag indicating if this state is the start state of its owning
+	 * flow.
+	 * @return true if the flow is the start state, false otherwise
+	 */
+	public boolean isStartState() {
+		return flow.getStartState() == this;
+	}
+
+	/**
 	 * Enter this state in the provided flow control context. This
 	 * implementation just calls the
 	 * {@link #doEnter(FlowExecutionControlContext)} hook method, which should

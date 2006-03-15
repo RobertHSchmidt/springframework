@@ -364,15 +364,15 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param input the flow session input
 	 * @return the new flow session
 	 */
-	public FlowSession activateSession(Flow flow, AttributeMap input) {
+	public FlowSession activateSession(Flow flow) {
 		FlowSessionImpl session;
 		if (!flowSessions.isEmpty()) {
 			FlowSessionImpl parent = getActiveSessionInternal();
 			parent.setStatus(FlowSessionStatus.SUSPENDED);
-			session = createFlowSession(flow, input, parent);
+			session = createFlowSession(flow, parent);
 		}
 		else {
-			session = createFlowSession(flow, input, null);
+			session = createFlowSession(flow, null);
 		}
 		flowSessions.add(session);
 		session.setStatus(FlowSessionStatus.STARTING);
@@ -386,13 +386,12 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Create a new flow session object. Subclasses can override this to return
 	 * a special implementation if required.
 	 * @param flow the flow that should be associated with the flow session
-	 * @param input the input parameters used to populate the flow session
 	 * @param parent the flow session that should be the parent of the newly
-	 * created flow session
+	 * created flow session (may be null)
 	 * @return the newly created flow session
 	 */
-	protected FlowSessionImpl createFlowSession(Flow flow, AttributeMap input, FlowSessionImpl parent) {
-		return new FlowSessionImpl(flow, input, parent);
+	protected FlowSessionImpl createFlowSession(Flow flow, FlowSessionImpl parent) {
+		return new FlowSessionImpl(flow, parent);
 	}
 
 	public FlowSession endActiveFlowSession() {
