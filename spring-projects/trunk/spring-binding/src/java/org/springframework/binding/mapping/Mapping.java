@@ -33,7 +33,7 @@ import org.springframework.util.Assert;
  * process.
  * @author Keith Donald
  */
-public class Mapping implements Serializable {
+public class Mapping implements AttributeMapper, Serializable {
 
 	protected static final Log logger = LogFactory.getLog(Mapping.class);
 

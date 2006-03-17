@@ -24,11 +24,12 @@ package org.springframework.binding.expression;
 public interface ExpressionParser {
 
 	/**
-	 * Is this expression string actually a parseable expression?
+	 * Is this expression string delimited in a manner that indicates it is a parseable expression?
+	 * For example ${expression}.
 	 * @param expressionString the proposed expression string
 	 * @return true if yes, false if not
 	 */
-	public boolean isExpression(String expressionString);
+	public boolean isDelimitedExpression(String expressionString);
 
 	/**
 	 * Parse the provided expression string, returning an evaluator capable of
@@ -38,15 +39,6 @@ public interface ExpressionParser {
 	 * @throws ParserException an exception occured during parsing
 	 */
 	public Expression parseExpression(String expressionString) throws ParserException;
-
-	/**
-	 * Parse the provided string containing multiple expressions, returning an
-	 * array of evaluatable expressions.
-	 * @param expressionString the parseable expression
-	 * @return the evaluator for the parsed expression
-	 * @throws ParserException an exception occured during parsing
-	 */
-	public Expression[] parseExpressions(String expressionString) throws ParserException;
 
 	/**
 	 * Parse the provided property expression string, returning an evaluator

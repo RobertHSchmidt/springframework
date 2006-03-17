@@ -24,11 +24,11 @@ import org.springframework.binding.expression.PropertyExpression;
  * @author Keith
  */
 public class BeanWrapperExpressionParser extends AbstractExpressionParser {
-	public Expression parseExpression(String expressionString) throws ParserException {
+	protected Expression doParseExpression(String expressionString) throws ParserException {
 		return parsePropertyExpression(expressionString);
 	}
 
 	public PropertyExpression parsePropertyExpression(String expressionString) throws ParserException {
-		return new BeanWrapperExpression(cutExpression(expressionString));
+		return new BeanWrapperExpression(cut(expressionString));
 	}
 }

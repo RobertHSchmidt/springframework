@@ -18,6 +18,7 @@ package org.springframework.binding.method;
 import java.io.Serializable;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 
 /**
  * A specification for a <code>Method</code>, consisting of the methodName
@@ -61,6 +62,8 @@ public class MethodSignature implements Serializable {
 	 * @param parameters the method arguments
 	 */
 	public MethodSignature(String methodName, Parameters parameters) {
+		Assert.notNull(methodName, "The method name is required");
+		Assert.notNull(parameters, "The parameters are required");
 		this.methodName = methodName;
 		this.parameters = parameters;
 	}

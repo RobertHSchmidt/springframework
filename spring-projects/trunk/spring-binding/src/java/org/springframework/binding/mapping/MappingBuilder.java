@@ -61,15 +61,6 @@ public class MappingBuilder {
 	 * @param expressionParser the expression parser.
 	 */
 	public MappingBuilder(ExpressionParser expressionParser) {
-		setExpressionParser(expressionParser);
-	}
-
-	/**
-	 * Sets the expression parser that will parse string-encoded source and
-	 * target mapping expressions.
-	 * @param expressionParser the expression parser
-	 */
-	public void setExpressionParser(ExpressionParser expressionParser) {
 		Assert.notNull(expressionParser, "The expression parser is required");
 		this.expressionParser = expressionParser;
 	}
@@ -112,7 +103,6 @@ public class MappingBuilder {
 	 * @return this, to support call-chaining
 	 */
 	public MappingBuilder from(Class sourceType) {
-		Assert.notNull(sourceType, "The source type is required");
 		this.sourceType = sourceType;
 		return this;
 	}
@@ -123,7 +113,6 @@ public class MappingBuilder {
 	 * @return this, to support call-chaining
 	 */
 	public MappingBuilder to(Class targetType) {
-		Assert.notNull(sourceType, "The target type is required");
 		this.targetType = targetType;
 		return this;
 	}

@@ -30,17 +30,17 @@ import org.springframework.binding.expression.PropertyExpression;
  */
 public class OgnlExpressionParser extends AbstractExpressionParser {
 
-	public Expression parseExpression(String expressionString) throws ParserException {
-		return parsePropertyExpression(expressionString);
-	}
-
-	public PropertyExpression parsePropertyExpression(String expressionString) throws ParserException {
+	protected Expression doParseExpression(String expressionString) throws ParserException {
 		try {
-			return new OgnlExpression(Ognl.parseExpression(cutExpression(expressionString)));
+			return new OgnlExpression(Ognl.parseExpression(expressionString));
 		}
 		catch (OgnlException e) {
 			throw new ParserException(expressionString, e);
 		}
+	}
+
+	public PropertyExpression parsePropertyExpression(String expressionString) throws ParserException {
+		return (PropertyExpression)doParseExpression(cut(expressionString));
 	}
 
 	/**

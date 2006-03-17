@@ -40,32 +40,41 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	 */
 	private static final String DEFAULT_EXPRESSION_SUFFIX = "}";
 
+	private String expressionPrefix = DEFAULT_EXPRESSION_PREFIX;
+	
+	private String expressionSuffix = DEFAULT_EXPRESSION_SUFFIX;
+
+	public String getExpressionPrefix() {
+		return expressionPrefix;
+	}
+
+	public void setExpressionPrefix(String expressionPrefix) {
+		this.expressionPrefix = expressionPrefix;
+	}
+
+	public String getExpressionSuffix() {
+		return expressionSuffix;
+	}
+
+	public void setExpressionSuffix(String expressionSuffix) {
+		this.expressionSuffix = expressionSuffix;
+	}
+
 	/**
 	 * Check whether or not given criteria are expressed as an expression.
 	 */
-	public boolean isExpression(String encodedCriteria) {
-		return (encodedCriteria.startsWith(getExpressionPrefix()) && encodedCriteria.endsWith(getExpressionSuffix()));
+	public boolean isDelimitedExpression(String expressionString) {
+		return (expressionString.startsWith(getExpressionPrefix()) && expressionString.endsWith(getExpressionSuffix()));
 	}
 
-	/**
-	 * Cut the expression from given criteria string and return it.
-	 */
-	protected String cutExpression(String encodedCriteria) {
-		if (isExpression(encodedCriteria)) {
-			return encodedCriteria.substring(DEFAULT_EXPRESSION_PREFIX.length(), encodedCriteria.length()
-					- DEFAULT_EXPRESSION_SUFFIX.length());
+	public final Expression parseExpression(String expressionString) throws ParserException {
+		Expression[] expressions = parseExpressions(expressionString);
+		if (expressions.length == 1) {
+			return expressions[0];
 		}
 		else {
-			return encodedCriteria;
+			return new CompositeStringExpression(expressions);
 		}
-	}
-
-	protected String getExpressionPrefix() {
-		return DEFAULT_EXPRESSION_PREFIX;
-	}
-
-	protected String getExpressionSuffix() {
-		return DEFAULT_EXPRESSION_SUFFIX;
 	}
 
 	/*
@@ -78,9 +87,10 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	 * string. @param expressionString the expression string @return the parsed
 	 * expressions @throws ParserException when the expressions cannot be parsed
 	 */
-	public Expression[] parseExpressions(String expressionString) throws ParserException {
+	private Expression[] parseExpressions(String expressionString) throws ParserException {
 		List expressions = new LinkedList();
 		if (StringUtils.hasText(expressionString)) {
+			expressionString = cut(expressionString);
 			int startIdx = 0;
 			while (startIdx < expressionString.length()) {
 				int exprStartIdx = expressionString.indexOf(getExpressionPrefix(), startIdx);
@@ -92,7 +102,7 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 					}
 					int exprEndIdx = expressionString.indexOf(getExpressionSuffix(), exprStartIdx);
 					if (exprEndIdx >= exprStartIdx) {
-						expressions.add(parseExpression(expressionString.substring(exprStartIdx, exprEndIdx + 1)));
+						expressions.add(doParseExpression(cut(expressionString.substring(exprStartIdx, exprEndIdx + 1))));
 						startIdx = exprEndIdx + 1;
 					}
 					else {
@@ -101,17 +111,39 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 					}
 				}
 				else {
-					// no expression could be found
-					expressions.add(new StaticExpression(expressionString.substring(startIdx)));
+					if (startIdx == 0) {
+						// treat entire string as one expression
+						expressions.add(doParseExpression(expressionString));
+					} else {
+						// no more ${expressions} found in string
+						expressions.add(new StaticExpression(expressionString.substring(startIdx)));
+					}
 					startIdx = expressionString.length();
 				}
 			}
 		}
+		else {
+			expressions.add(new StaticExpression(expressionString));
+		}
 		return (Expression[])expressions.toArray(new Expression[expressions.size()]);
 	}
 
-	public abstract Expression parseExpression(String expressionString) throws ParserException;
+	/**
+	 * Cut the expression from given criteria string and return it.
+	 */
+	protected String cut(String expressionString) {
+		if (isDelimitedExpression(expressionString)) {
+			return expressionString.substring(DEFAULT_EXPRESSION_PREFIX.length(), expressionString.length()
+					- DEFAULT_EXPRESSION_SUFFIX.length());
+		}
+		else {
+			return expressionString;
+		}
+	}
 
-	public abstract PropertyExpression parsePropertyExpression(String expressionString) throws ParserException, UnsupportedOperationException;
-	
+	protected abstract Expression doParseExpression(String expressionString);
+
+	public abstract PropertyExpression parsePropertyExpression(String expressionString) throws ParserException,
+			UnsupportedOperationException;
+
 }

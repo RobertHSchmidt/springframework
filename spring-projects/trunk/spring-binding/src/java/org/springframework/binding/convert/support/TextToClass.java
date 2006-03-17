@@ -28,9 +28,9 @@ import org.springframework.util.StringUtils;
  */
 public class TextToClass extends ConversionServiceAwareConverter {
 
-	public static final String TYPE_PREFIX = "type:";
+	private static final String ALIAS_PREFIX = "type:";
 
-	public static final String CLASS_PREFIX = "class:";
+	private static final String CLASS_PREFIX = "class:";
 
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class };
@@ -47,7 +47,7 @@ public class TextToClass extends ConversionServiceAwareConverter {
 			if (classNameOrAlias.startsWith(CLASS_PREFIX)) {
 				return ClassUtils.forName(text.substring(CLASS_PREFIX.length()));
 			}
-			else if (classNameOrAlias.startsWith(TYPE_PREFIX)) {
+			else if (classNameOrAlias.startsWith(ALIAS_PREFIX)) {
 				Class clazz = getConversionService().getClassByAlias(text);
 				Assert.notNull(clazz, "No class found associated with type alias '" + classNameOrAlias + "'");
 				return clazz;

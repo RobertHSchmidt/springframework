@@ -15,11 +15,14 @@
  */
 package org.springframework.binding.convert.support;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
@@ -83,7 +86,7 @@ public abstract class AbstractConversionService implements ConversionService {
 		aliasMap.put(alias, converter);
 		addConverter(converter);
 	}
-	
+
 	public void addConverters(Converter[] converters) {
 		for (int i = 0; i < converters.length; i++) {
 			addConverter(converters[i]);
@@ -98,22 +101,26 @@ public abstract class AbstractConversionService implements ConversionService {
 		addAlias(StringUtils.uncapitalize(ClassUtils.getShortName(targetType)), targetType);
 	}
 
-	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass, String alias)
-			throws IllegalArgumentException {
-		Assert.hasText(alias, "The target alias is required and must either be a type alias (e.g 'boolean') "
-				+ "or a generic converter alias (e.g. 'bean') ");
-		Object targetType = aliasMap.get(alias);
-		if (targetType == null) {
-			return null;
+	public ConversionExecutor[] getConversionExecutorsFrom(Class sourceClass) {
+		Map sourceTargetConverters = (Map)findConvertersForSource(sourceClass);
+		if (sourceTargetConverters.isEmpty()) {
+			if (parent != null) {
+				return parent.getConversionExecutorsFrom(sourceClass);
+			}
+			else {
+				return new ConversionExecutor[0];
+			}
 		}
-		else if (targetType instanceof Class) {
-			return getConversionExecutor(sourceClass, (Class)targetType);
+		Set executors = new HashSet();
+		if (parent != null) {
+			executors.addAll(Arrays.asList(parent.getConversionExecutorsFrom(sourceClass)));
 		}
-		else {
-			Assert.isInstanceOf(Converter.class, targetType, "Not a converter:");
-			Converter conv = (Converter)targetType;
-			return new ConversionExecutor(Object.class, conv);
+		Iterator it = sourceTargetConverters.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry)it.next();
+			executors.add(new ConversionExecutor(sourceClass, (Class)entry.getKey(), (Converter)entry.getValue()));
 		}
+		return (ConversionExecutor[])executors.toArray(new ConversionExecutor[executors.size()]);
 	}
 
 	public ConversionExecutor getConversionExecutor(Class sourceClass, Class targetClass) {
@@ -121,12 +128,12 @@ public abstract class AbstractConversionService implements ConversionService {
 			throw new IllegalStateException("No converters have been added to this service's registry");
 		}
 		if (sourceClass.equals(targetClass)) {
-			return new ConversionExecutor(targetClass, new NoOpConverter(sourceClass, targetClass));
+			return new ConversionExecutor(sourceClass, targetClass, new NoOpConverter(sourceClass, targetClass));
 		}
 		Map sourceTargetConverters = (Map)findConvertersForSource(sourceClass);
 		Converter converter = (Converter)findTargetConverter(sourceTargetConverters, targetClass);
 		if (converter != null) {
-			return new ConversionExecutor(targetClass, converter);
+			return new ConversionExecutor(sourceClass, targetClass, converter);
 		}
 		else {
 			if (parent != null) {
@@ -139,20 +146,27 @@ public abstract class AbstractConversionService implements ConversionService {
 		}
 	}
 
-	public ConversionExecutor[] getConversionExecutorsFrom(Class sourceClass) {
-		Map sourceTargetConverters = (Map)findConvertersForSource(sourceClass);
-		if (sourceTargetConverters.isEmpty()) {
-			return new ConversionExecutor[0];
+	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass, String alias)
+			throws IllegalArgumentException {
+		Assert.hasText(alias, "The target alias is required and must either be a type alias (e.g 'boolean') "
+				+ "or a generic converter alias (e.g. 'bean') ");
+		Object targetType = aliasMap.get(alias);
+		if (targetType == null) {
+			if (parent != null) {
+				return parent.getConversionExecutorByTargetAlias(sourceClass, alias);
+			}
+			else {
+				return null;
+			}
 		}
-		ConversionExecutor[] executors = new ConversionExecutor[sourceTargetConverters.size()];
-		Iterator it = sourceTargetConverters.entrySet().iterator();
-		int i = 0;
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry)it.next();
-			executors[i] = new ConversionExecutor((Class)entry.getKey(), (Converter)entry.getValue());
-			i++;
+		else if (targetType instanceof Class) {
+			return getConversionExecutor(sourceClass, (Class)targetType);
 		}
-		return executors;
+		else {
+			Assert.isInstanceOf(Converter.class, targetType, "Not a converter: ");
+			Converter conv = (Converter)targetType;
+			return new ConversionExecutor(sourceClass, Object.class, conv);
+		}
 	}
 
 	public Class getClassByAlias(String alias) {

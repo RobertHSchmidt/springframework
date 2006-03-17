@@ -26,21 +26,21 @@ import org.springframework.util.StringUtils;
  */
 public class TextToBoolean extends AbstractConverter {
 
-	public static final String VALUE_TRUE = "true";
+	private static final String VALUE_TRUE = "true";
 
-	public static final String VALUE_FALSE = "false";
+	private static final String VALUE_FALSE = "false";
 
-	public static final String VALUE_ON = "on";
+	private static final String VALUE_ON = "on";
 
-	public static final String VALUE_OFF = "off";
+	private static final String VALUE_OFF = "off";
 
-	public static final String VALUE_YES = "yes";
+	private static final String VALUE_YES = "yes";
 
-	public static final String VALUE_NO = "no";
+	private static final String VALUE_NO = "no";
 
-	public static final String VALUE_1 = "1";
+	private static final String VALUE_1 = "1";
 
-	public static final String VALUE_0 = "0";
+	private static final String VALUE_0 = "0";
 
 	private String trueString;
 

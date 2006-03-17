@@ -32,15 +32,16 @@ public class ConverterPropertyEditorAdapter extends PropertyEditorSupport {
 
 	private ConversionExecutor conversionExecutor;
 
-	public ConverterPropertyEditorAdapter(ConversionExecutor converter) {
-		Assert.notNull(converter, "A from string conversion executor is required");
-		this.conversionExecutor = converter;
+	public ConverterPropertyEditorAdapter(ConversionExecutor conversionExecutor) {
+		Assert.notNull(conversionExecutor, "A conversion executor is required");
+		Assert.isTrue(conversionExecutor.getSourceClass().equals(String.class), "A string conversion executor is required");
+		this.conversionExecutor = conversionExecutor;
 	}
 
 	public Class getTargetClass() {
 		return conversionExecutor.getTargetClass();
 	}
-	
+
 	public void setAsText(String text) throws IllegalArgumentException {
 		setValue(conversionExecutor.execute(text));
 	}

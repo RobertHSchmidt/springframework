@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
@@ -32,25 +33,40 @@ import org.springframework.util.Assert;
 public class ConversionExecutor implements Serializable {
 
 	/**
+	 * The source value type this executor will attempt to convert from.
+	 */
+	private final Class sourceClass;
+
+	/**
 	 * The target value type this executor will attempt to convert to.
 	 */
-	private Class targetClass;
+	private final Class targetClass;
 
 	/**
 	 * The converter that will perform the conversion.
 	 */
-	private Converter converter;
+	private final Converter converter;
 
 	/**
 	 * Creates a conversion executor.
 	 * @param converter The converter that will perform the conversion.
 	 * @param targetClass The target type that the converter will convert to.
 	 */
-	public ConversionExecutor(Class targetClass, Converter converter) {
+	public ConversionExecutor(Class sourceClass, Class targetClass, Converter converter) {
+		Assert.notNull(sourceClass, "The source class is required");
 		Assert.notNull(targetClass, "The target class is required");
 		Assert.notNull(converter, "The converter is required");
+		this.sourceClass = sourceClass;
 		this.targetClass = targetClass;
 		this.converter = converter;
+	}
+
+	/**
+	 * Returns the source class of conversions performed by this executor.
+	 * @return the source class.
+	 */
+	public Class getSourceClass() {
+		return sourceClass;
 	}
 
 	/**
@@ -60,22 +76,42 @@ public class ConversionExecutor implements Serializable {
 	public Class getTargetClass() {
 		return targetClass;
 	}
-	
+
 	/**
 	 * Execute the conversion for the provided source object.
 	 * @param source the source object to convert
 	 */
 	public Object execute(Object source) throws ConversionException {
-		return converter.convert(source, targetClass, Collections.EMPTY_MAP);
+		return execute(source, Collections.EMPTY_MAP);
 	}
 
 	/**
 	 * Execute the conversion for the provided source object.
 	 * @param source the source object to convert
-	 * @param context the conversion context, useful for influencing
-	 * the behavior of the converter.
+	 * @param context the conversion context, useful for influencing the
+	 * behavior of the converter.
 	 */
 	public Object execute(Object source, Map context) throws ConversionException {
+		if (source != null) {
+			Assert.isInstanceOf(sourceClass, source, "Not of source type: ");
+		}
 		return converter.convert(source, targetClass, context);
+	}
+
+	public boolean equals(Object o) {
+		if (!(o instanceof ConversionExecutor)) {
+			return false;
+		}
+		ConversionExecutor other = (ConversionExecutor)o;
+		return sourceClass.equals(other.sourceClass) && targetClass.equals(other.targetClass);
+	}
+
+	public int hashCode() {
+		return sourceClass.hashCode() + targetClass.hashCode();
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("sourceClass", sourceClass).append("targetClass", targetClass)
+				.toString();
 	}
 }

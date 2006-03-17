@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -47,6 +48,7 @@ public class Parameter implements Serializable {
 	 * @param name the name
 	 */
 	public Parameter(Class type, Expression name) {
+		Assert.notNull(name, "The parameter name expression is required");
 		this.type = type;
 		this.name = name;
 	}
