@@ -59,10 +59,10 @@ public class HigherLowerGame implements Serializable {
 		else {
 			guesses++;
 			if (answer < guess) {
-				return GuessResult.TOO_LOW;
+				return GuessResult.TOO_HIGH;
 			}
 			else if (answer > guess) {
-				return GuessResult.TOO_HIGH;
+				return GuessResult.TOO_LOW;
 			}
 			else {
 				return GuessResult.CORRECT;
