@@ -52,7 +52,7 @@ public class TextToFlowExecutionListenerCriteria extends AbstractConverter {
 	}
 
 	public FlowExecutionListenerCriteria convert(String source) {
-		return (FlowExecutionListenerCriteria)convert(source);
+		return (FlowExecutionListenerCriteria)super.convert(source);
 	}
 
 	protected Object doConvert(Object source, Class targetClass, Map context) throws ConversionException {
