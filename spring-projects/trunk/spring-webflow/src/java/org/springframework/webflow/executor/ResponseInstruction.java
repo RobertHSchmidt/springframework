@@ -18,6 +18,7 @@ package org.springframework.webflow.executor;
 import java.io.Serializable;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
@@ -63,6 +64,9 @@ public class ResponseInstruction implements Serializable {
 	 */
 	public ResponseInstruction(FlowExecutionKey flowExecutionKey, FlowExecutionContext flowExecutionContext,
 			ViewSelection viewSelection) {
+		Assert.notNull(flowExecutionKey, "The flow execution key is required");
+		Assert.notNull(flowExecutionContext, "The flow execution context is required");
+		Assert.notNull(viewSelection, "The view selection is required");
 		this.flowExecutionKey = flowExecutionKey;
 		this.flowExecutionContext = flowExecutionContext;
 		this.viewSelection = viewSelection;
@@ -74,6 +78,8 @@ public class ResponseInstruction implements Serializable {
 	 * @param viewSelection
 	 */
 	public ResponseInstruction(FlowExecutionContext flowExecutionContext, ViewSelection viewSelection) {
+		Assert.notNull(flowExecutionContext, "The flow execution context is required");
+		Assert.notNull(viewSelection, "The view selection is required");
 		this.flowExecutionKey = null;
 		this.flowExecutionContext = flowExecutionContext;
 		this.viewSelection = viewSelection;
