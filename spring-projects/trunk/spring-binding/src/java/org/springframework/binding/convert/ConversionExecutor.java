@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
+import org.springframework.util.Assert;
+
 /**
  * A command object that is parameterized with the information neccessary to
  * perform a conversion of a source input to a target output.
@@ -30,25 +32,35 @@ import java.util.Map;
 public class ConversionExecutor implements Serializable {
 
 	/**
-	 * The converter that will perform the conversion.
-	 */
-	private Converter converter;
-
-	/**
 	 * The target value type this executor will attempt to convert to.
 	 */
 	private Class targetClass;
+
+	/**
+	 * The converter that will perform the conversion.
+	 */
+	private Converter converter;
 
 	/**
 	 * Creates a conversion executor.
 	 * @param converter The converter that will perform the conversion.
 	 * @param targetClass The target type that the converter will convert to.
 	 */
-	public ConversionExecutor(Converter converter, Class targetClass) {
-		this.converter = converter;
+	public ConversionExecutor(Class targetClass, Converter converter) {
+		Assert.notNull(targetClass, "The target class is required");
+		Assert.notNull(converter, "The converter is required");
 		this.targetClass = targetClass;
+		this.converter = converter;
 	}
 
+	/**
+	 * Returns the target class of conversions performed by this executor.
+	 * @return the target class.
+	 */
+	public Class getTargetClass() {
+		return targetClass;
+	}
+	
 	/**
 	 * Execute the conversion for the provided source object.
 	 * @param source the source object to convert

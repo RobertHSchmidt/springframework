@@ -30,15 +30,19 @@ import org.springframework.util.Assert;
  */
 public class ConverterPropertyEditorAdapter extends PropertyEditorSupport {
 
-	private ConversionExecutor converterExecutor;
+	private ConversionExecutor conversionExecutor;
 
 	public ConverterPropertyEditorAdapter(ConversionExecutor converter) {
-		Assert.notNull(converter, "A toString conversion executor is required");
-		this.converterExecutor = converter;
+		Assert.notNull(converter, "A from string conversion executor is required");
+		this.conversionExecutor = converter;
 	}
 
+	public Class getTargetClass() {
+		return conversionExecutor.getTargetClass();
+	}
+	
 	public void setAsText(String text) throws IllegalArgumentException {
-		setValue(converterExecutor.execute(text));
+		setValue(conversionExecutor.execute(text));
 	}
 
 	public String getAsText() {

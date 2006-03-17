@@ -15,18 +15,13 @@
  */
 package org.springframework.binding.convert.support;
 
-import java.beans.PropertyEditor;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.binding.convert.ConversionExecutor;
-import org.springframework.binding.convert.Converter;
+import org.springframework.binding.convert.ConversionService;
+import org.springframework.util.Assert;
 
 /**
  * Default, local implementation of a conversion service deployable within a
@@ -38,38 +33,23 @@ import org.springframework.binding.convert.Converter;
  * 
  * @author Keith Donald
  */
-public class BeanFactoryAwareConversionService extends DefaultConversionService implements InitializingBean,
-		BeanFactoryAware, BeanFactoryPostProcessor {
+public class CustomConverterConfigurer implements BeanFactoryPostProcessor, InitializingBean {
 
-	/**
-	 * The Spring Bean Factory.
-	 */
-	private BeanFactory beanFactory;
+	private ConversionService conversionService;
 
-	public BeanFactoryAwareConversionService() {
+	public void setConversionService(ConversionService conversionService) {
+		this.conversionService = conversionService;
 	}
 
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		this.beanFactory = beanFactory;
-	}
-
-	public void afterPropertiesSet() {
-		addConverter(new TextToBean(beanFactory), "bean");
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(conversionService, "The conversion service is required");
 	}
 
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		if (getSourceClassConverters() != null) {
-			Map sourceStringConverters = (Map)getSourceClassConverters().get(String.class);
-			if (sourceStringConverters != null) {
-				Iterator it = sourceStringConverters.entrySet().iterator();
-				while (it.hasNext()) {
-					Map.Entry entry = (Map.Entry)it.next();
-					Class targetClass = (Class)entry.getKey();
-					PropertyEditor editor = new ConverterPropertyEditorAdapter(new ConversionExecutor((Converter)entry
-							.getValue(), targetClass));
-					beanFactory.registerCustomEditor(targetClass, editor);
-				}
-			}
+		ConversionExecutor[] executors = conversionService.getConversionExecutorsFrom(String.class);
+		for (int i = 0; i < executors.length; i++) {
+			ConverterPropertyEditorAdapter editor = new ConverterPropertyEditorAdapter(executors[i]);
+			beanFactory.registerCustomEditor(editor.getTargetClass(), editor);
 		}
 	}
 }
