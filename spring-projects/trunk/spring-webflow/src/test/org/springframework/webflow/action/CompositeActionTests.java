@@ -62,7 +62,6 @@ public class CompositeActionTests extends TestCase {
 		actionControl.verify();
 		assertEquals("success", result.getId());
 		assertEquals(1, result.getAttributes().size());
-		System.out.println(result.getAttributes());
 	}
 
 	public void testDoExecuteWithError() throws Exception {
