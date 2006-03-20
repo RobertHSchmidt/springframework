@@ -75,6 +75,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	public ApplicationViewSelector(Expression viewName, boolean requestConversationRedirect) {
 		Assert.notNull(viewName, "The view name expression is required");
 		this.viewName = viewName;
+		this.requestConversationRedirect = requestConversationRedirect;
 	}
 
 	/**

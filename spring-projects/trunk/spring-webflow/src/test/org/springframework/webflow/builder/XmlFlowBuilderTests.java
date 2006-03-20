@@ -104,7 +104,8 @@ public class XmlFlowBuilderTests extends TestCase {
 
 		ViewState viewState1 = (ViewState)flow.getState("viewState1");
 		assertNotNull(viewState1);
-		assertEquals("view1", ((ApplicationViewSelector)viewState1.getViewSelector()).getViewName());
+		assertEquals("view1", (String)((ApplicationViewSelector)viewState1.getViewSelector()).getViewName()
+				.evaluateAgainst(null, null));
 		assertEquals(1, viewState1.getTransitionSet().size());
 		context.setLastEvent(createEvent("event1"));
 		assertTrue(viewState1.getTransitionSet().transitionMatches(context));
@@ -161,7 +162,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(decisionState3.getAction());
 		assertNull(decisionState3.getAnnotatedAction().getAttributeMap().get("method"));
 		assertTrue(decisionState3.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
-		
+
 		DecisionState decisionState4 = (DecisionState)flow.getState("decisionState4");
 		assertTrue(decisionState4.getTransitionSet().size() == 2);
 		assertNotNull(decisionState4);
@@ -171,7 +172,8 @@ public class XmlFlowBuilderTests extends TestCase {
 
 		EndState endState1 = (EndState)flow.getState("endState1");
 		assertNotNull(endState1);
-		assertEquals("endView1", ((ApplicationViewSelector)endState1.getViewSelector()).getViewName());
+		assertEquals("endView1", (String)((ApplicationViewSelector)endState1.getViewSelector()).getViewName()
+				.evaluateAgainst(null, null));
 
 		EndState endState2 = (EndState)flow.getState("endState2");
 		assertNotNull(endState2);
@@ -227,7 +229,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		public boolean isStatefulAction(String actionId) throws FlowArtifactException {
 			return false;
 		}
-		
+
 		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
 			if ("attributeMapper1".equals(id)) {
 				return new FlowAttributeMapper() {

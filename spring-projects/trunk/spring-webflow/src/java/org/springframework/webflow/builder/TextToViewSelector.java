@@ -35,7 +35,7 @@ import org.springframework.webflow.support.FlowRedirectSelector;
  * This converter supports the following encoded forms:
  * <ul>
  * <li>"viewName" - will result in a {@link ApplicationViewSelector} that
- * returns a ViewSelection with the provided view name.</li>
+ * returns a ViewSelection with the provided view name expression.</li>
  * <li>"redirect:&lt;viewName&gt;" - will result in a
  * {@link ApplicationViewSelector} that returns a ViewSelection with the
  * provided view name and redirect flag set to true.</li>
@@ -126,7 +126,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		}
 		else {
 			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(encodedView);
-			return new ApplicationViewSelector(viewNameExpr, true);
+			return new ApplicationViewSelector(viewNameExpr);
 		}
 	}
 }
