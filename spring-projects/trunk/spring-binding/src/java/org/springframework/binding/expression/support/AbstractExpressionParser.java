@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * An expression parser that parses Ognl expressions.
- * @author Keith
+ * @author Keith Donald
  */
 public abstract class AbstractExpressionParser implements ExpressionParser {
 
@@ -40,22 +40,40 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	 */
 	private static final String DEFAULT_EXPRESSION_SUFFIX = "}";
 
+	/**
+	 * The marked expression delimter prefix.
+	 */
 	private String expressionPrefix = DEFAULT_EXPRESSION_PREFIX;
-	
+
+	/**
+	 * The marked expression delimiter suffix.
+	 */
 	private String expressionSuffix = DEFAULT_EXPRESSION_SUFFIX;
 
+	/**
+	 * Returns the configured expression delimiter prefix.
+	 */
 	public String getExpressionPrefix() {
 		return expressionPrefix;
 	}
 
+	/**
+	 * Sets the expression delimiter prefix.
+	 */
 	public void setExpressionPrefix(String expressionPrefix) {
 		this.expressionPrefix = expressionPrefix;
 	}
 
+	/**
+	 * Returns the expression delimiter suffix.
+	 */
 	public String getExpressionSuffix() {
 		return expressionSuffix;
 	}
 
+	/**
+	 * Sets the expression delimiter suffix.
+	 */
 	public void setExpressionSuffix(String expressionSuffix) {
 		this.expressionSuffix = expressionSuffix;
 	}
@@ -64,7 +82,22 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	 * Check whether or not given criteria are expressed as an expression.
 	 */
 	public boolean isDelimitedExpression(String expressionString) {
-		return (expressionString.startsWith(getExpressionPrefix()) && expressionString.endsWith(getExpressionSuffix()));
+		int prefixIndex = expressionString.indexOf(getExpressionPrefix());
+		if (prefixIndex == -1) {
+			return false;
+		}
+		int suffixIndex = expressionString.indexOf(getExpressionSuffix(), prefixIndex);
+		if (suffixIndex == -1) {
+			return false;
+		}
+		else {
+			if (suffixIndex == prefixIndex + getExpressionPrefix().length()) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
 	}
 
 	public final Expression parseExpression(String expressionString) throws ParserException {
@@ -90,31 +123,38 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	private Expression[] parseExpressions(String expressionString) throws ParserException {
 		List expressions = new LinkedList();
 		if (StringUtils.hasText(expressionString)) {
-			expressionString = cut(expressionString);
 			int startIdx = 0;
 			while (startIdx < expressionString.length()) {
-				int exprStartIdx = expressionString.indexOf(getExpressionPrefix(), startIdx);
-				if (exprStartIdx >= startIdx) {
+				int prefixIndex = expressionString.indexOf(getExpressionPrefix(), startIdx);
+				if (prefixIndex >= startIdx) {
 					// an expression was found
-					if (exprStartIdx > startIdx) {
-						expressions.add(new StaticExpression(expressionString.substring(startIdx, exprStartIdx)));
-						startIdx = exprStartIdx;
+					if (prefixIndex > startIdx) {
+						expressions.add(new StaticExpression(expressionString.substring(startIdx, prefixIndex)));
+						startIdx = prefixIndex;
 					}
-					int exprEndIdx = expressionString.indexOf(getExpressionSuffix(), exprStartIdx);
-					if (exprEndIdx >= exprStartIdx) {
-						expressions.add(doParseExpression(cut(expressionString.substring(exprStartIdx, exprEndIdx + 1))));
-						startIdx = exprEndIdx + 1;
+					int suffixIndex = expressionString.indexOf(getExpressionSuffix(), prefixIndex);
+					if (suffixIndex == -1) {
+						throw new ParserException(expressionString, null, "No ending suffix '" + getExpressionSuffix()
+								+ "' for expression starting at character " + prefixIndex + ": "
+								+ expressionString.substring(prefixIndex));
+					}
+					else if (suffixIndex == prefixIndex + getExpressionPrefix().length()) {
+						throw new ParserException(expressionString, null, "No expression defined within delimiter '"
+								+ getExpressionPrefix() + getExpressionSuffix() + "' at character " + prefixIndex);
 					}
 					else {
-						expressions.add(new StaticExpression(expressionString.substring(startIdx)));
-						startIdx = expressionString.length();
+						String expr = expressionString.substring(prefixIndex + getExpressionPrefix().length(),
+								suffixIndex);
+						expressions.add(doParseExpression(expr));
+						startIdx = suffixIndex + 1;
 					}
 				}
 				else {
 					if (startIdx == 0) {
 						// treat entire string as one expression
 						expressions.add(doParseExpression(expressionString));
-					} else {
+					}
+					else {
 						// no more ${expressions} found in string
 						expressions.add(new StaticExpression(expressionString.substring(startIdx)));
 					}
@@ -126,19 +166,6 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 			expressions.add(new StaticExpression(expressionString));
 		}
 		return (Expression[])expressions.toArray(new Expression[expressions.size()]);
-	}
-
-	/**
-	 * Cut the expression from given criteria string and return it.
-	 */
-	protected String cut(String expressionString) {
-		if (isDelimitedExpression(expressionString)) {
-			return expressionString.substring(DEFAULT_EXPRESSION_PREFIX.length(), expressionString.length()
-					- DEFAULT_EXPRESSION_SUFFIX.length());
-		}
-		else {
-			return expressionString;
-		}
 	}
 
 	protected abstract Expression doParseExpression(String expressionString);

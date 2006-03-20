@@ -29,6 +29,6 @@ public class BeanWrapperExpressionParser extends AbstractExpressionParser {
 	}
 
 	public PropertyExpression parsePropertyExpression(String expressionString) throws ParserException {
-		return new BeanWrapperExpression(cut(expressionString));
+		return new BeanWrapperExpression(expressionString);
 	}
 }

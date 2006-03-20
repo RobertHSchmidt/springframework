@@ -40,7 +40,7 @@ public class OgnlExpressionParser extends AbstractExpressionParser {
 	}
 
 	public PropertyExpression parsePropertyExpression(String expressionString) throws ParserException {
-		return (PropertyExpression)doParseExpression(cut(expressionString));
+		return (PropertyExpression)doParseExpression(expressionString);
 	}
 
 	/**
