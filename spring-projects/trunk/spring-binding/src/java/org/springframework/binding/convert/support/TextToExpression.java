@@ -20,6 +20,7 @@ import java.util.Map;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.util.Assert;
 
 /**
@@ -62,6 +63,11 @@ public class TextToExpression extends AbstractConverter {
 	}
 
 	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
-		return getExpressionParser().parseExpression((String)source);
+		String expressionString = (String)source;
+		if (getExpressionParser().isDelimitedExpression(expressionString)) {
+			return getExpressionParser().parseExpression((String)source);
+		} else {
+			return new StaticExpression(expressionString);
+		}
 	}
 }
