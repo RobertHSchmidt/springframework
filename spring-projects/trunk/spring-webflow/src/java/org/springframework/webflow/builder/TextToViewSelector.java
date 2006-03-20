@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.support.CompositeStringExpression;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.NullViewSelector;
 import org.springframework.webflow.ViewSelector;
@@ -112,12 +111,12 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		}
 		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
-			Expression urlExpr = (Expression)fromStringTo(CompositeStringExpression.class).execute(externalUrl);
+			Expression urlExpr = (Expression)fromStringTo(Expression.class).execute(externalUrl);
 			return new ExternalRedirectSelector(urlExpr);
 		}
 		else if (encodedView.startsWith(FLOW_REDIRECT_PREFIX)) {
 			String flowRedirect = encodedView.substring(FLOW_REDIRECT_PREFIX.length());
-			Expression redirectExpr = (Expression)fromStringTo(CompositeStringExpression.class).execute(flowRedirect);
+			Expression redirectExpr = (Expression)fromStringTo(Expression.class).execute(flowRedirect);
 			return new FlowRedirectSelector(redirectExpr);
 		}
 		else if (encodedView.startsWith(BEAN_PREFIX)) {
