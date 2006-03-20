@@ -7,7 +7,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.convert.support.TextToExpression;
-import org.springframework.binding.convert.support.TextToExpressions;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.method.ClassMethodKey;
 import org.springframework.binding.method.MethodSignature;
@@ -182,7 +181,6 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 			service.addConverter(new TextToViewSelector(this));
 			service.addConverter(new TextToTransitionTargetStateResolver(this));
 			service.addConverter(new TextToExpression(getExpressionParser()));
-			service.addConverter(new TextToExpressions(getExpressionParser()));
 			service.addConverter(new TextToMethodSignature(service));
 			setConversionService(service);
 		}

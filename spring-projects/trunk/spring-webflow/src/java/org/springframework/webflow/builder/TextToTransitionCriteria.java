@@ -86,7 +86,7 @@ public class TextToTransitionCriteria extends AbstractConverter {
 				|| WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
 			return WildcardTransitionCriteria.INSTANCE;
 		}
-		else if (flowArtifactFactory.getExpressionParser().isExpression(encodedCriteria)) {
+		else if (flowArtifactFactory.getExpressionParser().isDelimitedExpression(encodedCriteria)) {
 			Expression expression = flowArtifactFactory.getExpressionParser().parseExpression(encodedCriteria);
 			return createBooleanExpressionTransitionCriteria(expression);
 		}

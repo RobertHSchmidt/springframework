@@ -72,7 +72,7 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 
 	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
 		String encodedCriteria = (String)source;
-		if (flowArtifactFactory.getExpressionParser().isExpression(encodedCriteria)) {
+		if (flowArtifactFactory.getExpressionParser().isDelimitedExpression(encodedCriteria)) {
 			throw new UnsupportedOperationException("Target state resolver expressions are not yet supported");
 		}
 		else if (encodedCriteria.startsWith(BEAN_PREFIX)) {
