@@ -2,6 +2,7 @@ package org.springframework.webflow.support;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionControlContext;
@@ -39,7 +40,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		};
 		state1.addTransition(new Transition(to("end")));
 		EndState state2 = new EndState(flow, "end");
-		state2.setViewSelector(new ApplicationViewSelector("view"));
+		state2.setViewSelector(new ApplicationViewSelector(new StaticExpression("view")));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		handler.add(MyCustomException.class, "end");
 		flow.addExceptionHandler(handler);
@@ -57,7 +58,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		};
 		state1.addTransition(new Transition(to("end")));
 		EndState state2 = new EndState(flow, "end");
-		state2.setViewSelector(new ApplicationViewSelector("view"));
+		state2.setViewSelector(new ApplicationViewSelector(new StaticExpression("view")));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		handler.add(MyCustomException.class, "end");
 		state1.addExceptionHandler(handler);

@@ -18,6 +18,7 @@ package org.springframework.webflow;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.OgnlExpressionParser;
+import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.util.StringUtils;
@@ -205,7 +206,7 @@ public class StateTests extends TestCase {
 	}
 
 	public static ViewSelector view(String viewName) {
-		return new ApplicationViewSelector(viewName);
+		return new ApplicationViewSelector(new StaticExpression(viewName));
 	}
 
 	public static class InputOutputMapper implements FlowAttributeMapper {

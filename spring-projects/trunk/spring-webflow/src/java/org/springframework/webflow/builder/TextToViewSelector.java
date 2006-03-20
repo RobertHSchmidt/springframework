@@ -107,7 +107,8 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		}
 		if (encodedView.startsWith(REDIRECT_PREFIX)) {
 			String viewName = encodedView.substring(REDIRECT_PREFIX.length());
-			return new ApplicationViewSelector(viewName, true);
+			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(viewName);
+			return new ApplicationViewSelector(viewNameExpr, true);
 		}
 		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
@@ -124,7 +125,8 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 			return flowArtifactFactory.getViewSelector(id);
 		}
 		else {
-			return new ApplicationViewSelector(encodedView);
+			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(encodedView);
+			return new ApplicationViewSelector(viewNameExpr, true);
 		}
 	}
 }

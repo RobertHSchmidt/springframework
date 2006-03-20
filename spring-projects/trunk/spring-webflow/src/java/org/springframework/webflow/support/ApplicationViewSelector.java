@@ -16,7 +16,9 @@
 package org.springframework.webflow.support;
 
 import java.io.Serializable;
+import java.util.Collections;
 
+import org.springframework.binding.expression.Expression;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
@@ -24,11 +26,13 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
 
 /**
- * Simple view selector that makes an {@link ApplicationView} with the
- * same view name each time. This factory will treat all attributes returned
- * from calling {@link RequestContext#getModel()} as the application model
- * exposed to the view during rendering. This is typically the union of
- * attributes in request, flow, and conversation scope.
+ * Simple view selector that makes an {@link ApplicationView} selection using a
+ * view name expression.
+ * <p>
+ * This factory will treat all attributes returned from calling
+ * {@link RequestContext#getModel()} as the application model exposed to the
+ * view during rendering. This is typically the union of attributes in request,
+ * flow, and conversation scope.
  * <p>
  * This selector also supports setting a <i>requestConversationRedirect</i>
  * flag that will trigger a {@link ConversationRedirect} to the
@@ -40,9 +44,9 @@ import org.springframework.webflow.ViewSelector;
 public class ApplicationViewSelector implements ViewSelector, Serializable {
 
 	/**
-	 * The static view name to render.
+	 * The view name to render.
 	 */
-	private String viewName;
+	private Expression viewName;
 
 	/**
 	 * A flag indicating if a "redirect to conversation" should be requested.
@@ -55,35 +59,29 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	/**
 	 * Creates a view descriptor creator that will produce view descriptors
 	 * requesting that the specified view is rendered.
-	 * @param viewName the view name
+	 * @param viewName the view name expression
 	 */
-	public ApplicationViewSelector(String viewName) {
-		setViewName(viewName);
+	public ApplicationViewSelector(Expression viewName) {
+		this(viewName, false);
 	}
 
 	/**
 	 * Creates a view descriptor creator that will produce view descriptors
 	 * requesting that the specified view is rendered.
-	 * @param viewName the view name
+	 * @param viewName the view name expression
+	 * @param requestConversationRedirect indicates if a conversation redirect
+	 * should be made
 	 */
-	public ApplicationViewSelector(String viewName, boolean requestConversationRedirect) {
-		setViewName(viewName);
-		setRequestConversationRedirect(requestConversationRedirect);
+	public ApplicationViewSelector(Expression viewName, boolean requestConversationRedirect) {
+		Assert.notNull(viewName, "The view name expression is required");
+		this.viewName = viewName;
 	}
 
 	/**
 	 * Returns the name of the view that should be rendered.
 	 */
-	public String getViewName() {
+	public Expression getViewName() {
 		return viewName;
-	}
-
-	/**
-	 * Set the name of the view that should be rendered.
-	 */
-	public void setViewName(String viewName) {
-		Assert.hasText(viewName, "The view name is required");
-		this.viewName = viewName;
 	}
 
 	/**
@@ -94,16 +92,9 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 		return requestConversationRedirect;
 	}
 
-	/**
-	 * Sets whether or not this view selection will request a "redirect to
-	 * conversation".
-	 */
-	public void setRequestConversationRedirect(boolean requestConversationRedirect) {
-		this.requestConversationRedirect = requestConversationRedirect;
-	}
-
 	public ViewSelection makeSelection(RequestContext context) {
-		ApplicationView view = new ApplicationView(getViewName(), context.getModel().getMap());
+		String viewName = (String)getViewName().evaluateAgainst(context, Collections.EMPTY_MAP);
+		ApplicationView view = new ApplicationView(viewName, context.getModel().getMap());
 		if (isRequestConversationRedirect()) {
 			return new ConversationRedirect(view);
 		}

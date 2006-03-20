@@ -17,6 +17,7 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.webflow.action.TestMultiAction;
 import org.springframework.webflow.builder.MyCustomException;
 import org.springframework.webflow.support.ApplicationView;
@@ -37,10 +38,10 @@ public class FlowTests extends TestCase {
 	private Flow createSimpleFlow() {
 		flow = new Flow("myFlow");
 		ViewState state1 = new ViewState(flow, "myState1");
-		state1.setViewSelector(new ApplicationViewSelector("myView"));
+		state1.setViewSelector(new ApplicationViewSelector(new StaticExpression("myView")));
 		state1.addTransition(new Transition(to("myState2")));
 		EndState state2 = new EndState(flow, "myState2");
-		state2.setViewSelector(new ApplicationViewSelector("myView2"));
+		state2.setViewSelector(new ApplicationViewSelector(new StaticExpression("myView2")));
 		return flow;
 	}
 
@@ -153,13 +154,13 @@ public class FlowTests extends TestCase {
 		assertEquals(1, inlined.length);
 		assertSame(flow.getInlineFlows()[0], inline);
 	}
-	
+
 	public void testAddGlobalTransition() {
 		Transition t = new Transition(new StaticTargetStateResolver("myState2"));
 		flow.addGlobalTransition(t);
 		assertSame(t, flow.getGlobalTransitionSet().toArray()[0]);
 	}
-	
+
 	public void testStart() {
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		flow.start(context, new AttributeMap());

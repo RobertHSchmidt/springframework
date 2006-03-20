@@ -13,7 +13,7 @@ public class SimpleFlow extends Flow {
 		super("simpleFlow");
 
 		ViewState state1 = new ViewState(this, "view");
-		state1.setViewSelector(new ApplicationViewSelector("view"));
+		state1.setViewSelector(new ApplicationViewSelector(new StaticExpression("view")));
 		state1.addTransition(new Transition(new StaticTargetStateResolver("end")));
 
 		EndState state2 = new EndState(this, "end");

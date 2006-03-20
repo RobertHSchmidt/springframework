@@ -17,6 +17,7 @@ package org.springframework.webflow.execution;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AttributeMap;
@@ -198,6 +199,6 @@ public class FlowExecutionTests extends TestCase {
 	}
 
 	public static ViewSelector view(String viewName) {
-		return new ApplicationViewSelector(viewName);
+		return new ApplicationViewSelector(new StaticExpression(viewName));
 	}
 }
