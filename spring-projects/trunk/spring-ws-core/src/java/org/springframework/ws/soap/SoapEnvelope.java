@@ -17,17 +17,17 @@
 package org.springframework.ws.soap;
 
 /**
- * Represents the <code>Envelope</code> element in a SOAP message. The header contains the <code>SoapHeader</code> and
- * <code>SoapBody</code>.
+ * Represents the <code>Envelope</code> element in a SOAP message. The header contains the optional
+ * <code>SoapHeader</code> and <code>SoapBody</code>.
  *
  * @author Arjen Poutsma
  */
 public interface SoapEnvelope extends SoapElement {
 
     /**
-     * Returns the <code>SoapHeader</code>.
+     * Returns the <code>SoapHeader</code>. Returns <code>null</code> if no header is present.
      *
-     * @return the <code>SoapHeader</code>
+     * @return the <code>SoapHeader</code>, or <code>null</code>
      */
     SoapHeader getHeader();
 
