@@ -47,17 +47,6 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	public static final String NAME_ATTRIBUTE = "name";
 
 	/**
-	 * The action execution method attribute ("method").
-	 * <p>
-	 * The method property is a hint about what method should be invoked; e.g
-	 * the name of a specific method on a
-	 * <code>{@link org.springframework.webflow.action.MultiAction}</code>.
-	 * <p>
-	 * @see ActionState
-	 */
-	public static final String METHOD_ATTRIBUTE = "method";
-
-	/**
 	 * The target action to execute.
 	 */
 	private Action targetAction;
@@ -68,7 +57,6 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @see #setCaption(String)
 	 * @see #setDescription(String)
 	 * @see #setName(String)
-	 * @see #setMethod(String)
 	 */
 	public AnnotatedAction() {
 
@@ -134,23 +122,6 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 */
 	public boolean isNamed() {
 		return StringUtils.hasText(getName());
-	}
-
-	/**
-	 * Returns the name of the action method to invoke when the target action is
-	 * executed.
-	 */
-	public String getMethod() {
-		return (String)getAttributeMap().getString(METHOD_ATTRIBUTE);
-	}
-
-	/**
-	 * Sets the name of the action method to invoke when the target action is
-	 * executed.
-	 * @param method the action method name.
-	 */
-	public void setMethod(String method) {
-		getAttributeMap().put(METHOD_ATTRIBUTE, method);
 	}
 
 	public Event execute(RequestContext context) throws Exception {

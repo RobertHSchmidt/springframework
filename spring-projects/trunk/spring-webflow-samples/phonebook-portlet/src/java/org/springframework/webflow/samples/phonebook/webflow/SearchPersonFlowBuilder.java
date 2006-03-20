@@ -15,12 +15,11 @@
  */
 package org.springframework.webflow.samples.phonebook.webflow;
 
-import org.springframework.webflow.Action;
-import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.FormAction;
+import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilderException;
@@ -57,15 +56,14 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
-		Action searchFormAction = createSearchFormAction();
+		MultiAction searchFormAction = createSearchFormAction();
 		ViewState displayCriteria = addViewState(ENTER_CRITERIA, "searchCriteria", transition(on("search"),
-				to(EXECUTE_SEARCH), ifSuccessful(method("bindAndValidate", searchFormAction))));
-		displayCriteria.addEntryAction(method("setupForm", searchFormAction));
+				to(EXECUTE_SEARCH), ifSuccessful(invoke("bindAndValidate", searchFormAction))));
+		displayCriteria.addEntryAction(invoke("setupForm", searchFormAction));
 
 		// execute query
-		AnnotatedAction searchAction = method("search(${flowScope.searchCriteria})", action("phonebook"));
-		searchAction.setResultName("results");
-		addActionState(EXECUTE_SEARCH, searchAction, transition(on(success()), to(DISPLAY_RESULTS)));
+		addActionState(EXECUTE_SEARCH, action("phonebook", method("search(${flowScope.searchCriteria})")), transition(
+				on(success()), to(DISPLAY_RESULTS)));
 
 		// view results
 		addViewState(DISPLAY_RESULTS, "searchResults", new Transition[] {
@@ -73,7 +71,8 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 		// view details for selected user id
 		DefaultFlowAttributeMapper idMapper = new DefaultFlowAttributeMapper();
-		idMapper.addInputMapping(mapping().source("requestParameters.id").target("id").from(String.class).to(Long.class).value());
+		idMapper.addInputMapping(mapping().source("requestParameters.id").target("id").from(String.class)
+				.to(Long.class).value());
 		addSubflowState(BROWSE_DETAILS, flow(DETAIL_FLOW), idMapper, transition(on(finish()), to(EXECUTE_SEARCH)));
 
 		// end - an error occured

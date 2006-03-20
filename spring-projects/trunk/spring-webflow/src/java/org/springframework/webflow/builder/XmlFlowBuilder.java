@@ -88,8 +88,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *        &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *        &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *         &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *         &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -697,7 +697,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)
 				&& getLocalFlowArtifactFactory().isMultiAction(element.getAttribute(BEAN_ATTRIBUTE))) {
-			action.setMethod(element.getAttribute(METHOD_ATTRIBUTE));
+			action.getAttributeMap().put(MultiAction.METHOD_ATTRIBUTE, element.getAttribute(METHOD_ATTRIBUTE));
 		}
 		action.getAttributeMap().putAll(parseAttributes(element));
 		action.setTargetAction(parseAction(element));
@@ -724,8 +724,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			resultScope = (ScopeType)fromStringTo(ScopeType.class)
 					.execute(element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
 		}
-		BeanInvokingActionParameters actionParameters = new BeanInvokingActionParameters(actionId, method, resultName,
-				resultScope, null, null);
+		BeanInvokingActionParameters actionParameters = new BeanInvokingActionParameters(actionId,
+				new MethodInfo(method, resultName, resultScope), null, null);
 		return getLocalFlowArtifactFactory().getAction(actionParameters);
 	}
 

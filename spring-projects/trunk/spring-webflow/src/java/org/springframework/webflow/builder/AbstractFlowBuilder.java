@@ -16,6 +16,7 @@
 package org.springframework.webflow.builder;
 
 import org.springframework.binding.mapping.MappingBuilder;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
@@ -31,6 +32,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.ActionTransitionCriteria;
 
 /**
@@ -44,27 +46,26 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- *     public void buildStates() {
- *              
- *         // get customer information
- *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
- *             on(success(), to(&quot;displayDetails&quot;)));
- *                      
- *         // view customer information               
- *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *             on(submit(), to(&quot;bindAndValidate&quot;));
- *                  
- *         // bind and validate customer information updates 
- *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
- *             new Transition[] {
- *                 on(error(), to(&quot;displayDetails&quot;)),
- *                 on(success(), to(&quot;finish&quot;))
- *         });
- *                      
- *         // finish
- *         addEndState(&quot;finish&quot;);
- *     }
- * }
+ * public void buildStates() {
+ *                   
+ *              // get customer information
+ *              addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
+ *                  on(success(), to(&quot;displayDetails&quot;)));
+ *                           
+ *              // view customer information               
+ *              addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *                  on(submit(), to(&quot;bindAndValidate&quot;));
+ *                       
+ *              // bind and validate customer information updates 
+ *              addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
+ *                  new Transition[] {
+ *                      on(error(), to(&quot;displayDetails&quot;)),
+ *                      on(success(), to(&quot;finish&quot;))
+ *              });
+ *                           
+ *              // finish
+ *              addEndState(&quot;finish&quot;);
+ *          }}
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
@@ -166,7 +167,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		mapping.setConversionService(getFlowArtifactFactory().getConversionService());
 		return mapping;
 	}
-	
+
 	/**
 	 * Hook subclasses may override to provide additional properties for the
 	 * flow built by this builder. Returns <code>null</code> by default.
@@ -456,19 +457,70 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
 	protected Action action(String id) throws FlowArtifactException {
-		return getFlowArtifactFactory().getAction(new FlowArtifactParameters(id));
+		return action(new FlowArtifactParameters(id));
 	}
 
 	/**
-	 * Creates an annotated action with a single property that indicates which
-	 * method should be invoked on the target action when the state is entered.
-	 * @param methodName the method name to invoke on the action</code>
-	 * @return the annotated action
+	 * Request that the action with the specified id be executed when the action
+	 * state being built is entered. Simply looks the action up by name and
+	 * returns it.
+	 * @param parameters parameters that may affect how the action is resolved
+	 * or constructed.
+	 * @return the action
+	 * @throws FlowArtifactException the action could not be resolved
 	 */
-	protected AnnotatedAction method(String methodName, Action action) {
-		AnnotatedAction annotatedAction = new AnnotatedAction(action);
-		annotatedAction.setMethod(methodName);
-		return annotatedAction;
+	protected Action action(FlowArtifactParameters parameters) throws FlowArtifactException {
+		return getFlowArtifactFactory().getAction(parameters);
+	}
+
+	/**
+	 * Request that the method on the action with the specified id be executed
+	 * when the action state being built is entered. Simply looks the action up
+	 * by name and returns it.
+	 * @param id the action id
+	 * @param method the method signature
+	 * @return the action
+	 * @throws FlowArtifactException the action could not be resolved
+	 */
+	protected Action action(String id, MethodSignature method) throws FlowArtifactException {
+		return action(id, new MethodInfo(method));
+	}
+
+	/**
+	 * Request that the method on the action with the specified id be executed
+	 * when the action state being built is entered. Simply looks the action up
+	 * by name and returns it.
+	 * @param id the action id
+	 * @param methodInfo the method info
+	 * @return the action
+	 * @throws FlowArtifactException the action could not be resolved
+	 */
+	protected Action action(String id, MethodInfo methodInfo) throws FlowArtifactException {
+		return action(new BeanInvokingActionParameters(id, methodInfo, null, null));
+	}
+
+	/**
+	 * Convert the encoded method signature string to a {@link MethodSignature}
+	 * object.
+	 * @param method the encoded method signature
+	 * @return the method signature
+	 */
+	protected MethodSignature method(String method) {
+		return (MethodSignature)fromStringTo(MethodSignature.class).execute(method);
+	}
+
+	/**
+	 * Creates an annotated action decorator that instructs the specified method
+	 * be invoked on the multi action when it is executed.
+	 * @param methodName the name of the method on the multi action instance
+	 * @param multiAction the multi action
+	 * @return the annotated action that when invoked sets up a context property
+	 * used by the multi action to instruct it with what method to invoke
+	 */
+	protected AnnotatedAction invoke(String methodName, MultiAction multiAction) throws FlowArtifactException {
+		AnnotatedAction action = new AnnotatedAction(multiAction);
+		action.getAttributeMap().put(MultiAction.METHOD_ATTRIBUTE, methodName);
+		return action;
 	}
 
 	/**

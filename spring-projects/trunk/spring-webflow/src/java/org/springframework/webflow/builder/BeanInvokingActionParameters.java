@@ -5,36 +5,30 @@ import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.ScopeType;
 
 public class BeanInvokingActionParameters extends FlowArtifactParameters {
-	private MethodSignature method;
-
-	private String resultName;
-
-	private ScopeType resultScope;
+	private MethodInfo methodInfo;
 
 	private ScopeType beanScope;
-	
-	public BeanInvokingActionParameters(String id, MethodSignature method, String resultName,
-			ScopeType resultScope, ScopeType beanScope, AttributeCollection customAttributes) {
+
+	public BeanInvokingActionParameters(String id, MethodInfo methodInfo, ScopeType beanScope,
+			AttributeCollection customAttributes) {
 		super(id, customAttributes);
-		this.method = method;
-		this.resultName = resultName;
-		this.resultScope = resultScope;
+		this.methodInfo = methodInfo;
 		this.beanScope = beanScope;
 	}
 
 	public MethodSignature getMethod() {
-		return method;
+		return methodInfo.getMethod();
 	}
 
 	public String getResultName() {
-		return resultName;
+		return methodInfo.getResultName();
 	}
 
 	public ScopeType getResultScope() {
-		return resultScope;
+		return methodInfo.getResultScope();
 	}
 
 	public ScopeType getBeanScope() {
 		return beanScope;
-	}	
+	}
 }

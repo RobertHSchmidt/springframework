@@ -24,7 +24,7 @@
 	
 	<end-state id="endState1"/>
 
-	<exception-handler hjhjbean="customExceptionHandler"/>
+	<exception-handler bean="customExceptionHandler"/>
 
 	<import resource="testFlow3Context.xml"/>
 

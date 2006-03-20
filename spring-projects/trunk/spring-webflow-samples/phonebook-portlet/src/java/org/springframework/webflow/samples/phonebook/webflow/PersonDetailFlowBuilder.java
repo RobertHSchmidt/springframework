@@ -15,13 +15,11 @@
  */
 package org.springframework.webflow.samples.phonebook.webflow;
 
-import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.support.DefaultFlowAttributeMapper;
-
 
 /**
  * Java-based flow builder that builds the person details flow, exactly like it
@@ -48,9 +46,7 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
-		AnnotatedAction detailsAction = method("getPerson(${flowScope.id})", action("phonebook"));
-		detailsAction.setResultName("person");
-		addActionState(GET_DETAILS, detailsAction, transition(on(success()), to(DISPLAY_DETAILS)));
+		addActionState(GET_DETAILS, action("phonebook", method("getPerson(${flowScope.id})")), transition(on(success()), to(DISPLAY_DETAILS)));
 
 		// view the person details
 		addViewState(DISPLAY_DETAILS, "details", new Transition[] { transition(on(back()), to("finish")),
@@ -58,7 +54,8 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 		// view details for selected collegue
 		DefaultFlowAttributeMapper idMapper = new DefaultFlowAttributeMapper();
-		idMapper.addInputMapping(mapping().source("externalContext.requestParameterMap.id").target("id").from(String.class).to(Long.class).value());
+		idMapper.addInputMapping(mapping().source("externalContext.requestParameterMap.id").target("id").from(
+				String.class).to(Long.class).value());
 		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow(THIS_FLOW), idMapper, transition(on(finish()), to(GET_DETAILS)));
 
 		// end
