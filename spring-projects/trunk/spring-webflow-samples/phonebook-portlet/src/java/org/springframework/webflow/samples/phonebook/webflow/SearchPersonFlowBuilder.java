@@ -40,16 +40,6 @@ import org.springframework.webflow.support.DefaultFlowAttributeMapper;
  */
 public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
-	private static final String ENTER_CRITERIA = "enterCriteria";
-
-	private static final String EXECUTE_SEARCH = "executeSearch";
-
-	private static final String DISPLAY_RESULTS = "displayResults";
-
-	private static final String BROWSE_DETAILS = "browseDetails";
-
-	private static final String DETAIL_FLOW = "detail-flow";
-
 	public SearchPersonFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
 		super(flowArtifactFactory);
 	}
@@ -57,23 +47,23 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
 		MultiAction searchFormAction = createSearchFormAction();
-		ViewState displayCriteria = addViewState(ENTER_CRITERIA, "searchCriteria", transition(on("search"),
-				to(EXECUTE_SEARCH), ifSuccessful(invoke("bindAndValidate", searchFormAction))));
+		ViewState displayCriteria = addViewState("enterCriteria", "searchCriteria", transition(on("search"),
+				to("executeSearch"), ifSuccessful(invoke("bindAndValidate", searchFormAction))));
 		displayCriteria.addEntryAction(invoke("setupForm", searchFormAction));
 
 		// execute query
-		addActionState(EXECUTE_SEARCH, action("phonebook", method("search(${flowScope.searchCriteria})")), transition(
-				on(success()), to(DISPLAY_RESULTS)));
+		addActionState("executeSearch", action("phonebook", method("search(${flowScope.searchCriteria})")), transition(
+				on(success()), to("displayResults")));
 
 		// view results
-		addViewState(DISPLAY_RESULTS, "searchResults", new Transition[] {
-				transition(on("newSearch"), to(ENTER_CRITERIA)), transition(on(select()), to(BROWSE_DETAILS)) });
+		addViewState("displayResults", "searchResults", new Transition[] {
+				transition(on("newSearch"), to("enterCriteria")), transition(on(select()), to("browseDetails")) });
 
 		// view details for selected user id
 		DefaultFlowAttributeMapper idMapper = new DefaultFlowAttributeMapper();
 		idMapper.addInputMapping(mapping().source("requestParameters.id").target("id").from(String.class)
 				.to(Long.class).value());
-		addSubflowState(BROWSE_DETAILS, flow(DETAIL_FLOW), idMapper, transition(on(finish()), to(EXECUTE_SEARCH)));
+		addSubflowState("browseDetails", flow("detail-flow"), idMapper, transition(on(finish()), to("executeSearch")));
 
 		// end - an error occured
 		addEndState(error(), "error");
