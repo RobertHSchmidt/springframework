@@ -49,7 +49,7 @@ public interface Attachment {
      * closing the stream.
      *
      * @return the contents of the file as stream, or an empty stream if empty
-     * @throws IOException in case of access errors (if the temporary store fails)
+     * @throws IOException in case of access I/O errors
      */
     InputStream getInputStream() throws IOException;
 
