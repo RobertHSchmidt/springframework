@@ -21,8 +21,8 @@ import ognl.OgnlException;
 import ognl.PropertyAccessor;
 
 import org.springframework.binding.expression.support.OgnlExpressionParser;
+import org.springframework.binding.util.MapAdaptable;
 import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.MapAdaptable;
 
 /**
  * An extension of {@link OgnlExpressionParser} that registers webflow-specific

@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.builder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.springframework.webflow.Event;
@@ -42,7 +45,7 @@ public class TextToViewSelectorTests extends TestCase {
 	}
 
 	public void testApplicationView() {
-		ViewSelector selector = (ViewSelector)converter.convert("myView");
+		ViewSelector selector = (ViewSelector)viewSelector(TextToViewSelector.VIEW_STATE_TYPE, "myView");
 		RequestContext context = getRequestContext();
 		ApplicationView view = (ApplicationView)selector.makeSelection(context);
 		assertEquals("myView", view.getViewName());
@@ -50,7 +53,7 @@ public class TextToViewSelectorTests extends TestCase {
 	}
 
 	public void testConversationRedirect() {
-		ViewSelector selector = (ViewSelector)converter.convert("redirect:myView");
+		ViewSelector selector = (ViewSelector)viewSelector(TextToViewSelector.VIEW_STATE_TYPE, "redirect:myView");
 		RequestContext context = getRequestContext();
 		ConversationRedirect redirect = (ConversationRedirect)selector.makeSelection(context);
 		assertEquals("myView", redirect.getApplicationView().getViewName());
@@ -58,7 +61,7 @@ public class TextToViewSelectorTests extends TestCase {
 	}
 	
 	public void testFlowRedirect() {
-		ViewSelector selector = (ViewSelector)converter.convert("flowRedirect:myFlow");
+		ViewSelector selector = (ViewSelector)viewSelector(TextToViewSelector.END_STATE_TYPE, "flowRedirect:myFlow");
 		RequestContext context = getRequestContext();
 		FlowRedirect redirect = (FlowRedirect)selector.makeSelection(context);
 		assertEquals("myFlow", redirect.getFlowId());
@@ -66,7 +69,7 @@ public class TextToViewSelectorTests extends TestCase {
 	}
 
 	public void testFlowRedirectWithModel() {
-		ViewSelector selector = (ViewSelector)converter.convert("flowRedirect:myFlow?foo=${flowScope.foo}&bar=${requestScope.oven}");
+		ViewSelector selector = (ViewSelector)viewSelector(TextToViewSelector.END_STATE_TYPE, "flowRedirect:myFlow?foo=${flowScope.foo}&bar=${requestScope.oven}");
 		RequestContext context = getRequestContext();
 		FlowRedirect redirect = (FlowRedirect)selector.makeSelection(context);
 		assertEquals("myFlow", redirect.getFlowId());
@@ -76,8 +79,7 @@ public class TextToViewSelectorTests extends TestCase {
 	}
 
 	public void testExternalRedirect() {
-		ViewSelector selector = (ViewSelector)converter
-				.convert("externalRedirect:myUrl.htm?foo=${flowScope.foo}&bar=${requestScope.oven}");
+		ViewSelector selector = (ViewSelector)viewSelector(TextToViewSelector.END_STATE_TYPE, "externalRedirect:myUrl.htm?foo=${flowScope.foo}&bar=${requestScope.oven}");
 		RequestContext context = getRequestContext();
 		ExternalRedirect view = (ExternalRedirect)selector.makeSelection(context);
 		assertEquals("myUrl.htm?foo=bar&bar=mit", view.getUrl());
@@ -92,5 +94,16 @@ public class TextToViewSelectorTests extends TestCase {
 		ctx.getFlowScope().put("boo", new Integer(3));
 		ctx.setLastEvent(new Event(this, "sample"));
 		return ctx;
+	}
+	
+	/**
+	 * Turn given view name into a corresponding view selector.
+	 * @param viewName the view name (might be encoded)
+	 * @return the corresponding view selector
+	 */
+	protected ViewSelector viewSelector(String stateType, String viewName) {
+		Map context = new HashMap(1, 1);
+		context.put(TextToViewSelector.STATE_TYPE_CONTEXT_PARAMETER, stateType);
+		return (ViewSelector)converter.convert(viewName, context);
 	}
 }

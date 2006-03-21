@@ -15,10 +15,9 @@
  */
 package org.springframework.webflow.builder;
 
-import java.util.Map;
-
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.NullViewSelector;
 import org.springframework.webflow.ViewSelector;
@@ -55,6 +54,24 @@ import org.springframework.webflow.support.FlowRedirectSelector;
  * @author Erwin Vervaet
  */
 public class TextToViewSelector extends ConversionServiceAwareConverter {
+
+	/**
+	 * The name of the context parameter indicating which state type the
+	 * conversion operation applies.
+	 */
+	public static final String STATE_TYPE_CONTEXT_PARAMETER = "stateType";
+
+	/**
+	 * Conversion context parameter value constant indicating the encoded view
+	 * selector applies to a view state.
+	 */
+	public static final String VIEW_STATE_TYPE = "view";
+
+	/**
+	 * Conversion context parameter value constant indicating the encoded view
+	 * selector applies to an end state.
+	 */
+	public static final String END_STATE_TYPE = "end";
 
 	/**
 	 * Prefix used when the encoded view name wants to specify that a redirect
@@ -100,11 +117,25 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		return new Class[] { ViewSelector.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
 		String encodedView = (String)source;
 		if (!StringUtils.hasText(encodedView)) {
 			return NullViewSelector.INSTANCE;
 		}
+		String stateType = context.getRequiredString(STATE_TYPE_CONTEXT_PARAMETER);
+		if (stateType.equals(VIEW_STATE_TYPE)) {
+			return convertEncodedViewStateSelector(encodedView);
+		}
+		else if (stateType.equals(END_STATE_TYPE)) {
+			return convertEncodedEndStateSelector(encodedView);
+		}
+		else {
+			throw new IllegalArgumentException("No state context provided; unable to convert encoded view selector '"
+					+ encodedView + "'");
+		}
+	}
+
+	protected ViewSelector convertEncodedViewStateSelector(String encodedView) {
 		if (encodedView.startsWith(REDIRECT_PREFIX)) {
 			String viewName = encodedView.substring(REDIRECT_PREFIX.length());
 			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(viewName);
@@ -113,7 +144,33 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
 			Expression urlExpr = (Expression)fromStringTo(Expression.class).execute(externalUrl);
-			return new ExternalRedirectSelector(urlExpr);
+			return new ExternalRedirectSelector(urlExpr, false);
+		}
+		else if (encodedView.startsWith(FLOW_REDIRECT_PREFIX)) {
+			String flowRedirect = encodedView.substring(FLOW_REDIRECT_PREFIX.length());
+			Expression redirectExpr = (Expression)fromStringTo(Expression.class).execute(flowRedirect);
+			return new FlowRedirectSelector(redirectExpr);
+		}
+		else if (encodedView.startsWith(BEAN_PREFIX)) {
+			String id = encodedView.substring(BEAN_PREFIX.length());
+			return flowArtifactFactory.getViewSelector(id);
+		}
+		else {
+			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(encodedView);
+			return new ApplicationViewSelector(viewNameExpr);
+		}
+	}
+
+	protected ViewSelector convertEncodedEndStateSelector(String encodedView) {
+		if (encodedView.startsWith(REDIRECT_PREFIX)) {
+			String externalUrl = encodedView.substring(REDIRECT_PREFIX.length());
+			Expression urlExpr = (Expression)fromStringTo(Expression.class).execute(externalUrl);
+			return new ExternalRedirectSelector(urlExpr, true);
+		}
+		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
+			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
+			Expression urlExpr = (Expression)fromStringTo(Expression.class).execute(externalUrl);
+			return new ExternalRedirectSelector(urlExpr, false);
 		}
 		else if (encodedView.startsWith(FLOW_REDIRECT_PREFIX)) {
 			String flowRedirect = encodedView.substring(FLOW_REDIRECT_PREFIX.length());

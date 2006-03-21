@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.core.style.StylerUtils;
 
 /**

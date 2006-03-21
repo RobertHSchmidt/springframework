@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow;
 
+import org.springframework.binding.util.MapAdaptable;
+
 /**
  * An interface for objects that manage the storage of attribute values.
  * 

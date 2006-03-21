@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.builder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.Action;
@@ -47,25 +50,25 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
  * public void buildStates() {
- *                   
- *              // get customer information
- *              addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
- *                  on(success(), to(&quot;displayDetails&quot;)));
- *                           
- *              // view customer information               
- *              addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *                  on(submit(), to(&quot;bindAndValidate&quot;));
- *                       
- *              // bind and validate customer information updates 
- *              addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
- *                  new Transition[] {
- *                      on(error(), to(&quot;displayDetails&quot;)),
- *                      on(success(), to(&quot;finish&quot;))
- *              });
- *                           
- *              // finish
- *              addEndState(&quot;finish&quot;);
- *          }}
+ *                     
+ *                // get customer information
+ *                addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
+ *                    on(success(), to(&quot;displayDetails&quot;)));
+ *                             
+ *                // view customer information               
+ *                addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *                    on(submit(), to(&quot;bindAndValidate&quot;));
+ *                         
+ *                // bind and validate customer information updates 
+ *                addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
+ *                    new Transition[] {
+ *                        on(error(), to(&quot;displayDetails&quot;)),
+ *                        on(success(), to(&quot;finish&quot;))
+ *                });
+ *                             
+ *                // finish
+ *                addEndState(&quot;finish&quot;);
+ *            }}
  * </pre>
  * 
  * What this Java-based FlowBuilder implementation does is add four states to a
@@ -255,7 +258,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected ViewState addViewState(String stateId, String viewName, Transition transition)
 			throws IllegalArgumentException {
-		return addViewState(stateId, viewSelector(viewName), new Transition[] { transition }, null);
+		return addViewState(stateId, viewSelector("view", viewName), new Transition[] { transition }, null);
 	}
 
 	/**
@@ -274,7 +277,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected ViewState addViewState(String stateId, String viewName, Transition[] transitions)
 			throws IllegalArgumentException {
-		return addViewState(stateId, viewSelector(viewName), transitions, null);
+		return addViewState(stateId, viewSelector(TextToViewSelector.VIEW_STATE_TYPE, viewName), transitions, null);
 	}
 
 	/**
@@ -294,7 +297,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected ViewState addViewState(String stateId, String viewName, Transition[] transitions,
 			AttributeCollection attributes) throws IllegalArgumentException {
-		return addViewState(stateId, viewSelector(viewName), transitions, attributes);
+		return addViewState(stateId, viewSelector(TextToViewSelector.VIEW_STATE_TYPE, viewName), transitions,
+				attributes);
 	}
 
 	/**
@@ -347,8 +351,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param viewName the view name (might be encoded)
 	 * @return the corresponding view selector
 	 */
-	protected ViewSelector viewSelector(String viewName) {
-		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName);
+	protected ViewSelector viewSelector(String stateType, String viewName) {
+		Map context = new HashMap(1, 1);
+		context.put(TextToViewSelector.STATE_TYPE_CONTEXT_PARAMETER, stateType);
+		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName, context);
 	}
 
 	/**
@@ -731,7 +737,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
 	protected EndState addEndState(String stateId, String viewName) throws IllegalArgumentException {
-		return addEndState(stateId, viewSelector(viewName), null, null);
+		return addEndState(stateId, viewSelector(TextToViewSelector.END_STATE_TYPE, viewName), null, null);
 	}
 
 	/**
@@ -746,7 +752,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws IllegalArgumentException the state id is not unique
 	 */
 	protected EndState addEndState(String stateId, String[] outputAttributeNames) throws IllegalArgumentException {
-		return addEndState(stateId, viewSelector(null), outputAttributeNames, null);
+		return addEndState(stateId, viewSelector(TextToViewSelector.END_STATE_TYPE, null), outputAttributeNames, null);
 	}
 
 	/**
@@ -762,7 +768,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected EndState addEndState(String stateId, String viewName, String[] outputAttributeNames)
 			throws IllegalArgumentException {
-		return addEndState(stateId, viewSelector(viewName), outputAttributeNames, null);
+		return addEndState(stateId, viewSelector(TextToViewSelector.END_STATE_TYPE, viewName), outputAttributeNames,
+				null);
 	}
 
 	/**

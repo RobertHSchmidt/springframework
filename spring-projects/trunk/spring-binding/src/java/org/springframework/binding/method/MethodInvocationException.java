@@ -25,14 +25,14 @@ import org.springframework.core.style.StylerUtils;
  * @author Keith Donald
  */
 public class MethodInvocationException extends NestedRuntimeException {
-	
+
 	/**
-	 * The method key. 
+	 * The method key.
 	 */
 	private ClassMethodKey methodKey;
 
 	/**
-	 * The method invocation argument values. 
+	 * The method invocation argument values.
 	 */
 	private Object[] arguments;
 
