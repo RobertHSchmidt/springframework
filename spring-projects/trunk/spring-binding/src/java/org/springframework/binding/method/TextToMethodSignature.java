@@ -15,11 +15,10 @@
  */
 package org.springframework.binding.method;
 
-import java.util.Map;
-
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.util.StringUtils;
 
 /**
@@ -65,7 +64,7 @@ public class TextToMethodSignature extends ConversionServiceAwareConverter {
 		return new Class[] { MethodSignature.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
 		String encodedMethodKey = (String)source;
 		encodedMethodKey = encodedMethodKey.trim();
 		int openParan = encodedMethodKey.indexOf('(');

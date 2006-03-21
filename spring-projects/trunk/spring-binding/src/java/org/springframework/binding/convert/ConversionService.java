@@ -25,8 +25,8 @@ package org.springframework.binding.convert;
 public interface ConversionService {
 
 	/**
-	 * Return all conversion executors capable of converting source objects 
-	 * of the the specified <code>sourceClass</code>.
+	 * Return all conversion executors capable of converting source objects of
+	 * the the specified <code>sourceClass</code>.
 	 * @param sourceClass the source class to convert from
 	 * @return the matching conversion executors
 	 */
@@ -58,7 +58,8 @@ public interface ConversionService {
 	 * target class name
 	 * @return the conversion executor
 	 */
-	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass, String targetAlias) throws ConversionException;
+	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass, String targetAlias)
+			throws ConversionException;
 
 	/**
 	 * Return the class with the specified alias.
