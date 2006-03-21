@@ -28,6 +28,7 @@ import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.ConversionServiceAware;
 import org.springframework.binding.convert.Converter;
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -242,7 +243,7 @@ public abstract class AbstractConversionService implements ConversionService {
 			this.targetClass = targetClass;
 		}
 
-		protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
+		protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
 			return source;
 		}
 

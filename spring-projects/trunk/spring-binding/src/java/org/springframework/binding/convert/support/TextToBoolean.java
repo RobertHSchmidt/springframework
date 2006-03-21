@@ -15,8 +15,7 @@
  */
 package org.springframework.binding.convert.support;
 
-import java.util.Map;
-
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.util.StringUtils;
 
 /**
@@ -63,7 +62,7 @@ public class TextToBoolean extends AbstractConverter {
 		return new Class[] { Boolean.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
 		String text = (String)source;
 		if (!StringUtils.hasText(text)) {
 			return null;

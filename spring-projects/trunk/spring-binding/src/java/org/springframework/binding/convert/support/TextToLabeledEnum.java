@@ -15,9 +15,8 @@
  */
 package org.springframework.binding.convert.support;
 
-import java.util.Map;
-
 import org.springframework.binding.format.support.LabeledEnumFormatter;
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.core.enums.LabeledEnum;
 
 /**
@@ -37,7 +36,7 @@ public class TextToLabeledEnum extends AbstractConverter {
 		return new Class[] { LabeledEnum.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
 		return labeledEnumFormatter.parseValue((String)source, targetClass);
 	}
 }

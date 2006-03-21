@@ -24,8 +24,8 @@ package org.springframework.binding.expression;
 public interface ExpressionParser {
 
 	/**
-	 * Is this expression string delimited in a manner that indicates it is a parseable expression?
-	 * For example ${expression}.
+	 * Is this expression string delimited in a manner that indicates it is a
+	 * parseable expression? For example ${expression}.
 	 * @param expressionString the proposed expression string
 	 * @return true if yes, false if not
 	 */

@@ -16,15 +16,16 @@ import org.springframework.util.Assert;
 /**
  * Evaluates a parsed ognl expression.
  * <p>
- * IMPLEMENTATION NOTE: ognl 2.6.7 expression objects do not respect equality properly, so the equality
- * operations defined within this class do not function properly.
+ * IMPLEMENTATION NOTE: ognl 2.6.7 expression objects do not respect equality
+ * properly, so the equality operations defined within this class do not
+ * function properly.
  * 
  * @author Keith Donald
  */
 class OgnlExpression implements PropertyExpression {
-	
+
 	/**
-	 * The expression. 
+	 * The expression.
 	 */
 	private Object expression;
 

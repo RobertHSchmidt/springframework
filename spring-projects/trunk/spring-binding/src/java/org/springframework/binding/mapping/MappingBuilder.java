@@ -16,6 +16,7 @@ import org.springframework.util.Assert;
  * 
  * <pre>
  * MappingBuilder mapping = new MappingBuilder();
+ * 
  * Mapping result = mapping.source(&quot;foo&quot;).target(&quot;bar&quot;).from(String.class).to(Long.class).value();
  * </pre>
  * 

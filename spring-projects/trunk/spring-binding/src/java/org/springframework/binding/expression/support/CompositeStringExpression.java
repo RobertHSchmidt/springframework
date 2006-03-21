@@ -12,9 +12,9 @@ import org.springframework.core.style.ToStringCreator;
  * @author Keith Donald
  */
 public class CompositeStringExpression implements Expression {
-	
+
 	/**
-	 * The expression array. 
+	 * The expression array.
 	 */
 	private Expression[] expressions;
 

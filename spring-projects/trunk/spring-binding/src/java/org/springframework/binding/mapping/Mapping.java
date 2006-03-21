@@ -94,13 +94,14 @@ public class Mapping implements AttributeMapper, Serializable {
 			return false;
 		}
 		Mapping other = (Mapping)o;
-		return sourceExpression.equals(other.sourceExpression) && targetPropertyExpression.equals(other.targetPropertyExpression);
+		return sourceExpression.equals(other.sourceExpression)
+				&& targetPropertyExpression.equals(other.targetPropertyExpression);
 	}
-	
+
 	public int hashCode() {
 		return sourceExpression.hashCode() + targetPropertyExpression.hashCode();
 	}
-	
+
 	public String toString() {
 		return new ToStringCreator(this).append(sourceExpression + " -> " + targetPropertyExpression).append(
 				"typeConverter", typeConverter).toString();

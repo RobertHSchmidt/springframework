@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.Converter;
+import org.springframework.binding.util.MapAccessor;
 
 /**
  * Base class for converters provided as a convenience to implementors.
@@ -43,8 +44,8 @@ public abstract class AbstractConverter implements Converter {
 	}
 
 	/**
-	 * Convenience convert method that converts the provided source to 
-	 * the target class specified with an empty conversion context.
+	 * Convenience convert method that converts the provided source to the
+	 * target class specified with an empty conversion context.
 	 * 
 	 * @param source The source to convert
 	 * @param targetClass the target class to convert the source to, must be one
@@ -56,7 +57,7 @@ public abstract class AbstractConverter implements Converter {
 	public Object convert(Object source, Class targetClass) throws ConversionException {
 		return convert(source, targetClass, Collections.EMPTY_MAP);
 	}
-	
+
 	/**
 	 * Convenience convert method that converts the provided source to the first
 	 * target object supported by this converter. Useful when a converter only
@@ -78,7 +79,7 @@ public abstract class AbstractConverter implements Converter {
 			if (context == null) {
 				context = Collections.EMPTY_MAP;
 			}
-			return doConvert(source, targetClass, context);
+			return doConvert(source, targetClass, new MapAccessor(context));
 		}
 		catch (ConversionException e) {
 			throw e;
@@ -102,6 +103,6 @@ public abstract class AbstractConverter implements Converter {
 	 * @throws Exception an exception occured, will be wrapped in a conversion
 	 * exception if necessary
 	 */
-	protected abstract Object doConvert(Object source, Class targetClass, Map context) throws Exception;
+	protected abstract Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception;
 
 }

@@ -17,10 +17,10 @@ package org.springframework.binding.convert.support;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Map;
 
 import org.springframework.binding.format.FormatterFactory;
 import org.springframework.binding.format.support.SimpleFormatterFactory;
+import org.springframework.binding.util.MapAccessor;
 
 /**
  * Converts textual representations of numbers to a <code>Number</code>
@@ -46,7 +46,7 @@ public class TextToNumber extends AbstractFormattingConverter {
 				BigInteger.class, BigDecimal.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
 		return getFormatterFactory().getNumberFormatter(targetClass).parseValue((String)source, targetClass);
 	}
 }

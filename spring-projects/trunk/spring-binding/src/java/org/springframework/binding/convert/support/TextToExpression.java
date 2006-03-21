@@ -15,12 +15,11 @@
  */
 package org.springframework.binding.convert.support;
 
-import java.util.Map;
-
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.expression.support.StaticExpression;
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.util.Assert;
 
 /**
@@ -62,11 +61,12 @@ public class TextToExpression extends AbstractConverter {
 		return new Class[] { Expression.class, PropertyExpression.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, Map context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
 		String expressionString = (String)source;
 		if (getExpressionParser().isDelimitedExpression(expressionString)) {
 			return getExpressionParser().parseExpression((String)source);
-		} else {
+		}
+		else {
 			return new StaticExpression(expressionString);
 		}
 	}
