@@ -17,6 +17,8 @@
 package org.springframework.ws.soap.saaj;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Result;
@@ -25,6 +27,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.ws.soap.Attachment;
 import org.springframework.ws.soap.SoapVersion;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
@@ -86,5 +90,37 @@ public class SaajSoapMessageTest extends XMLTestCase {
 
     public void testGetVersion() throws Exception {
         assertEquals("Invalid SOAP version", SoapVersion.SOAP_11, message.getVersion());
+    }
+
+    public void testGetAttachment() throws Exception {
+        String contents = "attachment contents";
+        AttachmentPart saajAttachment = saajMessage.createAttachmentPart(contents, "text/plain");
+        String contentId = "contentId";
+        saajAttachment.setContentId(contentId);
+        saajMessage.addAttachmentPart(saajAttachment);
+        Attachment attachment = message.getAttachment(contentId);
+        assertNotNull("No attachment returned", attachment);
+        assertEquals("Invalid Content Id", contentId, attachment.getId());
+    }
+
+    public void testGetAttachments() throws Exception {
+        String contents = "attachment contents";
+        AttachmentPart saajAttachment = saajMessage.createAttachmentPart(contents, "text/plain");
+        String contentId = "contentId";
+        saajAttachment.setContentId(contentId);
+        saajMessage.addAttachmentPart(saajAttachment);
+        Iterator iterator = message.getAttachments();
+        assertTrue("No attachments found", iterator.hasNext());
+        Attachment attachment = (Attachment) iterator.next();
+        assertNotNull("No attachment returned", attachment);
+    }
+
+    public void testAddAttachmentInputSource() throws Exception {
+        byte[] contents = "attachment contents".getBytes();
+        ByteArrayResource resource = new ByteArrayResource(contents);
+        Attachment attachment = message.addAttachment(resource, "text/plain");
+        assertNotNull("No attachment returned", attachment);
+        assertEquals("Invalid attachment count", 1, saajMessage.countAttachments());
+        assertEquals("Invalid content type", "text/plain", attachment.getContentType());
     }
 }

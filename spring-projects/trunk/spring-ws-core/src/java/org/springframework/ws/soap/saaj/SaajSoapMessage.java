@@ -16,11 +16,19 @@
 
 package org.springframework.ws.soap.saaj;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Locale;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.xml.namespace.QName;
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
@@ -36,10 +44,14 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 
+import org.springframework.core.io.InputStreamSource;
+import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.ws.soap.AbstractSoapMessage;
+import org.springframework.ws.soap.Attachment;
+import org.springframework.ws.soap.AttachmentException;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapEnvelope;
 import org.springframework.ws.soap.SoapFault;
@@ -121,6 +133,71 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         catch (SOAPException ex) {
             throw new SaajSoapMessageException("Could not write message to OutputStream: " + ex.getMessage(), ex);
         }
+    }
+
+    public Attachment getAttachment(String id) {
+        MimeHeaders mimeHeaders = new MimeHeaders();
+        mimeHeaders.addHeader("Content-Id", id);
+        Iterator iterator = saajMessage.getAttachments(mimeHeaders);
+        if (!iterator.hasNext()) {
+            return null;
+        }
+        else {
+            AttachmentPart saajAttachment = (AttachmentPart) iterator.next();
+            return new SaajAttachment(saajAttachment);
+        }
+    }
+
+    public Iterator getAttachments() {
+        Iterator saajAttachmentIterator = saajMessage.getAttachments();
+        return new SaajAttachmentIterator(saajAttachmentIterator);
+    }
+
+    public Attachment addAttachment(File file) throws AttachmentException {
+        Assert.notNull(file, "File must not be null");
+        FileDataSource dataSource = new FileDataSource(file);
+        AttachmentPart saajAttachment = saajMessage.createAttachmentPart(new DataHandler(dataSource));
+        saajMessage.addAttachmentPart(saajAttachment);
+        return new SaajAttachment(saajAttachment);
+    }
+
+    public Attachment addAttachment(InputStreamSource inputStreamSource, String contentType) {
+        Assert.notNull(inputStreamSource, "InputStreamSource must not be null");
+        if (inputStreamSource instanceof Resource && ((Resource) inputStreamSource).isOpen()) {
+            throw new IllegalArgumentException("Passed-in Resource contains an open stream: invalid argument. " +
+                    "SAAJ requires an InputStreamSource that creates a fresh stream for every call.");
+        }
+        DataSource dataSource = createDataSource(inputStreamSource, contentType);
+        AttachmentPart saajAttachment = saajMessage.createAttachmentPart(new DataHandler(dataSource));
+        saajMessage.addAttachmentPart(saajAttachment);
+        return new SaajAttachment(saajAttachment);
+    }
+
+    /**
+     * Create an Activation Framework DataSource for the given InputStreamSource.
+     *
+     * @param inputStreamSource the InputStreamSource (typically a Spring Resource)
+     * @param contentType       the content type
+     * @return the Activation Framework DataSource
+     */
+    private DataSource createDataSource(final InputStreamSource inputStreamSource, final String contentType) {
+        return new DataSource() {
+            public InputStream getInputStream() throws IOException {
+                return inputStreamSource.getInputStream();
+            }
+
+            public OutputStream getOutputStream() {
+                throw new UnsupportedOperationException("Read-only javax.activation.DataSource");
+            }
+
+            public String getContentType() {
+                return contentType;
+            }
+
+            public String getName() {
+                throw new UnsupportedOperationException("DataSource name not available");
+            }
+        };
     }
 
     /**
@@ -450,6 +527,69 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         public boolean isReceiverFault() {
             return (SERVER.equals(saajFault.getFaultCodeAsName().getLocalName()) &&
                     SOAPConstants.URI_NS_SOAP_ENVELOPE.equals(saajFault.getFaultCodeAsName().getURI()));
+        }
+    }
+
+    /**
+     * SAAJ-specific implementation of <code>org.springframework.ws.soap.Attachment</code>
+     */
+    private static class SaajAttachment implements Attachment {
+
+        private final AttachmentPart saajAttachment;
+
+        public SaajAttachment(AttachmentPart saajAttachment) {
+            this.saajAttachment = saajAttachment;
+        }
+
+        public String getId() {
+            return saajAttachment.getContentId();
+        }
+
+        public String getContentType() {
+            return saajAttachment.getContentType();
+        }
+
+        public InputStream getInputStream() throws IOException {
+            try {
+                return saajAttachment.getDataHandler().getInputStream();
+            }
+            catch (SOAPException e) {
+                return new ByteArrayInputStream(new byte[0]);
+            }
+        }
+
+        public long getSize() {
+            try {
+                int result = saajAttachment.getSize();
+                // SAAJ returns -1 when the size cannot be determined
+                return (result != -1) ? result : 0;
+            }
+            catch (SOAPException ex) {
+                throw new SaajAttachmentException(ex);
+            }
+        }
+
+    }
+
+    private static class SaajAttachmentIterator implements Iterator {
+
+        private final Iterator saajIterator;
+
+        public SaajAttachmentIterator(Iterator saajIterator) {
+            this.saajIterator = saajIterator;
+        }
+
+        public boolean hasNext() {
+            return saajIterator.hasNext();
+        }
+
+        public Object next() {
+            AttachmentPart saajAttachment = (AttachmentPart) saajIterator.next();
+            return new SaajAttachment(saajAttachment);
+        }
+
+        public void remove() {
+            saajIterator.remove();
         }
     }
 }

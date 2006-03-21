@@ -16,6 +16,10 @@
 
 package org.springframework.ws.soap;
 
+import java.io.File;
+import java.util.Iterator;
+
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.ws.WebServiceMessage;
 
 /**
@@ -66,4 +70,43 @@ public interface SoapMessage extends WebServiceMessage {
      * @see SoapVersion#SOAP_12
      */
     SoapVersion getVersion();
+
+    /**
+     * Returns an <code>Iterator</code> over all <code>Attachment</code>s that are part of this
+     * <code>SoapMessage</code>.
+     *
+     * @return an <code>Iterator</code> over all <code>Attachment</code>s
+     * @see Attachment
+     */
+    Iterator getAttachments();
+
+    /**
+     * Add an attachment to the <code>SoapMessage</code>, taking the content from a <code>java.io.File</code>.
+     * <p/>
+     * The content type will be determined by the name of the given content file. Do not use this for temporary files
+     * with arbitrary filenames (possibly ending in ".tmp" or the like)!
+     *
+     * @param file the File resource to take the content from
+     * @return the added attachment
+     * @throws AttachmentException in case of errors
+     * @see #addAttachment(InputStreamSource, String)
+     */
+    Attachment addAttachment(File file) throws AttachmentException;
+
+    /**
+     * Add an attachment to the <code>SoapMessage</code>, taking the content from an
+     * <code>org.springframework.core.io.InputStreamResource</code>.
+     * <p/>
+     * Note that the <code>InputStream</code> returned by the source needs to be a <em>fresh one on each call</em>, as
+     * underlying implementations can invoke <code>getInputStream()</code> multiple times.
+     *
+     * @param inputStreamSource the resource to take the content from (all of Spring's Resource implementations can be
+     *                          passed in here)
+     * @param contentType       the content type to use for the element
+     * @return the added attachment
+     * @throws AttachmentException in case of errors
+     * @see #addAttachment(java.io.File)
+     * @see org.springframework.core.io.Resource
+     */
+    Attachment addAttachment(InputStreamSource inputStreamSource, String contentType);
 }

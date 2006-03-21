@@ -38,7 +38,7 @@ public interface SoapHeader extends SoapElement {
     SoapHeaderElement addHeaderElement(QName name);
 
     /**
-     * Returns an <code>Iterator</code> over all the <code>SoapHeaderElement</code>sthat have the specified role and
+     * Returns an <code>Iterator</code> over all the <code>SoapHeaderElement</code>s that have the specified role and
      * that have a <code>MustUnderstand</code> attribute whose value is equivalent to <code>true</code>.
      *
      * @param role the role for which to search
