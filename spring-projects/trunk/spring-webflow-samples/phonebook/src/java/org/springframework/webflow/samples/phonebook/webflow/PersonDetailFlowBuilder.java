@@ -32,31 +32,24 @@ import org.springframework.webflow.support.DefaultFlowAttributeMapper;
  */
 public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
-	private static final String GET_DETAILS = "getDetails";
-
-	private static final String DISPLAY_DETAILS = "displayDetails";
-
-	private static final String BROWSE_COLLEAGUE_DETAILS = "browseColleagueDetails";
-
-	private static final String THIS_FLOW = "detail-flow";
-
 	public PersonDetailFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
 		super(flowArtifactFactory);
 	}
 
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
-		addActionState(GET_DETAILS, action("phonebook", method("getPerson(${flowScope.id})")), transition(on(success()), to(DISPLAY_DETAILS)));
+		addActionState("getDetails", action("phonebook", method("getPerson(${flowScope.id})")), transition(
+				on(success()), to("displayDetails")));
 
 		// view the person details
-		addViewState(DISPLAY_DETAILS, "details", new Transition[] { transition(on(back()), to("finish")),
-				transition(on(select()), to(BROWSE_COLLEAGUE_DETAILS)) });
+		addViewState("displayDetails", "details", new Transition[] { transition(on(back()), to("finish")),
+				transition(on(select()), to("browseColleagueDetails")) });
 
 		// view details for selected collegue
 		DefaultFlowAttributeMapper idMapper = new DefaultFlowAttributeMapper();
 		idMapper.addInputMapping(mapping().source("externalContext.requestParameterMap.id").target("id").from(
 				String.class).to(Long.class).value());
-		addSubflowState(BROWSE_COLLEAGUE_DETAILS, flow(THIS_FLOW), idMapper, transition(on(finish()), to(GET_DETAILS)));
+		addSubflowState("browseColleagueDetails", getFlow(), idMapper, transition(on(finish()), to("getDetails")));
 
 		// end
 		addEndState("finish");
