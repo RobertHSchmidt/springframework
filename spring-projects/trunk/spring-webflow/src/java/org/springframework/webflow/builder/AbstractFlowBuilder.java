@@ -483,7 +483,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
 	protected Action action(String id, MethodSignature method) throws FlowArtifactException {
-		return action(id, new MethodInfo(method));
+		return action(id, new BeanInvocationParameters(method));
 	}
 
 	/**
@@ -495,7 +495,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the action
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
-	protected Action action(String id, MethodInfo methodInfo) throws FlowArtifactException {
+	protected Action action(String id, BeanInvocationParameters methodInfo) throws FlowArtifactException {
 		return action(new BeanInvokingActionParameters(id, methodInfo, null, null));
 	}
 

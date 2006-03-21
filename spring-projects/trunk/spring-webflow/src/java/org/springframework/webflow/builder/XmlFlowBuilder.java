@@ -88,8 +88,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *         &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *         &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -725,7 +725,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 					.execute(element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
 		}
 		BeanInvokingActionParameters actionParameters = new BeanInvokingActionParameters(actionId,
-				new MethodInfo(method, resultName, resultScope), null, null);
+				new BeanInvocationParameters(method, resultName, resultScope), null, null);
 		return getLocalFlowArtifactFactory().getAction(actionParameters);
 	}
 
