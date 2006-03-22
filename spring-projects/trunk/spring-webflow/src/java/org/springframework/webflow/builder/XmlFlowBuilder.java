@@ -90,8 +90,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *          &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *          &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -443,6 +443,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		GenericApplicationContext context = new GenericApplicationContext();
 		context.setResourceLoader(getFlowArtifactFactory().getResourceLoader());
 		new XmlBeanDefinitionReader(context).loadBeanDefinitions(resources);
+		context.refresh();
 		localFlowArtifactFactory.push(new LocalFlowArtifactRegistry(context));
 	}
 
