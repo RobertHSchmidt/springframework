@@ -15,6 +15,7 @@
  */
 package org.springframework.ws.samples.airline.service.impl;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -72,8 +73,12 @@ public class AirlineServiceImpl implements AirlineService {
 
     public List getFlightsInPeriod(String flightNumber, Calendar startOfPeriod, Calendar endOfPeriod) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Getting flights in with number [" + flightNumber + "] that fall in period [" + startOfPeriod +
-                    "-" + endOfPeriod + "]");
+            String flightNumberString = (flightNumber != null) ? flightNumber : "unspecified";
+            DateFormat format = DateFormat.getDateInstance();
+            String startString = (startOfPeriod != null) ? format.format(startOfPeriod.getTime()) : "unspecified";
+            String endString = (endOfPeriod != null) ? format.format(endOfPeriod.getTime()) : "unspecified";
+            logger.debug("Getting flights in with number [" + flightNumberString + "] that fall in period [" +
+                    startString + "] to [" + endString + "]");
         }
         return flightDao.getFlights(flightNumber, startOfPeriod, endOfPeriod);
     }

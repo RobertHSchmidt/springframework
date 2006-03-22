@@ -15,43 +15,33 @@
  */
 package org.springframework.ws.samples.airline.ws;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import javax.xml.XMLConstants;
-import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
+import java.util.Date;
 
-import org.springframework.ws.endpoint.AbstractDomPayloadEndpoint;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.xpath.XPath;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.ws.endpoint.AbstractJDomPayloadEndpoint;
 import org.springframework.ws.samples.airline.domain.Airport;
 import org.springframework.ws.samples.airline.domain.Customer;
 import org.springframework.ws.samples.airline.domain.Flight;
 import org.springframework.ws.samples.airline.domain.ServiceClass;
 import org.springframework.ws.samples.airline.domain.Ticket;
 import org.springframework.ws.samples.airline.service.AirlineService;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-public class BookFlightEndpoint extends AbstractDomPayloadEndpoint {
+public class BookFlightEndpoint extends AbstractJDomPayloadEndpoint implements InitializingBean {
 
     private AirlineService airlineService;
 
-    private XPathExpression flightNumberXPathExpression;
+    private XPath flightNumberXPath;
 
-    private XPathExpression customerIdXPathExpression;
+    private XPath customerIdXPath;
 
     private static final String PREFIX = "tns";
 
     private static final String NAMESPACE = "http://www.springframework.org/spring-ws/samples/airline";
-
-    private DatatypeFactory datatypeFactory;
 
     private static final String FLIGHT_NUMBER_EXPRESSION =
             "/" + PREFIX + ":BookFlightRequest/" + PREFIX + ":flightNumber/text()";
@@ -59,140 +49,99 @@ public class BookFlightEndpoint extends AbstractDomPayloadEndpoint {
     private static final String CUSTOMER_ID_EXPRESSION =
             "/" + PREFIX + ":BookFlightRequest/" + PREFIX + ":customerId/text()";
 
+    private Namespace namespace;
+
     public void setAirlineService(AirlineService airlineService) {
         this.airlineService = airlineService;
     }
 
-    protected Element invokeInternal(Element requestElement, Document document) throws Exception {
-        String flightNumber = flightNumberXPathExpression.evaluate(requestElement);
-        long customerId =
-                ((Double) customerIdXPathExpression.evaluate(requestElement, XPathConstants.NUMBER)).longValue();
-
+    protected Element invokeInternal(Element requestElement) throws Exception {
+        String flightNumber = flightNumberXPath.valueOf(requestElement);
+        long customerId = Long.parseLong(customerIdXPath.valueOf(requestElement));
         if (logger.isDebugEnabled()) {
             logger.debug(
                     "BookFlight request for flight number [" + flightNumber + "] customer id [" + customerId + "]");
         }
         Ticket ticket = airlineService.bookFlight(flightNumber, customerId);
-
-        return createResponse(ticket, document);
+        return createResponse(ticket);
     }
 
-    private Element createResponse(Ticket ticket, Document document) {
-        Element responseElement = document.createElementNS(NAMESPACE, "BookFlightResponse");
-        document.appendChild(responseElement);
-        addIssueDateElement(document, responseElement, ticket.getIssueDate());
-        addCustomerElement(document, responseElement, ticket.getCustomer());
-        addFlightElement(document, responseElement, ticket.getFlight());
+    private Element createResponse(Ticket ticket) {
+        Element responseElement = new Element("BookFlightResponse", namespace);
+        responseElement.addContent(createIssueDateElement(ticket.getIssueDate()));
+        responseElement.addContent(createCustomerElement(ticket.getCustomer()));
+        responseElement.addContent(createFlightElement(ticket.getFlight()));
         return responseElement;
     }
 
-    private void addIssueDateElement(Document document, Element responseElement, Calendar issueDate) {
-        Element issueDateElement = document.createElementNS(NAMESPACE, "issueDate");
-        responseElement.appendChild(issueDateElement);
-        XMLGregorianCalendar issueDateCalendar = datatypeFactory.newXMLGregorianCalendarDate(
-                issueDate.get(Calendar.YEAR), issueDate.get(Calendar.MONTH) + 1, issueDate.get(Calendar.DAY_OF_MONTH),
-                DatatypeConstants.FIELD_UNDEFINED);
-        issueDateElement.setTextContent(issueDateCalendar.toXMLFormat());
+    protected Element createIssueDateElement(Calendar issueDate) {
+        Element issueDateElement = new Element("issueDate", namespace);
+        issueDateElement.setText(formatIsoDate(issueDate.getTime()));
+        return issueDateElement;
     }
 
-    private void addCustomerElement(Document document, Element responseElement, Customer customer) {
-        Element customerElement = document.createElementNS(NAMESPACE, "customer");
-        responseElement.appendChild(customerElement);
-        Element customerIdElement = document.createElementNS(NAMESPACE, "id");
-        customerIdElement.setTextContent(String.valueOf(customer.getId()));
-        customerElement.appendChild(customerIdElement);
-        Element customerNameElement = document.createElementNS(NAMESPACE, "name");
-        customerElement.appendChild(customerNameElement);
-        Element customerFirstNameElement = document.createElementNS(NAMESPACE, "first");
-        customerFirstNameElement.setTextContent(customer.getFirstName());
-        customerNameElement.appendChild(customerFirstNameElement);
-        Element customerLastNameElement = document.createElementNS(NAMESPACE, "last");
-        customerLastNameElement.setTextContent(customer.getLastName());
-        customerNameElement.appendChild(customerLastNameElement);
+    protected Element createCustomerElement(Customer customer) {
+        Element customerElement = new Element("customer", namespace);
+        customerElement.addContent(new Element("id", namespace).setText(String.valueOf(customer.getId())));
+        Element customerNameElement = new Element("name", namespace);
+        customerElement.addContent(customerNameElement);
+        customerNameElement.addContent(new Element("first", namespace).setText(customer.getFirstName()));
+        customerNameElement.addContent(new Element("last", namespace).setText(customer.getLastName()));
+        return customerElement;
     }
 
-    private void addFlightElement(Document document, Element responseElement, Flight flight) {
-        Element flightElement = document.createElementNS(NAMESPACE, "flight");
-        responseElement.appendChild(flightElement);
-        Element flightNumberElement = document.createElementNS(NAMESPACE, "number");
-        flightElement.appendChild(flightNumberElement);
-        flightNumberElement.setTextContent(flight.getNumber());
-        Element departureTimeElement = document.createElementNS(NAMESPACE, "departureTime");
-        flightElement.appendChild(departureTimeElement);
-        Element departureAirportElement = document.createElementNS(NAMESPACE, "departureAirport");
-        flightElement.appendChild(departureAirportElement);
-        addAirportElement(document, departureAirportElement, flight.getDepartureAirport());
-        XMLGregorianCalendar departureCalendar =
-                datatypeFactory.newXMLGregorianCalendar((GregorianCalendar) flight.getDepartureTime());
-        departureTimeElement.setTextContent(departureCalendar.toXMLFormat());
-        Element arrivalTimeElement = document.createElementNS(NAMESPACE, "arrivalTime");
-        flightElement.appendChild(arrivalTimeElement);
-        XMLGregorianCalendar arrivalCalendar =
-                datatypeFactory.newXMLGregorianCalendar((GregorianCalendar) flight.getArrivalTime());
-        arrivalTimeElement.setTextContent(arrivalCalendar.toXMLFormat());
-        Element arrivalAirportElement = document.createElementNS(NAMESPACE, "arrivalAirport");
-        flightElement.appendChild(arrivalAirportElement);
-        addAirportElement(document, arrivalAirportElement, flight.getArrivalAirport());
-        addServiceClassElement(document, flightElement, flight.getServiceClass());
+    protected Element createFlightElement(Flight flight) {
+        Element flightElement = new Element("flight", namespace);
+        flightElement.addContent(new Element("number", namespace).setText(flight.getNumber()));
+        String departureTime = formatIsoDateTime(flight.getDepartureTime().getTime());
+        flightElement.addContent(new Element("departureTime", namespace).setText(departureTime));
+        flightElement.addContent(createAirportElement("departureAirport", flight.getDepartureAirport()));
+        String arrivalTime = formatIsoDateTime(flight.getArrivalTime().getTime());
+        flightElement.addContent(new Element("arrivalTime", namespace).setText(arrivalTime));
+        flightElement.addContent(createAirportElement("arrivalAirport", flight.getArrivalAirport()));
+        flightElement.addContent(createServiceClassElement(flight.getServiceClass()));
+        return flightElement;
     }
 
-    private void addAirportElement(Document document, Element airportElement, Airport airport) {
-        Element codeElement = document.createElementNS(NAMESPACE, "code");
-        airportElement.appendChild(codeElement);
-        codeElement.setTextContent(airport.getCode());
-        Element nameElement = document.createElementNS(NAMESPACE, "name");
-        airportElement.appendChild(nameElement);
-        nameElement.setTextContent(airport.getName());
-        Element cityElement = document.createElementNS(NAMESPACE, "city");
-        airportElement.appendChild(cityElement);
-        cityElement.setTextContent(airport.getCity());
+    private String formatIsoDate(Date date) {
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
     }
 
-    private void addServiceClassElement(Document document, Element flightElement, ServiceClass serviceClass) {
-        Element serviceClassElement = document.createElementNS(NAMESPACE, "serviceClass");
-        flightElement.appendChild(serviceClassElement);
+    private String formatIsoDateTime(Date date) {
+        String result = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(date);
+        //convert YYYYMMDDTHH:mm:ss+HH00 into YYYYMMDDTHH:mm:ss+HH:00
+        return result.substring(0, result.length() - 2) + ":" + result.substring(result.length() - 2);
+    }
+
+    protected Element createAirportElement(String localName, Airport airport) {
+        Element airportElement = new Element(localName, namespace);
+        airportElement.addContent(new Element("code", namespace).setText(airport.getCode()));
+        airportElement.addContent(new Element("name", namespace).setText(airport.getName()));
+        airportElement.addContent(new Element("city", namespace).setText(airport.getCity()));
+        return airportElement;
+    }
+
+    protected Element createServiceClassElement(ServiceClass serviceClass) {
+        Element serviceClassElement = new Element("serviceClass", namespace);
         if (ServiceClass.BUSINESS.equals(serviceClass)) {
-            serviceClassElement.setTextContent("business");
+            serviceClassElement.setText("business");
         }
         else if (ServiceClass.ECONOMY.equals(serviceClass)) {
-            serviceClassElement.setTextContent("economy");
+            serviceClassElement.setText("economy");
         }
         else if (ServiceClass.FIRST.equals(serviceClass)) {
-            serviceClassElement.setTextContent("first");
+            serviceClassElement.setText("first");
         }
+        return serviceClassElement;
     }
 
-    public void onAfterPropertiesSet() throws Exception {
-        XPathFactory factory = XPathFactory.newInstance();
-        XPath xpath = factory.newXPath();
-        xpath.setNamespaceContext(new MyNamespaceHelper());
-        flightNumberXPathExpression = xpath.compile(FLIGHT_NUMBER_EXPRESSION);
-        customerIdXPathExpression = xpath.compile(CUSTOMER_ID_EXPRESSION);
-        datatypeFactory = DatatypeFactory.newInstance();
+    public void afterPropertiesSet() throws Exception {
+        namespace = Namespace.getNamespace(PREFIX, NAMESPACE);
+        flightNumberXPath = XPath.newInstance(FLIGHT_NUMBER_EXPRESSION);
+        flightNumberXPath.addNamespace(namespace);
+        customerIdXPath = XPath.newInstance(CUSTOMER_ID_EXPRESSION);
+        customerIdXPath.addNamespace(namespace);
     }
 
-    private static class MyNamespaceHelper implements NamespaceContext {
 
-        public String getNamespaceURI(String prefix) {
-            if (PREFIX.equals(prefix)) {
-                return NAMESPACE;
-            }
-            else {
-                return XMLConstants.NULL_NS_URI;
-            }
-        }
-
-        public String getPrefix(String namespaceURI) {
-            return NAMESPACE.equals(namespaceURI) ? PREFIX : null;
-        }
-
-        public Iterator getPrefixes(String namespaceURI) {
-            if (NAMESPACE.equals(namespaceURI)) {
-                return Collections.singletonList(PREFIX).iterator();
-            }
-            else {
-                return Collections.EMPTY_LIST.iterator();
-            }
-        }
-    }
 }

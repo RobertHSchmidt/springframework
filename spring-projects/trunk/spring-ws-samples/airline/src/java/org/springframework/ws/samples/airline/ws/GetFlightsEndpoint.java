@@ -15,6 +15,7 @@
  */
 package org.springframework.ws.samples.airline.ws;
 
+import java.text.DateFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,12 +48,18 @@ public class GetFlightsEndpoint extends AbstractMarshallingPayloadEndpoint {
     protected Object invokeInternal(Object requestObject) throws Exception {
         GetFlightsRequest request = (GetFlightsRequest) requestObject;
         if (logger.isDebugEnabled()) {
-            logger.debug("GetFlightsRequest [" + request.getStartOfPeriod() + "," + request.getEndOfPeriod() + "]");
+            DateFormat format = DateFormat.getDateInstance();
+            String startDate =
+                    (request.getStartOfPeriod() != null) ? format.format(request.getStartOfPeriod().getTime()) : null;
+            String endDate =
+                    (request.getEndOfPeriod() != null) ? format.format(request.getEndOfPeriod().getTime()) : null;
+            logger.debug(
+                    "GetFlightsRequest number=[" + request.getFlightNumber() + "," + startDate + "," + endDate + "]");
         }
         List flights = airlineService
                 .getFlightsInPeriod(request.getFlightNumber(), request.getStartOfPeriod(), request.getEndOfPeriod());
         if (logger.isDebugEnabled()) {
-            logger.debug("Marshalling [" + flights.size() + "] flight results");
+            logger.debug("Marshalling " + flights.size() + " flight results");
         }
         GetFlightsResponse response = new GetFlightsResponseImpl();
         for (Iterator iter = flights.iterator(); iter.hasNext();) {

@@ -42,7 +42,8 @@
         <dependency org="apache" name="xerces" rev="2.7.1">
             <artifact name="xercesImpl" type="jar"/>
         </dependency>
-        <dependency org="xalan" name="xalan" rev="2.7.0"/>
+        <dependency org="jdom" name="jdom" rev="1.0"/>
+        <dependency org="jaxen" name="jaxen" rev="1.1-beta-8"/>
 
         <dependency org="java" name="jaxb" rev="1.0" conf="global,buildtime->default">
             <artifact name="jaxb-xjc" type="jar" conf="buildtime"/>
