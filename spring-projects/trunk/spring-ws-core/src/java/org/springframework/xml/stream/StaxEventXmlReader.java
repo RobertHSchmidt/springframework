@@ -60,7 +60,7 @@ public class StaxEventXmlReader extends StaxXmlReader {
     public StaxEventXmlReader(XMLEventReader reader) {
         try {
             XMLEvent event = reader.peek();
-            if (!(event.isStartDocument() || event.isStartElement())) {
+            if (event == null || !(event.isStartDocument() || event.isStartElement())) {
                 throw new IllegalStateException("XMLEventReader not at start of document or element");
             }
         }

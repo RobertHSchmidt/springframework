@@ -105,11 +105,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         return (ObjectUtils.isEmpty(values)) ? null : values[0];
     }
 
-    /**
-     * Returns SOAP 1.1.
-     *
-     * @see SoapVersion#SOAP_11
-     */
     public SoapVersion getVersion() {
         String[] contentTypes = saajMessage.getSOAPPart().getMimeHeader(CONTENT_TYPE_HEADER);
         if (ObjectUtils.isEmpty(contentTypes)) {
