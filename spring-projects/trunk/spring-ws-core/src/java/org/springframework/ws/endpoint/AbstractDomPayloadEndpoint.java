@@ -73,7 +73,6 @@ public abstract class AbstractDomPayloadEndpoint extends AbstractTransformingEnd
         Document resonseDocument = documentBuilder.newDocument();
         Element responseElement = invokeInternal(requestElement, resonseDocument);
         if (responseElement != null) {
-            resonseDocument.normalizeDocument();
             return new DOMSource(responseElement);
         }
         else {
