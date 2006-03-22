@@ -156,7 +156,7 @@ public class FlowAction extends ActionSupport {
 	/**
 	 * Delegate for extract flow executor parameters.
 	 */
-	private FlowExecutorArgumentExtractor parameterExtractor;
+	private FlowExecutorArgumentExtractor argumentExtractor;
 
 	/**
 	 * Set the flow locator to use for the lookup of flow definitions to
@@ -182,19 +182,19 @@ public class FlowAction extends ActionSupport {
 	}
 
 	/**
-	 * Returns the flow executor parameter extractor used by this controller.
-	 * @return the parameter extractor
+	 * Returns the flow executor argument extractor used by this controller.
+	 * @return the argument extractor
 	 */
-	public FlowExecutorArgumentExtractor getParameterExtractor() {
-		return parameterExtractor;
+	public FlowExecutorArgumentExtractor getArgumentExtractor() {
+		return argumentExtractor;
 	}
 
 	/**
-	 * Sets the flow executor parameter extractor to use.
-	 * @param parameterExtractor the parameter extractor
+	 * Sets the flow executor argument extractor to use.
+	 * @param argumentExtractor the argument extractor
 	 */
-	public void setParameterExtractor(FlowExecutorArgumentExtractor parameterExtractor) {
-		this.parameterExtractor = parameterExtractor;
+	public void setArgumentExtractor(FlowExecutorArgumentExtractor argumentExtractor) {
+		this.argumentExtractor = argumentExtractor;
 	}
 
 	protected void onInit() {
@@ -217,8 +217,8 @@ public class FlowAction extends ActionSupport {
 				}
 			}
 		}
-		if (getParameterExtractor() == null) {
-			parameterExtractor = new FlowExecutorArgumentExtractor();
+		if (getArgumentExtractor() == null) {
+			argumentExtractor = new FlowExecutorArgumentExtractor();
 		}
 	}
 
@@ -235,7 +235,7 @@ public class FlowAction extends ActionSupport {
 	 * @return the controller helper
 	 */
 	protected FlowRequestHandler createRequestHandler() {
-		return new FlowRequestHandler(getFlowExecutor(), getParameterExtractor());
+		return new FlowRequestHandler(getFlowExecutor(), getArgumentExtractor());
 	}
 
 	/**
@@ -248,8 +248,8 @@ public class FlowAction extends ActionSupport {
 			// forward to a view as part of an active conversation
 			ApplicationView forward = (ApplicationView)response.getViewSelection();
 			Map model = new HashMap(forward.getModel());
-			parameterExtractor.put(response.getFlowExecutionKey(), model);
-			parameterExtractor.put(response.getFlowExecutionContext(), model);
+			argumentExtractor.put(response.getFlowExecutionKey(), model);
+			argumentExtractor.put(response.getFlowExecutionContext(), model);
 			WebUtils.exposeRequestAttributes(request, model);
 			if (form instanceof SpringBindingActionForm) {
 				SpringBindingActionForm bindingForm = (SpringBindingActionForm)form;
@@ -261,18 +261,18 @@ public class FlowAction extends ActionSupport {
 		else if (response.isConversationRedirect()) {
 			// redirect to active conversation URL
 			Serializable conversationId = response.getFlowExecutionKey().getConversationId();
-			String conversationUrl = parameterExtractor.createConversationUrl(conversationId, context);
+			String conversationUrl = argumentExtractor.createConversationUrl(conversationId, context);
 			return new ActionForward(conversationUrl, true);
 		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL
-			String externalUrl = parameterExtractor.createExternalUrl((ExternalRedirect)response.getViewSelection(),
+			String externalUrl = argumentExtractor.createExternalUrl((ExternalRedirect)response.getViewSelection(),
 					response.getFlowExecutionKey(), context);
 			return new ActionForward(externalUrl, true);
 		}
 		else if (response.isFlowRedirect()) {
 			// restart the flow by redirecting to flow launch URL
-			String flowUrl = parameterExtractor.createFlowUrl((FlowRedirect)response.getViewSelection(), context);
+			String flowUrl = argumentExtractor.createFlowUrl((FlowRedirect)response.getViewSelection(), context);
 			return new ActionForward(flowUrl, true);
 		}
 		else if (response.isNull()) {
