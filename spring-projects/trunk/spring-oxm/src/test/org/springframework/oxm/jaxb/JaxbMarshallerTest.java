@@ -15,6 +15,7 @@
  */
 package org.springframework.oxm.jaxb;
 
+import java.util.Collections;
 import javax.xml.transform.sax.SAXResult;
 
 import org.easymock.MockControl;
@@ -88,6 +89,14 @@ public class JaxbMarshallerTest extends AbstractMarshallerTest {
         }
         catch (XmlMappingException ex) {
         }
+    }
+
+    public void testProperties() throws Exception {
+        JaxbMarshaller marshaller = new JaxbMarshaller();
+        marshaller.setContextPath("org.springframework.oxm.jaxb");
+        marshaller.setMarshallerProperties(
+                Collections.singletonMap(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE));
+        marshaller.afterPropertiesSet();
     }
 
 
