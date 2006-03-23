@@ -81,7 +81,7 @@ public class SubflowStateTests extends TestCase {
 		mapperState.addTransition(new Transition(on("success"), to("subFlowState")));
 
 		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
-		subflowState.setAttributeMapper(new InputOutputMapper());
+		subflowState.setAttributeMapper(new TestAttributeMapper());
 		subflowState.addTransition(new Transition(on("finish"), to("finish")));
 
 		EndState endState = new EndState(flow, "finish");
@@ -111,18 +111,5 @@ public class SubflowStateTests extends TestCase {
 
 	protected ViewSelector view(String viewName) {
 		return new ApplicationViewSelector(new StaticExpression(viewName));
-	}
-
-	protected static class InputOutputMapper implements FlowAttributeMapper {
-		public AttributeMap createSubflowInput(RequestContext context) {
-			AttributeMap inputMap = new AttributeMap();
-			inputMap.put("childInputAttribute", context.getFlowScope().get("parentInputAttribute"));
-			return inputMap;
-		}
-
-		public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
-			AttributeMap parentAttributes = context.getFlowExecutionContext().getActiveSession().getScope();
-			parentAttributes.put("parentOutputAttribute", subflowOutput.get("childInputAttribute"));
-		}
 	}
 }

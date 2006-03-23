@@ -27,12 +27,11 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.TargetStateResolver;
+import org.springframework.webflow.TestAction;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.StateTests.ExecutionCounterAction;
-import org.springframework.webflow.StateTests.InputOutputMapper;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.FlowArtifactParameters;
@@ -65,7 +64,7 @@ public class FlowExecutionTests extends TestCase {
 		Flow flow = new Flow("myFlow");
 
 		ActionState actionState = new ActionState(flow, "actionState");
-		actionState.addAction(new ExecutionCounterAction());
+		actionState.addAction(new TestAction());
 		actionState.addTransition(new Transition(on("success"), to("viewState")));
 
 		ViewState viewState = new ViewState(flow, "viewState");
@@ -73,7 +72,6 @@ public class FlowExecutionTests extends TestCase {
 		viewState.addTransition(new Transition(on("submit"), to("subFlowState")));
 
 		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
-		subflowState.setAttributeMapper(new InputOutputMapper());
 		subflowState.addTransition(new Transition(on("finish"), to("finish")));
 
 		new EndState(flow, "finish");

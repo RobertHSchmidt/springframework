@@ -34,28 +34,28 @@ public class ActionStateTests extends TestCase {
 	public void testActionStateSingleAction() {
 		Flow flow = new Flow("myFlow");
 		ActionState state = new ActionState(flow, "actionState");
-		state.addAction(new ExecutionCounterAction());
+		state.addAction(new TestAction());
 		state.addTransition(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		flowExecution.start(null, new MockExternalContext());
-		assertEquals(1, ((ExecutionCounterAction)state.getActionList().get(0)).getExecutionCount());
+		assertEquals(1, ((TestAction)state.getActionList().get(0)).getExecutionCount());
 	}
 
 	public void testActionAttributesChain() {
 		Flow flow = new Flow("myFlow");
 		ActionState state = new ActionState(flow, "actionState");
-		state.addAction(new ExecutionCounterAction("not mapped result"));
-		state.addAction(new ExecutionCounterAction(null));
-		state.addAction(new ExecutionCounterAction(""));
-		state.addAction(new ExecutionCounterAction("success"));
+		state.addAction(new TestAction("not mapped result"));
+		state.addAction(new TestAction(null));
+		state.addAction(new TestAction(""));
+		state.addAction(new TestAction("success"));
 		state.addTransition(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		flowExecution.start(null, new MockExternalContext());
 		Action[] actions = state.getActionList().toArray();
 		for (int i = 0; i < actions.length; i++) {
-			ExecutionCounterAction action = (ExecutionCounterAction)actions[i];
+			TestAction action = (TestAction)actions[i];
 			assertEquals(1, action.getExecutionCount());
 		}
 	}
@@ -63,10 +63,10 @@ public class ActionStateTests extends TestCase {
 	public void testActionAttributesChainNoMatchingTransition() {
 		Flow flow = new Flow("myFlow");
 		ActionState state = new ActionState(flow, "actionState");
-		state.addAction(new ExecutionCounterAction("not mapped result"));
-		state.addAction(new ExecutionCounterAction(null));
-		state.addAction(new ExecutionCounterAction(""));
-		state.addAction(new ExecutionCounterAction("yet another not mapped result"));
+		state.addAction(new TestAction("not mapped result"));
+		state.addAction(new TestAction(null));
+		state.addAction(new TestAction(""));
+		state.addAction(new TestAction("yet another not mapped result"));
 		state.addTransition(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
@@ -82,12 +82,12 @@ public class ActionStateTests extends TestCase {
 	public void testActionAttributesChainNamedActions() {
 		Flow flow = new Flow("myFlow");
 		ActionState state = new ActionState(flow, "actionState");
-		state.addAction(new AnnotatedAction(new ExecutionCounterAction("not mapped result")));
-		state.addAction(new AnnotatedAction(new ExecutionCounterAction(null)));
-		AnnotatedAction action3 = new AnnotatedAction(new ExecutionCounterAction(""));
+		state.addAction(new AnnotatedAction(new TestAction("not mapped result")));
+		state.addAction(new AnnotatedAction(new TestAction(null)));
+		AnnotatedAction action3 = new AnnotatedAction(new TestAction(""));
 		action3.setName("action3");
 		state.addAction(action3);
-		AnnotatedAction action4 = new AnnotatedAction(new ExecutionCounterAction("success"));
+		AnnotatedAction action4 = new AnnotatedAction(new TestAction("success"));
 		action4.setName("action4");
 		state.addAction(action4);
 		state.addTransition(new Transition(on("action4.success"), to("finish")));
@@ -98,7 +98,7 @@ public class ActionStateTests extends TestCase {
 		Action[] actions = state.getActionList().toArray();
 		for (int i = 0; i < actions.length; i++) {
 			AnnotatedAction action = (AnnotatedAction)actions[i];
-			assertEquals(1, ((ExecutionCounterAction)(action.getTargetAction())).getExecutionCount());
+			assertEquals(1, ((TestAction)(action.getTargetAction())).getExecutionCount());
 		}
 	}
 
@@ -108,33 +108,5 @@ public class ActionStateTests extends TestCase {
 
 	protected TargetStateResolver to(String stateId) {
 		return new StaticTargetStateResolver(stateId);
-	}
-
-	private static class ExecutionCounterAction implements Action {
-		private Event result = new Event(this, "success");
-
-		private int executionCount;
-
-		public ExecutionCounterAction() {
-
-		}
-
-		public ExecutionCounterAction(String result) {
-			if (StringUtils.hasText(result)) {
-				this.result = new Event(this, result);
-			}
-			else {
-				this.result = null;
-			}
-		}
-
-		public int getExecutionCount() {
-			return executionCount;
-		}
-
-		public Event execute(RequestContext context) throws Exception {
-			executionCount++;
-			return result;
-		}
 	}
 }
