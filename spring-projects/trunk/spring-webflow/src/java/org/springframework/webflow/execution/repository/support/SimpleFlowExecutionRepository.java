@@ -15,10 +15,15 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.binding.convert.support.DefaultConversionService;
+import org.springframework.binding.util.MapAccessor;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
@@ -200,6 +205,15 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 
 		protected ConversationLock createLock() {
 			return ConversationLockFactory.createLock();
+		}
+
+		private void writeObject(ObjectOutputStream out) throws IOException {
+			out.defaultWriteObject();
+		}
+
+		private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+			in.defaultReadObject();
+			lock = createLock();
 		}
 
 		public String toString() {

@@ -42,7 +42,7 @@ public class UtilConcurrentConversationLock implements ConversationLock {
 	 */
 	public void lock() {
 		try {
-			this.lock.acquire();
+			lock.acquire();
 		}
 		catch (InterruptedException e) {
 			throw new SystemInterruptedException("Unable to acquire lock.", e);
@@ -53,7 +53,7 @@ public class UtilConcurrentConversationLock implements ConversationLock {
 	 * Releases the lock.
 	 */
 	public void unlock() {
-		this.lock.release();
+		lock.release();
 	}
 
 	/**
