@@ -201,7 +201,7 @@ public abstract class State extends AnnotatedObject {
 	 * render the results of the state processing
 	 * @throws StateException if an exception occurs in this state
 	 */
-	public ViewSelection enter(FlowExecutionControlContext context) throws StateException {
+	public final ViewSelection enter(FlowExecutionControlContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Entering state '" + getId() + "' of flow '" + getFlow().getId() + "'");
 		}

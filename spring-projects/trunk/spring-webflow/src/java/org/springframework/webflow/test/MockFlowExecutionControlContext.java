@@ -53,15 +53,14 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 	
 	public ViewSelection start(Flow flow, AttributeMap input) throws IllegalStateException {
 		getMockFlowExecutionContext().setActiveSession(new MockFlowSession(flow, input));
+		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.STARTING);
 		ViewSelection selectedView = flow.start(this, input);
-		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.PAUSED);
 		return selectedView;
 	}
 
 	public ViewSelection signalEvent(Event event) {
-		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.ACTIVE);
+		setLastEvent(event);
 		ViewSelection selectedView = getActiveFlow().onEvent(event, this);
-		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.PAUSED);
 		return selectedView;
 	}
 

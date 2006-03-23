@@ -72,7 +72,7 @@ public class MockRequestContext implements RequestContext {
 	public MockRequestContext() {
 
 	}
-	
+
 	/**
 	 * Creates a new mock request context with the following defaults:
 	 * <ul>
