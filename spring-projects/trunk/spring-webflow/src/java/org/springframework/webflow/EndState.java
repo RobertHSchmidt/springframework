@@ -66,6 +66,8 @@ public class EndState extends State {
 	 * Default constructor for bean style usage.
 	 * @see State#State()
 	 * @see #setViewSelector(ViewSelector)
+	 * @see #addOutputAttributeName(String)
+	 * @see #addOutputAttributeNames(String[])
 	 */
 	public EndState() {
 	}
@@ -78,6 +80,8 @@ public class EndState extends State {
 	 * flow
 	 * @see State#State(Flow, String)
 	 * @see #setViewSelector(ViewSelector)
+	 * @see #addOutputAttributeName(String)
+	 * @see #addOutputAttributeNames(String[])
 	 */
 	public EndState(Flow flow, String id) throws IllegalArgumentException {
 		super(flow, id);
