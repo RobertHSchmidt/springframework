@@ -39,6 +39,8 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	private boolean executing;
 	
+	private boolean paused;
+	
 	private int flowNestingLevel;
 
 	private boolean requestInProcess;
@@ -64,6 +66,14 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 	public boolean isExecuting() {
 		return executing;
 	}
+	
+	/**
+	 *  Is the flow execution paused?
+	 */
+	public boolean isPaused() {
+		return paused;
+	}
+	
 	/**
 	 * Returns the nesting level of the currently active flow in the flow
 	 * execution. The root flow is at level 0, a sub flow of the root flow
@@ -121,7 +131,6 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 			flowNestingLevel = 0;
 			eventsSignaled = 0;
 			stateTransitions = 0;
-			executing = true;
 		}
 	}
 	
@@ -129,6 +138,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		if (session.isRoot()) {
 			Assert.state(!started, "The flow execution was already started");
 			started = true;
+			executing = true;
 		}
 		else {
 			assertStarted();
@@ -155,10 +165,12 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	public void paused(RequestContext context, ViewSelection selectedView) {
 		executing = false;
+		paused = true;
 	}
 
 	public void resumed(RequestContext context) {
 		executing = true;
+		paused = false;
 	}
 
 	public void sessionEnded(RequestContext context, FlowSession endedSession, UnmodifiableAttributeMap sessionOutput) {

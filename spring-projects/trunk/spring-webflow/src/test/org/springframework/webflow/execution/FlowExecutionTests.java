@@ -81,10 +81,14 @@ public class FlowExecutionTests extends TestCase {
 		MockFlowExecutionListener flowExecutionListener = new MockFlowExecutionListener();
 		FlowExecutionImpl flowExecution = new FlowExecutionImpl(flow,
 				new FlowExecutionListener[] { flowExecutionListener });
-		flowExecution.start(null, new MockExternalContext());
+		AttributeMap input = new AttributeMap();
+		input.put("name", "value");
+		flowExecution.start(input, new MockExternalContext());
+		assertTrue(flowExecutionListener.isPaused());
 		assertTrue(!flowExecutionListener.isExecuting());
 		assertEquals(0, flowExecutionListener.getFlowNestingLevel());
 		assertEquals(2, flowExecutionListener.getTransitionCount());
+		assertEquals("value", flowExecution.getActiveSession().getScope().getString("name"));
 		flowExecution.signalEvent("submit", new MockExternalContext());
 		assertTrue(!flowExecutionListener.isExecuting());
 		assertEquals(1, flowExecutionListener.getFlowNestingLevel());
