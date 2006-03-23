@@ -81,7 +81,7 @@ public class FlowExecutionTests extends TestCase {
 		MockFlowExecutionListener flowExecutionListener = new MockFlowExecutionListener();
 		FlowExecutionImpl flowExecution = new FlowExecutionImpl(flow,
 				new FlowExecutionListener[] { flowExecutionListener });
-		flowExecution.start(new MockExternalContext());
+		flowExecution.start(null, new MockExternalContext());
 		assertTrue(!flowExecutionListener.isExecuting());
 		assertEquals(0, flowExecutionListener.getFlowNestingLevel());
 		assertEquals(2, flowExecutionListener.getTransitionCount());
@@ -106,7 +106,7 @@ public class FlowExecutionTests extends TestCase {
 		new FlowAssembler("flow", builder).assembleFlow();
 		Flow flow = builder.getResult();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ApplicationView view = (ApplicationView)flowExecution.start(new MockExternalContext());
+		ApplicationView view = (ApplicationView)flowExecution.start(null, new MockExternalContext());
 		assertNotNull(view);
 		assertEquals("viewName", view.getViewName());
 		for (int i = 0; i < 10; i++) {
@@ -156,7 +156,7 @@ public class FlowExecutionTests extends TestCase {
 		Flow parentFlow = parentBuilder.getResult();
 
 		FlowExecution flowExecution = new FlowExecutionImpl(parentFlow);
-		flowExecution.start(new MockExternalContext());
+		flowExecution.start(null, new MockExternalContext());
 		assertFalse(flowExecution.isActive());
 	}
 
@@ -167,7 +167,7 @@ public class FlowExecutionTests extends TestCase {
 		assembler.assembleFlow();
 		FlowExecution execution = new FlowExecutionImpl(builder.getResult());
 		MockExternalContext context = new MockExternalContext();
-		execution.start(context);
+		execution.start(null, context);
 		assertEquals("viewState1", execution.getActiveSession().getState().getId());
 		assertNotNull(execution.getActiveSession().getScope().get("items"));
 		execution.signalEvent("event1", context);
@@ -183,7 +183,7 @@ public class FlowExecutionTests extends TestCase {
 		assembler.assembleFlow();
 		FlowExecution execution = new FlowExecutionImpl(builder.getResult());
 		MockExternalContext context = new MockExternalContext();
-		execution.start(context);
+		execution.start(null, context);
 		assertEquals("viewState2", execution.getActiveSession().getState().getId());
 		assertNotNull(execution.getActiveSession().getScope().get("items"));
 		execution.signalEvent("event2", context);

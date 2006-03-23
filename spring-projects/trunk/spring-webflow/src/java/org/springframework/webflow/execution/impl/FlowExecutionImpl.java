@@ -36,7 +36,6 @@ import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
-import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -166,14 +165,14 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// methods implementing FlowExecution
 
-	public ViewSelection start(ExternalContext externalContext) throws StateException {
+	public ViewSelection start(AttributeMap input, ExternalContext externalContext) throws StateException {
 		Assert.state(!isActive(),
 				"This flow is already executing -- you cannot call 'start(ExternalContext)' more than once");
 		FlowExecutionControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
-				ViewSelection selectedView = context.start(getFlow(), null);
+				ViewSelection selectedView = context.start(getFlow(), input);
 				return pause(context, selectedView);
 			}
 			catch (StateException e) {

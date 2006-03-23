@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
@@ -46,15 +47,16 @@ import org.springframework.webflow.support.FlowRedirect;
  * More specifically, a typical flow execution test case will test:
  * <ul>
  * <li>That the flow execution starts as expected given a request from an
- * external context containing potential input request parameters (see the
- * {@link #startFlow(ParameterMap)} variants).
+ * external context containing potential input attributes (see the
+ * {@link #startFlow(AttributeMap, ExternalContext, FlowExecutionListener[]))}
+ * variants).
  * <li>That given the set of supported transition criteria for a state, that
  * the state executes the appropriate transition when an event is signaled (with
  * potential input request parameters, see the
- * {@link #signalEvent(String, ParameterMap)} variants). A test case should be
- * coded for each logical event that can occur, where an event drives a possible
- * path through the flow. The goal should be to exercise all possible paths of
- * the flow.
+ * {@link #signalEvent(String, ExternalContext)} variants). A test case should
+ * be coded for each logical event that can occur, where an event drives a
+ * possible path through the flow. The goal should be to exercise all possible
+ * paths of the flow.
  * <li>That given a transition that leads to an interactive state type (a view
  * state or an end state), that the view selection returned to the client
  * matches what was expected and the current state of the flow matches what is
@@ -81,63 +83,75 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	private FlowExecution flowExecution;
 
 	/**
-	 * Start the flow execution that will be tested.
+	 * Start the flow execution to be tested.
+	 * <p>
+	 * Convenience operation that starts the execution with:
+	 * <ul>
+	 * <li>no input attributes
+	 * <li>no attached flow execution listeners
+	 * <li>an empty {@link MockExternalContext} with no environmental request
+	 * parameters set.
+	 * </ul>
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
 	protected ViewSelection startFlow() {
-		return startFlow(new MockExternalContext(), null);
+		return startFlow(null, new MockExternalContext(), null);
 	}
 
 	/**
-	 * Start the flow execution that will be tested. Pass in the populated
-	 * request parameter map for access during execution startup.
-	 * @param requestParameters request parameters needed by the flow execution
-	 * to complete startup
-	 * @return the view selection made as a result of starting the flow
-	 * (returned when the first interactive state (a view state or end state) is
-	 * entered)
-	 */
-	protected ViewSelection startFlow(ParameterMap requestParameters) {
-		return startFlow(new MockExternalContext(requestParameters), null);
-	}
-
-	/**
-	 * Start the flow execution that will be tested.
-	 * @param listener a single listener to attach to the flow execution for
-	 * this test scenario.
-	 * @return the view selection made as a result of starting the flow
-	 * (returned when the first interactive state (a view state or end state) is
-	 * entered)
-	 */
-	protected ViewSelection startFlow(FlowExecutionListener listener) {
-		return startFlow(new MockExternalContext(), new FlowExecutionListener[] { listener });
-	}
-
-	/**
-	 * Start the flow execution that will be tested. Pass in the populated
-	 * request parameter map for access during execution startup.
-	 * @param requestParameters request parameters needed by the flow execution
-	 * to complete startup
-	 * @param listener a single listener to attach to the flow execution for
-	 * this test scenario.
-	 * @return the view selection made as a result of starting the flow
-	 * (returned when the first interactive state (a view state or end state) is
-	 * entered)
-	 */
-	protected ViewSelection startFlow(ParameterMap requestParameters, FlowExecutionListener listener) {
-		return startFlow(new MockExternalContext(requestParameters), new FlowExecutionListener[] { listener });
-	}
-
-	/**
-	 * Start the flow execution that will be tested.
+	 * Start the flow execution to be tested.
 	 * <p>
-	 * This is the most flexible of the start methods. It allows you to specify
-	 * an external context that allows the flow execution being tested access to
-	 * the calling environment for this request. It also allows you to specify
-	 * an array of listeners that should observe the lifecycle of the flow
+	 * Convenience operation that starts the execution with:
+	 * <ul>
+	 * <li>the specified input attributes, eligible for mapping by the root
+	 * flow
+	 * <li>no attached flow execution listeners
+	 * <li>an empty {@link MockExternalContext} with no environmental request
+	 * parameters set.
+	 * </ul>
+	 * @return the view selection made as a result of starting the flow
+	 * (returned when the first interactive state (a view state or end state) is
+	 * entered)
+	 */
+	protected ViewSelection startFlow(AttributeMap input) {
+		return startFlow(input, new MockExternalContext(), null);
+	}
+
+	/**
+	 * Start the flow execution to be tested.
+	 * <p>
+	 * Convenience operation that starts the execution with:
+	 * <ul>
+	 * <li>the specified input attributes, eligible for mapping by the root
+	 * flow
+	 * <li>the flow execution listener attached
+	 * <li>an empty {@link MockExternalContext} with no environmental request
+	 * parameters set.
+	 * </ul>
+	 * @return the view selection made as a result of starting the flow
+	 * (returned when the first interactive state (a view state or end state) is
+	 * entered)
+	 */
+	protected ViewSelection startFlow(AttributeMap input, FlowExecutionListener listener) {
+		return startFlow(input, new MockExternalContext(), new FlowExecutionListener[] { listener });
+	}
+
+	/**
+	 * Start the flow execution to be tested.
+	 * <p>
+	 * This is the most flexible of the start methods. It allows you to specify:
+	 * <ol>
+	 * <li>a map of input attributes to pass to the flow execution, eligible
+	 * for mapping by the root flow definition.
+	 * <li>an external context that provides the flow execution being tested
+	 * access to the calling environment for this request.
+	 * <li>an array of listeners that should observe the lifecycle of the flow
 	 * execution being tested (and make test assertions during that lifecycle).
+	 * </ol>
+	 * @param input the flow execution input attributes eligible for mapping by
+	 * the root flow.
 	 * @param context the external context providing information about the
 	 * caller's environment, used by the flow execution during the start
 	 * operation
@@ -147,9 +161,9 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
-	protected ViewSelection startFlow(ExternalContext context, FlowExecutionListener[] listeners) {
+	protected ViewSelection startFlow(AttributeMap input, ExternalContext context, FlowExecutionListener[] listeners) {
 		flowExecution = createFlowExecution(listeners);
-		return flowExecution.start(context);
+		return flowExecution.start(input, context);
 	}
 
 	/**

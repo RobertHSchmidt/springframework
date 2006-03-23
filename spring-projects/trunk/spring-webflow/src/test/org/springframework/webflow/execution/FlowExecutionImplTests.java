@@ -106,7 +106,7 @@ public class FlowExecutionImplTests extends TestCase {
 		MockParameterMap input = new MockParameterMap();
 		input.put("name", "value");
 		// start the flow execution
-		flowExecution.start(new MockExternalContext(input));
+		flowExecution.start(null, new MockExternalContext(input));
 		runFlowExecutionRehydrationTest();
 	}
 

@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution;
 
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.StateException;
@@ -78,6 +79,8 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * Start this flow execution, transitioning it to the root flow's start
 	 * state and returning the starting model and view selection. Typically
 	 * called by a flow execution manager, but also from test code.
+	 * @param input input attributes to pass to the flow, which the flow may
+	 * choose to map into its scope
 	 * @param context the context in which the event occured
 	 * @return the starting view selection, which requests that the calling
 	 * client render a view with configured model data (so the user may
@@ -86,7 +89,7 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * flow execution during request processing
 	 * @see FlowExecutionContext#getFlow()
 	 */
-	public ViewSelection start(ExternalContext context) throws StateException;
+	public ViewSelection start(AttributeMap input, ExternalContext context) throws StateException;
 
 	/**
 	 * Signal an occurence of the specified user event in the current state of

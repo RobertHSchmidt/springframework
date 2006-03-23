@@ -152,7 +152,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecution flowExecution = repository.createFlowExecution(flowId);
-		ViewSelection selectedView = flowExecution.start(context);
+		ViewSelection selectedView = flowExecution.start(null, context);
 		if (flowExecution.isActive()) {
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);

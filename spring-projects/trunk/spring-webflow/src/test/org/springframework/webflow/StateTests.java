@@ -46,7 +46,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		flowExecution.start(new MockExternalContext());
+		flowExecution.start(null, new MockExternalContext());
 		assertEquals(1, ((ExecutionCounterAction)state.getActionList().get(0)).getExecutionCount());
 	}
 
@@ -60,7 +60,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		flowExecution.start(new MockExternalContext());
+		flowExecution.start(null, new MockExternalContext());
 		Action[] actions = state.getActionList().toArray();
 		for (int i = 0; i < actions.length; i++) {
 			ExecutionCounterAction action = (ExecutionCounterAction)actions[i];
@@ -79,7 +79,7 @@ public class StateTests extends TestCase {
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		try {
-			flowExecution.start(new MockExternalContext());
+			flowExecution.start(null, new MockExternalContext());
 			fail("Should not have matched to another state transition");
 		}
 		catch (NoMatchingTransitionException e) {
@@ -101,7 +101,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("action4.success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		flowExecution.start(new MockExternalContext());
+		flowExecution.start(null, new MockExternalContext());
 		assertTrue(!flowExecution.isActive());
 		Action[] actions = state.getActionList().toArray();
 		for (int i = 0; i < actions.length; i++) {
@@ -117,7 +117,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("submit"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ApplicationView view = (ApplicationView)flowExecution.start(new MockExternalContext());
+		ApplicationView view = (ApplicationView)flowExecution.start(null, new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
 		assertNotNull(view);
 		assertEquals("myViewName", view.getViewName());
@@ -129,7 +129,7 @@ public class StateTests extends TestCase {
 		state.addTransition(new Transition(on("submit"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(new MockExternalContext());
+		ViewSelection view = flowExecution.start(null, new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals(ViewSelection.NULL_VIEW, view);
 	}
@@ -149,7 +149,7 @@ public class StateTests extends TestCase {
 		state3.setViewSelector(view("myParentFlowEndingViewName"));
 
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ApplicationView view = (ApplicationView)flowExecution.start(new MockExternalContext());
+		ApplicationView view = (ApplicationView)flowExecution.start(null, new MockExternalContext());
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
@@ -186,7 +186,7 @@ public class StateTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		MockParameterMap input = new MockParameterMap();
 		input.put("parentInputAttribute", "attributeValue");
-		ApplicationView view = (ApplicationView)flowExecution.start(new MockExternalContext(input));
+		ApplicationView view = (ApplicationView)flowExecution.start(null, new MockExternalContext(input));
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());

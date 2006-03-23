@@ -443,7 +443,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		GenericApplicationContext context = new GenericApplicationContext();
 		context.setResourceLoader(getFlowArtifactFactory().getResourceLoader());
 		new XmlBeanDefinitionReader(context).loadBeanDefinitions(resources);
-		context.refresh();
 		localFlowArtifactFactory.push(new LocalFlowArtifactRegistry(context));
 	}
 
@@ -1051,6 +1050,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			else {
 				registry.context.setParent(top().context);
 			}
+			registry.context.refresh();
 			localFlowArtifactRegistries.push(registry);
 		}
 

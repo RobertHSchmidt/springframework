@@ -150,7 +150,7 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		/**
 		 * The lock for this conversation.
 		 */
-		private ConversationLock lock;
+		private transient ConversationLock lock;
 
 		/**
 		 * The flow execution representing the state of a conversation.

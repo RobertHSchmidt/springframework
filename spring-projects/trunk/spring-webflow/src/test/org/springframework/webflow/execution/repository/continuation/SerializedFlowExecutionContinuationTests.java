@@ -84,7 +84,7 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 			return null;
 		}
 
-		public ViewSelection start(ExternalContext externalContext) throws StateException {
+		public ViewSelection start(AttributeMap input, ExternalContext externalContext) throws StateException {
 			return null;
 		}
 
