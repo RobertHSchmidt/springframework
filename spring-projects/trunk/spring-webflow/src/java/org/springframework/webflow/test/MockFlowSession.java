@@ -17,12 +17,11 @@ package org.springframework.webflow.test;
 
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.ViewState;
 
 /**
  * Mock implementation of the <code>FlowSession</code> interface.
@@ -47,11 +46,7 @@ public class MockFlowSession implements FlowSession {
 	 */
 	public MockFlowSession() {
 		setFlow(new Flow("mockFlow"));
-		State state = new State(flow, "mockState") {
-			protected ViewSelection doEnter(FlowExecutionControlContext context) {
-				return ViewSelection.NULL_VIEW;
-			}
-		};
+		State state = new ViewState(flow, "mockState");
 		setStatus(FlowSessionStatus.ACTIVE);
 		setState(state);
 	}

@@ -76,6 +76,19 @@ public class MockRequestContext implements RequestContext {
 	/**
 	 * Creates a new mock request context with the following defaults:
 	 * <ul>
+	 * <li>A flow execution context with an active session for the specified flow.
+	 * <li>A mock external context with no request parameters set.
+	 * </ul>
+	 * To add request parameters to this request, use the
+	 * {@link #putRequestParameter(String, String) } method.
+	 */
+	public MockRequestContext(Flow flow) {
+		flowExecutionContext = new MockFlowExecutionContext(flow);
+	}
+	
+	/**
+	 * Creates a new mock request context with the following defaults:
+	 * <ul>
 	 * <li>A flow execution context with a active session of flow "mockFlow" in
 	 * state "mockState".
 	 * <li>A mock external context with the provided parameters set.

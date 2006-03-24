@@ -18,6 +18,7 @@ package org.springframework.webflow.support;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
 
@@ -46,7 +47,11 @@ public class EventIdTransitionCriteria implements TransitionCriteria, Serializab
 	}
 
 	public boolean test(RequestContext context) {
-		return eventId.equalsIgnoreCase(context.getLastEvent().getId());
+		Event lastEvent = context.getLastEvent();
+		if (lastEvent == null) {
+			return false;
+		}
+		return eventId.equalsIgnoreCase(lastEvent.getId());
 	}
 
 	public String toString() {

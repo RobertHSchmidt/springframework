@@ -48,7 +48,7 @@ public class MockFlowExecutionControlContext extends MockRequestContext implemen
 	 * provided flow definition.
 	 */
 	public MockFlowExecutionControlContext(Flow rootFlow) {
-		getMockFlowExecutionContext().setRootFlow(rootFlow);
+		super(rootFlow);
 	}
 	
 	public ViewSelection start(Flow flow, AttributeMap input) throws IllegalStateException {
