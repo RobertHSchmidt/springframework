@@ -43,7 +43,7 @@ public class ActionExecutor {
 	public static Event execute(Action action, RequestContext context) throws ActionExecutionException {
 		try {
 			if (logger.isDebugEnabled()) {
-				if (context.getFlowExecutionContext().getActiveSession().getStatus() == FlowSessionStatus.STARTING) {
+				if (context.getCurrentState() == null) {
 					logger.debug("Executing start " + action + " for flow '" + context.getActiveFlow().getId() + "'");
 				}
 				else {
@@ -58,7 +58,7 @@ public class ActionExecutor {
 		}
 		catch (Exception e) {
 			// wrap the action as an ActionExecutionException
-			if (context.getFlowExecutionContext().getActiveSession().getStatus() == FlowSessionStatus.STARTING) {
+			if (context.getCurrentState() == null) {
 				throw new ActionExecutionException(context.getActiveFlow(), action, context.getAttributes(), e);
 			}
 			else {
