@@ -15,10 +15,11 @@
  */
 package org.springframework.webflow.context.portlet;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.portlet.PortletContext;
 
+import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.ExternalContext.SharedMap;
 import org.springframework.webflow.context.StringKeyedMapAdapter;
 
@@ -54,8 +55,8 @@ public class PortletContextMap extends StringKeyedMapAdapter implements SharedMa
 		context.removeAttribute(key);
 	}
 
-	protected Enumeration getAttributeNames() {
-		return context.getAttributeNames();
+	protected Iterator getAttributeNames() {
+		return CollectionUtils.iterator(context.getAttributeNames());
 	}
 
 	public Object getMutex() {

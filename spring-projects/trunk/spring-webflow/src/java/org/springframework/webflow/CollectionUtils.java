@@ -18,6 +18,7 @@ package org.springframework.webflow;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * A utility class for working with collections used by Spring Web FLow.
@@ -37,25 +38,55 @@ public class CollectionUtils {
 	public static final ParameterMap EMPTY_PARAMETER_MAP = new ParameterMap(Collections.EMPTY_MAP);
 
 	/**
-	 * The shared, singleton empty enumeration instance.
+	 * The shared, singleton empty iterator instance.
 	 */
-	public static final EmptyEnumeration EMPTY_ENUMERATION = new EmptyEnumeration();
+	public static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator();
+
+	public static Iterator iterator(Enumeration enumeration) {
+		return new EnumerationIterator(enumeration);
+	}
 
 	private CollectionUtils() {
 
 	}
 
-	private static class EmptyEnumeration implements Enumeration, Serializable {
-		private EmptyEnumeration() {
+	private static class EmptyIterator implements Iterator, Serializable {
+		private EmptyIterator() {
 
 		}
 
-		public boolean hasMoreElements() {
+		public boolean hasNext() {
 			return false;
 		}
 
-		public Object nextElement() {
+		public Object next() {
 			throw new UnsupportedOperationException("There are no elements");
 		}
+
+		public void remove() {
+			throw new UnsupportedOperationException("There are no elements");
+		}
+	}
+
+	private static class EnumerationIterator implements Iterator {
+
+		private Enumeration enumeration;
+
+		public EnumerationIterator(Enumeration enumeration) {
+			this.enumeration = enumeration;
+		}
+
+		public boolean hasNext() {
+			return enumeration.hasMoreElements();
+		}
+
+		public Object next() {
+			return enumeration.nextElement();
+		}
+
+		public void remove() throws UnsupportedOperationException {
+			throw new UnsupportedOperationException("Not supported");
+		}
+
 	}
 }

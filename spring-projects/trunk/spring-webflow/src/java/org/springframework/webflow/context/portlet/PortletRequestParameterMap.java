@@ -16,9 +16,11 @@
 package org.springframework.webflow.context.portlet;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.portlet.PortletRequest;
 
+import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.context.StringKeyedMapAdapter;
 
 /**
@@ -60,7 +62,7 @@ public class PortletRequestParameterMap extends StringKeyedMapAdapter {
 		throw new UnsupportedOperationException("PortletRequest parameter maps are immutable");
 	}
 
-	protected Enumeration getAttributeNames() {
-		return request.getParameterNames();
+	protected Iterator getAttributeNames() {
+		return CollectionUtils.iterator(request.getParameterNames());
 	}
 }

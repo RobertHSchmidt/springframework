@@ -16,7 +16,6 @@
 package org.springframework.webflow.context;
 
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -37,8 +36,8 @@ public abstract class StringKeyedMapAdapter implements Map {
 	private Set entrySet;
 
 	public void clear() {
-		for (Enumeration e = getAttributeNames(); e.hasMoreElements();) {
-			removeAttribute((String)e.nextElement());
+		for (Iterator it = getAttributeNames(); it.hasNext();) {
+			removeAttribute((String)it.next());
 		}
 	}
 
@@ -50,8 +49,8 @@ public abstract class StringKeyedMapAdapter implements Map {
 		if (value == null) {
 			return false;
 		}
-		for (Enumeration e = getAttributeNames(); e.hasMoreElements();) {
-			Object aValue = getAttribute((String)e.nextElement());
+		for (Iterator it = getAttributeNames(); it.hasNext();) {
+			Object aValue = getAttribute((String)it.next());
 			if (value.equals(aValue)) {
 				return true;
 			}
@@ -68,7 +67,7 @@ public abstract class StringKeyedMapAdapter implements Map {
 	}
 
 	public boolean isEmpty() {
-		return !getAttributeNames().hasMoreElements();
+		return !getAttributeNames().hasNext();
 	}
 
 	public Set keySet() {
@@ -98,9 +97,9 @@ public abstract class StringKeyedMapAdapter implements Map {
 
 	public int size() {
 		int size = 0;
-		for (Enumeration e = getAttributeNames(); e.hasMoreElements();) {
+		for (Iterator it = getAttributeNames(); it.hasNext();) {
 			size++;
-			e.nextElement();
+			it.next();
 		}
 		return size;
 	}
@@ -138,7 +137,7 @@ public abstract class StringKeyedMapAdapter implements Map {
 	 * Returns an enumeration listing all keys known to the map.
 	 * @return the key enumeration
 	 */
-	protected abstract Enumeration getAttributeNames();
+	protected abstract Iterator getAttributeNames();
 	
 	// internal helper classes
 
@@ -171,7 +170,7 @@ public abstract class StringKeyedMapAdapter implements Map {
 	}
 
 	private class KeyIterator implements Iterator {
-		protected final Enumeration enumeration = getAttributeNames();
+		protected final Iterator it = getAttributeNames();
 
 		protected Object currentKey;
 
@@ -183,11 +182,11 @@ public abstract class StringKeyedMapAdapter implements Map {
 		}
 
 		public boolean hasNext() {
-			return enumeration.hasMoreElements();
+			return it.hasNext();
 		}
 
 		public Object next() {
-			return currentKey = enumeration.nextElement();
+			return currentKey = it.next();
 		}
 	}
 

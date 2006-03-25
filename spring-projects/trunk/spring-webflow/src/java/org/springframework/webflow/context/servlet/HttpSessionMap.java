@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.context.servlet;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -69,9 +69,9 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 		}
 	}
 
-	protected Enumeration getAttributeNames() {
+	protected Iterator getAttributeNames() {
 		HttpSession session = getSession();
-		return (session == null) ? CollectionUtils.EMPTY_ENUMERATION : session.getAttributeNames();
+		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.iterator(session.getAttributeNames());
 	}
 
 	public Object getMutex() {

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.context.StringKeyedMapAdapter;
 
 /**
@@ -70,14 +71,14 @@ public class HttpServletRequestParameterMap extends StringKeyedMapAdapter {
 		throw new UnsupportedOperationException("HttpServletRequest parameter maps are immutable");
 	}
 
-	protected Enumeration getAttributeNames() {
+	protected Iterator getAttributeNames() {
 		Enumeration parameterNames = request.getParameterNames();
 		if (request instanceof MultipartHttpServletRequest) {
 			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
-			return new MultiPartEnumeration(multipartRequest.getFileMap().keySet().iterator(), parameterNames);
+			return new MultiPartIterator(multipartRequest.getFileMap().keySet().iterator(), parameterNames);
 		}
 		else {
-			return parameterNames;
+			return CollectionUtils.iterator(parameterNames);
 		}
 	}
 
@@ -86,22 +87,22 @@ public class HttpServletRequestParameterMap extends StringKeyedMapAdapter {
 	 * the request parameter map.
 	 * @author Keith Donald
 	 */
-	private static class MultiPartEnumeration implements Enumeration {
+	private static class MultiPartIterator implements Iterator {
 
 		private Iterator fileMapNames;
 
 		private Enumeration parameterNames;
 
-		public MultiPartEnumeration(Iterator fileMapNames, Enumeration parameterNames) {
+		public MultiPartIterator(Iterator fileMapNames, Enumeration parameterNames) {
 			this.fileMapNames = fileMapNames;
 			this.parameterNames = parameterNames;
 		}
 
-		public boolean hasMoreElements() {
+		public boolean hasNext() {
 			return fileMapNames.hasNext() || parameterNames.hasMoreElements();
 		}
 
-		public Object nextElement() {
+		public Object next() {
 			if (fileMapNames.hasNext()) {
 				return fileMapNames.next();
 			}
@@ -109,5 +110,9 @@ public class HttpServletRequestParameterMap extends StringKeyedMapAdapter {
 				return parameterNames.nextElement();
 			}
 		}
+
+		public void remove() {
+			throw new UnsupportedOperationException("Remove not supported");
+		}		
 	}
 }

@@ -16,6 +16,7 @@
 package org.springframework.webflow.context.portlet;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
@@ -69,9 +70,9 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 		}
 	}
 
-	protected Enumeration getAttributeNames() {
+	protected Iterator getAttributeNames() {
 		PortletSession session = getSession();
-		return (session == null) ? CollectionUtils.EMPTY_ENUMERATION : session.getAttributeNames();
+		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.iterator(session.getAttributeNames()); 
 	}
 
 	public Object getMutex() {

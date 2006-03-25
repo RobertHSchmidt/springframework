@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.context.portlet;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -74,10 +74,10 @@ public class PortletRequestParameterMapTests extends TestCase {
 	public void testGetAttributeNames() {
 		mockPortletRequest.setParameter("Some param", "Some value");
 		// perform test
-		Enumeration names = tested.getAttributeNames();
+		Iterator names = tested.getAttributeNames();
 		assertNotNull("Null result unexpected", names);
-		assertTrue("More elements", names.hasMoreElements());
-		String name = (String) names.nextElement();
+		assertTrue("More elements", names.hasNext());
+		String name = (String) names.next();
 		assertEquals("Some param", name);
 	}
 }

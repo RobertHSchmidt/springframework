@@ -16,9 +16,11 @@
 package org.springframework.webflow.context.servlet;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.context.StringKeyedMapAdapter;
 
 /**
@@ -53,7 +55,7 @@ public class HttpServletRequestMap extends StringKeyedMapAdapter {
 		request.removeAttribute(key);
 	}
 
-	protected Enumeration getAttributeNames() {
-		return request.getAttributeNames();
+	protected Iterator getAttributeNames() {
+		return CollectionUtils.iterator(request.getAttributeNames());
 	}
 }
