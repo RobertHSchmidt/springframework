@@ -84,7 +84,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 			// expected
 		}
 	}
-	
+
 	public static TargetStateResolver to(String stateId) {
 		return new StaticTargetStateResolver(stateId);
 	}

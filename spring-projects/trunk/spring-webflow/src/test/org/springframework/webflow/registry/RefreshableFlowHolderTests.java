@@ -39,7 +39,7 @@ public class RefreshableFlowHolderTests extends TestCase {
 		holder.getFlow();
 		assertTrue(holder.isAssembled());
 		long lastModified = holder.getLastModified();
- 		holder.getFlow();
+		holder.getFlow();
 		assertEquals(lastModified, holder.getLastModified());
 	}
 }

@@ -35,12 +35,13 @@ public class ParameterMapTests extends TestCase {
 		String value = parameterMap.getRequired("string");
 		assertEquals("A string", value);
 	}
-	
+
 	public void testGetRequiredNotPresent() {
 		try {
 			parameterMap.getRequired("bogus");
-		} catch (IllegalArgumentException e) {
-			
+		}
+		catch (IllegalArgumentException e) {
+
 		}
 	}
 
@@ -72,17 +73,18 @@ public class ParameterMapTests extends TestCase {
 	public void testGetRequiredArrayNotPresent() {
 		try {
 			parameterMap.getRequiredArray("bogus");
-		} catch (IllegalArgumentException e) {
-			
+		}
+		catch (IllegalArgumentException e) {
+
 		}
 	}
-	
+
 	public void testGetSingleValueAsArray() {
 		String[] value = parameterMap.getArray("string");
 		assertEquals(1, value.length);
 		assertEquals("A string", value[0]);
 	}
-	
+
 	public void testGetMultipart() {
 		MultipartFile file = parameterMap.getMultipartFile("multipartFile");
 		assertNotNull(file);
@@ -96,11 +98,12 @@ public class ParameterMapTests extends TestCase {
 	public void testGetRequiredMultipartNotPresent() {
 		try {
 			parameterMap.getRequiredMultipartFile("bogus");
-		} catch (IllegalArgumentException e) {
-			
+		}
+		catch (IllegalArgumentException e) {
+
 		}
 	}
-	
+
 	public void testGetConversion() {
 		Integer i = parameterMap.getInteger("integer");
 		assertEquals(new Integer(12345), i);

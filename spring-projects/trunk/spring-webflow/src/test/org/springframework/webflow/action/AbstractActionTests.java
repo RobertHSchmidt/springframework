@@ -10,7 +10,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 public class AbstractActionTests extends TestCase {
 	private TestAbstractAction action = new TestAbstractAction();
-	
+
 	public void testInitCallback() throws Exception {
 		action.afterPropertiesSet();
 		assertTrue(action.initialized);
@@ -25,7 +25,8 @@ public class AbstractActionTests extends TestCase {
 		try {
 			action.afterPropertiesSet();
 			fail("Should've failed initialization");
-		} catch (BeanInitializationException e) {
+		}
+		catch (BeanInitializationException e) {
 			assertFalse(action.initialized);
 		}
 	}
@@ -45,8 +46,9 @@ public class AbstractActionTests extends TestCase {
 		try {
 			action.execute(new MockRequestContext());
 			fail("Should've failed execute");
-		} catch (IllegalStateException e) {
-			
+		}
+		catch (IllegalStateException e) {
+
 		}
 	}
 
@@ -59,30 +61,30 @@ public class AbstractActionTests extends TestCase {
 		Event result = action.execute(new MockRequestContext());
 		assertEquals("success", result.getId());
 	}
-	
+
 	public void testPostExecuteCalled() throws Exception {
 		testNormalExecute();
 		assertTrue(action.postExecuteCalled);
 	}
-	
+
 	private class TestAbstractAction extends AbstractAction {
 		private boolean initialized;
 
 		private boolean postExecuteCalled;
-		
+
 		protected void initAction() {
 			initialized = true;
 		}
-		
+
 		protected Event doExecute(RequestContext context) throws Exception {
 			throw new IllegalStateException("Should not be called");
 		}
-		
+
 		protected void doPostExecute(RequestContext context) {
 			postExecuteCalled = true;
 		}
 	}
-	
+
 	public void testSuccess() {
 		Event event = action.success();
 		assertEquals(action.getEventFactorySupport().getSuccessEventId(), event.getId());
@@ -99,7 +101,7 @@ public class AbstractActionTests extends TestCase {
 		Event event = action.error();
 		assertEquals(action.getEventFactorySupport().getErrorEventId(), event.getId());
 	}
-	
+
 	public void testErrorException() {
 		IllegalArgumentException e = new IllegalArgumentException("woops");
 		Event event = action.error(e);
@@ -131,13 +133,13 @@ public class AbstractActionTests extends TestCase {
 		Event event = action.result("custom");
 		assertEquals("custom", event.getId());
 	}
-	
+
 	public void testCustomResultObject() {
 		Event event = action.result("custom", "result", "value");
 		assertEquals("custom", event.getId());
 		assertEquals("value", event.getAttributes().getString("result"));
 	}
-	
+
 	public void testCustomResultCollection() {
 		AttributeMap collection = new AttributeMap();
 		collection.put("result", "value");

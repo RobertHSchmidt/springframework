@@ -27,9 +27,9 @@ public class StringKeyedMapAdapterTests extends TestCase {
 
 		protected void setAttribute(String key, Object value) {
 			contents.put(key, value);
-		}		
+		}
 	};
-	
+
 	public void testGetPutRemove() {
 		assertTrue(map.size() == 0);
 		assertTrue(map.isEmpty());
@@ -54,7 +54,7 @@ public class StringKeyedMapAdapterTests extends TestCase {
 		map.putAll(all);
 		assertTrue(map.size() == 2);
 	}
-	
+
 	public void testEntrySet() {
 		map.put("foo", "bar");
 		map.put("bar", "baz");

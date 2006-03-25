@@ -76,14 +76,15 @@ public class SetPortletModeActionTest extends TestCase {
 		MockRenderResponse mockRenderResponse = new MockRenderResponse();
 		PortletExternalContext externalContext = new PortletExternalContext(null, null, mockRenderResponse);
 		MockRequestContext mockRequestContext = new MockRequestContext();
-		mockRequestContext.setExternalContext(externalContext);	
+		mockRequestContext.setExternalContext(externalContext);
 		mockRequestContext.setAttribute(SetPortletModeAction.PORTLET_MODE_ATTRIBUTE, PortletMode.HELP);
 
 		// perform test
 		try {
 			tested.doExecute(mockRequestContext);
 			fail("ActionExecutionException expected");
-		} catch (ActionExecutionException expected) {
+		}
+		catch (ActionExecutionException expected) {
 			// expected
 		}
 	}

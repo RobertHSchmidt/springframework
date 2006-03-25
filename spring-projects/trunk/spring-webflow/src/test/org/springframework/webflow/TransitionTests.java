@@ -23,13 +23,13 @@ public class TransitionTests extends TestCase {
 		assertEquals(context.getCurrentState(), target);
 		assertEquals(1, action.getExecutionCount());
 	}
-	
+
 	public void testTransitionCriteriaDoesNotMatch() {
 		Transition t = new Transition(new EventIdTransitionCriteria("bogus"), new StaticTargetStateResolver("target"));
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new Flow());
 		assertFalse(t.matches(context));
 	}
-	
+
 	public void testTransitionCannotExecute() {
 		Transition t = new Transition(new StaticTargetStateResolver("target"));
 		t.setExecutionCriteria(new EventIdTransitionCriteria("bogus"));

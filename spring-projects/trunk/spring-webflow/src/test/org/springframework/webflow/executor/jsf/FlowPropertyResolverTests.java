@@ -34,24 +34,26 @@ import org.springframework.webflow.test.MockFlowSession;
 public class FlowPropertyResolverTests extends TestCase {
 
 	private FlowPropertyResolver resolver;
+
 	private MockControl flowExControl;
+
 	private FlowExecution flowEx;
 
 	protected void setUp() throws Exception {
 		resolver = new FlowPropertyResolver(new OriginalPropertyResolver());
 		flowExControl = MockControl.createControl(FlowExecution.class);
-		flowEx = (FlowExecution) flowExControl.getMock();
+		flowEx = (FlowExecution)flowExControl.getMock();
 	}
 
 	protected void tearDown() throws Exception {
 		resolver = null;
 	}
-	
+
 	public void testGetTypeBaseIndex() {
 		Class type = resolver.getType(flowEx, 22);
 		assertNull("can't get property from flow via index", type);
 	}
-	
+
 	public void testGetTypeBaseProperty() {
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getScope().put("name", "joe");
@@ -61,12 +63,13 @@ public class FlowPropertyResolverTests extends TestCase {
 		Class type = resolver.getType(flowEx, "name");
 		assertTrue("returned type must match property type", type.equals(String.class));
 	}
-	
+
 	public void testGetValueBaseIndex() {
 		try {
 			resolver.getValue(flowEx, 2);
 			fail("not legal to get flow property by index");
-		} catch (ReferenceSyntaxException e) {
+		}
+		catch (ReferenceSyntaxException e) {
 			// expected
 		}
 	}
@@ -80,16 +83,17 @@ public class FlowPropertyResolverTests extends TestCase {
 		Object value = resolver.getValue(flowEx, "name");
 		assertTrue("must return expected property", value.equals("joe"));
 	}
-	
+
 	public void testSetValueBaseIndex() {
 		try {
 			resolver.setValue(flowEx, 2, "whatever");
 			fail("not legal to set flow property by index");
-		} catch (ReferenceSyntaxException e) {
+		}
+		catch (ReferenceSyntaxException e) {
 			// expected
 		}
 	}
-	
+
 	public void testSetValueBaseProperty() {
 		MockFlowSession flowSession = new MockFlowSession();
 		flowEx.getActiveSession();
@@ -101,42 +105,36 @@ public class FlowPropertyResolverTests extends TestCase {
 
 	private static class OriginalPropertyResolver extends PropertyResolver {
 
-		public Class getType(Object base, int index) throws EvaluationException,
-				PropertyNotFoundException {
+		public Class getType(Object base, int index) throws EvaluationException, PropertyNotFoundException {
 			return Object.class;
 		}
 
-		public Class getType(Object base, Object property) throws EvaluationException,
-				PropertyNotFoundException {
+		public Class getType(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
 			return Object.class;
 		}
 
-		public Object getValue(Object base, int index) throws EvaluationException,
-				PropertyNotFoundException {
+		public Object getValue(Object base, int index) throws EvaluationException, PropertyNotFoundException {
 			return new String("Some value");
 		}
 
-		public Object getValue(Object base, Object property) throws EvaluationException,
-				PropertyNotFoundException {
+		public Object getValue(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
 			return new String("Some value");
 		}
 
-		public boolean isReadOnly(Object base, int index) throws EvaluationException,
+		public boolean isReadOnly(Object base, int index) throws EvaluationException, PropertyNotFoundException {
+			return false;
+		}
+
+		public boolean isReadOnly(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
+			return false;
+		}
+
+		public void setValue(Object base, int index, Object value) throws EvaluationException,
 				PropertyNotFoundException {
-			return false;
 		}
 
-		public boolean isReadOnly(Object base, Object property)
-				throws EvaluationException, PropertyNotFoundException {
-			return false;
-		}
-
-		public void setValue(Object base, int index, Object value)
-				throws EvaluationException, PropertyNotFoundException {
-		}
-
-		public void setValue(Object base, Object property, Object value)
-				throws EvaluationException, PropertyNotFoundException {
+		public void setValue(Object base, Object property, Object value) throws EvaluationException,
+				PropertyNotFoundException {
 		}
 	}
 }

@@ -24,23 +24,23 @@ import org.springframework.webflow.RequestContext;
  * @author Erwin Vervaet
  */
 public class TestMultiAction extends MultiAction {
-	
+
 	int counter = 0;
-	
+
 	public Event increment(RequestContext context) throws Exception {
 		counter++;
 		return success();
 	}
-	
+
 	public Event decrement(RequestContext context) throws Exception {
 		counter--;
 		return success();
 	}
-	
+
 	public int getCounter() {
 		return counter;
 	}
-	
+
 	public void setCounter(int counter) {
 		this.counter = counter;
 	}

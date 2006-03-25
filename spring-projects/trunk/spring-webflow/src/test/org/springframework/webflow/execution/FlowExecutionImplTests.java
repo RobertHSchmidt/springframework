@@ -71,7 +71,7 @@ public class FlowExecutionImplTests extends TestCase {
 		ObjectOutputStream oout = new ObjectOutputStream(bout);
 		oout.writeObject(flowExecution);
 		oout.flush();
-		
+
 		// deserialize the flowExecution
 		ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 		ObjectInputStream oin = new ObjectInputStream(bin);
@@ -89,10 +89,10 @@ public class FlowExecutionImplTests extends TestCase {
 
 		assertEquals(flowExecution.isActive(), restoredFlowExecution.isActive());
 		if (flowExecution.isActive()) {
-			assertTrue(entriesCollectionsAreEqual(flowExecution.getActiveSession().getScope().getMap()
-					.entrySet(), restoredFlowExecution.getActiveSession().getScope().getMap().entrySet()));
-			assertEquals(flowExecution.getActiveSession().getState().getId(), restoredFlowExecution
-					.getActiveSession().getState().getId());
+			assertTrue(entriesCollectionsAreEqual(flowExecution.getActiveSession().getScope().getMap().entrySet(),
+					restoredFlowExecution.getActiveSession().getScope().getMap().entrySet()));
+			assertEquals(flowExecution.getActiveSession().getState().getId(), restoredFlowExecution.getActiveSession()
+					.getState().getId());
 			assertEquals(flowExecution.getActiveSession().getFlow().getId(), restoredFlowExecution.getActiveSession()
 					.getFlow().getId());
 			assertSame(flowExecution.getFlow(), restoredFlowExecution.getFlow());
@@ -102,7 +102,7 @@ public class FlowExecutionImplTests extends TestCase {
 
 	public void testRehydrate() throws Exception {
 		// setup some input data
-		
+
 		MockParameterMap input = new MockParameterMap();
 		input.put("name", "value");
 		// start the flow execution

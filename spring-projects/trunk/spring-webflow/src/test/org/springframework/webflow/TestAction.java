@@ -7,13 +7,13 @@ public class TestAction extends AbstractAction {
 	private Event result = new Event(this, "success");
 
 	private boolean executed;
-	
+
 	private int executionCount;
 
 	public TestAction() {
-		
+
 	}
-	
+
 	public TestAction(String result) {
 		if (StringUtils.hasText(result)) {
 			this.result = new Event(this, result);
@@ -22,7 +22,7 @@ public class TestAction extends AbstractAction {
 			this.result = null;
 		}
 	}
-	
+
 	public boolean isExecuted() {
 		return executed;
 	}

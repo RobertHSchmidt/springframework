@@ -39,7 +39,7 @@ public class FlowVariableResolverTests extends TestCase {
 	private MockFacesContext mockFacesContext;
 
 	private MockJsfExternalContext mockJsfExternalContext;
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		mockFacesContext = new MockFacesContext();
@@ -71,8 +71,7 @@ public class FlowVariableResolverTests extends TestCase {
 	public void testResolveVariableFlowScopeWithThreadLocal() {
 		MockControl flowExecutionControl = MockControl.createControl(FlowExecution.class);
 		FlowExecution flowExecutionMock = (FlowExecution)flowExecutionControl.getMock();
-		FlowExecutionKey key = new FlowExecutionKey("some conversation id",
-				"some continuation id");
+		FlowExecutionKey key = new FlowExecutionKey("some conversation id", "some continuation id");
 		FlowExecutionHolder holder = new FlowExecutionHolder(key, flowExecutionMock);
 		FlowExecutionHolderUtils.setFlowExecutionHolder(holder, mockFacesContext);
 		flowExecutionControl.replay();

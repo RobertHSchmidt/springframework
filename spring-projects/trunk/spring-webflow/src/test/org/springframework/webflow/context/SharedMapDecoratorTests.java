@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 public class SharedMapDecoratorTests extends TestCase {
 
 	private SharedMapDecorator map = new SharedMapDecorator(new HashMap());
-	
+
 	public void testGetPutRemove() {
 		assertTrue(map.size() == 0);
 		assertTrue(map.isEmpty());
@@ -35,7 +35,7 @@ public class SharedMapDecoratorTests extends TestCase {
 		map.putAll(all);
 		assertTrue(map.size() == 2);
 	}
-	
+
 	public void testEntrySet() {
 		map.put("foo", "bar");
 		map.put("bar", "baz");

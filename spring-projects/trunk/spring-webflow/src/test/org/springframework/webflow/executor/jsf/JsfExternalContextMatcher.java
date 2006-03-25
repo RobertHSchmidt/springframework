@@ -28,16 +28,17 @@ public class JsfExternalContextMatcher extends AbstractMatcher {
 
 	/*
 	 * @see org.easymock.AbstractMatcher#argumentMatches(java.lang.Object,
-	 *      java.lang.Object)
+	 * java.lang.Object)
 	 */
 	protected boolean argumentMatches(Object arg0, Object arg1) {
 		if (arg0 instanceof JsfExternalContext && arg1 instanceof JsfExternalContext) {
-			JsfExternalContext first = (JsfExternalContext) arg0;
-			JsfExternalContext second = (JsfExternalContext) arg1;
+			JsfExternalContext first = (JsfExternalContext)arg0;
+			JsfExternalContext second = (JsfExternalContext)arg1;
 			return super.argumentMatches(first.getActionId(), second.getActionId())
 					&& super.argumentMatches(first.getOutcome(), second.getOutcome())
 					&& super.argumentMatches(first.getFacesContext(), second.getFacesContext());
-		} else {
+		}
+		else {
 			return super.argumentMatches(arg0, arg1);
 		}
 	}

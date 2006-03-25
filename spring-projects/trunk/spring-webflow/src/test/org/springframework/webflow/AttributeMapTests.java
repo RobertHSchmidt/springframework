@@ -95,7 +95,7 @@ public class AttributeMapTests extends TestCase {
 		BigDecimal bd = (BigDecimal)attributeMap.getNumber("bigDecimal", BigDecimal.class);
 		assertEquals(new BigDecimal("12345.67"), bd);
 	}
-	
+
 	public void testGetNumberWrongType() {
 		try {
 			attributeMap.getNumber("bigDecimal", Integer.class);
@@ -105,7 +105,7 @@ public class AttributeMapTests extends TestCase {
 
 		}
 	}
-	
+
 	public void testGetNumberWithDefaultOption() {
 		BigDecimal d = new BigDecimal("1");
 		BigDecimal bd = (BigDecimal)attributeMap.getNumber("bigDecimal", BigDecimal.class, d);
@@ -124,7 +124,7 @@ public class AttributeMapTests extends TestCase {
 		BigDecimal bd = (BigDecimal)attributeMap.getRequiredNumber("bigDecimal", BigDecimal.class);
 		assertEquals(new BigDecimal("12345.67"), bd);
 	}
-	
+
 	public void testGetNumberRequiredNotPresent() {
 		try {
 			attributeMap.getRequiredNumber("bogus", BigDecimal.class);
@@ -134,17 +134,17 @@ public class AttributeMapTests extends TestCase {
 
 		}
 	}
-	
+
 	public void testGetInteger() {
 		Integer i = (Integer)attributeMap.getInteger("integer");
 		assertEquals(new Integer(12345), i);
 	}
-	
+
 	public void testGetIntegerNull() {
 		Integer i = (Integer)attributeMap.getInteger("bogus");
 		assertNull(i);
 	}
-	
+
 	public void testGetIntegerRequired() {
 		Integer i = (Integer)attributeMap.getRequiredInteger("integer");
 		assertEquals(new Integer(12345), i);
@@ -164,12 +164,12 @@ public class AttributeMapTests extends TestCase {
 		Long i = (Long)attributeMap.getLong("long");
 		assertEquals(new Long(12345), i);
 	}
-	
+
 	public void testGetLongNull() {
 		Long i = (Long)attributeMap.getLong("bogus");
 		assertNull(i);
 	}
-	
+
 	public void testGetLongRequired() {
 		Long i = (Long)attributeMap.getRequiredLong("long");
 		assertEquals(new Long(12345), i);
@@ -189,12 +189,12 @@ public class AttributeMapTests extends TestCase {
 		String i = (String)attributeMap.getString("string");
 		assertEquals("A string", i);
 	}
-	
+
 	public void testGetStringNull() {
 		String i = (String)attributeMap.getString("bogus");
 		assertNull(i);
 	}
-	
+
 	public void testGetStringRequired() {
 		String i = (String)attributeMap.getRequiredString("string");
 		assertEquals("A string", i);
@@ -214,12 +214,12 @@ public class AttributeMapTests extends TestCase {
 		Boolean i = (Boolean)attributeMap.getBoolean("boolean");
 		assertEquals(Boolean.TRUE, i);
 	}
-	
+
 	public void testGetBooleanNull() {
 		Boolean i = (Boolean)attributeMap.getBoolean("bogus");
 		assertNull(i);
 	}
-	
+
 	public void testGetBooleanRequired() {
 		Boolean i = (Boolean)attributeMap.getRequiredBoolean("boolean");
 		assertEquals(Boolean.TRUE, i);
@@ -234,7 +234,7 @@ public class AttributeMapTests extends TestCase {
 
 		}
 	}
-	
+
 	public void testGetArray() {
 		String[] i = (String[])attributeMap.getArray("stringArray", String[].class);
 		assertEquals(3, i.length);
@@ -284,15 +284,16 @@ public class AttributeMapTests extends TestCase {
 
 		}
 	}
-	
+
 	public void testGetMap() {
 		Map map = attributeMap.getMap();
 		assertEquals(10, map.size());
 		try {
 			map.put("can't", "modify");
 			fail("Cant modify but u did");
-		} catch (UnsupportedOperationException e) {
-			
+		}
+		catch (UnsupportedOperationException e) {
+
 		}
 	}
 }

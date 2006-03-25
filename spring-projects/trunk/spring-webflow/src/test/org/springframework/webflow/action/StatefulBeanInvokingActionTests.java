@@ -9,11 +9,11 @@ import org.springframework.webflow.test.MockRequestContext;
 
 public class StatefulBeanInvokingActionTests extends TestCase {
 	private StatefulBeanInvokingAction action;
-	
+
 	private StaticWebApplicationContext beanFactory = new StaticWebApplicationContext();
 
 	private MockRequestContext context = new MockRequestContext();
-	
+
 	public void setUp() {
 		action = new StatefulBeanInvokingAction(new MethodSignature("execute"), "bean", beanFactory);
 	}
@@ -35,11 +35,12 @@ public class StatefulBeanInvokingActionTests extends TestCase {
 		try {
 			action.execute(context);
 			fail("should've failed iae");
-		} catch (IllegalArgumentException e) {
-			
+		}
+		catch (IllegalArgumentException e) {
+
 		}
 	}
-	
+
 	public void testInvokeBeanCustomScope() throws Exception {
 		action.setBeanScope(ScopeType.CONVERSATION);
 		beanFactory.registerPrototype("bean", TestBean.class);

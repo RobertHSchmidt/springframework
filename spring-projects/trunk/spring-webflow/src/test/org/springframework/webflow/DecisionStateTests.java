@@ -31,18 +31,20 @@ public class DecisionStateTests extends TestCase {
 	public void testIfDecision() {
 		Flow flow = new Flow();
 		DecisionState state = new DecisionState(flow, "decisionState");
-		state.addTransition(new Transition(new EventIdTransitionCriteria("foo"), new StaticTargetStateResolver("target")));
+		state.addTransition(new Transition(new EventIdTransitionCriteria("foo"),
+				new StaticTargetStateResolver("target")));
 		new EndState(flow, "target");
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		context.setLastEvent(new Event(this, "foo"));
 		state.enter(context);
 		assertFalse(context.getFlowExecutionContext().isActive());
 	}
-	
+
 	public void testElseDecision() {
 		Flow flow = new Flow();
 		DecisionState state = new DecisionState(flow, "decisionState");
-		state.addTransition(new Transition(new EventIdTransitionCriteria("foo"), new StaticTargetStateResolver("invalid")));
+		state.addTransition(new Transition(new EventIdTransitionCriteria("foo"), new StaticTargetStateResolver(
+				"invalid")));
 		state.addTransition(new Transition(new StaticTargetStateResolver("target")));
 		new EndState(flow, "target");
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
@@ -50,26 +52,30 @@ public class DecisionStateTests extends TestCase {
 		state.enter(context);
 		assertFalse(context.getFlowExecutionContext().isActive());
 	}
-	
+
 	public void testNoMatching() {
 		Flow flow = new Flow();
 		DecisionState state = new DecisionState(flow, "decisionState");
-		state.addTransition(new Transition(new EventIdTransitionCriteria("foo"), new StaticTargetStateResolver("invalid")));
-		state.addTransition(new Transition(new EventIdTransitionCriteria("bar"), new StaticTargetStateResolver("invalid")));
+		state.addTransition(new Transition(new EventIdTransitionCriteria("foo"), new StaticTargetStateResolver(
+				"invalid")));
+		state.addTransition(new Transition(new EventIdTransitionCriteria("bar"), new StaticTargetStateResolver(
+				"invalid")));
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		context.setLastEvent(new Event(this, "bogus"));
 		try {
 			state.enter(context);
 			fail("Expected no matching");
-		} catch (NoMatchingTransitionException e) {
-			
+		}
+		catch (NoMatchingTransitionException e) {
+
 		}
 	}
-	
+
 	public void testDecisionAction() {
 		Flow flow = new Flow();
 		DecisionState state = new DecisionState(flow, "decisionState");
-		state.addTransition(new Transition(new EventIdTransitionCriteria("success"), new StaticTargetStateResolver("target")));
+		state.addTransition(new Transition(new EventIdTransitionCriteria("success"), new StaticTargetStateResolver(
+				"target")));
 		state.setAction(new TestAction());
 		new EndState(flow, "target");
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);

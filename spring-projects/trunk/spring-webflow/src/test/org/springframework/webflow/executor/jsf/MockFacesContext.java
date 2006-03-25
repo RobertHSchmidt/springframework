@@ -123,7 +123,7 @@ public class MockFacesContext extends FacesContext {
 	public void setViewRoot(UIViewRoot viewRoot) {
 		this.viewRoot = viewRoot;
 	}
-	
+
 	public void addMessage(String arg0, FacesMessage arg1) {
 	}
 

@@ -29,6 +29,7 @@ import org.springframework.mock.web.portlet.MockPortletRequest;
 public class PortletSessionMapTests extends TestCase {
 
 	private PortletSessionMap tested;
+
 	private MockPortletRequest mockPortletRequest;
 
 	protected void setUp() throws Exception {
@@ -84,7 +85,7 @@ public class PortletSessionMapTests extends TestCase {
 		assertNotNull("Null result unexpected", names);
 		System.out.println(names);
 		assertTrue("More elements", names.hasNext());
-		String name = (String) names.next();
+		String name = (String)names.next();
 		assertEquals("Some key", name);
 	}
 

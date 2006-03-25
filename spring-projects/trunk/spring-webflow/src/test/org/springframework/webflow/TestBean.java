@@ -12,18 +12,18 @@ public class TestBean implements Serializable {
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
-	
+
 	public boolean equals(Object o) {
 		if (!(o instanceof TestBean)) {
 			return false;
 		}
 		return amount == ((TestBean)o).amount;
 	}
-	
+
 	public int hashCode() {
 		return amount * 29;
 	}
-	
+
 	public String toString() {
 		return "[TestBean amount = " + amount + "]";
 	}

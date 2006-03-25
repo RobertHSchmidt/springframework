@@ -55,7 +55,8 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 				"/org/springframework/webflow/builder/testFlow2ParentContext.xml");
 		this.parentBeanFactory = parentContext.getBeanFactory();
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow2.xml", getClass()));
-		builder.setFlowArtifactFactory(new RegistryBackedFlowArtifactFactory(new FlowRegistryImpl(), parentBeanFactory));
+		builder
+				.setFlowArtifactFactory(new RegistryBackedFlowArtifactFactory(new FlowRegistryImpl(), parentBeanFactory));
 		new FlowAssembler("testFlow2", builder).assembleFlow();
 		this.flow = builder.getResult();
 		this.testService = (TestService)parentContext.getBean("testService");

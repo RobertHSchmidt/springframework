@@ -13,7 +13,7 @@ public class AnnotedActionTests extends TestCase {
 
 	protected void setUp() throws Exception {
 	}
-	
+
 	public void testBasicExecute() throws Exception {
 		assertEquals("success", action.execute(context).getId());
 	}

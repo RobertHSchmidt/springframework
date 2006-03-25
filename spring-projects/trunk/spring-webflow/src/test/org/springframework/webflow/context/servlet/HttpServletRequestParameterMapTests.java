@@ -13,39 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.context.portlet;
+package org.springframework.webflow.context.servlet;
 
 import java.util.Iterator;
 
 import junit.framework.TestCase;
 
-import org.springframework.mock.web.portlet.MockPortletRequest;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * Unit test for the PortletRequestParameterMap class.
  * 
  * @author Ulrik Sandberg
  */
-public class PortletRequestParameterMapTests extends TestCase {
+public class HttpServletRequestParameterMapTests extends TestCase {
 
-	private PortletRequestParameterMap tested;
+	private HttpServletRequestParameterMap tested;
 
-	private MockPortletRequest mockPortletRequest;
+	private MockHttpServletRequest request;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		mockPortletRequest = new MockPortletRequest();
-		tested = new PortletRequestParameterMap(mockPortletRequest);
+		request = new MockHttpServletRequest();
+		tested = new HttpServletRequestParameterMap(request);
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		mockPortletRequest = null;
+		request = null;
 		tested = null;
 	}
 
 	public void testGetAttribute() {
-		mockPortletRequest.setParameter("Some param", "Some value");
+		request.setParameter("Some param", "Some value");
 		// perform test
 		Object result = tested.getAttribute("Some param");
 		assertEquals("Some value", result);
@@ -63,7 +63,7 @@ public class PortletRequestParameterMapTests extends TestCase {
 	}
 
 	public void testRemoveAttribute() {
-		mockPortletRequest.setParameter("Some param", "Some value");
+		request.setParameter("Some param", "Some value");
 		// perform test
 		try {
 			tested.removeAttribute("Some param");
@@ -75,7 +75,7 @@ public class PortletRequestParameterMapTests extends TestCase {
 	}
 
 	public void testGetAttributeNames() {
-		mockPortletRequest.setParameter("Some param", "Some value");
+		request.setParameter("Some param", "Some value");
 		// perform test
 		Iterator names = tested.getAttributeNames();
 		assertNotNull("Null result unexpected", names);
