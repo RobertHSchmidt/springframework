@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution;
+package org.springframework.webflow.execution.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,7 +31,9 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.XmlFlowBuilder;
 import org.springframework.webflow.builder.XmlFlowBuilderTests;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.FlowExecutionListenerLoader;
+import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockParameterMap;
 
