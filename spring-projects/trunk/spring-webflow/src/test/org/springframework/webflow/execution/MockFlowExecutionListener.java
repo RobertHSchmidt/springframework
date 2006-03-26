@@ -15,9 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
-import java.util.Map;
-
 import org.springframework.util.Assert;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowSession;
@@ -35,6 +34,8 @@ import org.springframework.webflow.ViewSelection;
  */
 public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 
+	private boolean sessionStarting;
+	
 	private boolean started;
 
 	private boolean executing;
@@ -51,8 +52,12 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	private int eventsSignaled;
 
+	private boolean stateEntering;
+	
 	private int stateTransitions;
 
+	private boolean sessionEnding;
+	
 	/**
 	 * Is the flow execution running: it has started but not yet ended.
 	 */
@@ -125,16 +130,19 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		requestInProcess = true;
 	}
 
-	public void sessionStarting(RequestContext context, Flow flow, Map input) throws EnterStateVetoException {
+	public void sessionStarting(RequestContext context, Flow flow, AttributeMap input) throws EnterStateVetoException {
 		if (!context.getFlowExecutionContext().isActive()) {
 			Assert.state(!started, "The flow execution was already started");
 			flowNestingLevel = 0;
 			eventsSignaled = 0;
 			stateTransitions = 0;
 		}
+		sessionStarting = true;
 	}
 
 	public void sessionStarted(RequestContext context, FlowSession session) {
+		Assert.state(sessionStarting, "The session should've been starting...");
+		sessionStarting = false;
 		if (session.isRoot()) {
 			Assert.state(!started, "The flow execution was already started");
 			started = true;
@@ -157,9 +165,12 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 	}
 
 	public void stateEntering(RequestContext context, State state) throws EnterStateVetoException {
+		stateEntering = true;
 	}
 
 	public void stateEntered(RequestContext context, State newState, State previousState) {
+		Assert.state(stateEntering, "State should've entering...");
+		stateEntering = false;
 		stateTransitions++;
 	}
 
@@ -173,8 +184,15 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		paused = false;
 	}
 
+	
+	public void sessionEnding(RequestContext context, FlowSession session, AttributeMap output) {
+		sessionEnding = true;
+	}
+
 	public void sessionEnded(RequestContext context, FlowSession endedSession, UnmodifiableAttributeMap sessionOutput) {
 		assertStarted();
+		Assert.state(sessionEnding, "Should have been ending");
+		sessionEnding = false;
 		if (endedSession.isRoot()) {
 			Assert.state(flowNestingLevel == 0, "The flow execution should have ended");
 			started = false;
