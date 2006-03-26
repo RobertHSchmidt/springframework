@@ -55,12 +55,6 @@ import org.springframework.webflow.test.MockExternalContext;
 public class FlowExecutionTests extends TestCase {
 
 	public void testFlowExecutionListener() {
-		Flow subFlow = new Flow("mySubFlow");
-		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
-		state1.setViewSelector(view("mySubFlowViewName"));
-		state1.addTransition(new Transition(on("submit"), to("finish")));
-		new EndState(subFlow, "finish");
-
 		Flow flow = new Flow("myFlow");
 
 		ActionState actionState = new ActionState(flow, "actionState");
@@ -70,6 +64,12 @@ public class FlowExecutionTests extends TestCase {
 		ViewState viewState = new ViewState(flow, "viewState");
 		viewState.setViewSelector(view("myView"));
 		viewState.addTransition(new Transition(on("submit"), to("subFlowState")));
+
+		Flow subFlow = new Flow("mySubFlow");
+		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
+		state1.setViewSelector(view("mySubFlowViewName"));
+		state1.addTransition(new Transition(on("submit"), to("finish")));
+		new EndState(subFlow, "finish");
 
 		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
 		subflowState.addTransition(new Transition(on("finish"), to("finish")));
@@ -81,19 +81,24 @@ public class FlowExecutionTests extends TestCase {
 				new FlowExecutionListener[] { flowExecutionListener });
 		AttributeMap input = new AttributeMap();
 		input.put("name", "value");
+		assertTrue(!flowExecutionListener.isStarted());
 		flowExecution.start(input, new MockExternalContext());
+		assertTrue(flowExecutionListener.isStarted());
 		assertTrue(flowExecutionListener.isPaused());
 		assertTrue(!flowExecutionListener.isExecuting());
+		assertEquals(1, flowExecutionListener.getEventsSignaledCount());
 		assertEquals(0, flowExecutionListener.getFlowNestingLevel());
 		assertEquals(2, flowExecutionListener.getTransitionCount());
 		assertEquals("value", flowExecution.getActiveSession().getScope().getString("name"));
 		flowExecution.signalEvent("submit", new MockExternalContext());
 		assertTrue(!flowExecutionListener.isExecuting());
+		assertEquals(2, flowExecutionListener.getEventsSignaledCount());
 		assertEquals(1, flowExecutionListener.getFlowNestingLevel());
 		assertEquals(4, flowExecutionListener.getTransitionCount());
 		flowExecution.signalEvent("submit", new MockExternalContext());
 		assertTrue(!flowExecutionListener.isExecuting());
 		assertEquals(0, flowExecutionListener.getFlowNestingLevel());
+		assertEquals(4, flowExecutionListener.getEventsSignaledCount());
 		assertEquals(6, flowExecutionListener.getTransitionCount());
 	}
 
