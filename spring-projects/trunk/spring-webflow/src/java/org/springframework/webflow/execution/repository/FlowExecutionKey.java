@@ -62,7 +62,7 @@ public class FlowExecutionKey implements Serializable {
 	 */
 	public FlowExecutionKey(Serializable conversationId, Serializable continuationId) {
 		Assert.notNull(conversationId, "The conversationId is required");
-		Assert.notNull(continuationId, "The conversationId is required");
+		Assert.notNull(continuationId, "The continuationId is required");
 		this.conversationId = conversationId;
 		this.continuationId = continuationId;
 	}
