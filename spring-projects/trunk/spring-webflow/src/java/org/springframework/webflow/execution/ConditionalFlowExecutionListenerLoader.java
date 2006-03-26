@@ -61,7 +61,7 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	 */
 	public void setListeners(FlowExecutionListener[] listeners) {
 		clearListeners();
-		setListenersCriteria(listeners, FlowExecutionListenerCriteriaFactory.allFlows());
+		setListenersCriteria(listeners, null);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	 * @param listener the listener to add
 	 */
 	public void addListener(FlowExecutionListener listener) {
-		addListener(listener, FlowExecutionListenerCriteriaFactory.allFlows());
+		addListener(listener, null);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 			listeners.add(conditional);
 		}
 		if (criteria == null) {
-			criteria = FlowExecutionListenerCriteriaFactory.allFlows();
+			criteria = new FlowExecutionListenerCriteriaFactory().allFlows();
 		}
 		conditional.add(criteria);
 	}
@@ -165,7 +165,7 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	private void clearListeners() {
 		listeners.clear();
 	}
-	
+
 	/**
 	 * Remove the criteria for the specified listener.
 	 * @param listener the listener

@@ -42,6 +42,13 @@ import org.springframework.util.StringUtils;
  */
 public class TextToFlowExecutionListenerCriteria extends AbstractConverter {
 
+	/**
+	 * The string representation of the wildcard flow id.
+	 */
+	public static final String WILDCARD_FLOW_ID = "*";
+
+	private FlowExecutionListenerCriteriaFactory criteriaFactory = new FlowExecutionListenerCriteriaFactory();
+
 	public Class[] getSourceClasses() {
 		return new Class[] { String.class };
 	}
@@ -56,16 +63,13 @@ public class TextToFlowExecutionListenerCriteria extends AbstractConverter {
 
 	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws ConversionException {
 		String encodedCriteria = (String)source;
-		if (!StringUtils.hasText(encodedCriteria)
-				|| FlowExecutionListenerCriteriaFactory.WildcardFlowExecutionListenerCriteria.WILDCARD_FLOW_ID
-						.equals(encodedCriteria)) {
+		if (!StringUtils.hasText(encodedCriteria) || WILDCARD_FLOW_ID.equals(encodedCriteria)) {
 			// match all flows
-			return FlowExecutionListenerCriteriaFactory.allFlows();
+			return criteriaFactory.allFlows();
 		}
 		else {
 			// match identified flows
-			return FlowExecutionListenerCriteriaFactory.flows(StringUtils
-					.commaDelimitedListToStringArray(encodedCriteria));
+			return criteriaFactory.flows(StringUtils.commaDelimitedListToStringArray(encodedCriteria));
 		}
 	}
 }

@@ -33,7 +33,7 @@ public class FlowExecutionListenerCriteriaFactory {
 	/**
 	 * Returns a wild card criteria that matches all flows.
 	 */
-	public static FlowExecutionListenerCriteria allFlows() {
+	public FlowExecutionListenerCriteria allFlows() {
 		return new WildcardFlowExecutionListenerCriteria();
 	}
 
@@ -41,7 +41,7 @@ public class FlowExecutionListenerCriteriaFactory {
 	 * Returns a criteria that just matches a flow with the specified id.
 	 * @param flowId the flow id to match
 	 */
-	public static FlowExecutionListenerCriteria flow(String flowId) {
+	public FlowExecutionListenerCriteria flow(String flowId) {
 		return new FlowIdFlowExecutionListenerCriteria(flowId);
 	}
 
@@ -50,7 +50,7 @@ public class FlowExecutionListenerCriteriaFactory {
 	 * the specified ids.
 	 * @param flowIds the flow id to match
 	 */
-	public static FlowExecutionListenerCriteria flows(String[] flowIds) {
+	public FlowExecutionListenerCriteria flows(String[] flowIds) {
 		return new FlowIdFlowExecutionListenerCriteria(flowIds);
 	}
 
@@ -58,19 +58,14 @@ public class FlowExecutionListenerCriteriaFactory {
 	 * A flow execution listener criteria implementation that matches for all
 	 * flows.
 	 */
-	public static class WildcardFlowExecutionListenerCriteria implements FlowExecutionListenerCriteria {
-
-		/**
-		 * The string representation of the wildcard flow id.
-		 */
-		public static final String WILDCARD_FLOW_ID = "*";
+	private static class WildcardFlowExecutionListenerCriteria implements FlowExecutionListenerCriteria {
 
 		public boolean appliesTo(Flow flow) {
 			return true;
 		}
 
 		public String toString() {
-			return WILDCARD_FLOW_ID;
+			return "*";
 		}
 	}
 
@@ -78,7 +73,7 @@ public class FlowExecutionListenerCriteriaFactory {
 	 * A flow execution listener criteria implementation that matches flows with
 	 * a specified id.
 	 */
-	public static class FlowIdFlowExecutionListenerCriteria implements FlowExecutionListenerCriteria {
+	private static class FlowIdFlowExecutionListenerCriteria implements FlowExecutionListenerCriteria {
 
 		/**
 		 * The flow ids that apply for this criteria.
