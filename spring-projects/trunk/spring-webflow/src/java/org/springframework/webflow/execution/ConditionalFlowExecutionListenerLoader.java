@@ -180,23 +180,4 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 			}
 		}
 	}
-
-	/**
-	 * Helper that converts from text to a FlowExecutionListenerCriteria
-	 * @param encodedCriteria the encoded text
-	 * @return the criteria
-	 */
-	protected FlowExecutionListenerCriteria convertEncodedListenerCriteria(String encodedCriteria) {
-		return new TextToFlowExecutionListenerCriteria().convert(encodedCriteria);
-	}
-
-	private void setListenerCriteria(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
-		setListenersCriteria(new FlowExecutionListener[] { listener }, criteria);
-	}
-
-	private void setListenersCriteria(FlowExecutionListener[] listeners, FlowExecutionListenerCriteria criteria) {
-		for (int i = 0; i < listeners.length; i++) {
-			addListener((FlowExecutionListener)listeners[i], criteria);
-		}
-	}
 }
