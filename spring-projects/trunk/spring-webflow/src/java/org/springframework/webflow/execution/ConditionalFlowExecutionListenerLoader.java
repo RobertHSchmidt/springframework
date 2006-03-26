@@ -48,23 +48,6 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	private List listeners = new LinkedList();
 
 	/**
-	 * Set the flow execution listener that will be notified of <i>all</i>
-	 * managed flow executions.
-	 */
-	public void setListener(FlowExecutionListener listener) {
-		setListeners(new FlowExecutionListener[] { listener });
-	}
-
-	/**
-	 * Sets the flow execution listeners that will be notified of <i>all</i>
-	 * managed flow executions.
-	 */
-	public void setListeners(FlowExecutionListener[] listeners) {
-		clearListeners();
-		setListenersCriteria(listeners, null);
-	}
-
-	/**
 	 * Add a listener that will listen to executions for all flows.
 	 * @param listener the listener to add
 	 */
@@ -73,12 +56,26 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	}
 
 	/**
+	 * Adds a collection of listeners that share a matching criteria.
+	 * @param listeners the listeners
+	 * @param criteria the criteria where these listeners apply
+	 */
+	public void addListeners(FlowExecutionListener[] listeners, FlowExecutionListenerCriteria criteria) {
+		for (int i = 0; i < listeners.length; i++) {
+			addListener(listeners[i], criteria);
+		}
+	}
+	
+	/**
 	 * Add a listener that will listen to executions to flows matching the
 	 * specified criteria.
 	 * @param listener the listener
 	 * @param criteria the listener criteria
 	 */
 	public void addListener(FlowExecutionListener listener, FlowExecutionListenerCriteria criteria) {
+		if (listener == null) {
+			return;
+		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Adding flow execution listener " + listener + " with criteria " + criteria);
 		}
@@ -162,7 +159,10 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 		}
 	}
 
-	private void clearListeners() {
+	/**
+	 * Remove all listeners loadable by this loader.
+	 */
+	public void removeAllListeners() {
 		listeners.clear();
 	}
 

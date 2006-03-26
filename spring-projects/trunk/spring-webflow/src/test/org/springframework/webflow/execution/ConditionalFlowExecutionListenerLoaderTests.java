@@ -1,10 +1,5 @@
 package org.springframework.webflow.execution;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
 import org.springframework.webflow.Flow;
@@ -54,20 +49,28 @@ public class ConditionalFlowExecutionListenerLoaderTests extends TestCase {
 		assertEquals(1, listeners.length);
 		assertSame(l1, listeners[0]);
 	}
-	
-	public void testSetListener() {
+
+	public void testAddListenerGroup() {
 		FlowExecutionListener l1 = new FlowExecutionListenerAdapter() {
 		};
 		FlowExecutionListener l2 = new FlowExecutionListenerAdapter() {
 		};
-		loader.setListener(l1);
+		FlowExecutionListener l3 = new FlowExecutionListenerAdapter() {
+		};
+		FlowExecutionListener l4 = new FlowExecutionListenerAdapter() {
+		};
+		loader.addListener(l1);
+		loader.addListener(l2);
+		loader.addListeners(new FlowExecutionListener[] { l3, l4 }, new FlowExecutionListenerCriteriaFactory()
+				.flow("bogus"));
 		assertTrue(loader.containsListener(l1));
+		assertTrue(loader.containsListener(l2));
+		assertTrue(loader.containsListener(l3));
+		assertTrue(loader.containsListener(l4));
 		FlowExecutionListener[] listeners = loader.getListeners(new Flow("foo"));
-		assertEquals(1, listeners.length);
+		assertEquals(2, listeners.length);
 		assertSame(l1, listeners[0]);
-		loader.setListener(l2);
-		listeners = loader.getListeners(new Flow("foo"));
-		assertEquals(1, listeners.length);
-		assertSame(l2, listeners[0]);
+		assertSame(l2, listeners[1]);
 	}
+
 }
