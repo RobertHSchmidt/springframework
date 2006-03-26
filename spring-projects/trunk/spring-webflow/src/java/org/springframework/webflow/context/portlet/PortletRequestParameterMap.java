@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.context.portlet;
 
-import java.util.Enumeration;
 import java.util.Iterator;
 
 import javax.portlet.PortletRequest;

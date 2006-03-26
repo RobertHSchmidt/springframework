@@ -30,22 +30,22 @@ public class PortletRequestParameterMapTests extends TestCase {
 
 	private PortletRequestParameterMap tested;
 
-	private MockPortletRequest mockPortletRequest;
+	private MockPortletRequest request;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		mockPortletRequest = new MockPortletRequest();
-		tested = new PortletRequestParameterMap(mockPortletRequest);
+		request = new MockPortletRequest();
+		tested = new PortletRequestParameterMap(request);
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		mockPortletRequest = null;
+		request = null;
 		tested = null;
 	}
 
 	public void testGetAttribute() {
-		mockPortletRequest.setParameter("Some param", "Some value");
+		request.setParameter("Some param", "Some value");
 		// perform test
 		Object result = tested.getAttribute("Some param");
 		assertEquals("Some value", result);
@@ -63,7 +63,7 @@ public class PortletRequestParameterMapTests extends TestCase {
 	}
 
 	public void testRemoveAttribute() {
-		mockPortletRequest.setParameter("Some param", "Some value");
+		request.setParameter("Some param", "Some value");
 		// perform test
 		try {
 			tested.removeAttribute("Some param");
@@ -75,7 +75,7 @@ public class PortletRequestParameterMapTests extends TestCase {
 	}
 
 	public void testGetAttributeNames() {
-		mockPortletRequest.setParameter("Some param", "Some value");
+		request.setParameter("Some param", "Some value");
 		// perform test
 		Iterator names = tested.getAttributeNames();
 		assertNotNull("Null result unexpected", names);

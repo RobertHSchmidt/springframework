@@ -94,6 +94,14 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	}
 
 	/**
+	 * Is this parameter map empty, with a size of 0?
+	 * @return true if empty, false if not
+	 */
+	public boolean isEmpty() {
+		return parameters.isEmpty();
+	}
+	
+	/**
 	 * Returns the number of parameters in this map.
 	 * @return the parameter count
 	 */

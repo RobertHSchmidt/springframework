@@ -58,6 +58,14 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	}
 
 	/**
+	 * Is this parameter map empty, with a size of 0?
+	 * @return true if empty, false if not
+	 */
+	public boolean isEmpty() {
+		return attributes.isEmpty();
+	}
+
+	/**
 	 * Does the attribute with the provided name exist in this scope?
 	 * @param attributeName the attribute name
 	 * @return true if so, false otherwise

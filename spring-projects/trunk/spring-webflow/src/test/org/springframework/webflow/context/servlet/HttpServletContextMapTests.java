@@ -30,21 +30,21 @@ public class HttpServletContextMapTests extends TestCase {
 
 	private HttpServletContextMap tested;
 
-	private MockServletContext mockServletContext;
+	private MockServletContext context;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		mockServletContext = new MockServletContext();
+		context = new MockServletContext();
 		// a fresh MockServletContext seems to already contain an element;
 		// that's confusing, so we remove it
-		mockServletContext.removeAttribute("javax.servlet.context.tempdir");
-		tested = new HttpServletContextMap(mockServletContext);
+		context.removeAttribute("javax.servlet.context.tempdir");
+		tested = new HttpServletContextMap(context);
 		tested.put("SomeKey", "SomeValue");
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		mockServletContext = null;
+		context = null;
 		tested = null;
 	}
 

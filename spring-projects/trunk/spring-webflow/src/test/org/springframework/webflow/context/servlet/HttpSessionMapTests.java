@@ -20,6 +20,7 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.util.WebUtils;
 
 /**
  * Unit test for the PortletSessionMap class.
@@ -95,5 +96,17 @@ public class HttpSessionMapTests extends TestCase {
 		Iterator names = tested.getAttributeNames();
 		assertNotNull("Null result unexpected", names);
 		assertFalse("No elements expected", names.hasNext());
+	}
+	
+	public void testGetSessionAsMutex() {
+		Object mutex = tested.getMutex();
+		assertSame(mutex, request.getSession());
+	}
+
+	public void testGetSessionMutex() {
+		Object object = new Object();
+		request.getSession().setAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE, object);
+		Object mutex = tested.getMutex();
+		assertSame(mutex, object);
 	}
 }

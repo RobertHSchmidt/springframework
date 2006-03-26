@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.context.servlet;
 
-import java.util.Enumeration;
 import java.util.Iterator;
 
 import javax.servlet.ServletContext;

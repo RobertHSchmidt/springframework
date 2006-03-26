@@ -30,22 +30,22 @@ public class PortletRequestMapTests extends TestCase {
 
 	private PortletRequestMap tested;
 
-	private MockPortletRequest mockPortletRequest;
+	private MockPortletRequest request;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		mockPortletRequest = new MockPortletRequest();
-		tested = new PortletRequestMap(mockPortletRequest);
+		request = new MockPortletRequest();
+		tested = new PortletRequestMap(request);
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		mockPortletRequest = null;
+		request = null;
 		tested = null;
 	}
 
 	public void testGetAttribute() {
-		mockPortletRequest.setAttribute("Some key", "Some value");
+		request.setAttribute("Some key", "Some value");
 		// perform test
 		Object result = tested.getAttribute("Some key");
 		assertEquals("Some value", result);
@@ -54,19 +54,19 @@ public class PortletRequestMapTests extends TestCase {
 	public void testSetAttribute() {
 		// perform test
 		tested.setAttribute("Some key", "Some value");
-		assertEquals("Some value", mockPortletRequest.getAttribute("Some key"));
+		assertEquals("Some value", request.getAttribute("Some key"));
 	}
 
 	public void testRemoveAttribute() {
-		mockPortletRequest.setAttribute("Some key", "Some value");
+		request.setAttribute("Some key", "Some value");
 		// perform test
 		tested.removeAttribute("Some key");
-		assertNull(mockPortletRequest.getAttribute("Some key"));
+		assertNull(request.getAttribute("Some key"));
 	}
 
 	public void testGetAttributeNames() {
-		mockPortletRequest.setAttribute("Some key", "Some value");
-		mockPortletRequest.removeAttribute("javax.servlet.context.tempdir");
+		request.setAttribute("Some key", "Some value");
+		request.removeAttribute("javax.servlet.context.tempdir");
 		// perform test
 		Iterator names = tested.getAttributeNames();
 		assertNotNull("Null result unexpected", names);
