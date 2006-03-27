@@ -29,4 +29,11 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 		ResponseInstruction response = flowExecutor.launch("testFlow1", context);
 		assertTrue(response.getFlowExecutionContext().isActive());
 	}
+	
+	public void testLaunchAndSignalEvent() {
+		ExternalContext context = new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
+				new MockHttpServletResponse());
+		ResponseInstruction response = flowExecutor.launch("testFlow1", context);
+		response = flowExecutor.signalEvent("event1", response.getFlowExecutionKey(), context);
+	}
 }
