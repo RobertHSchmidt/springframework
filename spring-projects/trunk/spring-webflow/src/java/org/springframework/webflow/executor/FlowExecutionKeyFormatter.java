@@ -21,25 +21,26 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 public class FlowExecutionKeyFormatter implements Formatter {
 
 	/**
-	 * The conversation id prefix delimiter ("_s");
+	 * The conversation id prefix delimiter ("_c");
 	 */
-	private static final String CONVERSATION_ID_PREFIX = "_s";
+	private static final String CONVERSATION_ID_PREFIX = "_c";
 
 	/**
-	 * The continuation id prefix delimiter ("_c");
+	 * The continuation id prefix delimiter ("_k");
 	 */
-	private static final String CONTINUATION_ID_PREFIX = "_c";
+	private static final String CONTINUATION_ID_PREFIX = "_k";
 
 	public String formatValue(Object continuationKey) throws IllegalArgumentException {
 		Assert.notNull(continuationKey, "The flow execution key is required");
+		Assert.isInstanceOf(FlowExecutionKey.class, "Not of expected type: ");
 		FlowExecutionKey key = (FlowExecutionKey)continuationKey;
 		return CONVERSATION_ID_PREFIX + key.getConversationId() + CONTINUATION_ID_PREFIX + key.getContinuationId();
 	}
 
 	public Object parseValue(String continuationKeyString, Class targetClass) throws InvalidFormatException {
 		Assert.hasText(continuationKeyString, "The string encoded flow execution key is required");
-		Assert.isTrue(continuationKeyString.startsWith(CONVERSATION_ID_PREFIX), "Invalid string encoded flow execution key '"
-				+ continuationKeyString + "'");
+		Assert.isTrue(continuationKeyString.startsWith(CONVERSATION_ID_PREFIX),
+				"Invalid string encoded flow execution key '" + continuationKeyString + "'");
 		int continuationStart = continuationKeyString.indexOf(CONTINUATION_ID_PREFIX, CONVERSATION_ID_PREFIX.length());
 		String conversationId = continuationKeyString.substring(CONVERSATION_ID_PREFIX.length(), continuationStart);
 		String continuationId = continuationKeyString.substring(continuationStart + CONTINUATION_ID_PREFIX.length());

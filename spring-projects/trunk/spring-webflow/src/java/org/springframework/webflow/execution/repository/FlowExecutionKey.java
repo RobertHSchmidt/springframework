@@ -48,12 +48,12 @@ public class FlowExecutionKey implements Serializable {
 	/**
 	 * The conversation key part.
 	 */
-	private Serializable conversationId;
+	private final Serializable conversationId;
 
 	/**
 	 * The continuation key part.
 	 */
-	private Serializable continuationId;
+	private final Serializable continuationId;
 
 	/**
 	 * Creates a new, immutable flow execution key.
