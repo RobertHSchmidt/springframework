@@ -37,6 +37,7 @@ import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.FlowArtifactParameters;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilderException;
+import org.springframework.webflow.builder.TestFlowArtifactFactory;
 import org.springframework.webflow.builder.XmlFlowBuilder;
 import org.springframework.webflow.builder.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
@@ -169,7 +170,7 @@ public class FlowExecutionTests extends TestCase {
 
 	public void testExtensiveFlowNavigationScenario1() {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
-				new XmlFlowBuilderTests.TestFlowArtifactFactory());
+				new TestFlowArtifactFactory());
 		FlowAssembler assembler = new FlowAssembler("testFlow1", builder);
 		assembler.assembleFlow();
 		FlowExecution execution = new FlowExecutionImpl(builder.getResult());
@@ -183,7 +184,7 @@ public class FlowExecutionTests extends TestCase {
 
 	public void testExtensiveFlowNavigationScenario2() {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
-				new XmlFlowBuilderTests.TestFlowArtifactFactory());
+				new TestFlowArtifactFactory());
 		AttributeMap attributes = new AttributeMap();
 		attributes.put("scenario2", Boolean.TRUE);
 		FlowAssembler assembler = new FlowAssembler(new FlowArtifactParameters("testFlow1", attributes), builder);

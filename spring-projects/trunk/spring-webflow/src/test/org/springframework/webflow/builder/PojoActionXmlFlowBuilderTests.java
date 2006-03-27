@@ -7,7 +7,6 @@ import org.springframework.webflow.ActionState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
-import org.springframework.webflow.builder.XmlFlowBuilderTests.TestFlowArtifactFactory;
 
 public class PojoActionXmlFlowBuilderTests extends TestCase {
 	private Flow flow;

@@ -29,6 +29,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.builder.FlowAssembler;
+import org.springframework.webflow.builder.TestFlowArtifactFactory;
 import org.springframework.webflow.builder.XmlFlowBuilder;
 import org.springframework.webflow.builder.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -52,7 +53,7 @@ public class FlowExecutionImplTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
-				new XmlFlowBuilderTests.TestFlowArtifactFactory());
+				new TestFlowArtifactFactory());
 		FlowAssembler assembler = new FlowAssembler("testFlow", builder);
 		assembler.assembleFlow();
 		final Flow flow = builder.getResult();

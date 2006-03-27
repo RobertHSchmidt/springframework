@@ -41,7 +41,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * Strategy for locating externally managed dependent artifacts when a
 	 * registered Flow is being built.
 	 */
-	private RegistryBackedFlowArtifactFactory flowArtifactFactory;
+	private FlowArtifactFactory flowArtifactFactory;
 
 	/**
 	 * Sets the parent registry of the registry constructed by this factory
@@ -52,12 +52,31 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 		flowRegistry.setParent(parent);
 	}
 
+	/**
+	 * Explicitly sets the flow artifact factory to access externally managed
+	 * artifacts needed by flows included in the registry produced by this
+	 * factory bean. This setter is optional, and only necessary if the flow
+	 * artifact factory strategy is a custom one.
+	 * @param flowArtifactFactory the custom flow artifact factory
+	 * @see #setBeanFactory(BeanFactory)
+	 */
+	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
+		this.flowArtifactFactory = flowArtifactFactory;
+	}
+
 	public void setBeanFactory(BeanFactory beanFactory) {
-		flowArtifactFactory = new RegistryBackedFlowArtifactFactory(getFlowRegistry(), beanFactory);
+		if (flowArtifactFactory == null) {
+			flowArtifactFactory = new RegistryBackedFlowArtifactFactory(getFlowRegistry(), beanFactory);
+		}
 	}
 
 	public void setResourceLoader(ResourceLoader resourceLoader) {
-		flowArtifactFactory.setResourceLoader(resourceLoader);
+		if (flowArtifactFactory instanceof RegistryBackedFlowArtifactFactory) {
+			RegistryBackedFlowArtifactFactory factory = (RegistryBackedFlowArtifactFactory)flowArtifactFactory;
+			if (factory.getResourceLoader() == null) {
+				factory.setResourceLoader(resourceLoader);
+			}
+		}
 	}
 
 	/**
