@@ -17,9 +17,9 @@ package org.springframework.webflow.samples.flowlauncher;
 
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.ParameterMap;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.State;
 import org.springframework.webflow.execution.EnterStateVetoException;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 
@@ -27,7 +27,7 @@ public class SampleFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	public static final String INPUT_ATTRIBUTE = "input";
 
-	public void sessionStarting(RequestContext context, State startState, AttributeMap input)
+	public void sessionStarting(RequestContext context, Flow flow, AttributeMap input)
 			throws EnterStateVetoException {
 		/*
 		 * Each time a flow is starting, check if there is input data in the
