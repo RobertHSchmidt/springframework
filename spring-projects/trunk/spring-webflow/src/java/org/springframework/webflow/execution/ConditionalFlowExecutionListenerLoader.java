@@ -91,45 +91,6 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	}
 
 	/**
-	 * Returns the array of flow execution listeners for specified flow.
-	 * @param flow the flow definition associated with the execution to be
-	 * listened to
-	 * @return the flow execution listeners that apply
-	 */
-	public FlowExecutionListener[] getListeners(Flow flow) {
-		Assert.notNull(flow, "The Flow to load listeners for cannot be null");
-		List listenersToAttach = new LinkedList();
-		for (Iterator it = listeners.iterator(); it.hasNext();) {
-			ConditionalFlowExecutionListenerHolder listenerHolder = (ConditionalFlowExecutionListenerHolder)it.next();
-			if (listenerHolder.listenerAppliesTo(flow)) {
-				listenersToAttach.add(listenerHolder.getListener());
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Loaded [" + listenersToAttach.size() + "] of possible " + listeners.size()
-					+ " listeners to this execution request for flow '" + flow.getId()
-					+ "', the listeners to attach are " + StylerUtils.style(listenersToAttach));
-		}
-		return (FlowExecutionListener[])listenersToAttach.toArray(new FlowExecutionListener[listenersToAttach.size()]);
-	}
-
-	/**
-	 * Lookup the listener criteria holder for the listener provided.
-	 * @param listener the listener
-	 * @return the holder
-	 */
-	protected ConditionalFlowExecutionListenerHolder getHolder(FlowExecutionListener listener) {
-		Iterator it = listeners.iterator();
-		while (it.hasNext()) {
-			ConditionalFlowExecutionListenerHolder next = (ConditionalFlowExecutionListenerHolder)it.next();
-			if (next.getListener().equals(listener)) {
-				return next;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Is the listener contained by this Flow execution manager?
 	 * @param listener the listener
 	 * @return true if yes, false otherwise
@@ -179,5 +140,44 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 				removeListener(listener);
 			}
 		}
+	}
+
+	/**
+	 * Returns the array of flow execution listeners for specified flow.
+	 * @param flow the flow definition associated with the execution to be
+	 * listened to
+	 * @return the flow execution listeners that apply
+	 */
+	public FlowExecutionListener[] getListeners(Flow flow) {
+		Assert.notNull(flow, "The Flow to load listeners for cannot be null");
+		List listenersToAttach = new LinkedList();
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			ConditionalFlowExecutionListenerHolder listenerHolder = (ConditionalFlowExecutionListenerHolder)it.next();
+			if (listenerHolder.listenerAppliesTo(flow)) {
+				listenersToAttach.add(listenerHolder.getListener());
+			}
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Loaded [" + listenersToAttach.size() + "] of possible " + listeners.size()
+					+ " listeners to this execution request for flow '" + flow.getId()
+					+ "', the listeners to attach are " + StylerUtils.style(listenersToAttach));
+		}
+		return (FlowExecutionListener[])listenersToAttach.toArray(new FlowExecutionListener[listenersToAttach.size()]);
+	}
+
+	/**
+	 * Lookup the listener criteria holder for the listener provided.
+	 * @param listener the listener
+	 * @return the holder
+	 */
+	protected ConditionalFlowExecutionListenerHolder getHolder(FlowExecutionListener listener) {
+		Iterator it = listeners.iterator();
+		while (it.hasNext()) {
+			ConditionalFlowExecutionListenerHolder next = (ConditionalFlowExecutionListenerHolder)it.next();
+			if (next.getListener().equals(listener)) {
+				return next;
+			}
+		}
+		return null;
 	}
 }
