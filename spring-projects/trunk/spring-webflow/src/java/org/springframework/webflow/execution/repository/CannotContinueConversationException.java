@@ -35,7 +35,7 @@ public class CannotContinueConversationException extends FlowExecutionRepository
 	 * @param key the flow execution key
 	 */
 	public CannotContinueConversationException(FlowExecutionKey key) {
-		super("Cannot continue conversation '" + key.getConversationId() + "'; the submitted continuation id '"
+		this(key, "Cannot continue conversation '" + key.getConversationId() + "'; the submitted continuation id '"
 				+ key.getContinuationId()
 				+ "' is invalid.  This could happen if your users are relying on local browser history "
 				+ "(typically via the back button) that reference obsoleted or expired continuations.");
@@ -43,11 +43,12 @@ public class CannotContinueConversationException extends FlowExecutionRepository
 
 	/**
 	 * Creates a new invalid conversation continuation exception.
-	 * @param key the flow execution key
+	 * @param flowExecutionKey the flow execution key
 	 * @param message a custom message
 	 */
-	public CannotContinueConversationException(FlowExecutionKey key, String message) {
+	public CannotContinueConversationException(FlowExecutionKey flowExecutionKey, String message) {
 		super(message);
+		this.flowExecutionKey = flowExecutionKey;
 	}
 
 	/**

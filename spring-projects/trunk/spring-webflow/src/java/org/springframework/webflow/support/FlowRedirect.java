@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.webflow.ViewSelection;
 
@@ -51,6 +52,7 @@ public final class FlowRedirect extends ViewSelection {
 	 * @param input the input data to pass to the flow.
 	 */
 	public FlowRedirect(String flowId, Map input) {
+		Assert.hasText(flowId, "The flow id is required");
 		this.flowId = flowId;
 		if (input == null) {
 			input = Collections.EMPTY_MAP;
@@ -77,7 +79,7 @@ public final class FlowRedirect extends ViewSelection {
 			return false;
 		}
 		FlowRedirect other = (FlowRedirect)o;
-		return ObjectUtils.nullSafeEquals(flowId, other.flowId) && input.equals(other.input);
+		return flowId.equals(other.flowId) && input.equals(other.input);
 	}
 
 	public int hashCode() {

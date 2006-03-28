@@ -21,7 +21,6 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.Assert;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
@@ -37,12 +36,12 @@ import org.springframework.webflow.execution.repository.support.NoOpConversation
  * Stores flow execution continuations clientside, requiring no use of
  * server-side state.
  * <p>
- * Specifically, instead of putting {@link FlowExecution} objects in a
+ * More specifically, instead of putting {@link FlowExecution} objects in a
  * server-side store, this repository <i>encodes</i> them directly into the
  * <code>continuationId</code> of a generated {@link FlowExecutionKey}. When
  * asked to load a flow execution by its key, this repository decodes the
  * serialized <code>continuationId</code>, restoring the
- * {@link FlowExecution} object at the state it was when it was encoded.
+ * {@link FlowExecution} object at the state it was when encoded.
  * <p>
  * Note: currently this repository implementation does not support
  * <i>conversation invalidation after completion</i>, which enables automatic
@@ -77,21 +76,26 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
-	 * Returns the continuation factory.
+	 * Creates a new client flow execution repository.
+	 * @param repositoryServices the common services needed by this repository
+	 * to function.
+	 */
+	public ClientContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
+		super(repositoryServices);
+	}
+
+	/**
+	 * Returns the continuation factory in use by this repository.
 	 */
 	public FlowExecutionContinuationFactory getContinuationFactory() {
 		return continuationFactory;
 	}
 
 	/**
-	 * Sets the continuation factory.
+	 * Sets the continuation factory used by this repository.
 	 */
 	public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
 		this.continuationFactory = continuationFactory;
-	}
-
-	public ClientContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
-		super(repositoryServices);
 	}
 
 	public ConversationLock getLock(Serializable conversationId) {
@@ -116,17 +120,14 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 
 	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId)
 			throws FlowExecutionRepositoryException {
-		// nothing to do by default, subclasses may override
-		return null;
+		throw new UnsupportedOperationException("Operation not supported by this implementation");
 	}
 
 	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {
-		// nothing to do by default, subclasses may override
-		return null;
+		throw new UnsupportedOperationException("Operation not supported by this implementation");
 	}
 
-	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection)
-			throws FlowException {
+	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException {
 		// nothing to do by default, subclasses may override
 	}
 
@@ -178,12 +179,6 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 		}
 		finally {
 			ois.close();
-		}
-	}
-
-	private static class FlowExecutionContinuationDeserializationException extends NestedRuntimeException {
-		public FlowExecutionContinuationDeserializationException(String message, Throwable cause) {
-			super(message, cause);
 		}
 	}
 }

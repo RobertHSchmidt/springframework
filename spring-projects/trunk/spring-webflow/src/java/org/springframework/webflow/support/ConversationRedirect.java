@@ -16,6 +16,7 @@
 package org.springframework.webflow.support;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.webflow.ViewSelection;
 
@@ -47,6 +48,7 @@ public final class ConversationRedirect extends ViewSelection {
 	 * redirect request.
 	 */
 	public ConversationRedirect(ApplicationView applicationView) {
+		Assert.notNull(applicationView, "The application view is to redirect to is required");
 		this.applicationView = applicationView;
 	}
 

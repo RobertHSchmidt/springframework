@@ -125,6 +125,26 @@ public class ResponseInstruction implements Serializable {
 		return viewSelection instanceof FlowRedirect;
 	}
 	
+	public boolean equals(Object o) {
+		if (!(o instanceof ResponseInstruction)) {
+			return false;
+		}
+		ResponseInstruction other = (ResponseInstruction)o;
+		if (flowExecutionKey != null) {
+			return flowExecutionKey.equals(other.getFlowExecutionKey()) && viewSelection.equals(other.viewSelection);
+		} else {
+			return other.getFlowExecutionKey() == null && viewSelection.equals(other.viewSelection);
+		}
+	}
+	
+	public int hashCode() {
+		int hashCode = viewSelection.hashCode();
+		if (flowExecutionKey != null) {
+			hashCode += flowExecutionKey.hashCode();
+		}
+		return hashCode;
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append("flowExecutionKey", flowExecutionKey).append("flowExecutionContext",
 				flowExecutionContext).append("viewSelection", viewSelection).toString();

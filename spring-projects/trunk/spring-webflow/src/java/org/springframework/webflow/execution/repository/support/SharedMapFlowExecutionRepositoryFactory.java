@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ExternalContext.SharedAttributeMap;
 import org.springframework.webflow.ExternalContext.SharedMap;
@@ -134,6 +135,7 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 	 */
 	public static class SessionMapLocator implements SharedMapLocator {
 		public SharedMap getMap(ExternalContext context) {
+			Assert.notNull(context, "The external context is required");
 			return context.getSessionMap().getSharedMap();
 		}
 	}

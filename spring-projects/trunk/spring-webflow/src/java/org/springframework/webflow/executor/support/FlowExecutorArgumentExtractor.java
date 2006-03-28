@@ -14,7 +14,6 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ParameterMap;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
-import org.springframework.webflow.executor.FlowExecutionKeyFormatter;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowRedirect;
@@ -245,7 +244,7 @@ public class FlowExecutorArgumentExtractor {
 		String eventId = findParameter(eventIdParameterName, context.getRequestParameterMap());
 		Assert.hasText(eventId, "No eventId could be obtained: make sure the client provides the '"
 				+ eventIdParameterName + "' parameter as input along with the '" + flowExecutionKeyParameterName
-				+ "' parameter; the parameters provided for this request were:"
+				+ "' parameter; the parameters provided for this request were: "
 				+ StylerUtils.style(context.getRequestParameterMap()));
 		return eventId;
 	}

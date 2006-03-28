@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.registry;
 
+import org.springframework.core.style.StylerUtils;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 
@@ -28,27 +29,8 @@ public class NoSuchFlowDefinitionException extends FlowArtifactException {
 	 * Creates an exception indicating a flow definition could not be found.
 	 * @param flowId the flow Id.
 	 */
-	public NoSuchFlowDefinitionException(String flowId) {
-		this(flowId, null);
+	public NoSuchFlowDefinitionException(String flowId, String[] registeredFlowIds) {
+		super(flowId, Flow.class, "No such flow with id '" + flowId + "' found in registry; the flows in this registry are: "
+				+ StylerUtils.style(registeredFlowIds));
 	}
-
-	/**
-	 * Creates an exception indicating a flow definition could not be found.
-	 * @param id the flow Id.
-	 * @param cause the root cause
-	 */
-	public NoSuchFlowDefinitionException(String id, Throwable cause) {
-		super(id, Flow.class, "No such flow definition with id '" + id + "' found", cause);
-	}
-
-	/**
-	 * Creates an exception indicating a flow definition could not be found.
-	 * @param id the flow Id
-	 * @param message a custom message
-	 * @param cause the root cause
-	 */
-	public NoSuchFlowDefinitionException(String id, String message, Throwable cause) {
-		super(id, Flow.class, message, cause);
-	}
-
 }

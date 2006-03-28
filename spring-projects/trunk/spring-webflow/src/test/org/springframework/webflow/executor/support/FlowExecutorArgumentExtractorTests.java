@@ -29,7 +29,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 	}
 
 	public void testExtractFlowExecutionId() {
-		context.putRequestParameter("_flowExecutionKey", "_s12345_c12345");
+		context.putRequestParameter("_flowExecutionKey", "_c12345_k12345");
 		assertEquals(flowExecutionKey, argumentExtractor.extractFlowExecutionKey(context));
 	}
 

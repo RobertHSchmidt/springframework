@@ -20,6 +20,7 @@ import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
@@ -152,7 +153,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecution flowExecution = repository.createFlowExecution(flowId);
-		ViewSelection selectedView = flowExecution.start(null, context);
+		ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
 		if (flowExecution.isActive()) {
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);
@@ -167,9 +168,21 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
+	/**
+	 * Factory method that creates the input attribute map for a newly created {@link FlowExecution}.
+	 * TODO - add support for input mappings here
+	 * @param flowExecution the new flow execution (yet to be started)
+	 * @param context the external context
+	 * @return the input map
+	 */
+	protected AttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
+		return null;
+	}
+
 	public ResponseInstruction signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
+		Assert.notNull(flowExecutionKey, "The flow execution key is required");
 		ConversationLock lock = repository.getLock(flowExecutionKey.getConversationId());
 		lock.lock();
 		try {

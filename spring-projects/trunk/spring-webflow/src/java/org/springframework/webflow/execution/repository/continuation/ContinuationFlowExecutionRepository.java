@@ -167,7 +167,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	}
 
 	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId) throws FlowExecutionRepositoryException {
-		return new FlowExecutionKey(conversationId, getConversation(conversationId).getCurrentContinuation().getId());
+		return new FlowExecutionKey(conversationId, getRequiredConversation(conversationId).getCurrentContinuation().getId());
 	}
 
 	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {

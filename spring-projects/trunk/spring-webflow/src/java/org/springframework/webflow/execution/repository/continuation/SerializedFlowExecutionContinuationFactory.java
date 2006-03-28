@@ -30,9 +30,9 @@ import org.springframework.webflow.execution.FlowExecution;
 public class SerializedFlowExecutionContinuationFactory implements FlowExecutionContinuationFactory {
 
 	/**
-	 * Flag to turn on/off continuation compression.
+	 * Flag to toggle continuation compression; compression is on by default.
 	 */
-	private boolean compress = false;
+	private boolean compress = true;
 
 	/**
 	 * Returns whether or not the continuations should be compressed.

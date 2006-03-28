@@ -62,7 +62,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 	}
 
 	public String[] getFlowIds() {
-		return (String[])flowDefinitions.keySet().toArray(new String[0]);
+		return (String[])flowDefinitions.keySet().toArray(new String[flowDefinitions.size()]);
 	}
 
 	public int getFlowCount() {
@@ -157,7 +157,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 	private FlowHolder getFlowDefinitionHolder(String id) {
 		FlowHolder flowHolder = (FlowHolder)flowDefinitions.get(id);
 		if (flowHolder == null) {
-			throw new NoSuchFlowDefinitionException(id);
+			throw new NoSuchFlowDefinitionException(id, getFlowIds());
 		}
 		return flowHolder;
 	}

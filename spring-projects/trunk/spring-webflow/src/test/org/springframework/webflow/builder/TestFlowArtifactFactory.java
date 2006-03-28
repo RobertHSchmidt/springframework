@@ -28,7 +28,7 @@ public class TestFlowArtifactFactory extends DefaultFlowArtifactFactory {
 			new EndState(flow, "finish");
 			return flow;
 		}
-		throw new NoSuchFlowDefinitionException(id);
+		throw new NoSuchFlowDefinitionException(id, new String[] {"subFlow1", "subFlow2" });
 	}
 
 	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
