@@ -46,11 +46,6 @@ public class Conversation implements Serializable {
 	private int maxContinuations;
 
 	/**
-	 * The last (current) view selection made by the conversation.
-	 */
-	private ViewSelection currentViewSelection = ViewSelection.NULL_VIEW;
-
-	/**
 	 * The attribute map that forms the basis of <i>conversationScope</i>.
 	 */
 	private AttributeMap scope = new AttributeMap();
@@ -112,20 +107,6 @@ public class Conversation implements Serializable {
 	 */
 	public FlowExecutionContinuation getCurrentContinuation() {
 		return (FlowExecutionContinuation)continuations.getLast();
-	}
-
-	/**
-	 * Returns the current view selection.
-	 */
-	public ViewSelection getCurrentViewSelection() {
-		return currentViewSelection;
-	}
-
-	/**
-	 * Sets the current view selection.
-	 */
-	public void setCurrentViewSelection(ViewSelection viewSelection) {
-		currentViewSelection = viewSelection;
 	}
 
 	/**

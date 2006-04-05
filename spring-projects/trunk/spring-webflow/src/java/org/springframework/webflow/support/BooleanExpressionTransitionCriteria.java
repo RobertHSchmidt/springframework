@@ -56,7 +56,7 @@ public class BooleanExpressionTransitionCriteria implements TransitionCriteria {
 	}
 
 	public boolean test(RequestContext context) {
-		Object result = this.booleanExpression.evaluateAgainst(context, getEvaluationContext(context));
+		Object result = booleanExpression.evaluateAgainst(context, getEvaluationContext(context));
 		Assert.isInstanceOf(Boolean.class, result, "Impossible to determine result of boolean expression: ");
 		return ((Boolean)result).booleanValue();
 	}

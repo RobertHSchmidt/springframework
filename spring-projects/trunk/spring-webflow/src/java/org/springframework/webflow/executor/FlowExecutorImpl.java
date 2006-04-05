@@ -157,7 +157,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		if (flowExecution.isActive()) {
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);
-			setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView, repository);
+			setViewSelection(flowExecutionKey, selectedView, repository);
 			if (selectedView instanceof ApplicationView && alwaysRedirectOnPause) {
 				selectedView = new ConversationRedirect((ApplicationView)selectedView);
 			}
@@ -191,7 +191,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 			if (flowExecution.isActive()) {
 				flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
 				repository.putFlowExecution(flowExecutionKey, flowExecution);
-				setCurrentViewSelection(flowExecutionKey.getConversationId(), selectedView, repository);
+				setViewSelection(flowExecutionKey, selectedView, repository);
 				if (selectedView instanceof ApplicationView && alwaysRedirectOnPause) {
 					selectedView = new ConversationRedirect((ApplicationView)selectedView);
 				}
@@ -207,14 +207,14 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	private void setCurrentViewSelection(Serializable conversationId, ViewSelection selectedView,
+	private void setViewSelection(FlowExecutionKey flowExecutionKey, ViewSelection selectedView,
 			FlowExecutionRepository repository) {
 		if (selectedView instanceof ConversationRedirect) {
-			repository.setCurrentViewSelection(conversationId, ((ConversationRedirect)selectedView)
+			repository.setViewSelection(flowExecutionKey, ((ConversationRedirect)selectedView)
 					.getApplicationView());
 		}
 		else {
-			repository.setCurrentViewSelection(conversationId, selectedView);
+			repository.setViewSelection(flowExecutionKey, selectedView);
 		}
 	}
 
@@ -223,7 +223,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey flowExecutionKey = repository.getCurrentFlowExecutionKey(conversationId);
 		FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
-		ViewSelection selectedView = repository.getCurrentViewSelection(conversationId);
+		ViewSelection selectedView = repository.getViewSelection(flowExecutionKey);
 		return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
 	}
 

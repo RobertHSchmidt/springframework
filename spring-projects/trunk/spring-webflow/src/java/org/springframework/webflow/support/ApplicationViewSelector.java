@@ -21,6 +21,7 @@ import java.util.Collections;
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
@@ -95,12 +96,17 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 
 	public ViewSelection makeSelection(RequestContext context) {
 		String viewName = (String)getViewName().evaluateAgainst(context, Collections.EMPTY_MAP);
-		ApplicationView view = new ApplicationView(viewName, context.getModel().getMap());
-		if (isRequestConversationRedirect()) {
-			return new ConversationRedirect(view);
+		if (!StringUtils.hasText(viewName)) {
+			return ViewSelection.NULL_VIEW;
 		}
 		else {
-			return view;
+			ApplicationView view = new ApplicationView(viewName, context.getModel().getMap());
+			if (isRequestConversationRedirect()) {
+				return new ConversationRedirect(view);
+			}
+			else {
+				return view;
+			}
 		}
 	}
 

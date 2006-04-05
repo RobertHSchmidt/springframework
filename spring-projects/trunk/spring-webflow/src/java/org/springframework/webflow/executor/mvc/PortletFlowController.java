@@ -211,7 +211,7 @@ public class PortletFlowController extends AbstractController implements Initial
 			response.setRenderParameter(argumentExtractor.getFlowIdParameterName(), flowId);
 		}
 		else {
-			throw new IllegalArgumentException("Don't know how to handle response instruction " + response);
+			throw new IllegalArgumentException("Don't know how to handle response instruction " + responseInstruction);
 		}
 	}
 

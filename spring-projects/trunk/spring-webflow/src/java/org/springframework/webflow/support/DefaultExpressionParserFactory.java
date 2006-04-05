@@ -29,6 +29,8 @@ import org.springframework.binding.expression.support.OgnlExpressionParser;
  */
 public class DefaultExpressionParserFactory {
 
+	private static final WebFlowOgnlExpressionParser INSTANCE = new WebFlowOgnlExpressionParser();
+	
 	static {
 		try {
 			Class.forName("ognl.Ognl");
@@ -52,6 +54,6 @@ public class DefaultExpressionParserFactory {
 	 * @return the expression parser
 	 */
 	public ExpressionParser getExpressionParser() {
-		return new WebFlowOgnlExpressionParser();
+		return INSTANCE;
 	}
 }

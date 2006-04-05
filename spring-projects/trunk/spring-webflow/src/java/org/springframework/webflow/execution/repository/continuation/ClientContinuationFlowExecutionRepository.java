@@ -123,11 +123,11 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 		throw new UnsupportedOperationException("Operation not supported by this implementation");
 	}
 
-	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {
+	public ViewSelection getViewSelection(FlowExecutionKey flowExecutionKey) throws FlowException {
 		throw new UnsupportedOperationException("Operation not supported by this implementation");
 	}
 
-	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException {
+	public void setViewSelection(FlowExecutionKey flowExecutionKey, ViewSelection viewSelection) throws FlowException {
 		// nothing to do by default, subclasses may override
 	}
 

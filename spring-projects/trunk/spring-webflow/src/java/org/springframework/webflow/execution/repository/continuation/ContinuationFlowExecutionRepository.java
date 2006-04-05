@@ -154,28 +154,20 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
 		Conversation conversation = getOrCreateConversation(key.getConversationId());
 		conversation.setScope(flowExecution.getScope());
-		removeConversationAttributes(flowExecution);
+		// TODO flow execution scope is serialized - duplicating with conversation.setScope
 		conversation.addContinuation(continuationFactory.createContinuation(key.getContinuationId(), flowExecution));
-	}
-
-	/**
-	 * Set the flow execution conversation attribute map to null as it's been
-	 * saved out separately.
-	 */
-	private void removeConversationAttributes(FlowExecution flowExecution) {
-		((FlowExecutionImpl)flowExecution).setScope(null);
 	}
 
 	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId) throws FlowExecutionRepositoryException {
 		return new FlowExecutionKey(conversationId, getRequiredConversation(conversationId).getCurrentContinuation().getId());
 	}
 
-	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowException {
-		return getConversation(conversationId).getCurrentViewSelection();
+	public ViewSelection getViewSelection(FlowExecutionKey flowExecutionKey) {
+		throw new UnsupportedOperationException("Operation not yet supported by this implementation");
 	}
 
-	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) throws FlowException {
-		getConversation(conversationId).setCurrentViewSelection(viewSelection);
+	public void setViewSelection(FlowExecutionKey flowExecutionKey, ViewSelection viewSelection) {
+		
 	}
 
 	public void invalidateConversation(Serializable conversationId) {

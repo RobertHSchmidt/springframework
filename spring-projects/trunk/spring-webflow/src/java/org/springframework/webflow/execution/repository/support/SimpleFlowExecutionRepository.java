@@ -87,8 +87,8 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		FlowExecutionEntry entry = getFlowExecutionEntry(key.getConversationId());
 		// assert that the provided continuationId matches the entry's
-		// continuationId
-		// if they do not match, access to the conversation is not allowed.
+		// continuationId if they do not match, access to the conversation is
+		// not allowed.
 		if (!key.getContinuationId().equals(entry.getContinuationId())) {
 			throw new CannotContinueConversationException(key, "The continuation id '" + key.getContinuationId()
 					+ "' associated with conversation '" + key.getConversationId()
@@ -117,12 +117,12 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		return new FlowExecutionKey(conversationId, getFlowExecutionEntry(conversationId).getContinuationId());
 	}
 
-	public ViewSelection getCurrentViewSelection(Serializable conversationId) {
-		return getFlowExecutionEntry(conversationId).getCurrentViewSelection();
+	public ViewSelection getViewSelection(FlowExecutionKey flowExecutionKey) {
+		return getFlowExecutionEntry(flowExecutionKey.getConversationId()).getViewSelection();
 	}
 
-	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection) {
-		getFlowExecutionEntry(conversationId).setCurrentViewSelection(viewSelection);
+	public void setViewSelection(FlowExecutionKey flowExecutionKey, ViewSelection viewSelection) {
+		getFlowExecutionEntry(flowExecutionKey.getConversationId()).setViewSelection(viewSelection);
 	}
 
 	public void invalidateConversation(Serializable conversationId) {
@@ -151,11 +151,6 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		private Serializable continuationId;
 
 		/**
-		 * The lock for this conversation.
-		 */
-		private transient ConversationLock lock;
-
-		/**
 		 * The flow execution representing the state of a conversation.
 		 */
 		private FlowExecution flowExecution;
@@ -164,6 +159,11 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		 * The last (current) view selection made by the conversation.
 		 */
 		private ViewSelection currentViewSelection = ViewSelection.NULL_VIEW;
+
+		/**
+		 * The lock for this conversation.
+		 */
+		private transient ConversationLock lock;
 
 		/**
 		 * Creates a new flow execution entry represnting a active conversation
@@ -193,11 +193,11 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 			return flowExecution;
 		}
 
-		public ViewSelection getCurrentViewSelection() {
+		public ViewSelection getViewSelection() {
 			return currentViewSelection;
 		}
 
-		public void setCurrentViewSelection(ViewSelection viewSelection) {
+		public void setViewSelection(ViewSelection viewSelection) {
 			currentViewSelection = viewSelection;
 		}
 

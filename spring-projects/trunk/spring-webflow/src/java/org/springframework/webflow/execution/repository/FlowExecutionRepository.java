@@ -70,10 +70,10 @@ public interface FlowExecutionRepository {
 	 * Generate a unique flow execution key to be used as an index into a new
 	 * flow execution continuation associated with an <i>existing</i> user
 	 * conversation managed in this repository. The returned key consists of the
-	 * provided <code>conversationId</code> provided and a new, unique
+	 * provided <code>conversationId</code> and a new, unique
 	 * <code>continuationId</code>.
 	 * @param flowExecution the flow execution
-	 * @throws FlowExecutionStorageException a problem occured generating the
+	 * @throws FlowExecutionRepositoryException a problem occured generating the
 	 * key
 	 */
 	public FlowExecutionKey generateKey(FlowExecution flowExecution, Serializable conversationId)
@@ -102,8 +102,10 @@ public interface FlowExecutionRepository {
 	 * 
 	 * @param conversationId the conversation id
 	 * @return the conversation lock
+	 * @throws FlowExecutionRepositoryException a problem occured accessing the
+	 * lock object
 	 */
-	public ConversationLock getLock(Serializable conversationId);
+	public ConversationLock getLock(Serializable conversationId) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Return the <code>FlowExecution</code> indexed by the provided key. The
@@ -131,7 +133,7 @@ public interface FlowExecutionRepository {
 	 * 
 	 * @param key the flow execution key
 	 * @param flowExecution the flow execution
-	 * @throws FlowExecutionStorageException the flow execution could not be
+	 * @throws FlowExecutionRepositoryException the flow execution could not be
 	 * stored
 	 */
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution)
@@ -143,34 +145,35 @@ public interface FlowExecutionRepository {
 	 * @param conversationId the conversation id
 	 * @return the current continuation key
 	 * @throws FlowExecutionRepositoryException if an exception occured getting
-	 * the continuationk ey
+	 * the continuation key
 	 */
-	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId) throws FlowExecutionRepositoryException;
+	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId)
+			throws FlowExecutionRepositoryException;
 
 	/**
-	 * Returns the current (or last) view selection made for the specified
-	 * conversation, or <code>null</code> if no such view selection exists.
+	 * Returns the last view selection made for the flow execution with the
+	 * given key or <code>null</code> if no such view selection exists.
 	 * <p>
-	 * The "current view selection" is simply a descriptor for the last response
-	 * issued to the actor participating with this conversation. This method
-	 * facilitates access of that descriptor for purposes of re-issuing the same
-	 * response multiple times, for example to support browser refresh.
-	 * @param conversationId the id of an existing conversation
-	 * @return the current view selection
+	 * The returned view selection is simply a descriptor for the last response
+	 * issued by the flow execution with this key. This method facilitates
+	 * access of that descriptor for purposes of re-issuing the same response
+	 * multiple times, for example to support browser refresh.
+	 * @param key the flow execution key
+	 * @return the view selection
 	 * @throws FlowExecutionRepositoryException if an exception occured
-	 * retrieving the current view selection
+	 * retrieving the view selection
 	 */
-	public ViewSelection getCurrentViewSelection(Serializable conversationId) throws FlowExecutionRepositoryException;
+	public ViewSelection getViewSelection(FlowExecutionKey flowExecutionKey) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Sets the current (or last) view selection made for the specified
-	 * conversation.
+	 * flow execution.
 	 * @param conversationId the id of an existing conversation
 	 * @param viewSelection the view selection, to be set as the current
 	 * @throws FlowExecutionRepositoryException if an exception occured setting
 	 * the current view selection
 	 */
-	public void setCurrentViewSelection(Serializable conversationId, ViewSelection viewSelection)
+	public void setViewSelection(FlowExecutionKey flowExecutionKey, ViewSelection viewSelection)
 			throws FlowExecutionRepositoryException;
 
 	/**

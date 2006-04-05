@@ -8,6 +8,7 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.expression.SetPropertyAttempt;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 
 /**
  * A property expression that can add an element to a collection when asked to
@@ -30,13 +31,14 @@ public class CollectionAddingPropertyExpression implements PropertyExpression {
 	}
 
 	public void setValue(Object target, Object value, Map context) throws EvaluationException {
-		Collection collection = (Collection)evaluateAgainst(target, context);
-		if (collection == null) {
+		Object result = evaluateAgainst(target, context);
+		Assert.isInstanceOf(Collection.class, result, "Not a collection: ");
+		if (result == null) {
 			throw new EvaluationException(new SetPropertyAttempt(collectionExpression, target, value, context),
 					new IllegalArgumentException("The collection expression evaluated to a [null] reference"));
 		}
 		if (value != null) {
-			collection.add(value);
+			((Collection)result).add(value);
 		}
 	}
 

@@ -42,7 +42,7 @@ public class EventIdTransitionCriteria implements TransitionCriteria, Serializab
 	 * @param eventId the event id
 	 */
 	public EventIdTransitionCriteria(String eventId) {
-		Assert.notNull(eventId, "The event id is required");
+		Assert.hasText(eventId, "The event id is required");
 		this.eventId = eventId;
 	}
 
