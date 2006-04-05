@@ -57,6 +57,10 @@ public class SoapMessageDispatcherTest extends TestCase {
 
     private SoapFault faultMock;
 
+    private MockControl versionControl;
+
+    private SoapVersion versionMock;
+
     protected void setUp() throws Exception {
         contextControl = MockControl.createControl(SoapMessageContext.class);
         contextMock = (SoapMessageContext) contextControl.getMock();
@@ -73,6 +77,8 @@ public class SoapMessageDispatcherTest extends TestCase {
         faultMock = (SoapFault) faultControl.getMock();
         interceptorControl = MockControl.createControl(SoapEndpointInterceptor.class);
         interceptorMock = (SoapEndpointInterceptor) interceptorControl.getMock();
+        versionControl = MockControl.createControl(SoapVersion.class);
+        versionMock = (SoapVersion) versionControl.getMock();
         dispatcher = new SoapMessageDispatcher();
     }
 
@@ -80,9 +86,12 @@ public class SoapMessageDispatcherTest extends TestCase {
         contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
         messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
         contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
+        messageControl.expectAndReturn(requestMock.getVersion(), versionMock);
+        String role = "next";
+        versionControl.expectAndReturn(versionMock.getNextRoleUri(), role);
+        contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
         messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
-        headerControl.expectAndReturn(
-                headerMock.examineMustUnderstandHeaderElements("http://schemas.xmlsoap.org/soap/actor/next"),
+        headerControl.expectAndReturn(headerMock.examineMustUnderstandHeaderElements(role),
                 Collections.singleton(headerElementMock).iterator());
         interceptorControl.expectAndReturn(interceptorMock.understands(headerElementMock), true);
         replayMockControls();
@@ -99,9 +108,12 @@ public class SoapMessageDispatcherTest extends TestCase {
         contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
         messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
         contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
+        messageControl.expectAndReturn(requestMock.getVersion(), versionMock);
+        String role = "next";
+        versionControl.expectAndReturn(versionMock.getNextRoleUri(), role);
+        contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
         messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
-        headerControl.expectAndReturn(
-                headerMock.examineMustUnderstandHeaderElements(SoapEndpointInvocationChain.DEFAULT_ROLE),
+        headerControl.expectAndReturn(headerMock.examineMustUnderstandHeaderElements(role),
                 Collections.singleton(headerElementMock).iterator());
         interceptorControl.expectAndReturn(interceptorMock.understands(headerElementMock), false);
         QName headerElementName = new QName("header");
@@ -111,7 +123,7 @@ public class SoapMessageDispatcherTest extends TestCase {
         bodyMock.addMustUnderstandFault(new QName[]{headerElementName});
         bodyControl.setMatcher(MockControl.ARRAY_MATCHER);
         bodyControl.setReturnValue(faultMock);
-        faultMock.setFaultRole(SoapEndpointInvocationChain.DEFAULT_ROLE);
+        faultMock.setFaultRole(role);
 
         replayMockControls();
 
@@ -127,11 +139,20 @@ public class SoapMessageDispatcherTest extends TestCase {
         contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
         messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
         contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
+        messageControl.expectAndReturn(requestMock.getVersion(), versionMock);
+        String versionRole = "next";
+        versionControl.expectAndReturn(versionMock.getNextRoleUri(), versionRole);
+        contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
         messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
-        String role = "role";
-        headerControl.expectAndReturn(headerMock.examineMustUnderstandHeaderElements(role),
+        String specifiedRole = "role";
+        headerControl.expectAndReturn(headerMock.examineMustUnderstandHeaderElements(specifiedRole),
+                Collections.singleton(headerElementMock).iterator());
+        headerControl.expectAndReturn(headerMock.examineMustUnderstandHeaderElements(versionRole),
                 Collections.singleton(headerElementMock).iterator());
         interceptorControl.expectAndReturn(interceptorMock.understands(headerElementMock), true);
+        interceptorControl.expectAndReturn(interceptorMock.understands(headerElementMock), true);
+        contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
+        messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
 
         replayMockControls();
 
@@ -165,6 +186,7 @@ public class SoapMessageDispatcherTest extends TestCase {
         bodyControl.replay();
         faultControl.replay();
         interceptorControl.replay();
+        versionControl.replay();
     }
 
     private void verifyMockControls() {
@@ -175,6 +197,16 @@ public class SoapMessageDispatcherTest extends TestCase {
         bodyControl.verify();
         faultControl.verify();
         interceptorControl.verify();
+        versionControl.verify();
     }
 
+    public void testGetRoles() throws Exception {
+        String[] roles = dispatcher.getRoles(null, SoapVersion.SOAP_11);
+        assertEquals("Invalid amount of roles", 1, roles.length);
+        assertEquals("Invalid role", SoapVersion.SOAP_11.getNextRoleUri(), roles[0]);
+        roles = dispatcher.getRoles(new String[]{"role"}, SoapVersion.SOAP_11);
+        assertEquals("Invalid amount of roles", 2, roles.length);
+        assertEquals("Invalid role", "role", roles[0]);
+        assertEquals("Invalid role", SoapVersion.SOAP_11.getNextRoleUri(), roles[1]);
+    }
 }

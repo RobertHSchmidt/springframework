@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.EndpointInvocationChain;
 import org.springframework.ws.MessageDispatcher;
@@ -39,15 +40,16 @@ import org.springframework.ws.soap.context.SoapMessageContext;
 public class SoapMessageDispatcher extends MessageDispatcher {
 
     /**
-     * Process the MustUnderstand headers in the incoming SOAP request message. Iterates over all SOAP headers which
-     * should be understood, and determines whether these are supported. Generates a SOAP MustUnderstand fault if a
-     * header is not understood.
+     * Process the <code>MustUnderstand</code> headers in the incoming SOAP request message. Iterates over all SOAP
+     * headers which should be understood, and determines whether these are supported. Generates a SOAP MustUnderstand
+     * fault if a header is not understood.
      *
      * @param mappedEndpoint the mapped EndpointInvocationChain
      * @param messageContext the message context
      * @return <code>true</code> if all necessary headers are understood; <code>false</code> otherwise
      * @see SoapEndpointInvocationChain#getRoles()
      * @see SoapHeader#examineMustUnderstandHeaderElements(String)
+     * @see SoapBody#addMustUnderstandFault(javax.xml.namespace.QName[])
      */
     protected boolean handleRequest(EndpointInvocationChain mappedEndpoint, MessageContext messageContext) {
         if (mappedEndpoint instanceof SoapEndpointInvocationChain && messageContext instanceof SoapMessageContext) {
@@ -57,9 +59,9 @@ public class SoapMessageDispatcher extends MessageDispatcher {
                 // no headers to process
                 return true;
             }
-            for (int i = 0; i < mappedSoapEndpoint.getRoles().length; i++) {
-                String role = mappedSoapEndpoint.getRoles()[i];
-                if (!handleRequestForRole(mappedSoapEndpoint, soapContext, role)) {
+            String[] roles = getRoles(mappedSoapEndpoint.getRoles(), soapContext.getSoapRequest().getVersion());
+            for (int i = 0; i < roles.length; i++) {
+                if (!handleRequestForRole(mappedSoapEndpoint, soapContext, roles[i])) {
                     return false;
                 }
             }
@@ -67,6 +69,27 @@ public class SoapMessageDispatcher extends MessageDispatcher {
         return true;
     }
 
+    /**
+     * Determines the roles for a specific SOAP invocation chain. Gets the roles specified on the chain, and adds the
+     * SOAP-version specific 'next' role to it.
+     *
+     * @see SoapVersion#getNextRoleUri()
+     */
+    protected String[] getRoles(String[] mappedRoles, SoapVersion version) {
+        if (mappedRoles == null) {
+            mappedRoles = new String[0];
+        }
+        return StringUtils.addStringToArray(mappedRoles, version.getNextRoleUri());
+    }
+
+    /**
+     * Handles the request for a single SOAP role. Iterates over all <code>MustUnderstand</code> headers for a specific
+     * role, and determines whether these are understood by any of the registered <code>SoapEndpointInterceptor</code>.
+     * If they are, returns <code>true</code>. If they are not, a SOAP fault is created.
+     *
+     * @see SoapEndpointInterceptor#understands(SoapHeaderElement)
+     * @see SoapBody#addMustUnderstandFault(javax.xml.namespace.QName[])
+     */
     private boolean handleRequestForRole(SoapEndpointInvocationChain mappedEndpoint,
                                          SoapMessageContext messageContext,
                                          String role) {

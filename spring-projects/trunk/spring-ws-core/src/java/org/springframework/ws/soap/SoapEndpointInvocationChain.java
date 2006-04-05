@@ -20,44 +20,32 @@ import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.EndpointInvocationChain;
 
 /**
- * SOAP-specific subclass of the <code>EndpointInvocationChain</code>. Add associated actor roles, which by default are
- * set to the default 'next actor' role.
+ * SOAP-specific subclass of the <code>EndpointInvocationChain</code>. Adds associated SOAP roles.
  *
  * @author Arjen Poutsma
  * @see #getRoles()
- * @see #DEFAULT_ROLE
  */
 public class SoapEndpointInvocationChain extends EndpointInvocationChain {
 
     private String[] roles;
 
     /**
-     * Defines the default actor role: the next application processing a SOAP request as the intended actor for a SOAP
-     * 1.1 header entry (see section 4.2.2 of the SOAP 1.1 specification).
-     */
-    public static final String DEFAULT_ROLE = "http://schemas.xmlsoap.org/soap/actor/next";
-
-    /**
      * Create new <code>SoapEndpointInvocationChain</code>. The actor roles is set to the default role.
      *
      * @param endpoint the endpoint object to invoke
-     * @see #DEFAULT_ROLE
      */
     public SoapEndpointInvocationChain(Object endpoint) {
         super(endpoint);
-        this.roles = new String[]{DEFAULT_ROLE};
     }
 
     /**
-     * Create new <code>SoapEndpointInvocationChain</code>. The role is set to the default role.
+     * Create new <code>SoapEndpointInvocationChain</code>.
      *
      * @param endpoint     the endpoint object to invoke
      * @param interceptors the array of interceptors to apply
-     * @see #DEFAULT_ROLE
      */
     public SoapEndpointInvocationChain(Object endpoint, EndpointInterceptor[] interceptors) {
         super(endpoint, interceptors);
-        this.roles = new String[]{DEFAULT_ROLE};
     }
 
     /**

@@ -34,14 +34,13 @@ import org.springframework.ws.soap.SoapEndpointInvocationChain;
  */
 public abstract class AbstractSoapEndpointMapping extends AbstractEndpointMapping {
 
-    private String[] roles = new String[]{SoapEndpointInvocationChain.DEFAULT_ROLE};
+    private String[] roles;
 
     /**
      * Returns the array of SOAP actor roles to apply to all endpoints mapped by this endpoint mapping. By default, this
      * is set to the 'next actor' role.
      *
      * @return the SOAP actor roles
-     * @see SoapEndpointInvocationChain#DEFAULT_ROLE
      */
     protected final String[] getRoles() {
         return roles;
