@@ -7,7 +7,7 @@ http://forum.springframework.org/forumdisplay.php?f=39
 
 Spring Web Services (Spring-WS) is a product of the Spring community focused on creating document-driven Web services.
 Spring-WS aims to facilitate contract-first SOAP service development, allowing for the creation of flexible web services
-using one of the many ways to create and manipulate XML payloads.
+using one of the many ways to manipulate XML payloads.
 
 Spring-WS consists of two modules: a flexible Object/XML Mapping abstraction with support for JAXB, XMLBeans, Castor,
 and JiBX; and a Web service framework that resembles Spring MVC.
