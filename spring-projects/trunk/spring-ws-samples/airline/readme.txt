@@ -2,20 +2,17 @@
 == Spring Web Service Airline sample application ==
 =====================================================
 
-@author Alef Arendsen
-
 1. INTRODUCTION
 
-Features a web service on top of an airline reservation system, backed by a database.
-The web service works using XPath queries to pull information from a message following
-the airline.xsd schema in src\webapp.
+Features a web service on top of an airline reservation system, backed by a database. The web service works by using XML
+Marshalling techniques, and JDOM in combination with XPath queries to pull information from a message following the
+airline.xsd schema in src/webapp.
 
-A c# client is available in the client directory.
+A C# client is available in the client directory.
 
 2. INSTALLATION
 
-The Airline sample is a normal web application that connects to a database of your
-choice.
+The Airline sample is a normal web application that connects to a database of your choice.
 
 1. Create a database using one of the scripts in src/etc/db
 2. Adjust the jdbc.properties in src/etc/resources/org/springframework/ws/samples/airline/dao
@@ -28,12 +25,11 @@ include these in your server if you're using either one of those databases.
 
 3. RUNNING THE CLIENT
 
-The c# client is available in the client directory. Just run the airline.exe file and
-(if you've deployed te war file without changing the default--causing the URL of the 
-airline service to be http://localhost:8080/airline/Airline) the web service will be
-called, causing two flight reservations to be created.
+The c# client is available in the client directory. Just run the airline.exe file and (if you've deployed te war file
+without changing the default--causing the URL of the airline service to be http://localhost:8080/airline/Airline) the
+web service will be called, causing two flight reservations to be created.
 
-If the web service is NOT running at the default URL, you can append the URL to the
-airline.exe file (e.g. 'airline.exe http://localhost:8080/airline-webservice/Airline').
+If the web service is NOT running at the default URL, you can append the URL to the airline.exe file (e.g. 'airline.exe
+http://localhost:8080/airline-webservice/Airline').
 
 
