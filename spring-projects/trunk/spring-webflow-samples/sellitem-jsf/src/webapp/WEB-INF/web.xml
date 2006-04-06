@@ -7,7 +7,7 @@
 	
 	<context-param>
 		<param-name>webAppRootKey</param-name>
-		<param-value>sellitem-jsf.root</param-value>
+		<param-value>swf-sellitem-jsf.root</param-value>
 	</context-param>
 	
 	<context-param>
