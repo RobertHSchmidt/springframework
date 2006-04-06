@@ -1,42 +1,53 @@
 <?xml version="1.0"?>
 <!--
   =======================================================================
-  A master build file for creating a release of Spring Web Flow
+  A master build file for creating a release of Spring Web Services
   =======================================================================
 -->
-<project name="build-spring-ws" default="release">
+<project name="build-spring-ws" default="release" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
 
   <!-- Load local and user build preferences -->
   <property file="build.properties"/>
   <property file="project.properties"/>
   <property file="${user.home}/build.properties"/>
-  
-  <path id="modules">
-    <pathelement location="../spring-oxm"/>
-    <pathelement location="../spring-ws-core"/>
-    <pathelement location="../spring-ws-samples/airline"/>
+
+  <!-- try to load ivy here from local lib dir, in case the user has not already dropped
+  it into ant's lib dir (note that the latter copy will always take precedence).
+  We will not fail as long as local lib dir exists (it may be empty) and
+  ivy is in at least one of ant's lib dir or the local lib dir. -->
+  <path id="ivy.lib.path">
+      <fileset dir="${common.build.dir}/lib" includes="*.jar" />
   </path>
+
+  <taskdef resource="fr/jayasoft/ivy/ant/antlib.xml" uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path" />
 
   <!-- simplistic pattern for zipping up sources -->
   <selector id="project.source.zip.includes">
-    <and>
       <or>
-        <filename name="build-spring-ws/**"/>
-        <filename name="common-build/**"/>
-        <filename name="repository/**"/>
-        <filename name="spring-ws/**"/>
+          <filename name="common-build/**" />
+          <and>
+              <or>
+                  <filename name="build-spring-ws/**" />
+                  <filename name="spring-oxm/**" />
+                  <filename name="spring-ws-core/**" />
+                  <filename name="spring-ws-samples/**" />
+              </or>
+              <and>
+                  <!-- exclude core project derived artifacts -->
+                  <filename name="*/docs/**" negate="true"/>
+                  <filename name="*/target/**" negate="true" />
+                  <filename name="*/build.properties" negate="true" />
+                  <filename name="*/lib/**" negate="true" />
+              </and>
+              <and>
+                  <!-- exclude sample project derived artifacts -->
+                  <filename name="*/*/docs/**" negate="true"/>
+                  <filename name="*/*/target/**" negate="true" />
+                  <filename name="*/*/build.properties" negate="true" />
+                  <filename name="*/*/lib/**" negate="true" />
+              </and>
+          </and>
       </or>
-      <and>
-        <filename name="*/target/**" negate="true"/>
-        <filename name="*/build.properties" negate="true"/>
-        <filename name="*/lib/**" negate="true"/>
-      </and>
-      <and>
-        <filename name="*/*/target/**" negate="true"/>
-        <filename name="*/*/build.properties" negate="true"/>
-        <filename name="*/*/lib/**" negate="true"/>
-      </and>
-    </and>  
   </selector>
  
   <!--
@@ -48,7 +59,7 @@
     Master build for Spring-WS jars.
 
     Please execute
-      build -projecthelp
+      ant -p
 
     to see a list of all relevant targets.
     The default target is 'release'
@@ -62,49 +73,55 @@
   </target>
 
   <target name="init.pre" >
+      <!-- ivy will determine the right order to build oxm, ws and samples -->
 
-    <tstamp>
-    	<format property="build.timestamp" pattern="yyyyMMddHHmmss"/>
-    </tstamp>
-    <tstamp>
-      <format property="TSTAMPCOL" pattern="hh:mm"/>
-    </tstamp>
+      <property name="ivy.conf.dir" value="${common.build.dir}" />
 
-  	<!-- default the release version (used in release archive zips) to the current timestamp -->
-    <property name="release.version" value="${build.timestamp}"/>
+      <ivy:configure file="${ivy.conf.dir}/ivyconf.xml" />
 
-    <!-- root of build hierarchy -->
-    <property name="target.dir" value="${basedir}/target"/>
+      <ivy:buildlist reference="modules">
+          <fileset dir="..">
+              <include name="spring-oxm/build.xml" />
+              <include name="spring-ws-core/build.xml" />
+              <include name="spring-ws-samples/*/build.xml" />
+          </fileset>
+      </ivy:buildlist>
+      <tstamp>
+          <format property="build.timestamp" pattern="yyyyMMddHHmmss"/>
+      </tstamp>
+      <tstamp>
+          <format property="TSTAMPCOL" pattern="hh:mm"/>
+      </tstamp>
 
-    <!-- directory for release zips -->
-    <property name="target.release.dir" value="${target.dir}/release"/>
-  
-    <!-- directory for release zips -->
-    <property name="release.bin.zip"
-	          value="spring-ws-bin-${release.version}.zip"/>
-    <property name="release.bin.deps.zip"
-	          value="spring-ws-bin-with-dependencies-${release.version}.zip"/>
-    <property name="release.buildable.zip"
-	          value="spring-ws-buildable-${release.version}.zip"/>
+      <!-- default the release version (used in release archive zips) to the current timestamp -->
+      <property name="release.version" value="${build.timestamp}"/>
 
-    <property name="zip.toplevel.dir" value="spring-ws-${release.version}"/>
+      <!-- root of build hierarchy -->
+      <property name="target.dir" value="${basedir}/target"/>
 
-    <echo message='user.dir = "${user.dir}"' />
-    <echo message='ant.file = "${ant.file}"' />
-    <echo message='ant.java.version = "${ant.java.version}"' />
-    <echo message='release.version = "${release.version}"' />
+      <!-- directory for release zips -->
+      <property name="target.release.dir" value="${target.dir}/release"/>
 
+      <!-- directory for release zips -->
+      <property name="zip.toplevel.dir" value="spring-ws-${release.version}"/>
+	  <property name="release.zip" value="spring-ws-${release.version}.zip" />
+
+      <echo message='user.dir = "${user.dir}"' />
+      <echo message='ant.file = "${ant.file}"' />
+      <echo message='ant.java.version = "${ant.java.version}"' />
+      <echo message='release.version = "${release.version}"' />
   </target>
   
   <target name="init.post" >
     <property name="projects" value="modules"/>
-
+	<property name="projects.names" refid="modules" />
     <property name="init.done" value="true"/>
   </target>
   
-  <target name="clean" depends="init"
-          description="Cleans all build output files from all projects">
+  <target name="clean" depends="init" description="Cleans all build output files from all projects">
+    <delete dir="${target.dir}" />  
     <echo>projects=${projects}</echo>
+    <echo>projects.names=${projects.names}</echo>
 	<subant target="clean" inheritall="false">
 	  <buildpath refid="${projects}"/>
     </subant>
@@ -133,99 +150,66 @@
 	  <buildpath refid="${projects}"/>
     </subant>
   </target>
-  
-  <target name="tests" depends="init"
-          description="Calls test targets on each project">
+ 
+  <target name="build-release-repo" depends="init" description="Builds repo of all dependencies for all projects">
+	<echo>projects=${projects}</echo>
+	<subant target="retrieve-to-repo" inheritall="false">
+      <property name="retrieve.to.repo.dir" value="${target.dir}/repo" />
+      <property name="retrieve.to.repo.pattern"
+                  value="${release.repo.ivy.retrieve.pattern}" />
+      <property name="retrieve.to.repo.pattern.ivy" 
+                value="${release.repo.ivy.retrieve.ivy.pattern}" />
+		<buildpath refid="${projects}" />
+	</subant>
+  </target>
+	
+  <target name="tests" depends="init" description="Calls test targets on each project">
     <echo>projects=${projects}</echo>
-	<subant target="tests" inheritall="false">
+	<subant target="tests" inheritall="false">1
 	  <buildpath refid="${projects}"/>
     </subant>
   </target>
 
-  <target name="javadoc" depends="init"
-          description="Calls javadoc targets on each project">
+  <target name="javadoc" depends="init" description="Calls javadoc targets on each project">
     <echo>projects=${projects}</echo>
 	<subant target="javadoc" inheritall="false">
 	  <buildpath refid="${projects}"/>
     </subant>
   </target>
+  
+	<target name="doc" depends="init" description="Calls doc targets on applicable projects">
+		<echo>projects=${projects}</echo>
+		<subant target="doc-all" inheritall="false" failonerror="false">
+			<buildpathelement location="../spring-ws-core" />
+		</subant>
+	</target>
 
   <target name="release"
-          depends="dist, javadoc, gen-release-bins, gen-release-bins-with-deps, gen-buildable-zip"
-          description="Generate release zips">
+          depends="dist, build-release-repo, javadoc, doc, gen.release.zip"
+          description="Generate the spring-ws release archive">
   </target>
 
-  <target name="gen-release-bins" depends="init"
-          description="Generate bin zips/tarballs">
+  <target name="gen.release.zip" depends="init">
+		<mkdir dir="${target.release.dir}" />
+		<delete file="${target.release.dir}/${release.zip}" />
 
-    <mkdir dir="${target.release.dir}"/>
-    <delete file="${target.release.dir}/${release.bin.zip}"/>
-
-    <zip zipfile="${target.release.dir}/${release.bin.zip}">
-	  <zipfileset dir="../spring-ws/core/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
-	  <zipfileset dir="../spring-ws/core/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
-	  <zipfileset dir="../spring-ws/core/target/javadocs" prefix="${zip.toplevel.dir}/doc/api/core"/>
-	  <zipfileset dir="../spring-ws/oxm/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
-	  <zipfileset dir="../spring-ws/oxm/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
-	  <zipfileset dir="../spring-ws/oxm/target/javadocs" prefix="${zip.toplevel.dir}/doc/api/oxm"/>
-    </zip>
-  </target>
-
-  <target name="gen-release-bins-with-deps" depends="init"
-          description="Generate bin zips/tarballs with all dependencies">
-
-    <mkdir dir="${target.release.dir}"/>
-    <delete file="${target.release.dir}/${release.bin.deps.zip}"/>
-
-    <zip zipfile="${target.release.dir}/${release.bin.deps.zip}">
-	  <zipfileset dir="../spring-ws/core/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
-	  <zipfileset dir="../spring-ws/core/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
-	  <zipfileset dir="../spring-ws/core/target/javadocs" prefix="${zip.toplevel.dir}/doc/api/core"/>
-	  <zipfileset dir="../spring-ws/core/lib/global" prefix="${zip.toplevel.dir}/lib"/>
-	  <zipfileset dir="../spring-ws/oxm/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
-	  <zipfileset dir="../spring-ws/oxm/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
-	  <zipfileset dir="../spring-ws/oxm/target/javadocs" prefix="${zip.toplevel.dir}/doc/api/oxm"/>
-	  <zipfileset dir="../spring-ws/oxm/lib/global" prefix="${zip.toplevel.dir}/lib"/>
-	</zip>
-  </target>
+		<zip zipfile="${target.release.dir}/${release.zip}">
+			<!-- important readme, license, and other text files -->
+			<zipfileset file="../spring-ws-core/*.txt" prefix="${zip.toplevel.dir}" />
+			<!-- binary files -->
+			<zipfileset dir="../spring-ws-core/target/dist/jars" prefix="${zip.toplevel.dir}" />
+			<zipfileset dir="../spring-oxm/target/dist/jars" prefix="${zip.toplevel.dir}" />
+			<zipfileset dir="../spring-ws-core/target/javadocs" prefix="${zip.toplevel.dir}/docs/api" />
+			<zipfileset dir="../spring-ws-core/docs/reference/target" prefix="${zip.toplevel.dir}/docs/reference">
+				<exclude name="**/html_single/**" />
+			</zipfileset>
+			<zipfileset dir="${target.dir}/repo" 
+			            prefix="${zip.toplevel.dir}/projects/repository" />
+			<!-- project sources -->
+			<zipfileset dir=".." prefix="${zip.toplevel.dir}/projects">
+				<selector refid="project.source.zip.includes" />
+			</zipfileset>
+		</zip>
+	</target>
   
-  <target name="gen-buildable-zip" depends="init"
-          description="Generate archive with buildable sources">
-
-    <mkdir dir="${target.release.dir}"/>
-    <delete file="${target.release.dir}/${release.buildable.zip}"/>
-
-    <zip zipfile="${target.release.dir}/${release.buildable.zip}">
-      <zipfileset dir="..">
-        <selector refid="project.source.zip.includes"/>
-        <exclude name="**/*.iml"/>
-        <exclude name="**/*.ipr"/>
-        <exclude name="**/*.iws"/>
-        <exclude name="**/*.classpath"/>
-        <exclude name="**/*.springBeans"/>
-        <exclude name="**/*.project"/>
-        <exclude name="**/*.tmproj"/>
-        <exclude name="**/.metadata"/>                
-        <exclude name="**/.metadata/**/*"/>                
-        <exclude name="**/exploded/**"/>
-        <exclude name="**/exploded"/>
-        <exclude name="**/core/docs"/>
-        <exclude name="**/core/docs/**"/>
-        <exclude name="**/core-tiger"/>
-        <exclude name="**/core-tiger/**/*"/>
-        <exclude name="**/sandbox"/>
-        <exclude name="**/sandbox/**/*"/>
-      </zipfileset>
-	  <zipfileset dir="../spring-ws/core/target/javadocs" prefix="doc/api/core"/>
-	  <zipfileset dir="../spring-ws/oxm/target/javadocs" prefix="doc/api/oxm"/>
-    </zip>
-  </target>
-
-  <target name="cvs-update">
-	<cvs dest="${basedir}" command="update"/>
-	<cvs dest="${basedir}/../spring-oxm" command="update"/>
-	<cvs dest="${basedir}/../spring-ws-core" command="update"/>
-	<cvs dest="${basedir}/../common-build" command="update"/>
-	<cvs dest="${basedir}/../spring-ws-samples" command="update"/>  
-  </target>
 </project>
