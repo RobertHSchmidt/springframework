@@ -15,9 +15,11 @@
  */
 package org.springframework.webflow;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
@@ -121,6 +123,11 @@ public class Flow extends AnnotatedObject {
 	private State startState;
 
 	/**
+	 * The mapper to map flow input attributes.
+	 */
+	private AttributeMapper inputMapper;
+
+	/**
 	 * The list of actions to execute when this flow starts.
 	 * <p>
 	 * Start actions should execute with care as during startup a flow session
@@ -138,6 +145,11 @@ public class Flow extends AnnotatedObject {
 	 * The list of actions to execute when this flow ends.
 	 */
 	private ActionList endActionList = new ActionList();
+
+	/**
+	 * The mapper to map flow output attributes.
+	 */
+	private AttributeMapper outputMapper;
 
 	/**
 	 * The set of exception handlers for this flow.
@@ -361,6 +373,22 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
+	 * Returns the configured flow input mapper
+	 * @return the input mapper
+	 */
+	public AttributeMapper getInputMapper() {
+		return inputMapper;
+	}
+	
+	/**
+	 * Sets the mapper to map flow input attributes.
+	 * @param inputMapper the input mapper
+	 */
+	public void setInputMapper(AttributeMapper inputMapper) {
+		this.inputMapper = inputMapper;
+	}
+	
+	/**
 	 * Convenience method to add a single action to this flows's start action
 	 * list. Start actions are executed when this flow is started.
 	 * @param action the action to add
@@ -394,6 +422,22 @@ public class Flow extends AnnotatedObject {
 	 */
 	public ActionList getEndActionList() {
 		return endActionList;
+	}
+
+	/**
+	 * Returns the configured flow output mapper
+	 * @return the output mapper
+	 */
+	public AttributeMapper getOutputMapper() {
+		return outputMapper;
+	}
+	
+	/**
+	 * Sets the mapper to map flow output attributes.
+	 * @param outputMapper the output mapper
+	 */
+	public void setOutputMapper(AttributeMapper outputMapper) {
+		this.outputMapper = outputMapper;
 	}
 
 	/**
@@ -523,8 +567,9 @@ public class Flow extends AnnotatedObject {
 	 * @param input eligible input into the session
 	 */
 	public ViewSelection start(FlowExecutionControlContext context, AttributeMap input) {
-		// TODO input mapper
-		context.getFlowScope().putAll(input);
+		if (inputMapper != null) {
+			inputMapper.map(input, context, Collections.EMPTY_MAP);
+		}
 		startActionList. execute(context);
 		return startState.enter(context);
 	}
@@ -571,6 +616,9 @@ public class Flow extends AnnotatedObject {
 	 */
 	public void end(FlowExecutionControlContext context, AttributeMap output) {
 		endActionList.execute(context);
+		if (outputMapper != null) {
+			outputMapper.map(output, context, Collections.EMPTY_MAP);
+		}
 	}
 
 	/**

@@ -1,7 +1,5 @@
 package org.springframework.webflow.builder;
 
-import java.lang.reflect.Method;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
@@ -242,9 +240,8 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 	protected ResultEventFactory getResultEventFactory(Object bean, BeanInvokingActionParameters parameters) {
 		MethodSignature method = parameters.getMethod();
 		ClassMethodKey key = new ClassMethodKey(bean.getClass(), method.getMethodName(), method.getParameters().getTypesArray());
-		Method m = key.getMethod();
 		ResultObjectBasedEventFactory factory = new ResultObjectBasedEventFactory();
-		if (factory.isMappedType(m.getReturnType())) {
+		if (factory.isMappedType(key.getMethod().getReturnType())) {
 			return factory;
 		} else {
 			return new SuccessEventFactory();

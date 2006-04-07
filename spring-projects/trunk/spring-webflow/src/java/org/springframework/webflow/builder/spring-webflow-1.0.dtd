@@ -40,7 +40,7 @@
 	Finally, a flow may nest one or more other flows within this document to
 	use as subflows, referred to as 'inline flows'.
 -->
-<!ELEMENT flow ( attribute*, start-actions?, var*, ( action-state | view-state | decision-state | subflow-state | end-state )+, global-transitions?, end-actions?, exception-handler*, import*, inline-flow* )>
+<!ELEMENT flow ( attribute*, var*, input-mapper?, start-actions?, ( action-state | view-state | decision-state | subflow-state | end-state )+, global-transitions?, end-actions?, output-mapper*, exception-handler*, import*, inline-flow* )>
 
 <!--
 	The the start state of this flow; the start state is the point where flow execution will begin.
@@ -48,25 +48,40 @@
 <!ATTLIST flow start-state IDREF #REQUIRED>
 
 <!--
-	Defines flow startup logic to execute. This logic will always execute when this flow is started.
+	The mapper that will map flow input attributes.
 -->
-<!ELEMENT start-actions ( action+ )>
+<!ELEMENT input-mapper ( mapping+ )>
 
 <!--
-	A flow variable definition.  Flow variables are automatically created in "flow scope" 
-	when an execution of this flow starts.
+	A mapping that maps an attribute.
 -->
-<!ELEMENT var EMPTY>
+<!ELEMENT mapping EMPTY>
 
 <!--
-	This flow variable's name.
+	The expression resolving the source value to be mapped.
 -->
-<!ATTLIST var name CDATA #REQUIRED>
+<!ATTLIST mapping source CDATA #REQUIRED>
 
 <!--
-	This flow variable's type.  The type may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer').
+	The property expression defining the target property to be set.
 -->
-<!ATTLIST var type CDATA #IMPLIED>
+<!ATTLIST mapping target CDATA #IMPLIED>
+
+<!--
+	The expression resolving the target collection that the source value should be added to.
+	Use this or the 'target' attribute, not both.
+-->
+<!ATTLIST mapping target-collection CDATA #IMPLIED>
+
+<!--
+	The source value type to map from.
+-->
+<!ATTLIST mapping from CDATA #IMPLIED>
+
+<!--
+	The target value type to map to.
+-->
+<!ATTLIST mapping to CDATA #IMPLIED>
 
 <!--
 	An attribute about this element.
@@ -100,12 +115,38 @@
 <!ELEMENT value ( #PCDATA )>
 
 <!--
+	A flow variable definition.  Flow variables are automatically created in "flow scope" 
+	when an execution of this flow starts.
+-->
+<!ELEMENT var EMPTY>
+
+<!--
+	This flow variable's name.
+-->
+<!ATTLIST var name CDATA #REQUIRED>
+
+<!--
+	This flow variable's type.  The type may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer').
+-->
+<!ATTLIST var type CDATA #IMPLIED>
+
+<!--
+	The bean defining the initial flow variable value (must be a non-singleton prototype).
+-->
+<!ATTLIST var bean CDATA #REQUIRED>
+
+<!--
+	Defines flow startup logic to execute. This logic will always execute when this flow is started.
+-->
+<!ELEMENT start-actions ( action+ )>
+
+<!--
 	Defines an action state, a state where one or more actions are executed.
 	This state type is typically used to invoke application code, often business services.
 	An action state is a transitionable state.  A transition out of this state 
 	is driven by the result of action execution (e.g. success, error).
 -->
-<!ELEMENT action-state ( attribute*, entry-actions?, action+, transition+, exit-actions?, exception-handler* )>
+<!ELEMENT action-state ( attribute*, entry-actions?, action+, transition*, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this action state; must be unique to this flow.
@@ -221,7 +262,7 @@
   	    <transition on="submit" to="state"/>
 	
 	Sophisticated transitional expressions are also supported. For example:
-	    <transition on="${#result == 'submit' && flowScope.attribute == 'foo'}" to="state"/>
+	    <transition on="${#result == 'submit' &;amp;&amp flowScope.attribute == 'foo'}" to="state"/>
 	
 	Custom transition criteria implementations can be referenced by id. For example:
 	    <transition on="bean:myCustomCriteria" to="state"/>
@@ -244,7 +285,7 @@
 	A view state is a transitionable state. A view state transition is triggered by a
 	user input event.
 -->
-<!ELEMENT view-state ( attribute*, entry-actions?, transition+, exit-actions?, exception-handler* )>
+<!ELEMENT view-state ( attribute*, entry-actions?, transition*, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this view state; must be unique to this flow.
@@ -406,7 +447,7 @@
 	to respond to the result of that execution. The result of subflow execution, the end state 
 	that was reached, should be used as grounds for a transition out of this state.
 -->
-<!ELEMENT subflow-state ( attribute*, entry-actions?, attribute-mapper?, transition+, exit-actions?, exception-handler* )>
+<!ELEMENT subflow-state ( attribute*, entry-actions?, input-mapper?, output-mapper?, transition*, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this subflow state; must be unique to this flow.
@@ -417,118 +458,6 @@
 	The id of the flow to be spawned as a subflow when this subflow state is entered.
 -->
 <!ATTLIST subflow-state flow CDATA #REQUIRED>
-
-<!--
-	An optional mapper that will map attributes from the parent flow to/from the spawned subflow. 
--->
-<!ELEMENT attribute-mapper ( input-mapping*, output-mapping* )>
-
-<!--
-	The identifier of a custom flow attribute mapper implementation exported in the
-	Spring bean factory. This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
-	
-	Use this as an alternative to the convenient "input" and "output" element attributes 
-	when you need full control of attribute mapping behavior for this subflow state.
--->
-<!ATTLIST attribute-mapper bean CDATA #IMPLIED>
-
-<!--
-	A single input mapping that maps an attribute from this flow to the subflow.
--->
-<!ELEMENT input-mapping EMPTY>
-
-<!--
-	The name of an attribute in this flow to map as input into the spawning the subflow.
-
-	If the 'as' attribute is not specified, the mapped attribute will be assigned 
-	the same name in the subflow.
-
-	If the 'as' attribute is specified, the mapped attribute will be assigned that name 
-	in the subflow.
-	
-	Use this or the 'value' attribute, not both.
--->
-<!ATTLIST input-mapping name CDATA #IMPLIED>
-
-<!--
-	A value expression evaluated against this flow's request context.
-	The evaluated expression value is what is mapped as an input attribute into the spawning subflow.
-	
-	Note: you must specify the 'as' attribute to assign the expression value an attribute name 
-	in the subflow.
-	
-	Use this or the 'name' attribute, not both.
--->
-<!ATTLIST input-mapping value CDATA #IMPLIED>
-
-<!--
-	The name of the target attribute in the subflow. This is optional when used in
-	conjunction with the 'name' attribute; by default, the same attribute name will be
-	used between this flow and the subflow.
-	
-	Note: this is required when used in conjunction with the 'value' attribute: you must
-	assign a name to the value returned by the expression for storage in the subflow.
--->
-<!ATTLIST input-mapping as CDATA #IMPLIED>
-
-<!--
-	The type of the source attribute value in this flow; used with the "to" attribute to perform
-	a value type conversion during attribute mapping.
--->
-<!ATTLIST input-mapping from CDATA #IMPLIED>
-
-<!--
-	The target type of the subflow attribute value; used with the "from" attribute to perform
-	a value type conversion during attribute mapping.
--->
-<!ATTLIST input-mapping to CDATA #IMPLIED>
-
-<!--
-	A single output mapping that maps a output attribute returned from the subflow to this
-	flow when the subflow ends and this flow resumes.
--->
-<!ELEMENT output-mapping EMPTY>
-
-<!--
-	The name of a subflow output attribute to map into this resuming flow.
-	
-	If the 'as' attribute is not specified, the mapped attribute will be assigned
-	the same name in this flow.
-	
-	If the 'as' attribute is specified, the mapped attribute will be assigned that name
-	in this flow.
--->
-<!ATTLIST output-mapping name CDATA #IMPLIED>
-
-<!--
-	The name of the target attribute in this flow. This is optional when used in
-	conjunction with the 'name' attribute; by default, the same name will be used between
-	the subflow and this flow.
--->
-<!ATTLIST output-mapping as CDATA #IMPLIED>
-
-<!--
-	The name of a collection in flow scope to output this attribute to.  The name can 
-	refer to any attribute in flow scope, so long as its type is of java.util.Collection.  
-	The mapped element from the ending subflow will be added to the collection of 
-	the resuming parent flow.  The referenced attribute value is expected to be
-	non-null.
-	
-	Use this attribute or the 'as' attribute, not both.
--->
-<!ATTLIST output-mapping collection CDATA #IMPLIED>
-
-<!--
-	The type of the attribute to map from the subflow; used with the "to" attribute to perform
-	a value type conversion during attribute mapping.
--->
-<!ATTLIST output-mapping from CDATA #IMPLIED>
-
-<!--
-	The type of the target attribute to set in this flow; used with the "from" attribute to perform
-	a value type conversion during attribute mapping.
--->
-<!ATTLIST output-mapping to CDATA #IMPLIED>
 
 <!--
 	Defines an end state, a state that terminates this flow when entered.
@@ -612,6 +541,11 @@
 	Defines flow ending logic to be executed. This logic will always execute when this flow is ended.
 -->
 <!ELEMENT end-actions ( action+ )>
+
+<!--
+	The mapper that will map flow output attributes.
+-->
+<!ELEMENT output-mapper ( mapping+ )>
 
 <!--
 	Defines a state exception handler to handle one or more exceptions that may occur during the

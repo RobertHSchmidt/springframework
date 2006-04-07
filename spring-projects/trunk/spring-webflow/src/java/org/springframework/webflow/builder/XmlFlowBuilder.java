@@ -17,7 +17,6 @@ package org.springframework.webflow.builder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,8 +34,11 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.mapping.AttributeMapper;
+import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -71,9 +73,8 @@ import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.FlowVariableCreatingAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.CollectionAddingPropertyExpression;
-import org.springframework.webflow.support.DefaultFlowAttributeMapper;
-import org.springframework.webflow.support.FlowScopeExpression;
 import org.springframework.webflow.support.FlowVariable;
+import org.springframework.webflow.support.ImmutableFlowAttributeMapper;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionCriteriaChain;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
@@ -418,8 +419,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		FlowArtifactParameters parameters = flowParameters.putAll(parseAttributes(flowElement));
 		Flow flow = getLocalFlowArtifactFactory().createFlow(parameters);
 		parseAndAddFlowVariables(flowElement, flow);
+		flow.setInputMapper(parseInputMapper(flowElement));
 		parseAndAddFlowActions(flowElement, flow);
 		parseAndAddFlowTransitions(flowElement, flow);
+		flow.setOutputMapper(parseOutputMapper(flowElement));
 		return flow;
 	}
 
@@ -648,7 +651,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		SubflowState state = (SubflowState)getLocalFlowArtifactFactory().createState(flow, SubflowState.class,
 				parseParameters(element));
 		state.setSubflow(getLocalFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE)));
-		state.setAttributeMapper(parseAttributeMapper(element));
+		state.setAttributeMapper(new ImmutableFlowAttributeMapper(parseInputMapper(element), parseOutputMapper(element)));
 		state.getTransitionSet().addAll(parseTransitions(element));
 		return state;
 	}
@@ -680,7 +683,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		context.put(TextToViewSelector.STATE_TYPE_CONTEXT_PARAMETER, stateType);
 		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName, context);
 	}
-	
+
 	/**
 	 * Parse all annotated action definitions contained in given element.
 	 */
@@ -851,102 +854,34 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 	}
 
-	/**
-	 * Obtain an attribute mapper reference from given subflow definition
-	 * element and return the identified mapper, or null if no mapper is
-	 * referenced.
-	 */
-	protected FlowAttributeMapper parseAttributeMapper(Element element) {
-		List mapperElements = DomUtils.getChildElementsByTagName(element, ATTRIBUTE_MAPPER_ELEMENT);
-		if (mapperElements.isEmpty()) {
-			return null;
-		}
-		else {
-			Element mapperElement = (Element)mapperElements.get(0);
-			if (mapperElement.hasAttribute(BEAN_ATTRIBUTE)) {
-				return getLocalFlowArtifactFactory().getAttributeMapper(mapperElement.getAttribute(BEAN_ATTRIBUTE));
-			}
-			else {
-				// inline definition of a mapping
-				DefaultFlowAttributeMapper attributeMapper = new DefaultFlowAttributeMapper();
-				List inputElements = DomUtils.getChildElementsByTagName(mapperElement, INPUT_MAPPING_ELEMENT);
-				List inputMappings = new ArrayList(inputElements.size());
-				for (Iterator it = inputElements.iterator(); it.hasNext();) {
-					parseAndAddInputMapping((Element)it.next(), inputMappings);
-				}
-				attributeMapper.addInputMappings((Mapping[])inputMappings.toArray(new Mapping[inputMappings.size()]));
-				List outputElements = DomUtils.getChildElementsByTagName(mapperElement, OUTPUT_MAPPING_ELEMENT);
-				List outputMappings = new ArrayList(outputElements.size());
-				for (Iterator it = outputElements.iterator(); it.hasNext();) {
-					parseAndAddOutputMapping((Element)it.next(), outputMappings);
-				}
-				attributeMapper
-						.addOutputMappings((Mapping[])outputMappings.toArray(new Mapping[outputMappings.size()]));
-				return attributeMapper;
-			}
-		}
+	protected AttributeMapper parseInputMapper(Element element) {
+		List mapperElements = DomUtils.getChildElementsByTagName(element, "input-mapper");
+		return mapperElements.isEmpty() ? null : parseAttributeMapper((Element)mapperElements.get(0));
 	}
 
-	/**
-	 * Parse a single inline input attribute mapping definition and add it to
-	 * given list.
-	 */
-	protected void parseAndAddInputMapping(Element element, List inputMappings) {
-		String name = element.getAttribute(NAME_ATTRIBUTE);
-		String value = element.getAttribute(VALUE_ATTRIBUTE);
-		String as = element.getAttribute(AS_ATTRIBUTE);
-		ConversionExecutor typeConverter = parseTypeConverter(element);
-		ExpressionParser parser = getExpressionParser();
-		if (StringUtils.hasText(name)) {
-			Assert.isTrue(!StringUtils.hasText(value),
-					"The 'name' attribute cannot be used with the 'value' attribute -- use one or the other");
-			if (StringUtils.hasText(as)) {
-				inputMappings.add(new Mapping(new FlowScopeExpression(parser.parseExpression(name)), parser
-						.parsePropertyExpression(as), typeConverter));
-			}
-			else {
-				inputMappings.add(new Mapping(new FlowScopeExpression(parser.parseExpression(name)),
-						getExpressionParser().parsePropertyExpression(name), typeConverter));
-			}
-		}
-		else if (StringUtils.hasText(value)) {
-			// "value" allows you to specify the value that should get mapped
-			// using an expression against the request context
-			Assert.hasText(as, "The 'as' attribute is required with the 'value' attribute");
-			inputMappings.add(new Mapping(getExpressionParser().parseExpression(value), getExpressionParser()
-					.parsePropertyExpression(as), typeConverter));
-		}
-		else {
-			throw new FlowBuilderException(this,
-					"Use of the 'name' or 'value' attribute is required in input mapping definition " + element);
-		}
+	protected AttributeMapper parseOutputMapper(Element element) {
+		List mapperElements = DomUtils.getChildElementsByTagName(element, "output-mapper");
+		return mapperElements.isEmpty() ? null : parseAttributeMapper((Element)mapperElements.get(0));
 	}
 
-	/**
-	 * Parse a single inline output attribute mapping definition and add it to
-	 * given list.
-	 */
-	protected void parseAndAddOutputMapping(Element element, List outputMappings) {
-		String name = element.getAttribute(NAME_ATTRIBUTE);
-		String as = element.getAttribute(AS_ATTRIBUTE);
-		String collection = element.getAttribute(COLLECTION_ATTRIBUTE);
-		ConversionExecutor typeConverter = parseTypeConverter(element);
-		ExpressionParser parser = getExpressionParser();
-		if (StringUtils.hasText(as)) {
-			outputMappings.add(new Mapping(parser.parseExpression(name), parser.parsePropertyExpression(as),
-					typeConverter));
-		}
-		else {
-			if (StringUtils.hasText(collection)) {
-				PropertyExpression collectionExpression = new CollectionAddingPropertyExpression(
-						new FlowScopeExpression(parser.parseExpression(collection)));
-				outputMappings.add(new Mapping(parser.parseExpression(name), collectionExpression, typeConverter));
+	protected AttributeMapper parseAttributeMapper(Element element) {
+		List mappingElements = DomUtils.getChildElementsByTagName(element, "mapping");
+		DefaultAttributeMapper mapper = new DefaultAttributeMapper();
+		Iterator it = mappingElements.iterator();
+		while (it.hasNext()) {
+			Element mappingElement = (Element)it.next();
+			Expression source = getExpressionParser().parseExpression(mappingElement.getAttribute("source"));
+			PropertyExpression target = null;
+			if (StringUtils.hasText(mappingElement.getAttribute("target"))) {
+				target = getExpressionParser().parsePropertyExpression(mappingElement.getAttribute("target"));
 			}
-			else {
-				outputMappings.add(new Mapping(parser.parseExpression(name), parser.parsePropertyExpression(name),
-						typeConverter));
+			else if (StringUtils.hasText(mappingElement.getAttribute("target-collection"))) {
+				target = new CollectionAddingPropertyExpression(getExpressionParser().parsePropertyExpression(
+						mappingElement.getAttribute("target-collection")));
 			}
+			mapper.addMapping(new Mapping(source, target, parseTypeConverter(mappingElement)));
 		}
+		return mapper;
 	}
 
 	protected ConversionExecutor parseTypeConverter(Element element) {

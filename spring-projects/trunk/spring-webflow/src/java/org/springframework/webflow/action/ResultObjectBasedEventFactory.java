@@ -14,21 +14,11 @@ import org.springframework.webflow.support.EventFactorySupport;
 public class ResultObjectBasedEventFactory extends EventFactorySupport implements ResultEventFactory {
 
 	public boolean isMappedType(Class type) {
-		if (Boolean.class.equals(type) || isJdk5Enum(type) || LabeledEnum.class.isAssignableFrom(type)
-				|| String.class.equals(type)) {
+		if (isBoolean(type) || isJdk5Enum(type) || isLabeledEnum(type) || isString(type)) {
 			return true;
 		}
 		else {
 			return false;
-		}
-	}
-
-	private boolean isJdk5Enum(Class type) {
-		if (!(JdkVersion.getMajorJavaVersion() >= JdkVersion.JAVA_15)) {
-			return false;
-		}
-		else {
-			return type.isEnum();
 		}
 	}
 
@@ -50,4 +40,26 @@ public class ResultObjectBasedEventFactory extends EventFactorySupport implement
 			return event(source, String.valueOf(resultObject), getResultAttributeName(), resultObject);
 		}
 	}
+	
+	private boolean isBoolean(Class type) {
+		return Boolean.class.equals(type) || boolean.class.equals(type);
+	}
+
+	private boolean isJdk5Enum(Class type) {
+		if (!(JdkVersion.getMajorJavaVersion() >= JdkVersion.JAVA_15)) {
+			return false;
+		}
+		else {
+			return type.isEnum();
+		}
+	}
+
+	private boolean isLabeledEnum(Class type) {
+		return LabeledEnum.class.isAssignableFrom(type);
+	}
+
+	private boolean isString(Class type) {
+		return String.class.equals(type);
+	}
+
 }

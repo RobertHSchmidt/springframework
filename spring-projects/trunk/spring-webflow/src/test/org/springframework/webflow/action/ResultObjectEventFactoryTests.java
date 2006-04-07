@@ -8,7 +8,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.test.MockRequestContext;
 
-public class ReturnValuedBasedEventFactoryTests extends TestCase {
+public class ResultObjectEventFactoryTests extends TestCase {
 
 	private MockRequestContext context = new MockRequestContext();
 
@@ -23,6 +23,7 @@ public class ReturnValuedBasedEventFactoryTests extends TestCase {
 	public void testMappedTypes() {
 		assertTrue(factory.isMappedType(FlowSessionStatus.class));
 		assertTrue(factory.isMappedType(MethodType.class));
+		assertTrue(factory.isMappedType(boolean.class));
 		assertTrue(factory.isMappedType(Boolean.class));
 		assertTrue(factory.isMappedType(String.class));
 		assertFalse(factory.isMappedType(Integer.class));

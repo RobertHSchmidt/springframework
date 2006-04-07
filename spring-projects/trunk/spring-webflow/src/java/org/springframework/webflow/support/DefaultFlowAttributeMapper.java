@@ -16,21 +16,16 @@
 package org.springframework.webflow.support;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.UnmodifiableAttributeMap;
 
 /**
  * Generic flow attribute mapper implementation that allows mappings to be
@@ -57,7 +52,7 @@ import org.springframework.webflow.UnmodifiableAttributeMap;
  * @author Keith Donald
  * @author Colin Sampaleanu
  */
-public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializable {
+public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper implements Serializable {
 
 	/**
 	 * Logger, usable in subclasses.
@@ -65,10 +60,11 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 	protected final Log logger = LogFactory.getLog(getClass());;
 
 	/**
-	 * The expression parser that will parse input and output attribute expressions. 
+	 * The expression parser that will parse input and output attribute
+	 * expressions.
 	 */
 	private ExpressionParser expressionParser = new DefaultExpressionParserFactory().getExpressionParser();
-	
+
 	/**
 	 * The mapper that maps attributes into a spawning subflow.
 	 */
@@ -182,27 +178,6 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 		return outputMapper.getMappings();
 	}
 
-	public AttributeMap createSubflowInput(RequestContext context) {
-		if (inputMapper != null) {
-			AttributeMap input = new AttributeMap();
-			// map from request context to input map
-			inputMapper.map(context, input, getMappingContext(context));
-			return input;
-		}
-		else {
-			// an empty, but modifiable map
-			return new AttributeMap();
-		}
-	}
-
-	public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
-		if (outputMapper != null && subflowOutput != null) {
-			// map from request context to parent flow scope
-			outputMapper.map(subflowOutput, context.getFlowExecutionContext().getActiveSession().getScope(),
-					getMappingContext(context));
-		}
-	}
-
 	/**
 	 * Factory method that returns a mapping builder helper for building
 	 * {@link Mapping} objects.
@@ -212,11 +187,12 @@ public class DefaultFlowAttributeMapper implements FlowAttributeMapper, Serializ
 		return new MappingBuilder(expressionParser);
 	}
 
-	/**
-	 * Returns a map of contextual data available during mapping.
-	 */
-	protected Map getMappingContext(RequestContext context) {
-		return Collections.EMPTY_MAP;
+	protected AttributeMapper getInputMapper() {
+		return inputMapper;
+	}
+
+	protected AttributeMapper getOutputMapper() {
+		return outputMapper;
 	}
 
 	public String toString() {

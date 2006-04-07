@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.core.io.Resource;
+import org.xml.sax.EntityResolver;
 
 /**
  * A factory bean that produces a populated flow registry using a
@@ -60,7 +61,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	/**
 	 * The flow registrar that will perform the definition registrations.
 	 */
-	private ExternalizedFlowRegistrar flowRegistrar = createFlowRegistrar();
+	private XmlFlowRegistrar flowRegistrar = createFlowRegistrar();
 
 	/**
 	 * Temporary holder for flow definitions configured using a property map.
@@ -72,14 +73,14 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * may override.
 	 * @return the flow registrar to use
 	 */
-	protected ExternalizedFlowRegistrar createFlowRegistrar() {
+	protected XmlFlowRegistrar createFlowRegistrar() {
 		return new XmlFlowRegistrar();
 	}
 
 	/**
 	 * Returns the configured externalized flow registrar.
 	 */
-	protected ExternalizedFlowRegistrar getFlowRegistrar() {
+	protected XmlFlowRegistrar getFlowRegistrar() {
 		return flowRegistrar;
 	}
 
@@ -151,6 +152,23 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 		this.flowDefinitions = flowDefinitions;
 	}
 
+	/**
+	 * Sets whether or not the flow builder used to build the flow definitions in this 
+	 * registry should perform build-time validation.
+	 * @param builderValidating the validating flag
+	 */
+	public void setBuilderValidating(boolean builderValidating) {
+		getFlowRegistrar().setBuilderValidating(builderValidating);
+	}
+	
+	/**
+	 * Sets the entity resolver to use during Xml flow definition building.
+	 * @param entityResolver the entity resolver
+	 */
+	public void setEntityResolver(EntityResolver entityResolver) {
+		getFlowRegistrar().setEntityResolver(entityResolver);
+	}
+	
 	protected void doPopulate(FlowRegistry registry) {
 		addFlowDefinitionsFromPropertiesIfNecessary();
 		getFlowRegistrar().registerFlows(registry, getFlowArtifactFactory());

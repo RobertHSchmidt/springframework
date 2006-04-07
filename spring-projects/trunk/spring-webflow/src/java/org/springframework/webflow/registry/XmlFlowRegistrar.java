@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.builder.XmlFlowBuilder;
+import org.xml.sax.EntityResolver;
 
 /**
  * A flow registrar that populates a flow registry from flow definitions defined
@@ -59,12 +60,38 @@ public class XmlFlowRegistrar extends ExternalizedFlowRegistrar {
 	 */
 	private static final String XML_SUFFIX = ".xml";
 
+	private boolean builderValidating = true;
+	
+	private EntityResolver entityResolver;
+
+	/**
+	 * Sets whether or not the flow builder used to build the flow definitions in this 
+	 * registry should perform build-time validation.
+	 * @param builderValidating the validating flag
+	 */
+	public void setBuilderValidating(boolean builderValidating) {
+		this.builderValidating = builderValidating;
+	}
+
+	/**
+	 * Sets the entity resolver to use during Xml flow definition building.
+	 * @param entityResolver the entity resolver
+	 */
+	public void setEntityResolver(EntityResolver entityResolver) {
+		this.entityResolver = entityResolver;
+	}
+
 	protected boolean isFlowDefinition(File file) {
 		return file.getName().endsWith(XML_SUFFIX);
 	}
 
 	protected FlowBuilder createFlowBuilder(Resource location, FlowArtifactFactory flowArtifactFactory) {
-		return new XmlFlowBuilder(location, flowArtifactFactory);
+		XmlFlowBuilder builder = new XmlFlowBuilder(location, flowArtifactFactory);
+		builder.setValidating(builderValidating);
+		if (entityResolver != null) {
+			builder.setEntityResolver(entityResolver);
+		}
+		return builder;
 	}
 
 	protected String getFlowId(Resource location) {
