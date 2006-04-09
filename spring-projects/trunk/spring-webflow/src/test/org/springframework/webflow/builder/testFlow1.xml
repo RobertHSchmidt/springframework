@@ -37,7 +37,7 @@
 		<transition on="Created" to="viewState2"/>
 	</action-state>
 	
-	<view-state id="viewState1" view="view1">
+  	<view-state id="viewState1" view="view1">
 		<transition on="event1" to="subFlowState1"/>
 	</view-state>
 	
@@ -81,21 +81,21 @@
  	</decision-state>
 
  	<decision-state id="decisionState2">
-		<transition on="${flowScope.attribute1 != null}" to="decisionState3"/>
-		<transition on="${flowScope.attribute1 == null}" to="endState1"/>
+		<if test="${flowScope.attribute1 != null}" then="actionState4"/>
+		<if test="${flowScope.attribute1 == null}" then="endState1"/>
  	</decision-state>
 
- 	<decision-state id="decisionState3">
+ 	<action-state id="actionState4">
  		<action bean="pojoAction" method="booleanMethod"/>
-		<transition on="yes" to="decisionState4"/>
+		<transition on="yes" to="actionState5"/>
 		<transition on="no" to="endState2"/>
- 	</decision-state>
+ 	</action-state>
 
- 	<decision-state id="decisionState4">
+ 	<action-state id="actionState5">
  		<action bean="pojoAction" method="enumMethod"/>
 		<transition on="created" to="endState1"/>
 		<transition on="starting" to="endState2"/>
- 	</decision-state>
+ 	</action-state>
  	 	 	 	
 	<end-state id="endState1" view="endView1"/>
 	

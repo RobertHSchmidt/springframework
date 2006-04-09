@@ -154,8 +154,9 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
 		Conversation conversation = getOrCreateConversation(key.getConversationId());
 		conversation.setScope(flowExecution.getScope());
-		// TODO flow execution scope is serialized - duplicating with conversation.setScope
+		((FlowExecutionImpl)flowExecution).setScope(null);
 		conversation.addContinuation(continuationFactory.createContinuation(key.getContinuationId(), flowExecution));
+		((FlowExecutionImpl)flowExecution).setScope(conversation.getScope());
 	}
 
 	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId) throws FlowExecutionRepositoryException {
