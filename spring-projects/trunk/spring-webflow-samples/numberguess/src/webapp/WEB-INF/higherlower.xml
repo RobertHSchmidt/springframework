@@ -10,7 +10,7 @@
 	
 	<action-state id="guess">
 		<action bean="higherlowerGame" method="makeGuess(int ${requestParameters.guess})"/>
-		<transition on="Correct" to="showAnswer"/>
+		<transition on="correct" to="showAnswer"/>
 		<transition on="*" to="enterGuess"/>
 	</action-state>
 	

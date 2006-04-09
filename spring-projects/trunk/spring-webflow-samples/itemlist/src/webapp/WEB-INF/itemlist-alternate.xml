@@ -11,7 +11,9 @@
 
 	<subflow-state id="addItem" flow="item">
 		<attribute-mapper>
-			<output-mapping name="item" collection="list"/>
+			<output-mapper>
+				<mapping source="item" target-collection="list"/>
+			</output-mapper>
 		</attribute-mapper>
 		<transition on="finish" to="displayItemlist"/>
 	</subflow-state>
