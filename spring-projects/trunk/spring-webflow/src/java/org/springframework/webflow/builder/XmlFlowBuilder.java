@@ -75,6 +75,7 @@ import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.CollectionAddingPropertyExpression;
 import org.springframework.webflow.support.FlowVariable;
 import org.springframework.webflow.support.ImmutableFlowAttributeMapper;
+import org.springframework.webflow.support.SimpleFlowVariable;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionCriteriaChain;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
@@ -91,8 +92,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *         &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *         &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -477,7 +478,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 */
 	protected FlowVariable parseVariable(Element element) {
 		Class type = (Class)fromStringTo(Class.class).execute(element.getAttribute(TYPE_ATTRIBUTE));
-		return new FlowVariable(element.getAttribute(NAME_ATTRIBUTE), type);
+		return new SimpleFlowVariable(element.getAttribute(NAME_ATTRIBUTE), type);
 	}
 
 	/**

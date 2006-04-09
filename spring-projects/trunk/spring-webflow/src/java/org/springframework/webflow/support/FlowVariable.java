@@ -17,10 +17,10 @@ package org.springframework.webflow.support;
 
 import java.io.Serializable;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.ScopeType;
 
 /**
  * A value object that defines a specification for a flow variable. Encapsulates
@@ -28,7 +28,7 @@ import org.springframework.webflow.RequestContext;
  * to create a new variable instance in a flow execution scope.
  * @author Keith Donald
  */
-public class FlowVariable implements Serializable {
+public abstract class FlowVariable implements Serializable {
 
 	/**
 	 * The variable name.
@@ -36,43 +36,67 @@ public class FlowVariable implements Serializable {
 	private String name;
 
 	/**
-	 * The variable type.
+	 * The variable scope.
 	 */
-	private Class type;
+	private ScopeType scope;
 
 	/**
 	 * Creates a new flow variable.
 	 * @param name the variable name
-	 * @param type the variable type
 	 */
-	public FlowVariable(String name, Class type) {
-		Assert.notNull(name, "The variable name is required");
-		Assert.notNull(type, "The variable type is required");
-		this.name = name;
-		this.type = type;
+	public FlowVariable(String name) {
+		this(name, ScopeType.FLOW);
 	}
 
+	/**
+	 * Creates a new flow variable.
+	 * @param name the variable name
+	 * @param scope the variable scope type
+	 */
+	public FlowVariable(String name, ScopeType scope) {
+		Assert.notNull(name, "The variable name is required");
+		Assert.notNull(scope, "The variable scope type is required");
+		this.name = name;
+		this.scope = scope;
+	}
+
+	/**
+	 * Returns the name of this variable.
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * Returns the scope of this variable.
+	 */
+	public ScopeType getScope() {
+		return scope;
+	}
+	
 	public boolean equals(Object o) {
 		if (!(o instanceof FlowVariable)) {
 			return false;
 		}
 		FlowVariable other = (FlowVariable)o;
-		return name.equals(other.name);
+		return name.equals(other.name) && scope.equals(other.scope);
 	}
 
 	public int hashCode() {
-		return name.hashCode();
+		return name.hashCode() + scope.hashCode();
 	}
 
 	/**
 	 * Creates a new instance of this flow variable in flow scope.
 	 * @param context the flow execution request context
 	 */
-	public void create(RequestContext context) {
-		context.getFlowScope().put(name, BeanUtils.instantiateClass(type));
+	public final void create(RequestContext context) {
+		scope.getScope(context).put(name, createVariableValue(context));
 	}
 
+	protected abstract Object createVariableValue(RequestContext context);
+	
 	public String toString() {
-		return new ToStringCreator(this).append("name", name).append("type", type).toString();
+		return new ToStringCreator(this).append("name", name).append("scope", scope).toString();
 	}
 }

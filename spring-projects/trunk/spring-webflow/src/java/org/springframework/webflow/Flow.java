@@ -379,7 +379,7 @@ public class Flow extends AnnotatedObject {
 	public AttributeMapper getInputMapper() {
 		return inputMapper;
 	}
-	
+
 	/**
 	 * Sets the mapper to map flow input attributes.
 	 * @param inputMapper the input mapper
@@ -387,7 +387,7 @@ public class Flow extends AnnotatedObject {
 	public void setInputMapper(AttributeMapper inputMapper) {
 		this.inputMapper = inputMapper;
 	}
-	
+
 	/**
 	 * Convenience method to add a single action to this flows's start action
 	 * list. Start actions are executed when this flow is started.
@@ -431,7 +431,7 @@ public class Flow extends AnnotatedObject {
 	public AttributeMapper getOutputMapper() {
 		return outputMapper;
 	}
-	
+
 	/**
 	 * Sets the mapper to map flow output attributes.
 	 * @param outputMapper the output mapper
@@ -570,7 +570,7 @@ public class Flow extends AnnotatedObject {
 		if (inputMapper != null) {
 			inputMapper.map(input, context, Collections.EMPTY_MAP);
 		}
-		startActionList. execute(context);
+		startActionList.execute(context);
 		return startState.enter(context);
 	}
 
@@ -611,8 +611,8 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Inform this flow definition that a execution session of itself has ended.
 	 * @param context the flow execution control context
-	 * @param output initial output produced by the session that is
-	 * eligible for modification by this method.
+	 * @param output initial output produced by the session that is eligible for
+	 * modification by this method.
 	 */
 	public void end(FlowExecutionControlContext context, AttributeMap output) {
 		endActionList.execute(context);

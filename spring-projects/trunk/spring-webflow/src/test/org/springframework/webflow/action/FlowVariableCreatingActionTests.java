@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.Event;
 import org.springframework.webflow.support.FlowVariable;
+import org.springframework.webflow.support.SimpleFlowVariable;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -31,7 +32,7 @@ public class FlowVariableCreatingActionTests extends TestCase {
 	private FlowVariableCreatingAction tested;
 
 	protected void setUp() throws Exception {
-		tested = new FlowVariableCreatingAction(new FlowVariable("Some variable", Object.class));
+		tested = new FlowVariableCreatingAction(new SimpleFlowVariable("Some variable", Object.class));
 	}
 
 	public void testDoExecute() throws Exception {
@@ -42,7 +43,7 @@ public class FlowVariableCreatingActionTests extends TestCase {
 	}
 
 	public void testConstructorWithArray() throws Exception {
-		FlowVariable[] expectedVariables = new FlowVariable[] { new FlowVariable("Some variable", Object.class) };
+		FlowVariable[] expectedVariables = new FlowVariable[] { new SimpleFlowVariable("Some variable", Object.class) };
 		FlowVariableCreatingAction localTested = new FlowVariableCreatingAction(expectedVariables);
 		FlowVariable[] actualVariables = localTested.getVariables();
 		assertEquals(1, actualVariables.length);
