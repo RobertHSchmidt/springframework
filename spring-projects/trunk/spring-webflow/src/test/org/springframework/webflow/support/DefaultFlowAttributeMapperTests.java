@@ -56,7 +56,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 
 	public void testDirectMapping() {
 		mapper.addInputMapping(mapping.source("${flowScope.x}").target("${y}").value());
-		mapper.addOutputMapping(mapping.source("y").value());
+		mapper.addOutputMapping(mapping.source("y").target("flowScope.y").value());
 
 		context.setActiveSession(parentSession);
 		context.getFlowScope().put("x", "xValue");
@@ -77,9 +77,9 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		mapper.addInputMappings(new Mapping[] { mapping.source("flowScope.bean.prop").target("attr").value(),
 				mapping.source("flowScope.bean").target("otherBean").value(),
 				mapping.source("flowScope.otherAttr").target("otherBean.prop ").value() });
-		mapper.addOutputMappings(new Mapping[] { mapping.source("bean.prop").target("attr").value(),
-				mapping.source("bean").target("otherBean").value(),
-				mapping.source("otherAttr").target("otherBean.prop").value() });
+		mapper.addOutputMappings(new Mapping[] { mapping.source("bean.prop").target("flowScope.attr").value(),
+				mapping.source("bean").target("flowScope.otherBean").value(),
+				mapping.source("otherAttr").target("flowScope.otherBean.prop").value() });
 
 		TestBean bean = new TestBean();
 		bean.setProp("value");
@@ -107,8 +107,8 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 	public void testExpressionMapping() {
 		mapper.addInputMappings(new Mapping[] { mapping.source("${requestScope.a}").target("b").value(),
 				mapping.source("${flowScope.x}").target("y").value() });
-		mapper.addOutputMappings(new Mapping[] { mapping.source("b").target("c").value(),
-				mapping.source("y").target("z").value() });
+		mapper.addOutputMappings(new Mapping[] { mapping.source("b").target("flowScope.c").value(),
+				mapping.source("y").target("flowScope.z").value() });
 
 		context.setActiveSession(parentSession);
 		context.getRequestScope().put("a", "aValue");
@@ -132,8 +132,8 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 	public void testNullMapping() {
 		mapper.addInputMappings(new Mapping[] { mapping.source("${flowScope.x}").target("y").value(),
 				mapping.source("${flowScope.a}").target("b").value() });
-		mapper.addOutputMappings(new Mapping[] { mapping.source("y").target("c").value(),
-				mapping.source("b").target("z").value() });
+		mapper.addOutputMappings(new Mapping[] { mapping.source("y").target("flowScope.c").value(),
+				mapping.source("b").target("flowScope.z").value() });
 
 		parentSession.getScope().put("x", null);
 

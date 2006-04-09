@@ -18,12 +18,15 @@ package org.springframework.webflow;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
+import org.springframework.binding.mapping.DefaultAttributeMapper;
+import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
+import org.springframework.webflow.support.DefaultExpressionParserFactory;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
@@ -47,6 +50,11 @@ public class EndStateTests extends TestCase {
 
 	public void testEndStateOutput() {
 		Flow flow = new Flow("myFlow");
+		DefaultAttributeMapper inputMapper = new DefaultAttributeMapper();
+		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		inputMapper.addMapping(mapping.source("attr1").target("flowScope.attr1").value());
+		flow.setInputMapper(inputMapper);
+		
 		EndState state = new EndState(flow, "finish");
 		state.addOutputAttributeNames(new String[] { "attr1", "attr2" });
 		FlowExecutionListener outputVerifier = new FlowExecutionListenerAdapter() {

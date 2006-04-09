@@ -38,9 +38,9 @@ public abstract class AbstractFlowAttributeMapper implements FlowAttributeMapper
 	protected final Log logger = LogFactory.getLog(getClass());;
 
 	protected abstract AttributeMapper getInputMapper();
-	
+
 	protected abstract AttributeMapper getOutputMapper();
-	
+
 	public AttributeMap createSubflowInput(RequestContext context) {
 		if (getInputMapper() != null) {
 			AttributeMap input = new AttributeMap();
@@ -57,8 +57,7 @@ public abstract class AbstractFlowAttributeMapper implements FlowAttributeMapper
 	public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
 		if (getOutputMapper() != null && subflowOutput != null) {
 			// map from request context to parent flow scope
-			getOutputMapper().map(subflowOutput, context.getFlowExecutionContext().getActiveSession().getScope(),
-					getMappingContext(context));
+			getOutputMapper().map(subflowOutput, context, getMappingContext(context));
 		}
 	}
 
@@ -67,5 +66,5 @@ public abstract class AbstractFlowAttributeMapper implements FlowAttributeMapper
 	 */
 	protected Map getMappingContext(RequestContext context) {
 		return Collections.EMPTY_MAP;
-	}	
+	}
 }

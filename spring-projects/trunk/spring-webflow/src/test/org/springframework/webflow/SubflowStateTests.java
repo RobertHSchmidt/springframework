@@ -26,6 +26,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
+import org.springframework.webflow.support.DefaultExpressionParserFactory;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
@@ -64,6 +65,10 @@ public class SubflowStateTests extends TestCase {
 
 	public void testSubFlowStateModelMapping() {
 		Flow subFlow = new Flow("mySubFlow");
+		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		DefaultAttributeMapper inputMapper = new DefaultAttributeMapper();
+		inputMapper.addMapping(mapping.source("childInputAttribute").target("flowScope.childInputAttribute").value());
+		subFlow.setInputMapper(inputMapper);
 		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
 		state1.setViewSelector(view("mySubFlowViewName"));
 		state1.addTransition(new Transition(on("submit"), to("finish")));
@@ -73,7 +78,7 @@ public class SubflowStateTests extends TestCase {
 		Flow flow = new Flow("myFlow");
 		ActionState mapperState = new ActionState(flow, "mapperState");
 		DefaultAttributeMapper mapper = new DefaultAttributeMapper();
-		mapper.addMapping(new MappingBuilder(new OgnlExpressionParser()).source(
+		mapper.addMapping(mapping.source(
 				"externalContext.requestParameterMap.parentInputAttribute").target("flowScope.parentInputAttribute")
 				.value());
 		Action mapperAction = new AttributeMapperAction(mapper);

@@ -29,7 +29,7 @@ import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.FlowVariableCreatingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.support.ApplicationViewSelector;
-import org.springframework.webflow.support.DefaultFlowAttributeMapper;
+import org.springframework.webflow.support.ImmutableFlowAttributeMapper;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockRequestContext;
@@ -132,10 +132,6 @@ public class XmlFlowBuilderTests extends TestCase {
 		transition = subFlowState2.getRequiredTransition(context);
 		assertEquals("decisionState1", getTargetStateId(transition));
 
-		DefaultFlowAttributeMapper mapper = (DefaultFlowAttributeMapper)subFlowState2.getAttributeMapper();
-		assertEquals(3, mapper.getInputMappings().length);
-		assertEquals(4, mapper.getOutputMappings().length);
-
 		DecisionState decisionState1 = (DecisionState)flow.getState("decisionState1");
 		assertTrue(decisionState1.getTransitionSet().size() == 2);
 		assertNotNull(decisionState1);
@@ -146,19 +142,19 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(decisionState2);
 		assertNull(decisionState2.getAction());
 
-		DecisionState decisionState3 = (DecisionState)flow.getState("decisionState3");
-		assertTrue(decisionState3.getTransitionSet().size() == 2);
-		assertNotNull(decisionState3);
-		assertNotNull(decisionState3.getAction());
-		assertNull(decisionState3.getAnnotatedAction().getAttributeMap().get("method"));
-		assertTrue(decisionState3.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
+		ActionState actionState4 = (ActionState)flow.getState("actionState4");
+		assertTrue(actionState4.getTransitionSet().size() == 2);
+		assertNotNull(actionState4);
+		assertNotNull(actionState4.getActionList().get(0));
+		assertNull(actionState4.getActionList().getAnnotated(0).getAttributeMap().get("method"));
+		assertTrue(actionState4.getActionList().getAnnotated(0).getTargetAction() instanceof LocalBeanInvokingAction);
 
-		DecisionState decisionState4 = (DecisionState)flow.getState("decisionState4");
-		assertTrue(decisionState4.getTransitionSet().size() == 2);
-		assertNotNull(decisionState4);
-		assertNotNull(decisionState4.getAction());
-		assertNull(decisionState4.getAnnotatedAction().getAttributeMap().get("method"));
-		assertTrue(decisionState4.getAnnotatedAction().getTargetAction() instanceof LocalBeanInvokingAction);
+		ActionState actionState5 = (ActionState)flow.getState("actionState5");
+		assertTrue(actionState5.getTransitionSet().size() == 2);
+		assertNotNull(actionState5);
+		assertNotNull(actionState5.getActionList().get(0));
+		assertNull(actionState5.getActionList().getAnnotated(0).getAttributeMap().get("method"));
+		assertTrue(actionState5.getActionList().getAnnotated(0).getTargetAction() instanceof LocalBeanInvokingAction);
 
 		EndState endState1 = (EndState)flow.getState("endState1");
 		assertNotNull(endState1);

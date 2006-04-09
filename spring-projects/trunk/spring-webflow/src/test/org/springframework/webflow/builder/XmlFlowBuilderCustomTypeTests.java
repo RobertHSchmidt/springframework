@@ -18,9 +18,12 @@ package org.springframework.webflow.builder;
 import junit.framework.TestCase;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.FlowExecutionControlContext;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.StateException;
@@ -43,7 +46,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow3.xml",
-				XmlFlowBuilderCustomTypeTests.class), new DefaultFlowArtifactFactory());
+				XmlFlowBuilderCustomTypeTests.class), new CustomFlowArtifactFactory());
 		FlowAssembler assembler = new FlowAssembler("testFlow3", builder);
 		assembler.assembleFlow();
 		flow = builder.getResult();
@@ -78,4 +81,21 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 			return null;
 		}
 	}
+	
+	public static class CustomFlowArtifactFactory extends DefaultFlowArtifactFactory {
+
+		public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
+			return new CustomAction();
+		}
+
+		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
+			return new CustomAttributeMapper();
+		}
+
+		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
+			return new CustomExceptionHandler();
+		}
+		
+	}
+
 }

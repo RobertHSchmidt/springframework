@@ -18,6 +18,8 @@ package org.springframework.webflow.execution;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
+import org.springframework.binding.mapping.DefaultAttributeMapper;
+import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AttributeMap;
@@ -43,6 +45,7 @@ import org.springframework.webflow.builder.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
+import org.springframework.webflow.support.DefaultExpressionParserFactory;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
@@ -57,7 +60,10 @@ public class FlowExecutionTests extends TestCase {
 
 	public void testFlowExecutionListener() {
 		Flow flow = new Flow("myFlow");
-
+		DefaultAttributeMapper inputMapper = new DefaultAttributeMapper();
+		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		inputMapper.addMapping(mapping.source("name").target("flowScope.name").value());
+		flow.setInputMapper(inputMapper);
 		ActionState actionState = new ActionState(flow, "actionState");
 		actionState.addAction(new TestAction());
 		actionState.addTransition(new Transition(on("success"), to("viewState")));
