@@ -91,8 +91,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *         &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *         &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -182,13 +182,21 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String ATTRIBUTE_MAPPER_ELEMENT = "attribute-mapper";
 
-	private static final String INPUT_MAPPING_ELEMENT = "input-mapping";
+	private static final String OUTPUT_MAPPER_ELEMENT = "output-mapper";
 
-	private static final String OUTPUT_MAPPING_ELEMENT = "output-mapping";
+	private static final String INPUT_MAPPER_ELEMENT = "input-mapper";
 
-	private static final String AS_ATTRIBUTE = "as";
+	private static final String MAPPING_ELEMENT = "mapping";
 
-	private static final String COLLECTION_ATTRIBUTE = "collection";
+	private static final String SOURCE_ATTRIBUTE = "source";
+
+	private static final String TARGET_ATTRIBUTE = "target";
+
+	private static final String FROM_ATTRIBUTE = "from";
+
+	private static final String TO_ATTRIBUTE = "to";
+
+	private static final String TARGET_COLLECTION_ATTRIBUTE = "target-collection";
 
 	private static final String END_STATE_ELEMENT = "end-state";
 
@@ -199,10 +207,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String GLOBAL_TRANSITIONS_ELEMENT = "global-transitions";
 
 	private static final String ON_ATTRIBUTE = "on";
-
-	private static final String TO_ATTRIBUTE = "to";
-
-	private static final String FROM_ATTRIBUTE = "from";
 
 	private static final String ATTRIBUTE_ELEMENT = "attribute";
 
@@ -634,12 +638,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		DecisionState state = (DecisionState)getLocalFlowArtifactFactory().createState(flow, DecisionState.class,
 				parseParameters(element));
 		state.getTransitionSet().addAll(parseIfs(element));
-		state.getTransitionSet().addAll(parseTransitions(element));
-		List actionElements = DomUtils.getChildElementsByTagName(element, ACTION_ELEMENT);
-		if (!actionElements.isEmpty()) {
-			Element actionElement = (Element)actionElements.get(0);
-			state.setAction(parseAnnotatedAction(actionElement));
-		}
 		return state;
 	}
 
@@ -651,7 +649,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		SubflowState state = (SubflowState)getLocalFlowArtifactFactory().createState(flow, SubflowState.class,
 				parseParameters(element));
 		state.setSubflow(getLocalFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE)));
-		state.setAttributeMapper(new ImmutableFlowAttributeMapper(parseInputMapper(element), parseOutputMapper(element)));
+		state.setAttributeMapper(parseFlowAttributeMapper(element));
 		state.getTransitionSet().addAll(parseTransitions(element));
 		return state;
 	}
@@ -854,30 +852,44 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 	}
 
+	protected FlowAttributeMapper parseFlowAttributeMapper(Element element) {
+		List mapperElements = DomUtils.getChildElementsByTagName(element, ATTRIBUTE_MAPPER_ELEMENT);
+		if (mapperElements.isEmpty()) {
+			return null;
+		}
+		Element mapperElement = (Element)mapperElements.get(0);
+		if (StringUtils.hasText(mapperElement.getAttribute(BEAN_ATTRIBUTE))) {
+			return getFlowArtifactFactory().getAttributeMapper(mapperElement.getAttribute(BEAN_ATTRIBUTE));
+		}
+		else {
+			return new ImmutableFlowAttributeMapper(parseInputMapper(mapperElement), parseOutputMapper(mapperElement));
+		}
+	}
+
 	protected AttributeMapper parseInputMapper(Element element) {
-		List mapperElements = DomUtils.getChildElementsByTagName(element, "input-mapper");
+		List mapperElements = DomUtils.getChildElementsByTagName(element, INPUT_MAPPER_ELEMENT);
 		return mapperElements.isEmpty() ? null : parseAttributeMapper((Element)mapperElements.get(0));
 	}
 
 	protected AttributeMapper parseOutputMapper(Element element) {
-		List mapperElements = DomUtils.getChildElementsByTagName(element, "output-mapper");
+		List mapperElements = DomUtils.getChildElementsByTagName(element, OUTPUT_MAPPER_ELEMENT);
 		return mapperElements.isEmpty() ? null : parseAttributeMapper((Element)mapperElements.get(0));
 	}
 
 	protected AttributeMapper parseAttributeMapper(Element element) {
-		List mappingElements = DomUtils.getChildElementsByTagName(element, "mapping");
+		List mappingElements = DomUtils.getChildElementsByTagName(element, MAPPING_ELEMENT);
 		DefaultAttributeMapper mapper = new DefaultAttributeMapper();
 		Iterator it = mappingElements.iterator();
 		while (it.hasNext()) {
 			Element mappingElement = (Element)it.next();
-			Expression source = getExpressionParser().parseExpression(mappingElement.getAttribute("source"));
+			Expression source = getExpressionParser().parseExpression(mappingElement.getAttribute(SOURCE_ATTRIBUTE));
 			PropertyExpression target = null;
-			if (StringUtils.hasText(mappingElement.getAttribute("target"))) {
-				target = getExpressionParser().parsePropertyExpression(mappingElement.getAttribute("target"));
+			if (StringUtils.hasText(mappingElement.getAttribute(TARGET_ATTRIBUTE))) {
+				target = getExpressionParser().parsePropertyExpression(mappingElement.getAttribute(TARGET_ATTRIBUTE));
 			}
-			else if (StringUtils.hasText(mappingElement.getAttribute("target-collection"))) {
+			else if (StringUtils.hasText(mappingElement.getAttribute(TARGET_COLLECTION_ATTRIBUTE))) {
 				target = new CollectionAddingPropertyExpression(getExpressionParser().parsePropertyExpression(
-						mappingElement.getAttribute("target-collection")));
+						mappingElement.getAttribute(TARGET_COLLECTION_ATTRIBUTE)));
 			}
 			mapper.addMapping(new Mapping(source, target, parseTypeConverter(mappingElement)));
 		}

@@ -13,7 +13,9 @@
 		<attribute name="propBoolean" value="true" type="boolean"/>
 		<attribute name="propString" value="aString"/>
 		<action bean="action1">
-			<attribute name="prop1"><value>prop1Value</value></attribute>
+			<attribute name="prop1">
+				<value>prop1Value</value>
+			</attribute>
 			<attribute name="prop2" value="prop2Value"/>
 		</action>
 		<action name="action2Name" bean="action2"/>
@@ -56,13 +58,16 @@
 
 	<subflow-state id="subFlowState2" flow="subFlow2">
 		<attribute-mapper>
-			<input-mapping name="attribute1"/>
-			<input-mapping name="attribute3" as="attribute2"/>
-			<input-mapping value="${flowScope.attribute1}" as="attribute4"/>
-			<output-mapping name="attribute2"/>
-			<output-mapping name="attribute1" as="attribute3"/>
-			<output-mapping name="attribute4" as="attribute1"/>
-			<output-mapping name="attribute4" collection="items"/>
+			<input-mapper>
+				<mapping source="flowScope.attribute1" target="attribute1"/>
+				<mapping source="flowScope.attribute3" target="attribute2"/>	
+				<mapping source="flowScope.attribute1" target="attribute4"/>
+			</input-mapper>
+			<output-mapper>
+				<mapping source="attribute1" target="flowScope.attribute3"/>
+				<mapping source="attribute4" target="flowScope.attribute1"/>
+				<mapping source="attribute4" target-collection="flowScope.items"/>
+			</output-mapper>
 		</attribute-mapper>
 		<transition on="finish" to="decisionState1"/>
 	</subflow-state>

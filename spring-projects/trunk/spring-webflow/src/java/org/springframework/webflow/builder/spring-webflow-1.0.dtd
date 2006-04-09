@@ -133,7 +133,7 @@
 <!--
 	The bean defining the initial flow variable value (must be a non-singleton prototype).
 -->
-<!ATTLIST var bean CDATA #REQUIRED>
+<!ATTLIST var bean CDATA #IMPLIED>
 
 <!--
 	Defines flow startup logic to execute. This logic will always execute when this flow is started.
@@ -345,55 +345,20 @@
 	idempotent 'navigation' or 'routing' state and is not intended to execute non-idempotent
 	(or mutating) behavior.
 	
-	A decision state is a transitionable state. A decision state transition can be triggered 
-	in two possible ways:
-	
-	1. By evaluating a boolean expression against the flow execution request context.  To 
-	define expressions, use the 'if' or 'transition' elements.
-	
-	2. By evaluating the result of a single action invoked when this state is entered. 
-	To define an action, use the 'action' element.  The referenced action bean may implement 
-	the Action interface or may be a method on a JavaBean (POJO) that returns a value.
-	In the latter case, a string-form of the method return value will be used as
-	the criteria for a state transition.
+	A decision state is a transitionable state. A decision state transition can be triggered by
+	evaluating a boolean expression against the flow execution request context.  To 
+	define expressions, use the 'if' element.
 	
 	Examples:
 
 	A simple boolean expression test, using the convenient 'if' element:
 	
-	    <decision-state id="requiresShipping">
-		    <if test="${flowScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
-    	</decision-state>
+    <decision-state id="requiresShipping">
+	    <if test="${flowScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
+    </decision-state>
 
-	The same boolean expression test, using the 'transition' element as an alternative:
-		
-        <decision-state id="requiresShipping">
-            <transition on="${flowScope.sale.shipping}" then="enterShippingDetails"/>
-            <transition on="${!flowScope.saleShipping}" then="processSale"/>
-        </decision-state>
-
-	Use of the 'action' element to invoke a method that returns a boolean, combined with use of
-	transition elements to evaluate the string-form of the boolean result:
-	
-        <decision-state id="requiresShipping">
-		    <action bean="shippingService" method="isShippingRequired"/>
-    	    <transition on="yes" to="enterShippingDetails"/>
-     	    <transition on="no" to="processSale"/>
-        </decision-state>	
-
-	Use of the 'action' element to invoke a method that returns a value object, combined with
-	use of transition elements to evaluate the string-form of the result:
-	
-        <decision-state id="handleShippingMethod">
-            <action bean="shippingService" method="getShippingMethod(${flowScope.sale})"/>
-            <transition on="Normal" to="enterNormalShipping"/>
-            <transition on="Priority" to="enterPriorityShipping"/>
-        </decision-state>
-	
-	Do not combine use of the 'if' element with use of the 'transition' element or 'action' 
-	element.  Use one strategy or the other.
 -->
-<!ELEMENT decision-state ( attribute*, entry-actions?, if*, action?, transition*, exit-actions?, exception-handler* )>
+<!ELEMENT decision-state ( attribute*, entry-actions?, if*, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this decision state; must be unique to this flow.
@@ -447,7 +412,7 @@
 	to respond to the result of that execution. The result of subflow execution, the end state 
 	that was reached, should be used as grounds for a transition out of this state.
 -->
-<!ELEMENT subflow-state ( attribute*, entry-actions?, input-mapper?, output-mapper?, transition*, exit-actions?, exception-handler* )>
+<!ELEMENT subflow-state ( attribute*, entry-actions?, attribute-mapper?, transition*, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this subflow state; must be unique to this flow.
@@ -458,6 +423,20 @@
 	The id of the flow to be spawned as a subflow when this subflow state is entered.
 -->
 <!ATTLIST subflow-state flow CDATA #REQUIRED>
+
+<!--
+	Defines an attribute mapper to map attributes to and from the subflow.
+-->
+<!ELEMENT attribute-mapper ( input-mapper?, output-mapper? )>
+
+<!--
+	The identifier of a custom flow attribute mapper implementation exported in the
+	Spring bean factory. This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
+	
+	Use this as an alternative to the child input-mapper and output-mapper elements
+	when you need full control of attribute mapping behavior for this subflow state.
+-->
+<!ATTLIST attribute-mapper bean CDATA #IMPLIED>
 
 <!--
 	Defines an end state, a state that terminates this flow when entered.
