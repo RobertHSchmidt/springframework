@@ -270,12 +270,24 @@
 	The exact interpretation of this attribute value depends on the TextToTransitionCriteria
 	converter that is installed.
 -->
-<!ATTLIST transition on CDATA #REQUIRED>
+<!ATTLIST transition on CDATA #IMPLIED>
+
+<!--
+    The exception type that should trigger execution of this transition.
+    
+    The value may be a fully-qualified class name (e.g. example.booking.ItineraryExpiredException) or 
+    a short class name (e.g. ItineraryExpiredException).  Superclasses of the configured exception type
+    match by default.
+    
+    Use of this attribute results in an exception handler being attached to the object associated
+    with this transition definition.  Use this attribute or the 'on' attribute, not both.
+-->
+<!ATTLIST transition on-exception CDATA #IMPLIED>
 
 <!--
 	The target state of this transition.
 -->
-<!ATTLIST transition to IDREF #REQUIRED>
+<!ATTLIST transition to CDATA #REQUIRED>
 
 <!--
 	Defines a view state, a state where a view will be selected for rendering, the 
@@ -531,16 +543,6 @@
 	execution of this flow definition. Exception handlers may be attached at the state or flow level.
 -->
 <!ELEMENT exception-handler EMPTY>
-
-<!--
-	The class of exception that may occur that you wish to handle.
--->
-<!ATTLIST exception-handler on CDATA #IMPLIED>
-
-<!--
-	The id of the state to transition to when this class of exception does occur.
--->
-<!ATTLIST exception-handler to IDREF #IMPLIED>
 
 <!--
 	The id of a custom exception handler implementation to attach.
