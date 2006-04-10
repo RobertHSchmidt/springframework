@@ -13,15 +13,6 @@ import org.springframework.webflow.support.EventFactorySupport;
  */
 public class ResultObjectBasedEventFactory extends EventFactorySupport implements ResultEventFactory {
 
-	public boolean isMappedType(Class type) {
-		if (isBoolean(type) || isJdk5Enum(type) || isLabeledEnum(type) || isString(type)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
 	public Event createResultEvent(Object source, Object resultObject, RequestContext context) {
 		if (resultObject instanceof Boolean) {
 			return event(source, ((Boolean)resultObject).booleanValue());
@@ -40,7 +31,16 @@ public class ResultObjectBasedEventFactory extends EventFactorySupport implement
 			return event(source, String.valueOf(resultObject), getResultAttributeName(), resultObject);
 		}
 	}
-	
+
+	public boolean isMappedType(Class type) {
+		if (isBoolean(type) || isJdk5Enum(type) || isLabeledEnum(type) || isString(type)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	private boolean isBoolean(Class type) {
 		return Boolean.class.equals(type) || boolean.class.equals(type);
 	}

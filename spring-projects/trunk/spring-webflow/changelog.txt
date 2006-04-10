@@ -6,13 +6,66 @@ Changes in version 1.0 RC1 (17.4.2006)
 ------------------------------------
 
 Package org.springframework.webflow
+* Added explict Flow variable support to this package; see Flow.addVariable and Flow.start
+* Fixed a bug in ParameterMap related to multi-valued parameter access
+* Refined the semantics of flow input attribute mapping.  All input attributes passed into a flow 
+  by a caller must now be explictly mapped by the flow.  To achieve this each Flow can be configured
+  with an inputMapper; see Flow.setInputMapper and Flow.start.
+* Removed the 'action' property of the DecisionState.  Use an ActionState if the purpose of the 
+  state is to execute an Action and respond to its result.  Consider using a custom ResultEventFactory 
+  to customize how the result event is created for bean invoking actions.
+
 Package org.springframework.webflow.action
+* Removed FlowVariableCreatingAction, superceded by variable support added to core package.
+* Extracted ResultObjectBasedEventFactory and SuccessEventFactory implementations of the ResultEventFactory interface.
+* Introduced MementoBeanStatePersister for saving and restoring action bean state from a flow-scoped managed memento.
+
 Package org.springframework.webflow.builder
+* Added a 'bean' attribute to the 'var' element, for delegating to a Spring bean factory for flow variable creation.
+* Made the 'bean' and 'type' attributes optional of the 'var' element; by default the 'name' attribute will be treated as the name 
+  of a prototype bean in the BeanFactory to use to create the flow variable value.
+* Added 'input-mapper' and 'output-mapper' elements to the 'flow' element, for mapping input and output attributes respectively.
+* Changed the 'attribute-mapper' element of the 'subflow-state' element to be consistent with the new
+  'input-mapper' and 'output-mapper' elements, for mapping input and output attributes to and from a subflow, respectively.
+* Added an 'on-exception' attribute to the 'transition' element, for executing a state transition as part of
+  state or flow exception handler logic.  This supercedes use of the 'class' and 'to' attributes of the 
+  'exception-handler' element.
+* Streamlined the 'exception-handler' attribute to support attaching custom exception handler implementations only.
+  Favor use of <transition on-exception="..." to="..."/> for attaching transition executing state exception handlers.
+* Added special detection for "stateful actions"; beans marked singleton=false (non-singleton prototypes) are treated
+  as stateful actions, with their instances managed directly in flow scope by default.  Beans implementing MementoOriginator
+  are treated as stateful actions responsible for creating mementos that house their state managed in flow scope.
+* Added special detection for action "result event factories"; bean methods that return a scalar 'value object' are 
+  configured with a ResultObjectBasedEventFactory, otherwise a SuccessEventFactory is used.
+* Added back the state type context attribute to TextToViewSelector, to aid in creating the correct ViewSelector 
+  implementation based on the state type (ViewState or EndState) in use.
+* Changed the 'on' attribute of the 'transition' element to be optional.
+* Enhanced the 'to' attribute of the 'transition' element ${expression} capable; the resolved string expression(s) are 
+  treated as the target state of the transition.
+* Enhanced the 'view' attribute of the 'view-state' and 'end-state' elements to be fully ${expression} capable; previously 
+  expressions could only be defined for redirect parameters.
+
 Package org.springframework.webflow.context
+* Changed the String-keyed map attribute iteration construct from 'Enumeration' to 'Iterator'.
+
 Package org.springframework.webflow.execution
+* Simplified the ConditionalFlowExecutionListenerLoader configuration interface.
+* Refined the FlowExecutionListener interface, affecting the sessionStarting and eventSignaled operations.
+* Fixed a bug in ContinuationFlowExecutionRepository related to conversation scope restoration (which could cause a NPE).
+
 Package org.springframework.webflow.executor
+* Misc polishing
+
 Package org.springframework.webflow.registry
+* Added 'builderValidating' and 'entityResolver' properties of XmlFlowRegistryFactoryBean configuration interface.
+* Misc polishing
+
+Package org.springframework.webflow.support
+* Added two concrete FlowVariable types, SimpleFlowVariable and BeanFactoryFlowVariable.
+* Added ImmutableFlowAttributeMapper.
+
 Package org.springframework.webflow.test
+* Misc polishing
 
 Changes in version 1.0 Early Access (02.3.2006)
 ------------------------------------

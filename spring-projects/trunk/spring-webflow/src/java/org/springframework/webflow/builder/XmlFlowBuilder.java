@@ -828,11 +828,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		List transitionElements = DomUtils.getChildElementsByTagName(element, TRANSITION_ELEMENT);
 		for (int i = 0; i < transitionElements.size(); i++) {
 			Element transitionElement = (Element)transitionElements.get(i);
-			if (StringUtils.hasText(transitionElement.getAttribute(ON_ATTRIBUTE))) {
-				transitions.add(parseTransition(transitionElement));
+			if (StringUtils.hasText(transitionElement.getAttribute(ON_EXCEPTION_ATTRIBUTE))) {
+				exceptionHandlers.add(parseTransitionExecutingExceptionHandler(transitionElement));
 			}
 			else {
-				exceptionHandlers.add(parseTransitionExecutingExceptionHandler(transitionElement));
+				transitions.add(parseTransition(transitionElement));
 			}
 		}
 		return new TransitionExecutors((Transition[])transitions.toArray(new Transition[transitions.size()]),
