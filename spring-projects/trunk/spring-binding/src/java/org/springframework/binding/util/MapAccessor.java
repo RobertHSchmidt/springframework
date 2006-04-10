@@ -454,7 +454,7 @@ public class MapAccessor implements MapAdaptable {
 		if (!requiredType.isInstance(value)) {
 			throw new IllegalArgumentException("Map key '" + key + "' has value [" + value
 					+ "] that is not of expected type [" + requiredType + "], instead it is of type ["
-					+ value.getClass() + "]");
+					+ (value != null ? value.getClass().getName() : "null") + "]");
 		}
 		return value;
 	}
