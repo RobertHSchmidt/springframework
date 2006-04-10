@@ -32,7 +32,7 @@ public class ResultObjectBasedEventFactory extends EventFactorySupport implement
 		}
 	}
 
-	public boolean isMappedType(Class type) {
+	public boolean isMappedValueType(Class type) {
 		if (isBoolean(type) || isJdk5Enum(type) || isLabeledEnum(type) || isString(type)) {
 			return true;
 		}

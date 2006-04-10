@@ -21,12 +21,12 @@ public class ResultObjectEventFactoryTests extends TestCase {
 	}
 
 	public void testMappedTypes() {
-		assertTrue(factory.isMappedType(FlowSessionStatus.class));
-		assertTrue(factory.isMappedType(MethodType.class));
-		assertTrue(factory.isMappedType(boolean.class));
-		assertTrue(factory.isMappedType(Boolean.class));
-		assertTrue(factory.isMappedType(String.class));
-		assertFalse(factory.isMappedType(Integer.class));
+		assertTrue(factory.isMappedValueType(FlowSessionStatus.class));
+		assertTrue(factory.isMappedValueType(MethodType.class));
+		assertTrue(factory.isMappedValueType(boolean.class));
+		assertTrue(factory.isMappedValueType(Boolean.class));
+		assertTrue(factory.isMappedValueType(String.class));
+		assertFalse(factory.isMappedValueType(Integer.class));
 	}
 
 	public void testNullResult() {

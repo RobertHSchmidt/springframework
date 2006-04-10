@@ -241,7 +241,7 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 		MethodSignature method = parameters.getMethod();
 		ClassMethodKey key = new ClassMethodKey(bean.getClass(), method.getMethodName(), method.getParameters().getTypesArray());
 		ResultObjectBasedEventFactory factory = new ResultObjectBasedEventFactory();
-		if (factory.isMappedType(key.getMethod().getReturnType())) {
+		if (factory.isMappedValueType(key.getMethod().getReturnType())) {
 			return factory;
 		} else {
 			return new SuccessEventFactory();
