@@ -189,12 +189,14 @@ public class FlowPhaseListener implements PhaseListener {
 				repository.putFlowExecution(holder.getFlowExecutionKey(), flowExecution);
 			}
 			else {
-				// remove the conversation from the repository
-				Serializable conversationId = holder.getFlowExecutionKey().getConversationId();
-				if (logger.isDebugEnabled()) {
-					logger.debug("Removing conversation in repository with id '" + conversationId + "'");
+				if (holder.getFlowExecutionKey() != null) {
+					// remove the conversation from the repository
+					Serializable conversationId = holder.getFlowExecutionKey().getConversationId();
+					if (logger.isDebugEnabled()) {
+						logger.debug("Removing conversation in repository with id '" + conversationId + "'");
+					}
+					repository.invalidateConversation(conversationId);
 				}
-				repository.invalidateConversation(conversationId);
 			}
 		}
 	}
