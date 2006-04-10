@@ -78,6 +78,7 @@ import org.springframework.webflow.support.ImmutableFlowAttributeMapper;
 import org.springframework.webflow.support.SimpleFlowVariable;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionCriteriaChain;
+import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -91,8 +92,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *           &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *           &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -139,8 +140,6 @@ import org.xml.sax.SAXException;
 public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	// recognized XML elements and attributes
-
-	private static final String SCOPE_ATTRIBUTE = "scope";
 
 	private static final String ID_ATTRIBUTE = "id";
 
@@ -210,6 +209,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String ON_ATTRIBUTE = "on";
 
+	private static final String ON_EXCEPTION_ATTRIBUTE = "on-exception";
+
 	private static final String ATTRIBUTE_ELEMENT = "attribute";
 
 	private static final String VALUE_ELEMENT = "value";
@@ -219,6 +220,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String TYPE_ATTRIBUTE = "type";
 
 	private static final String VAR_ELEMENT = "var";
+
+	private static final String SCOPE_ATTRIBUTE = "scope";
 
 	private static final String START_ACTIONS_ELEMENT = "start-actions";
 
@@ -521,8 +524,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected void parseAndAddFlowTransitions(Element element, Flow flow) {
 		List transitionElements = DomUtils.getChildElementsByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
 		if (!transitionElements.isEmpty()) {
-			Element transitionElement = (Element)transitionElements.get(0);
-			flow.getGlobalTransitionSet().addAll(parseTransitions(transitionElement));
+			Element globalTransitionsElement = (Element)transitionElements.get(0);
+			TransitionExecutors transitionExecutors = parseTransitionExecutors(globalTransitionsElement);
+			flow.getGlobalTransitionSet().addAll(transitionExecutors.getTransitions());
+			flow.getExceptionHandlerSet().addAll(transitionExecutors.getExceptionHandlers());
 		}
 	}
 
@@ -627,8 +632,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		ActionState state = (ActionState)getLocalFlowArtifactFactory().createState(flow, ActionState.class,
 				parseParameters(element));
 		state.getActionList().addAll(parseAnnotatedActions(element));
-		state.getTransitionSet().addAll(parseTransitions(element));
+		parseAndAddTransitionExecutors(state, element);
 		return state;
+	}
+
+	private void parseAndAddTransitionExecutors(TransitionableState state, Element element) {
+		TransitionExecutors transitionExecutors = parseTransitionExecutors(element);
+		state.getTransitionSet().addAll(transitionExecutors.getTransitions());
+		state.getExceptionHandlerSet().addAll(transitionExecutors.getExceptionHandlers());
 	}
 
 	/**
@@ -639,7 +650,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		ViewState state = (ViewState)getLocalFlowArtifactFactory().createState(flow, ViewState.class,
 				parseParameters(element));
 		state.setViewSelector(viewSelector(TextToViewSelector.VIEW_STATE_TYPE, element.getAttribute(VIEW_ATTRIBUTE)));
-		state.getTransitionSet().addAll(parseTransitions(element));
+		parseAndAddTransitionExecutors(state, element);
 		return state;
 	}
 
@@ -667,7 +678,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				parseParameters(element));
 		state.setSubflow(getLocalFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE)));
 		state.setAttributeMapper(parseFlowAttributeMapper(element));
-		state.getTransitionSet().addAll(parseTransitions(element));
+		parseAndAddTransitionExecutors(state, element);
 		return state;
 	}
 
@@ -811,13 +822,41 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Find all transition definitions in given state definition and return a
 	 * list of corresponding Transition objects.
 	 */
-	protected Transition[] parseTransitions(Element element) {
+	protected TransitionExecutors parseTransitionExecutors(Element element) {
 		List transitions = new LinkedList();
+		List exceptionHandlers = new LinkedList();
 		List transitionElements = DomUtils.getChildElementsByTagName(element, TRANSITION_ELEMENT);
 		for (int i = 0; i < transitionElements.size(); i++) {
-			transitions.add(parseTransition((Element)transitionElements.get(i)));
+			Element transitionElement = (Element)transitionElements.get(i);
+			if (StringUtils.hasText(transitionElement.getAttribute(ON_ATTRIBUTE))) {
+				transitions.add(parseTransition(transitionElement));
+			}
+			else {
+				exceptionHandlers.add(parseTransitionExecutingExceptionHandler(transitionElement));
+			}
 		}
-		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
+		return new TransitionExecutors((Transition[])transitions.toArray(new Transition[transitions.size()]),
+				(StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]));
+
+	}
+
+	protected static class TransitionExecutors {
+		private Transition[] transitions;
+
+		private StateExceptionHandler[] exceptionHandlers;
+
+		public TransitionExecutors(Transition[] transitions, StateExceptionHandler[] exceptionHandlers) {
+			this.transitions = transitions;
+			this.exceptionHandlers = exceptionHandlers;
+		}
+
+		public Transition[] getTransitions() {
+			return transitions;
+		}
+
+		public StateExceptionHandler[] getExceptionHandlers() {
+			return exceptionHandlers;
+		}
 	}
 
 	/**
@@ -832,6 +871,16 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		transition.setTargetStateResolver((TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
 				element.getAttribute(TO_ATTRIBUTE)));
 		return transition;
+	}
+
+	/**
+	 * Parse a transition executing exception handler definition.
+	 */
+	protected StateExceptionHandler parseTransitionExecutingExceptionHandler(Element element) {
+		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
+		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(ON_EXCEPTION_ATTRIBUTE));
+		handler.add(exceptionClass, element.getAttribute(TO_ATTRIBUTE));
+		return handler;
 	}
 
 	/**
