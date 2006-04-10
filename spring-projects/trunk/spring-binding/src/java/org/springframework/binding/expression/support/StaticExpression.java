@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
-import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -64,6 +63,6 @@ public class StaticExpression implements Expression {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("value", value).toString();
+		return String.valueOf(value);
 	}
 }
