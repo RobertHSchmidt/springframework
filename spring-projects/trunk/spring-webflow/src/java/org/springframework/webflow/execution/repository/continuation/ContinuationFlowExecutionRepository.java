@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;

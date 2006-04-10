@@ -21,7 +21,6 @@ import java.util.ListIterator;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.ViewSelection;
 
 /**
  * Represents an active, ongoing conversation between a user and the Spring Web
