@@ -166,8 +166,10 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 			// a flow execution has already been restored, signal an event in it
 			FlowExecution flowExecution = holder.getFlowExecution();
 			String eventId = argumentExtractor.extractEventId(context);
-			ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
-			renderView(selectedView, context);
+			if (eventId != null) {
+				ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
+				renderView(selectedView, context);
+			}
 		}
 		else {
 			String flowId = argumentExtractor.extractFlowId(context);
