@@ -29,13 +29,6 @@ package org.springframework.webflow;
 public class DecisionState extends TransitionableState {
 
 	/**
-	 * An optional action whose result can be used as the criteria for the
-	 * decision made in this state. This action should be idempotent and not
-	 * execute 'mutating' or non-idempotent behavior.
-	 */
-	private Action action;
-
-	/**
 	 * Default constructor for bean style usage.
 	 * @see TransitionableState#TransitionableState()
 	 */
@@ -55,44 +48,10 @@ public class DecisionState extends TransitionableState {
 	}
 
 	/**
-	 * Returns the action whose result can be used as the criteria for the
-	 * decision made in this state.
-	 */
-	public Action getAction() {
-		return action;
-	}
-
-	/**
-	 * Return the action as an annotated action, exposing access to action
-	 * properties for provisioning its use in this state.
-	 */
-	public AnnotatedAction getAnnotatedAction() {
-		if (action == null) {
-			return null;
-		}
-		if (action instanceof AnnotatedAction) {
-			return (AnnotatedAction)action;
-		}
-		else {
-			return new AnnotatedAction(action);
-		}
-	}
-
-	/**
-	 * Sets the action whose result can be used as the criteria for the decision
-	 * made in this state. This action should be idempotent and not execute
-	 * 'mutating' or non-idempotent behavior.
-	 */
-	public void setAction(Action action) {
-		this.action = action;
-	}
-
-	/**
 	 * Specialization of State's <code>doEnter</code> template method that
 	 * executes behaviour specific to this state type in polymorphic fashion.
 	 * <p>
-	 * Invokes the decision action and responds to its result event if set. Else
-	 * simply looks up the first transition that matches the state of the
+	 * Simply looks up the first transition that matches the state of the
 	 * context and executes it.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
@@ -101,12 +60,6 @@ public class DecisionState extends TransitionableState {
 	 * @throws StateException if an exception occurs in this state
 	 */
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
-		if (action != null) {
-			Event event = ActionExecutor.execute(action, context);
-			if (event != null) {
-				return context.signalEvent(event);
-			}
-		}
 		return getRequiredTransition(context).execute(this, context);
 	}
 }

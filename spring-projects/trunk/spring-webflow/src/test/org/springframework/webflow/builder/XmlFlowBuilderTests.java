@@ -26,10 +26,8 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.action.FlowVariableCreatingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.support.ApplicationViewSelector;
-import org.springframework.webflow.support.ImmutableFlowAttributeMapper;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockRequestContext;
@@ -65,8 +63,8 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals("actionState1", flow.getStartState().getId());
 		assertEquals(14, flow.getStateIds().length);
 
-		assertEquals(1, flow.getStartActionList().size());
-		assertTrue(flow.getStartActionList().get(0) instanceof FlowVariableCreatingAction);
+		assertEquals(0, flow.getStartActionList().size());
+		assertEquals(3, flow.getVariables().length);
 		assertEquals(1, flow.getExceptionHandlerSet().size());
 		assertTrue(flow.getExceptionHandlerSet().toArray()[0] instanceof TransitionExecutingStateExceptionHandler);
 
@@ -135,12 +133,10 @@ public class XmlFlowBuilderTests extends TestCase {
 		DecisionState decisionState1 = (DecisionState)flow.getState("decisionState1");
 		assertTrue(decisionState1.getTransitionSet().size() == 2);
 		assertNotNull(decisionState1);
-		assertNull(decisionState1.getAction());
 
 		DecisionState decisionState2 = (DecisionState)flow.getState("decisionState2");
 		assertTrue(decisionState2.getTransitionSet().size() == 2);
 		assertNotNull(decisionState2);
-		assertNull(decisionState2.getAction());
 
 		ActionState actionState4 = (ActionState)flow.getState("actionState4");
 		assertTrue(actionState4.getTransitionSet().size() == 2);

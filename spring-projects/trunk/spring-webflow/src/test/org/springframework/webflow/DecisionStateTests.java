@@ -70,17 +70,4 @@ public class DecisionStateTests extends TestCase {
 
 		}
 	}
-
-	public void testDecisionAction() {
-		Flow flow = new Flow();
-		DecisionState state = new DecisionState(flow, "decisionState");
-		state.addTransition(new Transition(new EventIdTransitionCriteria("success"), new StaticTargetStateResolver(
-				"target")));
-		state.setAction(new TestAction());
-		new EndState(flow, "target");
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
-		context.setLastEvent(new Event(this, "foo"));
-		state.enter(context);
-		assertFalse(context.getFlowExecutionContext().isActive());
-	}
 }

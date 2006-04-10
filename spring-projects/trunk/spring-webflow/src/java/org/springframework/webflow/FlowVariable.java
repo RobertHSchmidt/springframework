@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support;
+package org.springframework.webflow;
 
 import java.io.Serializable;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ScopeType;
 
 /**
  * A value object that defines a specification for a flow variable. Encapsulates
@@ -45,7 +43,7 @@ public abstract class FlowVariable implements Serializable {
 	 * @param name the variable name
 	 */
 	public FlowVariable(String name) {
-		this(name, ScopeType.FLOW);
+		this(name, null);
 	}
 
 	/**
@@ -54,10 +52,9 @@ public abstract class FlowVariable implements Serializable {
 	 * @param scope the variable scope type
 	 */
 	public FlowVariable(String name, ScopeType scope) {
-		Assert.notNull(name, "The variable name is required");
-		Assert.notNull(scope, "The variable scope type is required");
+		Assert.hasText(name, "The variable name is required");
 		this.name = name;
-		this.scope = scope;
+		this.scope = (scope != null ? scope : ScopeType.FLOW);
 	}
 
 	/**

@@ -547,7 +547,7 @@
 <!--
 	The id of a custom exception handler implementation to attach.
 -->
-<!ATTLIST exception-handler bean CDATA #IMPLIED>
+<!ATTLIST exception-handler bean CDATA #REQUIRED>
 
 <!--
     Requests the import of all custom flow artifacts contained within a single bean

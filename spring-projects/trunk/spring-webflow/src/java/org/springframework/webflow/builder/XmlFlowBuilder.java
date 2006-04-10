@@ -59,6 +59,7 @@ import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.FlowVariable;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
@@ -70,15 +71,13 @@ import org.springframework.webflow.TransitionableState;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.action.FlowVariableCreatingAction;
 import org.springframework.webflow.action.MultiAction;
+import org.springframework.webflow.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.support.CollectionAddingPropertyExpression;
-import org.springframework.webflow.support.FlowVariable;
 import org.springframework.webflow.support.ImmutableFlowAttributeMapper;
 import org.springframework.webflow.support.SimpleFlowVariable;
 import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionCriteriaChain;
-import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -92,8 +91,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -140,6 +139,8 @@ import org.xml.sax.SAXException;
 public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	// recognized XML elements and attributes
+
+	private static final String SCOPE_ATTRIBUTE = "scope";
 
 	private static final String ID_ATTRIBUTE = "id";
 
@@ -464,11 +465,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		if (varElements.isEmpty()) {
 			return;
 		}
-		FlowVariableCreatingAction variableCreator = new FlowVariableCreatingAction();
 		for (int i = 0; i < varElements.size(); i++) {
-			variableCreator.addVariable(parseVariable((Element)varElements.get(i)));
+			flow.addVariable(parseVariable((Element)varElements.get(i)));
 		}
-		flow.addStartAction(variableCreator);
 	}
 
 	/**
@@ -477,8 +476,25 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * @return the flow variable
 	 */
 	protected FlowVariable parseVariable(Element element) {
-		Class type = (Class)fromStringTo(Class.class).execute(element.getAttribute(TYPE_ATTRIBUTE));
-		return new SimpleFlowVariable(element.getAttribute(NAME_ATTRIBUTE), type);
+		ScopeType scope = null;
+		if (element.hasAttribute(SCOPE_ATTRIBUTE) && !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
+			scope = (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
+		}
+		if (StringUtils.hasText(element.getAttribute(BEAN_ATTRIBUTE))) {
+			BeanFactory beanFactory = getLocalFlowArtifactFactory().getServiceRegistry();
+			return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), scope, element
+					.getAttribute(BEAN_ATTRIBUTE), beanFactory);
+		}
+		else {
+			if (StringUtils.hasText(element.getAttribute(TYPE_ATTRIBUTE))) {
+				Class type = (Class)fromStringTo(Class.class).execute(element.getAttribute(TYPE_ATTRIBUTE));
+				return new SimpleFlowVariable(element.getAttribute(NAME_ATTRIBUTE), type, scope);
+			}
+			else {
+				BeanFactory beanFactory = getLocalFlowArtifactFactory().getServiceRegistry();
+				return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), scope, null, beanFactory);
+			}
+		}
 	}
 
 	/**
@@ -801,7 +817,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		for (int i = 0; i < transitionElements.size(); i++) {
 			transitions.add(parseTransition((Element)transitionElements.get(i)));
 		}
-		return (Transition[])transitions.toArray(new Transition[0]);
+		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
 	}
 
 	/**
@@ -932,25 +948,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		StateExceptionHandler[] exceptionHandlers = new StateExceptionHandler[handlerElements.size()];
 		for (int i = 0; i < handlerElements.size(); i++) {
 			Element handlerElement = (Element)handlerElements.get(i);
-			if (handlerElement.hasAttribute(BEAN_ATTRIBUTE)) {
-				exceptionHandlers[i] = getLocalFlowArtifactFactory().getExceptionHandler(
-						handlerElement.getAttribute(BEAN_ATTRIBUTE));
-			}
-			else {
-				exceptionHandlers[i] = parseDefaultExceptionHandler(handlerElement);
-			}
+			exceptionHandlers[i] = getLocalFlowArtifactFactory().getExceptionHandler(
+					handlerElement.getAttribute(BEAN_ATTRIBUTE));
 		}
 		return exceptionHandlers;
-	}
-
-	/**
-	 * Parse a default exception handler definition from given element.
-	 */
-	protected StateExceptionHandler parseDefaultExceptionHandler(Element element) {
-		TransitionExecutingStateExceptionHandler defaultHandler = new TransitionExecutingStateExceptionHandler();
-		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(ON_ATTRIBUTE));
-		defaultHandler.add(exceptionClass, element.getAttribute(TO_ATTRIBUTE));
-		return defaultHandler;
 	}
 
 	public void dispose() {

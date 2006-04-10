@@ -123,6 +123,11 @@ public class Flow extends AnnotatedObject {
 	private State startState;
 
 	/**
+	 * The set of flow variables created by this flow.
+	 */
+	private Set variables = CollectionFactory.createLinkedSetIfPossible(3);
+
+	/**
 	 * The mapper to map flow input attributes.
 	 */
 	private AttributeMapper inputMapper;
@@ -157,7 +162,7 @@ public class Flow extends AnnotatedObject {
 	private StateExceptionHandlerSet exceptionHandlerSet = new StateExceptionHandlerSet();
 
 	/**
-	 * The list of exception handlers for this flow.
+	 * The set of inline flows contained by this flow.
 	 */
 	private Set inlineFlows = CollectionFactory.createLinkedSetIfPossible(3);
 
@@ -373,6 +378,34 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
+	 * Adds a flow variable.
+	 * @param variable the var
+	 */
+	public void addVariable(FlowVariable variable) {
+		variables.add(variable);
+	}
+
+	/**
+	 * Adds the flow variables.
+	 * @param variables the vars
+	 */
+	public void addVariables(FlowVariable[] variables) {
+		if (variables == null) {
+			return;
+		}
+		for (int i = 0; i < variables.length; i++) {
+			addVariable(variables[i]);
+		}
+	}
+
+	/**
+	 * Returns the flow variables.
+	 */
+	public FlowVariable[] getVariables() {
+		return (FlowVariable[])variables.toArray(new FlowVariable[variables.size()]);
+	}
+
+	/**
 	 * Returns the configured flow input mapper
 	 * @return the input mapper
 	 */
@@ -567,11 +600,20 @@ public class Flow extends AnnotatedObject {
 	 * @param input eligible input into the session
 	 */
 	public ViewSelection start(FlowExecutionControlContext context, AttributeMap input) {
+		createVariables(context);
 		if (inputMapper != null) {
 			inputMapper.map(input, context, Collections.EMPTY_MAP);
 		}
 		startActionList.execute(context);
 		return startState.enter(context);
+	}
+	
+	protected void createVariables(RequestContext context) {
+		Iterator it = variables.iterator();
+		while (it.hasNext()) {
+			FlowVariable variable = (FlowVariable)it.next();
+			variable.create(context);
+		}
 	}
 
 	/**

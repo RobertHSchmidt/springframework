@@ -4,6 +4,7 @@ import java.lang.reflect.Modifier;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
+import org.springframework.webflow.FlowVariable;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ScopeType;
 
@@ -26,7 +27,7 @@ public class SimpleFlowVariable extends FlowVariable {
 	 * @param class the concrete variable class
 	 */
 	public SimpleFlowVariable(String name, Class variableClass) {
-		this(name, variableClass, ScopeType.FLOW);
+		this(name, variableClass, null);
 	}
 
 	/**
