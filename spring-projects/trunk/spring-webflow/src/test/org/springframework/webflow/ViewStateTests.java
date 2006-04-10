@@ -23,7 +23,7 @@ import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
-import org.springframework.webflow.support.StaticTargetStateResolver;
+import org.springframework.webflow.support.DefaultTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -62,7 +62,7 @@ public class ViewStateTests extends TestCase {
 	}
 
 	protected static TargetStateResolver to(String stateId) {
-		return new StaticTargetStateResolver(stateId);
+		return new DefaultTargetStateResolver(stateId);
 	}
 
 	public static ViewSelector view(String viewName) {

@@ -28,7 +28,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.support.ApplicationViewSelector;
-import org.springframework.webflow.support.StaticTargetStateResolver;
+import org.springframework.webflow.support.DefaultTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -169,7 +169,7 @@ public class XmlFlowBuilderTests extends TestCase {
 	}
 
 	protected String getTargetStateId(Transition transition) {
-		return ((StaticTargetStateResolver)transition.getTargetStateResolver()).getTargetStateId();
+		return ((DefaultTargetStateResolver)transition.getTargetStateResolver()).getTargetStateId().toString();
 	}
 
 }

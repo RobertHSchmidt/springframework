@@ -15,11 +15,11 @@
  */
 package org.springframework.webflow.builder;
 
-import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
+import org.springframework.binding.expression.Expression;
 import org.springframework.binding.util.MapAccessor;
 import org.springframework.webflow.TargetStateResolver;
-import org.springframework.webflow.support.StaticTargetStateResolver;
+import org.springframework.webflow.support.DefaultTargetStateResolver;
 
 /**
  * Converter that takes an encoded string representation and produces a
@@ -28,7 +28,7 @@ import org.springframework.webflow.support.StaticTargetStateResolver;
  * This converter supports the following encoded forms:
  * <ul>
  * <li>"stateId" - will result in a TargetStateResolver that always resolves to
- * the same state, an instance of ({@link org.springframework.webflow.support.StaticTargetStateResolver})
+ * the same state, an instance of ({@link org.springframework.webflow.support.DefaultTargetStateResolver})
  * </li>
  * <li>"bean:&lt;id&gt;" - will result in usage of a custom TargetStateResolver
  * bean implementation.</li>
@@ -70,25 +70,16 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 	}
 
 	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
-		String encodedCriteria = (String)source;
-		if (flowArtifactFactory.getExpressionParser().isDelimitedExpression(encodedCriteria)) {
-			throw new UnsupportedOperationException("Target state resolver expressions are not yet supported");
+		String targetStateId = (String)source;
+		if (flowArtifactFactory.getExpressionParser().isDelimitedExpression(targetStateId)) {
+			Expression expression = flowArtifactFactory.getExpressionParser().parseExpression(targetStateId);
+			return new DefaultTargetStateResolver(expression);
 		}
-		else if (encodedCriteria.startsWith(BEAN_PREFIX)) {
-			return flowArtifactFactory.getTargetStateResolver(encodedCriteria.substring(BEAN_PREFIX.length()));
+		else if (targetStateId.startsWith(BEAN_PREFIX)) {
+			return flowArtifactFactory.getTargetStateResolver(targetStateId.substring(BEAN_PREFIX.length()));
 		}
 		else {
-			return createStaticTargetStateResolver(encodedCriteria);
+			return new DefaultTargetStateResolver(targetStateId);
 		}
-	}
-
-	/**
-	 * Hook method subclasses can override.
-	 * @param stateId the stateid
-	 * @return the target state resolver
-	 * @throws ConversionException when something goes wrong
-	 */
-	protected TargetStateResolver createStaticTargetStateResolver(String stateId) throws ConversionException {
-		return new StaticTargetStateResolver(stateId);
 	}
 }

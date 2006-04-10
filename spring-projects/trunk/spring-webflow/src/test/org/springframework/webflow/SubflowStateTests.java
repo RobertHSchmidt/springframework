@@ -28,7 +28,7 @@ import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
-import org.springframework.webflow.support.StaticTargetStateResolver;
+import org.springframework.webflow.support.DefaultTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockParameterMap;
 
@@ -111,7 +111,7 @@ public class SubflowStateTests extends TestCase {
 	}
 
 	protected TargetStateResolver to(String stateId) {
-		return new StaticTargetStateResolver(stateId);
+		return new DefaultTargetStateResolver(stateId);
 	}
 
 	protected ViewSelector view(String viewName) {

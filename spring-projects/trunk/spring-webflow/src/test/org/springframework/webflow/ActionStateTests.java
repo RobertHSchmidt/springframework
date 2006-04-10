@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
-import org.springframework.webflow.support.StaticTargetStateResolver;
+import org.springframework.webflow.support.DefaultTargetStateResolver;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -107,6 +107,6 @@ public class ActionStateTests extends TestCase {
 	}
 
 	protected TargetStateResolver to(String stateId) {
-		return new StaticTargetStateResolver(stateId);
+		return new DefaultTargetStateResolver(stateId);
 	}
 }

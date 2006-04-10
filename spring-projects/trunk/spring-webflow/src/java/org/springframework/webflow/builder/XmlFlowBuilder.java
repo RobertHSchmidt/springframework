@@ -76,7 +76,6 @@ import org.springframework.webflow.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.support.CollectionAddingPropertyExpression;
 import org.springframework.webflow.support.ImmutableFlowAttributeMapper;
 import org.springframework.webflow.support.SimpleFlowVariable;
-import org.springframework.webflow.support.StaticTargetStateResolver;
 import org.springframework.webflow.support.TransitionCriteriaChain;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.w3c.dom.Document;
@@ -879,7 +878,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected StateExceptionHandler parseTransitionExecutingExceptionHandler(Element element) {
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(ON_EXCEPTION_ATTRIBUTE));
-		handler.add(exceptionClass, element.getAttribute(TO_ATTRIBUTE));
+		handler.add(exceptionClass, (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
+				element.getAttribute(TO_ATTRIBUTE)));
 		return handler;
 	}
 
@@ -906,11 +906,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				element.getAttribute(TEST_ATTRIBUTE));
 		Transition thenTransition = getLocalFlowArtifactFactory().createTransition(CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 		thenTransition.setMatchingCriteria(criteria);
-		thenTransition.setTargetStateResolver(new StaticTargetStateResolver(element.getAttribute(THEN_ATTRIBUTE)));
+		ConversionExecutor converter = fromStringTo(TargetStateResolver.class);
+		thenTransition.setTargetStateResolver((TargetStateResolver)converter.execute(element
+				.getAttribute(THEN_ATTRIBUTE)));
 		if (StringUtils.hasText(element.getAttribute(ELSE_ATTRIBUTE))) {
 			Transition elseTransition = getLocalFlowArtifactFactory().createTransition(
 					CollectionUtils.EMPTY_ATTRIBUTE_MAP);
-			elseTransition.setTargetStateResolver(new StaticTargetStateResolver(element.getAttribute(ELSE_ATTRIBUTE)));
+			elseTransition.setTargetStateResolver((TargetStateResolver)converter.execute(element
+					.getAttribute(ELSE_ATTRIBUTE)));
 			return new Transition[] { thenTransition, elseTransition };
 		}
 		else {

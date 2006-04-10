@@ -22,7 +22,7 @@ import org.springframework.webflow.action.TestMultiAction;
 import org.springframework.webflow.builder.MyCustomException;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
-import org.springframework.webflow.support.StaticTargetStateResolver;
+import org.springframework.webflow.support.DefaultTargetStateResolver;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockFlowExecutionControlContext;
 
@@ -156,7 +156,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testAddGlobalTransition() {
-		Transition t = new Transition(new StaticTargetStateResolver("myState2"));
+		Transition t = new Transition(new DefaultTargetStateResolver("myState2"));
 		flow.addGlobalTransition(t);
 		assertSame(t, flow.getGlobalTransitionSet().toArray()[0]);
 	}
@@ -209,6 +209,6 @@ public class FlowTests extends TestCase {
 	}
 
 	public static TargetStateResolver to(String stateId) {
-		return new StaticTargetStateResolver(stateId);
+		return new DefaultTargetStateResolver(stateId);
 	}
 }

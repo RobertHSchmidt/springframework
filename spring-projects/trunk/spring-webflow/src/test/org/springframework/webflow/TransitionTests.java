@@ -3,13 +3,13 @@ package org.springframework.webflow;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.support.EventIdTransitionCriteria;
-import org.springframework.webflow.support.StaticTargetStateResolver;
+import org.springframework.webflow.support.DefaultTargetStateResolver;
 import org.springframework.webflow.test.MockFlowExecutionControlContext;
 
 public class TransitionTests extends TestCase {
 
 	public void testSimpleTransition() {
-		Transition t = new Transition(new StaticTargetStateResolver("target"));
+		Transition t = new Transition(new DefaultTargetStateResolver("target"));
 		Flow flow = new Flow();
 		ViewState source = new ViewState(flow, "source");
 		TestAction action = new TestAction();
@@ -25,13 +25,13 @@ public class TransitionTests extends TestCase {
 	}
 
 	public void testTransitionCriteriaDoesNotMatch() {
-		Transition t = new Transition(new EventIdTransitionCriteria("bogus"), new StaticTargetStateResolver("target"));
+		Transition t = new Transition(new EventIdTransitionCriteria("bogus"), new DefaultTargetStateResolver("target"));
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new Flow());
 		assertFalse(t.matches(context));
 	}
 
 	public void testTransitionCannotExecute() {
-		Transition t = new Transition(new StaticTargetStateResolver("target"));
+		Transition t = new Transition(new DefaultTargetStateResolver("target"));
 		t.setExecutionCriteria(new EventIdTransitionCriteria("bogus"));
 		Flow flow = new Flow();
 		ViewState source = new ViewState(flow, "source");

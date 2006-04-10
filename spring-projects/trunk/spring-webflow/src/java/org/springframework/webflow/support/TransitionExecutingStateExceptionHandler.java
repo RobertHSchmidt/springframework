@@ -16,9 +16,7 @@
 package org.springframework.webflow.support;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.springframework.core.JdkVersion;
 import org.springframework.core.NestedRuntimeException;
@@ -50,7 +48,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	/**
 	 * The exceptionType->targetStateId map.
 	 */
-	private Map exceptionTargetStateIdMapping = new HashMap();
+	private Map exceptionTargetStateResolverMapping = new HashMap();
 
 	/**
 	 * Creates a state mapping exception handler with initially no mappings.
@@ -59,7 +57,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	}
 
 	/**
-	 * Adds a exception->state mapping to this handler.
+	 * Adds an exception->state mapping to this handler.
 	 * @param exceptionClass the type of exception to map
 	 * @param targetStateId the id of the state to transition to if the
 	 * specified type of exception is handled
@@ -67,25 +65,26 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	 * statement
 	 */
 	public TransitionExecutingStateExceptionHandler add(Class exceptionClass, String targetStateId) {
-		Assert.notNull(exceptionClass, "The exception class is required");
-		Assert.hasText(targetStateId, "The target state id is required");
-		exceptionTargetStateIdMapping.put(exceptionClass, targetStateId);
-		return this;
+		return add(exceptionClass, new DefaultTargetStateResolver(targetStateId));
 	}
 
 	/**
-	 * Adds the given exception->state mappings to this handler.
-	 * @param mappings the mappings to add
+	 * Adds a exception->state mapping to this handler.
+	 * @param exceptionClass the type of exception to map
+	 * @param targetStateResolver the resolver to calculate the state to transition to if the
+	 * specified type of exception is handled
+	 * @return this handler, to allow for adding multiple mappings in a single
+	 * statement
 	 */
-	public void addAll(Map mappings) {
-		for (Iterator entries = mappings.entrySet().iterator(); entries.hasNext();) {
-			Entry entry = (Entry)entries.next();
-			add((Class)entry.getKey(), (String)entry.getValue());
-		}
+	public TransitionExecutingStateExceptionHandler add(Class exceptionClass, TargetStateResolver targetStateResolver) {
+		Assert.notNull(exceptionClass, "The exception class is required");
+		Assert.notNull(targetStateResolver, "The target state resolver is required");
+		exceptionTargetStateResolverMapping.put(exceptionClass, targetStateResolver);
+		return this;
 	}
 
 	public boolean handles(StateException e) {
-		return getTargetStateId(e) != null;
+		return getTargetStateResolver(e) != null;
 	}
 
 	public ViewSelection handle(StateException e, FlowExecutionControlContext context) {
@@ -94,9 +93,8 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 			throw new IllegalStateException("The source state '" + sourceState.getId()
 					+ "' to transition from must be transitionable!");
 		}
-		TargetStateResolver targetStateResolver = new StaticTargetStateResolver(getTargetStateId(e));
 		context.getRequestScope().put(HANDLED_STATE_EXCEPTION_ATTRIBUTE, e);
-		return new Transition(targetStateResolver).execute((TransitionableState)sourceState, context);
+		return new Transition(getTargetStateResolver(e)).execute((TransitionableState)sourceState, context);
 	}
 
 	// helpers
@@ -106,30 +104,30 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	 * <code>null</code> if no mapping can be found for given exception. Will
 	 * try all exceptions in the exception cause chain.
 	 */
-	protected String getTargetStateId(StateException e) {
+	protected TargetStateResolver getTargetStateResolver(StateException e) {
 		if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_13) {
-			return getTargetStateId13(e);
+			return getTargetStateResolver13(e);
 		}
 		else {
-			return getTargetStateId14(e);
+			return getTargetStateResolver14(e);
 		}
 	}
 
 	/**
 	 * Internal getTargetState implementation for use with JDK 1.3.
 	 */
-	private String getTargetStateId13(NestedRuntimeException e) {
-		if (exceptionTargetStateIdMapping.containsKey(e.getClass())) {
-			return (String)exceptionTargetStateIdMapping.get(e.getClass());
+	private TargetStateResolver getTargetStateResolver13(NestedRuntimeException e) {
+		if (exceptionTargetStateResolverMapping.containsKey(e.getClass())) {
+			return (TargetStateResolver)exceptionTargetStateResolverMapping.get(e.getClass());
 		}
 		else {
 			Throwable throwable = e.getCause();
 			if (throwable != null && throwable instanceof NestedRuntimeException) {
-				return getTargetStateId13((NestedRuntimeException)throwable);
+				return getTargetStateResolver13((NestedRuntimeException)throwable);
 			}
 			else {
-				if (exceptionTargetStateIdMapping.containsKey(throwable.getClass())) {
-					return (String)exceptionTargetStateIdMapping.get(throwable.getClass());
+				if (exceptionTargetStateResolverMapping.containsKey(throwable.getClass())) {
+					return (TargetStateResolver)exceptionTargetStateResolverMapping.get(throwable.getClass());
 				}
 				else {
 					return null;
@@ -141,13 +139,13 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	/**
 	 * Internal getTargetState implementation for use with JDK 1.4 or later.
 	 */
-	private String getTargetStateId14(Throwable t) {
-		if (exceptionTargetStateIdMapping.containsKey(t.getClass())) {
-			return (String)exceptionTargetStateIdMapping.get(t.getClass());
+	private TargetStateResolver getTargetStateResolver14(Throwable t) {
+		if (exceptionTargetStateResolverMapping.containsKey(t.getClass())) {
+			return (TargetStateResolver)exceptionTargetStateResolverMapping.get(t.getClass());
 		}
 		else {
 			if (t.getCause() != null) {
-				return getTargetStateId14(t.getCause());
+				return getTargetStateResolver14(t.getCause());
 			}
 			else {
 				return null;
@@ -156,6 +154,6 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("exceptionStateMap", exceptionTargetStateIdMapping).toString();
+		return new ToStringCreator(this).append("exceptionStateMap", exceptionTargetStateResolverMapping).toString();
 	}
 }

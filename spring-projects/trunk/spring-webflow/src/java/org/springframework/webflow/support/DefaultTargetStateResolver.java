@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.support;
 
+import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.State;
@@ -28,35 +30,41 @@ import org.springframework.webflow.TransitionableState;
  * 
  * @author Keith Donald
  */
-public class StaticTargetStateResolver implements TargetStateResolver {
+public class DefaultTargetStateResolver implements TargetStateResolver {
 
 	/**
-	 * The state id for the target state - used temporarily until the target
-	 * state is resolved after flow construction (and all possible states have
-	 * been added).
+	 * The expression for the target state identifier.
 	 */
-	private String targetStateId;
+	private Expression targetStateId;
 
 	/**
 	 * Creates a new static target state resolver that always returns the same
 	 * target state.
-	 * @param targetStateId the id of the target state (will be resolved once
-	 * and cached at runtime)
+	 * @param targetStateId the id of the target state
 	 */
-	public StaticTargetStateResolver(String targetStateId) {
-		Assert.hasText(targetStateId, "The target state id is required");
-		this.targetStateId = targetStateId;
+	public DefaultTargetStateResolver(String targetStateId) {
+		this(new StaticExpression(targetStateId));
 	}
 
 	/**
-	 * Returns the id of the target state resolved by this resolver.
+	 * Creates a new target state resolver.
+	 * @param targetStateIdExpression the target state id expression
 	 */
-	public String getTargetStateId() {
+	public DefaultTargetStateResolver(Expression targetStateIdExpression) {
+		Assert.notNull(targetStateIdExpression, "The target state id expression is required");
+		this.targetStateId = targetStateIdExpression;
+	}
+
+	/**
+	 * Returns the id expression of the target state resolved by this resolver.
+	 */
+	public Expression getTargetStateId() {
 		return targetStateId;
 	}
 
 	public State resolveTargetState(Transition transition, TransitionableState sourceState, RequestContext context) {
-		return sourceState.getFlow().getRequiredState(targetStateId);
+		String stateId = String.valueOf(targetStateId.evaluateAgainst(context, null));
+		return sourceState.getFlow().getRequiredState(stateId);
 	}
 
 	public String toString() {
