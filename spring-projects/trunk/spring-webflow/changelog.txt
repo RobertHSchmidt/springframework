@@ -50,8 +50,10 @@ Package org.springframework.webflow.context
 
 Package org.springframework.webflow.execution
 * Simplified the ConditionalFlowExecutionListenerLoader configuration interface.
-* Refined the FlowExecutionListener interface, affecting the sessionStarting and eventSignaled operations.
+* Refined the FlowExecutionListener interface, improving the sessionStarting and eventSignaled method signatures.
 * Fixed a bug in ContinuationFlowExecutionRepository related to conversation scope restoration (which could cause a NPE).
+* Added an 'input' Attribute argument to the FlowExecution.start operation, for passing input into a starting 
+  flow execution in a consistent manner.
 
 Package org.springframework.webflow.executor
 * Misc polishing
