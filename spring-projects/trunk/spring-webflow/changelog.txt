@@ -2,6 +2,18 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
+Changes in version 1.0 RC1 (17.4.2006)
+------------------------------------
+
+Package org.springframework.webflow
+Package org.springframework.webflow.action
+Package org.springframework.webflow.builder
+Package org.springframework.webflow.context
+Package org.springframework.webflow.execution
+Package org.springframework.webflow.executor
+Package org.springframework.webflow.registry
+Package org.springframework.webflow.test
+
 Changes in version 1.0 Early Access (02.3.2006)
 ------------------------------------
 
