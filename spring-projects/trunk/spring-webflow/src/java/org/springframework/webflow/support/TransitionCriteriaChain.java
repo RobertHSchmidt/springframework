@@ -23,6 +23,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.WildcardTransitionCriteria;
 
 /**
  * An ordered chain of <code>TransitionCriteria</code>. Iterates over each element
@@ -85,6 +86,9 @@ public class TransitionCriteriaChain implements TransitionCriteria {
 	 * @param actions the actions (and there execution properties) to chain together
 	 */
 	public static TransitionCriteria criteriaChainFor(AnnotatedAction[] actions) {
+		if (actions == null || actions.length == 0) {
+			return WildcardTransitionCriteria.INSTANCE;
+		}
 		TransitionCriteriaChain chain = new TransitionCriteriaChain();
 		for (int i = 0; i < actions.length; i++) {
 			chain.add(new ActionTransitionCriteria(actions[i]));

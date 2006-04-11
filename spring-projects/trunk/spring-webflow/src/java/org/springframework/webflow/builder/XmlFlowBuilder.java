@@ -719,7 +719,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		while (it.hasNext()) {
 			actions.add(parseAnnotatedAction((Element)it.next()));
 		}
-		return (AnnotatedAction[])actions.toArray(new AnnotatedAction[0]);
+		return (AnnotatedAction[])actions.toArray(new AnnotatedAction[actions.size()]);
 	}
 
 	/**
@@ -894,7 +894,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		while (it.hasNext()) {
 			transitions.addAll(Arrays.asList(parseIf((Element)it.next())));
 		}
-		return (Transition[])transitions.toArray(new Transition[0]);
+		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
 	}
 
 	/**
