@@ -49,6 +49,7 @@
         <dependency org="jibx" name="jibx-bind" rev="1.0.1" conf="test->default"/>
         <dependency org="apache" name="bcel" rev="5.1" conf="test->default"/>
         <dependency org="xpp3" name="xpp3" rev="1.1.3.3" conf="test->default"/>
+        <dependency org="xstream" name="xstream" rev="1.1.3" conf="buildtime->default"/>
 
 
         <dependency org="easymock" name="easymock" rev="1.2" conf="test->default">

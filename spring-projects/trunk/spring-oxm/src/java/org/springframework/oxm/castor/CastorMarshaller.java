@@ -40,12 +40,15 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 
 /**
- * Implementation of the <code>Marshaller</code> interface for Castor.
+ * Implementation of the <code>Marshaller</code> interface for Castor. By default, Castor does not require any further
+ * configuration, though a mapping file can be used to have more control over the behavior of Castor.
  * <p/>
- * Due to Castor's API, it is required to set the encoding used for writing. It defaults to <code>UTF-8</code>.
+ * Due to Castor's API, it is required to set the encoding used for writing to outputstreams. It defaults to
+ * <code>UTF-8</code>.
  *
  * @author Arjen Poutsma
  * @see #setEncoding(String)
+ * @see #setMappingLocation(org.springframework.core.io.Resource)
  */
 public class CastorMarshaller extends AbstractMarshaller implements InitializingBean {
 
