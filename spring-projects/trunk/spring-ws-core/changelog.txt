@@ -2,6 +2,12 @@ SPRING WEB SERVICES CHANGELOG
 =============================
 http://www.springframework.org
 
+Changes in version 1.0-M1
+-------------------------
+
+Package org.springframework.ws.xml
+* added XPath abstraction with support for JAXP 1.3, Jaxen, and Xalan
+
 Changes in version 0.9.1 (06.04.2006)
 -------------------------------------
 

@@ -14,33 +14,32 @@
  * limitations under the License.
  */
 
-package org.springframework.xml;
-
-import org.springframework.core.NestedRuntimeException;
+package org.springframework.xml.xpath;
 
 /**
- * Root of the hierarchy of XML exception.
+ * Exception throws when a XPath expression cannot be parsed.
  *
  * @author Arjen Poutsma
  */
-public abstract class XmlException extends NestedRuntimeException {
+public class XPathParseException extends XPathException {
 
     /**
-     * Constructs a new instance of the <code>XmlException</code> with the specific detail message.
+     * Constructs a new instance of the <code>XPathParseException</code> with the specific detail message.
      *
      * @param message the detail message
      */
-    protected XmlException(String message) {
+    public XPathParseException(String message) {
         super(message);
     }
 
     /**
-     * Constructs a new instance of the <code>XmlException</code> with the specific detail message and exception.
+     * Constructs a new instance of the <code>XPathParseException</code> with the specific detail message and
+     * exception.
      *
      * @param message   the detail message
      * @param throwable the wrapped exception
      */
-    protected XmlException(String message, Throwable throwable) {
+    public XPathParseException(String message, Throwable throwable) {
         super(message, throwable);
     }
 }
