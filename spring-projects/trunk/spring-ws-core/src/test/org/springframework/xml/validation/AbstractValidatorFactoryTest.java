@@ -40,12 +40,10 @@ public abstract class AbstractValidatorFactoryTest extends TestCase {
     private static final String INVALID_MESSAGE =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><product xmlns=\"http://www.springframework.org/spring-ws/test/validation\" effDate=\"2006-01-01\"><size>20</size></product>";
 
-    private Resource schemaResource;
-
     private XmlValidator validator;
 
     protected void setUp() throws Exception {
-        schemaResource = new ClassPathResource("schema.xsd", Jaxp13ValidatorFactoryTest.class);
+        Resource schemaResource = new ClassPathResource("schema.xsd", Jaxp13ValidatorFactoryTest.class);
         validator = createValidator(schemaResource, XmlValidatorFactory.SCHEMA_W3C_XML);
     }
 
@@ -78,7 +76,9 @@ public abstract class AbstractValidatorFactoryTest extends TestCase {
     }
 
     public void testHandleValidMessageDom() throws Exception {
-        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        Document document = documentBuilderFactory.newDocumentBuilder()
                 .parse(new InputSource(new StringReader(VALID_MESSAGE)));
         SAXParseException[] errors = validator.validate(new DOMSource(document));
         assertNotNull("Null returned for errors", errors);
@@ -86,7 +86,9 @@ public abstract class AbstractValidatorFactoryTest extends TestCase {
     }
 
     public void testHandleInvalidMessageDom() throws Exception {
-        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        Document document = documentBuilderFactory.newDocumentBuilder()
                 .parse(new InputSource(new StringReader(INVALID_MESSAGE)));
         SAXParseException[] errors = validator.validate(new DOMSource(document));
         assertNotNull("Null returned for errors", errors);
