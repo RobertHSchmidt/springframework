@@ -27,6 +27,8 @@ import org.springframework.webflow.builder.ResourceHolder;
  * A flow definition holder that can detect changes on an underlying flow
  * definition resource and refresh that resource automatically.
  * 
+ * This class is threadsafe.
+ * 
  * @author Keith Donald
  */
 public class RefreshableFlowHolder implements FlowHolder {
@@ -66,7 +68,14 @@ public class RefreshableFlowHolder implements FlowHolder {
 		return assembler.getFlowParameters().getId();
 	}
 
-	public Flow getFlow() {
+	/**
+	 * Returns the flow builder that actually builds the Flow definition.
+	 */
+	public FlowBuilder getFlowBuilder() {
+		return assembler.getFlowBuilder();
+	}
+
+	public synchronized Flow getFlow() {
 		if (assembling) {
 			// must return early assembly result
 			return getFlowBuilder().getResult();
@@ -81,13 +90,56 @@ public class RefreshableFlowHolder implements FlowHolder {
 		return flow;
 	}
 
-	/**
-	 * Returns the flow builder that actually builds the Flow definition.
-	 */
-	public FlowBuilder getFlowBuilder() {
-		return assembler.getFlowBuilder();
+	public synchronized void refresh() {
+		assembleFlow();
 	}
 
+	/**
+	 * Reassemble the flow if its underlying resource has changed.
+	 */
+	protected void refreshIfChanged() {
+		if (this.lastModified == -1) {
+			// just ignore, tracking last modified date not supported
+			return;
+		}
+		if (this.lastModified < calculateLastModified()) {
+			assembleFlow();
+		}
+	}
+
+	/**
+	 * Assemble the held flow definition, delegating to the configured
+	 * FlowAssembler (director).
+	 */
+	protected void assembleFlow() {
+		try {
+			assembling = true;
+			assembler.assembleFlow();
+			flow = getFlowBuilder().getResult();
+		}
+		finally {
+			assembling = false;
+		}
+	}
+
+	/**
+	 * Helper that retrieves the last modified date by querying the backing flow
+	 * resource.
+	 * @return the last modified date, or -1 if it could not be retrieved
+	 */
+	protected long calculateLastModified() {
+		if (getFlowBuilder() instanceof ResourceHolder) {
+			Resource resource = ((ResourceHolder)getFlowBuilder()).getResource();
+			try {
+				return resource.getFile().lastModified();
+			}
+			catch (IOException e) {
+				// ignore, last modified checks not supported
+			}
+		}
+		return -1;
+	}
+	
 	/**
 	 * Returns a flag indicating if this holder has performed and completed
 	 * Flow assembly.
@@ -109,55 +161,5 @@ public class RefreshableFlowHolder implements FlowHolder {
 	 */
 	protected long getLastModified() {
 		return lastModified;
-	}
-
-	/**
-	 * Assemble the held flow definition, delegating to the configured
-	 * FlowAssembler (director).
-	 */
-	protected void assembleFlow() {
-		try {
-			assembling = true;
-			assembler.assembleFlow();
-			flow = getFlowBuilder().getResult();
-		}
-		finally {
-			assembling = false;
-		}
-	}
-
-	public void refresh() {
-		assembleFlow();
-	}
-
-	/**
-	 * Reassemble the flow if its underlying resource has changed.
-	 */
-	protected void refreshIfChanged() {
-		if (this.lastModified == -1) {
-			// just ignore, tracking last modified date not supported
-			return;
-		}
-		if (this.lastModified < calculateLastModified()) {
-			refresh();
-		}
-	}
-
-	/**
-	 * Helper that retrieves the last modified date by querying the backing flow
-	 * resource.
-	 * @return the last modified date, or -1 if it could not be retrieved
-	 */
-	protected long calculateLastModified() {
-		if (getFlowBuilder() instanceof ResourceHolder) {
-			Resource resource = ((ResourceHolder)getFlowBuilder()).getResource();
-			try {
-				return resource.getFile().lastModified();
-			}
-			catch (IOException e) {
-				// ignore, last modified checks not supported
-			}
-		}
-		return -1;
 	}
 }
