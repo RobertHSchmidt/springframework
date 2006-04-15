@@ -40,7 +40,7 @@ public class BeanFactoryFlowVariable extends FlowVariable {
 			this.beanName = variableName;
 		}
 		Assert.notNull(beanFactory, "The variable bean factory is required");
-		Assert.isTrue(!beanFactory.isSingleton(variableName), "The variable bean must be a prototype (singleton=false)");
+		Assert.isTrue(!beanFactory.isSingleton(this.beanName), "The variable bean with name '" + this.beanName + "' must be a prototype (singleton=false)");
 		this.beanFactory = beanFactory;
 	}
 

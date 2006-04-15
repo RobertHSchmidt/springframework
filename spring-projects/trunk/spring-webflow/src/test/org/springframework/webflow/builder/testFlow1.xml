@@ -7,6 +7,8 @@
 
 	<var name="attribute1" class="org.springframework.webflow.TestBean"/>
 	<var name="attribute3" class="org.springframework.webflow.TestBean"/>
+	<var name="attribute5"/>
+	<var name="attribute6" bean="attribute5" scope="request"/>
 	<var name="items" class="java.util.ArrayList"/>
 	
 	<action-state id="actionState1">
@@ -105,6 +107,8 @@
 		<transition on-exception="org.springframework.webflow.builder.MyCustomException" to="endState1"/>
 	</global-transitions>
 
+	<import resource="testFlow1Context.xml"/>
+	
 	<inline-flow id="inline-flow">
 		<flow start-state="end">
 			<end-state id="end">

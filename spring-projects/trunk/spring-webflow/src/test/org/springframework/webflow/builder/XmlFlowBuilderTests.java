@@ -64,7 +64,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals(14, flow.getStateIds().length);
 
 		assertEquals(0, flow.getStartActionList().size());
-		assertEquals(3, flow.getVariables().length);
+		assertEquals(5, flow.getVariables().length);
 		assertEquals(1, flow.getExceptionHandlerSet().size());
 		assertTrue(flow.getExceptionHandlerSet().toArray()[0] instanceof TransitionExecutingStateExceptionHandler);
 

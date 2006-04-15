@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.StylerUtils;
@@ -106,6 +108,8 @@ import org.springframework.util.StringUtils;
  */
 public class Flow extends AnnotatedObject {
 
+	private static final Log logger = LogFactory.getLog(Flow.class);
+	
 	/**
 	 * An assigned flow identifier uniquely identifying this flow among all
 	 * other flows.
@@ -612,6 +616,9 @@ public class Flow extends AnnotatedObject {
 		Iterator it = variables.iterator();
 		while (it.hasNext()) {
 			FlowVariable variable = (FlowVariable)it.next();
+			if (logger.isDebugEnabled()) {
+				logger.debug("Creating " + variable);
+			}
 			variable.create(context);
 		}
 	}
