@@ -212,15 +212,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String ATTRIBUTE_ELEMENT = "attribute";
 
+	private static final String TYPE_ATTRIBUTE = "type";
+
 	private static final String VALUE_ELEMENT = "value";
 
 	private static final String VALUE_ATTRIBUTE = "value";
 
-	private static final String TYPE_ATTRIBUTE = "type";
-
 	private static final String VAR_ELEMENT = "var";
 
 	private static final String SCOPE_ATTRIBUTE = "scope";
+
+	private static final String CLASS_ATTRIBUTE = "class";
 
 	private static final String START_ACTIONS_ELEMENT = "start-actions";
 
@@ -488,9 +490,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 					.getAttribute(BEAN_ATTRIBUTE), beanFactory);
 		}
 		else {
-			if (StringUtils.hasText(element.getAttribute(TYPE_ATTRIBUTE))) {
-				Class type = (Class)fromStringTo(Class.class).execute(element.getAttribute(TYPE_ATTRIBUTE));
-				return new SimpleFlowVariable(element.getAttribute(NAME_ATTRIBUTE), type, scope);
+			if (StringUtils.hasText(element.getAttribute(CLASS_ATTRIBUTE))) {
+				Class variableClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(CLASS_ATTRIBUTE));
+				return new SimpleFlowVariable(element.getAttribute(NAME_ATTRIBUTE), variableClass, scope);
 			}
 			else {
 				BeanFactory beanFactory = getLocalFlowArtifactFactory().getServiceRegistry();

@@ -103,7 +103,7 @@ public interface Action {
 	 * search results view) into flow scope. Instead, put such result
 	 * collections in request scope, and ensure you execute this action again
 	 * each time you wish to view those results. 2nd level caches managed
-	 * outside of SWF are much better cache solutions.
+	 * outside of SWF are much more general cache solutions.
 	 * <p>
 	 * Note: as flow scoped attributes are eligible for serialization they
 	 * should be <code>Serializable</code>.

@@ -5,9 +5,9 @@
 <flow start-state="actionState1">
 	<attribute name="propInteger" value="12345" type="integer"/>
 
-	<var name="attribute1" type="org.springframework.webflow.TestBean"/>
-	<var name="attribute3" type="org.springframework.webflow.TestBean"/>
-	<var name="items" type="java.util.ArrayList"/>
+	<var name="attribute1" class="org.springframework.webflow.TestBean"/>
+	<var name="attribute3" class="org.springframework.webflow.TestBean"/>
+	<var name="items" class="java.util.ArrayList"/>
 	
 	<action-state id="actionState1">
 		<attribute name="propBoolean" value="true" type="boolean"/>
