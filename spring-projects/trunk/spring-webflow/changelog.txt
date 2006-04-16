@@ -55,6 +55,8 @@ Package org.springframework.webflow.execution
 * Added an 'input' Attribute argument to the FlowExecution.start operation, for passing input into a starting
   flow execution in a consistent manner.
 * Introduced an EventId value object for describing an external event that has been signaled.
+* Streamlined FlowExecutionRepository interface to remove experimental 'getCurrentViewSelection' and 
+  'setCurrentViewSelection' methods.
 
 Package org.springframework.webflow.executor
 * Added 'appendFlowInputAttributesToRequestPath' property to RequestPathFlowExecutorArgumentExtractor to control
