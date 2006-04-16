@@ -30,8 +30,8 @@ public class JaxbUtilsTest extends TestCase {
     }
 
     public void testConvertUnmarshallingException() {
-        assertTrue("Invalid exception conversion",
-                JaxbUtils.convertJaxbException(new UnmarshalException("")) instanceof JaxbUnmarshallingFailureException);
+        assertTrue("Invalid exception conversion", JaxbUtils
+                .convertJaxbException(new UnmarshalException("")) instanceof JaxbUnmarshallingFailureException);
     }
 
     public void testConvertValidationException() {
@@ -44,4 +44,7 @@ public class JaxbUtilsTest extends TestCase {
                 JaxbUtils.convertJaxbException(new JAXBException("")) instanceof JaxbSystemException);
     }
 
+    public void testGetJaxbVersion() throws Exception {
+        assertEquals("Invalid JAXB version", JaxbUtils.JAXB_2, JaxbUtils.getJaxbVersion());
+    }
 }

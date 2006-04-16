@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.oxm.jaxb;
 
 import org.springframework.oxm.AbstractUnmarshallerTest;
 import org.springframework.oxm.Unmarshaller;
 
-public class JaxbUnmarshallerTest extends AbstractUnmarshallerTest {
+/**
+ * @author Arjen Poutsma
+ */
+public abstract class AbstractJaxbUnmarshallerTest extends AbstractUnmarshallerTest {
 
-    protected Unmarshaller createUnmarshaller() throws Exception {
-        JaxbMarshaller marshaller = new JaxbMarshaller();
+    protected final Unmarshaller createUnmarshaller() throws Exception {
+        AbstractJaxbMarshaller marshaller = createJaxbUnmarshaller();
         marshaller.setContextPath("org.springframework.oxm.jaxb");
         marshaller.afterPropertiesSet();
         return marshaller;
     }
+
+    protected abstract AbstractJaxbMarshaller createJaxbUnmarshaller();
 
     protected void testFlights(Object o) {
         Flights flights = (Flights) o;

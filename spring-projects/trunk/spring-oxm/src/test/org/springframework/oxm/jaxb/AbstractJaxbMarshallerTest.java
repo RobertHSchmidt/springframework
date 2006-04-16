@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.oxm.jaxb;
 
 import java.util.Collections;
@@ -26,14 +27,19 @@ import org.springframework.oxm.jaxb.impl.FlightTypeImpl;
 import org.springframework.oxm.jaxb.impl.FlightsImpl;
 import org.xml.sax.ContentHandler;
 
-public class JaxbMarshallerTest extends AbstractMarshallerTest {
+/**
+ * @author Arjen Poutsma
+ */
+public abstract class AbstractJaxbMarshallerTest extends AbstractMarshallerTest {
 
-    protected Marshaller createMarshaller() throws Exception {
-        JaxbMarshaller marshaller = new JaxbMarshaller();
+    protected final Marshaller createMarshaller() throws Exception {
+        AbstractJaxbMarshaller marshaller = createJaxbMarshaller();
         marshaller.setContextPath("org.springframework.oxm.jaxb");
         marshaller.afterPropertiesSet();
         return marshaller;
     }
+
+    protected abstract AbstractJaxbMarshaller createJaxbMarshaller() throws Exception;
 
     protected Object createFlights() {
         FlightType flight = new FlightTypeImpl();
@@ -49,19 +55,19 @@ public class JaxbMarshallerTest extends AbstractMarshallerTest {
         handlerMock.setDocumentLocator(null);
         handlerControl.setMatcher(MockControl.ALWAYS_MATCHER);
         handlerMock.startDocument();
-        handlerMock.startPrefixMapping("ns1", "http://samples.springframework.org/flight");
-        handlerMock.startElement("http://samples.springframework.org/flight", "flights", "ns1:flights", null);
+        handlerMock.startPrefixMapping("", "http://samples.springframework.org/flight");
+        handlerMock.startElement("http://samples.springframework.org/flight", "flights", "flights", null);
         handlerControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        handlerMock.startElement("http://samples.springframework.org/flight", "flight", "ns1:flight", null);
+        handlerMock.startElement("http://samples.springframework.org/flight", "flight", "flight", null);
         handlerControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        handlerMock.startElement("http://samples.springframework.org/flight", "number", "ns1:number", null);
+        handlerMock.startElement("http://samples.springframework.org/flight", "number", "number", null);
         handlerControl.setMatcher(MockControl.ALWAYS_MATCHER);
         handlerMock.characters(new char[]{'4', '2'}, 0, 2);
         handlerControl.setMatcher(MockControl.ARRAY_MATCHER);
-        handlerMock.endElement("http://samples.springframework.org/flight", "number", "ns1:number");
-        handlerMock.endElement("http://samples.springframework.org/flight", "flight", "ns1:flight");
-        handlerMock.endElement("http://samples.springframework.org/flight", "flights", "ns1:flights");
-        handlerMock.endPrefixMapping("ns1");
+        handlerMock.endElement("http://samples.springframework.org/flight", "number", "number");
+        handlerMock.endElement("http://samples.springframework.org/flight", "flight", "flight");
+        handlerMock.endElement("http://samples.springframework.org/flight", "flights", "flights");
+        handlerMock.endPrefixMapping("");
         handlerMock.endDocument();
 
         handlerControl.replay();
@@ -72,7 +78,7 @@ public class JaxbMarshallerTest extends AbstractMarshallerTest {
 
     public void testAfterPropertiesSetNoContextPath() throws Exception {
         try {
-            JaxbMarshaller marshaller = new JaxbMarshaller();
+            Jaxb1Marshaller marshaller = new Jaxb1Marshaller();
             marshaller.afterPropertiesSet();
             fail("Should have thrown an IllegalArgumentException");
         }
@@ -82,7 +88,7 @@ public class JaxbMarshallerTest extends AbstractMarshallerTest {
 
     public void testAfterPropertiesSet() throws Exception {
         try {
-            JaxbMarshaller marshaller = new JaxbMarshaller();
+            Jaxb1Marshaller marshaller = new Jaxb1Marshaller();
             marshaller.setContextPath("ab");
             marshaller.afterPropertiesSet();
             fail("Should have thrown an XmlMappingException");
@@ -92,12 +98,10 @@ public class JaxbMarshallerTest extends AbstractMarshallerTest {
     }
 
     public void testProperties() throws Exception {
-        JaxbMarshaller marshaller = new JaxbMarshaller();
+        Jaxb1Marshaller marshaller = new Jaxb1Marshaller();
         marshaller.setContextPath("org.springframework.oxm.jaxb");
         marshaller.setMarshallerProperties(
                 Collections.singletonMap(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE));
         marshaller.afterPropertiesSet();
     }
-
-
 }

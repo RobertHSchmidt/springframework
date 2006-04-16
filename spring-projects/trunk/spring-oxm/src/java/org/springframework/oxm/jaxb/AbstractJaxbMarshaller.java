@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.oxm.jaxb;
 
 import java.util.Iterator;
@@ -32,19 +33,23 @@ import org.springframework.oxm.XmlMappingException;
 import org.springframework.util.StringUtils;
 
 /**
- * Implementation of the <code>Marshaller</code> interface for JAXB.
+ * Abstract base class for implementations of the <code>Marshaller</code> and <code>Unmarshaller</code> interfaces that
+ * use JAXB. This base class is responsible for creating JAXB marshallers from a <code>JAXBContext</code>.
  * <p/>
- * The typical usage will be to set the <code>contextPath</code> property on this bean, possibly the marshaller
- * properties, and to refer to it.
+ * JAXB 2.0 added  breaking API changes, so specific subclasses must be used for JAXB 1.0 and 2.0
+ * (<code>Jaxb1Marshaller</code> and <code>Jaxb2Marshaller</code> respectivaly). (Jaxb
  *
  * @author Arjen Poutsma
- * @see #setContextPath(String)
- * @see #setMarshallerProperties(java.util.Map)
+ * @see Jaxb1Marshaller
+ * @see Jaxb2Marshaller
  */
-public class JaxbMarshaller
+public abstract class AbstractJaxbMarshaller
         implements org.springframework.oxm.Marshaller, org.springframework.oxm.Unmarshaller, InitializingBean {
 
-    private static final Log logger = LogFactory.getLog(JaxbMarshaller.class);
+    /**
+     * Logger available to subclasses.
+     */
+    protected final Log logger = LogFactory.getLog(getClass());
 
     private Marshaller marshaller;
 
@@ -56,7 +61,19 @@ public class JaxbMarshaller
 
     private Map unmarshallerProperties;
 
-    private boolean validating = false;
+    /**
+     * Returns the JAXB marshaller.
+     */
+    protected Marshaller getMarshaller() {
+        return marshaller;
+    }
+
+    /**
+     * Returns the JAXB unmarshaller.
+     */
+    protected Unmarshaller getUnmarshaller() {
+        return unmarshaller;
+    }
 
     /**
      * Sets the JAXB Context path.
@@ -70,11 +87,11 @@ public class JaxbMarshaller
      * <code>Marshaller</code>, and allow for features such as indentation.
      *
      * @param properties the properties
-     * @see Marshaller#setProperty(String, Object)
-     * @see Marshaller#JAXB_ENCODING
-     * @see Marshaller#JAXB_FORMATTED_OUTPUT
-     * @see Marshaller#JAXB_NO_NAMESPACE_SCHEMA_LOCATION
-     * @see Marshaller#JAXB_SCHEMA_LOCATION
+     * @see javax.xml.bind.Marshaller#setProperty(String, Object)
+     * @see javax.xml.bind.Marshaller#JAXB_ENCODING
+     * @see javax.xml.bind.Marshaller#JAXB_FORMATTED_OUTPUT
+     * @see javax.xml.bind.Marshaller#JAXB_NO_NAMESPACE_SCHEMA_LOCATION
+     * @see javax.xml.bind.Marshaller#JAXB_SCHEMA_LOCATION
      */
     public void setMarshallerProperties(Map properties) {
         this.marshallerProperties = properties;
@@ -85,20 +102,13 @@ public class JaxbMarshaller
      * <code>Unmarshaller</code>.
      *
      * @param properties the properties
-     * @see Unmarshaller#setProperty(String, Object)
+     * @see javax.xml.bind.Unmarshaller#setProperty(String, Object)
      */
     public void setUnmarshallerProperties(Map properties) {
         this.unmarshallerProperties = properties;
     }
 
-    /**
-     * Set if the JAXB <code>Unmarshaller</code> should validate the incoming document. Default is <code>false</code>.
-     */
-    public void setValidating(boolean validating) {
-        this.validating = validating;
-    }
-
-    public final void afterPropertiesSet() throws XmlMappingException {
+    public final void afterPropertiesSet() throws Exception {
         if (!StringUtils.hasLength(contextPath)) {
             throw new IllegalArgumentException("contextPath is required");
         }
@@ -109,8 +119,39 @@ public class JaxbMarshaller
             JAXBContext jaxbContext = JAXBContext.newInstance(contextPath);
             marshaller = jaxbContext.createMarshaller();
             unmarshaller = jaxbContext.createUnmarshaller();
-            unmarshaller.setValidating(validating);
             setJaxbProperties();
+            initJaxbMarshaller();
+        }
+        catch (JAXBException ex) {
+            throw convertJaxbException(ex);
+        }
+    }
+
+    /**
+     * Convert the given <code>JAXBException</code> to an appropriate exception from the
+     * <code>org.springframework.oxm</code> hierarchy.
+     * <p/>
+     * The default implementation delegates to <code>JaxbUtils</code>. Can be overridden in subclasses.
+     *
+     * @param ex <code>JAXBException</code> that occured
+     * @return the corresponding <code>XmlMappingException</code> instance
+     * @see JaxbUtils#convertJaxbException
+     */
+    protected XmlMappingException convertJaxbException(JAXBException ex) {
+        return JaxbUtils.convertJaxbException(ex);
+    }
+
+    /**
+     * Concrete JAXB Marhsallers can override this for custom initialization behavior. Gets called after creation of
+     * JAXB <code>Marshaller</code> and <code>Unmarshaller</code>, and after the respective properties have been set.
+     */
+    protected void initJaxbMarshaller() throws Exception {
+
+    }
+
+    public void marshal(Object graph, Result result) {
+        try {
+            marshaller.marshal(graph, result);
         }
         catch (JAXBException ex) {
             throw convertJaxbException(ex);
@@ -132,15 +173,6 @@ public class JaxbMarshaller
         }
     }
 
-    public void marshal(Object graph, Result result) {
-        try {
-            marshaller.marshal(graph, result);
-        }
-        catch (JAXBException ex) {
-            throw convertJaxbException(ex);
-        }
-    }
-
     public Object unmarshal(Source source) {
         try {
             return this.unmarshaller.unmarshal(source);
@@ -150,17 +182,4 @@ public class JaxbMarshaller
         }
     }
 
-    /**
-     * Convert the given <code>JAXBException</code> to an appropriate exception from the
-     * <code>org.springframework.oxm</code> hierarchy.
-     * <p/>
-     * The default implementation delegates to <code>JaxbUtils</code>. Can be overridden in subclasses.
-     *
-     * @param ex <code>JAXBException</code> that occured
-     * @return the corresponding <code>XmlMappingException</code> instance
-     * @see org.springframework.oxm.jaxb.JaxbUtils#convertJaxbException
-     */
-    public XmlMappingException convertJaxbException(JAXBException ex) {
-        return JaxbUtils.convertJaxbException(ex);
-    }
 }

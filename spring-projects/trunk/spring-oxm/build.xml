@@ -23,11 +23,13 @@
     <target name="generate-jaxb-test">
         <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="test.classpath"/>
 
-        <xjc target="${target.gen.java.test.dir}" package="${jaxb.package}">
+        <xjc target="${target.gen.java.test.dir}" package="${jaxb.package}" source="1.0">
             <schema dir="${src.test.resources.dir}">
                 <include name="**/*.xsd"/>
             </schema>
+            <produces dir="${target.gen.java.test.dir}" includes="**/jaxb/**/*.java"/>
         </xjc>
+
     </target>
 
     <target name="generate-xmlbeans-test">

@@ -92,7 +92,7 @@
         <property name="unmarshaller" ref="jaxbMarshaller"/>
     </bean>
 
-    <bean id="jaxbMarshaller" class="org.springframework.oxm.jaxb.JaxbMarshaller">
+    <bean id="jaxbMarshaller" class="org.springframework.oxm.jaxb.Jaxb1Marshaller">
         <description>
             The validating JAXB Marshaller is used by the getFlightsEndpoint to unmarshal XML to objects and
             vice-versa.

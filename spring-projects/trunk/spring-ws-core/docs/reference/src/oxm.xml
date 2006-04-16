@@ -432,7 +432,7 @@ public class Application {
             <programlisting><![CDATA[
 <beans>
 
-    <bean id="jaxbMarshaller" class="org.springframework.oxm.jaxb.JaxbMarshaller">
+    <bean id="jaxbMarshaller" class="org.springframework.oxm.jaxb.Jaxb1Marshaller">
         <property name="contextPath" value="org.springframework.ws.samples.airline.schema"/>
     </bean>
     ...

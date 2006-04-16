@@ -27,7 +27,36 @@ import org.springframework.oxm.XmlMappingException;
  *
  * @author Arjen Poutsma
  */
-public class JaxbUtils {
+public abstract class JaxbUtils {
+
+    public static final int JAXB_1 = 0;
+
+    public static final int JAXB_2 = 1;
+
+    private static final String JAXB_2_CLASS_NAME = "javax.xml.bind.Binder";
+
+    private static int jaxbVersion = JAXB_1;
+
+    static {
+        try {
+            Class.forName(JAXB_2_CLASS_NAME);
+            jaxbVersion = JAXB_2;
+        }
+        catch (ClassNotFoundException ex1) {
+            // leave JAXB 1 as default
+        }
+    }
+
+    /**
+     * Gets the major JAXB version. This means we can do things like if <code>(getJaxbVersion() &lt;= JAXB_2)</code>.
+     *
+     * @return a code comparable to the JAXP_XX codes in this class
+     * @see #JAXB_1
+     * @see #JAXB_2
+     */
+    public static int getJaxbVersion() {
+        return jaxbVersion;
+    }
 
     /**
      * Converts the given <code>JAXBException</code> to an appropriate exception from the
