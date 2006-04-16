@@ -476,10 +476,10 @@ public class FlowExecutorArgumentExtractor {
 	 * Append query properties to the redirect URL. Stringifies, URL-encodes and
 	 * formats model attributes as query properties.
 	 * @param targetUrl the StringBuffer to append the properties to
-	 * @param model Map that contains model attributes
+	 * @param map Map that contains attributes
 	 */
-	private void appendQueryParameters(Map model, StringBuffer targetUrl) {
-		Iterator entries = model.entrySet().iterator();
+	protected void appendQueryParameters(Map map, StringBuffer targetUrl) {
+		Iterator entries = map.entrySet().iterator();
 		while (entries.hasNext()) {
 			Map.Entry entry = (Map.Entry)entries.next();
 			appendQueryParameter(entry.getKey(), entry.getValue(), targetUrl);

@@ -2,6 +2,7 @@ package org.springframework.webflow.executor.support;
 
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
@@ -30,7 +31,43 @@ import org.springframework.webflow.support.FlowRedirect;
  */
 public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgumentExtractor {
 
+	private static final char PATH_SEPARATOR_CHARACTER = '/';
+
 	private static final String CONVERSATION_ID_PREFIX = "/_c";
+
+	private boolean appendFlowInputAttributesToRequestPath = false;
+
+    /**
+	 * Returns the flag indicating if flow input attributes should be appended to the
+	 * request path to build a flow redirect request, instead of being appended
+	 * as standard URL query parameters.
+	 */
+	public boolean isAppendFlowInputAttributesToRequestPath() {
+		return appendFlowInputAttributesToRequestPath;
+	}
+
+	/**
+	 * Sets a flag indicating if flow input attributes should be appended to the
+	 * request path to build a flow redirect request, instead of being appended
+	 * as standard URL query parameters.
+	 * 
+	 * For example:
+	 * <ul>
+	 * <li>With request path appending turned on:
+	 * <pre>
+	 *     /booking/12345
+	 * </pre>
+	 * <li>With request path appending turned off:
+	 * <pre>
+	 *    /booking?bookingId=12345
+	 * </pre>
+	 * </ul>
+	 * 
+	 * @param appendFlowInputAttributesToRequestPath the boolean flag value
+	 */
+	public void setAppendFlowInputAttributesToRequestPath(boolean appendFlowInputAttributesToRequestPath) {
+		this.appendFlowInputAttributesToRequestPath = appendFlowInputAttributesToRequestPath;
+	}
 
 	public String extractFlowId(ExternalContext context) {
 		String requestPathInfo = context.getRequestPathInfo();
@@ -45,7 +82,8 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		String requestPathInfo = context.getRequestPathInfo();
 		if (requestPathInfo != null && requestPathInfo.startsWith(CONVERSATION_ID_PREFIX)) {
 			return requestPathInfo.substring(CONVERSATION_ID_PREFIX.length());
-		} else {
+		}
+		else {
 			return super.extractConversationId(context);
 		}
 	}
@@ -53,23 +91,31 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext context) {
 		StringBuffer flowUrl = new StringBuffer();
 		flowUrl.append(context.getDispatcherPath());
-		flowUrl.append('/');
+		flowUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowUrl.append(flowRedirect.getFlowId());
-		if (!flowRedirect.getInput().isEmpty()) {
-			flowUrl.append('/');
-			Iterator it = flowRedirect.getInput().values().iterator();
+		if (appendFlowInputAttributesToRequestPath) {
+			appendRequestPathElements(flowRedirect.getInput(), flowUrl);
+		}
+		else {
+			appendQueryParameters(flowRedirect.getInput(), flowUrl);
+		}
+		return flowUrl.toString();
+	}
+
+	protected void appendRequestPathElements(Map map, StringBuffer url) {
+		if (!map.isEmpty()) {
+			url.append(PATH_SEPARATOR_CHARACTER);
+			Iterator it = map.values().iterator();
 			while (it.hasNext()) {
-				flowUrl.append(encodeValue(it.next()));
+				url.append(encodeValue(it.next()));
 				if (it.hasNext()) {
-					flowUrl.append('/');
+					url.append(PATH_SEPARATOR_CHARACTER);
 				}
 			}
 		}
-		return flowUrl.toString();
 	}
 
 	public String createConversationUrl(Serializable conversationId, ExternalContext context) {
 		return context.getDispatcherPath() + CONVERSATION_ID_PREFIX + conversationId;
 	}
-	
 }
