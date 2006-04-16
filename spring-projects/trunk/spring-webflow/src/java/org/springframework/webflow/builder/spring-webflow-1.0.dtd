@@ -496,11 +496,11 @@
 	
 	Use of the "redirect:" prefix triggers a redirect to a specific "after conversation completion"
 	external URL.  For example:
-	    "externalRedirect:/home.html"
+	    "redirect:/home.html"
 	
 	Redirect query parameters may also be specified using ${expressions} that evaluate against
 	the request context. For example:
-	    "externalRedirect:/thankyou.htm?confirmationNumber=${flowScope.order.confirmation.id}"
+	    "redirect:/thankyou.htm?confirmationNumber=${flowScope.order.confirmation.id}"
 	
 	Use of the "flowRedirect:" prefix indicates this end state should trigger a redirect that
 	starts another flow.  Flow input parameters may be specified using ${expressions} that 
