@@ -17,7 +17,6 @@ package org.springframework.oxm;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMResult;
@@ -35,8 +34,9 @@ public abstract class AbstractMarshallerTest extends XMLTestCase {
 
     protected Object flights;
 
-    protected static final String EXPECTED_STRING = "<tns:flights xmlns:tns=\"http://samples.springframework.org/flight\">"
-            + "<tns:flight><tns:number>42</tns:number></tns:flight></tns:flights>";
+    protected static final String EXPECTED_STRING =
+            "<tns:flights xmlns:tns=\"http://samples.springframework.org/flight\">" +
+                    "<tns:flight><tns:number>42</tns:number></tns:flight></tns:flights>";
 
     protected final void setUp() throws Exception {
         this.marshaller = createMarshaller();
@@ -48,13 +48,12 @@ public abstract class AbstractMarshallerTest extends XMLTestCase {
 
     protected abstract Object createFlights();
 
-
     public void testMarshalDOMResult() throws Exception {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
         Document document = builder.newDocument();
         DOMResult domResult = new DOMResult(document);
-        marshaller.marshal(flights, domResult);        
+        marshaller.marshal(flights, domResult);
         Document expected = builder.newDocument();
         Element flightsElement = expected.createElementNS("http://samples.springframework.org/flight", "tns:flights");
         expected.appendChild(flightsElement);
@@ -66,7 +65,6 @@ public abstract class AbstractMarshallerTest extends XMLTestCase {
         numberElement.appendChild(text);
         assertXMLEqual("Marshaller writes invalid DOMResult", expected, document);
     }
-    
 
     public void testMarshalStreamResultWriter() throws Exception {
         StringWriter writer = new StringWriter();
@@ -79,7 +77,8 @@ public abstract class AbstractMarshallerTest extends XMLTestCase {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         StreamResult result = new StreamResult(os);
         marshaller.marshal(flights, result);
-        assertXMLEqual("Marshaller writes invalid StreamResult", EXPECTED_STRING, new String(os.toByteArray(), "UTF-8"));
+        assertXMLEqual("Marshaller writes invalid StreamResult", EXPECTED_STRING,
+                new String(os.toByteArray(), "UTF-8"));
     }
 
 }
