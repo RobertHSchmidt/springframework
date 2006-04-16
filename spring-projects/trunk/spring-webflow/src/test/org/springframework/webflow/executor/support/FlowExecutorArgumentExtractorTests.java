@@ -2,6 +2,7 @@ package org.springframework.webflow.executor.support;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.test.MockExternalContext;
 
@@ -35,12 +36,12 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 
 	public void testExtractEventId() {
 		context.putRequestParameter("_eventId", "submit");
-		assertEquals("submit", argumentExtractor.extractEventId(context));
+		assertEquals(new EventId("submit"), argumentExtractor.extractEventId(context));
 	}
 
 	public void testExtractEventIdButtonNameFormat() {
 		context.putRequestParameter("_eventId_submit", "not important");
-		assertEquals("submit", argumentExtractor.extractEventId(context));
+		assertEquals(new EventId("submit"), argumentExtractor.extractEventId(context));
 	}
 
 	public void testAccidentalParameterArraySubmit() {

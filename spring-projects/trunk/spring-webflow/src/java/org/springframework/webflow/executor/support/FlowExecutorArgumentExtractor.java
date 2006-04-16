@@ -13,6 +13,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ParameterMap;
+import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.support.ExternalRedirect;
@@ -240,13 +241,13 @@ public class FlowExecutorArgumentExtractor {
 	 * @return the event id
 	 * @throws IllegalArgumentException if the event id could not be obtained.
 	 */
-	public String extractEventId(ExternalContext context) throws IllegalArgumentException {
+	public EventId extractEventId(ExternalContext context) throws IllegalArgumentException {
 		String eventId = findParameter(eventIdParameterName, context.getRequestParameterMap());
 		Assert.hasText(eventId, "No eventId could be obtained: make sure the client provides the '"
 				+ eventIdParameterName + "' parameter as input along with the '" + flowExecutionKeyParameterName
 				+ "' parameter; the parameters provided for this request were: "
 				+ StylerUtils.style(context.getRequestParameterMap()));
-		return eventId;
+		return new EventId(eventId);
 	}
 
 	/**

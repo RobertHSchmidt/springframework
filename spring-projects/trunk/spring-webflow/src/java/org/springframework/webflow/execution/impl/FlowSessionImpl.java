@@ -75,7 +75,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	private String stateId;
 
 	/**
-	 * The session status; may be CREATED, ACTIVE, SUSPENDED, or ENDED.
+	 * The session status; may be CREATED, STARTING, ACTIVE, PAUSED, SUSPENDED, or ENDED.
 	 */
 	private FlowSessionStatus status = FlowSessionStatus.CREATED;
 

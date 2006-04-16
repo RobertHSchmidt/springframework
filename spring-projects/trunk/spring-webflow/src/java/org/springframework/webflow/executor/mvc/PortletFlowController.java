@@ -32,6 +32,7 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
+import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
@@ -192,7 +193,7 @@ public class PortletFlowController extends AbstractController implements Initial
 
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
-		String eventId = argumentExtractor.extractEventId(context);
+		EventId eventId = argumentExtractor.extractEventId(context);
 		FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 		ResponseInstruction responseInstruction = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
 		if (responseInstruction.isApplicationView() || responseInstruction.isConversationRedirect()) {

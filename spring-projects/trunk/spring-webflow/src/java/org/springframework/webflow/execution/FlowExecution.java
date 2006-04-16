@@ -103,5 +103,5 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @throws StateException if an exception was thrown within a state of the
 	 * resumed flow execution during event processing
 	 */
-	public ViewSelection signalEvent(String eventId, ExternalContext context) throws StateException;
+	public ViewSelection signalEvent(EventId eventId, ExternalContext context) throws StateException;
 }

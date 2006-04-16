@@ -2,6 +2,8 @@ package org.springframework.webflow.executor.jsf;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.execution.EventId;
+
 public class FlowNavigationHandlerParameterExtractorTests extends TestCase {
 	private FlowNavigationHandlerArgumentExtractor extractor = new FlowNavigationHandlerArgumentExtractor();
 
@@ -19,8 +21,7 @@ public class FlowNavigationHandlerParameterExtractorTests extends TestCase {
 
 	public void testExtractEventId() {
 		JsfExternalContext context = new JsfExternalContext(new MockFacesContext(), "action", "submit");
-		String eventId = extractor.extractEventId(context);
-		assertEquals("Wrong event id", "submit", eventId);
+		EventId eventId = extractor.extractEventId(context);
+		assertEquals("Wrong event id", new EventId("submit"), eventId);
 	}
-
 }

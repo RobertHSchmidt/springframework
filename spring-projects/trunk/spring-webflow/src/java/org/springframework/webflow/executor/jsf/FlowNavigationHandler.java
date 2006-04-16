@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.jsf.DecoratingNavigationHandler;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
@@ -165,7 +166,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 		if (holder != null) {
 			// a flow execution has already been restored, signal an event in it
 			FlowExecution flowExecution = holder.getFlowExecution();
-			String eventId = argumentExtractor.extractEventId(context);
+			EventId eventId = argumentExtractor.extractEventId(context);
 			if (eventId != null) {
 				ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
 				renderView(selectedView, context);

@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
+import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 
 /**
@@ -59,7 +60,7 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured resuming the existing flow
 	 * execution.
 	 */
-	public ResponseInstruction signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
+	public ResponseInstruction signalEvent(EventId eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
 			throws FlowException;
 
 	/**

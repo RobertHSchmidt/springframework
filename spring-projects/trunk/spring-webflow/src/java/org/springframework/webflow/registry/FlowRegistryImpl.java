@@ -15,14 +15,11 @@
  */
 package org.springframework.webflow.registry;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
-import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
@@ -74,12 +71,14 @@ public class FlowRegistryImpl implements FlowRegistry {
 		return flowDefinitions.get(id) != null;
 	}
 
-	public Collection getFlows() {
-		Set flows = CollectionFactory.createLinkedSetIfPossible(flowDefinitions.size());
+	public Flow[] getFlows() {
+		Flow[] flows = new Flow[flowDefinitions.size()];
 		Iterator it = flowDefinitions.values().iterator();
+		int i = 0;
 		while (it.hasNext()) {
 			FlowHolder holder = (FlowHolder)it.next();
-			flows.add(holder.getFlow());
+			flows[i] = holder.getFlow();
+			i++;
 		}
 		return flows;
 	}

@@ -29,6 +29,7 @@ import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ParameterMap;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
@@ -191,7 +192,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param eventId the event that occured
 	 */
 	protected ViewSelection signalEvent(String eventId) {
-		return flowExecution.signalEvent(eventId, new MockExternalContext());
+		return signalEvent(eventId, new MockExternalContext());
 	}
 
 	/**
@@ -202,7 +203,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * to complete event processing
 	 */
 	protected ViewSelection signalEvent(String eventId, ParameterMap requestParameters) {
-		return flowExecution.signalEvent(eventId, new MockExternalContext(requestParameters));
+		return signalEvent(eventId, new MockExternalContext(requestParameters));
 	}
 
 	/**
@@ -247,7 +248,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * end state)
 	 */
 	protected ViewSelection signalEvent(String eventId, ExternalContext context) {
-		return flowExecution.signalEvent(eventId, context);
+		return flowExecution.signalEvent(new EventId(eventId), context);
 	}
 
 	/**

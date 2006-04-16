@@ -17,18 +17,18 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.expression.support.OgnlExpressionParser;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.action.AttributeMapperAction;
+import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
-import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.DefaultTargetStateResolver;
+import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockParameterMap;
 
@@ -58,7 +58,7 @@ public class SubflowStateTests extends TestCase {
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
-		view = (ApplicationView)flowExecution.signalEvent("submit", new MockExternalContext());
+		view = (ApplicationView)flowExecution.signalEvent(new EventId("submit"), new MockExternalContext());
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
 		assertTrue(!flowExecution.isActive());
 	}
@@ -100,7 +100,7 @@ public class SubflowStateTests extends TestCase {
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
 		assertEquals("attributeValue", flowExecution.getActiveSession().getScope().get("childInputAttribute"));
-		view = (ApplicationView)flowExecution.signalEvent("submit", new MockExternalContext());
+		view = (ApplicationView)flowExecution.signalEvent(new EventId("submit"), new MockExternalContext());
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
 		assertTrue(!flowExecution.isActive());
 		assertEquals("attributeValue", view.getModel().get("parentOutputAttribute"));

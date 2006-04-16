@@ -24,6 +24,7 @@ import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.ConversationLock;
@@ -169,8 +170,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	/**
-	 * Factory method that creates the input attribute map for a newly created {@link FlowExecution}.
-	 * TODO - add support for input mappings here
+	 * Factory method that creates the input attribute map for a newly created
+	 * {@link FlowExecution}. TODO - add support for input mappings here
 	 * @param flowExecution the new flow execution (yet to be started)
 	 * @param context the external context
 	 * @return the input map
@@ -179,7 +180,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		return null;
 	}
 
-	public ResponseInstruction signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
+	public ResponseInstruction signalEvent(EventId eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		Assert.notNull(flowExecutionKey, "The flow execution key is required");
@@ -210,8 +211,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	private void setViewSelection(FlowExecutionKey flowExecutionKey, ViewSelection selectedView,
 			FlowExecutionRepository repository) {
 		if (selectedView instanceof ConversationRedirect) {
-			repository.setViewSelection(flowExecutionKey, ((ConversationRedirect)selectedView)
-					.getApplicationView());
+			repository.setViewSelection(flowExecutionKey, ((ConversationRedirect)selectedView).getApplicationView());
 		}
 		else {
 			repository.setViewSelection(flowExecutionKey, selectedView);

@@ -26,6 +26,7 @@ import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
@@ -88,7 +89,7 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 			return null;
 		}
 
-		public ViewSelection signalEvent(String eventId, ExternalContext externalContext) throws StateException {
+		public ViewSelection signalEvent(EventId eventId, ExternalContext externalContext) throws StateException {
 			return null;
 		}
 
