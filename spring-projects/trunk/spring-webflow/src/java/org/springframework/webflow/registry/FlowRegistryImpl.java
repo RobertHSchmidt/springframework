@@ -82,7 +82,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 		}
 		return flows;
 	}
-	
+
 	public void registerFlow(FlowHolder flowHolder) {
 		Assert.notNull(flowHolder, "The flow definition holder to register is required");
 		index(flowHolder);
@@ -120,23 +120,17 @@ public class FlowRegistryImpl implements FlowRegistry {
 		}
 	}
 
-	public void refresh(String flowId) throws IllegalArgumentException {
+	public void refresh(String flowId) throws NoSuchFlowDefinitionException {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
 			// workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-			try {
-				FlowHolder holder = getFlowDefinitionHolder(flowId);
-				holder.refresh();
-				if (!holder.getId().equals(flowId)) {
-					reindex(holder, flowId);
-				}
+			FlowHolder holder = getFlowDefinitionHolder(flowId);
+			holder.refresh();
+			if (!holder.getId().equals(flowId)) {
+				reindex(holder, flowId);
 			}
-			catch (NoSuchFlowDefinitionException e) {
-				// rethrow without context for generic JMX clients
-				throw new IllegalArgumentException("Unable to complete refresh operation: "
-						+ "no flow definition with id '" + flowId + "' is stored in this registry");
-			}
+
 		}
 		finally {
 			Thread.currentThread().setContextClassLoader(loader);
@@ -162,9 +156,10 @@ public class FlowRegistryImpl implements FlowRegistry {
 	}
 
 	// implementing FlowLocator
-	
+
 	public Flow getFlow(String id) throws FlowArtifactException {
-		Assert.hasText(id, "Unable to load a flow definition: no flow id was provided.  Please provide a valid flow identifier.");
+		Assert.hasText(id,
+				"Unable to load a flow definition: no flow id was provided.  Please provide a valid flow identifier.");
 		try {
 			return getFlowDefinitionHolder(id).getFlow();
 		}
