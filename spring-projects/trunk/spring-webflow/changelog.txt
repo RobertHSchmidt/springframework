@@ -2,7 +2,7 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC1 (17.4.2006)
+Changes in version 1.0 RC1 (21.4.2006)
 ------------------------------------
 
 Package org.springframework.webflow
@@ -52,13 +52,20 @@ Package org.springframework.webflow.execution
 * Simplified the ConditionalFlowExecutionListenerLoader configuration interface.
 * Refined the FlowExecutionListener interface, improving the sessionStarting and eventSignaled method signatures.
 * Fixed a bug in ContinuationFlowExecutionRepository related to conversation scope restoration (which could cause a NPE).
-* Added an 'input' Attribute argument to the FlowExecution.start operation, for passing input into a starting 
+* Added an 'input' Attribute argument to the FlowExecution.start operation, for passing input into a starting
   flow execution in a consistent manner.
+* Introduced an EventId value object for describing an external event that has been signaled.
 
 Package org.springframework.webflow.executor
+* Added 'appendFlowInputAttributesToRequestPath' property to RequestPathFlowExecutorArgumentExtractor to control
+  if flow redirect input is appended to the URL request path or by use of named query parameters.
+* FlowExecutorArgumentExtractor now throws typed argument extraction exceptions to report illegal arguments provided by clients.
+* Changed JSF execution resume behavior to no longer require an eventId; if no eventId is provided in a request the current view will not change.
+* Fixed a situation where a NullPointerException could occur within JSF's FlowPhaseListener.
 * Misc polishing
 
 Package org.springframework.webflow.registry
+* Fixed a race condition within RefreshableFlowHolder pertaining to flow assembly.
 * Added 'builderValidating' and 'entityResolver' properties of XmlFlowRegistryFactoryBean configuration interface.
 * Misc polishing
 
