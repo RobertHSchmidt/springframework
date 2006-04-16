@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
+import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.ResponseInstruction;
@@ -97,8 +98,8 @@ public class FlowRequestHandler {
 		}
 		FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 		if (flowExecutionKey != null) {
-			ResponseInstruction response = flowExecutor.signalEvent(argumentExtractor.extractEventId(context),
-					flowExecutionKey, context);
+			EventId eventId = argumentExtractor.extractEventId(context);
+			ResponseInstruction response = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Returning [resume] " + response);
 			}
@@ -114,7 +115,8 @@ public class FlowRequestHandler {
 				return response;
 			}
 			else {
-				ResponseInstruction response = flowExecutor.launch(argumentExtractor.extractFlowId(context), context);
+				String flowId = argumentExtractor.extractFlowId(context);
+				ResponseInstruction response = flowExecutor.launch(flowId, context);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning [launch] " + response);
 				}

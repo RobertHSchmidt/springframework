@@ -239,7 +239,6 @@ public class FlowExecutorArgumentExtractor {
 	 * 
 	 * @param context the context in which the external user event occured
 	 * @return the event id
-	 * @throws IllegalArgumentException if the event id could not be obtained.
 	 */
 	public EventId extractEventId(ExternalContext context) throws IllegalArgumentException {
 		String eventId = findParameter(eventIdParameterName, context.getRequestParameterMap());
