@@ -123,20 +123,25 @@
 <!ELEMENT var EMPTY>
 
 <!--
-	This name of the variable, used as the index of the variable value set in the configured scope.
+	This name of this variable, used as the index of the variable value set in the configured scope.
+	
+	When specified without the 'class' or 'bean' attributes, this name is also used as the bean name
+	of a non-singleton bean in the configured Bean Factory to use as the initial variable value.
 -->
 <!ATTLIST var name CDATA #REQUIRED>
 
 <!--
-	This scope of the variable.
+	This scope of this variable.
 -->
 <!ATTLIST var scope (request | flow | conversation | default) "default">
 
 <!--
-	This implementation class of the variable's value.  The class may be an alias (e.g 'int') or a
+	The implementation class of the variable's value.  The class may be an alias (e.g 'int') or a
 	fully-qualified class (e.g. 'java.lang.Integer').  The class cannot be abstract or an interface.
-	Only required if the variable should be instantiated directly by callin	the default constructor
-	on its class rather than having the initial variable value returned by the Spring Bean Factory.
+	Only required if the variable should be instantiated directly by calling the default constructor
+	on its class rather than having the initial variable value returned by a Spring Bean Factory.
+	
+	Use this or the 'bean' attribute, not both.
 -->
 <!ATTLIST var class CDATA #IMPLIED>
 
