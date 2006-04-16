@@ -32,8 +32,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
-import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ConversationRedirect;
 
 /**
  * The default implementation of the central facade for <i>driving</i> the
@@ -158,10 +156,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 		if (flowExecution.isActive()) {
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);
-			setViewSelection(flowExecutionKey, selectedView, repository);
-			if (selectedView instanceof ApplicationView && alwaysRedirectOnPause) {
-				selectedView = new ConversationRedirect((ApplicationView)selectedView);
-			}
 			return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
 		}
 		else {
@@ -192,10 +186,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 			if (flowExecution.isActive()) {
 				flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
 				repository.putFlowExecution(flowExecutionKey, flowExecution);
-				setViewSelection(flowExecutionKey, selectedView, repository);
-				if (selectedView instanceof ApplicationView && alwaysRedirectOnPause) {
-					selectedView = new ConversationRedirect((ApplicationView)selectedView);
-				}
 				return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
 			}
 			else {
@@ -208,23 +198,12 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	private void setViewSelection(FlowExecutionKey flowExecutionKey, ViewSelection selectedView,
-			FlowExecutionRepository repository) {
-		if (selectedView instanceof ConversationRedirect) {
-			repository.setViewSelection(flowExecutionKey, ((ConversationRedirect)selectedView).getApplicationView());
-		}
-		else {
-			repository.setViewSelection(flowExecutionKey, selectedView);
-		}
-	}
-
 	public ResponseInstruction getCurrentResponseInstruction(Serializable conversationId, ExternalContext context)
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey flowExecutionKey = repository.getCurrentFlowExecutionKey(conversationId);
 		FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
-		ViewSelection selectedView = repository.getViewSelection(flowExecutionKey);
-		return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
+		return new ResponseInstruction(flowExecutionKey, flowExecution, ViewSelection.NULL_VIEW);
 	}
 
 	/**

@@ -22,8 +22,6 @@ import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.util.Assert;
-import org.springframework.webflow.FlowException;
-import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
@@ -121,14 +119,6 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId)
 			throws FlowExecutionRepositoryException {
 		throw new UnsupportedOperationException("Operation not supported by this implementation");
-	}
-
-	public ViewSelection getViewSelection(FlowExecutionKey flowExecutionKey) throws FlowException {
-		throw new UnsupportedOperationException("Operation not supported by this implementation");
-	}
-
-	public void setViewSelection(FlowExecutionKey flowExecutionKey, ViewSelection viewSelection) throws FlowException {
-		// nothing to do by default, subclasses may override
 	}
 
 	public void invalidateConversation(Serializable conversationId) {

@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.CannotContinueConversationException;
 import org.springframework.webflow.execution.repository.ConversationLock;
@@ -117,14 +116,6 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		return new FlowExecutionKey(conversationId, getFlowExecutionEntry(conversationId).getContinuationId());
 	}
 
-	public ViewSelection getViewSelection(FlowExecutionKey flowExecutionKey) {
-		return getFlowExecutionEntry(flowExecutionKey.getConversationId()).getViewSelection();
-	}
-
-	public void setViewSelection(FlowExecutionKey flowExecutionKey, ViewSelection viewSelection) {
-		getFlowExecutionEntry(flowExecutionKey.getConversationId()).setViewSelection(viewSelection);
-	}
-
 	public void invalidateConversation(Serializable conversationId) {
 		flowExecutionEntries.remove(conversationId);
 	}
@@ -154,11 +145,6 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		 * The flow execution representing the state of a conversation.
 		 */
 		private FlowExecution flowExecution;
-
-		/**
-		 * The last (current) view selection made by the conversation.
-		 */
-		private ViewSelection currentViewSelection = ViewSelection.NULL_VIEW;
 
 		/**
 		 * The lock for this conversation.
@@ -191,14 +177,6 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 
 		public FlowExecution getFlowExecution() {
 			return flowExecution;
-		}
-
-		public ViewSelection getViewSelection() {
-			return currentViewSelection;
-		}
-
-		public void setViewSelection(ViewSelection viewSelection) {
-			currentViewSelection = viewSelection;
 		}
 
 		protected ConversationLock createLock() {

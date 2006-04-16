@@ -151,32 +151,6 @@ public interface FlowExecutionRepository {
 			throws FlowExecutionRepositoryException;
 
 	/**
-	 * Returns the last view selection made for the flow execution with the
-	 * given key or <code>null</code> if no such view selection exists.
-	 * <p>
-	 * The returned view selection is simply a descriptor for the last response
-	 * issued by the flow execution with this key. This method facilitates
-	 * access of that descriptor for purposes of re-issuing the same response
-	 * multiple times, for example to support browser refresh.
-	 * @param key the flow execution key
-	 * @return the view selection
-	 * @throws FlowExecutionRepositoryException if an exception occured
-	 * retrieving the view selection
-	 */
-	public ViewSelection getViewSelection(FlowExecutionKey flowExecutionKey) throws FlowExecutionRepositoryException;
-
-	/**
-	 * Sets the current (or last) view selection made for the specified
-	 * flow execution.
-	 * @param conversationId the id of an existing conversation
-	 * @param viewSelection the view selection, to be set as the current
-	 * @throws FlowExecutionRepositoryException if an exception occured setting
-	 * the current view selection
-	 */
-	public void setViewSelection(FlowExecutionKey flowExecutionKey, ViewSelection viewSelection)
-			throws FlowExecutionRepositoryException;
-
-	/**
 	 * Invalidate the executing conversation with the specified id. This method
 	 * will remove all data associated with the conversation, including any
 	 * managed continuations. Any future clients that reference this

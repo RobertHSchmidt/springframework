@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.repository.CannotContinueConversationException;
@@ -160,14 +159,6 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 
 	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId) throws FlowExecutionRepositoryException {
 		return new FlowExecutionKey(conversationId, getRequiredConversation(conversationId).getCurrentContinuation().getId());
-	}
-
-	public ViewSelection getViewSelection(FlowExecutionKey flowExecutionKey) {
-		throw new UnsupportedOperationException("Operation not yet supported by this implementation");
-	}
-
-	public void setViewSelection(FlowExecutionKey flowExecutionKey, ViewSelection viewSelection) {
-		
 	}
 
 	public void invalidateConversation(Serializable conversationId) {
