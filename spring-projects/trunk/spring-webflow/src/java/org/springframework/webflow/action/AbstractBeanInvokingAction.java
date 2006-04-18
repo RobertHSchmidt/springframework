@@ -121,9 +121,6 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * Sets the scope of {@link #getResultName() result name} attribute.
 	 */
 	public void setResultScope(ScopeType resultScope) {
-		if (resultScope == null) {
-			resultScope = ScopeType.REQUEST;
-		}
 		this.resultScope = resultScope;
 	}
 
