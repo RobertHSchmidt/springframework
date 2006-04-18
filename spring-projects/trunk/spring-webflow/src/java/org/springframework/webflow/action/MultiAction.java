@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.action;
 
-import org.springframework.webflow.ActionState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker;
@@ -94,7 +93,7 @@ public class MultiAction extends AbstractAction {
 	 * the name of a specific method on a
 	 * <code>{@link org.springframework.webflow.action.MultiAction}</code>.
 	 * <p>
-	 * @see ActionState
+	 * @see org.springframework.webflow.ActionState
 	 */
 	public static final String METHOD_ATTRIBUTE = "method";
 
