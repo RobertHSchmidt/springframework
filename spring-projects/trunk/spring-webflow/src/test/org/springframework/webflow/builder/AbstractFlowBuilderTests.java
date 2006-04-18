@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
+import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
@@ -30,6 +31,8 @@ import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.action.MultiAction;
+import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * Test Java based flow builder logic (subclasses of AbstractFlowBuilder).
@@ -46,6 +49,15 @@ public class AbstractFlowBuilderTests extends TestCase {
 
 	private static String PERSON_DETAILS = "person.Detail";
 
+	private AbstractFlowBuilder builder = createBuilder();
+	
+	protected AbstractFlowBuilder createBuilder() {
+		return new AbstractFlowBuilder() {
+			public void buildStates() {
+				addEndState("finish");
+			}
+		};
+	}
 	public void testDependencyLookup() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
 		master.setFlowArtifactFactory(new DefaultFlowArtifactFactory() {
@@ -184,6 +196,19 @@ public class AbstractFlowBuilderTests extends TestCase {
 	 */
 	public static final class NoOpAction implements Action {
 		public Event execute(RequestContext context) throws Exception {
+			return new Event(this, "success");
+		}
+	}
+	
+	public void testConfigureMultiAction() throws Exception {
+		MultiAction multiAction = new MultiAction(new MultiActionTarget());
+		AnnotatedAction action = builder.invoke("foo", multiAction);
+		assertEquals("foo", action.getAttributeMap().get(MultiAction.METHOD_ATTRIBUTE));
+		assertEquals("success", action.execute(new MockRequestContext()).getId());
+	}
+	
+	public static class MultiActionTarget {
+		public Event foo(RequestContext context) {
 			return new Event(this, "success");
 		}
 	}

@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.action.MultiAction.ActionMethodResolver;
+import org.springframework.webflow.action.MultiAction.MethodResolver;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker.MethodLookupException;
@@ -60,7 +60,7 @@ public class MultiActionTests extends TestCase {
 	}
 
 	public void testCustomMethodResolver() throws Exception {
-		ActionMethodResolver methodResolver = new ActionMethodResolver() {
+		MethodResolver methodResolver = new MethodResolver() {
 			public String resolveMethod(RequestContext context) {
 				return "increment";
 			}

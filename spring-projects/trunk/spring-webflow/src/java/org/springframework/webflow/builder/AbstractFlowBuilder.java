@@ -35,6 +35,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.ActionTransitionCriteria;
 
@@ -50,22 +51,21 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
  *     public void buildStates() {
- *                      
  *         // get customer information
  *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
  *             on(success(), to(&quot;displayDetails&quot;)));
- *                              
+ *                                       
  *         // view customer information               
  *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
  *             on(submit(), to(&quot;bindAndValidate&quot;));
- *                          
+ *                                   
  *         // bind and validate customer information updates 
  *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
  *             new Transition[] {
  *                 on(error(), to(&quot;displayDetails&quot;)),
  *                 on(success(), to(&quot;finish&quot;))
- *         });
- *                              
+ *             });
+ *                                       
  *         // finish
  *         addEndState(&quot;finish&quot;);
  *     }
@@ -456,9 +456,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Request that the action with the specified id be executed when the action
-	 * state being built is entered. Simply looks the action up by name and
-	 * returns it.
+	 * Resolves the action with the specified id. Simply looks the action up by
+	 * id and returns it.
 	 * @param id the action id
 	 * @return the action
 	 * @throws FlowArtifactException the action could not be resolved
@@ -468,9 +467,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Request that the action with the specified id be executed when the action
-	 * state being built is entered. Simply looks the action up by name and
-	 * returns it.
+	 * Resolves the action using the provided parameter object to identify the
+	 * action and affect its construction or retrieval.
 	 * @param parameters parameters that may affect how the action is resolved
 	 * or constructed.
 	 * @return the action
@@ -481,12 +479,12 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Request that the method on the action with the specified id be executed
-	 * when the action state being built is entered. Simply looks the action up
-	 * by name and returns it.
-	 * @param id the action id
-	 * @param method the method signature
-	 * @return the action
+	 * Creates a bean invoking action that invokes the method identified by the
+	 * signature on the bean associated with the action identifier.
+	 * @param id the action id identifying a arbitrary
+	 * <code>java.lang.Object</code> to be used as an action
+	 * @param method the signature of the method to invoke on the POJO
+	 * @return the adapted bean invoking action
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
 	protected Action action(String id, MethodSignature method) throws FlowArtifactException {
@@ -494,12 +492,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Request that the method on the action with the specified id be executed
-	 * when the action state being built is entered. Simply looks the action up
-	 * by name and returns it.
-	 * @param id the action id
-	 * @param methodInfo the method info
-	 * @return the action
+	 * Creates a bean invoking action that invokes the method identified by the
+	 * signature on the bean associated with the action identifier.
+	 * @param id the action id identifying a arbitrary
+	 * <code>java.lang.Object</code> to be used as an action
+	 * @param methodInvoke the POJO method invocation parameters, allowing for
+	 * more customization of bean invoking action behavior.
+	 * @return the adapted bean invoking action
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
 	protected Action action(String id, BeanInvocationParameters methodInfo) throws FlowArtifactException {
@@ -508,9 +507,24 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * Convert the encoded method signature string to a {@link MethodSignature}
-	 * object.
+	 * object. Method signatures are used to match methods on POJO services to
+	 * invoke on a {@link AbstractBeanInvokingAction bean invoking action}.
+	 * <p>
+	 * Encoded Method signature format: Method without arguments:
+	 * 
+	 * <pre>
+	 *     ${methodName}
+	 * </pre>
+	 * 
+	 * Method with arguments:
+	 * 
+	 * <pre>
+	 *     ${methodName}(${arg1}, ${arg2}, ${arg n})
+	 * </pre>
+	 * 
 	 * @param method the encoded method signature
 	 * @return the method signature
+	 * 
 	 */
 	protected MethodSignature method(String method) {
 		return (MethodSignature)fromStringTo(MethodSignature.class).execute(method);
@@ -518,7 +532,11 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * Creates an annotated action decorator that instructs the specified method
-	 * be invoked on the multi action when it is executed.
+	 * be invoked on the multi action when it is executed. Use this when working
+	 * with MultiActions to specify the method on the MultiAction to invoke for
+	 * a particular usage scenario. Use the {@link #method(String)} factory
+	 * method when working with
+	 * {@link AbstractBeanInvokingAction bean invoking actions}.
 	 * @param methodName the name of the method on the multi action instance
 	 * @param multiAction the multi action
 	 * @return the annotated action that when invoked sets up a context property

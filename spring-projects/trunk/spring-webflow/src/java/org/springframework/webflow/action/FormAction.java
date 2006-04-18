@@ -94,19 +94,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *         &lt;entry-actions&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *         &lt;/entry-actions&gt;
- *         &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *         &lt;/transition&gt;
- *     &lt;/view-state&gt;
- *                               
- *     &lt;action-state id=&quot;executeSearch&quot;&gt;
- *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *     &lt;/action-state&gt;
+ *      &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *          &lt;entry-actions&gt;
+ *              &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *          &lt;/entry-actions&gt;
+ *          &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *              &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *          &lt;/transition&gt;
+ *      &lt;/view-state&gt;
+ *                                
+ *      &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *          &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *          &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *      &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -293,7 +293,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	/**
 	 * A cache for dispatched action execute methods.
 	 */
-	private DispatchMethodInvoker validateMethodInvoker = new DispatchMethodInvoker();
+	private DispatchMethodInvoker validateMethodInvoker;
 
 	/**
 	 * Determines if validation should only be invoked if the "validatorMethod"
@@ -303,8 +303,10 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	private boolean validateUsingValidatorMethod;
 
 	/**
-	 * Creates a initially unconfigured FormAction instance relying on default
-	 * property values.
+	 * Bean-style default constructor; creates a initially unconfigured
+	 * FormAction instance relying on default property values.  Clients invoking this 
+	 * constructor directly must set the {@link #formObjectClass} property.
+	 * @see #setFormObjectClass(Class)
 	 */
 	public FormAction() {
 
@@ -490,10 +492,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 				throw new IllegalArgumentException("Validator [" + getValidator()
 						+ "] does not support form object class [" + getFormObjectClass() + "]");
 			}
-			// initialize method dispatcher
-			getValidateMethodInvoker().setTarget(getValidator());
-			getValidateMethodInvoker().setParameterTypes(
-					new Class[] { getFormObjectClass() == null ? Object.class : getFormObjectClass(), Errors.class });
+			validateMethodInvoker = new DispatchMethodInvoker(validator, new Class[] { getFormObjectClass(),
+					Errors.class });
 		}
 	}
 

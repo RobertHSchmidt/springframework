@@ -22,35 +22,26 @@ import java.util.Map;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
+import org.springframework.util.ClassUtils;
 
 /**
  * Invoker and cache for dispatch methods that all share the same target object.
- * The dispatch methods typically share the same form, but multiple exist per target
- * object, and they only differ in name.
+ * The dispatch methods typically share the same form, but multiple exist per
+ * target object, and they only differ in name.
  * 
  * @author Keith Donald
  */
 public class DispatchMethodInvoker {
 
 	/**
-	 * The target object to cache methods on.
+	 * The target object to dispatch to.
 	 */
-	private Object target = this;
+	private Object target;
 
 	/**
-	 * The method parameter types describing the signature of the dispatcher methods.
+	 * The parameter types describing the dispatch method signature.
 	 */
-	private Class[] parameterTypes = new Class[0];
-
-	/**
-	 * The dispatch method return type
-	 */
-	private Class returnType;
-
-	/**
-	 * A description of the method type.
-	 */
-	private String typeCaption = "dispatcher";
+	private Class[] parameterTypes;
 
 	/**
 	 * The resolved method cache.
@@ -59,162 +50,30 @@ public class DispatchMethodInvoker {
 		public Object create(Object key) {
 			String methodName = (String)key;
 			try {
-				return getTarget().getClass().getMethod(methodName, parameterTypes);
+				return target.getClass().getMethod(methodName, parameterTypes);
 			}
 			catch (NoSuchMethodException e) {
-				throw new MethodLookupException("Unable to resolve " + getTypeCaption() + " method with name '"
-						+ methodName + "' and signature '" + getSignature(methodName)
+				throw new MethodLookupException("Unable to resolve dispatch method with name '"
+						+ methodName + "' and signature '" + getSignatureString(methodName)
 						+ "'; make sure the method name is correct "
-						+ "and such a public method is defined on targetClass " + getTarget().getClass().getName(), e);
+						+ "and such a method is defined on targetClass " + target.getClass().getName(), e);
 			}
 		}
 	};
 
 	/**
-	 * Creates a still-to-be-configured dispatch method invoker.
-	 * 
-	 * @see #setParameterTypes(Class[])
-	 * @see #setReturnType(Class)
-	 * @see #setTypeCaption(String)
-	 * @see #setTarget(Object)
-	 */
-	public DispatchMethodInvoker() {
-	}
-
-	/**
 	 * Creates a dispatch method invoker.
 	 * @param parameterTypes the parameter types defining the signature of the
-	 *        dispatch methods
-	 * @param returnType the return type of the dispatch methods, use null for void
+	 * dispatch methods
+	 * @param returnType the return type of the dispatch methods, use null for
+	 * void
 	 * @param typeCaption a description of the method type
 	 * @see #setTarget(Object)
 	 */
-	public DispatchMethodInvoker(Class[] parameterTypes, Class returnType, String typeCaption) {
-		setParameterTypes(parameterTypes);
-		setReturnType(returnType);
-		setTypeCaption(typeCaption);
-	}
-
-	/**
-	 * Creates a dispatch method invoker.
-	 * @param target the object
-	 * @param parameterTypes the parameter types defining the signature of the
-	 *        dispatch methods
-	 * @param returnType the return type of the dispatch methods, use null for void
-	 * @param typeCaption a description of the method type
-	 */
-	public DispatchMethodInvoker(Object target, Class[] parameterTypes, Class returnType, String typeCaption) {
-		setTarget(target);
-		setParameterTypes(parameterTypes);
-		setReturnType(returnType);
-		setTypeCaption(typeCaption);
-	}
-
-	/**
-	 * Set the target object holding the methods.
-	 * @param target the delegate to set
-	 */
-	public void setTarget(Object target) {
-		Assert.notNull(target, "The target object is required");
+	public DispatchMethodInvoker(Object target, Class[] parameterTypes) {
+		Assert.notNull(target, "The target of a dispatch method invocation is required");
 		this.target = target;
-		this.methodCache.clear();
-	}
-
-	/**
-	 * Set the parameter types defining the signature of the dispatch methods.
-	 */
-	public void setParameterTypes(Class[] parameterTypes) {
 		this.parameterTypes = parameterTypes;
-		this.methodCache.clear();
-	}
-
-	/**
-	 * Sets the expected return type for the dispatch methods.
-	 * @param returnType the expected return type, or null for void
-	 */
-	public void setReturnType(Class returnType) {
-		this.returnType = returnType;
-	}
-
-	/**
-	 * Set the method type description (e.g. "action").
-	 */
-	public void setTypeCaption(String typeCaption) {
-		this.typeCaption = typeCaption;
-	}
-
-	/**
-	 * Returns the target object holding the methods.
-	 * Defaults to this object.
-	 */
-	public Object getTarget() {
-		return target;
-	}
-
-	/**
-	 * Returns the parameter types describing the signature of the dispatch methods.
-	 * @return the parameter types
-	 */
-	public Class[] getParameterTypes() {
-		return parameterTypes;
-	}
-
-	/**
-	 * Convenience method that returns the parameter types describing the signature of
-	 * the dispatch method as a string.
-	 */
-	protected String getParameterTypesString() {
-		StringBuffer parameterTypesString = new StringBuffer();
-		for (int i = 0; i < parameterTypes.length; i++) {
-			parameterTypesString.append(parameterTypes[i]);
-			if (i < parameterTypes.length - 1) {
-				parameterTypesString.append(',');
-			}
-		}
-		return parameterTypesString.toString();
-	}
-	
-	/**
-	 * Returns the expected return type of the dispatch methods.
-	 * @return the expected return type, or null if void
-	 */
-	public Class getReturnType() {
-		return returnType;
-	}
-
-	/**
-	 * Convenience method that returns the return type of the dispatch methods
-	 * as a string.
-	 */
-	protected String getReturnTypeString() {
-		return (returnType != null ? returnType.getName() : "void");
-	}
-	
-	/**
-	 * Returns a optional description of the type of method resolved by this cache.
-	 * @return the method type description
-	 */
-	public String getTypeCaption() {
-		return typeCaption;
-	}
-
-	/**
-	 * Returns the signature of the dispatch methods invoked by this class.
-	 * @param methodName name of the dispatch method
-	 */
-	protected String getSignature(String methodName) {
-		return "public " + getReturnTypeString() + " " + methodName + "(" + getParameterTypesString() + ");";
-	}
-	
-	/**
-	 * Get a handle to the method of the specified name, with the signature defined by the
-	 * configured parameter types and return type.
-	 * @param methodName the method name
-	 * @return the method
-	 * @throws MethodLookupException when the method cannot be resolved
-	 */
-	public Method getDispatchMethod(String methodName) throws MethodLookupException {
-		return (Method)this.methodCache.get(methodName);
 	}
 
 	/**
@@ -228,14 +87,7 @@ public class DispatchMethodInvoker {
 	public Object invoke(String methodName, Object[] arguments) throws MethodLookupException, Exception {
 		try {
 			Method dispatchMethod = getDispatchMethod(methodName);
-			Object result = dispatchMethod.invoke(getTarget(), arguments);
-			if (result != null && returnType != null) {
-				Assert.isInstanceOf(returnType, result, "Dispatched " + getTypeCaption()
-						+ " methods must return result objects of type '" + getReturnType() + "' or null; "
-						+ "however, this method '" + dispatchMethod.getName() + "' returned an object of type "
-						+ result.getClass());
-			}
-			return result;
+			return dispatchMethod.invoke(target, arguments);
 		}
 		catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
@@ -247,12 +99,46 @@ public class DispatchMethodInvoker {
 			}
 		}
 	}
-	
+
+	/**
+	 * Get a handle to the method of the specified name, with the signature
+	 * defined by the configured parameter types and return type.
+	 * @param methodName the method name
+	 * @return the method
+	 * @throws MethodLookupException when the method cannot be resolved
+	 */
+	private Method getDispatchMethod(String methodName) throws MethodLookupException {
+		return (Method)methodCache.get(methodName);
+	}
+
+	/**
+	 * Returns the signature of the dispatch methods invoked by this class.
+	 * @param methodName name of the dispatch method
+	 */
+	private String getSignatureString(String methodName) {
+		return methodName + "(" + getParameterTypesString() + ");";
+	}
+
+	/**
+	 * Convenience method that returns the parameter types describing the
+	 * signature of the dispatch method as a string.
+	 */
+	private String getParameterTypesString() {
+		StringBuffer parameterTypesString = new StringBuffer();
+		for (int i = 0; i < parameterTypes.length; i++) {
+			parameterTypesString.append(ClassUtils.getShortName(parameterTypes[i]));
+			if (i < parameterTypes.length - 1) {
+				parameterTypesString.append(',');
+			}
+		}
+		return parameterTypesString.toString();
+	}
+
 	/**
 	 * Thrown when a method could not be resolved.
 	 */
 	public static class MethodLookupException extends NestedRuntimeException {
-		
+
 		/**
 		 * Create a new method lookup exception.
 		 * @param msg a descriptive message
