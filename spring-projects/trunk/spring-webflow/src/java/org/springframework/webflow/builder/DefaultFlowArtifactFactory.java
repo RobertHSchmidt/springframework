@@ -115,7 +115,7 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 	}
 
 	public boolean isMultiAction(String actionId) throws FlowArtifactException {
-		if (getServiceRegistry().containsBean(actionId)) {
+		if (containsService(actionId)) {
 			return MultiAction.class.isAssignableFrom(getServiceRegistry().getType(actionId));
 		}
 		else {
@@ -124,7 +124,7 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 	}
 
 	public boolean isStatefulAction(String actionId) {
-		if (getServiceRegistry().containsBean(actionId)) {
+		if (containsService(actionId)) {
 			return !getServiceRegistry().isSingleton(actionId);
 		}
 		else {
@@ -152,7 +152,11 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 		return (StateExceptionHandler)getService(id, StateExceptionHandler.class, true);
 	}
 
-	private Object getService(String id, Class artifactType, boolean enforceTypeCheck) {
+	protected boolean containsService(String id) {
+		return getServiceRegistry().containsBean(id);
+	}
+	
+	protected Object getService(String id, Class artifactType, boolean enforceTypeCheck) {
 		try {
 			if (enforceTypeCheck) {
 				return getServiceRegistry().getBean(id, artifactType);
@@ -166,7 +170,7 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 		}
 	}
 	
-	private Class getServiceType(String id, Class artifactType) {
+	protected Class getServiceType(String id, Class artifactType) {
 		try {
 			return getServiceRegistry().getType(id);
 		}
