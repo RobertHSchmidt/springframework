@@ -1061,21 +1061,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			localRegistries.push(registry);
 		}
 
-		/**
-		 * Attach a master service registry as a parent registry of the local
-		 * context, if supported by the configured flow artifact factory.
-		 * @param context the local context to attach a global service registry
-		 * to
-		 */
-		private void setFirstParent(ConfigurableApplicationContext context) {
-			try {
-				context.getBeanFactory().setParentBeanFactory(getFlowArtifactFactory().getServiceRegistry());
-			}
-			catch (UnsupportedOperationException e) {
-
-			}
-		}
-
 		public Flow getSubflow(String id) throws FlowArtifactException {
 			Flow currentFlow = getCurrentFlow();
 			// quick check for recursive subflow
@@ -1117,6 +1102,20 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return top().context;
 		}
 
+		/**
+		 * Attach a master service registry as a parent registry of the local
+		 * context, if supported by the configured flow artifact factory.
+		 * @param context the local context to attach a global service registry
+		 * to
+		 */
+		private void setFirstParent(ConfigurableApplicationContext context) {
+			try {
+				context.getBeanFactory().setParentBeanFactory(getFlowArtifactFactory().getServiceRegistry());
+			}
+			catch (UnsupportedOperationException e) {
+
+			}
+		}
 	}
 
 	/**

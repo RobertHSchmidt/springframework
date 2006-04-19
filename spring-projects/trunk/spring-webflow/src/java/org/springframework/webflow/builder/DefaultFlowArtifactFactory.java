@@ -102,7 +102,7 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 	}
 
 	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
-		Class actionType = getServiceRegistry().getType(actionParameters.getId());
+		Class actionType = getServiceType(actionParameters.getId(), Action.class);
 		if (Action.class.isAssignableFrom(actionType)) {
 			return (Action)getServiceRegistry().getBean(actionParameters.getId());
 		}
@@ -160,6 +160,15 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 			else {
 				return getServiceRegistry().getBean(id);
 			}
+		}
+		catch (BeansException e) {
+			throw new FlowArtifactException(id, artifactType, e);
+		}
+	}
+	
+	private Class getServiceType(String id, Class artifactType) {
+		try {
+			return getServiceRegistry().getType(id);
 		}
 		catch (BeansException e) {
 			throw new FlowArtifactException(id, artifactType, e);
