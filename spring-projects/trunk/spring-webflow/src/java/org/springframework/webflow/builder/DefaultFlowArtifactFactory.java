@@ -1,13 +1,12 @@
 package org.springframework.webflow.builder;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.convert.support.TextToExpression;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.method.ClassMethodKey;
-import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.TextToMethodSignature;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
@@ -23,14 +22,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.action.BeanFactoryBeanInvokingAction;
-import org.springframework.webflow.action.LocalBeanInvokingAction;
-import org.springframework.webflow.action.MementoBeanStatePersister;
-import org.springframework.webflow.action.MementoOriginator;
-import org.springframework.webflow.action.ResultEventFactory;
-import org.springframework.webflow.action.ResultObjectBasedEventFactory;
-import org.springframework.webflow.action.StatefulBeanInvokingAction;
-import org.springframework.webflow.action.SuccessEventFactory;
+import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
 
 /**
@@ -47,17 +39,23 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 	 * The parser for parsing expression strings into evaluatable expression
 	 * objects.
 	 */
-	private ExpressionParser expressionParser;
+	private ExpressionParser expressionParser = new DefaultExpressionParserFactory().getExpressionParser();
 
 	/**
 	 * A conversion service that can convert between types.
 	 */
-	private ConversionService conversionService;
+	private ConversionService conversionService = createDefaultConversionService();
 
 	/**
 	 * A resource loader that can load resources.
 	 */
-	private ResourceLoader resourceLoader;
+	private ResourceLoader resourceLoader = new DefaultResourceLoader();
+
+	/**
+	 * Determines which result event factory should be used for each bean
+	 * invoking action created by this factory.
+	 */
+	private ResultEventFactorySelector resultEventFactorySelector = new ResultEventFactorySelector();
 
 	/**
 	 * Set the expression parser responsible for parsing expression strings into
@@ -83,49 +81,89 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 		this.resourceLoader = resourceLoader;
 	}
 
+	/**
+	 * Returns the strategy for calcuating the result event factory to configure
+	 * for each bean invoking action created by this factory.
+	 */
+	public ResultEventFactorySelector getResultEventFactorySelector() {
+		return resultEventFactorySelector;
+	}
+
+	/**
+	 * Sets the strategy to calculate the result event factory to configure for
+	 * each bean invoking action created by this factory.
+	 */
+	public void setResultEventFactorySelector(ResultEventFactorySelector resultEventFactorySelector) {
+		this.resultEventFactorySelector = resultEventFactorySelector;
+	}
+
 	public Flow getSubflow(String id) throws FlowArtifactException {
 		throw new FlowArtifactException(id, Flow.class, "Subflow lookup is not supported by this artifact factory");
 	}
 
-	public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
-		throw new FlowArtifactException(parameters.getId(), Action.class, "Unable to lookup action with id '"
-				+ parameters.getId() + "'; action lookup is not supported by this artifact factory");
+	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
+		Class actionType = getServiceRegistry().getType(actionParameters.getId());
+		if (Action.class.isAssignableFrom(actionType)) {
+			return (Action)getServiceRegistry().getBean(actionParameters.getId());
+		}
+		else {
+			// adapt the bean to an Action using the construction attributes as
+			// declarative instructions
+			Assert.isInstanceOf(BeanInvokingActionParameters.class, actionParameters, "Wrong parameter object type: ");
+			return beanToAction((BeanInvokingActionParameters)actionParameters);
+		}
 	}
 
 	public boolean isMultiAction(String actionId) throws FlowArtifactException {
-		throw new FlowArtifactException(actionId, Action.class, "Unable to determine class of action with id '"
-				+ actionId + "'; action lookup is not supported by this artifact factory");
+		if (getServiceRegistry().containsBean(actionId)) {
+			return MultiAction.class.isAssignableFrom(getServiceRegistry().getType(actionId));
+		}
+		else {
+			return false;
+		}
 	}
 
-	public boolean isStatefulAction(String actionId) throws FlowArtifactException {
-		throw new FlowArtifactException(actionId, Action.class, "Unable to determine statefulness of action with id '"
-				+ actionId + "'; action lookup is not supported by this artifact factory");
+	public boolean isStatefulAction(String actionId) {
+		if (getServiceRegistry().containsBean(actionId)) {
+			return !getServiceRegistry().isSingleton(actionId);
+		}
+		else {
+			return false;
+		}
 	}
-	
+
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, FlowAttributeMapper.class, "Unable to lookup attribute mapper with id '"
-				+ id + "'; attribute mapper lookup is not supported by this artifact factory");
+		return (FlowAttributeMapper)getService(id, FlowAttributeMapper.class, true);
 	}
 
 	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, TransitionCriteria.class, "Unable to lookup transition criteria with id '"
-				+ id + "'; transition criteria lookup is not supported by this artifact factory");
+		return (TransitionCriteria)getService(id, TransitionCriteria.class, true);
 	}
 
 	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, ViewSelector.class, "Unable to lookup view selector with id '" + id
-				+ "'; view selector lookup is not supported by this artifact factory");
-	}
-
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, StateExceptionHandler.class, "Unable to lookup exception handler with id '"
-				+ id + "'; state exception handler lookup is not supported by this artifact factory");
+		return (ViewSelector)getService(id, ViewSelector.class, true);
 	}
 
 	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, TargetStateResolver.class,
-				"Unable to lookup target state resolver with id '" + id
-						+ "'; transition target state resolver lookup is not supported by this artifact factory");
+		return (TargetStateResolver)getService(id, TargetStateResolver.class, true);
+	}
+
+	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
+		return (StateExceptionHandler)getService(id, StateExceptionHandler.class, true);
+	}
+
+	private Object getService(String id, Class artifactType, boolean enforceTypeCheck) {
+		try {
+			if (enforceTypeCheck) {
+				return getServiceRegistry().getBean(id, artifactType);
+			}
+			else {
+				return getServiceRegistry().getBean(id);
+			}
+		}
+		catch (BeansException e) {
+			throw new FlowArtifactException(id, artifactType, e);
+		}
 	}
 
 	public Flow createFlow(FlowArtifactParameters parameters) throws FlowArtifactException {
@@ -150,101 +188,44 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 		return transition;
 	}
 
-	private Object newInstance(Class artifactType) {
-		return BeanUtils.instantiateClass(artifactType);
-	}
-
 	public BeanFactory getServiceRegistry() throws UnsupportedOperationException {
-		throw new UnsupportedOperationException("Service registry lookup not supported by this artifact factory");
+		throw new UnsupportedOperationException("Service registry lookup is not supported by this artifact factory");
 	}
 
 	public ResourceLoader getResourceLoader() throws UnsupportedOperationException {
-		if (resourceLoader == null) {
-			setResourceLoader(new DefaultResourceLoader());
-		}
 		return resourceLoader;
 	}
 
 	public ExpressionParser getExpressionParser() {
-		if (expressionParser == null) {
-			setExpressionParser(new DefaultExpressionParserFactory().getExpressionParser());
-		}
 		return expressionParser;
 	}
 
 	public ConversionService getConversionService() {
-		if (conversionService == null) {
-			DefaultConversionService service = new DefaultConversionService();
-			service.addConverter(new TextToTransitionCriteria(this));
-			service.addConverter(new TextToViewSelector(this));
-			service.addConverter(new TextToTransitionTargetStateResolver(this));
-			service.addConverter(new TextToExpression(getExpressionParser()));
-			service.addConverter(new TextToMethodSignature(service));
-			setConversionService(service);
-		}
 		return conversionService;
 	}
 
-	/**
-	 * Helper method to the transform the given object into an {@link Action}.
-	 * By default, if the given object implements the <code>Action</code>
-	 * interface it is returned as is, otherwise it is wrapped in an action
-	 * adapter that can invoke an arbitrary method on the object. Subclasses may
-	 * override.
-	 * @param artifact the object to be adapted as an action
-	 * @param parameters assigned action construction parameters
-	 * @return the action
-	 */
-	protected Action toAction(Object artifact, FlowArtifactParameters parameters) {
-		if (artifact instanceof Action) {
-			return (Action)artifact;
+	private ConversionService createDefaultConversionService() {
+		DefaultConversionService service = new DefaultConversionService();
+		service.addConverter(new TextToTransitionCriteria(this));
+		service.addConverter(new TextToViewSelector(this));
+		service.addConverter(new TextToTransitionTargetStateResolver(this));
+		service.addConverter(new TextToExpression(getExpressionParser()));
+		service.addConverter(new TextToMethodSignature(service));
+		return service;
+	}
+
+	private Action beanToAction(BeanInvokingActionParameters parameters) {
+		if (isStatefulAction(parameters.getId())) {
+			return parameters.createStatefulAction(getServiceRegistry(), getResultEventFactorySelector(),
+					getConversionService());
 		}
 		else {
-			// adapt the bean to an Action using the construction attributes as
-			// declarative instructions
-			Assert.isInstanceOf(BeanInvokingActionParameters.class, parameters);
-			BeanInvokingActionParameters actionParams = (BeanInvokingActionParameters)parameters;
-			if (isStatefulAction(parameters.getId())) {
-				if (artifact instanceof MementoOriginator) {
-					BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction(actionParams.getMethod(),
-							parameters.getId(), getServiceRegistry());
-					action.setBeanStatePersister(new MementoBeanStatePersister());
-					action.setResultEventFactory(getResultEventFactory(artifact, actionParams));
-					action.setConversionService(getConversionService());
-					action.setResultName(actionParams.getResultName());
-					action.setResultScope(actionParams.getResultScope());
-					return action;
-				}
-				else {
-					StatefulBeanInvokingAction action = new StatefulBeanInvokingAction(actionParams.getMethod(),
-							parameters.getId(), getServiceRegistry());
-					action.setConversionService(getConversionService());
-					action.setResultEventFactory(getResultEventFactory(artifact, actionParams));
-					action.setResultName(actionParams.getResultName());
-					action.setResultScope(actionParams.getResultScope());
-					action.setBeanScope(actionParams.getBeanScope());
-					return action;
-				}
-			}
-			else {
-				LocalBeanInvokingAction action = new LocalBeanInvokingAction(actionParams.getMethod(), artifact);
-				action.setConversionService(getConversionService());
-				action.setResultEventFactory(getResultEventFactory(artifact, actionParams));
-				action.setResultName(actionParams.getResultName());
-				action.setResultScope(actionParams.getResultScope());
-				return action;
-			}
+			return parameters.createAction(getServiceRegistry().getBean(parameters.getId()),
+					getResultEventFactorySelector(), getConversionService());
 		}
 	}
-	
-	protected ResultEventFactory getResultEventFactory(Object bean, BeanInvokingActionParameters parameters) {
-		MethodSignature method = parameters.getMethod();
-		ClassMethodKey key = new ClassMethodKey(bean.getClass(), method.getMethodName(), method.getParameters().getTypesArray());
-		ResultObjectBasedEventFactory factory = new ResultObjectBasedEventFactory();
-		if (factory.isMappedValueType(key.getMethod().getReturnType())) {
-			return factory;
-		} else {
-			return new SuccessEventFactory();
-		}
+
+	private Object newInstance(Class artifactType) {
+		return BeanUtils.instantiateClass(artifactType);
 	}
 }

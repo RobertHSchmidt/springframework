@@ -51,12 +51,6 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	private Map exceptionTargetStateResolverMapping = new HashMap();
 
 	/**
-	 * Creates a state mapping exception handler with initially no mappings.
-	 */
-	public TransitionExecutingStateExceptionHandler() {
-	}
-
-	/**
 	 * Adds an exception->state mapping to this handler.
 	 * @param exceptionClass the type of exception to map
 	 * @param targetStateId the id of the state to transition to if the

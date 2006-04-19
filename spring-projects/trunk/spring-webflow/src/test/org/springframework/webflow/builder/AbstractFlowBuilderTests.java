@@ -111,7 +111,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 			assembler.assembleFlow();
 			fail("Should have failed, artifact lookup not supported");
 		}
-		catch (FlowArtifactException e) {
+		catch (UnsupportedOperationException e) {
 			// expected
 		}
 	}

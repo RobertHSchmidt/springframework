@@ -23,7 +23,6 @@ import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ScopeType;
 
 /**
  * Base class for actions that delegate to methods on beans (plain old
@@ -31,9 +30,9 @@ import org.springframework.webflow.ScopeType;
  * to the SWF Action contract.
  * <p>
  * The method to invoke is determined by the value of the
- * {@link MultiAction#METHOD_ATTRIBUTE} action execution property, typically
- * set when provisioning this Action's use as part of an {@link AnnotatedAction}
- * or an {@link ActionState}.
+ * {@link MultiAction#METHOD_ATTRIBUTE} action execution property, typically set
+ * when provisioning this Action's use as part of an {@link AnnotatedAction} or
+ * an {@link ActionState}.
  * 
  * @author Keith Donald
  */
@@ -41,22 +40,15 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 
 	/**
 	 * The signature of the method to invoke on the target bean, capable of
-	 * resolving the method when used with a {@link MethodInvoker}.  Required.
+	 * resolving the method when used with a {@link MethodInvoker}. Required.
 	 */
 	private MethodSignature methodSignature;
 
 	/**
-	 * The name of the attribute to index the return value of the invoked bean
-	 * method. Optiona; the default is <code>null</code> which simply
-	 * results in ignoring the return value.
+	 * The specification (configuration) for how bean method returns values
+	 * should be exposed to an executing flow that invokes this action.
 	 */
-	private String resultName;
-
-	/**
-	 * The scope the attribute indexing the return value of the invoked bean
-	 * method. Default is {@link ScopeType#REQUEST).
-	 */
-	private ScopeType resultScope = ScopeType.REQUEST;
+	private ResultSpecification resultSpecification;
 
 	/**
 	 * The method invoker that performs the action-&gt;bean method binding,
@@ -95,33 +87,19 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * Returns the name of the attribute to use as an index for the return value
-	 * of the invoked bean method.
+	 * Returns the specification (configuration) for how bean method returns
+	 * values should be exposed to an executing flow that invokes this action.
 	 */
-	public String getResultName() {
-		return resultName;
+	public ResultSpecification getResultSpecification() {
+		return resultSpecification;
 	}
 
 	/**
-	 * Sets the name of the attribute to use as an index for return value of the
-	 * invoked bean method.
+	 * Sets the specification (configuration) for how bean method returns values
+	 * should be exposed to an executing flow that invokes this action.
 	 */
-	public void setResultName(String resultName) {
-		this.resultName = resultName;
-	}
-
-	/**
-	 * Returns the scope of {@link #getResultName() result name} attribute.
-	 */
-	public ScopeType getResultScope() {
-		return resultScope;
-	}
-
-	/**
-	 * Sets the scope of {@link #getResultName() result name} attribute.
-	 */
-	public void setResultScope(ScopeType resultScope) {
-		this.resultScope = resultScope;
+	public void setResultSpecification(ResultSpecification resultSpecification) {
+		this.resultSpecification = resultSpecification;
 	}
 
 	/**
@@ -170,7 +148,9 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBeanStatePersister().restoreState(getBean(context), context);
 		Object returnValue = getMethodInvoker().invoke(methodSignature, bean, context);
-		exposeMethodReturnValue(returnValue, context);
+		if (resultSpecification != null) {
+			resultSpecification.exposeResult(returnValue, context);
+		}
 		getBeanStatePersister().saveState(bean, context);
 		return getResultEventFactory().createResultEvent(bean, returnValue, context);
 	}
@@ -180,18 +160,6 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * this method.
 	 */
 	protected abstract Object getBean(RequestContext context);
-
-	/**
-	 * Exposes the return value as an attribute in a configured scope, if
-	 * necessary. Subclasses may override.
-	 * @param returnValue the return value
-	 * @param context the request context
-	 */
-	protected void exposeMethodReturnValue(Object returnValue, RequestContext context) {
-		if (resultName != null) {
-			resultScope.getScope(context).put(resultName, returnValue);
-		}
-	}
 
 	/**
 	 * State persister that doesn't take any action - default, private

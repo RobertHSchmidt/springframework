@@ -22,14 +22,14 @@ public class PojoActionXmlFlowBuilderTests extends TestCase {
 		ActionState as1 = (ActionState)flow.getRequiredState("actionState1");
 		AbstractBeanInvokingAction targetAction = (AbstractBeanInvokingAction)as1.getActionList().getAnnotated(0)
 				.getTargetAction();
-		assertEquals(ScopeType.REQUEST, targetAction.getResultScope());
+		assertEquals(ScopeType.REQUEST, targetAction.getResultSpecification().getResultScope());
 
 		ActionState as2 = (ActionState)flow.getRequiredState("actionState2");
 		targetAction = (AbstractBeanInvokingAction)as2.getActionList().getAnnotated(0).getTargetAction();
-		assertEquals(ScopeType.FLOW, targetAction.getResultScope());
+		assertEquals(ScopeType.FLOW, targetAction.getResultSpecification().getResultScope());
 
 		ActionState as3 = (ActionState)flow.getRequiredState("actionState3");
 		targetAction = (AbstractBeanInvokingAction)as3.getActionList().getAnnotated(0).getTargetAction();
-		assertEquals(ScopeType.CONVERSATION, targetAction.getResultScope());
+		assertEquals(ScopeType.CONVERSATION, targetAction.getResultSpecification().getResultScope());
 	}
 }

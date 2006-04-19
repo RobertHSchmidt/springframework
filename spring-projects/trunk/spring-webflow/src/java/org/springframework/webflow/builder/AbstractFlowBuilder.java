@@ -488,21 +488,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
 	protected Action action(String id, MethodSignature method) throws FlowArtifactException {
-		return action(id, new BeanInvocationParameters(method));
-	}
-
-	/**
-	 * Creates a bean invoking action that invokes the method identified by the
-	 * signature on the bean associated with the action identifier.
-	 * @param id the action id identifying a arbitrary
-	 * <code>java.lang.Object</code> to be used as an action
-	 * @param methodInvoke the POJO method invocation parameters, allowing for
-	 * more customization of bean invoking action behavior.
-	 * @return the adapted bean invoking action
-	 * @throws FlowArtifactException the action could not be resolved
-	 */
-	protected Action action(String id, BeanInvocationParameters methodInfo) throws FlowArtifactException {
-		return action(new BeanInvokingActionParameters(id, methodInfo, null, null));
+		return action(new BeanInvokingActionParameters(id, method, null, null, null));
 	}
 
 	/**

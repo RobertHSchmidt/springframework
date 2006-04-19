@@ -185,48 +185,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
-	/**
-	 * Handles an exception that occured performing an operation on this flow
-	 * execution. First trys the set of exception handlers associated with the
-	 * offending state, then the handlers at the flow level.
-	 * @param exception the exception that occured
-	 * @param context the state context the exception occured in
-	 * @return the selected error view
-	 * @throws StateException rethrows the exception it was not handled at the
-	 * state or flow level
-	 */
-	protected ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
-			throws StateException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Attempting to handle exception [" + exception + "]");
-		}
-		// the state could be null if the flow was attempting a start operation
-		if (exception.getState() != null) {
-			try {
-				ViewSelection selectedView = exception.getState().handleException(exception, context);
-				if (logger.isDebugEnabled()) {
-					logger.debug("State '" + exception.getState().getId() + "' handled exception");
-				}
-				return selectedView;
-			}
-			catch (StateException e) {
-			}
-		}
-		try {
-			ViewSelection selectedView = exception.getFlow().handleException(exception, context);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Flow '" + exception.getFlow().getId() + "' handled exception");
-			}
-			return selectedView;
-		}
-		catch (StateException e) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Rethrowing unhandled state exception");
-			}
-			throw exception;
-		}
-	}
-
 	public ViewSelection signalEvent(EventId eventId, ExternalContext externalContext) throws StateException {
 		assertActive();
 		if (logger.isDebugEnabled()) {
@@ -277,6 +235,59 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			}
 			else {
 				logger.debug("Paused to wait for user input");
+			}
+		}
+		return selectedView;
+	}
+
+	/**
+	 * Handles an exception that occured performing an operation on this flow
+	 * execution. First trys the set of exception handlers associated with the
+	 * offending state, then the handlers at the flow level.
+	 * @param exception the exception that occured
+	 * @param context the state context the exception occured in
+	 * @return the selected error view
+	 * @throws StateException rethrows the exception it was not handled at the
+	 * state or flow level
+	 */
+	protected ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
+			throws StateException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Attempting to handle exception [" + exception + "]");
+		}
+		// the state could be null if the flow was attempting a start operation
+		ViewSelection selectedView = tryStateHandlers(exception, context);
+		if (selectedView != null) {
+			return selectedView;
+		}
+		selectedView = tryFlowHandlers(exception, context);
+		if (selectedView != null) {
+			return selectedView;
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Rethrowing unhandled state exception");
+		}
+		throw exception;
+	}
+
+	private ViewSelection tryStateHandlers(StateException exception, FlowExecutionControlContext context) {
+		ViewSelection selectedView = null;
+		if (exception.getState() != null) {
+			selectedView = exception.getState().handleException(exception, context);
+			if (selectedView != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("State '" + exception.getState().getId() + "' handled exception");
+				}
+			}
+		}
+		return selectedView;
+	}
+
+	private ViewSelection tryFlowHandlers(StateException exception, FlowExecutionControlContext context) {
+		ViewSelection selectedView = exception.getFlow().handleException(exception, context);
+		if (selectedView != null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Flow '" + exception.getFlow().getId() + "' handled exception");
 			}
 		}
 		return selectedView;

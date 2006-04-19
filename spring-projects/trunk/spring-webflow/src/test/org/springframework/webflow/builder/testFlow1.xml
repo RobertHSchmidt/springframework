@@ -106,7 +106,7 @@
 	<global-transitions>
 		<transition on-exception="org.springframework.webflow.builder.MyCustomException" to="endState1"/>
 	</global-transitions>
-
+	
 	<import resource="testFlow1Context.xml"/>
 	
 	<inline-flow id="inline-flow">

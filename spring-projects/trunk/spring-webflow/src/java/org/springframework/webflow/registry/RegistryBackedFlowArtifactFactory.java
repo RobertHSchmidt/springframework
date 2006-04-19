@@ -15,21 +15,12 @@
  */
 package org.springframework.webflow.registry;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
-import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.StateExceptionHandler;
-import org.springframework.webflow.TargetStateResolver;
-import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.builder.DefaultFlowArtifactFactory;
 import org.springframework.webflow.builder.FlowArtifactFactory;
-import org.springframework.webflow.builder.FlowArtifactParameters;
 
 /**
  * A flow artifact factory that obtains subflow definitions from a explict
@@ -93,52 +84,6 @@ public class RegistryBackedFlowArtifactFactory extends DefaultFlowArtifactFactor
 
 	public Flow getSubflow(String id) throws FlowArtifactException {
 		return subflowRegistry.getFlow(id);
-	}
-
-	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
-		return toAction(getBean(actionParameters.getId(), Action.class, false), actionParameters);
-	}
-
-	public boolean isMultiAction(String actionId) throws FlowArtifactException {
-		if (beanFactory.containsBean(actionId)) {
-			return MultiAction.class.isAssignableFrom(beanFactory.getType(actionId));
-		} else {
-			return false;
-		}
-	}
-
-	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
-		return (FlowAttributeMapper)getBean(id, FlowAttributeMapper.class, true);
-	}
-
-	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
-		return (TransitionCriteria)getBean(id, TransitionCriteria.class, true);
-	}
-
-	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
-		return (ViewSelector)getBean(id, ViewSelector.class, true);
-	}
-
-	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
-		return (TargetStateResolver)getBean(id, TargetStateResolver.class, true);
-	}
-
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
-		return (StateExceptionHandler)getBean(id, StateExceptionHandler.class, true);
-	}
-
-	private Object getBean(String id, Class artifactType, boolean enforceTypeCheck) {
-		try {
-			if (enforceTypeCheck) {
-				return beanFactory.getBean(id, artifactType);
-			}
-			else {
-				return beanFactory.getBean(id);
-			}
-		}
-		catch (BeansException e) {
-			throw new FlowArtifactException(id, artifactType, e);
-		}
 	}
 
 	public BeanFactory getServiceRegistry() throws UnsupportedOperationException {

@@ -1,5 +1,7 @@
 package org.springframework.webflow.builder;
 
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.AttributeMap;
@@ -22,6 +24,20 @@ import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
  */
 public class TestFlowArtifactFactory extends DefaultFlowArtifactFactory {
 
+	public StaticListableBeanFactory registry = new StaticListableBeanFactory();
+	
+	public TestFlowArtifactFactory() {
+		init();
+	}
+	
+	public void init() {
+		registry.addBean("action1", new TestAction());
+		registry.addBean("action2", new TestAction());
+		registry.addBean("multiAction", new TestMultiAction());
+		registry.addBean("pojoAction", new TestPojo());
+		registry.addBean("attributeMapper1", new TestAttributeMapper());
+	}
+	
 	public Flow getSubflow(String id) throws FlowArtifactException {
 		if ("subFlow1".equals(id) || "subFlow2".equals(id)) {
 			Flow flow = new Flow(id);
@@ -31,43 +47,6 @@ public class TestFlowArtifactFactory extends DefaultFlowArtifactFactory {
 		throw new NoSuchFlowDefinitionException(id, new String[] {"subFlow1", "subFlow2" });
 	}
 
-	public Action getAction(FlowArtifactParameters actionParameters) throws FlowArtifactException {
-		String id = actionParameters.getId();
-		if ("action1".equals(id) || "action2".equals(id)) {
-			return new TestAction();
-		}
-		if ("multiAction".equals(id)) {
-			return new TestMultiAction();
-		}
-		if ("pojoAction".equals(id)) {
-			BeanInvokingActionParameters params = (BeanInvokingActionParameters)actionParameters;
-			return toAction(new TestPojo(), params);
-		}
-		throw new FlowArtifactException(id, Action.class);
-	}
-
-	public boolean isMultiAction(String actionId) throws FlowArtifactException {
-		return "multiAction".equals(actionId);
-	}
-
-	public boolean isStatefulAction(String actionId) throws FlowArtifactException {
-		return false;
-	}
-
-	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
-		if ("attributeMapper1".equals(id)) {
-			return new FlowAttributeMapper() {
-				public AttributeMap createSubflowInput(RequestContext context) {
-					return new AttributeMap();
-				}
-
-				public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
-				}
-			};
-		}
-		throw new FlowArtifactException(id, FlowAttributeMapper.class);
-	}
-	
 	public class TestAction implements Action {
 		public Event execute(RequestContext context) throws Exception {
 			if (context.getFlowExecutionContext().getFlow().getAttributeMap().contains("scenario2")) {
@@ -101,4 +80,9 @@ public class TestFlowArtifactFactory extends DefaultFlowArtifactFactory {
 		public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
 		}
 	}
+
+	public BeanFactory getServiceRegistry() throws UnsupportedOperationException {
+		return registry;
+	}
+	
 }
