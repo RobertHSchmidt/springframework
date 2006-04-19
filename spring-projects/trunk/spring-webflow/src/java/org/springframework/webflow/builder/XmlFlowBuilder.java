@@ -67,7 +67,6 @@ import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.TransitionableState;
-import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.MultiAction;
@@ -91,8 +90,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *        &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *        &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
