@@ -34,7 +34,7 @@ import org.springframework.webflow.ViewSelection;
  * {@link org.springframework.webflow.executor.FlowExecutor}. This manager then
  * creates an instance of an object implementing this interface, initializing it
  * with the requested Flow definition which becomes the execution's "root", or
- * top-level flow. After creation, the {@link #start(ExternalContext)} operation
+ * top-level flow. After creation, the {@link #start(AttributeMap, ExternalContext)} operation
  * is called, which causes the execution to activate a new session for its root
  * flow definition. That session is then pushed onto a stack and its definition
  * becomes the <i>active flow</i>. A local, internal
@@ -54,7 +54,7 @@ import org.springframework.webflow.ViewSelection;
  * <p>
  * Subsequent requests from the client to manipuate this flow execution trigger
  * restoration and rehydration of this object, followed by an invocation of the
- * {@link #signalEvent(String, ExternalContext)} operation. The signalEvent
+ * {@link #signalEvent(EventId, ExternalContext)} operation. The signalEvent
  * operation tells this state machine what action the user took from within the
  * context of the current state; for example, the user may have pressed pressed
  * the "submit" button, or pressed "cancel". After the user event is processed,
