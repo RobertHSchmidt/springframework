@@ -17,7 +17,6 @@ package org.springframework.webflow.execution.repository;
 
 import java.io.Serializable;
 
-import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
