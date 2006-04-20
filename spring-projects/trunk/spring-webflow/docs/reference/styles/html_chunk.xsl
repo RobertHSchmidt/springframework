@@ -90,9 +90,6 @@
 			<a style="border:none;background: url();" href="http://www.springframework.org/" title="The Spring Framework">
 				<img style="border:none;" src="images/xdev-spring_logo.jpg"/>
 			</a>
-			<a style="border:none;background: url();" href="http://www.interface21.com/" title="Interface21 - Spring from the Source">
-				<img style="border:none;position:absolute;padding-top:7px;right:32px;" src="images/i21-banner-stamped.jpg"/>
-			</a>
 		</div>
 	</xsl:template> 
 	
