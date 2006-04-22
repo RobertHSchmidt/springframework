@@ -304,17 +304,17 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Adds a decision state to the flow built by this builder.
 	 * @param stateId the state identifier
-	 * @param ifCriteria the criteria that defines the decision
+	 * @param decisionCriteria the criteria that defines the decision
 	 * @param trueStateResolver the resolver that will resolve the transition
 	 * target state on a "true" decision
 	 * @param falseStateResolver the resolver that will resolve the transition
 	 * target state on a "false" decision
 	 * @return the fully constructed decision state instance
 	 */
-	protected State addDecisionState(String stateId, TransitionCriteria ifCriteria,
+	protected State addDecisionState(String stateId, TransitionCriteria decisionCriteria,
 			TargetStateResolver trueStateResolver, TargetStateResolver falseStateResolver) {
 		Transition thenTransition = getFlowArtifactFactory()
-				.createTransition(ifCriteria, null, trueStateResolver, null);
+				.createTransition(decisionCriteria, null, trueStateResolver, null);
 		Transition elseTransition = getFlowArtifactFactory().createTransition(null, null, falseStateResolver, null);
 		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), null,
 				new Transition[] { thenTransition, elseTransition }, null, null, null);
