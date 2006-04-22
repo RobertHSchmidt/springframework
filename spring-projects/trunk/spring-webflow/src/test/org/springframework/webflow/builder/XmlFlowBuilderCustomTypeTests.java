@@ -49,7 +49,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 				XmlFlowBuilderCustomTypeTests.class), new CustomFlowArtifactFactory());
 		FlowAssembler assembler = new FlowAssembler("testFlow3", builder);
 		assembler.assembleFlow();
-		flow = builder.getResult();
+		flow = builder.getFlow();
 	}
 
 	public void testBuildResult() {
@@ -81,10 +81,10 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 			return null;
 		}
 	}
-	
+
 	public static class CustomFlowArtifactFactory extends DefaultFlowArtifactFactory {
 
-		public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
+		public Action getAction(String id) throws FlowArtifactException {
 			return new CustomAction();
 		}
 
@@ -95,7 +95,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
 			return new CustomExceptionHandler();
 		}
-		
+
 	}
 
 }

@@ -17,11 +17,10 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.DefaultTargetStateResolver;
+import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -34,8 +33,8 @@ public class ActionStateTests extends TestCase {
 	public void testActionStateSingleAction() {
 		Flow flow = new Flow("myFlow");
 		ActionState state = new ActionState(flow, "actionState");
-		state.addAction(new TestAction());
-		state.addTransition(new Transition(on("success"), to("finish")));
+		state.getActionList().add(new TestAction());
+		state.getTransitionSet().add(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		flowExecution.start(null, new MockExternalContext());
@@ -45,11 +44,11 @@ public class ActionStateTests extends TestCase {
 	public void testActionAttributesChain() {
 		Flow flow = new Flow("myFlow");
 		ActionState state = new ActionState(flow, "actionState");
-		state.addAction(new TestAction("not mapped result"));
-		state.addAction(new TestAction(null));
-		state.addAction(new TestAction(""));
-		state.addAction(new TestAction("success"));
-		state.addTransition(new Transition(on("success"), to("finish")));
+		state.getActionList().add(new TestAction("not mapped result"));
+		state.getActionList().add(new TestAction(null));
+		state.getActionList().add(new TestAction(""));
+		state.getActionList().add(new TestAction("success"));
+		state.getTransitionSet().add(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		flowExecution.start(null, new MockExternalContext());
@@ -63,11 +62,11 @@ public class ActionStateTests extends TestCase {
 	public void testActionAttributesChainNoMatchingTransition() {
 		Flow flow = new Flow("myFlow");
 		ActionState state = new ActionState(flow, "actionState");
-		state.addAction(new TestAction("not mapped result"));
-		state.addAction(new TestAction(null));
-		state.addAction(new TestAction(""));
-		state.addAction(new TestAction("yet another not mapped result"));
-		state.addTransition(new Transition(on("success"), to("finish")));
+		state.getActionList().add(new TestAction("not mapped result"));
+		state.getActionList().add(new TestAction(null));
+		state.getActionList().add(new TestAction(""));
+		state.getActionList().add(new TestAction("yet another not mapped result"));
+		state.getTransitionSet().add(new Transition(on("success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		try {
@@ -82,15 +81,15 @@ public class ActionStateTests extends TestCase {
 	public void testActionAttributesChainNamedActions() {
 		Flow flow = new Flow("myFlow");
 		ActionState state = new ActionState(flow, "actionState");
-		state.addAction(new AnnotatedAction(new TestAction("not mapped result")));
-		state.addAction(new AnnotatedAction(new TestAction(null)));
+		state.getActionList().add(new AnnotatedAction(new TestAction("not mapped result")));
+		state.getActionList().add(new AnnotatedAction(new TestAction(null)));
 		AnnotatedAction action3 = new AnnotatedAction(new TestAction(""));
 		action3.setName("action3");
-		state.addAction(action3);
+		state.getActionList().add(action3);
 		AnnotatedAction action4 = new AnnotatedAction(new TestAction("success"));
 		action4.setName("action4");
-		state.addAction(action4);
-		state.addTransition(new Transition(on("action4.success"), to("finish")));
+		state.getActionList().add(action4);
+		state.getTransitionSet().add(new Transition(on("action4.success"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		flowExecution.start(null, new MockExternalContext());

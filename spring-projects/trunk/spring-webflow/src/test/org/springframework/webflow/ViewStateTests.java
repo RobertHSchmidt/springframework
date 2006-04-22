@@ -22,8 +22,8 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
-import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.DefaultTargetStateResolver;
+import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -37,7 +37,7 @@ public class ViewStateTests extends TestCase {
 		Flow flow = new Flow("myFlow");
 		ViewState state = new ViewState(flow, "viewState");
 		state.setViewSelector(view("myViewName"));
-		state.addTransition(new Transition(on("submit"), to("finish")));
+		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ApplicationView view = (ApplicationView)flowExecution.start(null, new MockExternalContext());
@@ -49,7 +49,7 @@ public class ViewStateTests extends TestCase {
 	public void testViewStateMarker() {
 		Flow flow = new Flow("myFlow");
 		ViewState state = new ViewState(flow, "viewState");
-		state.addTransition(new Transition(on("submit"), to("finish")));
+		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ViewSelection view = flowExecution.start(null, new MockExternalContext());

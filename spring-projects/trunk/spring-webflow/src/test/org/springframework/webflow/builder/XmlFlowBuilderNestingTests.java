@@ -58,7 +58,7 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 		builder
 				.setFlowArtifactFactory(new RegistryBackedFlowArtifactFactory(new FlowRegistryImpl(), parentBeanFactory));
 		new FlowAssembler("testFlow2", builder).assembleFlow();
-		this.flow = builder.getResult();
+		this.flow = builder.getFlow();
 		this.testService = (TestService)parentContext.getBean("testService");
 	}
 

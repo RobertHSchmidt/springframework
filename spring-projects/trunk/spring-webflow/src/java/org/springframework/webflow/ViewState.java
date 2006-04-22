@@ -45,14 +45,6 @@ public class ViewState extends TransitionableState {
 	private ViewSelector viewSelector = NullViewSelector.INSTANCE;
 
 	/**
-	 * Default constructor for bean style usage.
-	 * @see TransitionableState#TransitionableState()
-	 * @see #setViewSelector(ViewSelector)
-	 */
-	public ViewState() {
-	}
-
-	/**
 	 * Create a new view state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)

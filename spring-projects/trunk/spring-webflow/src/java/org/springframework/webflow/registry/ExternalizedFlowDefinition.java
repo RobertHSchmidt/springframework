@@ -17,14 +17,25 @@ package org.springframework.webflow.registry;
 
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.AttributeCollection;
-import org.springframework.webflow.builder.FlowArtifactParameters;
+import org.springframework.webflow.CollectionUtils;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 
 /**
  * A descriptor for a Flow to be assembled from a externalized resource.
  * Describes exactly one externalized flow definition resource.
  * @author Keith Donald
  */
-public class ExternalizedFlowDefinition extends FlowArtifactParameters {
+public class ExternalizedFlowDefinition {
+
+	/**
+	 * The identifier to assign to the flow.
+	 */
+	private String id;
+
+	/**
+	 * Attributes that can be used to affect flow construction.
+	 */
+	private UnmodifiableAttributeMap attributes;
 
 	/**
 	 * The externalized flow resource location.
@@ -37,7 +48,7 @@ public class ExternalizedFlowDefinition extends FlowArtifactParameters {
 	 * @param location the flow resource location.
 	 */
 	public ExternalizedFlowDefinition(Resource location) {
-		super(location.getFilename());
+		this(location.getFilename(), location);
 		this.location = location;
 	}
 
@@ -47,8 +58,7 @@ public class ExternalizedFlowDefinition extends FlowArtifactParameters {
 	 * @param location the flow resource location.
 	 */
 	public ExternalizedFlowDefinition(String id, Resource location) {
-		super(id);
-		this.location = location;
+		this(id, location, null);
 	}
 
 	/**
@@ -57,8 +67,21 @@ public class ExternalizedFlowDefinition extends FlowArtifactParameters {
 	 * @param location the flow resource location.
 	 */
 	public ExternalizedFlowDefinition(String id, Resource location, AttributeCollection attributes) {
-		super(id, attributes);
+		this.id = id;
 		this.location = location;
+		if (attributes != null) {
+			this.attributes = attributes.unmodifiable();
+		}
+		else {
+			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
+		}
+	}
+
+	/**
+	 * Returns the identifier to assign to the flow definition.
+	 */
+	public String getId() {
+		return id;
 	}
 
 	/**
@@ -66,5 +89,12 @@ public class ExternalizedFlowDefinition extends FlowArtifactParameters {
 	 */
 	public Resource getLocation() {
 		return location;
+	}
+
+	/**
+	 * Returns arbitrary flow definition attributes.
+	 */
+	public UnmodifiableAttributeMap getAttributes() {
+		return attributes;
 	}
 }

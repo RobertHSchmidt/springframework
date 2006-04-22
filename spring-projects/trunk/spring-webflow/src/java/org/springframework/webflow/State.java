@@ -76,16 +76,6 @@ public abstract class State extends AnnotatedObject {
 	private StateExceptionHandlerSet exceptionHandlerSet = new StateExceptionHandlerSet();
 
 	/**
-	 * Default constructor for bean style usage
-	 * @see #setFlow(Flow)
-	 * @see #setId(String)
-	 * @see #addEntryAction(Action)
-	 * @see #addExceptionHandler(StateExceptionHandler)
-	 */
-	protected State() {
-	}
-
-	/**
 	 * Creates a state for the provided <code>flow</code> identified by the
 	 * provided <code>id</code>. The id must be locally unique to the owning
 	 * flow. The flow state will be automatically added to the flow.
@@ -113,7 +103,7 @@ public abstract class State extends AnnotatedObject {
 	 * @throws IllegalArgumentException if this state cannot be added to the
 	 * flow
 	 */
-	public void setFlow(Flow flow) throws IllegalArgumentException {
+	private void setFlow(Flow flow) throws IllegalArgumentException {
 		Assert.hasText(getId(), "The id of the state should be set before adding the state to a flow");
 		Assert.notNull(flow, "The owning flow is required");
 		flow.add(this);
@@ -132,19 +122,10 @@ public abstract class State extends AnnotatedObject {
 	 * Set the state identifier, unique to the owning flow.
 	 * @param id the state identifier
 	 */
-	public void setId(String id) {
+	private void setId(String id) {
 		Assert.hasText(id, "This state must have a valid identifier");
 		Assert.isTrue(getFlow() == null, "You cannot change the id of a state which has already been added to a flow");
 		this.id = id;
-	}
-
-	/**
-	 * Convenience method to add a single action to this state's entry action
-	 * list. Entry actions are executed when this state is entered.
-	 * @param action the action to add
-	 */
-	public void addEntryAction(Action action) {
-		getEntryActionList().add(action);
 	}
 
 	/**
@@ -153,19 +134,6 @@ public abstract class State extends AnnotatedObject {
 	 */
 	public ActionList getEntryActionList() {
 		return entryActionList;
-	}
-
-	/**
-	 * Adds a exception handler to this state.
-	 * <p>
-	 * State exception handlers are invoked when an unhandled
-	 * {@link StateException} exception occurs while this state is entered. They
-	 * can execute custom exception handling logic as well as select an error
-	 * view to display.
-	 * @param handler the exception handler
-	 */
-	public void addExceptionHandler(StateExceptionHandler handler) {
-		exceptionHandlerSet.add(handler);
 	}
 
 	/**

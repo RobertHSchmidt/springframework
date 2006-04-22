@@ -10,20 +10,17 @@ public class FlowExecutionListenerCriteriaFactoryTests extends TestCase {
 
 	public void testAllFlows() {
 		FlowExecutionListenerCriteria c = factory.allFlows();
-		assertEquals(true, c.appliesTo(new Flow()));
 		assertEquals(true, c.appliesTo(new Flow("foo")));
 	}
 
 	public void testFlowMatch() {
 		FlowExecutionListenerCriteria c = factory.flow("foo");
-		assertEquals(false, c.appliesTo(new Flow()));
 		assertEquals(true, c.appliesTo(new Flow("foo")));
 		assertEquals(false, c.appliesTo(new Flow("baz")));
 	}
 
 	public void testMultipleFlowMatch() {
 		FlowExecutionListenerCriteria c = factory.flows(new String[] { "foo", "bar" });
-		assertEquals(false, c.appliesTo(new Flow()));
 		assertEquals(true, c.appliesTo(new Flow("foo")));
 		assertEquals(true, c.appliesTo(new Flow("bar")));
 		assertEquals(false, c.appliesTo(new Flow("baz")));

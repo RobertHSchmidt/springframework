@@ -171,13 +171,6 @@ public class Flow extends AnnotatedObject {
 	private Set inlineFlows = CollectionFactory.createLinkedSetIfPossible(3);
 
 	/**
-	 * Default constructor for bean style usage.
-	 * @see #setId(String)
-	 */
-	public Flow() {
-	}
-
-	/**
 	 * Construct a new flow definition with the given id. The id should be
 	 * unique among all flows.
 	 * @param id the flow identifier

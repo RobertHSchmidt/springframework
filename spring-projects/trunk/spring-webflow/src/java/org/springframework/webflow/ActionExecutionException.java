@@ -123,7 +123,7 @@ public class ActionExecutionException extends StateException {
 	 * Returns the properties (attributes) associated with the action during
 	 * execution.
 	 */
-	public UnmodifiableAttributeMap getExecutionProperties() {
+	public UnmodifiableAttributeMap getExecutionAttributes() {
 		return executionProperties;
 	}
 }

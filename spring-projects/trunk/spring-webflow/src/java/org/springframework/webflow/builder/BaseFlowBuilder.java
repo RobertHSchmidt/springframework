@@ -15,11 +15,10 @@
  */
 package org.springframework.webflow.builder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.util.Assert;
+import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.Flow;
 
 /**
@@ -37,11 +36,6 @@ import org.springframework.webflow.Flow;
  * @author Erwin Vervaet
  */
 public abstract class BaseFlowBuilder implements FlowBuilder {
-
-	/**
-	 * A logger instance that can be used in subclasses.
-	 */
-	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * The <code>Flow</code> built by this builder.
@@ -70,30 +64,73 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	}
 
 	/**
-	 * Returns the artifact locator.
+	 * Returns the flow artifact factory.
 	 */
 	public FlowArtifactFactory getFlowArtifactFactory() {
 		return flowArtifactFactory;
 	}
 
 	/**
-	 * Returns the artifact locator
-	 * @throws IllegalStateException if the artifact locator is not set
-	 */
-	protected FlowArtifactFactory getRequiredFlowArtifactFactory() {
-		if (flowArtifactFactory == null) {
-			throw new IllegalStateException("The 'flowArtifactFactory' property must be set before you can use it to "
-					+ "load actions, attribute mappers, subflows, and other Flow artifacts needed by this builder");
-		}
-		return getFlowArtifactFactory();
-	}
-
-	/**
-	 * Sets the artifact locator.
+	 * Sets the flow artifact factory.
 	 */
 	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
 		Assert.notNull(flowArtifactFactory, "The flow artifact factory is required");
 		this.flowArtifactFactory = flowArtifactFactory;
+	}
+
+	/**
+	 * Set the flow being built by this builder. Typically called during
+	 * initialization to set the initial flow reference returned by
+	 * {@link #getFlow()} after building.
+	 */
+	protected void setFlow(Flow flow) {
+		this.flow = flow;
+	}
+
+	public abstract void init(String id, AttributeCollection attributes) throws FlowBuilderException;
+
+	public void buildVariables() throws FlowBuilderException {
+
+	}
+
+	public void buildStartActions() throws FlowBuilderException {
+
+	}
+
+	public void buildInputMapper() throws FlowBuilderException {
+
+	}
+
+	public void buildInlineFlows() throws FlowBuilderException {
+
+	}
+
+	public abstract void buildStates() throws FlowBuilderException;
+
+	public void buildExceptionHandlers() throws FlowBuilderException {
+
+	}
+
+	public void buildGlobalTransitions() throws FlowBuilderException {
+
+	}
+
+	public void buildEndActions() throws FlowBuilderException {
+
+	}
+
+	public void buildOutputMapper() throws FlowBuilderException {
+
+	}
+
+	public void dispose() {
+	}
+
+	/**
+	 * Get the flow (result) built by this builder.
+	 */
+	public Flow getFlow() {
+		return flow;
 	}
 
 	/**
@@ -103,7 +140,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * @return the conversion executor, or <code>null</code> if no suitable
 	 * converter exists for given alias
 	 */
-	protected ConversionExecutor fromStringToAliased(String targetAlias) {
+	protected ConversionExecutor fromStringTo(String targetAlias) {
 		return getFlowArtifactFactory().getConversionService().getConversionExecutorByTargetAlias(String.class,
 				targetAlias);
 	}
@@ -117,31 +154,5 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 */
 	protected ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
 		return getFlowArtifactFactory().getConversionService().getConversionExecutor(String.class, targetType);
-	}
-
-	/**
-	 * Get the flow (result) built by this builder.
-	 */
-	protected Flow getFlow() {
-		return flow;
-	}
-
-	/**
-	 * Set the flow being built by this builder.
-	 */
-	protected void setFlow(Flow flow) {
-		this.flow = flow;
-	}
-
-	public void buildPostProcess() {
-		// nothing by default
-	}
-
-	public void dispose() {
-		// nothing by default
-	}
-
-	public Flow getResult() {
-		return getFlow();
 	}
 }

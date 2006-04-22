@@ -27,7 +27,7 @@ public class ConditionalFlowExecutionListenerLoaderTests extends TestCase {
 		loader.removeListener(l1);
 		assertFalse(loader.containsListener(l1));
 		loader.removeListener(l2);
-		assertEquals(0, loader.getListeners(new Flow()).length);
+		assertEquals(0, loader.getListeners(new Flow("flow")).length);
 	}
 
 	public void testAddListenerWithCriteria() {

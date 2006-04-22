@@ -37,6 +37,7 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
+import org.springframework.webflow.action.ResultSpecification;
 import org.springframework.webflow.support.ActionTransitionCriteria;
 
 /**
@@ -50,25 +51,25 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- *     public void buildStates() {
- *         // get customer information
- *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
- *             on(success(), to(&quot;displayDetails&quot;)));
- *                                       
- *         // view customer information               
- *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *             on(submit(), to(&quot;bindAndValidate&quot;));
- *                                   
- *         // bind and validate customer information updates 
- *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
- *             new Transition[] {
- *                 on(error(), to(&quot;displayDetails&quot;)),
- *                 on(success(), to(&quot;finish&quot;))
- *             });
- *                                       
- *         // finish
- *         addEndState(&quot;finish&quot;);
- *     }
+ * 	public void buildStates() {
+ *          // get customer information
+ *          addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
+ *              on(success(), to(&quot;displayDetails&quot;)));
+ *                                        
+ *          // view customer information               
+ *          addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *              on(submit(), to(&quot;bindAndValidate&quot;));
+ *                                    
+ *          // bind and validate customer information updates 
+ *          addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
+ *              new Transition[] {
+ *                  on(error(), to(&quot;displayDetails&quot;)),
+ *                  on(success(), to(&quot;finish&quot;))
+ *              });
+ *                                        
+ *          // finish
+ *          addEndState(&quot;finish&quot;);
+ *      }
  * }
  * </pre>
  * 
@@ -162,8 +163,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		super(flowArtifactFactory);
 	}
 
-	public void init(FlowArtifactParameters flowParameters) throws FlowBuilderException {
-		setFlow(getFlowArtifactFactory().createFlow(flowParameters.putAll(flowAttributes())));
+	public void init(String flowId, AttributeCollection attributes) throws FlowBuilderException {
+		setFlow(getFlowArtifactFactory().createFlow(flowId, attributes));
 	}
 
 	protected MappingBuilder mapping() {
@@ -463,19 +464,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
 	protected Action action(String id) throws FlowArtifactException {
-		return action(new FlowArtifactParameters(id));
-	}
-
-	/**
-	 * Resolves the action using the provided parameter object to identify the
-	 * action and affect its construction or retrieval.
-	 * @param parameters parameters that may affect how the action is resolved
-	 * or constructed.
-	 * @return the action
-	 * @throws FlowArtifactException the action could not be resolved
-	 */
-	protected Action action(FlowArtifactParameters parameters) throws FlowArtifactException {
-		return getFlowArtifactFactory().getAction(parameters);
+		return getFlowArtifactFactory().getAction(id);
 	}
 
 	/**
@@ -487,8 +476,22 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the adapted bean invoking action
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
-	protected Action action(String id, MethodSignature method) throws FlowArtifactException {
-		return action(new BeanInvokingActionParameters(id, method, null, null, null));
+	protected Action action(String id, MethodSignature methodSignature) throws FlowArtifactException {
+		return getFlowArtifactFactory().createBeanInvokingAction(id, methodSignature, null, null);
+	}
+
+	/**
+	 * Creates a bean invoking action that invokes the method identified by the
+	 * signature on the bean associated with the action identifier.
+	 * @param id the action id identifying a arbitrary
+	 * <code>java.lang.Object</code> to be used as an action
+	 * @param method the signature of the method to invoke on the POJO
+	 * @return the adapted bean invoking action
+	 * @throws FlowArtifactException the action could not be resolved
+	 */
+	protected Action action(String id, MethodSignature methodSignature, ResultSpecification resultSpecification)
+			throws FlowArtifactException {
+		return getFlowArtifactFactory().createBeanInvokingAction(id, methodSignature, resultSpecification, null);
 	}
 
 	/**
@@ -499,13 +502,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Encoded Method signature format: Method without arguments:
 	 * 
 	 * <pre>
-	 *     ${methodName}
+	 *      ${methodName}
 	 * </pre>
 	 * 
 	 * Method with arguments:
 	 * 
 	 * <pre>
-	 *     ${methodName}(${arg1}, ${arg2}, ${arg n})
+	 *      ${methodName}(${arg1}, ${arg2}, ${arg n})
 	 * </pre>
 	 * 
 	 * @param method the encoded method signature
@@ -823,7 +826,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 			AttributeCollection attributes) throws IllegalArgumentException {
 		EndState state = new EndState(getFlow(), stateId);
 		state.setViewSelector(viewSelector);
-		state.addOutputAttributeNames(outputAttributeNames);
 		state.getAttributeMap().putAll(attributes);
 		return state;
 	}

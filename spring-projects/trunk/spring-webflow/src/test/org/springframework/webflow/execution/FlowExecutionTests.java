@@ -36,7 +36,6 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
-import org.springframework.webflow.builder.FlowArtifactParameters;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.builder.TestFlowArtifactFactory;
@@ -65,21 +64,21 @@ public class FlowExecutionTests extends TestCase {
 		inputMapper.addMapping(mapping.source("name").target("flowScope.name").value());
 		flow.setInputMapper(inputMapper);
 		ActionState actionState = new ActionState(flow, "actionState");
-		actionState.addAction(new TestAction());
-		actionState.addTransition(new Transition(on("success"), to("viewState")));
+		actionState.getActionList().add(new TestAction());
+		actionState.getTransitionSet().add(new Transition(on("success"), to("viewState")));
 
 		ViewState viewState = new ViewState(flow, "viewState");
 		viewState.setViewSelector(view("myView"));
-		viewState.addTransition(new Transition(on("submit"), to("subFlowState")));
+		viewState.getTransitionSet().add(new Transition(on("submit"), to("subFlowState")));
 
 		Flow subFlow = new Flow("mySubFlow");
 		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
 		state1.setViewSelector(view("mySubFlowViewName"));
-		state1.addTransition(new Transition(on("submit"), to("finish")));
+		state1.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		new EndState(subFlow, "finish");
 
 		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
-		subflowState.addTransition(new Transition(on("finish"), to("finish")));
+		subflowState.getTransitionSet().add(new Transition(on("finish"), to("finish")));
 
 		new EndState(flow, "finish");
 
@@ -118,7 +117,7 @@ public class FlowExecutionTests extends TestCase {
 			}
 		};
 		new FlowAssembler("flow", builder).assembleFlow();
-		Flow flow = builder.getResult();
+		Flow flow = builder.getFlow();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ApplicationView view = (ApplicationView)flowExecution.start(null, new MockExternalContext());
 		assertNotNull(view);
@@ -153,7 +152,7 @@ public class FlowExecutionTests extends TestCase {
 			}
 		};
 		new FlowAssembler("flow", childBuilder).assembleFlow();
-		final Flow childFlow = childBuilder.getResult();
+		final Flow childFlow = childBuilder.getFlow();
 		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder() {
 			public void buildStates() throws FlowBuilderException {
 				addActionState("doStuff", new AbstractAction() {
@@ -167,7 +166,7 @@ public class FlowExecutionTests extends TestCase {
 			}
 		};
 		new FlowAssembler("parentFlow", parentBuilder).assembleFlow();
-		Flow parentFlow = parentBuilder.getResult();
+		Flow parentFlow = parentBuilder.getFlow();
 
 		FlowExecution flowExecution = new FlowExecutionImpl(parentFlow);
 		flowExecution.start(null, new MockExternalContext());
@@ -179,7 +178,7 @@ public class FlowExecutionTests extends TestCase {
 				new TestFlowArtifactFactory());
 		FlowAssembler assembler = new FlowAssembler("testFlow1", builder);
 		assembler.assembleFlow();
-		FlowExecution execution = new FlowExecutionImpl(builder.getResult());
+		FlowExecution execution = new FlowExecutionImpl(builder.getFlow());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		assertEquals("viewState1", execution.getActiveSession().getState().getId());
@@ -193,9 +192,9 @@ public class FlowExecutionTests extends TestCase {
 				new TestFlowArtifactFactory());
 		AttributeMap attributes = new AttributeMap();
 		attributes.put("scenario2", Boolean.TRUE);
-		FlowAssembler assembler = new FlowAssembler(new FlowArtifactParameters("testFlow1", attributes), builder);
+		FlowAssembler assembler = new FlowAssembler("testFlow1", attributes, builder);
 		assembler.assembleFlow();
-		FlowExecution execution = new FlowExecutionImpl(builder.getResult());
+		FlowExecution execution = new FlowExecutionImpl(builder.getFlow());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		assertEquals("viewState2", execution.getActiveSession().getState().getId());

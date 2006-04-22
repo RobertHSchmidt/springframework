@@ -24,7 +24,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};
-		state1.addTransition(new Transition(to("end")));
+		state1.getTransitionSet().add(new Transition(to("end")));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		handler.add(MyCustomException.class, "state1");
 		StateException e = new StateException(state1, "Oops", new MyCustomException());
@@ -38,7 +38,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};
-		state1.addTransition(new Transition(to("end")));
+		state1.getTransitionSet().add(new Transition(to("end")));
 		EndState state2 = new EndState(flow, "end");
 		state2.setViewSelector(new ApplicationViewSelector(new StaticExpression("view")));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
@@ -56,12 +56,12 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};
-		state1.addTransition(new Transition(to("end")));
+		state1.getTransitionSet().add(new Transition(to("end")));
 		EndState state2 = new EndState(flow, "end");
 		state2.setViewSelector(new ApplicationViewSelector(new StaticExpression("view")));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		handler.add(MyCustomException.class, "end");
-		state1.addExceptionHandler(handler);
+		state1.getExceptionHandlerSet().add(handler);
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		execution.start(null, new MockExternalContext());
 		assertTrue("Should have ended", !execution.isActive());
@@ -74,7 +74,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};
-		state1.addTransition(new Transition(to("end")));
+		state1.getTransitionSet().add(new Transition(to("end")));
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		try {
 			execution.start(null, new MockExternalContext());

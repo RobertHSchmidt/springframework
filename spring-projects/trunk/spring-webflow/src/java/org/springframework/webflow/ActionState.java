@@ -60,11 +60,11 @@ import org.springframework.core.style.ToStringCreator;
  * the last one in the chain. For example:
  * 
  * <pre>
- *       &lt;action-state id=&quot;setupForm&quot;&gt; 
- *           &lt;action name=&quot;setup&quot; bean=&quot;myAction&quot; method=&quot;setupForm&quot;/&gt; 
- *           &lt;action name=&quot;referenceData&quot; bean=&quot;myAction&quot; method=&quot;setupReferenceData&quot;/&gt; 
- *           &lt;transition on=&quot;referenceData.success&quot; to=&quot;displayForm&quot;/&gt; 
- *       &lt;/action-state&gt;
+ *     &lt;action-state id=&quot;setupForm&quot;&gt; 
+ *         &lt;action name=&quot;setup&quot; bean=&quot;myAction&quot; method=&quot;setupForm&quot;/&gt; 
+ *         &lt;action name=&quot;referenceData&quot; bean=&quot;myAction&quot; method=&quot;setupReferenceData&quot;/&gt; 
+ *         &lt;transition on=&quot;referenceData.success&quot; to=&quot;displayForm&quot;/&gt; 
+ *     &lt;/action-state&gt;
  * </pre>
  * 
  * When the 'setupForm' state above is entered, the 'setup' action will execute,
@@ -108,14 +108,6 @@ public class ActionState extends TransitionableState {
 	private ActionList actionList = new ActionList();
 
 	/**
-	 * Default constructor for bean style usage.
-	 * @see TransitionableState#TransitionableState()
-	 * @see #addAction(Action)
-	 */
-	public ActionState() {
-	}
-
-	/**
 	 * Creates a new action state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
@@ -126,15 +118,6 @@ public class ActionState extends TransitionableState {
 	 */
 	public ActionState(Flow flow, String id) throws IllegalArgumentException {
 		super(flow, id);
-	}
-
-	/**
-	 * Convenience method to add a single action to this state's executable
-	 * action list.
-	 * @param action the action to add
-	 */
-	public void addAction(Action action) {
-		getActionList().add(action);
 	}
 
 	/**

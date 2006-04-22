@@ -16,6 +16,9 @@
 package org.springframework.webflow.builder;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.AttributeCollection;
+import org.springframework.webflow.CollectionUtils;
+import org.springframework.webflow.UnmodifiableAttributeMap;
 
 /**
  * A director for assembling flows, delegating to a {@link FlowBuilder} to
@@ -26,9 +29,9 @@ import org.springframework.util.Assert;
  * Flow assemblers may be used in a standalone, programmatic fashion as follows:
  * 
  * <pre>
- *     FlowBuilder builder = ...;
- *     new FlowAssembler(&quot;myFlow&quot;, builder).assembleFlow();
- *     Flow flow = builder.getResult();
+ *      FlowBuilder builder = ...;
+ *      new FlowAssembler(&quot;myFlow&quot;, builder).assembleFlow();
+ *      Flow flow = builder.getFlow();
  * </pre>
  * 
  * @see org.springframework.webflow.builder.FlowBuilder
@@ -39,10 +42,14 @@ import org.springframework.util.Assert;
 public class FlowAssembler {
 
 	/**
-	 * Parameters neccessary to assemble the flow, most notably the flow
-	 * identifier.
+	 * The identifier to assign to the flow.
 	 */
-	private FlowArtifactParameters flowParameters;
+	private String flowId;
+
+	/**
+	 * Attributes that can be used to affect flow construction.
+	 */
+	private UnmodifiableAttributeMap flowAttributes;
 
 	/**
 	 * The flow builder strategy used to construct the flow from its component
@@ -57,48 +64,47 @@ public class FlowAssembler {
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
 	public FlowAssembler(String flowId, FlowBuilder flowBuilder) {
-		this(new FlowArtifactParameters(flowId), flowBuilder);
+		this(flowId, null, flowBuilder);
 	}
 
 	/**
 	 * Create a new flow assembler that will direct Flow assembly using the
 	 * specified builder strategy.
-	 * @param flowParameters the assigned flow parameters
+	 * @param flowId the assigned flow id
+	 * @param flowAttributes externally assigned flow attributes that can affect
+	 * flow construction
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
-	public FlowAssembler(FlowArtifactParameters flowParameters, FlowBuilder flowBuilder) {
-		setFlowParameters(flowParameters);
-		setFlowBuilder(flowBuilder);
+	public FlowAssembler(String flowId, AttributeCollection flowAttributes, FlowBuilder flowBuilder) {
+		Assert.hasText(flowId, "The flow id is required");
+		Assert.notNull(flowBuilder, "The flow builder is required");
+		this.flowId = flowId;
+		this.flowAttributes = (flowAttributes != null ? flowAttributes.unmodifiable()
+				: CollectionUtils.EMPTY_ATTRIBUTE_MAP);
+		this.flowBuilder = flowBuilder;
 	}
 
 	/**
-	 * Returns the flow parameters to assign during flow assembly.
+	 * Returns the identifier to assign to the flow.
 	 */
-	public FlowArtifactParameters getFlowParameters() {
-		return flowParameters;
+	public String getFlowId() {
+		return flowId;
 	}
 
 	/**
-	 * Sets the flow parameters to assign during flow assembly.
-	 * @param flowParameters flow parameters
+	 * Returns externally assigned attributes that can be used to affect flow
+	 * construction.
 	 */
-	public void setFlowParameters(FlowArtifactParameters flowParameters) {
-		this.flowParameters = flowParameters;
+	public UnmodifiableAttributeMap getFlowAttributes() {
+		return flowAttributes;
 	}
 
 	/**
-	 * Returns the builder the factory uses to build flows.
+	 * Returns the flow builder strategy used to construct the flow from its
+	 * component parts.
 	 */
 	public FlowBuilder getFlowBuilder() {
 		return flowBuilder;
-	}
-
-	/**
-	 * Set the builder the factory will use to build flows.
-	 */
-	public void setFlowBuilder(FlowBuilder flowBuilder) {
-		Assert.notNull(flowBuilder, "The flow builder is required");
-		this.flowBuilder = flowBuilder;
 	}
 
 	/**
@@ -107,10 +113,14 @@ public class FlowAssembler {
 	 * "assembling" flag is set to true.
 	 */
 	public void assembleFlow() {
-		flowBuilder.init(flowParameters);
+		flowBuilder.init(flowId, flowAttributes);
+		flowBuilder.buildVariables();
+		flowBuilder.buildInputMapper();
+		flowBuilder.buildInlineFlows();
 		flowBuilder.buildStates();
+		flowBuilder.buildGlobalTransitions();
+		flowBuilder.buildOutputMapper();
 		flowBuilder.buildExceptionHandlers();
-		flowBuilder.buildPostProcess();
 		flowBuilder.dispose();
 	}
 }

@@ -3,8 +3,11 @@ package org.springframework.webflow.builder;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
+import org.springframework.binding.mapping.AttributeMapper;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
+import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
@@ -13,9 +16,10 @@ import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
+import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
+import org.springframework.webflow.action.ResultSpecification;
 
 /**
  * A support interface used by FlowBuilders at configuration time to retrieve
@@ -40,24 +44,29 @@ public interface FlowArtifactFactory {
 	 * @param parameters the assigned action parameters
 	 * @throws FlowArtifactException when no such action is found
 	 */
-	public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException;
+	public Action getAction(String id) throws FlowArtifactException;
 
 	/**
-	 * Returns true if the action with the given <code>actionId</code> is a {@link MultiAction} instance.
+	 * Returns true if the action with the given <code>actionId</code> is an
+	 * actual implementation of the {@link Action} interface. It could be an
+	 * arbitrary bean (any <code>java.lang.Object</code>), at which it needs
+	 * to be adapted by a
+	 * {@link AbstractBeanInvokingAction bean invoking action}.
+	 * @param actionId the action id
+	 * @return true if the action is an Action, false otherwise
+	 * @throws FlowArtifactException when no such action is found
+	 */
+	public boolean isAction(String actionId) throws FlowArtifactException;
+
+	/**
+	 * Returns true if the action with the given <code>actionId</code> is a
+	 * {@link MultiAction} instance.
 	 * @param actionId the action id
 	 * @return true if the action is a multi action, false otherwise
 	 * @throws FlowArtifactException when no such action is found
 	 */
 	public boolean isMultiAction(String actionId) throws FlowArtifactException;
 
-	/**
-	 * Returns a flag indicating if the action with the <code>actionId</code> is stateful; that is,
-	 * capable of holding caller-specific state as instance variables.
-	 * @param actionId the action
-	 * @return true if stateful, false if stateless (singleton)
-	 */
-	public boolean isStatefulAction(String actionId) throws FlowArtifactException;
-	
 	/**
 	 * Retrieve the flow attribute mapper to be used in a subflow state with the
 	 * provided id.
@@ -102,29 +111,33 @@ public interface FlowArtifactFactory {
 	 */
 	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException;
 
-	/**
-	 * Create a new flow definition with the assigned parameters.
-	 * @param parameters the assigned flow parameters
-	 * @return the flow definition
-	 */
-	public Flow createFlow(FlowArtifactParameters parameters) throws FlowArtifactException;
+	public Flow createFlow(String id, AttributeCollection attributes) throws FlowArtifactException;
 
-	/**
-	 * Create a new state definition with the assigned parameters.
-	 * @param flow the state's owning flow
-	 * @param stateType the state type
-	 * @param parameters the assigned state parameters
-	 * @return the state
-	 */
-	public State createState(Flow flow, Class stateType, FlowArtifactParameters parameters)
+	public State createViewState(String id, Flow flow, Action[] entryActions, ViewSelector viewSelector,
+			Transition[] transitions, StateExceptionHandler[] exceptionHandlers, Action[] exitActions,
+			AttributeCollection attributes) throws FlowArtifactException;
+
+	public State createActionState(String id, Flow flow, Action[] entryActions, Action[] actions,
+			Transition[] transitions, StateExceptionHandler[] exceptionHandlers, Action[] exitActions,
+			AttributeCollection attributes) throws FlowArtifactException;
+
+	public State createDecisionState(String id, Flow flow, Action[] entryActions, Transition[] transitions,
+			StateExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes)
 			throws FlowArtifactException;
 
-	/**
-	 * Create a new state transition with the assigned properties.
-	 * @param attributes the assigned transition attributes
-	 * @return the transition
-	 */
-	public Transition createTransition(UnmodifiableAttributeMap attributes) throws FlowArtifactException;
+	public State createSubflowState(String id, Flow flow, Action[] entryActions, Flow subflow,
+			FlowAttributeMapper attributeMapper, Transition[] transitions, StateExceptionHandler[] exceptionHandlers,
+			Action[] exitActions, AttributeCollection attributes) throws FlowArtifactException;
+
+	public State createEndState(String id, Flow flow, Action[] entryActions, ViewSelector viewSelector,
+			AttributeMapper outputMapper, StateExceptionHandler[] exceptionHandlers, AttributeCollection attributes)
+			throws FlowArtifactException;
+
+	public Transition createTransition(TransitionCriteria matchingCriteria, TransitionCriteria executionCriteria,
+			TargetStateResolver targetStateResolver, AttributeCollection attributes) throws FlowArtifactException;
+
+	public Action createBeanInvokingAction(String beanId, MethodSignature methodSignature,
+			ResultSpecification resultSpecification, AttributeCollection attributes);
 
 	/**
 	 * Returns a generic bean (service) registry for accessing arbitrary beans.
@@ -144,7 +157,7 @@ public interface FlowArtifactFactory {
 	 * @return the expression parser
 	 */
 	public ExpressionParser getExpressionParser();
-	
+
 	/**
 	 * Returns a generic type conversion service for converting between types,
 	 * typically from string to a rich value object.

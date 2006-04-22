@@ -35,7 +35,7 @@ public class ActionExecutorTests extends TestCase {
 			}
 		};
 		MockRequestContext context = new MockRequestContext();
-		MockFlowSession starting = new MockFlowSession(new Flow());
+		MockFlowSession starting = new MockFlowSession(new Flow("flow"));
 		starting.setStatus(FlowSessionStatus.STARTING);
 		context.getMockFlowExecutionContext().setActiveSession(starting);
 		try {

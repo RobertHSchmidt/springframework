@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
-import org.springframework.webflow.executor.support.FlowExecutionKeyFormatter;
 
 public class FlowExecutionKeyFormatterTests extends TestCase {
 	public void testFormat() {

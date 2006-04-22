@@ -56,7 +56,7 @@ public class FlowExecutionImplTests extends TestCase {
 				new TestFlowArtifactFactory());
 		FlowAssembler assembler = new FlowAssembler("testFlow", builder);
 		assembler.assembleFlow();
-		final Flow flow = builder.getResult();
+		final Flow flow = builder.getFlow();
 		flowLocator = new FlowLocator() {
 			public Flow getFlow(String flowId) throws FlowArtifactException {
 				if (flow.getId().equals(flowId)) {

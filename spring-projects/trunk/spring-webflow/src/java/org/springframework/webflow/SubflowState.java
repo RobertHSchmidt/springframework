@@ -51,15 +51,6 @@ public class SubflowState extends TransitionableState {
 	private FlowAttributeMapper attributeMapper;
 
 	/**
-	 * Default constructor for bean style usage.
-	 * @see TransitionableState#TransitionableState()
-	 * @see #setSubflow(Flow)
-	 * @see #setAttributeMapper(FlowAttributeMapper)
-	 */
-	public SubflowState() {
-	}
-
-	/**
 	 * Create a new subflow state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
@@ -78,7 +69,7 @@ public class SubflowState extends TransitionableState {
 	 * Set the subflow that will be spawned by this state.
 	 * @param subflow the subflow to spawn
 	 */
-	public void setSubflow(Flow subflow) {
+	private void setSubflow(Flow subflow) {
 		Assert.notNull(subflow, "A subflow state must have a subflow");
 		this.subflow = subflow;
 	}

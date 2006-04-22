@@ -78,15 +78,6 @@ public class Transition extends AnnotatedObject {
 	private TargetStateResolver targetStateResolver;
 
 	/**
-	 * Default constructor for bean style usage.
-	 * @see #setMatchingCriteria(TransitionCriteria)
-	 * @see #setExecutionCriteria(TransitionCriteria)
-	 * @see #setTargetStateResolver(TargetStateResolver)
-	 */
-	public Transition() {
-	}
-
-	/**
 	 * Create a new transition that always matches and always executes,
 	 * transitioning to the target state calculated by the provided
 	 * targetStateResolver.

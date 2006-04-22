@@ -40,14 +40,6 @@ public abstract class TransitionableState extends State {
 	private ActionList exitActionList = new ActionList();
 
 	/**
-	 * Default constructor for bean style usage
-	 * @see State#State()
-	 * @see #addTransition(Transition)
-	 */
-	protected TransitionableState() {
-	}
-
-	/**
 	 * Create a new transitionable state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
@@ -61,29 +53,12 @@ public abstract class TransitionableState extends State {
 	}
 
 	/**
-	 * Add a transition to this state.
-	 * @param transition the transition to add
-	 */
-	public void addTransition(Transition transition) {
-		transitions.add(transition);
-	}
-
-	/**
 	 * Returns the set of transitions that define the possible paths out of this
 	 * state.
 	 * @return the state transition set
 	 */
 	public TransitionSet getTransitionSet() {
 		return transitions;
-	}
-
-	/**
-	 * Convenience method to add a single action to this state's exit action
-	 * list. Exit actions are executed when this state is transitioned out of.
-	 * @param action the exit action to add
-	 */
-	public void addExitAction(Action action) {
-		getExitActionList().add(action);
 	}
 
 	/**

@@ -64,8 +64,8 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 		FlowArtifactFactory flowArtifactFactory = createFlowArtifactFactory();
 		ExternalizedFlowDefinition flowDefinition = getFlowDefinition();
 		FlowBuilder builder = createFlowBuilder(flowDefinition.getLocation(), flowArtifactFactory);
-		new FlowAssembler(flowDefinition, builder).assembleFlow();
-		Flow flow = builder.getResult();
+		new FlowAssembler(flowDefinition.getId(), flowDefinition.getAttributes(), builder).assembleFlow();
+		Flow flow = builder.getFlow();
 		if (isCacheFlowDefinition()) {
 			cachedFlowDefinition = flow;
 		}

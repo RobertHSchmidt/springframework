@@ -39,7 +39,7 @@ public class FlowTests extends TestCase {
 		flow = new Flow("myFlow");
 		ViewState state1 = new ViewState(flow, "myState1");
 		state1.setViewSelector(new ApplicationViewSelector(new StaticExpression("myView")));
-		state1.addTransition(new Transition(to("myState2")));
+		state1.getTransitionSet().add(new Transition(to("myState2")));
 		EndState state2 = new EndState(flow, "myState2");
 		state2.setViewSelector(new ApplicationViewSelector(new StaticExpression("myView2")));
 		return flow;

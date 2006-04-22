@@ -33,7 +33,7 @@ public class StateTests extends TestCase {
 	private boolean entered;
 
 	public void setUp() {
-		flow = new Flow();
+		flow = new Flow("flow");
 		state = new State(flow, "myState") {
 			protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
 				entered = true;
@@ -51,7 +51,7 @@ public class StateTests extends TestCase {
 
 	public void testStateEnterWithEntryAction() {
 		TestAction action = new TestAction();
-		state.addEntryAction(action);
+		state.getEntryActionList().add(action);
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		state.enter(context);
 		assertEquals(state, context.getCurrentState());

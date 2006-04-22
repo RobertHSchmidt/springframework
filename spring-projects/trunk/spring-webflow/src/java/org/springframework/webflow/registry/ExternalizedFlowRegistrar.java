@@ -160,7 +160,9 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	protected void processFlowLocations(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
 		Iterator it = flowLocations.iterator();
 		while (it.hasNext()) {
-			registerFlow((Resource)it.next(), registry, flowArtifactFactory);
+			Resource location = (Resource)it.next();
+			FlowBuilder builder = createFlowBuilder(location, flowArtifactFactory);
+			registerFlow(new ExternalizedFlowDefinition(location), registry, builder);
 		}
 	}
 
@@ -174,20 +176,8 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 		while (it.hasNext()) {
 			ExternalizedFlowDefinition definition = (ExternalizedFlowDefinition)it.next();
 			FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowArtifactFactory);
-			registerFlow(definition, builder, registry);
+			registerFlow(definition, registry, builder);
 		}
-	}
-
-	/**
-	 * Register the Flow definition from the XML resource provided in the
-	 * provided registry.
-	 * @param location the XML resource
-	 * @param registry the registry
-	 * @param flowArtifactFactory the flow artifactFactory
-	 */
-	protected void registerFlow(Resource location, FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
-		FlowBuilder builder = createFlowBuilder(location, flowArtifactFactory);
-		registerFlow(getFlowId(location), builder, registry);
 	}
 
 	/**

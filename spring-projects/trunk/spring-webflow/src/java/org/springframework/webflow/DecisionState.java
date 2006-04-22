@@ -29,13 +29,6 @@ package org.springframework.webflow;
 public class DecisionState extends TransitionableState {
 
 	/**
-	 * Default constructor for bean style usage.
-	 * @see TransitionableState#TransitionableState()
-	 */
-	public DecisionState() {
-	}
-
-	/**
 	 * Creates a new decision state with the supported set of transitions.
 	 * @param flow the owning flow
 	 * @param stateId the state identifier (must be unique to the flow)

@@ -15,11 +15,7 @@
  */
 package org.springframework.webflow;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.springframework.core.CollectionFactory;
+import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -57,21 +53,10 @@ public class EndState extends State {
 	private ViewSelector viewSelector = NullViewSelector.INSTANCE;
 
 	/**
-	 * The set of output attributes that will be returned to the parent flow
-	 * when this end state terminates a subflow.
+	 * Attribute mapper for mapping output attributes exposed by this end state when it is entered.
 	 */
-	private Set outputAttributeNames = CollectionFactory.createLinkedSetIfPossible(3);
-
-	/**
-	 * Default constructor for bean style usage.
-	 * @see State#State()
-	 * @see #setViewSelector(ViewSelector)
-	 * @see #addOutputAttributeName(String)
-	 * @see #addOutputAttributeNames(String[])
-	 */
-	public EndState() {
-	}
-
+	private AttributeMapper outputMapper;
+	
 	/**
 	 * Create a new end state with no associated view.
 	 * @param flow the owning flow
@@ -101,38 +86,6 @@ public class EndState extends State {
 	 */
 	public void setViewSelector(ViewSelector viewSelector) {
 		this.viewSelector = viewSelector;
-	}
-
-	/**
-	 * Record the name of an attribute to expose as output when this end state
-	 * is used to end this flow when acting as a subflow.
-	 * @param outputAttributeName the attribute name
-	 * @return true if the collection of output attributes was modified
-	 */
-	public boolean addOutputAttributeName(String outputAttributeName) {
-		return outputAttributeNames.add(outputAttributeName);
-	}
-
-	/**
-	 * Record the names of attributes to expose as output when this end state is
-	 * used to end this flow when acting as a subflow.
-	 * @param outputAttributeNames the attribute names
-	 * @return true if the collection of output attributes was modified
-	 */
-	public boolean addOutputAttributeNames(String[] outputAttributeNames) {
-		if (outputAttributeNames == null) {
-			return false;
-		}
-		return this.outputAttributeNames.addAll(Arrays.asList(outputAttributeNames));
-	}
-
-	/**
-	 * Returns the names of attributes to expose as output when this end state
-	 * is entered and used to terminate a subflow.
-	 * @return the output attribute names
-	 */
-	public String[] getOutputAttributeNames() {
-		return (String[])outputAttributeNames.toArray(new String[0]);
 	}
 
 	/**
@@ -173,19 +126,15 @@ public class EndState extends State {
 	 * returns an empty map. Subclasses may override.
 	 */
 	protected AttributeMap createSessionOutput(AttributeMap scope) {
-		if (outputAttributeNames.isEmpty()) {
+		if (outputMapper != null) {
 			return new AttributeMap();
 		}
-		AttributeMap output = new AttributeMap(outputAttributeNames.size());
-		Iterator it = outputAttributeNames.iterator();
-		while (it.hasNext()) {
-			String attributeName = (String)it.next();
-			output.put(attributeName, scope.get(attributeName));
-		}
-		return output;
+		AttributeMap outputMap = new AttributeMap();
+		outputMapper.map(scope, outputMap, null);
+		return outputMap;
 	}
 
 	protected void appendToString(ToStringCreator creator) {
-		creator.append("viewSelector", viewSelector).append("outputAttributeNames", outputAttributeNames);
+		creator.append("viewSelector", viewSelector).append("outputMapper", outputMapper);
 	}
 }

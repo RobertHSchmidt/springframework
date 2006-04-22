@@ -43,12 +43,12 @@ public class SubflowStateTests extends TestCase {
 		Flow subFlow = new Flow("mySubFlow");
 		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
 		state1.setViewSelector(view("mySubFlowViewName"));
-		state1.addTransition(new Transition(on("submit"), to("finish")));
+		state1.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		new EndState(subFlow, "finish");
 
 		Flow flow = new Flow("myFlow");
 		SubflowState state2 = new SubflowState(flow, "subFlowState", subFlow);
-		state2.addTransition(new Transition(on("finish"), to("finish")));
+		state2.getTransitionSet().add(new Transition(on("finish"), to("finish")));
 
 		EndState state3 = new EndState(flow, "finish");
 		state3.setViewSelector(view("myParentFlowEndingViewName"));
@@ -71,9 +71,9 @@ public class SubflowStateTests extends TestCase {
 		subFlow.setInputMapper(inputMapper);
 		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
 		state1.setViewSelector(view("mySubFlowViewName"));
-		state1.addTransition(new Transition(on("submit"), to("finish")));
+		state1.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		EndState state2 = new EndState(subFlow, "finish");
-		state2.addOutputAttributeName("childInputAttribute");
+		//state2.addOutputAttributeName("childInputAttribute");
 
 		Flow flow = new Flow("myFlow");
 		ActionState mapperState = new ActionState(flow, "mapperState");
@@ -82,12 +82,12 @@ public class SubflowStateTests extends TestCase {
 				"externalContext.requestParameterMap.parentInputAttribute").target("flowScope.parentInputAttribute")
 				.value());
 		Action mapperAction = new AttributeMapperAction(mapper);
-		mapperState.addAction(mapperAction);
-		mapperState.addTransition(new Transition(on("success"), to("subFlowState")));
+		mapperState.getActionList().add(mapperAction);
+		mapperState.getTransitionSet().add(new Transition(on("success"), to("subFlowState")));
 
 		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
 		subflowState.setAttributeMapper(new TestAttributeMapper());
-		subflowState.addTransition(new Transition(on("finish"), to("finish")));
+		subflowState.getTransitionSet().add(new Transition(on("finish"), to("finish")));
 
 		EndState endState = new EndState(flow, "finish");
 		endState.setViewSelector(view("myParentFlowEndingViewName"));

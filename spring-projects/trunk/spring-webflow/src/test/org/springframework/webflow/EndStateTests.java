@@ -27,8 +27,8 @@ import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
-import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.DefaultTargetStateResolver;
+import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -56,7 +56,7 @@ public class EndStateTests extends TestCase {
 		flow.setInputMapper(inputMapper);
 		
 		EndState state = new EndState(flow, "finish");
-		state.addOutputAttributeNames(new String[] { "attr1", "attr2" });
+		//state.addOutputAttributeNames(new String[] { "attr1", "attr2" });
 		FlowExecutionListener outputVerifier = new FlowExecutionListenerAdapter() {
 			public void sessionEnded(RequestContext context, FlowSession session, UnmodifiableAttributeMap output) {
 				assertEquals("value1", output.get("attr1"));

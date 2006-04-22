@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.builder;
 
+import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.Flow;
 
 /**
@@ -22,15 +23,22 @@ import org.springframework.webflow.Flow;
  * flow consists of the following steps:
  * <ol>
  * <li> Initialize this builder, creating the initial flow definition, by
- * calling {@link #init(FlowArtifactParameters)}.
- * <li> Call {@link #buildStates} to create the states of the flow and add them
+ * calling {@link #init(String, UnmodifiableAttributeMap))}.
+ * <li> Call {@link #buildVariables()} to create any variables of the flow and add them
  * to the flow definition.
- * <li> Call {@link #buildExceptionHandlers} to create the state exception
+ * <li> Call {@link #buildInputMapper()} to create and set the input mapper for the flow.
+ * <li> Call {@link #buildStartActions()} to create and add any start actions to the flow.
+ * <li> Call {@link #buildInlineFlows()} to create and add any inline flows encapsulated 
+ * by the flow and add them to the flow definition.
+ * <li> Call {@link #buildStates()} to create the states of the flow and add them
+ * to the flow definition.
+ * <li> Call {@link #buildGlobalTransitions()} to create the state exception
  * handlers of the flow and add them to the flow definition.
- * <li> Call {@link #buildPostProcess} to do any build post processing, for
- * example, making a second pass through the fully configured Flow to resolve
- * any artifacts.
- * <li> Call {@link #getResult} to return the fully-built {@link Flow}
+ * <li> Call {@link #buildStartActions()} to create and add any end actions to the flow.
+ * <li> Call {@link #buildOutputMapper()} to create and set the output mapper for the flow.
+ * <li> Call {@link #buildExceptionHandlers()} to create the state exception
+ * handlers of the flow and add them to the flow definition.
+ * <li> Call {@link #getFlow()} to return the fully-built {@link Flow}
  * definition.
  * <li> Dispose this builder, releasing any resources allocated during the
  * building process by calling {@link #dispose()}.
@@ -60,19 +68,61 @@ import org.springframework.webflow.Flow;
 public interface FlowBuilder {
 
 	/**
-	 * Initialize this builder and return a handle to the flow under
-	 * construction.
-	 * @param flowParameters flow parameters to be assigned to the flow being
-	 * built
+	 * Initialize this builder.  This could cause the builder to open a stream to an 
+	 * externalized resource representing the flow definition, for example.
+	 * @param id the identifier to assign to the flow
+	 * 
 	 * @throws FlowBuilderException an exception occured building the flow
 	 */
-	public void init(FlowArtifactParameters flowParameters) throws FlowBuilderException;
+	public void init(String id, AttributeCollection attributes) throws FlowBuilderException;
 
 	/**
-	 * Creates and adds all states to the flow built by this builder.
+	 * Builds any variables initialized by the flow when it starts.
+	 * @throws FlowBuilderException an exception occured building the flow
+	 */
+	public void buildVariables() throws FlowBuilderException;
+
+	/**
+	 * Builds the input mapper responsible for mapping flow input on start.
+	 * @throws FlowBuilderException an exception occured building the flow
+	 */
+	public void buildInputMapper() throws FlowBuilderException;
+
+	/**
+	 * Builds any start actions to execute when the flow starts.
+	 * @throws FlowBuilderException an exception occured building the flow
+	 */
+	public void buildStartActions() throws FlowBuilderException;
+
+	/**
+	 * Builds any "in-line" flows encapsulated by the flow.
+	 * @throws FlowBuilderException an exception occured building the flow
+	 */
+	public void buildInlineFlows() throws FlowBuilderException;
+
+	/**
+	 * Builds the states (steps) of the flow.
 	 * @throws FlowBuilderException an exception occured building the flow
 	 */
 	public void buildStates() throws FlowBuilderException;
+
+	/**
+	 * Builds any transitions shared by all states of the flow.
+	 * @throws FlowBuilderException an exception occured building the flow
+	 */
+	public void buildGlobalTransitions() throws FlowBuilderException;
+
+	/**
+	 * Builds any end actions to execute when the flow ends.
+	 * @throws FlowBuilderException an exception occured building the flow
+	 */
+	public void buildEndActions() throws FlowBuilderException;
+
+	/**
+	 * Builds the output mapper responsible for mapping flow output on end.
+	 * @throws FlowBuilderException an exception occured building the flow
+	 */
+	public void buildOutputMapper() throws FlowBuilderException;
 
 	/**
 	 * Creates and adds all state exception handlers to the flow built by this
@@ -82,19 +132,11 @@ public interface FlowBuilder {
 	public void buildExceptionHandlers() throws FlowBuilderException;
 
 	/**
-	 * Do any post processing necessary by this builder.
-	 * @throws FlowBuilderException an exception occured during post processing
-	 */
-	public void buildPostProcess() throws FlowBuilderException;
-
-	/**
 	 * Get the fully constructed and configured Flow object - called by the
-	 * builder's assembler (director) after assembly. Note that this method will
-	 * return the same Flow object as that returned from the <code>init()</code>
-	 * method. However, when this method is called by the assembler, flow
-	 * construction will have completed and the returned flow is ready for use.
+	 * builder's assembler (director) after assembly.  Ehen this method is called by the assembler, 
+	 * it is expectred flow construction wto have completed and the returned flow is ready for use.
 	 */
-	public Flow getResult();
+	public Flow getFlow();
 
 	/**
 	 * Shutdown the builder, releasing any resources it holds. A new flow

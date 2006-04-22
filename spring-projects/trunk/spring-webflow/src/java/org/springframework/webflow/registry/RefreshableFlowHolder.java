@@ -65,7 +65,7 @@ public class RefreshableFlowHolder implements FlowHolder {
 	}
 
 	public String getId() {
-		return assembler.getFlowParameters().getId();
+		return assembler.getFlowId();
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class RefreshableFlowHolder implements FlowHolder {
 	public synchronized Flow getFlow() {
 		if (assembling) {
 			// must return early assembly result
-			return getFlowBuilder().getResult();
+			return getFlowBuilder().getFlow();
 		}
 		if (!isAssembled()) {
 			lastModified = calculateLastModified();
@@ -115,7 +115,7 @@ public class RefreshableFlowHolder implements FlowHolder {
 		try {
 			assembling = true;
 			assembler.assembleFlow();
-			flow = getFlowBuilder().getResult();
+			flow = getFlowBuilder().getFlow();
 		}
 		finally {
 			assembling = false;

@@ -3,10 +3,10 @@ package org.springframework.webflow;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.easymock.MockControl;
 import org.springframework.web.multipart.MultipartFile;
-
-import junit.framework.TestCase;
 
 public class ParameterMapTests extends TestCase {
 	private ParameterMap parameterMap;

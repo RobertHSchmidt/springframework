@@ -67,14 +67,14 @@ public class AbstractFlowBuilderTests extends TestCase {
 					builder.setFlowArtifactFactory(this);
 					FlowAssembler assembler = new FlowAssembler(PERSON_DETAILS, builder);
 					assembler.assembleFlow();
-					return builder.getResult();
+					return builder.getFlow();
 				}
 				else {
 					throw new FlowArtifactException(id, Flow.class);
 				}
 			}
 
-			public Action getAction(FlowArtifactParameters parameters) throws FlowArtifactException {
+			public Action getAction(String id) throws FlowArtifactException {
 				return new NoOpAction();
 			}
 
@@ -90,7 +90,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 
 		FlowAssembler assembler = new FlowAssembler(PERSONS_LIST, master);
 		assembler.assembleFlow();
-		Flow flow = master.getResult();
+		Flow flow = master.getFlow();
 
 		assertEquals("person.List", flow.getId());
 		assertTrue(flow.getStateCount() == 4);
