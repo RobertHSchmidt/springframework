@@ -54,10 +54,11 @@ public class EndState extends State {
 	private ViewSelector viewSelector = NullViewSelector.INSTANCE;
 
 	/**
-	 * Attribute mapper for mapping output attributes exposed by this end state when it is entered.
+	 * Attribute mapper for mapping output attributes exposed by this end state
+	 * when it is entered.
 	 */
 	private AttributeMapper outputMapper;
-	
+
 	/**
 	 * Create a new end state with no associated view.
 	 * @param flow the owning flow
@@ -88,6 +89,22 @@ public class EndState extends State {
 	public void setViewSelector(ViewSelector viewSelector) {
 		Assert.notNull(viewSelector, "The view selector is required");
 		this.viewSelector = viewSelector;
+	}
+
+	/**
+	 * Returns the configured attribute mapper for mapping output attributes
+	 * exposed by this end state when it is entered.
+	 */
+	public AttributeMapper getOutputMapper() {
+		return outputMapper;
+	}
+
+	/**
+	 * Sets the attribute mapper to use for mapping output attributes exposed by
+	 * this end state when it is entered.
+	 */
+	public void setOutputMapper(AttributeMapper outputMapper) {
+		this.outputMapper = outputMapper;
 	}
 
 	/**

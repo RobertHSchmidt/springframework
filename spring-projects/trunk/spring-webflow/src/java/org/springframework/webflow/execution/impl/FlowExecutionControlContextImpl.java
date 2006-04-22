@@ -203,10 +203,10 @@ class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
 	public FlowSession endActiveFlowSession(AttributeMap output) throws IllegalStateException {
 		FlowSession session = getFlowExecutionContext().getActiveSession();
 		flowExecution.getListeners().fireSessionEnding(this, session, output);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Ending active session " + session);
-		}
 		getActiveFlow().end(this, output);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Ending active session " + session + "; exposed session output is " + output);
+		}
 		session = flowExecution.endActiveFlowSession();
 		flowExecution.getListeners().fireSessionEnded(this, session, output.unmodifiable());
 		return session;

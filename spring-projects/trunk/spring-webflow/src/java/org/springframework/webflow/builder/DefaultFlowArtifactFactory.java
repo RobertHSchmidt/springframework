@@ -203,6 +203,9 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 		if (viewSelector != null) {
 			endState.setViewSelector(viewSelector);
 		}
+		if (outputMapper != null) {
+			endState.setOutputMapper(outputMapper);
+		}
 		configureCommonProperties(endState, entryActions, exceptionHandlers, attributes);
 		return endState;
 	}
