@@ -3,7 +3,7 @@
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
 <flow start-state="displayItemlist">
-	<var name="list" type="java.util.ArrayList"/>
+	<var name="list" class="java.util.ArrayList"/>
 
 	<view-state id="displayItemlist" view="itemlist">
 		<transition on="add" to="addItem"/>
@@ -30,7 +30,9 @@
 			</action-state>
 			
 			<end-state id="finish">
-				<output-attribute name="item"/>
+				<output-mapper>
+					 <mapping source="flowScope.item" target="item"/>
+				</output-mapper>
 			</end-state>
 		</flow>
 	</inline-flow>

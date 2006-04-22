@@ -141,9 +141,9 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testAddActions() {
-		flow.addStartAction(new TestMultiAction());
-		flow.addStartAction(new TestMultiAction());
-		flow.addEndAction(new TestMultiAction());
+		flow.getStartActionList().add(new TestMultiAction());
+		flow.getStartActionList().add(new TestMultiAction());
+		flow.getEndActionList().add(new TestMultiAction());
 		assertEquals(2, flow.getStartActionList().size());
 		assertEquals(1, flow.getEndActionList().size());
 	}
@@ -173,7 +173,7 @@ public class FlowTests extends TestCase {
 	public void testStartWithAction() {
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		TestAction action = new TestAction();
-		flow.addStartAction(action);
+		flow.getStartActionList().add(action);
 		flow.start(context, new AttributeMap());
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
 		assertEquals(1, action.getExecutionCount());
@@ -181,7 +181,7 @@ public class FlowTests extends TestCase {
 
 	public void testEnd() {
 		TestAction action = new TestAction();
-		flow.addEndAction(action);
+		flow.getEndActionList().add(action);
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		AttributeMap sessionOutput = new AttributeMap();
 		flow.end(context, sessionOutput);
@@ -189,7 +189,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testHandleStateException() {
-		flow.addExceptionHandler(new TransitionExecutingStateExceptionHandler()
+		flow.getExceptionHandlerSet().add(new TransitionExecutingStateExceptionHandler()
 				.add(MyCustomException.class, "myState2"));
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		context.setCurrentState(flow.getRequiredState("myState1"));

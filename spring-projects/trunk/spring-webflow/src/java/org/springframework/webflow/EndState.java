@@ -112,12 +112,12 @@ public class EndState extends State {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Returning ending view selection " + selectedView);
 			}
-			context.endActiveFlowSession(createSessionOutput(activeSession.getScope()));
+			context.endActiveFlowSession(createSessionOutput(context));
 			return selectedView;
 		}
 		else {
 			// there is a parent flow that will resume (this flow is a subflow)
-			AttributeMap sessionOutput = createSessionOutput(activeSession.getScope());
+			AttributeMap sessionOutput = createSessionOutput(context);
 			context.endActiveFlowSession(sessionOutput);
 			return context.signalEvent(new Event(this, getId(), sessionOutput));
 		}
@@ -127,12 +127,12 @@ public class EndState extends State {
 	 * Returns the subflow result event parameter map. Default implementation
 	 * returns an empty map. Subclasses may override.
 	 */
-	protected AttributeMap createSessionOutput(AttributeMap scope) {
+	protected AttributeMap createSessionOutput(RequestContext context) {
 		if (outputMapper == null) {
 			return new AttributeMap();
 		}
 		AttributeMap outputMap = new AttributeMap();
-		outputMapper.map(scope, outputMap, null);
+		outputMapper.map(context, outputMap, null);
 		return outputMap;
 	}
 

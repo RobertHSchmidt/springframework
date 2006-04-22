@@ -43,7 +43,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		state2.setViewSelector(new ApplicationViewSelector(new StaticExpression("view")));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		handler.add(MyCustomException.class, "end");
-		flow.addExceptionHandler(handler);
+		flow.getExceptionHandlerSet().add(handler);
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		execution.start(null, new MockExternalContext());
 		assertTrue("Should have ended", !execution.isActive());

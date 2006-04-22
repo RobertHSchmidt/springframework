@@ -416,30 +416,12 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Convenience method to add a single action to this flows's start action
-	 * list. Start actions are executed when this flow is started.
-	 * @param action the action to add
-	 */
-	public void addStartAction(Action action) {
-		getStartActionList().add(action);
-	}
-
-	/**
 	 * Returns the list of actions executed by this flow when an execution of
 	 * the flow <i>starts</i>.
 	 * @return the start action list
 	 */
 	public ActionList getStartActionList() {
 		return startActionList;
-	}
-
-	/**
-	 * Convenience method that adds anaction to this flows's end action list.
-	 * End actions are executed when this flow ends.
-	 * @param action the end action to add
-	 */
-	public void addEndAction(Action action) {
-		getEndActionList().add(action);
 	}
 
 	/**
@@ -465,22 +447,6 @@ public class Flow extends AnnotatedObject {
 	 */
 	public void setOutputMapper(AttributeMapper outputMapper) {
 		this.outputMapper = outputMapper;
-	}
-
-	/**
-	 * Adds a state exception handler to this flow.
-	 * <p>
-	 * State exception handlers are invoked when an unhandled
-	 * {@link StateException} exception occurs when this flow is executing. They
-	 * can execute custom exception handling logic as well as select an error
-	 * view to display.
-	 * <p>
-	 * State exception handlers attached at the flow level have a opportunity to
-	 * handle exceptions that aren't handled at the state level.
-	 * @param handler the exception handler
-	 */
-	public void addExceptionHandler(StateExceptionHandler handler) {
-		exceptionHandlerSet.add(handler);
 	}
 
 	/**

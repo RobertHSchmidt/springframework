@@ -113,7 +113,7 @@
 		<flow start-state="end">
 			<end-state id="end">
 				<output-mapper>
-					<mapping source="name" target="name"/>
+					<mapping source="flowScope.name" target="name"/>
 				</output-mapper>
 			</end-state>
 		</flow>
