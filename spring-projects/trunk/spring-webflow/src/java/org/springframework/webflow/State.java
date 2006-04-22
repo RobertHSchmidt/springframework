@@ -37,6 +37,8 @@ import org.springframework.util.Assert;
  * Why is this class abstract and not an interface? A specific design choice. It
  * is expected that specializations of this base class be "States" and not part
  * of some other inheritance hierarchy.
+ * <p>
+ * Equality: Two states are equal if they have the same id and are part of the same flow.
  * 
  * @see org.springframework.webflow.TransitionableState
  * @see org.springframework.webflow.ActionState
@@ -158,6 +160,18 @@ public abstract class State extends AnnotatedObject {
 		return flow.getStartState() == this;
 	}
 
+	public boolean equals(Object o) {
+		if (!(o instanceof State)) {
+			return false;
+		}
+		State other = (State)o;
+		return id.equals(other.id) && flow.equals(other.flow);
+	}
+	
+	public int hashCode() {
+		return id.hashCode() + flow.hashCode();
+	}
+	
 	/**
 	 * Enter this state in the provided flow control context. This
 	 * implementation just calls the

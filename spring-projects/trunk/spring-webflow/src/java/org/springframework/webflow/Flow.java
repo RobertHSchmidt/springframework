@@ -591,6 +591,18 @@ public class Flow extends AnnotatedObject {
 		return globalTransitionSet;
 	}
 
+	public boolean equals(Object o) {
+		if (!(o instanceof Flow)) {
+			return false;
+		}
+		Flow other = (Flow)o;
+		return id.equals(other.id);
+	}
+	
+	public int hashCode() {
+		return id.hashCode();
+	}
+	
 	/**
 	 * Start a new session for this flow in the specified state.
 	 * @param context the flow execution control context
