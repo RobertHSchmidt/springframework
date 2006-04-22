@@ -478,7 +478,7 @@
 	responds to the result of the subflow, typically by reasoning on the id of the end
 	state that was reached.
 -->
-<!ELEMENT end-state ( attribute*, entry-actions?, output-attribute*, exception-handler* )>
+<!ELEMENT end-state ( attribute*, entry-actions?, output-mapper?, exception-handler* )>
 
 <!--
 	The unique identifier of this end state; must be unique to this flow.
@@ -523,21 +523,6 @@
 	the client. Use a marker end state when another state is expected to generate the response.
 -->
 <!ATTLIST end-state view CDATA #IMPLIED>
-
-<!--
-	The name of an attribute in flow scope to expose for output mapping when this end state is 
-	entered and terminates this flow.
-	
-	Output attributes can be mapped by resuming parent flows when this flow is acting
-	as a subflow.  See the subflow-state element, the attribute-mapper subelement, and
-	the "output-mapping" subelement for more information.
--->
-<!ELEMENT output-attribute EMPTY>
-
-<!--
-	The name of a attribute in flow scope to expose for output mapping when this end-state is entered.
--->
-<!ATTLIST output-attribute name CDATA #IMPLIED>
 
 <!--
 	Defines flow-level transitions eligible for execution if a state-level transition cannot be matched.
