@@ -47,8 +47,8 @@ public class FlowTests extends TestCase {
 
 	public void testAddStates() {
 		Flow flow = new Flow("myFlow");
-		flow.add(new EndState(flow, "myState1"));
-		flow.add(new EndState(flow, "myState2"));
+		new EndState(flow, "myState1");
+		new EndState(flow, "myState2");
 		assertEquals("Wrong start state:", "myState1", flow.getStartState().getId());
 		assertEquals("State count wrong:", 2, flow.getStateCount());
 		assertEquals("State count wrong:", 2, flow.getStates().length);
@@ -62,9 +62,9 @@ public class FlowTests extends TestCase {
 
 	public void testAddDuplicateState() {
 		Flow flow = new Flow("myFlow");
-		flow.add(new EndState(flow, "myState1"));
+		new EndState(flow, "myState1");
 		try {
-			flow.add(new EndState(flow, "myState1"));
+			new EndState(flow, "myState1");
 			fail("Duplicate state added");
 		}
 		catch (IllegalArgumentException e) {
@@ -75,15 +75,18 @@ public class FlowTests extends TestCase {
 	public void testAddSameStateTwice() {
 		Flow flow = new Flow("myFlow");
 		EndState state = new EndState(flow, "myState1");
-		flow.add(state);
-		flow.add(state);
+		try {
+			flow.add(state);
+			fail("Should have failed");
+		} catch (IllegalArgumentException e) {
+			
+		}
 		assertEquals("State count wrong:", 1, flow.getStateCount());
 	}
 
 	public void testAddStateAlreadyInOtherFlow() {
 		Flow otherFlow = new Flow("myOtherFlow");
 		State state = new EndState(otherFlow, "myState1");
-		otherFlow.add(state);
 		Flow flow = new Flow("myFlow");
 		try {
 			flow.add(state);

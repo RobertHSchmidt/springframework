@@ -210,9 +210,6 @@ public class Flow extends AnnotatedObject {
 					+ "' -- it already belongs to a different flow");
 		}
 		if (states.contains(state)) {
-			return;
-		}
-		if (containsState(state.getId())) {
 			throw new IllegalArgumentException("This flow '" + getId() + "' already contains a state with id '"
 					+ state.getId() + "' -- state ids must be locally unique to the flow definition; "
 					+ "existing state-ids of this flow include: " + StylerUtils.style(getStateIds()));

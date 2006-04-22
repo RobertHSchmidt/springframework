@@ -108,8 +108,8 @@ public abstract class State extends AnnotatedObject {
 	private void setFlow(Flow flow) throws IllegalArgumentException {
 		Assert.hasText(getId(), "The id of the state should be set before adding the state to a flow");
 		Assert.notNull(flow, "The owning flow is required");
-		flow.add(this);
 		this.flow = flow;
+		flow.add(this);
 	}
 
 	/**
