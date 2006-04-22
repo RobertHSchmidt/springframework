@@ -2,7 +2,7 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC1 (21.4.2006)
+Changes in version 1.0 RC1 (24.4.2006)
 ------------------------------------
 
 Package org.springframework.webflow
@@ -27,6 +27,8 @@ Package org.springframework.webflow.builder
 * Added 'input-mapper' and 'output-mapper' elements to the 'flow' element, for mapping input and output attributes respectively.
 * Changed the 'attribute-mapper' element of the 'subflow-state' element to be consistent with the new
   'input-mapper' and 'output-mapper' elements, for mapping input and output attributes to and from a subflow, respectively.
+* Changed the 'output-attribute' element of the 'end-state' element to be consistent with the new
+  'output-mapper' elements, for output attributes specific to a flow outcome.
 * Added an 'on-exception' attribute to the 'transition' element, for executing a state transition as part of
   state or flow exception handler logic.  This supercedes use of the 'class' and 'to' attributes of the 
   'exception-handler' element.
@@ -44,6 +46,11 @@ Package org.springframework.webflow.builder
   treated as the target state of the transition.
 * Enhanced the 'view' attribute of the 'view-state' and 'end-state' elements to be fully ${expression} capable; previously 
   expressions could only be defined for redirect parameters.
+* Refined the FlowArtifactFactory interface, acting now as both a service locator and abstract factory.
+* Refined the FlowBuilder interface, adding builder methods for each type of major Flow construct.
+* Reworked AbstractFlowBuilder and XmlFlowBuilder to bring them in-line with the FlowArtifactFactory and FlowBuilder refinements.
+* XmlFlowBuilder now respects deployment within a WebApplicationContext now, supporting access to the 
+  ServletContext from within beans deployed in flow-local contexts.
 
 Package org.springframework.webflow.context
 * Changed the String-keyed map attribute iteration construct from 'Enumeration' to 'Iterator'.
