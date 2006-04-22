@@ -18,6 +18,7 @@ package org.springframework.webflow.registry;
 import java.io.Serializable;
 
 import org.springframework.core.io.Resource;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.UnmodifiableAttributeMap;
@@ -95,16 +96,17 @@ public class ExternalizedFlowDefinition implements Serializable {
 	public UnmodifiableAttributeMap getAttributes() {
 		return attributes;
 	}
-	
+
 	private String stripExtension(String fileName) {
 		int extensionIndex = fileName.indexOf('.');
 		if (extensionIndex != -1) {
 			return fileName.substring(0, extensionIndex);
-		} else {
+		}
+		else {
 			return fileName;
 		}
 	}
-	
+
 	private void setAttributes(AttributeCollection attributes) {
 		if (attributes != null) {
 			this.attributes = attributes.unmodifiable();
@@ -112,5 +114,10 @@ public class ExternalizedFlowDefinition implements Serializable {
 		else {
 			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
 		}
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("id", id).append("location", location).append("attributes", attributes)
+				.toString();
 	}
 }
