@@ -18,6 +18,7 @@ package org.springframework.webflow.builder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -73,6 +74,7 @@ import org.springframework.webflow.support.CollectionAddingPropertyExpression;
 import org.springframework.webflow.support.ImmutableFlowAttributeMapper;
 import org.springframework.webflow.support.SimpleFlowVariable;
 import org.springframework.webflow.support.TransitionCriteriaChain;
+import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -86,8 +88,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *                &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *                &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -430,9 +432,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private Flow parseFlow(String id, AttributeCollection attributes, Element flowElement) {
-		Assert.state(FLOW_ELEMENT.equals(flowElement.getTagName()), "This is not the '" + FLOW_ELEMENT + "' element");
+		if (!isFlowElement(flowElement)) {
+			throw new IllegalStateException("This is not the '" + FLOW_ELEMENT + "' element");
+		}
 		initLocalFlowArtifactFactoryRegistry(flowElement);
 		return getLocalFlowArtifactFactory().createFlow(id, attributes);
+	}
+
+	private boolean isFlowElement(Element flowElement) {
+		return FLOW_ELEMENT.equals(flowElement.getTagName());
 	}
 
 	/**
@@ -521,9 +529,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private void parseAndAddGlobalTransitions(Element element, Flow flow) {
-		List transitionElements = DomUtils.getChildElementsByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
-		if (!transitionElements.isEmpty()) {
-			Element globalTransitionsElement = (Element)transitionElements.get(0);
+		List globalTransitionElements = DomUtils.getChildElementsByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
+		if (!globalTransitionElements.isEmpty()) {
+			Element globalTransitionsElement = (Element)globalTransitionElements.get(0);
 			flow.getGlobalTransitionSet().addAll(parseTransitions(globalTransitionsElement));
 		}
 	}
@@ -579,7 +587,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 		parseAndSetStartState(flowElement, flow);
 	}
-	
+
 	private void parseAndSetStartState(Element element, Flow flow) {
 		String startStateId = element.getAttribute(START_STATE_ATTRIBUTE);
 		flow.setStartState(startStateId);
@@ -651,6 +659,16 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			}
 		}
 		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
+	}
+
+	private Transition parseTransition(Element element) {
+		TransitionCriteria matchingCriteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
+				element.getAttribute(ON_ATTRIBUTE));
+		TransitionCriteria executionCriteria = TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element));
+		TargetStateResolver targetStateResolver = (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
+				element.getAttribute(TO_ATTRIBUTE));
+		return getLocalFlowArtifactFactory().createTransition(matchingCriteria, executionCriteria, targetStateResolver,
+				null);
 	}
 
 	private ViewSelector parseViewSelector(String stateType, Element element) {
@@ -763,16 +781,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 	}
 
-	private Transition parseTransition(Element element) {
-		TransitionCriteria matchingCriteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
-				element.getAttribute(ON_ATTRIBUTE));
-		TransitionCriteria executionCriteria = TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element));
-		TargetStateResolver targetStateResolver = (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
-				element.getAttribute(TO_ATTRIBUTE));
-		return getLocalFlowArtifactFactory().createTransition(matchingCriteria, executionCriteria, targetStateResolver,
-				null);
-	}
-
 	private Transition[] parseIfs(Element element) {
 		List transitions = new LinkedList();
 		List transitionElements = DomUtils.getChildElementsByTagName(element, IF_ELEMENT);
@@ -872,17 +880,58 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private StateExceptionHandler[] parseExceptionHandlers(Element element) {
-		List handlerElements = DomUtils.getChildElementsByTagName(element, EXCEPTION_HANDLER_ELEMENT);
-		if (handlerElements.isEmpty()) {
-			return null;
+		StateExceptionHandler[] transitionExecutingHandlers = parseTransitionExecutingExceptionHandlers(element);
+		StateExceptionHandler[] customHandlers = parseCustomExceptionHandlers(element);
+		StateExceptionHandler[] exceptionHandlers = new StateExceptionHandler[transitionExecutingHandlers.length
+				+ customHandlers.length];
+		System.arraycopy(transitionExecutingHandlers, 0, exceptionHandlers, 0, transitionExecutingHandlers.length);
+		System.arraycopy(customHandlers, 0, exceptionHandlers, transitionExecutingHandlers.length,
+				customHandlers.length);
+		return exceptionHandlers;
+	}
+
+	private StateExceptionHandler[] parseTransitionExecutingExceptionHandlers(Element element) {
+		List transitionElements = Collections.EMPTY_LIST;
+		if (isFlowElement(element)) {
+			List globalTransitionElements = DomUtils.getChildElementsByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
+			if (!globalTransitionElements.isEmpty()) {
+				Element globalTransitionsElement = (Element)globalTransitionElements.get(0);
+				transitionElements = DomUtils.getChildElementsByTagName(globalTransitionsElement, TRANSITION_ELEMENT);
+			}
 		}
-		StateExceptionHandler[] exceptionHandlers = new StateExceptionHandler[handlerElements.size()];
+		else {
+			transitionElements = DomUtils.getChildElementsByTagName(element, TRANSITION_ELEMENT);
+		}
+		List exceptionHandlers = new LinkedList();
+		for (int i = 0; i < transitionElements.size(); i++) {
+			Element transitionElement = (Element)transitionElements.get(i);
+			if (StringUtils.hasText(transitionElement.getAttribute(ON_EXCEPTION_ATTRIBUTE))) {
+				exceptionHandlers.add(parseTransitionExecutingExceptionHandler(transitionElement));
+			}
+		}
+		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
+	}
+
+	private StateExceptionHandler parseTransitionExecutingExceptionHandler(Element element) {
+		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
+		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(ON_EXCEPTION_ATTRIBUTE));
+		handler.add(exceptionClass, (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
+				element.getAttribute(TO_ATTRIBUTE)));
+		return handler;
+	}
+
+	private StateExceptionHandler[] parseCustomExceptionHandlers(Element element) {
+		List exceptionHandlers = new LinkedList();
+		List handlerElements = DomUtils.getChildElementsByTagName(element, EXCEPTION_HANDLER_ELEMENT);
 		for (int i = 0; i < handlerElements.size(); i++) {
 			Element handlerElement = (Element)handlerElements.get(i);
-			exceptionHandlers[i] = getLocalFlowArtifactFactory().getExceptionHandler(
-					handlerElement.getAttribute(BEAN_ATTRIBUTE));
+			exceptionHandlers.add(parseCustomExceptionHandler(handlerElement));
 		}
-		return exceptionHandlers;
+		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
+	}
+
+	private StateExceptionHandler parseCustomExceptionHandler(Element element) {
+		return getLocalFlowArtifactFactory().getExceptionHandler(element.getAttribute(BEAN_ATTRIBUTE));
 	}
 
 	private void destroyFlowArtifactRegistry(Flow flow) {
@@ -975,7 +1024,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		 * The local registry holding the artifacts local to the flow.
 		 */
 		private GenericApplicationContext context;
-		
+
 		/**
 		 * Create new registry
 		 * @param context the local registry
@@ -983,24 +1032,25 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		public LocalFlowArtifactRegistry(Resource[] resources) {
 			this.resources = resources;
 		}
-		
+
 		private void init(LocalFlowArtifactFactory localFactory, FlowArtifactFactory rootFactory) {
 			BeanFactory parent = null;
 			if (localFactory.localRegistries.isEmpty()) {
 				try {
 					parent = rootFactory.getServiceRegistry();
-				} catch (UnsupportedOperationException e) {
-					
 				}
-			} else {
+				catch (UnsupportedOperationException e) {
+
+				}
+			}
+			else {
 				parent = localFactory.top().context;
 			}
 			context = createLocalFlowContext(parent, rootFactory);
 			new XmlBeanDefinitionReader(context).loadBeanDefinitions(resources);
 			context.refresh();
 		}
-		
-		
+
 		private GenericApplicationContext createLocalFlowContext(BeanFactory parent, FlowArtifactFactory rootFactory) {
 			if (parent instanceof WebApplicationContext) {
 				GenericWebApplicationContext context = new GenericWebApplicationContext();
@@ -1008,11 +1058,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				context.setParent((WebApplicationContext)parent);
 				context.setResourceLoader(rootFactory.getResourceLoader());
 				return context;
-			} else {
+			}
+			else {
 				GenericApplicationContext context = new GenericApplicationContext();
 				if (parent instanceof ApplicationContext) {
 					context.setParent((ApplicationContext)parent);
-				} else {
+				}
+				else {
 					if (parent != null) {
 						context.getBeanFactory().setParentBeanFactory(parent);
 					}
