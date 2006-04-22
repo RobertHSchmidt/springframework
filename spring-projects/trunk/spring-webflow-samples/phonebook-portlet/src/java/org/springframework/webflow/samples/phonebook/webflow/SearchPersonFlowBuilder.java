@@ -15,9 +15,9 @@
  */
 package org.springframework.webflow.samples.phonebook.webflow;
 
+import org.springframework.webflow.Action;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.Transition;
-import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.FormAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
@@ -47,9 +47,9 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
 		MultiAction searchFormAction = createSearchFormAction();
-		ViewState enterCriteria = addViewState("enterCriteria", "searchCriteria", transition(on("search"),
-				to("executeSearch"), ifSuccessful(invoke("bindAndValidate", searchFormAction))));
-		enterCriteria.addEntryAction(invoke("setupForm", searchFormAction));
+		addViewState("enterCriteria", new Action[] { invoke("setupForm", searchFormAction) },
+				viewSelector("searchCriteria"), new Transition[] { transition(on("search"), to("executeSearch"),
+						ifReturnedSuccess(invoke("bindAndValidate", searchFormAction))) }, null, null, null);
 
 		// execute query
 		addActionState("executeSearch", action("phonebook", method("search(${flowScope.searchCriteria})")), transition(

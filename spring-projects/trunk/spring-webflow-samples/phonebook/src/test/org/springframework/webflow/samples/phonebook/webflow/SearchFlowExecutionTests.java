@@ -16,14 +16,14 @@
 package org.springframework.webflow.samples.phonebook.webflow;
 
 import java.io.File;
+import java.util.Map;
 
+import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.EndState;
-import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook;
@@ -92,12 +92,10 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 		Flow detailFlow = new Flow("detail-flow");
 		// test responding to finish result
-		EndState finish = new EndState(detailFlow, "finish");
-		finish.addEntryAction(new AbstractAction() {
-			public Event doExecute(RequestContext context) throws Exception {
-				// test attribute mapping
-				assertEquals(new Long(1), context.getFlowScope().get("id"));
-				return success();
+		new EndState(detailFlow, "finish");
+		detailFlow.setInputMapper(new AttributeMapper() {
+			public void map(Object source, Object target, Map context) {
+				assertEquals("id of value 1 not provided as input by calling search flow", new Long(1), ((AttributeMap)source).get("id"));
 			}
 		});
 		flowArtifactFactory.registerSubflow(detailFlow);
