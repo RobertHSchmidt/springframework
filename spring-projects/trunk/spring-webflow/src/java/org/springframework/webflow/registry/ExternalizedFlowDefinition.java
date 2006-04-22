@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.registry;
 
+import java.io.Serializable;
+
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.CollectionUtils;
@@ -25,7 +27,7 @@ import org.springframework.webflow.UnmodifiableAttributeMap;
  * Describes exactly one externalized flow definition resource.
  * @author Keith Donald
  */
-public class ExternalizedFlowDefinition {
+public class ExternalizedFlowDefinition implements Serializable {
 
 	/**
 	 * The identifier to assign to the flow.
@@ -48,8 +50,9 @@ public class ExternalizedFlowDefinition {
 	 * @param location the flow resource location.
 	 */
 	public ExternalizedFlowDefinition(Resource location) {
-		this(location.getFilename(), location);
+		this.id = stripExtension(location.getFilename());
 		this.location = location;
+		setAttributes(null);
 	}
 
 	/**
@@ -69,12 +72,7 @@ public class ExternalizedFlowDefinition {
 	public ExternalizedFlowDefinition(String id, Resource location, AttributeCollection attributes) {
 		this.id = id;
 		this.location = location;
-		if (attributes != null) {
-			this.attributes = attributes.unmodifiable();
-		}
-		else {
-			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
-		}
+		setAttributes(attributes);
 	}
 
 	/**
@@ -96,5 +94,23 @@ public class ExternalizedFlowDefinition {
 	 */
 	public UnmodifiableAttributeMap getAttributes() {
 		return attributes;
+	}
+	
+	private String stripExtension(String fileName) {
+		int extensionIndex = fileName.indexOf('.');
+		if (extensionIndex != -1) {
+			return fileName.substring(0, extensionIndex);
+		} else {
+			return fileName;
+		}
+	}
+	
+	private void setAttributes(AttributeCollection attributes) {
+		if (attributes != null) {
+			this.attributes = attributes.unmodifiable();
+		}
+		else {
+			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
+		}
 	}
 }

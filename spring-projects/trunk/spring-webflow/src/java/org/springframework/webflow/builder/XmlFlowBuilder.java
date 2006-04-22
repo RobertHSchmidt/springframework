@@ -1003,7 +1003,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			return getFlowArtifactFactory().getSubflow(id);
 		}
 
-		public Flow createFlow(String id, UnmodifiableAttributeMap attributes) throws FlowArtifactException {
+		public Flow createFlow(String id, AttributeCollection attributes) throws FlowArtifactException {
 			top().flow = getFlowArtifactFactory().createFlow(id, attributes);
 			return top().flow;
 		}

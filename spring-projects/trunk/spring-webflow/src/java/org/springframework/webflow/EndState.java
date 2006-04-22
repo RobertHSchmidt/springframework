@@ -126,7 +126,7 @@ public class EndState extends State {
 	 * returns an empty map. Subclasses may override.
 	 */
 	protected AttributeMap createSessionOutput(AttributeMap scope) {
-		if (outputMapper != null) {
+		if (outputMapper == null) {
 			return new AttributeMap();
 		}
 		AttributeMap outputMap = new AttributeMap();
