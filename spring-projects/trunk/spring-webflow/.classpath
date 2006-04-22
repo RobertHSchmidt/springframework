@@ -18,7 +18,7 @@
 	<classpathentry kind="lib" path="lib/buildtime/servlet-api.jar"/>
 	<classpathentry sourcepath="/spring-binding/src/java" kind="lib" path="lib/global/spring-binding.jar"/>
 	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-beans.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
+	<classpathentry sourcepath="/spring" kind="lib" path="lib/global/spring-context.jar"/>
 	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-core.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/spring-portlet.jar"/>
 	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-web.jar"/>

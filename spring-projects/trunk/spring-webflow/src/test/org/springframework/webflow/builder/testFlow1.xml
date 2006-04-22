@@ -112,7 +112,9 @@
 	<inline-flow id="inline-flow">
 		<flow start-state="end">
 			<end-state id="end">
-				<output-attribute name="foo"/>
+				<output-mapper>
+					<mapping source="name" target="name"/>
+				</output-mapper>
 			</end-state>
 		</flow>
 	</inline-flow>

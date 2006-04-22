@@ -42,6 +42,7 @@ import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.method.MethodSignature;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
@@ -49,6 +50,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.AttributeCollection;
@@ -84,8 +87,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *             &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *             &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -408,7 +411,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Load the flow definition from the configured resource and return the
 	 * resulting DOM document.
 	 */
-	protected Document loadDocument() throws IOException, ParserConfigurationException, SAXException {
+	private Document loadDocument() throws IOException, ParserConfigurationException, SAXException {
 		InputStream is = null;
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -466,7 +469,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * Initialize a local flow artifact registry to access the flow local bean
 	 * factory.
 	 */
-	protected void initLocalFlowArtifactFactoryRegistry(Element flowElement) {
+	private void initLocalFlowArtifactFactoryRegistry(Element flowElement) {
 		List importElements = DomUtils.getChildElementsByTagName(flowElement, IMPORT_ELEMENT);
 		Resource[] resources = new Resource[importElements.size()];
 		for (int i = 0; i < importElements.size(); i++) {
@@ -479,12 +482,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 						+ importElement.getAttribute(RESOURCE_ATTRIBUTE) + "'", e);
 			}
 		}
-		GenericApplicationContext context = new GenericApplicationContext();
-		context.setResourceLoader(getFlowArtifactFactory().getResourceLoader());
-		new XmlBeanDefinitionReader(context).loadBeanDefinitions(resources);
-		localFlowArtifactFactory.push(new LocalFlowArtifactRegistry(context));
+		localFlowArtifactFactory.push(new LocalFlowArtifactRegistry(resources));
 	}
-
+	
 	/**
 	 * Parse a list of flow variables to create when the flow starts.
 	 * @param flowElement the flow element
@@ -979,13 +979,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		 * @param registry the local registry
 		 */
 		public void push(LocalFlowArtifactRegistry registry) {
-			if (localRegistries.isEmpty()) {
-				setFirstParent(registry.context);
-			}
-			else {
-				registry.context.setParent(top().context);
-			}
-			registry.context.refresh();
+			registry.init(this, getFlowArtifactFactory());
 			localRegistries.push(registry);
 		}
 
@@ -1029,21 +1023,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		public BeanFactory getServiceRegistry() {
 			return top().context;
 		}
-
-		/**
-		 * Attach a master service registry as a parent registry of the local
-		 * context, if supported by the configured flow artifact factory.
-		 * @param context the local context to attach a global service registry
-		 * to
-		 */
-		private void setFirstParent(ConfigurableApplicationContext context) {
-			try {
-				context.getBeanFactory().setParentBeanFactory(getFlowArtifactFactory().getServiceRegistry());
-			}
-			catch (UnsupportedOperationException e) {
-
-			}
-		}
 	}
 
 	/**
@@ -1055,17 +1034,57 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 		private Flow flow;
 
+		private Resource[] resources;
+
 		/**
 		 * The local registry holding the artifacts local to the flow.
 		 */
-		private ConfigurableApplicationContext context;
-
+		private GenericApplicationContext context;
+		
 		/**
 		 * Create new registry
 		 * @param context the local registry
 		 */
-		public LocalFlowArtifactRegistry(ConfigurableApplicationContext context) {
-			this.context = context;
+		public LocalFlowArtifactRegistry(Resource[] resources) {
+			this.resources = resources;
+		}
+		
+		private void init(LocalFlowArtifactFactory localFactory, FlowArtifactFactory rootFactory) {
+			BeanFactory parent = null;
+			if (localFactory.localRegistries.isEmpty()) {
+				try {
+					parent = rootFactory.getServiceRegistry();
+				} catch (UnsupportedOperationException e) {
+					
+				}
+			} else {
+				parent = localFactory.top().context;
+			}
+			context = createLocalFlowContext(parent, rootFactory);
+			new XmlBeanDefinitionReader(context).loadBeanDefinitions(resources);
+			context.refresh();
+		}
+		
+		
+		private GenericApplicationContext createLocalFlowContext(BeanFactory parent, FlowArtifactFactory rootFactory) {
+			if (parent instanceof WebApplicationContext) {
+				GenericWebApplicationContext context = new GenericWebApplicationContext();
+				context.setServletContext(((WebApplicationContext)parent).getServletContext());
+				context.setParent((WebApplicationContext)parent);
+				context.setResourceLoader(rootFactory.getResourceLoader());
+				return context;
+			} else {
+				GenericApplicationContext context = new GenericApplicationContext();
+				if (parent instanceof ApplicationContext) {
+					context.setParent((ApplicationContext)parent);
+				} else {
+					if (parent != null) {
+						context.getBeanFactory().setParentBeanFactory(parent);
+					}
+				}
+				context.setResourceLoader(rootFactory.getResourceLoader());
+				return context;
+			}
 		}
 	}
 }
