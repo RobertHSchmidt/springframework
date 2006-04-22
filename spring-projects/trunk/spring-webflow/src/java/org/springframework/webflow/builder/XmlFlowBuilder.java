@@ -406,10 +406,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		document = null;
 	}
 
-	/**
-	 * Load the flow definition from the configured resource and return the
-	 * resulting DOM document.
-	 */
 	private Document loadDocument() throws IOException, ParserConfigurationException, SAXException {
 		InputStream is = null;
 		try {
@@ -433,10 +429,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 	}
 
-	/**
-	 * Parse the XML flow definitions and construct a Flow object. Will not
-	 * parse all state definitions for the flow!
-	 */
 	private Flow parseFlow(String id, AttributeCollection attributes, Element flowElement) {
 		Assert.state(FLOW_ELEMENT.equals(flowElement.getTagName()), "This is not the '" + FLOW_ELEMENT + "' element");
 		initLocalFlowArtifactFactoryRegistry(flowElement);
@@ -464,10 +456,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return localFlowArtifactFactory;
 	}
 
-	/**
-	 * Initialize a local flow artifact registry to access the flow local bean
-	 * factory.
-	 */
 	private void initLocalFlowArtifactFactoryRegistry(Element flowElement) {
 		List importElements = DomUtils.getChildElementsByTagName(flowElement, IMPORT_ELEMENT);
 		Resource[] resources = new Resource[importElements.size()];
@@ -483,12 +471,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 		localFlowArtifactFactory.push(new LocalFlowArtifactRegistry(resources));
 	}
-	
-	/**
-	 * Parse a list of flow variables to create when the flow starts.
-	 * @param flowElement the flow element
-	 * @param flow the flow
-	 */
+
 	private void parseAndAddFlowVariables(Element flowElement, Flow flow) {
 		List varElements = DomUtils.getChildElementsByTagName(flowElement, VAR_ELEMENT);
 		if (varElements.isEmpty()) {
@@ -499,11 +482,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 	}
 
-	/**
-	 * Parse the flow variable.
-	 * @param element the var element
-	 * @return the flow variable
-	 */
 	private FlowVariable parseVariable(Element element) {
 		ScopeType scope = null;
 		if (element.hasAttribute(SCOPE_ATTRIBUTE) && !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
@@ -576,12 +554,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		destroyFlowArtifactRegistry(inlineFlow);
 	}
 
-	/**
-	 * Parse the state definitions in given element and add them to the flow
-	 * object we're constructing.
-	 */
 	private void parseAndAddStateDefinitions(Element flowElement, Flow flow) {
-		String startStateId = flowElement.getAttribute(START_STATE_ATTRIBUTE);
 		NodeList nodeList = flowElement.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
@@ -604,6 +577,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				}
 			}
 		}
+		parseAndSetStartState(flowElement, flow);
+	}
+	
+	private void parseAndSetStartState(Element element, Flow flow) {
+		String startStateId = element.getAttribute(START_STATE_ATTRIBUTE);
 		flow.setStartState(startStateId);
 	}
 
@@ -686,9 +664,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return getLocalFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE));
 	}
 
-	/**
-	 * Parse all annotated action definitions contained in given element.
-	 */
 	private AnnotatedAction[] parseAnnotatedActions(Element element) {
 		List actions = new LinkedList();
 		List actionElements = DomUtils.getChildElementsByTagName(element, ACTION_ELEMENT);
@@ -699,9 +674,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return (AnnotatedAction[])actions.toArray(new AnnotatedAction[actions.size()]);
 	}
 
-	/**
-	 * Parse an annotated action definition and return the corresponding object.
-	 */
 	private AnnotatedAction parseAnnotatedAction(Element element) {
 		AnnotatedAction action = new AnnotatedAction();
 		if (element.hasAttribute(NAME_ATTRIBUTE)) {
@@ -716,9 +688,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return action;
 	}
 
-	/**
-	 * Parse an action definition and return the corresponding object.
-	 */
 	private Action parseAction(Element element) {
 		String actionId = element.getAttribute(BEAN_ATTRIBUTE);
 		if (getLocalFlowArtifactFactory().isAction(actionId)) {
@@ -753,11 +722,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				null);
 	}
 
-	/**
-	 * Parse all properties defined as nested elements of given element. Returns
-	 * the properties as a map: the name of the property is the key, the
-	 * associated value the value.
-	 */
 	private UnmodifiableAttributeMap parseAttributes(Element element) {
 		AttributeMap attributes = new AttributeMap();
 		List propertyElements = DomUtils.getChildElementsByTagName(element, ATTRIBUTE_ELEMENT);
@@ -767,10 +731,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return attributes.unmodifiable();
 	}
 
-	/**
-	 * Parse a property definition from given element and add the property to
-	 * given set.
-	 */
 	private void parseAndSetAttribute(Element element, AttributeMap attributes) {
 		String name = element.getAttribute(NAME_ATTRIBUTE);
 		String value = null;
@@ -785,9 +745,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		attributes.put(name, convertPropertyValue(element, value));
 	}
 
-	/**
-	 * Do type conversion for given property value.
-	 */
 	private Object convertPropertyValue(Element element, String stringValue) {
 		if (element.hasAttribute(TYPE_ATTRIBUTE)) {
 			ConversionExecutor executor = fromStringTo(element.getAttribute(TYPE_ATTRIBUTE));
@@ -806,10 +763,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 	}
 
-	/**
-	 * Parse a transition definition and return a corresponding Transition
-	 * object.
-	 */
 	private Transition parseTransition(Element element) {
 		TransitionCriteria matchingCriteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(ON_ATTRIBUTE));
@@ -820,10 +773,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				null);
 	}
 
-	/**
-	 * Find all "if" definitions in given state definition and return a list of
-	 * corresponding Transition objects.
-	 */
 	private Transition[] parseIfs(Element element) {
 		List transitions = new LinkedList();
 		List transitionElements = DomUtils.getChildElementsByTagName(element, IF_ELEMENT);
@@ -834,10 +783,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
 	}
 
-	/**
-	 * Parse an "if" transition definition and return a corresponding Transition
-	 * object.
-	 */
 	private Transition[] parseIf(Element element) {
 		Transition thenTransition = parseThen(element);
 		if (StringUtils.hasText(element.getAttribute(ELSE_ATTRIBUTE))) {
@@ -926,10 +871,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	}
 
-	/**
-	 * Parse the list of exception handlers present in the XML document and add
-	 * them to the flow definition being built.
-	 */
 	private StateExceptionHandler[] parseExceptionHandlers(Element element) {
 		List handlerElements = DomUtils.getChildElementsByTagName(element, EXCEPTION_HANDLER_ELEMENT);
 		if (handlerElements.isEmpty()) {
@@ -944,12 +885,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return exceptionHandlers;
 	}
 
-	/**
-	 * Pops the local registry off the stack for the flow definition that has
-	 * just been constructed.
-	 * @param flow the built flow
-	 */
-	protected void destroyFlowArtifactRegistry(Flow flow) {
+	private void destroyFlowArtifactRegistry(Flow flow) {
 		localFlowArtifactFactory.pop();
 	}
 
