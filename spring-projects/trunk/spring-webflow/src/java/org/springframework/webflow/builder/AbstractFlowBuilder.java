@@ -51,24 +51,24 @@ import org.springframework.webflow.support.EventFactorySupport;
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
  * 	public void buildStates() {
- *                               // get customer information
- *                               addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
- *                                   on(success(), to(&quot;displayDetails&quot;)));
- *                                                             
- *                               // view customer information               
- *                               addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *                                   on(submit(), to(&quot;bindAndValidate&quot;));
- *                                                         
- *                               // bind and validate customer information updates 
- *                               addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
- *                                   new Transition[] {
- *                                       on(error(), to(&quot;displayDetails&quot;)),
- *                                       on(success(), to(&quot;finish&quot;))
- *                                   });
- *                                                             
- *                               // finish
- *                               addEndState(&quot;finish&quot;);
- *                           }
+ *                                 // get customer information
+ *                                 addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
+ *                                     on(success(), to(&quot;displayDetails&quot;)));
+ *                                                               
+ *                                 // view customer information               
+ *                                 addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *                                     on(submit(), to(&quot;bindAndValidate&quot;));
+ *                                                           
+ *                                 // bind and validate customer information updates 
+ *                                 addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
+ *                                     new Transition[] {
+ *                                         on(error(), to(&quot;displayDetails&quot;)),
+ *                                         on(success(), to(&quot;finish&quot;))
+ *                                     });
+ *                                                               
+ *                                 // finish
+ *                                 addEndState(&quot;finish&quot;);
+ *                             }
  * }
  * </pre>
  * 
@@ -237,24 +237,23 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 				exceptionHandlers, exitActions, attributes);
 	}
 
-	protected State addSubflowState(String stateId, Flow subflow, FlowAttributeMapper flowAttributeMapper,
+	protected State addSubflowState(String stateId, Flow subflow, FlowAttributeMapper attributeMapper,
 			Transition transition) {
-		return getFlowArtifactFactory().createSubflowState(stateId, getFlow(), null, subflow, flowAttributeMapper,
+		return getFlowArtifactFactory().createSubflowState(stateId, getFlow(), null, subflow, attributeMapper,
 				new Transition[] { transition }, null, null, null);
 	}
 
-	protected State addSubflowState(String stateId, Flow subflow, FlowAttributeMapper flowAttributeMapper,
+	protected State addSubflowState(String stateId, Flow subflow, FlowAttributeMapper attributeMapper,
 			Transition[] transitions) {
-		return getFlowArtifactFactory().createSubflowState(stateId, getFlow(), null, subflow, flowAttributeMapper,
+		return getFlowArtifactFactory().createSubflowState(stateId, getFlow(), null, subflow, attributeMapper,
 				transitions, null, null, null);
 	}
 
 	protected State addSubflowState(String stateId, Action[] entryActions, Flow subflow,
-			FlowAttributeMapper flowAttributeMapper, Transition[] transitions,
-			StateExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes)
-			throws IllegalArgumentException {
-		return getFlowArtifactFactory().createSubflowState(stateId, getFlow(), entryActions, subflow,
-				flowAttributeMapper, transitions, exceptionHandlers, exitActions, attributes);
+			FlowAttributeMapper attributeMapper, Transition[] transitions, StateExceptionHandler[] exceptionHandlers,
+			Action[] exitActions, AttributeCollection attributes) throws IllegalArgumentException {
+		return getFlowArtifactFactory().createSubflowState(stateId, getFlow(), entryActions, subflow, attributeMapper,
+				transitions, exceptionHandlers, exitActions, attributes);
 	}
 
 	protected State addEndState(String stateId) {
@@ -266,7 +265,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	protected State addEndState(String stateId, ViewSelector viewSelector, AttributeMapper outputMapper) {
-		return getFlowArtifactFactory().createEndState(stateId, getFlow(), null, viewSelector, outputMapper, null, null);
+		return getFlowArtifactFactory()
+				.createEndState(stateId, getFlow(), null, viewSelector, outputMapper, null, null);
 	}
 
 	protected State addEndState(String stateId, Action[] entryActions, ViewSelector viewSelector,
@@ -335,13 +335,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Encoded Method signature format: Method without arguments:
 	 * 
 	 * <pre>
-	 *              ${methodName}
+	 *                ${methodName}
 	 * </pre>
 	 * 
 	 * Method with arguments:
 	 * 
 	 * <pre>
-	 *               ${methodName}(${arg1}, ${arg2}, ${arg n})
+	 *                 ${methodName}(${arg1}, ${arg2}, ${arg n})
 	 * </pre>
 	 * 
 	 * @param method the encoded method signature

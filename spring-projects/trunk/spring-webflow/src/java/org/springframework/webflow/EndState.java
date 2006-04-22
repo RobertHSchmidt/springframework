@@ -17,6 +17,7 @@ package org.springframework.webflow;
 
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 
 /**
  * Terminates an active flow session when entered. If the terminated session is
@@ -85,6 +86,7 @@ public class EndState extends State {
 	 * is entered and terminates a root flow.
 	 */
 	public void setViewSelector(ViewSelector viewSelector) {
+		Assert.notNull(viewSelector, "The view selector is required");
 		this.viewSelector = viewSelector;
 	}
 

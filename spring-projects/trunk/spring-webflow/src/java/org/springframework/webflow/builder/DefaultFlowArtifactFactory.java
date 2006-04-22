@@ -161,7 +161,9 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 			Transition[] transitions, StateExceptionHandler[] exceptionHandlers, Action[] exitActions,
 			AttributeCollection attributes) throws FlowArtifactException {
 		ViewState viewState = new ViewState(flow, id);
-		viewState.setViewSelector(viewSelector);
+		if (viewSelector != null) {
+			viewState.setViewSelector(viewSelector);
+		}
 		configureCommonProperties(viewState, entryActions, transitions, exceptionHandlers, exitActions, attributes);
 		return viewState;
 	}
@@ -187,6 +189,9 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 			FlowAttributeMapper attributeMapper, Transition[] transitions, StateExceptionHandler[] exceptionHandlers,
 			Action[] exitActions, AttributeCollection attributes) throws FlowArtifactException {
 		SubflowState subflowState = new SubflowState(flow, id, subflow);
+		if (attributeMapper != null) {
+			subflowState.setAttributeMapper(attributeMapper);
+		}
 		configureCommonProperties(subflowState, entryActions, transitions, exceptionHandlers, exitActions, attributes);
 		return subflowState;
 	}
@@ -195,7 +200,9 @@ public class DefaultFlowArtifactFactory implements FlowArtifactFactory {
 			AttributeMapper outputMapper, StateExceptionHandler[] exceptionHandlers, AttributeCollection attributes)
 			throws FlowArtifactException {
 		EndState endState = new EndState(flow, id);
-		endState.setViewSelector(viewSelector);
+		if (viewSelector != null) {
+			endState.setViewSelector(viewSelector);
+		}
 		configureCommonProperties(endState, entryActions, exceptionHandlers, attributes);
 		return endState;
 	}
