@@ -18,27 +18,26 @@ package org.springframework.webflow.builder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.Action;
-import org.springframework.webflow.ActionState;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.AttributeCollection;
-import org.springframework.webflow.DecisionState;
-import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.SubflowState;
+import org.springframework.webflow.State;
+import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.action.ResultSpecification;
 import org.springframework.webflow.support.ActionTransitionCriteria;
+import org.springframework.webflow.support.EventFactorySupport;
 
 /**
  * Base class for flow builders that programmatically build flows in Java
@@ -52,24 +51,24 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
  * 	public void buildStates() {
- *          // get customer information
- *          addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
- *              on(success(), to(&quot;displayDetails&quot;)));
- *                                        
- *          // view customer information               
- *          addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *              on(submit(), to(&quot;bindAndValidate&quot;));
- *                                    
- *          // bind and validate customer information updates 
- *          addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
- *              new Transition[] {
- *                  on(error(), to(&quot;displayDetails&quot;)),
- *                  on(success(), to(&quot;finish&quot;))
- *              });
- *                                        
- *          // finish
- *          addEndState(&quot;finish&quot;);
- *      }
+ *                               // get customer information
+ *                               addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
+ *                                   on(success(), to(&quot;displayDetails&quot;)));
+ *                                                             
+ *                               // view customer information               
+ *                               addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *                                   on(submit(), to(&quot;bindAndValidate&quot;));
+ *                                                         
+ *                               // bind and validate customer information updates 
+ *                               addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
+ *                                   new Transition[] {
+ *                                       on(error(), to(&quot;displayDetails&quot;)),
+ *                                       on(success(), to(&quot;finish&quot;))
+ *                                   });
+ *                                                             
+ *                               // finish
+ *                               addEndState(&quot;finish&quot;);
+ *                           }
  * }
  * </pre>
  * 
@@ -147,6 +146,8 @@ import org.springframework.webflow.support.ActionTransitionCriteria;
  */
 public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
+	private EventFactorySupport eventFactorySupport = new EventFactorySupport();
+
 	/**
 	 * Default constructor for subclassing.
 	 */
@@ -182,278 +183,110 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		return null;
 	}
 
-	public abstract void buildStates();
-
-	public void buildExceptionHandlers() {
-		// default implementation assumes no exception handlers to build
+	protected State addViewState(String stateId, String viewName, Transition transition) {
+		return getFlowArtifactFactory().createViewState(stateId, getFlow(), null, viewSelector(viewName),
+				new Transition[] { transition }, null, null, null);
 	}
 
-	/**
-	 * Adds a <code>ViewState</code> marker to the flow built by this builder.
-	 * <p>
-	 * A marker has a <code>null</code> <code>viewName</code> and assumes
-	 * the HTTP response has already been written when entered. The marker notes
-	 * that control should be returned to the HTTP client.
-	 * @param stateId the <code>ViewState</code> id; must be unique in the
-	 * context of the flow built by this builder
-	 * @param transition a single supported transition for this state, mapping a
-	 * path from this state to another state (triggered by an event)
-	 * @return the view marker state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ViewState addViewState(String stateId, Transition transition) throws IllegalArgumentException {
-		return addViewState(stateId, (String)null, transition);
+	protected State addViewState(String stateId, String viewName, Transition[] transitions) {
+		return getFlowArtifactFactory().createViewState(stateId, getFlow(), null, viewSelector(viewName), transitions,
+				null, null, null);
 	}
 
-	/**
-	 * Adds a <code>ViewState</code> marker to the flow built by this builder.
-	 * <p>
-	 * A view marker has a <code>null</code> <code>viewName</code> and
-	 * assumes the HTTP response has already been written when entered. The
-	 * marker notes that control should be returned to the HTTP client.
-	 * <p>
-	 * @param stateId the <code>ViewState</code> id; must be unique in the
-	 * context of the flow built by this builder
-	 * @param transitions the supported transitions for this state, where each
-	 * transition maps a path from this state to another state (triggered by an
-	 * event)
-	 * @return the view marker state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ViewState addViewState(String stateId, Transition[] transitions) throws IllegalArgumentException {
-		return addViewState(stateId, (String)null, transitions);
+	protected State addViewState(String stateId, Action[] entryActions, ViewSelector viewSelector,
+			Transition[] transitions, StateExceptionHandler[] exceptionHandlers, Action[] exitActions,
+			AttributeCollection attributes) {
+		return getFlowArtifactFactory().createViewState(stateId, getFlow(), entryActions, viewSelector, transitions,
+				exceptionHandlers, exitActions, attributes);
 	}
 
-	/**
-	 * Adds a <code>ViewState</code> marker to the flow built by this builder.
-	 * <p>
-	 * A view marker has a <code>null</code> <code>viewName</code> and
-	 * assumes the HTTP response has already been written when entered. The
-	 * marker notes that control should be returned to the HTTP client.
-	 * <p>
-	 * @param stateId the <code>ViewState</code> id; must be unique in the
-	 * context of the flow built by this builder
-	 * @param transitions the supported transitions for this state, where each
-	 * transition maps a path from this state to another state (triggered by an
-	 * event)
-	 * @param attributes additional attributes describing the state
-	 * @return the view marker state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ViewState addViewState(String stateId, Transition[] transitions, AttributeCollection attributes)
+	protected State addActionState(String stateId, Action action, Transition transition) {
+		return getFlowArtifactFactory().createActionState(stateId, getFlow(), null, new Action[] { action },
+				new Transition[] { transition }, null, null, null);
+	}
+
+	protected State addActionState(String stateId, Action action, Transition[] transitions) {
+		return getFlowArtifactFactory().createActionState(stateId, getFlow(), null, new Action[] { action },
+				transitions, null, null, null);
+	}
+
+	protected State addActionState(String stateId, Action action, Transition transition,
+			StateExceptionHandler exceptionHandler) {
+		return getFlowArtifactFactory().createActionState(stateId, getFlow(), null, new Action[] { action },
+				new Transition[] { transition }, new StateExceptionHandler[] { exceptionHandler }, null, null);
+	}
+
+	protected State addActionState(String stateId, Action[] entryActions, Action[] actions, Transition[] transitions,
+			StateExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes) {
+		return getFlowArtifactFactory().createActionState(stateId, getFlow(), entryActions, actions, transitions,
+				exceptionHandlers, exitActions, attributes);
+	}
+
+	protected State addDecisionState(String stateId, Transition thenTransition, Transition elseTransition) {
+		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), null,
+				new Transition[] { thenTransition, elseTransition }, null, null, null);
+	}
+
+	protected State addDecisionState(String stateId, Transition[] transitions) {
+		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), null, transitions, null, null, null);
+	}
+
+	protected State addDecisionState(String stateId, Action[] entryActions, Transition[] transitions,
+			StateExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes) {
+		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), entryActions, transitions,
+				exceptionHandlers, exitActions, attributes);
+	}
+
+	protected State addSubflowState(String stateId, Flow subflow, FlowAttributeMapper flowAttributeMapper,
+			Transition transition) {
+		return getFlowArtifactFactory().createSubflowState(stateId, getFlow(), null, subflow, flowAttributeMapper,
+				new Transition[] { transition }, null, null, null);
+	}
+
+	protected State addSubflowState(String stateId, Flow subflow, FlowAttributeMapper flowAttributeMapper,
+			Transition[] transitions) {
+		return getFlowArtifactFactory().createSubflowState(stateId, getFlow(), null, subflow, flowAttributeMapper,
+				transitions, null, null, null);
+	}
+
+	protected State addSubflowState(String stateId, Action[] entryActions, Flow subflow,
+			FlowAttributeMapper flowAttributeMapper, Transition[] transitions,
+			StateExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes)
 			throws IllegalArgumentException {
-		return addViewState(stateId, (String)null, transitions, attributes);
+		return getFlowArtifactFactory().createSubflowState(stateId, getFlow(), entryActions, subflow,
+				flowAttributeMapper, transitions, exceptionHandlers, exitActions, attributes);
 	}
 
-	/**
-	 * Adds a <code>ViewState</code> to the flow built by this builder. A view
-	 * state triggers the rendering of a view template when entered.
-	 * @param stateId the <code>ViewState</code> id; must be locally unique to
-	 * the flow built by this builder
-	 * @param viewName the name of the logical view to render; this name will be
-	 * mapped to a physical resource template such as a JSP when the ViewState
-	 * is entered and control returns to the front controller
-	 * @param transition a single supported transition for this state, mapping a
-	 * path from this state to another state (triggered by an event)
-	 * @return the view state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ViewState addViewState(String stateId, String viewName, Transition transition)
-			throws IllegalArgumentException {
-		return addViewState(stateId, viewSelector("view", viewName), new Transition[] { transition }, null);
+	protected State addEndState(String stateId) {
+		return getFlowArtifactFactory().createEndState(stateId, getFlow(), null, null, null, null, null);
 	}
 
-	/**
-	 * Adds a <code>ViewState</code> to the flow built by this builder. A view
-	 * state triggers the rendering of a view template when entered.
-	 * @param stateId the <code>ViewState</code> id; must be unique in the
-	 * context of the flow built by this builder
-	 * @param viewName the name of the logical view to render; this name will be
-	 * mapped to a physical resource template such as a JSP when the ViewState
-	 * is entered and control returns to the front controller
-	 * @param transitions the supported transitions for this state, where each
-	 * transition maps a path from this state to another state (triggered by an
-	 * event)
-	 * @return the view state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ViewState addViewState(String stateId, String viewName, Transition[] transitions)
-			throws IllegalArgumentException {
-		return addViewState(stateId, viewSelector(TextToViewSelector.VIEW_STATE_TYPE, viewName), transitions, null);
+	protected State addEndState(String stateId, ViewSelector viewSelector) {
+		return getFlowArtifactFactory().createEndState(stateId, getFlow(), null, viewSelector, null, null, null);
 	}
 
-	/**
-	 * Adds a <code>ViewState</code> to the flow built by this builder. A view
-	 * state triggers the rendering of a view template when entered.
-	 * @param stateId the <code>ViewState</code> id; must be unique in the
-	 * context of the flow built by this builder
-	 * @param viewName the name of the logical view to render; this name will be
-	 * mapped to a physical resource template such as a JSP when the ViewState
-	 * is entered and control returns to the front controller
-	 * @param transitions the supported transitions for this state, where each
-	 * transition maps a path from this state to another state (triggered by an
-	 * event)
-	 * @param attributes additional attributes describing the state
-	 * @return the view state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ViewState addViewState(String stateId, String viewName, Transition[] transitions,
-			AttributeCollection attributes) throws IllegalArgumentException {
-		return addViewState(stateId, viewSelector(TextToViewSelector.VIEW_STATE_TYPE, viewName), transitions,
-				attributes);
+	protected State addEndState(String stateId, ViewSelector viewSelector, AttributeMapper outputMapper) {
+		return getFlowArtifactFactory().createEndState(stateId, getFlow(), null, viewSelector, outputMapper, null, null);
 	}
 
-	/**
-	 * Adds a <code>ViewState</code> to the flow built by this builder. A view
-	 * state triggers the rendering of a view template when entered.
-	 * @param stateId the <code>ViewState</code> id; must be unique in the
-	 * context of the flow built by this builder
-	 * @param viewSelector the factory to produce a selection noting the name of
-	 * the logical view to render; this name will be mapped to a physical
-	 * resource template such as a JSP when the ViewState is entered and control
-	 * returns to the front controller
-	 * @param transitions the supported transitions for this state, where each
-	 * transition maps a path from this state to another state (triggered by an
-	 * event)
-	 * @return the view state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ViewState addViewState(String stateId, ViewSelector viewSelector, Transition[] transitions)
-			throws IllegalArgumentException {
-		return addViewState(stateId, viewSelector, transitions, null);
+	protected State addEndState(String stateId, Action[] entryActions, ViewSelector viewSelector,
+			AttributeMapper outputMapper, StateExceptionHandler[] exceptionHandlers, AttributeCollection attributes) {
+		return getFlowArtifactFactory().createEndState(stateId, getFlow(), entryActions, viewSelector, outputMapper,
+				exceptionHandlers, attributes);
 	}
 
-	/**
-	 * Adds a <code>ViewState</code> to the flow built by this builder. A view
-	 * state triggers the rendering of a view template when entered.
-	 * @param stateId the <code>ViewState</code> id; must be unique in the
-	 * context of the flow built by this builder
-	 * @param viewSelector the factory to produce a selection noting the name of
-	 * the logical view to render; this name will be mapped to a physical
-	 * resource template such as a JSP when the ViewState is entered and control
-	 * returns to the front controller
-	 * @param transitions the supported transitions for this state, where each
-	 * transition maps a path from this state to another state (triggered by an
-	 * event)
-	 * @param attributes additional attributes describing the state
-	 * @return the view state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ViewState addViewState(String stateId, ViewSelector viewSelector, Transition[] transitions,
-			AttributeCollection attributes) throws IllegalArgumentException {
-		ViewState state = new ViewState(getFlow(), stateId);
-		state.setViewSelector(viewSelector);
-		state.getTransitionSet().addAll(transitions);
-		state.getAttributeMap().putAll(attributes);
-		return state;
+	protected ViewSelector viewSelector(String viewName) {
+		return viewSelector(TextToViewSelector.VIEW_STATE_TYPE, viewName);
 	}
 
-	/**
-	 * Turn given view name into a corresponding view selector.
-	 * @param viewName the view name (might be encoded)
-	 * @return the corresponding view selector
-	 */
-	protected ViewSelector viewSelector(String stateType, String viewName) {
+	protected ViewSelector endViewSelector(String viewName) {
+		return viewSelector(TextToViewSelector.END_STATE_TYPE, viewName);
+	}
+
+	private ViewSelector viewSelector(String stateType, String viewName) {
 		Map context = new HashMap(1, 1);
 		context.put(TextToViewSelector.STATE_TYPE_CONTEXT_PARAMETER, stateType);
 		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName, context);
-	}
-
-	/**
-	 * Adds an <code>ActionState</code> to the flow built by this builder. An
-	 * action state executes an <code>Action</code> implementation when
-	 * entered.
-	 * @param stateId the qualified stateId for the state; must be unique in the
-	 * context of the flow built by this builder
-	 * @param action the action implementation
-	 * @param transition a single supported transition for this state, mapping a
-	 * path from this state to another state (triggered by an event)
-	 * @return the action state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ActionState addActionState(String stateId, Action action, Transition transition)
-			throws IllegalArgumentException {
-		return addActionState(stateId, new Action[] { action }, new Transition[] { transition }, null);
-	}
-
-	/**
-	 * Adds an <code>ActionState</code> to the flow built by this builder. An
-	 * action state executes an <code>Action</code> implementation when
-	 * entered.
-	 * @param stateId the qualified stateId for the state; must be unique in the
-	 * context of the flow built by this builder
-	 * @param action the action implementation
-	 * @param transitions the supported transitions for this state, where each
-	 * transition maps a path from this state to another state (triggered by an
-	 * event)
-	 * @return the action state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ActionState addActionState(String stateId, Action action, Transition[] transitions)
-			throws IllegalArgumentException {
-		return addActionState(stateId, new Action[] { action }, transitions, null);
-	}
-
-	/**
-	 * Adds an <code>ActionState</code> to the flow built by this builder. An
-	 * action state executes an <code>Action</code> implementation when
-	 * entered.
-	 * @param stateId the qualified stateId for the state; must be unique in the
-	 * context of the flow built by this builder
-	 * @param action the action implementation
-	 * @param transitions the supported transitions for this state, where each
-	 * transition maps a path from this state to another state (triggered by an
-	 * event)
-	 * @param attributes additional attributes describing the state
-	 * @return the action state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ActionState addActionState(String stateId, Action action, Transition[] transitions,
-			AttributeCollection attributes) throws IllegalArgumentException {
-		return addActionState(stateId, new Action[] { action }, transitions, attributes);
-	}
-
-	/**
-	 * Adds an <code>ActionState</code> to the flow built by this builder. An
-	 * action state executes one or more <code>Action</code> implementations
-	 * when entered.
-	 * @param stateId the qualified stateId for the state; must be unique in the
-	 * context of the flow built by this builder
-	 * @param actions the action implementations, to be executed in order until
-	 * a valid transitional result is returned (Chain of Responsibility)
-	 * @param transitions the supported transitions for this state, where each
-	 * transition maps a path from this state to another state (triggered by an
-	 * event)
-	 * @return the action state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ActionState addActionState(String stateId, Action[] actions, Transition[] transitions)
-			throws IllegalArgumentException {
-		return addActionState(stateId, actions, transitions, null);
-	}
-
-	/**
-	 * Adds an <code>ActionState</code> to the flow built by this builder. An
-	 * action state executes one or more <code>Action</code> implementations
-	 * when entered.
-	 * @param stateId the qualified stateId for the state; must be unique in the
-	 * context of the flow built by this builder
-	 * @param actions the action implementations, to be executed in order until
-	 * a valid transitional result is returned (Chain of Responsibility)
-	 * @param transitions the supported transitions for this state, where each
-	 * transition maps a path from this state to another state (triggered by an
-	 * event)
-	 * @param attributes additional attributes describing the state
-	 * @return the action state
-	 * @throws IllegalArgumentException the stateId was not unique
-	 */
-	protected ActionState addActionState(String stateId, Action[] actions, Transition[] transitions,
-			AttributeCollection attributes) throws IllegalArgumentException {
-		ActionState state = new ActionState(getFlow(), stateId);
-		state.getTransitionSet().addAll(transitions);
-		state.getActionList().addAll(actions);
-		state.getAttributeMap().putAll(attributes);
-		return state;
 	}
 
 	/**
@@ -502,13 +335,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Encoded Method signature format: Method without arguments:
 	 * 
 	 * <pre>
-	 *      ${methodName}
+	 *              ${methodName}
 	 * </pre>
 	 * 
 	 * Method with arguments:
 	 * 
 	 * <pre>
-	 *      ${methodName}(${arg1}, ${arg2}, ${arg n})
+	 *               ${methodName}(${arg1}, ${arg2}, ${arg n})
 	 * </pre>
 	 * 
 	 * @param method the encoded method signature
@@ -535,98 +368,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		AnnotatedAction action = new AnnotatedAction(multiAction);
 		action.getAttributeMap().put(MultiAction.METHOD_ATTRIBUTE, methodName);
 		return action;
-	}
-
-	/**
-	 * Adds a subflow state to the flow built by this builder with the specified
-	 * id.
-	 * @param stateId the state id, must be unique among all states of the flow
-	 * built by this builder
-	 * @param subFlow the flow to be used as a subflow
-	 * @param transition the single supported transition out of the state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected SubflowState addSubflowState(String stateId, Flow subFlow, Transition transition) {
-		return addSubflowState(stateId, subFlow, null, new Transition[] { transition }, null);
-	}
-
-	/**
-	 * Adds a subflow state to the flow built by this builder with the specified
-	 * id.
-	 * @param stateId the state id, must be unique among all states of the flow
-	 * built by this builder
-	 * @param subFlow the flow to be used as a subflow
-	 * @param transitions the eligible set of state transitions
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected SubflowState addSubflowState(String stateId, Flow subFlow, Transition[] transitions) {
-		return addSubflowState(stateId, subFlow, null, transitions, null);
-	}
-
-	/**
-	 * Adds a subflow state to the flow built by this builder with the specified
-	 * id.
-	 * @param stateId the state id, must be unique among all states of the flow
-	 * built by this builder
-	 * @param subFlow the flow to be used as a subflow
-	 * @param transitions the eligible set of state transitions
-	 * @param attributes additional attributes describing the state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected SubflowState addSubflowState(String stateId, Flow subFlow, Transition[] transitions,
-			AttributeCollection attributes) {
-		return addSubflowState(stateId, subFlow, null, transitions, attributes);
-	}
-
-	/**
-	 * Adds a subflow state to the flow built by this builder with the specified
-	 * id.
-	 * @param stateId the state id, must be unique among all states of the flow
-	 * built by this builder
-	 * @param subFlow the flow to be used as a subflow
-	 * @param attributeMapper the attribute mapper to map attributes between the
-	 * flow built by this builder and the subflow
-	 * @param transition the single supported transition out of the state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected SubflowState addSubflowState(String stateId, Flow subFlow, FlowAttributeMapper attributeMapper,
-			Transition transition) {
-		return addSubflowState(stateId, subFlow, attributeMapper, new Transition[] { transition }, null);
-	}
-
-	/**
-	 * Adds a subflow state to the flow built by this builder with the specified
-	 * id.
-	 * @param stateId the state id
-	 * @param subFlow the flow definition to be used as the subflow
-	 * @param attributeMapper the attribute mapper to map attributes between the
-	 * flow built by this builder and the subflow
-	 * @param transitions the eligible set of state transitions
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected SubflowState addSubflowState(String stateId, Flow subFlow, FlowAttributeMapper attributeMapper,
-			Transition[] transitions) {
-		return addSubflowState(stateId, subFlow, attributeMapper, transitions, null);
-	}
-
-	/**
-	 * Adds a subflow state to the flow built by this builder with the specified
-	 * id.
-	 * @param stateId the state id
-	 * @param subFlow the flow definition to be used as the subflow
-	 * @param attributeMapper the attribute mapper to map attributes between the
-	 * flow built by this builder and the subflow
-	 * @param transitions the eligible set of state transitions
-	 * @param attributes additional attributes describing the state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected SubflowState addSubflowState(String stateId, Flow subFlow, FlowAttributeMapper attributeMapper,
-			Transition[] transitions, AttributeCollection attributes) {
-		SubflowState state = new SubflowState(getFlow(), stateId, subFlow);
-		state.getTransitionSet().addAll(transitions);
-		state.setAttributeMapper(attributeMapper);
-		state.getAttributeMap().putAll(attributes);
-		return state;
 	}
 
 	/**
@@ -658,179 +399,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Adds a decision state to the flow built by this builder with the
-	 * specified id.
-	 * @param stateId the state id
-	 * @param matchingCriteria the criteria that determines what boolean
-	 * true/fase decision to make
-	 * @param ifTrueStateId the state to transition to if the criteria is true
-	 * @param ifFalseStateId the state to transition if the criteria is false
-	 * @return the configured decision state
-	 * @throws IllegalArgumentException
-	 */
-	protected DecisionState addDecisionState(String stateId, TransitionCriteria matchingCriteria, String ifTrueStateId,
-			String ifFalseStateId) throws IllegalArgumentException {
-		return addDecisionState(stateId, matchingCriteria, ifTrueStateId, ifFalseStateId, null);
-	}
-
-	/**
-	 * Adds a decision state to the flow built by this builder with the
-	 * specified id.
-	 * @param stateId the state id
-	 * @param matchingCriteria the criteria that determines what boolean
-	 * true/fase decision to make
-	 * @param ifTrueStateId the state to transition to if the criteria is true
-	 * @param ifFalseStateId the state to transition if the criteria is false
-	 * @param attributes custom decision state attributes
-	 * @return the configured decision state
-	 * @throws IllegalArgumentException
-	 */
-	protected DecisionState addDecisionState(String stateId, TransitionCriteria matchingCriteria, String ifTrueStateId,
-			String ifFalseStateId, AttributeCollection attributes) throws IllegalArgumentException {
-		Transition[] transitions = new Transition[2];
-		transitions[0] = new Transition(to(ifTrueStateId));
-		transitions[0].setMatchingCriteria(matchingCriteria);
-		transitions[1] = new Transition(to(ifFalseStateId));
-		return addDecisionState(stateId, transitions, attributes);
-	}
-
-	/**
-	 * Adds a decision state to the flow built by this builder with the
-	 * specified id.
-	 * @param stateId the state id
-	 * @param transitions the state's supported transitions, evaluated in the
-	 * specified order until a match is found
-	 * @return the configured decision state
-	 * @throws IllegalArgumentException
-	 */
-	protected DecisionState addDecisionState(String stateId, Transition[] transitions) throws IllegalArgumentException {
-		return addDecisionState(stateId, transitions, null);
-	}
-
-	/**
-	 * Adds a decision state to the flow built by this builder with the
-	 * specified id.
-	 * @param stateId the state id
-	 * @param transitions the state's supported transitions, evaluated in the
-	 * specified order until a match is found
-	 * @param attributes custom decision state attributes
-	 * @return the configured decision state
-	 * @throws IllegalArgumentException
-	 */
-	protected DecisionState addDecisionState(String stateId, Transition[] transitions, AttributeCollection attributes)
-			throws IllegalArgumentException {
-		DecisionState state = new DecisionState(getFlow(), stateId);
-		state.getTransitionSet().addAll(transitions);
-		state.getAttributeMap().putAll(attributes);
-		return state;
-	}
-
-	/**
-	 * Adds an end state with the specified id. The created end state will be a
-	 * marker end state with no associated view.
-	 * @param stateId the end state id
-	 * @return the end state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected EndState addEndState(String stateId) throws IllegalArgumentException {
-		return addEndState(stateId, (String)null);
-	}
-
-	/**
-	 * Adds an end state with the specified id that will display the specified
-	 * view when entered as part of a terminating flow execution.
-	 * @param stateId the end state id
-	 * @param viewName the view name
-	 * @return the end state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected EndState addEndState(String stateId, String viewName) throws IllegalArgumentException {
-		return addEndState(stateId, viewSelector(TextToViewSelector.END_STATE_TYPE, viewName), null, null);
-	}
-
-	/**
-	 * Adds an end state with the specified id exposing the specified attributes
-	 * as output. The created end state will be a marker end state with no
-	 * associated view.
-	 * @param stateId the end state id
-	 * @param outputAttributeNames the names of the attributes in flow scope to
-	 * expose as output attributes, making them available for output mapping by
-	 * a calling parent flow
-	 * @return the end state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected EndState addEndState(String stateId, String[] outputAttributeNames) throws IllegalArgumentException {
-		return addEndState(stateId, viewSelector(TextToViewSelector.END_STATE_TYPE, null), outputAttributeNames, null);
-	}
-
-	/**
-	 * Adds an end state with the specified id that will display the specified
-	 * view when entered as part of a terminating flow execution.
-	 * @param stateId the end state id
-	 * @param viewName the view name
-	 * @param outputAttributeNames the names of the attributes in flow scope to
-	 * expose as output attributes, making them available for output mapping by
-	 * a calling parent flow
-	 * @return the end state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected EndState addEndState(String stateId, String viewName, String[] outputAttributeNames)
-			throws IllegalArgumentException {
-		return addEndState(stateId, viewSelector(TextToViewSelector.END_STATE_TYPE, viewName), outputAttributeNames,
-				null);
-	}
-
-	/**
-	 * Adds an end state with the specified id that will message the specified
-	 * view selector to produce a view to display when entered as part of a root
-	 * flow termination.
-	 * @param stateId the end state id
-	 * @param viewSelector the view selector
-	 * @return the end state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected EndState addEndState(String stateId, ViewSelector viewSelector) throws IllegalArgumentException {
-		return addEndState(stateId, viewSelector, null, null);
-	}
-
-	/**
-	 * Adds an end state with the specified id that will display the specified
-	 * view when entered as part of a terminating flow execution.
-	 * @param stateId the end state id
-	 * @param viewSelector the view selector
-	 * @param outputAttributeNames the names of the attributes in flow scope to
-	 * expose as output attributes, making them available for output mapping by
-	 * a calling parent flow
-	 * @return the end state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected EndState addEndState(String stateId, ViewSelector viewSelector, String[] outputAttributeNames)
-			throws IllegalArgumentException {
-		return addEndState(stateId, viewSelector, outputAttributeNames, null);
-	}
-
-	/**
-	 * Adds an end state with the specified id that will message the specified
-	 * view selector to produce a view to display when entered as part of a root
-	 * flow termination.
-	 * @param stateId the end state id
-	 * @param viewSelector the view selector
-	 * @param outputAttributeNames the names of the attributes in flow scope to
-	 * expose as output attributes, making them available for output mapping by
-	 * a calling parent flow
-	 * @param attributes additional attributes describing the state
-	 * @return the end state
-	 * @throws IllegalArgumentException the state id is not unique
-	 */
-	protected EndState addEndState(String stateId, ViewSelector viewSelector, String[] outputAttributeNames,
-			AttributeCollection attributes) throws IllegalArgumentException {
-		EndState state = new EndState(getFlow(), stateId);
-		state.setViewSelector(viewSelector);
-		state.getAttributeMap().putAll(attributes);
-		return state;
-	}
-
-	/**
 	 * Creates a transition criteria that is used to match a Transition. The
 	 * criteria is based on the provided expression string.
 	 * @param transitionCriteriaExpression the transition criteria expression,
@@ -853,39 +421,27 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Creates a transition stating:
-	 * <tt>On the occurrence of an event that matches the criteria defined by
-	 * ${criteria}, transition to the state resolved by ${targetStateResolver}.
-	 * </tt>
-	 * @param criteria the transition criteria
-	 * @param targetStateResolver the resolver of the target state of the
-	 * transition
-	 * @return the transition (event matching criteria->stateId)
+	 * Creates a new transition.
+	 * @param matchingCriteria
+	 * @param targetStateResolver
+	 * @return the transition
 	 */
-	protected Transition transition(TransitionCriteria criteria, TargetStateResolver targetStateResolver) {
-		Transition transition = new Transition(targetStateResolver);
-		transition.setMatchingCriteria(criteria);
-		return transition;
+	protected Transition transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver) {
+		return transition(matchingCriteria, null, targetStateResolver, null);
 	}
 
 	/**
-	 * Creates a transition stating:
-	 * <tt>On the occurrence of an event that matches the criteria defined by
-	 * ${criteria}, transition to the state resolved by ${targetStateResolver} if the ${executionCriteria}
-	 * holds true.
-	 * </tt>
-	 * @param criteria the transition criteria
-	 * @param targetStateResolver the resolver of the target state of the
-	 * transition
-	 * @param executionCriteria criteria that decide whether or not the
-	 * transition can complete execution
-	 * @return the transition (event matching criteria->stateId)
+	 * Creates a new transition.
+	 * @param matchingCriteria
+	 * @param executionCriteria
+	 * @param targetStateResolver
+	 * @param attributes
+	 * @return the transition
 	 */
-	protected Transition transition(TransitionCriteria criteria, TargetStateResolver targetStateResolver,
-			TransitionCriteria executionCriteria) {
-		Transition transition = transition(criteria, targetStateResolver);
-		transition.setExecutionCriteria(executionCriteria);
-		return transition;
+	protected Transition transition(TransitionCriteria matchingCriteria, TransitionCriteria executionCriteria,
+			TargetStateResolver targetStateResolver, AttributeCollection attributes) {
+		return getFlowArtifactFactory().createTransition(matchingCriteria, executionCriteria, targetStateResolver,
+				attributes);
 	}
 
 	/**
@@ -909,7 +465,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the event id
 	 */
 	protected String success() {
-		return "success";
+		return eventFactorySupport.getSuccessEventId();
 	}
 
 	/**
@@ -918,7 +474,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the event id
 	 */
 	protected String error() {
-		return "error";
+		return eventFactorySupport.getErrorEventId();
 	}
 
 	/**
@@ -999,7 +555,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the event id
 	 */
 	protected String yes() {
-		return "yes";
+		return eventFactorySupport.getYesEventId();
 	}
 
 	/**
@@ -1008,6 +564,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the event id
 	 */
 	protected String no() {
-		return "no";
+		return eventFactorySupport.getNoEventId();
 	}
 }
