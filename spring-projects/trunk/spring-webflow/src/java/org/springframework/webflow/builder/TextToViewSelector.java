@@ -100,13 +100,13 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	/**
 	 * Factory to use for loading custom ViewSelector beans.
 	 */
-	private FlowServiceLocator flowArtifactFactory;
+	private FlowServiceLocator flowServiceLocator;
 
 	/**
 	 * Create a new text to ViewSelector converter.
 	 */
-	public TextToViewSelector(FlowServiceLocator flowArtifactFactory) {
-		this.flowArtifactFactory = flowArtifactFactory;
+	public TextToViewSelector(FlowServiceLocator flowServiceLocator) {
+		this.flowServiceLocator = flowServiceLocator;
 	}
 
 	public Class[] getSourceClasses() {
@@ -153,7 +153,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		}
 		else if (encodedView.startsWith(BEAN_PREFIX)) {
 			String id = encodedView.substring(BEAN_PREFIX.length());
-			return flowArtifactFactory.getViewSelector(id);
+			return flowServiceLocator.getViewSelector(id);
 		}
 		else {
 			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(encodedView);
@@ -179,7 +179,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		}
 		else if (encodedView.startsWith(BEAN_PREFIX)) {
 			String id = encodedView.substring(BEAN_PREFIX.length());
-			return flowArtifactFactory.getViewSelector(id);
+			return flowServiceLocator.getViewSelector(id);
 		}
 		else {
 			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(encodedView);

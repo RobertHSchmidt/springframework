@@ -50,15 +50,15 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 	/**
 	 * Locator to use for loading custom TransitionCriteria beans.
 	 */
-	private FlowServiceLocator flowArtifactFactory;
+	private FlowServiceLocator flowServiceLocator;
 
 	/**
 	 * Create a new converter that converts strings to transition target state
 	 * resovler objects. The given conversion service will be used to do all
 	 * necessary internal conversion (e.g. parsing expression strings).
 	 */
-	public TextToTransitionTargetStateResolver(FlowServiceLocator flowArtifactFactory) {
-		this.flowArtifactFactory = flowArtifactFactory;
+	public TextToTransitionTargetStateResolver(FlowServiceLocator flowServiceLocator) {
+		this.flowServiceLocator = flowServiceLocator;
 	}
 
 	public Class[] getSourceClasses() {
@@ -71,12 +71,12 @@ public class TextToTransitionTargetStateResolver extends AbstractConverter {
 
 	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
 		String targetStateId = (String)source;
-		if (flowArtifactFactory.getExpressionParser().isDelimitedExpression(targetStateId)) {
-			Expression expression = flowArtifactFactory.getExpressionParser().parseExpression(targetStateId);
+		if (flowServiceLocator.getExpressionParser().isDelimitedExpression(targetStateId)) {
+			Expression expression = flowServiceLocator.getExpressionParser().parseExpression(targetStateId);
 			return new DefaultTargetStateResolver(expression);
 		}
 		else if (targetStateId.startsWith(BEAN_PREFIX)) {
-			return flowArtifactFactory.getTargetStateResolver(targetStateId.substring(BEAN_PREFIX.length()));
+			return flowServiceLocator.getTargetStateResolver(targetStateId.substring(BEAN_PREFIX.length()));
 		}
 		else {
 			return new DefaultTargetStateResolver(targetStateId);

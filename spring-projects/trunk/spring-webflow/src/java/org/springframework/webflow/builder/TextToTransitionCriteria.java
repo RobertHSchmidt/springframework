@@ -60,15 +60,15 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	/**
 	 * Locator to use for loading custom TransitionCriteria beans.
 	 */
-	private FlowServiceLocator flowArtifactFactory;
+	private FlowServiceLocator flowServiceLocator;
 
 	/**
 	 * Create a new converter that converts strings to transition criteria
 	 * objects. The given conversion service will be used to do all necessary
 	 * internal conversion (e.g. parsing expression strings).
 	 */
-	public TextToTransitionCriteria(FlowServiceLocator artifactLocator) {
-		this.flowArtifactFactory = artifactLocator;
+	public TextToTransitionCriteria(FlowServiceLocator flowServiceLocator) {
+		this.flowServiceLocator = flowServiceLocator;
 	}
 
 	public Class[] getSourceClasses() {
@@ -85,12 +85,12 @@ public class TextToTransitionCriteria extends AbstractConverter {
 				|| WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
 			return WildcardTransitionCriteria.INSTANCE;
 		}
-		else if (flowArtifactFactory.getExpressionParser().isDelimitedExpression(encodedCriteria)) {
-			Expression expression = flowArtifactFactory.getExpressionParser().parseExpression(encodedCriteria);
+		else if (flowServiceLocator.getExpressionParser().isDelimitedExpression(encodedCriteria)) {
+			Expression expression = flowServiceLocator.getExpressionParser().parseExpression(encodedCriteria);
 			return createBooleanExpressionTransitionCriteria(expression);
 		}
 		else if (encodedCriteria.startsWith(BEAN_PREFIX)) {
-			return flowArtifactFactory.getTransitionCriteria(encodedCriteria.substring(BEAN_PREFIX.length()));
+			return flowServiceLocator.getTransitionCriteria(encodedCriteria.substring(BEAN_PREFIX.length()));
 		}
 		else {
 			return createEventIdTransitionCriteria(encodedCriteria);
