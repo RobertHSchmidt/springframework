@@ -1,3 +1,18 @@
+/*
+ * Copyright 2002-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.webflow.builder;
 
 import org.springframework.beans.BeansException;
@@ -22,9 +37,9 @@ import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
 
 /**
- * Base implementation of a flow artifact factory that implements a minimal set
- * of the <code>FlowArtifactFactory</code> interface, throwing unsupported
- * operation exceptions for most operations.
+ * Base implementation that implements a minimal set of the
+ * <code>FlowArtifactFactory</code> interface, throwing unsupported operation
+ * exceptions for some operations.
  * <p>
  * May be subclassed to offer additional factory/lookup support.
  * @author Keith Donald
@@ -60,8 +75,8 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	private ResourceLoader resourceLoader = new DefaultResourceLoader();
 
 	/**
-	 * Sets the factory encapsulating the creation of central Flow artifacts such as
-	 * {@link Flow flows} and {@link State states}.
+	 * Sets the factory encapsulating the creation of central Flow artifacts
+	 * such as {@link Flow flows} and {@link State states}.
 	 */
 	public void setFlowArtifactFactory(FlowArtifactFactory flowEntityFactory) {
 		this.flowArtifactFactory = flowEntityFactory;
