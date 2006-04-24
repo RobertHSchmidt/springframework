@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,7 +32,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.Expression;
@@ -43,21 +41,16 @@ import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.method.MethodSignature;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.FlowVariable;
 import org.springframework.webflow.ScopeType;
@@ -88,8 +81,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -244,11 +237,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	protected Resource location;
 
 	/**
-	 * A flow artifact factory specific to this builder that first looks in a
-	 * locally-managed Spring application context for flow artifacts before
-	 * searching an externally managed factory.
+	 * A flow service locator local to this builder that first looks in a
+	 * locally-managed Spring application context for services before searching
+	 * an externally managed factory.
 	 */
-	private LocalFlowArtifactFactory localFlowArtifactFactory = new LocalFlowArtifactFactory();
+	private LocalFlowServiceLocator localFlowServiceLocator;
 
 	/**
 	 * Flag indicating if the the XML document parser will perform DTD
@@ -281,10 +274,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * location, using the provided factory to access externally managed flow
 	 * artifacts.
 	 * @param location the location of the xml-based flow definition resource
-	 * @param flowArtifactFactory the bean factory defining this flow builder
+	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
 	 */
-	public XmlFlowBuilder(Resource location, FlowArtifactFactory flowArtifactFactory) {
-		super(flowArtifactFactory);
+	public XmlFlowBuilder(Resource location, FlowServiceLocator flowServiceLocator) {
+		super(flowServiceLocator);
 		setLocation(location);
 	}
 
@@ -348,6 +341,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	public void init(String id, AttributeCollection attributes) throws FlowBuilderException {
+		localFlowServiceLocator = new LocalFlowServiceLocator(getFlowServiceLocator());
 		try {
 			document = loadDocument();
 			Assert.notNull(document, "Document should never be null");
@@ -404,7 +398,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	public void dispose() {
-		destroyFlowArtifactRegistry(getFlow());
+		destroyLocalServiceRegistry(getFlow());
 		document = null;
 	}
 
@@ -435,8 +429,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		if (!isFlowElement(flowElement)) {
 			throw new IllegalStateException("This is not the '" + FLOW_ELEMENT + "' element");
 		}
-		initLocalFlowArtifactFactoryRegistry(flowElement);
-		return getLocalFlowArtifactFactory().createFlow(id, attributes);
+		Flow flow = getFlowArtifactFactory().createFlow(id, attributes);
+		initLocalServiceRegistry(flowElement, flow);
+		return flow;
+	}
+
+	private FlowArtifactFactory getFlowArtifactFactory() {
+		return getLocalFlowServiceLocator().getFlowArtifactFactory();
 	}
 
 	private boolean isFlowElement(Element flowElement) {
@@ -458,13 +457,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	/**
-	 * Returns the flow artifact factory local to this builder.
+	 * Returns the flow service locator local to this builder.
 	 */
-	protected FlowArtifactFactory getLocalFlowArtifactFactory() {
-		return localFlowArtifactFactory;
+	protected FlowServiceLocator getLocalFlowServiceLocator() {
+		return localFlowServiceLocator;
 	}
 
-	private void initLocalFlowArtifactFactoryRegistry(Element flowElement) {
+	private void initLocalServiceRegistry(Element flowElement, Flow flow) {
 		List importElements = DomUtils.getChildElementsByTagName(flowElement, IMPORT_ELEMENT);
 		Resource[] resources = new Resource[importElements.size()];
 		for (int i = 0; i < importElements.size(); i++) {
@@ -477,7 +476,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 						+ importElement.getAttribute(RESOURCE_ATTRIBUTE) + "'", e);
 			}
 		}
-		localFlowArtifactFactory.push(new LocalFlowArtifactRegistry(resources));
+		localFlowServiceLocator.push(new LocalFlowServiceRegistry(flow, resources));
 	}
 
 	private void parseAndAddFlowVariables(Element flowElement, Flow flow) {
@@ -496,7 +495,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			scope = (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
 		}
 		if (StringUtils.hasText(element.getAttribute(BEAN_ATTRIBUTE))) {
-			BeanFactory beanFactory = getLocalFlowArtifactFactory().getServiceRegistry();
+			BeanFactory beanFactory = getLocalFlowServiceLocator().getBeanFactory();
 			return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), scope, element
 					.getAttribute(BEAN_ATTRIBUTE), beanFactory);
 		}
@@ -506,7 +505,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				return new SimpleFlowVariable(element.getAttribute(NAME_ATTRIBUTE), variableClass, scope);
 			}
 			else {
-				BeanFactory beanFactory = getLocalFlowArtifactFactory().getServiceRegistry();
+				BeanFactory beanFactory = getLocalFlowServiceLocator().getBeanFactory();
 				return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), scope, null, beanFactory);
 			}
 		}
@@ -559,7 +558,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		parseAndAddStateDefinitions(flowElement, inlineFlow);
 		parseAndAddGlobalTransitions(flowElement, inlineFlow);
 		inlineFlow.getExceptionHandlerSet().addAll(parseExceptionHandlers(flowElement));
-		destroyFlowArtifactRegistry(inlineFlow);
+		destroyLocalServiceRegistry(inlineFlow);
 	}
 
 	private void parseAndAddStateDefinitions(Element flowElement, Flow flow) {
@@ -594,31 +593,31 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private void parseAndAddActionState(Element element, Flow flow) {
-		getLocalFlowArtifactFactory().createActionState(parseId(element), flow, parseEntryActions(element),
+		getFlowArtifactFactory().createActionState(parseId(element), flow, parseEntryActions(element),
 				parseAnnotatedActions(element), parseTransitions(element), parseExceptionHandlers(element),
 				parseExitActions(element), parseAttributes(element));
 	}
 
 	private void parseAndAddViewState(Element element, Flow flow) {
-		getLocalFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element),
+		getFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element),
 				parseViewSelector(TextToViewSelector.VIEW_STATE_TYPE, element), parseTransitions(element),
 				parseExceptionHandlers(element), parseExitActions(element), parseAttributes(element));
 	}
 
 	private void parseAndAddDecisionState(Element element, Flow flow) {
-		getLocalFlowArtifactFactory()
+		getFlowArtifactFactory()
 				.createDecisionState(parseId(element), flow, parseEntryActions(element), parseIfs(element),
 						parseExceptionHandlers(element), parseExitActions(element), parseAttributes(element));
 	}
 
 	private void parseAndAddSubflowState(Element element, Flow flow) {
-		getLocalFlowArtifactFactory().createSubflowState(parseId(element), flow, parseEntryActions(element),
+		getFlowArtifactFactory().createSubflowState(parseId(element), flow, parseEntryActions(element),
 				parseSubflow(element), parseFlowAttributeMapper(element), parseTransitions(element),
 				parseExceptionHandlers(element), parseExitActions(element), parseAttributes(element));
 	}
 
 	private void parseAndAddEndState(Element element, Flow flow) {
-		getLocalFlowArtifactFactory().createEndState(parseId(element), flow, parseEntryActions(element),
+		getFlowArtifactFactory().createEndState(parseId(element), flow, parseEntryActions(element),
 				parseViewSelector(TextToViewSelector.END_STATE_TYPE, element), parseOutputMapper(element),
 				parseExceptionHandlers(element), parseAttributes(element));
 	}
@@ -667,8 +666,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		TransitionCriteria executionCriteria = TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element));
 		TargetStateResolver targetStateResolver = (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
 				element.getAttribute(TO_ATTRIBUTE));
-		return getLocalFlowArtifactFactory().createTransition(matchingCriteria, executionCriteria, targetStateResolver,
-				null);
+		return getFlowArtifactFactory()
+				.createTransition(matchingCriteria, executionCriteria, targetStateResolver, null);
 	}
 
 	private ViewSelector parseViewSelector(String stateType, Element element) {
@@ -679,7 +678,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private Flow parseSubflow(Element element) {
-		return getLocalFlowArtifactFactory().getSubflow(element.getAttribute(FLOW_ATTRIBUTE));
+		return getLocalFlowServiceLocator().getSubflow(element.getAttribute(FLOW_ATTRIBUTE));
 	}
 
 	private AnnotatedAction[] parseAnnotatedActions(Element element) {
@@ -698,7 +697,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			action.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)
-				&& getLocalFlowArtifactFactory().isMultiAction(element.getAttribute(BEAN_ATTRIBUTE))) {
+				&& getLocalFlowServiceLocator().isMultiAction(element.getAttribute(BEAN_ATTRIBUTE))) {
 			action.getAttributeMap().put(MultiAction.METHOD_ATTRIBUTE, element.getAttribute(METHOD_ATTRIBUTE));
 		}
 		action.getAttributeMap().putAll(parseAttributes(element));
@@ -708,8 +707,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private Action parseAction(Element element) {
 		String actionId = element.getAttribute(BEAN_ATTRIBUTE);
-		if (getLocalFlowArtifactFactory().isAction(actionId)) {
-			return getLocalFlowArtifactFactory().getAction(actionId);
+		if (getLocalFlowServiceLocator().isAction(actionId)) {
+			return getLocalFlowServiceLocator().getAction(actionId);
 		}
 		else {
 			return parseBeanInvokingAction(actionId, element);
@@ -736,8 +735,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			resultSpecification = new ResultSpecification(resultName, (resultScope != null ? resultScope
 					: ScopeType.REQUEST));
 		}
-		return getLocalFlowArtifactFactory().createBeanInvokingAction(beanId, methodSignature, resultSpecification,
-				null);
+		return getBeanInvokingActionFactory().createBeanInvokingAction(beanId,
+				getLocalFlowServiceLocator().getBeanFactory(), methodSignature, resultSpecification,
+				getLocalFlowServiceLocator().getConversionService(), null);
+	}
+
+	private BeanInvokingActionFactory getBeanInvokingActionFactory() {
+		return getFlowServiceLocator().getBeanInvokingActionFactory();
 	}
 
 	private UnmodifiableAttributeMap parseAttributes(Element element) {
@@ -807,13 +811,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				element.getAttribute(TEST_ATTRIBUTE));
 		TargetStateResolver targetStateResolver = (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
 				element.getAttribute(THEN_ATTRIBUTE));
-		return getLocalFlowArtifactFactory().createTransition(matchingCriteria, null, targetStateResolver, null);
+		return getFlowArtifactFactory().createTransition(matchingCriteria, null, targetStateResolver, null);
 	}
 
 	private Transition parseElse(Element element) {
 		TargetStateResolver targetStateResolver = (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
 				element.getAttribute(ELSE_ATTRIBUTE));
-		return getLocalFlowArtifactFactory().createTransition(null, null, targetStateResolver, null);
+		return getFlowArtifactFactory().createTransition(null, null, targetStateResolver, null);
 	}
 
 	private FlowAttributeMapper parseFlowAttributeMapper(Element element) {
@@ -823,7 +827,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 		Element mapperElement = (Element)mapperElements.get(0);
 		if (StringUtils.hasText(mapperElement.getAttribute(BEAN_ATTRIBUTE))) {
-			return getFlowArtifactFactory().getAttributeMapper(mapperElement.getAttribute(BEAN_ATTRIBUTE));
+			return getLocalFlowServiceLocator().getAttributeMapper(mapperElement.getAttribute(BEAN_ATTRIBUTE));
 		}
 		else {
 			return new ImmutableFlowAttributeMapper(parseInputMapper(mapperElement), parseOutputMapper(mapperElement));
@@ -844,16 +848,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		List mappingElements = DomUtils.getChildElementsByTagName(element, MAPPING_ELEMENT);
 		DefaultAttributeMapper mapper = new DefaultAttributeMapper();
 		Iterator it = mappingElements.iterator();
+		ExpressionParser parser = getLocalFlowServiceLocator().getExpressionParser();
 		while (it.hasNext()) {
 			Element mappingElement = (Element)it.next();
-			Expression source = getExpressionParser().parseExpression(mappingElement.getAttribute(SOURCE_ATTRIBUTE));
+			Expression source = parser.parseExpression(mappingElement.getAttribute(SOURCE_ATTRIBUTE));
 			PropertyExpression target = null;
 			if (StringUtils.hasText(mappingElement.getAttribute(TARGET_ATTRIBUTE))) {
-				target = getExpressionParser().parsePropertyExpression(mappingElement.getAttribute(TARGET_ATTRIBUTE));
+				target = parser.parsePropertyExpression(mappingElement.getAttribute(TARGET_ATTRIBUTE));
 			}
 			else if (StringUtils.hasText(mappingElement.getAttribute(TARGET_COLLECTION_ATTRIBUTE))) {
-				target = new CollectionAddingPropertyExpression(getExpressionParser().parsePropertyExpression(
-						mappingElement.getAttribute(TARGET_COLLECTION_ATTRIBUTE)));
+				target = new CollectionAddingPropertyExpression(parser.parsePropertyExpression(mappingElement
+						.getAttribute(TARGET_COLLECTION_ATTRIBUTE)));
 			}
 			mapper.addMapping(new Mapping(source, target, parseTypeConverter(mappingElement)));
 		}
@@ -865,7 +870,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		String to = element.getAttribute(TO_ATTRIBUTE);
 		if (StringUtils.hasText(from)) {
 			if (StringUtils.hasText(to)) {
-				ConversionService service = getFlowArtifactFactory().getConversionService();
+				ConversionService service = getLocalFlowServiceLocator().getConversionService();
 				return service.getConversionExecutor(service.getClassByAlias(from), service.getClassByAlias(to));
 			}
 			else {
@@ -876,7 +881,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Assert.isTrue(!StringUtils.hasText(to), "Use of the 'to' attribute requires use of the 'from' attribute");
 		}
 		return null;
-
 	}
 
 	private StateExceptionHandler[] parseExceptionHandlers(Element element) {
@@ -931,147 +935,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private StateExceptionHandler parseCustomExceptionHandler(Element element) {
-		return getLocalFlowArtifactFactory().getExceptionHandler(element.getAttribute(BEAN_ATTRIBUTE));
+		return getLocalFlowServiceLocator().getExceptionHandler(element.getAttribute(BEAN_ATTRIBUTE));
 	}
 
-	private void destroyFlowArtifactRegistry(Flow flow) {
-		localFlowArtifactFactory.pop();
-	}
-
-	/**
-	 * Returns the configured expression parser.
-	 * @return the expression parser
-	 */
-	private ExpressionParser getExpressionParser() {
-		return getFlowArtifactFactory().getExpressionParser();
-	}
-
-	/**
-	 * A local artifact factory that searches local registries first before
-	 * querying the global, externally managed artifact factory.
-	 * @author Keith Donald
-	 */
-	private class LocalFlowArtifactFactory extends DefaultFlowArtifactFactory {
-
-		/**
-		 * The stack of registries.
-		 */
-		private Stack localRegistries = new Stack();
-
-		/**
-		 * Push a new registry onto the stack
-		 * @param registry the local registry
-		 */
-		public void push(LocalFlowArtifactRegistry registry) {
-			registry.init(this, getFlowArtifactFactory());
-			localRegistries.push(registry);
-		}
-
-		public Flow getSubflow(String id) throws FlowArtifactException {
-			Flow currentFlow = getCurrentFlow();
-			// quick check for recursive subflow
-			if (currentFlow.getId().equals(id)) {
-				return currentFlow;
-			}
-			// check local inline flows
-			if (currentFlow.containsInlineFlow(id)) {
-				return currentFlow.getInlineFlow(id);
-			}
-			// check externally managed toplevel flows
-			return getFlowArtifactFactory().getSubflow(id);
-		}
-
-		public Flow createFlow(String id, AttributeCollection attributes) throws FlowArtifactException {
-			top().flow = getFlowArtifactFactory().createFlow(id, attributes);
-			return top().flow;
-		}
-
-		/**
-		 * Pop a registry off the stack
-		 */
-		public LocalFlowArtifactRegistry pop() {
-			return (LocalFlowArtifactRegistry)localRegistries.pop();
-		}
-
-		/**
-		 * Returns the top registry on the stack
-		 */
-		public LocalFlowArtifactRegistry top() {
-			return (LocalFlowArtifactRegistry)localRegistries.peek();
-		}
-
-		public Flow getCurrentFlow() {
-			return top().flow;
-		}
-
-		public BeanFactory getServiceRegistry() {
-			return top().context;
-		}
-	}
-
-	/**
-	 * Simple value object that holds a reference to a local artifact registry
-	 * of a flow definition that is in the process of being constructed.
-	 * @author Keith Donald
-	 */
-	private static class LocalFlowArtifactRegistry {
-
-		private Flow flow;
-
-		private Resource[] resources;
-
-		/**
-		 * The local registry holding the artifacts local to the flow.
-		 */
-		private GenericApplicationContext context;
-
-		/**
-		 * Create new registry
-		 * @param context the local registry
-		 */
-		public LocalFlowArtifactRegistry(Resource[] resources) {
-			this.resources = resources;
-		}
-
-		private void init(LocalFlowArtifactFactory localFactory, FlowArtifactFactory rootFactory) {
-			BeanFactory parent = null;
-			if (localFactory.localRegistries.isEmpty()) {
-				try {
-					parent = rootFactory.getServiceRegistry();
-				}
-				catch (UnsupportedOperationException e) {
-
-				}
-			}
-			else {
-				parent = localFactory.top().context;
-			}
-			context = createLocalFlowContext(parent, rootFactory);
-			new XmlBeanDefinitionReader(context).loadBeanDefinitions(resources);
-			context.refresh();
-		}
-
-		private GenericApplicationContext createLocalFlowContext(BeanFactory parent, FlowArtifactFactory rootFactory) {
-			if (parent instanceof WebApplicationContext) {
-				GenericWebApplicationContext context = new GenericWebApplicationContext();
-				context.setServletContext(((WebApplicationContext)parent).getServletContext());
-				context.setParent((WebApplicationContext)parent);
-				context.setResourceLoader(rootFactory.getResourceLoader());
-				return context;
-			}
-			else {
-				GenericApplicationContext context = new GenericApplicationContext();
-				if (parent instanceof ApplicationContext) {
-					context.setParent((ApplicationContext)parent);
-				}
-				else {
-					if (parent != null) {
-						context.getBeanFactory().setParentBeanFactory(parent);
-					}
-				}
-				context.setResourceLoader(rootFactory.getResourceLoader());
-				return context;
-			}
-		}
+	private void destroyLocalServiceRegistry(Flow flow) {
+		localFlowServiceLocator.pop();
 	}
 }

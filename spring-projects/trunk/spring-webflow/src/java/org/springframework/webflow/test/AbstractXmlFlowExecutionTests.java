@@ -16,7 +16,7 @@
 package org.springframework.webflow.test;
 
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.builder.XmlFlowBuilder;
 
@@ -55,7 +55,7 @@ import org.springframework.webflow.builder.XmlFlowBuilder;
  * @author Keith Donald
  */
 public abstract class AbstractXmlFlowExecutionTests extends AbstractExternalizedFlowExecutionTests {
-	protected FlowBuilder createFlowBuilder(Resource resource, FlowArtifactFactory flowArtifactFactory) {
+	protected FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowArtifactFactory) {
 		return new XmlFlowBuilder(resource, flowArtifactFactory);
 	}
 }

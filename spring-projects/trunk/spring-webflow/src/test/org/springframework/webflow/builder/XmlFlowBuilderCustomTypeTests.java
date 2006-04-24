@@ -82,7 +82,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 		}
 	}
 
-	public static class CustomFlowArtifactFactory extends DefaultFlowArtifactFactory {
+	public static class CustomFlowArtifactFactory extends BaseFlowServiceLocator {
 
 		public Action getAction(String id) throws FlowArtifactException {
 			return new CustomAction();

@@ -37,7 +37,7 @@ import org.xml.sax.EntityResolver;
  * in the registry created by this factory bean.
  * <p>
  * This class is also <code>BeanFactoryAware</code> and when used with Spring
- * will automatically create a configured {@link RegistryBackedFlowArtifactFactory}
+ * will automatically create a configured {@link DefaultFlowServiceLocator}
  * for loading Flow artifacts like Actions from the Spring bean factory during
  * the Flow registration process.
  * <p>
@@ -171,7 +171,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	
 	protected void doPopulate(FlowRegistry registry) {
 		addFlowDefinitionsFromPropertiesIfNecessary();
-		getFlowRegistrar().registerFlows(registry, getFlowArtifactFactory());
+		getFlowRegistrar().registerFlows(registry, getFlowServiceLocator());
 	}
 
 	private void addFlowDefinitionsFromPropertiesIfNecessary() {
@@ -182,7 +182,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 				Map.Entry entry = (Map.Entry)it.next();
 				String flowId = (String)entry.getKey();
 				String location = (String)entry.getValue();
-				Resource resource = getFlowArtifactFactory().getResourceLoader().getResource(location);
+				Resource resource = getFlowServiceLocator().getResourceLoader().getResource(location);
 				flows.add(new ExternalizedFlowDefinition(flowId, resource));
 			}
 			getFlowRegistrar().addFlowDefinitions(

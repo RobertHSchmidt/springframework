@@ -18,7 +18,7 @@ package org.springframework.webflow.test;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
-import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
@@ -61,7 +61,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 		if (isCacheFlowDefinition() && cachedFlowDefinition != null) {
 			return cachedFlowDefinition;
 		}
-		FlowArtifactFactory flowArtifactFactory = createFlowArtifactFactory();
+		FlowServiceLocator flowArtifactFactory = createFlowArtifactFactory();
 		ExternalizedFlowDefinition flowDefinition = getFlowDefinition();
 		FlowBuilder builder = createFlowBuilder(flowDefinition.getLocation(), flowArtifactFactory);
 		new FlowAssembler(flowDefinition.getId(), flowDefinition.getAttributes(), builder).assembleFlow();
@@ -82,8 +82,8 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * 
 	 * @return the flow artifact factory
 	 */
-	protected FlowArtifactFactory createFlowArtifactFactory() {
-		return new MockFlowArtifactFactory();
+	protected FlowServiceLocator createFlowArtifactFactory() {
+		return new MockFlowServiceLocator();
 	}
 
 	/**
@@ -93,7 +93,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @param flowArtifactFactory the flow artifact factory
 	 * @return the flow builder
 	 */
-	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowArtifactFactory flowArtifactFactory);
+	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowArtifactFactory);
 
 	/**
 	 * Returns the definition of the externalized flow needed by this flow

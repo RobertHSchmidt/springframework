@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.registry;
 
-import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowServiceLocator;
 
 /**
  * A strategy to use to populate a flow registry with one or more flow
@@ -31,7 +31,7 @@ import org.springframework.webflow.builder.FlowArtifactFactory;
  * <li>Create a flow artifact factory that will create flow artifacts during the flow
  * registration process.
  * <li>Use any number of flow registrars to populate the registry by calling
- * {@link #registerFlows(FlowRegistry, FlowArtifactFactory)}.
+ * {@link #registerFlows(FlowRegistry, FlowServiceLocator)}.
  * </ol>
  * </p>
  * <p>
@@ -40,7 +40,7 @@ import org.springframework.webflow.builder.FlowArtifactFactory;
  * BeanDefinitionReaders to drive context population.
  * <p>
  * @see FlowRegistry
- * @see FlowArtifactFactory
+ * @see FlowServiceLocator
  * @see FlowRegistrarSupport
  * @see XmlFlowRegistrar
  * 
@@ -52,8 +52,8 @@ public interface FlowRegistrar {
 	 * Register flow definition resources managed by this registrar in the
 	 * registry provided.
 	 * @param registry the registry to register flow definitions in
-	 * @param flowArtifactFactory the flow artifact factory for accessing externally managed flow 
+	 * @param flowServiceLocator the service locator for accessing externally managed flow 
 	 * artifacts, typically used by flow builders that build flow definitions
 	 */
-	public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory);
+	public void registerFlows(FlowRegistry registry, FlowServiceLocator flowServiceLocator);
 }

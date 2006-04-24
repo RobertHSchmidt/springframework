@@ -60,14 +60,14 @@ public class TextToTransitionCriteria extends AbstractConverter {
 	/**
 	 * Locator to use for loading custom TransitionCriteria beans.
 	 */
-	private FlowArtifactFactory flowArtifactFactory;
+	private FlowServiceLocator flowArtifactFactory;
 
 	/**
 	 * Create a new converter that converts strings to transition criteria
 	 * objects. The given conversion service will be used to do all necessary
 	 * internal conversion (e.g. parsing expression strings).
 	 */
-	public TextToTransitionCriteria(FlowArtifactFactory artifactLocator) {
+	public TextToTransitionCriteria(FlowServiceLocator artifactLocator) {
 		this.flowArtifactFactory = artifactLocator;
 	}
 

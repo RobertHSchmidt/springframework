@@ -22,7 +22,7 @@ import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
  * 
  * @author Erwin Vervaet
  */
-public class TestFlowArtifactFactory extends DefaultFlowArtifactFactory {
+public class TestFlowArtifactFactory extends BaseFlowServiceLocator {
 
 	public StaticListableBeanFactory registry = new StaticListableBeanFactory();
 	
@@ -81,7 +81,7 @@ public class TestFlowArtifactFactory extends DefaultFlowArtifactFactory {
 		}
 	}
 
-	public BeanFactory getServiceRegistry() throws UnsupportedOperationException {
+	public BeanFactory getBeanFactory() throws UnsupportedOperationException {
 		return registry;
 	}
 	

@@ -39,7 +39,7 @@ public class TextToViewSelectorTests extends TestCase {
 	private TextToViewSelector converter;
 
 	public void setUp() {
-		DefaultFlowArtifactFactory flowArtifactFactory = new DefaultFlowArtifactFactory();
+		BaseFlowServiceLocator flowArtifactFactory = new BaseFlowServiceLocator();
 		converter = new TextToViewSelector(flowArtifactFactory);
 		converter.setConversionService(flowArtifactFactory.getConversionService());
 	}

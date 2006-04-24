@@ -16,11 +16,10 @@
 package org.springframework.webflow.registry;
 
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
-import org.springframework.webflow.builder.DefaultFlowArtifactFactory;
-import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.BaseFlowServiceLocator;
+import org.springframework.webflow.builder.FlowServiceLocator;
 
 /**
  * A flow artifact factory that obtains subflow definitions from a explict
@@ -28,11 +27,11 @@ import org.springframework.webflow.builder.FlowArtifactFactory;
  * standard Spring {@link BeanFactory} registry.
  * 
  * @see FlowRegistry
- * @see FlowArtifactFactory#getSubflow(String)
+ * @see FlowServiceLocator#getSubflow(String)
  * 
  * @author Keith Donald
  */
-public class RegistryBackedFlowArtifactFactory extends DefaultFlowArtifactFactory implements ResourceLoaderAware {
+public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 
 	/**
 	 * The registry for locating subflows.
@@ -49,7 +48,7 @@ public class RegistryBackedFlowArtifactFactory extends DefaultFlowArtifactFactor
 	 * registry and additional artifacts from the provided bean factory.
 	 * @param beanFactory The spring bean factory
 	 */
-	public RegistryBackedFlowArtifactFactory(BeanFactory beanFactory) {
+	public DefaultFlowServiceLocator(BeanFactory beanFactory) {
 		this(new FlowRegistryImpl(), beanFactory);
 	}
 	
@@ -59,7 +58,7 @@ public class RegistryBackedFlowArtifactFactory extends DefaultFlowArtifactFactor
 	 * @param subflowRegistry The registry for loading subflows
 	 * @param beanFactory The spring bean factory
 	 */
-	public RegistryBackedFlowArtifactFactory(FlowRegistry subflowRegistry, BeanFactory beanFactory) {
+	public DefaultFlowServiceLocator(FlowRegistry subflowRegistry, BeanFactory beanFactory) {
 		this.subflowRegistry = subflowRegistry;
 		this.beanFactory = beanFactory;
 	}
@@ -84,9 +83,5 @@ public class RegistryBackedFlowArtifactFactory extends DefaultFlowArtifactFactor
 
 	public Flow getSubflow(String id) throws FlowArtifactException {
 		return subflowRegistry.getFlow(id);
-	}
-
-	public BeanFactory getServiceRegistry() throws UnsupportedOperationException {
-		return beanFactory;
 	}
 }

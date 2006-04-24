@@ -18,9 +18,13 @@ package org.springframework.webflow.registry;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.webflow.builder.BeanInvokingActionFactory;
 import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowServiceLocator;
 
 /**
  * A base class for factory beans that create populated Flow Registries.
@@ -41,7 +45,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * Strategy for locating externally managed dependent artifacts when a
 	 * registered Flow is being built.
 	 */
-	private FlowArtifactFactory flowArtifactFactory;
+	private DefaultFlowServiceLocator flowServiceLocator;
 
 	/**
 	 * Sets the parent registry of the registry constructed by this factory
@@ -52,31 +56,28 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 		flowRegistry.setParent(parent);
 	}
 
-	/**
-	 * Explicitly sets the flow artifact factory to access externally managed
-	 * artifacts needed by flows included in the registry produced by this
-	 * factory bean. This setter is optional, and only necessary if the flow
-	 * artifact factory strategy is a custom one.
-	 * @param flowArtifactFactory the custom flow artifact factory
-	 * @see #setBeanFactory(BeanFactory)
-	 */
 	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
-		this.flowArtifactFactory = flowArtifactFactory;
+		flowServiceLocator.setFlowArtifactFactory(flowArtifactFactory);
+	}
+
+	public void setBeanInvokingActionFactory(BeanInvokingActionFactory beanInvokingActionFactory) {
+		flowServiceLocator.setBeanInvokingActionFactory(beanInvokingActionFactory);
+	}
+
+	public void setConversionService(ConversionService conversionService) {
+		flowServiceLocator.setConversionService(conversionService);
+	}
+	
+	public void setExpressionParser(ExpressionParser expressionParser) {
+		flowServiceLocator.setExpressionParser(expressionParser);
+	}
+	
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		flowServiceLocator.setResourceLoader(resourceLoader);
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		if (flowArtifactFactory == null) {
-			flowArtifactFactory = new RegistryBackedFlowArtifactFactory(getFlowRegistry(), beanFactory);
-		}
-	}
-
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		if (flowArtifactFactory instanceof RegistryBackedFlowArtifactFactory) {
-			RegistryBackedFlowArtifactFactory factory = (RegistryBackedFlowArtifactFactory)flowArtifactFactory;
-			if (factory.getResourceLoader() == null) {
-				factory.setResourceLoader(resourceLoader);
-			}
-		}
+		flowServiceLocator = new DefaultFlowServiceLocator(getFlowRegistry(), beanFactory);
 	}
 
 	/**
@@ -90,8 +91,8 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * Returns the strategy for locating dependent artifacts when a Flow is
 	 * being built.
 	 */
-	protected FlowArtifactFactory getFlowArtifactFactory() {
-		return flowArtifactFactory;
+	protected FlowServiceLocator getFlowServiceLocator() {
+		return flowServiceLocator;
 	}
 
 	public Object getObject() throws Exception {

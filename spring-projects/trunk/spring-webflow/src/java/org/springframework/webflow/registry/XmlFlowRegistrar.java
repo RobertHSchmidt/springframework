@@ -19,7 +19,7 @@ import java.io.File;
 
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.builder.XmlFlowBuilder;
 import org.xml.sax.EntityResolver;
@@ -85,8 +85,8 @@ public class XmlFlowRegistrar extends ExternalizedFlowRegistrar {
 		return file.getName().endsWith(XML_SUFFIX);
 	}
 
-	protected FlowBuilder createFlowBuilder(Resource location, FlowArtifactFactory flowArtifactFactory) {
-		XmlFlowBuilder builder = new XmlFlowBuilder(location, flowArtifactFactory);
+	protected FlowBuilder createFlowBuilder(Resource location, FlowServiceLocator flowServiceLocator) {
+		XmlFlowBuilder builder = new XmlFlowBuilder(location, flowServiceLocator);
 		builder.setValidating(builderValidating);
 		if (entityResolver != null) {
 			builder.setEntityResolver(entityResolver);

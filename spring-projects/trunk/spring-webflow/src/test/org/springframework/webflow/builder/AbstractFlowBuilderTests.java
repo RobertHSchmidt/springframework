@@ -60,11 +60,11 @@ public class AbstractFlowBuilderTests extends TestCase {
 	}
 	public void testDependencyLookup() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
-		master.setFlowArtifactFactory(new DefaultFlowArtifactFactory() {
+		master.setFlowServiceLocator(new BaseFlowServiceLocator() {
 			public Flow getSubflow(String id) throws FlowArtifactException {
 				if (id.equals(PERSON_DETAILS)) {
 					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();
-					builder.setFlowArtifactFactory(this);
+					builder.setFlowServiceLocator(this);
 					FlowAssembler assembler = new FlowAssembler(PERSON_DETAILS, builder);
 					assembler.assembleFlow();
 					return builder.getFlow();

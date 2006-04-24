@@ -4,7 +4,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.registry.FlowRegistryImpl;
-import org.springframework.webflow.registry.RegistryBackedFlowArtifactFactory;
+import org.springframework.webflow.registry.DefaultFlowServiceLocator;
 import org.springframework.webflow.registry.StaticFlowHolder;
 
 /**
@@ -20,12 +20,12 @@ import org.springframework.webflow.registry.StaticFlowHolder;
  * 
  * @author Keith Donald
  */
-public class MockFlowArtifactFactory extends RegistryBackedFlowArtifactFactory {
+public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 
 	/**
 	 * Creates a new mock flow artifact factory.
 	 */
-	public MockFlowArtifactFactory() {
+	public MockFlowServiceLocator() {
 		super(new FlowRegistryImpl(), new StaticListableBeanFactory());
 	}
 

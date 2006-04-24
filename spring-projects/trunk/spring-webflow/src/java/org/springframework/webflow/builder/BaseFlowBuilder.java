@@ -26,11 +26,11 @@ import org.springframework.webflow.Flow;
  * needed by most concrete flow builder implementations. All flow related
  * artifacts are expected to be defined in the bean factory defining this flow
  * builder. Subclasses can use a
- * {@link org.springframework.webflow.builder.FlowArtifactFactory} to easily
+ * {@link org.springframework.webflow.builder.FlowServiceLocator} to easily
  * access that bean factory.
  * 
  * @see org.springframework.beans.factory.BeanFactory
- * @see org.springframework.webflow.builder.FlowArtifactFactory
+ * @see org.springframework.webflow.builder.FlowServiceLocator
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -46,36 +46,36 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * Locates actions, attribute mappers, and other artifacts usable by the
 	 * flow built by this builder.
 	 */
-	private FlowArtifactFactory flowArtifactFactory;
+	private FlowServiceLocator flowServiceLocator;
 
 	/**
 	 * Default constructor for subclassing.
 	 */
 	protected BaseFlowBuilder() {
-		setFlowArtifactFactory(new DefaultFlowArtifactFactory());
+		setFlowServiceLocator(new BaseFlowServiceLocator());
 	}
 
 	/**
 	 * Creates a flow builder using the locator to link in artifacts
-	 * @param flowArtifactFactory the flow artifact locator.
+	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
 	 */
-	protected BaseFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
-		setFlowArtifactFactory(flowArtifactFactory);
+	protected BaseFlowBuilder(FlowServiceLocator flowServiceLocator) {
+		setFlowServiceLocator(flowServiceLocator);
 	}
 
 	/**
-	 * Returns the flow artifact factory.
+	 * Returns the configured flow service locator.
 	 */
-	public FlowArtifactFactory getFlowArtifactFactory() {
-		return flowArtifactFactory;
+	public FlowServiceLocator getFlowServiceLocator() {
+		return flowServiceLocator;
 	}
 
 	/**
-	 * Sets the flow artifact factory.
+	 * Sets the flow service locator.
 	 */
-	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
-		Assert.notNull(flowArtifactFactory, "The flow artifact factory is required");
-		this.flowArtifactFactory = flowArtifactFactory;
+	public void setFlowServiceLocator(FlowServiceLocator flowServiceLocator) {
+		Assert.notNull(flowServiceLocator, "The flow service locator is required");
+		this.flowServiceLocator = flowServiceLocator;
 	}
 
 	/**
@@ -141,7 +141,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * converter exists for given alias
 	 */
 	protected ConversionExecutor fromStringTo(String targetAlias) {
-		return getFlowArtifactFactory().getConversionService().getConversionExecutorByTargetAlias(String.class,
+		return getFlowServiceLocator().getConversionService().getConversionExecutorByTargetAlias(String.class,
 				targetAlias);
 	}
 
@@ -153,6 +153,6 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * @throws ConversionException when the converter cannot be found
 	 */
 	protected ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
-		return getFlowArtifactFactory().getConversionService().getConversionExecutor(String.class, targetType);
+		return getFlowServiceLocator().getConversionService().getConversionExecutor(String.class, targetType);
 	}
 }

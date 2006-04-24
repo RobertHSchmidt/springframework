@@ -56,18 +56,18 @@ import org.springframework.webflow.support.EventFactorySupport;
  *         // get customer information
  *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
  *             on(success(), to(&quot;displayDetails&quot;)));
- *                                                                            
+ *                                                                                
  *         // view customer information               
  *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
  *             on(submit(), to(&quot;bindAndValidate&quot;));
- *                                                                        
+ *                                                                            
  *         // bind and validate customer information updates 
  *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
  *             new Transition[] {
  *                 on(error(), to(&quot;displayDetails&quot;)),
  *                 on(success(), to(&quot;finish&quot;))
  *             });
- *                                                                            
+ *                                                                                
  *         // finish
  *         addEndState(&quot;finish&quot;);
  *     }
@@ -164,10 +164,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Create an instance of an abstract flow builder, using the specified
 	 * factory to obtain needed flow services during configuation.
-	 * @param flowArtifactFactory the artifact locator
+	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
 	 */
-	protected AbstractFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
-		super(flowArtifactFactory);
+	protected AbstractFlowBuilder(FlowServiceLocator flowServiceLocator) {
+		super(flowServiceLocator);
 	}
 
 	/**
@@ -313,8 +313,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected State addDecisionState(String stateId, TransitionCriteria decisionCriteria,
 			TargetStateResolver trueStateResolver, TargetStateResolver falseStateResolver) {
-		Transition thenTransition = getFlowArtifactFactory()
-				.createTransition(decisionCriteria, null, trueStateResolver, null);
+		Transition thenTransition = getFlowArtifactFactory().createTransition(decisionCriteria, null,
+				trueStateResolver, null);
 		Transition elseTransition = getFlowArtifactFactory().createTransition(null, null, falseStateResolver, null);
 		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), null,
 				new Transition[] { thenTransition, elseTransition }, null, null, null);
@@ -352,7 +352,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Adds a subflow state to the flow built by this builder.
 	 * @param stateId the state identifier
 	 * @param subflow the flow that will act as the subflow
-	 * @param attributeMapper the mapper to map subflow input and output attributes
+	 * @param attributeMapper the mapper to map subflow input and output
+	 * attributes
 	 * @param transitions the single transition (path) out of the state
 	 * @return the fully constructed subflow state instance
 	 */
@@ -366,7 +367,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Adds a subflow state to the flow built by this builder.
 	 * @param stateId the state identifier
 	 * @param subflow the flow that will act as the subflow
-	 * @param attributeMapper the mapper to map subflow input and output attributes
+	 * @param attributeMapper the mapper to map subflow input and output
+	 * attributes
 	 * @param transitions the transitions (paths) out of the state
 	 * @return the fully constructed subflow state instance
 	 */
@@ -381,7 +383,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param stateId the state identifier
 	 * @param entryActions the entry actions to execute when the state enters
 	 * @param subflow the flow that will act as the subflow
-	 * @param attributeMapper the mapper to map subflow input and output attributes
+	 * @param attributeMapper the mapper to map subflow input and output
+	 * attributes
 	 * @param transitions the transitions (paths) out of this state
 	 * @param exceptionHandlers the exception handlers to handle exceptions
 	 * thrown by the state
@@ -421,7 +424,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Adds an end state to the flow built by this builder.
 	 * @param stateId the state identifier
 	 * @param viewName the string-encoded view selector
-	 * @param outputMapper the output mapper to map output attributes for the end state (a flow outcome)
+	 * @param outputMapper the output mapper to map output attributes for the
+	 * end state (a flow outcome)
 	 * @return the fully constructed end state instance
 	 */
 	protected State addEndState(String stateId, String viewName, AttributeMapper outputMapper) {
@@ -435,7 +439,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param entryActions the actions to execute when the state is entered
 	 * @param viewSelector the view selector that will make the view selection
 	 * when the state is entered
-	 * @param outputMapper the output mapper to map output attributes for the end state (a flow outcome)
+	 * @param outputMapper the output mapper to map output attributes for the
+	 * end state (a flow outcome)
 	 * @param exceptionHandlers any exception handlers to attach to the state
 	 * @param attributes attributes to assign to the state that may be used to
 	 * affect state construction and execution
@@ -483,7 +488,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
 	protected Action action(String id) throws FlowArtifactException {
-		return getFlowArtifactFactory().getAction(id);
+		return getFlowServiceLocator().getAction(id);
 	}
 
 	/**
@@ -496,7 +501,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
 	protected Action action(String id, MethodSignature methodSignature) throws FlowArtifactException {
-		return getFlowArtifactFactory().createBeanInvokingAction(id, methodSignature, null, null);
+		return getBeanInvokingActionFactory().createBeanInvokingAction(id, getFlowServiceLocator().getBeanFactory(),
+				methodSignature, null, getFlowServiceLocator().getConversionService(), null);
 	}
 
 	/**
@@ -510,7 +516,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected Action action(String id, MethodSignature methodSignature, ResultSpecification resultSpecification)
 			throws FlowArtifactException {
-		return getFlowArtifactFactory().createBeanInvokingAction(id, methodSignature, resultSpecification, null);
+		return getBeanInvokingActionFactory().createBeanInvokingAction(id, getFlowServiceLocator().getBeanFactory(),
+				methodSignature, resultSpecification, getFlowServiceLocator().getConversionService(), null);
 	}
 
 	/**
@@ -521,13 +528,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Encoded Method signature format: Method without arguments:
 	 * 
 	 * <pre>
-	 *                             ${methodName}
+	 * ${methodName}
 	 * </pre>
 	 * 
 	 * Method with arguments:
 	 * 
 	 * <pre>
-	 *                              ${methodName}(${arg1}, ${arg2}, ${arg n})
+	 * ${methodName}(${arg1}, ${arg2}, ${arg n})
 	 * </pre>
 	 * 
 	 * @param method the encoded method signature
@@ -567,7 +574,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * exported with the specified id
 	 */
 	protected FlowAttributeMapper attributeMapper(String id) throws FlowArtifactException {
-		return getFlowArtifactFactory().getAttributeMapper(id);
+		return getFlowServiceLocator().getAttributeMapper(id);
 	}
 
 	/**
@@ -581,7 +588,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @throws FlowArtifactException when the flow cannot be resolved
 	 */
 	protected Flow flow(String id) throws FlowArtifactException {
-		return getFlowArtifactFactory().getSubflow(id);
+		return getFlowServiceLocator().getSubflow(id);
 	}
 
 	/**
@@ -626,7 +633,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected Transition transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver,
 			TransitionCriteria executionCriteria) {
 		return getFlowArtifactFactory()
-				.createTransition(matchingCriteria, executionCriteria, targetStateResolver, null);
+			.createTransition(matchingCriteria, executionCriteria, targetStateResolver, null);
 	}
 
 	/**
@@ -773,8 +780,16 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the mapping builder
 	 */
 	protected MappingBuilder mapping() {
-		MappingBuilder mapping = new MappingBuilder(getFlowArtifactFactory().getExpressionParser());
-		mapping.setConversionService(getFlowArtifactFactory().getConversionService());
+		MappingBuilder mapping = new MappingBuilder(getFlowServiceLocator().getExpressionParser());
+		mapping.setConversionService(getFlowServiceLocator().getConversionService());
 		return mapping;
+	}
+
+	private FlowArtifactFactory getFlowArtifactFactory() {
+		return getFlowServiceLocator().getFlowArtifactFactory();
+	}
+
+	private BeanInvokingActionFactory getBeanInvokingActionFactory() {
+		return getFlowServiceLocator().getBeanInvokingActionFactory();
 	}
 }

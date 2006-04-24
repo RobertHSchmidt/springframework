@@ -100,12 +100,12 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	/**
 	 * Factory to use for loading custom ViewSelector beans.
 	 */
-	private FlowArtifactFactory flowArtifactFactory;
+	private FlowServiceLocator flowArtifactFactory;
 
 	/**
 	 * Create a new text to ViewSelector converter.
 	 */
-	public TextToViewSelector(FlowArtifactFactory flowArtifactFactory) {
+	public TextToViewSelector(FlowServiceLocator flowArtifactFactory) {
 		this.flowArtifactFactory = flowArtifactFactory;
 	}
 

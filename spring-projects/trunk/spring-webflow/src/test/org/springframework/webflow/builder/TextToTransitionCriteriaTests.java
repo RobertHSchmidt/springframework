@@ -28,7 +28,7 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class TextToTransitionCriteriaTests extends TestCase {
 
-	private TextToTransitionCriteria converter = new TextToTransitionCriteria(new DefaultFlowArtifactFactory());
+	private TextToTransitionCriteria converter = new TextToTransitionCriteria(new BaseFlowServiceLocator());
 
 	public void testAny() {
 		String expression = "*";

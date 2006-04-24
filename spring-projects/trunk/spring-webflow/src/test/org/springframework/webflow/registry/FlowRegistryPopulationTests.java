@@ -10,8 +10,8 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
-import org.springframework.webflow.builder.DefaultFlowArtifactFactory;
-import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.BaseFlowServiceLocator;
+import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.builder.FlowBuilderException;
@@ -20,7 +20,7 @@ import org.springframework.webflow.builder.SimpleFlowBuilder;
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
-		FlowArtifactFactory factory = new DefaultFlowArtifactFactory();
+		FlowServiceLocator factory = new BaseFlowServiceLocator();
 		FlowBuilder builder1 = new AbstractFlowBuilder(factory) {
 			public void buildStates() throws FlowBuilderException {
 				addEndState("end");
@@ -44,7 +44,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 
 	public void testXmlPopulationWithRecursion() {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
-		FlowArtifactFactory flowArtifactFactory = new RegistryBackedFlowArtifactFactory(registry,
+		FlowServiceLocator flowArtifactFactory = new DefaultFlowServiceLocator(registry,
 				new DefaultListableBeanFactory());
 		File parent = new File("src/test/org/springframework/webflow/registry");
 		XmlFlowRegistrar registrar = new XmlFlowRegistrar();
@@ -86,7 +86,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 	}
 
 	public static class MyFlowRegistrar extends FlowRegistrarSupport {
-		public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
+		public void registerFlows(FlowRegistry registry, FlowServiceLocator flowArtifactFactory) {
 			File parent = new File("src/test/org/springframework/webflow/registry");
 			registerXmlFlow(new FileSystemResource(new File(parent, "flow1.xml")), registry, flowArtifactFactory);
 			registerXmlFlow(new FileSystemResource(new File(parent, "flow2.xml")), registry, flowArtifactFactory);

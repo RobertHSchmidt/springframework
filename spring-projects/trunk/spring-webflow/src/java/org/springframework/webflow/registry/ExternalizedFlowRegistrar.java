@@ -23,8 +23,8 @@ import java.util.Set;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilder;
+import org.springframework.webflow.builder.FlowServiceLocator;
 
 /**
  * A flow registrar that populates a flow registry from flow definitions defined
@@ -50,7 +50,7 @@ import org.springframework.webflow.builder.FlowBuilder;
  * 
  * @see org.springframework.webflow.registry.ExternalizedFlowDefinition
  * @see org.springframework.webflow.registry.FlowRegistry
- * @see org.springframework.webflow.builder.FlowArtifactFactory
+ * @see org.springframework.webflow.builder.FlowServiceLocator
  * @see org.springframework.webflow.builder.FlowBuilder
  * 
  * @author Keith Donald
@@ -147,21 +147,21 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 		return this.flowDefinitions.addAll(Arrays.asList(flowDefinitions));
 	}
 
-	public void registerFlows(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
-		processFlowLocations(registry, flowArtifactFactory);
-		processFlowDefinitions(registry, flowArtifactFactory);
+	public void registerFlows(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
+		processFlowLocations(registry, flowServiceLocator);
+		processFlowDefinitions(registry, flowServiceLocator);
 	}
 
 	/**
 	 * Register the Flow definitions at the configured file locations
 	 * @param registry the registry
-	 * @param flowArtifactFactory the flow artifactFactory
+	 * @param flowServiceLocator the flow artifactFactory
 	 */
-	protected void processFlowLocations(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
+	protected void processFlowLocations(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
 		Iterator it = flowLocations.iterator();
 		while (it.hasNext()) {
 			Resource location = (Resource)it.next();
-			FlowBuilder builder = createFlowBuilder(location, flowArtifactFactory);
+			FlowBuilder builder = createFlowBuilder(location, flowServiceLocator);
 			registerFlow(new ExternalizedFlowDefinition(location), registry, builder);
 		}
 	}
@@ -169,13 +169,13 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	/**
 	 * Register the Flow definitions at the configured file locations
 	 * @param registry the registry
-	 * @param flowArtifactFactory the flow artifactFactory
+	 * @param flowServiceLocator the flow artifactFactory
 	 */
-	protected void processFlowDefinitions(FlowRegistry registry, FlowArtifactFactory flowArtifactFactory) {
+	protected void processFlowDefinitions(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
 		Iterator it = flowDefinitions.iterator();
 		while (it.hasNext()) {
 			ExternalizedFlowDefinition definition = (ExternalizedFlowDefinition)it.next();
-			FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowArtifactFactory);
+			FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowServiceLocator);
 			registerFlow(definition, registry, builder);
 		}
 	}
@@ -202,10 +202,10 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * Factory method that returns a new externalized flow builder that will
 	 * construct the registered Flow. Subclasses must override.
 	 * @param location the externalized flow definition location
-	 * @param flowArtifactFactory the flow artifact factory
+	 * @param flowServiceLocator the flow artifact factory
 	 * @return the flow builder
 	 */
-	protected abstract FlowBuilder createFlowBuilder(Resource location, FlowArtifactFactory flowArtifactFactory);
+	protected abstract FlowBuilder createFlowBuilder(Resource location, FlowServiceLocator flowServiceLocator);
 
 	public String toString() {
 		return new ToStringCreator(this).append("flowLocations", flowLocations).append("flowDefinitions",

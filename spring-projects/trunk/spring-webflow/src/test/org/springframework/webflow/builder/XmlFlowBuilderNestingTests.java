@@ -33,7 +33,7 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.registry.FlowRegistryImpl;
-import org.springframework.webflow.registry.RegistryBackedFlowArtifactFactory;
+import org.springframework.webflow.registry.DefaultFlowServiceLocator;
 
 /**
  * Test case for XML flow builder, testing flow nesting.
@@ -56,7 +56,7 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 		this.parentBeanFactory = parentContext.getBeanFactory();
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow2.xml", getClass()));
 		builder
-				.setFlowArtifactFactory(new RegistryBackedFlowArtifactFactory(new FlowRegistryImpl(), parentBeanFactory));
+				.setFlowServiceLocator(new DefaultFlowServiceLocator(new FlowRegistryImpl(), parentBeanFactory));
 		new FlowAssembler("testFlow2", builder).assembleFlow();
 		this.flow = builder.getFlow();
 		this.testService = (TestService)parentContext.getBean("testService");

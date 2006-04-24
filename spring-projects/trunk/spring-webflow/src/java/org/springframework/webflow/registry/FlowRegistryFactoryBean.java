@@ -26,7 +26,7 @@ import java.util.List;
  * <p>
  * This class is also <code>BeanFactoryAware</code> and when used with Spring
  * will automatically create a configured
- * {@link RegistryBackedFlowArtifactFactory} for loading Flow artifacts like
+ * {@link DefaultFlowServiceLocator} for loading Flow artifacts like
  * Actions from the Spring bean factory during the Flow registration process.
  * <p>
  * Usage example:
@@ -73,7 +73,7 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 			Iterator it = flowRegistrars.iterator();
 			while (it.hasNext()) {
 				FlowRegistrar registrar = (FlowRegistrar)it.next();
-				registrar.registerFlows(registry, getFlowArtifactFactory());
+				registrar.registerFlows(registry, getFlowServiceLocator());
 			}
 		}
 	}
