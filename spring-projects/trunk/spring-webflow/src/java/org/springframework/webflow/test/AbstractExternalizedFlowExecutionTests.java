@@ -61,9 +61,9 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 		if (isCacheFlowDefinition() && cachedFlowDefinition != null) {
 			return cachedFlowDefinition;
 		}
-		FlowServiceLocator flowArtifactFactory = createFlowArtifactFactory();
+		FlowServiceLocator flowServiceLocator = createFlowServiceLocator();
 		ExternalizedFlowDefinition flowDefinition = getFlowDefinition();
-		FlowBuilder builder = createFlowBuilder(flowDefinition.getLocation(), flowArtifactFactory);
+		FlowBuilder builder = createFlowBuilder(flowDefinition.getLocation(), flowServiceLocator);
 		new FlowAssembler(flowDefinition.getId(), flowDefinition.getAttributes(), builder).assembleFlow();
 		Flow flow = builder.getFlow();
 		if (isCacheFlowDefinition()) {
@@ -82,7 +82,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * 
 	 * @return the flow artifact factory
 	 */
-	protected FlowServiceLocator createFlowArtifactFactory() {
+	protected FlowServiceLocator createFlowServiceLocator() {
 		return new MockFlowServiceLocator();
 	}
 
@@ -90,10 +90,10 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * Create the builder that will build the flow whose execution will be
 	 * tested.
 	 * @param resource the externalized flow definition resource location
-	 * @param flowArtifactFactory the flow artifact factory
+	 * @param flowServiceLocator the flow artifact factory
 	 * @return the flow builder
 	 */
-	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowArtifactFactory);
+	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowServiceLocator);
 
 	/**
 	 * Returns the definition of the externalized flow needed by this flow

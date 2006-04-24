@@ -46,9 +46,12 @@ Package org.springframework.webflow.builder
   treated as the target state of the transition.
 * Enhanced the 'view' attribute of the 'view-state' and 'end-state' elements to be fully ${expression} capable; previously 
   expressions could only be defined for redirect parameters.
-* Refined the FlowArtifactFactory interface, acting now as both a service locator and abstract factory.
+* Renamed the FlowArtifactFactory interface as it was in 1.0 EA to FlowServiceLocator.  Factored out two new
+  "services" from the original interface: FlowArtifactFactory, for encapsulating the construction of core flow elements
+  like State and Transition, and BeanInvokingActionFactory, for encapsulating the construction of an Action that invokes 
+  a method on a bean when executed.
 * Refined the FlowBuilder interface, adding builder methods for each type of major Flow construct.
-* Reworked AbstractFlowBuilder and XmlFlowBuilder to bring them in-line with the FlowArtifactFactory and FlowBuilder refinements.
+* Reworked AbstractFlowBuilder and XmlFlowBuilder to bring them in-line with the FlowServiceLocator and FlowBuilder refinements.
 * XmlFlowBuilder now respects deployment within a WebApplicationContext now, supporting access to the 
   ServletContext from within beans deployed in flow-local contexts.
 
@@ -76,6 +79,8 @@ Package org.springframework.webflow.executor
 Package org.springframework.webflow.registry
 * Fixed a race condition within RefreshableFlowHolder pertaining to flow assembly.
 * Added 'builderValidating' and 'entityResolver' properties of XmlFlowRegistryFactoryBean configuration interface.
+* Reworked to bring registry subsystem in-line with changes in builder system.  All "flow services" may be 
+  configured by Spring now by setting properties of a FlowRegistryFactoryBean.
 * Misc polishing
 
 Package org.springframework.webflow.support
