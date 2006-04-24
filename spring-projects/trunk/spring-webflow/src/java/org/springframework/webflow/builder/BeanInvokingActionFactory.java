@@ -20,6 +20,7 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.AttributeCollection;
+import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.BeanFactoryBeanInvokingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
@@ -28,6 +29,10 @@ import org.springframework.webflow.action.MementoOriginator;
 import org.springframework.webflow.action.ResultSpecification;
 import org.springframework.webflow.action.StatefulBeanInvokingAction;
 
+/**
+ * A factory for {@link Action} instances that invoke methods on beans.
+ * @author Keith Donald
+ */
 public class BeanInvokingActionFactory {
 
 	/**
@@ -52,10 +57,28 @@ public class BeanInvokingActionFactory {
 		this.resultEventFactorySelector = resultEventFactorySelector;
 	}
 
+	/**
+	 * Factory method that creates a bean invoking action, an adapter that
+	 * adapts a method on an abitrary {@link Object} to the {@link Action}
+	 * interface. This method is an atomic operation that returns a fully
+	 * initialized Action. It encapsulates the selection of the action
+	 * implementation as well as the action assembly.
+	 * @param beanId the bean to be adapted to an Action instance
+	 * @param beanFactory the bean factory where the bean is managed
+	 * @param methodSignature the method to invoke on the bean when the action
+	 * is executed (required)
+	 * @param resultSpecification the specification for what to do with the
+	 * method return value; may be null
+	 * @param attributes attributes that may be used to affect the bean invoking
+	 * action's construction
+	 * @return the fully configured bean invoking action instance
+	 * @throws FlowArtifactException an exception occured creating the action
+	 */
 	public Action createBeanInvokingAction(String beanId, BeanFactory beanFactory, MethodSignature methodSignature,
 			ResultSpecification resultSpecification, ConversionService conversionService, AttributeCollection attributes) {
 		if (!beanFactory.isSingleton(beanId)) {
-			return createStatefulAction(beanId, beanFactory, methodSignature, resultSpecification, conversionService, attributes);
+			return createStatefulAction(beanId, beanFactory, methodSignature, resultSpecification, conversionService,
+					attributes);
 		}
 		else {
 			Object bean = beanFactory.getBean(beanId);
