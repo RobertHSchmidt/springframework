@@ -5,11 +5,11 @@ import java.io.File;
 import org.easymock.MockControl;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
-import org.springframework.webflow.test.MockFlowArtifactFactory;
+import org.springframework.webflow.test.MockFlowServiceLocator;
 import org.springframework.webflow.test.MockParameterMap;
 
 public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
@@ -74,11 +74,11 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	}
 
 	@Override
-	protected FlowArtifactFactory createFlowArtifactFactory() {
+	protected FlowServiceLocator createFlowServiceLocator() {
 		saleProcessorControl = MockControl.createControl(SaleProcessor.class);
 		saleProcessor = (SaleProcessor)saleProcessorControl.getMock();
-		MockFlowArtifactFactory flowArtifactFactory = new MockFlowArtifactFactory();
-		flowArtifactFactory.registerBean("saleProcessor", saleProcessor);
-		return flowArtifactFactory;
+		MockFlowServiceLocator flowServiceLocator = new MockFlowServiceLocator();
+		flowServiceLocator.registerBean("saleProcessor", saleProcessor);
+		return flowServiceLocator;
 	}
 }

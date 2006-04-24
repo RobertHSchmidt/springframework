@@ -17,8 +17,8 @@ package org.springframework.webflow.samples.phonebook.webflow;
 
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
-import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilderException;
+import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.support.DefaultFlowAttributeMapper;
 
 /**
@@ -32,8 +32,8 @@ import org.springframework.webflow.support.DefaultFlowAttributeMapper;
  */
 public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
-	public PersonDetailFlowBuilder(FlowArtifactFactory flowArtifactFactory) {
-		super(flowArtifactFactory);
+	public PersonDetailFlowBuilder(FlowServiceLocator flowServiceLocator) {
+		super(flowServiceLocator);
 	}
 
 	public void buildStates() throws FlowBuilderException {

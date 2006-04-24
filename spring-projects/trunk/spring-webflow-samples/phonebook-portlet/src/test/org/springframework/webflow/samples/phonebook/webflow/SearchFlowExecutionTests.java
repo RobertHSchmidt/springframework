@@ -24,13 +24,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.builder.FlowArtifactFactory;
+import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook;
 import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
-import org.springframework.webflow.test.MockFlowArtifactFactory;
+import org.springframework.webflow.test.MockFlowServiceLocator;
 import org.springframework.webflow.test.MockParameterMap;
 
 public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
@@ -87,8 +87,8 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		return new ExternalizedFlowDefinition(resource);
 	}
 
-	protected FlowArtifactFactory createFlowArtifactFactory() {
-		MockFlowArtifactFactory flowArtifactFactory = new MockFlowArtifactFactory();
+	protected FlowServiceLocator createFlowServiceLocator() {
+		MockFlowServiceLocator flowServiceLocator = new MockFlowServiceLocator();
 
 		Flow detailFlow = new Flow("detail-flow");
 		// test responding to finish result
@@ -98,8 +98,8 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 				assertEquals("id of value 1 not provided as input by calling search flow", new Long(1), ((AttributeMap)source).get("id"));
 			}
 		});
-		flowArtifactFactory.registerSubflow(detailFlow);
-		flowArtifactFactory.registerBean("phonebook", phonebook);
-		return flowArtifactFactory;
+		flowServiceLocator.registerSubflow(detailFlow);
+		flowServiceLocator.registerBean("phonebook", phonebook);
+		return flowServiceLocator;
 	}
 }
