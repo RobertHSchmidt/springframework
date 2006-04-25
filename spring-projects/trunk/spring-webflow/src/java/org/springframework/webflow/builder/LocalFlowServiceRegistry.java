@@ -55,16 +55,16 @@ class LocalFlowServiceRegistry {
 		this.resources = resources;
 	}
 
+	public Flow getFlow() {
+		return flow;
+	}
+
 	public Resource[] getResources() {
 		return resources;
 	}
 
 	public ApplicationContext getContext() {
 		return context;
-	}
-
-	public Flow getFlow() {
-		return flow;
 	}
 
 	/**
