@@ -45,16 +45,16 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 	private Stack localRegistries = new Stack();
 
 	/**
-	 * The parent factory.
+	 * The parent service locator.
 	 */
-	private FlowServiceLocator rootFactory;
+	private FlowServiceLocator parent;
 
 	/**
-	 * Creates a new local artifact factory.
-	 * @param rootFactory the root parent factory
+	 * Creates a new local service locator
+	 * @param parent the root service locator
 	 */
-	public LocalFlowServiceLocator(FlowServiceLocator rootFactory) {
-		this.rootFactory = rootFactory;
+	public LocalFlowServiceLocator(FlowServiceLocator parent) {
+		this.parent = parent;
 	}
 
 	/**
@@ -62,7 +62,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 	 * @param registry the local registry
 	 */
 	public void push(LocalFlowServiceRegistry registry) {
-		registry.init(this, rootFactory);
+		registry.init(this, parent);
 		localRegistries.push(registry);
 	}
 
@@ -77,7 +77,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			return currentFlow.getInlineFlow(id);
 		}
 		// check externally managed toplevel flows
-		return rootFactory.getSubflow(id);
+		return parent.getSubflow(id);
 	}
 
 	public Action getAction(String id) throws FlowArtifactException {
@@ -85,7 +85,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			return (Action)getBean(id, Action.class);
 		}
 		else {
-			return rootFactory.getAction(id);
+			return parent.getAction(id);
 		}
 	}
 
@@ -94,7 +94,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			return Action.class.isAssignableFrom(getBeanFactory().getType(actionId));
 		}
 		else {
-			return rootFactory.isAction(actionId);
+			return parent.isAction(actionId);
 		}
 	}
 
@@ -103,7 +103,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			return MultiAction.class.isAssignableFrom(getBeanFactory().getType(actionId));
 		}
 		else {
-			return rootFactory.isMultiAction(actionId);
+			return parent.isMultiAction(actionId);
 		}
 	}
 
@@ -112,7 +112,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			return (FlowAttributeMapper)getBean(id, FlowAttributeMapper.class);
 		}
 		else {
-			return rootFactory.getAttributeMapper(id);
+			return parent.getAttributeMapper(id);
 		}
 	}
 
@@ -121,7 +121,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			return (StateExceptionHandler)getBean(id, StateExceptionHandler.class);
 		}
 		else {
-			return rootFactory.getExceptionHandler(id);
+			return parent.getExceptionHandler(id);
 		}
 	}
 
@@ -130,7 +130,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			return (TransitionCriteria)getBean(id, TransitionCriteria.class);
 		}
 		else {
-			return rootFactory.getTransitionCriteria(id);
+			return parent.getTransitionCriteria(id);
 		}
 	}
 
@@ -139,7 +139,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			return (ViewSelector)getBean(id, ViewSelector.class);
 		}
 		else {
-			return rootFactory.getViewSelector(id);
+			return parent.getViewSelector(id);
 		}
 	}
 
@@ -148,28 +148,28 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			return (TargetStateResolver)getBean(id, TargetStateResolver.class);
 		}
 		else {
-			return rootFactory.getTargetStateResolver(id);
+			return parent.getTargetStateResolver(id);
 		}
 	}
 
 	public FlowArtifactFactory getFlowArtifactFactory() {
-		return rootFactory.getFlowArtifactFactory();
+		return parent.getFlowArtifactFactory();
 	}
 
 	public BeanInvokingActionFactory getBeanInvokingActionFactory() {
-		return rootFactory.getBeanInvokingActionFactory();
+		return parent.getBeanInvokingActionFactory();
 	}
 
 	public ConversionService getConversionService() {
-		return rootFactory.getConversionService();
+		return parent.getConversionService();
 	}
 
 	public ExpressionParser getExpressionParser() {
-		return rootFactory.getExpressionParser();
+		return parent.getExpressionParser();
 	}
 
 	public ResourceLoader getResourceLoader() {
-		return rootFactory.getResourceLoader();
+		return parent.getResourceLoader();
 	}
 
 	public BeanFactory getBeanFactory() {
