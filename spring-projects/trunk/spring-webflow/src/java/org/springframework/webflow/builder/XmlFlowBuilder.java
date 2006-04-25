@@ -239,7 +239,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	/**
 	 * A flow service locator local to this builder that first looks in a
 	 * locally-managed Spring application context for services before searching
-	 * an externally managed factory.
+	 * the externally managed {@link #getFlowServiceLocator()}.
 	 */
 	private LocalFlowServiceLocator localFlowServiceLocator;
 

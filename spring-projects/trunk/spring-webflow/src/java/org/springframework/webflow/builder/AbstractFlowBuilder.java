@@ -163,7 +163,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * Create an instance of an abstract flow builder, using the specified
-	 * factory to obtain needed flow services during configuation.
+	 * locator to obtain needed flow services at build time.
 	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
 	 */
 	protected AbstractFlowBuilder(FlowServiceLocator flowServiceLocator) {

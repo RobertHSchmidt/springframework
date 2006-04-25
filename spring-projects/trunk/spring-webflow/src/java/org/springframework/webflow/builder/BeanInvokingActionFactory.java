@@ -31,6 +31,10 @@ import org.springframework.webflow.action.StatefulBeanInvokingAction;
 
 /**
  * A factory for {@link Action} instances that invoke methods on beans.
+ * <p>
+ * This factory encapsulates the logic required to take an arbitrary
+ * <code>java.lang.Object</code> method and adapt it to the {@link Action}
+ * interface.
  * @author Keith Donald
  */
 public class BeanInvokingActionFactory {

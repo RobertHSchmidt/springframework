@@ -44,15 +44,15 @@ import org.springframework.webflow.support.EventFactorySupport;
 public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
+	 * Logger, usable in subclasses.
+	 */
+	protected final Log logger = LogFactory.getLog(getClass());
+
+	/**
 	 * A helper for creating action execution result events. The default value
 	 * is {@link EventFactorySupport}.
 	 */
 	private EventFactorySupport eventFactorySupport = new EventFactorySupport();
-
-	/**
-	 * Logger, usable in subclasses.
-	 */
-	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * Returns the helper delegate for creating action execution result events.
@@ -63,15 +63,15 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	}
 
 	/**
-	 * Sets the helper delegate for creating action execution result events.  This allows 
-	 * for customizing how common action result events such as "success" and "error" 
-	 * are created.
+	 * Sets the helper delegate for creating action execution result events.
+	 * This allows for customizing how common action result events such as
+	 * "success" and "error" are created.
 	 * @return the event factory support
 	 */
 	public void setEventFactorySupport(EventFactorySupport eventFactorySupport) {
 		this.eventFactorySupport = eventFactorySupport;
 	}
-	
+
 	public void afterPropertiesSet() throws Exception {
 		try {
 			initAction();
@@ -149,14 +149,14 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Typically called as part of return, for example:
 	 * 
 	 * <pre>
-	 *     protected Event doExecute(RequestContext context) {
-	 *         // do some work
-	 *         if (some condition) {
-	 *             return result(&quot;success&quot;);
-	 *         } else {
-	 *             return result(&quot;error&quot;);
-	 *         }
-	 *     }
+	 *      protected Event doExecute(RequestContext context) {
+	 *          // do some work
+	 *          if (some condition) {
+	 *              return result(&quot;success&quot;);
+	 *          } else {
+	 *              return result(&quot;error&quot;);
+	 *          }
+	 *      }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
@@ -174,16 +174,16 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * example:
 	 * 
 	 * <pre>
-	 *     protected Event doExecute(RequestContext context) {
-	 *         // do some work
-	 *         AttributeMap resultAttributes = new AttributeMap();
-	 *         resultAttributes.put(&quot;name&quot;, &quot;value&quot;);
-	 *         if (some condition) {
-	 *             return result(&quot;success&quot;, resultAttributes);
-	 *         } else {
-	 *             return result(&quot;error&quot;, resultAttributes);
-	 *         }
-	 *     }
+	 *      protected Event doExecute(RequestContext context) {
+	 *          // do some work
+	 *          AttributeMap resultAttributes = new AttributeMap();
+	 *          resultAttributes.put(&quot;name&quot;, &quot;value&quot;);
+	 *          if (some condition) {
+	 *              return result(&quot;success&quot;, resultAttributes);
+	 *          } else {
+	 *              return result(&quot;error&quot;, resultAttributes);
+	 *          }
+	 *      }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
@@ -212,19 +212,18 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	public final Event execute(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Action '" + ClassUtils.getShortName(getClass()) + "' beginning execution");
+			logger.debug("Action '" + getLoggingName() + "' beginning execution");
 		}
 		Event result = doPreExecute(context);
 		if (result == null) {
 			result = doExecute(context);
 			if (logger.isDebugEnabled()) {
 				if (result != null) {
-					logger.debug("Action '" + ClassUtils.getShortName(getClass())
-							+ "' completed execution; result is '" + result.getId() + "'");
+					logger.debug("Action '" + getLoggingName() + "' completed execution; result is '" + result.getId()
+							+ "'");
 				}
 				else {
-					logger.debug("Action '" + ClassUtils.getShortName(getClass())
-							+ "' completed execution; result is [null]");
+					logger.debug("Action '" + getLoggingName() + "' completed execution; result is [null]");
 				}
 			}
 			doPostExecute(context);
@@ -235,6 +234,10 @@ public abstract class AbstractAction implements Action, InitializingBean {
 			}
 		}
 		return result;
+	}
+
+	private String getLoggingName() {
+		return ClassUtils.getShortName(getClass());
 	}
 
 	/**

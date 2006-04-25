@@ -23,11 +23,7 @@ import org.springframework.webflow.Flow;
 
 /**
  * Abstract base implementation of a flow builder defining common functionality
- * needed by most concrete flow builder implementations. All flow related
- * artifacts are expected to be defined in the bean factory defining this flow
- * builder. Subclasses can use a
- * {@link org.springframework.webflow.builder.FlowServiceLocator} to easily
- * access that bean factory.
+ * needed by most concrete flow builder implementations.
  * 
  * @see org.springframework.beans.factory.BeanFactory
  * @see org.springframework.webflow.builder.FlowServiceLocator
@@ -43,7 +39,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	private Flow flow;
 
 	/**
-	 * Locates actions, attribute mappers, and other artifacts usable by the
+	 * Locates actions, attribute mappers, and other artifacts needed by the
 	 * flow built by this builder.
 	 */
 	private FlowServiceLocator flowServiceLocator;

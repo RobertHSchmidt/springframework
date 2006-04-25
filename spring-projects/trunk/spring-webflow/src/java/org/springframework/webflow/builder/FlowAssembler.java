@@ -29,9 +29,9 @@ import org.springframework.webflow.UnmodifiableAttributeMap;
  * Flow assemblers may be used in a standalone, programmatic fashion as follows:
  * 
  * <pre>
- *      FlowBuilder builder = ...;
- *      new FlowAssembler(&quot;myFlow&quot;, builder).assembleFlow();
- *      Flow flow = builder.getFlow();
+ *     FlowBuilder builder = ...;
+ *     new FlowAssembler(&quot;myFlow&quot;, builder).assembleFlow();
+ *     Flow flow = builder.getFlow();
  * </pre>
  * 
  * @see org.springframework.webflow.builder.FlowBuilder

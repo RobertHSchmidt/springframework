@@ -32,6 +32,11 @@ import org.springframework.webflow.Flow;
 class LocalFlowServiceRegistry {
 
 	/**
+	 * The flow for which this registry is for (and scoped by).
+	 */
+	private Flow flow;
+
+	/**
 	 * The locations of the registry resource definitions. 
 	 */
 	private Resource[] resources;
@@ -40,11 +45,6 @@ class LocalFlowServiceRegistry {
 	 * The local registry holding the artifacts local to the flow.
 	 */
 	private GenericApplicationContext context;
-
-	/**
-	 * The flow for which this registry is for.
-	 */
-	private Flow flow;
 
 	/**
 	 * Create new registry
@@ -67,6 +67,11 @@ class LocalFlowServiceRegistry {
 		return flow;
 	}
 
+	/**
+	 * Initialize this registry of the local flow service locator.
+	 * @param localFactory the local flow service locator
+	 * @param rootFactory the root service locator
+	 */
 	public void init(LocalFlowServiceLocator localFactory, FlowServiceLocator rootFactory) {
 		BeanFactory parent = null;
 		if (localFactory.isEmpty()) {

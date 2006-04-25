@@ -33,8 +33,8 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.action.MultiAction;
 
 /**
- * A local artifact factory that searches local registries first before querying
- * the global, externally managed artifact factory.
+ * Searches flow-local registries first before querying the global, externally
+ * managed flow service locator.
  * @author Keith Donald
  */
 class LocalFlowServiceLocator implements FlowServiceLocator {
@@ -81,65 +81,73 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 	}
 
 	public Action getAction(String id) throws FlowArtifactException {
-		if (containsService(id)) {
-			return (Action)getService(id, Action.class);
-		} else {
+		if (containsBean(id)) {
+			return (Action)getBean(id, Action.class);
+		}
+		else {
 			return rootFactory.getAction(id);
 		}
 	}
 
 	public boolean isAction(String actionId) throws FlowArtifactException {
-		if (containsService(actionId)) {
+		if (containsBean(actionId)) {
 			return Action.class.isAssignableFrom(getBeanFactory().getType(actionId));
-		} else {
+		}
+		else {
 			return rootFactory.isAction(actionId);
 		}
 	}
 
 	public boolean isMultiAction(String actionId) {
-		if (containsService(actionId)) {
+		if (containsBean(actionId)) {
 			return MultiAction.class.isAssignableFrom(getBeanFactory().getType(actionId));
-		} else {
+		}
+		else {
 			return rootFactory.isMultiAction(actionId);
 		}
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
-		if (containsService(id)) {
-			return (FlowAttributeMapper)getService(id, FlowAttributeMapper.class);
-		} else {
+		if (containsBean(id)) {
+			return (FlowAttributeMapper)getBean(id, FlowAttributeMapper.class);
+		}
+		else {
 			return rootFactory.getAttributeMapper(id);
 		}
 	}
 
 	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
-		if (containsService(id)) {
-			return (StateExceptionHandler)getService(id, StateExceptionHandler.class);
-		} else {
+		if (containsBean(id)) {
+			return (StateExceptionHandler)getBean(id, StateExceptionHandler.class);
+		}
+		else {
 			return rootFactory.getExceptionHandler(id);
 		}
 	}
 
 	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
-		if (containsService(id)) {
-			return (TransitionCriteria)getService(id, TransitionCriteria.class);
-		} else {
+		if (containsBean(id)) {
+			return (TransitionCriteria)getBean(id, TransitionCriteria.class);
+		}
+		else {
 			return rootFactory.getTransitionCriteria(id);
 		}
 	}
 
 	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
-		if (containsService(id)) {
-			return (ViewSelector)getService(id, ViewSelector.class);
-		} else {
+		if (containsBean(id)) {
+			return (ViewSelector)getBean(id, ViewSelector.class);
+		}
+		else {
 			return rootFactory.getViewSelector(id);
 		}
 	}
 
 	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
-		if (containsService(id)) {
-			return (TargetStateResolver)getService(id, TargetStateResolver.class);
-		} else {
+		if (containsBean(id)) {
+			return (TargetStateResolver)getBean(id, TargetStateResolver.class);
+		}
+		else {
 			return rootFactory.getTargetStateResolver(id);
 		}
 	}
@@ -182,23 +190,30 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		return (LocalFlowServiceRegistry)localRegistries.peek();
 	}
 
+	/**
+	 * Returns true if this locator has no local registries.
+	 */
 	public boolean isEmpty() {
 		return localRegistries.isEmpty();
 	}
 
+	/**
+	 * Returns the flow for the registry at the top of the stack.
+	 */
 	public Flow getCurrentFlow() {
 		return top().getFlow();
 	}
 
-	protected boolean containsService(String id) {
+	protected boolean containsBean(String id) {
 		if (localRegistries.isEmpty()) {
 			return false;
-		} else {
+		}
+		else {
 			return getBeanFactory().containsBean(id);
 		}
 	}
 
-	protected Object getService(String id, Class artifactType) {
+	protected Object getBean(String id, Class artifactType) {
 		try {
 			return getBeanFactory().getBean(id, artifactType);
 		}

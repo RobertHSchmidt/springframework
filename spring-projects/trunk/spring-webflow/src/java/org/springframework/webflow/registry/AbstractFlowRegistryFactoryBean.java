@@ -22,6 +22,9 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.webflow.Action;
+import org.springframework.webflow.Flow;
+import org.springframework.webflow.State;
 import org.springframework.webflow.builder.BeanInvokingActionFactory;
 import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowServiceLocator;
@@ -37,41 +40,60 @@ import org.springframework.webflow.builder.FlowServiceLocator;
 public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, BeanFactoryAware, ResourceLoaderAware {
 
 	/**
-	 * The flow registry to register Flow definitions in.
+	 * The registry to register Flow definitions in.
 	 */
 	private FlowRegistryImpl flowRegistry = new FlowRegistryImpl();
 
 	/**
-	 * Strategy for locating externally managed dependent artifacts when a
-	 * registered Flow is being built.
+	 * The locator of services needed by the Flows built for inclusion in the
+	 * registry.
 	 */
 	private DefaultFlowServiceLocator flowServiceLocator;
 
 	/**
 	 * Sets the parent registry of the registry constructed by this factory
 	 * bean.
+	 * <p>
+	 * A child registry will delegate to its parent if it cannot fulfill a
+	 * request to locate a Flow definition.
 	 * @param parent the parent flow definition registry
 	 */
 	public void setParent(FlowRegistry parent) {
 		flowRegistry.setParent(parent);
 	}
 
+	/**
+	 * Sets the factory encapsulating the creation of central Flow artifacts
+	 * such as {@link Flow flows} and {@link State states}.
+	 */
 	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
 		flowServiceLocator.setFlowArtifactFactory(flowArtifactFactory);
 	}
 
+	/**
+	 * Sets the factory for creating bean invoking actions, actions that adapt
+	 * methods on objects to the {@link Action} interface.
+	 */
 	public void setBeanInvokingActionFactory(BeanInvokingActionFactory beanInvokingActionFactory) {
 		flowServiceLocator.setBeanInvokingActionFactory(beanInvokingActionFactory);
 	}
 
-	public void setConversionService(ConversionService conversionService) {
-		flowServiceLocator.setConversionService(conversionService);
-	}
-	
+	/**
+	 * Set the expression parser responsible for parsing expression strings into
+	 * evaluatable expression objects.
+	 */
 	public void setExpressionParser(ExpressionParser expressionParser) {
 		flowServiceLocator.setExpressionParser(expressionParser);
 	}
-	
+
+	/**
+	 * Set the conversion service to use to convert between types; typically
+	 * from string to a rich object type.
+	 */
+	public void setConversionService(ConversionService conversionService) {
+		flowServiceLocator.setConversionService(conversionService);
+	}
+
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		flowServiceLocator.setResourceLoader(resourceLoader);
 	}

@@ -38,10 +38,11 @@ import org.springframework.webflow.support.DefaultExpressionParserFactory;
 
 /**
  * Base implementation that implements a minimal set of the
- * <code>FlowArtifactFactory</code> interface, throwing unsupported operation
+ * <code>FlowServiceLocator</code> interface, throwing unsupported operation
  * exceptions for some operations.
  * <p>
  * May be subclassed to offer additional factory/lookup support.
+ * 
  * @author Keith Donald
  */
 public class BaseFlowServiceLocator implements FlowServiceLocator {
@@ -53,8 +54,8 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	private FlowArtifactFactory flowArtifactFactory = new FlowArtifactFactory();
 
 	/**
-	 * The factory for creating bean invoking actions, actions that adapt
-	 * methods on objects to the {@link Action} interface.
+	 * The factory encapsulating the creation of bean invoking actions, actions
+	 * that adapt methods on objects to the {@link Action} interface.
 	 */
 	private BeanInvokingActionFactory beanInvokingActionFactory = new BeanInvokingActionFactory();
 
@@ -119,15 +120,15 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	}
 
 	public Action getAction(String id) throws FlowArtifactException {
-		return (Action)getService(id, Action.class);
+		return (Action)getBean(id, Action.class);
 	}
 
 	public boolean isAction(String actionId) throws FlowArtifactException {
-		return Action.class.isAssignableFrom(getServiceType(actionId, Action.class));
+		return Action.class.isAssignableFrom(getBeanType(actionId, Action.class));
 	}
 
 	public boolean isMultiAction(String actionId) throws FlowArtifactException {
-		if (containsService(actionId)) {
+		if (containsBean(actionId)) {
 			return MultiAction.class.isAssignableFrom(getBeanFactory().getType(actionId));
 		}
 		else {
@@ -136,23 +137,23 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
-		return (FlowAttributeMapper)getService(id, FlowAttributeMapper.class);
+		return (FlowAttributeMapper)getBean(id, FlowAttributeMapper.class);
 	}
 
 	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
-		return (TransitionCriteria)getService(id, TransitionCriteria.class);
+		return (TransitionCriteria)getBean(id, TransitionCriteria.class);
 	}
 
 	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
-		return (ViewSelector)getService(id, ViewSelector.class);
+		return (ViewSelector)getBean(id, ViewSelector.class);
 	}
 
 	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
-		return (TargetStateResolver)getService(id, TargetStateResolver.class);
+		return (TargetStateResolver)getBean(id, TargetStateResolver.class);
 	}
 
 	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
-		return (StateExceptionHandler)getService(id, StateExceptionHandler.class);
+		return (StateExceptionHandler)getBean(id, StateExceptionHandler.class);
 	}
 
 	public FlowArtifactFactory getFlowArtifactFactory() {
@@ -176,7 +177,7 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	}
 
 	public BeanFactory getBeanFactory() throws UnsupportedOperationException {
-		throw new UnsupportedOperationException("Service registry lookup is not supported by this artifact factory");
+		throw new UnsupportedOperationException("Bean factory lookup is not supported by this service locator");
 	}
 
 	private ConversionService createDefaultConversionService() {
@@ -189,20 +190,23 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		return service;
 	}
 
-	protected boolean isPrototype(String beanId) {
-		if (containsService(beanId)) {
-			return !getBeanFactory().isSingleton(beanId);
-		}
-		else {
-			return false;
-		}
-	}
-
-	protected boolean containsService(String id) {
+	/**
+	 * Helper method for determining if the configured bean factory contains the provided bean.
+	 * @param id the id of the bean
+	 * @return true if yes, false otherwise
+	 */
+	protected boolean containsBean(String id) {
 		return getBeanFactory().containsBean(id);
 	}
 
-	protected Object getService(String id, Class artifactType) {
+	/**
+	 * Helper method to lookup the bean representing a flow artifact of the specified type.
+	 * @param id the bean id
+	 * @param artifactType the bean type
+	 * @return the bean
+	 * @throws FlowArtifactException an exception occurred
+	 */
+	protected Object getBean(String id, Class artifactType) throws FlowArtifactException {
 		try {
 			return getBeanFactory().getBean(id, artifactType);
 		}
@@ -211,7 +215,14 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
-	protected Class getServiceType(String id, Class artifactType) {
+	/**
+	 * Helper method to lookup the type of the bean with the provided id.
+	 * @param id the bean id
+	 * @param artifactType the bean type
+	 * @return the bean's type
+	 * @throws FlowArtifactException an exception occurred
+	 */
+	protected Class getBeanType(String id, Class artifactType) throws FlowArtifactException {
 		try {
 			return getBeanFactory().getType(id);
 		}

@@ -18,13 +18,13 @@ import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
 
 /**
- * A support interface used by FlowBuilders at configuration time that serves
- * two roles:
+ * A support interface used by FlowBuilders at configuration time. Acts as a
+ * "service locator" responsible for:
  * <ol>
- * <li> As a service locator to retrieve dependent (but externally managed flow
- * artifacts needed to build flow and state definitions. Such artifacts are
- * usually hosted in a backing registry, and may be shared by multiple flows.
- * <li> As a service locator for abstract factories to create core flow-specific
+ * <li> retrieving dependent (but externally managed) flow services needed to
+ * configure flow and state definitions. Such services are usually hosted in a
+ * backing registry, and may be shared by multiple flows.
+ * <li> providing access to abstract factories to create core flow definitional
  * artifacts such as {@link Flow}, {@link State}, {@link Transition}, and
  * {@link AbstractBeanInvokingAction bean invoking actions}. These artifacts
  * are unique to each flow and are typically not shared.
@@ -32,7 +32,8 @@ import org.springframework.webflow.action.MultiAction;
  * In general, implementations of this interface act as facades to accessing and
  * creating flow artifacts during {@link FlowAssembler flow assembly}. Finally,
  * this interface also exposes access to generic infrastructure services also
- * needed by flow assemblers.
+ * needed by flow assemblers such as a {@link ConversionService} and
+ * {@link ExpressionParser}.
  * 
  * @author Keith Donald
  */

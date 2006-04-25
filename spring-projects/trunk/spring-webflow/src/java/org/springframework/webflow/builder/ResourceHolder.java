@@ -33,5 +33,5 @@ public interface ResourceHolder {
 	 * Returns the flow definition resource held by this holder.
 	 */
 	public Resource getResource();
-
+	
 }

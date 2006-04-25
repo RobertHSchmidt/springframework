@@ -37,6 +37,10 @@ import org.springframework.webflow.ViewState;
 /**
  * A factory for core web flow elements such as {@link Flow flows}, {@link State states}, 
  * and {@link Transition transitions}.
+ * <p>
+ * This factory encapsulates the construct of each Flow implementation 
+ * as well as each core state type.
+ *  
  * @author Keith Donald
  */
 public class FlowArtifactFactory {

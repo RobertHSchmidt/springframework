@@ -22,9 +22,9 @@ import org.springframework.webflow.builder.BaseFlowServiceLocator;
 import org.springframework.webflow.builder.FlowServiceLocator;
 
 /**
- * A flow artifact factory that obtains subflow definitions from a explict
- * {@link FlowRegistry} The remaining types of artifacts are sourced from a
- * standard Spring {@link BeanFactory} registry.
+ * The default flow service locator implementation that obtains subflow
+ * definitions from a dedicated {@link FlowRegistry}. The remaining services are
+ * sourced from a standard Spring {@link BeanFactory}.
  * 
  * @see FlowRegistry
  * @see FlowServiceLocator#getSubflow(String)
@@ -51,7 +51,7 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 	public DefaultFlowServiceLocator(BeanFactory beanFactory) {
 		this(new FlowRegistryImpl(), beanFactory);
 	}
-	
+
 	/**
 	 * Creates a flow artifact factory that retrieves subflows from the provided
 	 * registry and additional artifacts from the provided bean factory.
@@ -72,16 +72,11 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 		return subflowRegistry;
 	}
 
-	/**
-	 * Returns the bean factory used by this flow artifact factory to manage
-	 * custom flow artifacts.
-	 * @return the bean factory
-	 */
-	public BeanFactory getBeanFactory() {
-		return beanFactory;
-	}
-
 	public Flow getSubflow(String id) throws FlowArtifactException {
 		return subflowRegistry.getFlow(id);
+	}
+	
+	public BeanFactory getBeanFactory() {
+		return beanFactory;
 	}
 }
