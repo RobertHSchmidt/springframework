@@ -3,27 +3,29 @@ package org.springframework.webflow.test;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.registry.FlowRegistryImpl;
 import org.springframework.webflow.registry.DefaultFlowServiceLocator;
+import org.springframework.webflow.registry.FlowRegistryImpl;
 import org.springframework.webflow.registry.StaticFlowHolder;
 
 /**
- * A stub flow artifact factory implementation suitable for a test environment.
+ * A stub flow service locator implementation suitable for a test environment.
  * <p>
  * Allows programmatic registration of subflows needed by a flow execution being
- * tested, see {@link #registerSubflow(Flow)}.
+ * tested, see {@link #registerSubflow(Flow)}. Subflows registered are
+ * typically stubs that verify parent flow input and output scenarios.
  * <p>
- * Also supports programmatic registration of additional custom artifacts needed
- * by a flow (such as Actions) managed in a backing Spring {@link ConfigurableBeanFactory};
- * see {@link #registerBean(String, Object)}.  Beans registered are typically mocks or 
- * stubs of business services invoked by the flow.
+ * Also supports programmatic registration of additional custom services needed
+ * by a flow (such as Actions) managed in a backing Spring
+ * {@link ConfigurableBeanFactory}. See the
+ * {@link #registerBean(String, Object)} method. Beans registered are typically
+ * mocks or stubs of business services invoked by the flow.
  * 
  * @author Keith Donald
  */
 public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 
 	/**
-	 * Creates a new mock flow artifact factory.
+	 * Creates a new mock flow service locator.
 	 */
 	public MockFlowServiceLocator() {
 		super(new FlowRegistryImpl(), new StaticListableBeanFactory());

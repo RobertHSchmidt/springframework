@@ -42,13 +42,13 @@ import org.xml.sax.EntityResolver;
  * <pre>
  *    BeanFactory beanFactory = ...
  *    FlowRegistryImpl registry = new FlowRegistryImpl();
- *    FlowArtifactFactory flowArtifactFactory =
- *        new FlowRegistryFlowArtifactFactory(registry, beanFactory);
+ *    FlowServiceLocator flowServiceLocator =
+ *        new DefaultFlowServiceLocator(registry, beanFactory);
  *    XmlFlowRegistrar registrar = new XmlFlowRegistrar();
  *    File parent = new File(&quot;src/webapp/WEB-INF&quot;);
  *    registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
  *    registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
- *    registrar.registerFlows(locations, flowArtifactFactory);
+ *    registrar.registerFlows(locations, flowServiceLocator);
  * </pre>
  * 
  * @author Keith Donald

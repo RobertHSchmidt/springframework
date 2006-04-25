@@ -19,9 +19,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.UnmodifiableAttributeMap;
-import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
+import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.XmlFlowBuilder;
 
 /**
@@ -64,7 +64,8 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	}
 
 	/**
-	 * Helper method to register the flow built from an externalized resource in the registry.
+	 * Helper method to register the flow built from an externalized resource in
+	 * the registry.
 	 * @param flowDefinition representation of the externalized flow definition
 	 * resource
 	 * @param registry the flow registry to register the flow in
@@ -82,29 +83,27 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * registry.
 	 * @param location the resource location of the externalized flow definition
 	 * @param registry the flow registry to register the flow in
-	 * @param flowServiceLocator the flow artifact factory that the builder
-	 * will use to wire in externally managed flow artifacts during the build
-	 * process
+	 * @param flowServiceLocator the service locator that the builder will use
+	 * to wire in externally managed flow services needed by a Flow during the
+	 * build process
 	 */
-	protected void registerXmlFlow(Resource location, FlowRegistry registry,
-			FlowServiceLocator flowServiceLocator) {
+	protected void registerXmlFlow(Resource location, FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
 		registerXmlFlow(new ExternalizedFlowDefinition(location), registry, flowServiceLocator);
 	}
-	
+
 	/**
 	 * Helper method to register the flow built from the XML File in the
 	 * registry.
 	 * @param flowDefinition representation of the externalized flow definition
 	 * resource
 	 * @param registry the flow registry to register the flow in
-	 * @param flowServiceLocator the flow artifact factory that the builder
-	 * will use to wire in externally managed flow artifacts during the build
-	 * process
+	 * @param flowServiceLocator the service locator that the builder will use
+	 * to wire in externally managed flow services needed by a Flow during the
+	 * build process
 	 */
 	protected void registerXmlFlow(ExternalizedFlowDefinition flowDefinition, FlowRegistry registry,
 			FlowServiceLocator flowServiceLocator) {
-		registerFlow(flowDefinition, registry, new XmlFlowBuilder(flowDefinition.getLocation(),
-				flowServiceLocator));
+		registerFlow(flowDefinition, registry, new XmlFlowBuilder(flowDefinition.getLocation(), flowServiceLocator));
 	}
 
 	/**
