@@ -2,12 +2,13 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC1 (24.4.2006)
+Changes in version 1.0 RC1 (28.4.2006)
 ------------------------------------
 
 Package org.springframework.webflow
 * Added explict Flow variable support to this package; see Flow.addVariable and Flow.start
 * Fixed a bug in ParameterMap related to multi-valued parameter access
+* ParameterMap.get now returns the first element for a multi-valued parameter instead of throwing an exception
 * Refined the semantics of flow input attribute mapping.  All input attributes passed into a flow 
   by a caller must now be explictly mapped by the flow.  To achieve this each Flow can be configured
   with an inputMapper; see Flow.setInputMapper and Flow.start.
@@ -46,7 +47,7 @@ Package org.springframework.webflow.builder
   treated as the target state of the transition.
 * Enhanced the 'view' attribute of the 'view-state' and 'end-state' elements to be fully ${expression} capable; previously 
   expressions could only be defined for redirect parameters.
-* Renamed the FlowArtifactFactory interface as it was in 1.0 EA to FlowServiceLocator.  Factored out two new
+* Renamed the FlowArtifactFactory interface as it existed in 1.0 EA to FlowServiceLocator.  Factored out two new
   "services" from the original interface: FlowArtifactFactory, for encapsulating the construction of core flow elements
   like State and Transition, and BeanInvokingActionFactory, for encapsulating the construction of an Action that invokes 
   a method on a bean when executed.
@@ -64,6 +65,8 @@ Package org.springframework.webflow.execution
 * Fixed a bug in ContinuationFlowExecutionRepository related to conversation scope restoration (which could cause a NPE).
 * Added an 'input' Attribute argument to the FlowExecution.start operation, for passing input into a starting
   flow execution in a consistent manner.
+* Added support for tracking the "currentViewSelection" of a paused flow execution;
+  used to support flow execution redirects.
 * Introduced an EventId value object for describing an external event that has been signaled.
 * Streamlined FlowExecutionRepository interface to remove experimental 'getCurrentViewSelection' and 
   'setCurrentViewSelection' methods.
@@ -81,10 +84,17 @@ Package org.springframework.webflow.registry
 * Added 'builderValidating' and 'entityResolver' properties of XmlFlowRegistryFactoryBean configuration interface.
 * Reworked to bring registry subsystem in-line with changes in builder system.  All "flow services" may be 
   configured by Spring now by setting properties of a FlowRegistryFactoryBean.
+* Added setters to AbstractFlowRegistryFactoryBean for configuring common flow builder services.
 * Misc polishing
 
 Package org.springframework.webflow.support
 * Added two concrete FlowVariable types, SimpleFlowVariable and BeanFactoryFlowVariable.
+* Added FlowExecutionRedirect, for redirecting to a "current" ApplicationViewSelection 
+  of a FlowExecution.  This facilitates post+redirect+get semantics with unique resource URLs
+  for refreshing flow execution continuation (allowing back and refresh button use without
+  page caching).
+* Factored out a RedirectType enumeration, as there are now three redirect options: FlowExecutionRedirect
+  ConversationRedirect, or None.
 * Added ImmutableFlowAttributeMapper.
 
 Package org.springframework.webflow.test
