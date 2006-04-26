@@ -249,6 +249,22 @@ public class FlowExecutorArgumentExtractor {
 		return new EventId(eventId);
 	}
 
+	public boolean isFlowIdPresent(ExternalContext context) {
+		return context.getRequestParameterMap().contains(flowIdParameterName);
+	}
+	
+	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
+		return context.getRequestParameterMap().contains(flowExecutionKeyParameterName);
+	}
+	
+	public boolean isEventIdPresent(ExternalContext context) {
+		return context.getRequestParameterMap().contains(eventIdParameterName);
+	}
+
+	public boolean isConversationIdPresent(ExternalContext context) {
+		return context.getRequestParameterMap().contains(conversationIdParameterName);
+	}
+	
 	/**
 	 * Extract the conversation id from the external context.
 	 * @param context the context in which the external user event occured

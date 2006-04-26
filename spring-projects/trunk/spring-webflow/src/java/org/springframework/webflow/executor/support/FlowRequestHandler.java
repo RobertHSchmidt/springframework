@@ -37,7 +37,7 @@ import org.springframework.webflow.executor.ResponseInstruction;
  * operation and implements the following algorithm:
  * <ol>
  * <li>Extract the flow execution id by calling
- * {@link FlowExecutorArgumentExtractor#extractFlowExecutionKey(ExternalContext)}.</li>
+ * {@link FlowExecutorArgumentExtractor#extractFlowExecutionKey(ExternalContext)}.
  * <li>If a valid flow execution id was extracted, signal an event in that
  * existing execution to resume it. The event to signal is determined by calling
  * the {@link FlowExecutorArgumentExtractor#extractEventId(ExternalContext)}
@@ -46,7 +46,7 @@ import org.springframework.webflow.executor.ResponseInstruction;
  * top-level flow definition for which an execution is created is determined by
  * extracting the flow id using the
  * {@link FlowExecutorArgumentExtractor#extractFlowId(ExternalContext)}. If
- * this parameter is not present, an exception is thrown.</li>
+ * this parameter is not present, an exception is thrown.
  * 
  * @author Keith Donald
  */
@@ -98,12 +98,16 @@ public class FlowRequestHandler {
 		}
 		FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 		if (flowExecutionKey != null) {
-			EventId eventId = argumentExtractor.extractEventId(context);
-			ResponseInstruction response = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Returning [resume] " + response);
+			if (argumentExtractor.isEventIdPresent(context)) {
+				EventId eventId = argumentExtractor.extractEventId(context);
+				ResponseInstruction response = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Returning [resume] " + response);
+				}
+				return response;
+			} else {
+				return flowExecutor.getCurrentResponseInstruction(flowExecutionKey, context);
 			}
-			return response;
 		}
 		else {
 			Serializable conversationId = argumentExtractor.extractConversationId(context);

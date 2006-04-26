@@ -22,32 +22,32 @@ import org.springframework.webflow.ViewSelection;
 
 /**
  * Concerete response type that requests an redirect to an <i>existing</i>,
- * active Spring Web Flow conversation at a SWF-specific <i>conversation URL</i>.
+ * active Spring Web Flow execution at a SWF-specific <i>flow execution URL</i>.
  * This enables the triggering of redirect after post semantics from within an
  * <i>active</i> flow execution.
  * <p>
  * Once the redirect response is issued, the configured
  * {@link #getApplicationView()} is treated as the view to render on the
- * subsequent request issued from the browser, targeted at the conversation URL.
- * The conversation URL is stabally refreshable (and bookmarkable) while the
- * conversation remains active.
+ * subsequent request issued from the browser, targeted at the flow execution URL.
+ * The flow execution URL is stabally refreshable (and bookmarkable) while the
+ * flow execution remains active.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public final class ConversationRedirect extends ViewSelection {
+public final class FlowExecutionRedirect extends ViewSelection {
 
 	/**
-	 * The view to render to on receipt of subsequent conversation requests.
+	 * The view to render to on receipt of subsequent flow execution refresh requests.
 	 */
 	private final ApplicationView applicationView;
 
 	/**
-	 * Creates a new conversation redirect.
-	 * @param applicationView the view to render on receipt of the conversation
+	 * Creates a new flow execution redirect.
+	 * @param applicationView the view to render on receipt of the flow execution
 	 * redirect request.
 	 */
-	public ConversationRedirect(ApplicationView applicationView) {
+	public FlowExecutionRedirect(ApplicationView applicationView) {
 		Assert.notNull(applicationView, "The application view is to redirect to is required");
 		this.applicationView = applicationView;
 	}
@@ -65,10 +65,10 @@ public final class ConversationRedirect extends ViewSelection {
 	}
 	
 	public boolean equals(Object o) {
-		if (!(o instanceof ConversationRedirect)) {
+		if (!(o instanceof FlowExecutionRedirect)) {
 			return false;
 		}
-		ConversationRedirect other = (ConversationRedirect)o;
+		FlowExecutionRedirect other = (FlowExecutionRedirect)o;
 		return ObjectUtils.nullSafeEquals(applicationView, other.applicationView);
 	}
 

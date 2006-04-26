@@ -64,8 +64,7 @@ public interface FlowExecutor {
 			throws FlowException;
 
 	/**
-	 * Returns the current view selection for the specified conversation, or
-	 * <code>null</code> if no such view selection exists.
+	 * Returns the current response instruction for the conversation.
 	 * @param conversationId the id of an existing conversation
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system.
@@ -75,4 +74,15 @@ public interface FlowExecutor {
 	public ResponseInstruction getCurrentResponseInstruction(Serializable conversationId, ExternalContext context)
 			throws FlowException;
 
+	/**
+	 * Returns the current response instruction for the flow execution.
+	 * @param flowExecutionKey the identifying key of a paused flow execution
+	 * continuation that is waiting to resume on the ocurrence of an user event.
+	 * @param context the external context representing the state of a request
+	 * into Spring Web Flow from an external system.
+	 * @return the current response instruction
+	 * @throws FlowException if an exception occured retrieving the current response instruction
+	 */
+	public ResponseInstruction getCurrentResponseInstruction(FlowExecutionKey flowExecutionKey, ExternalContext context)
+			throws FlowException;
 }

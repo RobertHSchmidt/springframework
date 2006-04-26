@@ -73,8 +73,10 @@ public class SubflowStateTests extends TestCase {
 		state1.setViewSelector(view("mySubFlowViewName"));
 		state1.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		EndState state2 = new EndState(subFlow, "finish");
-		//state2.addOutputAttributeName("childInputAttribute");
-
+		DefaultAttributeMapper outputMapper = new DefaultAttributeMapper();
+		outputMapper.addMapping(mapping.source("flowScope.childInputAttribute").target("childInputAttribute").value());
+		state2.setOutputMapper(outputMapper);
+		
 		Flow flow = new Flow("myFlow");
 		ActionState mapperState = new ActionState(flow, "mapperState");
 		DefaultAttributeMapper mapper = new DefaultAttributeMapper();

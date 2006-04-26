@@ -32,6 +32,8 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
+import org.springframework.webflow.support.ApplicationView;
+import org.springframework.webflow.support.FlowExecutionRedirect;
 
 /**
  * The default implementation of the central facade for <i>driving</i> the
@@ -156,22 +158,11 @@ public class FlowExecutorImpl implements FlowExecutor {
 		if (flowExecution.isActive()) {
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);
-			return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
+			return new ResponseInstruction(flowExecutionKey, flowExecution, pausedView(selectedView));
 		}
 		else {
 			return new ResponseInstruction(flowExecution, selectedView);
 		}
-	}
-
-	/**
-	 * Factory method that creates the input attribute map for a newly created
-	 * {@link FlowExecution}. TODO - add support for input mappings here
-	 * @param flowExecution the new flow execution (yet to be started)
-	 * @param context the external context
-	 * @return the input map
-	 */
-	protected AttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
-		return null;
 	}
 
 	public ResponseInstruction signalEvent(EventId eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
@@ -186,7 +177,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 			if (flowExecution.isActive()) {
 				flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
 				repository.putFlowExecution(flowExecutionKey, flowExecution);
-				return new ResponseInstruction(flowExecutionKey, flowExecution, selectedView);
+				return new ResponseInstruction(flowExecutionKey, flowExecution, pausedView(selectedView));
 			}
 			else {
 				repository.invalidateConversation(flowExecutionKey.getConversationId());
@@ -203,7 +194,25 @@ public class FlowExecutorImpl implements FlowExecutor {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey flowExecutionKey = repository.getCurrentFlowExecutionKey(conversationId);
 		FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
-		return new ResponseInstruction(flowExecutionKey, flowExecution, ViewSelection.NULL_VIEW);
+		return new ResponseInstruction(flowExecutionKey, flowExecution, flowExecution.getCurrentViewSelection());
+	}
+
+	public ResponseInstruction getCurrentResponseInstruction(FlowExecutionKey flowExecutionKey, ExternalContext context)
+			throws FlowException {
+		FlowExecutionRepository repository = getRepository(context);
+		FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
+		return new ResponseInstruction(flowExecutionKey, flowExecution, flowExecution.getCurrentViewSelection());
+	}
+
+	/**
+	 * Factory method that creates the input attribute map for a newly created
+	 * {@link FlowExecution}. TODO - add support for input mappings here
+	 * @param flowExecution the new flow execution (yet to be started)
+	 * @param context the external context
+	 * @return the input map
+	 */
+	protected AttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
+		return null;
 	}
 
 	/**
@@ -212,5 +221,21 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 */
 	protected FlowExecutionRepository getRepository(ExternalContext context) {
 		return repositoryFactory.getRepository(context);
+	}
+
+	/**
+	 * Factory method that post processes a view selection made as the result of
+	 * pausing an active flow execution. This implementation enforces the
+	 * "alwaysRedirectOnPause" behavior if necessary.
+	 * @param selectedView the view selected by the view state
+	 * @return the view to return to callers
+	 */
+	protected ViewSelection pausedView(ViewSelection selectedView) {
+		if (isAlwaysRedirectOnPause()) {
+			if (selectedView instanceof ApplicationView) {
+				return new FlowExecutionRedirect((ApplicationView)selectedView);
+			}
+		}
+		return selectedView;
 	}
 }

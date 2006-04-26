@@ -127,5 +127,9 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 		public boolean isRootFlowActive() {
 			return false;
 		}
+
+		public ViewSelection getCurrentViewSelection() {
+			return null;
+		}
 	}
 }

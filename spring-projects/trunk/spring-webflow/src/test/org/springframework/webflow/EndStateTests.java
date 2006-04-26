@@ -56,7 +56,11 @@ public class EndStateTests extends TestCase {
 		flow.setInputMapper(inputMapper);
 		
 		EndState state = new EndState(flow, "finish");
-		//state.addOutputAttributeNames(new String[] { "attr1", "attr2" });
+		DefaultAttributeMapper outputMapper = new DefaultAttributeMapper();
+		outputMapper.addMapping(mapping.source("flowScope.attr1").target("attr1").value());
+		outputMapper.addMapping(mapping.source("flowScope.attr2").target("attr2").value());
+		state.setOutputMapper(outputMapper);
+		
 		FlowExecutionListener outputVerifier = new FlowExecutionListenerAdapter() {
 			public void sessionEnded(RequestContext context, FlowSession session, UnmodifiableAttributeMap output) {
 				assertEquals("value1", output.get("attr1"));
