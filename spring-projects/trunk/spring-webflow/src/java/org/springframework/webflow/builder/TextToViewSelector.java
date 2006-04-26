@@ -26,6 +26,7 @@ import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.ExternalRedirectSelector;
 import org.springframework.webflow.support.FlowRedirect;
 import org.springframework.webflow.support.FlowRedirectSelector;
+import org.springframework.webflow.support.ApplicationViewSelector.RedirectType;
 
 /**
  * Converter that converts an encoded string representation of a view selector
@@ -78,6 +79,12 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 * is required.
 	 */
 	public static final String REDIRECT_PREFIX = "redirect:";
+
+	/**
+	 * Prefix used when the encoded view name wants to specify that a redirect
+	 * to an external URL is required.
+	 */
+	public static final String CONVERSATION_REDIRECT_PREFIX = "conversationRedirect:";
 
 	/**
 	 * Prefix used when the encoded view name wants to specify that a redirect
@@ -139,7 +146,12 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		if (encodedView.startsWith(REDIRECT_PREFIX)) {
 			String viewName = encodedView.substring(REDIRECT_PREFIX.length());
 			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(viewName);
-			return new ApplicationViewSelector(viewNameExpr, true);
+			return new ApplicationViewSelector(viewNameExpr, RedirectType.FLOW_EXECUTION);
+		}
+		if (encodedView.startsWith(CONVERSATION_REDIRECT_PREFIX)) {
+			String viewName = encodedView.substring(CONVERSATION_REDIRECT_PREFIX.length());
+			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(viewName);
+			return new ApplicationViewSelector(viewNameExpr, RedirectType.CONVERSATION);
 		}
 		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());

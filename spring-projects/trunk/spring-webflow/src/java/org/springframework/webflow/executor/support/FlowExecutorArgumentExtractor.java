@@ -226,8 +226,7 @@ public class FlowExecutorArgumentExtractor {
 	 */
 	public FlowExecutionKey extractFlowExecutionKey(ExternalContext context) throws IllegalArgumentException {
 		String encodedKey = context.getRequestParameterMap().get(flowExecutionKeyParameterName);
-		return encodedKey != null ? (FlowExecutionKey)flowExecutionKeyFormatter.parseValue(encodedKey,
-				FlowExecutionKey.class) : null;
+		return encodedKey != null ? parse(encodedKey) : null;
 	}
 
 	/**
@@ -252,19 +251,19 @@ public class FlowExecutorArgumentExtractor {
 	public boolean isFlowIdPresent(ExternalContext context) {
 		return context.getRequestParameterMap().contains(flowIdParameterName);
 	}
-	
+
 	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
 		return context.getRequestParameterMap().contains(flowExecutionKeyParameterName);
 	}
-	
+
 	public boolean isEventIdPresent(ExternalContext context) {
-		return context.getRequestParameterMap().contains(eventIdParameterName);
+		return findParameter(eventIdParameterName, context.getRequestParameterMap()) != null;
 	}
 
 	public boolean isConversationIdPresent(ExternalContext context) {
 		return context.getRequestParameterMap().contains(conversationIdParameterName);
 	}
-	
+
 	/**
 	 * Extract the conversation id from the external context.
 	 * @param context the context in which the external user event occured
@@ -414,6 +413,23 @@ public class FlowExecutorArgumentExtractor {
 
 	/**
 	 * Create a URL path that when redirected to renders the <i>current</i> (or
+	 * last) view selection</i> made by the flow execution identified by the
+	 * flow execution key. Used to support the <i>flow execution redirect</i>
+	 * use case.
+	 * @param conversationId the conversation id
+	 * @param context the external context
+	 * @return the relative conversation URL path
+	 */
+	public String createFlowExecutionUrl(FlowExecutionKey flowExecutionKey, ExternalContext context) {
+		StringBuffer flowExecutionUrl = new StringBuffer();
+		flowExecutionUrl.append(context.getDispatcherPath());
+		flowExecutionUrl.append('?');
+		appendQueryParameter(flowExecutionKeyParameterName, format(flowExecutionKey), flowExecutionUrl);
+		return flowExecutionUrl.toString();
+	}
+
+	/**
+	 * Create a URL path that when redirected to renders the <i>current</i> (or
 	 * last) view selection</i> made by the conversation identified by the
 	 * provided conversationId. Used to support the <i>conversation redirect</i>
 	 * use case.
@@ -449,8 +465,7 @@ public class FlowExecutorArgumentExtractor {
 			else {
 				externalUrl.append('&');
 			}
-			appendQueryParameter(flowExecutionKeyParameterName,
-					flowExecutionKeyFormatter.formatValue(flowExecutionKey), externalUrl);
+			appendQueryParameter(flowExecutionKeyParameterName, format(flowExecutionKey), externalUrl);
 		}
 		return externalUrl.toString();
 	}
@@ -464,7 +479,7 @@ public class FlowExecutorArgumentExtractor {
 	 */
 	public void put(FlowExecutionKey flowExecutionKey, Map model) {
 		if (flowExecutionKey != null) {
-			model.put(flowExecutionKeyAttributeName, flowExecutionKeyFormatter.formatValue(flowExecutionKey));
+			model.put(flowExecutionKeyAttributeName, format(flowExecutionKey));
 		}
 	}
 
@@ -538,5 +553,14 @@ public class FlowExecutorArgumentExtractor {
 		catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException("Cannot encode URL " + input);
 		}
+	}
+	
+	protected String format(FlowExecutionKey flowExecutionKey) {
+		return flowExecutionKeyFormatter.formatValue(flowExecutionKey);
+	}
+	
+	protected FlowExecutionKey parse(String encodedKey) {
+		return (FlowExecutionKey)flowExecutionKeyFormatter.parseValue(encodedKey,
+				FlowExecutionKey.class);
 	}
 }

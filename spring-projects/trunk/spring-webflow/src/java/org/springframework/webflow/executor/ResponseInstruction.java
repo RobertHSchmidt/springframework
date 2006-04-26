@@ -25,6 +25,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.support.FlowExecutionRedirect;
 import org.springframework.webflow.support.FlowRedirect;
 
 /**
@@ -111,6 +112,10 @@ public class ResponseInstruction implements Serializable {
 	
 	public boolean isConfirmationView() {
 		return isApplicationView() && !flowExecutionContext.isActive();
+	}
+	
+	public boolean isFlowExecutionRedirect() {
+		return viewSelection instanceof FlowExecutionRedirect;
 	}
 	
 	public boolean isConversationRedirect() {

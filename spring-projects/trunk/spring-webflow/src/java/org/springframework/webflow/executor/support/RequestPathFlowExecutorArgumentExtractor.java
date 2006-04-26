@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.support.FlowRedirect;
 
 /**
@@ -78,6 +79,17 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		return StringUtils.hasText(extractedFilename) ? extractedFilename : super.extractFlowId(context);
 	}
 
+	public FlowExecutionKey extractFlowExecutionKey(ExternalContext context) {
+		String requestPathInfo = context.getRequestPathInfo();
+		if (requestPathInfo != null && requestPathInfo.startsWith(CONVERSATION_ID_PREFIX)) {
+			int index = requestPathInfo.indexOf(CONVERSATION_ID_PREFIX);
+			return parse(requestPathInfo.substring(index + 1));
+		}
+		else {
+			return super.extractFlowExecutionKey(context);
+		}
+	}
+
 	public Serializable extractConversationId(ExternalContext context) {
 		String requestPathInfo = context.getRequestPathInfo();
 		if (requestPathInfo != null && requestPathInfo.startsWith(CONVERSATION_ID_PREFIX)) {
@@ -115,7 +127,11 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		}
 	}
 
+	public String createFlowExecutionUrl(FlowExecutionKey flowExecutionKey, ExternalContext context) {
+		return context.getDispatcherPath() + PATH_SEPARATOR_CHARACTER + format(flowExecutionKey);
+	}
+
 	public String createConversationUrl(Serializable conversationId, ExternalContext context) {
-		return context.getDispatcherPath() + CONVERSATION_ID_PREFIX + conversationId;
+		return context.getDispatcherPath() + PATH_SEPARATOR_CHARACTER + CONVERSATION_ID_PREFIX + conversationId;
 	}
 }

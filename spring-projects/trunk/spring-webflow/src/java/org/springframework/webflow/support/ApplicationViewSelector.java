@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Collections;
 
 import org.springframework.binding.expression.Expression;
+import org.springframework.core.enums.StaticLabeledEnum;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -55,7 +56,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * Setting this to true allows you to redirect while the flow is in progress
 	 * to a stable "conversation URL" that can be safely refreshed.
 	 */
-	private boolean requestConversationRedirect;
+	private RedirectType redirectType;
 
 	/**
 	 * Creates a view descriptor creator that will produce view descriptors
@@ -63,7 +64,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * @param viewName the view name expression
 	 */
 	public ApplicationViewSelector(Expression viewName) {
-		this(viewName, false);
+		this(viewName, RedirectType.NONE);
 	}
 
 	/**
@@ -73,10 +74,10 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * @param requestConversationRedirect indicates if a conversation redirect
 	 * should be made
 	 */
-	public ApplicationViewSelector(Expression viewName, boolean requestConversationRedirect) {
+	public ApplicationViewSelector(Expression viewName, RedirectType redirectType) {
 		Assert.notNull(viewName, "The view name expression is required");
 		this.viewName = viewName;
-		this.requestConversationRedirect = requestConversationRedirect;
+		this.redirectType = redirectType;
 	}
 
 	/**
@@ -86,32 +87,43 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 		return viewName;
 	}
 
-	/**
-	 * Returns whether or not this view selection will request a "redirect to
-	 * conversation".
-	 */
-	public boolean isRequestConversationRedirect() {
-		return requestConversationRedirect;
-	}
-
 	public ViewSelection makeSelection(RequestContext context) {
 		String viewName = (String)getViewName().evaluateAgainst(context, Collections.EMPTY_MAP);
 		if (!StringUtils.hasText(viewName)) {
 			return ViewSelection.NULL_VIEW;
 		}
 		else {
-			ApplicationView view = new ApplicationView(viewName, context.getModel().getMap());
-			if (isRequestConversationRedirect()) {
-				return new ConversationRedirect(view);
-			}
-			else {
-				return view;
-			}
+			return redirectType.process(new ApplicationView(viewName, context.getModel().getMap()));
 		}
 	}
 
+	public abstract static class RedirectType extends StaticLabeledEnum {
+		public static final RedirectType FLOW_EXECUTION = new RedirectType(0, "Flow Execution") {
+			public ViewSelection process(ApplicationView applicationView) {
+				return new FlowExecutionRedirect(applicationView);
+			}
+		};
+
+		public static final RedirectType CONVERSATION = new RedirectType(1, "Conversation") {
+			public ViewSelection process(ApplicationView applicationView) {
+				return new ConversationRedirect(applicationView);
+			}
+		};
+
+		public static final RedirectType NONE = new RedirectType(2, "None") {
+			public ViewSelection process(ApplicationView applicationView) {
+				return applicationView;
+			}
+		};
+
+		private RedirectType(int code, String label) {
+			super(code, label);
+		}
+
+		public abstract ViewSelection process(ApplicationView applicationView);
+	}
+
 	public String toString() {
-		return new ToStringCreator(this).append("viewName", viewName).append("requestConversationRedirect",
-				requestConversationRedirect).toString();
+		return new ToStringCreator(this).append("viewName", viewName).append("redirectType", redirectType).toString();
 	}
 }
