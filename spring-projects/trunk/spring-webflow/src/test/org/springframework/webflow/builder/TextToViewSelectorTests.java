@@ -26,6 +26,7 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.support.FlowExecutionRedirect;
 import org.springframework.webflow.support.FlowRedirect;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -52,8 +53,16 @@ public class TextToViewSelectorTests extends TestCase {
 		assertEquals(5, view.getModel().size());
 	}
 
-	public void testConversationRedirect() {
+	public void testFlowExecutionRedirect() {
 		ViewSelector selector = (ViewSelector)viewSelector(TextToViewSelector.VIEW_STATE_TYPE, "redirect:myView");
+		RequestContext context = getRequestContext();
+		FlowExecutionRedirect redirect = (FlowExecutionRedirect)selector.makeSelection(context);
+		assertEquals("myView", redirect.getApplicationView().getViewName());
+		assertEquals(5, redirect.getApplicationView().getModel().size());
+	}
+
+	public void testConversationRedirect() {
+		ViewSelector selector = (ViewSelector)viewSelector(TextToViewSelector.VIEW_STATE_TYPE, "conversationRedirect:myView");
 		RequestContext context = getRequestContext();
 		ConversationRedirect redirect = (ConversationRedirect)selector.makeSelection(context);
 		assertEquals("myView", redirect.getApplicationView().getViewName());

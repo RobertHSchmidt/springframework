@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.Collections;
 
 import org.springframework.binding.expression.Expression;
-import org.springframework.core.enums.StaticLabeledEnum;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -95,32 +94,6 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 		else {
 			return redirectType.process(new ApplicationView(viewName, context.getModel().getMap()));
 		}
-	}
-
-	public abstract static class RedirectType extends StaticLabeledEnum {
-		public static final RedirectType FLOW_EXECUTION = new RedirectType(0, "Flow Execution") {
-			public ViewSelection process(ApplicationView applicationView) {
-				return new FlowExecutionRedirect(applicationView);
-			}
-		};
-
-		public static final RedirectType CONVERSATION = new RedirectType(1, "Conversation") {
-			public ViewSelection process(ApplicationView applicationView) {
-				return new ConversationRedirect(applicationView);
-			}
-		};
-
-		public static final RedirectType NONE = new RedirectType(2, "None") {
-			public ViewSelection process(ApplicationView applicationView) {
-				return applicationView;
-			}
-		};
-
-		private RedirectType(int code, String label) {
-			super(code, label);
-		}
-
-		public abstract ViewSelection process(ApplicationView applicationView);
 	}
 
 	public String toString() {

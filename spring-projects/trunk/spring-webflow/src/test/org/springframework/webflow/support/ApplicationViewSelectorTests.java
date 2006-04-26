@@ -6,7 +6,6 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.support.ApplicationViewSelector.RedirectType;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class ApplicationViewSelectorTests extends TestCase {

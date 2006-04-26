@@ -26,7 +26,7 @@ import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.ExternalRedirectSelector;
 import org.springframework.webflow.support.FlowRedirect;
 import org.springframework.webflow.support.FlowRedirectSelector;
-import org.springframework.webflow.support.ApplicationViewSelector.RedirectType;
+import org.springframework.webflow.support.RedirectType;
 
 /**
  * Converter that converts an encoded string representation of a view selector
