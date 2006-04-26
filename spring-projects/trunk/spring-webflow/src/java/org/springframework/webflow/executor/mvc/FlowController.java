@@ -226,7 +226,7 @@ public class FlowController extends AbstractController implements InitializingBe
 			return new ModelAndView(view.getViewName(), model);
 		}
 		else if (response.isFlowExecutionRedirect()) {
-			// redirect to active conversation URL
+			// redirect to active flow execution URL
 			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), context);
 			return new ModelAndView(new RedirectView(flowExecutionUrl, true));
 		}

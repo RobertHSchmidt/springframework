@@ -258,6 +258,11 @@ public class FlowAction extends ActionSupport {
 			return findActionForward(forward, mapping);
 
 		}
+		else if (response.isFlowExecutionRedirect()) {
+			// redirect to active flow execution URL
+			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), context);
+			return new ActionForward(flowExecutionUrl, true);
+		}
 		else if (response.isConversationRedirect()) {
 			// redirect to active conversation URL
 			Serializable conversationId = response.getFlowExecutionKey().getConversationId();

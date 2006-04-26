@@ -37,6 +37,7 @@ import org.springframework.webflow.executor.support.FlowExecutorArgumentExtracto
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.support.FlowExecutionRedirect;
 import org.springframework.webflow.support.FlowRedirect;
 
 /**
@@ -220,6 +221,11 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 			ViewHandler handler = facesContext.getApplication().getViewHandler();
 			UIViewRoot view = handler.createView(facesContext, viewIdResolver.resolveViewId(forward.getViewName()));
 			facesContext.setViewRoot(view);
+		}
+		else if (selectedView instanceof FlowExecutionRedirect) {
+			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
+			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(holder.getFlowExecutionKey(), context);
+			sendRedirect(flowExecutionUrl, facesContext);
 		}
 		else if (selectedView instanceof ConversationRedirect) {
 			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
