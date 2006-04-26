@@ -45,13 +45,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 	}
 
 	public void testAccidentalParameterArraySubmit() {
-		context.putRequestParameter("_flowExecutionKey", new String[] { "_s12345_c12345", "_s12345_c12345" });
-		try {
-			argumentExtractor.extractFlowExecutionKey(context);
-			fail("Should've failed");
-		}
-		catch (IllegalArgumentException e) {
-
-		}
+		context.putRequestParameter("_flowExecutionKey", new String[] { "_c12345_k12345", "_c12345_k12345" });
+		assertEquals(flowExecutionKey, argumentExtractor.extractFlowExecutionKey(context));
 	}
 }

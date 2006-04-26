@@ -125,7 +125,7 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 * @return the parameter value
 	 */
 	public String get(String parameterName) {
-		return parameterAccessor.getString(parameterName);
+		return get(parameterName, (String)null);
 	}
 
 	/**
@@ -135,7 +135,20 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 * @return the parameter value
 	 */
 	public String get(String parameterName, String defaultValue) {
-		return parameterAccessor.getString(parameterName, defaultValue);
+		if (!parameters.containsKey(parameterName)) {
+			return defaultValue;
+		}
+		Object value = parameters.get(parameterName);
+		if (value.getClass().isArray()) {
+			parameterAccessor.assertKeyValueInstanceOf(parameterName, value, String[].class);
+			Object first = ((String[])value)[0];
+			parameterAccessor.assertKeyValueInstanceOf(parameterName, first, String.class);
+			return (String)first;
+			
+		} else {
+			parameterAccessor.assertKeyValueInstanceOf(parameterName, value, String.class);
+			return (String)value;
+		}
 	}
 
 	/**
@@ -219,7 +232,8 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 * @throws IllegalArgumentException when the parameter is not found
 	 */
 	public String getRequired(String parameterName) throws IllegalArgumentException {
-		return parameterAccessor.getRequiredString(parameterName);
+		parameterAccessor.assertContainsKey(parameterName);
+		return get(parameterName);
 	}
 
 	/**
@@ -267,7 +281,7 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	 */
 	public Object getRequired(String parameterName, Class targetType) throws IllegalArgumentException,
 			ConversionException {
-		return convert(parameterAccessor.getRequiredString(parameterName), targetType);
+		return convert(getRequired(parameterName), targetType);
 	}
 
 	/**
