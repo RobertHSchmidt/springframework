@@ -91,7 +91,7 @@ Package org.springframework.webflow.support
 * Added two concrete FlowVariable types, SimpleFlowVariable and BeanFactoryFlowVariable.
 * Added FlowExecutionRedirect, for redirecting to a "current" ApplicationViewSelection 
   of a FlowExecution.  This facilitates post+redirect+get semantics with unique resource URLs
-  for refreshing flow execution continuation (allowing back and refresh button use without
+  for refreshing each flow execution continuation (allowing back and refresh button use without
   page caching).
 * Factored out a RedirectType enumeration, as there are now three redirect options: FlowExecutionRedirect
   ConversationRedirect, or None.
