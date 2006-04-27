@@ -57,16 +57,16 @@ import org.springframework.webflow.support.RedirectType;
  * </tr>
  * <tr>
  * <td>repositoryFactory</td>
- * <td>The strategy for accessing a flow execution repositorie that is used to
- * create, save, and store managed flow executions driven by this executor.</td>
+ * <td>The strategy for accessing a flow execution repositories that are used
+ * to create, save, and store managed flow executions driven by this executor.</td>
  * <td>A {@link SimpleFlowExecutionRepositoryFactory simple}, stateful
  * server-side session-based repository factory</td>
  * </tr>
  * <tr>
- * <td>redirectType</td>
- * <td>A enumeration indicating if this executor should force redirect
- * <i>redirect to an {@link ApplicationView} after pausing an active flow
- * execution. Several different types of redirect are supported.</td>
+ * <td>redirectOnPause</td>
+ * <td>A enumeration indicating if this executor should force a redirect to an
+ * {@link ApplicationView} after pausing an active flow execution. Several
+ * different types of redirect are supported.</td>
  * <td>NONE, indicating no special redirect action should be taken</td>
  * </tr>
  * </table>

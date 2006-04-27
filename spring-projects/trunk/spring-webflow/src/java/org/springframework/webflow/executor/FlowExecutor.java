@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 
 /**
  * The central facade or entry-point into the Spring Web Flow system. This
- * inteface defines a coarse-grained system boundary suitable for invocation by
+ * interface defines a coarse-grained system boundary suitable for invocation by
  * most clients.
  * <p>
  * Implementations of this interface abstract away much of the the internal
@@ -40,7 +40,7 @@ public interface FlowExecutor {
 	 * external request.
 	 * @param flowId the unique id of the flow definition to launch
 	 * @param context the external context representing the state of a request
-	 * into Spring Web Flow from an external system.
+	 * into Spring Web Flow from an external system
 	 * @return the starting response instruction
 	 * @throws FlowException if an exception occured launching the new flow
 	 * execution.
@@ -49,13 +49,13 @@ public interface FlowExecutor {
 
 	/**
 	 * Signal an occurrence of an event in the current state of an existing,
-	 * paused flow execution continuation. The flow execution will resume to
-	 * process the event.
+	 * paused flow execution. The flow execution will resume to process the
+	 * event.
 	 * @param eventId the user event that occured
 	 * @param flowExecutionKey the identifying key of a paused flow execution
-	 * continuation that is waiting to resume on the ocurrence of an user event.
+	 * continuation that is waiting to resume on the occurrence of an user event
 	 * @param context the external context representing the state of a request
-	 * into Spring Web Flow from an external system.
+	 * into Spring Web Flow from an external system
 	 * @return the next response instruction
 	 * @throws FlowException if an exception occured resuming the existing flow
 	 * execution.
@@ -64,24 +64,31 @@ public interface FlowExecutor {
 			throws FlowException;
 
 	/**
-	 * Returns the current response instruction for the conversation.
+	 * Returns the current response instruction for the "last" tracked state of
+	 * a paused conversation. This is a logical refresh operation that allows
+	 * the "current response" to be reissued. This operation does not affect the
+	 * state of the conversation.
 	 * @param conversationId the id of an existing conversation
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system.
 	 * @return the current response instruction
-	 * @throws FlowException if an exception occured retrieving the current response instruction
+	 * @throws FlowException if an exception occured retrieving the current
+	 * response instruction
 	 */
 	public ResponseInstruction getCurrentResponseInstruction(Serializable conversationId, ExternalContext context)
 			throws FlowException;
 
 	/**
-	 * Returns the current response instruction for the flow execution.
+	 * Returns the current response instruction for the flow execution. This is
+	 * a logical refresh operation that allows the "current response" to be
+	 * reissued. This operation does not affect the state of the flow execution.
 	 * @param flowExecutionKey the identifying key of a paused flow execution
 	 * continuation that is waiting to resume on the ocurrence of an user event.
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system.
 	 * @return the current response instruction
-	 * @throws FlowException if an exception occured retrieving the current response instruction
+	 * @throws FlowException if an exception occured retrieving the current
+	 * response instruction
 	 */
 	public ResponseInstruction getCurrentResponseInstruction(FlowExecutionKey flowExecutionKey, ExternalContext context)
 			throws FlowException;
