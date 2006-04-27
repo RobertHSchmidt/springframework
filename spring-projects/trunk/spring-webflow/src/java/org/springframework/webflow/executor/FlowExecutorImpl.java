@@ -106,7 +106,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * supported, the default is {@link RedirectType#NONE} indicating no special
 	 * redirect action should be taken.
 	 */
-	private RedirectType redirectType = RedirectType.NONE;
+	private RedirectType redirectOnPause = RedirectType.NONE;
 
 	/**
 	 * Create a new flow executor that configures use of the default repository
@@ -133,8 +133,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * Returns a value indicating if this executor should redirect after pausing
 	 * an active flow execution.
 	 */
-	public RedirectType getRedirectType() {
-		return redirectType;
+	public RedirectType getRedirectOnPause() {
+		return redirectOnPause;
 	}
 
 	/**
@@ -147,8 +147,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * Setting a redirect type allows the user to participate in the current
 	 * view-state of a conversation at a bookmarkable URL.
 	 */
-	public void setRedirectType(RedirectType redirectType) {
-		this.redirectType = redirectType;
+	public void setRedirectOnPause(RedirectType redirectType) {
+		this.redirectOnPause = redirectType;
 	}
 
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
@@ -232,7 +232,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 */
 	protected ViewSelection pausedView(ViewSelection selectedView) {
 		if (selectedView instanceof ApplicationView) {
-			return redirectType.process((ApplicationView)selectedView);
+			return redirectOnPause.process((ApplicationView)selectedView);
 		}
 		else {
 			return selectedView;
