@@ -35,9 +35,9 @@ import org.springframework.webflow.ViewSelector;
  * view during rendering. This is typically the union of attributes in request,
  * flow, and conversation scope.
  * <p>
- * This selector also supports setting a <i>requestConversationRedirect</i>
- * flag that will trigger a {@link ConversationRedirect} to the
- * {@link ApplicationView} at a bookmarkable conversation URL.
+ * This selector also supports setting a <i>redirectType</i> value that can be
+ * used to trigger a redirect to the {@link ApplicationView} at a bookmarkable
+ * URL.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -50,16 +50,18 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	private Expression viewName;
 
 	/**
-	 * A flag indicating if a "redirect to conversation" should be requested.
+	 * A value indicating if a redirect to the selected application view should
+	 * be requested.
 	 * <p>
-	 * Setting this to true allows you to redirect while the flow is in progress
-	 * to a stable "conversation URL" that can be safely refreshed.
+	 * Setting this to something other than {@link RedirectType#NONE} allows you
+	 * to redirect while the flow is in progress to a stable URL that can be
+	 * safely refreshed.
 	 */
 	private RedirectType redirectType;
 
 	/**
-	 * Creates a view descriptor creator that will produce view descriptors
-	 * requesting that the specified view is rendered.
+	 * Creates a application view selector that will make application view
+	 * selections requesting that the specified view be rendered.
 	 * @param viewName the view name expression
 	 */
 	public ApplicationViewSelector(Expression viewName) {
@@ -67,11 +69,11 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	}
 
 	/**
-	 * Creates a view descriptor creator that will produce view descriptors
-	 * requesting that the specified view is rendered.
+	 * Creates a application view selector that will make application view
+	 * selections requesting that the specified view be rendered.
 	 * @param viewName the view name expression
-	 * @param requestConversationRedirect indicates if a conversation redirect
-	 * should be made
+	 * @param redirectType indicates if a redirect to the view should be
+	 * initiated
 	 */
 	public ApplicationViewSelector(Expression viewName, RedirectType redirectType) {
 		Assert.notNull(viewName, "The view name expression is required");
@@ -92,7 +94,8 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 			return ViewSelection.NULL_VIEW;
 		}
 		else {
-			return redirectType.process(new ApplicationView(viewName, context.getModel().getMap()));
+			ApplicationView selectedView = new ApplicationView(viewName, context.getModel().getMap());
+			return redirectType.process(selectedView);
 		}
 	}
 

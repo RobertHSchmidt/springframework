@@ -32,8 +32,9 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 	}
 
 	/**
-	 * Register a subflow definition in this factory; typically to support a
-	 * flow execution test.
+	 * Register a subflow definition in the backing flow registry, typically to
+	 * support a flow execution test. For test scenarios, the subflow is often a
+	 * stub used to verify parent flow input and output mapping behavior.
 	 * @param subflow the subflow
 	 */
 	public void registerSubflow(Flow subflow) {
@@ -41,9 +42,10 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 	}
 
 	/**
-	 * Register a bean in this factory; typically to support a flow execution
-	 * test. If this bean is a service object used as an Action, it is often a
-	 * stub or dynamic mock.
+	 * Register a bean in the backing bean factory, typically to support a flow
+	 * execution test. For test scenarios, if the bean is a service invoked by a
+	 * bean invoking action it is often a stub or dynamic mock implementation of
+	 * the service's business interface.
 	 * @param beanName the bean name
 	 * @param bean the singleton instance
 	 */

@@ -21,37 +21,57 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 public class FlowExecutionKeyFormatter implements Formatter {
 
 	/**
-	 * The conversation id prefix delimiter ("_c");
+	 * The default conversation id prefix delimiter ("_c");
 	 */
 	private static final String CONVERSATION_ID_PREFIX = "_c";
 
 	/**
-	 * The continuation id prefix delimiter ("_k");
+	 * The default continuation id prefix delimiter ("_k");
 	 */
 	private static final String CONTINUATION_ID_PREFIX = "_k";
+
+	/**
+	 * Returns the conversation id prefix delimiter.
+	 */
+	public String getConversationIdPrefix() {
+		return CONVERSATION_ID_PREFIX;
+	}
+
+	/**
+	 * Returns the continuation id prefix delimiter.
+	 */
+	public String getContinuationIdPrefix() {
+		return CONTINUATION_ID_PREFIX;
+	}
 
 	public String formatValue(Object flowExecutionKey) throws IllegalArgumentException {
 		Assert.notNull(flowExecutionKey, "The flow execution key is required");
 		Assert.isInstanceOf(FlowExecutionKey.class, flowExecutionKey, "Not of expected type: ");
 		FlowExecutionKey key = (FlowExecutionKey)flowExecutionKey;
-		return CONVERSATION_ID_PREFIX + key.getConversationId() + CONTINUATION_ID_PREFIX + key.getContinuationId();
+		return getConversationIdPrefix() + key.getConversationId() + getContinuationIdPrefix()
+				+ key.getContinuationId();
 	}
 
-	public Object parseValue(String encodedFlowExecutionKey, Class targetClass) throws InvalidFormatException {
-		Assert.hasText(encodedFlowExecutionKey, "The string encoded flow execution key is required");
-		if (!encodedFlowExecutionKey.startsWith(CONVERSATION_ID_PREFIX)) {
-			throw new InvalidFormatException(encodedFlowExecutionKey, getFormat());
+	public Object parseValue(String encodedKey, Class targetClass) throws InvalidFormatException {
+		Assert.hasText(encodedKey, "The string encoded flow execution key is required");
+		if (!encodedKey.startsWith(getConversationIdPrefix())) {
+			throw new InvalidFormatException(encodedKey, getFormat());
 		}
-		int continuationStart = encodedFlowExecutionKey.indexOf(CONTINUATION_ID_PREFIX, CONVERSATION_ID_PREFIX.length());
+		int continuationStart = encodedKey.indexOf(getContinuationIdPrefix(), getConversationIdPrefix().length());
 		if (continuationStart == -1) {
-			throw new InvalidFormatException(encodedFlowExecutionKey, getFormat());
+			throw new InvalidFormatException(encodedKey, getFormat());
 		}
-		String conversationId = encodedFlowExecutionKey.substring(CONVERSATION_ID_PREFIX.length(), continuationStart);
-		String continuationId = encodedFlowExecutionKey.substring(continuationStart + CONTINUATION_ID_PREFIX.length());
+		String conversationId = encodedKey.substring(getConversationIdPrefix().length(), continuationStart);
+		String continuationId = encodedKey.substring(continuationStart + getContinuationIdPrefix().length());
 		return new FlowExecutionKey(conversationId, continuationId);
 	}
-	
+
 	protected String getFormat() {
-		return CONVERSATION_ID_PREFIX + "<conversationId>" + CONTINUATION_ID_PREFIX + "<continuationId>";
+		return getConversationIdPrefix() + "<conversationId>" + getContinuationIdPrefix() + "<continuationId>";
+	}
+
+	public boolean isFormatted(String encodedKey) {
+		return encodedKey.startsWith(getConversationIdPrefix())
+				&& encodedKey.indexOf(getContinuationIdPrefix(), getConversationIdPrefix().length()) != -1;
 	}
 }

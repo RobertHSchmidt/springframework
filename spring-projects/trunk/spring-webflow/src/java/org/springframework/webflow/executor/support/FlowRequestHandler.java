@@ -94,10 +94,10 @@ public class FlowRequestHandler {
 	 */
 	public ResponseInstruction handleFlowRequest(ExternalContext context) throws FlowException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Event signaled in " + context);
+			logger.debug("Request initiated by " + context);
 		}
-		FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
-		if (flowExecutionKey != null) {
+		if (argumentExtractor.isFlowExecutionKeyPresent(context)) {
+			FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 			if (argumentExtractor.isEventIdPresent(context)) {
 				EventId eventId = argumentExtractor.extractEventId(context);
 				ResponseInstruction response = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
@@ -105,16 +105,21 @@ public class FlowRequestHandler {
 					logger.debug("Returning [resume] " + response);
 				}
 				return response;
-			} else {
-				return flowExecutor.getCurrentResponseInstruction(flowExecutionKey, context);
+			}
+			else {
+				ResponseInstruction response = flowExecutor.getCurrentResponseInstruction(flowExecutionKey, context);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Refreshing [current flow execution] " + response);
+				}
+				return response;
 			}
 		}
 		else {
-			Serializable conversationId = argumentExtractor.extractConversationId(context);
-			if (conversationId != null) {
+			if (argumentExtractor.isConversationIdPresent(context)) {
+				Serializable conversationId = argumentExtractor.extractConversationId(context);
 				ResponseInstruction response = flowExecutor.getCurrentResponseInstruction(conversationId, context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Returning [current] " + response);
+					logger.debug("Returning [current conversation] " + response);
 				}
 				return response;
 			}

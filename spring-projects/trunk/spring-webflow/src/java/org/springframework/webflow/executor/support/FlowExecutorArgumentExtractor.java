@@ -6,10 +6,10 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.springframework.binding.format.Formatter;
+import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.core.JdkVersion;
 import org.springframework.core.style.StylerUtils;
-import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ParameterMap;
@@ -92,7 +92,7 @@ public class FlowExecutorArgumentExtractor {
 	 * The formatter that will parse encoded string keys into
 	 * {@link FlowExecutionKey} objects.
 	 */
-	private Formatter flowExecutionKeyFormatter = new FlowExecutionKeyFormatter();
+	private FlowExecutionKeyFormatter flowExecutionKeyFormatter = new FlowExecutionKeyFormatter();
 
 	/**
 	 * Identifies an event that occured in an existing flow execution, defaults
@@ -163,11 +163,20 @@ public class FlowExecutorArgumentExtractor {
 	}
 
 	/**
+	 * Returns the configured strategy for converting an encoded string to a
+	 * {@link FlowExecutionKey} and back.
+	 * @param flowExecutionKeyFormatter the formatter
+	 */
+	public FlowExecutionKeyFormatter getFlowExecutionKeyFormatter() {
+		return flowExecutionKeyFormatter;
+	}
+	
+	/**
 	 * Sets the strategy for converting an encoded string to a
 	 * {@link FlowExecutionKey} and back.
 	 * @param flowExecutionKeyFormatter the formatter
 	 */
-	public void setFlowExecutionKeyFormatter(Formatter flowExecutionKeyFormatter) {
+	public void setFlowExecutionKeyFormatter(FlowExecutionKeyFormatter flowExecutionKeyFormatter) {
 		this.flowExecutionKeyFormatter = flowExecutionKeyFormatter;
 	}
 
@@ -206,14 +215,44 @@ public class FlowExecutorArgumentExtractor {
 	}
 
 	/**
-	 * Extracts the flow id from the external context.
-	 * @param context the context in which the external user event occurred
-	 * @return the obtained flow id or <code>null</code> if not found (and
-	 * there is no default value).
+	 * Returns true if the flow id is extractable from the context.
+	 * @param context the context in which a external user event occured
+	 * @return true if extractable, false if not
 	 */
-	public String extractFlowId(ExternalContext context) {
+	public boolean isFlowIdPresent(ExternalContext context) {
+		return context.getRequestParameterMap().contains(flowIdParameterName);
+	}
+
+	/**
+	 * Extracts the flow id from the external context, falling back on the
+	 * defaultFlowId if flow id could be extracted.
+	 * @param context the context in which a external user event occurred
+	 * @return the extracted flow id
+	 * @throws FlowExecutorArgumentExtractionException if the flow id could not
+	 * be extracted and no default value was set
+	 */
+	public String extractFlowId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String flowId = context.getRequestParameterMap().get(flowIdParameterName);
-		return (flowId != null ? flowId : defaultFlowId);
+		if (flowId == null) {
+			flowId = defaultFlowId;
+		}
+		if (!StringUtils.hasText(flowId)) {
+			throw new FlowExecutorArgumentExtractionException(
+					"Unable to extract the flowId argument: make sure the client provides the '" + flowIdParameterName
+							+ "' parameter as input or set the 'defaultFlowId' property; "
+							+ "the parameters provided in this request are: "
+							+ StylerUtils.style(context.getRequestParameterMap()));
+		}
+		return flowId;
+	}
+
+	/**
+	 * Returns true if the flow execution key is extractable from the context.
+	 * @param context the context in which a external user event occured
+	 * @return true if extractable, false if not
+	 */
+	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
+		return context.getRequestParameterMap().contains(flowExecutionKeyParameterName);
 	}
 
 	/**
@@ -221,12 +260,29 @@ public class FlowExecutorArgumentExtractor {
 	 * @param context the context in which the external user event occured
 	 * @return the obtained flow execution key or <code>null</code> if not
 	 * found
-	 * @throws IllegalArgumentException if the flow execution key parameter was
-	 * present but could not be parsed
+	 * @throws FlowExecutorArgumentExtractionException if the flow execution key
+	 * could not be extracted
 	 */
-	public FlowExecutionKey extractFlowExecutionKey(ExternalContext context) throws IllegalArgumentException {
+	public FlowExecutionKey extractFlowExecutionKey(ExternalContext context)
+			throws FlowExecutorArgumentExtractionException {
 		String encodedKey = context.getRequestParameterMap().get(flowExecutionKeyParameterName);
-		return encodedKey != null ? parse(encodedKey) : null;
+		if (!StringUtils.hasText(encodedKey)) {
+			throw new FlowExecutorArgumentExtractionException(
+					"Unable to extract the flowExecutionKey argument: make sure the client provides the '"
+							+ flowExecutionKeyParameterName
+							+ "' parameter as input; the parameters provided in this request are: "
+							+ StylerUtils.style(context.getRequestParameterMap()));
+		}
+		return parse(encodedKey);
+	}
+
+	/**
+	 * Returns true if the flow execution key is extractable from the context.
+	 * @param context the context in which a external user event occured
+	 * @return true if extractable, false if not
+	 */
+	public boolean isEventIdPresent(ExternalContext context) {
+		return findParameter(eventIdParameterName, context.getRequestParameterMap()) != null;
 	}
 
 	/**
@@ -236,41 +292,48 @@ public class FlowExecutorArgumentExtractor {
 	 * successfully extracted, indicating a request to resume a flow execution.
 	 * It should never return null.
 	 * 
-	 * @param context the context in which the external user event occured
+	 * @param context the context in which a external user event occured
 	 * @return the event id
+	 * @throws FlowExecutorArgumentExtractionException if the event id could not
+	 * be extracted
 	 */
-	public EventId extractEventId(ExternalContext context) throws IllegalArgumentException {
+	public EventId extractEventId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String eventId = findParameter(eventIdParameterName, context.getRequestParameterMap());
-		Assert.hasText(eventId, "No eventId could be obtained: make sure the client provides the '"
-				+ eventIdParameterName + "' parameter as input along with the '" + flowExecutionKeyParameterName
-				+ "' parameter; the parameters provided for this request were: "
-				+ StylerUtils.style(context.getRequestParameterMap()));
+		if (!StringUtils.hasText(eventId)) {
+			throw new FlowExecutorArgumentExtractionException(
+					"Unable to extract the eventId argument: make sure the client provides the '"
+							+ eventIdParameterName + "' parameter as input along with the '"
+							+ flowExecutionKeyParameterName
+							+ "' parameter; the parameters provided in this request are: "
+							+ StylerUtils.style(context.getRequestParameterMap()));
+		}
 		return new EventId(eventId);
 	}
 
-	public boolean isFlowIdPresent(ExternalContext context) {
-		return context.getRequestParameterMap().contains(flowIdParameterName);
-	}
-
-	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
-		return context.getRequestParameterMap().contains(flowExecutionKeyParameterName);
-	}
-
-	public boolean isEventIdPresent(ExternalContext context) {
-		return findParameter(eventIdParameterName, context.getRequestParameterMap()) != null;
-	}
-
+	/**
+	 * Returns true if the conversationId is extractable from the context.
+	 * @param context the context in which a external user event occured
+	 * @return true if extractable, false if not
+	 */
 	public boolean isConversationIdPresent(ExternalContext context) {
 		return context.getRequestParameterMap().contains(conversationIdParameterName);
 	}
 
 	/**
 	 * Extract the conversation id from the external context.
-	 * @param context the context in which the external user event occured
+	 * @param context the context in which a external user event occured
 	 * @return the conversation id, or <code>null</code> if not found.
 	 */
-	public Serializable extractConversationId(ExternalContext context) {
-		return context.getRequestParameterMap().get(conversationIdParameterName);
+	public Serializable extractConversationId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
+		String conversationId = context.getRequestParameterMap().get(conversationIdParameterName);
+		if (!StringUtils.hasText(conversationId)) {
+			throw new FlowExecutorArgumentExtractionException(
+					"Unable to extract the conversationId argument: make sure the client provides the '"
+							+ conversationIdParameterName
+							+ "' parameter as input; the parameters provided in this request are: "
+							+ StylerUtils.style(context.getRequestParameterMap()));
+		}
+		return conversationId;
 	}
 
 	/**
@@ -554,13 +617,18 @@ public class FlowExecutorArgumentExtractor {
 			throw new IllegalArgumentException("Cannot encode URL " + input);
 		}
 	}
-	
+
 	protected String format(FlowExecutionKey flowExecutionKey) {
 		return flowExecutionKeyFormatter.formatValue(flowExecutionKey);
 	}
-	
-	protected FlowExecutionKey parse(String encodedKey) {
-		return (FlowExecutionKey)flowExecutionKeyFormatter.parseValue(encodedKey,
-				FlowExecutionKey.class);
-	}
+
+	protected FlowExecutionKey parse(String encodedKey) throws FlowExecutorArgumentExtractionException {
+		try {
+			return (FlowExecutionKey)flowExecutionKeyFormatter.parseValue(encodedKey, FlowExecutionKey.class);
+		}
+		catch (InvalidFormatException e) {
+			throw new FlowExecutorArgumentExtractionException(
+					"Unable to extract the flowExecutionKey argument: the provided key '" + encodedKey + "' is invalid", e);
+		}
+	}	
 }

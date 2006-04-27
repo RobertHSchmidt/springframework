@@ -61,18 +61,18 @@ import org.springframework.webflow.support.FlowRedirect;
  * Usage example:
  * 
  * <pre>
- *     &lt;!--
- *         Exposes flows for execution.
- *     --&gt;
- *     &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *         &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
- *         &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
- *     &lt;/bean&gt;
- *                                                                              
- *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *         &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *     &lt;/bean&gt;
+ *      &lt;!--
+ *          Exposes flows for execution.
+ *      --&gt;
+ *      &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *          &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
+ *          &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
+ *      &lt;/bean&gt;
+ *                                                                               
+ *      &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *          &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *          &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *      &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
@@ -103,12 +103,13 @@ public class PortletFlowController extends AbstractController implements Initial
 	public PortletFlowController() {
 		initDefaults();
 	}
-	
+
 	/**
-	 * Initialize the defaults of this constructor. 
+	 * Initialize the defaults of this constructor.
 	 */
 	protected void initDefaults() {
-		// set the cache seconds property to 0 so no pages are cached by default for flows.
+		// set the cache seconds property to 0 so no pages are cached by default
+		// for flows.
 		setCacheSeconds(0);
 	}
 
@@ -173,8 +174,8 @@ public class PortletFlowController extends AbstractController implements Initial
 
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
-		Serializable conversationId = argumentExtractor.extractConversationId(context);
-		if (conversationId != null) {
+		if (argumentExtractor.isConversationIdPresent(context)) {
+			Serializable conversationId = argumentExtractor.extractConversationId(context);
 			ResponseInstruction responseInstruction = getCachedResponseInstruction(request,
 					getConversationAttributeName(conversationId));
 			// rely on current response instruction for active conversation
@@ -193,8 +194,8 @@ public class PortletFlowController extends AbstractController implements Initial
 
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
-		EventId eventId = argumentExtractor.extractEventId(context);
 		FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
+		EventId eventId = argumentExtractor.extractEventId(context);
 		ResponseInstruction responseInstruction = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
 		if (responseInstruction.isApplicationView() || responseInstruction.isConversationRedirect()) {
 			Serializable conversationId = flowExecutionKey.getConversationId();

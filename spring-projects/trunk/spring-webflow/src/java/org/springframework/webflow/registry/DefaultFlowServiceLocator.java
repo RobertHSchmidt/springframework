@@ -23,8 +23,8 @@ import org.springframework.webflow.builder.FlowServiceLocator;
 
 /**
  * The default flow service locator implementation that obtains subflow
- * definitions from a dedicated {@link FlowRegistry}. The remaining services are
- * sourced from a standard Spring {@link BeanFactory}.
+ * definitions from a dedicated {@link FlowRegistry} and obtains the remaining
+ * services from a generic Spring {@link BeanFactory}.
  * 
  * @see FlowRegistry
  * @see FlowServiceLocator#getSubflow(String)
@@ -75,7 +75,7 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 	public Flow getSubflow(String id) throws FlowArtifactException {
 		return subflowRegistry.getFlow(id);
 	}
-	
+
 	public BeanFactory getBeanFactory() {
 		return beanFactory;
 	}

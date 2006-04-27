@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.UnmodifiableAttributeMap;
@@ -51,9 +52,8 @@ public class ExternalizedFlowDefinition implements Serializable {
 	 * @param location the flow resource location.
 	 */
 	public ExternalizedFlowDefinition(Resource location) {
-		this.id = stripExtension(location.getFilename());
-		this.location = location;
-		setAttributes(null);
+		Assert.notNull(location, "The location of the externalized flow definition is required");
+		init(stripExtension(location.getFilename()), location, null);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class ExternalizedFlowDefinition implements Serializable {
 	 * @param location the flow resource location.
 	 */
 	public ExternalizedFlowDefinition(String id, Resource location) {
-		this(id, location, null);
+		init(id, location, null);
 	}
 
 	/**
@@ -71,9 +71,7 @@ public class ExternalizedFlowDefinition implements Serializable {
 	 * @param location the flow resource location.
 	 */
 	public ExternalizedFlowDefinition(String id, Resource location, AttributeCollection attributes) {
-		this.id = id;
-		this.location = location;
-		setAttributes(attributes);
+		init(id, location, attributes);
 	}
 
 	/**
@@ -97,6 +95,31 @@ public class ExternalizedFlowDefinition implements Serializable {
 		return attributes;
 	}
 
+	public boolean equals(Object o) {
+		if (!(o instanceof ExternalizedFlowDefinition)) {
+			return false;
+		}
+		ExternalizedFlowDefinition other = (ExternalizedFlowDefinition)o;
+		return id.equals(other.id) && location.equals(other.location);
+	}
+
+	public int hashCode() {
+		return id.hashCode() + location.hashCode();
+	}
+
+	private void init(String id, Resource location, AttributeCollection attributes) {
+		Assert.hasText(id, "The id of the externalized flow definition is required");
+		Assert.notNull(location, "The location of the externalized flow definition is required");
+		this.id = id;
+		this.location = location;
+		if (attributes != null) {
+			this.attributes = attributes.unmodifiable();
+		}
+		else {
+			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
+		}
+	}
+
 	private String stripExtension(String fileName) {
 		int extensionIndex = fileName.indexOf('.');
 		if (extensionIndex != -1) {
@@ -104,15 +127,6 @@ public class ExternalizedFlowDefinition implements Serializable {
 		}
 		else {
 			return fileName;
-		}
-	}
-
-	private void setAttributes(AttributeCollection attributes) {
-		if (attributes != null) {
-			this.attributes = attributes.unmodifiable();
-		}
-		else {
-			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
 		}
 	}
 

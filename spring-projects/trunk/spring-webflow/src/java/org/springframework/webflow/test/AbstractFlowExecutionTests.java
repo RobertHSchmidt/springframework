@@ -20,6 +20,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeMap;
@@ -35,7 +36,9 @@ import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ConversationRedirect;
+import org.springframework.webflow.support.DefaultExpressionParserFactory;
 import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.support.FlowExecutionRedirect;
 import org.springframework.webflow.support.FlowRedirect;
 
 /**
@@ -51,27 +54,26 @@ import org.springframework.webflow.support.FlowRedirect;
  * external context containing potential input attributes (see the
  * {@link #startFlow(AttributeMap, ExternalContext, FlowExecutionListener[]))}
  * variants).
- * <li>That given the set of supported transition criteria for a state, that
- * the state executes the appropriate transition when an event is signaled (with
+ * <li>That given the set of supported state transition criteria a state
+ * executes the appropriate transition when a matching event is signaled (with
  * potential input request parameters, see the
  * {@link #signalEvent(String, ExternalContext)} variants). A test case should
  * be coded for each logical event that can occur, where an event drives a
  * possible path through the flow. The goal should be to exercise all possible
- * paths of the flow.
+ * paths of the flow. Use a test coverage tool like Clover or Emma to assist
+ * with measuring your test's effectiveness.
  * <li>That given a transition that leads to an interactive state type (a view
- * state or an end state), that the view selection returned to the client
- * matches what was expected and the current state of the flow matches what is
- * expected.
+ * state or an end state) that the view selection returned to the client matches
+ * what was expected and the current state of the flow matches what is expected.
  * </ul>
  * A flow execution test can effectively automate and validate the orchestration
- * required to drive an end-to-end business process that spans several steps
- * involving the user. Such tests are a good way to test your system top-down
- * starting at the web-tier and pushing through all the way to the DB without
- * having to deploy to a servlet or portlet container. Because these tests are
- * typically end-to-end integration tests that involve a transactional resource
- * such a database, this class subclasses Spring's
- * AbstractTransactionalSpringContextTests to take advantage of its automatic
- * transaction management and rollback capabilites.
+ * required to drive an end-to-end business task that spans several steps
+ * involving the user to complete. Such tests are a good way to test your system
+ * top-down starting at the web-tier and pushing through all the way to the DB
+ * without having to deploy to a servlet or portlet container. In addition, they
+ * can be used to effectively test a flow's execution (the weblayer) standalone,
+ * typically with a mock service layer. Both styles of testing are valuable and
+ * supported.
  * 
  * @author Keith Donald
  */
@@ -82,6 +84,12 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * object).
 	 */
 	private FlowExecution flowExecution;
+
+	/**
+	 * The expression parser for parsing evaluatable model attribute
+	 * expressions.
+	 */
+	private ExpressionParser expressionParser = new DefaultExpressionParserFactory().getExpressionParser();
 
 	/**
 	 * Start the flow execution to be tested.
@@ -384,6 +392,16 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 
 	/**
 	 * Assert that the returned view selection is an instance of
+	 * {@link FlowExecutionRedirect}.
+	 * @param viewSelection the view selection
+	 */
+	protected FlowExecutionRedirect flowExecutionRedirect(ViewSelection viewSelection) {
+		Assert.isInstanceOf(FlowExecutionRedirect.class, viewSelection, "Unexpected class of view selection: ");
+		return (FlowExecutionRedirect)viewSelection;
+	}
+
+	/**
+	 * Assert that the returned view selection is an instance of
 	 * {@link ConversationRedirect}.
 	 * @param viewSelection the view selection
 	 */
@@ -491,6 +509,6 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the attribute expression value
 	 */
 	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
-		return model.get(attributeName);
+		return expressionParser.parseExpression(attributeName).evaluateAgainst(model, null);
 	}
 }

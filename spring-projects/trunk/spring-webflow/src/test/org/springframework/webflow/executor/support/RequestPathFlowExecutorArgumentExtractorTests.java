@@ -23,6 +23,11 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 	}
 
 	public void testExtractFlowIdNoRequestPath() {
-		assertEquals(null, argumentExtractor.extractFlowId(new MockExternalContext()));
+		try {
+			argumentExtractor.extractFlowId(new MockExternalContext());
+			fail("should've failed");
+		} catch (FlowExecutorArgumentExtractionException e) {
+			
+		}
 	}
 }

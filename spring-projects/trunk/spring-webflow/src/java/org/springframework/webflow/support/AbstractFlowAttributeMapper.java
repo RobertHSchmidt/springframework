@@ -28,17 +28,27 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 
 /**
+ * Convenient base class for attribute mapper implementations. Encapsulates
+ * common attribute mapper workflow. Contains no state. Subclasses must override
+ * the {@link #getInputMapper()} and {@link #getOutputMapper()} methods to
+ * return the input mapper and output mapper, respectively.
+ * 
  * @author Keith Donald
  */
 public abstract class AbstractFlowAttributeMapper implements FlowAttributeMapper, Serializable {
 
 	/**
-	 * Logger, usable in subclasses.
+	 * Returns the input mapper to use to map attributes of a parent flow
+	 * {@link RequestContext} to a subflow input attribute {@link Map}.
+	 * @return the input mapper
 	 */
-	protected final Log logger = LogFactory.getLog(getClass());;
-
 	protected abstract AttributeMapper getInputMapper();
 
+	/**
+	 * Returns the output mapper to use to map attributes of a subflow {@link RequestContext} 
+	 * to a subflow result event attribute {@link Map}.
+	 * @return the output mapper the output mapper
+	 */
 	protected abstract AttributeMapper getOutputMapper();
 
 	public AttributeMap createSubflowInput(RequestContext context) {

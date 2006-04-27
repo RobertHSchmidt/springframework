@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
 import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.FlowExecutionRedirect;
+import org.springframework.webflow.support.RedirectType;
 
 /**
  * The default implementation of the central facade for <i>driving</i> the
@@ -63,16 +63,19 @@ import org.springframework.webflow.support.FlowExecutionRedirect;
  * server-side session-based repository factory</td>
  * </tr>
  * <tr>
- * <td>alwaysRedirectOnPause</td>
- * <td>A flag indicating if this executor should <i>always</i> request a
- * <i>redirect to conversation</i> after pausing an active flow execution.</td>
- * <td>false</td>
+ * <td>redirectType</td>
+ * <td>A enumeration indicating if this executor should force redirect
+ * <i>redirect to an {@link ApplicationView} after pausing an active flow
+ * execution. Several different types of redirect are supported.</td>
+ * <td>NONE, indicating no special redirect action should be taken</td>
  * </tr>
  * </table>
  * </p>
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.ViewSelection
+ * @see org.springframework.webflow.support.ApplicationView
+ * @see org.springframework.webflow.support.RedirectType
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -87,8 +90,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	/**
 	 * The flow execution repository factory, for obtaining repository instances
-	 * to save paused executions that require user input and load resuming
-	 * executions that will process user events.
+	 * to create, save, and restore flow executions.
 	 * <p>
 	 * The default value is the {@link SimpleFlowExecutionRepositoryFactory}
 	 * repository factory that creates repositories within the user session map.
@@ -96,13 +98,15 @@ public class FlowExecutorImpl implements FlowExecutor {
 	private FlowExecutionRepositoryFactory repositoryFactory;
 
 	/**
-	 * A flag indicating if this executor should <i>always</i> request a
-	 * <i>redirect to conversation</i> after pausing an active flow execution.
+	 * A value that indicates if this executor should always redirect selected
+	 * application views after pausing an active flow execution.
 	 * <p>
-	 * This allows the user to participate in the current state of the
-	 * conversation using a bookmarkable URL.
+	 * This allows the user to participate in the current state of the flow
+	 * execution using a bookmarkable URL. Several different redirect types are
+	 * supported, the default is {@link RedirectType#NONE} indicating no special
+	 * redirect action should be taken.
 	 */
-	private boolean alwaysRedirectOnPause;
+	private RedirectType redirectType = RedirectType.NONE;
 
 	/**
 	 * Create a new flow executor that configures use of the default repository
@@ -126,29 +130,25 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	/**
-	 * Returns the flag indicating if this executor should always request a
-	 * <i>redirect to conversation</i> after pausing an active flow execution.
-	 * <p>
-	 * This allows the user to participate in the current view-state of a
-	 * conversation using a bookmarkable URL.
+	 * Returns a value indicating if this executor should redirect after pausing
+	 * an active flow execution.
 	 */
-	public boolean isAlwaysRedirectOnPause() {
-		return alwaysRedirectOnPause;
+	public RedirectType getRedirectType() {
+		return redirectType;
 	}
 
 	/**
-	 * Sets the flag indicating if this executor should always request a
-	 * <i>redirect to conversation</i> after pausing an active flow execution.
+	 * Sets the value that indicates if this executor should redirect after
+	 * pausing an active flow execution.
 	 * <p>
-	 * If set to <code>true</code> this executor will always request a
-	 * redirect. If this is set to <code>false</code> this executor will only
-	 * request a redirect if the entered flow view state did so.
+	 * If set to something other than {@link RedirectType#NONE} this executor
+	 * will always trigger a redirect for a selected {@link ApplicationView}.
 	 * <p>
-	 * This allows the user to participate in the current view-state of a
-	 * conversation using a bookmarkable URL.
+	 * Setting a redirect type allows the user to participate in the current
+	 * view-state of a conversation at a bookmarkable URL.
 	 */
-	public void setAlwaysRedirectOnPause(boolean alwaysRedirectOnPause) {
-		this.alwaysRedirectOnPause = alwaysRedirectOnPause;
+	public void setRedirectType(RedirectType redirectType) {
+		this.redirectType = redirectType;
 	}
 
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
@@ -225,17 +225,17 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	/**
 	 * Factory method that post processes a view selection made as the result of
-	 * pausing an active flow execution. This implementation enforces the
-	 * "alwaysRedirectOnPause" behavior if necessary.
+	 * pausing an active flow execution. This implementation applies the
+	 * "redirectType" behavior if necessary.
 	 * @param selectedView the view selected by the view state
 	 * @return the view to return to callers
 	 */
 	protected ViewSelection pausedView(ViewSelection selectedView) {
-		if (isAlwaysRedirectOnPause()) {
-			if (selectedView instanceof ApplicationView) {
-				return new FlowExecutionRedirect((ApplicationView)selectedView);
-			}
+		if (selectedView instanceof ApplicationView) {
+			return redirectType.process((ApplicationView)selectedView);
 		}
-		return selectedView;
+		else {
+			return selectedView;
+		}
 	}
 }

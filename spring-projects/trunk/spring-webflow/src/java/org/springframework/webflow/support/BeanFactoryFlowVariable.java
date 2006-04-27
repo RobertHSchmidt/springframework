@@ -31,10 +31,11 @@ import org.springframework.webflow.ScopeType;
 public class BeanFactoryFlowVariable extends FlowVariable {
 
 	/**
-	 * The bean name in the factory whose value will be used as the flow variable. 
+	 * The name of the bean factory whose value will be used as the flow
+	 * variable.  The bean should be a prototype.
 	 */
 	private String beanName;
-	
+
 	/**
 	 * The bean factory where initial variable values will be obtained.
 	 */
@@ -45,17 +46,20 @@ public class BeanFactoryFlowVariable extends FlowVariable {
 	 * @param variableName the variable name
 	 * @param scope the variable scope
 	 * @param beanName the bean name
-	 * @param beanFactory the bean factory where initial variable values will be obtained
+	 * @param beanFactory the bean factory where initial variable values will be
+	 * obtained
 	 */
 	public BeanFactoryFlowVariable(String variableName, ScopeType scope, String beanName, BeanFactory beanFactory) {
 		super(variableName, scope);
 		if (StringUtils.hasText(beanName)) {
 			this.beanName = beanName;
-		} else {
+		}
+		else {
 			this.beanName = variableName;
 		}
 		Assert.notNull(beanFactory, "The variable bean factory is required");
-		Assert.isTrue(!beanFactory.isSingleton(this.beanName), "The variable bean with name '" + this.beanName + "' must be a prototype (singleton=false)");
+		Assert.isTrue(!beanFactory.isSingleton(this.beanName), "The variable bean with name '" + this.beanName
+				+ "' must be a prototype (singleton=false)");
 		this.beanFactory = beanFactory;
 	}
 
