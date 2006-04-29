@@ -70,7 +70,7 @@ public class SubflowState extends TransitionableState {
 	 * @param subflow the subflow to spawn
 	 */
 	private void setSubflow(Flow subflow) {
-		Assert.notNull(subflow, "A subflow state must have a subflow");
+		Assert.notNull(subflow, "A subflow state must have a subflow; the subflow is required");
 		this.subflow = subflow;
 	}
 

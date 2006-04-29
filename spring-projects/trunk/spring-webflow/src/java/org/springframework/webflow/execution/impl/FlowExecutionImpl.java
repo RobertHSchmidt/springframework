@@ -37,6 +37,7 @@ import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.ViewState;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -219,7 +220,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		try {
 			try {
 				resume(context);
-				throw new UnsupportedOperationException("Refresh not yet supported");
+				return ((ViewState)getActiveSession().getState()).refresh(context);
 			}
 			catch (StateException e) {
 				return pause(context, handleException(e, context));

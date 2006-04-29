@@ -36,6 +36,13 @@ package org.springframework.webflow;
  * @author Erwin Vervaet
  */
 public interface ViewSelector {
+	
+	/**
+	 * Make a new view selection for the given request context.
+	 * @param context the current request context of the executing flow
+	 * @return the view selection
+	 */
+	public ViewSelection refresh(RequestContext context);
 
 	/**
 	 * Make a new view selection for the given request context.

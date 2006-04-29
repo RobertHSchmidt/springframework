@@ -88,17 +88,41 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 		return viewName;
 	}
 
-	public ViewSelection makeSelection(RequestContext context) {
-		String viewName = (String)getViewName().evaluateAgainst(context, Collections.EMPTY_MAP);
+	public ViewSelection refresh(RequestContext context) {
+		String viewName = resolveViewName(context);
 		if (!StringUtils.hasText(viewName)) {
 			return ViewSelection.NULL_VIEW;
 		}
-		else {
-			ApplicationView selectedView = new ApplicationView(viewName, context.getModel().getMap());
-			return redirectType.process(selectedView);
-		}
+		return createApplicationView(viewName, context);
 	}
 
+	public ViewSelection makeSelection(RequestContext context) {
+		String viewName = resolveViewName(context);
+		if (!StringUtils.hasText(viewName)) {
+			return ViewSelection.NULL_VIEW;
+		}
+		return redirectType.process(createApplicationView(viewName, context));
+	}
+
+	/**
+	 * Resolves the application view name from the request context.
+	 * @param context the context
+	 * @return the view name
+	 */
+	protected String resolveViewName(RequestContext context) {
+		return (String)getViewName().evaluateAgainst(context, Collections.EMPTY_MAP);
+	}
+
+	/**
+	 * Creates the application view selection.
+	 * @param viewName the resolved view name
+	 * @param context the context
+	 * @return the application view
+	 */
+	protected ApplicationView createApplicationView(String viewName, RequestContext context) {
+		return new ApplicationView(viewName, context.getModel().getMap());
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append("viewName", viewName).append("redirectType", redirectType).toString();
 	}

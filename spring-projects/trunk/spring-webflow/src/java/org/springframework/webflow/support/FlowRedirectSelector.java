@@ -50,6 +50,10 @@ public class FlowRedirectSelector implements ViewSelector {
 		this.flowExpression = flowExpression;
 	}
 
+	public ViewSelection refresh(RequestContext context) {
+		return makeSelection(context);
+	}
+
 	public ViewSelection makeSelection(RequestContext context) {
 		String flowRedirect = (String)flowExpression.evaluateAgainst(context, Collections.EMPTY_MAP);
 		// the encoded flowRedirect should look something like

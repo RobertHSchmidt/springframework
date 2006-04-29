@@ -16,6 +16,7 @@
 package org.springframework.webflow;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 
 /**
  * A view state is a state in which a physical view resource should be rendered
@@ -67,6 +68,7 @@ public class ViewState extends TransitionableState {
 	 * Sets the strategy used to select the view to render in this view state.
 	 */
 	public void setViewSelector(ViewSelector viewSelector) {
+		Assert.notNull(viewSelector, "The view selector to make view selections is required");
 		this.viewSelector = viewSelector;
 	}
 
@@ -88,13 +90,25 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
+	 * Request that the current view selection to be reconstituted to support a
+	 * reissuing the response. This is idempotent operation that may be safely
+	 * called on a paused execution.
+	 * @param context the request context
+	 * @return the view selection
+	 * @throws StateException if an exception occurs in this state
+	 */
+	public ViewSelection refresh(RequestContext context) throws StateException {
+		return viewSelector.refresh(context);
+	}
+
+	/**
 	 * Returns the view selection that should be rendered by this state for
 	 * given execution context.
 	 * @param context the flow control context for the executing flow
 	 * @return a view selection containing model and view information needed to
 	 * render the results of the state execution
 	 */
-	public ViewSelection selectView(FlowExecutionControlContext context) {
+	private ViewSelection selectView(FlowExecutionControlContext context) {
 		ViewSelection selection = viewSelector.makeSelection(context);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Made view selection " + selection);

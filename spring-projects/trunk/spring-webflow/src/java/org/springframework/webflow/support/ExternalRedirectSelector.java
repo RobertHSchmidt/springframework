@@ -78,6 +78,10 @@ public class ExternalRedirectSelector implements ViewSelector, Serializable {
 		return contextRelative;
 	}
 
+	public ViewSelection refresh(RequestContext context) {
+		return makeSelection(context);
+	}
+	
 	public ViewSelection makeSelection(RequestContext context) {
 		String url = (String)urlExpression.evaluateAgainst(context, getEvaluationContext(context));
 		return new ExternalRedirect(url, contextRelative);
