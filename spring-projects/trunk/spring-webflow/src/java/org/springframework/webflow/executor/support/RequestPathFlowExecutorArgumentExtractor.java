@@ -6,7 +6,9 @@ import java.util.Map;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.support.FlowRedirect;
 
 /**
@@ -58,13 +60,13 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	 * <li>With request path appending turned on:
 	 * 
 	 * <pre>
-	 *     /booking/12345
+	 *       /booking/12345
 	 * </pre>
 	 * 
 	 * <li>With request path appending turned off:
 	 * 
 	 * <pre>
-	 *     /booking?bookingId=12345
+	 *       /booking?bookingId=12345
 	 * </pre>
 	 * 
 	 * </ul>
@@ -112,6 +114,36 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 				}
 			}
 		}
+	}
+
+	public String createFlowExecutionUrl(FlowExecutionKey key, FlowExecutionContext flowExecution, ExternalContext context) {
+		StringBuffer flowExecutionUrl = new StringBuffer();
+		flowExecutionUrl.append(context.getDispatcherPath());
+		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
+		flowExecutionUrl.append(flowExecution.getActiveSession().getFlow().getId());
+		flowExecutionUrl.append('?');
+		appendQueryParameter(getFlowExecutionKeyParameterName(), format(key), flowExecutionUrl);
+		return flowExecutionUrl.toString();
+	}
+
+	/**
+	 * Create a URL path that when redirected to renders the <i>current</i> (or
+	 * last) view selection</i> made by the conversation identified by the
+	 * provided conversationId. Used to support the <i>conversation redirect</i>
+	 * use case.
+	 * @param conversationId the conversation id
+	 * @param context the external context
+	 * @return the relative conversation URL path
+	 */
+	public String createConversationUrl(FlowExecutionKey key, FlowExecutionContext flowExecution, ExternalContext context) {
+		StringBuffer conversationUrl = new StringBuffer();
+		conversationUrl.append(context.getDispatcherPath());
+		conversationUrl.append(PATH_SEPARATOR_CHARACTER);
+		conversationUrl.append(flowExecution.getActiveSession().getFlow().getId());
+		conversationUrl.append('?');
+		appendQueryParameter(getConversationIdParameterName(), key.getConversationId(),
+				conversationUrl);
+		return conversationUrl.toString();
 	}
 
 	private String getRequestPathInfo(ExternalContext context) {

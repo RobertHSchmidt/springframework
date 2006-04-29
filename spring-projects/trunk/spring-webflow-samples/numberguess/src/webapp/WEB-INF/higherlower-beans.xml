@@ -4,5 +4,5 @@
 
 <beans>
 	<!-- note: higherlower game is a prototype, it holds caller state in flow scope as instance variables -->
-	<bean id="higherlowerGame" class="org.springframework.webflow.samples.numberguess.HigherLowerGame" singleton="false"/>
+	<bean id="game" class="org.springframework.webflow.samples.numberguess.HigherLowerGame" singleton="false"/>
 </beans>

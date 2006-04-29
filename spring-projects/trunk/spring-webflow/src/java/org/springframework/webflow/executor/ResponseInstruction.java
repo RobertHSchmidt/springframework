@@ -43,115 +43,158 @@ public class ResponseInstruction implements Serializable {
 	private static final long serialVersionUID = -3787181142379347131L;
 
 	/**
-	 * The id of the flow execution.
+	 * The persistent identifier of the flow execution.
 	 */
-	private final FlowExecutionKey flowExecutionKey;
+	private FlowExecutionKey flowExecutionKey;
 
 	/**
 	 * A state of the flow execution.
 	 */
-	private transient final FlowExecutionContext flowExecutionContext;
+	private transient FlowExecutionContext flowExecutionContext;
 
 	/**
 	 * The view selection that was made.
 	 */
-	private final ViewSelection viewSelection;
+	private ViewSelection viewSelection;
 
 	/**
 	 * Create a new response instruction for a paused flow execution.
-	 * @param flowExecutionKey
-	 * @param flowExecutionContext
-	 * @param viewSelection
+	 * @param flowExecutionKey the persistent identifier of the flow execution
+	 * @param flowExecutionContext the current flow execution context
+	 * @param viewSelection the selected view
 	 */
 	public ResponseInstruction(FlowExecutionKey flowExecutionKey, FlowExecutionContext flowExecutionContext,
 			ViewSelection viewSelection) {
 		Assert.notNull(flowExecutionKey, "The flow execution key is required");
+		this.flowExecutionKey = flowExecutionKey;
+		init(flowExecutionContext, viewSelection);
+	}
+
+	/**
+	 * Create a new response instruction for an ended flow execution.
+	 * @param flowExecutionContext the current flow execution context
+	 * @param viewSelection the selected view
+	 */
+	public ResponseInstruction(FlowExecutionContext flowExecutionContext, ViewSelection viewSelection) {
+		init(flowExecutionContext, viewSelection);
+	}
+
+	private void init(FlowExecutionContext flowExecutionContext, ViewSelection viewSelection) {
 		Assert.notNull(flowExecutionContext, "The flow execution context is required");
 		Assert.notNull(viewSelection, "The view selection is required");
-		this.flowExecutionKey = flowExecutionKey;
 		this.flowExecutionContext = flowExecutionContext;
 		this.viewSelection = viewSelection;
 	}
 
 	/**
-	 * Create a new response instruction for a ended flow execution.
-	 * @param flowExecutionContext
-	 * @param viewSelection
+	 * Returns the persistent identifier of the flow execution.
 	 */
-	public ResponseInstruction(FlowExecutionContext flowExecutionContext, ViewSelection viewSelection) {
-		Assert.notNull(flowExecutionContext, "The flow execution context is required");
-		Assert.notNull(viewSelection, "The view selection is required");
-		this.flowExecutionKey = null;
-		this.flowExecutionContext = flowExecutionContext;
-		this.viewSelection = viewSelection;
-	}
-
 	public FlowExecutionKey getFlowExecutionKey() {
 		return flowExecutionKey;
 	}
 
+	/**
+	 * Returns the flow execution context representing the current state of the
+	 * execution.
+	 */
 	public FlowExecutionContext getFlowExecutionContext() {
 		return flowExecutionContext;
 	}
 
+	/**
+	 * Returns the view selection selected by the flow executino.
+	 */
 	public ViewSelection getViewSelection() {
 		return viewSelection;
 	}
 
+	/**
+	 * Returns true if this is a "null" response instruction.
+	 */
 	public boolean isNull() {
 		return viewSelection == ViewSelection.NULL_VIEW;
 	}
 
+	/**
+	 * Returns true if this is an "application view" (forward) response
+	 * instruction.
+	 */
 	public boolean isApplicationView() {
 		return viewSelection instanceof ApplicationView;
 	}
-	
+
+	/**
+	 * Returns true if this is an instruction to render an application view for
+	 * a "active" (in progress) flow execution.
+	 */
 	public boolean isActiveView() {
 		return isApplicationView() && flowExecutionContext.isActive();
 	}
-	
+
+	/**
+	 * Returns true if this is an instruction to render a confirmation view for
+	 * a "ended" (inactive) flow execution.
+	 */
 	public boolean isConfirmationView() {
 		return isApplicationView() && !flowExecutionContext.isActive();
 	}
-	
+
+	/**
+	 * Returns true if this is an instruction to perform a redirect to the
+	 * current flow execution.
+	 */
 	public boolean isFlowExecutionRedirect() {
 		return viewSelection instanceof FlowExecutionRedirect;
 	}
-	
+
+	/**
+	 * Returns true if this is an instruction to perform a redirect to the
+	 * current state of the conversation.
+	 */
 	public boolean isConversationRedirect() {
 		return viewSelection instanceof ConversationRedirect;
 	}
 
+	/**
+	 * Returns true if this an instruction to perform a redirect to an external
+	 * URL.
+	 */
 	public boolean isExternalRedirect() {
 		return viewSelection instanceof ExternalRedirect;
 	}
 
+	/**
+	 * Returns true if this is an instruction to launch an entirely new
+	 * (independent) flow execution.
+	 */
 	public boolean isFlowRedirect() {
 		return viewSelection instanceof FlowRedirect;
 	}
-	
+
 	public boolean equals(Object o) {
 		if (!(o instanceof ResponseInstruction)) {
 			return false;
 		}
 		ResponseInstruction other = (ResponseInstruction)o;
-		if (flowExecutionKey != null) {
-			return flowExecutionKey.equals(other.getFlowExecutionKey()) && viewSelection.equals(other.viewSelection);
-		} else {
+		if (getFlowExecutionKey() != null) {
+			return getFlowExecutionKey().equals(other.getFlowExecutionKey())
+					&& viewSelection.equals(other.viewSelection);
+		}
+		else {
 			return other.getFlowExecutionKey() == null && viewSelection.equals(other.viewSelection);
 		}
 	}
-	
+
 	public int hashCode() {
 		int hashCode = viewSelection.hashCode();
-		if (flowExecutionKey != null) {
-			hashCode += flowExecutionKey.hashCode();
+		if (getFlowExecutionKey() != null) {
+			hashCode += getFlowExecutionKey().hashCode();
 		}
 		return hashCode;
 	}
-	
+
 	public String toString() {
-		return new ToStringCreator(this).append("flowExecutionKey", flowExecutionKey).append("flowExecutionContext",
-				flowExecutionContext).append("viewSelection", viewSelection).toString();
+		return new ToStringCreator(this).append("flowExecutionContext", flowExecutionContext).append("viewSelection",
+				viewSelection).toString();
 	}
 }

@@ -115,10 +115,12 @@ public class FlowAssembler {
 	public void assembleFlow() {
 		flowBuilder.init(flowId, flowAttributes);
 		flowBuilder.buildVariables();
+		flowBuilder.buildStartActions();
 		flowBuilder.buildInputMapper();
 		flowBuilder.buildInlineFlows();
 		flowBuilder.buildStates();
 		flowBuilder.buildGlobalTransitions();
+		flowBuilder.buildEndActions();
 		flowBuilder.buildOutputMapper();
 		flowBuilder.buildExceptionHandlers();
 		flowBuilder.dispose();

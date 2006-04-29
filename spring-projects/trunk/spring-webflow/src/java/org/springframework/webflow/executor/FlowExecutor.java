@@ -75,8 +75,7 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured retrieving the current
 	 * response instruction
 	 */
-	public ResponseInstruction getCurrentResponseInstruction(Serializable conversationId, ExternalContext context)
-			throws FlowException;
+	public ResponseInstruction refresh(Serializable conversationId, ExternalContext context) throws FlowException;
 
 	/**
 	 * Returns the current response instruction for the flow execution. This is
@@ -90,6 +89,5 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured retrieving the current
 	 * response instruction
 	 */
-	public ResponseInstruction getCurrentResponseInstruction(FlowExecutionKey flowExecutionKey, ExternalContext context)
-			throws FlowException;
+	public ResponseInstruction refresh(FlowExecutionKey flowExecutionKey, ExternalContext context) throws FlowException;
 }

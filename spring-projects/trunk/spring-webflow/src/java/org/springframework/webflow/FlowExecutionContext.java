@@ -63,13 +63,4 @@ public interface FlowExecutionContext extends FlowExecutionStatistics {
 	 * executing
 	 */
 	public FlowSession getActiveSession() throws IllegalStateException;
-	
-	/**
-	 * Returns the current view selection for this flow execution.  Returns a 
-	 * non-null value when this flow is paused waiting for user input.  The 
-	 * current view selection is the object representing the last response
-	 * that has been issued to the user participating in this execution.
-	 * @return the current view selection, may be null
-	 */
-	public ViewSelection getCurrentViewSelection();
 }

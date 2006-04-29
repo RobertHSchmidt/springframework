@@ -4,56 +4,47 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.Event;
 import org.springframework.webflow.samples.numberguess.MastermindGame.GameData;
+import org.springframework.webflow.samples.numberguess.MastermindGame.GuessResult;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class MastermindGameTests extends TestCase {
+
+	MastermindGame action = new MastermindGame();
+	
+	protected void setUp() {
+		action = new MastermindGame();
+	}
+	
 	public void testGuessNoInputProvided() throws Exception {
-		MockRequestContext context = new MockRequestContext();
-		MastermindGame action = new MastermindGame();
-		Event result = action.guess(context);
-		assertEquals("invalidInput", result.getId());
+		GuessResult result = action.makeGuess(null);
+		assertEquals(GuessResult.INVALID, result);
 	}
 
 	public void testGuessInputInvalidLength() throws Exception {
-		MockRequestContext context = new MockRequestContext();
-		context.putRequestParameter("guess", "123");
-		MastermindGame action = new MastermindGame();
-		Event result = action.guess(context);
-		assertEquals("invalidInput", result.getId());
+		GuessResult result = action.makeGuess("123");
+		assertEquals(GuessResult.INVALID, result);
 	}
 
 	public void testGuessInputNotAllDigits() throws Exception {
-		MockRequestContext context = new MockRequestContext();
-		context.putRequestParameter("guess", "12AB");
-		MastermindGame action = new MastermindGame();
-		Event result = action.guess(context);
-		assertEquals("invalidInput", result.getId());
+		GuessResult result = action.makeGuess("12AB");
+		assertEquals(GuessResult.INVALID, result);
 	}
 
 	public void testGuessInputNotUniqueDigits() throws Exception {
-		MockRequestContext context = new MockRequestContext();
-		context.putRequestParameter("guess", "1111");
-		MastermindGame action = new MastermindGame();
-		Event result = action.guess(context);
-		assertEquals("invalidInput", result.getId());
+		GuessResult result = action.makeGuess("1111");
+		assertEquals(GuessResult.INVALID, result);
 	}
 
 	public void testGuessRetry() throws Exception {
-		MockRequestContext context = new MockRequestContext();
-		context.putRequestParameter("guess", "1234");
-		MastermindGame action = new MastermindGame();
-		Event result = action.guess(context);
-		assertEquals("retry", result.getId());
+		GuessResult result = action.makeGuess("1234");
+		assertEquals(GuessResult.WRONG, result);
 	}
 
 	public void testGuessCorrect() throws Exception {
-		MockRequestContext context = new MockRequestContext();
-		MastermindGame action = new MastermindGame();
-		Event result = action.guess(context);
+		GuessResult result = action.makeGuess(null);
+		assertEquals(GuessResult.INVALID, result);
 		GameData data = action.getData();
-		String answer = data.getAnswer();
-		context.putRequestParameter("guess", answer);
-		result = action.guess(context);
-		assertEquals("correct", result.getId());
+		result = action.makeGuess(data.getAnswer());
+		assertEquals(GuessResult.CORRECT, result);
 	}
 }

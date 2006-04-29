@@ -63,6 +63,7 @@ Package org.springframework.webflow.execution
 * Simplified the ConditionalFlowExecutionListenerLoader configuration interface.
 * Refined the FlowExecutionListener interface, improving the sessionStarting and eventSignaled method signatures.
 * Fixed a bug in ContinuationFlowExecutionRepository related to conversation scope restoration (which could cause a NPE).
+* Fixed a bug in FlowExecutionImpl related to nested exception handling.
 * Added an 'input' Attribute argument to the FlowExecution.start operation, for passing input into a starting
   flow execution in a consistent manner.
 * Added support for tracking the "currentViewSelection" of a paused flow execution;

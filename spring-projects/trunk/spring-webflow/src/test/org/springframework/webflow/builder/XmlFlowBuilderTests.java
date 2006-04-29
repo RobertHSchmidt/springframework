@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.builder;
 
+import java.math.BigDecimal;
+
 import junit.framework.TestCase;
 
 import org.springframework.core.io.ClassPathResource;
@@ -63,8 +65,9 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals("actionState1", flow.getStartState().getId());
 		assertEquals(14, flow.getStateIds().length);
 
-		assertEquals(0, flow.getStartActionList().size());
 		assertEquals(5, flow.getVariables().length);
+		assertEquals(1, flow.getStartActionList().size());
+		assertEquals(1, flow.getEndActionList().size());
 		assertEquals(1, flow.getExceptionHandlerSet().size());
 		assertTrue(flow.getExceptionHandlerSet().toArray()[0] instanceof TransitionExecutingStateExceptionHandler);
 
@@ -80,6 +83,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertTrue(actionState1.getTransitionSet().transitionMatches(context));
 		Transition transition = actionState1.getRequiredTransition(context);
 		assertEquals("viewState1", getTargetStateId(transition));
+		assertEquals(new BigDecimal("123.45"), transition.getAttributeMap().get("propBigDecimal"));
 		context.setLastEvent(createEvent("action2Name.event2"));
 		assertTrue(actionState1.getTransitionSet().transitionMatches(context));
 		transition = actionState1.getRequiredTransition(context);
@@ -164,8 +168,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(inlineFlow);
 		EndState endState3 = (EndState)inlineFlow.getState("end");
 		assertNotNull(endState3);
-		//assertEquals(1, endState3.getOutputAttributeExpressions().length);
-		//assertEquals("foo", endState3.getOutputAttributeExpressions()[0]);
+		assertNotNull(endState3.getOutputMapper());
 	}
 
 	protected String getTargetStateId(Transition transition) {

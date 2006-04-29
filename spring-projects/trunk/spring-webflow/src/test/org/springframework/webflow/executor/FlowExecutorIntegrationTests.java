@@ -93,7 +93,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 		ExternalContext context = new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
 				new MockHttpServletResponse());
 		ResponseInstruction response = flowExecutor.launch("flow", context);
-		ResponseInstruction response2 = flowExecutor.getCurrentResponseInstruction(response.getFlowExecutionKey()
+		ResponseInstruction response2 = flowExecutor.refresh(response.getFlowExecutionKey()
 				.getConversationId(), context);
 		assertEquals(response, response2);
 	}
@@ -147,7 +147,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 				new MockHttpServletResponse());
 		flowExecutor.launch("flow", context);
 		try {
-			flowExecutor.getCurrentResponseInstruction("bogus", context);
+			flowExecutor.refresh("bogus", context);
 			fail("Should've failed");
 		}
 		catch (NoSuchConversationException e) {

@@ -19,8 +19,8 @@ import java.io.File;
 
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.FlowBuilder;
+import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.XmlFlowBuilder;
 import org.xml.sax.EntityResolver;
 

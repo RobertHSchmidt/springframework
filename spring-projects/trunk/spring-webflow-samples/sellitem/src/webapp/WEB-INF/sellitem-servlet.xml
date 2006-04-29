@@ -10,17 +10,12 @@
 	-->
 	<bean name="/pos.htm" class="org.springframework.webflow.executor.mvc.FlowController">
 		<property name="flowExecutor" ref="flowExecutor"/>
-		<!--
-			Set cacheSeconds to a small, non 0, value so you can do ctrl-N to open an new
-			window and experiment with the continuations stuff.
-		-->
-		<property name="cacheSeconds" value="5"/>
 	</bean>
 
 	<!-- Launches new flow executions and resumes existing executions. -->	
 	<bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
 		<constructor-arg ref="repositoryFactory"/>
-		<property name="alwaysRedirectOnPause" value="true"/>
+		<property name="redirectOnPause" value="FLOW_EXECUTION"/>
 	</bean>
 
 	<!-- Creates, saves, and restores managed flow executions -->
@@ -34,24 +29,6 @@
 	<!-- Creates the registry of flow definitions for this application -->
 	<bean name="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
 		<property name="flowLocations" value="/WEB-INF/sellitem.xml"/>
-	</bean>
-
-    <bean id="mbeanServerFactory" class="org.springframework.jmx.support.MBeanServerFactoryBean">
-        <property name="locateExistingServerIfPossible" value="true"/>
-    </bean>
-
-	<!-- Automatically exports the created flowRegistry as an MBean -->
-	<bean id="mbeanExporter" class="org.springframework.jmx.export.MBeanExporter">
-		<property name="beans">
-			<map>
-				<entry key="spring-webflow:name=flowRegistry" value-ref="flowRegistry"/>
-			</map>
-		</property>
-		<property name="assembler">
-			<bean class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler">
-				<property name="managedInterfaces" value="org.springframework.webflow.registry.FlowRegistryMBean"/>
-			</bean>
-		</property>
 	</bean>
 
 	<!-- Maps flow view-state view names to JSP templates -->

@@ -108,13 +108,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	private String flowId;
 
 	/**
-	 * Returns the current view selection if this flow is paused.  May be null
-	 * if the flow has not yet been started, has ended, or is currently
-	 * processing an event. 
-	 */
-	private ViewSelection currentViewSelection;
-	
-	/**
 	 * Default constructor required for externalizable serialization. Should NOT
 	 * be called programmatically.
 	 */
@@ -171,10 +164,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return scope;
 	}
 
-	public ViewSelection getCurrentViewSelection() {
-		return currentViewSelection;
-	}
-	
 	// methods implementing FlowExecution
 
 	public ViewSelection start(AttributeMap input, ExternalContext externalContext) throws StateException {
@@ -219,6 +208,28 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
+	
+	public ViewSelection refresh(ExternalContext externalContext) throws StateException {
+		assertActive();
+		if (logger.isDebugEnabled()) {
+			logger.debug("Resuming this execution for refresh");
+		}
+		FlowExecutionControlContext context = createControlContext(externalContext);
+		getListeners().fireRequestSubmitted(context);
+		try {
+			try {
+				resume(context);
+				throw new UnsupportedOperationException("Refresh not yet supported");
+			}
+			catch (StateException e) {
+				return pause(context, handleException(e, context));
+			}
+		}
+		finally {
+			getListeners().fireRequestProcessed(context);
+		}
+	}
+
 	/**
 	 * Resume this flow execution.
 	 * @param context the state request context
@@ -236,7 +247,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 */
 	protected ViewSelection pause(FlowExecutionControlContext context, ViewSelection selectedView) {
 		if (!isActive()) {
-			currentViewSelection = null;
 			return selectedView;
 		}
 		getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
@@ -249,7 +259,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 				logger.debug("Paused to wait for user input");
 			}
 		}
-		currentViewSelection = selectedView.unwrap();
 		return selectedView;
 	}
 
@@ -444,7 +453,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		flowId = (String)in.readObject();
 		scope = (AttributeMap)in.readObject();
 		flowSessions = (LinkedList)in.readObject();
-		currentViewSelection = (ViewSelection)in.readObject();
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
@@ -456,7 +464,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		out.writeObject(scope);
 		out.writeObject(flowSessions);
-		out.writeObject(currentViewSelection);
 	}
 
 	public synchronized void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader) {

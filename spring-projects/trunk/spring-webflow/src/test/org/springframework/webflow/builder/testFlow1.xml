@@ -10,6 +10,10 @@
 	<var name="attribute5"/>
 	<var name="attribute6" bean="attribute5" scope="request"/>
 	<var name="items" class="java.util.ArrayList"/>
+
+	<start-actions>
+		<action bean="action1"/>
+	</start-actions>
 	
 	<action-state id="actionState1">
 		<attribute name="propBoolean" value="true" type="boolean"/>
@@ -106,7 +110,11 @@
 	<global-transitions>
 		<transition on-exception="org.springframework.webflow.builder.MyCustomException" to="endState1"/>
 	</global-transitions>
-	
+
+	<end-actions>
+		<action bean="action1"/>
+	</end-actions>
+		
 	<import resource="testFlow1Context.xml"/>
 	
 	<inline-flow id="inline-flow">

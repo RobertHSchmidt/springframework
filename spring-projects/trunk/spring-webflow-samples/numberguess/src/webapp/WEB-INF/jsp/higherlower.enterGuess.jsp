@@ -3,7 +3,7 @@
 <div id="content">
 	<div id="insert"><img src="images/webflow-logo.jpg"/></div>
 	<h2>The Number Guess Game</h2>
-	<h3>Guess a number between 1 and 100!</h3>
+	<h3>Guess a number between 0 and 100!</h3>
 	<hr>
 	<form name="guessForm" method="post">
 		<table>
@@ -13,7 +13,7 @@
 			</tr>
 			<tr class="readOnly">
 				<td>Your last guess was:</td>
-				<td><b><i>${game.lastGuessResult}</b></i></td>
+				<td><b><i>${guessResult.label}</b></i></td>
 			</tr>
 		    <tr>
 		    	<td>Guess:</td>

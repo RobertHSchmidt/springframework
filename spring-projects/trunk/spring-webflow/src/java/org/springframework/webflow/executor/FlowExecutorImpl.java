@@ -125,7 +125,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * @param repositoryFactory the repository factory
 	 */
 	public FlowExecutorImpl(FlowExecutionRepositoryFactory repositoryFactory) {
-		Assert.notNull(repositoryFactory, "The repository factory is required");
+		Assert.notNull(repositoryFactory,
+				"The repository factory for creating, saving, and restoring flow executions is required");
 		this.repositoryFactory = repositoryFactory;
 	}
 
@@ -189,19 +190,19 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public ResponseInstruction getCurrentResponseInstruction(Serializable conversationId, ExternalContext context)
+	public ResponseInstruction refresh(Serializable conversationId, ExternalContext context)
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey flowExecutionKey = repository.getCurrentFlowExecutionKey(conversationId);
 		FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
-		return new ResponseInstruction(flowExecutionKey, flowExecution, flowExecution.getCurrentViewSelection());
+		return new ResponseInstruction(flowExecutionKey, flowExecution, flowExecution.refresh(context));
 	}
 
-	public ResponseInstruction getCurrentResponseInstruction(FlowExecutionKey flowExecutionKey, ExternalContext context)
+	public ResponseInstruction refresh(FlowExecutionKey flowExecutionKey, ExternalContext context)
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
-		return new ResponseInstruction(flowExecutionKey, flowExecution, flowExecution.getCurrentViewSelection());
+		return new ResponseInstruction(flowExecutionKey, flowExecution, flowExecution.refresh(context));
 	}
 
 	/**

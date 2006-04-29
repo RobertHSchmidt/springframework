@@ -42,14 +42,14 @@ public class HigherLowerGame implements Serializable {
 		return answer;
 	}
 
-	public long getGameDuration() {
+	public int getGuesses() {
+		return guesses;
+	}
+
+	public long getDuration() {
 		Calendar now = Calendar.getInstance();
 		long durationMilliseconds = now.getTime().getTime() - start.getTime().getTime();
 		return durationMilliseconds / 1000;
-	}
-
-	public int getGuesses() {
-		return guesses;
 	}
 
 	public GuessResult makeGuess(int guess) {

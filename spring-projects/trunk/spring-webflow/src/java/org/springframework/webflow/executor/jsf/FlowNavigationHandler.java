@@ -224,13 +224,14 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 		}
 		else if (selectedView instanceof FlowExecutionRedirect) {
 			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(holder.getFlowExecutionKey(), context);
+			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(holder.getFlowExecutionKey(), holder
+					.getFlowExecution(), context);
 			sendRedirect(flowExecutionUrl, facesContext);
 		}
 		else if (selectedView instanceof ConversationRedirect) {
 			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-			String conversationUrl = argumentExtractor.createConversationUrl(holder.getFlowExecutionKey()
-					.getConversationId(), context);
+			String conversationUrl = argumentExtractor.createConversationUrl(holder.getFlowExecutionKey(), holder
+					.getFlowExecution(), context);
 			sendRedirect(conversationUrl, facesContext);
 		}
 		else if (selectedView instanceof ExternalRedirect) {

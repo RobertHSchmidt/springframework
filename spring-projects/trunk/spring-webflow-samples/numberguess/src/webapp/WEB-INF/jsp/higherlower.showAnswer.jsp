@@ -14,7 +14,7 @@
 	</tr>
 	<tr>
 		<td>Elapsed time in seconds:</td>
-		<td>${game.durationSeconds}</td>
+		<td>${game.duration}</td>
 	</tr>
 	<tr>
 		<td colspan="2" class="buttonBar">

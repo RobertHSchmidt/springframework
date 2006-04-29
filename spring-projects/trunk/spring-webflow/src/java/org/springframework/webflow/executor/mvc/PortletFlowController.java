@@ -180,7 +180,7 @@ public class PortletFlowController extends AbstractController implements Initial
 					getConversationAttributeName(conversationId));
 			// rely on current response instruction for active conversation
 			if (responseInstruction == null) {
-				responseInstruction = flowExecutor.getCurrentResponseInstruction(conversationId, context);
+				responseInstruction = flowExecutor.refresh(conversationId, context);
 			}
 			return toModelAndView(responseInstruction);
 		}

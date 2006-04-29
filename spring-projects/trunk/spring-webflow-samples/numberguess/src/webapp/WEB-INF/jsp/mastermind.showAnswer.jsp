@@ -10,7 +10,7 @@
 	</tr>
 	<tr>
 		<td>Elapsed time in seconds:</td>
-		<td>${game.data.durationSeconds}</td>
+		<td>${game.data.duration}</td>
 	</tr>
 	<tr>
 		<td>Answer:</td>

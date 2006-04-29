@@ -4,5 +4,5 @@
 
 <beans>
 	<!-- note: masterMind game is a prototype, it holds caller state in flow scope as instance variables -->
-	<bean id="mastermindGame" class="org.springframework.webflow.samples.numberguess.MastermindGame" singleton="false"/>
+	<bean id="game" class="org.springframework.webflow.samples.numberguess.MastermindGame" singleton="false"/>
 </beans>

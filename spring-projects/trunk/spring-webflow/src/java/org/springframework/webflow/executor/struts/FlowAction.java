@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.executor.struts;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -116,9 +115,9 @@ import org.springframework.webflow.support.FlowRedirect;
  * instance {@link FlowLocator} named {@link #FLOW_LOCATOR_BEAN_NAME}. If the
  * FlowLocator dependency is resolved, this class will automatically configure a
  * default flow executor implementation suitable for a Struts environment (see
- * {@link #setFlowLocator(FlowLocator)}). In addition, you may choose
- * to simply inject a FlowLocator directly if the FlowExecutor defaults meet
- * your requirements.
+ * {@link #setFlowLocator(FlowLocator)}). In addition, you may choose to simply
+ * inject a FlowLocator directly if the FlowExecutor defaults meet your
+ * requirements.
  * </ul>
  * <p>
  * The benefits here are substantial: developers now have a powerful web flow
@@ -260,13 +259,14 @@ public class FlowAction extends ActionSupport {
 		}
 		else if (response.isFlowExecutionRedirect()) {
 			// redirect to active flow execution URL
-			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), context);
+			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
+					.getFlowExecutionContext(), context);
 			return new ActionForward(flowExecutionUrl, true);
 		}
 		else if (response.isConversationRedirect()) {
 			// redirect to active conversation URL
-			Serializable conversationId = response.getFlowExecutionKey().getConversationId();
-			String conversationUrl = argumentExtractor.createConversationUrl(conversationId, context);
+			String conversationUrl = argumentExtractor.createConversationUrl(response.getFlowExecutionKey(), response
+					.getFlowExecutionContext(), context);
 			return new ActionForward(conversationUrl, true);
 		}
 		else if (response.isExternalRedirect()) {

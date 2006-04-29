@@ -274,7 +274,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * location, using the provided factory to access externally managed flow
 	 * artifacts.
 	 * @param location the location of the xml-based flow definition resource
-	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
+	 * @param flowServiceLocator the locator for services needed by this builder
+	 * to build its Flow
 	 */
 	public XmlFlowBuilder(Resource location, FlowServiceLocator flowServiceLocator) {
 		super(flowServiceLocator);
@@ -666,8 +667,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		TransitionCriteria executionCriteria = TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element));
 		TargetStateResolver targetStateResolver = (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
 				element.getAttribute(TO_ATTRIBUTE));
-		return getFlowArtifactFactory()
-				.createTransition(matchingCriteria, executionCriteria, targetStateResolver, null);
+		return getFlowArtifactFactory().createTransition(matchingCriteria, executionCriteria, targetStateResolver,
+				parseAttributes(element));
 	}
 
 	private ViewSelector parseViewSelector(String stateType, Element element) {

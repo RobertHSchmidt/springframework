@@ -107,7 +107,7 @@ public class FlowRequestHandler {
 				return response;
 			}
 			else {
-				ResponseInstruction response = flowExecutor.getCurrentResponseInstruction(flowExecutionKey, context);
+				ResponseInstruction response = flowExecutor.refresh(flowExecutionKey, context);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Refreshing [current flow execution] " + response);
 				}
@@ -117,7 +117,7 @@ public class FlowRequestHandler {
 		else {
 			if (argumentExtractor.isConversationIdPresent(context)) {
 				Serializable conversationId = argumentExtractor.extractConversationId(context);
-				ResponseInstruction response = flowExecutor.getCurrentResponseInstruction(conversationId, context);
+				ResponseInstruction response = flowExecutor.refresh(conversationId, context);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning [current conversation] " + response);
 				}

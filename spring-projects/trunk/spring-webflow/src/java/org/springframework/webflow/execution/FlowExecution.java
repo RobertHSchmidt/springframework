@@ -104,4 +104,15 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * resumed flow execution during event processing
 	 */
 	public ViewSelection signalEvent(EventId eventId, ExternalContext context) throws StateException;
+
+	/**
+	 * Refresh this flow execution, asking the current view selection to be reconstituted to 
+	 * support a reissuing the response.  This is idempotent operation that may be safely called 
+	 * on a paused execution.
+	 * @param context the context in which the event occured
+	 * @return the current view selection for this flow execution
+	 * @throws StateException if an exception was thrown within a state of the
+	 * resumed flow execution during event processing
+	 */
+	public ViewSelection refresh(ExternalContext context) throws StateException;
 }

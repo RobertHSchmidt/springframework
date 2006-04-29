@@ -93,7 +93,8 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 			return null;
 		}
 
-		public void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader) {
+		public ViewSelection refresh(ExternalContext context) throws StateException {
+			return null;
 		}
 
 		public FlowExecutionListeners getListeners() {
@@ -126,10 +127,6 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 
 		public boolean isRootFlowActive() {
 			return false;
-		}
-
-		public ViewSelection getCurrentViewSelection() {
-			return null;
-		}
+		}		
 	}
 }

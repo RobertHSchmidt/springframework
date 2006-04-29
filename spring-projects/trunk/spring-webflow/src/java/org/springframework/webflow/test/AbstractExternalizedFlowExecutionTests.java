@@ -18,9 +18,9 @@ package org.springframework.webflow.test;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
-import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
+import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 
 /**

@@ -170,7 +170,7 @@ public class FlowExecutorArgumentExtractor {
 	public FlowExecutionKeyFormatter getFlowExecutionKeyFormatter() {
 		return flowExecutionKeyFormatter;
 	}
-	
+
 	/**
 	 * Sets the strategy for converting an encoded string to a
 	 * {@link FlowExecutionKey} and back.
@@ -483,11 +483,11 @@ public class FlowExecutorArgumentExtractor {
 	 * @param context the external context
 	 * @return the relative conversation URL path
 	 */
-	public String createFlowExecutionUrl(FlowExecutionKey flowExecutionKey, ExternalContext context) {
+	public String createFlowExecutionUrl(FlowExecutionKey key, FlowExecutionContext flowExecution, ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
 		flowExecutionUrl.append(context.getDispatcherPath());
 		flowExecutionUrl.append('?');
-		appendQueryParameter(flowExecutionKeyParameterName, format(flowExecutionKey), flowExecutionUrl);
+		appendQueryParameter(flowExecutionKeyParameterName, format(key), flowExecutionUrl);
 		return flowExecutionUrl.toString();
 	}
 
@@ -500,11 +500,11 @@ public class FlowExecutorArgumentExtractor {
 	 * @param context the external context
 	 * @return the relative conversation URL path
 	 */
-	public String createConversationUrl(Serializable conversationId, ExternalContext context) {
+	public String createConversationUrl(FlowExecutionKey key, FlowExecutionContext flowExecution, ExternalContext context) {
 		StringBuffer conversationUrl = new StringBuffer();
 		conversationUrl.append(context.getDispatcherPath());
 		conversationUrl.append('?');
-		appendQueryParameter(conversationIdParameterName, conversationId, conversationUrl);
+		appendQueryParameter(conversationIdParameterName, key.getConversationId(), conversationUrl);
 		return conversationUrl.toString();
 	}
 
@@ -588,7 +588,7 @@ public class FlowExecutorArgumentExtractor {
 	 * @param value the parameter value
 	 * @param targetUrl the target url
 	 */
-	private void appendQueryParameter(Object key, Object value, StringBuffer targetUrl) {
+	protected void appendQueryParameter(Object key, Object value, StringBuffer targetUrl) {
 		String encodedKey = urlEncode(key.toString());
 		String encodedValue = encodeValue(value);
 		targetUrl.append(encodedKey).append('=').append(encodedValue);
@@ -628,7 +628,8 @@ public class FlowExecutorArgumentExtractor {
 		}
 		catch (InvalidFormatException e) {
 			throw new FlowExecutorArgumentExtractionException(
-					"Unable to extract the flowExecutionKey argument: the provided key '" + encodedKey + "' is invalid", e);
+					"Unable to extract the flowExecutionKey argument: the provided key '" + encodedKey + "' is invalid",
+					e);
 		}
-	}	
+	}
 }

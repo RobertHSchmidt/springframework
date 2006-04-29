@@ -22,9 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.action.MultiAction;
+import org.springframework.core.enums.StaticLabeledEnum;
 
 /**
  * Action that encapsulates logic for the number guess sample flow.
@@ -32,7 +30,7 @@ import org.springframework.webflow.action.MultiAction;
  * @author Keri Donald
  * @author Keith Donald
  */
-public class MastermindGame extends MultiAction {
+public class MastermindGame implements Serializable {
 
 	private GameData data = new GameData();
 	
@@ -44,19 +42,18 @@ public class MastermindGame extends MultiAction {
 		return data.getGuessHistory();
 	}
 	
-	public Event guess(RequestContext context) throws Exception {
-		String guess = context.getRequestParameters().get("guess");
+	public GuessResult makeGuess(String guess) {
 		if (guess == null || guess.length() != 4) {
-			return result("invalidInput");
+			return GuessResult.INVALID;
 		}
 		for (int i = 0; i < 4; i++) {
 			if (!Character.isDigit(guess.charAt(i))) {
-				return result("invalidInput");
+				return GuessResult.INVALID;
 			}
 			int digit = Character.getNumericValue(guess.charAt(i));
 			for (int j = 0; j < i; j++) {
 				if (digit == Character.getNumericValue(guess.charAt(j))) {
-					return result("invalidInput");
+					return GuessResult.INVALID;
 				}
 			}
 		}
@@ -80,10 +77,9 @@ public class MastermindGame extends MultiAction {
 		if (rightPosition == 4) {
 			Calendar now = Calendar.getInstance();
 			long durationMilliseconds = now.getTime().getTime() - data.start.getTime().getTime();
-			data.durationSeconds = durationMilliseconds / 1000;
-			return result("correct");
+			return GuessResult.CORRECT;
 		} else {
-			return result("retry");
+			return GuessResult.WRONG;
 		}
 	}
 
@@ -100,8 +96,6 @@ public class MastermindGame extends MultiAction {
 
 		private List guessHistory = new ArrayList();
 		
-		private long durationSeconds = -1;
-
 		// property accessors for JSTL EL
 
 		public GameData() {
@@ -131,12 +125,14 @@ public class MastermindGame extends MultiAction {
 			return answer;
 		}
 
-		public long getDurationSeconds() {
-			return durationSeconds;
-		}
-
 		public int getGuesses() {
 			return guessHistory.size();
+		}
+
+		public long getDuration() {
+			Calendar now = Calendar.getInstance();
+			long durationMilliseconds = now.getTime().getTime() - start.getTime().getTime();
+			return durationMilliseconds / 1000;
 		}
 
 		public Collection getGuessHistory() {
@@ -150,7 +146,7 @@ public class MastermindGame extends MultiAction {
 			return (GuessData)guessHistory.get(guessHistory.size() - 1);
 		}
 		
-		public class GuessData {
+		public class GuessData implements Serializable {
 			private String guess;
 			
 			private int rightPosition;
@@ -175,5 +171,17 @@ public class MastermindGame extends MultiAction {
 				return rightPosition;
 			}	
 		}
-	}	
+	}
+	
+	public static class GuessResult extends StaticLabeledEnum {
+		public static final GuessResult INVALID = new GuessResult(0, "Invalid");
+
+		public static final GuessResult CORRECT = new GuessResult(1, "Correct");
+
+		public static final GuessResult WRONG = new GuessResult(2, "Wrong");
+
+		private GuessResult(int code, String label) {
+			super(code, label);
+		}
+	}
 }
