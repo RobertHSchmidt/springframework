@@ -1,5 +1,6 @@
 package org.springframework.webflow.executor.jsf;
 
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
@@ -19,13 +20,25 @@ public class FlowNavigationHandlerArgumentExtractor extends FlowExecutorArgument
 	 */
 	protected static final String FLOW_ID_PREFIX = "flowId:";
 
+	public boolean isEventIdPresent(ExternalContext context) {
+		return StringUtils.hasText(getOutcome(context));
+	}
+
 	/*
 	 * Overidden to return the eventId from the action outcome string.
 	 * @see org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor#extractEventId(org.springframework.webflow.ExternalContext)
 	 */
 	public EventId extractEventId(ExternalContext context) throws IllegalArgumentException {
-		JsfExternalContext jsf = (JsfExternalContext)context;
-		return new EventId(jsf.getOutcome());
+		return new EventId(getOutcome(context));
+	}
+
+	public boolean isFlowIdPresent(ExternalContext context) {
+		String outcome = getOutcome(context);
+		if (outcome != null && outcome.startsWith(FLOW_ID_PREFIX)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/*
@@ -33,13 +46,10 @@ public class FlowNavigationHandlerArgumentExtractor extends FlowExecutorArgument
 	 * @see org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor#extractFlowId(org.springframework.webflow.ExternalContext)
 	 */
 	public String extractFlowId(ExternalContext context) {
-		JsfExternalContext jsf = (JsfExternalContext)context;
-		String outcome = jsf.getOutcome();
-		if (outcome != null && outcome.startsWith(FLOW_ID_PREFIX)) {
-			return outcome.substring(FLOW_ID_PREFIX.length());
-		}
-		else {
-			return null;
-		}
+		return getOutcome(context).substring(FLOW_ID_PREFIX.length());
+	}
+	
+	private String getOutcome(ExternalContext context) {
+		return ((JsfExternalContext)context).getOutcome();
 	}
 }
