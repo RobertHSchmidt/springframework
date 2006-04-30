@@ -83,10 +83,8 @@ public abstract class RedirectType extends StaticLabeledEnum {
 	}
 
 	/**
-	 * Factory method that applies this redirect type to the selected
-	 * application view.
-	 * @param applicationView the selected application view
-	 * @return the returned, processed view selection
+	 * Factory method that makes the view selection for this redirect type.
+	 * @return the corresponding view selection
 	 */
 	public abstract ViewSelection select();
 }

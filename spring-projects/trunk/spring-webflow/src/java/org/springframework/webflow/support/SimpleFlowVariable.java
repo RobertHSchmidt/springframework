@@ -39,7 +39,7 @@ public class SimpleFlowVariable extends FlowVariable {
 	/**
 	 * Creates a new flow variable.
 	 * @param name the variable name
-	 * @param class the concrete variable class
+	 * @param variableClass the concrete variable class
 	 */
 	public SimpleFlowVariable(String name, Class variableClass) {
 		this(name, variableClass, null);
@@ -48,7 +48,7 @@ public class SimpleFlowVariable extends FlowVariable {
 	/**
 	 * Creates a new flow variable.
 	 * @param name the variable name
-	 * @param class the concrete variable class
+	 * @param variableClass the concrete variable class
 	 * @param scope the variable scope
 	 */
 	public SimpleFlowVariable(String name, Class variableClass, ScopeType scope) {

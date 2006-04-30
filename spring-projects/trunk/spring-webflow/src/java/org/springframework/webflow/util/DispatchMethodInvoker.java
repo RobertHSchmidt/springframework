@@ -53,22 +53,20 @@ public class DispatchMethodInvoker {
 				return target.getClass().getMethod(methodName, parameterTypes);
 			}
 			catch (NoSuchMethodException e) {
-				throw new MethodLookupException("Unable to resolve dispatch method with name '"
-						+ methodName + "' and signature '" + getSignatureString(methodName)
-						+ "'; make sure the method name is correct "
-						+ "and such a method is defined on targetClass " + target.getClass().getName(), e);
+				throw new MethodLookupException("Unable to resolve dispatch method with name '" + methodName
+						+ "' and signature '" + getSignatureString(methodName)
+						+ "'; make sure the method name is correct " + "and such a method is defined on targetClass "
+						+ target.getClass().getName(), e);
 			}
 		}
 	};
 
 	/**
 	 * Creates a dispatch method invoker.
-	 * @param parameterTypes the parameter types defining the signature of the
-	 * dispatch methods
-	 * @param returnType the return type of the dispatch methods, use null for
-	 * void
+	 * @param target the target to dispatch to.
+	 * @param parameterTypes the parameter types defining the argument signature
+	 * of the dispatch methods
 	 * @param typeCaption a description of the method type
-	 * @see #setTarget(Object)
 	 */
 	public DispatchMethodInvoker(Object target, Class[] parameterTypes) {
 		Assert.notNull(target, "The target of a dispatch method invocation is required");
