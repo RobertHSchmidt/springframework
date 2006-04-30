@@ -217,7 +217,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Adds a view state to the flow built by this builder.
 	 * @param stateId the state identifier
 	 * @param viewName the string-encoded view selector
-	 * @param transition the transitions (path) out of this state
+	 * @param transitions the transitions (path) out of this state
 	 * @return the fully constructed view state instance
 	 */
 	protected State addViewState(String stateId, String viewName, Transition[] transitions) {
@@ -231,7 +231,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param entryActions the actions to execute when the state is entered
 	 * @param viewSelector the view selector that will make the view selection
 	 * when the state is entered
-	 * @param transition the transitions (path) out of this state
+	 * @param transitions the transitions (path) out of this state
 	 * @param exceptionHandlers any exception handlers to attach to the state
 	 * @param exitActions the actions to execute when the state exits
 	 * @param attributes attributes to assign to the state that may be used to
@@ -288,7 +288,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Adds an action state to the flow built by this builder.
 	 * @param stateId the state identifier
 	 * @param entryActions any generic entry actions to add to the state
-	 * @param action the actions to execute in a chain when the state is entered
+	 * @param actions the actions to execute in a chain when the state is entered
 	 * @param transitions the transitions (paths) out of this state
 	 * @param exceptionHandlers the exception handlers to handle exceptions
 	 * thrown by the actions
@@ -356,7 +356,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param subflow the flow that will act as the subflow
 	 * @param attributeMapper the mapper to map subflow input and output
 	 * attributes
-	 * @param transitions the single transition (path) out of the state
+	 * @param transition the single transition (path) out of the state
 	 * @return the fully constructed subflow state instance
 	 */
 	protected State addSubflowState(String stateId, Flow subflow, FlowAttributeMapper attributeMapper,
@@ -498,7 +498,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * signature on the bean associated with the action identifier.
 	 * @param id the action id identifying a arbitrary
 	 * <code>java.lang.Object</code> to be used as an action
-	 * @param method the signature of the method to invoke on the POJO
+	 * @param methodSignature the signature of the method to invoke on the POJO
 	 * @return the adapted bean invoking action
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
@@ -512,7 +512,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * signature on the bean associated with the action identifier.
 	 * @param id the action id identifying a arbitrary
 	 * <code>java.lang.Object</code> to be used as an action
-	 * @param method the signature of the method to invoke on the POJO
+	 * @param methodSignature the signature of the method to invoke on the POJO
 	 * @return the adapted bean invoking action
 	 * @throws FlowArtifactException the action could not be resolved
 	 */
@@ -617,8 +617,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * Creates a new transition.
-	 * @param matchingCriteria
-	 * @param targetStateResolver
+	 * @param matchingCriteria the criteria that determines when the transition matches
+	 * @param targetStateResolver the resolver that calculates the target state of the transition
 	 * @return the transition
 	 */
 	protected Transition transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver) {
@@ -627,10 +627,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * Creates a new transition.
-	 * @param matchingCriteria
-	 * @param targetStateResolver
-	 * @param executionCriteria
-	 * @return
+	 * @param matchingCriteria the criteria that determines when the transition matches
+	 * @param targetStateResolver the resolver that calculates the target state of the transition
+	 * @param executionCriteria the criteria that determines if a matched transition is allowed to execute
+	 * @return the transition
 	 */
 	protected Transition transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver,
 			TransitionCriteria executionCriteria) {

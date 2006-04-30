@@ -35,16 +35,17 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.ViewState;
 
 /**
- * A factory for core web flow elements such as {@link Flow flows}, {@link State states}, 
- * and {@link Transition transitions}.
+ * A factory for core web flow elements such as {@link Flow flows},
+ * {@link State states}, and {@link Transition transitions}.
  * <p>
- * This factory encapsulates the construct of each Flow implementation 
- * as well as each core state type.
- *  
+ * This factory encapsulates the construct of each Flow implementation as well
+ * as each core state type. Subclasses may customize how the core elements are
+ * created, useful for plugging in custom implementations.
+ * 
  * @author Keith Donald
  */
 public class FlowArtifactFactory {
-	
+
 	/**
 	 * Factory method that creates a new {@link Flow} definition object.
 	 * <p>
@@ -60,7 +61,7 @@ public class FlowArtifactFactory {
 	 * @return the initial flow instance, ready for assembly by a FlowBuilder
 	 * @throws FlowArtifactException an exception occured creating the Flow
 	 * instance
-	 */	
+	 */
 	public Flow createFlow(String id, AttributeCollection attributes) throws FlowArtifactException {
 		Flow flow = new Flow(id);
 		flow.getAttributeMap().putAll(attributes);
@@ -242,7 +243,7 @@ public class FlowArtifactFactory {
 		transition.getAttributeMap().putAll(attributes);
 		return transition;
 	}
-	
+
 	private void configureCommonProperties(TransitionableState state, Action[] entryActions, Transition[] transitions,
 			StateExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes) {
 		configureCommonProperties(state, entryActions, exceptionHandlers, attributes);
