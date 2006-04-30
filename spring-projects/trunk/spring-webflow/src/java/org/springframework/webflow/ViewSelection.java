@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow;
 
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 /**
@@ -54,6 +55,11 @@ public abstract class ViewSelection implements Serializable {
 	 * response should be issued.
 	 * @author Keith Donald
 	 */
-	private static class NullViewSelection extends ViewSelection {
+	private static final class NullViewSelection extends ViewSelection {
+		// resolve the singleton instance
+		private Object readResolve() throws ObjectStreamException {
+			return NULL_VIEW;
+		}
 	}
+	
 }

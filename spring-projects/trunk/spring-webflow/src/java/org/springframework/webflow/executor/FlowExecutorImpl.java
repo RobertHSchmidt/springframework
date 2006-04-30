@@ -102,11 +102,9 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * application views after pausing an active flow execution.
 	 * <p>
 	 * This allows the user to participate in the current state of the flow
-	 * execution using a bookmarkable URL. Several different redirect types are
-	 * supported, the default is {@link RedirectType#NONE} indicating no special
-	 * redirect action should be taken.
+	 * execution using a bookmarkable URL.
 	 */
-	private RedirectType redirectOnPause = RedirectType.NONE;
+	private RedirectType redirectOnPause;
 
 	/**
 	 * Create a new flow executor that configures use of the default repository
@@ -142,11 +140,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * Sets the value that indicates if this executor should redirect after
 	 * pausing an active flow execution.
 	 * <p>
-	 * If set to something other than {@link RedirectType#NONE} this executor
-	 * will always trigger a redirect for a selected {@link ApplicationView}.
-	 * <p>
 	 * Setting a redirect type allows the user to participate in the current
-	 * view-state of a conversation at a bookmarkable URL.
+	 * view-state of a conversation at a refreshable URL.
 	 */
 	public void setRedirectOnPause(RedirectType redirectType) {
 		this.redirectOnPause = redirectType;
@@ -232,8 +227,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * @return the view to return to callers
 	 */
 	protected ViewSelection pausedView(ViewSelection selectedView) {
-		if (selectedView instanceof ApplicationView) {
-			return redirectOnPause.process((ApplicationView)selectedView);
+		if (selectedView instanceof ApplicationView && redirectOnPause != null) {
+			return redirectOnPause.select();
 		}
 		else {
 			return selectedView;

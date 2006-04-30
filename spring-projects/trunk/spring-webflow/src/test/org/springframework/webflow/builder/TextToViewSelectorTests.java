@@ -57,16 +57,22 @@ public class TextToViewSelectorTests extends TestCase {
 		ViewSelector selector = (ViewSelector)viewSelector(TextToViewSelector.VIEW_STATE_TYPE, "redirect:myView");
 		RequestContext context = getRequestContext();
 		FlowExecutionRedirect redirect = (FlowExecutionRedirect)selector.makeSelection(context);
-		assertEquals("myView", redirect.getApplicationView().getViewName());
-		assertEquals(5, redirect.getApplicationView().getModel().size());
+		assertSame(redirect, FlowExecutionRedirect.INSTANCE);
+		context.getRequestScope().clear();
+		ApplicationView view = (ApplicationView)selector.makeRefreshSelection(context);
+		assertEquals("myView", view.getViewName());
+		assertEquals(3, view.getModel().size());
 	}
 
 	public void testConversationRedirect() {
 		ViewSelector selector = (ViewSelector)viewSelector(TextToViewSelector.VIEW_STATE_TYPE, "conversationRedirect:myView");
 		RequestContext context = getRequestContext();
 		ConversationRedirect redirect = (ConversationRedirect)selector.makeSelection(context);
-		assertEquals("myView", redirect.getApplicationView().getViewName());
-		assertEquals(5, redirect.getApplicationView().getModel().size());
+		assertSame(redirect, ConversationRedirect.INSTANCE);
+		context.getRequestScope().clear();
+		ApplicationView view = (ApplicationView)selector.makeRefreshSelection(context);
+		assertEquals("myView", view.getViewName());
+		assertEquals(3, view.getModel().size());
 	}
 
 	public void testFlowRedirect() {

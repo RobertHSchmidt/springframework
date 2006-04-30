@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow;
 
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 /**
@@ -40,4 +41,10 @@ public final class NullViewSelector implements ViewSelector, Serializable {
 	public ViewSelection makeSelection(RequestContext context) {
 		return ViewSelection.NULL_VIEW;
 	}
+
+	// resolve the singleton instance
+	private Object readResolve() throws ObjectStreamException {
+		return INSTANCE;
+	}
+	
 }

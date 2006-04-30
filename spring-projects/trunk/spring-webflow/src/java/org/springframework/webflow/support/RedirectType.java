@@ -63,8 +63,8 @@ public abstract class RedirectType extends StaticLabeledEnum {
 	 * in time.
 	 */
 	public static final RedirectType FLOW_EXECUTION = new RedirectType(0, "Flow Execution") {
-		public ViewSelection process(ApplicationView applicationView) {
-			return new FlowExecutionRedirect(applicationView);
+		public ViewSelection select() {
+			return FlowExecutionRedirect.INSTANCE;
 		}
 	};
 
@@ -73,18 +73,8 @@ public abstract class RedirectType extends StaticLabeledEnum {
 	 * conversation URL that refreshes the most recent state of a conversation.
 	 */
 	public static final RedirectType CONVERSATION = new RedirectType(1, "Conversation") {
-		public ViewSelection process(ApplicationView applicationView) {
-			return new ConversationRedirect(applicationView);
-		}
-	};
-
-	/**
-	 * The "none" redirect type. Requests that no special redirect action be
-	 * taken.
-	 */
-	public static final RedirectType NONE = new RedirectType(2, "None") {
-		public ViewSelection process(ApplicationView applicationView) {
-			return applicationView;
+		public ViewSelection select() {
+			return ConversationRedirect.INSTANCE;
 		}
 	};
 
@@ -93,9 +83,10 @@ public abstract class RedirectType extends StaticLabeledEnum {
 	}
 
 	/**
-	 * Factory method that applies this redirect type to the selected application view.
+	 * Factory method that applies this redirect type to the selected
+	 * application view.
 	 * @param applicationView the selected application view
 	 * @return the returned, processed view selection
 	 */
-	public abstract ViewSelection process(ApplicationView applicationView);
+	public abstract ViewSelection select();
 }

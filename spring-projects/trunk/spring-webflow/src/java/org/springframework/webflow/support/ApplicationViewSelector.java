@@ -65,7 +65,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * @param viewName the view name expression
 	 */
 	public ApplicationViewSelector(Expression viewName) {
-		this(viewName, RedirectType.NONE);
+		this(viewName, null);
 	}
 
 	/**
@@ -88,20 +88,20 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 		return viewName;
 	}
 
+	public ViewSelection makeSelection(RequestContext context) {
+		if (redirectType != null) {
+			return redirectType.select();
+		} else {
+			return makeRefreshSelection(context);
+		}
+	}
+
 	public ViewSelection makeRefreshSelection(RequestContext context) {
 		String viewName = resolveViewName(context);
 		if (!StringUtils.hasText(viewName)) {
 			return ViewSelection.NULL_VIEW;
 		}
 		return createApplicationView(viewName, context);
-	}
-
-	public ViewSelection makeSelection(RequestContext context) {
-		String viewName = resolveViewName(context);
-		if (!StringUtils.hasText(viewName)) {
-			return ViewSelection.NULL_VIEW;
-		}
-		return redirectType.process(createApplicationView(viewName, context));
 	}
 
 	/**

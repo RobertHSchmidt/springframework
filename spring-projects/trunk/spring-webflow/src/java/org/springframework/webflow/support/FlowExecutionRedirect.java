@@ -15,64 +15,39 @@
  */
 package org.springframework.webflow.support;
 
-import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
+import java.io.ObjectStreamException;
+
 import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.ViewState;
 
 /**
- * Concerete response type that requests an redirect to an <i>existing</i>,
- * active Spring Web Flow execution at a SWF-specific <i>flow execution URL</i>.
- * This enables the triggering of redirect after post semantics from within an
- * <i>active</i> flow execution.
+ * Concrete response type that requests an redirect to an <i>existing</i>,
+ * active Spring Web Flow execution at a unique SWF-specific <i>flow execution
+ * URL</i>. This enables the triggering of redirect after post semantics from
+ * within an <i>active</i> flow execution.
  * <p>
- * Once the redirect response is issued, the configured
- * {@link #getApplicationView()} is treated as the view to render on the
- * subsequent request issued from the browser, targeted at the flow execution URL.
- * The flow execution URL is stabally refreshable (and bookmarkable) while the
- * flow execution remains active.
+ * Once the redirect response is issued a new request is initiated by the
+ * browser targeted at the flow execution URL. The URL is stabally refreshable
+ * (and bookmarkable) while the conversation remains active, safely triggering a
+ * {@link ViewState#refresh(org.springframework.webflow.RequestContext)} on each
+ * access.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public final class FlowExecutionRedirect extends ViewSelection {
 
-	/**
-	 * The view to render to on receipt of subsequent flow execution refresh requests.
-	 */
-	private final ApplicationView applicationView;
+	public static final FlowExecutionRedirect INSTANCE = new FlowExecutionRedirect();
 
-	/**
-	 * Creates a new flow execution redirect.
-	 * @param applicationView the view to render on receipt of the flow execution
-	 * redirect request.
-	 */
-	public FlowExecutionRedirect(ApplicationView applicationView) {
-		Assert.notNull(applicationView, "The application view is to redirect to is required");
-		this.applicationView = applicationView;
+	private FlowExecutionRedirect() {
 	}
 
-	/**
-	 * Return the application view to render on receipt of the conversation
-	 * redirect request.
-	 */
-	public ApplicationView getApplicationView() {
-		return applicationView;
-	}
-
-	public boolean equals(Object o) {
-		if (!(o instanceof FlowExecutionRedirect)) {
-			return false;
-		}
-		FlowExecutionRedirect other = (FlowExecutionRedirect)o;
-		return ObjectUtils.nullSafeEquals(applicationView, other.applicationView);
-	}
-
-	public int hashCode() {
-		return applicationView.hashCode();
+	// resolve the singleton instance
+	private Object readResolve() throws ObjectStreamException {
+		return INSTANCE;
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("applicationView", applicationView).toString();
+		return "flowExecutionRedirect";
 	}
 }

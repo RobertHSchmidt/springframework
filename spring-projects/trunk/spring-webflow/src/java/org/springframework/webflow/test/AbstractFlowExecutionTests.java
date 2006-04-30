@@ -29,6 +29,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ParameterMap;
+import org.springframework.webflow.StateException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
@@ -104,8 +105,10 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
+	 * @throws StateException if an exception was thrown within a state of the
+	 * resumed flow execution during event processing
 	 */
-	protected ViewSelection startFlow() {
+	protected ViewSelection startFlow() throws StateException {
 		return startFlow(null, new MockExternalContext(), null);
 	}
 
@@ -124,7 +127,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
-	protected ViewSelection startFlow(AttributeMap input) {
+	protected ViewSelection startFlow(AttributeMap input) throws StateException {
 		return startFlow(input, new MockExternalContext(), null);
 	}
 
@@ -142,8 +145,10 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
+	 * @throws StateException if an exception was thrown within a state of the
+	 * resumed flow execution during event processing
 	 */
-	protected ViewSelection startFlow(AttributeMap input, FlowExecutionListener listener) {
+	protected ViewSelection startFlow(AttributeMap input, FlowExecutionListener listener) throws StateException {
 		return startFlow(input, new MockExternalContext(), new FlowExecutionListener[] { listener });
 	}
 
@@ -169,8 +174,11 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
+	 * @throws StateException if an exception was thrown within a state of the
+	 * resumed flow execution during event processing
 	 */
-	protected ViewSelection startFlow(AttributeMap input, ExternalContext context, FlowExecutionListener[] listeners) {
+	protected ViewSelection startFlow(AttributeMap input, ExternalContext context, FlowExecutionListener[] listeners)
+			throws StateException {
 		flowExecution = createFlowExecution(listeners);
 		return flowExecution.start(input, context);
 	}
@@ -198,8 +206,10 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * Signal an occurence of an event in the current state of the flow
 	 * execution being tested.
 	 * @param eventId the event that occured
+	 * @throws StateException if an exception was thrown within a state of the
+	 * resumed flow execution during event processing
 	 */
-	protected ViewSelection signalEvent(String eventId) {
+	protected ViewSelection signalEvent(String eventId) throws StateException {
 		return signalEvent(eventId, new MockExternalContext());
 	}
 
@@ -209,8 +219,10 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param eventId the event that occured
 	 * @param requestParameters request parameters needed by the flow execution
 	 * to complete event processing
+	 * @throws StateException if an exception was thrown within a state of the
+	 * resumed flow execution during event processing
 	 */
-	protected ViewSelection signalEvent(String eventId, ParameterMap requestParameters) {
+	protected ViewSelection signalEvent(String eventId, ParameterMap requestParameters) throws StateException {
 		return signalEvent(eventId, new MockExternalContext(requestParameters));
 	}
 
@@ -249,14 +261,45 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * and only override the callback methods you are interested in.
 	 * @param eventId the event that occured
 	 * @param context the external context providing information about the
-	 * caller's environment, used by the flow execution during the start
+	 * caller's environment, used by the flow execution during the signal event
 	 * operation
 	 * @return the view selection that was made, returned once control is
 	 * returned to the client (occurs when the flow enters a view state, or an
 	 * end state)
+	 * @throws StateException if an exception was thrown within a state of the
+	 * resumed flow execution during event processing
 	 */
-	protected ViewSelection signalEvent(String eventId, ExternalContext context) {
+	protected ViewSelection signalEvent(String eventId, ExternalContext context) throws StateException {
 		return flowExecution.signalEvent(new EventId(eventId), context);
+	}
+
+	/**
+	 * Refresh the flow execution being tested, asking the current view state
+	 * state to make a "refresh" view selection. This is idempotent operation
+	 * that may be safely called on an active but currently paused execution.
+	 * Used to simulate a browser flow execution redirect.
+	 * @return the current view selection for this flow execution
+	 * @throws StateException if an exception was thrown within a state of the
+	 * resumed flow execution during event processing
+	 */
+	protected ViewSelection refresh() throws StateException {
+		return refresh(new MockExternalContext());
+	}
+
+	/**
+	 * Refresh the flow execution being tested, asking the current view state
+	 * state to make a "refresh" view selection. This is idempotent operation
+	 * that may be safely called on an active but currently paused execution.
+	 * Used to simulate a browser flow execution redirect.
+	 * @param context the external context providing information about the
+	 * caller's environment, used by the flow execution during the refresh
+	 * operation
+	 * @return the current view selection for this flow execution
+	 * @throws StateException if an exception was thrown within a state of the
+	 * resumed flow execution during event processing
+	 */
+	protected ViewSelection refresh(ExternalContext context) throws StateException {
+		return flowExecution.refresh(context);
 	}
 
 	/**

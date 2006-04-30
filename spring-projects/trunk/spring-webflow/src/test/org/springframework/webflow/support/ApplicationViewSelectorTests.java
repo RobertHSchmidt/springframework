@@ -55,11 +55,12 @@ public class ApplicationViewSelectorTests extends TestCase {
 		context.getConversationScope().put("foo", "bar3");
 		context.getConversationScope().put("foo3", "bar");
 		ViewSelection selection = selector.makeSelection(context);
-		assertTrue(selection instanceof ConversationRedirect);
-		ConversationRedirect redirect = (ConversationRedirect)selection;
-		ApplicationView view = redirect.getApplicationView();
+		assertSame(selection, ConversationRedirect.INSTANCE);
+		context.getRequestScope().clear();
+		context.getRequestScope().put("viewVar", "view");
+		ApplicationView view = (ApplicationView)selector.makeRefreshSelection(context);
 		assertEquals("view", view.getViewName());
-		assertEquals("bar", view.getModel().get("foo"));
+		assertEquals("bar2", view.getModel().get("foo"));
 		assertEquals("bar", view.getModel().get("foo2"));
 		assertEquals("bar", view.getModel().get("foo3"));
 	}
