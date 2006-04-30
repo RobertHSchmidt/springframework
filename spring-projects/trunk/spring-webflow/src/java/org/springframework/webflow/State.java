@@ -85,8 +85,8 @@ public abstract class State extends AnnotatedObject {
 	 * @param id the state identifier (must be unique to the flow)
 	 * @throws IllegalArgumentException if this state cannot be added to the
 	 * flow
-	 * @see #addEntryAction(Action)
-	 * @see #addExceptionHandler(StateExceptionHandler)
+	 * @see #getEntryActionList()
+	 * @see #getExceptionHandlerSet()
 	 */
 	protected State(Flow flow, String id) throws IllegalArgumentException {
 		setId(id);

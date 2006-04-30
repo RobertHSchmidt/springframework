@@ -46,7 +46,7 @@ public abstract class TransitionableState extends State {
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 * @see State#State(Flow, String)
-	 * @see #addTransition(Transition)
+	 * @see #getTransitionSet()
 	 */
 	protected TransitionableState(Flow flow, String id) throws IllegalArgumentException {
 		super(flow, id);

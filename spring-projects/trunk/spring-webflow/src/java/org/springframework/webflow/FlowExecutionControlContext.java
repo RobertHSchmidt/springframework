@@ -82,7 +82,7 @@ public interface FlowExecutionControlContext extends RequestContext {
 	 * and requests that a view be rendered with model data
 	 * @throws StateException if an exception was thrown within a state of the
 	 * flow during execution of this start operation
-	 * @see Flow#start(State, FlowExecutionControlContext)
+	 * @see Flow#start(FlowExecutionControlContext, AttributeMap)
 	 */
 	public ViewSelection start(Flow flow, AttributeMap input) throws StateException;
 

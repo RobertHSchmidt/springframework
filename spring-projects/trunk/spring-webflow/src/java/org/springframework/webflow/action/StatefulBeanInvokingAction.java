@@ -27,10 +27,6 @@ import org.springframework.webflow.ScopeType;
  * serializable). The target may hold modifiable state as instance members in a
  * thread safe manner.
  * <p>
- * To use this action, set the
- * {@link BeanFactoryBeanInvokingAction#BEAN_NAME_CONTEXT_ATTRIBUTE} context
- * attribute on each invocation.
- * <p>
  * The resolved bean name will be treated as the identifier of a prototype bean
  * definition in the configured bean factory to retrieve, as well as the name of
  * the attribute to expose the bean in under the configured

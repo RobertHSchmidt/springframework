@@ -16,23 +16,23 @@
 package org.springframework.webflow;
 
 /**
- * Central interface that allows clients to access contextual information about
+ * Central interface that allows callers to access contextual information about
  * an ongoing flow execution within the context of a single client request. The
  * term <i>request</i> is used to describe a single call (thread) into the flow
  * system by an external actor to manipulate exactly one flow execution.
  * <p>
- * A new instance of this object is created when one of the operations on a
- * <code>FlowExecution</code> facade is invoked, either ({@link org.springframework.webflow.execution.FlowExecution#start(ExternalContext)}
- * to activate a newly created flow execution, or
- * {@link org.springframework.webflow.execution.FlowExecution#signalEvent(String, ExternalContext)})
- * to signal an event in the current state of a resumed flow execution.
+ * A new instance of this object is created when one of the core operations
+ * supported by a <code>FlowExecution</code> is invoked, either <i>start</i>
+ * to launch the flow execution, <i>signalEvent</i> to resume the flow
+ * execution, or <i>refresh</i> to reconstitute the flow execution's last view
+ * selection for purposes of reissuing a user response.
  * <p>
  * Once created this context object is passed around throughout request
  * processing where it may be accessed and reasoned upon, typically by
  * user-implemented action code and/or state transition criteria.
  * <p>
  * When a call into a flow execution returns, this object goes out of scope and
- * is disposed of automatically. Thus, this object is an internal artifact used
+ * is disposed of automatically. Thus this object is an internal artifact used
  * within a FlowExecution: this object is NOT directly exposed to external
  * client code, e.g. a view implementation (JSP).
  * <p>
@@ -48,11 +48,11 @@ package org.springframework.webflow;
  * This interface does not allow direct manipulation of the flow execution. That
  * is only possible via the
  * {@link org.springframework.webflow.FlowExecutionControlContext} sub
- * interface.
+ * interface, which is used by privelged state types to manipulate the flow.
  * <p>
  * The web flow system will ensure that a RequestContext object is local to the
- * current thread, so it can be safely manipulated without needing to worry
- * about concurrent access.
+ * current thread. It can be safely manipulated without needing to worry about
+ * concurrent access.
  * <p>
  * Note: the <i>request</i> context is in no way linked to an HTTP or Portlet
  * request! It uses the familiar "request" naming convention to indicate a

@@ -72,7 +72,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </tr>
  * <tr>
  * <td>methodResolver</td>
- * <td><i>{@link DefaultMultiActionMethodResolver default}</i></td>
+ * <td><i>{@link DefaultMultiActionMethodResolver}</i></td>
  * <td>Set the strategy used to resolve the name (key) of an action execution
  * method. Allows full control over the method resolution algorithm.</td>
  * </tr>

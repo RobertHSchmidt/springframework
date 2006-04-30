@@ -66,7 +66,6 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Sets the helper delegate for creating action execution result events.
 	 * This allows for customizing how common action result events such as
 	 * "success" and "error" are created.
-	 * @return the event factory support
 	 */
 	public void setEventFactorySupport(EventFactorySupport eventFactorySupport) {
 		this.eventFactorySupport = eventFactorySupport;
@@ -97,8 +96,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
 	 * Returns a "success" result event with the provided result object as a
-	 * parameter. The result object is identified by the parameter name
-	 * {@link #RESULT_ATTRIBUTE_NAME}.
+	 * parameter.
 	 * @param result the action success result;
 	 */
 	protected Event success(Object result) {
@@ -114,8 +112,8 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
 	 * Returns an "error" result event caused by the provided exception.
-	 * @param e the exception that caused the error event, to be sent as an
-	 * event parameter under the name {@link #EXCEPTION_ATTRIBUTE_NAME}
+	 * @param e the exception that caused the error event, to be configured as
+	 * an event attribute.
 	 */
 	protected Event error(Exception e) {
 		return eventFactorySupport.error(this, e);
@@ -149,14 +147,14 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Typically called as part of return, for example:
 	 * 
 	 * <pre>
-	 *      protected Event doExecute(RequestContext context) {
-	 *          // do some work
-	 *          if (some condition) {
-	 *              return result(&quot;success&quot;);
-	 *          } else {
-	 *              return result(&quot;error&quot;);
-	 *          }
-	 *      }
+	 *       protected Event doExecute(RequestContext context) {
+	 *           // do some work
+	 *           if (some condition) {
+	 *               return result(&quot;success&quot;);
+	 *           } else {
+	 *               return result(&quot;error&quot;);
+	 *           }
+	 *       }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
@@ -174,16 +172,16 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * example:
 	 * 
 	 * <pre>
-	 *      protected Event doExecute(RequestContext context) {
-	 *          // do some work
-	 *          AttributeMap resultAttributes = new AttributeMap();
-	 *          resultAttributes.put(&quot;name&quot;, &quot;value&quot;);
-	 *          if (some condition) {
-	 *              return result(&quot;success&quot;, resultAttributes);
-	 *          } else {
-	 *              return result(&quot;error&quot;, resultAttributes);
-	 *          }
-	 *      }
+	 *       protected Event doExecute(RequestContext context) {
+	 *           // do some work
+	 *           AttributeMap resultAttributes = new AttributeMap();
+	 *           resultAttributes.put(&quot;name&quot;, &quot;value&quot;);
+	 *           if (some condition) {
+	 *               return result(&quot;success&quot;, resultAttributes);
+	 *           } else {
+	 *               return result(&quot;error&quot;, resultAttributes);
+	 *           }
+	 *       }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning

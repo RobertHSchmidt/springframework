@@ -114,7 +114,7 @@ public class ActionState extends TransitionableState {
 	 * @throws IllegalArgumentException when this state cannot be added to given
 	 * flow
 	 * @see TransitionableState#TransitionableState(Flow, String)
-	 * @see #addAction(Action)
+	 * @see #getActionList()
 	 */
 	public ActionState(Flow flow, String id) throws IllegalArgumentException {
 		super(flow, id);

@@ -67,8 +67,7 @@ public class EndState extends State {
 	 * flow
 	 * @see State#State(Flow, String)
 	 * @see #setViewSelector(ViewSelector)
-	 * @see #addOutputAttributeName(String)
-	 * @see #addOutputAttributeNames(String[])
+	 * @see #setOutputMapper(AttributeMapper)
 	 */
 	public EndState(Flow flow, String id) throws IllegalArgumentException {
 		super(flow, id);
