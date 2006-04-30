@@ -497,8 +497,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 		if (StringUtils.hasText(element.getAttribute(BEAN_ATTRIBUTE))) {
 			BeanFactory beanFactory = getLocalFlowServiceLocator().getBeanFactory();
-			return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), scope, element
-					.getAttribute(BEAN_ATTRIBUTE), beanFactory);
+			return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), element
+					.getAttribute(BEAN_ATTRIBUTE), beanFactory, scope);
 		}
 		else {
 			if (StringUtils.hasText(element.getAttribute(CLASS_ATTRIBUTE))) {
@@ -507,7 +507,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			}
 			else {
 				BeanFactory beanFactory = getLocalFlowServiceLocator().getBeanFactory();
-				return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), scope, null, beanFactory);
+				return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), null, beanFactory, scope);
 			}
 		}
 	}

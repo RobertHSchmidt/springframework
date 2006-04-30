@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.core.style.ToStringCreator;
+import org.springframework.core.style.StylerUtils;
 
 /**
  * An ordered, typed list of actions mainly for use internally by flow artifacts
@@ -164,6 +164,6 @@ public class ActionList {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("actions", actions).toString();
+		return StylerUtils.style(actions);
 	}
 }

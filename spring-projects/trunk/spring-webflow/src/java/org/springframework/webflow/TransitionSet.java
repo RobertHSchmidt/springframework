@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.core.style.ToStringCreator;
+import org.springframework.core.style.StylerUtils;
 
 /**
  * A typed set of transitions, mainly for use internally by artifacts that can
@@ -145,6 +145,6 @@ public class TransitionSet {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("transitions", transitions).toString();
+		return StylerUtils.style(transitions);
 	}
 }

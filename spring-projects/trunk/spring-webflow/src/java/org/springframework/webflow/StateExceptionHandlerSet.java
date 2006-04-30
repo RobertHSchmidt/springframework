@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.core.style.ToStringCreator;
+import org.springframework.core.style.StylerUtils;
 
 /**
  * A typed set of state exception handlers, mainly for use internally by
@@ -129,6 +129,6 @@ public class StateExceptionHandlerSet {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("exceptionHandlers", exceptionHandlers).toString();
+		return StylerUtils.style(exceptionHandlers);
 	}
 }

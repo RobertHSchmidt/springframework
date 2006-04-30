@@ -109,7 +109,7 @@ import org.springframework.util.StringUtils;
 public class Flow extends AnnotatedObject {
 
 	private static final Log logger = LogFactory.getLog(Flow.class);
-	
+
 	/**
 	 * An assigned flow identifier uniquely identifying this flow among all
 	 * other flows.
@@ -548,17 +548,18 @@ public class Flow extends AnnotatedObject {
 		Flow other = (Flow)o;
 		return id.equals(other.id);
 	}
-	
+
 	public int hashCode() {
 		return id.hashCode();
 	}
-	
+
 	/**
 	 * Start a new session for this flow in its stat state.
 	 * @param context the flow execution control context
 	 * @param input eligible input into the session
+	 * @throws StateException when an exception occurs entering the start state
 	 */
-	public ViewSelection start(FlowExecutionControlContext context, AttributeMap input) {
+	public ViewSelection start(FlowExecutionControlContext context, AttributeMap input) throws StateException {
 		createVariables(context);
 		if (inputMapper != null) {
 			inputMapper.map(input, context, Collections.EMPTY_MAP);
@@ -566,27 +567,15 @@ public class Flow extends AnnotatedObject {
 		startActionList.execute(context);
 		return startState.enter(context);
 	}
-	
-	private void createVariables(RequestContext context) {
-		Iterator it = variables.iterator();
-		while (it.hasNext()) {
-			FlowVariable variable = (FlowVariable)it.next();
-			if (logger.isDebugEnabled()) {
-				logger.debug("Creating " + variable);
-			}
-			variable.create(context);
-		}
-	}
 
 	/**
 	 * Inform this flow definition that an event was signaled in the current
 	 * state of an active flow execution.
 	 * @param context the flow execution control context
 	 * @return the selected view
-	 * @throws NoMatchingTransitionException when a matching transition cannot
-	 * be found to handle the event
+	 * @throws StateException when an exception occurs processing the event
 	 */
-	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) throws NoMatchingTransitionException {
+	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) throws StateException {
 		TransitionableState currentState = getCurrentTransitionableState(context);
 		try {
 			return currentState.onEvent(event, context);
@@ -603,22 +592,14 @@ public class Flow extends AnnotatedObject {
 		}
 	}
 
-	private TransitionableState getCurrentTransitionableState(FlowExecutionControlContext context) {
-		State currentState = context.getCurrentState();
-		if (!(currentState instanceof TransitionableState)) {
-			throw new IllegalStateException("You can only signal events in transitionable states, and state "
-					+ context.getCurrentState() + "  is not - programmer error");
-		}
-		return (TransitionableState)currentState;
-	}
-
 	/**
 	 * Inform this flow definition that a execution session of itself has ended.
 	 * @param context the flow execution control context
 	 * @param output initial output produced by the session that is eligible for
 	 * modification by this method.
+	 * @throws StateException when an exception occurs ending this flow
 	 */
-	public void end(FlowExecutionControlContext context, AttributeMap output) {
+	public void end(FlowExecutionControlContext context, AttributeMap output) throws StateException {
 		endActionList.execute(context);
 		if (outputMapper != null) {
 			outputMapper.map(output, context, Collections.EMPTY_MAP);
@@ -638,10 +619,31 @@ public class Flow extends AnnotatedObject {
 		return getExceptionHandlerSet().handleException(exception, context);
 	}
 
+	private void createVariables(RequestContext context) {
+		Iterator it = variables.iterator();
+		while (it.hasNext()) {
+			FlowVariable variable = (FlowVariable)it.next();
+			if (logger.isDebugEnabled()) {
+				logger.debug("Creating " + variable);
+			}
+			variable.create(context);
+		}
+	}
+
+	private TransitionableState getCurrentTransitionableState(FlowExecutionControlContext context) {
+		State currentState = context.getCurrentState();
+		if (!(currentState instanceof TransitionableState)) {
+			throw new IllegalStateException("You can only signal events in transitionable states, and state "
+					+ context.getCurrentState() + " is not transitionable - programmer error");
+		}
+		return (TransitionableState)currentState;
+	}
+
 	public String toString() {
 		return new ToStringCreator(this).append("id", id).append("states", states).append("startState", startState)
-				.append("startActionList", startActionList).append("exceptionHandlerSet", exceptionHandlerSet).append(
-						"endActionList", endActionList).append("transitionSet", globalTransitionSet).append(
-						"inlineFlows", inlineFlows).toString();
+				.append("variables", variables).append("inputMapper", inputMapper).append("startActionList",
+						startActionList).append("exceptionHandlerSet", exceptionHandlerSet).append(
+						"globalTransitionSet", globalTransitionSet).append("endActionList", endActionList).append(
+						"outputMapper", outputMapper).append("inlineFlows", inlineFlows).toString();
 	}
 }

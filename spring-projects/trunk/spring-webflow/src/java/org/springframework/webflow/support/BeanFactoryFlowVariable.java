@@ -44,12 +44,23 @@ public class BeanFactoryFlowVariable extends FlowVariable {
 	/**
 	 * Creates a new flow variable.
 	 * @param variableName the variable name
-	 * @param scope the variable scope
 	 * @param beanName the bean name
 	 * @param beanFactory the bean factory where initial variable values will be
 	 * obtained
 	 */
-	public BeanFactoryFlowVariable(String variableName, ScopeType scope, String beanName, BeanFactory beanFactory) {
+	public BeanFactoryFlowVariable(String variableName, String beanName, BeanFactory beanFactory) {
+		this(variableName, beanName, beanFactory, null);
+	}
+
+	/**
+	 * Creates a new flow variable.
+	 * @param variableName the variable name
+	 * @param beanName the bean name
+	 * @param beanFactory the bean factory where initial variable values will be
+	 * obtained
+	 * @param scope the variable scope
+	 */
+	public BeanFactoryFlowVariable(String variableName, String beanName, BeanFactory beanFactory, ScopeType scope) {
 		super(variableName, scope);
 		if (StringUtils.hasText(beanName)) {
 			this.beanName = beanName;
