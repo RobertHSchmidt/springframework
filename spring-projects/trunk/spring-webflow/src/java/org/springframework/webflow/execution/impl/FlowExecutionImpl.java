@@ -396,7 +396,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Activate a new <code>FlowSession</code> for the flow definition with
 	 * the input provided. Pushes the new flow session onto the stack.
 	 * @param flow the flow definition
-	 * @param input the flow session input
 	 * @return the new flow session
 	 */
 	public FlowSession activateSession(Flow flow) {

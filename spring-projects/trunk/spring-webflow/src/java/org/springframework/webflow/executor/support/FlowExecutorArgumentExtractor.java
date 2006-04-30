@@ -165,7 +165,6 @@ public class FlowExecutorArgumentExtractor {
 	/**
 	 * Returns the configured strategy for converting an encoded string to a
 	 * {@link FlowExecutionKey} and back.
-	 * @param flowExecutionKeyFormatter the formatter
 	 */
 	public FlowExecutionKeyFormatter getFlowExecutionKeyFormatter() {
 		return flowExecutionKeyFormatter;
@@ -479,7 +478,8 @@ public class FlowExecutorArgumentExtractor {
 	 * last) view selection</i> made by the flow execution identified by the
 	 * flow execution key. Used to support the <i>flow execution redirect</i>
 	 * use case.
-	 * @param conversationId the conversation id
+	 * @param key the flow execution key
+	 * @param flowExecution the flow execution
 	 * @param context the external context
 	 * @return the relative conversation URL path
 	 */
@@ -496,7 +496,8 @@ public class FlowExecutorArgumentExtractor {
 	 * last) view selection</i> made by the conversation identified by the
 	 * provided conversationId. Used to support the <i>conversation redirect</i>
 	 * use case.
-	 * @param conversationId the conversation id
+	 * @param key the flow execution key
+	 * @param flowExecution the flow execution
 	 * @param context the external context
 	 * @return the relative conversation URL path
 	 */

@@ -69,9 +69,9 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * @param flowDefinition representation of the externalized flow definition
 	 * resource
 	 * @param registry the flow registry to register the flow in
-	 * @param flowArtifactFactory the flow artifact factory that the builder
-	 * will use to wire in externally managed flow artifacts during the build
-	 * process
+	 * @param flowServiceLocator the service locator that the builder will use
+	 * to wire in externally managed flow services needed by a Flow during the
+	 * build process
 	 */
 	protected void registerFlow(ExternalizedFlowDefinition flowDefinition, FlowRegistry registry,
 			FlowBuilder flowBuilder) {

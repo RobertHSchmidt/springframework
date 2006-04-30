@@ -154,7 +154,7 @@ public class EventFactorySupport {
 
 	/**
 	 * Returns a "success" event.
-	 * @source the source of the event
+	 * @param source the source of the event
 	 */
 	public Event success(Object source) {
 		return event(source, getSuccessEventId());
@@ -164,7 +164,7 @@ public class EventFactorySupport {
 	 * Returns a "success" event with the provided result object as an
 	 * attribute. The result object is identified by the parameter name
 	 * {@link #getResultAttributeName()}.
-	 * @source the source of the event
+	 * @param source the source of the event
 	 * @param result the action success result
 	 */
 	public Event success(Object source, Object result) {
@@ -173,7 +173,7 @@ public class EventFactorySupport {
 
 	/**
 	 * Returns an "error" event.
-	 * @source the source of the event
+	 * @param source the source of the event
 	 */
 	public Event error(Object source) {
 		return event(source, getErrorEventId());
@@ -181,7 +181,7 @@ public class EventFactorySupport {
 
 	/**
 	 * Returns an "error" event caused by the provided exception.
-	 * @source the source of the event
+	 * @param source the source of the event
 	 * @param e the exception that caused the error event, to be put as an
 	 * event attribute under the name {@link #getExceptionAttributeName()}
 	 */
@@ -191,7 +191,7 @@ public class EventFactorySupport {
 
 	/**
 	 * Returns a "yes" event.
-	 * @source the source of the event
+	 * @param source the source of the event
 	 */
 	public Event yes(Object source) {
 		return event(source, getYesEventId());
@@ -199,7 +199,7 @@ public class EventFactorySupport {
 
 	/**
 	 * Returns a "no" result event.
-	 * @source the source of the event
+	 * @param source the source of the event
 	 */
 	public Event no(Object source) {
 		return event(source, getNoEventId());
@@ -207,7 +207,7 @@ public class EventFactorySupport {
 
 	/**
 	 * Returns an event to communicate an occurrence of a boolean expression.
-	 * @source the source of the event
+	 * @param source the source of the event
 	 * @param booleanResult the boolean
 	 * @return yes or no
 	 */
@@ -222,7 +222,7 @@ public class EventFactorySupport {
 
 	/**
 	 * Returns a event with the specified identifier.
-	 * @source the source of the event
+	 * @param source the source of the event
 	 * @param eventId the result event identifier
 	 * @return the event
 	 */
@@ -233,7 +233,7 @@ public class EventFactorySupport {
 	/**
 	 * Returns a event with the specified identifier and the specified set of
 	 * attributes.
-	 * @source the source of the event
+	 * @param source the source of the event
 	 * @param eventId the result event identifier
 	 * @param attributes the event attributes
 	 * @return the action result event
@@ -245,6 +245,7 @@ public class EventFactorySupport {
 	/**
 	 * Returns a result event for this action with the specified identifier and
 	 * a single parameter.
+	 * @param source the source of the event
 	 * @param eventId the result id
 	 * @param attributeName the parameter name
 	 * @param attributeValue the parameter value
