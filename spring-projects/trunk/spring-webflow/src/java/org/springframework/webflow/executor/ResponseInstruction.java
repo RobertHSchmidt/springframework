@@ -48,14 +48,14 @@ public class ResponseInstruction implements Serializable {
 	private FlowExecutionKey flowExecutionKey;
 
 	/**
-	 * A state of the flow execution.
-	 */
-	private transient FlowExecutionContext flowExecutionContext;
-
-	/**
 	 * The view selection that was made.
 	 */
 	private ViewSelection viewSelection;
+
+	/**
+	 * A state of the flow execution.
+	 */
+	private transient FlowExecutionContext flowExecutionContext;
 
 	/**
 	 * Create a new response instruction for a paused flow execution.
@@ -194,7 +194,7 @@ public class ResponseInstruction implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("flowExecutionContext", flowExecutionContext).append("viewSelection",
-				viewSelection).toString();
+		return new ToStringCreator(this).append("flowExecutionKey", flowExecutionKey).append("viewSelection",
+				viewSelection).append("flowExecutionContext", flowExecutionContext).toString();
 	}
 }
