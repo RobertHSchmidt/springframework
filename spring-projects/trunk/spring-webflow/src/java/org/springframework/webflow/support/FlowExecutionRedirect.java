@@ -60,10 +60,6 @@ public final class FlowExecutionRedirect extends ViewSelection {
 		return applicationView;
 	}
 
-	public ViewSelection unwrap() {
-		return getApplicationView();
-	}
-	
 	public boolean equals(Object o) {
 		if (!(o instanceof FlowExecutionRedirect)) {
 			return false;

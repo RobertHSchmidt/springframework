@@ -60,10 +60,6 @@ public final class ConversationRedirect extends ViewSelection {
 		return applicationView;
 	}
 
-	public ViewSelection unwrap() {
-		return getApplicationView();
-	}
-	
 	public boolean equals(Object o) {
 		if (!(o instanceof ConversationRedirect)) {
 			return false;

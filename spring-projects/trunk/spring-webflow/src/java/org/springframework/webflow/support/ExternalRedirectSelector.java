@@ -78,7 +78,7 @@ public class ExternalRedirectSelector implements ViewSelector, Serializable {
 		return contextRelative;
 	}
 
-	public ViewSelection refresh(RequestContext context) {
+	public ViewSelection makeRefreshSelection(RequestContext context) {
 		return makeSelection(context);
 	}
 	

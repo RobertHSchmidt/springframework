@@ -42,12 +42,14 @@ public interface ViewSelector {
 	 * @param context the current request context of the executing flow
 	 * @return the view selection
 	 */
-	public ViewSelection refresh(RequestContext context);
-
+	public ViewSelection makeSelection(RequestContext context);
+	
 	/**
-	 * Make a new view selection for the given request context.
+	 * Reconstitute the view selection for the given request context 
+	 * to support a ViewState 'refresh' operation.
 	 * @param context the current request context of the executing flow
 	 * @return the view selection
 	 */
-	public ViewSelection makeSelection(RequestContext context);
+	public ViewSelection makeRefreshSelection(RequestContext context);
+
 }

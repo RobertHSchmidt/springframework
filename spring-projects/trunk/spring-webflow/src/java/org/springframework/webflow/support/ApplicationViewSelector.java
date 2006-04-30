@@ -88,7 +88,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 		return viewName;
 	}
 
-	public ViewSelection refresh(RequestContext context) {
+	public ViewSelection makeRefreshSelection(RequestContext context) {
 		String viewName = resolveViewName(context);
 		if (!StringUtils.hasText(viewName)) {
 			return ViewSelection.NULL_VIEW;

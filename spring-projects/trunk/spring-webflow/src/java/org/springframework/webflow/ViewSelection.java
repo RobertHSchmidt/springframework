@@ -56,8 +56,4 @@ public abstract class ViewSelection implements Serializable {
 	 */
 	private static class NullViewSelection extends ViewSelection {
 	}
-
-	public ViewSelection unwrap() {
-		return this;
-	}
 }

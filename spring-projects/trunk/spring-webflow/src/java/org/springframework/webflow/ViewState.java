@@ -86,7 +86,7 @@ public class ViewState extends TransitionableState {
 	 * @throws StateException if an exception occurs in this state
 	 */
 	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
-		return selectView(context);
+		return viewSelector.makeSelection(context);
 	}
 
 	/**
@@ -99,22 +99,7 @@ public class ViewState extends TransitionableState {
 	 * @throws StateException if an exception occurs in this state
 	 */
 	public ViewSelection refresh(RequestContext context) throws StateException {
-		return viewSelector.refresh(context);
-	}
-
-	/**
-	 * Returns the view selection that should be rendered by this state for
-	 * given execution context.
-	 * @param context the flow control context for the executing flow
-	 * @return a view selection containing model and view information needed to
-	 * render the results of the state execution
-	 */
-	private ViewSelection selectView(FlowExecutionControlContext context) {
-		ViewSelection selection = viewSelector.makeSelection(context);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Made view selection " + selection);
-		}
-		return selection;
+		return viewSelector.makeRefreshSelection(context);
 	}
 
 	protected void appendToString(ToStringCreator creator) {

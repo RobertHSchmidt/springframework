@@ -50,7 +50,7 @@ public class FlowRedirectSelector implements ViewSelector {
 		this.flowExpression = flowExpression;
 	}
 
-	public ViewSelection refresh(RequestContext context) {
+	public ViewSelection makeRefreshSelection(RequestContext context) {
 		return makeSelection(context);
 	}
 

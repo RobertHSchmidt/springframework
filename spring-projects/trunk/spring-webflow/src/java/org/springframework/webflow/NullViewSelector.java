@@ -33,7 +33,7 @@ public final class NullViewSelector implements ViewSelector, Serializable {
 
 	}
 
-	public ViewSelection refresh(RequestContext context) {
+	public ViewSelection makeRefreshSelection(RequestContext context) {
 		return makeSelection(context);
 	}
 	
