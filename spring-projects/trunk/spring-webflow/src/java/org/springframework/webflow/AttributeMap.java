@@ -56,23 +56,6 @@ public class AttributeMap extends AbstractAttributeMap {
 		initAttributes(new HashMap(attributes.getMap()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.binding.util.AttributesSetter#setAttribute(java.lang.String,
-	 * java.lang.Object)
-	 */
-	public Object put(String attributeName, Object attributeValue) {
-		return getMapInternal().put(attributeName, attributeValue);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.binding.attribute.AttributeCollection#unmodifiable()
-	 */
-	public UnmodifiableAttributeMap unmodifiable() {
-		return new UnmodifiableAttributeMap(getMap());
-	}
-
 	/**
 	 * Creates a new attribute map wrapping the specified map.
 	 */
@@ -81,8 +64,35 @@ public class AttributeMap extends AbstractAttributeMap {
 		initAttributes(map);
 	}
 
+	public UnmodifiableAttributeMap unmodifiable() {
+		return new UnmodifiableAttributeMap(getMap());
+	}
+
+	public AttributeCollection union(AttributeCollection attributes) {
+		if (attributes == null) {
+			return new AttributeMap(getMapInternal());
+		}
+		else {
+			Map map = new HashMap();
+			map.putAll(getMapInternal());
+			map.putAll(attributes.getMap());
+			return new AttributeMap(map);
+		}
+	}
+
 	/**
-	 * Put all the attributes into this scope.
+	 * Put the attribute into this map.
+	 * @param attributeName the attribute name.
+	 * @param attributeValue the attribute value.
+	 * @return the previous value of the attribute, or null of 
+	 * there was no previous value.
+	 */
+	public Object put(String attributeName, Object attributeValue) {
+		return getMapInternal().put(attributeName, attributeValue);
+	}
+
+	/**
+	 * Put all the attributes into this map.
 	 * @param attributes the attributes to put into this scope.
 	 * @return this, to support call chaining.
 	 */
@@ -95,7 +105,7 @@ public class AttributeMap extends AbstractAttributeMap {
 	}
 
 	/**
-	 * Remove an attribute from this scope.
+	 * Remove an attribute from this map.
 	 * @param attributeName the name of the attribute to remove
 	 * @return previous value associated with specified attribute name, or
 	 * <tt>null</tt> if there was no mapping for the name
@@ -124,25 +134,5 @@ public class AttributeMap extends AbstractAttributeMap {
 		clear();
 		putAll(attributes);
 		return this;
-	}
-
-	/**
-	 * Merge the attributes in the provided map into the attributes in this map,
-	 * and returning a copy containing the union.
-	 * @param attributes the attributes to merge in
-	 * @return a new attribute map, the union of this map and the provided map.
-	 */
-	public AttributeMap union(AttributeCollection attributes) {
-		Map map = new HashMap(size() + attributes.size(), 1);
-		map.putAll(getMap());
-		map.putAll(attributes.getMap());
-		return new AttributeMap(map);
-	}
-
-	/**
-	 * Factory method to return the default attribute map used by this scope.
-	 */
-	protected Map createAttributeMap() {
-		return new HashMap();
 	}
 }

@@ -20,6 +20,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.binding.util.MapAccessor;
@@ -56,6 +57,10 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	public Map getMap() {
 		return attributeAccessor.getMap();
 	}
+
+	public abstract AttributeCollection union(AttributeCollection attributes);
+
+	public abstract UnmodifiableAttributeMap unmodifiable();
 
 	/**
 	 * Is this parameter map empty, with a size of 0?

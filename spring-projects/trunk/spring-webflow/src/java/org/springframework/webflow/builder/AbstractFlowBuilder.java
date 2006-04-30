@@ -52,25 +52,25 @@ import org.springframework.webflow.support.EventFactorySupport;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- *     public void buildStates() {
- *         // get customer information
- *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
- *             on(success(), to(&quot;displayDetails&quot;)));
- *                                                                                
- *         // view customer information               
- *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *             on(submit(), to(&quot;bindAndValidate&quot;));
- *                                                                            
- *         // bind and validate customer information updates 
- *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
- *             new Transition[] {
- *                 on(error(), to(&quot;displayDetails&quot;)),
- *                 on(success(), to(&quot;finish&quot;))
- *             });
- *                                                                                
- *         // finish
- *         addEndState(&quot;finish&quot;);
- *     }
+ * 	public void buildStates() {
+ *          // get customer information
+ *          addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
+ *              on(success(), to(&quot;displayDetails&quot;)));
+ *                                                                                 
+ *          // view customer information               
+ *          addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *              on(submit(), to(&quot;bindAndValidate&quot;));
+ *                                                                             
+ *          // bind and validate customer information updates 
+ *          addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
+ *              new Transition[] {
+ *                  on(error(), to(&quot;displayDetails&quot;)),
+ *                  on(success(), to(&quot;finish&quot;))
+ *              });
+ *                                                                                 
+ *          // finish
+ *          addEndState(&quot;finish&quot;);
+ *      }
  * }
  * </pre>
  * 
@@ -164,7 +164,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Create an instance of an abstract flow builder, using the specified
 	 * locator to obtain needed flow services at build time.
-	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
+	 * @param flowServiceLocator the locator for services needed by this builder
+	 * to build its Flow
 	 */
 	protected AbstractFlowBuilder(FlowServiceLocator flowServiceLocator) {
 		super(flowServiceLocator);
@@ -187,13 +188,14 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	public void init(String flowId, AttributeCollection attributes) throws FlowBuilderException {
-		setFlow(getFlowArtifactFactory().createFlow(flowId, flowAttributes()));
+		setFlow(getFlowArtifactFactory().createFlow(flowId, flowAttributes().union(attributes)));
 	}
 
 	/**
 	 * Hook subclasses may override to provide additional properties for the
-	 * flow built by this builder. Returns <code>null</code> by default.
-	 * @return additional properties describing the flow being built
+	 * flow built by this builder. Returns a empty collection by default.
+	 * @return additional properties describing the flow being built, should not
+	 * return null
 	 */
 	protected AttributeCollection flowAttributes() {
 		return CollectionUtils.EMPTY_ATTRIBUTE_MAP;
@@ -528,13 +530,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Encoded Method signature format: Method without arguments:
 	 * 
 	 * <pre>
-	 * ${methodName}
+	 *  ${methodName}
 	 * </pre>
 	 * 
 	 * Method with arguments:
 	 * 
 	 * <pre>
-	 * ${methodName}(${arg1}, ${arg2}, ${arg n})
+	 *  ${methodName}(${arg1}, ${arg2}, ${arg n})
 	 * </pre>
 	 * 
 	 * @param method the encoded method signature
@@ -633,7 +635,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected Transition transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver,
 			TransitionCriteria executionCriteria) {
 		return getFlowArtifactFactory()
-			.createTransition(matchingCriteria, executionCriteria, targetStateResolver, null);
+				.createTransition(matchingCriteria, executionCriteria, targetStateResolver, null);
 	}
 
 	/**

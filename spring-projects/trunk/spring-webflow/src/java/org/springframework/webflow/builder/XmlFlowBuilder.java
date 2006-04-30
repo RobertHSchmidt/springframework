@@ -81,8 +81,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -430,7 +430,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		if (!isFlowElement(flowElement)) {
 			throw new IllegalStateException("This is not the '" + FLOW_ELEMENT + "' element");
 		}
-		Flow flow = getFlowArtifactFactory().createFlow(id, attributes);
+		Flow flow = getFlowArtifactFactory().createFlow(id, parseAttributes(flowElement).union(attributes));
 		initLocalServiceRegistry(flowElement, flow);
 		return flow;
 	}
@@ -693,17 +693,16 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private AnnotatedAction parseAnnotatedAction(Element element) {
-		AnnotatedAction action = new AnnotatedAction();
+		AnnotatedAction annotated = new AnnotatedAction(parseAction(element));
 		if (element.hasAttribute(NAME_ATTRIBUTE)) {
-			action.setName(element.getAttribute(NAME_ATTRIBUTE));
+			annotated.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)
 				&& getLocalFlowServiceLocator().isMultiAction(element.getAttribute(BEAN_ATTRIBUTE))) {
-			action.getAttributeMap().put(MultiAction.METHOD_ATTRIBUTE, element.getAttribute(METHOD_ATTRIBUTE));
+			annotated.getAttributeMap().put(MultiAction.METHOD_ATTRIBUTE, element.getAttribute(METHOD_ATTRIBUTE));
 		}
-		action.getAttributeMap().putAll(parseAttributes(element));
-		action.setTargetAction(parseAction(element));
-		return action;
+		annotated.getAttributeMap().putAll(parseAttributes(element));
+		return annotated;
 	}
 
 	private Action parseAction(Element element) {

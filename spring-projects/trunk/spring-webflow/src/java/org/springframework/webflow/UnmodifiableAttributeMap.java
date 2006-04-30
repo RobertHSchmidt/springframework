@@ -16,6 +16,7 @@
 package org.springframework.webflow;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,5 +40,16 @@ public class UnmodifiableAttributeMap extends AbstractAttributeMap {
 
 	public UnmodifiableAttributeMap unmodifiable() {
 		return this;
+	}
+
+	public AttributeCollection union(AttributeCollection attributes) {
+		if (attributes == null) {
+			return this;
+		} else {
+			Map map = new HashMap();
+			map.putAll(getMapInternal());
+			map.putAll(attributes.getMap());
+			return new UnmodifiableAttributeMap(map);
+		}
 	}
 }
