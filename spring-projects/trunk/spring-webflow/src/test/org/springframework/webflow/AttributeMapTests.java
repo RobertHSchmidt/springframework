@@ -296,4 +296,20 @@ public class AttributeMapTests extends TestCase {
 
 		}
 	}
+	
+	public void testUnion() {
+		AttributeMap one = new AttributeMap();
+		one.put("foo", "bar");
+		one.put("bar", "baz");
+
+		AttributeMap two = new AttributeMap();
+		two.put("cat", "coz");
+		two.put("bar", "boo");
+
+		AttributeCollection three = one.union(two);
+		assertEquals(3, three.size());
+		assertEquals("bar", three.get("foo"));
+		assertEquals("coz", three.get("cat"));
+		assertEquals("boo", three.get("bar"));
+	}
 }
