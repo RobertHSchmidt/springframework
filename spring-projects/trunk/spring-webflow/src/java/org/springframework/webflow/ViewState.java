@@ -29,8 +29,8 @@ import org.springframework.util.Assert;
  * renderable resource template (like a JSP file).
  * <p>
  * A view state can also be a <i>marker</i> state with no associated view. In
- * this case it just returns control back to the client. Marker states are
- * useful for situations where an action or custom state type has already
+ * this case it just returns control back to the client. Marker states may be
+ * used for situations where an action or custom state type has already
  * generated the response.
  * 
  * @see org.springframework.webflow.ViewSelector
@@ -90,9 +90,10 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
-	 * Request that the current view selection to be reconstituted to support a
+	 * Request that the current view selection be reconstituted to support
 	 * reissuing the response. This is idempotent operation that may be safely
-	 * called on a paused execution.
+	 * called on a paused execution, used primarily to support a flow execution
+	 * redirect.
 	 * @param context the request context
 	 * @return the view selection
 	 * @throws StateException if an exception occurs in this state
