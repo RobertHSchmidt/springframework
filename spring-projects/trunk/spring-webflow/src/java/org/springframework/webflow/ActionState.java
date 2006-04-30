@@ -75,22 +75,23 @@ import org.springframework.core.style.ToStringCreator;
  * <td valign="top">method</td>
  * <td>The 'method' property is the name of a specific method on a
  * <code>{@link org.springframework.webflow.action.MultiAction}</code> to
- * execute, or the name of a specific method on a arbitrary POJO (plain old
- * java.lang.Object). In the MultiAction scenario, the named method must have
- * the signature <code>public Event ${method}(RequestContext)</code>. As an
- * example of this scenario, a method property with value <code>setupForm</code>
- * would bind to a method on a MultiAction instance with the signature:
+ * execute. In the MultiAction scenario the named method must have the signature
+ * <code>public Event ${method}(RequestContext)</code>. As an example of this
+ * scenario, a method property with value <code>setupForm</code> would bind to
+ * a method on a MultiAction instance with the signature:
  * <code>public Event setupForm(RequestContext context)</code>. <br>
  * <br>
- * As an alternative to a MultiAction method binding, the 'method' property may
- * instead be the name of an method of an arbitrary POJO (plain old
- * java.lang.Object). In this case the named method must be public and may have
- * any signature. If the method signature does accept parameters, those
- * parameters may be specified by using the format:
- * <code>methodName(${param1}, ${param2}, ...)</code>. Parameter
+ * As an alternative to a MultiAction method binding, this action state may
+ * excute a
+ * {@link org.springframework.webflow.action.AbstractBeanInvokingAction bean invoking action}
+ * that invokes a method on a POJO (plain old java.lang.Object). If the method
+ * signature does accept arguments, those arguments may be specified by using
+ * the format: <code>methodName(${arg1}, ${parg}, ...)</code>. Argument
  * ${expressions} are evaluated against the current <code>RequestContext</code>,
  * allowing for data stored in flow scope or request scope to be passed as
- * arguments to the POJO in an automatic fashion.</td>
+ * arguments to the POJO in an automatic fashion. In addition, POJO return
+ * values may be exposed to the flow automatically. See the bean invoking action
+ * type hierarchy for more information. </td>
  * </tr>
  * </table>
  * 
