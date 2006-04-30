@@ -119,7 +119,7 @@ public class Transition extends AnnotatedObject {
 	 * @param matchingCriteria the transition matching criteria
 	 */
 	public void setMatchingCriteria(TransitionCriteria matchingCriteria) {
-		Assert.notNull(matchingCriteria, "The transition matching criteria is required");
+		Assert.notNull(matchingCriteria, "The matching criteria is required");
 		this.matchingCriteria = matchingCriteria;
 	}
 
@@ -154,6 +154,7 @@ public class Transition extends AnnotatedObject {
 	 * @param targetStateResolver the target state resolver
 	 */
 	public void setTargetStateResolver(TargetStateResolver targetStateResolver) {
+		Assert.notNull(targetStateResolver, "The target state resolver is required");
 		this.targetStateResolver = targetStateResolver;
 	}
 
