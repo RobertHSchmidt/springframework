@@ -22,7 +22,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.CollectionUtils;
-import org.springframework.webflow.ExternalContext.SharedMap;
+import org.springframework.webflow.SharedMap;
 import org.springframework.webflow.context.StringKeyedMapAdapter;
 
 /**

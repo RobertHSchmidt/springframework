@@ -20,6 +20,7 @@ import java.util.HashMap;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ParameterMap;
+import org.springframework.webflow.SharedAttributeMap;
 import org.springframework.webflow.context.SharedMapDecorator;
 
 /**

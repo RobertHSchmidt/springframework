@@ -17,8 +17,8 @@ package org.springframework.webflow.execution.repository.support;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.ExternalContext.SharedAttributeMap;
-import org.springframework.webflow.ExternalContext.SharedMap;
+import org.springframework.webflow.SharedAttributeMap;
+import org.springframework.webflow.SharedMap;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryCreator;
 

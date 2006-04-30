@@ -82,7 +82,6 @@ public final class Event extends EventObject {
 		else {
 			this.attributes = attributes.unmodifiable();
 		}
-
 	}
 
 	/**
@@ -115,7 +114,7 @@ public final class Event extends EventObject {
 	// helpers
 
 	public String toString() {
-		return new ToStringCreator(this).append("source", getSource()).append("id", getId()).append("attributes",
-				getAttributes()).toString();
+		return new ToStringCreator(this).append("source", getSource()).append("id", getId()).append("timestamp",
+				getTimestamp()).append("attributes", getAttributes()).toString();
 	}
 }
