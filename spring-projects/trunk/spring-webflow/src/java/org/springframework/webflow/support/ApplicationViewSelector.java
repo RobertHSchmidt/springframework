@@ -53,7 +53,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * A value indicating if a redirect to the selected application view should
 	 * be requested.
 	 * <p>
-	 * Setting this to something other than {@link RedirectType#NONE} allows you
+	 * Setting this to something other than <code>null</code> allows you
 	 * to redirect while the flow is in progress to a stable URL that can be
 	 * safely refreshed.
 	 */
