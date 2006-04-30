@@ -2,7 +2,7 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC1 (28.4.2006)
+Changes in version 1.0 RC1 (01.5.2006)
 ------------------------------------
 
 Package org.springframework.webflow
@@ -66,8 +66,7 @@ Package org.springframework.webflow.execution
 * Fixed a bug in FlowExecutionImpl related to nested exception handling.
 * Added an 'input' Attribute argument to the FlowExecution.start operation, for passing input into a starting
   flow execution in a consistent manner.
-* Added support for tracking the "currentViewSelection" of a paused flow execution;
-  used to support flow execution redirects.
+* Added support "refreshing" a paused flow execution, an idempotent operation used to support flow execution redirects.
 * Introduced an EventId value object for describing an external event that has been signaled.
 * Streamlined FlowExecutionRepository interface to remove experimental 'getCurrentViewSelection' and 
   'setCurrentViewSelection' methods.
@@ -75,6 +74,7 @@ Package org.springframework.webflow.execution
 Package org.springframework.webflow.executor
 * Added 'appendFlowInputAttributesToRequestPath' property to RequestPathFlowExecutorArgumentExtractor to control
   if flow redirect input is appended to the URL request path or by use of named query parameters.
+* Added "redirectOnPause" attribute to FlowExecutorImpl to allow global enforcement of flow execution redirects for paused flows.
 * FlowExecutorArgumentExtractor now throws typed argument extraction exceptions to report illegal arguments provided by clients.
 * Changed JSF execution resume behavior to no longer require an eventId; if no eventId is provided in a request the current view will not change.
 * Fixed a situation where a NullPointerException could occur within JSF's FlowPhaseListener.
@@ -90,16 +90,19 @@ Package org.springframework.webflow.registry
 
 Package org.springframework.webflow.support
 * Added two concrete FlowVariable types, SimpleFlowVariable and BeanFactoryFlowVariable.
-* Added FlowExecutionRedirect, for redirecting to a "current" ApplicationViewSelection 
-  of a FlowExecution.  This facilitates post+redirect+get semantics with unique resource URLs
-  for refreshing each flow execution continuation (allowing back and refresh button use without
-  page caching).
-* Factored out a RedirectType enumeration, as there are now three redirect options: FlowExecutionRedirect
-  ConversationRedirect, or None.
+* Added FlowExecutionRedirect, for redirecting to a "current" ApplicationView of a FlowExecution.
+  This facilitates post+redirect+get semantics with unique resource URLs for refreshing each
+  flow execution continuation (allowing back and refresh button use without page caching).
+* Factored out a RedirectType enumeration, as there are now two redirect options: FlowExecutionRedirect and
+  ConversationRedirect.
 * Added ImmutableFlowAttributeMapper.
 
 Package org.springframework.webflow.test
 * Misc polishing
+
+Package org.springframework.webflow.samples
+* Made all samples Spring IDE projects.
+* Made the number guess "games" fully stateful, 100% decoupling game logic from SWF APIs.
 
 Changes in version 1.0 Early Access (02.3.2006)
 ------------------------------------
