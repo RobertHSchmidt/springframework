@@ -194,7 +194,6 @@ public class FlowArtifactFactory {
 	 * null
 	 * @param outputMapper the state output mapper; may be null
 	 * @param exceptionHandlers any exception handlers; may be null
-	 * @param exitActions any state exit actions; may be null
 	 * @param attributes attributes to assign to the State; which may also be
 	 * used to affect state construction. May be null.
 	 * @return the fully initialized subflow state instance

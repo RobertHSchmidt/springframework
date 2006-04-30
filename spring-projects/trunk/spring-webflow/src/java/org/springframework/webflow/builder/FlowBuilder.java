@@ -24,18 +24,22 @@ import org.springframework.webflow.Flow;
  * <ol>
  * <li> Initialize this builder, creating the initial flow definition, by
  * calling {@link #init(String, UnmodifiableAttributeMap))}.
- * <li> Call {@link #buildVariables()} to create any variables of the flow and add them
- * to the flow definition.
- * <li> Call {@link #buildInputMapper()} to create and set the input mapper for the flow.
- * <li> Call {@link #buildStartActions()} to create and add any start actions to the flow.
- * <li> Call {@link #buildInlineFlows()} to create and add any inline flows encapsulated 
- * by the flow and add them to the flow definition.
- * <li> Call {@link #buildStates()} to create the states of the flow and add them
- * to the flow definition.
+ * <li> Call {@link #buildVariables()} to create any variables of the flow and
+ * add them to the flow definition.
+ * <li> Call {@link #buildInputMapper()} to create and set the input mapper for
+ * the flow.
+ * <li> Call {@link #buildStartActions()} to create and add any start actions to
+ * the flow.
+ * <li> Call {@link #buildInlineFlows()} to create and add any inline flows
+ * encapsulated by the flow and add them to the flow definition.
+ * <li> Call {@link #buildStates()} to create the states of the flow and add
+ * them to the flow definition.
  * <li> Call {@link #buildGlobalTransitions()} to create the state exception
  * handlers of the flow and add them to the flow definition.
- * <li> Call {@link #buildStartActions()} to create and add any end actions to the flow.
- * <li> Call {@link #buildOutputMapper()} to create and set the output mapper for the flow.
+ * <li> Call {@link #buildEndActions()} to create and add any end actions to
+ * the flow.
+ * <li> Call {@link #buildOutputMapper()} to create and set the output mapper
+ * for the flow.
  * <li> Call {@link #buildExceptionHandlers()} to create the state exception
  * handlers of the flow and add them to the flow definition.
  * <li> Call {@link #getFlow()} to return the fully-built {@link Flow}
@@ -53,8 +57,8 @@ import org.springframework.webflow.Flow;
  * {@link org.springframework.webflow.builder.FlowAssembler}, which acts as an
  * assembler (director). Flow Builders may be reused, however, exercise caution
  * when doing this as these objects are not thread safe. Also, for each use be
- * sure to call init, buildStates, buildExceptionHandlers, buildPostProcess,
- * getResult, and dispose completely in that order.
+ * sure to call init, followed by the build* methods, getFlow, and dispose
+ * completely in that order.
  * <p>
  * This is an example of the classic GoF Builder pattern.
  * 
@@ -68,10 +72,10 @@ import org.springframework.webflow.Flow;
 public interface FlowBuilder {
 
 	/**
-	 * Initialize this builder.  This could cause the builder to open a stream to an 
-	 * externalized resource representing the flow definition, for example.
+	 * Initialize this builder. This could cause the builder to open a stream to
+	 * an externalized resource representing the flow definition, for example.
 	 * @param id the identifier to assign to the flow
-	 * 
+	 * @param attributes custom attributes to assign to the flow
 	 * @throws FlowBuilderException an exception occured building the flow
 	 */
 	public void init(String id, AttributeCollection attributes) throws FlowBuilderException;
@@ -133,8 +137,9 @@ public interface FlowBuilder {
 
 	/**
 	 * Get the fully constructed and configured Flow object - called by the
-	 * builder's assembler (director) after assembly.  Ehen this method is called by the assembler, 
-	 * it is expectred flow construction wto have completed and the returned flow is ready for use.
+	 * builder's assembler (director) after assembly. Ehen this method is called
+	 * by the assembler, it is expectred flow construction wto have completed
+	 * and the returned flow is ready for use.
 	 */
 	public Flow getFlow();
 

@@ -121,7 +121,7 @@ public interface FlowExecutionListener {
 	 * Called when the active flow execution session has been asked to end but 
 	 * before it has ended.
 	 * @param context the source of the event
-	 * @session the current active session that is ending
+	 * @session session the current active session that is ending
 	 * @param output the flow output produced by the ending session.
 	 * The map may be modified by this listener to affect the output returned.
 	 */
@@ -131,7 +131,7 @@ public interface FlowExecutionListener {
 	 * Called when a flow execution session ends. If the ended session was the
 	 * root session of the flow execution, the entire flow execution also ends.
 	 * @param context the source of the event
-	 * @param endedSession ending flow session
+	 * @param session ending flow session
 	 * @param output final, unmodifiable output returned by the ended
 	 * session
 	 */

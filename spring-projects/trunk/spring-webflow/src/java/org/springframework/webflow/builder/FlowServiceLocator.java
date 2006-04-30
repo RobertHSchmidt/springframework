@@ -50,7 +50,7 @@ public interface FlowServiceLocator {
 	/**
 	 * Retrieve the action to be executed within a flow with the assigned
 	 * parameters.
-	 * @param parameters the assigned action parameters
+	 * @param id the id of the action
 	 * @throws FlowArtifactException when no such action is found
 	 */
 	public Action getAction(String id) throws FlowArtifactException;
