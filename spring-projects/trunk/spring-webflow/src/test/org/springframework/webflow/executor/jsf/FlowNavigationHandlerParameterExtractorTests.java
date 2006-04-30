@@ -3,6 +3,7 @@ package org.springframework.webflow.executor.jsf;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.execution.EventId;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractionException;
 
 public class FlowNavigationHandlerParameterExtractorTests extends TestCase {
 	private FlowNavigationHandlerArgumentExtractor extractor = new FlowNavigationHandlerArgumentExtractor();
@@ -15,8 +16,11 @@ public class FlowNavigationHandlerParameterExtractorTests extends TestCase {
 
 	public void testExtractFlowIdWrongFormat() {
 		JsfExternalContext context = new JsfExternalContext(new MockFacesContext(), "action", "flow:foo");
-		String flowId = extractor.extractFlowId(context);
-		assertNull(flowId);
+		try {
+			String flowId = extractor.extractFlowId(context);
+		} catch (FlowExecutorArgumentExtractionException e) {
+			
+		}
 	}
 
 	public void testExtractEventId() {
