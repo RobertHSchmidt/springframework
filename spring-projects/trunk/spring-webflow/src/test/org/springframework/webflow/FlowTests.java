@@ -160,7 +160,7 @@ public class FlowTests extends TestCase {
 
 	public void testAddGlobalTransition() {
 		Transition t = new Transition(new DefaultTargetStateResolver("myState2"));
-		flow.addGlobalTransition(t);
+		flow.getGlobalTransitionSet().add(t);
 		assertSame(t, flow.getGlobalTransitionSet().toArray()[0]);
 	}
 

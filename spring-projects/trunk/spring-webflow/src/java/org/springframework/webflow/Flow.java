@@ -533,19 +533,6 @@ public class Flow extends AnnotatedObject {
 	}
 
 	/**
-	 * Convenience method that adds an transition to this flow's transition set.
-	 * <p>
-	 * Flow transitions are called <i>global transitions</i> as they are shared
-	 * by all states, eligible for execution if an event does not match a
-	 * transition at the state-level.
-	 * @see #onEvent(Event, FlowExecutionControlContext)
-	 * @param transition the transition to add
-	 */
-	public void addGlobalTransition(Transition transition) {
-		getGlobalTransitionSet().add(transition);
-	}
-
-	/**
 	 * Returns the set of transitions eligible for execution by this flow if no
 	 * state-level transition is matched.
 	 * @return the global transition set
@@ -567,7 +554,7 @@ public class Flow extends AnnotatedObject {
 	}
 	
 	/**
-	 * Start a new session for this flow in the specified state.
+	 * Start a new session for this flow in its stat state.
 	 * @param context the flow execution control context
 	 * @param input eligible input into the session
 	 */
@@ -580,7 +567,7 @@ public class Flow extends AnnotatedObject {
 		return startState.enter(context);
 	}
 	
-	protected void createVariables(RequestContext context) {
+	private void createVariables(RequestContext context) {
 		Iterator it = variables.iterator();
 		while (it.hasNext()) {
 			FlowVariable variable = (FlowVariable)it.next();
