@@ -53,7 +53,7 @@ import org.springframework.webflow.support.FlowRedirect;
  * <ul>
  * <li>That the flow execution starts as expected given a request from an
  * external context containing potential input attributes (see the
- * {@link #startFlow(AttributeMap, ExternalContext, FlowExecutionListener[]))}
+ * {@link #startFlow(AttributeMap, ExternalContext, FlowExecutionListener[])}
  * variants).
  * <li>That given the set of supported state transition criteria a state
  * executes the appropriate transition when a matching event is signaled (with

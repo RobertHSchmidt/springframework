@@ -72,14 +72,13 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </tr>
  * <tr>
  * <td>methodResolver</td>
- * <td><i>{@link DefaultMultiActionMethodResolver}</i></td>
+ * <td>Treats the id of the "currentState" as the target method name</td>
  * <td>Set the strategy used to resolve the name (key) of an action execution
  * method. Allows full control over the method resolution algorithm.</td>
  * </tr>
  * </table>
  * 
  * @see MultiAction.MethodResolver
- * @see DefaultMultiActionMethodResolver
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -137,8 +136,7 @@ public class MultiAction extends AbstractAction {
 	}
 
 	/**
-	 * Get the strategy used to resolve action execution method keys. Defaults
-	 * to {@link DefaultMultiActionMethodResolver}.
+	 * Get the strategy used to resolve action execution method keys.
 	 */
 	public MethodResolver getMethodResolver() {
 		return methodResolver;

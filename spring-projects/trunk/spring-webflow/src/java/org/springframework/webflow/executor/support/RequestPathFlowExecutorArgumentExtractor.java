@@ -131,8 +131,8 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	 * last) view selection</i> made by the conversation identified by the
 	 * provided conversationId. Used to support the <i>conversation redirect</i>
 	 * use case.
-	 * @param conversationId the conversation id
-	 * @param context the external context
+	 * @param key the flow execution key
+	 * @param context the flow execution context
 	 * @return the relative conversation URL path
 	 */
 	public String createConversationUrl(FlowExecutionKey key, FlowExecutionContext flowExecution, ExternalContext context) {

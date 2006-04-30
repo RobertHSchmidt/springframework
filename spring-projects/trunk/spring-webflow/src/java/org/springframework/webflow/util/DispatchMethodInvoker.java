@@ -66,7 +66,6 @@ public class DispatchMethodInvoker {
 	 * @param target the target to dispatch to.
 	 * @param parameterTypes the parameter types defining the argument signature
 	 * of the dispatch methods
-	 * @param typeCaption a description of the method type
 	 */
 	public DispatchMethodInvoker(Object target, Class[] parameterTypes) {
 		Assert.notNull(target, "The target of a dispatch method invocation is required");
