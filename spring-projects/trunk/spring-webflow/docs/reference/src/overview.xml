@@ -41,7 +41,7 @@
 		<para>
 			Spring Web Flow (SWF) is a component of the
 			Spring Framework's web stack focused on the
-			definition and execution of page flow within
+			definition and execution of UI flow within
 			a web application.
 		</para>
 		<para>
@@ -57,7 +57,7 @@
 		</para>
 		<para>
 			Spring Web Flow exists at a higher level of abstraction, integrating
-			as a self-contained <emphasis>page flow engine</emphasis> within
+			as a self-contained <emphasis>flow engine</emphasis> within
 			base frameworks	such as Struts, Spring MVC, Portlet MVC, and JSF.
 			SWF	provides you the capability to capture your
 			application's page flow	explicitly in a declarative, 
@@ -69,7 +69,7 @@
 	<sect1 id="introduction-packaging">
 		<title>Packaging overview</title>
 		<para>
-			Spring Web Flow has been architected as a self-contained <emphasis>page flow engine</emphasis>
+			Spring Web Flow has been architected as a self-contained <emphasis>flow engine</emphasis>
 			with few required dependencies on third-party APIs.  All dependencies are 
 			carefully managed.
 		</para>
@@ -263,8 +263,8 @@
 	<sect1 id="introduction-support">
 		<title>Support</title>
 		<para>
-			Spring Web Flow 1.0 is supported on Spring 1.2.6 or later.  The JSF integration requires
-			Spring 1.2.7.  The Portlet integration requires Spring 2.0.
+			Spring Web Flow 1.0 is supported on Spring 1.2.7 or later.
+			The Portlet integration requires Spring 2.0.
 		</para>
 		<para>
 		    The community support forum is located at http://forum.springframework.org.

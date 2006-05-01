@@ -10,7 +10,7 @@
 		</para>
 		<para>
 			Flows are defined declaratively using a rich domain-specific language (DSL) 
-			tailored to the problem domain of page flow.  Currently, Java-based and XML-based
+			tailored to the problem domain of UI flow.  Currently, Java-based and XML-based
 			forms of this language are provided.
 		</para>
 		<para>
@@ -87,7 +87,7 @@
                    </row>
                    <row>
                        <entry>variables</entry>
-                       <entry>The list of flow variables to create each time an execution of the flow is started.</entry>
+                       <entry>The set of flow variables to create each time an execution of the flow is started.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -113,14 +113,6 @@
 				       <entry>Empty</entry>
                    </row>
                    <row>
-                       <entry>globalTransitions</entry>
-                       <entry>The set of transitions shared by all states of the flow.</entry>
-				       <entry>
-				           <emphasis>0..*</emphasis>
-				       </entry>
-				       <entry>Empty</entry>
-                   </row>
-                   <row>
                        <entry>endActions</entry>
                        <entry>The list of actions to execute each time an execution of the flow ends.</entry>
 				       <entry>
@@ -138,6 +130,14 @@
 				           <emphasis>0..1</emphasis>
 				       </entry>
 				       <entry>Null</entry>
+                   </row>
+                   <row>
+                       <entry>globalTransitions</entry>
+                       <entry>The set of transitions shared by all states of the flow.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+				       <entry>Empty</entry>
                    </row>
                    <row>
                        <entry>exceptionHandlers</entry>
@@ -169,6 +169,8 @@
         &lt;attribute .../&gt;
 
         &lt;var .../&gt;
+
+        &lt;input-mapper .../&gt;
                 
         &lt;start-actions&gt;
             ...
@@ -176,13 +178,15 @@
         
         &lt;-- your state definitions go here --&gt;
 
-        &lt;global-transitions&gt;
-            ...
-        &lt;/global-transitions&gt;
-        
         &lt;end-actions&gt;
             ...
         &lt;/end-actions&gt;
+
+        &lt;output-mapper .../&gt;
+        
+        &lt;global-transitions&gt;
+            ...
+        &lt;/global-transitions&gt;
 
         &lt;exception-handler .../&gt;
 
@@ -202,14 +206,14 @@
     flow.addVariable(...);
     flow.setInputMapper(...);
     flow.getStartActionList().add(...);
-    flow.getGlobalTransitionSet().add(...);
     flow.getEndActionList().add(...);
-    flow.getExceptionHandlerSet().add(...);
     flow.setOutputMapper(...);
+    flow.getGlobalTransitionSet().add(...);
+    flow.getExceptionHandlerSet().add(...);
     flow.addInlineFlow(...);
           </programlisting>
           <para>
-              Note: a Flow definition is typically built by a FlowBuilder rather than assembled 
+              A Flow definition is typically built by a FlowBuilder rather than assembled 
               by hand.  The flow building subsystem is contained within the 
               <literal>org.springframework.webflow.builder</literal> package.
           </para>
@@ -359,7 +363,7 @@
           </programlisting>
         </sect2>
         <para>
-            Note: a State definition is typically built by a <literal>FlowArtifactFactory</literal>, used by 
+            A State definition is typically built by a <literal>FlowArtifactFactory</literal>, used by 
             a <literal>FlowBuilder</literal> during flow assembly.  The flow building subsystem is contained within the 
             <literal>org.springframework.webflow.builder</literal> package.
         </para>
@@ -560,7 +564,7 @@
         <sect2 id="transition-exception-handling">
         	<title>Transition executing state exception handlers</title>
         	<para>
-        		The <literal>&lt;transition/&gt;</literal> element contains an exclusive <literal>on-exception</literal>literal>
+        		The <literal>&lt;transition/&gt;</literal> element contains an exclusive <literal>on-exception</literal>
         		attribute used to specify an exception-based criteria for transition execution.  This allows you to 
         		transition the flow to another state on the occurrence of an exception.
         	</para>
@@ -890,8 +894,8 @@
 			</sect3>
 			<para>
 			    This is example is called a <emphasis>flow execution redirect</emphasis> because the application view selected 
-			    is constructed after a redirect to the flow execution.  The redirect is sent to a
-			    flow execution URL that <emphasis>refreshes</emphasis> the flow execution, triggering
+			    is constructed only after a redirect to the flow execution.  The redirect is sent to a
+			    URL that <emphasis>refreshes</emphasis> the flow execution, triggering
 			    the rendering of the <literal>yourList</literal> application view on the next request
 			    into the server.
 			</para>
@@ -947,7 +951,7 @@
             &lt;entry-actions&gt;
                 &lt;action bean="pdfWriter" method="write"/&gt;
             &lt;/entry-actions&gt;
-        &lt;/view-state id="displayPdf"&gt;
+        &lt;/view-state&gt;
         ...
     &lt;/flow&gt;
     			</programlisting>
@@ -1078,7 +1082,7 @@
             				<row>
               					<entry>on flow start</entry>
 								<entry>
-									Each time an execution of a flow starts.
+									Each time a new flow session starts.
 								</entry>
 	        	   	        </row>
             				<row>
@@ -1102,7 +1106,7 @@
             				<row>
               					<entry>on flow end</entry>
 								<entry>
-									Each time an execution of a flow terminates.
+									Each time a flow session terminates.
 								</entry>
 	        	   	        </row>
 	            		</tbody>
