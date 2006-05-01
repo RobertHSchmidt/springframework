@@ -79,9 +79,11 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	 * Adds a new input mapping. Use when you need full control over defining
 	 * how a subflow input attribute mapping will be perfomed.
 	 * @param inputMapping the input mapping
+	 * @return this, to support call chaining
 	 */
-	public void addInputMapping(Mapping inputMapping) {
+	public DefaultFlowAttributeMapper addInputMapping(Mapping inputMapping) {
 		inputMapper.addMapping(inputMapping);
+		return this;
 	}
 
 	/**
@@ -98,10 +100,12 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	 * into subflow scope.
 	 * @param inputAttributeName the attribute in flow scope to map into the
 	 * subflow
+	 * @return this, to support call chaining
 	 */
-	public void addInputAttribute(String inputAttributeName) {
+	public DefaultFlowAttributeMapper addInputAttribute(String inputAttributeName) {
 		PropertyExpression expr = expressionParser.parsePropertyExpression(inputAttributeName);
 		inputMapper.addMapping(new Mapping(new FlowScopeExpression(expr), expr, null));
+		return this;
 	}
 
 	/**
@@ -123,9 +127,11 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	 * Adds a new output mapping. Use when you need full control over defining
 	 * how a subflow output attribute mapping will be perfomed.
 	 * @param outputMapping the output mapping
+	 * @return this, to support call chaining
 	 */
-	public void addOutputMapping(Mapping outputMapping) {
+	public DefaultFlowAttributeMapper addOutputMapping(Mapping outputMapping) {
 		outputMapper.addMapping(outputMapping);
+		return this;	
 	}
 
 	/**
@@ -142,9 +148,11 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	 * the scope of the resuming parent flow.
 	 * @param outputAttributeName the subflow output attribute to map into the
 	 * parent flow
+	 * @return this, to support call chaining
 	 */
-	public void addOutputAttribute(String outputAttributeName) {
+	public DefaultFlowAttributeMapper addOutputAttribute(String outputAttributeName) {
 		outputMapper.addMapping(mapping().source(outputAttributeName).value());
+		return this;
 	}
 
 	/**

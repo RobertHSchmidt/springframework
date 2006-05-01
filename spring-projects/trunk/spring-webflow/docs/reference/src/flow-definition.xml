@@ -86,6 +86,25 @@
 				       </entry>
                    </row>
                    <row>
+                       <entry>variables</entry>
+                       <entry>The list of flow variables to create each time an execution of the flow is started.</entry>
+				       <entry>
+				           <emphasis>0..*</emphasis>
+				       </entry>
+				       <entry>Empty</entry>
+                   </row>
+                   <row>
+                       <entry>inputMapper</entry>
+                       <entry>
+                           The service responsible for mapping flow input provided by a caller each time an
+                           execution of the flow is started.
+                       </entry>
+				       <entry>
+				           <emphasis>0..1</emphasis>
+				       </entry>
+				       <entry>Null</entry>
+                   </row>
+                   <row>
                        <entry>startActions</entry>
                        <entry>The list of actions to execute each time an execution of the flow is started.</entry>
 				       <entry>
@@ -95,7 +114,7 @@
                    </row>
                    <row>
                        <entry>globalTransitions</entry>
-                       <entry>The set of transitions shared by all states of this flow.</entry>
+                       <entry>The set of transitions shared by all states of the flow.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -108,6 +127,17 @@
 				           <emphasis>0..*</emphasis>
 				       </entry>
 				       <entry>Empty</entry>
+                   </row>
+                   <row>
+                       <entry>outputMapper</entry>
+                       <entry>
+                           The service responsible for mapping flow output to expose to the caller each time an
+                           execution of the flow ends.
+                       </entry>
+				       <entry>
+				           <emphasis>0..1</emphasis>
+				       </entry>
+				       <entry>Null</entry>
                    </row>
                    <row>
                        <entry>exceptionHandlers</entry>
@@ -137,7 +167,9 @@
        	    <programlisting>
     &lt;flow start-state="startingPoint"&gt;
         &lt;attribute .../&gt;
-        
+
+        &lt;var .../&gt;
+                
         &lt;start-actions&gt;
             ...
         &lt;/start-actions&gt;
@@ -167,12 +199,20 @@
     flow.getAttributeMap().put("name", "value");
     flow.addState(...);
     flow.setStartState("startingPoint");
-    flow.addStartAction(...);
-    flow.addGlobalTransition(...);
-    flow.addEndAction(...);
-    flow.addExceptionHandler(...);
+    flow.addVariable(...);
+    flow.setInputMapper(...);
+    flow.getStartActionList().add(...);
+    flow.getGlobalTransitionSet().add(...);
+    flow.getEndActionList().add(...);
+    flow.getExceptionHandlerSet().add(...);
+    flow.setOutputMapper(...);
     flow.addInlineFlow(...);
           </programlisting>
+          <para>
+              Note: a Flow definition is typically built by a FlowBuilder rather than assembled 
+              by hand.  The flow building subsystem is contained within the 
+              <literal>org.springframework.webflow.builder</literal> package.
+          </para>
         </sect2>
     </sect1>
     <sect1 id="state">
@@ -313,11 +353,16 @@
     Flow flow = new Flow("id");
     TransitionableState state = new SomeConcreteStateType(flow, "stateId");
     state.getAttributeMap().put("name", "value");
-    state.addEntryAction(...);
-    state.addTransition(...);
-    state.addExitAction(...);
+    state.getEntryActionList().add(...);
+    state.getTransitionSet().add(...);
+    state.getExitActionList().add(...);
           </programlisting>
         </sect2>
+        <para>
+            Note: a State definition is typically built by a <literal>FlowArtifactFactory</literal>, used by 
+            a <literal>FlowBuilder</literal> during flow assembly.  The flow building subsystem is contained within the 
+            <literal>org.springframework.webflow.builder</literal> package.
+        </para>
     </sect1>
     <sect1 id="transition">
     	<title>Transition</title>
@@ -326,7 +371,8 @@
     	</para>
     	<para>
     	    Recall that all TransitionableStates have a set of one or more transitions, each defining a 
-    	    path to another state in the flow (or a recursive path back to the same state).  When a transitionable state is entered, it executes a behavior.
+    	    path to another state in the flow (or a recursive path back to the same state).
+    	    When a transitionable state is entered, it executes a behavior.
     	    For example, a transitionable state called "Display Form" may display a form to the user.
     	    The outcome of the state's execution, called an event, is used to drive execution of 
     	    one of the state's transitions.  For example, the user may press the form submit button which
@@ -511,6 +557,37 @@
 				</mediaobject>    			
 			</sect3>
 		</sect2>
+        <sect2 id="transition-exception-handling">
+        	<title>Transition executing state exception handlers</title>
+        	<para>
+        		The <literal>&lt;transition/&gt;</literal> element contains an exclusive <literal>on-exception</literal>literal>
+        		attribute used to specify an exception-based criteria for transition execution.  This allows you to 
+        		transition the flow to another state on the occurrence of an exception.
+        	</para>
+        	<sect3 id="transition-onExceptionXml">
+    	    	<title>Exception handling - XML example</title>
+    	    	<para>
+    	    	    The following example shows a transition that is applied as an state exception handler:
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="state1"&gt;
+    
+        &lt;some-state id="state1"&gt;
+            &lt;transition on="event1" to="state2"/&gt;
+            &lt;transition on-exception="example.MyBusinessException" to="state3"/&gt;
+        &lt;/some-state&gt;
+
+        ...
+        
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    In this example <literal>state1</literal> defines one transition and an exception handler
+    			    which executes a transition to <literal>state3</literal> if an <literal>MyBusinessException</literal>
+    			    is thrown within the state.
+    			</para>
+   			</sect3>
+		</sect2>
     </sect1>
     <sect1 id="core-states">
     	<title>Concrete state types</title>
@@ -636,16 +713,33 @@
             			<row>
               				<entry>ConversationRedirect</entry>
               				<entry>
-              					Wraps an ApplicationView and requests a redirect to that view at a SWF-specific <emphasis>conversation URL</emphasis>.  
-              					When the URL is accessed on subsequent requests, the wrapped ApplicationView will be rendered.  The
-              					URL itself is bookmarkable and refreshable while the conversation remains active.
+              					Requests a redirect back to the current ViewState at a unique <emphasis>conversation URL</emphasis>.  
+              					When this URL is accessed on subsequent requests, an ApplicationView will be reconstituted and rendered.
+              					The URL is refreshable while the conversation remains active.
+              					<para>
+	              					The conversation URL does not change for the duration of the conversation, even as the conversation progresses 
+	              					from step to step.  Accessing the URL always refreshes the current state of the conversation.
+    	          				</para>
+              				</entry>
+ 						</row>
+            			<row>
+              				<entry>FlowExecutionRedirect</entry>
+              				<entry>
+              					Requests a redirect back to a ViewState at a unique <emphasis>flow execution URL</emphasis>.  
+              					When this URL is accessed on subsequent requests, an ApplicationView will be reconstituted and rendered.
+              					The URL is refreshable while the conversation remains active.
+								<para>        				
+              						Unlike the ConversationRedirect URL, multiple flow execution URLs may be generated for a single logical conversation.  
+              						Each flow execution URL provides access to a paused flow execution continuation waiting in a restorable ViewState.
+              						Accessing the URL refreshes the conversation at that state.
+              					</para>
               				</entry>
  						</row>
             			<row>
               				<entry>FlowRedirect</entry>
               				<entry>
               					Requests a redirect that launches an entirely new flow--a new conversation.  Used to support 
-              					<emphasis>redirect to flow</emphasis> and <emphasis>restart flow</emphasis> use cases.
+              					<emphasis>redirect to flow</emphasis> (flow chaining) and <emphasis>restart flow</emphasis> use cases.
               				</entry>
  						</row>
             			<row>
@@ -690,10 +784,10 @@
             				<row>
               					<entry>ApplicationViewSelector</entry>
 								<entry>
-									Returns an ApplicationView referencing a static <literal>viewName</literal> to render an containing a
-									<literal>modelMap</literal> representing the application data to make available to the rendering process
+									Returns an ApplicationView referencing a logical <literal>viewName</literal> to render an containing a
+									<literal>modelMap</literal> with the application data needed by the rendering process
 									(by default, this map contains the union of the attributes in flow and request scope).
-									Supports setting a <literal>requestConversationRedirect</literal> flag that triggers
+									Supports setting a <literal>redirectType</literal> enum that triggers
 									a browser redirect to the selected view. The default implementation.
 								</entry>
 	        	   	        </row>
@@ -751,6 +845,11 @@
         ...
     &lt;/flow&gt;
     			</programlisting>
+    			<para>
+    				View name expressions may also be specified for the <literal>view</literal> attribute to
+    				achieve runtime view name calculation.
+    				For example, <literal>view="${requestScope.calculatedViewName}"</literal>.
+    			</para>
 			</sect3>  		
     	    <sect3 id="viewStateJava">
     	    	<title>ViewState API - application view selection</title>
@@ -773,10 +872,11 @@
     			</programlisting>
 			</sect3>
     	    <sect3 id="viewStateXml-redirect">
-    	    	<title>ViewState XML - conversation redirect</title>
+    	    	<title>ViewState XML - flow execution redirect</title>
     	    	<para>
-    	    	    The following example illustrates a <literal>view-state</literal> definition in XML that makes a conversation
-    	    	    redirect selection when entered, redirecting to the <literal>yourList</literal> view for display.
+    	    	    The following example illustrates a <literal>view-state</literal> definition in XML that makes a
+    	    	    flow execution redirect selection when entered, redirecting to the
+    	    	    <literal>yourList</literal> view for display.
     	    	</para>
     	    	<programlisting>
     &lt;flow start-state="displayList"&gt;
@@ -789,12 +889,14 @@
     			</programlisting>
 			</sect3>
 			<para>
-			    This is example is called a <emphasis>conversation redirect</emphasis> because the application view selected is cached 
-			    between requests as the "current view selection" for the active conversation.  The redirect sent is to a
-			    conversation URL that renders this cached application view on the next request into the server.
+			    This is example is called a <emphasis>flow execution redirect</emphasis> because the application view selected 
+			    is constructed after a redirect to the flow execution.  The redirect is sent to a
+			    flow execution URL that <emphasis>refreshes</emphasis> the flow execution, triggering
+			    the rendering of the <literal>yourList</literal> application view on the next request
+			    into the server.
 			</para>
     	    <sect3 id="viewStateJava-redirect">
-    	    	<title>ViewState API - conversation redirect</title>
+    	    	<title>ViewState API - flow execution redirect</title>
     	    	<para>
     	    	    The following example shows the equivalent view state definition using 
     	    	    the FlowBuilder API:
@@ -802,12 +904,52 @@
     	    	<programlisting>
     public class SearchFlowBuilder extends AbstractFlowBuilder {
     	public void buildStates() {
-    	    addViewState("displayList", new ApplicationViewSelector("yourView", true),
+    	    addViewState("displayList", viewSelector("redirect:yourView"),
    	            transition(on("add"), to("addListItem"))
     	    );
             ...    	          
         }
     }	
+    			</programlisting>
+			</sect3>
+    	    <sect3 id="viewStateXml-conversationRedirect">
+    	    	<title>ViewState XML - conversation redirect</title>
+    	    	<para>
+    	    	    The following example illustrates a <literal>view-state</literal> definition in XML that makes a
+    	    	    conversation redirect selection when entered, redirecting to the
+    	    	    <literal>yourList</literal> view for display.
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="displayList"&gt;
+        &lt;view-state id="displayList" view="conversationRedirect:yourList"&gt;
+            &lt;transition on="add" to="addListItem"/&gt;
+        &lt;/view-state&gt;
+        
+        ...
+    &lt;/flow&gt;
+    			</programlisting>
+				<para>
+				    This is example is called a <emphasis>conversation redirect</emphasis> because the application view selected 
+				    is constructed after a redirect to a conversation URL.  The redirect <emphasis>refreshes</emphasis> the current 
+				    view state of the conversation by triggering the rendering of the <literal>yourList</literal> application view
+				    on the next request into the server.
+				</para>
+			</sect3>
+    	    <sect3 id="viewStateXml-nullView">
+    	    	<title>ViewState XML - null view</title>
+    	    	<para>
+    	    	    The following example illustrates a <literal>view-state</literal> definition in XML that makes a
+    	    	    null view selection when entered, which causes no additional response to be issued.
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="displayPdf"&gt;
+        &lt;view-state id="displayPdf"&gt;
+            &lt;entry-actions&gt;
+                &lt;action bean="pdfWriter" method="write"/&gt;
+            &lt;/entry-actions&gt;
+        &lt;/view-state id="displayPdf"&gt;
+        ...
+    &lt;/flow&gt;
     			</programlisting>
 			</sect3>
     	    <sect3 id="viewStateXml-formState">
@@ -879,6 +1021,8 @@
     		    Spring Web Flow gives you full control over implementing your own actions and configuring when they should be invoked 
     		    within the lifecycle of a flow.  The system can also <emphasis>automatically</emphasis> adapt methods on
     		    your existing application objects (POJOs) to the <literal>Action</literal> interface in a non-invasive manner.
+    		    This means in most cases you can implement your flows without needing to develop custom glue code to bind SWF 
+    		    to your service layer operations.
     		</para>
     	    <para>
     	    	The properties of a <literal>org.springframework.webflow.ActionState</literal> are summarized below:
@@ -1015,21 +1159,8 @@
               					<entry>method</entry>
 								<entry>
 									The name of the target method on the Action instance to invoke to carry out execution.
-									This facilitates multiple <emphasis>action methods</emphasis> per Action instance.
-								</entry>
-	        	   	        </row>
-            				<row>
-              					<entry>resultName</entry>
-								<entry>
-									If the target method is an arbitrary public method that returns a value, this is the name of the attribute
-									the value should be indexed under.
-								</entry>
-	        	   	        </row>
-            				<row>
-              					<entry>resultScope</entry>
-								<entry>
-									If the resultName attribute is specified, this is the scope the result attribute should be indexed in.
-									For example, "request" or "flow" scope.
+									This facilitates multiple <emphasis>action methods</emphasis> per Action instance, 
+									supported by the <literal>org.springframework.webflow.action.MultiAction</literal>.
 								</entry>
 	        	   	        </row>
 	            		</tbody>
@@ -1073,7 +1204,7 @@
     			<para>
     			    The association between the <literal>searchAction</literal> id and an 
     			    <literal>Action</literal> implementation is made by the XmlFlowBuilder at 
-    			    Flow configuration time using a service registry, typically a
+    			    Flow configuration time using a service locator, typically a
     			    Spring BeanFactory.  For example:
     	    	<programlisting>
     &lt;beans&gt;
@@ -1213,7 +1344,7 @@
     public class SearchFlowBuilder extends AbstractFlowBuilder {
     	public void buildStates() {
             ...
-            addActionState("executeSearch", method("executeSearch", action("searchAction")),
+            addActionState("executeSearch", invoke("executeSearch", action("searchAction")),
                 transition(on("success"), to("displayResults")));
             ...    	          
         }
@@ -1292,120 +1423,28 @@
     public class SearchFlowBuilder extends AbstractFlowBuilder {
     	public void buildStates() {
     	    ...
-            addActionState("executeSearch", searchAction(),
+            addActionState("executeSearch",
+                action("searchService", method("search(${flowScope.searchCriteria})"), result("results"))
                 transition(on("success"), to("displayResults")));
             ...    	          
         }
-        
-        protected Action searchAction() {
-            AnnotatedAction searchAction =
-                method("executeSearch(${flowScope.criteria})", action("searchAction"));
-            searchAction.setResultName("results");
-            return searchAction;
-        }
     }	
     			</programlisting>
-			</sect3>    		
-    	</sect2>
-    	<sect2 id="decisionState">
-    		<title>DecisionState</title>
-    		<para>
-    			When entered, a decision state makes a flow routing decision.  This process consists of:
-    			<orderedlist>
-    				<listitem>
-    					<para>
-	    					Evaluating one or more boolean expressions against the executing flow to decide 
-	    					what state to transition to next.
-    					</para>
-    				</listitem>
-    				<listitem>
-    					<para>
-	    					Alternatively, executing a single <emphasis>decision action</emphasis> and evaluating its return event to 
-	    					decide what state to transition to next.  This action should be idempotent; that is, it should not 
-	    					have side effects.  Convenient support for evaluating return values of methods invoked 
-	    					on your application objects (POJOs) is provided.
-    					</para>
-    				</listitem>
-    			</orderedlist>
-    		</para>
-    	    <para>
-    	    	The properties of a <literal>org.springframework.webflow.DecisionState</literal> are summarized below:
-    	    </para>
-	    	<table>
-    	        <title>DecisionState properties</title>
-        	    <tgroup cols="4">
-            	    <colspec colname="c1" colwidth="2*" />
-        			<colspec colname="c2" colwidth="4*" />
-    	            <colspec colname="c2" colwidth="2*" />
-	                <colspec colname="c2" colwidth="2*" />
-	                <thead>
-       		            <row>
-               		        <entry>Property name</entry>
-               				<entry>Description</entry>
-	                        <entry>Cardinality</entry>
-       		                <entry>Default value</entry>
-           				</row>
-		  			</thead>
-				  	<tbody>
-            			<row>
-              				<entry>action</entry>
-							<entry>
-								The idempotent action to execute when the state is entered.
-								The action result event is used as the basis for the decision.
-							</entry>
-						    <entry>
-								<emphasis>0..1</emphasis>
-							</entry>
-							<entry>Null</entry>
-        	           </row>
-            	   </tbody>
-	          </tgroup>
-    	    </table>		
-    	    <sect3 id="decisionStateXml-expression">
-    	    	<title>DecisionState XML - expression evaluation</title>
-    	    	<para>
-    	    	    The following example constructs an <literal>DecisionState</literal> from
-    	    	    XML that evalutes a boolean expression to determine what transition 
-    	    	    to execute:
-    	    	</para>
-    	    	<programlisting>
-    &lt;flow start-state="shippingRequired"&gt;
-    
-        &lt;decision-state id="shippingRequired"&gt;
-            &lt;if test="${flowScope.order.needsShipping}" then="enterShippingDetails" else="placeOrder"/&gt;
-        &lt;/decision-state&gt;
-        ...
-    &lt;/flow&gt;
-    			</programlisting>
-    			<para>
-    			    This state definition reads "<emphasis>if the <literal>needsShipping</literal> property on the 
-    			    <literal>order</literal> object in flow scope is true, transition to the <literal>enterShippingDetails</literal>
-    			    state, otherwise transition to the <literal>placeOrder</literal> state</emphasis>."
-    			</para>
-    			<para>
-    			    <emphasis>Caution</emphasis>: flow definitions should <emphasis>not</emphasis> be vehicles for 
-    			    business logic.  In this case the decision made was controller logic, reasoning on a
-    			    pre-calculated value to decide what step of the flow to transition to next.  That is the kind of logic that 
-    			    should be in a flow definition.  In contrast, having the state <emphasis>itself</emphasis> embed 
-    			    the business rule defining how shipping status is calculated is a misuse.
-    			    Instead, push such a calculation into application code where it belongs and <emphasis>instruct</emphasis>
-    			    the flow to invoke that code using an action.
-    			</para>
 			</sect3>
-    	    <sect3 id="decisionStateXml-action">
-    	    	<title>DecisionState XML - decision action</title>
+    	    <sect3 id="actionStateXml-action">
+    	    	<title>ActionState XML - decision action</title>
     	    	<para>
-    	    	    The following example constructs an <literal>DecisionState</literal> from
-    	    	    XML that executes a action that forms the basis for the transition decision:
+    	    	    The following example constructs an <literal>ActionState</literal> from
+    	    	    XML that executes a action whose execution result forms the basis for the transition decision:
     	    	</para>
     	    	<programlisting>
     &lt;flow start-state="shippingRequired"&gt;
     
-        &lt;decision-state id="shippingRequired"&gt;
-            &lt;action bean="shippingService" method="isShippingRequired"/&gt;
+        &lt;action-state id="shippingRequired"&gt;
+            &lt;action bean="shippingService" method="isShippingRequired(${flowScope.purchase))"/&gt;
             &lt;transition on="yes" to="enterShippingDetails"/&gt;
             &lt;transition on="no" to="placeOrder"/&gt;
-        &lt;/decision-state&gt;
+        &lt;/action-state&gt;
         ...
     &lt;/flow&gt;
     			</programlisting>
@@ -1458,12 +1497,12 @@
 					</tgroup>
     		    </table>
     			<para>
-    				You may customize these default conversion policies by setting a custom <literal>EventFactory</literal>
+    				You may customize these default conversion policies by setting a custom <literal>ResultEventFactory</literal>
     				instance on the bean invoking action performing the adaption.
     			</para>
 			</sect3>
-    	    <sect3 id="decisionStateXml-actionenum">
-    	    	<title>DecisionState XML - decision action with enum return value</title>
+    	    <sect3 id="actionStateXml-actionenum">
+    	    	<title>ActionState XML - decision action with enum return value</title>
     	    	<para>
     	    	    The following example constructs an <literal>DecisionState</literal> from
     	    	    XML that executes a action that invokes a method on an application object that 
@@ -1472,12 +1511,12 @@
     	    	<programlisting>
     &lt;flow start-state="shippingRequired"&gt;
     
-        &lt;decision-state id="shippingRequired"&gt;
+        &lt;action-state id="shippingRequired"&gt;
             &lt;action bean="shippingService" method="calculateShippingMethod(${flowScope.order})"/&gt;
             &lt;transition on="BASIC" to="enterBasicShippingDetails"/&gt;
             &lt;transition on="EXPRESS" to="enterExpressShippingDetails"/&gt;
             &lt;transition on="NONE" to="placeOrder"/>
-        &lt;/decision-state&gt;
+        &lt;/action-state&gt;
         ...
     &lt;/flow&gt;
     			</programlisting>
@@ -1486,6 +1525,83 @@
     			    <literal>shippingService</literal> returns <literal>BASIC</literal> for the current order, transition to the <literal>enterBasicShippingDetails</literal>
     			    state.  If the return value is <literal>EXPRESS</literal> transition to the <literal>enterExpressShippingDetails</literal> state.
     			    If the return value is <literal>NONE</literal> transition to the <literal>placeOrder</literal> state</emphasis>."
+    			</para>
+			</sect3>
+    	</sect2>
+    	<sect2 id="decisionState">
+    		<title>DecisionState</title>
+    		<para>
+    			When entered, a decision state makes a flow routing decision.  This process consists of:
+    			<orderedlist>
+    				<listitem>
+    					<para>
+	    					Evaluating one or more boolean expressions against the executing flow to decide 
+	    					what state to transition to next.
+    					</para>
+    				</listitem>
+    			</orderedlist>
+    		</para>
+    	    <para>
+    	    	The properties of a <literal>org.springframework.webflow.DecisionState</literal> are summarized below:
+    	    </para>
+	    	<table>
+    	        <title>DecisionState properties</title>
+        	    <tgroup cols="4">
+            	    <colspec colname="c1" colwidth="2*" />
+        			<colspec colname="c2" colwidth="4*" />
+    	            <colspec colname="c2" colwidth="2*" />
+	                <colspec colname="c2" colwidth="2*" />
+	                <thead>
+       		            <row>
+               		        <entry>Property name</entry>
+               				<entry>Description</entry>
+	                        <entry>Cardinality</entry>
+       		                <entry>Default value</entry>
+           				</row>
+		  			</thead>
+				  	<tbody>
+            			<row>
+              				<entry>transitions (inherited from TransitionableState)</entry>
+							<entry>
+								The transitions that are evaluated on an event occurrence that 
+								form the basis for the decision.
+							</entry>
+						    <entry>
+								<emphasis>1..*</emphasis>
+							</entry>
+        	           </row>
+            	   </tbody>
+	          </tgroup>
+    	    </table>		
+    	    <sect3 id="decisionStateXml-expression">
+    	    	<title>DecisionState XML - expression evaluation</title>
+    	    	<para>
+    	    	    The following example constructs an <literal>DecisionState</literal> from
+    	    	    XML that evalutes a boolean expression to determine what transition 
+    	    	    to execute:
+    	    	</para>
+    	    	<programlisting>
+    &lt;flow start-state="shippingRequired"&gt;
+    
+        &lt;decision-state id="shippingRequired"&gt;
+            &lt;if test="${flowScope.order.needsShipping}" then="enterShippingDetails" else="placeOrder"/&gt;
+        &lt;/decision-state&gt;
+        ...
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This state definition reads "<emphasis>if the <literal>needsShipping</literal> property on the 
+    			    <literal>order</literal> object in flow scope is true, transition to the <literal>enterShippingDetails</literal>
+    			    state, otherwise transition to the <literal>placeOrder</literal> state</emphasis>."
+    			</para>
+    			<para>
+    			    <emphasis>Caution</emphasis>: flow definitions should <emphasis>not</emphasis> be vehicles for 
+    			    business logic.  In this case the decision made was controller logic, reasoning on a
+    			    pre-calculated value to decide what step of the flow to transition to next.  That is the kind of logic that 
+    			    should be in a flow definition.  In contrast, having the state <emphasis>itself</emphasis> embed 
+    			    the business rule defining how shipping status is calculated is a misuse.
+    			    Instead, push such a calculation into application code where it belongs and <emphasis>instruct</emphasis>
+    			    the flow to invoke that code using an action.
     			</para>
 			</sect3>
     	</sect2>
@@ -1516,7 +1632,7 @@
     				<listitem>
     					<para>
     						An ending flow can return output attributes.  If the ended flow was launched as a subflow,
-    						the resuming parent flow may choose to map the output attributes into its own scope.
+    						the resuming parent flow may choose to map these output attributes into its own scope.
     					</para>
     				</listitem>
     			</orderedlist>
@@ -1634,7 +1750,9 @@
 		        
         &lt;subflow-state id="enterShippingDetails" flow="shipping"&lt;
             &lt;attribute-mapper&gt;
-                &lt;input-attribute value="${flowScope.order.shipping}" name="shipping"/&gt;
+                &lt;input-mapper&gt;
+                    &lt;input-attribute value="${flowScope.order.shipping}" name="shipping"/&gt;
+                &lt;/input-mapper&gt;
             &lt;/attribute-mapper&gt;
             &lt;transition on="finish" to="placeOrder"/>
         &lt;/subflow-state&gt;
@@ -1720,9 +1838,10 @@
 				<para>
     				By default, an EndState creates a result event with an identifier that matches the 
     				identifier of the end-state itself.  For example, an end state with id <literal>finish</literal>
-    				returns a result event with id <literal>finish</literal>.  Also by default, any attributes in
-    				flow scope that have been explicitly marked as <emphasis>output attributes</emphasis>
-    				are returned as result event parameters.
+    				returns a result event with id <literal>finish</literal>.  Also, any attributes in
+    				flow scope that have been explicitly mapped as <emphasis>output attributes</emphasis>
+    				are returned as result event parameters.  This allows you to expose data associated 
+    				with a logical flow outcome.
  				</para>
 				<para>
 					Spring Web Flow gives you full control over the ending view selection strategy, as
@@ -1757,10 +1876,9 @@
             	   </tbody>
 				  	<tbody>
             			<row>
-              				<entry>outputAttributeNames</entry>
+              				<entry>outputMapper</entry>
 							<entry>
-								The names of attributes in flow scope that should be exposed as output;
-								thus being made eligible for output mapping by a calling flow.
+								The mapper responsible for exposed attributes as flow output and thus eligible for output mapping by a calling flow.
 							</entry>
 						    <entry>
 								<emphasis>0..*</emphasis>
@@ -1824,20 +1942,23 @@
     &lt;flow start-state="enterShippingDetails"&gt;
         ...
         &lt;end-state id="finish"&gt;
-            &lt;output-attribute name="shipping"/&gt;
+            &lt;output-mapper&gt;
+                &lt;mapping source="flowScope.shipping" target="shipping"/&gt;
+            &lt;/output-mapper&gt;
         &lt;/end-state&gt;
         
     &lt;/flow&gt;
     			</programlisting>
     			<para>
     			    This end state definition reads "<emphasis>terminate the <literal>shipping</literal> flow 
-    			    and expose the <literal>shipping</literal> property in flow scope as an output attribute</emphasis>."
+    			    and expose the <literal>shipping</literal> property in flow scope as an output attribute
+    			    with name <literal>shipping</literal></emphasis>."
     			</para>
     			<para>
     			    Since this end-state does not make a view selection it is expected this flow will be always used 
     			    as a subflow.  When this flow ends, the calling parent flow is expected to respond to the 
-    			    <literal>finish</literal> result, and may map the <literal>shipping</literal> attribute into 
-    			    its own scope.
+    			    <literal>finish</literal> result, and may map the <literal>shipping</literal> output 
+    			    attribute into its own scope.
     			</para>
 			</sect3>
     	    <sect3 id="endStateJava-outputattribute">
@@ -1849,7 +1970,10 @@
     public class ShippingFlowBuilder extends AbstractFlowBuilder {
     	public void buildStates() {
     	    ...
-            addEndState("finish", new String[] { "shipping" } );
+            addEndState("finish",
+                new DefaultAttributeMapper().add(
+                   mapping().source("flowScope.shipping").target("shipping").value()
+                );
         }
     }	
     			</programlisting>

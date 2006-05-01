@@ -29,6 +29,7 @@ import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
+import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
@@ -52,25 +53,25 @@ import org.springframework.webflow.support.EventFactorySupport;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- * 	public void buildStates() {
- *          // get customer information
- *          addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
- *              on(success(), to(&quot;displayDetails&quot;)));
+ *     public void buildStates() {
+ *         // get customer information
+ *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
+ *             on(success(), to(&quot;displayDetails&quot;)));
  *                                                                                 
- *          // view customer information               
- *          addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *              on(submit(), to(&quot;bindAndValidate&quot;));
+ *         // view customer information               
+ *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
+ *             on(submit(), to(&quot;bindAndValidate&quot;));
  *                                                                             
- *          // bind and validate customer information updates 
- *          addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
- *              new Transition[] {
- *                  on(error(), to(&quot;displayDetails&quot;)),
- *                  on(success(), to(&quot;finish&quot;))
- *              });
+ *         // bind and validate customer information updates 
+ *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
+ *             new Transition[] {
+ *                 on(error(), to(&quot;displayDetails&quot;)),
+ *                 on(success(), to(&quot;finish&quot;))
+ *             });
  *                                                                                 
- *          // finish
- *          addEndState(&quot;finish&quot;);
- *      }
+ *         // finish
+ *         addEndState(&quot;finish&quot;);
+ *     }
  * }
  * </pre>
  * 
@@ -530,21 +531,49 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Encoded Method signature format: Method without arguments:
 	 * 
 	 * <pre>
-	 *  ${methodName}
+	 *     ${methodName}
 	 * </pre>
 	 * 
 	 * Method with arguments:
 	 * 
 	 * <pre>
-	 *  ${methodName}(${arg1}, ${arg2}, ${arg n})
+	 *     ${methodName}(${arg1}, ${arg2}, ${arg n})
 	 * </pre>
 	 * 
 	 * @param method the encoded method signature
 	 * @return the method signature
+	 * @see #action(String, MethodSignature, ResultSpecification)
 	 * 
 	 */
 	protected MethodSignature method(String method) {
 		return (MethodSignature)fromStringTo(MethodSignature.class).execute(method);
+	}
+
+	/**
+	 * Factory method for a {@link {@link MethodSignature} method signature}
+	 * {@link {@link ResultSpecification} result specification}.
+	 * A result specification is used to expose a return value of a POJO invoked 
+	 * as part of a {@link AbstractBeanInvokingAction bean invoking action}.
+	 * @param resultName the result name
+	 * @return the result specification
+	 * @see #action(String, MethodSignature, ResultSpecification)
+	 */
+	protected ResultSpecification result(String resultName) {
+		return result(resultName, null);
+	}
+
+	/**
+	 * Factory method for a {@link {@link MethodSignature} method signature}
+	 * {@link {@link ResultSpecification} result specification}.
+	 * A result specification is used to expose a return value of a POJO invoked 
+	 * as part of a {@link AbstractBeanInvokingAction bean invoking action}.
+	 * @param resultName the result name attribute
+	 * @param resultScope the scope of the result
+	 * @return the result specification
+	 * @see #action(String, MethodSignature, ResultSpecification)
+	 */
+	protected ResultSpecification result(String resultName, ScopeType resultScope) {
+		return new ResultSpecification(resultName, resultScope);
 	}
 
 	/**
