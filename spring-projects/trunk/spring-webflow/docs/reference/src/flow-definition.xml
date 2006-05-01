@@ -379,7 +379,7 @@
 			  	<tbody>
            			<row>
            				<entry>matchingCriteria</entry>
-						<entry>The strategy that determines if the transition matches on the occurence an event.</entry>
+						<entry>The strategy that determines if the transition matches on an event occurrence.</entry>
 					    <entry>
 							<emphasis>1</emphasis>
 						</entry>
@@ -1223,7 +1223,7 @@
     	    <sect3 id="actionStateXml-pojoActionMethod">
     	    	<title>ActionState XML - POJO action method execution</title>
     	    	<para>
-    	    	    The next example constructs a <literal>ActionState</literal> definition from XML that 
+    	    	    The next example constructs an <literal>ActionState</literal> definition from XML that 
 					executes a single method on your Plain Old Java Object (POJO) and then responds to the result:
     	    	<programlisting>
     &lt;flow start-state="displaySearchCriteria"&gt;
@@ -1260,7 +1260,7 @@
     			    action execution, nor is there any requirement to extend from a Web Flow specific base class.
     			    Basically, you are not required to write a custom <literal>Action</literal> implementation at all--you 
     			    simply instruct Spring Web Flow to call your business methods directly.  The need
-    			    the for custom "glue code" to bind your web-tier to your middle-tier is eliminated.
+    			    for custom "glue code" to bind your web-tier to your middle-tier is eliminated.
     			</para>
     			<para>
     			    Spring Web Flow achieves this by automatically adapting the method on your existing
@@ -1268,7 +1268,7 @@
     			    exposing any return value in the correct scope.
     			</para>
     			<para>
-    			    This is adaption process is shown graphically below:
+    			    This adaption process is shown graphically below:
     			</para>
 				<mediaobject>
 					<imageobject role="fo">
@@ -1522,7 +1522,7 @@
     			</orderedlist>
     		</para>
     		<para>
-    		   It is helpful to think of the process of calling a flow as similiar to calling a Java method.  Flows can 
+    		   It is helpful to think of the process of calling a flow like calling a Java method.  Flows can 
     		   be passed input arguments and can produce return values just like methods can.  Flows are more powerful because 
     		   they are potentially long-running, as they can span more than one request into the server.
     		</para>

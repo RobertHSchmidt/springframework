@@ -367,7 +367,7 @@
     	</sect2>
     </sect1>
     <sect1 id="samples">
-    	<title>Sample applictions</title>
+    	<title>Sample applications</title>
     	<para>
 			It is recommended that you review the Spring Web Flow sample applications included in the 
 			release distribution for best-practice illustrations of the features of this framework.

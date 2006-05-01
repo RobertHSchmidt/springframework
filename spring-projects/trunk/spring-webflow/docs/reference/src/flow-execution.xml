@@ -6,7 +6,7 @@
 		<para>
 			Once a flow has been defined any number of executions of it can be launched in parallel 
 			at runtime.  Execution of a flow is carried out by a dedicated system that 
-			is based internally on a state machine that runs atop the Java VM.  As the the life of an
+			is based internally on a state machine that runs atop the Java VM.  As the life of an
 			flow execution can span more than one request into the server, this system 
 			is also responsible for persisting conversational state across requests.
 		</para>

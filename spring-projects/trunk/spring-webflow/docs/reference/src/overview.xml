@@ -60,7 +60,7 @@
 			as a self-contained <emphasis>page flow engine</emphasis> within
 			base frameworks	such as Struts, Spring MVC, Portlet MVC, and JSF.
 			SWF	provides you the capability to capture your
-			application's page flow	explicity in a declarative, 
+			application's page flow	explicitly in a declarative, 
 			highly-portable, and highly-manageable fashion.  SWF is 
 			a powerful controller framework based on a finite-state machine,
 			fully addressing the "C" in MVC.
