@@ -42,9 +42,11 @@ public class DefaultAttributeMapper implements AttributeMapper, Serializable {
 	/**
 	 * Add a mapping to this mapper.
 	 * @param mapping the mapping to add.
+	 * @return this, to support convenient call chaining.
 	 */
-	public void addMapping(Mapping mapping) {
+	public DefaultAttributeMapper addMapping(Mapping mapping) {
 		mappings.add(mapping);
+		return this;
 	}
 
 	/**
