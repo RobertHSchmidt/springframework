@@ -19,10 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -66,26 +63,8 @@ public class FormActionBindingTests extends TestCase {
 		assertNotNull(formActionErrors);
 		assertTrue(formActionErrors.hasErrors());
 
-		// use a SimpleFormController to do the binding
-		SimpleFormController simpleFormController = new SimpleFormController();
-		simpleFormController.setCommandClass(TestBean.class);
-		simpleFormController.setCommandName("formObject");
-		ModelAndView modelAndView = simpleFormController.handleRequest(request, response);
-		Errors simpleFormControllerErrors = (Errors)modelAndView.getModel().get(
-				BindException.ERROR_KEY_PREFIX + "formObject");
-		assertNotNull(simpleFormControllerErrors);
-		assertTrue(simpleFormControllerErrors.hasErrors());
-
-		assertNotSame(formActionErrors, simpleFormControllerErrors);
-		assertEquals(formActionErrors.getErrorCount(), simpleFormControllerErrors.getErrorCount());
-		assertEquals(formActionErrors.getGlobalErrorCount(), simpleFormControllerErrors.getGlobalErrorCount());
-		assertEquals(formActionErrors.getFieldErrorCount("prop"), simpleFormControllerErrors.getFieldErrorCount("prop"));
+		assertEquals(1, formActionErrors.getErrorCount());
+		assertEquals(0, formActionErrors.getGlobalErrorCount());
 		assertEquals(1, formActionErrors.getFieldErrorCount("prop"));
-		assertEquals(formActionErrors.getFieldError("prop").getCodes().length, simpleFormControllerErrors
-				.getFieldError("prop").getCodes().length);
-		for (int i = 0; i < formActionErrors.getFieldError("prop").getCodes().length; i++) {
-			assertEquals(formActionErrors.getFieldError("prop").getCodes()[i], simpleFormControllerErrors
-					.getFieldError("prop").getCodes()[i]);
-		}
 	}
 }
