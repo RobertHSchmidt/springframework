@@ -21,7 +21,6 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.action.FormAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
-import org.springframework.webflow.builder.FlowArtifactFactory;
 import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.samples.phonebook.domain.SearchCriteria;
@@ -53,8 +52,8 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 						ifReturnedSuccess(invoke("bindAndValidate", searchFormAction))) }, null, null, null);
 
 		// execute query
-		addActionState("executeSearch", action("phonebook", method("search(${flowScope.searchCriteria})")), transition(
-				on(success()), to("displayResults")));
+		addActionState("executeSearch", action("phonebook", method("search(${flowScope.searchCriteria})"),
+				result("results")), transition(on(success()), to("displayResults")));
 
 		// view results
 		addViewState("displayResults", "searchResults", new Transition[] {

@@ -38,8 +38,8 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	public void buildStates() throws FlowBuilderException {
 		// get the person given a userid as input
-		addActionState("getDetails", action("phonebook", method("getPerson(${flowScope.id})")), transition(
-				on(success()), to("displayDetails")));
+		addActionState("getDetails", action("phonebook", method("getPerson(${flowScope.id})"), result("person")),
+				transition(on(success()), to("displayDetails")));
 
 		// view the person details
 		addViewState("displayDetails", "details", new Transition[] { transition(on(back()), to("finish")),
