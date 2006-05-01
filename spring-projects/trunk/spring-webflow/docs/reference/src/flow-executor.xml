@@ -26,9 +26,10 @@
     	</para>
     	<programlisting>
     public interface FlowExecutor {
-        ResponseInstruction start(String flowId, ExternalContext context);
+        ResponseInstruction launch(String flowId, ExternalContext context);
         ResponseInstruction signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context);
-        ResponseInstruction getCurrentResponseInstruction(Serializable conversationId, ExternalContext context);
+        ResponseInstruction refresh(Serializable conversationId, ExternalContext context);
+        ResponseInstruction refresh(FlowExecutionKey flowExecutionKey, ExternalContext context);
     }    	
     	</programlisting>
     	<para>
@@ -36,7 +37,7 @@
     		<orderedlist>
     			<listitem>
     				<para>
-    					Start a new flow execution.
+    					Launch (start) a new top-level flow execution.
     				</para>
     			</listitem>
     			<listitem>
@@ -46,9 +47,10 @@
     			</listitem>
     			<listitem>
     				<para>
-    					Request that the last response issued by an active conversation be re-issued. 
-    					Unlike start and signalEvent, this is an idempotent operation that does not 
-    					affect the state of the flow.
+    					Request that the last response issued by an active conversation or 
+    					specific flow execution continuation be re-issued. 
+    					Unlike start and signalEvent, the refresh operations are idempotent operations
+    					that does not affect the state of a flow execution.
     				</para>
     			</listitem>
     		</orderedlist>
@@ -376,10 +378,10 @@
     	<para>
     		<orderedlist>
     			<listitem>
-    				<para>Phonebook - the central sample demonstrating most features (including subflows).</para>
+    				<para>Phonebook - the original sample demonstrating most features (including subflows).</para>
     			</listitem>
     			<listitem>
-    				<para>Sellitem - demonstrates a wizard with conditional transitions, conversational scope, and continuations.</para>
+    				<para>Sellitem - demonstrates a wizard with conditional transitions, conversational scope, flow execution redirects, and continuations.</para>
     			</listitem>
     			<listitem>
     				<para>Flowlauncher - demonstrates all the possible ways to launch and resume flows.</para>
@@ -400,7 +402,7 @@
     				<para>Phonebook-Portlet - the phonebook sample in a Portlet environment (notice how the flow definitions do not change)</para>
     			</listitem>
     			<listitem>
-    				<para>Sellitem-JSF - the sellitem sample in a JSF environment (notice how the flow definition does not change)</para>
+    				<para>Sellitem-JSF - the sellitem sample in a JSF environment (notice how the flow definition is more concise)</para>
     			</listitem>
     		</orderedlist>
     	</para>

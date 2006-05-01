@@ -599,22 +599,20 @@
             return new ExternalizedFlowDefinition(new FileSystemResource(file));
         }
 
-        protected FlowArtifactFactory createFlowArtifactFactory() {
-            MockFlowArtifactFactory flowArtifactFactory = new MockFlowArtifactFactory();
+        @Override
+        protected FlowServiceLocator createFlowServiceLocator() {
+            MockFlowServiceLocator locator = new MockFlowServiceLocator();
 
             Flow detailFlow = new Flow("detail-flow");
-            // test responding to finish result
-            EndState finish = new EndState(detailFlow, "finish");
-            finish.addEntryAction(new AbstractAction() {
-                public Event doExecute(RequestContext context) throws Exception {
-                    // test attribute mapping
-                    assertEquals(new Long(1), context.getFlowScope().get("id"));
-                    return success();
+            detailFlow.setInputMapper(new AttributeMapper() {
+                public void map(Object source, Object target, Map context) {
+                    assertEquals("id of value 1 not provided as input by calling search flow", 
+                                 new Long(1), ((AttributeMap)source).get("id"));
                 }
             });
-            flowArtifactFactory.registerSubflow(detailFlow);
-            flowArtifactFactory.registerBean("phonebook", phonebook);
-            return flowArtifactFactory;
+            locator.registerSubflow(detailFlow);
+            locator.registerBean("phonebook", phonebook);
+            return locator;
         }
     }	    	
 	    	</programlisting>

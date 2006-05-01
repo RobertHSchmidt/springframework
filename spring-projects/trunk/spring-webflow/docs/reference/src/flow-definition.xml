@@ -1215,8 +1215,8 @@
         &lt;bean id="searchAction" class="example.webflow.SearchAction"/&gt;
     &lt;/beans&gt;
     			</programlisting>
-    			    ... associates the <literal>searchAction</literal> with a single instance of 
-    			    <literal>example.webflow.SearchAction</literal>.
+    			    ... binds the <literal>searchAction</literal> action identifier to a singleton instance of the
+    			    <literal>example.webflow.SearchAction</literal> class.
     			</para>
     			<para>
     			    A simple <literal>SearchAction</literal> implementation might look like this:
@@ -1359,7 +1359,7 @@
     	    	<title>ActionState XML - POJO action method execution</title>
     	    	<para>
     	    	    The next example constructs an <literal>ActionState</literal> definition from XML that 
-					executes a single method on your Plain Old Java Object (POJO) and then responds to the result:
+					executes a single method on a Plain Old Java Object (POJO) and then responds to the result:
     	    	<programlisting>
     &lt;flow start-state="displaySearchCriteria"&gt;
         ...
@@ -1750,9 +1750,9 @@
     	    	<programlisting>
     &lt;flow start-state="enterOrderInformation"&gt;
     
-		...
+        ...
 		        
-        &lt;subflow-state id="enterShippingDetails" flow="shipping"&lt;
+        &lt;subflow-state id="enterShippingDetails" flow="shipping"&gt;
             &lt;attribute-mapper&gt;
                 &lt;input-mapper&gt;
                     &lt;input-attribute value="${flowScope.order.shipping}" name="shipping"/&gt;
@@ -1844,8 +1844,8 @@
     				identifier of the end-state itself.  For example, an end state with id <literal>finish</literal>
     				returns a result event with id <literal>finish</literal>.  Also, any attributes in
     				flow scope that have been explicitly mapped as <emphasis>output attributes</emphasis>
-    				are returned as result event parameters.  This allows you to expose data associated 
-    				with a logical flow outcome.
+    				are returned as result event parameters.  This allows you to return data along 
+    				with the logical flow outcome. 
  				</para>
 				<para>
 					Spring Web Flow gives you full control over the ending view selection strategy, as
@@ -1882,10 +1882,10 @@
             			<row>
               				<entry>outputMapper</entry>
 							<entry>
-								The mapper responsible for exposed attributes as flow output and thus eligible for output mapping by a calling flow.
+								The service responsible for exposing flow output attributes, making those attributes eligible for output mapping by a calling flow.
 							</entry>
 						    <entry>
-								<emphasis>0..*</emphasis>
+								<emphasis>0..1</emphasis>
 							</entry>
 							<entry>None</entry>
         	           </row>
