@@ -35,12 +35,17 @@ public final class ExternalRedirect extends ViewSelection {
 
 	/**
 	 * A flag indicating if the redirect URL is context relative.
+	 * <p>
+	 * The default is "false": A URL that starts with a slash will be interpreted
+	 * as absolute, i.e. taken as-is. If true, the context path will be
+	 * prepended to the URL in such a case. 
 	 */
 	private final boolean contextRelative;
 
 	/**
 	 * Creates an external redirect request.
 	 * @param url the url path to redirect to
+	 * @param whether the url should be treated as context relative
 	 */
 	public ExternalRedirect(String url, boolean contextRelative) {
 		Assert.notNull(url, "The external URL to redirect to is required");

@@ -463,6 +463,7 @@ public class FlowExecutorArgumentExtractor {
 	 */
 	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext externalContext) {
 		StringBuffer flowUrl = new StringBuffer();
+		flowUrl.append(externalContext.getContextPath());
 		flowUrl.append(externalContext.getDispatcherPath());
 		flowUrl.append('?');
 		appendQueryParameter(flowIdParameterName, flowRedirect.getFlowId(), flowUrl);
@@ -485,6 +486,7 @@ public class FlowExecutorArgumentExtractor {
 	 */
 	public String createFlowExecutionUrl(FlowExecutionKey key, FlowExecutionContext flowExecution, ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
+		flowExecutionUrl.append(context.getContextPath());
 		flowExecutionUrl.append(context.getDispatcherPath());
 		flowExecutionUrl.append('?');
 		appendQueryParameter(flowExecutionKeyParameterName, format(key), flowExecutionUrl);
@@ -503,6 +505,7 @@ public class FlowExecutorArgumentExtractor {
 	 */
 	public String createConversationUrl(FlowExecutionKey key, FlowExecutionContext flowExecution, ExternalContext context) {
 		StringBuffer conversationUrl = new StringBuffer();
+		conversationUrl.append(context.getContextPath());
 		conversationUrl.append(context.getDispatcherPath());
 		conversationUrl.append('?');
 		appendQueryParameter(conversationIdParameterName, key.getConversationId(), conversationUrl);
@@ -520,6 +523,9 @@ public class FlowExecutorArgumentExtractor {
 	public String createExternalUrl(ExternalRedirect redirect, FlowExecutionKey flowExecutionKey,
 			ExternalContext context) {
 		StringBuffer externalUrl = new StringBuffer();
+		if (redirect.isContextRelative() && redirect.getUrl().startsWith("/")) {
+			externalUrl.append(context.getContextPath());
+		}
 		externalUrl.append(redirect.getUrl());
 		if (flowExecutionKey != null) {
 			boolean first = redirect.getUrl().indexOf('?') < 0;

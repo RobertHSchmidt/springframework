@@ -91,6 +91,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 
 	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext context) {
 		StringBuffer flowUrl = new StringBuffer();
+		flowUrl.append(context.getContextPath());
 		flowUrl.append(context.getDispatcherPath());
 		flowUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowUrl.append(flowRedirect.getFlowId());
@@ -118,6 +119,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 
 	public String createFlowExecutionUrl(FlowExecutionKey key, FlowExecutionContext flowExecution, ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
+		flowExecutionUrl.append(context.getContextPath());
 		flowExecutionUrl.append(context.getDispatcherPath());
 		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowExecutionUrl.append(flowExecution.getActiveSession().getFlow().getId());
@@ -137,6 +139,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	 */
 	public String createConversationUrl(FlowExecutionKey key, FlowExecutionContext flowExecution, ExternalContext context) {
 		StringBuffer conversationUrl = new StringBuffer();
+		conversationUrl.append(context.getContextPath());
 		conversationUrl.append(context.getDispatcherPath());
 		conversationUrl.append(PATH_SEPARATOR_CHARACTER);
 		conversationUrl.append(flowExecution.getActiveSession().getFlow().getId());

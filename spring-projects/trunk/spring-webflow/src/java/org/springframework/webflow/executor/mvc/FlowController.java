@@ -229,24 +229,24 @@ public class FlowController extends AbstractController implements InitializingBe
 			// redirect to active flow execution URL
 			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
 					.getFlowExecutionContext(), context);
-			return new ModelAndView(new RedirectView(flowExecutionUrl, true));
+			return new ModelAndView(new RedirectView(flowExecutionUrl));
 		}
 		else if (response.isConversationRedirect()) {
 			// redirect to active conversation URL
 			String conversationUrl = argumentExtractor.createConversationUrl(response.getFlowExecutionKey(), response
 					.getFlowExecutionContext(), context);
-			return new ModelAndView(new RedirectView(conversationUrl, true));
+			return new ModelAndView(new RedirectView(conversationUrl));
 		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL
 			ExternalRedirect redirect = (ExternalRedirect)response.getViewSelection();
 			String externalUrl = argumentExtractor.createExternalUrl(redirect, response.getFlowExecutionKey(), context);
-			return new ModelAndView(new RedirectView(externalUrl, redirect.isContextRelative()));
+			return new ModelAndView(new RedirectView(externalUrl));
 		}
 		else if (response.isFlowRedirect()) {
 			// restart the flow by redirecting to flow launch URL
 			String flowUrl = argumentExtractor.createFlowUrl((FlowRedirect)response.getViewSelection(), context);
-			return new ModelAndView(new RedirectView(flowUrl, true));
+			return new ModelAndView(new RedirectView(flowUrl));
 		}
 		else if (response.isNull()) {
 			// no response to issue
