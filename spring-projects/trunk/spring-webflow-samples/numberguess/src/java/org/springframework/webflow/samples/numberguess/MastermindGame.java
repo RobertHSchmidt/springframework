@@ -22,8 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import org.springframework.core.enums.StaticLabeledEnum;
-
 /**
  * Action that encapsulates logic for the number guess sample flow.
  * 
@@ -104,7 +102,7 @@ public class MastermindGame implements Serializable {
 			return GuessResult.WRONG;
 		}
 	}
-	
+
 	/**
 	 * Simple data holder for number guess info.
 	 */
@@ -205,15 +203,7 @@ public class MastermindGame implements Serializable {
 		}
 	}
 
-	public static class GuessResult extends StaticLabeledEnum {
-		public static final GuessResult INVALID = new GuessResult(0, "Invalid");
-
-		public static final GuessResult CORRECT = new GuessResult(1, "Correct");
-
-		public static final GuessResult WRONG = new GuessResult(2, "Wrong");
-
-		private GuessResult(int code, String label) {
-			super(code, label);
-		}
+	enum GuessResult {
+		WRONG, CORRECT, INVALID
 	}
 }

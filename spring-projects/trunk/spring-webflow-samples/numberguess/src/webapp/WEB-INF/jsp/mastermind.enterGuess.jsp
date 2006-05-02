@@ -11,7 +11,7 @@
 	<%@include file="mastermind.guessHistoryTable.jsp" %>
 			
 	<form name="guessForm" method="post">
-		<c:if test="${guessResult.label == 'Invalid'}">
+		<c:if test="${game.result.label == 'Invalid'}">
 			<div class="error">Your guess was invalid: it must be a 4 digit number (e.g 1234), and each digit must be unique.</div>
 		</c:if>
 		<table>

@@ -19,8 +19,6 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Random;
 
-import org.springframework.core.enums.StaticLabeledEnum;
-
 /**
  * Action that encapsulates logic for the number guess sample flow. Note that
  * this is a stateful action: it holds modifiable state in instance members!
@@ -81,17 +79,7 @@ public class HigherLowerGame implements Serializable {
 		return getResult();
 	}
 
-	public static class GuessResult extends StaticLabeledEnum {
-		public static final GuessResult INVALID = new GuessResult(0, "Invalid");
-
-		public static final GuessResult TOO_LOW = new GuessResult(1, "Too low");
-
-		public static final GuessResult TOO_HIGH = new GuessResult(2, "Too high");
-
-		public static final GuessResult CORRECT = new GuessResult(3, "Correct");
-
-		private GuessResult(int code, String label) {
-			super(code, label);
-		}
+	enum GuessResult {
+		TOO_HIGH, TOO_LOW, CORRECT, INVALID
 	}
 }

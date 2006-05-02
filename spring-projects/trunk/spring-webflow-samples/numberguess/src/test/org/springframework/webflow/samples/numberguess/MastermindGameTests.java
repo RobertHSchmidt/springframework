@@ -2,10 +2,8 @@ package org.springframework.webflow.samples.numberguess;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.Event;
 import org.springframework.webflow.samples.numberguess.MastermindGame.GameData;
 import org.springframework.webflow.samples.numberguess.MastermindGame.GuessResult;
-import org.springframework.webflow.test.MockRequestContext;
 
 public class MastermindGameTests extends TestCase {
 
