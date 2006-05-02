@@ -33,30 +33,52 @@ import org.springframework.core.enums.StaticLabeledEnum;
 public class MastermindGame implements Serializable {
 
 	private GameData data = new GameData();
-	
+
 	public GameData getData() {
 		return data;
 	}
-	
+
 	public Collection getGuessHistory() {
 		return data.getGuessHistory();
 	}
-	
+
+	public GuessResult getResult() {
+		return data.getLastGuessResult();
+	}
+
+	public void setResult(GuessResult result) {
+		data.setLastGuessResult(result);
+	}
+
 	public GuessResult makeGuess(String guess) {
+		if (isGuessValid(guess)) {
+			setResult(calculateResult(guess));
+		}
+		else {
+			setResult(GuessResult.INVALID);
+		}
+		return getResult();
+	}
+
+	private boolean isGuessValid(String guess) {
 		if (guess == null || guess.length() != 4) {
-			return GuessResult.INVALID;
+			return false;
 		}
 		for (int i = 0; i < 4; i++) {
 			if (!Character.isDigit(guess.charAt(i))) {
-				return GuessResult.INVALID;
+				return false;
 			}
 			int digit = Character.getNumericValue(guess.charAt(i));
 			for (int j = 0; j < i; j++) {
 				if (digit == Character.getNumericValue(guess.charAt(j))) {
-					return GuessResult.INVALID;
+					return false;
 				}
 			}
 		}
+		return true;
+	}
+
+	private GuessResult calculateResult(String guess) {
 		int rightPosition = 0;
 		int correctButWrongPosition = 0;
 		for (int i = 0; i < guess.length(); i++) {
@@ -66,7 +88,8 @@ public class MastermindGame implements Serializable {
 				if (digit == answerDigit) {
 					if (i == j) {
 						rightPosition++;
-					} else {
+					}
+					else {
 						correctButWrongPosition++;
 					}
 					break;
@@ -75,19 +98,18 @@ public class MastermindGame implements Serializable {
 		}
 		data.recordGuessData(guess, rightPosition, correctButWrongPosition);
 		if (rightPosition == 4) {
-			Calendar now = Calendar.getInstance();
-			long durationMilliseconds = now.getTime().getTime() - data.start.getTime().getTime();
 			return GuessResult.CORRECT;
-		} else {
+		}
+		else {
 			return GuessResult.WRONG;
 		}
 	}
-
+	
 	/**
 	 * Simple data holder for number guess info.
 	 */
 	public static class GameData implements Serializable {
-		
+
 		private static Random random = new Random();
 
 		private Calendar start = Calendar.getInstance();
@@ -95,17 +117,52 @@ public class MastermindGame implements Serializable {
 		private String answer;
 
 		private List guessHistory = new ArrayList();
-		
+
+		private GuessResult lastGuessResult;
+
 		// property accessors for JSTL EL
 
 		public GameData() {
 			this.answer = createAnswer();
 		}
-		
+
+		public int getGuesses() {
+			return guessHistory.size();
+		}
+
+		public GuessResult getLastGuessResult() {
+			return lastGuessResult;
+		}
+
+		public void setLastGuessResult(GuessResult lastGuessResult) {
+			this.lastGuessResult = lastGuessResult;
+		}
+
+		public String getAnswer() {
+			return answer;
+		}
+
+		public long getDuration() {
+			Calendar now = Calendar.getInstance();
+			long durationMilliseconds = now.getTime().getTime() - start.getTime().getTime();
+			return durationMilliseconds / 1000;
+		}
+
+		public Collection getGuessHistory() {
+			return guessHistory;
+		}
+
+		public GuessData getLastGuessData() {
+			if (guessHistory.isEmpty()) {
+				return null;
+			}
+			return (GuessData)guessHistory.get(guessHistory.size() - 1);
+		}
+
 		public void recordGuessData(String guess, int rightPosition, int correctButWrongPosition) {
 			guessHistory.add(new GuessData(guess, rightPosition, correctButWrongPosition));
 		}
-		
+
 		public String createAnswer() {
 			StringBuffer buffer = new StringBuffer(4);
 			for (int i = 0; i < 4; i++) {
@@ -120,37 +177,12 @@ public class MastermindGame implements Serializable {
 			}
 			return buffer.toString();
 		}
-		
-		public String getAnswer() {
-			return answer;
-		}
 
-		public int getGuesses() {
-			return guessHistory.size();
-		}
-
-		public long getDuration() {
-			Calendar now = Calendar.getInstance();
-			long durationMilliseconds = now.getTime().getTime() - start.getTime().getTime();
-			return durationMilliseconds / 1000;
-		}
-
-		public Collection getGuessHistory() {
-			return guessHistory;
-		}
-		
-		public GuessData getLastGuessData() {
-			if (guessHistory.isEmpty()) {
-				return null;
-			}
-			return (GuessData)guessHistory.get(guessHistory.size() - 1);
-		}
-		
 		public class GuessData implements Serializable {
 			private String guess;
-			
+
 			private int rightPosition;
-			
+
 			private int correctButWrongPosition;
 
 			public GuessData(String guess, int rightPosition, int correctButWrongPosition) {
@@ -158,7 +190,7 @@ public class MastermindGame implements Serializable {
 				this.rightPosition = rightPosition;
 				this.correctButWrongPosition = correctButWrongPosition;
 			}
-			
+
 			public int getCorrectButWrongPosition() {
 				return correctButWrongPosition;
 			}
@@ -169,10 +201,10 @@ public class MastermindGame implements Serializable {
 
 			public int getRightPosition() {
 				return rightPosition;
-			}	
+			}
 		}
 	}
-	
+
 	public static class GuessResult extends StaticLabeledEnum {
 		public static final GuessResult INVALID = new GuessResult(0, "Invalid");
 

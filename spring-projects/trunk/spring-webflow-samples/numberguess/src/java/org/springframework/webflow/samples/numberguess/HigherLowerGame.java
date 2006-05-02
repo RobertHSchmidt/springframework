@@ -38,12 +38,22 @@ public class HigherLowerGame implements Serializable {
 
 	private int guesses = 0;
 
+	private GuessResult result;
+
 	public int getAnswer() {
 		return answer;
 	}
 
 	public int getGuesses() {
 		return guesses;
+	}
+
+	public GuessResult getResult() {
+		return result;
+	}
+
+	public void setResult(GuessResult result) {
+		this.result = result;
 	}
 
 	public long getDuration() {
@@ -54,20 +64,21 @@ public class HigherLowerGame implements Serializable {
 
 	public GuessResult makeGuess(int guess) {
 		if (guess < 0 || guess > 100) {
-			return GuessResult.INVALID;
+			setResult(GuessResult.INVALID);
 		}
 		else {
 			guesses++;
 			if (answer < guess) {
-				return GuessResult.TOO_HIGH;
+				setResult(GuessResult.TOO_HIGH);
 			}
 			else if (answer > guess) {
-				return GuessResult.TOO_LOW;
+				setResult(GuessResult.TOO_LOW);
 			}
 			else {
-				return GuessResult.CORRECT;
+				setResult(GuessResult.CORRECT);
 			}
 		}
+		return getResult();
 	}
 
 	public static class GuessResult extends StaticLabeledEnum {
