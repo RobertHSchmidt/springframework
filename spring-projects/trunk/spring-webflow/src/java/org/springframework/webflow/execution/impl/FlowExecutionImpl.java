@@ -209,7 +209,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
-	
 	public ViewSelection refresh(ExternalContext externalContext) throws StateException {
 		assertActive();
 		if (logger.isDebugEnabled()) {
@@ -220,6 +219,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		try {
 			try {
 				resume(context);
+				State currentState = getActiveSession().getState();
+				if (!(currentState instanceof ViewState)) {
+					throw new IllegalStateException("Current state is not a view state - cannot refresh; "
+							+ "perhaps an unhandled exception occured in another state?");
+				}
 				return ((ViewState)getActiveSession().getState()).refresh(context);
 			}
 			catch (StateException e) {
