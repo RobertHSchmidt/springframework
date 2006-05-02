@@ -17,8 +17,11 @@ package org.springframework.webflow.executor.jsf;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Map;
 
+import javax.faces.application.ViewHandler;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
@@ -84,6 +87,11 @@ public class FlowPhaseListener implements PhaseListener {
 	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
 
 	/**
+	 * Resolves selected Web Flow view names to JSF view ids.
+	 */
+	private ViewIdResolver viewIdResolver = new DefaultViewIdResolver();
+
+	/**
 	 * Returns the repository factory used by this phase listener.
 	 */
 	public FlowExecutionRepositoryFactory getRepositoryFactory() {
@@ -111,6 +119,20 @@ public class FlowPhaseListener implements PhaseListener {
 		this.argumentExtractor = argumentExtractor;
 	}
 
+	/**
+	 * Returns the JSF view id resolver used by this navigation handler.
+	 */
+	public ViewIdResolver getViewIdResolver() {
+		return viewIdResolver;
+	}
+
+	/**
+	 * Sets the JSF view id resolver used by this navigation handler.
+	 */
+	public void setViewIdResolver(ViewIdResolver viewIdResolver) {
+		this.viewIdResolver = viewIdResolver;
+	}
+
 	public PhaseId getPhaseId() {
 		return PhaseId.ANY_PHASE;
 	}
@@ -123,7 +145,7 @@ public class FlowPhaseListener implements PhaseListener {
 			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext());
 			if (holder != null) {
 				JsfExternalContext context = new JsfExternalContext(event.getFacesContext());
-				setupView(context, holder);
+				prepareResponse(context, holder);
 			}
 		}
 	}
@@ -166,19 +188,13 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 	}
 
-	/**
-	 * Returns the repository instance to be used by this phase listener.
-	 */
-	protected FlowExecutionRepository getRepository(JsfExternalContext context) {
-		if (repositoryFactory == null) {
-			repositoryFactory = FlowFacesUtils.getRepositoryFactory(context.getFacesContext());
-		}
-		return repositoryFactory.getRepository(context);
-	}
-
-	protected void setupView(JsfExternalContext context, FlowExecutionHolder holder) {
+	protected void prepareResponse(JsfExternalContext context, FlowExecutionHolder holder) {
 		generateKey(context, holder);
 		ViewSelection selectedView = holder.getViewSelection();
+		if (selectedView == null) {
+			selectedView = holder.getFlowExecution().refresh(context);
+			holder.setViewSelection(selectedView);
+		}
 		if (selectedView instanceof ApplicationView) {
 			prepareApplicationView(context.getFacesContext(), holder);
 		}
@@ -208,6 +224,14 @@ public class FlowPhaseListener implements PhaseListener {
 	}
 
 	protected void prepareApplicationView(FacesContext facesContext, FlowExecutionHolder holder) {
+		ApplicationView forward = (ApplicationView)holder.getViewSelection();
+		putInto(facesContext.getExternalContext().getRequestMap(), forward.getModel());
+		if (forward.getViewName() != null) {
+			// create the specified view so that it can be rendered
+			ViewHandler handler = facesContext.getApplication().getViewHandler();
+			UIViewRoot view = handler.createView(facesContext, viewIdResolver.resolveViewId(forward.getViewName()));
+			facesContext.setViewRoot(view);
+		}
 		Map requestMap = facesContext.getExternalContext().getRequestMap();
 		argumentExtractor.put(holder.getFlowExecutionKey(), requestMap);
 		argumentExtractor.put(holder.getFlowExecution(), requestMap);
@@ -255,6 +279,38 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 	}
 
+	/**
+	 * Returns the repository instance to be used by this phase listener.
+	 */
+	protected FlowExecutionRepository getRepository(JsfExternalContext context) {
+		if (repositoryFactory == null) {
+			repositoryFactory = FlowFacesUtils.getRepositoryFactory(context.getFacesContext());
+		}
+		return repositoryFactory.getRepository(context);
+	}
+	
+	/**
+	 * Utility method needed needed only because we can not rely on JSF
+	 * RequestMap supporting Map's putAll method. Tries putAll, falls back to
+	 * individual adds
+	 * @param targetMap the target map to add the model data to
+	 * @param map the model data to add to the target map
+	 */
+	private void putInto(Map targetMap, Map map) {
+		try {
+			targetMap.putAll(map);
+		}
+		catch (UnsupportedOperationException e) {
+			// work around nasty MyFaces bug where it's RequestMap doesn't
+			// support putAll remove after it's fixed in MyFaces
+			Iterator it = map.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry entry = (Map.Entry)it.next();
+				targetMap.put(entry.getKey(), entry.getValue());
+			}
+		}
+	}
+
 	private void sendRedirect(String url, JsfExternalContext context) {
 		try {
 			context.getFacesContext().getExternalContext().redirect(url);
@@ -262,6 +318,16 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 		catch (IOException e) {
 			throw new IllegalArgumentException("Could not send redirect to " + url);
+		}
+	}
+
+	/**
+	 * Standard default view id resolver which uses the web flow view name as
+	 * the jsf view id
+	 */
+	public static class DefaultViewIdResolver implements ViewIdResolver {
+		public String resolveViewId(String viewName) {
+			return viewName;
 		}
 	}
 }

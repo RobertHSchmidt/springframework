@@ -15,12 +15,7 @@
  */
 package org.springframework.webflow.executor.jsf;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import javax.faces.application.NavigationHandler;
-import javax.faces.application.ViewHandler;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.logging.Log;
@@ -34,7 +29,6 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
-import org.springframework.webflow.support.ApplicationView;
 
 /**
  * An implementation of a JSF <code>NavigationHandler</code> that provides
@@ -93,11 +87,6 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	private FlowExecutorArgumentExtractor argumentExtractor = new FlowNavigationHandlerArgumentExtractor();
 
 	/**
-	 * Resolves selected Web Flow view names to JSF view ids.
-	 */
-	private ViewIdResolver viewIdResolver = new DefaultViewIdResolver();
-
-	/**
 	 * Create a new {@link FlowNavigationHandler} using the default constructor.
 	 */
 	public FlowNavigationHandler() {
@@ -142,35 +131,17 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 		this.argumentExtractor = argumentExtractor;
 	}
 
-	/**
-	 * Returns the JSF view id resolver used by this navigation handler.
-	 */
-	public ViewIdResolver getViewIdResolver() {
-		return viewIdResolver;
-	}
-
-	/**
-	 * Sets the JSF view id resolver used by this navigation handler.
-	 */
-	public void setViewIdResolver(ViewIdResolver viewIdResolver) {
-		this.viewIdResolver = viewIdResolver;
-	}
-
 	public void handleNavigation(FacesContext facesContext, String fromAction, String outcome,
 			NavigationHandler originalNavigationHandler) {
 		JsfExternalContext context = new JsfExternalContext(facesContext, fromAction, outcome);
 		FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
 		if (holder != null) {
-			// a flow execution has already been restored, signal an event in it
 			if (argumentExtractor.isEventIdPresent(context)) {
+				// a flow execution has already been restored, signal an event in it
 				EventId eventId = argumentExtractor.extractEventId(context);
 				FlowExecution flowExecution = holder.getFlowExecution();
 				ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
-				renderView(selectedView, context);
-			} else {
-				FlowExecution flowExecution = holder.getFlowExecution();
-				ViewSelection selectedView = flowExecution.refresh(context);
-				renderView(selectedView, context);
+				FlowExecutionHolderUtils.getFlowExecutionHolder(context.getFacesContext()).setViewSelection(selectedView);
 			}
 		}
 		else {
@@ -180,7 +151,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 				FlowExecution flowExecution = getRepository(context).createFlowExecution(flowId);
 				ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
 				FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecution), facesContext);
-				renderView(selectedView, context);
+				FlowExecutionHolderUtils.getFlowExecutionHolder(context.getFacesContext()).setViewSelection(selectedView);
 			}
 			else {
 				// neither has happened, delegate to std navigation handler
@@ -208,63 +179,5 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	 */
 	protected AttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
 		return null;
-	}
-
-	/**
-	 * Render the view specified by this <code>ViewSelection</code>, after
-	 * exposing any model data it includes.
-	 * @param selectedView <code>ViewSelection</code> for the view to render
-	 * @param context <code>JsfExternalContext</code> for the current request
-	 */
-	protected void renderView(ViewSelection selectedView, JsfExternalContext context) {
-		FlowExecutionHolderUtils.getFlowExecutionHolder(context.getFacesContext()).setViewSelection(selectedView);
-		if (selectedView == ViewSelection.NULL_VIEW) {
-			return;
-		}
-		FacesContext facesContext = context.getFacesContext();
-		if (selectedView instanceof ApplicationView) {
-			ApplicationView forward = (ApplicationView)selectedView;
-			putInto(facesContext.getExternalContext().getRequestMap(), forward.getModel());
-			// stay on the same view if requested
-			if (forward.getViewName() == null) {
-				return;
-			}
-			// create the specified view so that it can be rendered
-			ViewHandler handler = facesContext.getApplication().getViewHandler();
-			UIViewRoot view = handler.createView(facesContext, viewIdResolver.resolveViewId(forward.getViewName()));
-			facesContext.setViewRoot(view);
-		}
-	}
-
-	/**
-	 * Utility method needed needed only because we can not rely on JSF
-	 * RequestMap supporting Map's putAll method. Tries putAll, falls back to
-	 * individual adds
-	 * @param targetMap the target map to add the model data to
-	 * @param map the model data to add to the target map
-	 */
-	private void putInto(Map targetMap, Map map) {
-		try {
-			targetMap.putAll(map);
-		}
-		catch (UnsupportedOperationException e) {
-			// work around nasty MyFaces bug where it's RequestMap doesn't
-			// support putAll remove after it's fixed in MyFaces
-			Iterator it = map.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry)it.next();
-				targetMap.put(entry.getKey(), entry.getValue());
-			}
-		}
-	}
-
-	/**
-	 * Standard default view id resolver which uses the web flow view name as
-	 * the jsf view id
-	 */
-	public static class DefaultViewIdResolver implements ViewIdResolver {
-		public String resolveViewId(String viewName) {
-			return viewName;
-		}
 	}
 }
