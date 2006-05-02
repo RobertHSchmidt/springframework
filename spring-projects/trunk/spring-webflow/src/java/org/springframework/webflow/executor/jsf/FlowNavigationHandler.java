@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.executor.jsf;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -217,7 +216,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	 * @param selectedView <code>ViewSelection</code> for the view to render
 	 * @param context <code>JsfExternalContext</code> for the current request
 	 */
-	public void renderView(ViewSelection selectedView, JsfExternalContext context) {
+	protected void renderView(ViewSelection selectedView, JsfExternalContext context) {
 		if (selectedView == ViewSelection.NULL_VIEW) {
 			return;
 		}
@@ -235,38 +234,19 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 			facesContext.setViewRoot(view);
 		}
 		else if (selectedView instanceof FlowExecutionRedirect) {
-			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(holder.getFlowExecutionKey(), holder
-					.getFlowExecution(), context);
-			sendRedirect(flowExecutionUrl, facesContext);
+			throw new UnsupportedOperationException("Flow execution redirects are not yet supported in a JSF environment");
 		}
 		else if (selectedView instanceof ConversationRedirect) {
-			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-			String conversationUrl = argumentExtractor.createConversationUrl(holder.getFlowExecutionKey(), holder
-					.getFlowExecution(), context);
-			sendRedirect(conversationUrl, facesContext);
+			throw new UnsupportedOperationException("Conversation redirects are not yet supported in a JSF environment");
 		}
 		else if (selectedView instanceof ExternalRedirect) {
-			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-			String externalUrl = argumentExtractor.createExternalUrl((ExternalRedirect)selectedView, holder
-					.getFlowExecutionKey(), context);
-			sendRedirect(externalUrl, facesContext);
+			throw new UnsupportedOperationException("External redirects are not yet supported in a JSF environment");
 		}
 		else if (selectedView instanceof FlowRedirect) {
-			String flowUrl = argumentExtractor.createFlowUrl((FlowRedirect)selectedView, context);
-			sendRedirect(flowUrl, facesContext);
+			throw new UnsupportedOperationException("Flow redirects are not yet supported in a JSF environment");
 		}
 		else {
 			throw new IllegalArgumentException("Don't know how to handle view selection " + selectedView);
-		}
-	}
-
-	private void sendRedirect(String url, FacesContext facesContext) {
-		try {
-			facesContext.getExternalContext().redirect(url);
-		}
-		catch (IOException e) {
-			throw new IllegalArgumentException("Could not send redirect to " + url);
 		}
 	}
 
