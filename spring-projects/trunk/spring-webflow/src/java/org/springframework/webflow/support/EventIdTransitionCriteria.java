@@ -46,6 +46,13 @@ public class EventIdTransitionCriteria implements TransitionCriteria, Serializab
 		this.eventId = eventId;
 	}
 
+	/**
+	 * Returns the eventId to match.
+	 */
+	public String getEventId() {
+		return eventId;
+	}
+
 	public boolean test(RequestContext context) {
 		Event lastEvent = context.getLastEvent();
 		if (lastEvent == null) {

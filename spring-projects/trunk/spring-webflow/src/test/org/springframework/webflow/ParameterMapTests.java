@@ -17,6 +17,7 @@ public class ParameterMapTests extends TestCase {
 		map.put("integer", "12345");
 		map.put("boolean", "true");
 		map.put("stringArray", new String[] { "1", "2", "3" });
+		map.put("emptyArray", new String[0]);
 		MockControl control = MockControl.createControl(MultipartFile.class);
 		map.put("multipartFile", control.getMock());
 		parameterMap = new ParameterMap(map);
@@ -24,7 +25,7 @@ public class ParameterMapTests extends TestCase {
 
 	public void testSize() {
 		assertTrue(!parameterMap.isEmpty());
-		assertEquals(5, parameterMap.size());
+		assertEquals(6, parameterMap.size());
 	}
 	
 	public void testGet() {
@@ -84,6 +85,11 @@ public class ParameterMapTests extends TestCase {
 		String[] value = parameterMap.getArray("stringArray");
 		assertEquals(3, value.length);
 	}
+	
+	public void testGetEmptyArray() {
+		String[] array = parameterMap.getArray("emptyArray");
+		assertEquals(0, array.length);
+	}
 
 	public void testGetArrayNull() {
 		String[] value = parameterMap.getArray("bogus");
@@ -115,6 +121,16 @@ public class ParameterMapTests extends TestCase {
 		String[] value = parameterMap.getArray("string");
 		assertEquals(1, value.length);
 		assertEquals("A string", value[0]);
+	}
+
+	public void testGetArrayAsSingleVaue() {
+		String value = parameterMap.get("stringArray");
+		assertEquals("1", value);
+	}
+
+	public void testGetEmptyArrayAsSingleVaue() {
+		String value = parameterMap.get("emptyArray");
+		assertEquals(null, value);
 	}
 
 	public void testGetMultipart() {

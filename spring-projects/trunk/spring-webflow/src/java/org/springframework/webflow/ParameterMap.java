@@ -100,7 +100,7 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	public boolean isEmpty() {
 		return parameters.isEmpty();
 	}
-	
+
 	/**
 	 * Returns the number of parameters in this map.
 	 * @return the parameter count
@@ -141,11 +141,18 @@ public class ParameterMap implements MapAdaptable, Serializable {
 		Object value = parameters.get(parameterName);
 		if (value.getClass().isArray()) {
 			parameterAccessor.assertKeyValueInstanceOf(parameterName, value, String[].class);
-			Object first = ((String[])value)[0];
-			parameterAccessor.assertKeyValueInstanceOf(parameterName, first, String.class);
-			return (String)first;
-			
-		} else {
+			String[] array = (String[])value;
+			if (array.length == 0) {
+				return null;
+			}
+			else {
+				Object first = ((String[])value)[0];
+				parameterAccessor.assertKeyValueInstanceOf(parameterName, first, String.class);
+				return (String)first;
+			}
+
+		}
+		else {
 			parameterAccessor.assertKeyValueInstanceOf(parameterName, value, String.class);
 			return (String)value;
 		}
@@ -153,8 +160,8 @@ public class ParameterMap implements MapAdaptable, Serializable {
 
 	/**
 	 * Get a multi-valued parameter value, returning <code>null</code> if no
-	 * value is found.  If the parameter is single valued an array with a single element 
-	 * is returned.
+	 * value is found. If the parameter is single valued an array with a single
+	 * element is returned.
 	 * @param parameterName the parameter name
 	 * @return the parameter value array
 	 */

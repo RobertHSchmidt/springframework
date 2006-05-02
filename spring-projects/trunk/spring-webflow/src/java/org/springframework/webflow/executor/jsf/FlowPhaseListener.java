@@ -29,6 +29,7 @@ import javax.faces.event.PhaseListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
@@ -186,6 +187,27 @@ public class FlowPhaseListener implements PhaseListener {
 			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecutionKey, flowExecution),
 					facesContext);
 		}
+		else if (argumentExtractor.isFlowIdPresent(context)) {
+			String flowId = argumentExtractor.extractFlowId(context);
+			FlowExecutionRepository repository = getRepository(context);
+			FlowExecution flowExecution = repository.createFlowExecution(flowId);
+			flowExecution.start(createInput(flowExecution, context), context);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Started new flow execution");
+			}
+			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecution), facesContext);
+		}
+	}
+
+	/**
+	 * Factory method that creates the input attribute map for a newly created
+	 * {@link FlowExecution}. TODO - add support for input mappings here
+	 * @param flowExecution the new flow execution (yet to be started)
+	 * @param context the external context
+	 * @return the input map
+	 */
+	protected AttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
+		return null;
 	}
 
 	protected void prepareResponse(JsfExternalContext context, FlowExecutionHolder holder) {
@@ -288,7 +310,7 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 		return repositoryFactory.getRepository(context);
 	}
-	
+
 	/**
 	 * Utility method needed needed only because we can not rely on JSF
 	 * RequestMap supporting Map's putAll method. Tries putAll, falls back to

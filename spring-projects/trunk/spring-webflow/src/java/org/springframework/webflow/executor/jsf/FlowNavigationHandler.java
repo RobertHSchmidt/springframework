@@ -145,6 +145,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 			}
 		}
 		else {
+			// @TODO this flow launch logic is redundant with FlowPhaseListener but currently necessary
 			if (argumentExtractor.isFlowIdPresent(context)) {
 				// a flow execution launch has been requested, start it
 				String flowId = argumentExtractor.extractFlowId(context);
