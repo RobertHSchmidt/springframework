@@ -15,12 +15,18 @@ public class ParameterMapTests extends TestCase {
 		Map map = new HashMap();
 		map.put("string", "A string");
 		map.put("integer", "12345");
+		map.put("boolean", "true");
 		map.put("stringArray", new String[] { "1", "2", "3" });
 		MockControl control = MockControl.createControl(MultipartFile.class);
 		map.put("multipartFile", control.getMock());
 		parameterMap = new ParameterMap(map);
 	}
 
+	public void testSize() {
+		assertTrue(!parameterMap.isEmpty());
+		assertEquals(5, parameterMap.size());
+	}
+	
 	public void testGet() {
 		String value = parameterMap.get("string");
 		assertEquals("A string", value);
@@ -34,6 +40,11 @@ public class ParameterMapTests extends TestCase {
 	public void testGetRequired() {
 		String value = parameterMap.getRequired("string");
 		assertEquals("A string", value);
+	}
+
+	public void testGetRequiredWithConversion() {
+		Integer value = (Integer)parameterMap.getRequired("integer", Integer.class);
+		assertEquals(new Integer(12345), value);
 	}
 
 	public void testGetRequiredNotPresent() {
@@ -55,6 +66,20 @@ public class ParameterMapTests extends TestCase {
 		assertEquals("default", value);
 	}
 
+	public void testGetWithDefaultAndConversion() {
+		Object value = parameterMap.get("bogus", Integer.class, new Integer(1));
+		assertEquals(new Integer(1), value);
+	}
+
+	public void testGetWithDefaultAndConversionNotAssignable() {
+		try {
+			parameterMap.get("bogus", Integer.class, "1");
+			fail("'1' isn't a integer");
+		} catch (IllegalArgumentException e) {
+			
+		}
+	}
+
 	public void testGetArray() {
 		String[] value = parameterMap.getArray("stringArray");
 		assertEquals(3, value.length);
@@ -68,6 +93,13 @@ public class ParameterMapTests extends TestCase {
 	public void testGetArrayRequired() {
 		String[] value = parameterMap.getRequiredArray("stringArray");
 		assertEquals(3, value.length);
+	}
+	
+	public void getArrayWithConversion() {
+		Integer[] values = (Integer[])parameterMap.getArray("stringArray", Integer.class);
+		assertEquals(new Integer(1), values[0]);
+		assertEquals(new Integer(2), values[1]);
+		assertEquals(new Integer(3), values[2]);
 	}
 
 	public void testGetRequiredArrayNotPresent() {
@@ -116,4 +148,72 @@ public class ParameterMapTests extends TestCase {
 		assertEquals(new Integer(2), i[1]);
 		assertEquals(new Integer(3), i[2]);
 	}
+
+	public void getRequiredArrayWithConversion() {
+		Integer[] values = (Integer[])parameterMap.getRequiredArray("stringArray", Integer.class);
+		assertEquals(new Integer(1), values[0]);
+		assertEquals(new Integer(2), values[1]);
+		assertEquals(new Integer(3), values[2]);
+	}
+
+	public void testGetNumber() {
+		Integer value = (Integer)parameterMap.getNumber("integer", Integer.class);
+		assertEquals(new Integer(12345), value);
+	}
+
+	public void testGetRequiredNumber() {
+		Integer value = (Integer)parameterMap.getRequiredNumber("integer", Integer.class);
+		assertEquals(new Integer(12345), value);
+	}
+
+	public void testGetNumberWithDefault() {
+		Integer value = (Integer)parameterMap.getNumber("bogus", Integer.class, new Integer(12345));
+		assertEquals(new Integer(12345), value);
+	}
+	
+	public void testGetInteger() {
+		Integer value = parameterMap.getInteger("integer");
+		assertEquals(new Integer(12345), value);
+	}
+
+	public void testGetRequiredInteger() {
+		Integer value = parameterMap.getRequiredInteger("integer");
+		assertEquals(new Integer(12345), value);
+	}
+
+	public void testGetIntegerWithDefault() {
+		Integer value = parameterMap.getInteger("bogus", new Integer(12345));
+		assertEquals(new Integer(12345), value);
+	}
+
+	public void testGetLong() {
+		Long value = (Long)parameterMap.getLong("integer");
+		assertEquals(new Long(12345), value);
+	}
+
+	public void testGetRequiredLong() {
+		Long value = (Long)parameterMap.getRequiredLong("integer");
+		assertEquals(new Long(12345), value);
+	}
+
+	public void testGetLongWithDefault() {
+		Long value = parameterMap.getLong("bogus", new Long(12345));
+		assertEquals(new Long(12345), value);
+	}
+
+	public void testGetBoolean() {
+		Boolean value = (Boolean)parameterMap.getBoolean("boolean");
+		assertEquals(Boolean.TRUE, value);
+	}
+
+	public void testGetRequiredBoolean() {
+		Boolean value = (Boolean)parameterMap.getRequiredBoolean("boolean");
+		assertEquals(Boolean.TRUE, value);
+	}
+
+	public void testGetBooleanWithDefault() {
+		Boolean value = parameterMap.getBoolean("bogus", Boolean.TRUE);
+		assertEquals(Boolean.TRUE, value);
+	}
+
 }
