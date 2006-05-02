@@ -225,7 +225,7 @@ public class FlowAction extends ActionSupport {
 			HttpServletResponse response) throws Exception {
 		ExternalContext context = new StrutsExternalContext(mapping, form, getServletContext(), request, response);
 		ResponseInstruction responseInstruction = createRequestHandler().handleFlowRequest(context);
-		return toActionForward(responseInstruction, mapping, form, request, context);
+		return toActionForward(responseInstruction, mapping, form, request, response, context);
 	}
 
 	/**
@@ -242,7 +242,7 @@ public class FlowAction extends ActionSupport {
 	 * from the ViewSelection as request attributes.
 	 */
 	protected ActionForward toActionForward(ResponseInstruction response, ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, ExternalContext context) {
+			HttpServletRequest request, HttpServletResponse httpResponse, ExternalContext context) throws Exception {
 		if (response.isApplicationView()) {
 			// forward to a view as part of an active conversation
 			ApplicationView forward = (ApplicationView)response.getViewSelection();
@@ -261,24 +261,24 @@ public class FlowAction extends ActionSupport {
 			// redirect to active flow execution URL
 			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
 					.getFlowExecutionContext(), context);
-			return new ActionForward(flowExecutionUrl, true);
+			return createRedirectForward(flowExecutionUrl, httpResponse);
 		}
 		else if (response.isConversationRedirect()) {
 			// redirect to active conversation URL
 			String conversationUrl = argumentExtractor.createConversationUrl(response.getFlowExecutionKey(), response
 					.getFlowExecutionContext(), context);
-			return new ActionForward(conversationUrl, true);
+			return createRedirectForward(conversationUrl, httpResponse);
 		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL
 			String externalUrl = argumentExtractor.createExternalUrl((ExternalRedirect)response.getViewSelection(),
 					response.getFlowExecutionKey(), context);
-			return new ActionForward(externalUrl, true);
+			return createRedirectForward(externalUrl, httpResponse);
 		}
 		else if (response.isFlowRedirect()) {
 			// restart the flow by redirecting to flow launch URL
 			String flowUrl = argumentExtractor.createFlowUrl((FlowRedirect)response.getViewSelection(), context);
-			return new ActionForward(flowUrl, true);
+			return createRedirectForward(flowUrl, httpResponse);
 		}
 		else if (response.isNull()) {
 			// no response to issue
@@ -287,6 +287,18 @@ public class FlowAction extends ActionSupport {
 		else {
 			throw new IllegalArgumentException("Don't know how to handle response instruction " + response);
 		}
+	}
+
+	/**
+	 * Handles a redirect.  This implementation simply calls sendRedirect on the response object.
+	 * @param url the url to redirect to
+	 * @param response the http response
+	 * @return the redirect forward, this implementation returns null
+	 * @throws Exception an excpetion occured processing the redirect
+	 */
+	protected ActionForward createRedirectForward(String url, HttpServletResponse response) throws Exception {
+		response.sendRedirect(url);
+		return null;
 	}
 
 	private Errors getCurrentErrors(Map model) {
