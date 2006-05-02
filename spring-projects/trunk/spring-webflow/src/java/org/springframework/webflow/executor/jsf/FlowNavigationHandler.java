@@ -35,10 +35,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ConversationRedirect;
-import org.springframework.webflow.support.ExternalRedirect;
-import org.springframework.webflow.support.FlowExecutionRedirect;
-import org.springframework.webflow.support.FlowRedirect;
 
 /**
  * An implementation of a JSF <code>NavigationHandler</code> that provides
@@ -171,6 +167,10 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 				FlowExecution flowExecution = holder.getFlowExecution();
 				ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
 				renderView(selectedView, context);
+			} else {
+				FlowExecution flowExecution = holder.getFlowExecution();
+				ViewSelection selectedView = flowExecution.refresh(context);
+				renderView(selectedView, context);
 			}
 		}
 		else {
@@ -217,6 +217,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	 * @param context <code>JsfExternalContext</code> for the current request
 	 */
 	protected void renderView(ViewSelection selectedView, JsfExternalContext context) {
+		FlowExecutionHolderUtils.getFlowExecutionHolder(context.getFacesContext()).setViewSelection(selectedView);
 		if (selectedView == ViewSelection.NULL_VIEW) {
 			return;
 		}
@@ -232,21 +233,6 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 			ViewHandler handler = facesContext.getApplication().getViewHandler();
 			UIViewRoot view = handler.createView(facesContext, viewIdResolver.resolveViewId(forward.getViewName()));
 			facesContext.setViewRoot(view);
-		}
-		else if (selectedView instanceof FlowExecutionRedirect) {
-			throw new UnsupportedOperationException("Flow execution redirects are not yet supported in a JSF environment");
-		}
-		else if (selectedView instanceof ConversationRedirect) {
-			throw new UnsupportedOperationException("Conversation redirects are not yet supported in a JSF environment");
-		}
-		else if (selectedView instanceof ExternalRedirect) {
-			throw new UnsupportedOperationException("External redirects are not yet supported in a JSF environment");
-		}
-		else if (selectedView instanceof FlowRedirect) {
-			throw new UnsupportedOperationException("Flow redirects are not yet supported in a JSF environment");
-		}
-		else {
-			throw new IllegalArgumentException("Don't know how to handle view selection " + selectedView);
 		}
 	}
 

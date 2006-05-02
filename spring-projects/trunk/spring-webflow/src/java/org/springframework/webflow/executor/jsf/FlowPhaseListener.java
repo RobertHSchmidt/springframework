@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.executor.jsf;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -26,11 +27,17 @@ import javax.faces.event.PhaseListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
+import org.springframework.webflow.support.ApplicationView;
+import org.springframework.webflow.support.ConversationRedirect;
+import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.support.FlowExecutionRedirect;
+import org.springframework.webflow.support.FlowRedirect;
 
 /**
  * JSF phase listener that is responsible for managing a {@link FlowExecution}
@@ -113,13 +120,21 @@ public class FlowPhaseListener implements PhaseListener {
 			restoreFlowExecution(event.getFacesContext());
 		}
 		else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
-			prepareView(event.getFacesContext());
+			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext());
+			if (holder != null) {
+				JsfExternalContext context = new JsfExternalContext(event.getFacesContext());
+				setupView(context, holder);
+			}
 		}
 	}
 
 	public void afterPhase(PhaseEvent event) {
 		if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
-			updateFlowExecution(event.getFacesContext());
+			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext());
+			if (holder != null) {
+				JsfExternalContext context = new JsfExternalContext(event.getFacesContext());
+				saveFlowExecution(context, holder);
+			}
 		}
 	}
 
@@ -138,6 +153,17 @@ public class FlowPhaseListener implements PhaseListener {
 			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecutionKey, flowExecution),
 					facesContext);
 		}
+		else if (argumentExtractor.isConversationIdPresent(context)) {
+			Serializable conversationId = argumentExtractor.extractConversationId(context);
+			FlowExecutionRepository repository = getRepository(context);
+			FlowExecutionKey flowExecutionKey = repository.getCurrentFlowExecutionKey(conversationId);
+			FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Loaded current flow execution from repository with id '" + flowExecutionKey + "'");
+			}
+			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecutionKey, flowExecution),
+					facesContext);
+		}
 	}
 
 	/**
@@ -150,54 +176,92 @@ public class FlowPhaseListener implements PhaseListener {
 		return repositoryFactory.getRepository(context);
 	}
 
-	protected void prepareView(FacesContext facesContext) {
-		FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-		if (holder != null) {
-			FlowExecution flowExecution = holder.getFlowExecution();
-			if (flowExecution.isActive()) {
-				// generate new continuation key for the flow execution
-				// before rendering the response
-				FlowExecutionKey flowExecutionKey = holder.getFlowExecutionKey();
-				FlowExecutionRepository repository = getRepository(new JsfExternalContext(facesContext));
-				if (flowExecutionKey == null) {
-					// it is an new conversation, generate a brand new key
-					flowExecutionKey = repository.generateKey(flowExecution);
+	protected void setupView(JsfExternalContext context, FlowExecutionHolder holder) {
+		generateKey(context, holder);
+		ViewSelection selectedView = holder.getViewSelection();
+		if (selectedView instanceof ApplicationView) {
+			prepareApplicationView(context.getFacesContext(), holder);
+		}
+		else if (selectedView instanceof FlowExecutionRedirect) {
+			saveFlowExecution(context, holder);
+			String url = argumentExtractor.createFlowExecutionUrl(holder.getFlowExecutionKey(), holder
+					.getFlowExecution(), context);
+			sendRedirect(url, context);
+		}
+		else if (selectedView instanceof ConversationRedirect) {
+			saveFlowExecution(context, holder);
+			String url = argumentExtractor.createConversationUrl(holder.getFlowExecutionKey(), holder
+					.getFlowExecution(), context);
+			sendRedirect(url, context);
+		}
+		else if (selectedView instanceof ExternalRedirect) {
+			saveFlowExecution(context, holder);
+			String url = argumentExtractor.createExternalUrl((ExternalRedirect)holder.getViewSelection(), holder
+					.getFlowExecutionKey(), context);
+			sendRedirect(url, context);
+		}
+		else if (selectedView instanceof FlowRedirect) {
+			saveFlowExecution(context, holder);
+			String url = argumentExtractor.createFlowUrl((FlowRedirect)holder.getViewSelection(), context);
+			sendRedirect(url, context);
+		}
+	}
+
+	protected void prepareApplicationView(FacesContext facesContext, FlowExecutionHolder holder) {
+		Map requestMap = facesContext.getExternalContext().getRequestMap();
+		argumentExtractor.put(holder.getFlowExecutionKey(), requestMap);
+		argumentExtractor.put(holder.getFlowExecution(), requestMap);
+	}
+
+	private void generateKey(JsfExternalContext context, FlowExecutionHolder holder) {
+		FlowExecution flowExecution = holder.getFlowExecution();
+		if (flowExecution.isActive()) {
+			// generate new continuation key for the flow execution
+			// before rendering the response
+			FlowExecutionKey flowExecutionKey = holder.getFlowExecutionKey();
+			FlowExecutionRepository repository = getRepository(context);
+			if (flowExecutionKey == null) {
+				// it is an new conversation, generate a brand new key
+				flowExecutionKey = repository.generateKey(flowExecution);
+			}
+			else {
+				// it is an existing conversaiton, use same conversation id,
+				// generate a new continuation id
+				flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
+			}
+			holder.setFlowExecutionKey(flowExecutionKey);
+		}
+	}
+
+	protected void saveFlowExecution(JsfExternalContext context, FlowExecutionHolder holder) {
+		FlowExecution flowExecution = holder.getFlowExecution();
+		FlowExecutionRepository repository = getRepository(context);
+		if (flowExecution.isActive()) {
+			// save the flow execution out to the repository
+			if (logger.isDebugEnabled()) {
+				logger.debug("Saving continuation to repository with key " + holder.getFlowExecutionKey());
+			}
+			repository.putFlowExecution(holder.getFlowExecutionKey(), flowExecution);
+		}
+		else {
+			if (holder.getFlowExecutionKey() != null) {
+				// remove the conversation from the repository
+				Serializable conversationId = holder.getFlowExecutionKey().getConversationId();
+				if (logger.isDebugEnabled()) {
+					logger.debug("Removing conversation in repository with id '" + conversationId + "'");
 				}
-				else {
-					// it is an existing conversaiton, use same conversation id,
-					// generate a new continuation id
-					flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
-				}
-				holder.setFlowExecutionKey(flowExecutionKey);
-				Map requestMap = facesContext.getExternalContext().getRequestMap();
-				argumentExtractor.put(flowExecutionKey, requestMap);
-				argumentExtractor.put(flowExecution, requestMap);
+				repository.invalidateConversation(conversationId);
 			}
 		}
 	}
 
-	protected void updateFlowExecution(FacesContext facesContext) {
-		FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-		if (holder != null) {
-			FlowExecution flowExecution = holder.getFlowExecution();
-			FlowExecutionRepository repository = getRepository(new JsfExternalContext(facesContext));
-			if (flowExecution.isActive()) {
-				// save the flow execution out to the repository
-				if (logger.isDebugEnabled()) {
-					logger.debug("Saving continuation to repository with key " + holder.getFlowExecutionKey());
-				}
-				repository.putFlowExecution(holder.getFlowExecutionKey(), flowExecution);
-			}
-			else {
-				if (holder.getFlowExecutionKey() != null) {
-					// remove the conversation from the repository
-					Serializable conversationId = holder.getFlowExecutionKey().getConversationId();
-					if (logger.isDebugEnabled()) {
-						logger.debug("Removing conversation in repository with id '" + conversationId + "'");
-					}
-					repository.invalidateConversation(conversationId);
-				}
-			}
+	private void sendRedirect(String url, JsfExternalContext context) {
+		try {
+			context.getFacesContext().getExternalContext().redirect(url);
+			context.getFacesContext().responseComplete();
+		}
+		catch (IOException e) {
+			throw new IllegalArgumentException("Could not send redirect to " + url);
 		}
 	}
 }

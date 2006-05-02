@@ -18,6 +18,7 @@ package org.springframework.webflow.executor.jsf;
 import java.io.Serializable;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 
@@ -42,6 +43,8 @@ public class FlowExecutionHolder implements Serializable {
 	 */
 	private FlowExecution flowExecution;
 
+	private ViewSelection viewSelection;
+	
 	/**
 	 * Creates a new flow execution holder for a flow execution that has not yet
 	 * been placed in a repository.
@@ -80,6 +83,14 @@ public class FlowExecutionHolder implements Serializable {
 	 */
 	public FlowExecution getFlowExecution() {
 		return flowExecution;
+	}
+
+	public ViewSelection getViewSelection() {
+		return viewSelection;
+	}
+
+	public void setViewSelection(ViewSelection viewSelection) {
+		this.viewSelection = viewSelection;
 	}
 
 	public String toString() {
