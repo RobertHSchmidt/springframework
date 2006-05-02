@@ -393,6 +393,9 @@
     				<para>Shippingrate - demonstrates Spring Web Flow together with Ajax technology.</para>
     			</listitem>
     			<listitem>
+    				<para>NumberGuess - demonstrates use of stateful middle-tier components to carry out business logic.</para>
+    			</listitem>
+    			<listitem>
     				<para>Birthdate - demonstrates Struts integration and the MultiAction.</para>
     			</listitem>
     			<listitem>
