@@ -27,6 +27,8 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.jsf.DecoratingNavigationHandler;
+import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
@@ -62,7 +64,7 @@ import org.springframework.webflow.support.FlowRedirect;
  * <li>If a flow execution <strong>is</strong> currently in progress:
  * <ul>
  * <li>Load the reference to the current in-progress flow execution using the
- * submitted <em>_flowExecutionId</em> parameter.</li>
+ * submitted <em>_flowExecutionKey</em> parameter.</li>
  * <li>Resume the flow execution by signaling what action outcome (aka event)
  * the user took in the current state.
  * <li>Once state event processing to complete, render the
@@ -177,7 +179,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 				// a flow execution launch has been requested, start it
 				String flowId = argumentExtractor.extractFlowId(context);
 				FlowExecution flowExecution = getRepository(context).createFlowExecution(flowId);
-				ViewSelection selectedView = flowExecution.start(null, context);
+				ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
 				FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecution), facesContext);
 				renderView(selectedView, context);
 			}
@@ -196,6 +198,17 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 			repositoryFactory = FlowFacesUtils.getRepositoryFactory(context.getFacesContext());
 		}
 		return repositoryFactory.getRepository(context);
+	}
+
+	/**
+	 * Factory method that creates the input attribute map for a newly created
+	 * {@link FlowExecution}. TODO - add support for input mappings here
+	 * @param flowExecution the new flow execution (yet to be started)
+	 * @param context the external context
+	 * @return the input map
+	 */
+	protected AttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
+		return null;
 	}
 
 	/**
