@@ -67,7 +67,7 @@ public class AbstractActionTests extends TestCase {
 		assertTrue(action.postExecuteCalled);
 	}
 
-	private class TestAbstractAction extends AbstractAction {
+	public class TestAbstractAction extends AbstractAction {
 		private boolean initialized;
 
 		private boolean postExecuteCalled;
