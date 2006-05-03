@@ -23,7 +23,7 @@ Package org.springframework.webflow.action
 
 Package org.springframework.webflow.builder
 * Added a 'bean' attribute to the 'var' element, for delegating to a Spring bean factory for flow variable creation.
-* Made the 'bean' and 'type' attributes optional of the 'var' element; by default the 'name' attribute will be treated as the name 
+* Made the 'bean' and 'class' attributes optional of the 'var' element; by default the 'name' attribute will be treated as the name 
   of a prototype bean in the BeanFactory to use to create the flow variable value.
 * Added 'input-mapper' and 'output-mapper' elements to the 'flow' element, for mapping input and output attributes respectively.
 * Changed the 'attribute-mapper' element of the 'subflow-state' element to be consistent with the new
