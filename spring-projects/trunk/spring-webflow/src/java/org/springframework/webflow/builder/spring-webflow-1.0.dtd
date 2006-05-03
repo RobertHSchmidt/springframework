@@ -27,13 +27,23 @@
 <!--
 	Defines exactly one flow definition.
 	
-	A flow is composed of one or more states that define the steps of the flow.
-	It may be annotated with attributes that define custom characteristics that
+	A flow is composed of one or more states that define the steps of a task.
+	One of those steps is the startState, which defines the starting point of 
+	the task.
+
+	A flow may be annotated with attributes that define custom characteristics that
 	can be used to affect flow execution.
 	
-	A flow may also be configured to respond to exceptions thrown by its states.
+	A flow may map input provided by callers that start it, and return output 
+	to callers that end it.  In addition, a flow may execute custom behavior
+	at start time and end time.
 	
-	It may import one or more local bean definition files defining custom
+	A flow can instantiate a set of application variables when started.  It may
+	be configured to handle exceptions thrown by its states during execution.
+	
+	A flow may define transitions shared by all states.
+	
+	A flow may import one or more local bean definition files defining custom
 	flow artifacts (such as actions, exception handlers, view selectors,
 	transition criteria, etc).
 	
@@ -43,7 +53,7 @@
 <!ELEMENT flow ( attribute*, var*, input-mapper?, start-actions?, ( action-state | view-state | decision-state | subflow-state | end-state )+, global-transitions?, end-actions?, output-mapper*, exception-handler*, import*, inline-flow* )>
 
 <!--
-	The start state of this flow.  The start state is the point where flow execution begins.
+	The identifier of the start state of this flow.  The start state is the point where flow execution begins.
 -->
 <!ATTLIST flow start-state IDREF #REQUIRED>
 
@@ -178,7 +188,7 @@
 	directly, Spring Web Flow will automatically adapt a method on that POJO to the Action contract.
 	See this element's 'method' attribute for more information.
 	
-	An action may be annotated with properties that can be used to affect the action's execution.
+	An action may be annotated with attributes that can be used to affect the action's execution.
 -->
 <!ELEMENT action ( attribute* )>
 
@@ -301,13 +311,17 @@
 <!ATTLIST transition on-exception CDATA #IMPLIED>
 
 <!--
-	The target state of this transition.
+	The id of the target state of this transition.
+	
+	The value of this attribute may be a static state identifier (e.g. to="displayForm")
+	or an expression to be evaluated at runtime against the request context
+	(e.g. to="${flowScope.previousViewState}").
 -->
 <!ATTLIST transition to CDATA #REQUIRED>
 
 <!--
 	Defines a view state, a state where a view will be selected for rendering, the 
-	executing flow will be 'paused', and control will be returned to the user.
+	executing flow will be 'paused' and control will be returned to the user.
 	A view state allows the user to participate in the flow.
 
 	A view state is a transitionable state. A view state transition is triggered by a
@@ -327,14 +341,23 @@
 	For example:
 	    "priceForm" or "/WEB-INF/jsp/priceForm.jsp"
 	
+	This value may also be a view name expression evaluated against the request context.  For example:
+	    "${flowScope.view}"
+	    
 	This value may also be qualified with a prefix to denote a specific (possibly custom)
 	ViewSelector strategy.
 
 	Use of the "redirect:" prefix indicates this view state should trigger a redirect to a 
-	well-known "conversation URL".  This causes the selected application view to be cached
-	and a redirect request is issued that refers back to it at a specific URL.  This allows
-	for bookmarking and refreshing the last view selection made.
+	unique "flow execution URL".  This causes the selected application view to be rendered on
+	the subsequent request into the server at that URL.  This allows browsers to easily
+	refresh a specific state of the conversation while the conversation remains active.
 		"redirect:priceForm"
+
+	Use of the "conversationRedirect:" prefix indicates this view state should trigger a redirect to a 
+	constant "conversation URL".  This causes the most recent application view to be rendered on
+	the subsequent request into the server at that URL.  This allows browsers to easily
+	refresh the current state of the conversation while the conversation remains active.
+		"conversationRedirect:priceForm"
 
 	Use of the "externalRedirect:" prefix indicates this view state should trigger a 
 	redirect to an absolute external URL, typically to interface with an external system.
@@ -401,9 +424,6 @@
 
 	The form is:
 	    <if test="${criteria}" then="trueStateId" else="falseStateId"/>
-	    
-	Use this element or the transition element when defining a decision state, not both.
-	Do not use this element with the decision-state 'action' element.
 -->
 <!ELEMENT if EMPTY>
 
@@ -419,11 +439,19 @@
 
 <!--
 	The state to transition to if the boolean expression is true.
+
+	The value of this attribute may be a static state identifier (e.g. then="displayForm")
+	or an expression to be evaluated at runtime against the request context
+	(e.g. then="${flowScope.previousViewState}").
 -->
 <!ATTLIST if then IDREF #REQUIRED>
 
 <!--
 	The state to transition to if the boolean expression is false (optional).
+
+	The value of this attribute may be a static state identifier (e.g. else="displayForm")
+	or an expression to be evaluated at runtime against the request context
+	(e.g. else="${flowScope.previousViewState}").
 -->
 <!ATTLIST if else IDREF #IMPLIED>
 
@@ -515,12 +543,9 @@
 	The exact semantics regarding the interpretation of this value are determined by the
 	installed TextToViewSelector converter.
 
-	The exact semantics regarding the interpretation of this value are determined by the
-	installed TextToViewSelector converter.
-
-	Note when no view name is provided, this end state will act as a marker state. A marker
-	end state does not request the rendering of a view, it only terminates the flow and returns control 
-	the client. Use a marker end state when another state is expected to generate the response.
+	Note when no view name is provided, this view state will make a "null" view selection. A null
+	view does not request the rendering of a view, it only pauses the flow and returns control 
+	the client. Use a null view when another state is expected to generate the response.
 -->
 <!ATTLIST end-state view CDATA #IMPLIED>
 
@@ -557,8 +582,10 @@
 <!ELEMENT import EMPTY>
 
 <!--
-	The relative resource path to the bean definition resource to import.
-	This path is relative to this document.
+	The relative resource path to a bean definition file to import.  Imported bean definitions 
+	are referenceable by this flow and any of its inline flows.
+	
+	The resource path is relative to this document.
 -->
 <!ATTLIST import resource CDATA #REQUIRED>
 
