@@ -2,7 +2,7 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC1 (02.5.2006)
+Changes in version 1.0 RC1 (03.5.2006)
 ------------------------------------
 
 Package org.springframework.webflow
@@ -76,8 +76,11 @@ Package org.springframework.webflow.executor
   if flow redirect input is appended to the URL request path or by use of named query parameters.
 * Added "redirectOnPause" attribute to FlowExecutorImpl to allow global enforcement of flow execution redirects for paused flows.
 * FlowExecutorArgumentExtractor now throws typed argument extraction exceptions to report illegal arguments provided by clients.
-* Changed JSF execution resume behavior to no longer require an eventId; if no eventId is provided in a request the current view will not change.
+* Changed JSF "resume flow" behavior to no longer require an eventId; if no eventId is provided in a request the current view will be refreshed.
+* Changed JSF "launch" flow behavior to no longer require a nav handler outcome; if the _flowId parameter 
+  is provided in the request the FlowPhaseListener will launch the new flow execution on RESTORE_VIEW instead.
 * Fixed a situation where a NullPointerException could occur within JSF's FlowPhaseListener.
+* Added support for conversation redirects, external redirects, and flow redirects within a JSF environment.
 * Misc polishing
 
 Package org.springframework.webflow.registry
