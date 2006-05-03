@@ -7,16 +7,16 @@
 	This DTD defines the Spring Web Flow (SWF) XML syntax.
 	
 	The root "flow" element of this document defines exactly one flow definition.
-    A flow definition is a blueprint for an executable task that involves a 
-    single user (aka conversation or dialog).
+	A flow definition is a blueprint for an executable task that involves a 
+	single user (aka conversation or dialog).
 	
 	A flow is composed of one or more states that form the steps of the flow.
 	Each State executes behavior when entered. What behavior is executed is a
 	function of the state's type. Core state types include view states,
 	action Atates, subflow states, decision states, and end states.
     
-    Each flow definition must specify exactly one start state.
-    Events that occur in transitionable states drive state transitions.
+	Each flow definition must specify exactly one start state.
+	Events that occur in transitionable states drive state transitions.
     
 	XML documents that conform to this DTD should declare the following doctype:
 
