@@ -545,9 +545,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		else {
 			if (isHydrated()) {
-				return new ToStringCreator(this).append("flow", getFlow().getId()).append("activeFlow",
-						getActiveSession().getFlow().getId()).append("currentState",
-						getActiveSession().getState().getId()).append("flowSessions", flowSessions).toString();
+				return new ToStringCreator(this).append("flow", flow.getId()).append("flowSessions", flowSessions)
+						.toString();
 			}
 			else {
 				return "[Unhydrated " + getCaption() + "]";
