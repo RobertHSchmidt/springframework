@@ -1755,7 +1755,7 @@
         &lt;subflow-state id="enterShippingDetails" flow="shipping"&gt;
             &lt;attribute-mapper&gt;
                 &lt;input-mapper&gt;
-                    &lt;input-attribute value="${flowScope.order.shipping}" name="shipping"/&gt;
+                    &lt;mapping source="flowScope.order.shipping" target="shipping"/&gt;
                 &lt;/input-mapper&gt;
             &lt;/attribute-mapper&gt;
             &lt;transition on="finish" to="placeOrder"/>
@@ -1795,7 +1795,7 @@
         
         protected FlowAttributeMapper shippingMapper() {
             DefaultFlowAttributeMapper mapper = new DefaultFlowAttributeMapper();
-    	    mapper.addInputMapping(mapping().source("${flowScope.order.shipping}").target("shipping").value());
+    	    mapper.addInputMapping(mapping().source("flowScope.order.shipping").target("shipping").value());
     	    return mapper;
     	}
     }	
