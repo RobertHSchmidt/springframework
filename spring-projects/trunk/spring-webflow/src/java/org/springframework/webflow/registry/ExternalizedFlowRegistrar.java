@@ -169,6 +169,20 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	}
 
 	/**
+	 * Register the Flow definitions at the configured file locations
+	 * @param registry the registry
+	 * @param flowServiceLocator the flow artifactFactory
+	 */
+	private void processFlowDefinitions(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
+		Iterator it = flowDefinitions.iterator();
+		while (it.hasNext()) {
+			ExternalizedFlowDefinition definition = (ExternalizedFlowDefinition)it.next();
+			FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowServiceLocator);
+			registerFlow(definition, registry, builder);
+		}
+	}
+
+	/**
 	 * Template method that calculates if the given file resource is actually a
 	 * flow definition resource. Resources that aren't flow definitions will be
 	 * ignored. Subclasses may override; this implementation simply returns true.
@@ -186,20 +200,6 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 */
 	protected ExternalizedFlowDefinition createFlowDefinition(Resource location) {
 		return new ExternalizedFlowDefinition(location);
-	}
-
-	/**
-	 * Register the Flow definitions at the configured file locations
-	 * @param registry the registry
-	 * @param flowServiceLocator the flow artifactFactory
-	 */
-	private void processFlowDefinitions(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
-		Iterator it = flowDefinitions.iterator();
-		while (it.hasNext()) {
-			ExternalizedFlowDefinition definition = (ExternalizedFlowDefinition)it.next();
-			FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowServiceLocator);
-			registerFlow(definition, registry, builder);
-		}
 	}
 
 	/**
