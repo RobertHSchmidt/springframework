@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.registry;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -157,13 +156,36 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * @param registry the registry
 	 * @param flowServiceLocator the flow artifactFactory
 	 */
-	protected void processFlowLocations(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
+	private void processFlowLocations(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
 		Iterator it = flowLocations.iterator();
 		while (it.hasNext()) {
 			Resource location = (Resource)it.next();
-			FlowBuilder builder = createFlowBuilder(location, flowServiceLocator);
-			registerFlow(new ExternalizedFlowDefinition(location), registry, builder);
+			if (isFlowDefinition(location)) {
+				ExternalizedFlowDefinition definition = createFlowDefinition(location);
+				FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowServiceLocator);
+				registerFlow(definition, registry, builder);
+			}
 		}
+	}
+
+	/**
+	 * Template method that calculates if the given file resource is actually a
+	 * flow definition resource. Resources that aren't flow definitions will be
+	 * ignored. Subclasses may override; this implementation simply returns true.
+	 * @param file the file
+	 * @return true if yes, false otherwise
+	 */
+	protected boolean isFlowDefinition(Resource resource) {
+		return true;
+	}
+
+	/**
+	 * Factory method that creates a flow definition from an externalized resource location.
+	 * @param location the location of the resource
+	 * @return the externalized flow definition pointer
+	 */
+	protected ExternalizedFlowDefinition createFlowDefinition(Resource location) {
+		return new ExternalizedFlowDefinition(location);
 	}
 
 	/**
@@ -171,7 +193,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * @param registry the registry
 	 * @param flowServiceLocator the flow artifactFactory
 	 */
-	protected void processFlowDefinitions(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
+	private void processFlowDefinitions(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
 		Iterator it = flowDefinitions.iterator();
 		while (it.hasNext()) {
 			ExternalizedFlowDefinition definition = (ExternalizedFlowDefinition)it.next();
@@ -179,24 +201,6 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 			registerFlow(definition, registry, builder);
 		}
 	}
-
-	/**
-	 * Template method that calculates if the given file resource is actually a
-	 * flow definition resource. Resources that aren't flow definitions will be
-	 * ignored. Subclasses must override.
-	 * @param file the file
-	 * @return true if yes, false otherwise
-	 */
-	protected abstract boolean isFlowDefinition(File file);
-
-	/**
-	 * Template method that calculates the <code>flowId</code> to assign to
-	 * the Flow definition to be built from the specified resource location.
-	 * Subclasses must override.
-	 * @param location the flow resource
-	 * @return the flow id
-	 */
-	protected abstract String getFlowId(Resource location);
 
 	/**
 	 * Factory method that returns a new externalized flow builder that will
