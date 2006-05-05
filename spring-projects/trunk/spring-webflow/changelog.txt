@@ -2,6 +2,16 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
+Changes in version 1.0 RC1 (03.15.2006)
+------------------------------------
+Package org.springframework.webflow.execution
+* Fixed bug in FlowExecutionImpl toString, where NPE could be thrown if toString was called during 
+  a FlowExecution.start (after becoming active but before having the current state set).
+
+Package org.springframework.webflow.registry
+* Improved ExternalizedFlowRegistrar, extracting a factory method for creating an ExternalizedFlowDefinition
+  from a valid Resource location, and a template method for calculating if the location is actually a flow resource.
+
 Changes in version 1.0 RC1 (03.5.2006)
 ------------------------------------
 
