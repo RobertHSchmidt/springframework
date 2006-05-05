@@ -19,13 +19,15 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.execution.EmptyFlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
 /**
  * A holder for services common to all {@link FlowExecutionRepository}
- * implementations.
+ * implementations.  Allows for customization of each of the services 
+ * to affect FlowExecutionRepository behavior.
  * <p>
  * <b>Configurable properties</b> <br>
  * <table border="1">
@@ -79,7 +81,7 @@ public class FlowExecutionRepositoryServices {
 	 * @param flowLocator the flow locator (required)
 	 */
 	public FlowExecutionRepositoryServices(FlowLocator flowLocator) {
-		Assert.notNull(flowLocator, "The flow locator is required");
+		Assert.notNull(flowLocator, "The flow locator to load flow definitions to execute is required");
 		this.flowLocator = flowLocator;
 	}
 
@@ -92,16 +94,17 @@ public class FlowExecutionRepositoryServices {
 	}
 
 	/**
-	 * Returns the flow execution listener loader
+	 * Returns the flow execution listener loader.
 	 */
 	public FlowExecutionListenerLoader getListenerLoader() {
 		return listenerLoader;
 	}
 
 	/**
-	 * Sets the flow execution listener loader
+	 * Sets the flow execution listener loader.
 	 */
 	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
+		Assert.notNull(listenerLoader, "The flow execution listener loader is required");
 		this.listenerLoader = listenerLoader;
 	}
 
@@ -115,9 +118,10 @@ public class FlowExecutionRepositoryServices {
 
 	/**
 	 * Sets the uid generation strategy used to generate unique conversation and
-	 * continuation identifiers.
+	 * continuation identifiers for {@link FlowExecutionKey flow execution keys}.
 	 */
 	public void setUidGenerator(UidGenerator uidGenerator) {
+		Assert.notNull(uidGenerator, "The flow execution key UID generator is required");
 		this.uidGenerator = uidGenerator;
 	}
 }
