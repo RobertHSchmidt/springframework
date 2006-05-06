@@ -14,11 +14,33 @@
  * limitations under the License.
  */
 
+// Uncomment this for running JAXB2 unit tests
+/*
 package org.springframework.oxm.jaxb;
 
-public class Jaxb2UnmarshallerTest extends AbstractJaxbUnmarshallerTest {
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.oxm.AbstractUnmarshallerTest;
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.oxm.jaxb2.FlightType;
+import org.springframework.oxm.jaxb2.Flights;
 
-    protected AbstractJaxbMarshaller createJaxbUnmarshaller() {
-        return new Jaxb2Marshaller();
+public class Jaxb2UnmarshallerTest extends AbstractUnmarshallerTest {
+
+    protected Unmarshaller createUnmarshaller() throws Exception {
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setContextPath("org.springframework.oxm.jaxb2");
+        marshaller.setSchema(new ClassPathResource("org/springframework/oxm/flight.xsd"));
+        marshaller.afterPropertiesSet();
+        return marshaller;
+    }
+
+    protected void testFlights(Object o) {
+        Flights flights = (Flights) o;
+        assertNotNull("Flights is null", flights);
+        assertEquals("Invalid amount of flight elements", 1, flights.getFlight().size());
+        FlightType flight = (FlightType) flights.getFlight().get(0);
+        assertNotNull("Flight is null", flight);
+        assertEquals("Number is invalid", 42L, flight.getNumber());
     }
 }
+*/

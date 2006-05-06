@@ -23,12 +23,22 @@
     <target name="generate-jaxb-test">
         <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="test.classpath"/>
 
-        <xjc target="${target.gen.java.test.dir}" package="${jaxb.package}" source="1.0">
+        <xjc target="${target.gen.java.test.dir}" package="${jaxb1.package}" source="1.0">
             <schema dir="${src.test.resources.dir}">
                 <include name="**/*.xsd"/>
             </schema>
-            <produces dir="${target.gen.java.test.dir}" includes="**/jaxb/**/*.java"/>
+            <produces dir="${target.gen.java.test.dir}" includes="**/jaxb1/**/*.java"/>
         </xjc>
+
+        <!--
+                Uncomment this for running JAXB2 tests
+                <xjc target="${target.gen.java.test.dir}" package="${jaxb2.package}">
+                    <schema dir="${src.test.resources.dir}">
+                        <include name="**/*.xsd"/>
+                    </schema>
+                    <produces dir="${target.gen.java.test.dir}" includes="**/jaxb2/**/*.java"/>
+                </xjc>
+        -->
 
     </target>
 
@@ -49,7 +59,8 @@
     <target name="generate-castor-test">
         <taskdef name="castor-srcgen" classname="org.exolab.castor.tools.ant.taskdefs.CastorSourceGenTask"
                  classpathref="test.classpath"/>
-        <castor-srcgen file="${src.test.resources.dir}/flight.xsd" todir="${target.gen.java.test.dir}"
+        <castor-srcgen file="${src.test.resources.dir}/org/springframework/oxm/flight.xsd"
+                       todir="${target.gen.java.test.dir}"
                        package="${castor.package}" types="j2" warnings="false"/>
     </target>
 

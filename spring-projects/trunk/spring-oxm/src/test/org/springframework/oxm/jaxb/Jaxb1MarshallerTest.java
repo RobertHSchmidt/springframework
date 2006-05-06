@@ -15,10 +15,38 @@
  */
 package org.springframework.oxm.jaxb;
 
+import java.util.Collections;
+
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.jaxb1.FlightType;
+import org.springframework.oxm.jaxb1.Flights;
+import org.springframework.oxm.jaxb1.impl.FlightTypeImpl;
+import org.springframework.oxm.jaxb1.impl.FlightsImpl;
+
 public class Jaxb1MarshallerTest extends AbstractJaxbMarshallerTest {
 
-    protected AbstractJaxbMarshaller createJaxbMarshaller() throws Exception {
-        return new Jaxb1Marshaller();
+    private static final String CONTEXT_PATH = "org.springframework.oxm.jaxb1";
+
+    protected final Marshaller createMarshaller() throws Exception {
+        Jaxb1Marshaller marshaller = new Jaxb1Marshaller();
+        marshaller.setContextPath(CONTEXT_PATH);
+        marshaller.afterPropertiesSet();
+        return marshaller;
     }
 
+    protected Object createFlights() {
+        FlightType flight = new FlightTypeImpl();
+        flight.setNumber(42L);
+        Flights flights = new FlightsImpl();
+        flights.getFlight().add(flight);
+        return flights;
+    }
+
+    public void testProperties() throws Exception {
+        Jaxb1Marshaller marshaller = new Jaxb1Marshaller();
+        marshaller.setContextPath(CONTEXT_PATH);
+        marshaller.setMarshallerProperties(
+                Collections.singletonMap(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE));
+        marshaller.afterPropertiesSet();
+    }
 }

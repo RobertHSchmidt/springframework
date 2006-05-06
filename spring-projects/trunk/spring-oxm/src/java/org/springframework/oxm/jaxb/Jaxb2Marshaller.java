@@ -22,7 +22,6 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -35,20 +34,21 @@ import org.xml.sax.SAXException;
  * Implementation of the <code>Marshaller</code> interface for JAXB 2.0.
  * <p/>
  * The typical usage will be to set the <code>contextPath</code> property on this bean, possibly customize the
- * marshaller and unmarshaller by setting properties, schema, adapters, and listeners,  and to refer to it.
+ * marshaller and unmarshaller by setting properties, schemas, adapters, and listeners, and to refer to it.
  *
  * @author Arjen Poutsma
  * @see #setContextPath(String)
  * @see #setMarshallerProperties(java.util.Map)
  * @see #setUnmarshallerProperties(java.util.Map)
  * @see #setSchema(org.springframework.core.io.Resource)
+ * @see #setSchemas(org.springframework.core.io.Resource[])
  * @see #setMarshallerListener(javax.xml.bind.Marshaller.Listener)
  * @see #setUnmarshallerListener(javax.xml.bind.Unmarshaller.Listener)
  * @see #setAdapters(javax.xml.bind.annotation.adapters.XmlAdapter[])
  */
 public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
 
-    private Resource schemaResource;
+    private Resource[] schemaResources;
 
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
 
@@ -77,7 +77,14 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
      * Sets the schema resource to use for validation.
      */
     public void setSchema(Resource schemaResource) {
-        this.schemaResource = schemaResource;
+        this.schemaResources = new Resource[]{schemaResource};
+    }
+
+    /**
+     * Sets the schema resources to use for validation.
+     */
+    public void setSchemas(Resource[] schemaResources) {
+        this.schemaResources = schemaResources;
     }
 
     /**
@@ -126,21 +133,30 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
     }
 
     private void initSchema() throws IOException, SAXException {
-        if (schemaResource != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Setting validation schema to [" + schemaResource + "] with schema language [" +
-                        schemaLanguage + "]");
-            }
+        if (!ObjectUtils.isEmpty(schemaResources)) {
             SchemaFactory schemaFactory = SchemaFactory.newInstance(schemaLanguage);
-            InputStream schemaInputStream = schemaResource.getInputStream();
+            StreamSource[] schemaSources = new StreamSource[schemaResources.length];
             try {
-                Source schemaSource = new StreamSource(schemaInputStream);
-                Schema schema = schemaFactory.newSchema(schemaSource);
+                for (int i = 0; i < schemaResources.length; i++) {
+                    Resource schemaResource = schemaResources[i];
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Setting validation schema to " + schemaResources);
+                    }
+                    schemaSources[i] = new StreamSource(schemaResource.getInputStream());
+                }
+                Schema schema = schemaFactory.newSchema(schemaSources);
                 getMarshaller().setSchema(schema);
                 getUnmarshaller().setSchema(schema);
             }
             finally {
-                schemaInputStream.close();
+                for (int i = 0; i < schemaSources.length; i++) {
+                    if (schemaSources[i] != null) {
+                        InputStream inputStream = schemaSources[i].getInputStream();
+                        if (inputStream != null) {
+                            inputStream.close();
+                        }
+                    }
+                }
             }
         }
     }

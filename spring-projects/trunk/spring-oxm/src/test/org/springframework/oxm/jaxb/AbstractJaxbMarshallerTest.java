@@ -16,38 +16,17 @@
 
 package org.springframework.oxm.jaxb;
 
-import java.util.Collections;
 import javax.xml.transform.sax.SAXResult;
 
 import org.easymock.MockControl;
 import org.springframework.oxm.AbstractMarshallerTest;
-import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.XmlMappingException;
-import org.springframework.oxm.jaxb.impl.FlightTypeImpl;
-import org.springframework.oxm.jaxb.impl.FlightsImpl;
 import org.xml.sax.ContentHandler;
 
 /**
  * @author Arjen Poutsma
  */
 public abstract class AbstractJaxbMarshallerTest extends AbstractMarshallerTest {
-
-    protected final Marshaller createMarshaller() throws Exception {
-        AbstractJaxbMarshaller marshaller = createJaxbMarshaller();
-        marshaller.setContextPath("org.springframework.oxm.jaxb");
-        marshaller.afterPropertiesSet();
-        return marshaller;
-    }
-
-    protected abstract AbstractJaxbMarshaller createJaxbMarshaller() throws Exception;
-
-    protected Object createFlights() {
-        FlightType flight = new FlightTypeImpl();
-        flight.setNumber(42L);
-        Flights flights = new FlightsImpl();
-        flights.getFlight().add(flight);
-        return flights;
-    }
 
     public void testMarshalSaxResult() throws Exception {
         MockControl handlerControl = MockControl.createStrictControl(ContentHandler.class);
@@ -63,7 +42,7 @@ public abstract class AbstractJaxbMarshallerTest extends AbstractMarshallerTest 
         handlerMock.startElement("http://samples.springframework.org/flight", "number", "number", null);
         handlerControl.setMatcher(MockControl.ALWAYS_MATCHER);
         handlerMock.characters(new char[]{'4', '2'}, 0, 2);
-        handlerControl.setMatcher(MockControl.ARRAY_MATCHER);
+        handlerControl.setMatcher(MockControl.ALWAYS_MATCHER);
         handlerMock.endElement("http://samples.springframework.org/flight", "number", "number");
         handlerMock.endElement("http://samples.springframework.org/flight", "flight", "flight");
         handlerMock.endElement("http://samples.springframework.org/flight", "flights", "flights");
@@ -97,11 +76,4 @@ public abstract class AbstractJaxbMarshallerTest extends AbstractMarshallerTest 
         }
     }
 
-    public void testProperties() throws Exception {
-        Jaxb1Marshaller marshaller = new Jaxb1Marshaller();
-        marshaller.setContextPath("org.springframework.oxm.jaxb");
-        marshaller.setMarshallerProperties(
-                Collections.singletonMap(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE));
-        marshaller.afterPropertiesSet();
-    }
 }

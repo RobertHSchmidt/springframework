@@ -15,9 +15,28 @@
  */
 package org.springframework.oxm.jaxb;
 
-public class Jaxb1UnmarshallerTest extends AbstractJaxbUnmarshallerTest {
+import org.springframework.oxm.AbstractUnmarshallerTest;
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.oxm.jaxb1.FlightType;
+import org.springframework.oxm.jaxb1.Flights;
 
-    protected AbstractJaxbMarshaller createJaxbUnmarshaller() {
-        return new Jaxb1Marshaller();
+public class Jaxb1UnmarshallerTest extends AbstractUnmarshallerTest {
+
+    protected Unmarshaller createUnmarshaller() throws Exception {
+        Jaxb1Marshaller marshaller = new Jaxb1Marshaller();
+        marshaller.setContextPath("org.springframework.oxm.jaxb1");
+        marshaller.setValidating(true);
+        marshaller.afterPropertiesSet();
+        return marshaller;
     }
+
+    protected void testFlights(Object o) {
+        Flights flights = (Flights) o;
+        assertNotNull("Flights is null", flights);
+        assertEquals("Invalid amount of flight elements", 1, flights.getFlight().size());
+        FlightType flight = (FlightType) flights.getFlight().get(0);
+        assertNotNull("Flight is null", flight);
+        assertEquals("Number is invalid", 42L, flight.getNumber());
+    }
+
 }

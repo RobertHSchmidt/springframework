@@ -142,12 +142,10 @@ public abstract class AbstractJaxbMarshaller
     }
 
     /**
-     * Concrete JAXB Marhsallers can override this for custom initialization behavior. Gets called after creation of
-     * JAXB <code>Marshaller</code> and <code>Unmarshaller</code>, and after the respective properties have been set.
+     * Overridden by concrete JAXB marshallers for custom initialization behavior. Gets called after creation of JAXB
+     * <code>Marshaller</code> and <code>Unmarshaller</code>, and after the respective properties have been set.
      */
-    protected void initJaxbMarshaller() throws Exception {
-
-    }
+    protected abstract void initJaxbMarshaller() throws Exception;
 
     public void marshal(Object graph, Result result) {
         try {
