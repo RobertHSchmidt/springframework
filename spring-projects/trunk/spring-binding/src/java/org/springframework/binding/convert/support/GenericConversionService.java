@@ -38,7 +38,7 @@ import org.springframework.util.StringUtils;
  * 
  * @author Keith Donald
  */
-public abstract class AbstractConversionService implements ConversionService {
+public class GenericConversionService implements ConversionService {
 
 	/**
 	 * An indexed map of converters. Each entry key is a source class that can

@@ -18,9 +18,7 @@ package org.springframework.binding.convert.support;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.springframework.binding.expression.Expression;
 import org.springframework.binding.format.support.SimpleFormatterFactory;
-import org.springframework.binding.mapping.Mapping;
 import org.springframework.core.enums.LabeledEnum;
 
 /**
@@ -28,7 +26,7 @@ import org.springframework.core.enums.LabeledEnum;
  * 
  * @author Keith Donald
  */
-public class DefaultConversionService extends AbstractConversionService {
+public class DefaultConversionService extends GenericConversionService {
 
 	/**
 	 * Creates a new default conversion service, installing the default
@@ -54,9 +52,7 @@ public class DefaultConversionService extends AbstractConversionService {
 		addDefaultAlias(BigInteger.class);
 		addDefaultAlias(BigDecimal.class);
 		addDefaultAlias(Boolean.class);
-		addDefaultAlias(Mapping.class);
 		addDefaultAlias(Class.class);
-		addDefaultAlias(Expression.class);
 		addDefaultAlias(LabeledEnum.class);
 	}
 }
