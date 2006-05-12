@@ -218,9 +218,12 @@ public interface Unmarshaller {
             </para>
         </section>
         <para>
-            Even though there are two separate interfaces, most implementations found in Spring-WS implement both in one
-            class. This means that you can wire up one marshaller class and refer to it as marshaller and unmarshaller
-            in your
+            Even though there are two separate marshalling interfaces (
+            <classname>Marshaller</classname>
+            and
+            <classname>Unmarshaller</classname>
+            ), most implementations found in Spring-WS implement both in one class.
+            This means that you can wire up one marshaller class and refer to it as marshaller and unmarshaller in your
             <filename>applicationContext.xml</filename>
             .
         </para>
@@ -317,20 +320,26 @@ public class Application {
     }
 
     public void saveSettings() throws IOException {
-        FileOutputStream os = new FileOutputStream(FILE_NAME);
+        FileOutputStream os = null;
         try {
+            os = new FileOutputStream(FILE_NAME);
             this.marshaller.marshal(settings, new StreamResult(os));
         } finally {
-            os.close();
+            if (os != null) {
+                os.close();
+            }
         }
     }
 
     public void loadSettings() throws IOException {
-        FileInputStream is = new FileInputStream(FILE_NAME);
+        FileInputStream is = null;
         try {
+            is = new FileInputStream(FILE_NAME);
             this.settings = (Settings) this.unmarshaller.unmarshal(new StreamSource(is));
         } finally {
-            is.close();
+            if (is != null) {
+                is.close();
+            }
         }
     }
 
