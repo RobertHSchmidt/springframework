@@ -16,6 +16,7 @@
 package org.springframework.webflow.registry;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.builder.BaseFlowServiceLocator;
@@ -46,20 +47,17 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 	/**
 	 * Creates a flow artifact factory that retrieves subflows from the provided
 	 * registry and additional artifacts from the provided bean factory.
-	 * @param beanFactory The spring bean factory
-	 */
-	public DefaultFlowServiceLocator(BeanFactory beanFactory) {
-		this(new FlowRegistryImpl(), beanFactory);
-	}
-
-	/**
-	 * Creates a flow artifact factory that retrieves subflows from the provided
-	 * registry and additional artifacts from the provided bean factory.
 	 * @param subflowRegistry The registry for loading subflows
 	 * @param beanFactory The spring bean factory
 	 */
 	public DefaultFlowServiceLocator(FlowRegistry subflowRegistry, BeanFactory beanFactory) {
+		Assert.notNull(subflowRegistry, "The subflow registry is required");
+		Assert.notNull(beanFactory, "The bean factory is required");
 		this.subflowRegistry = subflowRegistry;
+		this.beanFactory = beanFactory;
+	}
+
+	protected void setBeanFactory(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
 
@@ -78,5 +76,5 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 
 	public BeanFactory getBeanFactory() {
 		return beanFactory;
-	}
+	}	
 }

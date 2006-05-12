@@ -19,11 +19,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
+import org.springframework.binding.convert.support.GenericConversionService;
 import org.springframework.binding.convert.support.TextToExpression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.method.TextToMethodSignature;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
@@ -68,7 +70,7 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	/**
 	 * A conversion service that can convert between types.
 	 */
-	private ConversionService conversionService = createDefaultConversionService();
+	private ConversionService conversionService = createConversionService(null);
 
 	/**
 	 * A resource loader that can load resources.
@@ -79,8 +81,9 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	 * Sets the factory encapsulating the creation of central Flow artifacts
 	 * such as {@link Flow flows} and {@link State states}.
 	 */
-	public void setFlowArtifactFactory(FlowArtifactFactory flowEntityFactory) {
-		this.flowArtifactFactory = flowEntityFactory;
+	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
+		Assert.notNull(flowArtifactFactory, "The flow artifact factory is required");
+		this.flowArtifactFactory = flowArtifactFactory;
 	}
 
 	/**
@@ -88,6 +91,7 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	 * methods on objects to the {@link Action} interface.
 	 */
 	public void setBeanInvokingActionFactory(BeanInvokingActionFactory beanInvokingActionFactory) {
+		Assert.notNull(beanInvokingActionFactory, "The bean invoking action factory is required");
 		this.beanInvokingActionFactory = beanInvokingActionFactory;
 	}
 
@@ -96,6 +100,7 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	 * evaluatable expression objects.
 	 */
 	public void setExpressionParser(ExpressionParser expressionParser) {
+		Assert.notNull(expressionParser, "The expression parser is required");
 		this.expressionParser = expressionParser;
 	}
 
@@ -104,7 +109,8 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	 * from string to a rich object type.
 	 */
 	public void setConversionService(ConversionService conversionService) {
-		this.conversionService = conversionService;
+		Assert.notNull(conversionService, "The conversion service is required");
+		this.conversionService = createConversionService(conversionService);
 	}
 
 	/**
@@ -173,6 +179,9 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	}
 
 	public ResourceLoader getResourceLoader() throws UnsupportedOperationException {
+		if (resourceLoader == null) {
+			throw new UnsupportedOperationException("Resource loading is not supported by this service locator");
+		}
 		return resourceLoader;
 	}
 
@@ -180,18 +189,9 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		throw new UnsupportedOperationException("Bean factory lookup is not supported by this service locator");
 	}
 
-	private ConversionService createDefaultConversionService() {
-		DefaultConversionService service = new DefaultConversionService();
-		service.addConverter(new TextToTransitionCriteria(this));
-		service.addConverter(new TextToViewSelector(this));
-		service.addConverter(new TextToTransitionTargetStateResolver(this));
-		service.addConverter(new TextToExpression(getExpressionParser()));
-		service.addConverter(new TextToMethodSignature(service));
-		return service;
-	}
-
 	/**
-	 * Helper method for determining if the configured bean factory contains the provided bean.
+	 * Helper method for determining if the configured bean factory contains the
+	 * provided bean.
 	 * @param id the id of the bean
 	 * @return true if yes, false otherwise
 	 */
@@ -200,7 +200,8 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	}
 
 	/**
-	 * Helper method to lookup the bean representing a flow artifact of the specified type.
+	 * Helper method to lookup the bean representing a flow artifact of the
+	 * specified type.
 	 * @param id the bean id
 	 * @param artifactType the bean type
 	 * @return the bean
@@ -229,5 +230,27 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		catch (BeansException e) {
 			throw new FlowArtifactException(id, artifactType, e);
 		}
+	}
+
+	protected ConversionService createConversionService(ConversionService parent) {
+		if (parent != null) {
+			GenericConversionService conversionService = new GenericConversionService();
+			addWebFlowConverters(conversionService);
+			conversionService.setParent(parent);
+			return conversionService;
+		}
+		else {
+			DefaultConversionService conversionService = new DefaultConversionService();
+			addWebFlowConverters(conversionService);
+			return conversionService;
+		}
+	}
+
+	protected void addWebFlowConverters(GenericConversionService conversionService) {
+		conversionService.addConverter(new TextToTransitionCriteria(this));
+		conversionService.addConverter(new TextToViewSelector(this));
+		conversionService.addConverter(new TextToTransitionTargetStateResolver(this));
+		conversionService.addConverter(new TextToExpression(getExpressionParser()));
+		conversionService.addConverter(new TextToMethodSignature(conversionService));
 	}
 }

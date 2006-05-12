@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.repository.CannotContinueConversationException;
@@ -95,7 +96,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	/**
 	 * The maximum number of continuations that can be active per conversation.
 	 */
-	private int maxContinuations = 25;
+	private int maxContinuations = 0;
 
 	/**
 	 * Creates a new continuation flow execution repository.
@@ -118,6 +119,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	 * continuations stored in this repository.
 	 */
 	public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
+		Assert.notNull(continuationFactory, "The continuation factory is required");
 		this.continuationFactory = continuationFactory;
 	}
 
@@ -134,6 +136,7 @@ public class ContinuationFlowExecutionRepository extends AbstractFlowExecutionRe
 	 * repository.
 	 */
 	public void setMaxContinuations(int maxContinuations) {
+		Assert.isTrue(maxContinuations >= 0, "The max continuations must be greater than or equal to 0");
 		this.maxContinuations = maxContinuations;
 	}
 

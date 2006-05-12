@@ -73,6 +73,7 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 	 * Sets the shared, external map locator.
 	 */
 	public void setSharedMapLocator(SharedMapLocator sharedMapLocator) {
+		Assert.notNull(sharedMapLocator, "The shared map locator is required");
 		this.sharedMapLocator = sharedMapLocator;
 	}
 

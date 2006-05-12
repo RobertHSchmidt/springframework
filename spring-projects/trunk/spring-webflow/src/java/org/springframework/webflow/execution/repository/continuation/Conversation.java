@@ -40,7 +40,7 @@ public class Conversation implements Serializable {
 
 	/**
 	 * The maximum number of continuations that can be created for this
-	 * conversation.
+	 * conversation.  Value of '0' indicates to upper bound is set.
 	 */
 	private int maxContinuations;
 
@@ -58,7 +58,7 @@ public class Conversation implements Serializable {
 	 * this conversation.
 	 */
 	public Conversation(int maxContinuations) {
-		Assert.isTrue(maxContinuations > 0, "'maxContinuations' must be greater than 0");
+		Assert.isTrue(maxContinuations >= 0, "'maxContinuations' must be greater than or equal to 0");
 		this.maxContinuations = maxContinuations;
 	}
 
@@ -89,9 +89,13 @@ public class Conversation implements Serializable {
 		continuations.add(continuation);
 		// remove the first continuation if them maximium number of
 		// continuations has been reached
-		if (continuations.size() > maxContinuations) {
+		if (maxExceeded()) {
 			continuations.removeFirst();
 		}
+	}
+
+	private boolean maxExceeded() {
+		return maxContinuations > 0 && continuations.size() > maxContinuations;
 	}
 
 	/**

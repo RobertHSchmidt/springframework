@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepositoryCreator;
 import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
@@ -52,6 +53,7 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 	 * continuations stored in repositories created by this creator.
 	 */
 	public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
+		Assert.notNull(continuationFactory, "The continuation factory is required");
 		this.continuationFactory = continuationFactory;
 	}
 

@@ -18,6 +18,7 @@ package org.springframework.webflow.registry;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.context.ResourceLoaderAware;
@@ -37,7 +38,8 @@ import org.springframework.webflow.builder.FlowServiceLocator;
  * 
  * @author Keith Donald
  */
-public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, BeanFactoryAware, ResourceLoaderAware {
+public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, BeanFactoryAware, ResourceLoaderAware,
+		InitializingBean {
 
 	/**
 	 * The registry to register Flow definitions in.
@@ -48,7 +50,40 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * The locator of services needed by the Flows built for inclusion in the
 	 * registry.
 	 */
-	private DefaultFlowServiceLocator flowServiceLocator;
+	private FlowServiceLocator flowServiceLocator;
+
+	/**
+	 * The factory encapsulating the creation of central Flow artifacts such as
+	 * {@link Flow flows} and {@link State states}.
+	 */
+	private FlowArtifactFactory flowArtifactFactory;
+
+	/**
+	 * The factory encapsulating the creation of bean invoking actions, actions
+	 * that adapt methods on objects to the {@link Action} interface.
+	 */
+	private BeanInvokingActionFactory beanInvokingActionFactory;
+
+	/**
+	 * The parser for parsing expression strings into evaluatable expression
+	 * objects.
+	 */
+	private ExpressionParser expressionParser;
+
+	/**
+	 * A conversion service that can convert between types.
+	 */
+	private ConversionService conversionService;
+
+	/**
+	 * A resource loader that can load resources.
+	 */
+	private ResourceLoader resourceLoader;
+
+	/**
+	 * The Spring bean factory that manages configured flow artifacts.
+	 */
+	private BeanFactory beanFactory;
 
 	/**
 	 * Sets the parent registry of the registry constructed by this factory
@@ -67,7 +102,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * such as {@link Flow flows} and {@link State states}.
 	 */
 	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
-		flowServiceLocator.setFlowArtifactFactory(flowArtifactFactory);
+		this.flowArtifactFactory = flowArtifactFactory;
 	}
 
 	/**
@@ -75,7 +110,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * methods on objects to the {@link Action} interface.
 	 */
 	public void setBeanInvokingActionFactory(BeanInvokingActionFactory beanInvokingActionFactory) {
-		flowServiceLocator.setBeanInvokingActionFactory(beanInvokingActionFactory);
+		this.beanInvokingActionFactory = beanInvokingActionFactory;
 	}
 
 	/**
@@ -83,7 +118,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * evaluatable expression objects.
 	 */
 	public void setExpressionParser(ExpressionParser expressionParser) {
-		flowServiceLocator.setExpressionParser(expressionParser);
+		this.expressionParser = expressionParser;
 	}
 
 	/**
@@ -91,15 +126,19 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * from string to a rich object type.
 	 */
 	public void setConversionService(ConversionService conversionService) {
-		flowServiceLocator.setConversionService(conversionService);
+		this.conversionService = conversionService;
 	}
 
 	public void setResourceLoader(ResourceLoader resourceLoader) {
-		flowServiceLocator.setResourceLoader(resourceLoader);
+		this.resourceLoader = resourceLoader;
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		flowServiceLocator = new DefaultFlowServiceLocator(getFlowRegistry(), beanFactory);
+		this.beanFactory = beanFactory;
+	}
+
+	public void afterPropertiesSet() {
+		flowServiceLocator = createFlowServiceLocator();
 	}
 
 	/**
@@ -141,5 +180,31 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 
 	public boolean isSingleton() {
 		return true;
+	}
+
+	/**
+	 * Factory method for creating the service locator used to locate webflow
+	 * services during flow assembly. Subclasses may override to customize the
+	 * configuration of the locator returned.
+	 * @return the service locator
+	 */
+	protected FlowServiceLocator createFlowServiceLocator() {
+		DefaultFlowServiceLocator serviceLocator = new DefaultFlowServiceLocator(flowRegistry, beanFactory);
+		if (flowArtifactFactory != null) {
+			serviceLocator.setFlowArtifactFactory(flowArtifactFactory);
+		}
+		if (beanInvokingActionFactory != null) {
+			serviceLocator.setBeanInvokingActionFactory(beanInvokingActionFactory);
+		}
+		if (expressionParser != null) {
+			serviceLocator.setExpressionParser(expressionParser);
+		}
+		if (conversionService != null) {
+			serviceLocator.setConversionService(conversionService);
+		}
+		if (resourceLoader != null) {
+			serviceLocator.setResourceLoader(resourceLoader);
+		}
+		return serviceLocator;
 	}
 }

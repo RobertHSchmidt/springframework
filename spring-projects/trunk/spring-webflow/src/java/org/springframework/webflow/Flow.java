@@ -602,7 +602,7 @@ public class Flow extends AnnotatedObject {
 	public void end(FlowExecutionControlContext context, AttributeMap output) throws StateException {
 		endActionList.execute(context);
 		if (outputMapper != null) {
-			outputMapper.map(output, context, Collections.EMPTY_MAP);
+			outputMapper.map(context, output, Collections.EMPTY_MAP);
 		}
 	}
 

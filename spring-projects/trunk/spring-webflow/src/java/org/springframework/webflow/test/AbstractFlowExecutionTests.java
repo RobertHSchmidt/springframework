@@ -270,6 +270,9 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * resumed flow execution during event processing
 	 */
 	protected ViewSelection signalEvent(String eventId, ExternalContext context) throws StateException {
+		Assert
+				.state(flowExecution != null,
+						"The flow execution to test is [null]; you must start the flow execution before you can signal an event against it");
 		return flowExecution.signalEvent(new EventId(eventId), context);
 	}
 
@@ -299,6 +302,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * resumed flow execution during event processing
 	 */
 	protected ViewSelection refresh(ExternalContext context) throws StateException {
+		Assert.state(flowExecution != null,
+				"The flow execution to test is [null]; you must start the flow execution before you can refresh it");
 		return flowExecution.refresh(context);
 	}
 
@@ -309,9 +314,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @throws IllegalStateException the execution has not been started
 	 */
 	protected FlowExecutionContext getFlowExecutionContext() throws IllegalStateException {
-		if (flowExecution == null) {
-			throw new IllegalStateException("The flow execution has not been started; call startFlow first");
-		}
+		Assert.state(flowExecution != null,
+				"The flow execution to test is [null]; you must start the flow execution before you can query it");
 		return flowExecution;
 	}
 
@@ -401,7 +405,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * ended and has been started.
 	 */
 	protected void assertFlowExecutionActive() {
-		assertTrue("The flow execution is not active but it should be", flowExecution.isActive());
+		assertTrue("The flow execution is not active but it should be", getFlowExecutionContext().isActive());
 	}
 
 	/**
@@ -409,7 +413,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * active.
 	 */
 	protected void assertFlowExecutionEnded() {
-		assertTrue("The flow execution is still active but it should have ended", !flowExecution.isActive());
+		assertTrue("The flow execution is still active but it should have ended", !getFlowExecutionContext().isActive());
 	}
 
 	/**

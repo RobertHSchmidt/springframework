@@ -13,7 +13,7 @@
 	A flow is composed of one or more states that form the steps of the flow.
 	Each State executes behavior when entered. What behavior is executed is a
 	function of the state's type. Core state types include view states,
-	action Atates, subflow states, decision states, and end states.
+	action states, subflow states, decision states, and end states.
     
 	Each flow definition must specify exactly one start state.
 	Events that occur in transitionable states drive state transitions.
@@ -59,6 +59,20 @@
 
 <!--
 	The mapper to map input attributes provided at startup for use by this flow during its execution.
+	
+	For the input mapper the following mapping characteristics apply:
+	- The 'source' of each mapping is the flow input map containing input provided by the caller 
+	  that launched the flow.
+	- The 'target' of each mapping is the flow RequestContext, exposing access to the central 
+	  flow data structures such as flowScope.
+	  
+	For example:
+	
+	<input-mapper>
+	    <mapping source="clientInputAttribute" target="flowScope.myFlowAttribute"/>
+	</input-mapper>
+	
+	... maps the value of "clientInputAttribute" to the "myFlowAttribute" in flow scope.
 -->
 <!ELEMENT input-mapper ( mapping+ )>
 
@@ -561,6 +575,21 @@
 
 <!--
 	The mapper that will map flow output attributes.
+
+	For the output mapper the following mapping characteristics apply:
+	- The 'source' of each mapping is the flow RequestContext, exposing access to the central 
+	  flow data structures such as flowScope.
+	- The 'target' of each mapping is the flow output map that will contain output exposed to the 
+	  caller that terminated this flow.
+	  
+	For example:
+	
+	<ouput-mapper>
+	    <mapping source="flowScope.myFlowAttribute" target="clientOutputAttribute"/>
+	</output-mapper>
+	
+	... maps the value of "myFlowAttribute" in flow scope to "clientOutputAttribute" in the
+	flow output map.
 -->
 <!ELEMENT output-mapper ( mapping+ )>
 

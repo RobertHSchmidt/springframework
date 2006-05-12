@@ -20,12 +20,15 @@ import java.util.ArrayList;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
+import org.springframework.binding.mapping.DefaultAttributeMapper;
+import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.action.TestMultiAction;
 import org.springframework.webflow.builder.MyCustomException;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.BeanFactoryFlowVariable;
+import org.springframework.webflow.support.DefaultExpressionParserFactory;
 import org.springframework.webflow.support.DefaultTargetStateResolver;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.SimpleFlowVariable;
@@ -197,7 +200,19 @@ public class FlowTests extends TestCase {
 		context.getFlowScope().getRequired("var1", ArrayList.class);	
 		context.getFlowScope().getRequired("var2", ArrayList.class);	
 	}
-	
+
+	public void testStartWithMapper() {
+		DefaultAttributeMapper attributeMapper = new DefaultAttributeMapper();
+		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		attributeMapper.addMapping(mapping.source("attr").target("flowScope.attr").value());
+		flow.setInputMapper(attributeMapper);
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		AttributeMap sessionInput = new AttributeMap();
+		sessionInput.put("attr", "foo");
+		flow.start(context, sessionInput); 
+		assertEquals("foo", context.getFlowScope().get("attr"));
+	}
+
 	public void testOnEventNullCurrentState() {
 		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
 		Event event = new Event(this, "foo");
@@ -259,6 +274,18 @@ public class FlowTests extends TestCase {
 		AttributeMap sessionOutput = new AttributeMap();
 		flow.end(context, sessionOutput);
 		assertEquals(1, action.getExecutionCount());
+	}
+	
+	public void testEndWithMapper() {
+		DefaultAttributeMapper attributeMapper = new DefaultAttributeMapper();
+		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		attributeMapper.addMapping(mapping.source("flowScope.attr").target("attr").value());
+		flow.setOutputMapper(attributeMapper);
+		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		context.getFlowScope().put("attr", "foo");
+		AttributeMap sessionOutput = new AttributeMap();
+		flow.end(context, sessionOutput); 
+		assertEquals("foo", sessionOutput.get("attr"));
 	}
 
 	public void testHandleStateException() {

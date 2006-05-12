@@ -166,7 +166,8 @@ public class FlowPhaseListener implements PhaseListener {
 		if (argumentExtractor.isFlowExecutionKeyPresent(context)) {
 			// restore flow execution from repository so it will be
 			// available to variable/property resolvers and the flow
-			// navigation handler
+			// navigation handler (this could happen as part of a submission or
+			// flow execution redirect)
 			FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 			FlowExecutionRepository repository = getRepository(context);
 			FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
@@ -177,6 +178,8 @@ public class FlowPhaseListener implements PhaseListener {
 					facesContext);
 		}
 		else if (argumentExtractor.isConversationIdPresent(context)) {
+			// restore the flow execution (this could happen as part of a
+			// conversation redirect)
 			Serializable conversationId = argumentExtractor.extractConversationId(context);
 			FlowExecutionRepository repository = getRepository(context);
 			FlowExecutionKey flowExecutionKey = repository.getCurrentFlowExecutionKey(conversationId);
@@ -188,6 +191,8 @@ public class FlowPhaseListener implements PhaseListener {
 					facesContext);
 		}
 		else if (argumentExtractor.isFlowIdPresent(context)) {
+			// launch a new flow execution (this could happen as part of a flow
+			// redirect)
 			String flowId = argumentExtractor.extractFlowId(context);
 			FlowExecutionRepository repository = getRepository(context);
 			FlowExecution flowExecution = repository.createFlowExecution(flowId);
