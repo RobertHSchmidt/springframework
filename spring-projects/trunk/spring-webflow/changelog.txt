@@ -13,7 +13,13 @@ Package org.springframework.webflow.builder
 * Fixed bug related to inline-flow parsing where inline flow artifacts were not assembled properly.
 * Added not null asserts to setters allowing overriding of required flow builder services.
 * Improved dtd documentation describing input-mapper and output-mapper usage.
+* Relaxed 'isMultiAction' assert in XmlFlowBuilder to simply 'isAction', allowing provision of the 'method'
+  annotated action attribute with any target Action implementation, not just MultiActions.
+* Removed 'isMultiAction' tester on FlowServiceLocator as it is no longer needed by the builders.
 
+Package org.springframework.webflow.action
+* Moved MultiAction.METHOD_ATTRIBUTE constant to AnnotatedAction.METHOD_ATTRIBUTE.
+  
 Package org.springframework.webflow.execution
 * Fixed bug in FlowExecutionImpl toString, where a NPE could be thrown if toString was called during 
   a FlowExecution.start (after becoming active but before having the current state set).
