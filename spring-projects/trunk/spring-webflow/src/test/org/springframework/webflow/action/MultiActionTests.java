@@ -2,6 +2,7 @@ package org.springframework.webflow.action;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.MultiAction.MethodResolver;
@@ -15,13 +16,13 @@ public class MultiActionTests extends TestCase {
 	private MockRequestContext context = new MockRequestContext();
 
 	public void testDispatchWithMethodSignature() throws Exception {
-		context.getAttributeMap().put(MultiAction.METHOD_ATTRIBUTE, "increment");
+		context.getAttributeMap().put(AnnotatedAction.METHOD_ATTRIBUTE, "increment");
 		action.execute(context);
 		assertEquals(1, action.counter);
 	}
 
 	public void testDispatchWithBogusMethodSignature() throws Exception {
-		context.getAttributeMap().put(MultiAction.METHOD_ATTRIBUTE, "bogus");
+		context.getAttributeMap().put(AnnotatedAction.METHOD_ATTRIBUTE, "bogus");
 		try {
 			action.execute(context);
 			fail("Should've failed with no such method");

@@ -30,7 +30,7 @@ import org.springframework.webflow.RequestContext;
  * to the SWF Action contract.
  * <p>
  * The method to invoke is determined by the value of the
- * {@link MultiAction#METHOD_ATTRIBUTE} action execution property, typically set
+ * {@link AnnotatedAction#METHOD_ATTRIBUTE} action execution property, typically set
  * when provisioning this Action's use as part of an {@link AnnotatedAction} or
  * an {@link ActionState}.
  * 

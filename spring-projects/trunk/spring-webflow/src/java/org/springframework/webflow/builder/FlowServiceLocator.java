@@ -15,7 +15,6 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
-import org.springframework.webflow.action.MultiAction;
 
 /**
  * A support interface used by FlowBuilders at configuration time. Acts as a
@@ -66,15 +65,6 @@ public interface FlowServiceLocator {
 	 * @throws FlowArtifactException when no such action is found
 	 */
 	public boolean isAction(String actionId) throws FlowArtifactException;
-
-	/**
-	 * Returns true if the action with the given <code>actionId</code> is a
-	 * {@link MultiAction} instance.
-	 * @param actionId the action id
-	 * @return true if the action is a multi action, false otherwise
-	 * @throws FlowArtifactException when no such action is found
-	 */
-	public boolean isMultiAction(String actionId) throws FlowArtifactException;
 
 	/**
 	 * Returns the flow attribute mapper with the provided id. Flow attribute

@@ -35,7 +35,6 @@ import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
 
 /**
@@ -131,15 +130,6 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 
 	public boolean isAction(String actionId) throws FlowArtifactException {
 		return Action.class.isAssignableFrom(getBeanType(actionId, Action.class));
-	}
-
-	public boolean isMultiAction(String actionId) throws FlowArtifactException {
-		if (containsBean(actionId)) {
-			return MultiAction.class.isAssignableFrom(getBeanFactory().getType(actionId));
-		}
-		else {
-			return false;
-		}
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {

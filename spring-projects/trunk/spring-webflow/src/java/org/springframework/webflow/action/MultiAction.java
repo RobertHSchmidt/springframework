@@ -86,17 +86,6 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
 public class MultiAction extends AbstractAction {
 
 	/**
-	 * The action execution method attribute ("method").
-	 * <p>
-	 * The method property is a hint about what method should be invoked; e.g
-	 * the name of a specific method on a
-	 * <code>{@link org.springframework.webflow.action.MultiAction}</code>.
-	 * <p>
-	 * @see org.springframework.webflow.ActionState
-	 */
-	public static final String METHOD_ATTRIBUTE = "method";
-
-	/**
 	 * A cache for dispatched action execute methods. The default signature is
 	 * <code>public Event ${method}(RequestContext context) throws Exception;</code>.
 	 */

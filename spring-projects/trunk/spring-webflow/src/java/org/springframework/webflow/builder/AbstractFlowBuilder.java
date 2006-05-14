@@ -590,7 +590,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected AnnotatedAction invoke(String methodName, MultiAction multiAction) throws FlowArtifactException {
 		AnnotatedAction action = new AnnotatedAction(multiAction);
-		action.getAttributeMap().put(MultiAction.METHOD_ATTRIBUTE, methodName);
+		action.getAttributeMap().put(AnnotatedAction.METHOD_ATTRIBUTE, methodName);
 		return action;
 	}
 

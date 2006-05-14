@@ -30,7 +30,6 @@ import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.action.MultiAction;
 
 /**
  * Searches flow-local registries first before querying the global, externally
@@ -95,15 +94,6 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 		else {
 			return parent.isAction(actionId);
-		}
-	}
-
-	public boolean isMultiAction(String actionId) {
-		if (containsBean(actionId)) {
-			return MultiAction.class.isAssignableFrom(getBeanFactory().getType(actionId));
-		}
-		else {
-			return parent.isMultiAction(actionId);
 		}
 	}
 

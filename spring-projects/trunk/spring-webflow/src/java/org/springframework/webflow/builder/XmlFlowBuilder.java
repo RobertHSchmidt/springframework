@@ -60,7 +60,6 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.action.ResultSpecification;
 import org.springframework.webflow.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.support.CollectionAddingPropertyExpression;
@@ -698,8 +697,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			annotated.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
 		if (element.hasAttribute(METHOD_ATTRIBUTE)
-				&& getLocalFlowServiceLocator().isMultiAction(element.getAttribute(BEAN_ATTRIBUTE))) {
-			annotated.getAttributeMap().put(MultiAction.METHOD_ATTRIBUTE, element.getAttribute(METHOD_ATTRIBUTE));
+				&& getLocalFlowServiceLocator().isAction(element.getAttribute(BEAN_ATTRIBUTE))) {
+			annotated.setMethod(element.getAttribute(METHOD_ATTRIBUTE));
 		}
 		annotated.getAttributeMap().putAll(parseAttributes(element));
 		return annotated;

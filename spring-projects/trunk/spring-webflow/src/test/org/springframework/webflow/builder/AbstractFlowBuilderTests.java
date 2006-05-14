@@ -203,7 +203,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 	public void testConfigureMultiAction() throws Exception {
 		MultiAction multiAction = new MultiAction(new MultiActionTarget());
 		AnnotatedAction action = builder.invoke("foo", multiAction);
-		assertEquals("foo", action.getAttributeMap().get(MultiAction.METHOD_ATTRIBUTE));
+		assertEquals("foo", action.getAttributeMap().get(AnnotatedAction.METHOD_ATTRIBUTE));
 		assertEquals("success", action.execute(new MockRequestContext()).getId());
 	}
 	
