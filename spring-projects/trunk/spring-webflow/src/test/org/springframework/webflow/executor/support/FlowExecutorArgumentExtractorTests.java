@@ -105,19 +105,29 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		assertEquals("/app/flows.htm?_conversationId=123", url);
 	}
 
-	public void testCreateExternalUrl() {
+	public void testCreateExternalUrlAbsolute() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
 		FlowExecutionKey key = new FlowExecutionKey("123", "456");
-		ExternalRedirect redirect = new ExternalRedirect("/a/url", false);
+		ExternalRedirect redirect = new ExternalRedirect("/a/url");
+		argumentExtractor.setRedirectContextRelative(false);
 		String url = argumentExtractor.createExternalUrl(redirect, key, context);
 		assertEquals("/a/url?_flowExecutionKey=_c123_k456", url);
+	}
+
+	public void testCreateExternalUrlContextRelative() {
+		context.setContextPath("/app");
+		context.setDispatcherPath("/flows.htm");
+		FlowExecutionKey key = new FlowExecutionKey("123", "456");
+		ExternalRedirect redirect = new ExternalRedirect("/a/url");
+		String url = argumentExtractor.createExternalUrl(redirect, key, context);
+		assertEquals("/app/a/url?_flowExecutionKey=_c123_k456", url);
 	}
 
 	public void testCreateExternalUrlNoKey() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");
-		ExternalRedirect redirect = new ExternalRedirect("/a/url", true);
+		ExternalRedirect redirect = new ExternalRedirect("/a/url");
 		String url = argumentExtractor.createExternalUrl(redirect, null, context);
 		assertEquals("/app/a/url", url);
 	}
@@ -125,7 +135,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 	public void testCreateExternalUrlNoKeyRelativeUrl() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");
-		ExternalRedirect redirect = new ExternalRedirect("a/url", true);
+		ExternalRedirect redirect = new ExternalRedirect("a/url");
 		String url = argumentExtractor.createExternalUrl(redirect, null, context);
 		assertEquals("a/url", url);
 	}

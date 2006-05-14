@@ -27,6 +27,11 @@ Package org.springframework.webflow.execution
 * Changed ContinuationFlowExecutionRepositoryCreator's default 'maxContinuations' property to 0, setting 
   no upper bound on the number of continuations that can exist per conversation by default.
 
+Package org.springframework.webflow.executor
+* Refined support for context-relative external redirects; now by default external URLs that begin with 
+  a leading '/' are treated as context-relative.  The FlowExecutorArgumentExtractor.redirectContextRelative
+  property allows for overriding this default.
+  
 Package org.springframework.webflow.registry
 * Improved ExternalizedFlowRegistrar, extracting a factory method for creating an ExternalizedFlowDefinition
   from a valid Resource location, and a template method for calculating if the location is actually a flow resource.

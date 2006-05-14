@@ -17,6 +17,6 @@ public class SimpleFlow extends Flow {
 		state1.getTransitionSet().add(new Transition(new DefaultTargetStateResolver("end")));
 
 		EndState state2 = new EndState(this, "end");
-		state2.setViewSelector(new ExternalRedirectSelector(new StaticExpression("confirm"), true));
+		state2.setViewSelector(new ExternalRedirectSelector(new StaticExpression("confirm")));
 	}
 }

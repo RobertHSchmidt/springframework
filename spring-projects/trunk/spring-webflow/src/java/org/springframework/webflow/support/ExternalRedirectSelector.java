@@ -48,20 +48,14 @@ public class ExternalRedirectSelector implements ViewSelector, Serializable {
 	private Expression urlExpression;
 
 	/**
-	 * A flag indicating if the URL expression is context relative.
-	 */
-	private boolean contextRelative;
-
-	/**
 	 * Create a new redirecting view selector that takes given URL expression as
 	 * input. The expression is the parsed form (expression-tokenized) of the
 	 * encoded view (e.g. "/pathInfo?param0=value0&param1=value1").
 	 * @param urlExpression the url expression
 	 * @param contextRelative a context relative flag
 	 */
-	public ExternalRedirectSelector(Expression urlExpression, boolean contextRelative) {
+	public ExternalRedirectSelector(Expression urlExpression) {
 		this.urlExpression = urlExpression;
-		this.contextRelative = contextRelative;
 	}
 
 	/**
@@ -71,20 +65,13 @@ public class ExternalRedirectSelector implements ViewSelector, Serializable {
 		return urlExpression;
 	}
 
-	/**
-	 * Returns a flag indicating if the URL expression is context relative.
-	 */
-	public boolean isContextRelative() {
-		return contextRelative;
-	}
-
 	public ViewSelection makeRefreshSelection(RequestContext context) {
 		return makeSelection(context);
 	}
 	
 	public ViewSelection makeSelection(RequestContext context) {
 		String url = (String)urlExpression.evaluateAgainst(context, getEvaluationContext(context));
-		return new ExternalRedirect(url, contextRelative);
+		return new ExternalRedirect(url);
 	}
 
 	/**
@@ -95,7 +82,6 @@ public class ExternalRedirectSelector implements ViewSelector, Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("urlExpression", urlExpression).append("contextRelative",
-				contextRelative).toString();
+		return new ToStringCreator(this).append("urlExpression", urlExpression).toString();
 	}
 }

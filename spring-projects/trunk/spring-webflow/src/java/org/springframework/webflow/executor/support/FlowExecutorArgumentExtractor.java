@@ -417,6 +417,13 @@ public class FlowExecutorArgumentExtractor {
 	private String flowExecutionContextAttributeName = FLOW_EXECUTION_CONTEXT_ATTRIBUTE;
 
 	/**
+	 * A flag indicating whether to interpret a redirect URL that starts with a
+	 * slash ("/") as relative to the current ServletContext, i.e. as relative
+	 * to the web application root, as opposed to absolute.
+	 */
+	private boolean redirectContextRelative = true;
+
+	/**
 	 * The url encoding scheme to be used to encode URLs built by this parameter
 	 * extractor.
 	 */
@@ -454,6 +461,28 @@ public class FlowExecutorArgumentExtractor {
 	}
 
 	/**
+	 * Set whether to interpret a given redirect URL that starts with a slash
+	 * ("/") as relative to the current ServletContext, i.e. as relative to the
+	 * web application root.
+	 * <p>
+	 * Default is "true": A redirect URL that starts with a slash will be
+	 * interpreted as relative to the web application root, i.e. the context
+	 * path will be prepended to the URL.
+	 */
+	public void setRedirectContextRelative(boolean redirectContextRelative) {
+		this.redirectContextRelative = redirectContextRelative;
+	}
+
+	/**
+	 * Return whether to interpret a given redirect URL that starts with a slash
+	 * ("/") as relative to the current ServletContext, i.e. as relative to the
+	 * web application root.
+	 */
+	protected boolean isRedirectContextRelative() {
+		return redirectContextRelative;
+	}
+
+	/**
 	 * Create a URL that when redirected to launches a entirely new execution of
 	 * a flow (starts a new conversation). Used to support the <i>restart flow</i>
 	 * and <i>redirect to flow</i> use cases.
@@ -484,7 +513,8 @@ public class FlowExecutorArgumentExtractor {
 	 * @param context the external context
 	 * @return the relative conversation URL path
 	 */
-	public String createFlowExecutionUrl(FlowExecutionKey key, FlowExecutionContext flowExecution, ExternalContext context) {
+	public String createFlowExecutionUrl(FlowExecutionKey key, FlowExecutionContext flowExecution,
+			ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
 		flowExecutionUrl.append(context.getContextPath());
 		flowExecutionUrl.append(context.getDispatcherPath());
@@ -503,7 +533,8 @@ public class FlowExecutorArgumentExtractor {
 	 * @param context the external context
 	 * @return the relative conversation URL path
 	 */
-	public String createConversationUrl(FlowExecutionKey key, FlowExecutionContext flowExecution, ExternalContext context) {
+	public String createConversationUrl(FlowExecutionKey key, FlowExecutionContext flowExecution,
+			ExternalContext context) {
 		StringBuffer conversationUrl = new StringBuffer();
 		conversationUrl.append(context.getContextPath());
 		conversationUrl.append(context.getDispatcherPath());
@@ -523,7 +554,7 @@ public class FlowExecutorArgumentExtractor {
 	public String createExternalUrl(ExternalRedirect redirect, FlowExecutionKey flowExecutionKey,
 			ExternalContext context) {
 		StringBuffer externalUrl = new StringBuffer();
-		if (redirect.isContextRelative() && redirect.getUrl().startsWith("/")) {
+		if (redirect.getUrl().startsWith("/") && isRedirectContextRelative()) {
 			externalUrl.append(context.getContextPath());
 		}
 		externalUrl.append(redirect.getUrl());

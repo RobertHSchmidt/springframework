@@ -34,23 +34,13 @@ public final class ExternalRedirect extends ViewSelection {
 	private final String url;
 
 	/**
-	 * A flag indicating if the redirect URL is context relative.
-	 * <p>
-	 * The default is "false": A URL that starts with a slash will be interpreted
-	 * as absolute, i.e. taken as-is. If true, the context path will be
-	 * prepended to the URL in such a case. 
-	 */
-	private final boolean contextRelative;
-
-	/**
 	 * Creates an external redirect request.
 	 * @param url the url path to redirect to
 	 * @param whether the url should be treated as context relative
 	 */
-	public ExternalRedirect(String url, boolean contextRelative) {
+	public ExternalRedirect(String url) {
 		Assert.notNull(url, "The external URL to redirect to is required");
 		this.url = url;
-		this.contextRelative = contextRelative;
 	}
 	
 	/**
@@ -60,26 +50,19 @@ public final class ExternalRedirect extends ViewSelection {
 		return url;
 	}
 
-	/**
-	 * Returns the flag indicating if the external URL is context (application) relative.
-	 */
-	public boolean isContextRelative() {
-		return contextRelative;
-	}
-	
 	public boolean equals(Object o) {
 		if (!(o instanceof ExternalRedirect)) {
 			return false;
 		}
 		ExternalRedirect other = (ExternalRedirect)o;
-		return url.equals(other.url) && contextRelative == other.contextRelative;
+		return url.equals(other.url);
 	}
 
 	public int hashCode() {
-		return url.hashCode() + (contextRelative ? 1 : 0) * 29;
+		return url.hashCode();
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("url", url).append("contextRelative", contextRelative).toString();
+		return new ToStringCreator(this).append("url", url).toString();
 	}
 }

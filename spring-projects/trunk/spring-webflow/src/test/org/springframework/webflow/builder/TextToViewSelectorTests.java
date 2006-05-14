@@ -100,7 +100,6 @@ public class TextToViewSelectorTests extends TestCase {
 		RequestContext context = getRequestContext();
 		ExternalRedirect view = (ExternalRedirect)selector.makeSelection(context);
 		assertEquals("myUrl.htm?foo=bar&bar=mit", view.getUrl());
-		assertEquals(true, view.isContextRelative());
 	}
 
 	private RequestContext getRequestContext() {

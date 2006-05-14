@@ -19,7 +19,6 @@ import org.springframework.binding.convert.support.ConversionServiceAwareConvert
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.util.MapAccessor;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.NullViewSelector;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.support.ApplicationViewSelector;
@@ -110,38 +109,11 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 */
 	private FlowServiceLocator flowServiceLocator;
 
-	private boolean redirectContextRelative = true;
-
 	/**
 	 * Create a new text to ViewSelector converter.
 	 */
 	public TextToViewSelector(FlowServiceLocator flowServiceLocator) {
 		this.flowServiceLocator = flowServiceLocator;
-	}
-
-	/**
-	 * Set whether to interpret a given redirect URL that starts with a
-	 * slash ("/") as relative to the current ServletContext, i.e. as
-	 * relative to the web application root.
-	 * <p>Default is "true": A redirect URL that starts with a slash will be
-	 * interpreted as relative to the web application root, i.e. the context
-	 * path will be prepended to the URL.
-	 * <p><b>Redirect URLs can be specified via the "redirect:" prefix.</b>
-	 * E.g.: "redirect:myAction.do"
-	 * @see RedirectView#setContextRelative
-	 * @see #REDIRECT_URL_PREFIX
-	 */
-	public void setRedirectContextRelative(boolean redirectContextRelative) {
-		this.redirectContextRelative = redirectContextRelative;
-	}
-
-	/**
-	 * Return whether to interpret a given redirect URL that starts with a
-	 * slash ("/") as relative to the current ServletContext, i.e. as
-	 * relative to the web application root.
-	 */
-	protected boolean isRedirectContextRelative() {
-		return redirectContextRelative;
 	}
 
 	public Class[] getSourceClasses() {
@@ -184,7 +156,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
 			Expression urlExpr = (Expression)fromStringTo(Expression.class).execute(externalUrl);
-			return new ExternalRedirectSelector(urlExpr, isContextRelative(externalUrl));
+			return new ExternalRedirectSelector(urlExpr);
 		}
 		else if (encodedView.startsWith(FLOW_REDIRECT_PREFIX)) {
 			String flowRedirect = encodedView.substring(FLOW_REDIRECT_PREFIX.length());
@@ -205,12 +177,12 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		if (encodedView.startsWith(REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(REDIRECT_PREFIX.length());
 			Expression urlExpr = (Expression)fromStringTo(Expression.class).execute(externalUrl);
-			return new ExternalRedirectSelector(urlExpr, isContextRelative(externalUrl));
+			return new ExternalRedirectSelector(urlExpr);
 		}
 		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
 			Expression urlExpr = (Expression)fromStringTo(Expression.class).execute(externalUrl);
-			return new ExternalRedirectSelector(urlExpr, isContextRelative(externalUrl));
+			return new ExternalRedirectSelector(urlExpr);
 		}
 		else if (encodedView.startsWith(FLOW_REDIRECT_PREFIX)) {
 			String flowRedirect = encodedView.substring(FLOW_REDIRECT_PREFIX.length());
@@ -225,13 +197,5 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(encodedView);
 			return new ApplicationViewSelector(viewNameExpr);
 		}
-	}
-	
-	protected boolean isContextRelative(String externalUrl) {
-		if (externalUrl.startsWith("/")) {
-			return isRedirectContextRelative();
-		} else {
-			return true;
-		}
-	}
+	}	
 }
