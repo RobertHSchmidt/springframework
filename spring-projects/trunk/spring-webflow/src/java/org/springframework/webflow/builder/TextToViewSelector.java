@@ -156,7 +156,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
 			Expression urlExpr = (Expression)fromStringTo(Expression.class).execute(externalUrl);
-			return new ExternalRedirectSelector(urlExpr, false);
+			return new ExternalRedirectSelector(urlExpr, isContextRelative(externalUrl));
 		}
 		else if (encodedView.startsWith(FLOW_REDIRECT_PREFIX)) {
 			String flowRedirect = encodedView.substring(FLOW_REDIRECT_PREFIX.length());
@@ -177,12 +177,12 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		if (encodedView.startsWith(REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(REDIRECT_PREFIX.length());
 			Expression urlExpr = (Expression)fromStringTo(Expression.class).execute(externalUrl);
-			return new ExternalRedirectSelector(urlExpr, true);
+			return new ExternalRedirectSelector(urlExpr, isContextRelative(externalUrl));
 		}
 		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
 			Expression urlExpr = (Expression)fromStringTo(Expression.class).execute(externalUrl);
-			return new ExternalRedirectSelector(urlExpr, false);
+			return new ExternalRedirectSelector(urlExpr, isContextRelative(externalUrl));
 		}
 		else if (encodedView.startsWith(FLOW_REDIRECT_PREFIX)) {
 			String flowRedirect = encodedView.substring(FLOW_REDIRECT_PREFIX.length());
@@ -196,6 +196,14 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		else {
 			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(encodedView);
 			return new ApplicationViewSelector(viewNameExpr);
+		}
+	}
+	
+	protected boolean isContextRelative(String externalUrl) {
+		if (externalUrl.startsWith("/")) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 }
