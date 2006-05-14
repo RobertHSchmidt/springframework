@@ -19,6 +19,7 @@ import org.springframework.binding.convert.support.ConversionServiceAwareConvert
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.util.MapAccessor;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.NullViewSelector;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.support.ApplicationViewSelector;
@@ -109,11 +110,38 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 */
 	private FlowServiceLocator flowServiceLocator;
 
+	private boolean redirectContextRelative = true;
+
 	/**
 	 * Create a new text to ViewSelector converter.
 	 */
 	public TextToViewSelector(FlowServiceLocator flowServiceLocator) {
 		this.flowServiceLocator = flowServiceLocator;
+	}
+
+	/**
+	 * Set whether to interpret a given redirect URL that starts with a
+	 * slash ("/") as relative to the current ServletContext, i.e. as
+	 * relative to the web application root.
+	 * <p>Default is "true": A redirect URL that starts with a slash will be
+	 * interpreted as relative to the web application root, i.e. the context
+	 * path will be prepended to the URL.
+	 * <p><b>Redirect URLs can be specified via the "redirect:" prefix.</b>
+	 * E.g.: "redirect:myAction.do"
+	 * @see RedirectView#setContextRelative
+	 * @see #REDIRECT_URL_PREFIX
+	 */
+	public void setRedirectContextRelative(boolean redirectContextRelative) {
+		this.redirectContextRelative = redirectContextRelative;
+	}
+
+	/**
+	 * Return whether to interpret a given redirect URL that starts with a
+	 * slash ("/") as relative to the current ServletContext, i.e. as
+	 * relative to the web application root.
+	 */
+	protected boolean isRedirectContextRelative() {
+		return redirectContextRelative;
 	}
 
 	public Class[] getSourceClasses() {
@@ -201,9 +229,9 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	
 	protected boolean isContextRelative(String externalUrl) {
 		if (externalUrl.startsWith("/")) {
-			return true;
+			return isRedirectContextRelative();
 		} else {
-			return false;
+			return true;
 		}
 	}
 }
