@@ -99,12 +99,15 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 			appendRequestPathElements(flowRedirect.getInput(), flowUrl);
 		}
 		else {
-			appendQueryParameters(flowRedirect.getInput(), flowUrl);
+			if (!flowRedirect.getInput().isEmpty()) {
+				flowUrl.append('?');
+				appendQueryParameters(flowRedirect.getInput(), flowUrl);
+			}
 		}
 		return flowUrl.toString();
 	}
 
-	protected void appendRequestPathElements(Map map, StringBuffer url) {
+	private void appendRequestPathElements(Map map, StringBuffer url) {
 		if (!map.isEmpty()) {
 			url.append(PATH_SEPARATOR_CHARACTER);
 			Iterator it = map.values().iterator();

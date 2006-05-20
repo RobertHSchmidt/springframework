@@ -51,4 +51,8 @@ public class FlowExecutionHolderUtils {
 	private static String getFlowExecutionHolderKey() {
 		return FlowExecutionHolder.class.getName();
 	}
+
+	public static boolean isFlowExecutionRestored(FacesContext context) {
+		return getFlowExecutionHolder(context) != null;
+	}
 }

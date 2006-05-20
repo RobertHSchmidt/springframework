@@ -55,6 +55,17 @@ public class FlowExecutionHolder implements Serializable {
 	}
 
 	/**
+	 * Creates a new flow execution holder for a flow execution that has not yet
+	 * been placed in a repository.
+	 * @param flowExecution the flow execution to hold
+	 * @param selectedView the starting view selection
+	 */
+	public FlowExecutionHolder(FlowExecution flowExecution, ViewSelection selectedView) {
+		this.flowExecution = flowExecution;
+		this.viewSelection = selectedView;
+	}
+
+	/**
 	 * Creates a new flow execution holder.
 	 * @param flowExecutionKey the continuation key
 	 * @param flowExecution the flow execution to hold

@@ -143,20 +143,18 @@ public class FlowPhaseListener implements PhaseListener {
 			restoreFlowExecution(event.getFacesContext());
 		}
 		else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
-			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext());
-			if (holder != null) {
+			if (FlowExecutionHolderUtils.isFlowExecutionRestored(event.getFacesContext())) {
 				JsfExternalContext context = new JsfExternalContext(event.getFacesContext());
-				prepareResponse(context, holder);
+				prepareResponse(context, FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext()));
 			}
 		}
 	}
 
 	public void afterPhase(PhaseEvent event) {
 		if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
-			FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext());
-			if (holder != null) {
+			if (FlowExecutionHolderUtils.isFlowExecutionRestored(event.getFacesContext())) {
 				JsfExternalContext context = new JsfExternalContext(event.getFacesContext());
-				saveFlowExecution(context, holder);
+				saveFlowExecution(context, FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext()));
 			}
 		}
 	}
@@ -196,11 +194,12 @@ public class FlowPhaseListener implements PhaseListener {
 			String flowId = argumentExtractor.extractFlowId(context);
 			FlowExecutionRepository repository = getRepository(context);
 			FlowExecution flowExecution = repository.createFlowExecution(flowId);
-			flowExecution.start(createInput(flowExecution, context), context);
+			ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Started new flow execution");
 			}
-			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecution), facesContext);
+			FlowExecutionHolder holder = new FlowExecutionHolder(flowExecution, selectedView);
+			FlowExecutionHolderUtils.setFlowExecutionHolder(holder, facesContext);
 		}
 	}
 

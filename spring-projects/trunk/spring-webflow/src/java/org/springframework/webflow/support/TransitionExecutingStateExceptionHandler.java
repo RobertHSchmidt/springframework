@@ -43,12 +43,23 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	 * The name of the attribute to expose an handled state exception under in
 	 * request scope.
 	 */
-	public static final String HANDLED_STATE_EXCEPTION_ATTRIBUTE = "handledStateException";
+	public static final String STATE_EXCEPTION_ATTRIBUTE = "stateException";
+
+	/**
+	 * The name of the attribute to expose an handled state exception under in
+	 * request scope.
+	 */
+	public static final String ROOT_CAUSE_EXCEPTION_ATTRIBUTE = "rootCause";
 
 	/**
 	 * The exceptionType->targetStateId map.
 	 */
-	private Map exceptionTargetStateResolverMapping = new HashMap();
+	private Map exceptionTargetStateResolverMappings = new HashMap();
+
+	/**
+	 * Resolver that resolves the root cause of a handled StateException.
+	 */
+	private RootCauseResolver rootCauseResolver = createRootCauseResolver();
 
 	/**
 	 * Adds an exception->state mapping to this handler.
@@ -65,15 +76,15 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	/**
 	 * Adds a exception->state mapping to this handler.
 	 * @param exceptionClass the type of exception to map
-	 * @param targetStateResolver the resolver to calculate the state to transition to if the
-	 * specified type of exception is handled
+	 * @param targetStateResolver the resolver to calculate the state to
+	 * transition to if the specified type of exception is handled
 	 * @return this handler, to allow for adding multiple mappings in a single
 	 * statement
 	 */
 	public TransitionExecutingStateExceptionHandler add(Class exceptionClass, TargetStateResolver targetStateResolver) {
 		Assert.notNull(exceptionClass, "The exception class is required");
 		Assert.notNull(targetStateResolver, "The target state resolver is required");
-		exceptionTargetStateResolverMapping.put(exceptionClass, targetStateResolver);
+		exceptionTargetStateResolverMappings.put(exceptionClass, targetStateResolver);
 		return this;
 	}
 
@@ -87,7 +98,8 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 			throw new IllegalStateException("The source state '" + sourceState.getId()
 					+ "' to transition from must be transitionable!");
 		}
-		context.getRequestScope().put(HANDLED_STATE_EXCEPTION_ATTRIBUTE, e);
+		context.getRequestScope().put(STATE_EXCEPTION_ATTRIBUTE, e);
+		context.getRequestScope().put(ROOT_CAUSE_EXCEPTION_ATTRIBUTE, rootCauseResolver.findRootCause(e));
 		return new Transition(getTargetStateResolver(e)).execute((TransitionableState)sourceState, context);
 	}
 
@@ -111,17 +123,18 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	 * Internal getTargetState implementation for use with JDK 1.3.
 	 */
 	private TargetStateResolver getTargetStateResolver13(NestedRuntimeException e) {
-		if (exceptionTargetStateResolverMapping.containsKey(e.getClass())) {
-			return (TargetStateResolver)exceptionTargetStateResolverMapping.get(e.getClass());
+		TargetStateResolver resolver;
+		if (isRootCause13(e)) {
+			return findTargetStateResolver(e.getClass());
 		}
 		else {
-			Throwable throwable = e.getCause();
-			if (throwable != null && throwable instanceof NestedRuntimeException) {
-				return getTargetStateResolver13((NestedRuntimeException)throwable);
+			resolver = (TargetStateResolver)exceptionTargetStateResolverMappings.get(e.getClass());
+			if (resolver != null) {
+				return resolver;
 			}
 			else {
-				if (exceptionTargetStateResolverMapping.containsKey(throwable.getClass())) {
-					return (TargetStateResolver)exceptionTargetStateResolverMapping.get(throwable.getClass());
+				if (e.getCause() instanceof NestedRuntimeException) {
+					return getTargetStateResolver13((NestedRuntimeException)e.getCause());
 				}
 				else {
 					return null;
@@ -134,20 +147,84 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	 * Internal getTargetState implementation for use with JDK 1.4 or later.
 	 */
 	private TargetStateResolver getTargetStateResolver14(Throwable t) {
-		if (exceptionTargetStateResolverMapping.containsKey(t.getClass())) {
-			return (TargetStateResolver)exceptionTargetStateResolverMapping.get(t.getClass());
+		TargetStateResolver resolver;
+		if (isRootCause14(t)) {
+			return findTargetStateResolver(t.getClass());
 		}
 		else {
-			if (t.getCause() != null) {
-				return getTargetStateResolver14(t.getCause());
+			resolver = (TargetStateResolver)exceptionTargetStateResolverMappings.get(t.getClass());
+			if (resolver != null) {
+				return resolver;
 			}
 			else {
-				return null;
+				return getTargetStateResolver14(t.getCause());
+			}
+		}
+	}
+
+	private boolean isRootCause13(NestedRuntimeException t) {
+		return t.getCause() == null;
+	}
+
+	private boolean isRootCause14(Throwable t) {
+		return t.getCause() == null;
+	}
+
+	private TargetStateResolver findTargetStateResolver(Class argumentType) {
+		while (argumentType != null && argumentType.getClass() != Object.class) {
+			if (exceptionTargetStateResolverMappings.containsKey(argumentType)) {
+				return (TargetStateResolver)exceptionTargetStateResolverMappings.get(argumentType);
+			}
+			else {
+				argumentType = argumentType.getSuperclass();
+			}
+		}
+		return null;
+	}
+
+	protected RootCauseResolver createRootCauseResolver() {
+		return new RootCauseResolver();
+	}
+	
+	static class RootCauseResolver {
+		public Throwable findRootCause(Throwable e) {
+			if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_13) {
+				return findRootCause13(e);
+			}
+			else {
+				return findRootCause14(e);
+			}
+		}
+
+		private Throwable findRootCause13(Throwable e) {
+			if (e instanceof NestedRuntimeException) {
+				NestedRuntimeException nre = (NestedRuntimeException)e;
+				Throwable cause = e.getCause();
+				if (cause == null) {
+					return nre;
+				}
+				else {
+					return findRootCause13(cause);
+				}
+			}
+			else {
+				return e;
+			}
+		}
+
+		private Throwable findRootCause14(Throwable e) {
+			Throwable cause = e.getCause();
+			if (cause == null) {
+				return e;
+			}
+			else {
+				return findRootCause14(cause);
 			}
 		}
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("exceptionStateMap", exceptionTargetStateResolverMapping).toString();
+		return new ToStringCreator(this).append("exceptionTargetStateResolverMappings",
+				exceptionTargetStateResolverMappings).toString();
 	}
 }

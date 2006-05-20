@@ -134,13 +134,13 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	public void handleNavigation(FacesContext facesContext, String fromAction, String outcome,
 			NavigationHandler originalNavigationHandler) {
 		JsfExternalContext context = new JsfExternalContext(facesContext, fromAction, outcome);
-		FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-		if (holder != null) {
+		if (FlowExecutionHolderUtils.isFlowExecutionRestored(facesContext)) {
 			// the flow execution has been restored, now see if we need to signal an event against it
 			if (argumentExtractor.isEventIdPresent(context)) {
 				// a flow execution has already been restored, signal an event
 				// in it
 				EventId eventId = argumentExtractor.extractEventId(context);
+				FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
 				ViewSelection selectedView = holder.getFlowExecution().signalEvent(eventId, context);
 				holder.setViewSelection(selectedView);
 			}
@@ -152,8 +152,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 				String flowId = argumentExtractor.extractFlowId(context);
 				FlowExecution flowExecution = getRepository(context).createFlowExecution(flowId);
 				ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
-				holder = new FlowExecutionHolder(flowExecution);
-				holder.setViewSelection(selectedView);
+				FlowExecutionHolder holder = new FlowExecutionHolder(flowExecution, selectedView);
 				FlowExecutionHolderUtils.setFlowExecutionHolder(holder, facesContext);
 			}
 			else {

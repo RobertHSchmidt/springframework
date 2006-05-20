@@ -12,7 +12,7 @@ Package org.springframework.webflow
 Package org.springframework.webflow.builder
 * Fixed bug related to inline-flow parsing where inline flow artifacts were not assembled properly.
 * Added not null asserts to setters allowing overriding of required flow builder services.
-* Improved dtd documentation describing input-mapper and output-mapper usage.
+* Improved DTD documentation describing input-mapper and output-mapper element usage.
 * Relaxed 'isMultiAction' assert in XmlFlowBuilder to simply 'isAction', allowing provision of the 'method'
   annotated action attribute with any target Action implementation, not just MultiActions.
 * Removed 'isMultiAction' tester on FlowServiceLocator as it is no longer needed by the builders.
@@ -31,6 +31,8 @@ Package org.springframework.webflow.executor
 * Refined support for context-relative external redirects; now by default external URLs that begin with 
   a leading '/' are treated as context-relative.  The FlowExecutorArgumentExtractor.redirectContextRelative
   property allows for overriding this default.
+* Fixed bug in RequestPathFlowExecutorArgumentExtractor.createFlowUrl where flow redirect input 
+  was not being appended to the redirect URL correctly.
   
 Package org.springframework.webflow.registry
 * Improved ExternalizedFlowRegistrar, extracting a factory method for creating an ExternalizedFlowDefinition
@@ -38,6 +40,11 @@ Package org.springframework.webflow.registry
 * Fixed a bug in AbstractFlowRegistryFactoryBean where a NPE would occur when configuring custom DefaultFlowServiceLocator services.
 * Generally improved pluggability of core FlowBuilder services with the AbstractFlowRegistryFactoryBean,
   including the FlowArtifactFactory, BeanInvokingActionFactory, ExpressionParser, and parent ConversionService implementations.
+
+Package org.springframework.webflow.support
+* Improved TransitionExecutingStateExceptionHandler to consider exception superclasses in handler match.
+* Improved TransitionExecutingStateExceptionHandler to expose exception "rootCause" as request scoped attribute
+* Changed "handledStateException" attribute to simply "stateException".
 
 Package org.springframework.webflow.test
 * Added flowExecution not null asserts to signalEvent and refresh AbstractFlowExecutionTests operations.

@@ -1,5 +1,8 @@
 package org.springframework.webflow.executor.support;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.springframework.webflow.FlowExecutionContext;
@@ -46,6 +49,29 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 		assertEquals("/app/flows/flow", url);
 	}
 
+	public void testCreateFlowUrlInput() {
+		context.setContextPath("/app");
+		context.setDispatcherPath("/flows");
+		Map input = new HashMap();
+		input.put("foo", "bar");
+		input.put("baz", new Integer(3));
+		FlowRedirect flowRedirect = new FlowRedirect("flow", input);
+		String url = argumentExtractor.createFlowUrl(flowRedirect, context);
+		assertEquals("/app/flows/flow?foo=bar&baz=3", url);
+	}
+
+	public void testCreateFlowUrlInputRequestPath() {
+		context.setContextPath("/app");
+		context.setDispatcherPath("/flows");
+		Map input = new HashMap();
+		input.put("foo", "bar");
+		input.put("baz", new Integer(3));
+		FlowRedirect flowRedirect = new FlowRedirect("flow", input);
+		argumentExtractor.setAppendFlowInputAttributesToRequestPath(true);
+		String url = argumentExtractor.createFlowUrl(flowRedirect, context);
+		assertEquals("/app/flows/flow/bar/3", url);
+	}
+
 	public void testCreateFlowExecutionUrl() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");
@@ -63,5 +89,4 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 		String url = argumentExtractor.createConversationUrl(key, flowExecution, context);
 		assertEquals("/app/flows/mockFlow?_conversationId=123", url);
 	}
-
 }
