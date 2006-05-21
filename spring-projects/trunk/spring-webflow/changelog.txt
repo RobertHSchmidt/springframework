@@ -2,12 +2,15 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC2 (03.15.2006)
+Changes in version 1.0 RC2 (03.21.2006)
 ------------------------------------
 Package org.springframework.webflow
 * Removed 'requiredType' not null check on AttributeMap accessor methods;
   if no requiredType is specified the type assert is simply not performed.
 * Fixed bug in Flow.end where outputMapper source and target arguments were backwards.
+
+Package org.springframework.webflow.action
+* Made FormAction.formObjectScope default ScopeType.FLOW instead of ScopeType.REQUEST.
 
 Package org.springframework.webflow.builder
 * Fixed bug related to inline-flow parsing where inline flow artifacts were not assembled properly.
