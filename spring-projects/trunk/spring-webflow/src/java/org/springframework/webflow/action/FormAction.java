@@ -255,9 +255,10 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	private Class formObjectClass;
 
 	/**
-	 * The scope in which the form object should be exposed.
+	 * The scope in which the form object should be exposed.  Default is 
+	 * {@link ScopeType#FLOW}
 	 */
-	private ScopeType formObjectScope = ScopeType.REQUEST;
+	private ScopeType formObjectScope = ScopeType.FLOW;
 
 	/**
 	 * The scope in which the form object errors holder should be exposed.
